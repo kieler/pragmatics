@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+
+
+
+   <extension
+         point="org.eclipse.help.toc">
+      <toc
+            file="toc.xml">
+      </toc>
+      <toc
+            file="testToc.xml"
+            primary="true">
+      </toc>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="de.cau.cs.kieler.kivik.preferences.KivikPreferencePage"
+            id="de.cau.cs.kieler.kivik.preferences.KivikPreferencePage"
+            name="KiViK">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="de.cau.cs.kieler.kivik.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts.xml">
+      </contexts>
+   </extension>
+   <extension
+         point="org.eclipse.compare.contentMergeViewers">
+      <viewer
+            class="de.cau.cs.kieler.kivik.viewer.content.ModelContentMergeViewerCreator"
+            extensions="*"
+            id="de.cau.cs.kieler.kivik.views.ContentMergeViewer">
+      </viewer>
+      <contentTypeBinding
+            contentMergeViewerId="de.cau.cs.kieler.kivik.views.ContentMergeViewer"
+            contentTypeId="de.cau.cs.kieler.kivik.CompareContentType">
+      </contentTypeBinding>
+   </extension>
+   <extension
+         point="org.eclipse.compare.structureMergeViewers">
+      <viewer
+            class="de.cau.cs.kieler.kivik.viewer.structure.ModelStructureMergeViewerCreator"
+            extensions="*"
+            id="de.cau.cs.kieler.kivik.viewer.StructuredMergeViewer">
+      </viewer>
+      <contentTypeBinding
+            contentTypeId="de.cau.cs.kieler.kivik.CompareContentType"
+            structureMergeViewerId="de.cau.cs.kieler.kivik.viewer.StructuredMergeViewer">
+      </contentTypeBinding>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.contentTypes">
+      <content-type
+            file-extensions="ssm_diagram"
+            id="de.cau.cs.kieler.kivik.CompareContentType"
+            name="KiViK - KIELER Visual Kompare"
+            priority="normal">
+      </content-type>
+   </extension>
+
+</plugin>
