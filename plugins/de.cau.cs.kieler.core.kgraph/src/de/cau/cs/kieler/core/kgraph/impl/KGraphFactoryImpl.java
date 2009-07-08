@@ -1,0 +1,141 @@
+/**
+ * KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
+ * 
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2009 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ *
+ * $Id$
+ */
+package de.cau.cs.kieler.core.kgraph.impl;
+
+import de.cau.cs.kieler.core.kgraph.*;
+
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
+
+import org.eclipse.emf.ecore.impl.EFactoryImpl;
+
+import org.eclipse.emf.ecore.plugin.EcorePlugin;
+
+/**
+ * <!-- begin-user-doc -->
+ * An implementation of the model <b>Factory</b>.
+ * <!-- end-user-doc -->
+ * @generated
+ */
+public class KGraphFactoryImpl extends EFactoryImpl implements KGraphFactory {
+    /**
+     * Creates the default factory implementation.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public static KGraphFactory init() {
+        try {
+            KGraphFactory theKGraphFactory = (KGraphFactory)EPackage.Registry.INSTANCE.getEFactory("http://rtsys.informatik.uni-kiel.de/trac/kieler/wiki/KGraph"); 
+            if (theKGraphFactory != null) {
+                return theKGraphFactory;
+            }
+        }
+        catch (Exception exception) {
+            EcorePlugin.INSTANCE.log(exception);
+        }
+        return new KGraphFactoryImpl();
+    }
+
+    /**
+     * Creates an instance of the factory.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public KGraphFactoryImpl() {
+        super();
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public EObject create(EClass eClass) {
+        switch (eClass.getClassifierID()) {
+            case KGraphPackage.KNODE: return createKNode();
+            case KGraphPackage.KEDGE: return createKEdge();
+            case KGraphPackage.KPORT: return createKPort();
+            case KGraphPackage.KLABEL: return createKLabel();
+            default:
+                throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
+        }
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public KNode createKNode() {
+        KNodeImpl kNode = new KNodeImpl();
+        return kNode;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public KEdge createKEdge() {
+        KEdgeImpl kEdge = new KEdgeImpl();
+        return kEdge;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public KPort createKPort() {
+        KPortImpl kPort = new KPortImpl();
+        return kPort;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public KLabel createKLabel() {
+        KLabelImpl kLabel = new KLabelImpl();
+        return kLabel;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public KGraphPackage getKGraphPackage() {
+        return (KGraphPackage)getEPackage();
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @deprecated
+     * @generated
+     */
+    @Deprecated
+    public static KGraphPackage getPackage() {
+        return KGraphPackage.eINSTANCE;
+    }
+
+} //KGraphFactoryImpl

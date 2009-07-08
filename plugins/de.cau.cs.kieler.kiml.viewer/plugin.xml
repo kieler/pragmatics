@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="false"
+            category="de.cau.cs.kieler.views.category"
+            class="de.cau.cs.kieler.kiml.viewer.views.LayoutGraphView"
+            icon="icons/graph.gif"
+            id="de.cau.cs.kieler.kiml.viewer.layoutGraph"
+            name="Layout Graph"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="false"
+            category="de.cau.cs.kieler.views.category"
+            class="de.cau.cs.kieler.kiml.viewer.views.ExecutionView"
+            icon="icons/clock.gif"
+            id="de.cau.cs.kieler.kiml.viewer.execution"
+            name="Execution"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.kiml.layout.layoutListeners">
+      <layoutListener
+            class="de.cau.cs.kieler.kiml.viewer.ViewLayoutListener">
+      </layoutListener>
+   </extension>
+
+</plugin>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="de.cau.cs.kieler.klodd"
+      label="KIELER Dataflow Layout"
+      version="0.2.0"
+      provider-name="Christian-Albrechts-University of Kiel">
+
+   <description url="http://rtsys.informatik.uni-kiel.de/trac/kieler">
+      See http://rtsys.informatik.uni-kiel.de/trac/kieler
+   </description>
+
+   <copyright>
+      Copyright 2009 by
++ Christian-Albrechts-University of Kiel
++ Department of Computer Science
++ Real-Time and Embedded Systems Group
+   </copyright>
+
+   <license url="http://www.eclipse.org/org/documents/epl-v10.html">
+      See http://www.eclipse.org/org/documents/epl-v10.html
+   </license>
+
+   <requires>
+      <import feature="org.eclipse.emf.ecore" version="2.4.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.emf.common" version="2.4.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.gmf.runtime.notation" version="1.1.2" match="greaterOrEqual"/>
+   </requires>
+
+   <plugin
+         id="de.cau.cs.kieler.core"
+         download-size="45"
+         install-size="45"
+         version="0.1.1"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.kiml.layout"
+         download-size="61"
+         install-size="61"
+         version="0.2.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.klodd.hierarchical"
+         download-size="88"
+         install-size="88"
+         version="0.2.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.core.kgraph"
+         download-size="51"
+         install-size="51"
+         version="0.1.0"
+         unpack="false"/>
+
+</feature>

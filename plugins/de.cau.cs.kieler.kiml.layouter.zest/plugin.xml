@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="de.cau.cs.kieler.kiml.ui.preferences.layout"
+            class="de.cau.cs.kieler.kiml.layouter.zest.preferences.ZestLayouterPreferencePage"
+            id="de.cau.cs.kieler.kiml.layouter.zest.preferences"
+            name="Zest">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="de.cau.cs.kieler.kiml.layouter.zest.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.kiml.layout.layoutProviders">
+      <category
+            id="de.cau.cs.kieler.kiml.categories.zest"
+            name="Zest">
+      </category>
+      <layoutProvider
+            class="de.cau.cs.kieler.kiml.layouter.zest.ZestSpringLayoutProvider"
+            category="de.cau.cs.kieler.kiml.categories.zest"
+            id="de.cau.cs.kieler.kiml.layouter.zest.spring"
+            name="Zest Spring"
+            type="de.cau.cs.kieler.layout.types.force">
+         <supportedDiagram
+               priority="5"
+               type="de.cau.cs.kieler.layout.info.types.general">
+         </supportedDiagram>
+      </layoutProvider>
+      <layoutProvider
+            class="de.cau.cs.kieler.kiml.layouter.zest.ZestGridLayoutProvider"
+            category="de.cau.cs.kieler.kiml.categories.zest"
+            id="de.cau.cs.kieler.kiml.layouter.zest.grid"
+            name="Zest Grid">
+         <supportedDiagram
+               priority="9"
+               type="de.cau.cs.kieler.layout.info.types.boxes">
+         </supportedDiagram>
+      </layoutProvider>
+   </extension>
+
+</plugin>

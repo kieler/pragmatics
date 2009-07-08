@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension-point id="layoutProviders" name="Layout Providers" schema="schema/layoutProviders.exsd"/>
+   <extension-point id="layoutListeners" name="Layout Listeners" schema="schema/layoutListeners.exsd"/>
+   <extension-point id="layoutInfo" name="Layout Info" schema="schema/layoutInfo.exsd"/>
+   <extension
+         point="de.cau.cs.kieler.kiml.layout.layoutProviders">
+      <category
+            id="de.cau.cs.kieler.layouter.category"
+            name="KIELER">
+      </category>
+      <layoutProvider
+            class="de.cau.cs.kieler.kiml.layout.util.BoxLayoutProvider"
+            category="de.cau.cs.kieler.layouter.category"
+            id="de.cau.cs.kieler.kiml.layouter.boxLayout"
+            name="Box Layout">
+         <supportedDiagram
+               priority="10"
+               type="de.cau.cs.kieler.layout.info.types.boxes">
+         </supportedDiagram>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.minSpacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.priority">
+         </knownOption>
+      </layoutProvider>
+      <layoutType
+            id="de.cau.cs.kieler.layout.types.layered"
+            name="Layered">
+      </layoutType>
+      <layoutType
+            id="de.cau.cs.kieler.layout.types.orthogonal"
+            name="Orthogonal">
+      </layoutType>
+      <layoutType
+            id="de.cau.cs.kieler.layout.types.force"
+            name="Force">
+      </layoutType>
+      <layoutType
+            id="de.cau.cs.kieler.layout.types.circle"
+            name="Circular">
+      </layoutType>
+      <layoutType
+            id="de.cau.cs.kieler.layout.types.radial"
+            name="Radial">
+      </layoutType>
+      <layoutOption
+            description="Defines where an edge label shall be placed: at the source, center, or target"
+            id="de.cau.cs.kieler.layout.options.edgeLabelPlacement"
+            name="Edge Label Placement"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            description="Overall direction of edges: horizontal or vertical"
+            id="de.cau.cs.kieler.layout.options.layoutDirection"
+            name="Layout Direction"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            description="Defines constraints of the position of the ports of a node"
+            id="de.cau.cs.kieler.layout.options.portConstraints"
+            name="Port Constraints"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            description="Defines whether the size of a node is fixed"
+            id="de.cau.cs.kieler.layout.options.fixedSize"
+            name="Fixed Size"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            description="Minimal amount of space to be left between objects"
+            id="de.cau.cs.kieler.layout.options.minSpacing"
+            name="Minimal Spacing"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            description="Defines the priority of an object; its meaning depends on the specific layout algorithm"
+            id="de.cau.cs.kieler.layout.options.priority"
+            name="Priority"
+            type="int">
+      </layoutOption>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.kiml.layout.layoutInfo">
+      <diagramType
+            id="de.cau.cs.kieler.layout.info.types.nolayout"
+            name="No Layout">
+      </diagramType>
+      <diagramType
+            id="de.cau.cs.kieler.layout.info.types.general"
+            name="General">
+      </diagramType>
+      <diagramType
+            id="de.cau.cs.kieler.layout.info.types.stateMachine"
+            name="State Machine">
+      </diagramType>
+      <diagramType
+            id="de.cau.cs.kieler.layout.info.types.dataFlow"
+            name="Data Flow Diagram">
+      </diagramType>
+      <diagramType
+            id="de.cau.cs.kieler.layout.info.types.classDiagram"
+            name="Class Diagram">
+      </diagramType>
+      <diagramType
+            id="de.cau.cs.kieler.layout.info.types.boxes"
+            name="Unconnected Boxes">
+      </diagramType>
+   </extension>
+
+</plugin>

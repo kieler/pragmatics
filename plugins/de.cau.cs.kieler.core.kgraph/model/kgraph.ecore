@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="kgraph"
+    nsURI="http://rtsys.informatik.uni-kiel.de/trac/kieler/wiki/KGraph" nsPrefix="kgraph">
+  <eClassifiers xsi:type="ecore:EClass" name="KGraphElement" abstract="true" eSuperTypes="platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EModelElement">
+    <eOperations name="getData" eType="#//KGraphData">
+      <eParameters name="type" eType="ecore:EClass platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EClass"/>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="data" upperBound="-1" eType="#//KGraphData"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="KGraphData" abstract="true" interface="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="KNode" eSuperTypes="#//KGraphElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="children" upperBound="-1"
+        eType="#//KNode" containment="true" eOpposite="#//KNode/parent"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//KNode"
+        eOpposite="#//KNode/children"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ports" upperBound="-1"
+        eType="#//KPort" containment="true" eOpposite="#//KPort/node"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="outgoingEdges" upperBound="-1"
+        eType="#//KEdge" containment="true" eOpposite="#//KEdge/source"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="incomingEdges" upperBound="-1"
+        eType="#//KEdge" eOpposite="#//KEdge/target"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="label" eType="#//KLabel"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="KEdge" eSuperTypes="#//KGraphElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="source" lowerBound="1"
+        eType="#//KNode" eOpposite="#//KNode/outgoingEdges"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="target" lowerBound="1"
+        eType="#//KNode" eOpposite="#//KNode/incomingEdges"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="sourcePort" eType="#//KPort"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="targetPort" eType="#//KPort"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="labels" upperBound="-1"
+        eType="#//KLabel" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="KPort" eSuperTypes="#//KGraphElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="node" lowerBound="1" eType="#//KNode"
+        eOpposite="#//KNode/ports"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="edges" upperBound="-1"
+        eType="#//KEdge"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="label" eType="#//KLabel"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="KLabel" eSuperTypes="#//KGraphElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="text" lowerBound="1" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" lowerBound="1"
+        eType="#//KGraphElement"/>
+  </eClassifiers>
+</ecore:EPackage>

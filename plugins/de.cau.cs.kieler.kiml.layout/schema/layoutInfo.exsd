@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="de.cau.cs.kieler.kiml.layout" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="de.cau.cs.kieler.kiml.layout" id="layoutInfo" name="Layout Info"/>
+      </appInfo>
+      <documentation>
+         The layout info extension point allows to specify the properties of a specific diagram editor with regard to automatic layout. Containers of the diagram, such as compartment edit parts or diagram edit parts, can be mapped to generic diagram types. This information is used by the layout infrastructure to decide at runtime which layout provider to use for a specific part of a diagram.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="diagramType"/>
+            <element ref="binding"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  de.cau.cs.kieler.kiml.layout.layoutInfo
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  An optional identifier of the extension instance.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  An optional name of the extension instance.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="diagramType">
+      <annotation>
+         <documentation>
+            A diagram type, used to classify diagrams with respect to layout. Specific compartments of a graphical editor can be mapped to diagram types using the &lt;code&gt;binding&lt;/code&gt; element. Each layout provider may specify which diagram types it supports. There are two special diagram types which are predefined by KIML:
+&lt;ul&gt;&lt;li&gt;&lt;code&gt;de.cau.cs.kieler.layout.info.types.general&lt;/code&gt; applies to &lt;b&gt;all&lt;/b&gt; diagrams
+&lt;li&gt;&lt;code&gt;de.cau.cs.kieler.layout.info.types.nolayout&lt;/code&gt; declares that no automatic layout should be applied to such parts of the diagram&lt;/ul&gt;
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique identifier for this diagram type. It is recommended that the identifier be prefixed by the plug-in name, to guarantee uniqueness.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A user friendly name of this diagram type, to be displayed in the UI.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="binding">
+      <annotation>
+         <documentation>
+            A binding of a specific compartment to a diagram type.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A class that implements a graphical edit part. Typically this would be a compartment edit part or a diagram edit part, which can contain nodes as children. Then the diagram contained in that compartment would be mapped to the type given in this element.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.gef.GraphicalEditPart"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="type" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Identifier of a diagram type, which can be defined using the &lt;code&gt;diagramType&lt;/code&gt; element.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.layout.layoutInfo/diagramType/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         0.3.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example for a diagram type and a binding extension:
+&lt;pre&gt;
+   &lt;extension
+         point=&quot;de.cau.cs.kieler.kiml.layout.layoutInfo&quot;&gt;
+      &lt;diagramType
+            id=&quot;de.cau.cs.kieler.layout.info.types.stateMachine&quot;
+            name=&quot;State Machine&quot;&gt;
+      &lt;/diagramType&gt;
+      &lt;binding
+            class=&quot;de.cau.cs.kieler.synccharts.diagram.edit.parts.RegionEditPart&quot;
+            type=&quot;de.cau.cs.kieler.layout.info.types.stateMachine&quot;&gt;
+      &lt;/binding&gt;
+      &lt;binding
+            class=&quot;de.cau.cs.kieler.synccharts.diagram.edit.parts.RegionStateCompartmentEditPart&quot;
+            type=&quot;de.cau.cs.kieler.layout.info.types.stateMachine&quot;&gt;
+      &lt;/binding&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiinfo"/>
+      </appInfo>
+      <documentation>
+         All data that is contributed to this extension point is gathered in the singleton class &lt;code&gt;de.cau.cs.kieler.kiml.layout.services.LayoutServices&lt;/code&gt;. This is the point where registered data can be read at runtime.
+&lt;p&gt;
+&lt;b&gt;NOTE:&lt;/b&gt; The extension point is read out by the &lt;code&gt;de.cau.cs.kieler.kiml.ui&lt;/code&gt; plug-in, &lt;em&gt;not&lt;/em&gt; by &lt;code&gt;de.cau.cs.kieler.kiml.layout&lt;/code&gt;.
+      </documentation>
+   </annotation>
+
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright 2008 by&lt;br&gt;
+&amp;nbsp;+ Christian-Albrechts-University of Kiel&lt;br&gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;+ Department of Computer Science&lt;br&gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;+ Real-Time and Embedded Systems Group&lt;br&gt;
+This program and the accompanying materials are made available under the terms of the Eclipse Public License (EPL) which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/org/documents/epl-v10.html&quot;&gt;http://www.eclipse.org/org/documents/epl-v10.html&lt;/a&gt;.
+      </documentation>
+   </annotation>
+
+</schema>

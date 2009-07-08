@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.kiml.layout.layoutProviders">
+      <layoutProvider
+            class="de.cau.cs.kieler.klodd.hierarchical.HierarchicalDataflowLayoutProvider"
+            category="de.cau.cs.kieler.layouter.category"
+            id="de.cau.cs.kieler.klodd.hierarchical"
+            name="KLoDD Hierarchical"
+            type="de.cau.cs.kieler.layout.types.layered">
+         <supportedDiagram
+               priority="10"
+               type="de.cau.cs.kieler.layout.info.types.dataFlow">
+         </supportedDiagram>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.fixedSize">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.layoutDirection">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.minSpacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.portConstraints">
+         </knownOption>
+      </layoutProvider>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="de.cau.cs.kieler.kiml.ui.preferences.layout"
+            class="de.cau.cs.kieler.klodd.ui.preferences.KloddLayouterPreferencePage"
+            id="edu.unikiel.rtsys.klodd.preferences"
+            name="Data Flow">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="de.cau.cs.kieler.klodd.ui.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+   
+</plugin>

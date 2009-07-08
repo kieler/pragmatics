@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   
+
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="de.cau.cs.kieler.preferencePage"
+            class="de.cau.cs.kieler.kiml.ui.preferences.LayoutPreferencePage"
+            id="de.cau.cs.kieler.kiml.ui.preferences.layout"
+            name="%page.name.0">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="de.cau.cs.kieler.kiml.ui.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="de.cau.cs.kieler.commands.category"
+            defaultHandler="de.cau.cs.kieler.kiml.ui.handlers.LayoutHandler"
+            id="de.cau.cs.kieler.kiml.ui.command.layout"
+            name="%command.name.0">
+         <commandParameter
+               id="de.cau.cs.kieler.kiml.ui.layoutScope"
+               name="Scope"
+               optional="true">
+         </commandParameter>
+      </command>
+   </extension>
+   
+   <extension
+point="org.eclipse.ui.menus">
+<menuContribution
+  locationURI="menu:de.cau.cs.kieler.menu">
+   <command
+         commandId="de.cau.cs.kieler.kiml.ui.command.layout"
+         icon="icons/kieler-arrange.png"
+         label="%command.label.0"
+         mnemonic="%command.mnemonic.0"
+         style="push">
+      <visibleWhen
+            checkEnabled="false">
+         <reference
+               definitionId="de.cau.cs.kieler.expression.gmfDiagram">
+         </reference>
+      </visibleWhen>
+   </command>
+</menuContribution>
+<menuContribution
+      locationURI="toolbar:de.cau.cs.kieler.toolbar">
+   <command
+         commandId="de.cau.cs.kieler.kiml.ui.command.layout"
+         icon="icons/kieler-arrange.png"
+         label="%command.label.0"
+         style="push"
+         tooltip="Layout the current diagram with KIELER">
+      <visibleWhen
+            checkEnabled="false">
+         <reference
+               definitionId="de.cau.cs.kieler.expression.gmfDiagram">
+         </reference>
+      </visibleWhen>
+   </command>
+</menuContribution>
+<menuContribution
+      locationURI="popup:de.cau.cs.kieler.contextMenu">
+   <command
+         commandId="de.cau.cs.kieler.kiml.ui.command.layout"
+         icon="icons/kieler-arrange.png"
+         label="%command.label.2"
+         mnemonic="%command.mnemonic.0"
+         style="push">
+      <visibleWhen
+            checkEnabled="false">
+         <and>
+            <reference
+                  definitionId="de.cau.cs.kieler.expression.editorActive">
+            </reference>
+            <reference
+                  definitionId="de.cau.cs.kieler.expression.gmfDiagram">
+            </reference>
+            <not>
+               <reference
+                     definitionId="de.cau.cs.kieler.expression.onlyConnectionsSelected">
+               </reference>
+            </not>
+            <not>
+               <reference
+                     definitionId="de.cau.cs.kieler.expression.diagramSelected">
+               </reference>
+            </not>
+            <count
+                  value="1">
+            </count>
+         </and>
+      </visibleWhen>
+      <parameter
+            name="de.cau.cs.kieler.kiml.ui.layoutScope"
+            value="selection">
+      </parameter>
+   </command>
+   <command
+         commandId="de.cau.cs.kieler.kiml.ui.command.layout"
+         icon="icons/kieler-arrange.png"
+         label="%command.label.1"
+         mnemonic="%command.mnemonic.0"
+         style="push">
+      <visibleWhen
+            checkEnabled="false">
+         <reference
+               definitionId="de.cau.cs.kieler.expression.diagramSelected">
+         </reference>
+      </visibleWhen>
+      <parameter
+            name="de.cau.cs.kieler.kiml.ui.layoutScope"
+            value="diagram">
+      </parameter>
+   </command>
+</menuContribution>
+</extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="de.cau.cs.kieler.kiml.ui.command.layout"
+            contextId="org.eclipse.gmf.runtime.diagram.ui.diagramContext"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+K L">
+      </key>
+   </extension>
+ <extension
+       point="org.eclipse.gmf.runtime.diagram.ui.editpolicyProviders">
+    <editpolicyProvider
+          class="de.cau.cs.kieler.kiml.ui.layout.LayoutEditPolicyProvider">
+       <Priority
+             name="Lowest">
+       </Priority>
+    </editpolicyProvider>
+ </extension>
+ 
+   
+</plugin>
