@@ -1,12 +1,16 @@
-/*******************************************************************************
- * Copyright (c) 2008 Real-Time and Embedded Systems group
+/******************************************************************************
+ * KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
  *
- * INSERT LICENCE HERE
- *
- *
- * Author: Arne Schipper, ars@informatik.uni-kiel.de 
- *
- *******************************************************************************/
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2008 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.kiml.layouter.graphviz;
 
 import de.cau.cs.kieler.core.KielerException;
@@ -17,12 +21,8 @@ import de.cau.cs.kieler.kiml.layout.services.AbstractLayoutProvider;
 /**
  * Implements the Dot layouter of the GraphViz suite. As this class extends
  * the {@link AbstractLayoutProvider}, the most relevant method is
- * <code>doLayout</code>, which performs the actual layout, that is annotating
- * the provided KNode with the Dot layout information.
- * <p/>
- * This class acts as a wrapper to the {@link GraphvizLayouterLibrary}. Is uses the
- * {@link GraphvizLayouterLibrary} with the Dot engine and publishes the Dot
- * specific capabilities trough <code>getLayouterInfo</code>.
+ * {@code doLayout}, which performs the actual layout, that is annotating
+ * the provided {@code KNode} with the Dot layout information.
  * 
  * @author <a href="mailto:ars@informatik.uni-kiel.de">Arne Schipper</a>
  */

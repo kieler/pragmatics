@@ -24,7 +24,7 @@
             name="Graphviz">
       </category>
       <layoutProvider
-            class="kiel.layouter.graphviz.DotLayoutProvider"
+            class="de.cau.cs.kieler.kiml.layouter.graphviz.DotLayoutProvider"
             category="de.cau.cs.kieler.kiml.categories.graphviz"
             id="de.cau.cs.kieler.kiml.layouter.dot"
             name="Dot"
@@ -39,7 +39,7 @@
          </supportedDiagram>
       </layoutProvider>
       <layoutProvider
-            class="kiel.layouter.graphviz.NeatoLayoutProvider"
+            class="de.cau.cs.kieler.kiml.layouter.graphviz.NeatoLayoutProvider"
             category="de.cau.cs.kieler.kiml.categories.graphviz"
             id="de.cau.cs.kieler.kiml.layouter.neato"
             name="Neato"
@@ -50,7 +50,7 @@
          </supportedDiagram>
       </layoutProvider>
       <layoutProvider
-            class="kiel.layouter.graphviz.FdpLayoutProvider"
+            class="de.cau.cs.kieler.kiml.layouter.graphviz.FdpLayoutProvider"
             category="de.cau.cs.kieler.kiml.categories.graphviz"
             id="de.cau.cs.kieler.kiml.layouter.fdp"
             name="FDP"
@@ -61,7 +61,7 @@
          </supportedDiagram>
       </layoutProvider>
       <layoutProvider
-            class="kiel.layouter.graphviz.TwopiLayoutProvider"
+            class="de.cau.cs.kieler.kiml.layouter.graphviz.TwopiLayoutProvider"
             category="de.cau.cs.kieler.kiml.categories.graphviz"
             id="de.cau.cs.kieler.kiml.layouter.twopi"
             name="Twopi"
@@ -72,7 +72,7 @@
          </supportedDiagram>
       </layoutProvider>
       <layoutProvider
-            class="kiel.layouter.graphviz.CircoLayoutProvider"
+            class="de.cau.cs.kieler.kiml.layouter.graphviz.CircoLayoutProvider"
             category="de.cau.cs.kieler.kiml.categories.graphviz"
             id="de.cau.cs.kieler.kiml.layouter.circo"
             name="Circo"
