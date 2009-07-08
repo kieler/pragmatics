@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -51,10 +52,10 @@ import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
 import de.cau.cs.kieler.kiml.layouter.graphviz.Activator;
 import de.cau.cs.kieler.kiml.layouter.graphviz.preferences.GraphvizPreferencePage;
-import de.cau.cs.kieler.kiml.layouter.graphviz.preferences.PreferenceConstants;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
+import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.MapPrinter;
@@ -100,6 +101,14 @@ public class GraphvizLayouter {
     public final static String CIRCO_COMMAND = "circo";
     /** parameter used to specify the command */
     public final static String COMMAND_PARAMETER = "-K";
+    
+    /**
+     * Dots per inch specification. GraphViz uses inch for some internal sizes
+     * (e.g. width, height) but not for all. Hence finding the right DPI is
+     * crucial for the layout. Setting the DPI attribute for a graph within
+     * GraphViz seems to have no effect.
+     */
+    private final static float DPI = 72.0f;
 
     /** the dimension of bounding box from the last read graph */
     private Dimension boundingBox;
@@ -109,36 +118,14 @@ public class GraphvizLayouter {
     private BufferedReader dotOutput;
     /** the stderr of the dot process */
     private BufferedReader errorStream;
-    /** the dot process */
-    private Process graphvizProcess;
-    /** maps the object id to the object itself */
-    private HashMap<String, Object> idToObject = new HashMap<String, Object>();
-    /** internal file counter for debug output files */
-    private int fileCounter = 0;
-    /**
-     * Stores an instance of the preferences dialog. This is used to present the
-     * preferences at the right tab to the user whenever an error occurred that
-     * is likely caused by wrong preferences.
-     */
-    private PreferenceDialog preferenceDialog;
-    /**
-     * Dots per inch specification. GraphViz uses inch for some internal sizes
-     * (e.g. width, height) but not for all. Hence finding the right DPI is
-     * crucial for the layout. Setting the DPI attribute for a graph within
-     * GraphViz seems to have no effect.
-     */
-    private final float dpi = 72.0f;
+    /** maps each identifier of a graph element to the instance of the element */
+    private HashMap<String, KGraphElement> graphElementMap = new HashMap<String, KGraphElement>();
     /** X padding from the borders. pad attribute of GraphViz has no effect */
     private int prefPadX = 15;
     /** Y padding from the borders. pad attribute of GraphViz has no effect */
     private int prefPadY = 15;
     /** holds the String denoting the desired layouter of the GraphViz suite */
     private String command;
-    /** holds the path to the dot executable. Will be read from the preferences */
-    private String dotExecutable;
-    /** argument passed to the dot executable */
-    private String dotArgument = GraphvizLayouter.COMMAND_PARAMETER
-            + GraphvizLayouter.DOT_COMMAND;
 
     /**
      * Creates a new KIML GraphViz layouter with the specified concrete GraphViz
@@ -152,210 +139,223 @@ public class GraphvizLayouter {
     }
 
     /**
-     * Updates the preferences for the GraphViz layouter.
-     */
-    private void updatePreferences() {
-        IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-        dotExecutable = store.getString(PreferenceConstants.PREF_GRAPHVIZ_EXECUTABLE);
-    }
-
-    /**
      * Performs the actual work of the layout process. Translates the KNode into
      * a structure GraphViz understands, calls the desired GraphViz layouter and
      * annotates the KLayoutGraph with the position and size information
      * provided by GraphViz.
      * 
-     * @param node
-     *            the node to process
+     * @param parentNode the node to process
+     * @param progressMonitor a monitor to which progress is reported
      */
-    public void visit(KNode node, IKielerProgressMonitor progressMonitor) throws KielerException {
-        progressMonitor.begin("GraphViz layout", 20);
-        updatePreferences();
-
-        try {
-            /* return if there is nothing in this node */
-            if (node.getChildren().isEmpty()) {
-                return;
-            }
-
-            /* create fresh internal GraphViz graph */
-            updatePreferences();
-            idToObject.clear();
-            boundingBox = new Dimension();
-
-            // start the dot process
-            this.startProcess();
-
-            this.newGraph("KIELER");
-            Map<String, String> graphAttributes = new HashMap<String, String>();
-            graphAttributes.put(GraphvizAPI.ATTR_SHAPE, "box");
-
-            /* translate the KLayoutGraph to GraphViz */
-            mapNodeGroup2Graphviz(node);
-
-            /* check if Emma wants to layout horizontal */
-            KLayoutData layoutData = KimlLayoutUtil.getShapeLayout(node);
-            if (LayoutOptions.getLayoutDirection(layoutData) == LayoutDirection.VERTICAL) {
-                graphAttributes.put("rankdir", "BT");
-            } else {
-                graphAttributes.put("rankdir", "LR");
-            }
-            progressMonitor.worked(5);
-
-            // Apply graph attributes
-            this.setGraphAttributes(graphAttributes);
-            // finalize graph input and flush it to graphviz
-            this.flushGraph();
-
-            /* pick up desired layouter */
-            dotArgument = GraphvizLayouter.COMMAND_PARAMETER + command;
-
-            PrintWriter debugOut = null;
-            FileWriter fw = null;
-
-            /* should Emma debug? */
-            if (Activator.getDefault().getPreferenceStore().getBoolean(
-                    PreferenceConstants.PREF_GRAPHVIZ_ENABLE_DEBUG_OUTPUT)) {
-
-                String outputName = Integer.toString(node.hashCode());
-                String outputDir = Activator.getDefault().getPreferenceStore().getString(
-                        PreferenceConstants.PREF_GRAPHVIZ_DEBUG_DIR);
-                if (outputDir.equals("")) {
-                    outputDir = System.getProperty("user.home");
-                }
-                try {
-                    fw = new FileWriter(outputDir + File.separator + outputName);
-                    debugOut = new PrintWriter(fw);
-                    fileCounter++;
-                } catch (IOException e) {
-                    Status myStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-                            "Error writing Graphviz Dot file for debugging", e);
-                    StatusManager.getManager().handle(myStatus, StatusManager.SHOW);
-                }
-            }
-            // Wait for the graphviz process to terminate. This requires that
-            // the
-            // input stream has been closed before, otherwise the process will
-            // run
-            // forever.
-            // TODO: here should be some timeout...
-            progressMonitor.worked(5);
-            try {
-                graphvizProcess.waitFor();
-            } catch (InterruptedException e1) {/*nothing*/
-            }
-            progressMonitor.worked(5);
-            // read graphviz output and apply layout information to KIELER
-            // datastructure
-            this.retrieveLayoutInformations(debugOut);
-            this.setTopNodeAttributes(node);
-            this.killProcess(); // well, actually we know it has already
-                                // finished, but destroy process anyway to be
-                                // sure
-
-            if (fw != null)
-                try {
-                    fw.close();
-                } catch (IOException e) {/*nothing*/
-                }
-            if (debugOut != null)
-                debugOut.close();
-        } catch (KielerException ge) {
-            // TODO move error handling out of the layouter using
-            // KielerException
-            String message = "Error with the external GraphViz layouter library.";
-            Status myStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID, message, ge);
-            StatusManager.getManager().handle(myStatus, StatusManager.BLOCK);
-            if (preferenceDialog == null || preferenceDialog.getTray() == null) {
-                preferenceDialog = PreferencesUtil.createPreferenceDialogOn(null,
-                        GraphvizPreferencePage.ID, null, null);
-                preferenceDialog.open();
-            }
+    public void layout(KNode parentNode, IKielerProgressMonitor progressMonitor) throws KielerException {
+        progressMonitor.begin("Graphviz layout (" + command + ")", 20);
+        IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
+        String dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
+        graphElementMap.clear();
+        boundingBox = new Dimension();
+        // return if there is nothing in this node
+        if (parentNode.getChildren().isEmpty()) {
+            return;
         }
 
+        // start the dot process
+        Process graphvizProcess = startProcess(dotExecutable,
+                GraphvizLayouter.COMMAND_PARAMETER + command);
+
+        // translate the KGraph to Graphviz and write to the process
+        createGraph(parentNode);
+        dotInput.flush();
+        /* the dot process will immediately answer to graph strings
+         * in the input stream, but the process will stay open and
+         * responsive to new inputs, until the input stream is closed.
+         * Hence we close it and will start the process again for the next 
+         * operation.
+         * TODO: instead of closing the process and starting a new one, 
+         * reusing the same process could be more efficient. This would
+         * require additional exception handling in order to make it
+         * stable and fault tolerant.
+         */
+        dotInput.close();
+        progressMonitor.worked(5);
+
+        PrintWriter debugOutWriter = null;
+        FileWriter debugFileWriter = null;
+
+        // check whether debug output should be performed
+        if (preferenceStore.getBoolean(PREF_GRAPHVIZ_ENABLE_DEBUG_OUTPUT)) {
+            String outputName = getNodeID(parentNode);
+            String outputDir = preferenceStore.getString(PREF_GRAPHVIZ_DEBUG_DIR);
+            if (outputDir.length() == 0) {
+                outputDir = System.getProperty("user.home");
+            }
+            try {
+                if (outputDir.endsWith(File.separator))
+                    debugFileWriter = new FileWriter(outputDir + outputName);
+                else
+                    debugFileWriter = new FileWriter(outputDir + File.separator + outputName);
+                debugOutWriter = new PrintWriter(debugFileWriter);
+            } catch (IOException exception) {
+                throw new KielerException("Failed to write to debug output.", exception);
+            }
+        }
+        // wait for the graphviz process to terminate
+        // TODO here should be some timeout...
+        try {
+            graphvizProcess.waitFor();
+        } catch (InterruptedException exception) {}
+        progressMonitor.worked(10);
+        
+        // read graphviz output and apply layout information to the KGraph
+        retrieveLayoutResult(debugOutWriter);
+        setTopNodeAttributes(parentNode);
+        
+        // actually we know it has already finished, but destroy process anyway to be sure
+        graphvizProcess.destroy();
+
+        if (debugFileWriter != null)
+            try {
+                debugFileWriter.close();
+            } catch (IOException e) {}
+        if (debugOutWriter != null)
+            debugOutWriter.close();
         progressMonitor.done();
     }
 
     /**
-     * Maps a {@link de.cau.cs.kieler.kiml.layout.KimlLayoutGraph.KNode KNode}
-     * to the internal GraphvizAPI data structure. This is stored in the
-     * GraphvizAPI internally.
+     * Maps a {@code KNode} to the internal Graphviz data structure used by the Graphviz
+     * layouter.
      * 
-     * @param node
-     *            A KNode with the graph to lay out, the actual nodes of the
-     *            graph are stored as subgroups of the nodeGroup.
+     * @param parent a {@code KNode} with the graph to layout
      */
-    private void mapNodeGroup2Graphviz(KNode node) {
-        int i = 0;
-        /*
-         * First process all nodes to have the pointers for them when creating
-         * the edges.
-         */
-        for (KNode childNode : node.getChildren()) {
-            Map<String, String> nodeAttributes = new HashMap<String, String>();
+    private void createGraph(KNode parent) {
+        dotInput.println("digraph \"KIELER\" {");
+
+        // create nodes
+        for (KNode childNode : parent.getChildren()) {
+            Map<String, String> nodeAttributes = new LinkedHashMap<String, String>();
             String label = childNode.getLabel().getText();
-            if (label == null)
-                label = "";
             /*
              * Use NumberFormat to format the number into a String to workaround
-             * different possible locales of machines on that GraphViz could run
+             * different possible locales of machines on that Graphviz could run
              * (could result in different number formats, e.g. 0.33 on English
              * local, 0,33 on German)
              */
             KShapeLayout shapeLayout = KimlLayoutUtil.getShapeLayout(childNode);
-            String height = pixels2GraphVizInches((int) shapeLayout.getHeight());
-            String width = pixels2GraphVizInches((int) shapeLayout.getWidth());
-            nodeAttributes.put("label", label);
-            nodeAttributes.put("height", height);
-            nodeAttributes.put("width", width);
-            // hardcoded shape value here. Had the case where dot did not handle
-            // a global graph attribute of shape resulting in circles
-            nodeAttributes.put("shape", "box");
+            NumberFormat usFormat = NumberFormat.getInstance(Locale.US);
+            String width = usFormat.format(shapeLayout.getWidth() / DPI);
+            String height = usFormat.format(shapeLayout.getHeight() / DPI);
+            nodeAttributes.put(GraphvizAPI.ATTR_LABEL, label);
+            nodeAttributes.put(GraphvizAPI.ATTR_HEIGHT, height);
+            nodeAttributes.put(GraphvizAPI.ATTR_WIDTH, width);
+            // TODO customize the node shape
+            nodeAttributes.put(GraphvizAPI.ATTR_SHAPE, "box");
 
-            addNodeToGraph(childNode, nodeAttributes, i);
-            i++;
+            createNode(childNode, nodeAttributes);
         }
 
-        /*
-         * Then create the edges
-         */
-        for (KNode childNode : node.getChildren()) {
+        // create edges
+        for (KNode childNode : parent.getChildren()) {
             for (KEdge outgoingEdge : childNode.getOutgoingEdges()) {
-                Map<String, String> edgeAttributes = new HashMap<String, String>();
-                edgeAttributes.put("arrowhead", "none");
-                edgeAttributes.put("arrowtail", "none");
+                Map<String, String> edgeAttributes = new LinkedHashMap<String, String>();
+                edgeAttributes.put(GraphvizAPI.ATTR_ARROWHEAD, "none");
+                edgeAttributes.put(GraphvizAPI.ATTR_ARROWTAIL, "none");
 
                 for (KLabel label : outgoingEdge.getLabels()) {
                     KLayoutData layoutData = KimlLayoutUtil.getShapeLayout(label);
                     EdgeLabelPlacement labelPlacement = LayoutOptions
                             .getEdgeLabelPlacement(layoutData);
-                    /*
-                     * As graphViz just handles three labels properly (well,
-                     * actually just two, the mid and tail label), hard code
-                     * it here. First 'normal' label.
-                     */
-                    if (labelPlacement == EdgeLabelPlacement.CENTER) {
-                        String labelString = label.getText();
-                        edgeAttributes.put(GraphvizAPI.ATTR_LABEL, labelString);
-                    }
-                    /*
-                     * Give a try for head label.
-                     */
-                    else if (labelPlacement == EdgeLabelPlacement.HEAD) {
-                        String labelString = label.getText();
-                        edgeAttributes.put(GraphvizAPI.ATTR_HEADLABEL, labelString);
-                    }
-                    /*
-                     * Give a try for tail label.
-                     */
-                    else if (labelPlacement == EdgeLabelPlacement.TAIL) {
-                        String labelString = label.getText();
-                        edgeAttributes.put(GraphvizAPI.ATTR_TAILLABEL, labelString);
+                    switch (labelPlacement) {
+                    case CENTER:
+                        edgeAttributes.put(GraphvizAPI.ATTR_LABEL, label.getText());
+                        break;
+                    case HEAD:
+                        edgeAttributes.put(GraphvizAPI.ATTR_HEADLABEL, label.getText());
+                        break;
+                    case TAIL:
+                        edgeAttributes.put(GraphvizAPI.ATTR_TAILLABEL, label.getText());
+                        break;
                     }
                 }
-                this.addEdgeToGraph(outgoingEdge, edgeAttributes);
+                createEdge(outgoingEdge, edgeAttributes);
             }
         }
+        
+        // set graph attributes
+        Map<String, String> graphAttributes = new LinkedHashMap<String, String>();
+        KLayoutData parentLayout = KimlLayoutUtil.getShapeLayout(parent);
+        if (LayoutOptions.getLayoutDirection(parentLayout) == LayoutDirection.VERTICAL)
+            graphAttributes.put(GraphvizAPI.ATTR_RANKDIR, "BT");
+        else
+            graphAttributes.put(GraphvizAPI.ATTR_RANKDIR, "LR");
+        setGraphAttributes(graphAttributes);
+        dotInput.println("}");
+    }
+    
+
+    /**
+     * Adds the given node to the Graphviz graph.
+     * 
+     * @param node a node to add
+     * @param attributes map of attributes to set for the node
+     */
+    private void createNode(KNode node, Map<String, String> attributes) {
+        Iterator<String> iter = attributes.keySet().iterator();
+        String nodeID = getNodeID(node);
+        dotInput.print("\"" + nodeID + "\" [");
+
+        while (iter.hasNext()) {
+            String key = iter.next();
+            dotInput.print(key + "=\"" + attributes.get(key) + "\"");
+            if (iter.hasNext()) {
+                dotInput.print(", ");
+            }
+        }
+
+        dotInput.println("];");
+        graphElementMap.put(nodeID, node);
+    }
+
+    /**
+     * Adds the given edge to the Graphviz graph.
+     * 
+     * @param edge an edge to add
+     * @param attributes map of attributes to set for the edge
+     */
+    private void createEdge(KEdge edge, Map<String, String> attributes) {
+        Iterator<String> iter = attributes.keySet().iterator();
+        dotInput.print("\"" + this.getNodeID(edge.getSource()) + "\" -> \""
+                + this.getNodeID(edge.getTarget()) + "\" [");
+        
+        while (iter.hasNext()) {
+            String key = (String) iter.next();
+            dotInput.print(key + "=\"" + ((String) attributes.get(key)).replaceAll("\n", "\\\\n")
+                    + "\"");
+            dotInput.print(", ");
+        }
+        
+        dotInput.println("comment=\"" + getEdgeID(edge) + "\"];");
+        graphElementMap.put(getEdgeID(edge), edge);
+    }
+    
+    /**
+     * Sets attributes for the whole graph.
+     * 
+     * @param attributes map of attributes to set for the graph
+     */
+    private void setGraphAttributes(Map<String, String> attributes) {
+        Iterator<String> iter = attributes.keySet().iterator();
+        dotInput.print("graph [");
+
+        while (iter.hasNext()) {
+            String key = (String) iter.next();
+
+            dotInput.print(key + "=\"" + attributes.get(key) + "\"");
+            if (iter.hasNext()) {
+                dotInput.print(", ");
+            }
+        }
+
+        dotInput.println("];");
     }
 
     /**
@@ -389,20 +389,6 @@ public class GraphvizLayouter {
     }
 
     /**
-     * Transforms pixel into a GraphViz inch string, taking care of the
-     * platform's current locale settings. Under different locales, the height
-     * and width values of GraphViz use dots, respective periods.
-     * 
-     * @param pixels
-     *            the pixels to transform
-     * @return a localized inch string
-     */
-    private String pixels2GraphVizInches(int pixels) {
-        NumberFormat machineFormat = NumberFormat.getInstance(Locale.US);
-        return machineFormat.format(pixels / (float) dpi);
-    }
-
-    /**
      * Transforms GraphViz written inches into pixel, using the internal dpi
      * factor and taking care of the platform's current locale settings. Under
      * different locales, the height and width values of GraphViz use dots,
@@ -414,7 +400,7 @@ public class GraphvizLayouter {
      */
     private int graphVizInches2Pixels(String dotInches) throws ParseException {
         NumberFormat machineFormat = NumberFormat.getInstance(Locale.US);
-        return (int) (machineFormat.parse(dotInches).floatValue() * dpi);
+        return (int) (machineFormat.parse(dotInches).floatValue() * DPI);
     }
 
     /**
@@ -517,107 +503,23 @@ public class GraphvizLayouter {
     }
 
     /**
-     * @see GraphvizLayouterLibrary#newGraph(String)
+     * Creates a unique identifier for the given node.
+     * 
+     * @param node node for which an identifier shall be created
+     * @return a unique string used to identify the node
      */
-    protected final void newGraph(final String name) {
-        idToObject.clear();
-        System.out.println(MapPrinter.toString(idToObject));
-        dotInput.println("digraph \"" + name + "\" {");
-    }
-
-    /**
-     * @see GraphvizLayouter#layoutGraph()
-     */
-    protected final void flushGraph() {
-        dotInput.println("}");
-        dotInput.flush();
-        /* the dot process will immediately answer to graph strings
-         * in the input stream, but the process will stay open and
-         * responsive to new inputs, until the input stream is closed.
-         * Hence we close it and will start the process againfor the next 
-         * operation.
-         * TODO: instead of closing the process and starting a new one, 
-         * reusing the same process could be more efficient. This would
-         * require additional exception handling in order to make it
-         * stable and fault tolerant.
-         */
-        dotInput.close();
-    }
-
-    /**
-     * @see GraphvizLayouterLibrary#setGraphAttributes(Map)
-     */
-    protected final void setGraphAttributes(final Map<String, String> attributes) {
-        Iterator<String> iter = attributes.keySet().iterator();
-
-        dotInput.print("graph [");
-
-        while (iter.hasNext()) {
-            String key = (String) iter.next();
-
-            dotInput.print(key + "=\"" + attributes.get(key) + "\"");
-            if (iter.hasNext()) {
-                dotInput.print(", ");
-            }
-        }
-
-        dotInput.println("];");
-    }
-
-    /**
-     * @see GraphvizLayouterLibrary#addNodeToGraph(Node, Map)
-     */
-    protected final void addNodeToGraph(final KNode node, final Map<String, String> attributes,
-            int number) {
-        Iterator<String> iter = attributes.keySet().iterator();
-
-        // String nodeID = "node"+number;//this.getNodeID(node);
-        String nodeID = this.getNodeID(node);
-        dotInput.print("\"" + nodeID + "\" [");
-
-        while (iter.hasNext()) {
-            String key = (String) iter.next();
-
-            dotInput.print(key + "=\"" + attributes.get(key) + "\"");
-            if (iter.hasNext()) {
-                dotInput.print(", ");
-            }
-        }
-
-        dotInput.println("];");
-
-        idToObject.put(nodeID, node);
-    }
-
-    /**
-     * @see GraphvizLayouterLibrary#addEdgeToGraph(Edge, Map)
-     */
-    protected final void addEdgeToGraph(final KEdge edge, final Map<String, String> attributes) {
-        Iterator<String> iter = attributes.keySet().iterator();
-
-        dotInput.print("\"" + this.getNodeID(edge.getSource()) + "\" -> \""
-                + this.getNodeID(edge.getTarget()) + "\" [");
-        while (iter.hasNext()) {
-            String key = (String) iter.next();
-            dotInput.print(key + "=\"" + ((String) attributes.get(key)).replaceAll("\n", "\\\\n")
-                    + "\"");
-            if (iter.hasNext()) {
-                dotInput.print(", ");
-            }
-        }
-        dotInput.println(", comment=\"" + getEdgeID(edge) + "\"];");
-        idToObject.put(getEdgeID(edge), edge);
-    }
-
-    /** Create some temporary ID (hash code) */
     private String getNodeID(KNode node) {
-        String nodeID = "node" + node.hashCode();
-        return nodeID;
+        return "node" + node.hashCode();
     }
 
+    /**
+     * Creates a unique identifier for the given edge.
+     * 
+     * @param edge edge for which an identifier shall be created
+     * @return a unique string used to identify the edge
+     */
     private String getEdgeID(KEdge edge) {
-        String edgeID = "edge" + edge.hashCode();
-        return edgeID;
+        return "edge" + edge.hashCode();
     }
 
     /**
@@ -691,21 +593,23 @@ public class GraphvizLayouter {
     }
 
     /**
-     * @see GraphvizLayouterLibrary#retrieveLayoutInformations(Collection, View)
+     * Reads the layout result from the Graphviz output stream and applies it
+     * to the original graph.
+     * 
+     * @param debugWriter a print writer used to output the received Graphviz result
+     * @throws KielerException if an error occurs while reading, or if Graphviz reports
+     *     an error
      */
-    protected final void retrieveLayoutInformations(PrintWriter debugWriter) throws KielerException {
-        boolean endOfGraph;
-
+    private void retrieveLayoutResult(PrintWriter debugWriter) throws KielerException {
         // read error stream
         try {
+            StringBuffer error = new StringBuffer("Graphviz error:");
             while (errorStream.ready()) {
-                Status error = new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Graphviz: "
-                        + errorStream.readLine());
-                StatusManager.getManager().handle(error, StatusManager.SHOW);
+                 error.append(errorStream.readLine() + "\n");
             }
-        } catch (IOException e) {
-            throw new KielerException("Graphviz: error while reading dot error stream.", e);
-        }
+            if (error.length() > 0)
+                throw new KielerException(error.toString());
+        } catch (IOException exception) {}
 
         // read output stream
         try {
@@ -713,9 +617,8 @@ public class GraphvizLayouter {
             // require to wait until the dot process has finished. This was not
             // implemented yet, because process.waitFor() does not terminate...
             if (!dotOutput.ready())
-                throw new KielerException(
-                        "Graphviz output stream empty. Most likely incompatible dot binary set.");
-            endOfGraph = false;
+                throw new KielerException("Graphviz output stream is empty.");
+            boolean endOfGraph = false;
             while (!endOfGraph) {
                 String line;
                 boolean endOfLine;
@@ -724,10 +627,6 @@ public class GraphvizLayouter {
                 endOfLine = false;
                 while (!endOfLine) {
                     String read = dotOutput.readLine();
-                    // StatusManager.getManager().handle(
-                    // new Status(IStatus.INFO, Activator.PLUGIN_ID,
-                    // "read: "+read, null),
-                    // StatusManager.LOG);
                     if (read.endsWith("\\")) {
                         line += read.substring(0, read.length() - 1);
                     } else {
@@ -741,25 +640,26 @@ public class GraphvizLayouter {
                 if (line.matches(".*->.*")) {
                     retrieveEdgeLayout(line);
                 } else if (line.matches(".*\".*\" \\[.*")) {
-                    // node found
                     retrieveNodeLayout(line);
-                    // } else if (line.matches(".*graph \\[bb.*")) {
                 } else if (line.matches(".*bb=.*")) {
-                    // bounding box found
                     retrieveBoundingBox(line);
                 } else if (line.matches(".* \\[.*")
                         && !(line.matches(".*graph \\[.*") || line.matches(".*node \\[.*"))) {
-                    // node found without "..."
                     retrieveNodeLayout(line);
                 } else if (line.startsWith("}")) {
                     endOfGraph = true;
                 }
             }
-        } catch (IOException e) {
-            throw new KielerException("Error while reading dot output stream.", e);
+        } catch (IOException exception) {
+            throw new KielerException("Error while reading dot output stream.", exception);
         }
     }
 
+    /**
+     * Reads bounding box information from an input line.
+     * 
+     * @param line an input line
+     */
     private void retrieveBoundingBox(String line) {
         StringTokenizer st = new StringTokenizer(line, "=,\"");
 
@@ -770,14 +670,17 @@ public class GraphvizLayouter {
         boundingBox.height = Integer.parseInt(st.nextToken());
     }
 
+    /**
+     * Reads node layout from an input line.
+     * 
+     * @param line an input line
+     */
     private void retrieveNodeLayout(String line) {
         try {
             StringTokenizer st = new StringTokenizer(line);
             Map<String, String> attributes;
-            // st.nextToken("\""); // throw away leading " signs
             String nodeString = st.nextToken("[\t").trim();
-            KNode node = (KNode) idToObject.get(nodeString);
-            // st.nextToken("\"["); // " [
+            KNode node = (KNode) graphElementMap.get(nodeString);
             String attributeString = st.nextToken("[]");
             attributes = readAttributes(attributeString);
             String posString = attributes.get(GraphvizAPI.ATTR_POS);
@@ -810,13 +713,17 @@ public class GraphvizLayouter {
         }
     }
 
+    /**
+     * 
+     * @param line
+     */
     private void retrieveEdgeLayout(String line) {
         // edge found
         Map<String, String> attributes;
         KEdge edge;
         attributes = readAttributes(line.substring(line.indexOf('[') + 1, line.lastIndexOf(']')));
         try {
-            edge = (KEdge) idToObject.get(attributes.get("comment"));
+            edge = (KEdge) graphElementMap.get(attributes.get("comment"));
             String posString = (String) attributes.get("pos");
             List<Integer> intList = string2Ints(posString);
             KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(edge);
@@ -910,72 +817,30 @@ public class GraphvizLayouter {
      * the same process could be used multiple times for multiple input graphs.
      * So far this is not done.
      * 
-     * @author taken from KIEL classic
      * @return returns true, if the dot process could be started
      */
-    private void startProcess() throws KielerException {
-
-        isGraphvizExecutableValid(); // might also throw GraphvizException
-
-        String[] exp = { dotExecutable, dotArgument };
-        try {
-            graphvizProcess = Runtime.getRuntime().exec(exp);
-            dotOutput = new BufferedReader(new InputStreamReader(graphvizProcess.getInputStream()));
-            errorStream = new BufferedReader(
-                    new InputStreamReader(graphvizProcess.getErrorStream()));
-            dotInput = new PrintWriter(graphvizProcess.getOutputStream());
-        } catch (IOException e) {
-            throw new KielerException("Unable to start Graphviz process.", e);
-        }
-    }
-
-    /**
-     * Closes the dot process. I.e. it should wait for it to terminate or kill
-     * it if it does not terminate.
-     * 
-     * @return true iff process has ended
-     */
-    private boolean killProcess() {
-        // FIXME: should wait a timeout and then destroy the process
-        try {
-            graphvizProcess.destroy();
-            // graphvizProcess.waitFor();
-        } catch (Exception e) {
-        }
-        return true;
-    }
-
-    /**
-     * Checks whether the GraphvizBinary path is valid or not. Will try to
-     * access the file and if it fails will show an error message.
-     * 
-     * @return true iff dot executable can be read and executed
-     * @throws GraphvizException
-     *             iff dot can not be executed
-     * @author haf
-     */
-    private boolean isGraphvizExecutableValid() throws KielerException {
-        // try{
-        if (dotExecutable == null || dotExecutable.equals(""))
-            throw new KielerException("Path not set, path empty.");
+    private Process startProcess(String dotExecutable, String argument) throws KielerException {
         File exec = new File(dotExecutable);
-        if (exec.exists())
-            return true;
-        else
-            throw new KielerException("File not found.");
-        // }catch(IOException e){
-        // // FIXME: put UI stuff in external package such that we can use the
-        // algorithm also standalone in headless environment
-        // String message =
-        // "Error executing Graphviz dot binary: "+dotExecutable+" Please set the right path in the preferences!";
-        // //Status myStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-        // message, e);
-        // //StatusManager.getManager().handle(myStatus, StatusManager.BLOCK);
-        // //PreferenceDialog dialog =
-        // PreferencesUtil.createPreferenceDialogOn(null,
-        // GraphvizPreferencePage.ID, null, null);
-        // //dialog.open();
-        // throw new KielerException(message, e);
-        // }
+        if (!exec.exists()) {
+            //String message = "Error with the external GraphViz layouter library.";
+            //Status myStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID, message, ge);
+            //StatusManager.getManager().handle(myStatus, StatusManager.BLOCK);
+            PreferenceDialog preferenceDialog = PreferencesUtil.createPreferenceDialogOn(null,
+                        GraphvizPreferencePage.ID, null, null);
+            preferenceDialog.open();
+            // throw new KielerException("Invalid path set for Graphviz executable.");
+        }
+
+        String[] exp = { dotExecutable, argument };
+        try {
+            Process process = Runtime.getRuntime().exec(exp);
+            dotOutput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            errorStream = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            dotInput = new PrintWriter(process.getOutputStream());
+            return process;
+        } catch (IOException exception) {
+            throw new KielerException("Unable to start Graphviz process.", exception);
+        }
     }
+
 }

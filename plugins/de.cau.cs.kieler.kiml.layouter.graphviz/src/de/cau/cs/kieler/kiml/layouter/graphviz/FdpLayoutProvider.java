@@ -39,7 +39,7 @@ public class FdpLayoutProvider extends AbstractLayoutProvider {
 			IKielerProgressMonitor progressMonitor) throws KielerException {
 		if (graphvizLayouter == null)
 			graphvizLayouter = new GraphvizLayouter(GraphvizLayouter.FDP_COMMAND);
-		graphvizLayouter.visit(layoutNode, progressMonitor);
+		graphvizLayouter.layout(layoutNode, progressMonitor);
 	}
 
 }

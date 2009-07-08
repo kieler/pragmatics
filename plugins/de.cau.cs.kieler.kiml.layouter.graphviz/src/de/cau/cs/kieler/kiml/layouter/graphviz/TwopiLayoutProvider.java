@@ -39,7 +39,7 @@ public class TwopiLayoutProvider extends AbstractLayoutProvider {
 			IKielerProgressMonitor progressMonitor) throws KielerException {
 		if (graphvizLayouter == null)
 			graphvizLayouter = new GraphvizLayouter(GraphvizLayouter.TWOPI_COMMAND);
-		graphvizLayouter.visit(layoutNode, progressMonitor);
+		graphvizLayouter.layout(layoutNode, progressMonitor);
 	}
 
 }

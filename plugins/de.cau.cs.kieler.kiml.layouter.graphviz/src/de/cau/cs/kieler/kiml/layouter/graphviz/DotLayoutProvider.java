@@ -39,7 +39,7 @@ public class DotLayoutProvider extends AbstractLayoutProvider {
 			IKielerProgressMonitor progressMonitor) throws KielerException {
 		if (graphvizLayouter == null)
 			graphvizLayouter = new GraphvizLayouter(GraphvizLayouter.DOT_COMMAND);
-		graphvizLayouter.visit(layoutNode, progressMonitor);
+		graphvizLayouter.layout(layoutNode, progressMonitor);
 	}
 	
 }

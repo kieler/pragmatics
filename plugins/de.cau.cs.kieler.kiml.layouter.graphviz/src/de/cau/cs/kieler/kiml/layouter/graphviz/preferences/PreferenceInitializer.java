@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import de.cau.cs.kieler.kiml.layouter.graphviz.Activator;
+import de.cau.cs.kieler.kiml.layouter.graphviz.GraphvizLayouter;
 
 
 /**
@@ -36,10 +37,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 
-		/* initialize defaults */
-		store.setDefault(PreferenceConstants.PREF_GRAPHVIZ_PADDING_X, 15);
-		store.setDefault(PreferenceConstants.PREF_GRAPHVIZ_PADDING_Y, 15);
-
+		// FIXME no preferences to initialize yet
 	}
 
 }

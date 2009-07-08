@@ -39,7 +39,7 @@ public class NeatoLayoutProvider extends AbstractLayoutProvider {
 			IKielerProgressMonitor progressMonitor) throws KielerException {
 		if (graphvizLayouter == null)
 			graphvizLayouter = new GraphvizLayouter(GraphvizLayouter.NEATO_COMMAND);
-		graphvizLayouter.visit(layoutNode, progressMonitor);
+		graphvizLayouter.layout(layoutNode, progressMonitor);
 	}
 
 }

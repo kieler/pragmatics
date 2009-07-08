@@ -26,6 +26,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import de.cau.cs.kieler.kiml.layouter.graphviz.Activator;
+import de.cau.cs.kieler.kiml.layouter.graphviz.GraphvizLayouter;
 
 
 /**
@@ -58,10 +59,10 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 		debug.setText("Debug:");
 
 		BooleanFieldEditor enableDebug = new BooleanFieldEditor(
-				PreferenceConstants.PREF_GRAPHVIZ_ENABLE_DEBUG_OUTPUT,
+		        GraphvizLayouter.PREF_GRAPHVIZ_ENABLE_DEBUG_OUTPUT,
 				"Enable debug output (*.dot)", debug);
 		DirectoryFieldEditor debugDir = new DirectoryFieldEditor(
-				PreferenceConstants.PREF_GRAPHVIZ_DEBUG_DIR,
+		        GraphvizLayouter.PREF_GRAPHVIZ_DEBUG_DIR,
 				"Debug directory:", debug);
 		Label description = new Label(debug, SWT.WRAP);
 		description.setText("If a directory is chosen, debug output of GraphViz (the *.dot files) go there. Otherwise the user home directory is chosen.");
@@ -79,7 +80,7 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 		executable.setText("Executable:");
 
 		FileFieldEditor dotExecutable = new FileFieldEditor(
-				PreferenceConstants.PREF_GRAPHVIZ_EXECUTABLE,
+		        GraphvizLayouter.PREF_GRAPHVIZ_EXECUTABLE,
 				"Dot Executable:", executable);
 		dotExecutable.setValidateStrategy(FileFieldEditor.VALIDATE_ON_KEY_STROKE);
 		
