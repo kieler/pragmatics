@@ -46,6 +46,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.gef.ConnectionEditPart;
 import org.eclipse.gef.EditDomain;
+import org.eclipse.gef.EditPart;
 import org.eclipse.gef.MouseWheelHandler;
 import org.eclipse.gef.MouseWheelZoomHandler;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
@@ -75,7 +76,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.PlatformUI;
 
-import de.cau.cs.kieler.kiml.ui.layout.DiagramLayouter;
+import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kivik.Constants;
 import de.cau.cs.kieler.kivik.KivikPlugin;
 import de.cau.cs.kieler.kivik.preferences.PreferenceConstants;
@@ -263,8 +264,7 @@ public class ModelContentMergeDiagramTab extends DiagramGraphicalViewer
 			 * otherwise the connections and labels are not drawn properly.
 			 * Normally, 3 should be enough, don't know why we need 4.
 			 */
-			DiagramLayouter.layout(getEditPartRegistry().get(diagram),
-					editorID, false);
+			DiagramLayoutManager.layout(null, (EditPart)getEditPartRegistry().get(diagram), false);
 		}
 
 		/* check if user wants to be able to click on changed Elements */
