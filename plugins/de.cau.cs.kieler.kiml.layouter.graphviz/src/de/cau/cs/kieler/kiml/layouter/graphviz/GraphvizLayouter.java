@@ -85,7 +85,15 @@ import de.cau.cs.kieler.core.util.MapPrinter;
  * @author <a href="mailto:haf@informatik.uni-kiel.de">Hauke Fuhrmann</a>
  * 
  */
-public class GraphvizLayouterBinary implements GraphvizLayouter {
+public class GraphvizLayouter {
+    
+    public final static String DOT_COMMAND = "dot";
+    public final static String NEATO_COMMAND = "neato";
+    public final static String TWOPI_COMMAND = "twopi";
+    public final static String FDP_COMMAND = "fdp";
+    public final static String CIRCO_COMMAND = "circo";
+    public final static String COMMAND_PARAMETER = "-K";
+    
 	/**
 	   * This is the dimension of bounding box from last read graph.
 	   */
@@ -154,7 +162,7 @@ public class GraphvizLayouterBinary implements GraphvizLayouter {
 	 *            A String denoting the layouter. Must be one of those declared
 	 *            in {@link GraphvizLayoutProviderNames}.
 	 */
-	public GraphvizLayouterBinary(String command) {
+	public GraphvizLayouter(String command) {
 		init();
 		this.command = command;
 	}
@@ -267,7 +275,7 @@ public class GraphvizLayouterBinary implements GraphvizLayouter {
 			try {fw.close();} catch (IOException e) {/*nothing*/}
 		if(debugOut != null)
 			debugOut.close();
-		}catch(GraphvizException ge){
+		}catch(KielerException ge){
 			// TODO move error handling out of the layouter using KielerException
 			String message = "Error with the external GraphViz layouter library.";
 			Status myStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID, message, ge);
@@ -697,7 +705,7 @@ public class GraphvizLayouterBinary implements GraphvizLayouter {
 	  /**
 	   * @see GraphvizLayouterLibrary#retrieveLayoutInformations(Collection, View)
 	   */
-	  protected final void retrieveLayoutInformations(PrintWriter debugWriter) throws GraphvizException{
+	  protected final void retrieveLayoutInformations(PrintWriter debugWriter) throws KielerException {
 	    boolean endOfGraph;
 
 	    // read error stream
@@ -707,7 +715,7 @@ public class GraphvizLayouterBinary implements GraphvizLayouter {
 	    	StatusManager.getManager().handle(error, StatusManager.SHOW);
 	      }
 	    } catch (IOException e) {
-	    	throw new GraphvizException(e,"Graphviz: error while reading dot error stream.");
+	    	throw new KielerException("Graphviz: error while reading dot error stream.", e);
 	    }
 
 	    // read output stream
@@ -715,7 +723,7 @@ public class GraphvizLayouterBinary implements GraphvizLayouter {
 	    	// FIXME: should check if dot output is ready somewhere. This would
 	    	// require to wait until the dot process has finished. This was not implemented yet, because process.waitFor() does not terminate...
 	    	if(!dotOutput.ready())
-	    		throw new GraphvizException("Graphviz output stream empty. Most likely incompatible dot binary set.");
+	    		throw new KielerException("Graphviz output stream empty. Most likely incompatible dot binary set.");
 	      endOfGraph = false;
 	      while (!endOfGraph) {
 	        String line;
@@ -757,7 +765,7 @@ public class GraphvizLayouterBinary implements GraphvizLayouter {
 	        }
 	      }
 	    } catch (IOException e) {
-			throw new GraphvizException(e,"Error while reading dot output stream.");
+			throw new KielerException("Error while reading dot output stream.", e);
 	    }
 	  }
 
@@ -921,7 +929,7 @@ public class GraphvizLayouterBinary implements GraphvizLayouter {
 	   * @author taken from KIEL classic
 	   * @return returns true, if the dot process could be started
 	   */
-	  private void startProcess() throws GraphvizException{
+	  private void startProcess() throws KielerException {
 	    
 	    isGraphvizExecutableValid(); // might also throw GraphvizException
 	    
@@ -934,7 +942,7 @@ public class GraphvizLayouterBinary implements GraphvizLayouter {
 	        graphvizProcess.getErrorStream()));
 	      dotInput = new PrintWriter(graphvizProcess.getOutputStream());
 	    } catch (IOException e) {
-	    	throw new GraphvizException(e,"Unable to start Graphviz process.");
+	    	throw new KielerException("Unable to start Graphviz process.", e);
 	    }
 	  }
 	  
@@ -960,23 +968,23 @@ public class GraphvizLayouterBinary implements GraphvizLayouter {
 	   * @throws GraphvizException iff dot can not be executed
 	   * @author haf
 	   */
-	  private boolean isGraphvizExecutableValid() throws GraphvizException{
-		  try{
+	  private boolean isGraphvizExecutableValid() throws KielerException {
+//		  try{
 			  if (dotExecutable == null || dotExecutable.equals(""))
-				  throw new GraphvizException("Path not set, path empty.");
+				  throw new KielerException("Path not set, path empty.");
 			  File exec = new File(dotExecutable);
 			  if(exec.exists())
 				     return true;
 			  else
-				  throw new GraphvizException("File not found.");
-		  }catch(IOException e){
-			  // FIXME: put UI stuff in external package such that we can use the algorithm also standalone in headless environment
-			  String message = "Error executing Graphviz dot binary: "+dotExecutable+" Please set the right path in the preferences!";
-			  //Status myStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID, message, e);
-			  //StatusManager.getManager().handle(myStatus, StatusManager.BLOCK);
-			  //PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(null, GraphvizPreferencePage.ID, null, null);
-			  //dialog.open();
-			  throw new GraphvizException(e,message);
-		  }
+				  throw new KielerException("File not found.");
+//		  }catch(IOException e){
+//			  // FIXME: put UI stuff in external package such that we can use the algorithm also standalone in headless environment
+//			  String message = "Error executing Graphviz dot binary: "+dotExecutable+" Please set the right path in the preferences!";
+//			  //Status myStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID, message, e);
+//			  //StatusManager.getManager().handle(myStatus, StatusManager.BLOCK);
+//			  //PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(null, GraphvizPreferencePage.ID, null, null);
+//			  //dialog.open();
+//			  throw new KielerException(message, e);
+//		  }
 	  }
 }

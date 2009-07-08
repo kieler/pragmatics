@@ -61,6 +61,16 @@ public class KielerException extends Exception {
 		super(message);
 		this.type = type;
 	}
+
+	/**
+	 * Constructs a KIELER exception with given message and cause.
+	 * 
+	 * @param message readable exception message
+	 * @param cause exception that caused this exception
+	 */
+	public KielerException(String message, Exception cause) {
+	    super(message, cause);
+	}
 	
 	/**
 	 * Returns the type of KIELER exception.
