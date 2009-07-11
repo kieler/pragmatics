@@ -20,6 +20,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -118,6 +119,8 @@ public class GraphvizLayouter {
     private BufferedReader dotOutput;
     /** the stderr of the dot process */
     private BufferedReader errorStream;
+    /** a debug StringWriter */
+    private StringWriter debugWriter;
     /** maps each identifier of a graph element to the instance of the element */
     private HashMap<String, KGraphElement> graphElementMap = new HashMap<String, KGraphElement>();
     /** X padding from the borders. pad attribute of GraphViz has no effect */
@@ -200,8 +203,11 @@ public class GraphvizLayouter {
         }
         // wait for the graphviz process to terminate
         // TODO here should be some timeout...
+        
         try {
-            graphvizProcess.waitFor();
+            // FIXME: waitFor() sometimes does not terminate, which indicates
+        	// that the dot process has not terminated. 
+           	graphvizProcess.waitFor();
         } catch (InterruptedException exception) {}
         progressMonitor.worked(10);
         
@@ -442,6 +448,23 @@ public class GraphvizLayouter {
         return newLocation;
     }
 
+    /**
+     * Transforms GraphvizCoordinates to
+     * {@link de.cau.cs.kieler.kiml.layout.KimlLayoutGraph.KPoint KPoint}
+     * (KLayoutGraph) coordinates. Padding is also used.
+     * 
+     * @param location
+     *            GraphViz Coordinates
+     * @return Draw2D coordinates
+     */
+    private KPoint graphviz2KPoint(float x, float y) {
+        KPoint newLocation = KLayoutDataFactory.eINSTANCE.createKPoint();
+        newLocation.setX(x + prefPadX);
+        newLocation.setY(y + prefPadY);
+        return newLocation;
+    }
+    
+    
     private void bezierToPolyline(KEdgeLayout layout, Point p0, Point p1, Point p2, Point p3) {
 
         /*
@@ -502,6 +525,32 @@ public class GraphvizLayouter {
         return intList;
     }
 
+    /**
+     * Converts a string containing a list of integers into a List of Integer
+     * objects. Used for converting GraphViz position Strings (e.g. list of
+     * bendpoints) into a real list.
+     * 
+     * @param integerStringList
+     *            A comma separated string with integers
+     * @return A list holding all the provided Integers of the string
+     */
+    private List<Float> string2Floats(String floatStringList) {
+        ArrayList<Float> floatList = new ArrayList<Float>();
+        if (floatStringList != null) {
+            /* \s = any whitespace char */
+            String[] tokens = floatStringList.split(",|\\s");
+            for (int i = 0; i < tokens.length; i++) {
+                try {
+                    floatList.add(new Float(tokens[i]));
+                } catch (Exception e) {
+                    /* nothing */
+                }
+            }
+        }
+        return floatList;
+    }
+
+    
     /**
      * Creates a unique identifier for the given node.
      * 
@@ -728,7 +777,7 @@ public class GraphvizLayouter {
         try {
             edge = (KEdge) graphElementMap.get(attributes.get("comment"));
             String posString = (String) attributes.get("pos");
-            List<Integer> intList = string2Ints(posString);
+            List<Float> floatList = string2Floats(posString);
             KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(edge);
 
             /*
@@ -746,14 +795,14 @@ public class GraphvizLayouter {
              */
 
             /* first two points in list denote the start point */
-            edgeLayout.setSourcePoint(graphviz2KPoint(intList.get(0), intList.get(1)));
+            edgeLayout.setSourcePoint(graphviz2KPoint(floatList.get(0), floatList.get(1)));
 
-            for (int i = 0; i < intList.size() - 7; i += 6) {
+            for (int i = 0; i < floatList.size() - 7; i += 6) {
                 /* convert the bezier representation to a poly line */
-                bezierToPolyline(edgeLayout, new Point(intList.get(i + 0), intList.get(i + 1)),
-                        new Point(intList.get(i + 2), intList.get(i + 3)), new Point(intList
-                                .get(i + 4), intList.get(i + 5)), new Point(intList.get(i + 6),
-                                intList.get(i + 7)));
+                bezierToPolyline(edgeLayout, new Point(floatList.get(i + 0), floatList.get(i + 1)),
+                        new Point(floatList.get(i + 2), floatList.get(i + 3)), new Point(floatList
+                                .get(i + 4), floatList.get(i + 5)), new Point(floatList.get(i + 6),
+                                floatList.get(i + 7)));
             }
             /*
              * need to remove the last grid point, as this is the same as
@@ -762,8 +811,8 @@ public class GraphvizLayouter {
             edgeLayout.getBendPoints().remove(edgeLayout.getBendPoints().size() - 1);
 
             /* last two points in the GraphViz list denote the end point */
-            edgeLayout.setTargetPoint(graphviz2KPoint(intList.get(intList.size() - 2), intList
-                    .get(intList.size() - 1)));
+            edgeLayout.setTargetPoint(graphviz2KPoint(floatList.get(floatList.size() - 2), floatList
+                    .get(floatList.size() - 1)));
 
             /* tell all users that we produced some sort of spline */
             // edgeLayout.getOptions().add(new KIntOption(KEdgeType.SPLINE));
@@ -845,5 +894,5 @@ public class GraphvizLayouter {
             throw new KielerException("Unable to start Graphviz process.", exception);
         }
     }
-
+    
 }
