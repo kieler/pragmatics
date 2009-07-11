@@ -603,12 +603,15 @@ public class GraphvizLayouter {
     private void retrieveLayoutResult(PrintWriter debugWriter) throws KielerException {
         // read error stream
         try {
-            StringBuffer error = new StringBuffer("Graphviz error:");
+            StringBuffer error = new StringBuffer();
+            
             while (errorStream.ready()) {
                  error.append(errorStream.readLine() + "\n");
             }
+            // here make sure to correctly check error condition. Take this branch only if
+            // graphviz really indicated an error
             if (error.length() > 0)
-                throw new KielerException(error.toString());
+                throw new KielerException("Graphviz error: "+error.toString());
         } catch (IOException exception) {}
 
         // read output stream
