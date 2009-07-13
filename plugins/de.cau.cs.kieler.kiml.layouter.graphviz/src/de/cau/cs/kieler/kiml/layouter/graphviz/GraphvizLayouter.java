@@ -20,11 +20,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -59,7 +57,6 @@ import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.util.MapPrinter;
 
 /**
  * Basic wrapper class employing the GraphViz binary (e.g. dot layout) to do a
@@ -119,27 +116,12 @@ public class GraphvizLayouter {
     private BufferedReader dotOutput;
     /** the stderr of the dot process */
     private BufferedReader errorStream;
-    /** a debug StringWriter */
-    private StringWriter debugWriter;
     /** maps each identifier of a graph element to the instance of the element */
     private HashMap<String, KGraphElement> graphElementMap = new HashMap<String, KGraphElement>();
     /** X padding from the borders. pad attribute of GraphViz has no effect */
     private int prefPadX = 15;
     /** Y padding from the borders. pad attribute of GraphViz has no effect */
     private int prefPadY = 15;
-    /** holds the String denoting the desired layouter of the GraphViz suite */
-    private String command;
-
-    /**
-     * Creates a new KIML GraphViz layouter with the specified concrete GraphViz
-     * layouter (e.g. GraphViz Circo). Loads the preference values.
-     * 
-     * @param command A String denoting the layouter. Must be one of the command
-     *     strings defined in this class
-     */
-    public GraphvizLayouter(String command) {
-        this.command = command;
-    }
 
     /**
      * Performs the actual work of the layout process. Translates the KNode into
@@ -150,7 +132,8 @@ public class GraphvizLayouter {
      * @param parentNode the node to process
      * @param progressMonitor a monitor to which progress is reported
      */
-    public void layout(KNode parentNode, IKielerProgressMonitor progressMonitor) throws KielerException {
+    public void layout(KNode parentNode, IKielerProgressMonitor progressMonitor,
+            String command) throws KielerException {
         progressMonitor.begin("Graphviz layout (" + command + ")", 20);
         IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
         String dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);

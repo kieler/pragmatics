@@ -72,6 +72,8 @@ public class LayoutServiceBuilder {
     public static final String ATTRIBUTE_NAME = "name";
     /** name of the 'type' attribute in the extension points */
     public static final String ATTRIBUTE_TYPE = "type";
+    /** name of the 'parameter' attribute in the extension points */
+    public static final String ATTRIBUTE_PARAMETER = "parameter";
     /** name of the 'category' attribute in the extension points */
     public static final String ATTRIBUTE_COLLECTION = "category";
     /** name of the 'description' attribute in the extension points */
@@ -162,6 +164,7 @@ public class LayoutServiceBuilder {
     				    providerData.name = element.getAttribute(ATTRIBUTE_NAME);
     				    if (providerData.name == null)
     				        providerData.name = DEFAULT_PROVIDER_NAME;
+    				    layoutProvider.initialize(element.getAttribute(ATTRIBUTE_PARAMETER));
     				    providerData.type = element.getAttribute(ATTRIBUTE_TYPE);
     				    if (providerData.type == null)
     				        providerData.type = "";

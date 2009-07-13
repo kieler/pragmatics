@@ -90,14 +90,11 @@ Layout providers can be grouped using categories, and they can be given a type t
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="type" type="string">
+         <attribute name="parameter" type="string">
             <annotation>
                <documentation>
-                  Identifier of a layout type, which can be defined using the &lt;code&gt;layoutType&lt;/code&gt; element. Layout types describe the general kind of layout algorithm that is implemented by that provider.
+                  An optional string parameter which is passed to the layout provider instance for initialization.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.layout.layoutProviders/layoutType/@id"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="category" type="string">
@@ -107,6 +104,16 @@ Layout providers can be grouped using categories, and they can be given a type t
                </documentation>
                <appInfo>
                   <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.layout.layoutProviders/category/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="type" type="string">
+            <annotation>
+               <documentation>
+                  Identifier of a layout type, which can be defined using the &lt;code&gt;layoutType&lt;/code&gt; element. Layout types describe the general kind of layout algorithm that is implemented by that provider.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.layout.layoutProviders/layoutType/@id"/>
                </appInfo>
             </annotation>
          </attribute>

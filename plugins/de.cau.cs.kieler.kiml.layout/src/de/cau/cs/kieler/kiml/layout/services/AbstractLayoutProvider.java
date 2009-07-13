@@ -38,6 +38,15 @@ public abstract class AbstractLayoutProvider {
 	private List<KOption> defaultOptions = new LinkedList<KOption>();
 
 	/**
+	 * Initialize the layout provider with the given parameter.
+	 * The default implementation does nothing.
+	 * 
+	 * @param parameter a string used to parameterize the layout provider instance
+	 */
+	public void initialize(String parameter) {
+	}
+	
+	/**
 	 * Performs the actual layout process, that is attaches layout
      * information to the given node object.
 	 * 
