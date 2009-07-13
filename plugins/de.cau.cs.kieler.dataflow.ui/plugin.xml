@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            name="Create Random Dataflow Model"
+            icon="icons/sample.gif"
+            category="de.cau.cs.kieler.kiml.ui.kieler"
+            class="de.cau.cs.kieler.dataflow.ui.wizards.CreateRandomModelWizard"
+            id="de.cau.cs.kieler.dataflow.ui.wizards.CreateRandomModelWizard">
+      </wizard>
+   </extension>
+
+</plugin>

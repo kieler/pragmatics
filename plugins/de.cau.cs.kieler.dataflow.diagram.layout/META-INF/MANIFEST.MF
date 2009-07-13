@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Dataflow Diagram Custom Code
+Bundle-SymbolicName: de.cau.cs.kieler.dataflow.diagram.layout;singleton:=true
+Bundle-Version: 0.1.0
+Require-Bundle: org.eclipse.core.runtime;bundle-version="3.4.0",
+ org.eclipse.jface;bundle-version="3.4.0",
+ org.eclipse.ui;bundle-version="3.4.0",
+ de.cau.cs.kieler.dataflow.diagram,
+ de.cau.cs.kieler.kiml.layout
+Bundle-ActivationPolicy: lazy
+Bundle-Activator: dataflow.diagram.layout.DataflowDiagramLayoutPlugin
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-Vendor: Christian-Albrechts-University of Kiel

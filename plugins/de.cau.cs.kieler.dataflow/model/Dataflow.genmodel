@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/de.cau.cs.kieler.dataflow/src"
+    editDirectory="/de.cau.cs.kieler.dataflow.edit/src" editorDirectory="/de.cau.cs.kieler.dataflow.editor/src"
+    modelPluginID="de.cau.cs.kieler.dataflow" modelName="Dataflow" importerID="org.eclipse.emf.importer.ecore"
+    complianceLevel="6.0" copyrightFields="false">
+  <foreignModel>Dataflow.ecore</foreignModel>
+  <genPackages prefix="Dataflow" disposableProviderFactory="true" ecorePackage="Dataflow.ecore#/">
+    <genClasses ecoreClass="Dataflow.ecore#//Box">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Dataflow.ecore#//Box/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Dataflow.ecore#//Box/inputs"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Dataflow.ecore#//Box/outputs"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Dataflow.ecore#//Box/boxes"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Dataflow.ecore#//Box/connections"/>
+    </genClasses>
+    <genClasses ecoreClass="Dataflow.ecore#//Connection">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Dataflow.ecore#//Connection/sourcePort"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Dataflow.ecore#//Connection/targetPort"/>
+    </genClasses>
+    <genClasses ecoreClass="Dataflow.ecore#//DataflowModel"/>
+    <genClasses ecoreClass="Dataflow.ecore#//Port">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Dataflow.ecore#//Port/name"/>
+    </genClasses>
+    <genClasses ecoreClass="Dataflow.ecore#//InputPort">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Dataflow.ecore#//InputPort/inputParent"/>
+    </genClasses>
+    <genClasses ecoreClass="Dataflow.ecore#//OutputPort">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Dataflow.ecore#//OutputPort/outputParent"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

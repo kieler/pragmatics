@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.kiml.layout.layoutInfo">
+      <binding
+            class="dataflow.diagram.edit.parts.DataflowModelEditPart"
+            type="de.cau.cs.kieler.layout.info.types.dataFlow">
+      </binding>
+      <binding
+            class="dataflow.diagram.edit.parts.BoxBoxCompartmentEditPart"
+            type="de.cau.cs.kieler.layout.info.types.dataFlow">
+      </binding>
+      <binding
+            class="dataflow.diagram.edit.parts.BoxBoxCompartment2EditPart"
+            type="de.cau.cs.kieler.layout.info.types.dataFlow">
+      </binding>
+   </extension>
+</plugin>

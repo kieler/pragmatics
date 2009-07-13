@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Dataflow Model Additional UI
+Bundle-SymbolicName: de.cau.cs.kieler.dataflow.ui;singleton:=true
+Bundle-Version: 0.1.0
+Bundle-Activator: de.cau.cs.kieler.dataflow.ui.Activator
+Bundle-Vendor: Christian-Albrechts-University of Kiel
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.eclipse.ui.ide,
+ de.cau.cs.kieler.dataflow
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ActivationPolicy: lazy

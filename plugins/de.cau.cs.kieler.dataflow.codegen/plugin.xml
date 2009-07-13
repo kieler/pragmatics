@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            category="de.cau.cs.kieler.commands.category"
+            categoryId="de.cau.cs.kieler.commands.category"
+            defaultHandler="de.cau.cs.kieler.dataflow.codegen.LustreGenerator"
+            description="Generate Lustre code"
+            id="de.cau.cs.kieler.dataflow.codegen.GenLustre"
+            name="GenLustre">
+      </command>
+      <command
+            category="de.cau.cs.kieler.commands.category"
+            categoryId="de.cau.cs.kieler.commands.category"
+            defaultHandler="de.cau.cs.kieler.dataflow.codegen.ScadeGenerator"
+            description="generate Scade code"
+            id="de.cau.cs.kieler.dataflow.codegen.genScade"
+            name="genScade">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:de.cau.cs.kieler.contextMenu">
+         <command
+               commandId="de.cau.cs.kieler.dataflow.codegen.GenLustre"
+               label="generate Lustre"
+               mnemonic="generate Lustre"
+               style="push"
+               tooltip="generate Lustre code for current Diagram">
+            <visibleWhen
+                  checkEnabled="true">
+            </visibleWhen>
+         </command>
+         <command
+               commandId="de.cau.cs.kieler.dataflow.codegen.genScade"
+               label="generate Scade"
+               mnemonic="generate Scade"
+               style="push"
+               tooltip="generate Scade code">
+            <visibleWhen
+                  checkEnabled="true">
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+
+</plugin>
