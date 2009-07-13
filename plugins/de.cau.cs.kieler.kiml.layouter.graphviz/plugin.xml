@@ -24,10 +24,11 @@
             name="Graphviz">
       </category>
       <layoutProvider
-            class="de.cau.cs.kieler.kiml.layouter.graphviz.DotLayoutProvider"
             category="de.cau.cs.kieler.kiml.categories.graphviz"
+            class="de.cau.cs.kieler.kiml.layouter.graphviz.GraphvizLayoutProvider"
             id="de.cau.cs.kieler.kiml.layouter.dot"
             name="Dot"
+            parameter="dot"
             type="de.cau.cs.kieler.layout.types.layered">
          <supportedDiagram
                priority="10"
@@ -39,10 +40,11 @@
          </supportedDiagram>
       </layoutProvider>
       <layoutProvider
-            class="de.cau.cs.kieler.kiml.layouter.graphviz.NeatoLayoutProvider"
             category="de.cau.cs.kieler.kiml.categories.graphviz"
+            class="de.cau.cs.kieler.kiml.layouter.graphviz.GraphvizLayoutProvider"
             id="de.cau.cs.kieler.kiml.layouter.neato"
             name="Neato"
+            parameter="neato"
             type="de.cau.cs.kieler.layout.types.force">
          <supportedDiagram
                priority="9"
@@ -50,10 +52,11 @@
          </supportedDiagram>
       </layoutProvider>
       <layoutProvider
-            class="de.cau.cs.kieler.kiml.layouter.graphviz.FdpLayoutProvider"
             category="de.cau.cs.kieler.kiml.categories.graphviz"
+            class="de.cau.cs.kieler.kiml.layouter.graphviz.GraphvizLayoutProvider"
             id="de.cau.cs.kieler.kiml.layouter.fdp"
             name="FDP"
+            parameter="fdp"
             type="de.cau.cs.kieler.layout.types.force">
          <supportedDiagram
                priority="6"
@@ -61,10 +64,11 @@
          </supportedDiagram>
       </layoutProvider>
       <layoutProvider
-            class="de.cau.cs.kieler.kiml.layouter.graphviz.TwopiLayoutProvider"
             category="de.cau.cs.kieler.kiml.categories.graphviz"
+            class="de.cau.cs.kieler.kiml.layouter.graphviz.GraphvizLayoutProvider"
             id="de.cau.cs.kieler.kiml.layouter.twopi"
             name="Twopi"
+            parameter="twopi"
             type="de.cau.cs.kieler.layout.types.radial">
          <supportedDiagram
                priority="8"
@@ -72,10 +76,11 @@
          </supportedDiagram>
       </layoutProvider>
       <layoutProvider
-            class="de.cau.cs.kieler.kiml.layouter.graphviz.CircoLayoutProvider"
             category="de.cau.cs.kieler.kiml.categories.graphviz"
+            class="de.cau.cs.kieler.kiml.layouter.graphviz.GraphvizLayoutProvider"
             id="de.cau.cs.kieler.kiml.layouter.circo"
             name="Circo"
+            parameter="circo"
             type="de.cau.cs.kieler.layout.types.circle">
          <supportedDiagram
                priority="7"

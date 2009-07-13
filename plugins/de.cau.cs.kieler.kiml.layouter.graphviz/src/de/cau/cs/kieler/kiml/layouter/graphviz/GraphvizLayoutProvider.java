@@ -28,7 +28,7 @@ import de.cau.cs.kieler.kiml.layout.services.AbstractLayoutProvider;
  * 
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
-public class DotLayoutProvider extends AbstractLayoutProvider {
+public class GraphvizLayoutProvider extends AbstractLayoutProvider {
 
 	/** actual Graphviz layouter used to do the layout */
 	private GraphvizLayouter graphvizLayouter = new GraphvizLayouter();;

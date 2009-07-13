@@ -2,15 +2,14 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Graphviz Layouter
 Bundle-SymbolicName: de.cau.cs.kieler.kiml.layouter.graphviz;singleton:=true
-Bundle-Version: 1.0.0
+Bundle-Version: 0.1.0
 Bundle-Activator: de.cau.cs.kieler.kiml.layouter.graphviz.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.emf.ecore;bundle-version="2.4.0",
- org.eclipse.gef,
- de.cau.cs.kieler.kiml.layout,
- de.cau.cs.kieler.kiml.ui,
- de.cau.cs.kieler.core
+ de.cau.cs.kieler.core,
+ de.cau.cs.kieler.kiml.layout
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.draw2d,
  org.eclipse.gef.requests
+Bundle-Vendor: Christian-Albrechts-University of Kiel
