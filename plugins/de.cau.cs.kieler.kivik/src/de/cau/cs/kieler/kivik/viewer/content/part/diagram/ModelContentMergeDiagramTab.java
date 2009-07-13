@@ -255,16 +255,14 @@ public class ModelContentMergeDiagramTab extends DiagramGraphicalViewer
 		/* if collapsing is desired, or if re-layout is switched on, do it */
 		if (prefRelayoutDiagram || collapsedElements) {
 			primaryLayer.validate();
-			IEditorRegistry reg = PlatformUI.getWorkbench().getEditorRegistry();
-			String filename = diagram.eResource().getURI().toString();
-			String editorID = reg.getDefaultEditor(filename).getId();
 
 			/*
 			 * force the diagram layouter to perform several layout steps, as
 			 * otherwise the connections and labels are not drawn properly.
 			 * Normally, 3 should be enough, don't know why we need 4.
 			 */
-			DiagramLayoutManager.layout(null, (EditPart)getEditPartRegistry().get(diagram), false);
+			DiagramLayoutManager.layout(null, (EditPart)getEditPartRegistry().get(diagram),
+			        false, false);
 		}
 
 		/* check if user wants to be able to click on changed Elements */

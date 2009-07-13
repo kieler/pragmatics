@@ -38,11 +38,10 @@ import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.layout.LayoutServiceBuilder;
 
-
 /**
  * Preference page for general KIML preferences.
  * 
- * @author msp
+ * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class LayoutPreferencePage extends PreferencePage
 		implements IWorkbenchPreferencePage {
@@ -145,6 +144,12 @@ public class LayoutPreferencePage extends PreferencePage
         return prioritesGroup;
     }
     
+    /**
+     * Creates an abbreviation for the given diagram type.
+     * 
+     * @param diagramType a diagram type name
+     * @return an abbreviation for the diagram type
+     */
     private String getAbbrev(String diagramType) {
         if (diagramType.length() <= 7)
             return diagramType;

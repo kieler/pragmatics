@@ -29,7 +29,7 @@ import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
  * Provider class for the layouter priorities table. Includes a content provider, a
  * label provider, and a cell modifier.
  * 
- * @author msp
+ * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class PriorityTableProvider extends LabelProvider
         implements IStructuredContentProvider, ITableLabelProvider, ICellModifier {

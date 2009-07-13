@@ -26,7 +26,7 @@ import org.eclipse.gmf.runtime.notation.StringValueStyle;
 /**
  * Utility class for storage of layout hints in the GMF notation model.
  * 
- * @author msp
+ * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class GmfLayoutHints {
 

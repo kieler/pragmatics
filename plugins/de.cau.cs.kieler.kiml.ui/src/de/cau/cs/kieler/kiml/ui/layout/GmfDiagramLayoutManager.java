@@ -57,25 +57,35 @@ import de.cau.cs.kieler.kiml.layout.services.LayoutServices;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
 
 /**
- * A generic implementation of the {@link GmfDiagramLayoutManager}.
+ * Diagram layout manager that is able to generically layout diagrams generated
+ * by GMF. The internal KGraph graph structure is built from the structure of edit
+ * parts in the diagram. The new layout is applied to the diagram using
+ * {@link GmfLayoutEditPolicy}, which creates a {@link GmfLayoutCommand} to
+ * directly manipulate data in the GMF notation model, where layout information
+ * is stored persistently.
  * 
  * @author <a href="mailto:ars@informatik.uni-kiel.de">Arne Schipper</a>,
- *     msp
+ *     <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 
-    /* the mappings of KLayoutGraph LAYOUT elements to EditParts */
+    /** map of nodes in the layout graph to edit parts */
     private Map<KNode, GraphicalEditPart> node2EditPartMap = new LinkedHashMap<KNode, GraphicalEditPart>();
+    /** map of edges in the layout graph to edit parts */
     private Map<KEdge, ConnectionEditPart> edge2EditPartMap = new LinkedHashMap<KEdge, ConnectionEditPart>();
+    /** map of ports in the layout graph to edit parts */
     private Map<KPort, ShapeNodeEditPart> port2EditPartMap = new LinkedHashMap<KPort, ShapeNodeEditPart>();
+    /** map of edge labels in the layout graph to edit parts */
     private Map<KLabel, LabelEditPart> edgeLabel2EditPartMap = new LinkedHashMap<KLabel, LabelEditPart>();
-
     /** map of edit parts to nodes in the layout graph */
     private Map<GraphicalEditPart, KNode> editPart2NodeMap = new HashMap<GraphicalEditPart, KNode>();
+    /** map of edit parts to ports in the layout graph */
     private Map<GraphicalEditPart, KPort> editPart2PortMap = new HashMap<GraphicalEditPart, KPort>();
+    /** list of connection edit parts that were found in the diagram */
     private LinkedList<ConnectionEditPart> connections = new LinkedList<ConnectionEditPart>();
-    
+    /** editor part of the currently layouted diagram */
     private DiagramEditor diagramEditorPart;
+    /** top edit part of the currently layouted diagram */
     private DiagramEditPart diagramEditPart;
     
     /*
@@ -143,9 +153,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      * @see de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager#applyLayout()
      */
     protected void applyLayout() {
-        // create a new GEF Request to change the layout
-        // the request will be filled with the new layout specification
-        // piece by piece in the following
+        // create a new request to change the layout
         ApplyLayoutRequest applyLayoutRequest = new ApplyLayoutRequest();
         for (KNode knode : node2EditPartMap.keySet())
             applyLayoutRequest.addElement(knode, node2EditPartMap.get(knode));
@@ -156,14 +164,10 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         for (KLabel klabel : edgeLabel2EditPartMap.keySet())
             applyLayoutRequest.addElement(klabel, edgeLabel2EditPartMap.get(klabel));
         
-        // create a new GEF Command from the Request we just set up
-        // the command is received from a custom GmfLayoutEditPolicy that is
-        // registered with the DiagramEditPart. So we get the command from
-        // the diagram. This way we only have exactly one Request/Command pair which
-        // should result in massive performance gains.
+        // retrieve a command for the request; the command is created by GmfLayoutEditPolicy
         Command applyLayoutCommand = diagramEditPart.getCommand(applyLayoutRequest);
         
-        /* gets the diagram command stack */
+        // gets a command stack to execute the command
         DiagramCommandStack commandStack = null;
         if (diagramEditorPart != null) {
             Object adapter = diagramEditorPart.getAdapter(CommandStack.class);
@@ -176,9 +180,11 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     }
 
 	/**
+	 * Builds the layout graph for the given root edit part.
 	 * 
-	 * @param layoutRootPart
-	 * @return
+	 * @param layoutRootPart edit part for which the layout graph is built
+	 * @return layout graph layout graph that represents the structure contained in
+	 *     the root edit part
 	 */
 	private KNode doBuildLayoutGraph(GraphicalEditPart layoutRootPart) {
         KNode layoutGraph = KimlLayoutUtil.createInitializedNode();
@@ -227,12 +233,14 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 	}
 
 	/**
-	 * Recursive helper function for the sub elements of a composite element.
+	 * Recursively builds a layout graph by analyzing the children of the given
+	 * edit part.
 	 * 
-	 * @param currentEditPart
-	 *            The GraphicalEditPart which children will be processed
-	 * @param currentLayoutNode
-	 *            The corresponding KNode
+	 * @param currentEditPart the edit part whose children will be processed
+	 * @param currentLayoutNode the corresponding KNode
+	 * @param insetTop inset value to be set on the top side of the parent node
+	 * @param insetLeft inset value to be set on the left, right, and bottom side
+	 *     of the parent node
 	 */
 	private void buildLayoutGraphRecursively(GraphicalEditPart currentEditPart,
 			KNode currentLayoutNode, float insetTop, float insetLeft) {
@@ -421,23 +429,11 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 	}
 
 	/**
-	 * This function creates new KEdges and takes care of the labels for each
-	 * connection identified in the <code>buildLayoutGraphRecursively</code>
-	 * step before.
-	 * 
-	 * @param connections
-	 *            The connections that were build for a certain Node before.
+	 * Creates new edges and takes care of the labels for each connection
+	 * identified in the {@code buildLayoutGraphRecursively} method.
 	 */
 	private void processConnections() {
-
-		/* iterate through all the connections of an compartment element */
 		for (ConnectionEditPart connection : connections) {
-
-			/*
-			 * create the KEdge. The KEdge does not need to be added
-			 * explicitly to the KLayoutGraph, but exists in it through the
-			 * EOppositeReference of EMF.
-			 */
 			KEdge edge = KimlLayoutUtil.createInitializedEdge();
             KNode sourceNode, targetNode;
             KPort sourcePort = null, targetPort = null;

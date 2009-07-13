@@ -26,6 +26,8 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Maybe;
@@ -71,12 +73,13 @@ public abstract class DiagramLayoutManager {
      * @param editPart the parent edit part for which layout is performed, or
      *     {@code null} if the whole diagram shall be layouted
 	 * @param animate if true, Draw2D animation is activated
+	 * @param progressBar if true, a progress bar is displayed
 	 */
 	public final static void layout(IEditorPart editorPart, EditPart editPart,
-	        boolean animate) {
+	        boolean animate, boolean progressBar) {
 	    for (DiagramLayoutManager manager : managers) {
 	        if (manager.supports(editorPart) || manager.supports(editPart)) {
-	            IStatus status = manager.doLayout(editorPart, editPart, animate);
+	            IStatus status = manager.doLayout(editorPart, editPart, animate, progressBar);
 	            int severity = status.getSeverity();
 	            if (severity != IStatus.OK && severity != IStatus.CANCEL) {
 	                if (severity == IStatus.ERROR)
@@ -99,19 +102,29 @@ public abstract class DiagramLayoutManager {
 	 * @param editPart the parent edit part for which layout is performed, or
 	 *     {@code null} if the whole diagram shall be layouted
 	 * @param animate if true, Draw2D animation is activated
+	 * @param progressBar if true, a progress bar is displayed
 	 * @return a status indicating success or failure
 	 */
 	public final IStatus doLayout(final IEditorPart editorPart, final EditPart editPart,
-            final boolean animate) {
+            final boolean animate, boolean progressBar) {
 	    final Maybe<IStatus> status = new Maybe<IStatus>();
 		try {
-			PlatformUI.getWorkbench().getProgressService().run(false, false,
-					new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) {
-					status.object = doLayout(editorPart, editPart, animate,
-							new KielerProgressMonitor(monitor));
-				}
-			});
+            if (animate) {
+                Animation.markBegin();
+            }
+            if (progressBar) {
+    			PlatformUI.getWorkbench().getProgressService().run(false, false,
+    					new IRunnableWithProgress() {
+    				public void run(IProgressMonitor monitor) {
+    					status.object = doLayout(editorPart, editPart,
+    							new KielerProgressMonitor(monitor));
+    				}
+    			});
+            }
+            else {
+                status.object = doLayout(editorPart, editPart,
+                        new BasicProgressMonitor());
+            }
 			if (animate) {
 				Animation.run(calcAnimationTime(status.object.getCode()));
 			}
@@ -138,7 +151,7 @@ public abstract class DiagramLayoutManager {
 	 *     the number of layouted nodes as code value
 	 */
 	public final synchronized IStatus doLayout(IEditorPart editorPart, EditPart editPart,
-            boolean animate, KielerProgressMonitor progressMonitor) {
+	            IKielerProgressMonitor progressMonitor) {
 		try {
 			progressMonitor.begin("Diagram layout", 100);
 			
@@ -153,8 +166,6 @@ public abstract class DiagramLayoutManager {
 			layouterEngine.layout(layoutGraph, progressMonitor.subTask(90));
 
 			// apply layout to the model
-            if (animate)
-                Animation.markBegin();
 			applyLayout();
 			
 			// notify layout listeners about the performed layout

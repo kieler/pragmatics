@@ -61,11 +61,11 @@ public class LayoutHandler extends AbstractHandler implements IHandler {
 		    EditPart selectedElement = null;
 		    if (structuredSelection.getFirstElement() instanceof EditPart)
 		        selectedElement = (EditPart)structuredSelection.getFirstElement();
-    		DiagramLayoutManager.layout(editorPart, selectedElement, true);
+    		DiagramLayoutManager.layout(editorPart, selectedElement, true, true);
 		}
 		else
 		    // perform layout on the whole diagram
-		    DiagramLayoutManager.layout(editorPart, null, true);
+		    DiagramLayoutManager.layout(editorPart, null, true, true);
 
 		return null;
 	}

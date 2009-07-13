@@ -53,9 +53,11 @@ import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
 
 /**
- * Edit policy used to apply layout.
+ * Edit policy used to apply layout. This edit policy creates a
+ * {@link GmfLayoutCommand} to directly manipulate layout data in the
+ * GMF notation model.
  * 
- * @author haf, msp
+ * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  * @see org.eclipse.gmf.runtime.diagram.ui.editpolicies.XYLayoutEditPolicy
  * @see org.eclipse.gmf.runtime.diagram.ui.editpolicies.ConnectionBendpointEditPolicy
  * @see org.eclipse.gmf.runtime.diagram.ui.editpolicies.GraphicalNodeEditPolicy

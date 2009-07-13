@@ -40,7 +40,7 @@ import org.eclipse.gmf.runtime.notation.datatype.RelativeBendpoint;
 /**
  * Command used to apply layout.
  * 
- * @author haf, msp
+ * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  * @see org.eclipse.gmf.runtime.diagram.ui.commands.SetBoundsCommand
  * @see org.eclipse.gmf.runtime.diagram.ui.internal.commands.SetConnectionBendpointsCommand
  * @see org.eclipse.gmf.runtime.diagram.core.commands.SetConnectionAnchorsCommand
