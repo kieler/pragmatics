@@ -20,7 +20,6 @@ import org.osgi.framework.BundleContext;
 import de.cau.cs.kieler.core.IKielerPreferenceStore;
 import de.cau.cs.kieler.core.ui.KielerPreferenceStore;
 import de.cau.cs.kieler.klodd.hierarchical.HierarchicalDataflowLayoutProvider;
-import de.cau.cs.kieler.klodd.orthogonal.OrthogonalDataflowLayoutProvider;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -52,7 +51,7 @@ public class KloddUIPlugin extends AbstractUIPlugin {
 		IKielerPreferenceStore preferenceStore =
 				new KielerPreferenceStore(getPreferenceStore());
 		HierarchicalDataflowLayoutProvider.setPreferenceStore(preferenceStore);
-		OrthogonalDataflowLayoutProvider.setPreferenceStore(preferenceStore);
+		//OrthogonalDataflowLayoutProvider.setPreferenceStore(preferenceStore);
 	}
 
 	/*

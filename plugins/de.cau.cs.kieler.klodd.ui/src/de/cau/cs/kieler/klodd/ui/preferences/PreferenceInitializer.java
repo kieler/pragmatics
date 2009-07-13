@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import de.cau.cs.kieler.klodd.hierarchical.HierarchicalDataflowLayoutProvider;
-import de.cau.cs.kieler.klodd.orthogonal.OrthogonalDataflowLayoutProvider;
 import de.cau.cs.kieler.klodd.ui.KloddUIPlugin;
 
 
