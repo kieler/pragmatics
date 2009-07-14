@@ -15,7 +15,7 @@ import de.cau.cs.kieler.kiml.layouter.zest.Activator;
 /**
  * Preference page for the Zest layouters plugin.
  * 
- * @author msp
+ * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class ZestLayouterPreferencePage extends FieldEditorPreferencePage
         implements IWorkbenchPreferencePage {

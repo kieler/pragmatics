@@ -4,14 +4,12 @@ import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import de.cau.cs.kieler.kiml.layouter.zest.Activator;
-import de.cau.cs.kieler.kiml.layouter.zest.ZestGridLayoutProvider;
-import de.cau.cs.kieler.kiml.layouter.zest.ZestSpringLayoutProvider;
 
 
 /**
  * Initializer for the Zest layouter plugin preferences.
  * 
- * @author msp
+ * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
