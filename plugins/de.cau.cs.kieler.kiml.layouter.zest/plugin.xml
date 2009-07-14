@@ -23,10 +23,11 @@
             name="Zest">
       </category>
       <layoutProvider
-            class="de.cau.cs.kieler.kiml.layouter.zest.ZestSpringLayoutProvider"
             category="de.cau.cs.kieler.kiml.categories.zest"
+            class="de.cau.cs.kieler.kiml.layouter.zest.ZestLayoutProvider"
             id="de.cau.cs.kieler.kiml.layouter.zest.spring"
             name="Zest Spring"
+            parameter="SpringLayout"
             type="de.cau.cs.kieler.layout.types.force">
          <supportedDiagram
                priority="5"
@@ -34,14 +35,23 @@
          </supportedDiagram>
       </layoutProvider>
       <layoutProvider
-            class="de.cau.cs.kieler.kiml.layouter.zest.ZestGridLayoutProvider"
             category="de.cau.cs.kieler.kiml.categories.zest"
+            class="de.cau.cs.kieler.kiml.layouter.zest.ZestLayoutProvider"
             id="de.cau.cs.kieler.kiml.layouter.zest.grid"
-            name="Zest Grid">
+            name="Zest Grid"
+            parameter="GridLayout">
          <supportedDiagram
                priority="9"
                type="de.cau.cs.kieler.layout.info.types.boxes">
          </supportedDiagram>
+      </layoutProvider>
+      <layoutProvider
+            category="de.cau.cs.kieler.kiml.categories.zest"
+            class="de.cau.cs.kieler.kiml.layouter.zest.ZestLayoutProvider"
+            id="de.cau.cs.kieler.kiml.layouter.zest.grid"
+            name="Zest Radial"
+            parameter="RadialLayout"
+            type="de.cau.cs.kieler.layout.types.radial">
       </layoutProvider>
    </extension>
 
