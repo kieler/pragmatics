@@ -21,12 +21,14 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
+import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.slimgraph.KSlimEdge;
 import de.cau.cs.kieler.core.slimgraph.KSlimGraph;
 import de.cau.cs.kieler.core.slimgraph.KSlimNode;
 import de.cau.cs.kieler.core.slimgraph.alg.ICycleRemover;
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataFactory;
@@ -260,6 +262,18 @@ public class LayeredGraph {
 			}
 		}
 		
+		// layout the edge labels
+		// TODO the label sizes are not considered yet, would need to change preceding phases
+		for (KNode child : parentNode.getChildren()) {
+		    for (KEdge edge : child.getOutgoingEdges()) {
+		        layoutEdgeLabels(edge);
+		    }
+		}
+		for (KEdge edge : parentNode.getOutgoingEdges()) {
+		    if (parentNode.equals(edge.getTarget().getParent()))
+		        layoutEdgeLabels(edge);
+		}
+		
 		// update the size of the parent layout node
 		float width = insets.getLeft() + insets.getRight();
 		float height = insets.getTop() + insets.getBottom();
@@ -392,6 +406,63 @@ public class LayeredGraph {
 		element.linearSegment = linearSegment;
 		linearSegments.add(linearSegment);
 		return linearSegment;
+	}
+	
+	private void layoutEdgeLabels(KEdge edge) {
+	    List<KLabel> tailLabels = new LinkedList<KLabel>();
+	    List<KLabel> centerLabels = new LinkedList<KLabel>();
+	    List<KLabel> headLabels = new LinkedList<KLabel>();
+	    KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(edge);
+	    int midBendPoint = edgeLayout.getBendPoints().size() / 2;
+	    for (KLabel edgeLabel : edge.getLabels()) {
+	        switch (LayoutOptions.getEdgeLabelPlacement(KimlLayoutUtil.getShapeLayout(edgeLabel))) {
+	        case CENTER:
+	            if (midBendPoint > 0)
+	                centerLabels.add(edgeLabel);
+	            else
+	                tailLabels.add(edgeLabel);
+	            break;
+	        case TAIL:
+	            tailLabels.add(edgeLabel);
+	            break;
+	        case HEAD:
+	            headLabels.add(edgeLabel);
+	            break;
+	        }
+	    }
+	    
+	    // layout tail labels
+	    float xpos = edgeLayout.getSourcePoint().getX() + 3;
+	    float ypos = edgeLayout.getSourcePoint().getY() + 3;
+	    for (KLabel edgeLabel : tailLabels) {
+	        KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(edgeLabel);
+	        labelLayout.setXpos(xpos);
+	        labelLayout.setYpos(ypos);
+	        ypos += labelLayout.getHeight() + 3;
+	    }
+
+	    // layout center labels
+        if (!centerLabels.isEmpty()) {
+            KPoint point = edgeLayout.getBendPoints().get(midBendPoint);
+            xpos = point.getX() + 3;
+            ypos = point.getY() + 3;
+            for (KLabel edgeLabel : centerLabels) {
+                KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(edgeLabel);
+                labelLayout.setXpos(xpos);
+                labelLayout.setYpos(ypos);
+                ypos += labelLayout.getHeight() + 3;
+            }
+        }
+        
+        // layout tail labels
+        xpos = edgeLayout.getTargetPoint().getX() - 3;
+        ypos = edgeLayout.getTargetPoint().getY();
+        for (KLabel edgeLabel : headLabels) {
+            KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(edgeLabel);
+            ypos -= labelLayout.getHeight() - 3;
+            labelLayout.setXpos(xpos - labelLayout.getWidth());
+            labelLayout.setYpos(ypos);
+        }
 	}
 	
 }
