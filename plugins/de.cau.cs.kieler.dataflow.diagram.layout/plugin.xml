@@ -4,15 +4,15 @@
    <extension
          point="de.cau.cs.kieler.kiml.layout.layoutInfo">
       <binding
-            class="dataflow.diagram.edit.parts.DataflowModelEditPart"
+            class="de.cau.cs.kieler.dataflow.diagram.edit.parts.DataflowModelEditPart"
             type="de.cau.cs.kieler.layout.info.types.dataFlow">
       </binding>
       <binding
-            class="dataflow.diagram.edit.parts.BoxBoxCompartmentEditPart"
+            class="de.cau.cs.kieler.dataflow.diagram.edit.parts.BoxBoxCompartmentEditPart"
             type="de.cau.cs.kieler.layout.info.types.dataFlow">
       </binding>
       <binding
-            class="dataflow.diagram.edit.parts.BoxBoxCompartment2EditPart"
+            class="de.cau.cs.kieler.dataflow.diagram.edit.parts.BoxBoxCompartment2EditPart"
             type="de.cau.cs.kieler.layout.info.types.dataFlow">
       </binding>
    </extension>

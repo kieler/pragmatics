@@ -33,7 +33,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
-import dataflow.DataflowModel;
+import de.cau.cs.kieler.dataflow.DataflowModel;
 
 
 
@@ -168,7 +168,6 @@ public class CreateRandomModelWizard extends Wizard implements INewWizard {
 	/**
 	 * We will initialize file contents with a sample text.
 	 */
-
 	private InputStream openContentStream() {
 		String contents =
 			"This is the initial file contents for *.dataflow file that should be word-sorted in the Preview page of the multi-page editor";

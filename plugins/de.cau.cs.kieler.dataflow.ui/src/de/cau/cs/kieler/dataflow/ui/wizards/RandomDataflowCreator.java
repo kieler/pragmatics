@@ -1,11 +1,11 @@
 package de.cau.cs.kieler.dataflow.ui.wizards;
 
-import dataflow.Box;
-import dataflow.Connection;
-import dataflow.DataflowFactory;
-import dataflow.DataflowModel;
-import dataflow.InputPort;
-import dataflow.OutputPort;
+import de.cau.cs.kieler.dataflow.Box;
+import de.cau.cs.kieler.dataflow.Connection;
+import de.cau.cs.kieler.dataflow.DataflowFactory;
+import de.cau.cs.kieler.dataflow.DataflowModel;
+import de.cau.cs.kieler.dataflow.InputPort;
+import de.cau.cs.kieler.dataflow.OutputPort;
 
 public class RandomDataflowCreator {
 
