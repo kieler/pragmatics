@@ -107,7 +107,7 @@ public class KFloatOptionImpl extends KOptionImpl implements KFloatOption {
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
             case KLayoutDataPackage.KFLOAT_OPTION__VALUE:
-                return new Float(getValue());
+                return getValue();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -121,7 +121,7 @@ public class KFloatOptionImpl extends KOptionImpl implements KFloatOption {
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
             case KLayoutDataPackage.KFLOAT_OPTION__VALUE:
-                setValue(((Float)newValue).floatValue());
+                setValue((Float)newValue);
                 return;
         }
         super.eSet(featureID, newValue);

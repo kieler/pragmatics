@@ -2,7 +2,7 @@
 <feature
       id="de.cau.cs.kieler.klodd"
       label="KIELER Dataflow Layout"
-      version="0.2.0"
+      version="0.3.0"
       provider-name="Christian-Albrechts-University of Kiel">
 
    <description url="http://rtsys.informatik.uni-kiel.de/trac/kieler">
@@ -28,30 +28,30 @@
 
    <plugin
          id="de.cau.cs.kieler.core"
-         download-size="45"
-         install-size="45"
-         version="0.1.1"
+         download-size="47"
+         install-size="47"
+         version="0.1.2"
          unpack="false"/>
 
    <plugin
          id="de.cau.cs.kieler.kiml.layout"
-         download-size="61"
-         install-size="61"
-         version="0.2.0"
+         download-size="80"
+         install-size="80"
+         version="0.3.0"
          unpack="false"/>
 
    <plugin
          id="de.cau.cs.kieler.klodd.hierarchical"
-         download-size="88"
-         install-size="88"
-         version="0.2.0"
+         download-size="89"
+         install-size="89"
+         version="0.3.0"
          unpack="false"/>
 
    <plugin
          id="de.cau.cs.kieler.core.kgraph"
-         download-size="51"
-         install-size="51"
-         version="0.1.0"
+         download-size="40"
+         install-size="40"
+         version="0.2.0"
          unpack="false"/>
 
 </feature>

@@ -107,7 +107,7 @@ public class KIntOptionImpl extends KOptionImpl implements KIntOption {
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
             case KLayoutDataPackage.KINT_OPTION__VALUE:
-                return new Integer(getValue());
+                return getValue();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -121,7 +121,7 @@ public class KIntOptionImpl extends KOptionImpl implements KIntOption {
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
             case KLayoutDataPackage.KINT_OPTION__VALUE:
-                setValue(((Integer)newValue).intValue());
+                setValue((Integer)newValue);
                 return;
         }
         super.eSet(featureID, newValue);

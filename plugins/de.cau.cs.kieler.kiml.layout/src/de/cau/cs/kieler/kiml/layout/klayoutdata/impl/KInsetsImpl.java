@@ -234,13 +234,13 @@ public class KInsetsImpl extends EObjectImpl implements KInsets {
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
             case KLayoutDataPackage.KINSETS__TOP:
-                return new Float(getTop());
+                return getTop();
             case KLayoutDataPackage.KINSETS__BOTTOM:
-                return new Float(getBottom());
+                return getBottom();
             case KLayoutDataPackage.KINSETS__LEFT:
-                return new Float(getLeft());
+                return getLeft();
             case KLayoutDataPackage.KINSETS__RIGHT:
-                return new Float(getRight());
+                return getRight();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -254,16 +254,16 @@ public class KInsetsImpl extends EObjectImpl implements KInsets {
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
             case KLayoutDataPackage.KINSETS__TOP:
-                setTop(((Float)newValue).floatValue());
+                setTop((Float)newValue);
                 return;
             case KLayoutDataPackage.KINSETS__BOTTOM:
-                setBottom(((Float)newValue).floatValue());
+                setBottom((Float)newValue);
                 return;
             case KLayoutDataPackage.KINSETS__LEFT:
-                setLeft(((Float)newValue).floatValue());
+                setLeft((Float)newValue);
                 return;
             case KLayoutDataPackage.KINSETS__RIGHT:
-                setRight(((Float)newValue).floatValue());
+                setRight((Float)newValue);
                 return;
         }
         super.eSet(featureID, newValue);

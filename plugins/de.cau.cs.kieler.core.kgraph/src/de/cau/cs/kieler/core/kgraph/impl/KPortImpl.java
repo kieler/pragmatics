@@ -97,7 +97,7 @@ public class KPortImpl extends KGraphElementImpl implements KPort {
      * @generated
      */
     public KNode getNode() {
-        if (eContainerFeatureID != KGraphPackage.KPORT__NODE) return null;
+        if (eContainerFeatureID() != KGraphPackage.KPORT__NODE) return null;
         return (KNode)eContainer();
     }
 
@@ -117,7 +117,7 @@ public class KPortImpl extends KGraphElementImpl implements KPort {
      * @generated
      */
     public void setNode(KNode newNode) {
-        if (newNode != eInternalContainer() || (eContainerFeatureID != KGraphPackage.KPORT__NODE && newNode != null)) {
+        if (newNode != eInternalContainer() || (eContainerFeatureID() != KGraphPackage.KPORT__NODE && newNode != null)) {
             if (EcoreUtil.isAncestor(this, newNode))
                 throw new IllegalArgumentException("Recursive containment not allowed for " + toString());
             NotificationChain msgs = null;
@@ -226,7 +226,7 @@ public class KPortImpl extends KGraphElementImpl implements KPort {
      */
     @Override
     public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs) {
-        switch (eContainerFeatureID) {
+        switch (eContainerFeatureID()) {
             case KGraphPackage.KPORT__NODE:
                 return eInternalContainer().eInverseRemove(this, KGraphPackage.KNODE__PORTS, KNode.class, msgs);
         }

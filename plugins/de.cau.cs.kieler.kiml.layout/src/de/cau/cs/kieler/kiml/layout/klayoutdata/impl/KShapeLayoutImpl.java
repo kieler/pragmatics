@@ -233,13 +233,13 @@ public class KShapeLayoutImpl extends KLayoutDataImpl implements KShapeLayout {
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
             case KLayoutDataPackage.KSHAPE_LAYOUT__XPOS:
-                return new Float(getXpos());
+                return getXpos();
             case KLayoutDataPackage.KSHAPE_LAYOUT__YPOS:
-                return new Float(getYpos());
+                return getYpos();
             case KLayoutDataPackage.KSHAPE_LAYOUT__WIDTH:
-                return new Float(getWidth());
+                return getWidth();
             case KLayoutDataPackage.KSHAPE_LAYOUT__HEIGHT:
-                return new Float(getHeight());
+                return getHeight();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -253,16 +253,16 @@ public class KShapeLayoutImpl extends KLayoutDataImpl implements KShapeLayout {
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
             case KLayoutDataPackage.KSHAPE_LAYOUT__XPOS:
-                setXpos(((Float)newValue).floatValue());
+                setXpos((Float)newValue);
                 return;
             case KLayoutDataPackage.KSHAPE_LAYOUT__YPOS:
-                setYpos(((Float)newValue).floatValue());
+                setYpos((Float)newValue);
                 return;
             case KLayoutDataPackage.KSHAPE_LAYOUT__WIDTH:
-                setWidth(((Float)newValue).floatValue());
+                setWidth((Float)newValue);
                 return;
             case KLayoutDataPackage.KSHAPE_LAYOUT__HEIGHT:
-                setHeight(((Float)newValue).floatValue());
+                setHeight((Float)newValue);
                 return;
         }
         super.eSet(featureID, newValue);

@@ -144,7 +144,7 @@ public class KNodeImpl extends KGraphElementImpl implements KNode {
      * @generated
      */
     public KNode getParent() {
-        if (eContainerFeatureID != KGraphPackage.KNODE__PARENT) return null;
+        if (eContainerFeatureID() != KGraphPackage.KNODE__PARENT) return null;
         return (KNode)eContainer();
     }
 
@@ -164,7 +164,7 @@ public class KNodeImpl extends KGraphElementImpl implements KNode {
      * @generated
      */
     public void setParent(KNode newParent) {
-        if (newParent != eInternalContainer() || (eContainerFeatureID != KGraphPackage.KNODE__PARENT && newParent != null)) {
+        if (newParent != eInternalContainer() || (eContainerFeatureID() != KGraphPackage.KNODE__PARENT && newParent != null)) {
             if (EcoreUtil.isAncestor(this, newParent))
                 throw new IllegalArgumentException("Recursive containment not allowed for " + toString());
             NotificationChain msgs = null;
@@ -314,7 +314,7 @@ public class KNodeImpl extends KGraphElementImpl implements KNode {
      */
     @Override
     public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs) {
-        switch (eContainerFeatureID) {
+        switch (eContainerFeatureID()) {
             case KGraphPackage.KNODE__PARENT:
                 return eInternalContainer().eInverseRemove(this, KGraphPackage.KNODE__CHILDREN, KNode.class, msgs);
         }

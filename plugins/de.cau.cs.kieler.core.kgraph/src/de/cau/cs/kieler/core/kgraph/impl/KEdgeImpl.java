@@ -120,7 +120,7 @@ public class KEdgeImpl extends KGraphElementImpl implements KEdge {
      * @generated
      */
     public KNode getSource() {
-        if (eContainerFeatureID != KGraphPackage.KEDGE__SOURCE) return null;
+        if (eContainerFeatureID() != KGraphPackage.KEDGE__SOURCE) return null;
         return (KNode)eContainer();
     }
 
@@ -140,7 +140,7 @@ public class KEdgeImpl extends KGraphElementImpl implements KEdge {
      * @generated
      */
     public void setSource(KNode newSource) {
-        if (newSource != eInternalContainer() || (eContainerFeatureID != KGraphPackage.KEDGE__SOURCE && newSource != null)) {
+        if (newSource != eInternalContainer() || (eContainerFeatureID() != KGraphPackage.KEDGE__SOURCE && newSource != null)) {
             if (EcoreUtil.isAncestor(this, newSource))
                 throw new IllegalArgumentException("Recursive containment not allowed for " + toString());
             NotificationChain msgs = null;
@@ -348,7 +348,7 @@ public class KEdgeImpl extends KGraphElementImpl implements KEdge {
      */
     @Override
     public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs) {
-        switch (eContainerFeatureID) {
+        switch (eContainerFeatureID()) {
             case KGraphPackage.KEDGE__SOURCE:
                 return eInternalContainer().eInverseRemove(this, KGraphPackage.KNODE__OUTGOING_EDGES, KNode.class, msgs);
         }

@@ -150,9 +150,9 @@ public class KPointImpl extends EObjectImpl implements KPoint {
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
             case KLayoutDataPackage.KPOINT__X:
-                return new Float(getX());
+                return getX();
             case KLayoutDataPackage.KPOINT__Y:
-                return new Float(getY());
+                return getY();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -166,10 +166,10 @@ public class KPointImpl extends EObjectImpl implements KPoint {
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
             case KLayoutDataPackage.KPOINT__X:
-                setX(((Float)newValue).floatValue());
+                setX((Float)newValue);
                 return;
             case KLayoutDataPackage.KPOINT__Y:
-                setY(((Float)newValue).floatValue());
+                setY((Float)newValue);
                 return;
         }
         super.eSet(featureID, newValue);
