@@ -1,4 +1,4 @@
-package dataflow.custom.diagram;
+package de.cau.cs.kieler.dataflow.custom.diagram;
 
 import java.util.List;
 import java.util.ListIterator;

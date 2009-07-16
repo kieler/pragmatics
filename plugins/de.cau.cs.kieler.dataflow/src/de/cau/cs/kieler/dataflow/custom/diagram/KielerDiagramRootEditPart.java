@@ -1,4 +1,4 @@
-package dataflow.custom.diagram;
+package de.cau.cs.kieler.dataflow.custom.diagram;
 
 import org.eclipse.draw2d.FreeformLayer;
 import org.eclipse.draw2d.FreeformLayeredPane;
