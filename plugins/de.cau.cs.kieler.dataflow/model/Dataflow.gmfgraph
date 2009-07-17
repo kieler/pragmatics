@@ -12,7 +12,7 @@
           name="BoxFigure">
         <layout
             xsi:type="gmfgraph:CustomLayout"
-            qualifiedClassName="dataflow.custom.diagram.TitledToolbarLayout"/>
+            qualifiedClassName="de.cau.cs.kieler.dataflow.custom.diagram.TitledToolbarLayout"/>
         <backgroundColor
             xsi:type="gmfgraph:RGBColor"
             red="250"
