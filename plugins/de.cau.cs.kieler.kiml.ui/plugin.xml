@@ -6,7 +6,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            category="de.cau.cs.kieler.preferencePage"
+            category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.kiml.ui.preferences.LayoutPreferencePage"
             id="de.cau.cs.kieler.kiml.ui.preferences.layout"
             name="%page.name.0">
@@ -22,7 +22,7 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            categoryId="de.cau.cs.kieler.commands.category"
+            categoryId="de.cau.cs.kieler"
             defaultHandler="de.cau.cs.kieler.kiml.ui.handlers.LayoutHandler"
             id="de.cau.cs.kieler.kiml.ui.command.layout"
             name="%command.name.0">
@@ -37,7 +37,7 @@
    <extension
 point="org.eclipse.ui.menus">
 <menuContribution
-  locationURI="menu:de.cau.cs.kieler.menu">
+  locationURI="menu:de.cau.cs.kieler">
    <command
          commandId="de.cau.cs.kieler.kiml.ui.command.layout"
          icon="icons/kieler-arrange.png"
@@ -53,7 +53,7 @@ point="org.eclipse.ui.menus">
    </command>
 </menuContribution>
 <menuContribution
-      locationURI="toolbar:de.cau.cs.kieler.toolbar">
+      locationURI="toolbar:de.cau.cs.kieler">
    <command
          commandId="de.cau.cs.kieler.kiml.ui.command.layout"
          icon="icons/kieler-arrange.png"
@@ -69,7 +69,7 @@ point="org.eclipse.ui.menus">
    </command>
 </menuContribution>
 <menuContribution
-      locationURI="popup:de.cau.cs.kieler.contextMenu">
+      locationURI="popup:de.cau.cs.kieler">
    <command
          commandId="de.cau.cs.kieler.kiml.ui.command.layout"
          icon="icons/kieler-arrange.png"

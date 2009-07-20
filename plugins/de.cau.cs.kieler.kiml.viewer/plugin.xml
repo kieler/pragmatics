@@ -5,7 +5,7 @@
          point="org.eclipse.ui.views">
       <view
             allowMultiple="false"
-            category="de.cau.cs.kieler.views.category"
+            category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.kiml.viewer.views.LayoutGraphView"
             icon="icons/graph.gif"
             id="de.cau.cs.kieler.kiml.viewer.layoutGraph"
@@ -14,7 +14,7 @@
       </view>
       <view
             allowMultiple="false"
-            category="de.cau.cs.kieler.views.category"
+            category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.kiml.viewer.views.ExecutionView"
             icon="icons/clock.gif"
             id="de.cau.cs.kieler.kiml.viewer.execution"
