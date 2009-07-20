@@ -2,7 +2,7 @@
 <ecore:EPackage xmi:version="2.0"
     xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="klayoutdata"
-    nsURI="http://rtsys.informatik.uni-kiel.de/trac/kieler/wiki/KLayoutData" nsPrefix="klayoutdata">
+    nsURI="http://kieler.cs.cau.de/KLayoutData" nsPrefix="klayoutdata">
   <eClassifiers xsi:type="ecore:EClass" name="KLayoutData" abstract="true" eSuperTypes="../../de.cau.cs.kieler.core.kgraph/model/kgraph.ecore#//KGraphData">
     <eOperations name="getOption" eType="#//KOption">
       <eParameters name="key" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>

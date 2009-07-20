@@ -51,7 +51,7 @@ public interface KGraphPackage extends EPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    String eNS_URI = "http://rtsys.informatik.uni-kiel.de/trac/kieler/wiki/KGraph";
+    String eNS_URI = "http://kieler.cs.cau.de/KGraph";
 
     /**
      * The package namespace name.

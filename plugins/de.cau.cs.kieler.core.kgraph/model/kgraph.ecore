@@ -2,7 +2,7 @@
 <ecore:EPackage xmi:version="2.0"
     xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="kgraph"
-    nsURI="http://rtsys.informatik.uni-kiel.de/trac/kieler/wiki/KGraph" nsPrefix="kgraph">
+    nsURI="http://kieler.cs.cau.de/KGraph" nsPrefix="kgraph">
   <eClassifiers xsi:type="ecore:EClass" name="KGraphElement" abstract="true" eSuperTypes="platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EModelElement">
     <eOperations name="getData" eType="#//KGraphData">
       <eParameters name="type" eType="ecore:EClass platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EClass"/>

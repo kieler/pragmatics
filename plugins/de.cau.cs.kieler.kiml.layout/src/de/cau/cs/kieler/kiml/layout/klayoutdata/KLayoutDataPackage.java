@@ -52,7 +52,7 @@ public interface KLayoutDataPackage extends EPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    String eNS_URI = "http://rtsys.informatik.uni-kiel.de/trac/kieler/wiki/KLayoutData";
+    String eNS_URI = "http://kieler.cs.cau.de/KLayoutData";
 
     /**
      * The package namespace name.

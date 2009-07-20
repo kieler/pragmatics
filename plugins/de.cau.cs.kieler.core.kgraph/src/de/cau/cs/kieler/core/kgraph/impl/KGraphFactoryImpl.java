@@ -40,7 +40,7 @@ public class KGraphFactoryImpl extends EFactoryImpl implements KGraphFactory {
      */
     public static KGraphFactory init() {
         try {
-            KGraphFactory theKGraphFactory = (KGraphFactory)EPackage.Registry.INSTANCE.getEFactory("http://rtsys.informatik.uni-kiel.de/trac/kieler/wiki/KGraph"); 
+            KGraphFactory theKGraphFactory = (KGraphFactory)EPackage.Registry.INSTANCE.getEFactory("http://kieler.cs.cau.de/KGraph"); 
             if (theKGraphFactory != null) {
                 return theKGraphFactory;
             }

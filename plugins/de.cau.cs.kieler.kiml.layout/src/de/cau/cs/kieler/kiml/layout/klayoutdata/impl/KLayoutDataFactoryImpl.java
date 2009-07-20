@@ -40,7 +40,7 @@ public class KLayoutDataFactoryImpl extends EFactoryImpl implements KLayoutDataF
      */
     public static KLayoutDataFactory init() {
         try {
-            KLayoutDataFactory theKLayoutDataFactory = (KLayoutDataFactory)EPackage.Registry.INSTANCE.getEFactory("http://rtsys.informatik.uni-kiel.de/trac/kieler/wiki/KLayoutData"); 
+            KLayoutDataFactory theKLayoutDataFactory = (KLayoutDataFactory)EPackage.Registry.INSTANCE.getEFactory("http://kieler.cs.cau.de/KLayoutData"); 
             if (theKLayoutDataFactory != null) {
                 return theKLayoutDataFactory;
             }
