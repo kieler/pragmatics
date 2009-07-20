@@ -7,7 +7,7 @@
       <wizard
             name="Create Random Dataflow Model"
             icon="icons/sample.gif"
-            category="de.cau.cs.kieler.kiml.ui.kieler"
+            category="de.cau.cs.kieler.newWizards.category"
             class="de.cau.cs.kieler.dataflow.ui.wizards.CreateRandomModelWizard"
             id="de.cau.cs.kieler.dataflow.ui.wizards.CreateRandomModelWizard">
       </wizard>
