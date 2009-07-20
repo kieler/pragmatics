@@ -1,4 +1,4 @@
-«IMPORT dataflow»
+«IMPORT de::cau::cs::kieler::dataflow»
 
 «EXTENSION metamodel::helper»
 

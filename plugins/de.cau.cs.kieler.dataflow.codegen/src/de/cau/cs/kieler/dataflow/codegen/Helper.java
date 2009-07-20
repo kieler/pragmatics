@@ -18,9 +18,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import dataflow.Box;
-import dataflow.Connection;
-import dataflow.Port;
+import de.cau.cs.kieler.dataflow.*;
+
 
 public class Helper {
 
