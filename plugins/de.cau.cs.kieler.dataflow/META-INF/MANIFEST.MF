@@ -8,6 +8,7 @@ Bundle-Vendor: Christian-Albrechts-University of Kiel
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: de.cau.cs.kieler.dataflow,
+ de.cau.cs.kieler.dataflow.custom.diagram,
  de.cau.cs.kieler.dataflow.impl,
  de.cau.cs.kieler.dataflow.util
 Require-Bundle: org.eclipse.core.runtime,
