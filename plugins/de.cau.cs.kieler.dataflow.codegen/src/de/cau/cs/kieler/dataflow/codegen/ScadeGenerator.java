@@ -25,8 +25,6 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.part.FileEditorInput;
-import org.openarchitectureware.workflow.WorkflowRunner;
-import org.openarchitectureware.workflow.monitor.NullProgressMonitor;
 
 
 public class ScadeGenerator extends AbstractHandler implements IHandler {
@@ -47,12 +45,12 @@ public class ScadeGenerator extends AbstractHandler implements IHandler {
         Map<String, Object> slotContents = new HashMap<String, Object>();
 
 
-        System.out.println(Activator.getDefault().getStateLocation());
+        //System.out.println(Activator.getDefault().getStateLocation());
         properties.put("model", model);
         properties.put("src-gen", ".") ;
 
 
-        WorkflowRunner runner = new WorkflowRunner();  
+     /*   WorkflowRunner runner = new WorkflowRunner();  
 
         String generator = "src/generator.oaw";
         Log logger = LogFactoryImpl.getLog(runner.getClass());
@@ -66,7 +64,7 @@ public class ScadeGenerator extends AbstractHandler implements IHandler {
             System.out.println("Code generation complete");
         }else{
             System.out.println("Code generation failed");
-        }
+        }*/
 
 
         return null;

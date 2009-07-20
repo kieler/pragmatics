@@ -25,13 +25,13 @@
 
   <!--  generate code -->
   <component class="org.eclipse.xpand2.Generator">
-    <metaModel class="org.eclipse.xtend.typesystem.emf.EmfRegistryMetaModel" />
-    <metaModel id='mm' class='org.eclipse.xtend.typesystem.emf.EmfRegistryMetaModel' />  
-  <!--<metaModel class = "oaw.type.emf.EmfMetaModel">
-  <metaModelPackage value="dataflow.DataflowPackage"/>
-    </metaModel>-->
+   <!--  <metaModel class="org.eclipse.xtend.typesystem.emf.EmfRegistryMetaModel" />
+    <metaModel id='mm' class='org.eclipse.xtend.typesystem.emf.EmfRegistryMetaModel' /> -->   
+  <metaModel class = "oaw.type.emf.EmfMetaModel">  
+  <metaModelPackage value="dataflow.DataflowPackage"/> 
+    </metaModel>
     <expand
-	  value="template::Template::main FOR model" />
+	  value="template::Lustre::main FOR model" />
     <outlet path="${src-gen}" />
   </component>
 </workflow>

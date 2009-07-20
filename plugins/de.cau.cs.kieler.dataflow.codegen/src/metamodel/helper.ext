@@ -1,0 +1,29 @@
+import dataflow;
+
+Void init(Box b) :
+  JAVA de.cau.cs.kieler.dataflow.codegen.Helper.init(de.cau.cs.kieler.dataflow.Box);
+
+Void initIO(Box b) :
+  JAVA de.cau.cs.kieler.dataflow.codegen.Helper.initIO(de.cau.cs.kieler.dataflow.Box);
+
+Set getInputs() :
+  JAVA de.cau.cs.kieler.dataflow.codegen.Helper.getInputs();
+ 
+Set getOutputs() :
+  JAVA de.cau.cs.kieler.dataflow.codegen.Helper.getOutputs(); 
+  
+Set getLocals() :
+  JAVA de.cau.cs.kieler.dataflow.codegen.Helper.getLocals();   
+
+boolean hasLocals() :
+  getLocals().size>0;
+  
+Set getLocals(Box box) :
+ // box.boxes.connections.collect(c | !box.inputs.contains(c.sourcePort) && !box.outputs.contains(c.targetPort));
+  JAVA de.cau.cs.kieler.dataflow.codegen.Helper.getLocals(de.cau.cs.kieler.dataflow.Box);   
+
+boolean hasLocals(Box box) :
+  getLocals(box).size > 0;  
+  
+String getName(Port p) :
+  JAVA de.cau.cs.kieler.dataflow.codegen.Helper.getName(de.cau.cs.kieler.dataflow.Port);    

@@ -3,6 +3,7 @@
 	<name>de.cau.cs.kieler.dataflow.codegen</name>
 	<comment></comment>
 	<projects>
+		<project>de.cau.cs.kieler.dataflow</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
