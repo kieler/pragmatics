@@ -25,28 +25,35 @@
          id="de.cau.cs.kieler.kiml.layout"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml.layouter.graphviz"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
+         version="0.3.0"
          unpack="false"/>
 
    <plugin
          id="de.cau.cs.kieler.kiml.ui"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.1.0"
          unpack="false"/>
 
    <plugin
          id="de.cau.cs.kieler.klodd.hierarchical"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.3.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.kiml.graphviz.dot"
+         download-size="0"
+         install-size="0"
+         version="0.1.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.kiml.graphviz.layouter"
+         download-size="0"
+         install-size="0"
+         version="0.1.0"
          unpack="false"/>
 
 </feature>
