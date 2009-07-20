@@ -1,0 +1,72 @@
+/******************************************************************************
+ * KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2009 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
+grammar de.cau.cs.kieler.kiml.graphviz.Dot with org.eclipse.xtext.common.Terminals
+hidden(PREC_LINE)
+
+/**
+ * TMF Xtext grammar for the DOT Language, which is defined at
+ *      http://www.graphviz.org/doc/info/lang.html
+ *
+ * The original language permits Java-style comments and ignores lines beginning
+ * with '#'. These are not supported by this grammar, as it is used for automatically
+ * generated files.
+ */
+generate dot "http://kieler.cs.cau.de/Dot"
+
+
+terminal ID : (('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*);
+
+terminal FLOAT: (('-')?('.'('0'..'9')+ | ('0'..'9')+('.'('0'..'9')*)?));
+
+terminal PREC_LINE: '#' !('\n'|'\r')* ('\r'? '\n')? ;
+
+
+Value: ID | FLOAT | STRING;
+
+GraphvizModel: (graphs+=Graph)*;
+
+Graph: (strict?="strict")? type=GraphType (name=ID)?
+    "{" (statements+=Statement)* "}";
+
+Statement: (EdgeStatement | NodeStatement | AttributeStatement | Subgraph
+    | (name=ID "=" value=Value)) ";"?;
+
+EdgeStatement: (Subgraph | Node)
+    (edgeTarget+=EdgeTarget)+ (attributes=AttributeList)?;
+
+EdgeTarget: operator=EdgeOperator (subgraph=Subgraph | node=Node);
+
+NodeStatement: node=Node (attributes=AttributeList)?;
+
+AttributeStatement: type=AttributeType attributes=AttributeList;
+
+Subgraph: ("subgraph" (name=ID)?)? (attributes=AttributeList)?
+    "{" (statements+=Statement)* "}";
+
+AttributeList: "[" entries+=Attribute ("," entries+=Attribute)* "]";
+
+Attribute: name=ID ("=" value=Value)?;
+
+Node: name=ID (port=Port)?;
+
+Port: ":" name=ID (":" compass_pt=CompassPoint)? | ":" compass_pt=CompassPoint;
+
+enum EdgeOperator: directed="->" | undirected="--";
+ 
+enum GraphType: graph | digraph;
+ 
+enum AttributeType: graph | node | edge;
+
+enum CompassPoint: north="n" | northeast="ne" | east="e" | southeast="se"
+    | south="s" | southwest="sw" | west="w" | northwest="nw";
