@@ -1,4 +1,4 @@
-package de.cau.cs.kieler.kiml.layouter.zest;
+package de.cau.cs.kieler.kiml.zest;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -18,8 +18,8 @@ import de.cau.cs.kieler.kiml.layout.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
-import de.cau.cs.kieler.kiml.layouter.zest.graph.*;
-import de.cau.cs.kieler.kiml.layouter.zest.preferences.ZestLayouterPreferencePage;
+import de.cau.cs.kieler.kiml.zest.graph.*;
+import de.cau.cs.kieler.kiml.zest.preferences.ZestLayouterPreferencePage;
 
 
 /**

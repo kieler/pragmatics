@@ -1,4 +1,4 @@
-package de.cau.cs.kieler.kiml.layouter.zest.preferences;
+package de.cau.cs.kieler.kiml.zest.preferences;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.swt.SWT;
@@ -9,7 +9,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import de.cau.cs.kieler.core.ui.util.FloatFieldEditor;
-import de.cau.cs.kieler.kiml.layouter.zest.Activator;
+import de.cau.cs.kieler.kiml.zest.Activator;
 
 
 /**

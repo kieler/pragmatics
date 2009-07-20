@@ -6,7 +6,7 @@
          point="org.eclipse.ui.preferencePages">
       <page
             category="de.cau.cs.kieler.kiml.ui.preferences.layout"
-            class="de.cau.cs.kieler.kiml.layouter.graphviz.preferences.GraphvizPreferencePage"
+            class="de.cau.cs.kieler.kiml.graphviz.layouter.preferences.GraphvizPreferencePage"
             id="de.cau.cs.kieler.kiml.layouter.graphviz.preferences.GraphvizPreferencePage"
             name="GraphViz">
       </page>
@@ -14,7 +14,7 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
-            class="de.cau.cs.kieler.kiml.layouter.graphviz.preferences.PreferenceInitializer">
+            class="de.cau.cs.kieler.kiml.graphviz.layouter.preferences.PreferenceInitializer">
       </initializer>
    </extension>
    <extension
@@ -25,7 +25,7 @@
       </category>
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.graphviz"
-            class="de.cau.cs.kieler.kiml.layouter.graphviz.GraphvizLayoutProvider"
+            class="de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayoutProvider"
             id="de.cau.cs.kieler.kiml.layouter.dot"
             name="Dot"
             parameter="dot"
@@ -41,7 +41,7 @@
       </layoutProvider>
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.graphviz"
-            class="de.cau.cs.kieler.kiml.layouter.graphviz.GraphvizLayoutProvider"
+            class="de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayoutProvider"
             id="de.cau.cs.kieler.kiml.layouter.neato"
             name="Neato"
             parameter="neato"
@@ -53,7 +53,7 @@
       </layoutProvider>
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.graphviz"
-            class="de.cau.cs.kieler.kiml.layouter.graphviz.GraphvizLayoutProvider"
+            class="de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayoutProvider"
             id="de.cau.cs.kieler.kiml.layouter.fdp"
             name="FDP"
             parameter="fdp"
@@ -65,7 +65,7 @@
       </layoutProvider>
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.graphviz"
-            class="de.cau.cs.kieler.kiml.layouter.graphviz.GraphvizLayoutProvider"
+            class="de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayoutProvider"
             id="de.cau.cs.kieler.kiml.layouter.twopi"
             name="Twopi"
             parameter="twopi"
@@ -77,7 +77,7 @@
       </layoutProvider>
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.graphviz"
-            class="de.cau.cs.kieler.kiml.layouter.graphviz.GraphvizLayoutProvider"
+            class="de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayoutProvider"
             id="de.cau.cs.kieler.kiml.layouter.circo"
             name="Circo"
             parameter="circo"

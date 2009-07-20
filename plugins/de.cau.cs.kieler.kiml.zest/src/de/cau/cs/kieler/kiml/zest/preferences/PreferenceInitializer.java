@@ -1,9 +1,9 @@
-package de.cau.cs.kieler.kiml.layouter.zest.preferences;
+package de.cau.cs.kieler.kiml.zest.preferences;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import de.cau.cs.kieler.kiml.layouter.zest.Activator;
+import de.cau.cs.kieler.kiml.zest.Activator;
 
 
 /**

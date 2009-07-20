@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.layouter.graphviz.preferences;
+package de.cau.cs.kieler.kiml.graphviz.layouter.preferences;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
@@ -25,8 +25,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import de.cau.cs.kieler.kiml.layouter.graphviz.Activator;
-import de.cau.cs.kieler.kiml.layouter.graphviz.GraphvizLayouter;
+import de.cau.cs.kieler.kiml.graphviz.layouter.Activator;
+import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayouter;
 
 
 /**
@@ -38,7 +38,7 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
         implements IWorkbenchPreferencePage {
 
     /** identifier of the preference page */
-	public static final String ID = "de.cau.cs.kieler.kiml.layouter.graphviz.preferences.GraphvizPreferencePage";
+	public static final String ID = "de.cau.cs.kieler.kiml.graphviz.layouter.preferences.GraphvizPreferencePage";
 	
 	/**
 	 * Creates a Graphviz preference page.

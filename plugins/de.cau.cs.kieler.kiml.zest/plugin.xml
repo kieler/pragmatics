@@ -5,7 +5,7 @@
          point="org.eclipse.ui.preferencePages">
       <page
             category="de.cau.cs.kieler.kiml.ui.preferences.layout"
-            class="de.cau.cs.kieler.kiml.layouter.zest.preferences.ZestLayouterPreferencePage"
+            class="de.cau.cs.kieler.kiml.zest.preferences.ZestLayouterPreferencePage"
             id="de.cau.cs.kieler.kiml.layouter.zest.preferences"
             name="Zest">
       </page>
@@ -13,7 +13,7 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
-            class="de.cau.cs.kieler.kiml.layouter.zest.preferences.PreferenceInitializer">
+            class="de.cau.cs.kieler.kiml.zest.preferences.PreferenceInitializer">
       </initializer>
    </extension>
    <extension
@@ -24,7 +24,7 @@
       </category>
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.zest"
-            class="de.cau.cs.kieler.kiml.layouter.zest.ZestLayoutProvider"
+            class="de.cau.cs.kieler.kiml.zest.ZestLayoutProvider"
             id="de.cau.cs.kieler.kiml.layouter.zest.spring"
             name="Zest Spring"
             parameter="SpringLayout"
@@ -36,7 +36,7 @@
       </layoutProvider>
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.zest"
-            class="de.cau.cs.kieler.kiml.layouter.zest.ZestLayoutProvider"
+            class="de.cau.cs.kieler.kiml.zest.ZestLayoutProvider"
             id="de.cau.cs.kieler.kiml.layouter.zest.grid"
             name="Zest Grid"
             parameter="GridLayout">
@@ -47,7 +47,7 @@
       </layoutProvider>
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.zest"
-            class="de.cau.cs.kieler.kiml.layouter.zest.ZestLayoutProvider"
+            class="de.cau.cs.kieler.kiml.zest.ZestLayoutProvider"
             id="de.cau.cs.kieler.kiml.layouter.zest.grid"
             name="Zest Radial"
             parameter="RadialLayout"

@@ -10,5 +10,5 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.4.0",
  de.cau.cs.kieler.core,
  de.cau.cs.kieler.core.ui,
  de.cau.cs.kieler.kiml.layout
-Bundle-Activator: de.cau.cs.kieler.kiml.layouter.zest.Activator
+Bundle-Activator: de.cau.cs.kieler.kiml.zest.Activator
 Bundle-ActivationPolicy: lazy

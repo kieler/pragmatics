@@ -1,4 +1,4 @@
-package de.cau.cs.kieler.kiml.layouter.zest.graph;
+package de.cau.cs.kieler.kiml.zest.graph;
 
 import org.eclipse.zest.layouts.exampleStructures.SimpleNode;
 

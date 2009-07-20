@@ -1,17 +1,4 @@
-/******************************************************************************
- * KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
- *
- * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
- * Copyright 2008 by
- * + Christian-Albrechts-University of Kiel
- *   + Department of Computer Science
- *     + Real-Time and Embedded Systems Group
- * 
- * This code is provided under the terms of the Eclipse Public License (EPL).
- * See the file epl-v10.html for the license text.
- */
-package de.cau.cs.kieler.kiml.layouter.graphviz;
+package de.cau.cs.kieler.kiml.zest;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -19,13 +6,15 @@ import org.osgi.framework.BundleContext;
 
 /**
  * The activator class controls the plug-in life cycle
+ * 
+ * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class Activator extends AbstractUIPlugin {
 
-	/* The plug-in ID */
-	public static final String PLUGIN_ID = "de.cau.cs.kieler.kiml.layouter.graphviz";
-
-	/* The shared instance */
+	// The plug-in ID
+	public static final String PLUGIN_ID = "de.cau.cs.kieler.kiml.zest";
+	
+	// The shared instance
 	private static Activator plugin;
 	
 	/**
@@ -72,3 +61,4 @@ public class Activator extends AbstractUIPlugin {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
 	}
 }
+

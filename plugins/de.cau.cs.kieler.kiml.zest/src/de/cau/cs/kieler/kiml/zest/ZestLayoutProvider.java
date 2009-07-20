@@ -1,4 +1,4 @@
-package de.cau.cs.kieler.kiml.layouter.zest;
+package de.cau.cs.kieler.kiml.zest;
 
 import org.eclipse.zest.layouts.algorithms.AbstractLayoutAlgorithm;
 import org.eclipse.zest.layouts.algorithms.GridLayoutAlgorithm;
