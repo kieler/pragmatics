@@ -6,7 +6,7 @@
       <page
             category="de.cau.cs.kieler.kiml.ui.preferences.layout"
             class="de.cau.cs.kieler.kiml.zest.preferences.ZestLayouterPreferencePage"
-            id="de.cau.cs.kieler.kiml.layouter.zest.preferences"
+            id="de.cau.cs.kieler.kiml.zest.preferences"
             name="Zest">
       </page>
    </extension>
@@ -25,7 +25,7 @@
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.zest"
             class="de.cau.cs.kieler.kiml.zest.ZestLayoutProvider"
-            id="de.cau.cs.kieler.kiml.layouter.zest.spring"
+            id="de.cau.cs.kieler.kiml.zest.spring"
             name="Zest Spring"
             parameter="SpringLayout"
             type="de.cau.cs.kieler.layout.types.force">
@@ -37,7 +37,7 @@
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.zest"
             class="de.cau.cs.kieler.kiml.zest.ZestLayoutProvider"
-            id="de.cau.cs.kieler.kiml.layouter.zest.grid"
+            id="de.cau.cs.kieler.kiml.zest.grid"
             name="Zest Grid"
             parameter="GridLayout">
          <supportedDiagram
@@ -48,7 +48,7 @@
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.zest"
             class="de.cau.cs.kieler.kiml.zest.ZestLayoutProvider"
-            id="de.cau.cs.kieler.kiml.layouter.zest.grid"
+            id="de.cau.cs.kieler.kiml.zest.grid"
             name="Zest Radial"
             parameter="RadialLayout"
             type="de.cau.cs.kieler.layout.types.radial">
