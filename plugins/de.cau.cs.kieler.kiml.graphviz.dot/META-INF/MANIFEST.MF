@@ -1,12 +1,12 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: de.cau.cs.kieler.kiml.graphviz.dot
-Bundle-Vendor: My Company
-Bundle-Version: 1.0.0
+Bundle-Name: Graphviz Dot Language
+Bundle-Vendor: Christian-Albrechts-University of Kiel
+Bundle-Version: 0.1.0
 Bundle-SymbolicName: de.cau.cs.kieler.kiml.graphviz.dot; singleton:=true
 Eclipse-RegisterBuddy: org.eclipse.xtext.log4j
 Bundle-ActivationPolicy: lazy
-Require-Bundle:  org.eclipse.xtext,
+Require-Bundle: org.eclipse.xtext,
  org.eclipse.xtext.generator;resolution:=optional,
  de.itemis.xtext.antlr;resolution:=optional,
  org.apache.commons.logging;resolution:=optional,
@@ -15,5 +15,17 @@ Require-Bundle:  org.eclipse.xtext,
  org.eclipse.emf.mwe.utils;resolution:=optional,
  org.eclipse.emf.mwe.core;resolution:=optional,
  com.ibm.icu;resolution:=optional,
- org.eclipse.xtext.xtend;resolution:=optional
+ org.eclipse.xtext.xtend;resolution:=optional,
+ org.eclipse.xtext.util,
+ org.eclipse.emf.ecore,
+ org.eclipse.emf.common,
+ org.antlr.runtime
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Export-Package: de.cau.cs.kieler.kiml.graphviz,
+ de.cau.cs.kieler.kiml.graphviz.services,
+ de.cau.cs.kieler.kiml.graphviz.dot,
+ de.cau.cs.kieler.kiml.graphviz.dot.impl,
+ de.cau.cs.kieler.kiml.graphviz.dot.util,
+ de.cau.cs.kieler.kiml.graphviz.parseTreeConstruction,
+ de.cau.cs.kieler.kiml.graphviz.parser.antlr,
+ de.cau.cs.kieler.kiml.graphviz.validation

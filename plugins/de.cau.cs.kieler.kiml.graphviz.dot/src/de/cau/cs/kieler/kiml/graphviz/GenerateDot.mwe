@@ -1,5 +1,5 @@
 <workflow>
-	<property file="de/cau/cs/kieler/kiml/graphviz/dot/GenerateDot.properties"/>
+	<property file="de/cau/cs/kieler/kiml/graphviz/GenerateDot.properties"/>
 	
 	<property name="runtimeProject" value="../${projectName}"/>
 	
