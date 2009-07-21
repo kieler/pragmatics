@@ -9,6 +9,7 @@
       itemSemanticEditPolicyClassName="DataflowModelItemSemanticEditPolicy"
       canonicalEditPolicyClassName="DataflowModelCanonicalEditPolicy"
       iconProviderPriority="Low"
+      creationWizardCategoryID="de.cau.cs.kieler"
       validationProviderPriority="Low">
     <diagramRunTimeClass
         href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Diagram"/>
@@ -384,7 +385,8 @@
           kind="RulersAndGrid"/>
     </preferencePages>
   </diagram>
-  <plugin>
+  <plugin
+      version="0.1.0.qualifier">
     <requiredPlugins>org.eclipse.draw2d</requiredPlugins>
     <requiredPlugins>org.eclipse.gmf.runtime.draw2d.ui</requiredPlugins>
   </plugin>
