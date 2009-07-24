@@ -13,15 +13,12 @@
  */
 package de.cau.cs.kieler.kiml.graphviz.layouter.preferences;
 
-import org.eclipse.jface.preference.BooleanFieldEditor;
-import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -38,7 +35,7 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
         implements IWorkbenchPreferencePage {
 
     /** identifier of the preference page */
-	public static final String ID = "de.cau.cs.kieler.kiml.graphviz.layouter.preferences.GraphvizPreferencePage";
+	public static final String ID = "de.cau.cs.kieler.kiml.graphviz.preferences";
 	
 	/**
 	 * Creates a Graphviz preference page.
@@ -52,29 +49,6 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
 	public void createFieldEditors() {
-		GridLayout gl;
-
-		// debug group
-		Group debug = new Group(this.getFieldEditorParent(), SWT.NONE);
-		debug.setText("Debug:");
-
-		BooleanFieldEditor enableDebug = new BooleanFieldEditor(
-		        GraphvizLayouter.PREF_GRAPHVIZ_ENABLE_DEBUG_OUTPUT,
-				"Enable debug output (*.dot)", debug);
-		DirectoryFieldEditor debugDir = new DirectoryFieldEditor(
-		        GraphvizLayouter.PREF_GRAPHVIZ_DEBUG_DIR,
-				"Debug directory:", debug);
-		Label description = new Label(debug, SWT.WRAP);
-		description.setText("If a directory is chosen, debug output of GraphViz (the *.dot files) go there. Otherwise the user home directory is chosen.");
-		description.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
-				true, true, 2, 1));
-		debug.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
-				false, 3, 2));
-		gl = new GridLayout(3, false);
-		gl.marginWidth = 15;
-		gl.marginHeight = 10;
-		debug.setLayout(gl);
-
 		// executable group
 		Group executable = new Group(this.getFieldEditorParent(), SWT.NONE);
 		executable.setText("Executable:");
@@ -86,14 +60,12 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 		
 		executable.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
 				false, 2, 1));
-		gl = new GridLayout(2, false);
-		gl.marginWidth = 15;
-		gl.marginHeight = 10;
-		executable.setLayout(gl);
+		GridLayout gridLayout = new GridLayout(2, false);
+		gridLayout.marginWidth = 15;
+		gridLayout.marginHeight = 10;
+		executable.setLayout(gridLayout);
 		
 		// add all field editors
-		addField(enableDebug);
-		addField(debugDir);
 		addField(dotExecutable);
 	}
 

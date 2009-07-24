@@ -26,6 +26,8 @@ public final class GraphvizAPI {
     public static final String ATTR_ARROWTAIL     = "arrowtail";
     /** Bounding box. */
     public static final String ATTR_BOUNDINGBOX   = "bb";
+    /** Comment. */
+    public static final String ATTR_COMMENT       = "comment";
     /** This specifies the expected number of pixels per inch on a display device. */
     public static final String ATTR_DPI           = "dpi";
     /** If true, the node size is specified by the values of the width

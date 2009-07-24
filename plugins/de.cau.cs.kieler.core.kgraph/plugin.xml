@@ -21,7 +21,7 @@
 
    <extension point="org.eclipse.emf.ecore.generated_package">
       <package
-            uri="https://rtsys.informatik.uni-kiel.de/trac/kieler/KGraph"
+            uri="http://kieler.cs.cau.de/KGraph"
             class="de.cau.cs.kieler.core.kgraph.KGraphPackage"
             genModel="model/kgraph.genmodel"/>
    </extension>

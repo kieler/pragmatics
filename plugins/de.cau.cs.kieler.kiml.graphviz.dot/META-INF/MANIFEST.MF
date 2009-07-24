@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Graphviz Dot Language
-Bundle-Vendor: Christian-Albrechts-University of Kiel
+Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
 Bundle-Version: 0.1.0
 Bundle-SymbolicName: de.cau.cs.kieler.kiml.graphviz.dot; singleton:=true
 Eclipse-RegisterBuddy: org.eclipse.xtext.log4j
@@ -22,10 +22,11 @@ Require-Bundle: org.eclipse.xtext,
  org.antlr.runtime
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: de.cau.cs.kieler.kiml.graphviz,
- de.cau.cs.kieler.kiml.graphviz.services,
  de.cau.cs.kieler.kiml.graphviz.dot,
  de.cau.cs.kieler.kiml.graphviz.dot.impl,
  de.cau.cs.kieler.kiml.graphviz.dot.util,
+ de.cau.cs.kieler.kiml.graphviz.formatting,
  de.cau.cs.kieler.kiml.graphviz.parseTreeConstruction,
  de.cau.cs.kieler.kiml.graphviz.parser.antlr,
+ de.cau.cs.kieler.kiml.graphviz.services,
  de.cau.cs.kieler.kiml.graphviz.validation

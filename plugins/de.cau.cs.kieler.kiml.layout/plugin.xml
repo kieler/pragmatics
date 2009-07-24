@@ -110,5 +110,13 @@
             name="Unconnected Boxes">
       </diagramType>
    </extension>
+   <extension
+         point="org.eclipse.emf.ecore.generated_package">
+      <package
+            class="de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataPackage"
+            genModel="model/klayoutdata.genmodel"
+            uri="http://kieler.cs.cau.de/KLayoutData">
+      </package>
+   </extension>
 
 </plugin>
