@@ -1,11 +1,12 @@
 <?xml version="1.0"?>
 <workflow>
-  <property name="model" value="default3.dataflow" />
+  <property name="model" value="default.dataflow" />
   <property name="src-gen" value="." />
 
   <!-- set up EMF for standalone execution -->
   <bean class="org.eclipse.emf.mwe.utils.StandaloneSetup" >
     <platformUri value=".."/>
+    <registerGeneratedEPackage value="de.cau.cs.kieler.dataflow.DataflowPackage" /> 
   </bean>
 
   <!-- load model and store it in slot 'model' -->
@@ -25,11 +26,11 @@
 
   <!--  generate code -->
   <component class="org.eclipse.xpand2.Generator">
-   <!--  <metaModel class="org.eclipse.xtend.typesystem.emf.EmfRegistryMetaModel" />
-    <metaModel id='mm' class='org.eclipse.xtend.typesystem.emf.EmfRegistryMetaModel' /> -->   
-  <metaModel class = "oaw.type.emf.EmfMetaModel">  
-  <metaModelPackage value="dataflow.DataflowPackage"/> 
-    </metaModel>
+     <metaModel class="org.eclipse.xtend.typesystem.emf.EmfRegistryMetaModel" />
+    <metaModel id='mm' class='org.eclipse.xtend.typesystem.emf.EmfRegistryMetaModel' />    
+   <!-- <metaModel class = "oaw.type.emf.EmfMetaModel">  
+  <metaModelPackage value="dataflow.DataflowPackage"/>  
+    </metaModel> -->
     <expand
 	  value="template::Lustre::main FOR model" />
     <outlet path="${src-gen}" />

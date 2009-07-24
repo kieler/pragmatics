@@ -13,18 +13,18 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            category="de.cau.cs.kieler.commands.category"
-            categoryId="de.cau.cs.kieler.commands.category"
+            category="de.cau.cs.kieler"
+            categoryId="de.cau.cs.kieler"
             defaultHandler="de.cau.cs.kieler.dataflow.codegen.LustreGenerator"
             description="Generate Lustre code"
             id="de.cau.cs.kieler.dataflow.codegen.GenLustre"
             name="GenLustre">
       </command>
       <command
-            category="de.cau.cs.kieler.commands.category"
-            categoryId="de.cau.cs.kieler.commands.category"
+            category="de.cau.cs.kieler"
+            categoryId="de.cau.cs.kieler"
             defaultHandler="de.cau.cs.kieler.dataflow.codegen.ScadeGenerator"
-            description="generate Scade code"
+            description="Generate Scade code"
             id="de.cau.cs.kieler.dataflow.codegen.genScade"
             name="genScade">
       </command>
@@ -32,7 +32,7 @@
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
-            locationURI="popup:de.cau.cs.kieler.contextMenu">
+            locationURI="popup:de.cau.cs.kieler">
          <command
                commandId="de.cau.cs.kieler.dataflow.codegen.GenLustre"
                label="generate Lustre"
