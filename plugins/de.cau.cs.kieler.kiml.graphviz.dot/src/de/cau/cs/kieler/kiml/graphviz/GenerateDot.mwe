@@ -6,7 +6,6 @@
 	<bean class="org.eclipse.emf.mwe.utils.StandaloneSetup" platformUri="${runtimeProject}/.."/>
 	
 	<component class="org.eclipse.emf.mwe.utils.DirectoryCleaner" directory="${runtimeProject}/src-gen"/>
-	<component class="org.eclipse.emf.mwe.utils.DirectoryCleaner" directory="${runtimeProject}.ui/src-gen"/>
 	
 	<component class="org.eclipse.xtext.generator.Generator">
 		<pathRtProject value="${runtimeProject}"/>
@@ -35,18 +34,12 @@
 			<fragment class="org.eclipse.xtext.generator.validation.JavaValidatorFragment">
                 <composedCheck value="org.eclipse.xtext.validation.ImportUriValidator"/>
             </fragment>
-			
-            
+			            
 			<!-- scoping API -->
 			<fragment class="org.eclipse.xtext.generator.scoping.JavaScopingFragment"/>
 			
 			<!-- formatter API -->
 			<fragment class="org.eclipse.xtext.generator.formatting.FormatterFragment"/>
-
-			<!-- the following fragment tries to use the Antlr based content assist fragment which can be downloaded from http://www.itemis.com -->
-			<fragment class="de.itemis.xtext.antlr.XtextAntlrUiGeneratorFragment">
-			    <options backtrack="true"/>
-			</fragment> 
 			
 		</language>
 	</component>
