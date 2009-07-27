@@ -1,6 +1,6 @@
 grammar de.cau.cs.kieler.ksbase.FeatureDefinition with org.eclipse.xtext.common.Terminals
 
-generate featureDefinition "http://www.cau.de/cs/kieler/ksbase/FeatureDefinition"
+generate featureDefinition "http://kieler.cs.cau.de/ksbase/FeatureDefinition"
 
 FeatureDefinitions :
 	'ModelPackage = ' modelName=STRING ';'

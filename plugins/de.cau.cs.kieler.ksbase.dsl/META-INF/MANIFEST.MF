@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: de.cau.cs.kieler.ksbase.dsl
-Bundle-Vendor: My Company
+Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
 Bundle-Version: 0.0.1
 Bundle-SymbolicName: de.cau.cs.kieler.ksbase.dsl; singleton:=true
 Eclipse-RegisterBuddy: org.eclipse.xtext.log4j
