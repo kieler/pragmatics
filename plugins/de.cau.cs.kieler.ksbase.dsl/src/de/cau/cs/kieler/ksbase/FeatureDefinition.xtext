@@ -1,0 +1,21 @@
+grammar de.cau.cs.kieler.ksbase.FeatureDefinition with org.eclipse.xtext.common.Terminals
+
+generate featureDefinition "http://www.cau.de/cs/kieler/ksbase/FeatureDefinition"
+
+FeatureDefinitions :
+	'ModelPackage = ' modelName=STRING ';'
+	('ModelPackagePath = ' modelPath=STRING ';')?
+	'FeatureMenuTitle = ' featureMenuTitle=STRING ';'
+	('TransformationFile = 'featureFile=STRING ';')?
+	(elements+=FeatureType)*;
+	
+FeatureType :
+	'Feature' name=ID '{'
+		('File = ' fileName=STRING ';')?
+		'MethodName = ' methodName=STRING ';'
+		('NumParameter = ' numParameter+=INT ';')?
+		('Parameter = ' parameter+=STRING ';')+
+		'MenuEntry = ' menuEntry=STRING ';'
+	'}';
+
+

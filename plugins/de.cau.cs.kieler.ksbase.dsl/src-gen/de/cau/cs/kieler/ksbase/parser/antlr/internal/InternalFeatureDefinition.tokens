@@ -1,0 +1,20 @@
+RULE_ID=5
+RULE_STRING=4
+RULE_ANY_OTHER=10
+RULE_INT=6
+RULE_WS=9
+RULE_SL_COMMENT=8
+RULE_ML_COMMENT=7
+'}'=23
+'NumParameter = '=20
+'{'=17
+'File = '=18
+'Parameter = '=21
+'ModelPackagePath = '=13
+'MenuEntry = '=22
+';'=12
+'MethodName = '=19
+'TransformationFile = '=15
+'ModelPackage = '=11
+'Feature'=16
+'FeatureMenuTitle = '=14
