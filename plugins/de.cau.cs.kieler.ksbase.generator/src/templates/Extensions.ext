@@ -1,0 +1,33 @@
+import featureDefinition;
+
+String getFileNameFromPackage(String package):
+	setTargetProject(package) -> 
+	package.replaceAll("\\.","/")
+;
+
+Void setTargetProject(String name):
+	JAVA de.cau.cs.kieler.ksbase.generator.utils.Utils.setTargetPackageName(java.lang.String)
+;
+Void calcNumParams(FeatureType feature):
+	JAVA de.cau.cs.kieler.ksbase.generator.utils.Utils.GetNumParams(de.cau.cs.kieler.ksbase.featureDefinition.FeatureType)			
+;
+
+Void copyFeatureFiles(String file, String target):
+	JAVA de.cau.cs.kieler.ksbase.generator.utils.Utils.copyFeatureFiles(java.lang.String, java.lang.String)
+;
+
+String getCurrentProjectName():
+	JAVA de.cau.cs.kieler.ksbase.generator.utils.Utils.getCurrentProjectName()
+;
+
+String getTargetProjectName():
+	JAVA de.cau.cs.kieler.ksbase.generator.utils.Utils.getTargetProjectName()
+;
+
+String getTargetPackageName():
+	JAVA de.cau.cs.kieler.ksbase.generator.utils.Utils.getTargetPackageName()
+;
+
+String getTargetPackageFile():
+	JAVA de.cau.cs.kieler.ksbase.generator.utils.Utils.getTargetPackageFile()
+;

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFile"
+            nameFilter="*.sbf"
+            id="de.cau.cs.kieler.ksbase.generator.generateFeatures">
+         <action
+               label="Generate Structure Based Features"
+               class="de.cau.cs.kieler.ksbase.generator.popup.actions.GenerateFeatures"
+               enablesFor="1"
+               id="de.cau.cs.kieler.ksbase.generator.GenerateAction">
+         </action>
+      </objectContribution>
+   </extension>
+
+</plugin>
