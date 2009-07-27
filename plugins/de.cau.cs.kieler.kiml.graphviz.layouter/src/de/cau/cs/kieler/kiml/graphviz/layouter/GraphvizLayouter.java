@@ -224,6 +224,9 @@ public class GraphvizLayouter {
             PreferenceDialog preferenceDialog = PreferencesUtil.createPreferenceDialogOn(null,
                         GraphvizPreferencePage.ID, null, null);
             preferenceDialog.open();
+            // fetch the executable string again after the user has entered a new path
+            IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
+            dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
         }
 
         String[] exp = { dotExecutable, argument };
