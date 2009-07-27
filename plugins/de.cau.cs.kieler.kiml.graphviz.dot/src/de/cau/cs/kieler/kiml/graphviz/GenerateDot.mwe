@@ -10,9 +10,7 @@
 	
 	<component class="org.eclipse.xtext.generator.Generator">
 		<pathRtProject value="${runtimeProject}"/>
-		<pathUiProject value="${runtimeProject}.ui"/>
 		<projectNameRt value="${projectName}"/>
-		<projectNameUi value="${projectName}.ui"/>
 		
 		<language uri="${grammarURI}" fileExtensions="${file.extensions}">
 			<!-- Java API to access grammar elements (required by several other fragments) -->
@@ -45,16 +43,6 @@
 			<!-- formatter API -->
 			<fragment class="org.eclipse.xtext.generator.formatting.FormatterFragment"/>
 
-			<!-- labeling API -->
-			<fragment class="org.eclipse.xtext.ui.generator.labeling.LabelProviderFragment"/>
-
-			<!-- outline API -->
-			<fragment class="org.eclipse.xtext.ui.generator.outline.TransformerFragment"/>
-			<fragment class="org.eclipse.xtext.ui.generator.outline.OutlineNodeAdapterFactoryFragment"/>
-
-			
-			<!-- java-based API for content assistance -->
-			<fragment class="org.eclipse.xtext.ui.generator.contentAssist.JavaBasedContentAssistFragment"/>
 			<!-- the following fragment tries to use the Antlr based content assist fragment which can be downloaded from http://www.itemis.com -->
 			<fragment class="de.itemis.xtext.antlr.XtextAntlrUiGeneratorFragment">
 			    <options backtrack="true"/>
