@@ -13,6 +13,16 @@
  */
 package de.cau.cs.kieler.kiml.graphviz.layouter;
 
+import java.io.File;
+import java.io.IOException;
+
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.ui.dialogs.PreferencesUtil;
+
+import de.cau.cs.kieler.core.KielerException;
+import de.cau.cs.kieler.kiml.graphviz.layouter.preferences.GraphvizPreferencePage;
+
 /**
  * Defines constants used in the Graphviz Dot language.
  *
@@ -77,5 +87,38 @@ public final class GraphvizAPI {
     public static final String ATTR_WEIGHT        = "weight";
     /** Width of node, in inches. */
     public static final String ATTR_WIDTH         = "width";
+    
+    /** parameter used to specify the command */
+    public final static String PARAM_COMMAND = "-K";
+    /** preference constant for graphviz executable */
+    public static final String PREF_GRAPHVIZ_EXECUTABLE  = "pref.graphviz.executable";
+    
+    /**
+     * Starts a new Graphviz process with the given command.
+     * 
+     * @param command the graphviz command to use
+     * @return an instance of the graphviz process
+     * @throws KielerException if creating the process fails
+     */
+    public static Process startProcess(String command) throws KielerException {
+    	IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
+        String dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
+        File execFile = new File(dotExecutable);
+        if (!execFile.exists()) {
+            PreferenceDialog preferenceDialog = PreferencesUtil.createPreferenceDialogOn(null,
+                        GraphvizPreferencePage.ID, null, null);
+            preferenceDialog.open();
+            // fetch the executable string again after the user has entered a new path
+            dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
+        }
+
+        try {
+            String argument = PARAM_COMMAND + command;
+            Process process = Runtime.getRuntime().exec(new String[] { dotExecutable, argument });
+            return process;
+        } catch (IOException exception) {
+            throw new KielerException("Failed to start Graphviz process.", exception);
+        }
+    }
 
 }

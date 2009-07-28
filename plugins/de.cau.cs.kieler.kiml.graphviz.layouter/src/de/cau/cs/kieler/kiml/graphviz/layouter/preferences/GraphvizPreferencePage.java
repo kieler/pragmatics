@@ -23,7 +23,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import de.cau.cs.kieler.kiml.graphviz.layouter.Activator;
-import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayouter;
+import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizAPI;
 
 
 /**
@@ -54,7 +54,7 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 		executable.setText("Executable:");
 
 		FileFieldEditor dotExecutable = new FileFieldEditor(
-		        GraphvizLayouter.PREF_GRAPHVIZ_EXECUTABLE,
+		        GraphvizAPI.PREF_GRAPHVIZ_EXECUTABLE,
 				"Dot Executable:", executable);
 		dotExecutable.setValidateStrategy(FileFieldEditor.VALIDATE_ON_KEY_STROKE);
 		
