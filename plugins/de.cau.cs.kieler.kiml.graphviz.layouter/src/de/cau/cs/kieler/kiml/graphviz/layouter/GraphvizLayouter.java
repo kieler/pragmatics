@@ -133,7 +133,7 @@ public class GraphvizLayouter {
                 && !CIRCO_COMMAND.equals(command))
             throw new KielerException("Invalid Graphviz command set for this layout provider.");
         
-        progressMonitor.begin("Graphviz layout (" + command + ")", 50);
+        progressMonitor.begin("Graphviz layout (" + command + ")", 40);
         graphElementMap.clear();
         debugFileName = Integer.toString(parentNode.hashCode());
         // return if there is nothing in this node
@@ -155,24 +155,22 @@ public class GraphvizLayouter {
         
         // start the graphviz process
         Process graphvizProcess = GraphvizAPI.startProcess(command);
+        progressMonitor.worked(10);
 
         // translate the KGraph to Graphviz and write to the process
         GraphvizModel graphvizInput = createDotGraph(parentNode);
+        progressMonitor.worked(5);
         writeDotGraph(graphvizInput, new BufferedOutputStream(
         		graphvizProcess.getOutputStream()));
-        progressMonitor.worked(20);
+        progressMonitor.worked(5);
 
        	Thread.yield();
-//        try {
-//            // FIXME: waitFor() sometimes does not terminate, which indicates
-//        	// that the dot process has not terminated. 
-//           	graphvizProcess.waitFor();
-//        } catch (InterruptedException exception) {}
         progressMonitor.worked(10);
         
         // read graphviz output and apply layout information to the KGraph
         GraphvizModel graphvizOutput = readDotGraph(new BufferedInputStream(
         		graphvizProcess.getInputStream()), graphvizProcess.getErrorStream());
+        progressMonitor.worked(5);
         retrieveLayoutResult(parentNode, graphvizOutput);
         
         // destroy the process to release resources
@@ -207,7 +205,7 @@ public class GraphvizLayouter {
             KShapeLayout shapeLayout = KimlLayoutUtil.getShapeLayout(childNode);
             // set label
             attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_LABEL,
-                    "\"" + childNode.getLabel().getText() + "\""));
+            		getLabelValue(childNode.getLabel())));
             // set width and height
             String width = Float.toString(shapeLayout.getWidth() / DPI);
             String height = Float.toString(shapeLayout.getHeight() / DPI);
@@ -250,15 +248,15 @@ public class GraphvizLayouter {
                         switch (labelPlacement) {
                         case CENTER:
                             attributes.getEntries().add(createAttribute(
-                                    GraphvizAPI.ATTR_LABEL, "\"" + label.getText() + "\""));
+                                    GraphvizAPI.ATTR_LABEL, getLabelValue(label)));
                             break;
                         case HEAD:
                             attributes.getEntries().add(createAttribute(
-                                    GraphvizAPI.ATTR_HEADLABEL, "\"" + label.getText() + "\""));
+                                    GraphvizAPI.ATTR_HEADLABEL, getLabelValue(label)));
                             break;
                         case TAIL:
                             attributes.getEntries().add(createAttribute(
-                                    GraphvizAPI.ATTR_TAILLABEL, "\"" + label.getText() + "\""));
+                                    GraphvizAPI.ATTR_TAILLABEL, getLabelValue(label)));
                             break;
                         }
                     }
@@ -301,6 +299,20 @@ public class GraphvizLayouter {
         attribute.setName(name);
         attribute.setValue(value);
         return attribute;
+    }
+    
+    /**
+     * Creates a string used as label value from a given label.
+     * 
+     * @param label a label from the KGraph structure
+     * @return string to be used in the Graphviz model
+     */
+    private String getLabelValue(KLabel label) {
+        String labelValue = label.getText();
+        if (labelValue.endsWith("\\"))
+        	return "\"" + labelValue + " \"";
+        else
+        	return "\"" + labelValue + "\"";
     }
 
     /**
