@@ -30,7 +30,7 @@ Graph: (strict?="strict")? type=GraphType (name=ID)?
     "{" (statements+=Statement)* "}";
 
 Statement: (EdgeStatement | NodeStatement | AttributeStatement | Subgraph
-    | (name=ID "=" value=Value)) ";"?;
+    | (name=DotID "=" value=DotID)) ";"?;
 
 EdgeStatement: (sourceSubgraph=Subgraph | sourceNode=Node)
     (edgeTargets+=EdgeTarget)+ (attributes=AttributeList)?;
@@ -45,13 +45,13 @@ Subgraph: ("subgraph" (name=ID)?)? "{" (statements+=Statement)* "}";
 
 AttributeList: "[" entries+=Attribute ("," entries+=Attribute)* "]";
 
-Attribute: name=ID ("=" value=Value)?;
+Attribute: name=DotID ("=" value=DotID)?;
 
-Node: name=ID (port=Port)?;
+Node: name=DotID (port=Port)?;
 
-Port: ":" name=ID (":" compass_pt=CompassPoint)? | ":" compass_pt=CompassPoint;
+Port: ":" name=DotID (":" compass_pt=CompassPoint)? | ":" compass_pt=CompassPoint;
 
-Value: ID | FLOAT | STRING;
+DotID: ID | FLOAT | STRING;
 
 enum EdgeOperator: directed="->" | undirected="--";
 enum GraphType: graph | digraph;
