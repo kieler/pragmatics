@@ -5,7 +5,7 @@
 
   <extension point="org.eclipse.emf.ecore.generated_package">
     <package 
-       uri = "http://www.cau.de/cs/kieler/ksbase/FeatureDefinition" 
+       uri = "http://kieler.cs.cau.de/ksbase/FeatureDefinition" 
        class = "de.cau.cs.kieler.ksbase.featureDefinition.FeatureDefinitionPackage"
        genModel = "de/cau/cs/kieler/ksbase/FeatureDefinition.genmodel" /> 
 	

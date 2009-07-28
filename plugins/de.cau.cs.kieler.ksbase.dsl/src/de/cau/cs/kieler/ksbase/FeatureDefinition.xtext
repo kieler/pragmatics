@@ -5,15 +5,15 @@ generate featureDefinition "http://kieler.cs.cau.de/ksbase/FeatureDefinition"
 FeatureDefinitions :
 	'ModelPackage = ' modelName=STRING ';'
 	('ModelPackagePath = ' modelPath=STRING ';')?
+	('DiagramPackage = ' diagramPackage=STRING ';')?
 	'FeatureMenuTitle = ' featureMenuTitle=STRING ';'
 	('TransformationFile = 'featureFile=STRING ';')?
-	(elements+=FeatureType)*;
+	(elements+=FeatureType)+;
 	
 FeatureType :
 	'Feature' name=ID '{'
 		('File = ' fileName=STRING ';')?
 		'MethodName = ' methodName=STRING ';'
-		('NumParameter = ' numParameter+=INT ';')?
 		('Parameter = ' parameter+=STRING ';')+
 		'MenuEntry = ' menuEntry=STRING ';'
 	'}';
