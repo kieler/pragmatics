@@ -24,9 +24,11 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kiml.graphviz.layouter.preferences.GraphvizPreferencePage;
 
 /**
- * Defines constants used in the Graphviz Dot language.
+ * Defines constants used in the Graphviz Dot language and static methods to access Graphviz
+ * via a separate process.
  *
  * @author <a href="mailto:tkl@informatik.uni-kiel.de">Tobias Kloss</a>
+ * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public final class GraphvizAPI {
     
@@ -88,10 +90,18 @@ public final class GraphvizAPI {
     /** Width of node, in inches. */
     public static final String ATTR_WIDTH         = "width";
     
-    /** parameter used to specify the command */
-    public final static String PARAM_COMMAND = "-K";
     /** preference constant for graphviz executable */
     public static final String PREF_GRAPHVIZ_EXECUTABLE  = "pref.graphviz.executable";
+
+    /** parameter used to specify the command */
+    private final static String PARAM_COMMAND = "-K";
+    /** default locations of the dot executable */
+    private final static String[] DEFAULT_LOCS = {
+        "/opt/local/bin/",
+        "/usr/local/bin/",
+        "/usr/bin/",
+        "/bin/"
+    };
     
     /**
      * Starts a new Graphviz process with the given command.
@@ -103,13 +113,22 @@ public final class GraphvizAPI {
     public static Process startProcess(String command) throws KielerException {
     	IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
         String dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
-        File execFile = new File(dotExecutable);
-        if (!execFile.exists()) {
-            PreferenceDialog preferenceDialog = PreferencesUtil.createPreferenceDialogOn(null,
-                        GraphvizPreferencePage.ID, null, null);
-            preferenceDialog.open();
-            // fetch the executable string again after the user has entered a new path
-            dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
+        if (!new File(dotExecutable).exists()) {
+            boolean foundExec = false;
+            for (String location : DEFAULT_LOCS) {
+                dotExecutable = location + "dot";
+                if (new File(dotExecutable).exists()) {
+                    foundExec = true;
+                    break;
+                }
+            }
+            if (!foundExec) {
+                PreferenceDialog preferenceDialog = PreferencesUtil.createPreferenceDialogOn(null,
+                            GraphvizPreferencePage.ID, null, null);
+                preferenceDialog.open();
+                // fetch the executable string again after the user has entered a new path
+                dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
+            }
         }
 
         try {

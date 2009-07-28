@@ -65,6 +65,7 @@ import de.cau.cs.kieler.core.util.ForwardingInputStream;
  * 
  * @author <a href="mailto:ars@informatik.uni-kiel.de">Arne Schipper</a>
  * @author <a href="mailto:haf@informatik.uni-kiel.de">Hauke Fuhrmann</a>
+ * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class GraphvizLayouter {
     
