@@ -25,11 +25,6 @@ public class Utils {
         return targetProjectName.replace(".", "/");
     }
 
-    public static final void GetNumParams(FeatureType type) {
-        if (type.getNumParameter().size() == 0)
-            type.getNumParameter().add(type.getParameter().size());
-    }
-
     public static void copyFeatureFiles(String source, String target) {
         if (source != null && target != null) {
             // TODO: Create folder only once !

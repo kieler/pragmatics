@@ -8,9 +8,6 @@ String getFileNameFromPackage(String package):
 Void setTargetProject(String name):
 	JAVA de.cau.cs.kieler.ksbase.generator.utils.Utils.setTargetPackageName(java.lang.String)
 ;
-Void calcNumParams(FeatureType feature):
-	JAVA de.cau.cs.kieler.ksbase.generator.utils.Utils.GetNumParams(de.cau.cs.kieler.ksbase.featureDefinition.FeatureType)			
-;
 
 Void copyFeatureFiles(String file, String target):
 	JAVA de.cau.cs.kieler.ksbase.generator.utils.Utils.copyFeatureFiles(java.lang.String, java.lang.String)
@@ -30,4 +27,20 @@ String getTargetPackageName():
 
 String getTargetPackageFile():
 	JAVA de.cau.cs.kieler.ksbase.generator.utils.Utils.getTargetPackageFile()
+;
+
+String getDiagramPackage(FeatureType feature):
+let root = (FeatureDefinitions)feature.eContainer: 
+ if (root.diagramPackage == null || root.diagramPackage.length == 0) then
+ 	getCurrentProjectName()+".diagram"
+ else
+ 	root.diagramPackage
+;
+
+
+String getDiagramPackage(FeatureDefinitions root): 
+ if (root.diagramPackage == null || root.diagramPackage.length == 0) then
+ 	getCurrentProjectName()+".diagram"
+ else
+ 	root.diagramPackage
 ;

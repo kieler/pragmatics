@@ -249,7 +249,6 @@ public class KielerWorkflow extends Workflow {
 
 «FOREACH elements AS e»
 «FILE "src/"+pPath+"/handlers/"+e.methodName+"Handler.java"-»
-«calcNumParams(e)-»
 «copyFeatureFiles(e.fileName, pPath+"/transformations/"+e.fileName)-»
 package «pName».handlers;
 
@@ -263,9 +262,9 @@ public class «e.methodName»Handler extends AbstractHandler {
     public Object execute(ExecutionEvent event) throws ExecutionException {
         GenericTransformationHandler handler = new GenericTransformationHandler();
         «IF e.fileName == null || e.fileName.length == 0»
-        	if (!handler.initalize(event, "«e.methodName»",«e.numParameter.get(0)», "«featureFile»")) {
+        	if (!handler.initalize(event, "«e.methodName»",«e.parameter.size», "«featureFile»")) {
         «ELSE»
-        	if (!handler.initalize(event, "«e.methodName»",«e.numParameter.get(0)», "«e.fileName»")) {
+        	if (!handler.initalize(event, "«e.methodName»",«e.parameter.size», "«e.fileName»")) {
         «ENDIF»
             System.out.println("Fehler beim initialisieren");
         }
@@ -303,6 +302,19 @@ public class «e.methodName»Handler extends AbstractHandler {
       <handler
             class="«pName-».handlers.«e.methodName-»Handler"
             commandId="«pName-».commands.«e.methodName-»Command">
+			<enabledWhen>
+				<iterate
+					ifEmpty="false"
+               		operator="and">
+            	<or>
+            		«FOREACH e.parameter AS param-»
+               		<instanceof
+						value="«getDiagramPackage()».edit.parts.«param»EditPart">
+					</instanceof>
+					«ENDFOREACH-»
+            	</or>
+         	</iterate>
+         </enabledWhen>
       </handler>
       «ENDFOREACH-»
    </extension>
@@ -322,6 +334,15 @@ public class «e.methodName»Handler extends AbstractHandler {
                   mnemonic="S">
             </command>
             «ENDFOREACH-»
+            <visibleWhen
+				checkEnabled="false">
+				<with
+					variable="activeEditor">
+					<instanceof
+						value="«getDiagramPackage()».part.SyncchartsDiagramEditor">
+                    </instanceof>
+                  </with>
+            </visibleWhen>
          </menu>
       </menuContribution>
       <menuContribution
@@ -335,6 +356,15 @@ public class «e.methodName»Handler extends AbstractHandler {
                   id="«pName-».toolbars.«e.methodName-»Command"
                   label="«e.menuEntry»"
                   tooltip="«e.menuEntry-»">
+				<visibleWhen
+					checkEnabled="false">
+					<with
+						variable="activeEditor">
+						<instanceof
+                           value="«getDiagramPackage()».part.SyncchartsDiagramEditor">
+                     	</instanceof>
+                  	</with>
+               </visibleWhen>
             </command>
             «ENDFOREACH-»
          </toolbar>
@@ -358,6 +388,7 @@ Require-Bundle: org.eclipse.emf.mwe.core,
  org.eclipse.gef,
  org.eclipse.gmf.runtime.diagram.ui,
  org.eclipse.emf.mwe.utils,
+ «getDiagramPackage()»,
  «IF modelPath != null-»
  «getCurrentProjectName()-»,
  «modelPath»
