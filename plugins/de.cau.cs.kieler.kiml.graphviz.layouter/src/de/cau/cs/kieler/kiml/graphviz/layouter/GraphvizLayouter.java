@@ -47,21 +47,11 @@ import de.cau.cs.kieler.core.util.ForkedOutputStream;
 import de.cau.cs.kieler.core.util.ForwardingInputStream;
 
 /**
- * Basic wrapper class employing the GraphViz binary (e.g. dot layout) to do a
- * graphical layout on the passed {@code KNode} data structure. The basic
- * principle is simple:
- * <ol>
- * <li>Read the {@code KNode} data structure and use the {@link GraphvizAPI} to
- * fill a GraphViz internal (native) data structure.</li>
- * <li>Call a GraphViz layout engine (e.g. the dot layouter) on the GraphViz
- * data structure. The data structure will get augmented by positioning
- * attributes.</li>
- * <li>Read the position attributes from the GraphViz data structure and write
- * them back to the KIELER graph data structure.</li>
- * </ol>
- * Supported features are node sizes and positions, tail and mid label
- * positions. Edges in GraphViz are described as B-splines curves. The bezier
- * curves are converted to polylines here to be able to work with a GEF editor.
+ * Layouter that calls Graphviz through a child process to perform layout.
+ * The graph structure and layout information is passed through a textual
+ * format called Dot, see the <a href="http://www.graphviz.org/doc/info/lang.html">
+ * Dot language specification</a>. Serialization and parsing of this textual
+ * format is done using <a href="http://www.eclipse.org/modeling/tmf/">Xtext</a>.
  * 
  * @author <a href="mailto:ars@informatik.uni-kiel.de">Arne Schipper</a>
  * @author <a href="mailto:haf@informatik.uni-kiel.de">Hauke Fuhrmann</a>
@@ -110,9 +100,10 @@ public class GraphvizLayouter {
     /** maps each identifier of a graph element to the instance of the element */
     private HashMap<String, KGraphElement> graphElementMap = new HashMap<String, KGraphElement>();
     
+    /** the Google injector used to create the Xtext serializer and parser */
     private Injector injector = null;
-    /** minimal spacing between elements */
-    private float minSpacing;
+    /** offset value to be added to all coordinates */
+    private float offset;
     /** base file name for debug output */
     private String debugFileName;
 
@@ -142,12 +133,6 @@ public class GraphvizLayouter {
             return;
         }
         
-        // retrieve layout options
-        KLayoutData parentData = KimlLayoutUtil.getShapeLayout(parentNode);
-        minSpacing = LayoutOptions.getMinSpacing(parentData);
-        if (Float.isNaN(minSpacing))
-            minSpacing = DEF_MIN_SPACING;
-
         // create the Google injector for the Dot language
         if (injector == null) {
             injector = new DotStandaloneSetup().createInjectorAndDoEMFRegistration();
@@ -158,7 +143,7 @@ public class GraphvizLayouter {
         progressMonitor.worked(10);
 
         // translate the KGraph to Graphviz and write to the process
-        GraphvizModel graphvizInput = createDotGraph(parentNode);
+        GraphvizModel graphvizInput = createDotGraph(parentNode, command);
         progressMonitor.worked(5);
         writeDotGraph(graphvizInput, new BufferedOutputStream(
         		graphvizProcess.getOutputStream()));
@@ -184,9 +169,10 @@ public class GraphvizLayouter {
      * Dot parser.
      * 
      * @param parent a {@code KNode} with the graph to layout
+     * @param command the command string identifying the layout method
      * @return an instance of a graphviz model that corresponds to the input graph
      */
-    private GraphvizModel createDotGraph(KNode parent) {
+    private GraphvizModel createDotGraph(KNode parent, String command) {
         GraphvizModel graphvizModel = DotFactory.eINSTANCE.createGraphvizModel();
         Graph graph = DotFactory.eINSTANCE.createGraph();
         graph.setType(GraphType.DIGRAPH);
@@ -206,11 +192,14 @@ public class GraphvizLayouter {
             // set label
             attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_LABEL,
             		getLabelValue(childNode.getLabel())));
-            // set width and height
-            String width = Float.toString(shapeLayout.getWidth() / DPI);
-            String height = Float.toString(shapeLayout.getHeight() / DPI);
-            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_WIDTH, width));
-            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_HEIGHT, height));
+            if (LayoutOptions.isFixedSize(shapeLayout)) {
+	            // set width and height
+	            String width = Float.toString(shapeLayout.getWidth() / DPI);
+	            String height = Float.toString(shapeLayout.getHeight() / DPI);
+	            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_WIDTH, width));
+	            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_HEIGHT, height));
+	            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_FIXEDSIZE, "true"));
+            }
             // set shape
             // TODO customize the node shape
             attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_SHAPE, "box"));
@@ -272,17 +261,46 @@ public class GraphvizLayouter {
             }
         }
         
-        // set graph attributes
-        AttributeStatement attributeStatement = DotFactory.eINSTANCE.createAttributeStatement();
-        attributeStatement.setType(AttributeType.GRAPH);
-        AttributeList attributes = DotFactory.eINSTANCE.createAttributeList();
+        // set attributes for the whole graph
+        AttributeStatement graphAttrStatement = DotFactory.eINSTANCE.createAttributeStatement();
+        graphAttrStatement.setType(AttributeType.GRAPH);
+        AttributeList graphAttrs = DotFactory.eINSTANCE.createAttributeList();
         KLayoutData parentLayout = KimlLayoutUtil.getShapeLayout(parent);
-        if (LayoutOptions.getLayoutDirection(parentLayout) == LayoutDirection.VERTICAL)
-            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_RANKDIR, "BT"));
-        else
-            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_RANKDIR, "LR"));
-        attributeStatement.setAttributes(attributes);
-        graph.getStatements().add(attributeStatement);
+        // set minimal spacing and offset
+        float minSpacing = LayoutOptions.getMinSpacing(parentLayout);
+        if (Float.isNaN(minSpacing))
+            minSpacing = DEF_MIN_SPACING;
+        if (command.equals(DOT_COMMAND) || command.equals(TWOPI_COMMAND))
+        	graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_RANKSEP,
+        			Float.toString(minSpacing / DPI)));
+        if (command.equals(CIRCO_COMMAND))
+        	graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_MINDIST,
+        			Float.toString(minSpacing / DPI)));
+        else if (command.equals(NEATO_COMMAND) || command.equals(FDP_COMMAND)) {
+        	AttributeStatement edgeAttrStatement = DotFactory.eINSTANCE.createAttributeStatement();
+        	edgeAttrStatement.setType(AttributeType.EDGE);
+        	AttributeList edgeAttrs = DotFactory.eINSTANCE.createAttributeList();
+        	edgeAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_EDGELEN,
+        			Float.toString(minSpacing / DPI)));
+        	edgeAttrStatement.setAttributes(edgeAttrs);
+        	graph.getStatements().add(edgeAttrStatement);
+        }
+        offset = minSpacing;
+        // set layout direction
+        if (command.equals(DOT_COMMAND)) {
+	        if (LayoutOptions.getLayoutDirection(parentLayout) == LayoutDirection.VERTICAL)
+	            graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_RANKDIR, "BT"));
+	        else
+	            graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_RANKDIR, "LR"));
+        }
+        // enable overlap avoidance
+        if (!command.equals(DOT_COMMAND))
+        	graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_OVERLAP, "false"));
+        // configure initial placement of nodes
+        if (command.equals(NEATO_COMMAND) || command.equals(FDP_COMMAND))
+        	graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_START, "random1"));
+        graphAttrStatement.setAttributes(graphAttrs);
+        graph.getStatements().add(graphAttrStatement);
         
         return graphvizModel;
     }
@@ -482,10 +500,10 @@ public class GraphvizLayouter {
                 if (position != null) {
                     try {
                         StringTokenizer tokenizer = new StringTokenizer(position, ATTRIBUTE_DELIM);
-                        float xpos = Float.parseFloat(tokenizer.nextToken());
-                        float ypos = Float.parseFloat(tokenizer.nextToken());
-                        nodeLayout.setXpos(xpos - nodeLayout.getWidth() / 2 + minSpacing);
-                        nodeLayout.setYpos(ypos - nodeLayout.getHeight() / 2 + minSpacing);
+                        float xpos = Float.parseFloat(tokenizer.nextToken()) + offset;
+                        float ypos = Float.parseFloat(tokenizer.nextToken()) + offset;
+                        nodeLayout.setXpos(xpos - nodeLayout.getWidth() / 2);
+                        nodeLayout.setYpos(ypos - nodeLayout.getHeight() / 2);
                     }
                     catch (NumberFormatException exception) {}
                 }
@@ -504,7 +522,7 @@ public class GraphvizLayouter {
                 StringTokenizer posTokenizer = new StringTokenizer(posString, ATTRIBUTE_DELIM);
                 while (posTokenizer.hasMoreTokens()) {
                     try {
-                        float pos = Float.parseFloat(posTokenizer.nextToken());
+                        float pos = Float.parseFloat(posTokenizer.nextToken()) + offset;
                         posList.add(Float.valueOf(pos));
                     }
                     catch (NumberFormatException exception) {}
@@ -518,8 +536,8 @@ public class GraphvizLayouter {
 
                 // first two points in list denote the start point
                 KPoint sourcePoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-                sourcePoint.setX(posList.get(0) + minSpacing);
-                sourcePoint.setY(posList.get(1) + minSpacing);
+                sourcePoint.setX(posList.get(0));
+                sourcePoint.setY(posList.get(1));
                 edgeLayout.setSourcePoint(sourcePoint);
 
                 for (int i = 0; i < posList.size() - 7; i += 6) {
@@ -535,8 +553,8 @@ public class GraphvizLayouter {
 
                 // last two points in the GraphViz list denote the end point
                 KPoint targetPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-                targetPoint.setX(posList.get(posList.size() - 2) + minSpacing);
-                targetPoint.setY(posList.get(posList.size() - 1) + minSpacing);
+                targetPoint.setX(posList.get(posList.size() - 2));
+                targetPoint.setY(posList.get(posList.size() - 1));
                 edgeLayout.setTargetPoint(targetPoint);
 
                 // process the edge labels
@@ -550,7 +568,7 @@ public class GraphvizLayouter {
                         labelLoc = attributeMap.get(GraphvizAPI.ATTR_HEADLP);
                         break;
                     case CENTER:
-                        labelLoc = attributeMap.get(GraphvizAPI.ATTR_LP);
+                        labelLoc = attributeMap.get(GraphvizAPI.ATTR_LABELPOS);
                         break;
                     case TAIL:
                         labelLoc = attributeMap.get(GraphvizAPI.ATTR_TAILLP);
@@ -558,8 +576,8 @@ public class GraphvizLayouter {
                     }
                     try {
                         StringTokenizer tokenizer = new StringTokenizer(labelLoc, ATTRIBUTE_DELIM);
-                        shapeLayout.setXpos(Float.parseFloat(tokenizer.nextToken()) + minSpacing);
-                        shapeLayout.setYpos(Float.parseFloat(tokenizer.nextToken()) + minSpacing);
+                        shapeLayout.setXpos(Float.parseFloat(tokenizer.nextToken()) + offset);
+                        shapeLayout.setYpos(Float.parseFloat(tokenizer.nextToken()) + offset);
                     }
                     catch (NumberFormatException exception) {}
                 }
@@ -589,14 +607,15 @@ public class GraphvizLayouter {
         }
         
         // set parent node attributes
+        KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(parentNode);
         if (boundingBox != null) {
-            KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(parentNode);
             KInsets insets = LayoutOptions.getInsets(parentLayout);
-            parentLayout.setWidth(boundingBox.x + 2 * minSpacing
-                    + insets.getLeft() + insets.getRight());
-            parentLayout.setHeight(boundingBox.y + 2 * minSpacing
-                    + insets.getTop() + insets.getBottom());
+            parentLayout.setWidth(boundingBox.x + insets.getLeft() + insets.getRight()
+            		+ 2 * offset);
+            parentLayout.setHeight(boundingBox.y + insets.getTop() + insets.getBottom()
+            		+ 2 * offset);
         }
+        LayoutOptions.setFixedSize(parentLayout, true);
     }
     
     /**
@@ -655,8 +674,8 @@ public class GraphvizLayouter {
             int x = (int) (((ax * tCubed) + (bx * tSquared) + (cx * t)) + p0.x);
             int y = (int) (((ay * tCubed) + (by * tSquared) + (cy * t)) + p0.y);
             KPoint bendPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-            bendPoint.setX(x + minSpacing);
-            bendPoint.setY(y + minSpacing);
+            bendPoint.setX(x);
+            bendPoint.setY(y);
             bendPoints.add(bendPoint);
         }
     }

@@ -38,6 +38,18 @@
                priority="10"
                type="de.cau.cs.kieler.layout.info.types.stateMachine">
          </supportedDiagram>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.layoutDirection">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.minSpacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.fixedSize">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.edgeLabelPlacement">
+         </knownOption>
       </layoutProvider>
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.graphviz"
@@ -50,6 +62,15 @@
                priority="9"
                type="de.cau.cs.kieler.layout.info.types.general">
          </supportedDiagram>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.minSpacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.fixedSize">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.edgeLabelPlacement">
+         </knownOption>
       </layoutProvider>
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.graphviz"
@@ -62,6 +83,15 @@
                priority="6"
                type="de.cau.cs.kieler.layout.info.types.general">
          </supportedDiagram>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.minSpacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.fixedSize">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.edgeLabelPlacement">
+         </knownOption>
       </layoutProvider>
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.graphviz"
@@ -74,6 +104,15 @@
                priority="8"
                type="de.cau.cs.kieler.layout.info.types.general">
          </supportedDiagram>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.minSpacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.fixedSize">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.edgeLabelPlacement">
+         </knownOption>
       </layoutProvider>
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.graphviz"
@@ -86,6 +125,15 @@
                priority="7"
                type="de.cau.cs.kieler.layout.info.types.general">
          </supportedDiagram>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.minSpacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.fixedSize">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.edgeLabelPlacement">
+         </knownOption>
       </layoutProvider>
    </extension>
 

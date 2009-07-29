@@ -71,16 +71,30 @@ public final class GraphvizAPI {
     public static final String ATTR_LABELJUST     = "labeljust";
     /** Top/bottom placement of graph and cluster labels. */
     public static final String ATTR_LABELLOC      = "labelloc";
+    /** Preferred edge length, in inches (fdp, neato only). */
+    public static final String ATTR_EDGELEN       = "len";
     /** Label position, in points. */
-    public static final String ATTR_LP            = "lp";
+    public static final String ATTR_LABELPOS      = "lp";
+    /** Determines if and how node overlaps should be removed (not dot). */
+    public static final String ATTR_OVERLAP       = "overlap";
+    /** The pad attribute specifies how much, in inches, to extend the drawing area
+     * around the minimal area needed to draw the graph. */
+    public static final String ATTR_PAD           = "pad";
     /** Position of node, or spline control points. */
     public static final String ATTR_POS           = "pos";
-    /** Sets direction of graph layout. */
+    /** Specifies the minimum separation between all nodes (circo only). */
+    public static final String ATTR_MINDIST       = "mindist";
+    /** Sets direction of graph layout (dot only). */
     public static final String ATTR_RANKDIR       = "rankdir";
+    /** In dot, this gives the desired rank separation, in inches. In twopi, specifies
+     * radial separation of concentric circles. (twopi, dot only) */
+    public static final String ATTR_RANKSEP       = "ranksep";
     /** If 90, set drawing orientation to landscape. */    
     public static final String ATTR_ROTATE        = "rotate";
     /** Set the shape of a node. */
     public static final String ATTR_SHAPE         = "shape";
+    /** Parameter used to determine the initial layout of nodes (fdp, neato only). */
+    public static final String ATTR_START         = "start";
     /** Text label to be placed near tail of edge. */
     public static final String ATTR_TAILLABEL     = "taillabel";
     /** Tail label position. */

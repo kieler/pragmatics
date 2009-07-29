@@ -63,6 +63,7 @@ public abstract class AbstractLayoutProvider {
 	 * layout provider.
 	 * 
 	 * @return default options for the layout provider
+	 * @deprecated the layout options mechanism will be reimplemented soon
 	 */
 	public List<KOption> getDefaultOptions() {
 	    return defaultOptions;
