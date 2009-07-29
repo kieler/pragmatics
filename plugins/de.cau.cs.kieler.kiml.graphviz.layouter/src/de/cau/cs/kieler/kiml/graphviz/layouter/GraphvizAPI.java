@@ -125,7 +125,7 @@ public final class GraphvizAPI {
      * @throws KielerException if creating the process fails
      */
     public static Process startProcess(String command) throws KielerException {
-    	IPreferenceStore preferenceStore = Activator.getDefault().getPreferenceStore();
+    	IPreferenceStore preferenceStore = GraphvizLayouterPlugin.getDefault().getPreferenceStore();
         String dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
         if (!new File(dotExecutable).exists()) {
             boolean foundExec = false;

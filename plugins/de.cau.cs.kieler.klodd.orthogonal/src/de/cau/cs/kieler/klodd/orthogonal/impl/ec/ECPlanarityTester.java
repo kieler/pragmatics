@@ -20,7 +20,7 @@ import de.cau.cs.kieler.core.slimgraph.alg.IPlanarityTester;
 /**
  * Planarity tester that checks for normal planarity and EC-planarity.
  * 
- * @author msp
+ * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class ECPlanarityTester extends AbstractAlgorithm implements
 		IPlanarityTester {

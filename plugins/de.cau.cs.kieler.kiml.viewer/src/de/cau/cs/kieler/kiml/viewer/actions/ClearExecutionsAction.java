@@ -22,7 +22,7 @@ import de.cau.cs.kieler.kiml.viewer.views.ExecutionView;
 /**
  * Action that clears all execution data.
  * 
- * @author msp
+ * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class ClearExecutionsAction extends Action {
 

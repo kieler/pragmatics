@@ -9,6 +9,6 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.4.0",
  de.cau.cs.kieler.dataflow.diagram,
  de.cau.cs.kieler.kiml.layout
 Bundle-ActivationPolicy: lazy
-Bundle-Activator: dataflow.diagram.layout.DataflowDiagramLayoutPlugin
+Bundle-Activator: de.cau.cs.kieler.dataflow.diagram.layout.DataflowDiagramLayoutPlugin
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Bundle-Vendor: Christian-Albrechts-University of Kiel
+Bundle-Vendor: Christian-Albrechts-Universität zu Kiel

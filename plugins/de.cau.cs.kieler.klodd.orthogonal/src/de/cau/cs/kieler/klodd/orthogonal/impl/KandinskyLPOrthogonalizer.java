@@ -38,7 +38,7 @@ import de.cau.cs.kieler.klodd.orthogonal.structures.*;
  * Orthogonalizer implementation that uses LP methods to solve the
  * Kandinsky approach.
  * 
- * @author msp
+ * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class KandinskyLPOrthogonalizer extends AbstractAlgorithm implements
 		IOrthogonalizer {

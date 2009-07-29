@@ -23,7 +23,7 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 /**
  * Content provider for KIELER progress monitors.
  * 
- * @author msp
+ * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class ExecutionContentProvider implements ITreeContentProvider {
 

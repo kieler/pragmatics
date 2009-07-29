@@ -19,7 +19,7 @@ import de.cau.cs.kieler.core.slimgraph.KSlimGraph;
 /**
  * Interface for algorithms that perform planarization of a graph.
  * 
- * @author msp
+ * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public interface IPlanarizer extends IAlgorithm {
 

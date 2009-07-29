@@ -1,4 +1,17 @@
-package dataflow.diagram.layout;
+/******************************************************************************
+ * KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2008 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
+package de.cau.cs.kieler.kiml.graphviz.layouter;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -7,18 +20,18 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class DataflowDiagramLayoutPlugin extends AbstractUIPlugin {
+public class GraphvizLayouterPlugin extends AbstractUIPlugin {
 
-	// The plug-in ID
-	public static final String PLUGIN_ID = "de.cau.cs.kieler.dataflow.diagram.layout"; //$NON-NLS-1$
-	
-	// The shared instance
-	private static DataflowDiagramLayoutPlugin plugin;
+	/* The plug-in ID */
+	public static final String PLUGIN_ID = "de.cau.cs.kieler.kiml.graphviz.layouter";
+
+	/* The shared instance */
+	private static GraphvizLayouterPlugin plugin;
 	
 	/**
 	 * The constructor
 	 */
-	public DataflowDiagramLayoutPlugin() {
+	public GraphvizLayouterPlugin() {
 	}
 
 	/*
@@ -44,7 +57,7 @@ public class DataflowDiagramLayoutPlugin extends AbstractUIPlugin {
 	 *
 	 * @return the shared instance
 	 */
-	public static DataflowDiagramLayoutPlugin getDefault() {
+	public static GraphvizLayouterPlugin getDefault() {
 		return plugin;
 	}
 

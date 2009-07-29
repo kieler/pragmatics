@@ -37,7 +37,7 @@ import de.cau.cs.kieler.klodd.orthogonal.structures.*;
  * Planarizer implementation that uses an EC planarizer to handle port
  * constraints.
  * 
- * @author msp
+ * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class PortConstraintsPlanarizer extends AbstractAlgorithm implements
 		IPlanarizer {

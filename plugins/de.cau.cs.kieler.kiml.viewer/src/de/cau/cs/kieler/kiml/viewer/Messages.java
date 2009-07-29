@@ -19,7 +19,7 @@ import java.util.ResourceBundle;
 /**
  * Generated class for externalization of strings.
  * 
- * @author msp
+ * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class Messages {
 	

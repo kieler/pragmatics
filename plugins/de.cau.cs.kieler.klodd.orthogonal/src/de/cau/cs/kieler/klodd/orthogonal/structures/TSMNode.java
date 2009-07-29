@@ -23,7 +23,7 @@ import de.cau.cs.kieler.core.slimgraph.*;
  * A node in the graph structure used for the topology-shape-metrics
  * approach.
  * 
- * @author msp
+ * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class TSMNode extends KSlimNode {
 

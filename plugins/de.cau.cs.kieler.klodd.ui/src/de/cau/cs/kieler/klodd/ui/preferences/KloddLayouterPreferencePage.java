@@ -33,7 +33,7 @@ import de.cau.cs.kieler.klodd.ui.Messages;
 /**
  * Preference page for all KLoDD layout algorithms.
  * 
- * @author msp
+ * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class KloddLayouterPreferencePage extends FieldEditorPreferencePage implements
 		IWorkbenchPreferencePage {

@@ -48,7 +48,7 @@ import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
 /**
  * A canvas that is able to paint KIML layout graphs.
  * 
- * @author msp
+ * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class LayoutGraphCanvas extends Canvas implements PaintListener {
 

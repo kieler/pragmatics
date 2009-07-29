@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import de.cau.cs.kieler.kiml.graphviz.layouter.Activator;
+import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayouterPlugin;
 import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizAPI;
 
 
@@ -73,7 +73,7 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {
-        setPreferenceStore(Activator.getDefault().getPreferenceStore());
+        setPreferenceStore(GraphvizLayouterPlugin.getDefault().getPreferenceStore());
 	}
 
 }

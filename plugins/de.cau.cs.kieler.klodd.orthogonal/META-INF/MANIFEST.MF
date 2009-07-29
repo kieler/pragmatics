@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: KIELER Orthogonal Layout
+Bundle-Name: KIELER Orthogonal Dataflow Layout
 Bundle-SymbolicName: de.cau.cs.kieler.klodd.orthogonal;singleton:=true
 Bundle-Version: 0.1.0
 Require-Bundle: org.eclipse.emf.ecore;bundle-version="2.4.1",
@@ -8,4 +8,4 @@ Require-Bundle: org.eclipse.emf.ecore;bundle-version="2.4.1",
  de.cau.cs.kieler.kiml.layout,
  net.sourceforge.lpsolve;bundle-version="5.5.0"
 Export-Package: de.cau.cs.kieler.klodd.orthogonal;uses:="de.cau.cs.kieler.kiml.layout.services,de.cau.cs.kieler.kiml.layout.KimlLayoutGraph,de.cau.cs.kieler.core.alg"
-Bundle-Vendor: Christian-Albrechts-University of Kiel
+Bundle-Vendor: Christian-Albrechts-Universität zu Kiel

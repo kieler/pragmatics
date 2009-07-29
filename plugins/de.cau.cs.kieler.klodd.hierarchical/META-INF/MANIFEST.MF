@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: KIELER Hierarchical Layout
+Bundle-Name: KIELER Hierarchical Dataflow Layout
 Bundle-SymbolicName: de.cau.cs.kieler.klodd.hierarchical;singleton:=true
 Bundle-Version: 0.3.0
 Require-Bundle: de.cau.cs.kieler.core,
@@ -11,5 +11,5 @@ Export-Package: de.cau.cs.kieler.klodd.hierarchical;
    de.cau.cs.kieler.kiml.layout.options,
    de.cau.cs.kieler.core.alg,
    de.cau.cs.kieler.core.kgraph"
-Bundle-Vendor: Christian-Albrechts-University of Kiel
+Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

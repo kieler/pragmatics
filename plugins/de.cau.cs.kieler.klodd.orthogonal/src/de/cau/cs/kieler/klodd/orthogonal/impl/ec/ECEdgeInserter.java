@@ -30,7 +30,7 @@ import de.cau.cs.kieler.klodd.orthogonal.structures.*;
  * Algorithm that inserts an edge into a planar embedding and creates a
  * new planar embedding according to embedding constraints.
  * 
- * @author msp
+ * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class ECEdgeInserter extends AbstractAlgorithm {
 

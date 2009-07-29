@@ -28,7 +28,7 @@ import de.cau.cs.kieler.klodd.orthogonal.structures.*;
  * Algorithm that determines the biconnected components of a graph
  * with a DFS.
  * 
- * @author msp
+ * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class BiconnectedComponents extends AbstractAlgorithm {
 

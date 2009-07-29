@@ -21,7 +21,7 @@ import de.cau.cs.kieler.kiml.layout.klayoutdata.KInsets;
  * The graph structure used internally for the topology-shape-metrics
  * approach.
  * 
- * @author msp
+ * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class TSMGraph extends KSlimGraph {
 

@@ -34,9 +34,8 @@ import org.eclipse.ui.PlatformUI;
  * with the LayoutGraph Layout by creating an transparent image of this canvas and 
  * overlaying it over the GMF Editor.
  * 
- * @see de.cau.cs.kieler.kiml.viewer.views.TransparentShell
- * @author haf
- * 
+ * @see TransparentShell
+ * @author <a href="mailto:haf@informatik.uni-kiel.de">Hauke Fuhrmann</a>
  */
 public class GmfDebugCanvas extends LayoutGraphCanvas {
 

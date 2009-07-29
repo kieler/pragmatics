@@ -23,7 +23,7 @@ import de.cau.cs.kieler.core.slimgraph.*;
 /**
  * Algorithm that constructs the dual graph of a given graph.
  * 
- * @author msp
+ * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class DualGraphBuilder extends AbstractAlgorithm {
 

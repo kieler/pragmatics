@@ -40,7 +40,7 @@ import de.cau.cs.kieler.klodd.orthogonal.structures.*;
  * Compacter implementation that normalizes the graph and executes
  * another compacter for normalized orthogonal representations.
  * 
- * @author msp
+ * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class NormalizingCompacter extends AbstractAlgorithm implements
 		ICompacter {

@@ -23,7 +23,7 @@ import de.cau.cs.kieler.klodd.ui.KloddUIPlugin;
 /**
  * Initializer for the KLoDD layouter plugin preferences.
  * 
- * @author msp
+ * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 

@@ -26,7 +26,7 @@ import de.cau.cs.kieler.kiml.zest.preferences.ZestLayouterPreferencePage;
  * Wrapper class that translates KIML layout graphs into the Zest graph
  * structure.
  * 
- * @author msp
+ * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class ZestAlgorithmWrapper {
 	

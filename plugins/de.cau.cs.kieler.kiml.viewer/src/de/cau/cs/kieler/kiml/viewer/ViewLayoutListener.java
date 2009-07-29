@@ -30,7 +30,7 @@ import de.cau.cs.kieler.kiml.viewer.views.LayoutGraphView;
  * Layout listener implementation that displays the layout graphs in
  * a view.
  * 
- * @author msp
+ * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class ViewLayoutListener implements ILayoutListener {
 
