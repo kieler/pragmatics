@@ -51,19 +51,17 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 	public void createFieldEditors() {
 		// executable group
 		Group executable = new Group(this.getFieldEditorParent(), SWT.NONE);
-		executable.setText("Executable:");
+		executable.setText("Path to Executable");
 
 		FileFieldEditor dotExecutable = new FileFieldEditor(
 		        GraphvizAPI.PREF_GRAPHVIZ_EXECUTABLE,
-				"Dot Executable:", executable);
+				"Set a correct path to the 'dot' executable for Graphviz:", executable);
+		dotExecutable.getLabelControl(executable).setLayoutData(new GridData(SWT.LEFT, SWT.TOP,
+				false, false, 2, 1));
 		dotExecutable.setValidateStrategy(FileFieldEditor.VALIDATE_ON_KEY_STROKE);
 		
-		executable.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
-				false, 2, 1));
-		GridLayout gridLayout = new GridLayout(2, false);
-		gridLayout.marginWidth = 15;
-		gridLayout.marginHeight = 10;
-		executable.setLayout(gridLayout);
+		executable.setLayout(new GridLayout(2, false));
+		executable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		
 		// add all field editors
 		addField(dotExecutable);

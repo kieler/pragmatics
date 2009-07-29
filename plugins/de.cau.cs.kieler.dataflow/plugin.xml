@@ -12,7 +12,7 @@
 
    <extension point="org.eclipse.emf.ecore.generated_package">
       <package
-            uri="http://www.informatik.uni-kiel.de/rtsys/"
+            uri="http://kieler.cs.cau.de/Dataflow"
             class="dataflow.DataflowPackage"
             genModel="model/Dataflow.genmodel"/>
    </extension>

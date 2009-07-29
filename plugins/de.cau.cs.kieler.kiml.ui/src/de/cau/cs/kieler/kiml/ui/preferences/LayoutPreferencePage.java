@@ -79,8 +79,8 @@ public class LayoutPreferencePage extends PreferencePage
      * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
      */
     protected Control createContents(Composite parent) {
-        Group prioritesGroup = new Group(parent, SWT.NONE);
-        prioritesGroup.setText(Messages.getString("kiml.ui.2")); //$NON-NLS-1$
+        Group prioritiesGroup = new Group(parent, SWT.NONE);
+        prioritiesGroup.setText(Messages.getString("kiml.ui.2")); //$NON-NLS-1$
         
         Collection<LayoutProviderData> layoutProviderData = LayoutServices
                 .INSTANCE.getLayoutProviderData();
@@ -105,9 +105,10 @@ public class LayoutPreferencePage extends PreferencePage
         }
         
         // construct the priorities table
-        Label tableHeaderLabel = new Label(prioritesGroup, SWT.WRAP);
+        Label tableHeaderLabel = new Label(prioritiesGroup, SWT.WRAP);
         tableHeaderLabel.setText(Messages.getString("kiml.ui.3")); //$NON-NLS-1$
-        Table prioritiesTable = new Table(prioritesGroup, SWT.BORDER);
+        tableHeaderLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
+        Table prioritiesTable = new Table(prioritiesGroup, SWT.BORDER);
         TableColumn[] columns = new TableColumn[diagramTypes.length + 1];
         columns[0] =  new TableColumn(prioritiesTable, SWT.NONE);
         columns[0].setText(Messages.getString("kiml.ui.4")); //$NON-NLS-1$
@@ -138,10 +139,10 @@ public class LayoutPreferencePage extends PreferencePage
             column.pack();
         prioritiesTable.pack();
         
-        prioritesGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true,
-                false, 1, 2));
-        prioritesGroup.setLayout(new GridLayout(1, false));
-        return prioritesGroup;
+        prioritiesGroup.setLayout(new GridLayout(1, false));
+        prioritiesGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+                false, 1, 1));
+        return prioritiesGroup;
     }
     
     /**

@@ -80,7 +80,7 @@ public class GraphvizLayouter {
     public final static String CIRCO_COMMAND = "circo";
     
     /** if true, debug output is enabled, which writes dot files to the home folder */
-    private final static boolean ENABLE_DEBUG = true;
+    private final static boolean ENABLE_DEBUG = false;
     /** number of milliseconds to wait if no input is available from the Graphviz process */
     private final static int PROCESS_INPUT_WAIT = 500;
     /** maximal number of characters that is read from the Graphviz error output */
@@ -410,6 +410,7 @@ public class GraphvizLayouter {
     		throws KielerException{
     	try {
     		// wait for a while if there is no input from Graphviz
+    		// FIXME what if Graphviz takes longer to execute? this should be made dynamic
 	    	if (inputStream.available() == 0)
 	    		Thread.sleep(PROCESS_INPUT_WAIT);
 	    	// read and check error stream if there is still no input from Graphv
