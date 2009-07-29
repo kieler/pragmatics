@@ -28,6 +28,7 @@ public class ZestLayouterPreferencePage extends FieldEditorPreferencePage
 	 */
 	public ZestLayouterPreferencePage() {
 	    super(GRID);
+	    setDescription("Preferences for the Zest Layouters.");
 	}
 	
 	/*
@@ -40,13 +41,10 @@ public class ZestLayouterPreferencePage extends FieldEditorPreferencePage
 		optionsGroup.setText("General Options:");
 
 		FloatFieldEditor scaleBaseEditor = new FloatFieldEditor(
-				PREF_SCALE_BASE,	"&Scale base for parent nodes:", optionsGroup);
-		optionsGroup.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
-				false, 2, 1));
-		GridLayout gl = new GridLayout(2, true);
-		gl.marginWidth = 15;
-		gl.marginHeight = 10;
-		optionsGroup.setLayout(gl);
+				PREF_SCALE_BASE, "&Scale base for parent nodes:", optionsGroup);
+		
+		optionsGroup.setLayout(new GridLayout(2, true));
+		optionsGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
 
 		// add all field editors
 		addField(scaleBaseEditor);

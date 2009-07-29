@@ -96,23 +96,15 @@ public class KloddLayouterPreferencePage extends FieldEditorPreferencePage imple
 		crossRedPassesEditor.setValidRange(1, 999);
 		addField(crossRedPassesEditor);
 		
-		hieraGroup.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true,
-				false, 2, 1));
-		GridLayout gridLayout = new GridLayout(2, true);
-		gridLayout.marginWidth = 15;
-		gridLayout.marginHeight = 10;
-		hieraGroup.setLayout(gridLayout);
+		hieraGroup.setLayout(new GridLayout(2, false));
+		hieraGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
 		
 		// options group for orthogonal layouter
 //		Group orthoGroup = new Group(this.getFieldEditorParent(), SWT.NONE);
 //		orthoGroup.setText(Messages.getString("klodd.ui.3")); //$NON-NLS-1$
 //
-//		orthoGroup.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true,
-//				false, 2, 1));
-//		gridLayout = new GridLayout(2, true);
-//		gridLayout.marginWidth = 15;
-//		gridLayout.marginHeight = 10;
-//		orthoGroup.setLayout(gridLayout);
+//		orthoGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
+//		orthoGroup.setLayout(new GridLayout(2, false));
 	}
 
     /* (non-Javadoc)

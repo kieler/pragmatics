@@ -42,6 +42,7 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 	 */
 	public GraphvizPreferencePage() {
 	    super(GRID);
+	    setDescription("Preferences for the Graphviz layouter.");
 	}
 	
 	/*

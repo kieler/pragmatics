@@ -55,6 +55,7 @@ public class BoxPlacer extends AbstractAlgorithm {
         KInsets insets = LayoutOptions.getInsets(parentLayout);
         parentLayout.setWidth(insets.getLeft() + parentWidth + insets.getRight());
         parentLayout.setHeight(insets.getTop() + parentHeight + insets.getBottom());
+        LayoutOptions.setFixedSize(parentLayout, true);
         
         getMonitor().done();
     }
