@@ -40,6 +40,8 @@ public final class GraphvizAPI {
     public static final String ATTR_BOUNDINGBOX   = "bb";
     /** Comment. */
     public static final String ATTR_COMMENT       = "comment";
+    /** Set edge type for drawing arrowheads. */
+    public static final String ATTR_EDGEDIR       = "dir";
     /** This specifies the expected number of pixels per inch on a display device. */
     public static final String ATTR_DPI           = "dpi";
     /** If true, the node size is specified by the values of the width
@@ -51,8 +53,6 @@ public final class GraphvizAPI {
     public static final String ATTR_FONTSIZE      = "fontsize";
     /** Text label to be placed near head of edge. */
     public static final String ATTR_HEADLABEL     = "headlabel";
-    /** Head label position. */
-    public static final String ATTR_HEADLP        = "head_lp";
     /** Height of node, in inches. */
     public static final String ATTR_HEIGHT        = "height";
     /** Text label attached to objects. */
@@ -82,6 +82,8 @@ public final class GraphvizAPI {
     public static final String ATTR_PAD           = "pad";
     /** Position of node, or spline control points. */
     public static final String ATTR_POS           = "pos";
+    /** For graphs, this sets x and y margins of canvas, in inches. */
+    public static final String ATTR_MARGIN        = "margin";
     /** Specifies the minimum separation between all nodes (circo only). */
     public static final String ATTR_MINDIST       = "mindist";
     /** Sets direction of graph layout (dot only). */
@@ -97,8 +99,6 @@ public final class GraphvizAPI {
     public static final String ATTR_START         = "start";
     /** Text label to be placed near tail of edge. */
     public static final String ATTR_TAILLABEL     = "taillabel";
-    /** Tail label position. */
-    public static final String ATTR_TAILLP        = "tail_lp";
     /** Weight of edge. */
     public static final String ATTR_WEIGHT        = "weight";
     /** Width of node, in inches. */

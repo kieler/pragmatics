@@ -83,8 +83,9 @@ public abstract class DiagramLayoutManager {
 	            int severity = status.getSeverity();
 	            if (severity != IStatus.OK && severity != IStatus.CANCEL) {
 	                if (severity == IStatus.ERROR)
-	                    StatusManager.getManager().handle(status, StatusManager.SHOW);
-	                StatusManager.getManager().handle(status, StatusManager.LOG);
+	                    StatusManager.getManager().handle(status, StatusManager.SHOW | StatusManager.LOG);
+	                else
+	                	StatusManager.getManager().handle(status, StatusManager.LOG);
 	            }
 	            return;
 	        }

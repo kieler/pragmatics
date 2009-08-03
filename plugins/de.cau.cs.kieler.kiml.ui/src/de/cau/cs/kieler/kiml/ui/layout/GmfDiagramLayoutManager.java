@@ -39,6 +39,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramCommandStack;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.IEditorPart;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
@@ -374,10 +375,16 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 				GraphicalEditPart graphicalEditPart = (GraphicalEditPart) obj;
 				IFigure labelFigure = graphicalEditPart.getFigure();
 				String text = null;
+				Font font = null;
 				if (labelFigure instanceof WrappingLabel) {
-					text = ((WrappingLabel) labelFigure).getText();
-				} else if (labelFigure instanceof Label) {
-					text = ((Label) labelFigure).getText();
+					WrappingLabel wrappingLabel = (WrappingLabel)labelFigure;
+					text = wrappingLabel.getText();
+					font = wrappingLabel.getFont();
+				}
+				else if (labelFigure instanceof Label) {
+					Label label = (Label)labelFigure;
+					text = label.getText();
+					font = label.getFont();
 				}
 				if (text != null) {
 				    KNode parent = editPart2NodeMap.get(
@@ -391,6 +398,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     labelLayout.setYpos(labelBounds.y - parentLayout.getYpos());
                     labelLayout.setWidth(labelFigure.getPreferredSize().width);
                     labelLayout.setHeight(labelFigure.getPreferredSize().height);
+					LayoutOptions.setFontName(labelLayout, font.getFontData()[0].getName());
+					LayoutOptions.setFontSize(labelLayout, font.getFontData()[0].getHeight());
 				}
 			}
 		}
@@ -495,91 +504,50 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 		     }
 
 			/*
-			 * Process the label, at the moment 3 are hard coded.
+			 * process the labels
 			 * 
-			 * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			 * SOURCE and TARGET is exchanged when defining it in the.gmfgen
-			 * file. So if Emma sets a label to be placed as TARGET on a
-			 * connection (transition in the SSM case), then the label will show
-			 * up next to the source node in the diagram editor. So correct it
-			 * here, very ugly.
-			 * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			 * ars: source and target is exchanged when defining it in the gmfgen
+			 * file. So if Emma sets a label to be placed as target on a
+			 * connection, then the label will show up next to the source node in
+			 * the diagram editor. So correct it here, very ugly.
 			 */
 			for (Object obj : connection.getChildren()) {
 				if (obj instanceof LabelEditPart) {
 					LabelEditPart labelEditPart = (LabelEditPart) obj;
 					Rectangle labelBounds = labelEditPart.getFigure().getBounds();
-
-					// head label
-					if (labelEditPart.getKeyPoint() == ConnectionLocator.SOURCE) {
-						String headLabel = "";
-
-						if ((headLabel.equals(""))
-								&& (labelEditPart.getFigure() instanceof WrappingLabel))
-							headLabel = ((WrappingLabel) labelEditPart
-									.getFigure()).getText();
-
-						if (!headLabel.equals("")) {
-							KLabel hLabel = KimlLayoutUtil.createInitializedLabel(edge);
-							KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(hLabel);
+					String labelText = "";
+					Font font = null;
+					if (labelEditPart.getFigure() instanceof WrappingLabel) {
+						WrappingLabel wrappingLabel = (WrappingLabel)labelEditPart.getFigure();
+						labelText = wrappingLabel.getText();
+						font = wrappingLabel.getFont();
+					}
+					if (labelText.length() > 0) {
+						KLabel label = KimlLayoutUtil.createInitializedLabel(edge);
+						KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
+						switch (labelEditPart.getKeyPoint()) {
+						case ConnectionLocator.SOURCE:
 							LayoutOptions.setEdgeLabelPlacement(labelLayout,
 									EdgeLabelPlacement.HEAD);
-							labelLayout.setXpos(labelBounds.x);
-							labelLayout.setYpos(labelBounds.y);
-							labelLayout.setWidth(labelBounds.width);
-							labelLayout.setHeight(labelBounds.height);
-							hLabel.setText(headLabel);
-							edge.getLabels().add(hLabel);
-							edgeLabel2EditPartMap.put(hLabel, labelEditPart);
-						}
-					}
-
-					// middle label
-					if (labelEditPart.getKeyPoint() == ConnectionLocator.MIDDLE) {
-						String midLabel = "";
-
-						if ((midLabel.equals(""))
-								&& (labelEditPart.getFigure() instanceof WrappingLabel))
-							midLabel = ((WrappingLabel) labelEditPart
-									.getFigure()).getText();
-
-						if (!midLabel.equals("")) {
-							KLabel mLabel = KimlLayoutUtil.createInitializedLabel(edge);
-							KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(mLabel);
-                            LayoutOptions.setEdgeLabelPlacement(labelLayout,
+							break;
+						case ConnectionLocator.MIDDLE:
+							LayoutOptions.setEdgeLabelPlacement(labelLayout,
 									EdgeLabelPlacement.CENTER);
-                            labelLayout.setXpos(labelBounds.x);
-                            labelLayout.setYpos(labelBounds.y);
-                            labelLayout.setWidth(labelBounds.width);
-                            labelLayout.setHeight(labelBounds.height);
-                            mLabel.setText(midLabel);
-							edge.getLabels().add(mLabel);
-							edgeLabel2EditPartMap.put(mLabel, labelEditPart);
-						}
-					}
-
-					// tail label
-					if (labelEditPart.getKeyPoint() == ConnectionLocator.TARGET) {
-						String tailLabel = "";
-
-						if ((tailLabel.equals(""))
-								&& (labelEditPart.getFigure() instanceof WrappingLabel))
-							tailLabel = ((WrappingLabel) labelEditPart
-									.getFigure()).getText();
-
-						if (!tailLabel.equals("")) {
-							KLabel tLabel = KimlLayoutUtil.createInitializedLabel(edge);
-							KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(tLabel);
-                            LayoutOptions.setEdgeLabelPlacement(labelLayout,
+							break;
+						case ConnectionLocator.TARGET:
+							LayoutOptions.setEdgeLabelPlacement(labelLayout,
 									EdgeLabelPlacement.TAIL);
-                            labelLayout.setXpos(labelBounds.x);
-                            labelLayout.setYpos(labelBounds.y);
-                            labelLayout.setWidth(labelBounds.width);
-                            labelLayout.setHeight(labelBounds.height);
-                            tLabel.setText(tailLabel);
-							edge.getLabels().add(tLabel);
-							edgeLabel2EditPartMap.put(tLabel, labelEditPart);
+							break;
 						}
+						LayoutOptions.setFontName(labelLayout, font.getFontData()[0].getName());
+						LayoutOptions.setFontSize(labelLayout, font.getFontData()[0].getHeight());
+						labelLayout.setXpos(labelBounds.x);
+						labelLayout.setYpos(labelBounds.y);
+						labelLayout.setWidth(labelBounds.width);
+						labelLayout.setHeight(labelBounds.height);
+						label.setText(labelText);
+						edge.getLabels().add(label);
+						edgeLabel2EditPartMap.put(label, labelEditPart);
 					}
 				}
 			}

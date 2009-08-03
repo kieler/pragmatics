@@ -56,7 +56,7 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 
 		FileFieldEditor dotExecutable = new FileFieldEditor(
 		        GraphvizAPI.PREF_GRAPHVIZ_EXECUTABLE,
-				"Set a correct path to the 'dot' executable for Graphviz:", executable);
+				"Set a correct path to the 'dot' executable for Graphviz. The Graphviz layout tool is available at http://www.graphviz.org/", executable);
 		dotExecutable.getLabelControl(executable).setLayoutData(new GridData(SWT.LEFT, SWT.TOP,
 				false, false, 2, 1));
 		dotExecutable.setValidateStrategy(FileFieldEditor.VALIDATE_ON_KEY_STROKE);

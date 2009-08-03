@@ -422,4 +422,77 @@ public class LayoutOptions {
             return priorityOption.getValue();
     }
     
+    /** layout option key: font name */
+    public final static String FONT_NAME = "de.cau.cs.kieler.layout.options.fontName";
+    
+    /**
+     * Returns the font name for a given layout data instance.
+     * 
+     * @param layoutData layout data for a label
+     * @return the font name for the given layout data, or
+     *     {@code null} if there is no such option
+     */
+    public static String getFontName(KLayoutData layoutData) {
+        KStringOption fontOption = (KStringOption)layoutData.getOption(
+        		FONT_NAME);
+        if (fontOption == null)
+            return null;
+        else
+            return fontOption.getValue();
+    }
+    
+    /**
+     * Sets the font name for the given layout data instance.
+     * 
+     * @param layoutData layout data for a label
+     * @param fontName font name to set
+     */
+    public static void setFontName(KLayoutData layoutData,
+            String fontName) {
+        KStringOption fontOption = (KStringOption)layoutData.getOption(
+        		FONT_NAME);
+        if (fontOption == null) {
+        	fontOption = KLayoutDataFactory.eINSTANCE.createKStringOption();
+        	fontOption.setKey(FONT_NAME);
+            layoutData.getOptions().add(fontOption);
+        }
+        fontOption.setValue(fontName);
+    }
+    
+    /** layout option key: font size */
+    public static final String FONT_SIZE = "de.cau.cs.kieler.layout.options.fontSize";
+    
+    /**
+     * Sets the font size of the given layout data.
+     * 
+     * @param layoutData layout data to process
+     * @param size font size for the corresponding label
+     */
+    public static void setFontSize(KLayoutData layoutData,
+            int size) {
+        KIntOption sizeOption = (KIntOption)layoutData.getOption(
+        		FONT_SIZE);
+        if (sizeOption == null) {
+        	sizeOption = KLayoutDataFactory.eINSTANCE.createKIntOption();
+        	sizeOption.setKey(FONT_SIZE);
+            layoutData.getOptions().add(sizeOption);
+        }
+        sizeOption.setValue(size);
+    }
+    
+    /**
+     * Retrieves the font size for a given layout data.
+     * 
+     * @param layoutData layout data to process
+     * @return the font size, or 0 if no font size is assigned
+     */
+    public static int getFontSize(KLayoutData layoutData) {
+        KIntOption sizeOption = (KIntOption)layoutData.getOption(
+        		FONT_SIZE);
+        if (sizeOption == null)
+            return 0;
+        else
+            return sizeOption.getValue();
+    }
+    
 }
