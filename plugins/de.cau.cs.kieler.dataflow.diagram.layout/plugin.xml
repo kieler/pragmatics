@@ -5,14 +5,17 @@
          point="de.cau.cs.kieler.kiml.layout.layoutInfo">
       <binding
             class="de.cau.cs.kieler.dataflow.diagram.edit.parts.DataflowModelEditPart"
+            id="de.cau.cs.kieler.dataflow"
             type="de.cau.cs.kieler.layout.info.types.dataFlow">
       </binding>
       <binding
             class="de.cau.cs.kieler.dataflow.diagram.edit.parts.BoxBoxCompartmentEditPart"
+            id="de.cau.cs.kieler.dataflow"
             type="de.cau.cs.kieler.layout.info.types.dataFlow">
       </binding>
       <binding
             class="de.cau.cs.kieler.dataflow.diagram.edit.parts.BoxBoxCompartment2EditPart"
+            id="de.cau.cs.kieler.dataflow"
             type="de.cau.cs.kieler.layout.info.types.dataFlow">
       </binding>
    </extension>

@@ -193,7 +193,7 @@ Apart from a set of default layout types offered by KIML, new layout providers a
          <attribute name="type" type="string" use="required">
             <annotation>
                <documentation>
-                  Defines the data type of this option; must be either &lt;code&gt;boolean&lt;/code&gt;, &lt;code&gt;string&lt;/code&gt;, &lt;code&gt;int&lt;/code&gt;, &lt;code&gt;float&lt;/code&gt;, or &lt;code&gt;object&lt;/code&gt;.
+                  Defines the data type of this option; must be either &lt;code&gt;boolean&lt;/code&gt;, &lt;code&gt;string&lt;/code&gt;, &lt;code&gt;int&lt;/code&gt;, or &lt;code&gt;float&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>

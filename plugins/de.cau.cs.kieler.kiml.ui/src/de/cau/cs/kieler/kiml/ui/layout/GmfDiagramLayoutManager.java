@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.kiml.ui.layout;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -40,10 +39,10 @@ import org.eclipse.gmf.runtime.diagram.ui.figures.ResizableCompartmentFigure;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramCommandStack;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
-import org.eclipse.gmf.runtime.draw2d.ui.internal.figures.AnimatableScrollPane;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.IEditorPart;
 
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -109,9 +108,11 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     
     /*
      * (non-Javadoc)
-     * @see de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager#buildLayoutGraph(org.eclipse.ui.IEditorPart, org.eclipse.gef.EditPart)
+     * @see de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager#buildLayoutGraph(org.eclipse.ui.IEditorPart, org.eclipse.gef.EditPart, de.cau.cs.kieler.core.alg.IKielerProgressMonitor)
      */
-    protected KNode buildLayoutGraph(IEditorPart editorPart, EditPart editPart) {
+    protected KNode buildLayoutGraph(IEditorPart editorPart, EditPart editPart,
+    		IKielerProgressMonitor progressMonitor) {
+    	progressMonitor.begin("Build layout graph", 10);
         node2EditPartMap.clear();
         edge2EditPartMap.clear();
         port2EditPartMap.clear();
@@ -148,14 +149,17 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         }
         diagramEditPart = (DiagramEditPart)ep;
         
-        return doBuildLayoutGraph(layoutRootPart);
+        KNode topNode = doBuildLayoutGraph(layoutRootPart);
+        progressMonitor.done();
+        return topNode;
     }
     
     /*
      * (non-Javadoc)
-     * @see de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager#applyLayout()
+     * @see de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager#applyLayout(de.cau.cs.kieler.core.alg.IKielerProgressMonitor)
      */
-    protected void applyLayout() {
+    protected void applyLayout(IKielerProgressMonitor progressMonitor) {
+    	progressMonitor.begin("Apply layout to the diagram", 10);
         // create a new request to change the layout
         ApplyLayoutRequest applyLayoutRequest = new ApplyLayoutRequest();
         for (KNode knode : node2EditPartMap.keySet())
@@ -169,6 +173,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         
         // retrieve a command for the request; the command is created by GmfLayoutEditPolicy
         Command applyLayoutCommand = diagramEditPart.getCommand(applyLayoutRequest);
+        progressMonitor.worked(3);
         
         // gets a command stack to execute the command
         DiagramCommandStack commandStack = null;
@@ -180,6 +185,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         if (commandStack == null)
             commandStack = new DiagramCommandStack(null);
         commandStack.execute(applyLayoutCommand);
+        progressMonitor.done();
     }
 
 	/**
@@ -246,6 +252,13 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 	        isCollapsed = false;
 		// iterate through the children of the element
 		for (Object obj : currentEditPart.getChildren()) {
+			
+			// check visibility of the child
+			if (obj instanceof GraphicalEditPart) {
+				IFigure figure = ((GraphicalEditPart)obj).getFigure();
+				if (!figure.isVisible())
+					continue;
+			}
 
 		    // process ports (border items)
 		    if (obj instanceof AbstractBorderItemEditPart) {
@@ -311,19 +324,17 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     			    insetTop = compartmentBounds.y - parentBounds.y + compartmentInsets.top;
     			    insetLeft = compartmentBounds.x - parentBounds.x + compartmentInsets.left;
     			    if (compartmentFigure instanceof ResizableCompartmentFigure) {
-    			    	ScrollPane scrollPane = ((ResizableCompartmentFigure)compartmentFigure).getScrollPane();
+    			    	ResizableCompartmentFigure resizableCompartmentFigure = (ResizableCompartmentFigure)compartmentFigure;
+    			    	ScrollPane scrollPane = resizableCompartmentFigure.getScrollPane();
 			            Insets scrollPaneInsets = scrollPane.getInsets();
 			            insetTop += scrollPaneInsets.top;
 			            insetLeft += scrollPaneInsets.left;
     			    
 			            // check whether the compartment is collapsed
-    			    	if (scrollPane instanceof AnimatableScrollPane) {
-    			    		AnimatableScrollPane animScrollPane = (AnimatableScrollPane)scrollPane;
-    			    		if (!animScrollPane.isExpanded()) {
-    			    			isCollapsed = true;
-    			    			continue;
-    			    		}
-    			    	}
+			    		if (!resizableCompartmentFigure.isExpanded()) {
+			    			isCollapsed = true;
+			    			continue;
+			    		}
     			    }
     			    
     			    hasChildCompartments = true;
@@ -335,10 +346,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             // process nodes, which may be parents of compartments
             else if (obj instanceof ShapeNodeEditPart) {
                 ShapeNodeEditPart childNodeEditPart = (ShapeNodeEditPart) obj;
-                KNode childLayoutNode = KimlLayoutUtil
-                        .createInitializedNode();
-                Rectangle childBounds = childNodeEditPart.getFigure()
-                        .getBounds();
+                KNode childLayoutNode = KimlLayoutUtil.createInitializedNode();
+                Rectangle childBounds = childNodeEditPart.getFigure().getBounds();
                 KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(childLayoutNode);
 
                 // store all the connections to process them later
@@ -355,8 +364,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 nodeLayout.setWidth(childBounds.width);
 
                 currentLayoutNode.getChildren().add(childLayoutNode);
-                editPart2NodeMap.put(childNodeEditPart,
-                        childLayoutNode);
+                editPart2NodeMap.put(childNodeEditPart, childLayoutNode);
                 node2EditPartMap.put(childLayoutNode, childNodeEditPart);
                 hasChildNodes = true;
                 // process the child as new current edit part, as it may contain other elements

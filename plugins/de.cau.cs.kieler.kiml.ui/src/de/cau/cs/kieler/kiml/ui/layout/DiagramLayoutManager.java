@@ -157,17 +157,17 @@ public abstract class DiagramLayoutManager {
 			progressMonitor.begin("Diagram layout", 100);
 			
 			// transform the diagram into a KGraph instance
-			KNode layoutGraph = buildLayoutGraph(editorPart, editPart);
-			progressMonitor.worked(5);
+			KNode layoutGraph = buildLayoutGraph(editorPart, editPart,
+					progressMonitor.subTask(10));
 
 			// notify layout listeners about the layout request
 			LayoutServices.INSTANCE.layoutRequested(layoutGraph);
 
 			// perform layout on the layout graph
-			layouterEngine.layout(layoutGraph, progressMonitor.subTask(90));
+			layouterEngine.layout(layoutGraph, progressMonitor.subTask(80));
 
 			// apply layout to the model
-			applyLayout();
+			applyLayout(progressMonitor.subTask(10));
 			
 			// notify layout listeners about the performed layout
             progressMonitor.done();
@@ -242,14 +242,18 @@ public abstract class DiagramLayoutManager {
      *     the diagram is not part of an editor
 	 * @param editPart the parent edit part for which layout is performed, or
      *     {@code null} if the whole diagram shall be layouted
+     * @param progressMonitor a monitor to keep track of progress
 	 * @return a layout graph instance
 	 */
-	protected abstract KNode buildLayoutGraph(IEditorPart editorPart, EditPart editPart);
+	protected abstract KNode buildLayoutGraph(IEditorPart editorPart, EditPart editPart,
+			IKielerProgressMonitor progressMonitor);
 	
 	/**
 	 * Applies all layout data from the last created KGraph instance to the original
 	 * diagram.
+	 * 
+	 * @param progressMonitor a monitor to keep track of progress
 	 */
-	protected abstract void applyLayout();
+	protected abstract void applyLayout(IKielerProgressMonitor progressMonitor);
 	
 }

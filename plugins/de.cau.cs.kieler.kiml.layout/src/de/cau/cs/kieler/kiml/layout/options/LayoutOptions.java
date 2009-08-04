@@ -495,4 +495,37 @@ public class LayoutOptions {
             return sizeOption.getValue();
     }
     
+    /** layout option key: shape of a node */
+    public final static String SHAPE = "de.cau.cs.kieler.layout.options.shape";
+    
+    /**
+     * Returns the shape for a given layout data instance.
+     * 
+     * @param layoutData layout data for a node
+     * @return the shape for the given layout data
+     */
+    public static Shape getShape(KLayoutData layoutData) {
+        KIntOption shapeOption = (KIntOption)layoutData.getOption(SHAPE);
+        if (shapeOption == null)
+            return Shape.UNDEFINED;
+        else
+            return Shape.valueOf(shapeOption.getValue());
+    }
+    
+    /**
+     * Sets the shape for the given layout data instance.
+     * 
+     * @param layoutData layout data for a node
+     * @param shape shape to set
+     */
+    public static void setShape(KLayoutData layoutData, Shape shape) {
+        KIntOption shapeOption = (KIntOption)layoutData.getOption(SHAPE);
+        if (shapeOption == null) {
+        	shapeOption = KLayoutDataFactory.eINSTANCE.createKIntOption();
+        	shapeOption.setKey(SHAPE);
+            layoutData.getOptions().add(shapeOption);
+        }
+        shapeOption.setValue(shape.ordinal());
+    }
+    
 }

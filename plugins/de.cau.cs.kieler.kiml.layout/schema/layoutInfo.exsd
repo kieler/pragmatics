@@ -6,7 +6,7 @@
          <meta.schema plugin="de.cau.cs.kieler.kiml.layout" id="layoutInfo" name="Layout Info"/>
       </appInfo>
       <documentation>
-         The layout info extension point allows to specify the properties of a specific diagram editor with regard to automatic layout. Containers of the diagram, such as compartment edit parts or diagram edit parts, can be mapped to generic diagram types. This information is used by the layout infrastructure to decide at runtime which layout provider to use for a specific part of a diagram.
+         The layout info extension point allows to specify the properties of a specific diagram editor with regard to automatic layout. Containers of the diagram, such as compartment edit parts or diagram edit parts, can be mapped to generic diagram types. This information is used by the layout infrastructure to decide at runtime which layout provider to use for a specific part of a diagram. Furthermore, this extension point allows to configure layout options for specific diagrams to optimize the behavior of layout algorithms.
       </documentation>
    </annotation>
 
@@ -20,6 +20,7 @@
          <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="diagramType"/>
             <element ref="binding"/>
+            <element ref="option"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -104,6 +105,50 @@
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  An identifier for this specific diagram class. Multiple bindings may contribute the same identifier, indicating that the diagrams contained in the respective edit parts are of the same specific type.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="option">
+      <annotation>
+         <documentation>
+            A layout option configuration for a specific diagram class.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="diagram" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Identifier of a diagram binding, which can be defined using the &lt;code&gt;binding&lt;/code&gt; element. This option will be applied to all instances of the respective edit part. Multiple bindings may share the same identifier, thus allowing the same option to be configured for multiple edit part classes.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.layout.layoutInfo/binding/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="option" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Identifier of a layout option, which can be defined using the &lt;code&gt;layoutOption&lt;/code&gt; element of the &lt;code&gt;layoutProviders&lt;/code&gt; extension point.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.layout.layoutProviders/layoutOption/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Value of the layout option.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -121,7 +166,7 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example for a diagram type and a binding extension:
+         The following is an example for a diagram type, a binding, and an option extension:
 &lt;pre&gt;
    &lt;extension
          point=&quot;de.cau.cs.kieler.kiml.layout.layoutInfo&quot;&gt;
@@ -131,12 +176,14 @@
       &lt;/diagramType&gt;
       &lt;binding
             class=&quot;de.cau.cs.kieler.synccharts.diagram.edit.parts.RegionEditPart&quot;
+            id=&quot;de.cau.cs.kieler.synccharts.diagram&quot;
             type=&quot;de.cau.cs.kieler.layout.info.types.stateMachine&quot;&gt;
       &lt;/binding&gt;
-      &lt;binding
-            class=&quot;de.cau.cs.kieler.synccharts.diagram.edit.parts.RegionStateCompartmentEditPart&quot;
-            type=&quot;de.cau.cs.kieler.layout.info.types.stateMachine&quot;&gt;
-      &lt;/binding&gt;
+      &lt;option
+            diagram=&quot;de.cau.cs.kieler.synccharts.diagram&quot;
+            option=&quot;de.cau.cs.kieler.layout.options.minSpacing&quot;
+            value=&quot;20.0&quot;&gt;
+      &lt;/option&gt;
    &lt;/extension&gt;
 &lt;/pre&gt;
       </documentation>
