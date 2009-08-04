@@ -36,9 +36,11 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.figures.ResizableCompartmentFigure;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramCommandStack;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
+import org.eclipse.gmf.runtime.draw2d.ui.internal.figures.AnimatableScrollPane;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.IEditorPart;
 
@@ -65,8 +67,8 @@ import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
  * directly manipulate data in the GMF notation model, where layout information
  * is stored persistently.
  * 
- * @author <a href="mailto:ars@informatik.uni-kiel.de">Arne Schipper</a>,
- *     <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author <a href="mailto:ars@informatik.uni-kiel.de">Arne Schipper</a>
+ * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 
@@ -189,6 +191,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 	 */
 	private KNode doBuildLayoutGraph(GraphicalEditPart layoutRootPart) {
         KNode layoutGraph = KimlLayoutUtil.createInitializedNode();
+        // start with a specific node as root for layout
 		if (layoutRootPart instanceof ShapeNodeEditPart) {
 			ShapeNodeEditPart rootEditPart = (ShapeNodeEditPart) layoutRootPart;
 			KShapeLayout shapeLayout = KimlLayoutUtil.getShapeLayout(layoutGraph);
@@ -207,10 +210,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 			// wander recursively through the diagram
 			buildLayoutGraphRecursively(rootEditPart, layoutGraph, 0.0f, 0.0f);
 		}
-		/*
-		 * if the rootPart was a complete Diagram, that is when clicked into the
-		 * empty diagram background space, start with its children.
-		 */
+		// start with the whole diagram as root for layout
 		else if (layoutRootPart instanceof DiagramEditPart) {
 		    KShapeLayout shapeLayout = KimlLayoutUtil.getShapeLayout(layoutGraph);
 		    shapeLayout.setWidth(layoutRootPart.getFigure().getBounds().width);
@@ -224,10 +224,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 		else throw new UnsupportedOperationException("Not supported by this layout manager: "
 		        + layoutRootPart);
 		
-	    /*
-         * Finally process all the connections, as Emma has build all the needed
-         * KNodes which act as source and target.
-         */
+	    // transform all connections in the selected area
         processConnections();
         
         return layoutGraph;
@@ -245,11 +242,12 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 	 */
 	private void buildLayoutGraphRecursively(GraphicalEditPart currentEditPart,
 			KNode currentLayoutNode, float insetTop, float insetLeft) {
-	    boolean hasChildNodes = false, hasChildCompartments = false, hasPorts = false;
-		/* iterate through the children of the element */
+	    boolean hasChildNodes = false, hasChildCompartments = false, hasPorts = false,
+	        isCollapsed = false;
+		// iterate through the children of the element
 		for (Object obj : currentEditPart.getChildren()) {
 
-		    // process ports
+		    // process ports (border items)
 		    if (obj instanceof AbstractBorderItemEditPart) {
 		        AbstractBorderItemEditPart borderItem = (AbstractBorderItemEditPart)obj;
                 KPort port = KimlLayoutUtil.createInitializedPort();
@@ -298,42 +296,44 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     }
                 }
 		    }
-			/*
-			 * If it is ShapeCompartmentEditPart, Emma needs the children of it
-			 * to add to new KNodes. She handles possible insets, which
-			 * may result from labels and other stuff.
-			 */
+		    
+			// process compartments, which may contain other elements
 			else if (obj instanceof CompartmentEditPart
 					&& ((CompartmentEditPart) obj).getChildren().size() != 0) {
-
-			    GraphicalEditPart compartment = (GraphicalEditPart)obj;
+				CompartmentEditPart compartment = (CompartmentEditPart)obj;
 			    String diagramType = LayoutServices.INSTANCE.getDiagramTypeFor(compartment.getClass());
                 if (!LayoutServices.DIAGRAM_TYPE_NOLAYOUT.equals(diagramType)) {
-                    hasChildCompartments = true;
     			    Rectangle parentBounds = currentEditPart.getFigure().getBounds();
     			    IFigure compartmentFigure = compartment.getFigure();
+    			    // calculate insets of the child compartment
     			    Rectangle compartmentBounds = compartmentFigure.getBounds();
     			    Insets compartmentInsets = compartmentFigure.getInsets();
-    			    int compartmentTopInset = compartmentInsets.top;
-    			    int compartmentLeftInset = compartmentInsets.left;
-    			    Iterator<?> figureIter = compartmentFigure.getChildren().iterator();
-    			    while (figureIter.hasNext()) {
-    			        Object next = figureIter.next();
-    			        if (next instanceof ScrollPane) {
-    			            Insets scrollPaneInsets = ((IFigure)next).getInsets();
-    			            compartmentTopInset += scrollPaneInsets.top;
-    			            compartmentLeftInset += scrollPaneInsets.left;
-    			            break;
-    			        }
+    			    insetTop = compartmentBounds.y - parentBounds.y + compartmentInsets.top;
+    			    insetLeft = compartmentBounds.x - parentBounds.x + compartmentInsets.left;
+    			    if (compartmentFigure instanceof ResizableCompartmentFigure) {
+    			    	ScrollPane scrollPane = ((ResizableCompartmentFigure)compartmentFigure).getScrollPane();
+			            Insets scrollPaneInsets = scrollPane.getInsets();
+			            insetTop += scrollPaneInsets.top;
+			            insetLeft += scrollPaneInsets.left;
+    			    
+			            // check whether the compartment is collapsed
+    			    	if (scrollPane instanceof AnimatableScrollPane) {
+    			    		AnimatableScrollPane animScrollPane = (AnimatableScrollPane)scrollPane;
+    			    		if (!animScrollPane.isExpanded()) {
+    			    			isCollapsed = true;
+    			    			continue;
+    			    		}
+    			    	}
     			    }
+    			    
+    			    hasChildCompartments = true;
     				buildLayoutGraphRecursively(compartment, currentLayoutNode,
-    				        compartmentBounds.y - parentBounds.y + compartmentTopInset,
-    				        compartmentBounds.x - parentBounds.x + compartmentLeftInset);
+    				        insetTop, insetLeft);
                 }
 			}
-            /* if true, Emma has a real EditPart with contents. */
+		    
+            // process nodes, which may be parents of compartments
             else if (obj instanceof ShapeNodeEditPart) {
-
                 ShapeNodeEditPart childNodeEditPart = (ShapeNodeEditPart) obj;
                 KNode childLayoutNode = KimlLayoutUtil
                         .createInitializedNode();
@@ -341,35 +341,30 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                         .getBounds();
                 KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(childLayoutNode);
 
-                /* store all the connections to process them later */
+                // store all the connections to process them later
                 for (Object conn : childNodeEditPart.getTargetConnections()) {
                     if (conn instanceof ConnectionEditPart) {
                         connections.add((ConnectionEditPart) conn);
                     }
                 }
 
-                /* set location */
+                // set location and size
                 nodeLayout.setXpos(childBounds.x);
                 nodeLayout.setYpos(childBounds.y);
-
-                /* set size */
                 nodeLayout.setHeight(childBounds.height);
                 nodeLayout.setWidth(childBounds.width);
 
-                /* add node */
                 currentLayoutNode.getChildren().add(childLayoutNode);
-
-                /* keep track of mapping between elements */
                 editPart2NodeMap.put(childNodeEditPart,
                         childLayoutNode);
                 node2EditPartMap.put(childLayoutNode, childNodeEditPart);
-
                 hasChildNodes = true;
-                /* and process the child as new current */
+                // process the child as new current edit part, as it may contain other elements
                 buildLayoutGraphRecursively(childNodeEditPart,
                         childLayoutNode, 0.0f, 0.0f);
             }
-			/* label handling */
+		    
+			// process labels of nodes
             else if (obj instanceof GraphicalEditPart) {
 
 				GraphicalEditPart graphicalEditPart = (GraphicalEditPart) obj;
@@ -404,8 +399,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 			}
 		}
 		
-		// set layout options for the parent node
-        // TODO make this customizable
+		// set general layout options for the parent node
         KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(currentLayoutNode);
 		if (hasChildNodes) {
 		    GraphicalEditPart parentEditPart = node2EditPartMap.get(currentLayoutNode);
@@ -421,19 +415,25 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     	            LayoutOptions.setDiagramType(nodeLayout, diagramType);
     		}
             LayoutOptions.setLayoutDirection(nodeLayout, LayoutDirection.HORIZONTAL);
+		}
+		// set fixed size option
+		if (!hasChildNodes && !hasChildCompartments && !isCollapsed) {
+		    LayoutOptions.setFixedSize(nodeLayout, true);
+		}
+		// set insets
+		if (hasChildNodes || isCollapsed) {
             KInsets insets = LayoutOptions.getInsets(nodeLayout);
             insets.setTop(insetTop);
             insets.setLeft(insetLeft);
             insets.setRight(insetLeft);
             insets.setBottom(insetLeft);
 		}
-		else if (!hasChildCompartments){
-		    if (hasPorts)
+		// set port constraints
+	    if (hasPorts) {
+	    	if (hasChildNodes || hasChildCompartments)
+	    		LayoutOptions.setPortConstraints(nodeLayout, PortConstraints.FREE_PORTS);
+	    	else
 		        LayoutOptions.setPortConstraints(nodeLayout, PortConstraints.FIXED_POS);
-		    LayoutOptions.setFixedSize(nodeLayout, true);
-		}
-		else if (hasPorts) {
-            LayoutOptions.setPortConstraints(nodeLayout, PortConstraints.FREE_PORTS);
 		}
 	}
 
@@ -455,8 +455,10 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 			    sourcePort.getEdges().add(edge);
 			    sourceNode = sourcePort.getNode();
 			}
-			else
+			else {
 			    sourceNode = editPart2NodeMap.get(sourceObj);
+			    if (sourceNode == null) continue;
+			}
 			
 			EditPart targetObj = connection.getTarget();
 			if (targetObj instanceof AbstractBorderItemEditPart) {
@@ -466,10 +468,10 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 			    targetPort.getEdges().add(edge);
 			    targetNode = targetPort.getNode();
 			}
-			else
+			else {
 			    targetNode = editPart2NodeMap.get(targetObj);
-			
-            if (sourceNode == null || targetNode == null) continue;
+			    if (targetNode == null) continue;
+			}
 			
 			edge.setSource(sourceNode);
 			edge.setTarget(targetNode);

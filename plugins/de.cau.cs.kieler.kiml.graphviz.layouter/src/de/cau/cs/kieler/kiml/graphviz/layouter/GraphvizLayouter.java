@@ -79,7 +79,7 @@ public class GraphvizLayouter {
     public final static String CIRCO_COMMAND = "circo";
     
     /** if true, debug output is enabled, which writes dot files to the home folder */
-    private final static boolean ENABLE_DEBUG = true;
+    private final static boolean ENABLE_DEBUG = false;
     /** number of milliseconds to wait if no input is available from the Graphviz process */
     private final static int PROCESS_INPUT_WAIT = 500;
     /** maximal number of characters that is read from the Graphviz error output */
@@ -231,23 +231,16 @@ public class GraphvizLayouter {
             KLabel label = childNode.getLabel();
             attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_LABEL,
             		createString(label.getText())));
-            KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
-            String fontName = LayoutOptions.getFontName(labelLayout);
-            if (fontName != null) {
-            	attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_FONTNAME,
-            			createString(fontName)));
-            	attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_FONTSIZE,
-            			Integer.toString(LayoutOptions.getFontSize(labelLayout))));
-            }
             // set width and height
-            if (LayoutOptions.isFixedSize(shapeLayout)) {
-	            String width = Float.toString(shapeLayout.getWidth() / DPI);
-	            String height = Float.toString(shapeLayout.getHeight() / DPI);
-	            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_WIDTH, width));
-	            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_HEIGHT, height));
-	            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_FIXEDSIZE, "true"));
+            if (!LayoutOptions.isFixedSize(shapeLayout)) {
+            	KimlLayoutUtil.resizeNode(childNode);
             }
-            // set shape
+            String width = Float.toString(shapeLayout.getWidth() / DPI);
+            String height = Float.toString(shapeLayout.getHeight() / DPI);
+            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_WIDTH, width));
+            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_HEIGHT, height));
+            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_FIXEDSIZE, "true"));
+            // set node shape
             // TODO customize the node shape
             attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_SHAPE, "box"));
             
@@ -291,8 +284,9 @@ public class GraphvizLayouter {
 	                    if (fontName != null) {
 	                    	attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_FONTNAME,
 	                    			createString(fontName)));
+	                    	int fontSize = (int)(LayoutOptions.getFontSize(labelLayout) * 1.2);
 	                    	attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_FONTSIZE,
-	                    			Integer.toString(LayoutOptions.getFontSize(labelLayout))));
+	                    			Integer.toString(fontSize)));
 	                    }
                     }
                     // add comment with edge identifier
@@ -512,28 +506,30 @@ public class GraphvizLayouter {
                 KNode knode = (KNode)graphElementMap.get(nodeStatement.getNode().getName());
                 KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(knode);
                 AttributeList attributes = nodeStatement.getAttributes();
-                String position = null;
+                float xpos = 0.0f, ypos = 0.0f, width = 0.0f, height = 0.0f;
                 for (Attribute attribute : attributes.getEntries()) {
                     try {
-                        if (attribute.getName().equals(GraphvizAPI.ATTR_POS))
-                            position = attribute.getValue();
-                        else if (attribute.getName().equals(GraphvizAPI.ATTR_WIDTH))
-                            nodeLayout.setWidth(Float.parseFloat(attribute.getValue()) * DPI);
-                        else if (attribute.getName().equals(GraphvizAPI.ATTR_HEIGHT))
-                            nodeLayout.setHeight(Float.parseFloat(attribute.getValue()) * DPI);
+                        if (attribute.getName().equals(GraphvizAPI.ATTR_POS)) {
+                            StringTokenizer tokenizer = new StringTokenizer(
+                            		attribute.getValue(), ATTRIBUTE_DELIM);
+                            xpos = Float.parseFloat(tokenizer.nextToken()) + offset;
+                            ypos = Float.parseFloat(tokenizer.nextToken()) + offset;
+                        }
+                        else if (attribute.getName().equals(GraphvizAPI.ATTR_WIDTH)) {
+                            StringTokenizer tokenizer = new StringTokenizer(
+                            		attribute.getValue(), ATTRIBUTE_DELIM);
+                            width = Float.parseFloat(tokenizer.nextToken()) * DPI;
+                        }
+                        else if (attribute.getName().equals(GraphvizAPI.ATTR_HEIGHT)) {
+                            StringTokenizer tokenizer = new StringTokenizer(
+                            		attribute.getValue(), ATTRIBUTE_DELIM);
+                            height = Float.parseFloat(tokenizer.nextToken()) * DPI;
+                        }
                     }
                     catch (NumberFormatException exception) {}
                 }
-                if (position != null) {
-                    try {
-                        StringTokenizer tokenizer = new StringTokenizer(position, ATTRIBUTE_DELIM);
-                        float xpos = Float.parseFloat(tokenizer.nextToken()) + offset;
-                        float ypos = Float.parseFloat(tokenizer.nextToken()) + offset;
-                        nodeLayout.setXpos(xpos - nodeLayout.getWidth() / 2);
-                        nodeLayout.setYpos(ypos - nodeLayout.getHeight() / 2);
-                    }
-                    catch (NumberFormatException exception) {}
-                }
+                nodeLayout.setXpos(xpos - width / 2);
+                nodeLayout.setYpos(ypos - height / 2);
             }
             
             else if (statement instanceof EdgeStatement) {

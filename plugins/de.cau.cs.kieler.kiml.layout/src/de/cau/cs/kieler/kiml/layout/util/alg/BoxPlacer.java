@@ -73,6 +73,8 @@ public class BoxPlacer extends AbstractAlgorithm {
         float maxWidth = 0.0f;
         for (KNode box : sortedBoxes) {
             KShapeLayout boxLayout = KimlLayoutUtil.getShapeLayout(box);
+            if (!LayoutOptions.isFixedSize(boxLayout))
+            	KimlLayoutUtil.resizeNode(box);
             if (boxLayout.getWidth() > maxWidth)
                 maxWidth = boxLayout.getWidth();
         }

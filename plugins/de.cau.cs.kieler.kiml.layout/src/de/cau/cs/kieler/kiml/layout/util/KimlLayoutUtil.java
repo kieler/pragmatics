@@ -408,25 +408,29 @@ public class KimlLayoutUtil {
         }
     }
     
+    /** minimal size of a node */
+    private static final float MIN_NODE_SIZE = 15.0f;
     /** minimal distance of two ports on each side of a node */
     private static final float MIN_PORT_DISTANCE = 8.0f;
+    /** maximal aspect ratio of node sizes */
+    private static final float MAX_SIZE_RATIO = 2.0f;
     
     /**
      * Sets the size of a given node, depending on the number of ports
      * on each side, the insets and the label.
      * 
-     * @param node
+     * @param node the node that shall be resized
      */
     public static void resizeNode(KNode node) {
+        float newWidth = MIN_NODE_SIZE;
+        float newHeight = MIN_NODE_SIZE;
+        KShapeLayout labelLayout = getShapeLayout(node.getLabel());
+        newWidth += labelLayout.getWidth();
+        newHeight += labelLayout.getHeight();
         KShapeLayout nodeLayout = getShapeLayout(node);
         KInsets insets = LayoutOptions.getInsets(nodeLayout);
-        float minWidth = insets.getLeft() + insets.getRight() + 2;
-        float minHeight = insets.getTop() + insets.getBottom() + 2;
-        KShapeLayout labelLayout = getShapeLayout(node.getLabel());
-        if (labelLayout != null) {
-            minWidth += labelLayout.getWidth();
-            minHeight += labelLayout.getHeight();
-        }
+        newWidth = Math.max(newWidth, insets.getLeft() + insets.getRight());
+        newHeight = Math.max(newHeight, insets.getTop() + insets.getBottom());
         
         float minNorth = MIN_PORT_DISTANCE, minEast = MIN_PORT_DISTANCE,
             minSouth = MIN_PORT_DISTANCE, minWest = MIN_PORT_DISTANCE;
@@ -450,8 +454,12 @@ public class KimlLayoutUtil {
         
         float oldWidth = nodeLayout.getWidth();
         float oldHeight = nodeLayout.getHeight();
-        float newWidth = Math.max(minWidth, Math.max(minNorth, minSouth));
-        float newHeight = Math.max(minHeight, Math.max(minEast, minWest));
+        newWidth = Math.max(newWidth, Math.max(minNorth, minSouth));
+        newHeight = Math.max(newHeight, Math.max(minEast, minWest));
+        if (newHeight < newWidth / MAX_SIZE_RATIO)
+        	newHeight = newWidth / MAX_SIZE_RATIO;
+        else if (newWidth < newHeight / MAX_SIZE_RATIO)
+        	newWidth = newHeight / MAX_SIZE_RATIO;
         nodeLayout.setWidth(newWidth);
         nodeLayout.setHeight(newHeight);
         
