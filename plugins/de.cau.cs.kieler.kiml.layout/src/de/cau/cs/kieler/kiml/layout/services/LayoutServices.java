@@ -23,6 +23,7 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
@@ -36,23 +37,15 @@ import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
 public class LayoutServices {
 
     /** identifier of the 'general' diagram type, which applies to all diagrams */
-    public static final String DIAGRAM_TYPE_GENERAL = "de.cau.cs.kieler.layout.info.types.general";
+    public static final String DIAGRAM_TYPE_GENERAL = "de.cau.cs.kieler.layout.diagrams.general";
     /** identifier of the 'nolayout' diagram type, for which no automatic layout must be applied */
-    public static final String DIAGRAM_TYPE_NOLAYOUT = "de.cau.cs.kieler.layout.info.types.nolayout";
+    public static final String DIAGRAM_TYPE_NOLAYOUT = "de.cau.cs.kieler.layout.diagrams.nolayout";
     
-	/** the singleton instance */
+	/** the singleton instance of the layout service */
 	public static LayoutServices INSTANCE = null;
+	/** the singleton instance of the registry class */
+	public static Registry REGISTRY = null;
 	
-	/** Data type used to store information of diagram type bindings and options */
-	private static class DiagramSetup {
-		/** identifier of the diagram type */
-		String diagramType;
-		/** identifier of the diagram setup */
-		String setupId;
-		/** map of layout option identifiers to their configured values */
-		Map<String, String> options = new HashMap<String, String>();
-	}
-
 	/** the list of layout listeners that have been loaded at startup */
 	private List<ILayoutListener> listeners = new LinkedList<ILayoutListener>();
 	/** mapping of layout provider identifiers to their data instances */
@@ -65,51 +58,150 @@ public class LayoutServices {
 	private Map<String, String> layoutTypeMap = new HashMap<String, String>();
 	/** mapping of category identifiers to their names */
 	private Map<String, String> categoryMap = new HashMap<String, String>();
-	/** mapping of diagram type identifiers to their names */
-	private Map<String, String> diagramTypeMap = new LinkedHashMap<String, String>();
-	/** mapping of graphical edit parts to associated diagram setups */
-	private Map<Class<?>, DiagramSetup> editPartBindingMap
-			= new LinkedHashMap<Class<?>, DiagramSetup>();
-	/** list of unprocessed layout options */
-	private List<String[]> unprocessedOptions = new LinkedList<String[]>();
+    /** mapping of diagram type identifiers to their names */
+    private Map<String, String> diagramTypeMap = new LinkedHashMap<String, String>();
+	/** mapping of graphical edit parts to associated binding identifiers */
+	private Map<Class<?>, String> editPartBindingMap
+	        = new LinkedHashMap<Class<?>, String>();
+	/** mapping of binding identifiers to associated configured options */
+	private Map<String, Map<String, Object>> optionSetupMap
+	        = new HashMap<String, Map<String, Object>>();
+	
 
 	/**
-	 * Initializes the layout services <em>after</em> all contributions have been
-	 * registered from the extension points.
+	 * Creates an instance of the layout services and assigns the singleton
+	 * instance of the registry.
 	 */
-	public void initialize() {
-		// process all layout option configurations
-		for (String[] option : unprocessedOptions) {
-			String diagramSetupId = option[0];
-			String optionId = option[1];
-			String value = option[2]; 
-			for (DiagramSetup diagramSetup : editPartBindingMap.values()) {
-				if (diagramSetupId.equals(diagramSetup.setupId)) {
-					diagramSetup.options.put(optionId, value);
-					break;
+	public LayoutServices() {
+		REGISTRY = new Registry();
+	}
+	
+	/** Class used to register the layout services */
+	public class Registry {
+		
+		/** list of unprocessed layout options */
+		private List<String[]> unprocessedOptions = new LinkedList<String[]>();
+
+		/**
+		 * Initializes the layout services <em>after</em> all contributions have been
+		 * registered from the extension points.
+		 */
+		public void initialize() {
+			// process all layout option configurations
+			for (String[] option : unprocessedOptions) {
+                String optionId = option[1];
+				LayoutOptionData optionData = layoutOptionMap.get(optionId);
+				if (optionData != null) {
+	                String valueString = option[2]; 
+				    Object valueObj = optionData.parseValue(valueString);
+				    if (valueObj != null) {
+		                String bindingId = option[0];
+		                Map<String, Object> optionsMap = optionSetupMap.get(bindingId);
+		                optionsMap.put(optionId, valueObj);
+				    }
 				}
 			}
+			unprocessedOptions.clear();
 		}
-		unprocessedOptions.clear();
-	}
-	
-	/**
-	 * Adds the given layout listener to the list of registered listeners.
-	 * 
-	 * @param listener layout listener to register
-	 */
-	public void addLayoutListener(ILayoutListener listener) {
-		listeners.add(listener);
-	}
-	
-	/**
-	 * Removes the given layout listener from the list of registered
-	 * listeners.
-	 * 
-	 * @param listener layout listener to remove
-	 */
-	public void removeLayoutListener(ILayoutListener listener) {
-	    listeners.remove(listener);
+		
+		/**
+		 * Adds the given layout listener to the list of registered listeners.
+		 * 
+		 * @param listener layout listener to register
+		 */
+		public void addLayoutListener(ILayoutListener listener) {
+			listeners.add(listener);
+		}
+		
+		/**
+		 * Removes the given layout listener from the list of registered
+		 * listeners.
+		 * 
+		 * @param listener layout listener to remove
+		 */
+		public void removeLayoutListener(ILayoutListener listener) {
+		    listeners.remove(listener);
+		}
+		
+		/**
+		 * Registers the given layout provider. If there is already a
+		 * registered provider data instance with the same identifier, it
+		 * is overwritten.
+		 * 
+		 * @param providerData data instance of the layout provider to register
+		 */
+		public void addLayoutProvider(LayoutProviderData providerData) {
+	        layoutProviderMap.put(providerData.id, providerData);
+		}
+		
+		/**
+		 * Registers the given layout option. If there is already a
+		 * registered option data instance with the same identifier, it
+		 * is overwritten.
+		 * 
+		 * @param optionData data instance of the layout option to register
+		 */
+		public void addLayoutOption(LayoutOptionData optionData) {
+	        layoutOptionMap.put(optionData.id, optionData);
+		}
+		
+		/**
+		 * Registers the given layout type.
+		 * 
+		 * @param id identifier of the type
+		 * @param name user friendly name of the type
+		 */
+		public void addLayoutType(String id, String name) {
+	        layoutTypeMap.put(id, name);
+		}
+		
+		/**
+		 * Registers the given edit part with the binding identifier.
+		 * 
+		 * @param editPartType class of edit parts to register
+		 * @param bindingId identifier of the category of edit parts
+		 */
+		public void addEditPartBinding(Class<?> editPartType, String bindingId) {
+	        editPartBindingMap.put(editPartType, bindingId);
+	        if (!optionSetupMap.containsKey(bindingId))
+	            optionSetupMap.put(bindingId, new LinkedHashMap<String, Object>());
+		}
+		
+		/**
+		 * Registers the given category.
+		 * 
+		 * @param id identifier of the category
+		 * @param name user friendly name of the category
+		 */
+		public void addCategory(String id, String name) {
+	        categoryMap.put(id, name);
+		}
+		
+		/**
+		 * Registers the given diagram type. Diagram types with
+		 * {@link DIAGRAM_TYPE_NOLAYOUT} as identifier are rejected, since this
+		 * is a special value used to indicate that a diagram part shall not
+		 * be layouted at all.
+		 * 
+		 * @param id identifier of the diagram type
+		 * @param name user friendly name of the diagram type
+		 */
+		public void addDiagramType(String id, String name) {
+		    if (!DIAGRAM_TYPE_NOLAYOUT.equals(id))
+		        diagramTypeMap.put(id, name);
+		}
+		
+		/**
+		 * Registers a layout option configuration for the given diagram setup.
+		 * 
+		 * @param bindingId identifier of the category of edit parts
+		 * @param optionId identifier of a layout option
+		 * @param value value for the layout option
+		 */
+		public void setupOption(String bindingId, String optionId, String value) {
+			unprocessedOptions.add(new String[] {bindingId, optionId, value});
+		}
+		
 	}
 	
 	/**
@@ -138,18 +230,6 @@ public class LayoutServices {
 		}
 	}
 
-	/**
-	 * Registers the given layout provider. If there is already a
-	 * registered provider data instance with the same identifier, it
-	 * is overwritten.
-	 * 
-	 * @param providerData data instance of the layout provider to register
-	 */
-	public void addLayoutProvider(LayoutProviderData providerData) {
-	    if (providerData.id != null)
-	        layoutProviderMap.put(providerData.id, providerData);
-	}
-	
 	/**
 	 * Returns the layout provider data associated with the given
 	 * identifier.
@@ -191,19 +271,7 @@ public class LayoutServices {
 	    String diagramType = LayoutOptions.getDiagramType(nodeLayout);
 	    return findAppropriateProvider(layoutHint, diagramType).instance;
 	}
-	
-	/**
-	 * Registers the given layout option. If there is already a
-	 * registered option data instance with the same identifier, it
-	 * is overwritten.
-	 * 
-	 * @param optionData data instance of the layout option to register
-	 */
-	public void addLayoutOption(LayoutOptionData optionData) {
-	    if (optionData.id != null)
-	        layoutOptionMap.put(optionData.id, optionData);
-	}
-	
+
 	/**
 	 * Returns the layout option data associated with the given
 	 * identifier.
@@ -215,18 +283,7 @@ public class LayoutServices {
 	public LayoutOptionData getLayoutOptionData(String id) {
 	    return layoutOptionMap.get(id);
 	}
-	
-	/**
-	 * Registers the given layout type.
-	 * 
-	 * @param id identifier of the type
-	 * @param name user friendly name of the type
-	 */
-	public void addLayoutType(String id, String name) {
-	    if (id != null && name != null)
-	        layoutTypeMap.put(id, name);
-	}
-	
+
 	/**
 	 * Returns the name of the layout type with given identifier.
 	 * 
@@ -237,49 +294,7 @@ public class LayoutServices {
 	public String getLayoutTypeName(String id) {
 	    return layoutTypeMap.get(id);
 	}
-	
-	/**
-	 * Registers the given edit part with the diagram type.
-	 * 
-	 * @param editPartType class of edit parts to register
-	 * @param diagramType identifier of the associated diagram type
-	 */
-	public void addEditPartBinding(Class<?> editPartType, String diagramType,
-			String diagramSetupId) {
-	    if (editPartType != null && diagramType != null) {
-	    	DiagramSetup diagramSetup = new DiagramSetup();
-	    	diagramSetup.diagramType = diagramType;
-	    	diagramSetup.setupId = diagramSetupId;
-	        editPartBindingMap.put(editPartType, diagramSetup);
-	    }
-	}
-	
-	/**
-	 * Returns the identifier of the diagram type associated with the given edit part.
-	 * 
-	 * @param editPartType class of edit part
-	 * @return identifier of the associated diagram type, or {@code null} if the edit part
-	 *     type is not registered
-	 */
-	public String getDiagramTypeFor(Class<?> editPartType) {
-		DiagramSetup diagramSetup = editPartBindingMap.get(editPartType);
-		if (diagramSetup == null)
-			return null;
-		else
-			return diagramSetup.diagramType;
-	}
-	
-	/**
-	 * Registers the given category.
-	 * 
-	 * @param id identifier of the category
-	 * @param name user friendly name of the category
-	 */
-	public void addCategory(String id, String name) {
-	    if (id != null && name != null)
-	        categoryMap.put(id, name);
-	}
-	
+
 	/**
 	 * Returns the name of the given category.
 	 * 
@@ -288,20 +303,6 @@ public class LayoutServices {
 	 */
 	public String getCategoryName(String id) {
 	    return categoryMap.get(id);
-	}
-	
-	/**
-	 * Registers the given diagram type. Diagram types with
-	 * {@link DIAGRAM_TYPE_NOLAYOUT} as identifier are rejected, since this
-	 * is a special value used to indicate that a diagram part shall not
-	 * be layouted at all.
-	 * 
-	 * @param id identifier of the diagram type
-	 * @param name user friendly name of the diagram type
-	 */
-	public void addDiagramType(String id, String name) {
-	    if (id != null && name != null && !DIAGRAM_TYPE_NOLAYOUT.equals(id))
-	        diagramTypeMap.put(id, name);
 	}
 
 	/**
@@ -322,18 +323,42 @@ public class LayoutServices {
 	public Collection<String> getDiagramTypes() {
 	    return diagramTypeMap.keySet();
 	}
-	
+
 	/**
-	 * Registers a layout option configuration for the given diagram setup.
+	 * Sets all preconfigured layout options for the given layout data.
 	 * 
-	 * @param diagramSetupId identifier of a diagram setup
-	 * @param optionId identifier of a layout option
-	 * @param value value for the layout option
+	 * @param editPartType class of edit part
+	 * @param layoutData layout data for which the layout options shall be added
 	 */
-	public void setupOption(String diagramSetupId, String optionId, String value) {
-		unprocessedOptions.add(new String[] {diagramSetupId, optionId, value});
+	public void setLayoutOptions(Class<?> editPartType, KLayoutData layoutData) {
+	    String bindingId = editPartBindingMap.get(editPartType);
+	    if (bindingId != null) {
+	        Map<String, Object> options = optionSetupMap.get(bindingId);
+	        for (String option : options.keySet()) {
+	            Object value = options.get(option);
+	            LayoutOptionData optionData = layoutOptionMap.get(option);
+                optionData.setValue(layoutData, value);
+	        }
+	    }
 	}
-	
+
+	/**
+	 * Checks whether the diagram type configured for the given edit part is
+	 * a "no layout" diagram.
+	 * 
+	 * @param editPartType class of edit part
+	 * @return true if no layout must be performed for the given edit part
+	 */
+	public boolean isNolayout(Class<?> editPartType) {
+	    String bindingId = editPartBindingMap.get(editPartType);
+        if (bindingId != null) {
+            Map<String, Object> options = optionSetupMap.get(bindingId);
+            String diagramType = (String)options.get(LayoutOptions.DIAGRAM_TYPE);
+            return DIAGRAM_TYPE_NOLAYOUT.equals(diagramType);
+        }
+        else return false;
+	}
+
 	/**
 	 * Determines an appropriate layout provider for the given layout type and
 	 * diagram type.

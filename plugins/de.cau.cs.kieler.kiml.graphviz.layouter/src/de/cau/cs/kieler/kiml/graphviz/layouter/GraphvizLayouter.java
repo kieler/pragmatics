@@ -227,10 +227,10 @@ public class GraphvizLayouter {
 
             AttributeList attributes = DotFactory.eINSTANCE.createAttributeList();
             KShapeLayout shapeLayout = KimlLayoutUtil.getShapeLayout(childNode);
-            // set label
-            KLabel label = childNode.getLabel();
-            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_LABEL,
-            		createString(label.getText())));
+            // set label - removed as it is currently not needed for layout
+//            KLabel label = childNode.getLabel();
+//            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_LABEL,
+//            		createString(label.getText())));
             // set width and height
             if (!LayoutOptions.isFixedSize(shapeLayout)) {
             	KimlLayoutUtil.resizeNode(childNode);
@@ -284,6 +284,7 @@ public class GraphvizLayouter {
 	                    if (fontName != null) {
 	                    	attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_FONTNAME,
 	                    			createString(fontName)));
+	                    	// increase the font size to let Graphviz prepare more room for the label
 	                    	int fontSize = (int)(LayoutOptions.getFontSize(labelLayout) * 1.2);
 	                    	attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_FONTSIZE,
 	                    			Integer.toString(fontSize)));
@@ -327,7 +328,8 @@ public class GraphvizLayouter {
      */
     private String createString(String label) {
     	StringBuffer escapeBuffer = new StringBuffer(label.length() + 2);
-    	escapeBuffer.append('\"');
+    	// prefix the label with an underscore to prevent it from being equal to a keyword
+    	escapeBuffer.append("\"_");
     	boolean oddEscapes = false;
     	for (int i = 0; i < label.length(); i++) {
     		char c = label.charAt(i);

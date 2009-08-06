@@ -929,7 +929,7 @@ public class DotGrammarAccess implements IGrammarAccess {
 	} 
 
 	//terminal STRING:
-	//  "\"" "\"" | "\""->(!"\\" "\"");
+	//  "\"" "\"" | "\"" ("\\" "\"" | !"\"")* ("\\" "\"" | !("\\" | "\"")) "\"";
 	public TerminalRule getSTRINGRule() {
 		return (tSTRING != null) ? tSTRING : (tSTRING = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "STRING"));
 	} 

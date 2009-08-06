@@ -73,12 +73,12 @@ public class LayoutServiceBuilder {
     public static final String ATTRIBUTE_CLASS = "class";
     /** name of the 'description' attribute in the extension points */
     public static final String ATTRIBUTE_DESCRIPTION = "description";
-    /** name of the 'diagram' attribute in the extension points */
-    public static final String ATTRIBUTE_DIAGRAM = "diagram";
     /** name of the 'id' attribute in the extension points */
     public static final String ATTRIBUTE_ID = "id";
     /** name of the 'name' attribute in the extension points */
     public static final String ATTRIBUTE_NAME = "name";
+    /** name of the 'object' attribute in the extension points */
+    public static final String ATTRIBUTE_OBJECT = "object";
     /** name of the 'option' attribute in the extension points */
     public static final String ATTRIBUTE_OPTION = "option";
     /** name of the 'parameter' attribute in the extension points */
@@ -105,7 +105,7 @@ public class LayoutServiceBuilder {
 		loadLayoutProviderExtensions();
 		loadLayoutListenerExtensions();
 		loadLayoutInfoExtensions();
-		LayoutServices.INSTANCE.initialize();
+		LayoutServices.REGISTRY.initialize();
 		// load preferences for KIML
 		LoadPreferences();
 		// register an instance of the GMF diagram layout manager
@@ -154,6 +154,24 @@ public class LayoutServiceBuilder {
 	}
 	
 	/**
+	 * Reports an error that occured while reading extensions.
+	 * 
+	 * @param extensionPoint the identifier of the extension point
+	 * @param element the configuration element
+	 * @param attribute the attribute that contains an invalid entry
+	 * @param exception an optional exception that was caused by the invalid entry
+	 */
+	private static void reportError(String extensionPoint, IConfigurationElement element,
+	        String attribute, Exception exception) {
+	    String message = "Extension point " + extensionPoint + ": Invalid entry in attribute '"
+	            + attribute + "' of element " + element.getName() + ", contributed by "
+	            + element.getContributor().getName();
+        IStatus status = new Status(IStatus.WARNING, KimlUiPlugin.PLUGIN_ID, 0,
+                message, exception);
+        StatusManager.getManager().handle(status);
+	}
+	
+	/**
 	 * Loads and registers all layout providers from the extension point.
 	 */
 	private static void loadLayoutProviderExtensions() {
@@ -170,15 +188,12 @@ public class LayoutServiceBuilder {
     				    LayoutProviderData providerData = new LayoutProviderData();
     				    providerData.instance = layoutProvider;
     				    providerData.id = element.getAttribute(ATTRIBUTE_ID);
-    				    if (providerData.id == null) {
-    				    	IStatus status = new Status(IStatus.WARNING, KimlUiPlugin.PLUGIN_ID,
-    				    			0, "Layout provider with empty identifier submitted by "
-    				    			+ element.getNamespaceIdentifier(), null);
-    				    	StatusManager.getManager().handle(status, StatusManager.LOG);
+    				    if (providerData.id == null || providerData.id.length() == 0) {
+    				        reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_ID, null);
     				    	continue;
     				    }
     				    providerData.name = element.getAttribute(ATTRIBUTE_NAME);
-    				    if (providerData.name == null)
+    				    if (providerData.name == null || providerData.name.length() == 0)
     				        providerData.name = DEFAULT_PROVIDER_NAME;
     				    layoutProvider.initialize(element.getAttribute(ATTRIBUTE_PARAMETER));
     				    providerData.type = element.getAttribute(ATTRIBUTE_TYPE);
@@ -192,21 +207,28 @@ public class LayoutServiceBuilder {
     				            String option = child.getAttribute(ATTRIBUTE_OPTION);
     				            if (option != null && option.length() > 0)
     				                providerData.setOption(option, true);
+    				            else
+    				                reportError(EXTP_ID_LAYOUT_PROVIDERS, child,
+    				                        ATTRIBUTE_OPTION, null);
     				        }
     				        else if (ELEMENT_SUPPORTED_DIAGRAM.equals(child.getName())) {
     				            String type = child.getAttribute(ATTRIBUTE_TYPE);
-    				            String priority = child.getAttribute(ATTRIBUTE_PRIORITY);
-    				            try {
-    				                providerData.setDiagramSupport(type,
-    				                        Integer.parseInt(priority));
-    				            } catch (NumberFormatException exception) {
-    			                    IStatus status = new Status(IStatus.WARNING, KimlUiPlugin.PLUGIN_ID, 0,
-    			                            "Failed to parse 'priority' attribute in 'supportedDiagram' element.", exception);
-    			                    StatusManager.getManager().handle(status);
+    				            if (type == null || type.length() == 0)
+    				                reportError(EXTP_ID_LAYOUT_PROVIDERS, child,
+    				                        ATTRIBUTE_TYPE, null);
+    				            else {
+        				            String priority = child.getAttribute(ATTRIBUTE_PRIORITY);
+        				            try {
+        				                providerData.setDiagramSupport(type,
+        				                        Integer.parseInt(priority));
+        				            } catch (NumberFormatException exception) {
+        				                reportError(EXTP_ID_LAYOUT_PROVIDERS, child,
+        				                        ATTRIBUTE_PRIORITY, exception);
+        				            }
     				            }
     				        }
     				    }
-    					LayoutServices.INSTANCE.addLayoutProvider(providerData);
+    					LayoutServices.REGISTRY.addLayoutProvider(providerData);
     				}
     			}
 	            catch (CoreException exception) {
@@ -215,37 +237,48 @@ public class LayoutServiceBuilder {
 		    }
 		    else if (ELEMENT_LAYOUT_TYPE.equals(element.getName())) {
 		        // register a layout type from the extension
-		        LayoutServices.INSTANCE.addLayoutType(
-		                element.getAttribute(ATTRIBUTE_ID),
-		                element.getAttribute(ATTRIBUTE_NAME));
+		        String id = element.getAttribute(ATTRIBUTE_ID);
+		        String name = element.getAttribute(ATTRIBUTE_NAME);
+		        if (id == null || id.length() == 0)
+		            reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_ID, null);
+		        else if (name == null)
+		            reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_NAME, null);
+		        else
+		            LayoutServices.REGISTRY.addLayoutType(id, name);
 		    }
 		    else if (ELEMENT_CATEGORY.equals(element.getName())) {
 		        // register a category from the extension
-		        LayoutServices.INSTANCE.addCategory(
-		                element.getAttribute(ATTRIBUTE_ID),
-		                element.getAttribute(ATTRIBUTE_NAME));
+		        String id = element.getAttribute(ATTRIBUTE_ID);
+		        String name = element.getAttribute(ATTRIBUTE_NAME);
+		        if (id == null || id.length() == 0)
+		            reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_ID, null);
+		        else if (name == null)
+		            reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_NAME, null);
+		        else
+		            LayoutServices.REGISTRY.addCategory(id, name);
 		    }
 		    else if (ELEMENT_LAYOUT_OPTION.equals(element.getName())) {
 		    	// register a layout option from the extension
 		        LayoutOptionData optionData = new LayoutOptionData();
 		        optionData.id = element.getAttribute(ATTRIBUTE_ID);
-		        if (optionData.id == null) {
-			    	IStatus status = new Status(IStatus.WARNING, KimlUiPlugin.PLUGIN_ID,
-			    			0, "Layout option with empty identifier submitted by "
-			    			+ element.getNamespaceIdentifier(), null);
-			    	StatusManager.getManager().handle(status);
+		        if (optionData.id == null || optionData.id.length() == 0) {
+		            reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_ID, null);
 			    	continue;
 			    }
-		        optionData.type = element.getAttribute(ATTRIBUTE_TYPE);
-		        if (optionData.type == null)
-		        	optionData.type = LayoutOptionData.TYPE_STRING;
+		        try {
+		            optionData.setType(element.getAttribute(ATTRIBUTE_TYPE));
+		        }
+		        catch (IllegalArgumentException exception) {
+		            reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_TYPE, exception);
+                    continue;
+		        }
 		        optionData.name = element.getAttribute(ATTRIBUTE_NAME);
 		        if (optionData.name == null)
 		        	optionData.name = DEFAULT_OPTION_NAME;
 		        optionData.description = element.getAttribute(ATTRIBUTE_DESCRIPTION);
 		        if (optionData.description == null)
 		        	optionData.description = "";
-		        LayoutServices.INSTANCE.addLayoutOption(optionData);
+		        LayoutServices.REGISTRY.addLayoutOption(optionData);
 		    }
 		}
 	}
@@ -264,7 +297,7 @@ public class LayoutServiceBuilder {
     				ILayoutListener layoutListener = (ILayoutListener) element
     						.createExecutableExtension(ATTRIBUTE_CLASS);
     				if (layoutListener != null) {
-    					LayoutServices.INSTANCE.addLayoutListener(layoutListener);
+    					LayoutServices.REGISTRY.addLayoutListener(layoutListener);
     				}
     			}
     			catch (CoreException exception) {
@@ -284,34 +317,45 @@ public class LayoutServiceBuilder {
         for (IConfigurationElement element : extensions) {
             if (ELEMENT_DIAGRAM_TYPE.equals(element.getName())) {
                 // register a diagram type from the extension
-                LayoutServices.INSTANCE.addDiagramType(
-                        element.getAttribute(ATTRIBUTE_ID),
-                        element.getAttribute(ATTRIBUTE_NAME));
+                String id = element.getAttribute(ATTRIBUTE_ID);
+                String name = element.getAttribute(ATTRIBUTE_NAME);
+                if (id == null || id.length() == 0)
+                    reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_ID, null);
+                else if (name == null)
+                    reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_NAME, null);
+                else
+                    LayoutServices.REGISTRY.addDiagramType(id, name);
             }
             else if (ELEMENT_BINDING.equals(element.getName())) {
                 // register a binding from the extension
                 try {
                     String typeName = element.getAttribute(ATTRIBUTE_CLASS);
-                    if (typeName != null) {
-                        Class<?> editPartType = Platform.getBundle(
-                                element.getContributor().getName()).loadClass(typeName);
-                        LayoutServices.INSTANCE.addEditPartBinding(editPartType,
-                                element.getAttribute(ATTRIBUTE_TYPE),
-                                element.getAttribute(ATTRIBUTE_ID));
-                    }
+                    Class<?> editPartType = Platform.getBundle(
+                            element.getContributor().getName()).loadClass(typeName);
+                    String id = element.getAttribute(ATTRIBUTE_ID);
+                    if (id == null || id.length() == 0)
+                        reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_ID, null);
+                    else
+                        LayoutServices.REGISTRY.addEditPartBinding(editPartType, id);
                 }
                 catch (Exception exception) {
-                    IStatus status = new Status(IStatus.WARNING, KimlUiPlugin.PLUGIN_ID, 0,
-                            "Failed to load 'binding' element from extension point.", exception);
-                    StatusManager.getManager().handle(status);
+                    reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_CLASS, exception);
                 }
             }
             else if (ELEMENT_OPTION.equals(element.getName())) {
             	// register a layout option from the extension
-            	LayoutServices.INSTANCE.setupOption(
-            			element.getAttribute(ATTRIBUTE_DIAGRAM),
-            			element.getAttribute(ATTRIBUTE_OPTION),
-            			element.getAttribute(ATTRIBUTE_VALUE));
+                String object = element.getAttribute(ATTRIBUTE_OBJECT);
+                String option = element.getAttribute(ATTRIBUTE_OPTION);
+                String value = element.getAttribute(ATTRIBUTE_VALUE);
+                if (object == null || object.length() == 0)
+                    reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_OBJECT, null);
+                else if (option == null || option.length() == 0)
+                    reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_OPTION, null);
+                else {
+                    if (value == null)
+                        value = "";
+                    LayoutServices.REGISTRY.setupOption(object, option, value);
+                }
             }
         }
     }

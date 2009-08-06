@@ -383,14 +383,28 @@
         </groups>
         <groups xsi:type="xtext:Group">
           <tokens xsi:type="xtext:Keyword" value="&quot;"/>
-          <tokens xsi:type="xtext:UntilToken">
-            <terminal xsi:type="xtext:Group">
-              <tokens xsi:type="xtext:NegatedToken">
-                <terminal xsi:type="xtext:Keyword" value="\"/>
-              </tokens>
+          <tokens xsi:type="xtext:Alternatives" cardinality="*">
+            <groups xsi:type="xtext:Group">
+              <tokens xsi:type="xtext:Keyword" value="\"/>
               <tokens xsi:type="xtext:Keyword" value="&quot;"/>
-            </terminal>
+            </groups>
+            <groups xsi:type="xtext:NegatedToken">
+              <terminal xsi:type="xtext:Keyword" value="&quot;"/>
+            </groups>
           </tokens>
+          <tokens xsi:type="xtext:Alternatives">
+            <groups xsi:type="xtext:Group">
+              <tokens xsi:type="xtext:Keyword" value="\"/>
+              <tokens xsi:type="xtext:Keyword" value="&quot;"/>
+            </groups>
+            <groups xsi:type="xtext:NegatedToken">
+              <terminal xsi:type="xtext:Alternatives">
+                <groups xsi:type="xtext:Keyword" value="\"/>
+                <groups xsi:type="xtext:Keyword" value="&quot;"/>
+              </terminal>
+            </groups>
+          </tokens>
+          <tokens xsi:type="xtext:Keyword" value="&quot;"/>
         </groups>
       </alternatives>
     </rules>

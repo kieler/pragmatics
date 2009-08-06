@@ -2,21 +2,6 @@
 <?eclipse version="3.2"?>
 <plugin>
    <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            category="de.cau.cs.kieler.kiml.ui.preferences.layout"
-            class="de.cau.cs.kieler.kiml.zest.preferences.ZestLayouterPreferencePage"
-            id="de.cau.cs.kieler.kiml.zest.preferences"
-            name="Zest">
-      </page>
-   </extension>
-   <extension
-         point="org.eclipse.core.runtime.preferences">
-      <initializer
-            class="de.cau.cs.kieler.kiml.zest.preferences.PreferenceInitializer">
-      </initializer>
-   </extension>
-   <extension
          point="de.cau.cs.kieler.kiml.layout.layoutProviders">
       <category
             id="de.cau.cs.kieler.kiml.categories.zest"
@@ -31,7 +16,7 @@
             type="de.cau.cs.kieler.layout.types.force">
          <supportedDiagram
                priority="5"
-               type="de.cau.cs.kieler.layout.info.types.general">
+               type="de.cau.cs.kieler.layout.diagrams.general">
          </supportedDiagram>
       </layoutProvider>
       <layoutProvider
@@ -42,7 +27,7 @@
             parameter="GridLayout">
          <supportedDiagram
                priority="9"
-               type="de.cau.cs.kieler.layout.info.types.boxes">
+               type="de.cau.cs.kieler.layout.diagrams.boxes">
          </supportedDiagram>
       </layoutProvider>
       <layoutProvider
@@ -52,7 +37,26 @@
             name="Zest Radial"
             parameter="RadialLayout"
             type="de.cau.cs.kieler.layout.types.radial">
+         <supportedDiagram
+               priority="4"
+               type="de.cau.cs.kieler.layout.diagrams.general">
+         </supportedDiagram>
       </layoutProvider>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="de.cau.cs.kieler.kiml.ui.preferences.layout"
+            class="de.cau.cs.kieler.kiml.zest.preferences.ZestLayouterPreferencePage"
+            id="de.cau.cs.kieler.kiml.zest.preferences"
+            name="Zest">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="de.cau.cs.kieler.kiml.zest.preferences.PreferenceInitializer">
+      </initializer>
    </extension>
 
 </plugin>

@@ -42,9 +42,9 @@ public class LayoutProviderData {
     /** runtime instance of the layout provider */
     public AbstractLayoutProvider instance;
     /** layout type identifier */
-    public String type = "";
+    public String type;
     /** category identifier */
-    public String category = "";
+    public String category;
     
     /** list of known layout options */
     private List<String> knownOptions = new LinkedList<String>();
@@ -87,30 +87,28 @@ public class LayoutProviderData {
      *     is not supported
      */
     public void setDiagramSupport(String diagramType, int priority) {
-        if (diagramType != null) {
-            if (priority > MIN_PRIORITY) {
-                SupportedDiagram supportedDiagram0 = null;
-                for (SupportedDiagram supportedDiagram1 : supportedDiagrams) {
-                    if (diagramType.equals(supportedDiagram1.type)) {
-                        supportedDiagram0 = supportedDiagram1;
-                        break;
-                    }
+        if (priority > MIN_PRIORITY) {
+            SupportedDiagram supportedDiagram0 = null;
+            for (SupportedDiagram supportedDiagram1 : supportedDiagrams) {
+                if (diagramType.equals(supportedDiagram1.type)) {
+                    supportedDiagram0 = supportedDiagram1;
+                    break;
                 }
-                if (supportedDiagram0 == null) {
-                    supportedDiagram0 = new SupportedDiagram();
-                    supportedDiagram0.type = diagramType;
-                    supportedDiagrams.add(supportedDiagram0);
-                }
-                supportedDiagram0.priority = priority;
             }
-            else {
-                ListIterator<SupportedDiagram> suppdIter = supportedDiagrams.listIterator();
-                while (suppdIter.hasNext()) {
-                    SupportedDiagram supportedDiagram = suppdIter.next();
-                    if (diagramType.equals(supportedDiagram.type)) {
-                        suppdIter.remove();
-                        break;
-                    }
+            if (supportedDiagram0 == null) {
+                supportedDiagram0 = new SupportedDiagram();
+                supportedDiagram0.type = diagramType;
+                supportedDiagrams.add(supportedDiagram0);
+            }
+            supportedDiagram0.priority = priority;
+        }
+        else {
+            ListIterator<SupportedDiagram> suppdIter = supportedDiagrams.listIterator();
+            while (suppdIter.hasNext()) {
+                SupportedDiagram supportedDiagram = suppdIter.next();
+                if (diagramType.equals(supportedDiagram.type)) {
+                    suppdIter.remove();
+                    break;
                 }
             }
         }

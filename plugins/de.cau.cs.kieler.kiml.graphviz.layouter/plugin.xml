@@ -32,11 +32,11 @@
             type="de.cau.cs.kieler.layout.types.layered">
          <supportedDiagram
                priority="10"
-               type="de.cau.cs.kieler.layout.info.types.general">
+               type="de.cau.cs.kieler.layout.diagrams.general">
          </supportedDiagram>
          <supportedDiagram
                priority="10"
-               type="de.cau.cs.kieler.layout.info.types.stateMachine">
+               type="de.cau.cs.kieler.layout.diagrams.stateMachine">
          </supportedDiagram>
          <knownOption
                option="de.cau.cs.kieler.layout.options.layoutDirection">
@@ -60,7 +60,7 @@
             type="de.cau.cs.kieler.layout.types.force">
          <supportedDiagram
                priority="9"
-               type="de.cau.cs.kieler.layout.info.types.general">
+               type="de.cau.cs.kieler.layout.diagrams.general">
          </supportedDiagram>
          <knownOption
                option="de.cau.cs.kieler.layout.options.minSpacing">
@@ -81,7 +81,7 @@
             type="de.cau.cs.kieler.layout.types.force">
          <supportedDiagram
                priority="6"
-               type="de.cau.cs.kieler.layout.info.types.general">
+               type="de.cau.cs.kieler.layout.diagrams.general">
          </supportedDiagram>
          <knownOption
                option="de.cau.cs.kieler.layout.options.minSpacing">
@@ -102,7 +102,7 @@
             type="de.cau.cs.kieler.layout.types.radial">
          <supportedDiagram
                priority="8"
-               type="de.cau.cs.kieler.layout.info.types.general">
+               type="de.cau.cs.kieler.layout.diagrams.general">
          </supportedDiagram>
          <knownOption
                option="de.cau.cs.kieler.layout.options.minSpacing">
@@ -123,7 +123,7 @@
             type="de.cau.cs.kieler.layout.types.circle">
          <supportedDiagram
                priority="7"
-               type="de.cau.cs.kieler.layout.info.types.general">
+               type="de.cau.cs.kieler.layout.diagrams.general">
          </supportedDiagram>
          <knownOption
                option="de.cau.cs.kieler.layout.options.minSpacing">

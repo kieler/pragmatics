@@ -11,7 +11,7 @@
             type="de.cau.cs.kieler.layout.types.layered">
          <supportedDiagram
                priority="10"
-               type="de.cau.cs.kieler.layout.info.types.dataFlow">
+               type="de.cau.cs.kieler.layout.diagrams.dataFlow">
          </supportedDiagram>
          <knownOption
                option="de.cau.cs.kieler.layout.options.fixedSize">

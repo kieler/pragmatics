@@ -17,7 +17,7 @@
             name="Box Layout">
          <supportedDiagram
                priority="10"
-               type="de.cau.cs.kieler.layout.info.types.boxes">
+               type="de.cau.cs.kieler.layout.diagrams.boxes">
          </supportedDiagram>
          <knownOption
                option="de.cau.cs.kieler.layout.options.minSpacing">
@@ -46,6 +46,12 @@
             id="de.cau.cs.kieler.layout.types.radial"
             name="Radial">
       </layoutType>
+      <layoutOption
+            description="Identifier of a diagram type that is associated with the children of the respective node"
+            id="de.cau.cs.kieler.layout.options.diagramType"
+            name="Diagram Type"
+            type="string">
+      </layoutOption>
       <layoutOption
             description="Defines where an edge label shall be placed: at the source, center, or target"
             id="de.cau.cs.kieler.layout.options.edgeLabelPlacement"
@@ -86,27 +92,27 @@
    <extension
          point="de.cau.cs.kieler.kiml.layout.layoutInfo">
       <diagramType
-            id="de.cau.cs.kieler.layout.info.types.nolayout"
+            id="de.cau.cs.kieler.layout.diagrams.nolayout"
             name="No Layout">
       </diagramType>
       <diagramType
-            id="de.cau.cs.kieler.layout.info.types.general"
+            id="de.cau.cs.kieler.layout.diagrams.general"
             name="General">
       </diagramType>
       <diagramType
-            id="de.cau.cs.kieler.layout.info.types.stateMachine"
+            id="de.cau.cs.kieler.layout.diagrams.stateMachine"
             name="State Machine">
       </diagramType>
       <diagramType
-            id="de.cau.cs.kieler.layout.info.types.dataFlow"
+            id="de.cau.cs.kieler.layout.diagrams.dataFlow"
             name="Data Flow Diagram">
       </diagramType>
       <diagramType
-            id="de.cau.cs.kieler.layout.info.types.classDiagram"
+            id="de.cau.cs.kieler.layout.diagrams.classDiagram"
             name="Class Diagram">
       </diagramType>
       <diagramType
-            id="de.cau.cs.kieler.layout.info.types.boxes"
+            id="de.cau.cs.kieler.layout.diagrams.boxes"
             name="Unconnected Boxes">
       </diagramType>
    </extension>

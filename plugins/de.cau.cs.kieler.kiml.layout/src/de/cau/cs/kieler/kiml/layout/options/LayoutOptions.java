@@ -32,6 +32,27 @@ import de.cau.cs.kieler.kiml.layout.klayoutdata.KStringOption;
  */
 public class LayoutOptions {
 
+    /**
+     * Resolves the class of an enumeration given by an identifier.
+     * 
+     * @param optionId identifier of a layout option that is represented by an enumeration
+     * @return the corresponding enumeration class
+     */
+    public static Class<? extends Enum<?>> getEnumClass(String optionId) {
+        if (LAYOUT_DIRECTION.equals(optionId))
+            return LayoutDirection.class;
+        else if (PORT_SIDE.equals(optionId))
+            return PortSide.class;
+        else if (PORT_CONSTRAINTS.equals(optionId))
+            return PortConstraints.class;
+        else if (EDGE_LABEL_PLACEMENT.equals(optionId))
+            return EdgeLabelPlacement.class;
+        else if (SHAPE.equals(optionId))
+            return Shape.class;
+        else
+            return null;
+    }
+    
     /** layout option key: layout hint */
     public final static String LAYOUT_HINT = "de.cau.cs.kieler.layout.options.layoutHint";
     
