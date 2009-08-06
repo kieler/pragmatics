@@ -358,6 +358,43 @@ public interface KLayoutDataPackage extends EPackage {
     int KINT_OPTION_FEATURE_COUNT = KOPTION_FEATURE_COUNT + 1;
 
     /**
+     * The meta object id for the '{@link de.cau.cs.kieler.kiml.layout.klayoutdata.impl.KBooleanOptionImpl <em>KBoolean Option</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.kiml.layout.klayoutdata.impl.KBooleanOptionImpl
+     * @see de.cau.cs.kieler.kiml.layout.klayoutdata.impl.KLayoutDataPackageImpl#getKBooleanOption()
+     * @generated
+     */
+    int KBOOLEAN_OPTION = 7;
+
+    /**
+     * The feature id for the '<em><b>Key</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KBOOLEAN_OPTION__KEY = KOPTION__KEY;
+
+    /**
+     * The feature id for the '<em><b>Value</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KBOOLEAN_OPTION__VALUE = KOPTION_FEATURE_COUNT + 0;
+
+    /**
+     * The number of structural features of the '<em>KBoolean Option</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KBOOLEAN_OPTION_FEATURE_COUNT = KOPTION_FEATURE_COUNT + 1;
+
+    /**
      * The meta object id for the '{@link de.cau.cs.kieler.kiml.layout.klayoutdata.impl.KFloatOptionImpl <em>KFloat Option</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -365,7 +402,7 @@ public interface KLayoutDataPackage extends EPackage {
      * @see de.cau.cs.kieler.kiml.layout.klayoutdata.impl.KLayoutDataPackageImpl#getKFloatOption()
      * @generated
      */
-    int KFLOAT_OPTION = 7;
+    int KFLOAT_OPTION = 8;
 
     /**
      * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -402,7 +439,7 @@ public interface KLayoutDataPackage extends EPackage {
      * @see de.cau.cs.kieler.kiml.layout.klayoutdata.impl.KLayoutDataPackageImpl#getKObjectOption()
      * @generated
      */
-    int KOBJECT_OPTION = 8;
+    int KOBJECT_OPTION = 9;
 
     /**
      * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -439,7 +476,7 @@ public interface KLayoutDataPackage extends EPackage {
      * @see de.cau.cs.kieler.kiml.layout.klayoutdata.impl.KLayoutDataPackageImpl#getKInsets()
      * @generated
      */
-    int KINSETS = 9;
+    int KINSETS = 10;
 
     /**
      * The feature id for the '<em><b>Top</b></em>' attribute.
@@ -699,6 +736,27 @@ public interface KLayoutDataPackage extends EPackage {
      * @generated
      */
     EAttribute getKIntOption_Value();
+
+    /**
+     * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.layout.klayoutdata.KBooleanOption <em>KBoolean Option</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>KBoolean Option</em>'.
+     * @see de.cau.cs.kieler.kiml.layout.klayoutdata.KBooleanOption
+     * @generated
+     */
+    EClass getKBooleanOption();
+
+    /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kiml.layout.klayoutdata.KBooleanOption#isValue <em>Value</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Value</em>'.
+     * @see de.cau.cs.kieler.kiml.layout.klayoutdata.KBooleanOption#isValue()
+     * @see #getKBooleanOption()
+     * @generated
+     */
+    EAttribute getKBooleanOption_Value();
 
     /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.layout.klayoutdata.KFloatOption <em>KFloat Option</em>}'.
@@ -991,6 +1049,24 @@ public interface KLayoutDataPackage extends EPackage {
          * @generated
          */
         EAttribute KINT_OPTION__VALUE = eINSTANCE.getKIntOption_Value();
+
+        /**
+         * The meta object literal for the '{@link de.cau.cs.kieler.kiml.layout.klayoutdata.impl.KBooleanOptionImpl <em>KBoolean Option</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see de.cau.cs.kieler.kiml.layout.klayoutdata.impl.KBooleanOptionImpl
+         * @see de.cau.cs.kieler.kiml.layout.klayoutdata.impl.KLayoutDataPackageImpl#getKBooleanOption()
+         * @generated
+         */
+        EClass KBOOLEAN_OPTION = eINSTANCE.getKBooleanOption();
+
+        /**
+         * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute KBOOLEAN_OPTION__VALUE = eINSTANCE.getKBooleanOption_Value();
 
         /**
          * The meta object literal for the '{@link de.cau.cs.kieler.kiml.layout.klayoutdata.impl.KFloatOptionImpl <em>KFloat Option</em>}' class.

@@ -20,9 +20,7 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.slimgraph.KSlimGraph;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KFloatOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KInsets;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.options.PortConstraints;
@@ -74,13 +72,8 @@ public class OrthogonalDataflowLayoutProvider extends
 		// set option for minimal distance
         float minDist = LayoutOptions.getMinSpacing(
                 KimlLayoutUtil.getShapeLayout(layoutNode));
-        if (Float.isNaN(minDist)) {
-            KOption spacingOption = getDefault(LayoutOptions.MIN_SPACING);
-            if (spacingOption instanceof KFloatOption)
-                minDist = ((KFloatOption)spacingOption).getValue();
-            else
-                minDist = DEF_MIN_DIST;
-        }
+        if (Float.isNaN(minDist))
+            minDist = DEF_MIN_DIST;
 		
 		// split the graph into connected components
 		ConnectedComponents componentsSplitter = new ConnectedComponents();

@@ -30,7 +30,7 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  *
  * @see de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataPackage#getKOption()
- * @model
+ * @model abstract="true"
  * @generated
  */
 public interface KOption extends EObject {

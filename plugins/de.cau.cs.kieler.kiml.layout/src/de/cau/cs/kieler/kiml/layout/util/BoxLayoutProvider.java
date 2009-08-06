@@ -18,8 +18,6 @@ import java.util.List;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KFloatOption;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KOption;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.services.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.layout.util.alg.BoxPlacer;
@@ -50,13 +48,8 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         // set option for minimal spacing
         float spacing = LayoutOptions.getMinSpacing(
                 KimlLayoutUtil.getShapeLayout(layoutNode));
-        if (Float.isNaN(spacing)) {
-            KOption spacingOption = getDefault(LayoutOptions.MIN_SPACING);
-            if (spacingOption instanceof KFloatOption)
-                spacing = ((KFloatOption)spacingOption).getValue();
-            else
-                spacing = DEFAULT_SPACING;
-        }
+        if (Float.isNaN(spacing))
+            spacing = DEFAULT_SPACING;
         
         // sort boxes according to priority and size
         boxSorter.reset(progressMonitor.subTask(10));

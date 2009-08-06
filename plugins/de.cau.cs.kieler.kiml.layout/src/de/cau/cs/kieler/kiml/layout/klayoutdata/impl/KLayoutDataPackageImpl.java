@@ -17,6 +17,7 @@ package de.cau.cs.kieler.kiml.layout.klayoutdata.impl;
 
 import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KBooleanOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KFloatOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KInsets;
@@ -94,6 +95,13 @@ public class KLayoutDataPackageImpl extends EPackageImpl implements KLayoutDataP
      * @generated
      */
     private EClass kIntOptionEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass kBooleanOptionEClass = null;
 
     /**
      * <!-- begin-user-doc -->
@@ -365,6 +373,24 @@ public class KLayoutDataPackageImpl extends EPackageImpl implements KLayoutDataP
      * <!-- end-user-doc -->
      * @generated
      */
+    public EClass getKBooleanOption() {
+        return kBooleanOptionEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getKBooleanOption_Value() {
+        return (EAttribute)kBooleanOptionEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public EClass getKFloatOption() {
         return kFloatOptionEClass;
     }
@@ -496,6 +522,9 @@ public class KLayoutDataPackageImpl extends EPackageImpl implements KLayoutDataP
         kIntOptionEClass = createEClass(KINT_OPTION);
         createEAttribute(kIntOptionEClass, KINT_OPTION__VALUE);
 
+        kBooleanOptionEClass = createEClass(KBOOLEAN_OPTION);
+        createEAttribute(kBooleanOptionEClass, KBOOLEAN_OPTION__VALUE);
+
         kFloatOptionEClass = createEClass(KFLOAT_OPTION);
         createEAttribute(kFloatOptionEClass, KFLOAT_OPTION__VALUE);
 
@@ -546,6 +575,7 @@ public class KLayoutDataPackageImpl extends EPackageImpl implements KLayoutDataP
         kEdgeLayoutEClass.getESuperTypes().add(this.getKLayoutData());
         kStringOptionEClass.getESuperTypes().add(this.getKOption());
         kIntOptionEClass.getESuperTypes().add(this.getKOption());
+        kBooleanOptionEClass.getESuperTypes().add(this.getKOption());
         kFloatOptionEClass.getESuperTypes().add(this.getKOption());
         kObjectOptionEClass.getESuperTypes().add(this.getKOption());
 
@@ -571,7 +601,7 @@ public class KLayoutDataPackageImpl extends EPackageImpl implements KLayoutDataP
         initEAttribute(getKPoint_X(), theEcorePackage.getEFloat(), "x", "0.0f", 0, 1, KPoint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getKPoint_Y(), theEcorePackage.getEFloat(), "y", "0.0f", 0, 1, KPoint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-        initEClass(kOptionEClass, KOption.class, "KOption", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEClass(kOptionEClass, KOption.class, "KOption", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getKOption_Key(), theEcorePackage.getEString(), "key", null, 0, 1, KOption.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(kStringOptionEClass, KStringOption.class, "KStringOption", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -579,6 +609,9 @@ public class KLayoutDataPackageImpl extends EPackageImpl implements KLayoutDataP
 
         initEClass(kIntOptionEClass, KIntOption.class, "KIntOption", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getKIntOption_Value(), theEcorePackage.getEInt(), "value", null, 0, 1, KIntOption.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+        initEClass(kBooleanOptionEClass, KBooleanOption.class, "KBooleanOption", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEAttribute(getKBooleanOption_Value(), ecorePackage.getEBoolean(), "value", null, 0, 1, KBooleanOption.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(kFloatOptionEClass, KFloatOption.class, "KFloatOption", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getKFloatOption_Value(), theEcorePackage.getEFloat(), "value", null, 0, 1, KFloatOption.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

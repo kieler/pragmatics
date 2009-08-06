@@ -13,58 +13,54 @@
  *
  * $Id$
  */
-package de.cau.cs.kieler.kiml.layout.klayoutdata.impl;
+package de.cau.cs.kieler.kiml.ui.layout.layoutoptions;
 
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataPackage;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KOption;
 
-import org.eclipse.emf.common.notify.Notification;
+import java.util.Collection;
+
+import org.eclipse.emf.common.notify.NotificationChain;
+
+import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.InternalEObject;
 
-import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
+
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>KOption</b></em>'.
+ * An implementation of the model object '<em><b>Layout Option Style</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link de.cau.cs.kieler.kiml.layout.klayoutdata.impl.KOptionImpl#getKey <em>Key</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyleImpl#getOptions <em>Options</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public abstract class KOptionImpl extends EObjectImpl implements KOption {
+public class LayoutOptionStyleImpl extends EObjectImpl implements LayoutOptionStyle {
     /**
-     * The default value of the '{@link #getKey() <em>Key</em>}' attribute.
+     * The cached value of the '{@link #getOptions() <em>Options</em>}' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #getKey()
+     * @see #getOptions()
      * @generated
      * @ordered
      */
-    protected static final String KEY_EDEFAULT = null;
-
-    /**
-     * The cached value of the '{@link #getKey() <em>Key</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #getKey()
-     * @generated
-     * @ordered
-     */
-    protected String key = KEY_EDEFAULT;
+    protected EList<KOption> options;
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    protected KOptionImpl() {
+    protected LayoutOptionStyleImpl() {
         super();
     }
 
@@ -75,7 +71,7 @@ public abstract class KOptionImpl extends EObjectImpl implements KOption {
      */
     @Override
     protected EClass eStaticClass() {
-        return KLayoutDataPackage.Literals.KOPTION;
+        return LayoutOptionsPackage.Literals.LAYOUT_OPTION_STYLE;
     }
 
     /**
@@ -83,8 +79,11 @@ public abstract class KOptionImpl extends EObjectImpl implements KOption {
      * <!-- end-user-doc -->
      * @generated
      */
-    public String getKey() {
-        return key;
+    public EList<KOption> getOptions() {
+        if (options == null) {
+            options = new EObjectContainmentEList<KOption>(KOption.class, this, LayoutOptionsPackage.LAYOUT_OPTION_STYLE__OPTIONS);
+        }
+        return options;
     }
 
     /**
@@ -92,11 +91,13 @@ public abstract class KOptionImpl extends EObjectImpl implements KOption {
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setKey(String newKey) {
-        String oldKey = key;
-        key = newKey;
-        if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KOPTION__KEY, oldKey, key));
+    @Override
+    public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+        switch (featureID) {
+            case LayoutOptionsPackage.LAYOUT_OPTION_STYLE__OPTIONS:
+                return ((InternalEList<?>)getOptions()).basicRemove(otherEnd, msgs);
+        }
+        return super.eInverseRemove(otherEnd, featureID, msgs);
     }
 
     /**
@@ -107,8 +108,8 @@ public abstract class KOptionImpl extends EObjectImpl implements KOption {
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case KLayoutDataPackage.KOPTION__KEY:
-                return getKey();
+            case LayoutOptionsPackage.LAYOUT_OPTION_STYLE__OPTIONS:
+                return getOptions();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -118,11 +119,13 @@ public abstract class KOptionImpl extends EObjectImpl implements KOption {
      * <!-- end-user-doc -->
      * @generated
      */
+    @SuppressWarnings("unchecked")
     @Override
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case KLayoutDataPackage.KOPTION__KEY:
-                setKey((String)newValue);
+            case LayoutOptionsPackage.LAYOUT_OPTION_STYLE__OPTIONS:
+                getOptions().clear();
+                getOptions().addAll((Collection<? extends KOption>)newValue);
                 return;
         }
         super.eSet(featureID, newValue);
@@ -136,8 +139,8 @@ public abstract class KOptionImpl extends EObjectImpl implements KOption {
     @Override
     public void eUnset(int featureID) {
         switch (featureID) {
-            case KLayoutDataPackage.KOPTION__KEY:
-                setKey(KEY_EDEFAULT);
+            case LayoutOptionsPackage.LAYOUT_OPTION_STYLE__OPTIONS:
+                getOptions().clear();
                 return;
         }
         super.eUnset(featureID);
@@ -151,26 +154,10 @@ public abstract class KOptionImpl extends EObjectImpl implements KOption {
     @Override
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case KLayoutDataPackage.KOPTION__KEY:
-                return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
+            case LayoutOptionsPackage.LAYOUT_OPTION_STYLE__OPTIONS:
+                return options != null && !options.isEmpty();
         }
         return super.eIsSet(featureID);
     }
 
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    public String toString() {
-        if (eIsProxy()) return super.toString();
-
-        StringBuffer result = new StringBuffer(super.toString());
-        result.append(" (key: ");
-        result.append(key);
-        result.append(')');
-        return result.toString();
-    }
-
-} //KOptionImpl
+} //LayoutOptionStyleImpl

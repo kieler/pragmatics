@@ -72,9 +72,9 @@ public class KLayoutDataFactoryImpl extends EFactoryImpl implements KLayoutDataF
             case KLayoutDataPackage.KSHAPE_LAYOUT: return createKShapeLayout();
             case KLayoutDataPackage.KEDGE_LAYOUT: return createKEdgeLayout();
             case KLayoutDataPackage.KPOINT: return createKPoint();
-            case KLayoutDataPackage.KOPTION: return createKOption();
             case KLayoutDataPackage.KSTRING_OPTION: return createKStringOption();
             case KLayoutDataPackage.KINT_OPTION: return createKIntOption();
+            case KLayoutDataPackage.KBOOLEAN_OPTION: return createKBooleanOption();
             case KLayoutDataPackage.KFLOAT_OPTION: return createKFloatOption();
             case KLayoutDataPackage.KOBJECT_OPTION: return createKObjectOption();
             case KLayoutDataPackage.KINSETS: return createKInsets();
@@ -118,16 +118,6 @@ public class KLayoutDataFactoryImpl extends EFactoryImpl implements KLayoutDataF
      * <!-- end-user-doc -->
      * @generated
      */
-    public KOption createKOption() {
-        KOptionImpl kOption = new KOptionImpl();
-        return kOption;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public KStringOption createKStringOption() {
         KStringOptionImpl kStringOption = new KStringOptionImpl();
         return kStringOption;
@@ -141,6 +131,16 @@ public class KLayoutDataFactoryImpl extends EFactoryImpl implements KLayoutDataF
     public KIntOption createKIntOption() {
         KIntOptionImpl kIntOption = new KIntOptionImpl();
         return kIntOption;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public KBooleanOption createKBooleanOption() {
+        KBooleanOptionImpl kBooleanOption = new KBooleanOptionImpl();
+        return kBooleanOption;
     }
 
     /**

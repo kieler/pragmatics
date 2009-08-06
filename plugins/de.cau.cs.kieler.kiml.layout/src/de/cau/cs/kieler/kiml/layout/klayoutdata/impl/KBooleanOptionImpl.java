@@ -15,56 +15,55 @@
  */
 package de.cau.cs.kieler.kiml.layout.klayoutdata.impl;
 
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KBooleanOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataPackage;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KOption;
 
 import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.ecore.EClass;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.impl.EObjectImpl;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>KOption</b></em>'.
+ * An implementation of the model object '<em><b>KBoolean Option</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link de.cau.cs.kieler.kiml.layout.klayoutdata.impl.KOptionImpl#getKey <em>Key</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kiml.layout.klayoutdata.impl.KBooleanOptionImpl#isValue <em>Value</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public abstract class KOptionImpl extends EObjectImpl implements KOption {
+public class KBooleanOptionImpl extends KOptionImpl implements KBooleanOption {
     /**
-     * The default value of the '{@link #getKey() <em>Key</em>}' attribute.
+     * The default value of the '{@link #isValue() <em>Value</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #getKey()
+     * @see #isValue()
      * @generated
      * @ordered
      */
-    protected static final String KEY_EDEFAULT = null;
+    protected static final boolean VALUE_EDEFAULT = false;
 
     /**
-     * The cached value of the '{@link #getKey() <em>Key</em>}' attribute.
+     * The cached value of the '{@link #isValue() <em>Value</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #getKey()
+     * @see #isValue()
      * @generated
      * @ordered
      */
-    protected String key = KEY_EDEFAULT;
+    protected boolean value = VALUE_EDEFAULT;
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    protected KOptionImpl() {
+    protected KBooleanOptionImpl() {
         super();
     }
 
@@ -75,7 +74,7 @@ public abstract class KOptionImpl extends EObjectImpl implements KOption {
      */
     @Override
     protected EClass eStaticClass() {
-        return KLayoutDataPackage.Literals.KOPTION;
+        return KLayoutDataPackage.Literals.KBOOLEAN_OPTION;
     }
 
     /**
@@ -83,8 +82,8 @@ public abstract class KOptionImpl extends EObjectImpl implements KOption {
      * <!-- end-user-doc -->
      * @generated
      */
-    public String getKey() {
-        return key;
+    public boolean isValue() {
+        return value;
     }
 
     /**
@@ -92,11 +91,11 @@ public abstract class KOptionImpl extends EObjectImpl implements KOption {
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setKey(String newKey) {
-        String oldKey = key;
-        key = newKey;
+    public void setValue(boolean newValue) {
+        boolean oldValue = value;
+        value = newValue;
         if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KOPTION__KEY, oldKey, key));
+            eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KBOOLEAN_OPTION__VALUE, oldValue, value));
     }
 
     /**
@@ -107,8 +106,8 @@ public abstract class KOptionImpl extends EObjectImpl implements KOption {
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case KLayoutDataPackage.KOPTION__KEY:
-                return getKey();
+            case KLayoutDataPackage.KBOOLEAN_OPTION__VALUE:
+                return isValue();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -121,8 +120,8 @@ public abstract class KOptionImpl extends EObjectImpl implements KOption {
     @Override
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case KLayoutDataPackage.KOPTION__KEY:
-                setKey((String)newValue);
+            case KLayoutDataPackage.KBOOLEAN_OPTION__VALUE:
+                setValue((Boolean)newValue);
                 return;
         }
         super.eSet(featureID, newValue);
@@ -136,8 +135,8 @@ public abstract class KOptionImpl extends EObjectImpl implements KOption {
     @Override
     public void eUnset(int featureID) {
         switch (featureID) {
-            case KLayoutDataPackage.KOPTION__KEY:
-                setKey(KEY_EDEFAULT);
+            case KLayoutDataPackage.KBOOLEAN_OPTION__VALUE:
+                setValue(VALUE_EDEFAULT);
                 return;
         }
         super.eUnset(featureID);
@@ -151,8 +150,8 @@ public abstract class KOptionImpl extends EObjectImpl implements KOption {
     @Override
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case KLayoutDataPackage.KOPTION__KEY:
-                return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
+            case KLayoutDataPackage.KBOOLEAN_OPTION__VALUE:
+                return value != VALUE_EDEFAULT;
         }
         return super.eIsSet(featureID);
     }
@@ -167,10 +166,10 @@ public abstract class KOptionImpl extends EObjectImpl implements KOption {
         if (eIsProxy()) return super.toString();
 
         StringBuffer result = new StringBuffer(super.toString());
-        result.append(" (key: ");
-        result.append(key);
+        result.append(" (value: ");
+        result.append(value);
         result.append(')');
         return result.toString();
     }
 
-} //KOptionImpl
+} //KBooleanOptionImpl

@@ -13,8 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.layout.services;
 
-import java.util.ListIterator;
-
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KBooleanOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KFloatOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KIntOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutData;
@@ -137,63 +136,50 @@ public class LayoutOptionData {
      *     is invalid
      */
     public void setValue(KLayoutData layoutData, Object value) {
-        if (type == Type.BOOLEAN) {
-            if (((Boolean)value).booleanValue()) {
-                KOption option = layoutData.getOption(id);
-                if (option == null) {
-                    option = KLayoutDataFactory.eINSTANCE.createKOption();
-                    option.setKey(id);
-                    layoutData.getOptions().add(option);
-                }
-            }
-            else {
-                ListIterator<KOption> optionIter = layoutData.getOptions().listIterator();
-                while (optionIter.hasNext()) {
-                    if (id.equals(optionIter.next().getKey()))
-                        optionIter.remove();
-                }
-            }
-        }
-        else {
-            KOption option = layoutData.getOption(id);
-            if (option == null) {
-                switch (type) {
-                case ENUM:
-                case INT:
-                    option = KLayoutDataFactory.eINSTANCE.createKIntOption();
-                    break;
-                case STRING:
-                    option = KLayoutDataFactory.eINSTANCE.createKStringOption();
-                    break;
-                case FLOAT:
-                    option = KLayoutDataFactory.eINSTANCE.createKFloatOption();
-                    break;
-                default:
-                    throw new IllegalStateException("Invalid type set for this layout option.");
-                }
-                option.setKey(id);
-                layoutData.getOptions().add(option);
-            }
+        KOption option = layoutData.getOption(id);
+        if (option == null) {
             switch (type) {
-            case ENUM:
-                KIntOption intOption = (KIntOption)option;
-                intOption.setValue(((Enum<?>)value).ordinal());
+            case BOOLEAN:
+                option = KLayoutDataFactory.eINSTANCE.createKBooleanOption();
                 break;
+            case ENUM:
             case INT:
-                intOption = (KIntOption)option;
-                intOption.setValue(((Integer)value).intValue());
+                option = KLayoutDataFactory.eINSTANCE.createKIntOption();
                 break;
             case STRING:
-                KStringOption stringOption = (KStringOption)option;
-                stringOption.setValue((String)value);
+                option = KLayoutDataFactory.eINSTANCE.createKStringOption();
                 break;
             case FLOAT:
-                KFloatOption floatOption = (KFloatOption)option;
-                floatOption.setValue(((Float)value).floatValue());
+                option = KLayoutDataFactory.eINSTANCE.createKFloatOption();
                 break;
             default:
                 throw new IllegalStateException("Invalid type set for this layout option.");
             }
+            option.setKey(id);
+            layoutData.getOptions().add(option);
+        }
+        switch (type) {
+        case BOOLEAN:
+            KBooleanOption booleanOption = (KBooleanOption)option;
+            booleanOption.setValue(((Boolean)value).booleanValue());
+        case ENUM:
+            KIntOption intOption = (KIntOption)option;
+            intOption.setValue(((Enum<?>)value).ordinal());
+            break;
+        case INT:
+            intOption = (KIntOption)option;
+            intOption.setValue(((Integer)value).intValue());
+            break;
+        case STRING:
+            KStringOption stringOption = (KStringOption)option;
+            stringOption.setValue((String)value);
+            break;
+        case FLOAT:
+            KFloatOption floatOption = (KFloatOption)option;
+            floatOption.setValue(((Float)value).floatValue());
+            break;
+        default:
+            throw new IllegalStateException("Invalid type set for this layout option.");
         }
     }
     

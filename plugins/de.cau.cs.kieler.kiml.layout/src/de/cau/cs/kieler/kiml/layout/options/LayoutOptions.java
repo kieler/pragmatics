@@ -13,15 +13,13 @@
  */
 package de.cau.cs.kieler.kiml.layout.options;
 
-import java.util.ListIterator;
-
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KBooleanOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KFloatOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KIntOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KObjectOption;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KStringOption;
 
 /**
@@ -339,8 +337,11 @@ public class LayoutOptions {
      * @return true if the fixed size option is active
      */
     public static boolean isFixedSize(KLayoutData layoutData) {
-        KOption sizeOption = layoutData.getOption(FIXED_SIZE);
-        return sizeOption != null;
+        KBooleanOption sizeOption = (KBooleanOption)layoutData.getOption(FIXED_SIZE);
+        if (sizeOption == null)
+            return false;
+        else
+            return sizeOption.isValue();
     }
 
     /**
@@ -352,21 +353,13 @@ public class LayoutOptions {
      */
     public static void setFixedSize(KLayoutData layoutData,
             boolean fixedSize) {
-        if (fixedSize) {
-            KOption sizeOption = layoutData.getOption(FIXED_SIZE);
-            if (sizeOption == null) {
-                sizeOption = KLayoutDataFactory.eINSTANCE.createKOption();
-                sizeOption.setKey(FIXED_SIZE);
-                layoutData.getOptions().add(sizeOption);
-            }
+        KBooleanOption sizeOption = (KBooleanOption)layoutData.getOption(FIXED_SIZE);
+        if (sizeOption == null) {
+            sizeOption = KLayoutDataFactory.eINSTANCE.createKBooleanOption();
+            sizeOption.setKey(FIXED_SIZE);
+            layoutData.getOptions().add(sizeOption);
         }
-        else {
-            ListIterator<KOption> optionIter = layoutData.getOptions().listIterator();
-            while (optionIter.hasNext()) {
-                if (FIXED_SIZE.equals(optionIter.next().getKey()))
-                    optionIter.remove();
-            }
-        }
+        sizeOption.setValue(fixedSize);
     }
     
     /** layout option key: minimal distance between elements */

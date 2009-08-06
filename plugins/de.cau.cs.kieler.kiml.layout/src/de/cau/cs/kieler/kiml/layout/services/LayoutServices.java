@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutData;
@@ -258,8 +259,10 @@ public class LayoutServices {
 	 * @param layoutNode node for which a layout provider is requested
 	 * @return a layout provider instance that fits the layout hints for
 	 *     the given node
+	 * @throws KielerException if there is no registered layout provider
 	 */
-	public AbstractLayoutProvider getLayoutProvider(KNode layoutNode) {
+	public AbstractLayoutProvider getLayoutProvider(KNode layoutNode)
+	        throws KielerException {
 	    KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
 	    String layoutHint = LayoutOptions.getLayoutHint(nodeLayout);
 	    // try to get a specific provider for the given node
@@ -269,7 +272,11 @@ public class LayoutServices {
 
 	    // find the most appropriate provider from the layout type and diagram type
 	    String diagramType = LayoutOptions.getDiagramType(nodeLayout);
-	    return findAppropriateProvider(layoutHint, diagramType).instance;
+	    providerData = findAppropriateProvider(layoutHint, diagramType);
+	    if (providerData != null)
+	        return providerData.instance;
+	    else
+	        throw new KielerException("No registered layout provider is available.");
 	}
 
 	/**
@@ -366,7 +373,8 @@ public class LayoutServices {
 	 * @param layoutType hint about the layout type to choose, or {@code null}
 	 *     if no specific layout type is selected
 	 * @param diagramType identifier of the diagram type that is to be layouted
-	 * @return data instance for the most appropriate layout provider
+	 * @return data instance for the most appropriate layout provider, or {@code null}
+	 *     if there is no layout provider
 	 */
 	private LayoutProviderData findAppropriateProvider(String layoutType, String diagramType) {
         Iterator<LayoutProviderData> providerIter = layoutProviderMap.values().iterator();

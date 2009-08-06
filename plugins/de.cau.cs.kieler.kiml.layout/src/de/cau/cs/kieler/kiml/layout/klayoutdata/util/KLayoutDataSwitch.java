@@ -147,6 +147,13 @@ public class KLayoutDataSwitch<T> {
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
+            case KLayoutDataPackage.KBOOLEAN_OPTION: {
+                KBooleanOption kBooleanOption = (KBooleanOption)theEObject;
+                T result = caseKBooleanOption(kBooleanOption);
+                if (result == null) result = caseKOption(kBooleanOption);
+                if (result == null) result = defaultCase(theEObject);
+                return result;
+            }
             case KLayoutDataPackage.KFLOAT_OPTION: {
                 KFloatOption kFloatOption = (KFloatOption)theEObject;
                 T result = caseKFloatOption(kFloatOption);
@@ -273,6 +280,21 @@ public class KLayoutDataSwitch<T> {
      * @generated
      */
     public T caseKIntOption(KIntOption object) {
+        return null;
+    }
+
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>KBoolean Option</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>KBoolean Option</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseKBooleanOption(KBooleanOption object) {
         return null;
     }
 

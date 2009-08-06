@@ -111,6 +111,10 @@ public class KLayoutDataAdapterFactory extends AdapterFactoryImpl {
                 return createKIntOptionAdapter();
             }
             @Override
+            public Adapter caseKBooleanOption(KBooleanOption object) {
+                return createKBooleanOptionAdapter();
+            }
+            @Override
             public Adapter caseKFloatOption(KFloatOption object) {
                 return createKFloatOptionAdapter();
             }
@@ -241,6 +245,20 @@ public class KLayoutDataAdapterFactory extends AdapterFactoryImpl {
      * @generated
      */
     public Adapter createKIntOptionAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.layout.klayoutdata.KBooleanOption <em>KBoolean Option</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see de.cau.cs.kieler.kiml.layout.klayoutdata.KBooleanOption
+     * @generated
+     */
+    public Adapter createKBooleanOptionAdapter() {
         return null;
     }
 

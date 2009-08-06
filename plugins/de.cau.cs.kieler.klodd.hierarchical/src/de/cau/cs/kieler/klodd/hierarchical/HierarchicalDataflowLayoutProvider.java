@@ -27,10 +27,7 @@ import de.cau.cs.kieler.core.slimgraph.alg.DFSCycleRemover;
 import de.cau.cs.kieler.core.slimgraph.alg.GreedyCycleRemover;
 import de.cau.cs.kieler.core.slimgraph.alg.ICycleRemover;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KFloatOption;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KIntOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutData;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.layout.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
@@ -120,13 +117,8 @@ public class HierarchicalDataflowLayoutProvider extends
 		// set option for minimal distance
 		float minDist = LayoutOptions.getMinSpacing(
 		        KimlLayoutUtil.getShapeLayout(layoutNode));
-		if (Float.isNaN(minDist)) {
-            KOption spacingOption = getDefault(LayoutOptions.MIN_SPACING);
-            if (spacingOption instanceof KFloatOption)
-                minDist = ((KFloatOption)spacingOption).getValue();
-            else
-                minDist = DEF_MIN_DIST;
-		}
+		if (Float.isNaN(minDist))
+            minDist = DEF_MIN_DIST;
 
 		// perform some pre-processing
 		preProcess(layoutNode);
@@ -233,18 +225,8 @@ public class HierarchicalDataflowLayoutProvider extends
 	 * @param parentNode parent layout node
 	 */
 	private void preProcess(KNode parentNode) {
-	    // get layout direction from default options if needed
 	    KLayoutData parentLayout = KimlLayoutUtil.getShapeLayout(parentNode);
 	    LayoutDirection layoutDirection = LayoutOptions.getLayoutDirection(parentLayout);
-	    if (layoutDirection == LayoutDirection.UNDEFINED) {
-	        KIntOption directionOption = (KIntOption)getDefault(LayoutOptions.LAYOUT_DIRECTION);
-	        if (directionOption != null) {
-	            layoutDirection = LayoutDirection.valueOf(
-	                    directionOption.getValue());
-	            LayoutOptions.setLayoutDirection(parentLayout,
-	                    layoutDirection);
-	        }
-	    }
 	    
 		for (KNode node : parentNode.getChildren()) {
 			// fill port data for the child node

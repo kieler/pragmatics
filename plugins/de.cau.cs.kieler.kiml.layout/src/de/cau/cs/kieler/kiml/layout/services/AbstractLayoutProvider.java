@@ -34,9 +34,6 @@ import de.cau.cs.kieler.kiml.layout.klayoutdata.KOption;
  */
 public abstract class AbstractLayoutProvider {
 
-	/** list of layout options to use as default */
-	private List<KOption> defaultOptions = new LinkedList<KOption>();
-
 	/**
 	 * Initialize the layout provider with the given parameter.
 	 * The default implementation does nothing.
@@ -56,31 +53,5 @@ public abstract class AbstractLayoutProvider {
 	 */
 	public abstract void doLayout(KNode layoutNode,
 			IKielerProgressMonitor progressMonitor) throws KielerException;
-
-	/**
-	 * Returns the list of default options. This list may be
-	 * arbitrarily modified to set or remove options for the
-	 * layout provider.
-	 * 
-	 * @return default options for the layout provider
-	 * @deprecated the layout options mechanism will be reimplemented soon
-	 */
-	public List<KOption> getDefaultOptions() {
-	    return defaultOptions;
-	}
-	
-	/**
-	 * Returns the first default option with given key.
-	 * 
-	 * @param key key for the option to look up
-	 * @return the associated option, or null if there is none
-	 */
-	protected KOption getDefault(String key) {
-	    for (KOption option : defaultOptions) {
-	        if (option.getKey().equals(key))
-	            return option;
-	    }
-	    return null;
-	}
 	
 }

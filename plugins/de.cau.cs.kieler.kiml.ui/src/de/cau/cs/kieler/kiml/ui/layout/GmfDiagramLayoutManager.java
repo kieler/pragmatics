@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kiml.ui.layout;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.draw2d.ConnectionLocator;
@@ -49,6 +50,8 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KInsets;
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutData;
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.layout.options.EdgeLabelPlacement;
@@ -57,6 +60,8 @@ import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.options.PortConstraints;
 import de.cau.cs.kieler.kiml.layout.services.LayoutServices;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyle;
+import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsPackage;
 
 /**
  * Diagram layout manager that is able to generically layout diagrams generated
@@ -89,6 +94,30 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     private DiagramEditor diagramEditorPart;
     /** top edit part of the currently layouted diagram */
     private DiagramEditPart diagramEditPart;
+    
+    /**
+     * Sets all layout options that are stored in the notation view of the given edit
+     * part.
+     * 
+     * @param editPart edit part for which the notation view is queried for layout options
+     * @param layoutData layout data to which the layout options are added
+     */
+    public void setNotationLayoutOptions(IGraphicalEditPart editPart, KLayoutData layoutData) {
+        LayoutOptionStyle optionStyle = (LayoutOptionStyle)editPart.getNotationView()
+                .getStyle(LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
+        if (optionStyle != null) {
+            for (KOption option : optionStyle.getOptions()) {
+                ListIterator<KOption> optionIter = layoutData.getOptions().listIterator();
+                while (optionIter.hasNext()) {
+                    if (optionIter.next().getKey().equals(option.getKey())) {
+                        optionIter.remove();
+                        break;
+                    }
+                }
+                optionIter.add(option);
+            }
+        }
+    }
     
     /*
      * (non-Javadoc)
@@ -218,6 +247,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 			
 			// set preconfigured layout options for the root node
 			LayoutServices.INSTANCE.setLayoutOptions(rootEditPart.getClass(), shapeLayout);
+			// set user defined layout options for the root node
+			setNotationLayoutOptions(rootEditPart, shapeLayout);
 		}
 		// start with the whole diagram as root for layout
 		else if (layoutRootPart instanceof DiagramEditPart) {
@@ -232,6 +263,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 			
 			// set preconfigured layout options for the diagram
 			LayoutServices.INSTANCE.setLayoutOptions(layoutRootPart.getClass(), shapeLayout);
+			// set user defined layout options for the diagram
+			setNotationLayoutOptions(layoutRootPart, shapeLayout);
 		}
 		else throw new UnsupportedOperationException("Not supported by this layout manager: "
 		        + layoutRootPart);
@@ -284,6 +317,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 hasPorts = true;
                 // set preconfigured layout options for the port
                 LayoutServices.INSTANCE.setLayoutOptions(borderItem.getClass(), portLayout);
+                // set user defined layout options for the port
+                setNotationLayoutOptions(borderItem, portLayout);
                 
                 // store all the connections to process them later
                 for (Object connectionObj : borderItem.getTargetConnections()) {
@@ -385,12 +420,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 // set preconfigured layout options for the node
                 LayoutServices.INSTANCE.setLayoutOptions(childNodeEditPart.getClass(),
                         nodeLayout);
-                // set user defined layout hint for the node
-                String layoutHint = GmfLayoutHints.getStringValue(
-                        (IGraphicalEditPart)childNodeEditPart,
-                        LayoutOptions.LAYOUT_HINT);
-                if (layoutHint != null)
-                    LayoutOptions.setLayoutHint(nodeLayout, layoutHint);
+                // set user defined layout options for the node
+                setNotationLayoutOptions(childNodeEditPart, nodeLayout);
             }
 		    
 			// process labels of nodes
@@ -524,6 +555,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             
             // set the preconfigured layout options for the edge
             LayoutServices.INSTANCE.setLayoutOptions(connection.getClass(), edgeLayout);
+            // set the user defined layout options for the edge
+            setNotationLayoutOptions(connection, edgeLayout);
 
             /*
              * process the labels
