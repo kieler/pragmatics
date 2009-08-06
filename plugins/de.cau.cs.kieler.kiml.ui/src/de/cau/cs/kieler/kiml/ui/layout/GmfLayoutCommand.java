@@ -129,6 +129,7 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
     @Override
     protected CommandResult doExecuteWithResult(IProgressMonitor monitor,
             IAdaptable info) throws ExecutionException {
+        monitor.beginTask(getLabel(), 100);
         // process shape layout data
         for (ShapeLayoutData shapeLayout : shapeLayouts) {
             // set new location of the element
@@ -188,6 +189,7 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
         }
         edgeLayouts.clear();
         
+        monitor.done();
         return CommandResult.newOKCommandResult();
     }
 

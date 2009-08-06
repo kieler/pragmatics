@@ -51,6 +51,7 @@ import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.ui.Messages;
 
 /**
  * Edit policy used to apply layout. This edit policy creates a
@@ -85,7 +86,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                 ApplyLayoutRequest layoutRequest = (ApplyLayoutRequest)request;
                 IGraphicalEditPart hostEditPart = (IGraphicalEditPart)getHost();
                 GmfLayoutCommand command = new GmfLayoutCommand(
-                        hostEditPart.getEditingDomain(), "Apply Layout",
+                        hostEditPart.getEditingDomain(), Messages.getString("kiml.ui.5"),
                         new EObjectAdapter((View)hostEditPart.getModel()));
                 
                 // retrieve layout data from the request and compute layout data for the command
