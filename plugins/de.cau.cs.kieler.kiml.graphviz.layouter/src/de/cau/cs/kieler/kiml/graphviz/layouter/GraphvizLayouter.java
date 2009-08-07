@@ -80,16 +80,7 @@ public class GraphvizLayouter {
     
     /** if true, debug output is enabled, which writes dot files to the home folder */
     private final static boolean ENABLE_DEBUG = false;
-    /** number of milliseconds to wait if no input is available from the Graphviz process */
-    private final static int PROCESS_INPUT_WAIT = 500;
-    /** maximal number of characters that is read from the Graphviz error output */
-    private final static int MAX_ERROR_OUTPUT = 512;
-    /**
-     * Dots per inch specification. GraphViz uses inch for some internal sizes
-     * (e.g. width, height) but not for all. Hence finding the right DPI is
-     * crucial for the layout. Setting the DPI attribute for a graph within
-     * GraphViz seems to have no effect.
-     */
+    /** dots per inch specification, needed by Graphviz for some values */
     private final static float DPI = 72.0f;
     /** default value for minimal spacing */
     private final static float DEF_MIN_SPACING = 16.0f;
@@ -98,7 +89,6 @@ public class GraphvizLayouter {
 
     /** maps each identifier of a graph element to the instance of the element */
     private HashMap<String, KGraphElement> graphElementMap = new HashMap<String, KGraphElement>();
-    
     /** the Google injector used to create the Xtext serializer and parser */
     private Injector injector = null;
     /** offset value to be added to all coordinates */
@@ -139,26 +129,28 @@ public class GraphvizLayouter {
         
         // start the graphviz process
         Process graphvizProcess = GraphvizAPI.startProcess(command);
-        progressMonitor.worked(10);
-
-        // translate the KGraph to Graphviz and write to the process
-        GraphvizModel graphvizInput = createDotGraph(parentNode, command);
-        progressMonitor.worked(5);
-        writeDotGraph(graphvizInput, new BufferedOutputStream(
-        		graphvizProcess.getOutputStream()));
         progressMonitor.worked(5);
 
-       	Thread.yield();
-        progressMonitor.worked(10);
-        
-        // read graphviz output and apply layout information to the KGraph
-        GraphvizModel graphvizOutput = readDotGraph(new BufferedInputStream(
-        		graphvizProcess.getInputStream()), graphvizProcess.getErrorStream());
-        progressMonitor.worked(5);
-        retrieveLayoutResult(parentNode, graphvizOutput);
-        
-        // destroy the process to release resources
-        graphvizProcess.destroy();
+        try {
+            // translate the KGraph to Graphviz and write to the process
+            GraphvizModel graphvizInput = createDotGraph(parentNode, command);
+            progressMonitor.worked(5);
+            writeDotGraph(graphvizInput, new BufferedOutputStream(
+            		graphvizProcess.getOutputStream()), progressMonitor.subTask(10));
+    
+            // wait for Graphviz to give some output
+           	GraphvizAPI.waitForInput(graphvizProcess.getInputStream(),
+           	        graphvizProcess.getErrorStream(), progressMonitor.subTask(10));
+            
+            // read graphviz output and apply layout information to the KGraph
+            GraphvizModel graphvizOutput = readDotGraph(new BufferedInputStream(
+            		graphvizProcess.getInputStream()), progressMonitor.subTask(10));
+            retrieveLayoutResult(parentNode, graphvizOutput);
+        }
+        finally {
+            // destroy the process to release resources
+            graphvizProcess.destroy();            
+        }
 
         progressMonitor.done();
     }
@@ -356,10 +348,12 @@ public class GraphvizLayouter {
      * 
      * @param graphvizModel Graphviz model to serialize
      * @param outputStream output stream to which the model is written
+     * @param monitor a monitor to which progress is reported
      * @throws KielerException if writing to the output stream fails
      */
-    private void writeDotGraph(GraphvizModel graphvizModel, OutputStream outputStream)
-            throws KielerException {
+    private void writeDotGraph(GraphvizModel graphvizModel, OutputStream outputStream,
+            IKielerProgressMonitor monitor) throws KielerException {
+        monitor.begin("Serialize model", 10);
         // enable debug output if needed
         FileOutputStream debugStream = null;
         if (ENABLE_DEBUG) {
@@ -392,6 +386,7 @@ public class GraphvizLayouter {
             	outputStream.close();
             } catch (IOException exception) {}
         }
+        monitor.done();
     }
     
     /**
@@ -413,36 +408,19 @@ public class GraphvizLayouter {
     private String getEdgeID(KEdge edge) {
         return "edge" + edge.hashCode();
     }
-
+    
     /**
      * Reads and parses a serialized Graphviz model.
      * 
      * @param inputStream input stream from which the model is read
-     * @param errorStream error stream that is checked for error messages
+     * @param monitor a monitor to which progress is reported
      * @return an instance of the parsed graphviz model
-     * @throws KielerException if reading from the input stream fails, or an error message
-     *     is caught from Graphviz, or the parser fails to parse the model
+     * @throws KielerException if reading from the input stream fails, or the
+     *     parser fails to parse the model
      */
-    private GraphvizModel readDotGraph(InputStream inputStream, InputStream errorStream)
-    		throws KielerException{
-    	try {
-    		// wait for a while if there is no input from Graphviz
-    		// FIXME what if Graphviz takes longer to execute? this should be made dynamic
-	    	if (inputStream.available() == 0)
-	    		Thread.sleep(PROCESS_INPUT_WAIT);
-	    	// read and check error stream if there is still no input from Graphv
-        	if (inputStream.available() == 0) {
-	            StringBuffer error = new StringBuffer();
-	            while (error.length() < MAX_ERROR_OUTPUT
-	            		&& errorStream.available() > 0) {
-	                 error.append((char)errorStream.read());
-	            }
-	            // take this branch only if graphviz really indicated an error
-	            if (error.length() > 0)
-	                throw new KielerException("Graphviz error: " + error.toString());
-        	}
-        } catch (Exception exception) {}
-
+    private GraphvizModel readDotGraph(InputStream inputStream,
+            IKielerProgressMonitor monitor) throws KielerException {
+        monitor.begin("Parse output", 10);
         // enable debug output if needed
         FileOutputStream debugStream = null;
         if (ENABLE_DEBUG) {
@@ -483,6 +461,7 @@ public class GraphvizLayouter {
         if (graphvizModel.getGraphs().isEmpty())
             throw new KielerException("No output from the Graphviz process.");
         
+        monitor.done();
         return graphvizModel;
     }
     

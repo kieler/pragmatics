@@ -15,10 +15,14 @@ package de.cau.cs.kieler.kiml.graphviz.layouter.preferences;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
+import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -41,7 +45,7 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 	 * Creates a Graphviz preference page.
 	 */
 	public GraphvizPreferencePage() {
-	    super(GRID);
+	    super(FLAT);
 	    setDescription("Preferences for the Graphviz layouter.");
 	}
 	
@@ -50,22 +54,28 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
 	public void createFieldEditors() {
-		// executable group
-		Group executable = new Group(this.getFieldEditorParent(), SWT.NONE);
-		executable.setText("Path to Executable");
+        // process group
+        Composite parent = getFieldEditorParent();
+        Group processGroup = new Group(parent, SWT.NONE);
+        processGroup.setText("Graphviz Process");
 
-		FileFieldEditor dotExecutable = new FileFieldEditor(
-		        GraphvizAPI.PREF_GRAPHVIZ_EXECUTABLE,
-				"Set a correct path to the 'dot' executable for Graphviz. The Graphviz layout tool is available at http://www.graphviz.org/", executable);
-		dotExecutable.getLabelControl(executable).setLayoutData(new GridData(SWT.LEFT, SWT.TOP,
-				false, false, 2, 1));
-		dotExecutable.setValidateStrategy(FileFieldEditor.VALIDATE_ON_KEY_STROKE);
-		
-		executable.setLayout(new GridLayout(2, false));
-		executable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-		
-		// add all field editors
-		addField(dotExecutable);
+        Label label = new Label(processGroup, SWT.WRAP);
+        label.setText("The Graphviz layout tool is available at http://www.graphviz.org/. If the 'dot' executable cannot be found in default locations, its path must be entered here.");
+        GridData labelLayoutData = new GridData(SWT.LEFT, SWT.FILL, false, true, 3, 1);
+        labelLayoutData.widthHint = 450;
+        label.setLayoutData(labelLayoutData);
+        FileFieldEditor executableEditor = new FileFieldEditor(
+                GraphvizAPI.PREF_GRAPHVIZ_EXECUTABLE, "Set path to the 'dot' executable:", processGroup);
+        executableEditor.setValidateStrategy(FileFieldEditor.VALIDATE_ON_KEY_STROKE);
+        addField(executableEditor);
+        
+        IntegerFieldEditor timeoutEditor = new IntegerFieldEditor(
+                GraphvizAPI.PREF_TIMEOUT, "Timeout for Graphviz output (ms):", processGroup);
+        timeoutEditor.setValidRange(GraphvizAPI.PROCESS_MIN_TIMEOUT, Integer.MAX_VALUE);
+        addField(timeoutEditor);
+        
+        processGroup.setLayout(new GridLayout(3, false));
+        parent.setLayout(new FillLayout());
 	}
 
 	/*

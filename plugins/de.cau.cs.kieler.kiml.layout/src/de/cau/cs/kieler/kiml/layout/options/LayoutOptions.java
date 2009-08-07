@@ -542,4 +542,40 @@ public class LayoutOptions {
         shapeOption.setValue(shape.ordinal());
     }
     
+    /** layout option key: expand nodes to fill their parent */
+    public final static String EXPAND_NODES = "de.cau.cs.kieler.layout.options.expandNodes";
+    
+    /**
+     * Returns whether the expand nodes option is active for the
+     * given layout data instance.
+     * 
+     * @param layoutData layout data for a parent node
+     * @return true if the expand nodes option is active
+     */
+    public static boolean isExpandNodes(KLayoutData layoutData) {
+        KBooleanOption expandOption = (KBooleanOption)layoutData.getOption(EXPAND_NODES);
+        if (expandOption == null)
+            return false;
+        else
+            return expandOption.isValue();
+    }
+
+    /**
+     * Activates or deactivates the expand nodes option for the
+     * given layout data instance.
+     * 
+     * @param layoutData layout data for a parent node
+     * @param expandNodes true if the contained nodes shall be expanded
+     */
+    public static void setExpandNodes(KLayoutData layoutData,
+            boolean expandNodes) {
+        KBooleanOption expandOption = (KBooleanOption)layoutData.getOption(EXPAND_NODES);
+        if (expandOption == null) {
+            expandOption = KLayoutDataFactory.eINSTANCE.createKBooleanOption();
+            expandOption.setKey(EXPAND_NODES);
+            layoutData.getOptions().add(expandOption);
+        }
+        expandOption.setValue(expandNodes);
+    }
+    
 }

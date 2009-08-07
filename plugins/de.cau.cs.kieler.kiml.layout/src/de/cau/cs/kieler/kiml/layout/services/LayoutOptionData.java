@@ -162,6 +162,7 @@ public class LayoutOptionData {
         case BOOLEAN:
             KBooleanOption booleanOption = (KBooleanOption)option;
             booleanOption.setValue(((Boolean)value).booleanValue());
+            break;
         case ENUM:
             KIntOption intOption = (KIntOption)option;
             intOption.setValue(((Enum<?>)value).ordinal());

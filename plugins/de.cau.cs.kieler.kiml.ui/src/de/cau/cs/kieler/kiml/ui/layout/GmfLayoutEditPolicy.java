@@ -86,7 +86,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                 ApplyLayoutRequest layoutRequest = (ApplyLayoutRequest)request;
                 IGraphicalEditPart hostEditPart = (IGraphicalEditPart)getHost();
                 GmfLayoutCommand command = new GmfLayoutCommand(
-                        hostEditPart.getEditingDomain(), Messages.getString("kiml.ui.5"),
+                        hostEditPart.getEditingDomain(), Messages.getString("kiml.ui.5"), //$NON-NLS-1$
                         new EObjectAdapter((View)hostEditPart.getModel()));
                 
                 // retrieve layout data from the request and compute layout data for the command

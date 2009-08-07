@@ -13,7 +13,9 @@
  */
 package de.cau.cs.kieler.kiml.layout.util.alg;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -29,8 +31,8 @@ import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
  */
 public class BoxPlacer extends AbstractAlgorithm {
 
-    /** maximal factor by which the layout may be broader than the broadest box */
-    private static final float MAX_BROADEN = 1.2f;
+    /** maximal factor by which a row may be broader than the maximal row width */
+    private static final float MAX_BROADEN = 1.1f;
     
     // width and height of the parent node
     private float parentWidth, parentHeight;
@@ -42,13 +44,14 @@ public class BoxPlacer extends AbstractAlgorithm {
      * @param sortedBoxes sorted list of boxes
      * @param parentNode parent node
      * @param spacing minimal spacing between elements
+     * @param expandNodes if true, the nodes are expanded to fill their parent
      */
     public void placeBoxes(List<KNode> sortedBoxes,
-            KNode parentNode, float spacing) {
+            KNode parentNode, float spacing, boolean expandNodes) {
         getMonitor().begin("Box placement", 1);
         
         // do place the boxes
-        placeBoxes(sortedBoxes, spacing);
+        placeBoxes(sortedBoxes, spacing, expandNodes);
         
         // adjust parent size
         KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(parentNode);
@@ -66,38 +69,78 @@ public class BoxPlacer extends AbstractAlgorithm {
      * 
      * @param sortedBoxes sorted list of boxes
      * @param minSpacing minimal spacing between elements
+     * @param expandNodes if true, the nodes are expanded to fill their parent
      */
-    private void placeBoxes(List<KNode> sortedBoxes, float minSpacing) {
-        parentWidth = 0.0f;
-        // determine the maximal width
-        float maxWidth = 0.0f;
+    private void placeBoxes(List<KNode> sortedBoxes, float minSpacing,
+            boolean expandNodes) {
+        // determine the maximal row width by the maximal box width and the total area
+        float maxRowWidth = 0.0f;
+        float totalArea = 0.0f;
         for (KNode box : sortedBoxes) {
             KShapeLayout boxLayout = KimlLayoutUtil.getShapeLayout(box);
             if (!LayoutOptions.isFixedSize(boxLayout))
             	KimlLayoutUtil.resizeNode(box);
-            if (boxLayout.getWidth() > maxWidth)
-                maxWidth = boxLayout.getWidth();
+            maxRowWidth = Math.max(maxRowWidth, boxLayout.getWidth());
+            totalArea += boxLayout.getWidth() * boxLayout.getHeight();
         }
+        maxRowWidth = Math.max(maxRowWidth, (float)Math.sqrt(totalArea)) * MAX_BROADEN;
         
-        // place nodes iteratively
-        // TODO make this placement more intelligent
-        float xpos = minSpacing, ypos = minSpacing, nextYpos = ypos;
-        for (KNode box : sortedBoxes) {
-            KShapeLayout boxLayout = KimlLayoutUtil.getShapeLayout(box);
+        // place nodes iteratively into rows
+        float xpos = minSpacing, ypos = minSpacing,
+            highestBox = 0.0f, broadestRow = 2 * minSpacing;
+        LinkedList<Integer> rowIndices = new LinkedList<Integer>();
+        rowIndices.add(Integer.valueOf(0));
+        LinkedList<Float> rowHeights = new LinkedList<Float>();
+        ListIterator<KNode> boxIter = sortedBoxes.listIterator();
+        while (boxIter.hasNext()) {
+            KShapeLayout boxLayout = KimlLayoutUtil.getShapeLayout(boxIter.next());
             float width = boxLayout.getWidth();
             float height = boxLayout.getHeight();
-            if (xpos + width > maxWidth * MAX_BROADEN) {
+            if (xpos + width > maxRowWidth) {
                 // place box into the next row
+                if (expandNodes) {
+                    rowHeights.addLast(Float.valueOf(highestBox));
+                    rowIndices.addLast(Integer.valueOf(boxIter.previousIndex()));
+                }
                 xpos = minSpacing;
-                ypos = nextYpos + minSpacing;
+                ypos += highestBox + minSpacing;
+                highestBox = 0.0f;
+                broadestRow = Math.max(broadestRow, 2 * minSpacing + width);
             }
             boxLayout.setXpos(xpos);
             boxLayout.setYpos(ypos);
             xpos += width + minSpacing;
-            nextYpos = Math.max(nextYpos, ypos + height);
-            parentWidth = Math.max(parentWidth, xpos);
+            broadestRow = Math.max(broadestRow, xpos);
+            highestBox = Math.max(highestBox, height);
         }
-        parentHeight = nextYpos + minSpacing;
+        
+        // expand nodes if required
+        if (expandNodes) {
+            xpos = minSpacing;
+            boxIter = sortedBoxes.listIterator();
+            rowIndices.addLast(Integer.valueOf(sortedBoxes.size()));
+            ListIterator<Integer> rowIndexIter = rowIndices.listIterator();
+            int nextRowIndex = rowIndexIter.next();
+            rowHeights.addLast(Float.valueOf(highestBox));
+            ListIterator<Float> rowHeightIter = rowHeights.listIterator();
+            float rowHeight = 0.0f;
+            while (boxIter.hasNext()) {
+                if (boxIter.nextIndex() == nextRowIndex) {
+                    xpos = minSpacing;
+                    rowHeight = rowHeightIter.next();
+                    nextRowIndex = rowIndexIter.next();
+                }
+                KShapeLayout boxLayout = KimlLayoutUtil.getShapeLayout(boxIter.next());
+                boxLayout.setHeight(rowHeight);
+                if (boxIter.nextIndex() == nextRowIndex)
+                    boxLayout.setWidth(broadestRow - xpos - minSpacing);
+                xpos += boxLayout.getWidth() + minSpacing;
+            }
+        }
+        
+        // set parent size
+        parentWidth = broadestRow;
+        parentHeight = ypos + highestBox + minSpacing;
     }
     
 }

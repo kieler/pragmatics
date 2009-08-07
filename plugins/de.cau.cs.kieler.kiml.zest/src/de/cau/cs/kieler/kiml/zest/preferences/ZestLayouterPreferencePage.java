@@ -2,8 +2,9 @@ package de.cau.cs.kieler.kiml.zest.preferences;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -27,7 +28,7 @@ public class ZestLayouterPreferencePage extends FieldEditorPreferencePage
 	 * Creates a Zest preference page.
 	 */
 	public ZestLayouterPreferencePage() {
-	    super(GRID);
+	    super(FLAT);
 	    setDescription("Preferences for the Zest Layouters.");
 	}
 	
@@ -37,17 +38,16 @@ public class ZestLayouterPreferencePage extends FieldEditorPreferencePage
 	 */
 	public void createFieldEditors() {
 		// options group
-		Group optionsGroup = new Group(this.getFieldEditorParent(), SWT.NONE);
+	    Composite parent = getFieldEditorParent();
+		Group optionsGroup = new Group(parent, SWT.NONE);
 		optionsGroup.setText("General Options:");
 
 		FloatFieldEditor scaleBaseEditor = new FloatFieldEditor(
 				PREF_SCALE_BASE, "&Scale base for parent nodes:", optionsGroup);
+        addField(scaleBaseEditor);
 		
 		optionsGroup.setLayout(new GridLayout(2, true));
-		optionsGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
-
-		// add all field editors
-		addField(scaleBaseEditor);
+		parent.setLayout(new FillLayout());
 	}
 
     /* (non-Javadoc)

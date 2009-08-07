@@ -18,6 +18,7 @@ import java.util.List;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.services.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.layout.util.alg.BoxPlacer;
@@ -45,18 +46,20 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
     public void doLayout(KNode layoutNode,
             IKielerProgressMonitor progressMonitor) throws KielerException {
         progressMonitor.begin("Box layout", 20);
+        KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
         // set option for minimal spacing
-        float spacing = LayoutOptions.getMinSpacing(
-                KimlLayoutUtil.getShapeLayout(layoutNode));
+        float spacing = LayoutOptions.getMinSpacing(parentLayout);
         if (Float.isNaN(spacing))
             spacing = DEFAULT_SPACING;
+        // set expand nodes option
+        boolean expandNodes = LayoutOptions.isExpandNodes(parentLayout);
         
         // sort boxes according to priority and size
         boxSorter.reset(progressMonitor.subTask(10));
         List<KNode> sortedBoxes = boxSorter.sort(layoutNode);
         // place boxes on the plane
         boxPlacer.reset(progressMonitor.subTask(10));
-        boxPlacer.placeBoxes(sortedBoxes, layoutNode, spacing);
+        boxPlacer.placeBoxes(sortedBoxes, layoutNode, spacing, expandNodes);
         
         progressMonitor.done();
     }

@@ -15,12 +15,14 @@ package de.cau.cs.kieler.kiml.graphviz.layouter;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
 import de.cau.cs.kieler.core.KielerException;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.graphviz.layouter.preferences.GraphvizPreferencePage;
 
 /**
@@ -104,8 +106,14 @@ public final class GraphvizAPI {
     /** Width of node, in inches. */
     public static final String ATTR_WIDTH         = "width";
     
-    /** preference constant for graphviz executable */
-    public static final String PREF_GRAPHVIZ_EXECUTABLE  = "pref.graphviz.executable";
+    /** preference constant for Graphviz executable */
+    public static final String PREF_GRAPHVIZ_EXECUTABLE  = "graphviz.executable";
+    /** preference constant for timeout */
+    public static final String PREF_TIMEOUT = "graphviz.timeout";
+    /** default timeout for waiting for Graphviz to give some output */
+    public final static int PROCESS_DEF_TIMEOUT = 3000;
+    /** minimal timeout for waiting for Graphviz to give some output */
+    public final static int PROCESS_MIN_TIMEOUT = 200;
 
     /** parameter used to specify the command */
     private final static String PARAM_COMMAND = "-K";
@@ -116,6 +124,10 @@ public final class GraphvizAPI {
         "/usr/bin/",
         "/bin/"
     };
+    /** number of milliseconds to wait if no input is available from the Graphviz process */
+    private final static int PROCESS_INPUT_WAIT = 20;
+    /** maximal number of characters that is read from the Graphviz error output */
+    private final static int MAX_ERROR_OUTPUT = 512;
     
     /**
      * Starts a new Graphviz process with the given command.
@@ -152,6 +164,52 @@ public final class GraphvizAPI {
         } catch (IOException exception) {
             throw new KielerException("Failed to start Graphviz process.", exception);
         }
+    }
+    
+    /**
+     * Waits until there is some input from the given input stream, with a
+     * customizable timeout.
+     * 
+     * @param inputStream input stream from which input is expected
+     * @param errorStream error stream that is queried if there is no input
+     * @param monitor monitor to which progress is reported
+     * @throws KielerException if the timeout is exceeded while waiting
+     */
+    public static void waitForInput(InputStream inputStream, InputStream errorStream,
+            IKielerProgressMonitor monitor) throws KielerException {
+        monitor.begin("Wait for Graphviz", 10);
+        IPreferenceStore preferenceStore = GraphvizLayouterPlugin.getDefault().getPreferenceStore();
+        int timeout = preferenceStore.getInt(PREF_TIMEOUT);
+        if (timeout < PROCESS_MIN_TIMEOUT)
+            timeout = PROCESS_DEF_TIMEOUT;
+        // pause this thread so Graphviz can start working
+        Thread.yield();
+        try {
+            // wait until there is input from Graphviz
+            long startTime = System.currentTimeMillis();
+            try {
+                while (inputStream.available() == 0
+                        && System.currentTimeMillis() - startTime < timeout) {
+                    Thread.sleep(PROCESS_INPUT_WAIT);
+                }
+            }
+            catch (InterruptedException exception) {}
+            // read and check error stream if there is still no input from Graphviz
+            if (inputStream.available() == 0) {
+                StringBuffer error = new StringBuffer();
+                while (error.length() < MAX_ERROR_OUTPUT
+                        && errorStream.available() > 0) {
+                     error.append((char)errorStream.read());
+                }
+                if (error.length() > 0)
+                    throw new KielerException("Graphviz error: " + error.toString());
+                else
+                    throw new KielerException("Timeout exceeded while waiting for Graphviz output.");
+            }
+        } catch (IOException exception) {
+            throw new KielerException("Unable to read Graphviz output.", exception);
+        }
+        monitor.done();
     }
 
 }

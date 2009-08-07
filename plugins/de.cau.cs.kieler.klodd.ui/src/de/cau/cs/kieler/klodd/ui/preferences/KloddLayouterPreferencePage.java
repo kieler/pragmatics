@@ -19,8 +19,10 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -42,7 +44,7 @@ public class KloddLayouterPreferencePage extends FieldEditorPreferencePage imple
      * Creates the preference page.
      */
     public KloddLayouterPreferencePage() {
-        super(GRID);
+        super(FLAT);
         setDescription(Messages.getString("klodd.ui.0")); //$NON-NLS-1$
     }
     
@@ -52,7 +54,8 @@ public class KloddLayouterPreferencePage extends FieldEditorPreferencePage imple
 	 */
 	public void createFieldEditors() {
 		// options group for hierarchical layouter
-		Group hieraGroup = new Group(this.getFieldEditorParent(), SWT.NONE);
+	    Composite parent = getFieldEditorParent();
+		Group hieraGroup = new Group(parent, SWT.NONE);
 		hieraGroup.setText(Messages.getString("klodd.ui.1")); //$NON-NLS-1$
 
 		FieldEditor balanceEditor = new BooleanFieldEditor(
@@ -90,14 +93,17 @@ public class KloddLayouterPreferencePage extends FieldEditorPreferencePage imple
                 }, hieraGroup, false);
 		addField(edgeRouteEditor);
 		
+		Composite crossRedPassesParent = new Composite(hieraGroup, SWT.NONE);
 		IntegerFieldEditor crossRedPassesEditor = new IntegerFieldEditor(
 		        HierarchicalDataflowLayoutProvider.PREF_CROSSRED_PASSES,
-		        Messages.getString("klodd.ui.11"), hieraGroup, 3);
+		        Messages.getString("klodd.ui.11"), crossRedPassesParent, 3); //$NON-NLS-1$
 		crossRedPassesEditor.setValidRange(1, 999);
+		crossRedPassesParent.setLayout(new GridLayout(2, false));
+		crossRedPassesParent.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
 		addField(crossRedPassesEditor);
 		
-		hieraGroup.setLayout(new GridLayout(2, false));
-		hieraGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
+		hieraGroup.setLayout(new GridLayout(1, false));
+		parent.setLayout(new FillLayout());
 		
 		// options group for orthogonal layouter
 //		Group orthoGroup = new Group(this.getFieldEditorParent(), SWT.NONE);

@@ -25,6 +25,9 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.priority">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.expandNodes">
+         </knownOption>
       </layoutProvider>
       <layoutType
             id="de.cau.cs.kieler.layout.types.layered"
@@ -87,6 +90,12 @@
             id="de.cau.cs.kieler.layout.options.priority"
             name="Priority"
             type="int">
+      </layoutOption>
+      <layoutOption
+            description="If active, nodes are expanded to fill the area of their parent"
+            id="de.cau.cs.kieler.layout.options.expandNodes"
+            name="Expand Nodes"
+            type="boolean">
       </layoutOption>
    </extension>
    <extension
