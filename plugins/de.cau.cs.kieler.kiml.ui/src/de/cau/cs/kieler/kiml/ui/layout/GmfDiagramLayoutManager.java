@@ -150,6 +150,12 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         editPart2PortMap.clear();
         connections.clear();
         
+        // get the diagram editor part
+        if (editorPart instanceof DiagramEditor)
+            diagramEditorPart = (DiagramEditor)editorPart;
+        else
+            diagramEditorPart = null;
+        
         // choose the layout root edit part
         GraphicalEditPart layoutRootPart = null;
         if (editPart instanceof ShapeNodeEditPart || editPart instanceof DiagramEditPart)
@@ -158,9 +164,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             if (editPart instanceof IGraphicalEditPart)
                 layoutRootPart = ((IGraphicalEditPart)editPart).getTopGraphicEditPart();
             if (!(layoutRootPart instanceof ShapeNodeEditPart)
-                    && editorPart instanceof DiagramEditor) {
-                DiagramEditor diagramEditor = (DiagramEditor) editorPart;
-                EditPart contentEditPart = diagramEditor.getDiagramGraphicalViewer().getContents();
+                    && diagramEditorPart != null) {
+                EditPart contentEditPart = diagramEditorPart.getDiagramGraphicalViewer().getContents();
                 if (contentEditPart instanceof GraphicalEditPart)
                     layoutRootPart = (GraphicalEditPart) contentEditPart;
                 else

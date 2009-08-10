@@ -40,8 +40,17 @@ public abstract class KSlimGraphElement implements Comparable<KSlimGraphElement>
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object other) {
-		return (other.getClass() == this.getClass())
+		return (other instanceof KSlimGraphElement
+		        && other.getClass() == this.getClass())
 				&& ((KSlimGraphElement)other).id == this.id;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+	    return getClass().hashCode() + id;
 	}
 	
 	/*

@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.core.util;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
@@ -42,7 +43,8 @@ public class Pair <F, S> {
 	 * Comparator that uses the first element as base.
 	 */
 	public static class FirstComparator <F extends Comparable<F>, S>
-	        implements Comparator<Pair<F,S>> {
+	        implements Comparator<Pair<F,S>>, Serializable {
+        private static final long serialVersionUID = 1;
         /* (non-Javadoc)
          * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
          */
@@ -55,7 +57,8 @@ public class Pair <F, S> {
 	 * Comparator that uses the second element as base.
 	 */
 	public static class SecondComparator <F, S extends Comparable<S>>
-	        implements Comparator<Pair<F,S>> {
+	        implements Comparator<Pair<F,S>>, Serializable {
+        private static final long serialVersionUID = 1;
         /* (non-Javadoc)
          * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
          */

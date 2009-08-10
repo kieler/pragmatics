@@ -48,14 +48,14 @@ import org.eclipse.gmf.runtime.notation.datatype.RelativeBendpoint;
 public class GmfLayoutCommand extends AbstractTransactionalCommand {
 
     /** layout data for node shapes */
-    private class ShapeLayoutData {
+    private static class ShapeLayoutData {
         View view;
         Point location;
         Dimension size;
     }
     
     /** layout data for edges */
-    private class EdgeLayoutData {
+    private static class EdgeLayoutData {
         Edge edge;
         PointList bends;
         String sourceTerminal;
@@ -135,16 +135,16 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
             // set new location of the element
             if (shapeLayout.location != null) {
                 ViewUtil.setStructuralFeatureValue(shapeLayout.view, NotationPackage.eINSTANCE.getLocation_X(),
-                        new Integer(Math.round(shapeLayout.location.x)));
+                        Integer.valueOf(shapeLayout.location.x));
                 ViewUtil.setStructuralFeatureValue(shapeLayout.view, NotationPackage.eINSTANCE.getLocation_Y(),
-                        new Integer(Math.round(shapeLayout.location.y)));
+                        Integer.valueOf(shapeLayout.location.y));
             }
             // set new size of the element
             if (shapeLayout.size != null) {
                 ViewUtil.setStructuralFeatureValue(shapeLayout.view, NotationPackage.eINSTANCE.getSize_Width(),
-                        new Integer(Math.round(shapeLayout.size.width)));
+                        Integer.valueOf(shapeLayout.size.width));
                 ViewUtil.setStructuralFeatureValue(shapeLayout.view, NotationPackage.eINSTANCE.getSize_Height(),
-                        new Integer(Math.round(shapeLayout.size.height)));
+                        Integer.valueOf(shapeLayout.size.height));
             }
         }
         shapeLayouts.clear();
@@ -160,10 +160,10 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
                 for (int i = 0; i < edgeLayout.bends.size(); i++) {
                     Point bend = edgeLayout.bends.getPoint(i);
                     newBendpoints.add(new RelativeBendpoint(
-                            Math.round(bend.x - sourcePoint.x),
-                            Math.round(bend.y - sourcePoint.y),
-                            Math.round(bend.x - targetPoint.x),
-                            Math.round(bend.y - targetPoint.y)));
+                            bend.x - sourcePoint.x,
+                            bend.y - sourcePoint.y,
+                            bend.x - targetPoint.x,
+                            bend.y - targetPoint.y));
                 }
                 RelativeBendpoints points = (RelativeBendpoints)edgeLayout.edge.getBendpoints();
                 points.setPoints(newBendpoints);

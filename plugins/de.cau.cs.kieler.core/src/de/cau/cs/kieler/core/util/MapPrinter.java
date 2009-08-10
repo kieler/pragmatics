@@ -23,19 +23,26 @@ import java.util.Map;
  */
 public class MapPrinter {
 	
-	public static String toString(Map<?,?> m){
-		StringBuffer b = new StringBuffer();
+    /**
+     * Prints the contents of the given map.
+     * 
+     * @param map the map to be printed
+     * @return a string representation of the map
+     */
+	public static String toString(Map<?,?> map){
+		StringBuffer buffer = new StringBuffer();
 		
-		for (Object key : m.keySet()) {
-			if(key != null){
-				b.append(key.toString());
-				b.append(" ("+key.hashCode()+") ");
-				b.append(" = ");
-				b.append(m.get(key)+"\n");
+		for (Object key : map.keySet()) {
+			if (key == null) {
+			    buffer.append("null ");
 			}
+			else {
+			    buffer.append(key + " (" + key.hashCode() + ") ");
+			}
+		    buffer.append(" = " + map.get(key) + "\n");
 		}
 		
-		return b.toString();
+		return buffer.toString();
 	}
 	
 }

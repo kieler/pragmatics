@@ -242,8 +242,10 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         switch (labelEditPart.getKeyPoint()) {
         case ConnectionLocator.SOURCE:
             fromEnd = 85; // see LabelViewConstants.TARGET_LOCATION
+            break;
         case ConnectionLocator.TARGET:
             fromEnd = 15; // see LabelViewConstants.SOURCE_LOCATION
+            break;
         default:
             fromEnd = 50; // see LabelViewConstants.MIDDLE_LOCATION
         }
