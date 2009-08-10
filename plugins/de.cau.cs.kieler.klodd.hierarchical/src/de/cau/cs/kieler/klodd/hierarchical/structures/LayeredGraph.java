@@ -366,15 +366,19 @@ public class LayeredGraph {
 			LayerElement currentElement = null;
 			// process existing long edges for the source or target port
 			LinearSegment linearSegment = longEdgesMap.get(sourcePort);
-			if (linearSegment == null)
+			if (linearSegment == null || linearSegment.elements.get(0).getLayer().rank
+			        < sourceLayer.rank)
 				linearSegment = longEdgesMap.get(targetPort);
 			if (linearSegment != null) {
 				ListIterator<LayerElement> elemIter = linearSegment.elements.listIterator();
+				currentElement = elemIter.next();
 				while (elemIter.hasNext()
-						&& (currentElement = elemIter.next()).getLayer().rank
-						< targetLayer.rank - 1);
-				source.addOutgoing(edge, linearSegment.elements.get(0),
-						sourcePort, null);
+						&& currentElement.getLayer().rank <= sourceLayer.rank)
+				    currentElement = elemIter.next();
+				source.addOutgoing(edge, currentElement, sourcePort, null);
+                while (elemIter.hasNext()
+                        && currentElement.getLayer().rank < targetLayer.rank - 1)
+                    currentElement = elemIter.next();
 			}
 			else {
 				currentElement = sourceLayer.next.put(edge, null);
