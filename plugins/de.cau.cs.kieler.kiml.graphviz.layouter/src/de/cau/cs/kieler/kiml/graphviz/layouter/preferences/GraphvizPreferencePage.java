@@ -61,7 +61,7 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
 
         Label label = new Label(processGroup, SWT.WRAP);
         label.setText("The Graphviz layout tool is available at http://www.graphviz.org/. If the 'dot' executable cannot be found in default locations, its path must be entered here.");
-        GridData labelLayoutData = new GridData(SWT.LEFT, SWT.FILL, false, true, 3, 1);
+        GridData labelLayoutData = new GridData(SWT.LEFT, SWT.FILL, false, false, 3, 1);
         labelLayoutData.widthHint = 450;
         label.setLayoutData(labelLayoutData);
         FileFieldEditor executableEditor = new FileFieldEditor(

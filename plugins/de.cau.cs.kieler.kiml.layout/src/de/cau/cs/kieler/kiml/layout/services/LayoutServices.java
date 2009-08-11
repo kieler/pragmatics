@@ -98,7 +98,8 @@ public class LayoutServices {
 				    if (valueObj != null) {
 		                String bindingId = option[0];
 		                Map<String, Object> optionsMap = optionSetupMap.get(bindingId);
-		                optionsMap.put(optionId, valueObj);
+		                if (optionsMap != null)
+		                    optionsMap.put(optionId, valueObj);
 				    }
 				}
 			}

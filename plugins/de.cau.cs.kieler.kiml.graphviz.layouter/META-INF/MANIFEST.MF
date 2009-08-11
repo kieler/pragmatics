@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Graphviz Layouter
 Bundle-SymbolicName: de.cau.cs.kieler.kiml.graphviz.layouter;singleton:=true
-Bundle-Version: 0.1.0
+Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayouterPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: KIELER Orthogonal Dataflow Layout
 Bundle-SymbolicName: de.cau.cs.kieler.klodd.orthogonal;singleton:=true
-Bundle-Version: 0.1.0
+Bundle-Version: 0.1.0.qualifier
 Require-Bundle: org.eclipse.emf.ecore;bundle-version="2.4.1",
  de.cau.cs.kieler.core,
  de.cau.cs.kieler.kiml.layout,

@@ -83,7 +83,8 @@ public class LayoutOptionData {
      * Parses a string value for this layout option.
      * 
      * @param valueString a serialized value
-     * @return an instance of the corresponding correctly typed value
+     * @return an instance of the corresponding correctly typed value, or {@code null}
+     *     if the given value string is invalid
      * @throws IllegalStateException if the type that is set for this layout option
      *     is invalid
      */

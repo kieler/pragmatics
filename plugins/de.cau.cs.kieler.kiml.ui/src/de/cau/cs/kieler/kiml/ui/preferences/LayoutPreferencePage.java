@@ -107,7 +107,7 @@ public class LayoutPreferencePage extends PreferencePage
         // construct the priorities table
         Label tableHeaderLabel = new Label(prioritiesGroup, SWT.WRAP);
         tableHeaderLabel.setText(Messages.getString("kiml.ui.3")); //$NON-NLS-1$
-        GridData labelLayoutData = new GridData(SWT.LEFT, SWT.FILL, false, true);
+        GridData labelLayoutData = new GridData(SWT.LEFT, SWT.FILL, false, false);
         tableHeaderLabel.setLayoutData(labelLayoutData);
         Table prioritiesTable = new Table(prioritiesGroup, SWT.BORDER);
         TableColumn[] columns = new TableColumn[diagramTypes.length + 1];

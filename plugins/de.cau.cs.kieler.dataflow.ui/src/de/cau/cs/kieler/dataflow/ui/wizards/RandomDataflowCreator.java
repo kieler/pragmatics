@@ -7,6 +7,11 @@ import de.cau.cs.kieler.dataflow.DataflowModel;
 import de.cau.cs.kieler.dataflow.InputPort;
 import de.cau.cs.kieler.dataflow.OutputPort;
 
+/**
+ * Creator for dataflow models.
+ *
+ * @author @author <a href="mailto:haf@informatik.uni-kiel.de">Hauke Fuhrmann</a>
+ */
 public class RandomDataflowCreator {
 
 	DataflowFactory df = DataflowFactory.eINSTANCE;

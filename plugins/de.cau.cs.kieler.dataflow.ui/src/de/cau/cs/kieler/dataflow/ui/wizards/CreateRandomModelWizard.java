@@ -35,10 +35,8 @@ import org.eclipse.ui.ide.IDE;
 
 import de.cau.cs.kieler.dataflow.DataflowModel;
 
-
-
 /**
- * This is a sample new wizard. Its role is to create a new file 
+ * A new wizard for random dataflow models. Its role is to create a new file 
  * resource in the provided container. If the container resource
  * (a folder or a project) is selected in the workspace 
  * when the wizard is opened, it will accept it as the target
@@ -46,6 +44,8 @@ import de.cau.cs.kieler.dataflow.DataflowModel;
  * "dataflow". If a sample multi-page editor (also available
  * as a template) is registered for the same extension, it will
  * be able to open it.
+ * 
+ * @author <a href="mailto:haf@informatik.uni-kiel.de">Hauke Fuhrmann</a>
  */
 
 public class CreateRandomModelWizard extends Wizard implements INewWizard {

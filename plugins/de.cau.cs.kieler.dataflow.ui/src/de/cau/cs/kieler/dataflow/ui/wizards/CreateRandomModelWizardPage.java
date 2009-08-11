@@ -27,27 +27,27 @@ import de.cau.cs.kieler.dataflow.ui.Activator;
  * The "New" wizard page allows setting the container for the new file as well
  * as the file name. The page will only accept file name without the extension
  * OR with the extension that matches the expected one (dataflow).
+ * 
+ * @author <a href="mailto:haf@informatik.uni-kiel.de">Hauke Fuhrmann</a>
  */
-
 public class CreateRandomModelWizardPage extends WizardPage {
-	private Text containerText;
 
+    public static final String PREF_NODES = "nodes";
+    public static final String PREF_MIN_CONNECTIONS = "minConnections";
+    public static final String PREF_MAX_CONNECTIONS = "maxConnections";
+    public static final String PREF_HIERARCHY = "hierarchy";
+
+    public static final int DEF_NODES = 10;
+    public static final int DEF_MIN_CONNECTIONS = 0;
+    public static final int DEF_MAX_CONNECTIONS = 3;
+    public static final float DEF_HIERARCHY = 0.1f;
+    
+    private Text containerText;
 	private Text fileText;
-	
 	private Text nodeText;
 	private Text minConnectionText;
 	private Text maxConnectionText;
 	private Text hierarchyText;
-	
-	private static final String PREF_NODES = "nodes";
-	private static final String PREF_MIN_CONNECTIONS = "minConnections";
-	private static final String PREF_MAX_CONNECTIONS = "maxConnections";
-	private static final String PREF_HIERARCHY = "hierarchy";
-
-	private static final int DEF_NODES = 10;
-	private static final int DEF_MIN_CONNECTIONS = 0;
-	private static final int DEF_MAX_CONNECTIONS = 3;
-	private static final float DEF_HIERARCHY = 0.1f;
 	
 	private int nodes;
 	private int minConnections;
