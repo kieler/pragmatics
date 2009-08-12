@@ -22,58 +22,56 @@ import de.cau.cs.kieler.dataflow.diagram.part.DataflowVisualIDRegistry;
  */
 public class BoxCanonicalEditPolicy extends CanonicalEditPolicy {
 
-	/**
-	 * @generated
-	 */
-	Set myFeaturesToSynchronize;
+    /**
+     * @generated
+     */
+    Set myFeaturesToSynchronize;
 
-	/**
-	 * @generated
-	 */
-	protected List getSemanticChildrenList() {
-		View viewObject = (View) getHost().getModel();
-		List result = new LinkedList();
-		for (Iterator it = DataflowDiagramUpdater.getBox_2001SemanticChildren(
-				viewObject).iterator(); it.hasNext();) {
-			result.add(((DataflowNodeDescriptor) it.next()).getModelElement());
-		}
-		return result;
-	}
+    /**
+     * @generated
+     */
+    protected List getSemanticChildrenList() {
+        View viewObject = (View) getHost().getModel();
+        List result = new LinkedList();
+        for (Iterator it = DataflowDiagramUpdater.getBox_2001SemanticChildren(viewObject)
+                .iterator(); it.hasNext();) {
+            result.add(((DataflowNodeDescriptor) it.next()).getModelElement());
+        }
+        return result;
+    }
 
-	/**
-	 * @generated
-	 */
-	protected boolean isOrphaned(Collection semanticChildren, final View view) {
-		int visualID = DataflowVisualIDRegistry.getVisualID(view);
-		switch (visualID) {
-		case InputPortEditPart.VISUAL_ID:
-		case OutputPortEditPart.VISUAL_ID:
-			if (!semanticChildren.contains(view.getElement())) {
-				return true;
-			}
-		}
-		return false;
-	}
+    /**
+     * @generated
+     */
+    protected boolean isOrphaned(Collection semanticChildren, final View view) {
+        int visualID = DataflowVisualIDRegistry.getVisualID(view);
+        switch (visualID) {
+        case InputPortEditPart.VISUAL_ID:
+        case OutputPortEditPart.VISUAL_ID:
+            if (!semanticChildren.contains(view.getElement())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	/**
-	 * @generated
-	 */
-	protected String getDefaultFactoryHint() {
-		return null;
-	}
+    /**
+     * @generated
+     */
+    protected String getDefaultFactoryHint() {
+        return null;
+    }
 
-	/**
-	 * @generated
-	 */
-	protected Set getFeaturesToSynchronize() {
-		if (myFeaturesToSynchronize == null) {
-			myFeaturesToSynchronize = new HashSet();
-			myFeaturesToSynchronize.add(DataflowPackage.eINSTANCE
-					.getBox_Inputs());
-			myFeaturesToSynchronize.add(DataflowPackage.eINSTANCE
-					.getBox_Outputs());
-		}
-		return myFeaturesToSynchronize;
-	}
+    /**
+     * @generated
+     */
+    protected Set getFeaturesToSynchronize() {
+        if (myFeaturesToSynchronize == null) {
+            myFeaturesToSynchronize = new HashSet();
+            myFeaturesToSynchronize.add(DataflowPackage.eINSTANCE.getBox_Inputs());
+            myFeaturesToSynchronize.add(DataflowPackage.eINSTANCE.getBox_Outputs());
+        }
+        return myFeaturesToSynchronize;
+    }
 
 }

@@ -36,166 +36,155 @@ import de.cau.cs.kieler.dataflow.diagram.edit.parts.DataflowModelEditPart;
  */
 public class DataflowNewDiagramFileWizard extends Wizard {
 
-	/**
-	 * @generated
-	 */
-	private WizardNewFileCreationPage myFileCreationPage;
+    /**
+     * @generated
+     */
+    private WizardNewFileCreationPage myFileCreationPage;
 
-	/**
-	 * @generated
-	 */
-	private ModelElementSelectionPage diagramRootElementSelectionPage;
+    /**
+     * @generated
+     */
+    private ModelElementSelectionPage diagramRootElementSelectionPage;
 
-	/**
-	 * @generated
-	 */
-	private TransactionalEditingDomain myEditingDomain;
+    /**
+     * @generated
+     */
+    private TransactionalEditingDomain myEditingDomain;
 
-	/**
-	 * @generated
-	 */
-	public DataflowNewDiagramFileWizard(URI domainModelURI,
-			EObject diagramRoot, TransactionalEditingDomain editingDomain) {
-		assert domainModelURI != null : "Domain model uri must be specified"; //$NON-NLS-1$
-		assert diagramRoot != null : "Doagram root element must be specified"; //$NON-NLS-1$
-		assert editingDomain != null : "Editing domain must be specified"; //$NON-NLS-1$
+    /**
+     * @generated
+     */
+    public DataflowNewDiagramFileWizard(URI domainModelURI, EObject diagramRoot,
+            TransactionalEditingDomain editingDomain) {
+        assert domainModelURI != null : "Domain model uri must be specified"; //$NON-NLS-1$
+        assert diagramRoot != null : "Doagram root element must be specified"; //$NON-NLS-1$
+        assert editingDomain != null : "Editing domain must be specified"; //$NON-NLS-1$
 
-		myFileCreationPage = new WizardNewFileCreationPage(
-				Messages.DataflowNewDiagramFileWizard_CreationPageName,
-				StructuredSelection.EMPTY);
-		myFileCreationPage
-				.setTitle(Messages.DataflowNewDiagramFileWizard_CreationPageTitle);
-		myFileCreationPage.setDescription(NLS.bind(
-				Messages.DataflowNewDiagramFileWizard_CreationPageDescription,
-				DataflowModelEditPart.MODEL_ID));
-		IPath filePath;
-		String fileName = URI.decode(domainModelURI.trimFileExtension()
-				.lastSegment());
-		if (domainModelURI.isPlatformResource()) {
-			filePath = new Path(domainModelURI.trimSegments(1)
-					.toPlatformString(true));
-		} else if (domainModelURI.isFile()) {
-			filePath = new Path(domainModelURI.trimSegments(1).toFileString());
-		} else {
-			// TODO : use some default path
-			throw new IllegalArgumentException(
-					"Unsupported URI: " + domainModelURI); //$NON-NLS-1$
-		}
-		myFileCreationPage.setContainerFullPath(filePath);
-		myFileCreationPage.setFileName(DataflowDiagramEditorUtil
-				.getUniqueFileName(filePath, fileName, "dataflow_diagram")); //$NON-NLS-1$
+        myFileCreationPage = new WizardNewFileCreationPage(
+                Messages.DataflowNewDiagramFileWizard_CreationPageName, StructuredSelection.EMPTY);
+        myFileCreationPage.setTitle(Messages.DataflowNewDiagramFileWizard_CreationPageTitle);
+        myFileCreationPage.setDescription(NLS.bind(
+                Messages.DataflowNewDiagramFileWizard_CreationPageDescription,
+                DataflowModelEditPart.MODEL_ID));
+        IPath filePath;
+        String fileName = URI.decode(domainModelURI.trimFileExtension().lastSegment());
+        if (domainModelURI.isPlatformResource()) {
+            filePath = new Path(domainModelURI.trimSegments(1).toPlatformString(true));
+        }
+        else if (domainModelURI.isFile()) {
+            filePath = new Path(domainModelURI.trimSegments(1).toFileString());
+        }
+        else {
+            // TODO : use some default path
+            throw new IllegalArgumentException("Unsupported URI: " + domainModelURI); //$NON-NLS-1$
+        }
+        myFileCreationPage.setContainerFullPath(filePath);
+        myFileCreationPage.setFileName(DataflowDiagramEditorUtil.getUniqueFileName(filePath,
+                fileName, "dataflow_diagram")); //$NON-NLS-1$
 
-		diagramRootElementSelectionPage = new DiagramRootElementSelectionPage(
-				Messages.DataflowNewDiagramFileWizard_RootSelectionPageName);
-		diagramRootElementSelectionPage
-				.setTitle(Messages.DataflowNewDiagramFileWizard_RootSelectionPageTitle);
-		diagramRootElementSelectionPage
-				.setDescription(Messages.DataflowNewDiagramFileWizard_RootSelectionPageDescription);
-		diagramRootElementSelectionPage.setModelElement(diagramRoot);
+        diagramRootElementSelectionPage = new DiagramRootElementSelectionPage(
+                Messages.DataflowNewDiagramFileWizard_RootSelectionPageName);
+        diagramRootElementSelectionPage
+                .setTitle(Messages.DataflowNewDiagramFileWizard_RootSelectionPageTitle);
+        diagramRootElementSelectionPage
+                .setDescription(Messages.DataflowNewDiagramFileWizard_RootSelectionPageDescription);
+        diagramRootElementSelectionPage.setModelElement(diagramRoot);
 
-		myEditingDomain = editingDomain;
-	}
+        myEditingDomain = editingDomain;
+    }
 
-	/**
-	 * @generated
-	 */
-	public void addPages() {
-		addPage(myFileCreationPage);
-		addPage(diagramRootElementSelectionPage);
-	}
+    /**
+     * @generated
+     */
+    public void addPages() {
+        addPage(myFileCreationPage);
+        addPage(diagramRootElementSelectionPage);
+    }
 
-	/**
-	 * @generated
-	 */
-	public boolean performFinish() {
-		List affectedFiles = new LinkedList();
-		IFile diagramFile = myFileCreationPage.createNewFile();
-		DataflowDiagramEditorUtil.setCharset(diagramFile);
-		affectedFiles.add(diagramFile);
-		URI diagramModelURI = URI.createPlatformResourceURI(diagramFile
-				.getFullPath().toString(), true);
-		ResourceSet resourceSet = myEditingDomain.getResourceSet();
-		final Resource diagramResource = resourceSet
-				.createResource(diagramModelURI);
-		AbstractTransactionalCommand command = new AbstractTransactionalCommand(
-				myEditingDomain,
-				Messages.DataflowNewDiagramFileWizard_InitDiagramCommand,
-				affectedFiles) {
+    /**
+     * @generated
+     */
+    public boolean performFinish() {
+        List affectedFiles = new LinkedList();
+        IFile diagramFile = myFileCreationPage.createNewFile();
+        DataflowDiagramEditorUtil.setCharset(diagramFile);
+        affectedFiles.add(diagramFile);
+        URI diagramModelURI = URI.createPlatformResourceURI(diagramFile.getFullPath().toString(),
+                true);
+        ResourceSet resourceSet = myEditingDomain.getResourceSet();
+        final Resource diagramResource = resourceSet.createResource(diagramModelURI);
+        AbstractTransactionalCommand command = new AbstractTransactionalCommand(myEditingDomain,
+                Messages.DataflowNewDiagramFileWizard_InitDiagramCommand, affectedFiles) {
 
-			protected CommandResult doExecuteWithResult(
-					IProgressMonitor monitor, IAdaptable info)
-					throws ExecutionException {
-				int diagramVID = DataflowVisualIDRegistry
-						.getDiagramVisualID(diagramRootElementSelectionPage
-								.getModelElement());
-				if (diagramVID != DataflowModelEditPart.VISUAL_ID) {
-					return CommandResult
-							.newErrorCommandResult(Messages.DataflowNewDiagramFileWizard_IncorrectRootError);
-				}
-				Diagram diagram = ViewService.createDiagram(
-						diagramRootElementSelectionPage.getModelElement(),
-						DataflowModelEditPart.MODEL_ID,
-						DataflowDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT);
-				diagramResource.getContents().add(diagram);
-				return CommandResult.newOKCommandResult();
-			}
-		};
-		try {
-			OperationHistoryFactory.getOperationHistory().execute(command,
-					new NullProgressMonitor(), null);
-			diagramResource.save(DataflowDiagramEditorUtil.getSaveOptions());
-			DataflowDiagramEditorUtil.openDiagram(diagramResource);
-		} catch (ExecutionException e) {
-			DataflowDiagramEditorPlugin.getInstance().logError(
-					"Unable to create model and diagram", e); //$NON-NLS-1$
-		} catch (IOException ex) {
-			DataflowDiagramEditorPlugin.getInstance().logError(
-					"Save operation failed for: " + diagramModelURI, ex); //$NON-NLS-1$
-		} catch (PartInitException ex) {
-			DataflowDiagramEditorPlugin.getInstance().logError(
-					"Unable to open editor", ex); //$NON-NLS-1$
-		}
-		return true;
-	}
+            protected CommandResult doExecuteWithResult(IProgressMonitor monitor, IAdaptable info)
+                    throws ExecutionException {
+                int diagramVID = DataflowVisualIDRegistry
+                        .getDiagramVisualID(diagramRootElementSelectionPage.getModelElement());
+                if (diagramVID != DataflowModelEditPart.VISUAL_ID) {
+                    return CommandResult
+                            .newErrorCommandResult(Messages.DataflowNewDiagramFileWizard_IncorrectRootError);
+                }
+                Diagram diagram = ViewService.createDiagram(diagramRootElementSelectionPage
+                        .getModelElement(), DataflowModelEditPart.MODEL_ID,
+                        DataflowDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT);
+                diagramResource.getContents().add(diagram);
+                return CommandResult.newOKCommandResult();
+            }
+        };
+        try {
+            OperationHistoryFactory.getOperationHistory().execute(command,
+                    new NullProgressMonitor(), null);
+            diagramResource.save(DataflowDiagramEditorUtil.getSaveOptions());
+            DataflowDiagramEditorUtil.openDiagram(diagramResource);
+        }
+        catch (ExecutionException e) {
+            DataflowDiagramEditorPlugin.getInstance().logError(
+                    "Unable to create model and diagram", e); //$NON-NLS-1$
+        }
+        catch (IOException ex) {
+            DataflowDiagramEditorPlugin.getInstance().logError(
+                    "Save operation failed for: " + diagramModelURI, ex); //$NON-NLS-1$
+        }
+        catch (PartInitException ex) {
+            DataflowDiagramEditorPlugin.getInstance().logError("Unable to open editor", ex); //$NON-NLS-1$
+        }
+        return true;
+    }
 
-	/**
-	 * @generated
-	 */
-	private static class DiagramRootElementSelectionPage extends
-			ModelElementSelectionPage {
+    /**
+     * @generated
+     */
+    private static class DiagramRootElementSelectionPage extends ModelElementSelectionPage {
 
-		/**
-		 * @generated
-		 */
-		protected DiagramRootElementSelectionPage(String pageName) {
-			super(pageName);
-		}
+        /**
+         * @generated
+         */
+        protected DiagramRootElementSelectionPage(String pageName) {
+            super(pageName);
+        }
 
-		/**
-		 * @generated
-		 */
-		protected String getSelectionTitle() {
-			return Messages.DataflowNewDiagramFileWizard_RootSelectionPageSelectionTitle;
-		}
+        /**
+         * @generated
+         */
+        protected String getSelectionTitle() {
+            return Messages.DataflowNewDiagramFileWizard_RootSelectionPageSelectionTitle;
+        }
 
-		/**
-		 * @generated
-		 */
-		protected boolean validatePage() {
-			if (selectedModelElement == null) {
-				setErrorMessage(Messages.DataflowNewDiagramFileWizard_RootSelectionPageNoSelectionMessage);
-				return false;
-			}
-			boolean result = ViewService
-					.getInstance()
-					.provides(
-							new CreateDiagramViewOperation(
-									new EObjectAdapter(selectedModelElement),
-									DataflowModelEditPart.MODEL_ID,
-									DataflowDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT));
-			setErrorMessage(result ? null
-					: Messages.DataflowNewDiagramFileWizard_RootSelectionPageInvalidSelectionMessage);
-			return result;
-		}
-	}
+        /**
+         * @generated
+         */
+        protected boolean validatePage() {
+            if (selectedModelElement == null) {
+                setErrorMessage(Messages.DataflowNewDiagramFileWizard_RootSelectionPageNoSelectionMessage);
+                return false;
+            }
+            boolean result = ViewService.getInstance().provides(
+                    new CreateDiagramViewOperation(new EObjectAdapter(selectedModelElement),
+                            DataflowModelEditPart.MODEL_ID,
+                            DataflowDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT));
+            setErrorMessage(result ? null
+                    : Messages.DataflowNewDiagramFileWizard_RootSelectionPageInvalidSelectionMessage);
+            return result;
+        }
+    }
 }

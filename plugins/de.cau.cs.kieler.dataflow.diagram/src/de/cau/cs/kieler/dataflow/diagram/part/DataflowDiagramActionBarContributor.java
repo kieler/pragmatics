@@ -9,32 +9,31 @@ import org.eclipse.ui.IWorkbenchPage;
 /**
  * @generated
  */
-public class DataflowDiagramActionBarContributor extends
-		DiagramActionBarContributor {
+public class DataflowDiagramActionBarContributor extends DiagramActionBarContributor {
 
-	/**
-	 * @generated
-	 */
-	protected Class getEditorClass() {
-		return DataflowDiagramEditor.class;
-	}
+    /**
+     * @generated
+     */
+    protected Class getEditorClass() {
+        return DataflowDiagramEditor.class;
+    }
 
-	/**
-	 * @generated
-	 */
-	protected String getEditorId() {
-		return DataflowDiagramEditor.ID;
-	}
+    /**
+     * @generated
+     */
+    protected String getEditorId() {
+        return DataflowDiagramEditor.ID;
+    }
 
-	/**
-	 * @generated
-	 */
-	public void init(IActionBars bars, IWorkbenchPage page) {
-		super.init(bars, page);
-		// print preview
-		IMenuManager fileMenu = bars.getMenuManager().findMenuUsingPath(
-				IWorkbenchActionConstants.M_FILE);
-		assert fileMenu != null;
-		fileMenu.remove("pageSetupAction"); //$NON-NLS-1$
-	}
+    /**
+     * @generated
+     */
+    public void init(IActionBars bars, IWorkbenchPage page) {
+        super.init(bars, page);
+        // print preview
+        IMenuManager fileMenu = bars.getMenuManager().findMenuUsingPath(
+                IWorkbenchActionConstants.M_FILE);
+        assert fileMenu != null;
+        fileMenu.remove("pageSetupAction"); //$NON-NLS-1$
+    }
 }

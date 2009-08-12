@@ -10,52 +10,49 @@ import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributo
  */
 public abstract class DataflowAbstractNavigatorItem extends PlatformObject {
 
-	/**
-	 * @generated
-	 */
-	static {
-		final Class[] supportedTypes = new Class[] { ITabbedPropertySheetPageContributor.class };
-		final ITabbedPropertySheetPageContributor propertySheetPageContributor = new ITabbedPropertySheetPageContributor() {
-			public String getContributorId() {
-				return "de.cau.cs.kieler.dataflow.diagram"; //$NON-NLS-1$
-			}
-		};
-		Platform.getAdapterManager().registerAdapters(
-				new IAdapterFactory() {
+    /**
+     * @generated
+     */
+    static {
+        final Class[] supportedTypes = new Class[] { ITabbedPropertySheetPageContributor.class };
+        final ITabbedPropertySheetPageContributor propertySheetPageContributor = new ITabbedPropertySheetPageContributor() {
+            public String getContributorId() {
+                return "de.cau.cs.kieler.dataflow.diagram"; //$NON-NLS-1$
+            }
+        };
+        Platform.getAdapterManager().registerAdapters(new IAdapterFactory() {
 
-					public Object getAdapter(Object adaptableObject,
-							Class adapterType) {
-						if (adaptableObject instanceof de.cau.cs.kieler.dataflow.diagram.navigator.DataflowAbstractNavigatorItem
-								&& adapterType == ITabbedPropertySheetPageContributor.class) {
-							return propertySheetPageContributor;
-						}
-						return null;
-					}
+            public Object getAdapter(Object adaptableObject, Class adapterType) {
+                if (adaptableObject instanceof de.cau.cs.kieler.dataflow.diagram.navigator.DataflowAbstractNavigatorItem
+                        && adapterType == ITabbedPropertySheetPageContributor.class) {
+                    return propertySheetPageContributor;
+                }
+                return null;
+            }
 
-					public Class[] getAdapterList() {
-						return supportedTypes;
-					}
-				},
-				de.cau.cs.kieler.dataflow.diagram.navigator.DataflowAbstractNavigatorItem.class);
-	}
+            public Class[] getAdapterList() {
+                return supportedTypes;
+            }
+        }, de.cau.cs.kieler.dataflow.diagram.navigator.DataflowAbstractNavigatorItem.class);
+    }
 
-	/**
-	 * @generated
-	 */
-	private Object myParent;
+    /**
+     * @generated
+     */
+    private Object myParent;
 
-	/**
-	 * @generated
-	 */
-	protected DataflowAbstractNavigatorItem(Object parent) {
-		myParent = parent;
-	}
+    /**
+     * @generated
+     */
+    protected DataflowAbstractNavigatorItem(Object parent) {
+        myParent = parent;
+    }
 
-	/**
-	 * @generated
-	 */
-	public Object getParent() {
-		return myParent;
-	}
+    /**
+     * @generated
+     */
+    public Object getParent() {
+        return myParent;
+    }
 
 }

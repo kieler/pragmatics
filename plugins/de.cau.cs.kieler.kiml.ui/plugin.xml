@@ -40,7 +40,7 @@ point="org.eclipse.ui.menus">
   locationURI="menu:de.cau.cs.kieler">
    <command
          commandId="de.cau.cs.kieler.kiml.ui.command.layout"
-         icon="icons/kieler-arrange.png"
+         icon="icons/menu16/kieler-arrange.png"
          label="%command.label.0"
          mnemonic="%command.mnemonic.0"
          style="push">
@@ -56,7 +56,7 @@ point="org.eclipse.ui.menus">
       locationURI="toolbar:de.cau.cs.kieler">
    <command
          commandId="de.cau.cs.kieler.kiml.ui.command.layout"
-         icon="icons/kieler-arrange.png"
+         icon="icons/menu16/kieler-arrange.png"
          label="%command.label.0"
          style="push"
          tooltip="Layout the current diagram with KIELER">
@@ -72,7 +72,7 @@ point="org.eclipse.ui.menus">
       locationURI="popup:de.cau.cs.kieler">
    <command
          commandId="de.cau.cs.kieler.kiml.ui.command.layout"
-         icon="icons/kieler-arrange.png"
+         icon="icons/menu16/kieler-arrange.png"
          label="%command.label.2"
          mnemonic="%command.mnemonic.0"
          style="push">
@@ -107,7 +107,7 @@ point="org.eclipse.ui.menus">
    </command>
    <command
          commandId="de.cau.cs.kieler.kiml.ui.command.layout"
-         icon="icons/kieler-arrange.png"
+         icon="icons/menu16/kieler-arrange.png"
          label="%command.label.1"
          mnemonic="%command.mnemonic.0"
          style="push">

@@ -9,24 +9,23 @@ import de.cau.cs.kieler.dataflow.diagram.providers.DataflowElementTypes;
 /**
  * @generated
  */
-public class BoxBoxCompartment2ItemSemanticEditPolicy extends
-		DataflowBaseItemSemanticEditPolicy {
+public class BoxBoxCompartment2ItemSemanticEditPolicy extends DataflowBaseItemSemanticEditPolicy {
 
-	/**
-	 * @generated
-	 */
-	public BoxBoxCompartment2ItemSemanticEditPolicy() {
-		super(DataflowElementTypes.Box_3003);
-	}
+    /**
+     * @generated
+     */
+    public BoxBoxCompartment2ItemSemanticEditPolicy() {
+        super(DataflowElementTypes.Box_3003);
+    }
 
-	/**
-	 * @generated
-	 */
-	protected Command getCreateCommand(CreateElementRequest req) {
-		if (DataflowElementTypes.Box_3003 == req.getElementType()) {
-			return getGEFWrapper(new Box2CreateCommand(req));
-		}
-		return super.getCreateCommand(req);
-	}
+    /**
+     * @generated
+     */
+    protected Command getCreateCommand(CreateElementRequest req) {
+        if (DataflowElementTypes.Box_3003 == req.getElementType()) {
+            return getGEFWrapper(new Box2CreateCommand(req));
+        }
+        return super.getCreateCommand(req);
+    }
 
 }

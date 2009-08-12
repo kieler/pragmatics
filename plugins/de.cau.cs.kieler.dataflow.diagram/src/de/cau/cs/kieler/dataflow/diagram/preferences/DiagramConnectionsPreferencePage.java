@@ -9,11 +9,10 @@ import de.cau.cs.kieler.dataflow.diagram.part.DataflowDiagramEditorPlugin;
  */
 public class DiagramConnectionsPreferencePage extends ConnectionsPreferencePage {
 
-	/**
-	 * @generated
-	 */
-	public DiagramConnectionsPreferencePage() {
-		setPreferenceStore(DataflowDiagramEditorPlugin.getInstance()
-				.getPreferenceStore());
-	}
+    /**
+     * @generated
+     */
+    public DiagramConnectionsPreferencePage() {
+        setPreferenceStore(DataflowDiagramEditorPlugin.getInstance().getPreferenceStore());
+    }
 }

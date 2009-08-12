@@ -15,75 +15,73 @@ import de.cau.cs.kieler.dataflow.diagram.edit.policies.ConnectionItemSemanticEdi
 /**
  * @generated
  */
-public class ConnectionEditPart extends ConnectionNodeEditPart implements
-		ITreeBranchEditPart {
+public class ConnectionEditPart extends ConnectionNodeEditPart implements ITreeBranchEditPart {
 
-	/**
-	 * @generated
-	 */
-	public static final int VISUAL_ID = 4001;
+    /**
+     * @generated
+     */
+    public static final int VISUAL_ID = 4001;
 
-	/**
-	 * @generated
-	 */
-	public ConnectionEditPart(View view) {
-		super(view);
-	}
+    /**
+     * @generated
+     */
+    public ConnectionEditPart(View view) {
+        super(view);
+    }
 
-	/**
-	 * @generated
-	 */
-	protected void createDefaultEditPolicies() {
-		super.createDefaultEditPolicies();
-		installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
-				new ConnectionItemSemanticEditPolicy());
-	}
+    /**
+     * @generated
+     */
+    protected void createDefaultEditPolicies() {
+        super.createDefaultEditPolicies();
+        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE, new ConnectionItemSemanticEditPolicy());
+    }
 
-	/**
-	 * Creates figure for this edit part.
-	 * 
-	 * Body of this method does not depend on settings in generation model
-	 * so you may safely remove <i>generated</i> tag and modify it.
-	 * 
-	 * @generated
-	 */
+    /**
+     * Creates figure for this edit part.
+     * 
+     * Body of this method does not depend on settings in generation model
+     * so you may safely remove <i>generated</i> tag and modify it.
+     * 
+     * @generated
+     */
 
-	protected Connection createConnectionFigure() {
-		return new ConnectionFigure();
-	}
+    protected Connection createConnectionFigure() {
+        return new ConnectionFigure();
+    }
 
-	/**
-	 * @generated
-	 */
-	public ConnectionFigure getPrimaryShape() {
-		return (ConnectionFigure) getFigure();
-	}
+    /**
+     * @generated
+     */
+    public ConnectionFigure getPrimaryShape() {
+        return (ConnectionFigure) getFigure();
+    }
 
-	/**
-	 * @generated
-	 */
-	public class ConnectionFigure extends PolylineConnectionEx {
+    /**
+     * @generated
+     */
+    public class ConnectionFigure extends PolylineConnectionEx {
 
-		/**
-		 * @generated
-		 */
-		public ConnectionFigure() {
-			this.setLineWidth(1);
-			this.setForegroundColor(ColorConstants.blue);
+        /**
+         * @generated
+         */
+        public ConnectionFigure() {
+            this.setLineWidth(1);
+            this.setForegroundColor(ColorConstants.blue);
 
-			setTargetDecoration(createTargetDecoration());
-		}
+            setTargetDecoration(createTargetDecoration());
+        }
 
-		/**
-		 * @generated
-		 */
-		private RotatableDecoration createTargetDecoration() {
-			PolygonDecoration df = new PolygonDecoration();
-			df.setFill(true);
-			df.setLineWidth(1);
-			return df;
-		}
+        /**
+         * @generated
+         */
+        private RotatableDecoration createTargetDecoration() {
+            PolygonDecoration df = new PolygonDecoration();
+            df.setFill(true);
+            df.setLineWidth(1);
+            return df;
+        }
 
-	}
+    }
 
 }

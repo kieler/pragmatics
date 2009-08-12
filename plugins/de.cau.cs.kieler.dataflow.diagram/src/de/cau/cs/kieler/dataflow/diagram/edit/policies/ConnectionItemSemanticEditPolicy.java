@@ -9,21 +9,20 @@ import de.cau.cs.kieler.dataflow.diagram.providers.DataflowElementTypes;
 /**
  * @generated
  */
-public class ConnectionItemSemanticEditPolicy extends
-		DataflowBaseItemSemanticEditPolicy {
+public class ConnectionItemSemanticEditPolicy extends DataflowBaseItemSemanticEditPolicy {
 
-	/**
-	 * @generated
-	 */
-	public ConnectionItemSemanticEditPolicy() {
-		super(DataflowElementTypes.Connection_4001);
-	}
+    /**
+     * @generated
+     */
+    public ConnectionItemSemanticEditPolicy() {
+        super(DataflowElementTypes.Connection_4001);
+    }
 
-	/**
-	 * @generated
-	 */
-	protected Command getDestroyElementCommand(DestroyElementRequest req) {
-		return getGEFWrapper(new DestroyElementCommand(req));
-	}
+    /**
+     * @generated
+     */
+    protected Command getDestroyElementCommand(DestroyElementRequest req) {
+        return getGEFWrapper(new DestroyElementCommand(req));
+    }
 
 }

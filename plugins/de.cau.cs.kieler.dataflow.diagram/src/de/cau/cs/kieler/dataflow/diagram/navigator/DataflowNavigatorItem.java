@@ -11,84 +11,81 @@ import org.eclipse.gmf.runtime.notation.View;
  */
 public class DataflowNavigatorItem extends DataflowAbstractNavigatorItem {
 
-	/**
-	 * @generated
-	 */
-	static {
-		final Class[] supportedTypes = new Class[] { View.class, EObject.class };
-		Platform.getAdapterManager().registerAdapters(
-				new IAdapterFactory() {
+    /**
+     * @generated
+     */
+    static {
+        final Class[] supportedTypes = new Class[] { View.class, EObject.class };
+        Platform.getAdapterManager().registerAdapters(new IAdapterFactory() {
 
-					public Object getAdapter(Object adaptableObject,
-							Class adapterType) {
-						if (adaptableObject instanceof de.cau.cs.kieler.dataflow.diagram.navigator.DataflowNavigatorItem
-								&& (adapterType == View.class || adapterType == EObject.class)) {
-							return ((de.cau.cs.kieler.dataflow.diagram.navigator.DataflowNavigatorItem) adaptableObject)
-									.getView();
-						}
-						return null;
-					}
+            public Object getAdapter(Object adaptableObject, Class adapterType) {
+                if (adaptableObject instanceof de.cau.cs.kieler.dataflow.diagram.navigator.DataflowNavigatorItem
+                        && (adapterType == View.class || adapterType == EObject.class)) {
+                    return ((de.cau.cs.kieler.dataflow.diagram.navigator.DataflowNavigatorItem) adaptableObject)
+                            .getView();
+                }
+                return null;
+            }
 
-					public Class[] getAdapterList() {
-						return supportedTypes;
-					}
-				},
-				de.cau.cs.kieler.dataflow.diagram.navigator.DataflowNavigatorItem.class);
-	}
+            public Class[] getAdapterList() {
+                return supportedTypes;
+            }
+        }, de.cau.cs.kieler.dataflow.diagram.navigator.DataflowNavigatorItem.class);
+    }
 
-	/**
-	 * @generated
-	 */
-	private View myView;
+    /**
+     * @generated
+     */
+    private View myView;
 
-	/**
-	 * @generated
-	 */
-	private boolean myLeaf = false;
+    /**
+     * @generated
+     */
+    private boolean myLeaf = false;
 
-	/**
-	 * @generated
-	 */
-	public DataflowNavigatorItem(View view, Object parent, boolean isLeaf) {
-		super(parent);
-		myView = view;
-		myLeaf = isLeaf;
-	}
+    /**
+     * @generated
+     */
+    public DataflowNavigatorItem(View view, Object parent, boolean isLeaf) {
+        super(parent);
+        myView = view;
+        myLeaf = isLeaf;
+    }
 
-	/**
-	 * @generated
-	 */
-	public View getView() {
-		return myView;
-	}
+    /**
+     * @generated
+     */
+    public View getView() {
+        return myView;
+    }
 
-	/**
-	 * @generated
-	 */
-	public boolean isLeaf() {
-		return myLeaf;
-	}
+    /**
+     * @generated
+     */
+    public boolean isLeaf() {
+        return myLeaf;
+    }
 
-	/**
-	 * @generated
-	 */
-	public boolean equals(Object obj) {
-		if (obj instanceof de.cau.cs.kieler.dataflow.diagram.navigator.DataflowNavigatorItem) {
-			return EcoreUtil
-					.getURI(getView())
-					.equals(
-							EcoreUtil
-									.getURI(((de.cau.cs.kieler.dataflow.diagram.navigator.DataflowNavigatorItem) obj)
-											.getView()));
-		}
-		return super.equals(obj);
-	}
+    /**
+     * @generated
+     */
+    public boolean equals(Object obj) {
+        if (obj instanceof de.cau.cs.kieler.dataflow.diagram.navigator.DataflowNavigatorItem) {
+            return EcoreUtil
+                    .getURI(getView())
+                    .equals(
+                            EcoreUtil
+                                    .getURI(((de.cau.cs.kieler.dataflow.diagram.navigator.DataflowNavigatorItem) obj)
+                                            .getView()));
+        }
+        return super.equals(obj);
+    }
 
-	/**
-	 * @generated
-	 */
-	public int hashCode() {
-		return EcoreUtil.getURI(getView()).hashCode();
-	}
+    /**
+     * @generated
+     */
+    public int hashCode() {
+        return EcoreUtil.getURI(getView()).hashCode();
+    }
 
 }
