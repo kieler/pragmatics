@@ -1,3 +1,16 @@
+/******************************************************************************
+ * KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2008 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.dataflow.custom.diagram;
 
 import java.util.List;
@@ -13,6 +26,11 @@ import org.eclipse.gmf.runtime.diagram.ui.figures.LayoutHelper;
 import org.eclipse.gmf.runtime.draw2d.ui.mapmode.MapModeUtil;
 import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 
+/**
+ * A border item locator for dataflow diagrams.
+ *
+ * @author <a href="mailto:haf@informatik.uni-kiel.de">Hauke Fuhrmann</a>
+ */
 public class CustomBorderItemLocator implements IBorderItemLocator {
 
 	/** the figure around which this border item appears */
@@ -266,7 +284,7 @@ public class CustomBorderItemLocator implements IBorderItemLocator {
 			IFigure targetBorderItem) {
 		Rectangle recommendedRect = new Rectangle(recommendedLocation,
 			targetBorderItem.getSize());
-		List borderItems = targetBorderItem.getParent().getChildren();
+		List<?> borderItems = targetBorderItem.getParent().getChildren();
         
         // Only check those border items that would have already been
         // relocated. See Bugzilla#214799.

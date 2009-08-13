@@ -1,3 +1,16 @@
+/******************************************************************************
+ * KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2008 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.dataflow.custom.diagram;
 
 import org.eclipse.draw2d.FreeformLayer;
@@ -14,8 +27,7 @@ import org.eclipse.gmf.runtime.notation.MeasurementUnit;
  * 
  * This RootEditPart must be provided by the Diagram Editor's EditPartProvider.
  * 
- * @author haf
- *
+ * @author <a href="mailto:haf@informatik.uni-kiel.de">Hauke Fuhrmann</a>
  */
 public class KielerDiagramRootEditPart extends RenderedDiagramRootEditPart {
 

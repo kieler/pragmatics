@@ -1,3 +1,16 @@
+/******************************************************************************
+ * KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2008 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.dataflow.custom.diagram;
 
 import java.util.ArrayList;
@@ -10,6 +23,11 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.ConstrainedToolbarLayout;
 
+/**
+ * A titled toolbar layout for dataflow diagrams.
+ *
+ * @author <a href="mailto:haf@informatik.uni-kiel.de">Hauke Fuhrmann</a>
+ */
 public class TitledToolbarLayout extends ConstrainedToolbarLayout {
 	/**
 	 * @see org.eclipse.draw2d.LayoutManager#layout(IFigure)
@@ -17,7 +35,7 @@ public class TitledToolbarLayout extends ConstrainedToolbarLayout {
 	public void layout(IFigure parent) {
 		if (!parent.isVisible())
 			return;
-		List children = getChildren(parent);
+		List<?> children = getChildren(parent);
 		int numChildren = children.size();
 		Rectangle clientArea = transposer.t(parent.getClientArea());
 		int x = clientArea.x;
@@ -150,10 +168,10 @@ public class TitledToolbarLayout extends ConstrainedToolbarLayout {
 	 * Gets the list of children after applying the layout options of
 	 * ignore invisible children & reverse children
 	 */
-	private List getChildren(IFigure container) {
-		List children = new ArrayList(container.getChildren());
+	private List<?> getChildren(IFigure container) {
+		List<?> children = new ArrayList(container.getChildren());
 		if (getIgnoreInvisibleChildren()) {
-			Iterator iter = children.iterator();
+			Iterator<?> iter = children.iterator();
 			while (iter.hasNext()) {
 				IFigure f = (IFigure) iter.next();
 				if (!f.isVisible())

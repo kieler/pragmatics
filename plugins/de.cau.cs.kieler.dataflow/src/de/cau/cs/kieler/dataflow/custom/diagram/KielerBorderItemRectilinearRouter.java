@@ -1,3 +1,16 @@
+/******************************************************************************
+ * KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2008 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.dataflow.custom.diagram;
 
 import java.util.ArrayList;
@@ -26,6 +39,11 @@ import org.eclipse.gmf.runtime.draw2d.ui.internal.routers.RectilinearRouter;
 import org.eclipse.gmf.runtime.draw2d.ui.mapmode.IMapMode;
 import org.eclipse.gmf.runtime.draw2d.ui.mapmode.MapModeUtil;
 
+/**
+ * A border item rectilinear router for dataflow diagrams.
+ *
+ * @author <a href="mailto:haf@informatik.uni-kiel.de">Hauke Fuhrmann</a>
+ */
 public class KielerBorderItemRectilinearRouter extends
 	RectilinearRouter {
     private static int OFFSET = 15;
@@ -73,7 +91,7 @@ public class KielerBorderItemRectilinearRouter extends
             .getTargetAnchor(), targetPosition, OFFSET));
 
         fakeConnection.setConnectionRouter(conn.getConnectionRouter());
-        List originalbendpoints = (ArrayList) conn.getConnectionRouter()
+        List<?> originalbendpoints = (ArrayList<?>) conn.getConnectionRouter()
             .getConstraint(conn);
         // protection code to prevent NPE while creating the connection
         if (originalbendpoints == null || originalbendpoints.size() == 0) {
@@ -88,8 +106,8 @@ public class KielerBorderItemRectilinearRouter extends
                 .isClosestDistanceRouting(), connection
                 .isAvoidObstacleRouting());
         }
-        List constraint = new ArrayList();
-        for (Iterator itr = originalbendpoints.iterator(); itr.hasNext();) {
+        List<Point> constraint = new ArrayList<Point>();
+        for (Iterator<?> itr = originalbendpoints.iterator(); itr.hasNext();) {
             Bendpoint bp = (Bendpoint) itr.next();
             constraint.add(new AbsoluteBendpoint(bp.getLocation()));
         }

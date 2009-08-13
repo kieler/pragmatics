@@ -1,3 +1,16 @@
+/******************************************************************************
+ * KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2008 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.dataflow.custom.diagram;
 
 import java.util.List;
@@ -16,9 +29,9 @@ import org.eclipse.gmf.runtime.draw2d.ui.internal.routers.ObliqueRouter;
 import org.eclipse.gmf.runtime.draw2d.ui.internal.routers.RectilinearRouter;
 
 /**
+ * A connection layer for dataflow diagrams.
  * 
- * @author haf
- *
+ * @author <a href="mailto:haf@informatik.uni-kiel.de">Hauke Fuhrmann</a>
  */
 public class KielerConnectionLayerEx extends ConnectionLayerEx {
 
@@ -98,8 +111,8 @@ public class KielerConnectionLayerEx extends ConnectionLayerEx {
 	public void dirtyJumpLinks(Rectangle region) {
 		
 		if (!dirtied && shouldJumpLinks()) {
-			List children = getChildren();
-			ListIterator childIter = children.listIterator();
+			List<?> children = getChildren();
+			ListIterator<?> childIter = children.listIterator();
 			while (childIter.hasNext()) {
 				IFigure poly = (IFigure) childIter.next();
 				if (poly instanceof PolylineConnectionEx)
