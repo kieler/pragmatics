@@ -4,21 +4,22 @@
 
 «DEFINE main FOR DataflowModel»
 	«FILE (name==null?"Dummy":name) + ".lus"»
-«FOREACH boxes AS box-»«box.init()-»«ENDFOREACH-»	
+«this.init()-»	
 «FOREACH boxes AS box-»«box.initIO()-»«ENDFOREACH-»	
+«FOREACH boxes AS box-»«box.inferTypes()-»«ENDFOREACH-»
 node «name» (
 «FOREACH getInputs() AS input-»
-  «input»: int; 
+  «input.getName()»: «getType(input)»; 
 «ENDFOREACH-»
 ) returns (
 «FOREACH getOutputs() AS output-»
-  «output»: int; 
+  «output.getName()»: «getType(output)»; 
 «ENDFOREACH-»
 );
 «IF hasLocals()-»
 var
 «FOREACH getLocals() AS local-»
-  «local»: int;  
+  «local.getName()»: «getType(local)»;  
 «ENDFOREACH-»
 «ENDIF-»
 let	
@@ -33,11 +34,11 @@ tel
 «ENDDEFINE»
 
 «DEFINE node FOR Box»
-node «name» («FOREACH inputs AS in -»«in.getName()» : int; «ENDFOREACH-») returns («FOREACH outputs AS out-»«out.getName()» : int; «ENDFOREACH-»)
+node «name» («FOREACH inputs AS in -»«in.getName()» : «getType(in)»; «ENDFOREACH-») returns («FOREACH outputs AS out-»«getName(out)» : «getType(out)»; «ENDFOREACH-»)
 «IF this.hasLocals()-»
 var
 «FOREACH this.getLocals() AS local-»
-  «local»: int;
+  «local.getName()»: «getType(local)»;
 «ENDFOREACH-»
 «ENDIF-»
 let
@@ -45,10 +46,18 @@ let
   «EXPAND equation FOR box-»
   «ENDFOREACH-»
 tel
+  «FOREACH boxes AS box-»
+    «IF box.boxes.size>0-»
+    «EXPAND node FOR box»
+    «ENDIF-»
+  «ENDFOREACH-»
 «ENDDEFINE»
 
-«DEFINE equation FOR Box-»	(«FOREACH outputs AS out SEPARATOR ", "-»«out.name-»«ENDFOREACH-») = «IF name.startsWith("+") || name.startsWith("-") || name.startsWith("*")  -»«inputs.get(0).getName()» «name» «inputs.get(1).getName()»;
-	«ELSEIF inputs.size==0-»«name»;
-	«ELSE-»«name» («FOREACH inputs AS in SEPARATOR ", "-»«in.getName()-»«ENDFOREACH-»);
+«DEFINE equation FOR Box-»	(«FOREACH outputs AS out SEPARATOR ", "-»«getName(out)-»«ENDFOREACH-») = «IF inputs.size==0-»«name»;
+	«ELSEIF isBinOp(name)-»«IF inputs.size>1»«inputs.get(0).getName()» «name.toLowerCase()» «inputs.get(1).getName()»«ELSE»Missing input for «name»«ENDIF»;
+	«ELSEIF isUnOp(name)-»«name.toLowerCase()» «inputs.get(0).getName()»;
+	«ELSEIF name.toLowerCase().compareTo("if")==0»if «inputs.get(0).getName()» then «inputs.get(1).getName()» else «inputs.get(2).getName()»;
+	«ELSEIF name.toLowerCase().compareTo("currentwhen")==0»current ( «inputs.get(0).getName()» when «inputs.get(1).getName()»);
+	«ELSE-»«name» («FOREACH inputs AS in SEPARATOR ", "-»«getName(in)-»«ENDFOREACH-»);
 	«ENDIF-»
 «ENDDEFINE»

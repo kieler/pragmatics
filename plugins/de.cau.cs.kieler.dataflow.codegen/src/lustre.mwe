@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <workflow>
-  <property name="model" value="default.dataflow" />
+  <property name="model" value="gate.dataflow" />
   <property name="src-gen" value="." />
 
   <!-- set up EMF for standalone execution -->
   <bean class="org.eclipse.emf.mwe.utils.StandaloneSetup" >
     <platformUri value=".."/>
-    <registerGeneratedEPackage value="de.cau.cs.kieler.dataflow.DataflowPackage" /> 
+  <!--  <registerGeneratedEPackage value="de.cau.cs.kieler.dataflow.DataflowPackage" />--> 
   </bean>
 
   <!-- load model and store it in slot 'model' -->

@@ -40,20 +40,23 @@
                style="push"
                tooltip="generate Lustre code for current Diagram">
             <visibleWhen
-                  checkEnabled="true">
-            </visibleWhen>
-         </command>
-         <command
-               commandId="de.cau.cs.kieler.dataflow.codegen.genScade"
-               label="generate Scade"
-               mnemonic="generate Scade"
-               style="push"
-               tooltip="generate Scade code">
-            <visibleWhen
-                  checkEnabled="true">
+                  checkEnabled="false">
+               <or>
+                  <reference
+                        definitionId="de.cau.cs.kieler.expression.editorActive">
+                  </reference>
+               </or>
             </visibleWhen>
          </command>
       </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.emf.ecore.generated_package">
+      <package
+            class="de.cau.cs.kieler.dataflow.DataflowPackage"
+            genModel="model/Dataflow.genmodel"
+            uri="http://kieler.cs.cau.de/Dataflow">
+      </package>
    </extension>
 
 </plugin>
