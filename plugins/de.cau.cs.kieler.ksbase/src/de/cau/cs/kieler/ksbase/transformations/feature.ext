@@ -1,0 +1,19 @@
+import synccharts;
+
+Void addConnectedState(State source):
+	let transition = new Transition:
+	let target = new State:
+	transition.setSourceState(source) ->
+	transition.setTargetState(target) ->
+	transition.setDelay(1) ->
+	transition.setPriority(1) ->
+	source.outgoingTransitions.add(transition) ->
+	source.parentRegion.innerStates.add(target)
+;
+
+Void flipTransition(Transition t):
+ let source = t.sourceState:
+ let target = t.targetState:
+ t.setSourceState(target) ->
+ t.setTargetState(source)
+;
