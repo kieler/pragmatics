@@ -180,7 +180,8 @@ public class GraphvizLayouter {
             minSpacing = DEF_MIN_SPACING;
         String spacingVal = Float.toString(minSpacing / DPI);
         if (command.equals(DOT_COMMAND) || command.equals(TWOPI_COMMAND))
-        	graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_RANKSEP, spacingVal));
+        	graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_RANKSEP,
+        	        Float.toString(2 * minSpacing / DPI)));
         if (command.equals(CIRCO_COMMAND))
         	graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_MINDIST, spacingVal));
         else if (command.equals(NEATO_COMMAND) || command.equals(FDP_COMMAND)) {
@@ -261,13 +262,13 @@ public class GraphvizLayouter {
                             "none"));
                     // as Graphviz only supports positioning of a single label, all labels
                     // are stacked to one big label as workaround
-                    if (!outgoingEdge.getLabels().isEmpty()) {
-                        StringBuffer unifiedLabel = new StringBuffer();
-                        for (KLabel label : outgoingEdge.getLabels()) {
-                        	if (unifiedLabel.length() > 0)
-                        		unifiedLabel.append("\\n");
-                        	unifiedLabel.append(label.getText());
-                        }
+                    StringBuffer unifiedLabel = new StringBuffer();
+                    for (KLabel label : outgoingEdge.getLabels()) {
+                    	if (unifiedLabel.length() > 0)
+                    		unifiedLabel.append("\\n");
+                    	unifiedLabel.append(label.getText());
+                    }
+                    if (unifiedLabel.length() > 0) {
 	                    attributes.getEntries().add(createAttribute(
 	                            GraphvizAPI.ATTR_LABEL, createString(unifiedLabel.toString())));
 	                    KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(
@@ -322,22 +323,15 @@ public class GraphvizLayouter {
     	StringBuffer escapeBuffer = new StringBuffer(label.length() + 2);
     	// prefix the label with an underscore to prevent it from being equal to a keyword
     	escapeBuffer.append("\"_");
-    	boolean oddEscapes = false;
     	for (int i = 0; i < label.length(); i++) {
     		char c = label.charAt(i);
-    		if (c == '\"' && oddEscapes)
-    			escapeBuffer.append('\\');
-    		if (c == '\\')
-    			oddEscapes = !oddEscapes;
-    		else
-    			oddEscapes = false;
-    		if (c == '\n')
+    		if (c == '\"' || c == '\\')
+    			escapeBuffer.append('_');
+    		else if (c == '\n')
     			escapeBuffer.append("\\n");
     		else if (c != '\r')
     			escapeBuffer.append(c);
     	}
-    	if (oddEscapes)
-    		escapeBuffer.append('\\');
     	escapeBuffer.append('\"');
     	return escapeBuffer.toString();
     }
