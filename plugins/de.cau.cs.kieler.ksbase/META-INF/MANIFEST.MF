@@ -15,7 +15,16 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jdt.ui;bundle-version="3.5.0",
  org.eclipse.jdt.core;bundle-version="3.5.0",
  org.eclipse.gmf.runtime.diagram.ui;bundle-version="1.2.0",
- org.eclipse.gmf.runtime.diagram.ui.resources.editor;bundle-version="1.2.0"
+ org.eclipse.gmf.runtime.diagram.ui.resources.editor;bundle-version="1.2.0",
+ de.cau.cs.kieler.synccharts;bundle-version="0.1.0",
+ de.cau.cs.kieler.synccharts.model;bundle-version="1.0.0",
+ org.eclipse.xtend.check.ui;bundle-version="0.7.2",
+ org.eclipse.xtend.shared.ui;bundle-version="0.7.2",
+ org.eclipse.xtend.source;bundle-version="0.7.2",
+ org.eclipse.xtend.ui;bundle-version="0.7.2",
+ org.eclipse.xtend.ui.source;bundle-version="0.7.2",
+ org.openarchitectureware.xtend.editor;bundle-version="4.3.1",
+ org.eclipse.ui.editors;bundle-version="3.5.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.xtend.typesystem.emf,
