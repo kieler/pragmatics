@@ -227,7 +227,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
 
     protected Text sfMetaModel, sfMenu, sfMenuLoc, sfToolbarLoc;
     protected Combo cbEditors;
-    protected Button bfShowMenu, bfShowToolbar, bfShowPopup, bfShowBalloon;
+    protected Button bfShowMenu, bfShowToolbar, bfShowPopup, bfShowBalloon, bfAutoLayout;
     FileFieldEditor dfDefaultIcon, btTableRemove, btTableAdd;
     protected EditorTransformationSettings activeEditor;
     protected Table table;
@@ -254,6 +254,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
                 EditorTransformationSettings editor = TransformationManager
                         .getEditorByName(((Combo) e.getSource()).getText());
                 activeEditor = editor;
+                if ( activeEditor != null) {
                 sfMetaModel.setText(editor.getModelURI());
                 sfMenu.setText(editor.getMenuName());
                 sfMenuLoc.setText(editor.getMenuLocation());
@@ -262,6 +263,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
                 bfShowPopup.setSelection(editor.isShownInContext());
                 bfShowToolbar.setSelection(editor.isShownIToolbar());
                 bfShowBalloon.setSelection(editor.isShownInBalloon());
+                bfAutoLayout.setSelection(editor.isPerformAutoLayout());
                 dfDefaultIcon.setStringValue(editor.getDefaultIconURI()
                         .toString());
 
@@ -308,6 +310,8 @@ public class KSBasEPreferencePage extends PreferencePage implements
                 bfShowToolbar.setEnabled(true);
                 bfShowPopup.setEnabled(true);
                 bfShowBalloon.setEnabled(true);
+                bfAutoLayout.setEnabled(true);
+                }
             }
 
         });
@@ -447,6 +451,11 @@ public class KSBasEPreferencePage extends PreferencePage implements
         bfShowBalloon.setSelection(true);
         bfShowBalloon.setEnabled(false);
 
+        bfAutoLayout = new Button(container, SWT.CHECK);
+        bfAutoLayout.setText("Perform auto layout after execution");
+        bfAutoLayout.setSelection(true);
+        bfAutoLayout.setEnabled(false);
+        
         container.setLayout(layout);
         container.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, false,
                 false));
@@ -696,6 +705,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
                 flags |= KSBasEPlugin.SHOW_BALLOON;
 
             activeEditor.setVisibilityFlags(flags);
+            activeEditor.setPerformAutoLayout(bfAutoLayout.getSelection());
             activeEditor.setDefaultIconURI(URI.create(dfDefaultIcon
                     .getStringValue()));
             TransformationManager.storeTransformations();

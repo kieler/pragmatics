@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            category="de.cau.cs.kieler.preferencePage"
+            category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.ksbase.ui.KSBasEPreferencePage"
             id="de.cau.cs.kieler.ksbase.PreferencePage"
             name="KSBasE">
@@ -13,7 +13,7 @@
    <extension
          point="org.eclipse.gmf.runtime.diagram.ui.editpolicyProviders">
       <editpolicyProvider
-            class="de.cau.cs.kieler.ksbase.transformations.ExecuteTransformationEditPolicy">
+            class="de.cau.cs.kieler.ksbase.transformations.TransformationEditPolicyProvider">
          <Priority
                name="Lowest">
          </Priority>

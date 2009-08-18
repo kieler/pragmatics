@@ -102,14 +102,11 @@ public class TransformationManager {
             ObjectInputStream oos = new ObjectInputStream(fos);
             registeredEditors = (LinkedList<EditorTransformationSettings>) oos.readObject();
         } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        	registeredEditors = new LinkedList<EditorTransformationSettings>();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        	registeredEditors = new LinkedList<EditorTransformationSettings>();
         } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        	registeredEditors = new LinkedList<EditorTransformationSettings>();
         }
     }
 
