@@ -11,10 +11,11 @@ public class Transformation implements Serializable {
 
     private static final long serialVersionUID = -6839991969679808483L;
     private String name; // Menu entry name
-    private String transformation; // Xtend command string
+    private String transformationName; // Xtend method name
     private int visibilityFlags; // Visibility configuration, any combination of visibility Flags from KSBasePlugin
     private int numSelections; // Number of selections;
     private URI iconURI; // URI to icon
+    private String keyboardShorcut; //Assigned keyboard shortcut
     private String[] partConfig; // Parts for which this transformation is
                                  // defined
 
@@ -23,10 +24,11 @@ public class Transformation implements Serializable {
      */
     public Transformation(String name, String transformation) {
         this.name = name;
-        this.transformation = transformation;
+        this.transformationName = transformation;
         this.visibilityFlags = KSBasEPlugin.SHOW_MENU | KSBasEPlugin.SHOW_CONTEXT | KSBasEPlugin.SHOW_TOOLBAR | KSBasEPlugin.SHOW_BALLOON;
         numSelections = 1;
         iconURI = URI.create("");
+        keyboardShorcut = "";
         partConfig = null;
     }
 
@@ -34,8 +36,8 @@ public class Transformation implements Serializable {
         this.name = name;
     }
 
-    public void setTransformation(String value) {
-        this.transformation = value;
+    public void setTransformationName(String value) {
+        this.transformationName = value;
     }
 
     public void setVisibility(int value) {
@@ -54,8 +56,8 @@ public class Transformation implements Serializable {
         return this.name;
     }
 
-    public String getTransformation() {
-        return this.transformation;
+    public String getTransformationName() {
+        return this.transformationName;
     }
 
     public boolean isShownInMenu() {
@@ -101,23 +103,31 @@ public class Transformation implements Serializable {
         return this.partConfig;
     }
     
-    public String getPartConfgList() {
+    public String getPartConfigList() {
         if ( partConfig == null)
             return "";
         
         String res = "";
         for ( int i = 0 ; i < partConfig.length; ++i) {
             res += partConfig[i];
-            if ( i < partConfig.length )
+            if ( i < partConfig.length-1 )
                 res += ",";
         }
         return res;
     }
 
-    public void serialize(ObjectOutputStream writer) {
+    public String getKeyboardShorcut() {
+		return keyboardShorcut;
+	}
+
+	public void setKeyboardShorcut(String keyboardShorcut) {
+		this.keyboardShorcut = keyboardShorcut;
+	}
+
+	public void serialize(ObjectOutputStream writer) {
         try {
             writer.writeObject(this.name);
-            writer.writeObject(this.transformation);
+            writer.writeObject(this.transformationName);
             writer.writeInt(this.visibilityFlags);
             writer.writeInt(this.numSelections);
             writer.writeObject(this.iconURI);

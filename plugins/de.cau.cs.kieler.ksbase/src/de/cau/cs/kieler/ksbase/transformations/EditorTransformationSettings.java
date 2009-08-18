@@ -17,6 +17,7 @@ public class EditorTransformationSettings implements Serializable {
     private boolean performAutoLayout;
     private URI defaultIconURI;
     private String editor;
+    private String extFile;
     private LinkedList<Transformation> transformations;
     
     public EditorTransformationSettings(String name) {
@@ -27,6 +28,7 @@ public class EditorTransformationSettings implements Serializable {
         this.menuLocation = "menu:org.eclipse.ui.main.menu?after=additions";
         this.toolbarLocation = "menu:org.eclipse.ui.main.menu?after=additions";
         this.defaultIconURI = URI.create("");
+        this.extFile = "";
         this.transformations = new LinkedList<Transformation>();
         this.performAutoLayout = true;
     }
@@ -131,6 +133,14 @@ public class EditorTransformationSettings implements Serializable {
 
 	public void setPerformAutoLayout(boolean performAutoLayout) {
 		this.performAutoLayout = performAutoLayout;
+	}
+
+	public String getExtFile() {
+		return extFile;
+	}
+
+	public void setExtFile(String extFile) {
+		this.extFile = extFile;
 	}
     
 }

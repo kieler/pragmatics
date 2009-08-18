@@ -41,6 +41,7 @@ public class TransformationManager {
         IEditorPart activeEditor = HandlerUtil.getActiveEditor(event);
         ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event)
                 .getSelectionService().getSelection();
+        
         if (selection instanceof StructuredSelection && !selection.isEmpty()) {
             EditPart selectedElement = (EditPart) ((StructuredSelection) selection)
                     .getFirstElement();
@@ -88,6 +89,13 @@ public class TransformationManager {
         return editor;
     }
 
+    public static void removeEditor(String editor) {
+        for ( int i = 0; i < registeredEditors.size(); ++i) {
+            if (registeredEditors.get(i).getEditor().equals(editor))
+                registeredEditors.remove(i);
+        }
+    }
+    
     /**
      * Loads the editor settings from ksbase config file
      */
