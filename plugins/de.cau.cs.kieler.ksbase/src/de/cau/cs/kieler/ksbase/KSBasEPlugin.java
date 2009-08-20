@@ -1,3 +1,17 @@
+/******************************************************************************
+ * KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2009 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ * 
+ *****************************************************************************/
 package de.cau.cs.kieler.ksbase;
 
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -17,10 +31,11 @@ public class KSBasEPlugin extends AbstractUIPlugin {
     // The shared instance
     private static KSBasEPlugin plugin;
 
-    public static final int SHOW_MENU = 1;
-    public static final int SHOW_TOOLBAR = 1 << 1;
-    public static final int SHOW_CONTEXT = 1 << 2;
-    public static final int SHOW_BALLOON = 1 << 3;
+    //Visibility flags for menu entries
+    public static final int SHOW_MENU = 1; //Show entry in menu, if activated or activate menu
+    public static final int SHOW_TOOLBAR = 1 << 1; //Show entry in tool bar, if activated or activate menu
+    public static final int SHOW_CONTEXT = 1 << 2; //Show entry in context menu, if activated or activate context menu
+    public static final int SHOW_BALLOON = 1 << 3; //Show entry in balloon popup, if activated or activate balloon popups 
 
     /**
      * The constructor

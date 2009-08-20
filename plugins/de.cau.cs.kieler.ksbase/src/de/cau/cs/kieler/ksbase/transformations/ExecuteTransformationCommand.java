@@ -1,45 +1,47 @@
+/******************************************************************************
+ * KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2009 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ * 
+ *****************************************************************************/
 package de.cau.cs.kieler.ksbase.transformations;
 
-import java.awt.ActiveEvent;
-import java.io.FileOutputStream;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.operations.IOperationHistory;
-import org.eclipse.core.commands.operations.IUndoContext;
-import org.eclipse.core.commands.operations.IUndoableOperation;
-import org.eclipse.core.commands.operations.OperationHistoryFactory;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.impl.BasicNotifierImpl;
-import org.eclipse.emf.common.notify.impl.NotificationImpl;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.edit.provider.ChangeNotifier;
 import org.eclipse.emf.mwe.core.WorkflowContext;
 import org.eclipse.emf.mwe.core.WorkflowContextDefaultImpl;
 import org.eclipse.emf.mwe.core.issues.Issues;
 import org.eclipse.emf.mwe.core.issues.IssuesImpl;
 import org.eclipse.emf.mwe.core.issues.MWEDiagnostic;
 import org.eclipse.emf.mwe.core.monitor.NullProgressMonitor;
-import org.eclipse.emf.transaction.TransactionChangeDescription;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.emf.workspace.impl.WorkspaceCommandStackImpl;
 import org.eclipse.gef.EditPart;
-import org.eclipse.gef.RootEditPart;
 import org.eclipse.gmf.runtime.common.core.command.CommandResult;
-import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.gmf.runtime.emf.commands.core.command.AbstractTransactionalCommand;
-import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
 
+/**
+ * The command to execute an Xtend transformation.
+ * Handles MWE initialization too
+ * @author Michael Matzen
+ *
+ */
 public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
 
 	private KielerWorkflow workflow;
@@ -161,33 +163,6 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
 			return affectedFiles;
 		else
 			return super.getAffectedFiles();
-	}
-
-	@Override
-	public boolean canUndo() {
-		return true;
-	}
-
-	@Override
-	public boolean canRedo() {
-		return true;
-	}
-
-	protected IStatus doUndo(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
-		/*
-		 * TransactionChangeDescription change = getChange();
-		 * System.out.println(change.getObjectChanges().size());
-		 * System.out.println(change.getObjectsToAttach().size());
-		 * System.out.println(change.getObjectsToDetach().size());
-		 * System.out.println(change.getResourceChanges().size());
-		 * IOperationHistory history =
-		 * OperationHistoryFactory.getOperationHistory(); IUndoableOperation[]
-		 * ops = history.getUndoHistory(getContexts()[0]);
-		 */
-		// IUndoContext history = IOperationHistory.GLOBAL_UNDO_CONTEXT;
-		// System.out.println(history.matches(getContexts()[0]));
-		return super.doUndo(monitor, info);
 	}
 
 }

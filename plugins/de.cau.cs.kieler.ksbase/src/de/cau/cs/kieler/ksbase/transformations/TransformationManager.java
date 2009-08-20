@@ -1,3 +1,17 @@
+/******************************************************************************
+ * KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2009 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ * 
+ *****************************************************************************/
 package de.cau.cs.kieler.ksbase.transformations;
 
 import java.io.FileInputStream;
@@ -22,12 +36,16 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 
-//import org.eclipse.xtend.ui.editor.XtendEditor;
-
+/**
+ * Manages the creation of ExecuteTransformationCommands and manages the List of 
+ * currently registered editors  
+ * @author Michael Matzen
+ *
+ */
 public class TransformationManager {
 
     // TODO: Why is everything static in here ? Because we dont want to init it
-    // every time
+    // every time...
     // => Change to singleton pattern,
 
     // public static XtendEditor xtendEditor;
@@ -108,7 +126,10 @@ public class TransformationManager {
         try {
             fos = new FileInputStream(path.toOSString()+"/ksbase.config");
             ObjectInputStream oos = new ObjectInputStream(fos);
-            registeredEditors = (LinkedList<EditorTransformationSettings>) oos.readObject();
+            registeredEditors = (LinkedList<EditorTransformationSettings>) oos.readObject(); 
+            for (EditorTransformationSettings ed : registeredEditors) {
+                ed.parseTransformationsFromFile();
+            }
         } catch (FileNotFoundException e) {
         	registeredEditors = new LinkedList<EditorTransformationSettings>();
         } catch (IOException e) {

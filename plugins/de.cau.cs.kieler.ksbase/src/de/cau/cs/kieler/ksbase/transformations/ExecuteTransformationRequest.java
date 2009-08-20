@@ -21,7 +21,7 @@ import org.eclipse.ui.IEditorPart;
 /**
  * Request for the execution of a model transformation
  * 
- * @author <a href="mailto:mim@informatik.uni-kiel.de">Michael Matzen</a>
+ * @author Michael Matzen
  */
 public class ExecuteTransformationRequest extends Request {
 

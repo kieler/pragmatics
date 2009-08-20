@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            category="de.cau.cs.kieler"
+            category="de.cau.cs.kieler.preferencePage"
             class="de.cau.cs.kieler.ksbase.ui.KSBasEPreferencePage"
             id="de.cau.cs.kieler.ksbase.PreferencePage"
             name="KSBasE">
@@ -18,6 +18,19 @@
                name="Lowest">
          </Priority>
       </editpolicyProvider>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="de.cau.cs.kieler.ksbase.menuContribution1">
+         <dynamic
+               class="de.cau.cs.kieler.ksbase.ContributionItem1"
+               id="de.cau.cs.kieler.ksbase.dynamic1">
+         </dynamic>
+      </menuContribution>
    </extension>
 
 </plugin>

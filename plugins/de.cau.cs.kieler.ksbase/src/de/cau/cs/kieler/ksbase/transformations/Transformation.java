@@ -1,3 +1,17 @@
+/******************************************************************************
+ * KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2009 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ * 
+ *****************************************************************************/
 package de.cau.cs.kieler.ksbase.transformations;
 
 import java.io.IOException;
@@ -7,6 +21,13 @@ import java.net.URI;
 
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 
+/**
+ * The connection between Xtend functions and the KSBasE plugin
+ * Stores additional information about how the transformation can be executed 
+ * by the user/workbench 
+ * @author Michael Matzen
+ *
+ */
 public class Transformation implements Serializable {
 
     private static final long serialVersionUID = -6839991969679808483L;
