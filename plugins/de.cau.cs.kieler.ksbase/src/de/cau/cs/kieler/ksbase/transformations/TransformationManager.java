@@ -117,7 +117,7 @@ public class TransformationManager {
         	registeredEditors = new LinkedList<EditorTransformationSettings>();
         }
     }
-
+    
     /**
      * Stores the currently registered editor settings to the preference store
      */

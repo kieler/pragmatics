@@ -28,6 +28,7 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -230,7 +231,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
 								t.getTransformationName(), showIn,
 								t.getPartConfigList(),
 								String.valueOf(t.getNumSelections()),
-								t.getIconString() });
+								t.getIconString(), t.getKeyboardShortcut() });
 					}
 
 					sfMetaModel.setEnabled(true);
@@ -492,7 +493,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
 
 				TableItem row = cursor.getRow();
 				int col = cursor.getColumn();
-				Transformation transformation = activeEditor
+				final Transformation transformation = activeEditor
 						.getTransformations().get(table.indexOf(row));
 
 				if (col == 0 || col == 4) { // Text editor
@@ -569,12 +570,50 @@ public class KSBasEPreferencePage extends PreferencePage implements
 						cbEditors.notifyListeners(SWT.Selection, null);
 					}
 				} else { // Keyboard shortcut
-					// TODO: Keyboard shortcut selection dialog
-					// Simple input dialog : textfield, button clear, ok
-					// key pressed => map to string rep, add +
+					final Text text = new Text(cursor, SWT.NONE);
+					text.addKeyListener(new KeyAdapter() {
+
+						@Override
+						public void keyPressed(KeyEvent e) {
+							if ( e.keyCode == SWT.DEL || e.keyCode == SWT.BS ) {
+								text.setText("");
+							}
+							else {
+								if(e.keyCode >=97 && e.keyCode <=122) { //only allow characters
+								String ex = "";
+								if ( ex.length() > 0)
+									ex += "+";
+								if ( (e.stateMask & SWT.CTRL) != 0) {
+									ex += "CTRL + ";
+								}
+								if ( (e.stateMask & SWT.ALT) != 0) {
+									ex += "ALT + ";
+								}
+								if ( (e.stateMask & SWT.SHIFT) != 0) {
+									ex += "SHIFT + ";
+								}
+								ex += (char)e.keyCode;
+								text.setText(ex.toUpperCase());
+								}
+							}
+						}
+					});
+					text.addFocusListener(new FocusAdapter() {
+						public void focusLost(FocusEvent e) {
+							if ( text.getText().length() > 0) {
+							transformation.setKeyboardShortcut(text.getText());
+							cbEditors.notifyListeners(SWT.Selection, null);
+							}
+							text.dispose();
+						}
+					});
+					text.setText(row.getText(col));
+					editor.setEditor(text);
+					text.setFocus();
 				}
 			}
 		});
+		
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		tableComp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		tableComp.setEnabled(false);

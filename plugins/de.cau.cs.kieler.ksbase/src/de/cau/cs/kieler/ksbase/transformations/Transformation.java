@@ -15,7 +15,7 @@ public class Transformation implements Serializable {
     private int visibilityFlags; // Visibility configuration, any combination of visibility Flags from KSBasePlugin
     private int numSelections; // Number of selections;
     private URI iconURI; // URI to icon
-    private String keyboardShorcut; //Assigned keyboard shortcut
+    private String keyboardShortcut; //Assigned keyboard shortcut
     private String[] partConfig; // Parts for which this transformation is
                                  // defined
 
@@ -28,7 +28,7 @@ public class Transformation implements Serializable {
         this.visibilityFlags = KSBasEPlugin.SHOW_MENU | KSBasEPlugin.SHOW_CONTEXT | KSBasEPlugin.SHOW_TOOLBAR | KSBasEPlugin.SHOW_BALLOON;
         numSelections = 1;
         iconURI = URI.create("");
-        keyboardShorcut = "";
+        keyboardShortcut = "";
         partConfig = null;
     }
 
@@ -116,12 +116,12 @@ public class Transformation implements Serializable {
         return res;
     }
 
-    public String getKeyboardShorcut() {
-		return keyboardShorcut;
+    public String getKeyboardShortcut() {
+		return keyboardShortcut;
 	}
 
-	public void setKeyboardShorcut(String keyboardShorcut) {
-		this.keyboardShorcut = keyboardShorcut;
+	public void setKeyboardShortcut(String keyboardShortcut) {
+		this.keyboardShortcut = keyboardShortcut;
 	}
 
 	public void serialize(ObjectOutputStream writer) {
@@ -134,7 +134,20 @@ public class Transformation implements Serializable {
             writer.writeObject(this.partConfig);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+       }
     }
-
+	
+	
+	/**
+	 * Two transformations are equal, when they have the same transformation name 
+	 * and the same number of parameters 
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if ( obj instanceof Transformation) {
+			return (  numSelections == ((Transformation)obj).getNumSelections()) &&
+				( transformationName.equals( ((Transformation)obj).getTransformationName()) );
+		}
+	return false;
+}
 }
