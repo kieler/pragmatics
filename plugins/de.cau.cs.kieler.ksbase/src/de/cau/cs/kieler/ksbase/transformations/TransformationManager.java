@@ -80,7 +80,7 @@ public class TransformationManager {
 
         }
     }
-
+    
     public static LinkedList<EditorTransformationSettings> getEditors() {
         return registeredEditors;
     }
