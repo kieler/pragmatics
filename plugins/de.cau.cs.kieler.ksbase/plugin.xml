@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            category="de.cau.cs.kieler.preferencePage"
+            category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.ksbase.ui.KSBasEPreferencePage"
             id="de.cau.cs.kieler.ksbase.PreferencePage"
             name="KSBasE">

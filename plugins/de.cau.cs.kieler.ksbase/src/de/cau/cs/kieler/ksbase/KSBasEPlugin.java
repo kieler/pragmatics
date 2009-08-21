@@ -112,7 +112,7 @@ public class KSBasEPlugin extends AbstractUIPlugin {
                                         kielerCategory);
                             }
                             transformationCommand
-                                    .setHandler(new TransformationCommandHandler());
+                                    .setHandler(new TransformationCommandHandler(settings, t));
                             CommandContributionItemParameter p = new CommandContributionItemParameter(PlatformUI.getWorkbench(),null,cmdID,CommandContributionItem.STYLE_PUSH);
                             CommandContributionItem cmd = new CommandContributionItem(p);
                             

@@ -38,7 +38,7 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 public class EditorTransformationSettings implements Serializable {
 
     private static final long serialVersionUID = -7706521956908478893L;
-    private String modelURI; //The model URI TODO:Change to modelPackage
+    private String modelPackageFile; //The model package file
     private String menuName; //Name of the menu 
     private String menuLocation; //Location of the menu
     private String toolbarLocation; //Location of the toolbar
@@ -58,7 +58,7 @@ public class EditorTransformationSettings implements Serializable {
         this.visibilityFlags = KSBasEPlugin.SHOW_MENU
                 | KSBasEPlugin.SHOW_CONTEXT | KSBasEPlugin.SHOW_TOOLBAR
                 | KSBasEPlugin.SHOW_BALLOON;
-        this.modelURI = "";
+        this.modelPackageFile = "";
         this.menuName = "KIELER";
         this.menuLocation = "menu:org.eclipse.ui.main.menu?after=additions";
         this.toolbarLocation = "menu:org.eclipse.ui.main.menu?after=additions";
@@ -89,18 +89,22 @@ public class EditorTransformationSettings implements Serializable {
 
     /**
      * Gets the model URI
-     * @return A string representation of the modelURI
+     * @return A string representation of the model Package
      */
-    public String getModelURI() {
-        return modelURI;
+    public String getModelPackageFile() {
+
+        if ( modelPackageFile == null)
+            return "";
+        else 
+        return modelPackageFile;
     }
 
     /**
      * Sets a model URI
      * @param modelURI
      */
-    public void setModelURI(String modelURI) {
-        this.modelURI = modelURI;
+    public void setModelPackageFile(String modelPackageFile) {
+        this.modelPackageFile = modelPackageFile;
     }
 
     /**

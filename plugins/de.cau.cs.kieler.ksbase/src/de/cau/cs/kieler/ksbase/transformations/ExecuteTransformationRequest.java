@@ -14,6 +14,7 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.transformations;
 
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.gef.Request;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
@@ -34,17 +35,27 @@ public class ExecuteTransformationRequest extends Request {
 	private String fileName;
 	private ISelection selection;
 	private int selectionCount;
+	private String modelPackage;
 	
 	/**
 	 * Creates a transformation request
 	 */
-	public ExecuteTransformationRequest(IEditorPart ePart, String command, String fileName, ISelection selection, int selectionCount) {
+	public ExecuteTransformationRequest(IEditorPart ePart, String command, String fileName, ISelection selection, int selectionCount, String modelPackage) {
 		super(REQ_EXEC_TRANS);
 		this.editPart = ePart;
 		this.command = command;
 		this.fileName = fileName;
+		this.modelPackage = modelPackage;
 		this.selection = selection;
 		this.selectionCount = selectionCount; 
+	}
+	
+	public void setModelPackage(String modelPackage) {
+	    this.modelPackage = modelPackage;
+	}
+	
+	public String getModelPackage() {
+	    return this.modelPackage;
 	}
 	
 	public void setEditPart(IEditorPart part) {

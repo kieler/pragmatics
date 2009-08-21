@@ -5,11 +5,23 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 
+import de.cau.cs.kieler.ksbase.transformations.EditorTransformationSettings;
+import de.cau.cs.kieler.ksbase.transformations.Transformation;
+import de.cau.cs.kieler.ksbase.transformations.TransformationManager;
+
 
 public class TransformationCommandHandler extends AbstractHandler implements IHandler {
 
+    private EditorTransformationSettings editor;
+    private Transformation transformation;
+    
+    public TransformationCommandHandler(EditorTransformationSettings editor, Transformation transformation) {
+        this.editor = editor;
+        this.transformation = transformation;
+    }
+    
     public Object execute(ExecutionEvent event) throws ExecutionException {
-        // TODO: Add command execution here
+        TransformationManager.createAndExecuteTransformationCommand(event, editor, transformation);
         return null;
     }
 }

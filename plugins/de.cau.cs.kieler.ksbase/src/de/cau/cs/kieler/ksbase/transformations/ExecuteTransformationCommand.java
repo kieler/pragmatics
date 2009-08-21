@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.mwe.core.WorkflowContext;
 import org.eclipse.emf.mwe.core.WorkflowContextDefaultImpl;
 import org.eclipse.emf.mwe.core.issues.Issues;
@@ -128,7 +129,7 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
 	 */
 	@SuppressWarnings("unchecked")
 	public boolean initalize(IEditorPart editPart, ISelection selection,
-			String command, int numSelections, String fileName) {
+			String command, int numSelections, String fileName, String basePackage) {
 		StructuredSelection s;
 
 		if (selection instanceof StructuredSelection)
@@ -145,7 +146,7 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
 				fileName = fileName.substring(0, fileName.lastIndexOf("."));
 			}
 			  //TODO: AUSLESEN DES ePACKAGES !!!
-			workflow = new KielerWorkflow(command, fileName, null);
+			workflow = new KielerWorkflow(command, fileName, basePackage);
 			Object model = ((EditPart)selectedObject).getModel();
 			if ( model instanceof View) {
 				Object element = ((View)model).getElement();

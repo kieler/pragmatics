@@ -53,8 +53,8 @@ public class TransformationManager {
     private static LinkedList<EditorTransformationSettings>  registeredEditors;// The currently registered editors
 
     public static void createAndExecuteTransformationCommand(
-            ExecutionEvent event, String command, String fileName,
-            int numberOfSelections) {
+            ExecutionEvent event, EditorTransformationSettings editor,
+            Transformation t) {
         TransformationManager.activeSite = HandlerUtil.getActiveSite(event);
         IEditorPart activeEditor = HandlerUtil.getActiveEditor(event);
         ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event)
@@ -65,8 +65,8 @@ public class TransformationManager {
                     .getFirstElement();
 
             ExecuteTransformationRequest request = new ExecuteTransformationRequest(
-                    activeEditor, command, fileName, selection,
-                    numberOfSelections);
+                    activeEditor, t.getTransformationName(), editor.getExtFile(), selection,
+                    t.getNumSelections(), editor.getModelPackageFile());
             Command transformationCommand = selectedElement.getCommand(request);
 
             // gets a command stack to execute the command
