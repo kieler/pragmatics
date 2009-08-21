@@ -25,6 +25,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IClassFile;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
@@ -32,6 +34,7 @@ import org.eclipse.jdt.core.search.SearchMatch;
 import org.eclipse.jdt.core.search.SearchParticipant;
 import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.core.search.SearchRequestor;
+import org.eclipse.jdt.internal.core.ResolvedBinaryType;
 import org.eclipse.jdt.internal.core.ResolvedSourceType;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
@@ -848,9 +851,9 @@ public class KSBasEPreferencePage extends PreferencePage implements
             
             for (String type : types) {
                 SearchPattern p = SearchPattern.createPattern(type,
-                        IJavaSearchConstants.CLASS_AND_INTERFACE,
+                        IJavaSearchConstants.TYPE,
                         IJavaSearchConstants.IMPLEMENTORS,
-                        SearchPattern.R_FULL_MATCH);
+                        SearchPattern.R_EXACT_MATCH);
                 IJavaSearchScope scope = SearchEngine.createWorkspaceScope();
 
                 SearchRequestor req = new SearchRequestor() {
@@ -858,9 +861,20 @@ public class KSBasEPreferencePage extends PreferencePage implements
                     @Override
                     public void acceptSearchMatch(SearchMatch match)
                             throws CoreException {
+                    	if ( match.getElement() instanceof ResolvedSourceType) {
                         ResolvedSourceType type = ((ResolvedSourceType) match
                                 .getElement());
+                        Class c = type.getClass();
+                        IClassFile f = type.getClassFile();
+                        ICompilationUnit u = type.getCompilationUnit();
+                        IPath path = u.getPath();
                         diagrams.add(type.getFullyQualifiedName());
+                    	}
+                    	else if ( match.getElement() instanceof ResolvedBinaryType) {
+                    		ResolvedBinaryType type = ((ResolvedBinaryType)match.getElement());
+                    		//Ignore binary types for now
+                    		//diagrams.add(type.getFullyQualifiedName());
+                    	}
                     }
 
                 };
@@ -903,7 +917,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
                 }
             }
 
-        } catch (CoreException exc) {
+        } catch (Exception exc) {
             exc.printStackTrace();
         }
 

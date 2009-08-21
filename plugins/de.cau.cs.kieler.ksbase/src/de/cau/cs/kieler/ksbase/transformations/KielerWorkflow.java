@@ -21,8 +21,9 @@ import org.eclipse.emf.mwe.internal.core.Workflow;
 import org.eclipse.emf.mwe.utils.StandaloneSetup;
 
 import org.eclipse.xtend.XtendComponent;
+import org.eclipse.xtend.typesystem.emf.EcoreUtil2;
 import org.eclipse.xtend.typesystem.emf.EmfMetaModel;
-
+import de.cau.cs.kieler.synccharts.SyncchartsPackage;
 /**
  * An extension of the MWE default workflow.
  * Used to perform custom initializations
@@ -49,18 +50,17 @@ public class KielerWorkflow extends Workflow {
         setup.addRegisterGeneratedEPackage("de.cau.cs.kieler.synccharts.SyncchartsPackage");
         this.addBean(setup);
         */
-        try {
         // We are using the XtendComponent,
         xtendComponent = new XtendComponent();
         // with an EMFMetaMetaModel,
         EmfMetaModel emfmodel;
         
-        
-        EPackage pack = (EPackage)ClassLoader.getSystemClassLoader().loadClass(basePackage).cast(EPackage.class);
+        EPackage pack = EcoreUtil2.getEPackageByClassName(basePackage);
+        //(EPackage)ClassLoader.getSystemClassLoader().loadClass(basePackage2).cast(EPackage.class);
         System.out.println(pack.getName());
         
         emfmodel = new EmfMetaModel( 
-                );
+                pack);
         
         // Set metaModel-Slot
         xtendComponent.addMetaModel(emfmodel);
@@ -73,9 +73,5 @@ public class KielerWorkflow extends Workflow {
         // Don't forget to add the components to the workflow !!
         this.addComponent(xtendComponent);
 
-        } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
     }
 }
