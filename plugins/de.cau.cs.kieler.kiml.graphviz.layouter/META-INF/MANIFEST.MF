@@ -12,6 +12,4 @@ Require-Bundle: org.eclipse.ui,
  de.cau.cs.kieler.kiml.layout,
  de.cau.cs.kieler.kiml.graphviz.dot
 Bundle-ActivationPolicy: lazy
-Import-Package: org.eclipse.draw2d,
- org.eclipse.gef.requests
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
