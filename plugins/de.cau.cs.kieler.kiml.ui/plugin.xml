@@ -142,6 +142,28 @@ point="org.eclipse.ui.menus">
        </Priority>
     </editpolicyProvider>
  </extension>
+ <extension
+       point="de.cau.cs.kieler.kiml.layout.layoutProviders">
+    <layoutProvider
+          class="de.cau.cs.kieler.kiml.ui.layouter.Draw2DLayoutProvider"
+          id="de.cau.cs.kieler.kiml.layouter.draw2d"
+          name="Draw2D Layout"
+          type="de.cau.cs.kieler.layout.types.layered">
+       <supportedDiagram
+             priority="1"
+             type="de.cau.cs.kieler.layout.diagrams.general">
+       </supportedDiagram>
+       <knownOption
+             option="de.cau.cs.kieler.layout.options.minSpacing">
+       </knownOption>
+       <knownOption
+             option="de.cau.cs.kieler.layout.options.layoutDirection">
+       </knownOption>
+       <knownOption
+             option="de.cau.cs.kieler.layout.options.fixedSize">
+       </knownOption>
+    </layoutProvider>
+ </extension>
  
    
 </plugin>
