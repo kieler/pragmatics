@@ -12,7 +12,7 @@
  * See the file epl-v10.html for the license text.
  * 
  *****************************************************************************/
-package de.cau.cs.kieler.ksbase.transformations;
+package de.cau.cs.kieler.ksbase.ui.handler;
 
 import java.util.List;
 
@@ -34,6 +34,9 @@ import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
+
+import de.cau.cs.kieler.ksbase.core.KielerWorkflow;
+import de.cau.cs.kieler.ksbase.core.Messages;
 
 /**
  * The command to execute an Xtend transformation. Handles MWE initialization

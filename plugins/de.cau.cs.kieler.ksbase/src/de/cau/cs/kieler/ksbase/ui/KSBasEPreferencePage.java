@@ -74,9 +74,9 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.part.FileEditorInput;
 
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
-import de.cau.cs.kieler.ksbase.transformations.EditorTransformationSettings;
-import de.cau.cs.kieler.ksbase.transformations.Transformation;
-import de.cau.cs.kieler.ksbase.transformations.TransformationManager;
+import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
+import de.cau.cs.kieler.ksbase.core.Transformation;
+import de.cau.cs.kieler.ksbase.core.TransformationManager;
 
 /**
  * The KSBasE preference page

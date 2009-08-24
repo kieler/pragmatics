@@ -1,4 +1,4 @@
-package de.cau.cs.kieler.ksbase.transformations;
+package de.cau.cs.kieler.ksbase.core;
 
 import org.eclipse.osgi.util.NLS;
 

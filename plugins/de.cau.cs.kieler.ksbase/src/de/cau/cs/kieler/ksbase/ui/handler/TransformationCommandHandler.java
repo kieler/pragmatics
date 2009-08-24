@@ -5,9 +5,9 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 
-import de.cau.cs.kieler.ksbase.transformations.EditorTransformationSettings;
-import de.cau.cs.kieler.ksbase.transformations.Transformation;
-import de.cau.cs.kieler.ksbase.transformations.TransformationManager;
+import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
+import de.cau.cs.kieler.ksbase.core.Transformation;
+import de.cau.cs.kieler.ksbase.core.TransformationManager;
 
 public class TransformationCommandHandler extends AbstractHandler implements
         IHandler {

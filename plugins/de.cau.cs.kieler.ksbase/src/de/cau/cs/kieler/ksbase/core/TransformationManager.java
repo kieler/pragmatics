@@ -12,7 +12,7 @@
  * See the file epl-v10.html for the license text.
  * 
  *****************************************************************************/
-package de.cau.cs.kieler.ksbase.transformations;
+package de.cau.cs.kieler.ksbase.core;
 
 import java.net.URI;
 import java.util.LinkedList;
@@ -29,6 +29,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
+import de.cau.cs.kieler.ksbase.ui.handler.ExecuteTransformationRequest;
 
 /**
  * Manages the creation of ExecuteTransformationCommands and the list of

@@ -29,9 +29,9 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.services.IServiceLocator;
 import org.osgi.framework.BundleContext;
 
-import de.cau.cs.kieler.ksbase.transformations.EditorTransformationSettings;
-import de.cau.cs.kieler.ksbase.transformations.Transformation;
-import de.cau.cs.kieler.ksbase.transformations.TransformationManager;
+import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
+import de.cau.cs.kieler.ksbase.core.Transformation;
+import de.cau.cs.kieler.ksbase.core.TransformationManager;
 import de.cau.cs.kieler.ksbase.ui.handler.TransformationCommandHandler;
 
 /**

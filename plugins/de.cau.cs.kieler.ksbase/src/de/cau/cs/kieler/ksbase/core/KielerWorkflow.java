@@ -12,7 +12,7 @@
  * See the file epl-v10.html for the license text.
  * 
  *****************************************************************************/
-package de.cau.cs.kieler.ksbase.transformations;
+package de.cau.cs.kieler.ksbase.core;
 
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.mwe.internal.core.Workflow;
