@@ -13,7 +13,7 @@
    <extension
          point="org.eclipse.gmf.runtime.diagram.ui.editpolicyProviders">
       <editpolicyProvider
-            class="de.cau.cs.kieler.ksbase.transformations.TransformationEditPolicyProvider">
+            class="de.cau.cs.kieler.ksbase.handler.TransformationEditPolicyProvider">
          <Priority
                name="Lowest">
          </Priority>

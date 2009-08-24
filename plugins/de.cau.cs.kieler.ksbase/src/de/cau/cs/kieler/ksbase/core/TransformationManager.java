@@ -145,8 +145,7 @@ public class TransformationManager {
                     editor + Messages.Preferences_Transformations).split(","); //$NON-NLS-2$
             for (String transformation : transformations) {
                 String prefix = editor + "." + transformation; //$NON-NLS-1$
-                Transformation t = new Transformation(store.getString(prefix
-                        + Messages.Preferences_Transformation_Name), transformation);
+                Transformation t = new Transformation(transformation, transformation);
                 t.setNumSelections(store.getInt(prefix + Messages.Preferences_Transformation_Selections));
                 t.setIconURI(URI.create(store.getString(prefix + Messages.Preferences_Transformation_Icon)));
                 t.setKeyboardShortcut(store.getString(prefix + Messages.Preferences_Transformation_Shortcut));

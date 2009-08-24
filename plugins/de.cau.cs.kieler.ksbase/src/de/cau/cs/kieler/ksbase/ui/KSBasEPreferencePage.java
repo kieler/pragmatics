@@ -72,6 +72,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.part.FileEditorInput;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
@@ -635,15 +637,16 @@ public class KSBasEPreferencePage extends PreferencePage implements
                                 if (col == 4) { // Number of selections has to
                                     // be an int-value
                                     try {
-                                        Integer.parseInt(text.getText());
-                                        innerRow.setText(col, text.getText());
+                                        int number = Integer.parseInt(text.getText());
+                                        transformation.setNumSelections(number);
                                     } catch (NumberFormatException excep) {
                                         // ignore invalid input
                                     }
-                                } else {
-                                    innerRow.setText(col, text.getText());
+                                } else if (col == 0) {
+                                    transformation.setName(text.getText());
                                 }
                                 text.dispose();
+                                cbEditors.notifyListeners(SWT.Selection, null);
                             }
 
                         }
@@ -711,7 +714,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
                         transformation.setIconURI(URI.create(fileName));
                         cbEditors.notifyListeners(SWT.Selection, null);
                     }
-                } else { // Keyboard shortcut
+                } else if (col == 5) { // Keyboard shortcut
                     // We are using two text fields here
                     // one for storing the actual shortcut text including
                     // modifiers ('text') and one
@@ -885,6 +888,10 @@ public class KSBasEPreferencePage extends PreferencePage implements
                     .getStringValue()));
             manager.storeTransformations();
         }
+
+        //Recreate menu, or add new :P
+        KSBasEPlugin.getDefault().createMenu();
+        
         return super.performOk();
     }
 

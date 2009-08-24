@@ -3,7 +3,7 @@ package de.cau.cs.kieler.ksbase.core;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-    private static final String BUNDLE_NAME = "de.cau.cs.kieler.ksbase.transformations.messages"; //$NON-NLS-1$
+    private static final String BUNDLE_NAME = "de.cau.cs.kieler.ksbase.core.messages"; //$NON-NLS-1$
     public static String EditorTransformationSettings_Default_Menu_Location;
     public static String EditorTransformationSettings_Default_Menu_Name;
     public static String EditorTransformationSettings_Default_Toolbar_Location;

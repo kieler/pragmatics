@@ -14,8 +14,21 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
+import org.eclipse.core.expressions.ElementHandler;
+import org.eclipse.core.expressions.EvaluationResult;
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ExpressionConverter;
+import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.internal.expressions.InstanceofExpression;
+import org.eclipse.core.internal.expressions.IterateExpression;
+import org.eclipse.core.internal.expressions.WithExpression;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.PlatformUI;
@@ -83,6 +96,9 @@ public class KSBasEPlugin extends AbstractUIPlugin {
                 .getWorkbench().getService(ICommandService.class);
         final Category kielerCategory = cmdService
                 .getCategory("de.cau.cs.kieler.commands.category");
+        //
+        // !! Hier weiter mit den anderen Menüs und vor allem den visibleWhen
+        // Expressions !!
 
         for (final EditorTransformationSettings settings : TransformationManager
                 .getInstance().getEditors()) {
@@ -92,6 +108,7 @@ public class KSBasEPlugin extends AbstractUIPlugin {
                 AbstractContributionFactory menuContribution = new AbstractContributionFactory(
                         settings.getMenuLocation(), null) {
 
+                    @SuppressWarnings("restriction")
                     @Override
                     public void createContributionItems(
                             IServiceLocator serviceLocator,
@@ -99,7 +116,8 @@ public class KSBasEPlugin extends AbstractUIPlugin {
                         MenuManager dynamicMenu = new MenuManager(settings
                                 .getMenuName(), "de.cau.cs.kieler.ksbase.menu"
                                 + settings.getMenuName());
-                        for (Transformation t : settings.getTransformations()) {
+                        for (final Transformation t : settings
+                                .getTransformations()) {
                             String cmdID = "de.cau.cs.kieler.ksbase.commands"
                                     + settings.getMenuName() + "."
                                     + t.getName().replace(' ', '_');
@@ -117,11 +135,30 @@ public class KSBasEPlugin extends AbstractUIPlugin {
                                     CommandContributionItem.STYLE_PUSH);
                             CommandContributionItem cmd = new CommandContributionItem(
                                     p);
+                            if (t.getPartConfig().length > 0) {
+                                try {
+                                    IterateExpression iterate = new IterateExpression(
+                                            "or", "false");
+                                    for (String part : t.getPartConfig()) {
+                                        InstanceofExpression instance = new InstanceofExpression(
+                                                part);
+                                        iterate.add(instance);
+                                    }
+                                    additions.registerVisibilityForChild(cmd,
+                                            iterate);
+                                    dynamicMenu.add(cmd);
+                                } catch (CoreException e) {
 
-                            dynamicMenu.add(cmd);
-
+                                }
+                            }
                         }
-                        additions.addContributionItem(dynamicMenu, null);
+                        
+                        WithExpression we = new WithExpression("activeEditor");
+                        InstanceofExpression exp = new InstanceofExpression(
+                                settings.getEditor());
+                        we.add(exp);
+
+                        additions.addContributionItem(dynamicMenu, we);
                     }
                 };
                 menuService.addContributionFactory(menuContribution);
