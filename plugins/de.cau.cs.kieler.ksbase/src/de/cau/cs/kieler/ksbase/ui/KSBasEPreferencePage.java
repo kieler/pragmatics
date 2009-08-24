@@ -203,9 +203,11 @@ public class KSBasEPreferencePage extends PreferencePage implements
     protected EditorTransformationSettings activeEditor;
     protected Table table;
     Composite tableComp, browserContainer, btComp;
+    private TransformationManager manager;
     
     public KSBasEPreferencePage() {
         setDescription("Preferences for the KIELER Structure Based Editing Features.");
+        manager = TransformationManager.getInstance();
     }
 
     /**
@@ -228,7 +230,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
              * Handles the selection of an editor from the combo box
              */
             public void widgetSelected(SelectionEvent e) {
-                EditorTransformationSettings editor = TransformationManager
+                EditorTransformationSettings editor = manager
                         .getEditorByName(((Combo) e.getSource()).getText());
                 activeEditor = editor;
                 if (activeEditor != null) { //Load editor settings 
@@ -328,7 +330,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
                         return;
                     }
                 }
-                EditorTransformationSettings editor = TransformationManager
+                EditorTransformationSettings editor = manager
                 .addEditor(editorName);
                 cbEditors.add(editor.getEditor());
                 cbEditors.select(cbEditors.indexOf(editor.getEditor()));
@@ -351,7 +353,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
                     String[] res = openElementSelectionDialog(DIAGRAM_EDITORS,
                             false, editContainer);
                     if (res != null) {
-                        TransformationManager.getEditorByName(
+                        manager.getEditorByName(
                                 cbEditors.getText()).setEditor(res[0]);
                         cbEditors.notifyListeners(SWT.Selection, null);
                     }
@@ -371,7 +373,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
              */
             public void widgetSelected(SelectionEvent e) {
                 if (cbEditors.getText().length() > 0) {
-                    TransformationManager.removeEditor(cbEditors.getText());
+                    manager.removeEditor(cbEditors.getText());
 
                     cbEditors.remove(cbEditors.getText());
                     if (cbEditors.getItemCount() > 0) {
@@ -457,7 +459,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
                     }
                 }
 
-                EditorTransformationSettings editor = TransformationManager.getEditorByName(cbEditors.getText());
+                EditorTransformationSettings editor = manager.getEditorByName(cbEditors.getText());
                 editor.setModelPackageClass( modelPack );
                 cbEditors.notifyListeners(SWT.Selection, null);
             }
@@ -506,7 +508,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
                         box.open();
                         return;
                     } else {
-                        TransformationManager.getEditorByName(
+                        manager.getEditorByName(
                                 cbEditors.getText()).setExtFile(result,true);
                         cbEditors.notifyListeners(SWT.Selection, null);
                     }
@@ -824,8 +826,8 @@ public class KSBasEPreferencePage extends PreferencePage implements
 
         });
         //Fill editors combo box with existing editors
-        if (TransformationManager.getEditors() != null) {
-            for (EditorTransformationSettings s : TransformationManager
+        if (manager.getEditors() != null) {
+            for (EditorTransformationSettings s : manager
                     .getEditors()) {
                 cbEditors.add(s.getEditor());
             }
@@ -842,7 +844,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
      */
     public void init(IWorkbench workbench) {
         setPreferenceStore(KSBasEPlugin.getDefault().getPreferenceStore());
-        TransformationManager.initializeTransformations();
+        manager.initializeTransformations();
     }
 
     /**
@@ -869,7 +871,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
             activeEditor.setPerformAutoLayout(bfAutoLayout.getSelection());
             activeEditor.setDefaultIconURI(URI.create(dfDefaultIcon
                     .getStringValue()));
-            TransformationManager.storeTransformations();
+            manager.storeTransformations();
         }
         return super.performOk();
     }

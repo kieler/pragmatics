@@ -76,7 +76,7 @@ public class KSBasEPlugin extends AbstractUIPlugin {
     public void start(BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
-        TransformationManager.initializeTransformations();
+        TransformationManager.getInstance().initializeTransformations();
         createMenu();
     }
 
@@ -89,7 +89,7 @@ public class KSBasEPlugin extends AbstractUIPlugin {
         final Category kielerCategory = cmdService
                 .getCategory("de.cau.cs.kieler.commands.category");
         
-        for (final EditorTransformationSettings settings : TransformationManager
+        for (final EditorTransformationSettings settings : TransformationManager.getInstance()
                 .getEditors()) {
             if (settings.isShownInMenu()
                     && settings.getMenuLocation().length() > 0) {

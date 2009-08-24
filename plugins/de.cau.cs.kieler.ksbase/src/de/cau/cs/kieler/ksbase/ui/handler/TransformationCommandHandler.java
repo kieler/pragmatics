@@ -21,7 +21,7 @@ public class TransformationCommandHandler extends AbstractHandler implements IHa
     }
     
     public Object execute(ExecutionEvent event) throws ExecutionException {
-        TransformationManager.createAndExecuteTransformationCommand(event, editor, transformation);
+        TransformationManager.getInstance().createAndExecuteTransformationCommand(event, editor, transformation);
         return null;
     }
 }
