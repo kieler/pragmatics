@@ -22,28 +22,29 @@ import org.eclipse.gmf.runtime.diagram.ui.services.editpolicy.IEditPolicyProvide
 
 /**
  * Provides an edit policy the create and execute KSBasE commands
+ * 
  * @author Michael Matzen
- *
+ * 
  */
-public class TransformationEditPolicyProvider extends AbstractProvider implements
-IEditPolicyProvider {
+public class TransformationEditPolicyProvider extends AbstractProvider
+        implements IEditPolicyProvider {
 
-    /** the key used to install an <i>execute transformation</i> edit policy  */
+    /** the key used to install an <i>execute transformation</i> edit policy */
     public static final String EXECUTE_TRANSFORMATION_ROLE = "ExecuteTransformationEditPolicy";
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.gmf.runtime.diagram.ui.services.editpolicy.IEditPolicyProvider#createEditPolicies(org.eclipse.gef.EditPart)
      */
     public void createEditPolicies(EditPart editPart) {
-            editPart.installEditPolicy(EXECUTE_TRANSFORMATION_ROLE,
-                    new ExecuteTransformationEditPolicy());
+        editPart.installEditPolicy(EXECUTE_TRANSFORMATION_ROLE,
+                new ExecuteTransformationEditPolicy());
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.gmf.runtime.common.core.service.IProvider#provides(org.eclipse.gmf.runtime.common.core.service.IOperation)
      */
-	public boolean provides(IOperation operation) {
-		return operation instanceof CreateEditPoliciesOperation;
-	}
+    public boolean provides(IOperation operation) {
+        return operation instanceof CreateEditPoliciesOperation;
+    }
 
 }

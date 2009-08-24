@@ -19,11 +19,13 @@ import org.eclipse.emf.mwe.internal.core.Workflow;
 import org.eclipse.xtend.XtendComponent;
 import org.eclipse.xtend.typesystem.emf.EcoreUtil2;
 import org.eclipse.xtend.typesystem.emf.EmfMetaModel;
+
 /**
- * An extension of the MWE default workflow.
- * Used to perform custom initializations
+ * An extension of the MWE default workflow. Used to perform custom
+ * initializations
+ * 
  * @author Michael Matzen
- *
+ * 
  */
 @SuppressWarnings("restriction")
 public class KielerWorkflow extends Workflow {
@@ -32,14 +34,17 @@ public class KielerWorkflow extends Workflow {
 
     /**
      * Creates and initializes an oAW Workflow
-     * @param modelURI URI of model instance
-     * @param operation Xtend function name
-     * @param modelSelections selected model elements
+     * 
+     * @param modelURI
+     *            URI of model instance
+     * @param operation
+     *            Xtend function name
+     * @param modelSelections
+     *            selected model elements
      */
     public KielerWorkflow(String operation, String fileName, String basePackage) {
         super();
 
-        
         /*
         StandaloneSetup setup = new StandaloneSetup();
         setup.addRegisterGeneratedEPackage("de.cau.cs.kieler.synccharts.SyncchartsPackage");
@@ -49,21 +54,19 @@ public class KielerWorkflow extends Workflow {
         xtendComponent = new XtendComponent();
         // with an EMFMetaMetaModel,
         EmfMetaModel emfmodel;
-        
+
         EPackage pack = EcoreUtil2.getEPackageByClassName(basePackage);
-        //(EPackage)ClassLoader.getSystemClassLoader().loadClass(basePackage2).cast(EPackage.class);
-        //System.out.println(pack.getName());
-        
-        emfmodel = new EmfMetaModel( 
-                pack);
-        
+        // (EPackage)ClassLoader.getSystemClassLoader().loadClass(basePackage2).cast(EPackage.class);
+        // System.out.println(pack.getName());
+
+        emfmodel = new EmfMetaModel(pack);
+
         // Set metaModel-Slot
         xtendComponent.addMetaModel(emfmodel);
-        
-        String value = fileName+"::"+operation+"(model)";
-        
-        xtendComponent
-                .setInvoke(value);
+
+        String value = fileName + "::" + operation + "(model)";
+
+        xtendComponent.setInvoke(value);
 
         // Don't forget to add the components to the workflow !!
         this.addComponent(xtendComponent);

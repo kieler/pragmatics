@@ -30,27 +30,32 @@ import org.eclipse.core.runtime.Path;
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 
 /**
- * Stores the KSBasE settings for one specific editor
- * Class is serializable so it can be stored in an external File
+ * Stores the KSBasE settings for one specific editor Class is serializable so
+ * it can be stored in an external File
+ * 
  * @author Michael Matzen
- *
+ * 
  */
 public class EditorTransformationSettings implements Serializable {
 
     private static final long serialVersionUID = -7706521956908478893L;
-    private String modelPackageClass; //The model package class
-    private String menuName; //Name of the menu 
-    private String menuLocation; //Location of the menu
-    private String toolbarLocation; //Location of the toolbar
-    private int visibilityFlags; //Visiblity flags (see KSBasePlugin.java)
-    private boolean performAutoLayout; //Run auto-layout after transformation
-    private URI defaultIconURI; //Default icon for menu/toolbar/balloon/contextmenu entries
-    private String editor; //Editor to which this setting is assigned 
-    private String extFile; //Xtend file in which the transformations are defined
-    private LinkedList<Transformation> transformations; //The current List of Transformations
+    private String modelPackageClass; // The model package class
+    private String menuName; // Name of the menu
+    private String menuLocation; // Location of the menu
+    private String toolbarLocation; // Location of the toolbar
+    private int visibilityFlags; // Visiblity flags (see KSBasePlugin.java)
+    private boolean performAutoLayout; // Run auto-layout after transformation
+    private URI defaultIconURI; // Default icon for
+                                // menu/toolbar/balloon/contextmenu entries
+    private String editor; // Editor to which this setting is assigned
+    private String extFile; // Xtend file in which the transformations are
+                            // defined
+    private LinkedList<Transformation> transformations; // The current List of
+                                                        // Transformations
 
     /**
-     * Creates a new transformation setting with the given editor 
+     * Creates a new transformation setting with the given editor
+     * 
      * @param editor
      */
     public EditorTransformationSettings(String editor) {
@@ -70,6 +75,7 @@ public class EditorTransformationSettings implements Serializable {
 
     /**
      * Set the editor class
+     * 
      * @param editor
      */
     public void setEditor(String editor) {
@@ -78,6 +84,7 @@ public class EditorTransformationSettings implements Serializable {
 
     /**
      * Gets the assigned editor
+     * 
      * @return
      */
     public String getEditor() {
@@ -86,18 +93,20 @@ public class EditorTransformationSettings implements Serializable {
 
     /**
      * Gets the model URI
+     * 
      * @return A string representation of the model Package
      */
     public String getModelPackageClass() {
 
-        if ( modelPackageClass == null)
+        if (modelPackageClass == null)
             return "";
-        else 
-        return modelPackageClass;
+        else
+            return modelPackageClass;
     }
 
     /**
      * Sets a model URI
+     * 
      * @param modelURI
      */
     public void setModelPackageClass(String modelPackageClass) {
@@ -106,6 +115,7 @@ public class EditorTransformationSettings implements Serializable {
 
     /**
      * Gets the menu name
+     * 
      * @return Name of the menu
      */
     public String getMenuName() {
@@ -201,67 +211,72 @@ public class EditorTransformationSettings implements Serializable {
 
     public void setExtFile(String extFile, boolean parseFile) {
         this.extFile = extFile;
-        if ( parseFile )
-        parseTransformationsFromFile();
+        if (parseFile)
+            parseTransformationsFromFile();
     }
 
     /**
      * Parses the given Xtend file and stores the in-place m2m transformations.
-     * This parsing is based on the Xtend function names only!
-     * So renaming a function in Xtend will reset the KSbasE transformation
+     * This parsing is based on the Xtend function names only! So renaming a
+     * function in Xtend will reset the KSbasE transformation
      */
     public void parseTransformationsFromFile() {
-        //extFile should not be null, only if we read an old config file
+        // extFile should not be null, only if we read an old config file
         if (extFile != null && extFile.length() > 0) {
-            //Create path from fileName
+            // Create path from fileName
             IPath path = new Path(extFile);
-            //Create IFile from path
+            // Create IFile from path
             IFile file = ResourcesPlugin.getWorkspace().getRoot()
                     .getFileForLocation(path);
-            //If the file does not exist, we create an empty list
+            // If the file does not exist, we create an empty list
             if (file == null || !file.exists()) {
                 this.transformations = new LinkedList<Transformation>();
                 return;
             }
-            try { //read Xtend functions
+            try { // read Xtend functions
                 LinkedList<Transformation> newTrans = new LinkedList<Transformation>();
                 BufferedReader reader = new BufferedReader(
                         new InputStreamReader(file.getContents()));
                 while (reader.ready()) {
-                    //Read one line ... TODO: Check if functions can be defined over multiple lines...
+                    // Read one line ... TODO: Check if functions can be defined
+                    // over multiple lines...
                     String in = reader.readLine();
                     // Ugly isn't it? Parsing xtend by hand, assuming we get a
                     // correct file
-                    //Split only twice ! so we only split return types and function
-                    //declarations but not the parameters
-                    String[] token = in.split(" ",2);
+                    // Split only twice ! so we only split return types and
+                    // function
+                    // declarations but not the parameters
+                    String[] token = in.split(" ", 2);
                     if (token != null && token.length > 0) {
                         if (token[0].equalsIgnoreCase("import")) {
-                            // we don't need the import statement, cause it's Xtend only
-                        } else if (token[0].equalsIgnoreCase("void")) { 
-                            //Only parse 'Void' functions
+                            // we don't need the import statement, cause it's
+                            // Xtend only
+                        } else if (token[0].equalsIgnoreCase("void")) {
+                            // Only parse 'Void' functions
                             String methodName = token[1].substring(0, token[1]
-                                    .indexOf('(')); 
+                                    .indexOf('('));
                             String[] params = token[1].substring(
                                     token[1].indexOf('(') + 1,
                                     token[1].indexOf(')')).split(",");
                             Transformation tNew = new Transformation(
                                     methodName, methodName);
                             tNew.setNumSelections(params.length);
-                            //If the parsed function is not contained in the list of existing transformations, we add it now
+                            // If the parsed function is not contained in the
+                            // list of existing transformations, we add it now
                             if (this.transformations.contains(tNew)) {
                                 newTrans
                                         .add(this.transformations
                                                 .get(this.transformations
                                                         .indexOf(tNew)));
                             } else {
-                                //else we simply add a new default transformation
+                                // else we simply add a new default
+                                // transformation
                                 newTrans.add(tNew);
                             }
                         }
                     }
                 }
-                    this.transformations = newTrans;
+                this.transformations = newTrans;
             } catch (CoreException e) {
                 // ignore
             } catch (IOException e) {

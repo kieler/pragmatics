@@ -23,40 +23,44 @@ import org.eclipse.gmf.runtime.emf.core.util.EObjectAdapter;
 import org.eclipse.gmf.runtime.notation.View;
 
 /**
- * Edit policy used to execute a specific transformation. This edit policy creates a
- * {@link ExecuteTransformationCommand} to execute the transformation.
+ * Edit policy used to execute a specific transformation. This edit policy
+ * creates a {@link ExecuteTransformationCommand} to execute the transformation.
  * 
  * @author Michael Matzen
  */
 public class ExecuteTransformationEditPolicy extends AbstractEditPolicy {
 
-    
     /* (non-Javadoc)
      * @see org.eclipse.gef.editpolicies.AbstractEditPolicy#understandsRequest(org.eclipse.gef.Request)
      */
     @Override
     public boolean understandsRequest(Request req) {
-    	return (ExecuteTransformationRequest.REQ_EXEC_TRANS).equals(req.getType());
+        return (ExecuteTransformationRequest.REQ_EXEC_TRANS).equals(req
+                .getType());
     }
-	
+
     /* (non-Javadoc)
      * @see org.eclipse.gef.editpolicies.AbstractEditPolicy#getCommand(org.eclipse.gef.Request)
      */
     @Override
     public Command getCommand(Request req) {
-    	if ( ExecuteTransformationRequest.REQ_EXEC_TRANS.equals(req.getType())) {
-    		if ( req instanceof ExecuteTransformationRequest) {
-    			ExecuteTransformationRequest transformationRequest = (ExecuteTransformationRequest)req;
-    			IGraphicalEditPart hostEPart = (IGraphicalEditPart)getHost();
-    			ExecuteTransformationCommand command = new ExecuteTransformationCommand(hostEPart.getEditingDomain(), "Execute transformation", 
-    					new EObjectAdapter((View)hostEPart.getModel()));
-    			command.initalize(transformationRequest.getEditPart(), transformationRequest.getSelection(), transformationRequest.getCommand(), transformationRequest.getSelectionCount(), transformationRequest.getFileName(), transformationRequest.getModelPackage());
-    			return new ICommandProxy(command);
-    		}
-    		else 
-    			return null;
-    	}
-    	else 
-    		return super.getCommand(req);
+        if (ExecuteTransformationRequest.REQ_EXEC_TRANS.equals(req.getType())) {
+            if (req instanceof ExecuteTransformationRequest) {
+                ExecuteTransformationRequest transformationRequest = (ExecuteTransformationRequest) req;
+                IGraphicalEditPart hostEPart = (IGraphicalEditPart) getHost();
+                ExecuteTransformationCommand command = new ExecuteTransformationCommand(
+                        hostEPart.getEditingDomain(), "Execute transformation",
+                        new EObjectAdapter((View) hostEPart.getModel()));
+                command.initalize(transformationRequest.getEditPart(),
+                        transformationRequest.getSelection(),
+                        transformationRequest.getCommand(),
+                        transformationRequest.getSelectionCount(),
+                        transformationRequest.getFileName(),
+                        transformationRequest.getModelPackage());
+                return new ICommandProxy(command);
+            } else
+                return null;
+        } else
+            return super.getCommand(req);
     }
 }

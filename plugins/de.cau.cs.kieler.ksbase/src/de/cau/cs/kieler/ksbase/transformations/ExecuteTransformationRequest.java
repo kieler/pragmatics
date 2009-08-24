@@ -14,7 +14,6 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.transformations;
 
-import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.gef.Request;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
@@ -26,75 +25,77 @@ import org.eclipse.ui.IEditorPart;
  */
 public class ExecuteTransformationRequest extends Request {
 
-	/** The request, used to initiate a transformation*/
-	public static final String REQ_EXEC_TRANS = "execute transformation";
-	
-	//Variables used to initialize the command
-	private IEditorPart editPart;
-	private String command;
-	private String fileName;
-	private ISelection selection;
-	private int selectionCount;
-	private String modelPackage;
-	
-	/**
-	 * Creates a transformation request
-	 */
-	public ExecuteTransformationRequest(IEditorPart ePart, String command, String fileName, ISelection selection, int selectionCount, String modelPackage) {
-		super(REQ_EXEC_TRANS);
-		this.editPart = ePart;
-		this.command = command;
-		this.fileName = fileName;
-		this.modelPackage = modelPackage;
-		this.selection = selection;
-		this.selectionCount = selectionCount; 
-	}
-	
-	public void setModelPackage(String modelPackage) {
-	    this.modelPackage = modelPackage;
-	}
-	
-	public String getModelPackage() {
-	    return this.modelPackage;
-	}
-	
-	public void setEditPart(IEditorPart part) {
-		this.editPart = part;
-	}
-	
-	public IEditorPart getEditPart() {
-		return this.editPart;
-	}
-	
-	public void setCommand(String command) {
-		this.command = command;
-	}
-	
-	public String getCommand() {
-		return this.command;
-	}
-	
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
+    /** The request, used to initiate a transformation */
+    public static final String REQ_EXEC_TRANS = "execute transformation";
 
-	public String getFileName() {
-		return this.fileName;
-	}
-	
-	public void setSelection(ISelection selection) {
-		this.selection = selection;
-	}
-	
-	public ISelection getSelection() {
-		return this.selection;
-	}
-	
-	public void setSelectionCount(int count) {
-		this.selectionCount = count;
-	}
-	
-	public int getSelectionCount() {
-		return this.selectionCount;
-	}
+    // Variables used to initialize the command
+    private IEditorPart editPart;
+    private String command;
+    private String fileName;
+    private ISelection selection;
+    private int selectionCount;
+    private String modelPackage;
+
+    /**
+     * Creates a transformation request
+     */
+    public ExecuteTransformationRequest(IEditorPart ePart, String command,
+            String fileName, ISelection selection, int selectionCount,
+            String modelPackage) {
+        super(REQ_EXEC_TRANS);
+        this.editPart = ePart;
+        this.command = command;
+        this.fileName = fileName;
+        this.modelPackage = modelPackage;
+        this.selection = selection;
+        this.selectionCount = selectionCount;
+    }
+
+    public void setModelPackage(String modelPackage) {
+        this.modelPackage = modelPackage;
+    }
+
+    public String getModelPackage() {
+        return this.modelPackage;
+    }
+
+    public void setEditPart(IEditorPart part) {
+        this.editPart = part;
+    }
+
+    public IEditorPart getEditPart() {
+        return this.editPart;
+    }
+
+    public void setCommand(String command) {
+        this.command = command;
+    }
+
+    public String getCommand() {
+        return this.command;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getFileName() {
+        return this.fileName;
+    }
+
+    public void setSelection(ISelection selection) {
+        this.selection = selection;
+    }
+
+    public ISelection getSelection() {
+        return this.selection;
+    }
+
+    public void setSelectionCount(int count) {
+        this.selectionCount = count;
+    }
+
+    public int getSelectionCount() {
+        return this.selectionCount;
+    }
 }

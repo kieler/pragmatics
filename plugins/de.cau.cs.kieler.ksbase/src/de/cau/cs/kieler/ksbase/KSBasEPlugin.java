@@ -16,11 +16,7 @@ package de.cau.cs.kieler.ksbase;
 
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
-import org.eclipse.core.commands.CommandManager;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
@@ -34,7 +30,6 @@ import org.eclipse.ui.services.IServiceLocator;
 import org.osgi.framework.BundleContext;
 
 import de.cau.cs.kieler.ksbase.transformations.EditorTransformationSettings;
-import de.cau.cs.kieler.ksbase.transformations.ExecuteTransformationCommand;
 import de.cau.cs.kieler.ksbase.transformations.Transformation;
 import de.cau.cs.kieler.ksbase.transformations.TransformationManager;
 import de.cau.cs.kieler.ksbase.ui.handler.TransformationCommandHandler;
@@ -88,9 +83,9 @@ public class KSBasEPlugin extends AbstractUIPlugin {
                 .getWorkbench().getService(ICommandService.class);
         final Category kielerCategory = cmdService
                 .getCategory("de.cau.cs.kieler.commands.category");
-        
-        for (final EditorTransformationSettings settings : TransformationManager.getInstance()
-                .getEditors()) {
+
+        for (final EditorTransformationSettings settings : TransformationManager
+                .getInstance().getEditors()) {
             if (settings.isShownInMenu()
                     && settings.getMenuLocation().length() > 0) {
                 // Create menu contributions
@@ -102,9 +97,12 @@ public class KSBasEPlugin extends AbstractUIPlugin {
                             IServiceLocator serviceLocator,
                             IContributionRoot additions) {
                         MenuManager dynamicMenu = new MenuManager(settings
-                                .getMenuName(), "de.cau.cs.kieler.ksbase.menu"+settings.getMenuName());
+                                .getMenuName(), "de.cau.cs.kieler.ksbase.menu"
+                                + settings.getMenuName());
                         for (Transformation t : settings.getTransformations()) {
-                            String cmdID = "de.cau.cs.kieler.ksbase.commands"+settings.getMenuName()+"."+t.getName().replace(' ', '_');
+                            String cmdID = "de.cau.cs.kieler.ksbase.commands"
+                                    + settings.getMenuName() + "."
+                                    + t.getName().replace(' ', '_');
                             Command transformationCommand = cmdService
                                     .getCommand(cmdID);
                             if (!transformationCommand.isDefined()) {
@@ -112,10 +110,14 @@ public class KSBasEPlugin extends AbstractUIPlugin {
                                         kielerCategory);
                             }
                             transformationCommand
-                                    .setHandler(new TransformationCommandHandler(settings, t));
-                            CommandContributionItemParameter p = new CommandContributionItemParameter(PlatformUI.getWorkbench(),null,cmdID,CommandContributionItem.STYLE_PUSH);
-                            CommandContributionItem cmd = new CommandContributionItem(p);
-                            
+                                    .setHandler(new TransformationCommandHandler(
+                                            settings, t));
+                            CommandContributionItemParameter p = new CommandContributionItemParameter(
+                                    PlatformUI.getWorkbench(), null, cmdID,
+                                    CommandContributionItem.STYLE_PUSH);
+                            CommandContributionItem cmd = new CommandContributionItem(
+                                    p);
+
                             dynamicMenu.add(cmd);
 
                         }

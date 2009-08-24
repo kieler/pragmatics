@@ -22,23 +22,26 @@ import java.net.URI;
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 
 /**
- * The connection between Xtend functions and the KSBasE plugin
- * Stores additional information about how the transformation can be executed 
- * by the user/workbench 
+ * The connection between Xtend functions and the KSBasE plugin Stores
+ * additional information about how the transformation can be executed by the
+ * user/workbench
+ * 
  * @author Michael Matzen
- *
+ * 
  */
 public class Transformation implements Serializable {
 
     private static final long serialVersionUID = -6839991969679808483L;
     private String name; // Menu entry name
     private String transformationName; // Xtend method name
-    private int visibilityFlags; // Visibility configuration, any combination of visibility Flags from KSBasePlugin
+    private int visibilityFlags; // Visibility configuration, any combination of
+                                 // visibility Flags from KSBasePlugin
     private int numSelections; // Number of selections;
     private URI iconURI; // URI to icon
-    private String keyboardShortcut; //Assigned keyboard shortcut
+    private String keyboardShortcut; // Assigned keyboard shortcut
     private String[] partConfig; // Parts for which this transformation is
-                                 // defined
+
+    // defined
 
     /**
      * Creates a new Transformation
@@ -46,7 +49,9 @@ public class Transformation implements Serializable {
     public Transformation(String name, String transformation) {
         this.name = name;
         this.transformationName = transformation;
-        this.visibilityFlags = KSBasEPlugin.SHOW_MENU | KSBasEPlugin.SHOW_CONTEXT | KSBasEPlugin.SHOW_TOOLBAR | KSBasEPlugin.SHOW_BALLOON;
+        this.visibilityFlags = KSBasEPlugin.SHOW_MENU
+                | KSBasEPlugin.SHOW_CONTEXT | KSBasEPlugin.SHOW_TOOLBAR
+                | KSBasEPlugin.SHOW_BALLOON;
         numSelections = 1;
         iconURI = URI.create("");
         keyboardShortcut = "";
@@ -84,19 +89,19 @@ public class Transformation implements Serializable {
     public boolean isShownInMenu() {
         return (this.visibilityFlags & KSBasEPlugin.SHOW_MENU) == KSBasEPlugin.SHOW_MENU;
     }
-    
+
     public boolean isShownIToolbar() {
         return (this.visibilityFlags & KSBasEPlugin.SHOW_TOOLBAR) == KSBasEPlugin.SHOW_TOOLBAR;
     }
-    
+
     public boolean isShownInContext() {
         return (this.visibilityFlags & KSBasEPlugin.SHOW_CONTEXT) == KSBasEPlugin.SHOW_CONTEXT;
     }
-    
+
     public boolean isShownInBalloon() {
         return (this.visibilityFlags & KSBasEPlugin.SHOW_BALLOON) == KSBasEPlugin.SHOW_BALLOON;
     }
-    
+
     public int getVisiblity() {
         return this.visibilityFlags;
     }
@@ -108,10 +113,10 @@ public class Transformation implements Serializable {
     public String getIconString() {
         if (iconURI == null)
             return "";
-        else 
+        else
             return iconURI.toString();
     }
-    
+
     public URI getIconURI() {
         return this.iconURI;
     }
@@ -123,29 +128,29 @@ public class Transformation implements Serializable {
     public String[] getPartConfig() {
         return this.partConfig;
     }
-    
+
     public String getPartConfigList() {
-        if ( partConfig == null)
+        if (partConfig == null)
             return "";
-        
+
         String res = "";
-        for ( int i = 0 ; i < partConfig.length; ++i) {
+        for (int i = 0; i < partConfig.length; ++i) {
             res += partConfig[i];
-            if ( i < partConfig.length-1 )
+            if (i < partConfig.length - 1)
                 res += ",";
         }
         return res;
     }
 
     public String getKeyboardShortcut() {
-		return keyboardShortcut;
-	}
+        return keyboardShortcut;
+    }
 
-	public void setKeyboardShortcut(String keyboardShortcut) {
-		this.keyboardShortcut = keyboardShortcut;
-	}
+    public void setKeyboardShortcut(String keyboardShortcut) {
+        this.keyboardShortcut = keyboardShortcut;
+    }
 
-	public void serialize(ObjectOutputStream writer) {
+    public void serialize(ObjectOutputStream writer) {
         try {
             writer.writeObject(this.name);
             writer.writeObject(this.transformationName);
@@ -155,20 +160,20 @@ public class Transformation implements Serializable {
             writer.writeObject(this.partConfig);
         } catch (IOException e) {
             e.printStackTrace();
-       }
+        }
     }
-	
-	
-	/**
-	 * Two transformations are equal, when they have the same transformation name 
-	 * and the same number of parameters 
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if ( obj instanceof Transformation) {
-			return (  numSelections == ((Transformation)obj).getNumSelections()) &&
-				( transformationName.equals( ((Transformation)obj).getTransformationName()) );
-		}
-	return false;
-}
+
+    /**
+     * Two transformations are equal, when they have the same transformation
+     * name and the same number of parameters
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Transformation) {
+            return (numSelections == ((Transformation) obj).getNumSelections())
+                    && (transformationName.equals(((Transformation) obj)
+                            .getTransformationName()));
+        }
+        return false;
+    }
 }
