@@ -91,13 +91,13 @@ public class KSBasEPreferencePage extends PreferencePage implements
     // preference page
     // The classes which have to be implemented/extended by a class to be used
     // as an editor
-    protected static final String DIAGRAM_EDITORS[] = new String[] { "org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor" };
+    protected static final String DIAGRAM_EDITORS[] = new String[] { "org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor" }; //$NON-NLS-1$
     // The classes which have to be implemented/extended by a class to be used
     // as selections for a transformation
     protected static final String DIAGRAM_EDIT_PARTS[] = new String[] {
-            "org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart",
-            "org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionNodeEditPart" };
-    protected static final String DIAGRAM_PACKAGES[] = new String[] { "org.eclipse.emf.ecore.EPackage" };
+            "org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart", //$NON-NLS-1$
+            "org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionNodeEditPart" }; //$NON-NLS-1$
+    protected static final String DIAGRAM_PACKAGES[] = new String[] { "org.eclipse.emf.ecore.EPackage" }; //$NON-NLS-1$
 
     /**
      * A Dialog which contains 4 check boxes Show in Menu, Show in Context, Show
@@ -123,30 +123,30 @@ public class KSBasEPreferencePage extends PreferencePage implements
             Shell parent = getParent();
             final Shell shell = new Shell(parent, SWT.DIALOG_TRIM
                     | SWT.APPLICATION_MODAL);
-            shell.setText("Select visibility");
+            shell.setText(Messages.KSBasEPreferencePage_CheckBoxDialog_Title);
 
             Composite pane = new Composite(shell, SWT.NONE);
             pane.setLayout(new GridLayout(4, false));
 
-            new Label(pane, SWT.NONE).setText("Show in Menu");
+            new Label(pane, SWT.NONE).setText(Messages.KSBasEPreferencePage_ShowInMenu);
             btMenu = new Button(pane, SWT.CHECK);
             btMenu.setSelection(initalSelections[0]);
 
-            new Label(pane, SWT.NONE).setText("Show in Context");
+            new Label(pane, SWT.NONE).setText(Messages.KSBasEPreferencePage_ShowInPopup);
             btContext = new Button(pane, SWT.CHECK);
             btContext.setSelection(initalSelections[1]);
 
-            new Label(pane, SWT.NONE).setText("Show in Toolbar");
+            new Label(pane, SWT.NONE).setText(Messages.KSBasEPreferencePage_ShowInToolbar);
             btToolbar = new Button(pane, SWT.CHECK);
             btToolbar.setSelection(initalSelections[2]);
 
-            new Label(pane, SWT.NONE).setText("Show in Balloon");
+            new Label(pane, SWT.NONE).setText(Messages.KSBasEPreferencePage_ShowInBalloon);
             btBalloon = new Button(pane, SWT.CHECK);
             btBalloon.setSelection(initalSelections[3]);
             new Label(pane, SWT.NONE);
 
             Button btCancel = new Button(pane, SWT.NONE);
-            btCancel.setText("Cancel");
+            btCancel.setText(Messages.KSBasEPreferencePage_Button_Cancel);
             btCancel.addSelectionListener(new SelectionListener() {
 
                 public void widgetDefaultSelected(SelectionEvent e) {
@@ -161,7 +161,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
 
             });
             Button btOK = new Button(pane, SWT.NONE);
-            btOK.setText("OK");
+            btOK.setText(Messages.KSBasEPreferencePage_Button_OK);
             btOK.addSelectionListener(new SelectionListener() {
 
                 public void widgetDefaultSelected(SelectionEvent e) {
@@ -204,7 +204,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
     private TransformationManager manager;
 
     public KSBasEPreferencePage() {
-        setDescription("Preferences for the KIELER Structure Based Editing Features.");
+        setDescription(Messages.KSBasEPreferencePage_Title);
         manager = TransformationManager.getInstance();
     }
 
@@ -217,7 +217,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
         GridLayout layout = new GridLayout(2, false);
 
         Label editorLabel = new Label(container, SWT.NONE);
-        editorLabel.setText("Editor :");
+        editorLabel.setText(Messages.KSBasEPreferencePage_EditorSelection_Title);
         cbEditors = new Combo(container, SWT.DROP_DOWN | SWT.READ_ONLY);
         cbEditors.addSelectionListener(new SelectionListener() {
 
@@ -248,26 +248,26 @@ public class KSBasEPreferencePage extends PreferencePage implements
                     table.removeAll();
                     for (Transformation t : editor.getTransformations()) {
                         TableItem tItem = new TableItem(table, SWT.NONE);
-                        String showIn = "";
+                        String showIn = ""; //$NON-NLS-1$
                         if (t.getVisiblity() == 15)
-                            showIn = "All";
+                            showIn = Messages.KSBasEPreferencePage_ShowIn_All;
                         else {
                             if (t.isShownInMenu())
-                                showIn = "Menu";
+                                showIn = Messages.KSBasEPreferencePage_ShowIn_Menu;
                             if (t.isShownInContext()) {
                                 if (showIn.length() > 0)
-                                    showIn += "|";
-                                showIn += "Popup";
+                                    showIn += Messages.KSBasEPreferencePage_ShowIn_Separator;
+                                showIn += Messages.KSBasEPreferencePage_ShowIn_Popup;
                             }
                             if (t.isShownIToolbar()) {
                                 if (showIn.length() > 0)
-                                    showIn += "|";
-                                showIn += "Toolbar";
+                                    showIn += Messages.KSBasEPreferencePage_ShowIn_Separator;
+                                showIn += Messages.KSBasEPreferencePage_ShowIn_Toolbar;
                             }
                             if (t.isShownInBalloon()) {
                                 if (showIn.length() > 0)
-                                    showIn += "|";
-                                showIn += "Balloon";
+                                    showIn += Messages.KSBasEPreferencePage_ShowIn_Separator;
+                                showIn += Messages.KSBasEPreferencePage_ShowIn_Balloon;
                             }
                         }
                         tItem.setText(new String[] { t.getName(),
@@ -301,7 +301,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
         final Composite editContainer = new Composite(container, SWT.NONE);
         editContainer.setLayout(new RowLayout());
         Button btAddEditor = new Button(editContainer, SWT.RIGHT);
-        btAddEditor.setText("Add");
+        btAddEditor.setText(Messages.KSBasEPreferencePage_EditorSelection_Add);
         btAddEditor.addSelectionListener(new SelectionListener() {
 
             public void widgetDefaultSelected(SelectionEvent e) {
@@ -314,16 +314,16 @@ public class KSBasEPreferencePage extends PreferencePage implements
             public void widgetSelected(SelectionEvent e) {
                 String[] res = openElementSelectionDialog(DIAGRAM_EDITORS,
                         false, editContainer);
-                String editorName = "";
+                String editorName = ""; //$NON-NLS-1$
                 if (res != null) {
                     editorName = res[0];
 
                 } else {
                     InputDialog dlg = new InputDialog(
                             getShell(),
-                            "No diagram found",
-                            "No diagram was found in your current workspace, you can enter a fully qualified class name now or reconfigure your workspace settings and try again later",
-                            "org.example.MyDiagramEditor", null);
+                            Messages.KSBasEPreferencePage_DiagramEditor_NoDiagram_Title,
+                            Messages.KSBasEPreferencePage_DiagramEditor_NoDiagram_Message,
+                            Messages.KSBasEPreferencePage_DiagramEditor_NoDiagram_Default, null);
                     if (dlg.open() == InputDialog.OK) {
                         editorName = dlg.getValue();
                     } else {
@@ -339,7 +339,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
 
         });
         Button btModifyEditor = new Button(editContainer, SWT.RIGHT);
-        btModifyEditor.setText("Edit");
+        btModifyEditor.setText(Messages.KSBasEPreferencePage_EditorSelection_Editor);
         btModifyEditor.addSelectionListener(new SelectionListener() {
 
             public void widgetDefaultSelected(SelectionEvent e) {
@@ -362,7 +362,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
 
         });
         Button btDelEditor = new Button(editContainer, SWT.RIGHT);
-        btDelEditor.setText("Delete");
+        btDelEditor.setText(Messages.KSBasEPreferencePage_EditorSelection_Delete);
         btDelEditor.addSelectionListener(new SelectionListener() {
 
             public void widgetDefaultSelected(SelectionEvent e) {
@@ -379,14 +379,14 @@ public class KSBasEPreferencePage extends PreferencePage implements
                     if (cbEditors.getItemCount() > 0) {
                         cbEditors.select(0);
                     } else { // Disable controls if no other editor exists
-                        sfMetaModel.setText("");
+                        sfMetaModel.setText(""); //$NON-NLS-1$
                         sfMetaModel.setEnabled(false);
                         sfMenu.setEnabled(false);
-                        sfMenu.setText("");
+                        sfMenu.setText(""); //$NON-NLS-1$
                         sfMenuLoc.setEnabled(false);
-                        sfMenuLoc.setText("");
+                        sfMenuLoc.setText(""); //$NON-NLS-1$
                         sfToolbarLoc.setEnabled(false);
-                        sfToolbarLoc.setText("");
+                        sfToolbarLoc.setText(""); //$NON-NLS-1$
                         browserContainer.setEnabled(false);
                         tableComp.setEnabled(false);
                         btComp.setEnabled(false);
@@ -403,7 +403,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
 
         });
 
-        new Label(container, SWT.NONE).setText("Menu Name");
+        new Label(container, SWT.NONE).setText(Messages.KSBasEPreferencePage_MenuName);
         sfMenu = new Text(container, SWT.SINGLE | SWT.BORDER);
         sfMenu.setTextLimit(50);
         sfMenu
@@ -411,13 +411,13 @@ public class KSBasEPreferencePage extends PreferencePage implements
                         false));
         sfMenu.setEnabled(false);
 
-        new Label(container, SWT.NONE).setText("Menu location");
+        new Label(container, SWT.NONE).setText(Messages.KSBasEPreferencePage_MenuLocation);
         sfMenuLoc = new Text(container, SWT.SINGLE | SWT.BORDER);
         sfMenuLoc.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true,
                 false));
         sfMenuLoc.setEnabled(false);
 
-        new Label(container, SWT.NONE).setText("Toolbar location");
+        new Label(container, SWT.NONE).setText(Messages.KSBasEPreferencePage_ToolbarLocation);
         sfToolbarLoc = new Text(container, SWT.SINGLE | SWT.BORDER);
         sfToolbarLoc.setTextLimit(Text.LIMIT);
         sfToolbarLoc.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true,
@@ -427,12 +427,12 @@ public class KSBasEPreferencePage extends PreferencePage implements
         browserContainer = new Composite(parent, SWT.NONE);
         browserContainer.setLayout(new GridLayout(3, true));
 
-        new Label(browserContainer, SWT.NONE).setText("Editors Model Package");
+        new Label(browserContainer, SWT.NONE).setText(Messages.KSBasEPreferencePage_ModelPackage);
         sfMetaModel = new Text(browserContainer, SWT.SINGLE | SWT.BORDER
                 | SWT.READ_ONLY);
         sfMetaModel.setEnabled(false);
         btModelPackage = new Button(browserContainer, SWT.NONE);
-        btModelPackage.setText("Browse...");
+        btModelPackage.setText(Messages.KSBasEPreferencePage_Button_Browse);
         btModelPackage.addSelectionListener(new SelectionListener() {
 
             public void widgetDefaultSelected(SelectionEvent e) {
@@ -445,15 +445,15 @@ public class KSBasEPreferencePage extends PreferencePage implements
             public void widgetSelected(SelectionEvent e) {
                 String[] res = openElementSelectionDialog(DIAGRAM_PACKAGES,
                         false, editContainer);
-                String modelPack = "";
+                String modelPack = ""; //$NON-NLS-1$
                 if (res != null) {
                     modelPack = res[0];
                 } else {
                     InputDialog dlg = new InputDialog(
                             getShell(),
-                            "No EPackages found",
-                            "No EPackage was found in your current workspace, you can enter a fully qualified class name now or reconfigure your workspace settings and try again later",
-                            "org.example.MyDiagramEditor", null);
+                            Messages.KSBasEPreferencePage_ModelPackage_NoPackageFound_Title,
+                            Messages.KSBasEPreferencePage_ModelPackage_NoPackageFound_Message,
+                            Messages.KSBasEPreferencePage_ModelPackage_NoPackageFound_Default, null);
                     if (dlg.open() == InputDialog.OK) {
                         modelPack = dlg.getValue();
                     } else {
@@ -471,16 +471,16 @@ public class KSBasEPreferencePage extends PreferencePage implements
         sfMetaModel.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true,
                 false));
 
-        dfDefaultIcon = new FileFieldEditor("dfDefaultIcon", "Default icon",
+        dfDefaultIcon = new FileFieldEditor(Messages.KSBasEPreferencePage_DefaultIconName, Messages.KSBasEPreferencePage_DefaultIcon,
                 browserContainer);
-        dfDefaultIcon.setFileExtensions(new String[] { "*.png", "*.ico" });
+        dfDefaultIcon.setFileExtensions(new String[] { Messages.KSBasEPreferencePage_IconExtension_PNG, Messages.KSBasEPreferencePage_IconExtension_ICO });
 
-        new Label(browserContainer, SWT.NONE).setText("Xtend File");
+        new Label(browserContainer, SWT.NONE).setText(Messages.KSBasEPreferencePage_XtendFile);
         sfXtendFile = new Text(browserContainer, SWT.SINGLE | SWT.BORDER
                 | SWT.READ_ONLY);
 
         btBrowseXtend = new Button(browserContainer, SWT.NONE);
-        btBrowseXtend.setText("Browse...");
+        btBrowseXtend.setText(Messages.KSBasEPreferencePage_Button_Browse);
         btBrowseXtend.addSelectionListener(new SelectionListener() {
 
             public void widgetDefaultSelected(SelectionEvent e) {
@@ -494,9 +494,9 @@ public class KSBasEPreferencePage extends PreferencePage implements
                 FileDialog dlg = new FileDialog(getShell());
                 dlg.setFilterPath(ResourcesPlugin.getWorkspace().getRoot()
                         .getLocation().toOSString());
-                dlg.setFileName("extension.ext");
-                dlg.setFilterExtensions(new String[] { "*.ext" });
-                dlg.setText("Select Xtend file");
+                dlg.setFileName(Messages.KSBasEPreferencePage_XtendFile_DefaultName);
+                dlg.setFilterExtensions(new String[] { Messages.KSBasEPreferencePage_XtendFile_Extension });
+                dlg.setText(Messages.KSBasEPreferencePage_XtendFile_DialogTitle);
                 String result = dlg.open();
                 if (result != null) {
                     IPath path = new Path(result);
@@ -507,7 +507,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
                     if (file == null) {
                         MessageBox box = new MessageBox(getShell(), SWT.OK);
                         box
-                                .setMessage("Invalid file selected. Please select a file in your current workspace");
+                                .setMessage(Messages.KSBasEPreferencePage_XtendFile_InvalidFile);
                         box.open();
                         return;
                     } else {
@@ -527,27 +527,27 @@ public class KSBasEPreferencePage extends PreferencePage implements
         browserContainer.setEnabled(false);
 
         bfShowMenu = new Button(container, SWT.CHECK);
-        bfShowMenu.setText("Show Menu");
+        bfShowMenu.setText(Messages.KSBasEPreferencePage_ShowMenu);
         bfShowMenu.setSelection(true);
         bfShowMenu.setEnabled(false);
 
         bfShowToolbar = new Button(container, SWT.CHECK);
-        bfShowToolbar.setText("Show Toolbar");
+        bfShowToolbar.setText(Messages.KSBasEPreferencePage_ShowToolbar);
         bfShowToolbar.setSelection(true);
         bfShowToolbar.setEnabled(false);
 
         bfShowPopup = new Button(container, SWT.CHECK);
-        bfShowPopup.setText("Show Popup");
+        bfShowPopup.setText(Messages.KSBasEPreferencePage_ShowPopup);
         bfShowPopup.setSelection(true);
         bfShowPopup.setEnabled(false);
 
         bfShowBalloon = new Button(container, SWT.CHECK);
-        bfShowBalloon.setText("Show Balloon");
+        bfShowBalloon.setText(Messages.KSBasEPreferencePage_ShowBalloon);
         bfShowBalloon.setSelection(true);
         bfShowBalloon.setEnabled(false);
 
         bfAutoLayout = new Button(container, SWT.CHECK);
-        bfAutoLayout.setText("Perform auto-layout after execution");
+        bfAutoLayout.setText(Messages.KSBasEPreferencePage_AutoLayout);
         bfAutoLayout.setSelection(true);
         bfAutoLayout.setEnabled(false);
 
@@ -558,7 +558,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
         tableComp = new Composite(parent, SWT.NONE);
         tableComp.setLayout(new GridLayout(1, false));
         Label tableLabel = new Label(tableComp, SWT.NONE);
-        tableLabel.setText("Configure Transformations");
+        tableLabel.setText(Messages.KSBasEPreferencePage_TableTitle);
 
         table = new Table(tableComp, SWT.BORDER | SWT.SINGLE);
 
@@ -567,39 +567,39 @@ public class KSBasEPreferencePage extends PreferencePage implements
 
         TableColumn[] titleCols = new TableColumn[7];
         titleCols[0] = new TableColumn(table, SWT.NONE);
-        titleCols[0].setText("Name");
-        titleCols[0].setToolTipText("Name of menu entry");
+        titleCols[0].setText(Messages.KSBasEPreferencePage_Table_Col_Name);
+        titleCols[0].setToolTipText(Messages.KSBasEPreferencePage_Table_Col_Name_ToolTip);
         titleCols[0].setWidth(150);
 
         titleCols[1] = new TableColumn(table, SWT.NONE);
-        titleCols[1].setText("Transformation");
-        titleCols[1].setToolTipText("Name of the xtend method");
+        titleCols[1].setText(Messages.KSBasEPreferencePage_Table_Col_Transformation);
+        titleCols[1].setToolTipText(Messages.KSBasEPreferencePage_Table_Col_Transformation_ToolTip);
         titleCols[1].setWidth(150);
 
         titleCols[2] = new TableColumn(table, SWT.NONE);
-        titleCols[2].setText("visibleIn");
-        titleCols[2].setToolTipText("Visibility of entry");
+        titleCols[2].setText(Messages.KSBasEPreferencePage_Table_Col_Visible);
+        titleCols[2].setToolTipText(Messages.KSBasEPreferencePage_Table_Col_Visible_ToolTip);
         titleCols[2].setWidth(75);
 
         titleCols[3] = new TableColumn(table, SWT.NONE);
-        titleCols[3].setText("SelectedElements");
+        titleCols[3].setText(Messages.KSBasEPreferencePage_Table_Col_Elements);
         titleCols[3]
-                .setToolTipText("Diagram element types for which the transformation is defined");
+                .setToolTipText(Messages.KSBasEPreferencePage_Table_Col_Elements_ToolTip);
         titleCols[3].setWidth(150);
 
         titleCols[4] = new TableColumn(table, SWT.NONE);
-        titleCols[4].setText("Selections");
-        titleCols[4].setToolTipText("Number of selected Elements");
+        titleCols[4].setText(Messages.KSBasEPreferencePage_Table_Col_Selections);
+        titleCols[4].setToolTipText(Messages.KSBasEPreferencePage_Table_Col_Selections_ToolTip);
         titleCols[4].setWidth(60);
 
         titleCols[5] = new TableColumn(table, SWT.NONE);
-        titleCols[5].setText("Icon");
+        titleCols[5].setText(Messages.KSBasEPreferencePage_Table_Col_Icon);
         titleCols[5].setWidth(50);
 
         titleCols[6] = new TableColumn(table, SWT.NONE);
-        titleCols[6].setText("Shortcut");
+        titleCols[6].setText(Messages.KSBasEPreferencePage_Table_Col_Shortcut);
         titleCols[6].setWidth(75);
-        titleCols[6].setToolTipText("Keyboard shorcut");
+        titleCols[6].setToolTipText(Messages.KSBasEPreferencePage_Table_Col_Shortcut_ToolTip);
 
         // Cursor to edit Table cells
         final TableCursor cursor = new TableCursor(table, SWT.NONE);
@@ -690,12 +690,12 @@ public class KSBasEPreferencePage extends PreferencePage implements
 
                         InputDialog dlg = new InputDialog(
                                 getShell(),
-                                "No diagram elements found",
-                                "No diagram elements have been found in your current workspace, you can enter a comma separated list of fully qualified class names now or reconfigure your workspace settings and try again later",
-                                "org.example.ShapeNodeEditPart, org.example.ConnectionNodeEditPart",
+                                Messages.KSBasEPreferencePage_DiagramElements_NoElements_Title,
+                                Messages.KSBasEPreferencePage_DiagramElements_NoElements_Message,
+                                Messages.KSBasEPreferencePage_DiagramElements_NoElements_Default,
                                 null);
                         if (dlg.open() == InputDialog.OK) {
-                            res = dlg.getValue().split(",");
+                            res = dlg.getValue().split(","); //$NON-NLS-1$
                         } else {
                             return;
                         }
@@ -705,7 +705,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
 
                 } else if (col == 4) { // Icon
                     FileDialog dlg = new FileDialog(getShell(), SWT.OPEN);
-                    dlg.setFilterExtensions(new String[] { "*.png", "*.ico" });
+                    dlg.setFilterExtensions(new String[] { Messages.KSBasEPreferencePage_IconExtension_PNG, Messages.KSBasEPreferencePage_IconExtension_ICO });
                     String fileName = dlg.open();
                     if (fileName != null) {
                         transformation.setIconURI(URI.create(fileName));
@@ -728,30 +728,30 @@ public class KSBasEPreferencePage extends PreferencePage implements
                         @Override
                         public void keyPressed(KeyEvent e) {
                             if (e.keyCode == SWT.DEL || e.keyCode == SWT.BS) {
-                                text.setText("");
-                                keys.setText("");
+                                text.setText(""); //$NON-NLS-1$
+                                keys.setText(""); //$NON-NLS-1$
                             } else {
                                 if (e.keyCode >= 97 && e.keyCode <= 122) { // only
                                     // allow
                                     // characters
-                                    String ex = "";
+                                    String ex = ""; //$NON-NLS-1$
                                     if (ex.length() > 0)
-                                        ex += "+";
+                                        ex += "+"; //$NON-NLS-1$
                                     if ((e.stateMask & SWT.CTRL) != 0) {
-                                        ex += "CTRL + ";
+                                        ex += Messages.KSBasEPreferencePage_Shortcut_CTRL;
                                     }
                                     if ((e.stateMask & SWT.ALT) != 0) {
-                                        ex += "ALT + ";
+                                        ex += Messages.KSBasEPreferencePage_Shortcut_ALT;
                                     }
                                     if ((e.stateMask & SWT.SHIFT) != 0) {
-                                        ex += "SHIFT + ";
+                                        ex += Messages.KSBasEPreferencePage_Shortcut_SHIFT;
                                     }
                                     if (keys.getText().length() > 0)
                                         ex += keys;
 
                                     keys.append(String
                                             .valueOf((char) e.keyCode)
-                                            + " + ");
+                                            + " + "); //$NON-NLS-1$
 
                                     ex += (char) e.keyCode;
                                     text.setText(ex.toUpperCase());
@@ -787,7 +787,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
         btComp.setEnabled(false);
 
         Button btTableAdd = new Button(btComp, SWT.NONE);
-        btTableAdd.setText("Edit Transformations");
+        btTableAdd.setText(Messages.KSBasEPreferencePage_Button_Edit_Transformations);
         btTableAdd.addSelectionListener(new SelectionListener() {
 
             public void widgetDefaultSelected(SelectionEvent e) {
@@ -802,8 +802,8 @@ public class KSBasEPreferencePage extends PreferencePage implements
                     MessageBox box = new MessageBox(getShell(), SWT.OK
                             | SWT.CANCEL);
                     box
-                            .setMessage("The preferences will now be closed and the transformation file will be opened in an editor window. Please reopen the preferences after modifing the file");
-                    box.setText("Warning");
+                            .setMessage(Messages.KSBasEPreferencePage_EditTransformations_Message);
+                    box.setText(Messages.KSBasEPreferencePage_EditTransformations_Title);
                     if (box.open() == SWT.OK) {
                         try {
                             IPath path = new Path(sfXtendFile.getText());
@@ -947,7 +947,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
                             public String getText(Object element) {
                                 if (element instanceof String) {
                                     String elem = (String) element;
-                                    if (elem.contains("."))
+                                    if (elem.contains(".")) //$NON-NLS-1$
                                         return elem.substring(elem
                                                 .lastIndexOf('.') + 1, elem
                                                 .length());
@@ -959,11 +959,11 @@ public class KSBasEPreferencePage extends PreferencePage implements
                         });
                 listDlg.setAllowDuplicates(false);
                 listDlg
-                        .setEmptySelectionMessage("Please select at least one Element");
+                        .setEmptySelectionMessage(Messages.KSBasEPreferencePage_TypeSelection_EmptySelection);
                 listDlg
-                        .setEmptyListMessage("No Element found, please check your workspace settings");
+                        .setEmptyListMessage(Messages.KSBasEPreferencePage_TypeSelection_EmptyList);
                 listDlg.setMultipleSelection(multiple);
-                listDlg.setTitle("Select a target element");
+                listDlg.setTitle(Messages.KSBasEPreferencePage_91);
                 listDlg.setElements(diagrams.toArray());
                 if (listDlg.open() == ElementListSelectionDialog.OK) {
                     Object[] dlgRes = listDlg.getResult();

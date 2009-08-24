@@ -82,29 +82,29 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
         // TOOD: Suppress messages from xtend/mwe
         if (workflow == null) {
             return CommandResult
-                    .newErrorCommandResult("Workflow not initalized");
+                    .newErrorCommandResult(Messages.ExecuteTransformationCommand_Workflow_Initialization_Error);
         }
         try {
             workflow.invoke(this.context, this.monitor, this.issues);
         } catch (Exception e) {
             return CommandResult
-                    .newErrorCommandResult("Failed to invoke workflow");
+                    .newErrorCommandResult(Messages.ExecuteTransformationCommand_Workflow_Invoke_Error);
         }
         if (issues.hasWarnings()) {
             for (MWEDiagnostic warnings : issues.getWarnings()) {
-                System.err.println("Warning: " + warnings.getMessage());
+                System.err.println("Warning: " + warnings.getMessage()); //$NON-NLS-1$
             } // TODO: Check how to write multiple warnings, or write directly
             // to the log
             return CommandResult.newWarningCommandResult(
-                    "Transformation completed with warnings. "
+                    "Transformation completed with warnings. " //$NON-NLS-1$
                             + issues.getWarnings()[0], null);
         } else if (issues.hasErrors()) {
             for (MWEDiagnostic errors : issues.getErrors()) {
-                System.err.println("Error: " + errors.getMessage());
+                System.err.println("Error: " + errors.getMessage()); //$NON-NLS-1$
             } // TODO: Check how to write multiple errors, or write directly to
             // the log
             return CommandResult
-                    .newErrorCommandResult("Transformation failed. "
+                    .newErrorCommandResult("Transformation failed. " //$NON-NLS-1$
                             + issues.getErrors()[0]);
         }
 
@@ -141,14 +141,14 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
 
         Object selectedObject = s.getFirstElement();
         if (selectedObject instanceof EditPart) {
-            if (fileName.contains(".")) { // Remove .ext from fileName
-                fileName = fileName.substring(0, fileName.lastIndexOf("."));
+            if (fileName.contains(".")) { // Remove .ext from fileName //$NON-NLS-1$
+                fileName = fileName.substring(0, fileName.lastIndexOf(".")); //$NON-NLS-1$
             }
 
             workflow = new KielerWorkflow(command, fileName, basePackage);
             Object model = ((EditPart) selectedObject).getModel();
             if (model instanceof View) {
-                context.set("model", ((View) model).getElement());
+                context.set("model", ((View) model).getElement()); //$NON-NLS-1$
             }
 
         }

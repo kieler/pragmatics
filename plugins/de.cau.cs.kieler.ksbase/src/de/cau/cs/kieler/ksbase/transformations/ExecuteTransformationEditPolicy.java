@@ -49,7 +49,7 @@ public class ExecuteTransformationEditPolicy extends AbstractEditPolicy {
                 ExecuteTransformationRequest transformationRequest = (ExecuteTransformationRequest) req;
                 IGraphicalEditPart hostEPart = (IGraphicalEditPart) getHost();
                 ExecuteTransformationCommand command = new ExecuteTransformationCommand(
-                        hostEPart.getEditingDomain(), "Execute transformation",
+                        hostEPart.getEditingDomain(), Messages.ExecuteTransformationEditPolicy_Transformation_Command_Name,
                         new EObjectAdapter((View) hostEPart.getModel()));
                 command.initalize(transformationRequest.getEditPart(),
                         transformationRequest.getSelection(),

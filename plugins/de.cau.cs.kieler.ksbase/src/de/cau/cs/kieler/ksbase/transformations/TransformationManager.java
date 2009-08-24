@@ -126,31 +126,31 @@ public class TransformationManager {
         registeredEditors = new LinkedList<EditorTransformationSettings>();
         IPreferenceStore store = KSBasEPlugin.getDefault().getPreferenceStore();
 
-        String[] editors = store.getString("registertedEditors").split(",");
+        String[] editors = store.getString(Messages.Preferences_RegisteredEditors).split(","); //$NON-NLS-2$
         for (String editor : editors) {
             EditorTransformationSettings settings = new EditorTransformationSettings(
                     editor);
             settings.setModelPackageClass(store.getString(editor
-                    + ".ModelPackageClass"));
-            settings.setExtFile(store.getString(editor + ".ExtFile"), false);
-            settings.setMenuName(store.getString(editor + ".MenuName"));
-            settings.setMenuLocation(store.getString(editor + ".MenuLocation"));
+                    + Messages.Preferences_ModelPackageClass));
+            settings.setExtFile(store.getString(editor + Messages.Preferences_ExtFile), false);
+            settings.setMenuName(store.getString(editor + Messages.Preferences_MenuName));
+            settings.setMenuLocation(store.getString(editor + Messages.Preferences_MenuLocation));
             settings.setToolbarLocation(store.getString(editor
-                    + ".ToolbarLocation"));
-            settings.setVisibilityFlags(store.getInt(editor + ".Visibility"));
+                    + Messages.Preferences_ToolbarLocation));
+            settings.setVisibilityFlags(store.getInt(editor + Messages.Preferences_Visibility));
             settings.setDefaultIconURI(URI.create(store.getString(editor
-                    + ".DefaultIcon")));
+                    + Messages.Preferences_DefaultIcon)));
             String[] transformations = store.getString(
-                    editor + ".Transformations").split(",");
+                    editor + Messages.Preferences_Transformations).split(","); //$NON-NLS-2$
             for (String transformation : transformations) {
-                String prefix = editor + "." + transformation;
+                String prefix = editor + "." + transformation; //$NON-NLS-1$
                 Transformation t = new Transformation(store.getString(prefix
-                        + ".Name"), transformation);
-                t.setNumSelections(store.getInt(prefix + ".NumSelections"));
-                t.setIconURI(URI.create(store.getString(prefix + ".Icon")));
-                t.setKeyboardShortcut(store.getString(prefix + ".Shortcut"));
-                t.setPartConfig(store.getString(prefix + ".PartConfig").split(
-                        ","));
+                        + Messages.Preferences_Transformation_Name), transformation);
+                t.setNumSelections(store.getInt(prefix + Messages.Preferences_Transformation_Selections));
+                t.setIconURI(URI.create(store.getString(prefix + Messages.Preferences_Transformation_Icon)));
+                t.setKeyboardShortcut(store.getString(prefix + Messages.Preferences_Transformation_Shortcut));
+                t.setPartConfig(store.getString(prefix + Messages.Preferences_Transformation_PartConfig).split(
+                        ",")); //$NON-NLS-1$
                 settings.addTransformation(t);
             }
             registeredEditors.add(settings);
@@ -165,40 +165,40 @@ public class TransformationManager {
     public void storeTransformations() {
 
         IPreferenceStore store = KSBasEPlugin.getDefault().getPreferenceStore();
-        String editors = "";
+        String editors = ""; //$NON-NLS-1$
         for (EditorTransformationSettings settings : registeredEditors) {
             String prefix = settings.getEditor();
-            editors += prefix + ",";
-            store.setValue(prefix + ".ModelPackageClass", settings
+            editors += prefix + ","; //$NON-NLS-1$
+            store.setValue(prefix + Messages.Preferences_ModelPackageClass, settings
                     .getModelPackageClass());
-            store.setValue(prefix + ".ExtFile", settings.getExtFile());
-            store.setValue(prefix + ".MenuName", settings.getMenuName());
+            store.setValue(prefix + Messages.Preferences_ExtFile, settings.getExtFile());
+            store.setValue(prefix + Messages.Preferences_MenuName, settings.getMenuName());
             store
-                    .setValue(prefix + ".MenuLocation", settings
+                    .setValue(prefix + Messages.Preferences_MenuLocation, settings
                             .getMenuLocation());
-            store.setValue(prefix + ".ToolbarLocation", settings
+            store.setValue(prefix + Messages.Preferences_ToolbarLocation, settings
                     .getToolbarLocation());
-            store.setValue(prefix + ".Visibility", settings.getVisibility());
-            store.setValue(prefix + ".DefaultIcon", settings
+            store.setValue(prefix + Messages.Preferences_Visibility, settings.getVisibility());
+            store.setValue(prefix + Messages.Preferences_DefaultIcon, settings
                     .getDefaultIconURI().toString());
-            String transformations = "";
+            String transformations = ""; //$NON-NLS-1$
             for (Transformation t : settings.getTransformations()) {
-                String tprefix = prefix + "." + t.getName();
-                transformations += t.getName() + ",";
-                store.setValue(tprefix + ".Transformation", t
+                String tprefix = prefix + "." + t.getName(); //$NON-NLS-1$
+                transformations += t.getName() + ","; //$NON-NLS-1$
+                store.setValue(tprefix + Messages.Preferences_Transformation_Command, t
                         .getTransformationName());
                 store
-                        .setValue(tprefix + ".NumSelections", t
+                        .setValue(tprefix + Messages.Preferences_Transformation_Selections, t
                                 .getNumSelections());
-                store.setValue(tprefix + ".PartConfig", t.getPartConfigList());
-                store.setValue(tprefix + ".Icon", t.getIconString());
-                store.setValue(tprefix + ".Shortcut", t.getKeyboardShortcut());
+                store.setValue(tprefix + Messages.Preferences_Transformation_PartConfig, t.getPartConfigList());
+                store.setValue(tprefix + Messages.Preferences_Transformation_Icon, t.getIconString());
+                store.setValue(tprefix + Messages.Preferences_Transformation_Shortcut, t.getKeyboardShortcut());
             }
-            store.setValue(prefix + ".Transformations", transformations
+            store.setValue(prefix + Messages.Preferences_Transformations, transformations
                     .substring(0, transformations.length() - 1));
         }
         // trunc the last ','
-        store.setValue("registertedEditors", editors.substring(0, editors
+        store.setValue(Messages.Preferences_RegisteredEditors, editors.substring(0, editors
                 .length() - 1));
     }
 }

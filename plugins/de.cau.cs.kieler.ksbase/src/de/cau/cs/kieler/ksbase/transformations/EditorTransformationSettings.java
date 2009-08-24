@@ -63,12 +63,12 @@ public class EditorTransformationSettings implements Serializable {
         this.visibilityFlags = KSBasEPlugin.SHOW_MENU
                 | KSBasEPlugin.SHOW_CONTEXT | KSBasEPlugin.SHOW_TOOLBAR
                 | KSBasEPlugin.SHOW_BALLOON;
-        this.modelPackageClass = "";
-        this.menuName = "KIELER";
-        this.menuLocation = "menu:org.eclipse.ui.main.menu?after=additions";
-        this.toolbarLocation = "menu:org.eclipse.ui.main.menu?after=additions";
-        this.defaultIconURI = URI.create("");
-        this.extFile = "";
+        this.modelPackageClass = ""; //$NON-NLS-1$
+        this.menuName = Messages.EditorTransformationSettings_Default_Menu_Name;
+        this.menuLocation = Messages.EditorTransformationSettings_Default_Menu_Location;
+        this.toolbarLocation = Messages.EditorTransformationSettings_Default_Toolbar_Location;
+        this.defaultIconURI = URI.create(""); //$NON-NLS-1$
+        this.extFile = ""; //$NON-NLS-1$
         this.transformations = new LinkedList<Transformation>();
         this.performAutoLayout = true;
     }
@@ -99,7 +99,7 @@ public class EditorTransformationSettings implements Serializable {
     public String getModelPackageClass() {
 
         if (modelPackageClass == null)
-            return "";
+            return ""; //$NON-NLS-1$
         else
             return modelPackageClass;
     }
@@ -246,18 +246,18 @@ public class EditorTransformationSettings implements Serializable {
                     // Split only twice ! so we only split return types and
                     // function
                     // declarations but not the parameters
-                    String[] token = in.split(" ", 2);
+                    String[] token = in.split(" ", 2); //$NON-NLS-1$
                     if (token != null && token.length > 0) {
-                        if (token[0].equalsIgnoreCase("import")) {
+                        if (token[0].equalsIgnoreCase("import")) { //$NON-NLS-1$
                             // we don't need the import statement, cause it's
                             // Xtend only
-                        } else if (token[0].equalsIgnoreCase("void")) {
+                        } else if (token[0].equalsIgnoreCase("void")) { //$NON-NLS-1$
                             // Only parse 'Void' functions
                             String methodName = token[1].substring(0, token[1]
                                     .indexOf('('));
                             String[] params = token[1].substring(
                                     token[1].indexOf('(') + 1,
-                                    token[1].indexOf(')')).split(",");
+                                    token[1].indexOf(')')).split(","); //$NON-NLS-1$
                             Transformation tNew = new Transformation(
                                     methodName, methodName);
                             tNew.setNumSelections(params.length);
