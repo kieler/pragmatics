@@ -25,6 +25,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.gef.tools.AbstractTool.Input;
+import org.eclipse.gmf.runtime.gef.ui.internal.figures.DiamondFigure;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
@@ -36,6 +38,7 @@ import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.core.search.SearchRequestor;
 import org.eclipse.jdt.internal.core.ResolvedBinaryType;
 import org.eclipse.jdt.internal.core.ResolvedSourceType;
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -200,7 +203,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
     protected EditorTransformationSettings activeEditor;
     protected Table table;
     Composite tableComp, browserContainer, btComp;
-
+    
     public KSBasEPreferencePage() {
         setDescription("Preferences for the KIELER Structure Based Editing Features.");
     }
@@ -229,7 +232,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
                         .getEditorByName(((Combo) e.getSource()).getText());
                 activeEditor = editor;
                 if (activeEditor != null) { //Load editor settings 
-                    sfMetaModel.setText(editor.getModelPackageFile());
+                    sfMetaModel.setText(editor.getModelPackageClass());
                     sfMenu.setText(editor.getMenuName());
                     sfMenuLoc.setText(editor.getMenuLocation());
                     sfToolbarLoc.setText(editor.getToolbarLocation());
@@ -311,13 +314,25 @@ public class KSBasEPreferencePage extends PreferencePage implements
             public void widgetSelected(SelectionEvent e) {
                 String[] res = openElementSelectionDialog(DIAGRAM_EDITORS,
                         false,editContainer);
+                String editorName = "";
                 if (res != null) {
-                    EditorTransformationSettings editor = TransformationManager
-                            .addEditor(res[0]);
-                    cbEditors.add(editor.getEditor());
-                    cbEditors.select(cbEditors.indexOf(editor.getEditor()));
-                    cbEditors.notifyListeners(SWT.Selection, null);
+                    editorName = res[0];
+                    
                 }
+                else {
+                    InputDialog dlg = new InputDialog(getShell(), "No diagram found", "No diagram was found in your current workspace, you can enter a fully qualified class name now or reconfigure your workspace settings and try again later", "org.example.MyDiagramEditor", null);
+                    if ( dlg.open() == InputDialog.OK) {
+                        editorName = dlg.getValue();
+                    }
+                    else {
+                        return;
+                    }
+                }
+                EditorTransformationSettings editor = TransformationManager
+                .addEditor(editorName);
+                cbEditors.add(editor.getEditor());
+                cbEditors.select(cbEditors.indexOf(editor.getEditor()));
+                cbEditors.notifyListeners(SWT.Selection, null);
             }
 
         });
@@ -422,17 +437,29 @@ public class KSBasEPreferencePage extends PreferencePage implements
             }
 
             /**
-             * Handles the 'browse extend file' event
+             * Handles the 'browse model package' event
              * Shows a simple FileDialog in which a file can be selected
              */
             public void widgetSelected(SelectionEvent e) {
                 String[] res = openElementSelectionDialog(DIAGRAM_PACKAGES,
                         false,editContainer);
+                String modelPack = "";
                 if (res != null) {
-                    EditorTransformationSettings editor = TransformationManager.getEditorByName(cbEditors.getText());
-                    editor.setModelPackageFile( res[0] );
-                    cbEditors.notifyListeners(SWT.Selection, null);
+                    modelPack = res[0];
+                }               
+                else {
+                    InputDialog dlg = new InputDialog(getShell(), "No EPackages found", "No EPackage was found in your current workspace, you can enter a fully qualified class name now or reconfigure your workspace settings and try again later", "org.example.MyDiagramEditor", null);
+                    if ( dlg.open() == InputDialog.OK) {
+                        modelPack = dlg.getValue();
+                    }
+                    else {
+                        return;
+                    }
                 }
+
+                EditorTransformationSettings editor = TransformationManager.getEditorByName(cbEditors.getText());
+                editor.setModelPackageClass( modelPack );
+                cbEditors.notifyListeners(SWT.Selection, null);
             }
 
         });
@@ -480,7 +507,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
                         return;
                     } else {
                         TransformationManager.getEditorByName(
-                                cbEditors.getText()).setExtFile(result);
+                                cbEditors.getText()).setExtFile(result,true);
                         cbEditors.notifyListeners(SWT.Selection, null);
                     }
                 }
@@ -503,7 +530,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
         bfShowToolbar.setText("Show Toolbar");
         bfShowToolbar.setSelection(true);
         bfShowToolbar.setEnabled(false);
-
+        
         bfShowPopup = new Button(container, SWT.CHECK);
         bfShowPopup.setText("Show Popup");
         bfShowPopup.setSelection(true);
@@ -652,11 +679,22 @@ public class KSBasEPreferencePage extends PreferencePage implements
                     //Open a dialog to select diagram elements
                     String[] res = openElementSelectionDialog(
                             DIAGRAM_EDIT_PARTS, true, editContainer);
-                    ;
-                    if (res != null) {
-                        transformation.setPartConfig(res);
-                        cbEditors.notifyListeners(SWT.Selection, null);
+                    
+                    if (res == null) 
+                    {
+                        
+                        InputDialog dlg = new InputDialog(getShell(), "No diagram elements found", "No diagram elements have been found in your current workspace, you can enter a comma separated list of fully qualified class names now or reconfigure your workspace settings and try again later", "org.example.ShapeNodeEditPart, org.example.ConnectionNodeEditPart", null);
+                        if ( dlg.open() == InputDialog.OK) {
+                            res = dlg.getValue().split(",");
+                        }
+                        else {
+                            return;
+                        }
                     }
+                    transformation.setPartConfig(res);
+                    cbEditors.notifyListeners(SWT.Selection, null);
+
+                    
                 } else if (col == 4) { // Icon
                     FileDialog dlg = new FileDialog(getShell(), SWT.OPEN);
                     dlg.setFilterExtensions(new String[] { "*.png", "*.ico" });
@@ -813,7 +851,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
     @Override
     public boolean performOk() {
         if (activeEditor != null) {
-            activeEditor.setModelPackageFile(sfMetaModel.getText());
+            activeEditor.setModelPackageClass(sfMetaModel.getText());
             activeEditor.setMenuName(sfMenu.getText());
             activeEditor.setMenuLocation(sfMenuLoc.getText());
             activeEditor.setToolbarLocation(sfToolbarLoc.getText());
@@ -851,7 +889,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
             
             for (String type : types) {
                 SearchPattern p = SearchPattern.createPattern(type,
-                        IJavaSearchConstants.TYPE,
+                        IJavaSearchConstants.CLASS_AND_INTERFACE,
                         IJavaSearchConstants.IMPLEMENTORS,
                         SearchPattern.R_EXACT_MATCH);
                 IJavaSearchScope scope = SearchEngine.createWorkspaceScope();
@@ -864,15 +902,13 @@ public class KSBasEPreferencePage extends PreferencePage implements
                     	if ( match.getElement() instanceof ResolvedSourceType) {
                         ResolvedSourceType type = ((ResolvedSourceType) match
                                 .getElement());
-                        Class c = type.getClass();
-                        IClassFile f = type.getClassFile();
-                        ICompilationUnit u = type.getCompilationUnit();
-                        IPath path = u.getPath();
                         diagrams.add(type.getFullyQualifiedName());
                     	}
                     	else if ( match.getElement() instanceof ResolvedBinaryType) {
-                    		ResolvedBinaryType type = ((ResolvedBinaryType)match.getElement());
                     		//Ignore binary types for now
+                    	    
+                    	        //ResolvedBinaryType type = ((ResolvedBinaryType)match.getElement());
+                    	        //System.out.println(type.getFullyQualifiedName());
                     		//diagrams.add(type.getFullyQualifiedName());
                     	}
                     }

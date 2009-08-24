@@ -38,7 +38,7 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 public class EditorTransformationSettings implements Serializable {
 
     private static final long serialVersionUID = -7706521956908478893L;
-    private String modelPackageFile; //The model package file
+    private String modelPackageClass; //The model package class
     private String menuName; //Name of the menu 
     private String menuLocation; //Location of the menu
     private String toolbarLocation; //Location of the toolbar
@@ -58,16 +58,13 @@ public class EditorTransformationSettings implements Serializable {
         this.visibilityFlags = KSBasEPlugin.SHOW_MENU
                 | KSBasEPlugin.SHOW_CONTEXT | KSBasEPlugin.SHOW_TOOLBAR
                 | KSBasEPlugin.SHOW_BALLOON;
-        this.modelPackageFile = "";
+        this.modelPackageClass = "";
         this.menuName = "KIELER";
         this.menuLocation = "menu:org.eclipse.ui.main.menu?after=additions";
         this.toolbarLocation = "menu:org.eclipse.ui.main.menu?after=additions";
         this.defaultIconURI = URI.create("");
         this.extFile = "";
         this.transformations = new LinkedList<Transformation>();
-        Transformation tmp = new Transformation("Test", "Void setState");
-
-        this.transformations.add(tmp);
         this.performAutoLayout = true;
     }
 
@@ -91,20 +88,20 @@ public class EditorTransformationSettings implements Serializable {
      * Gets the model URI
      * @return A string representation of the model Package
      */
-    public String getModelPackageFile() {
+    public String getModelPackageClass() {
 
-        if ( modelPackageFile == null)
+        if ( modelPackageClass == null)
             return "";
         else 
-        return modelPackageFile;
+        return modelPackageClass;
     }
 
     /**
      * Sets a model URI
      * @param modelURI
      */
-    public void setModelPackageFile(String modelPackageFile) {
-        this.modelPackageFile = modelPackageFile;
+    public void setModelPackageClass(String modelPackageClass) {
+        this.modelPackageClass = modelPackageClass;
     }
 
     /**
@@ -202,13 +199,16 @@ public class EditorTransformationSettings implements Serializable {
         return extFile;
     }
 
-    public void setExtFile(String extFile) {
+    public void setExtFile(String extFile, boolean parseFile) {
         this.extFile = extFile;
+        if ( parseFile )
         parseTransformationsFromFile();
     }
 
     /**
      * Parses the given Xtend file and stores the in-place m2m transformations.
+     * This parsing is based on the Xtend function names only!
+     * So renaming a function in Xtend will reset the KSbasE transformation
      */
     public void parseTransformationsFromFile() {
         //extFile should not be null, only if we read an old config file
@@ -241,15 +241,14 @@ public class EditorTransformationSettings implements Serializable {
                         } else if (token[0].equalsIgnoreCase("void")) { 
                             //Only parse 'Void' functions
                             String methodName = token[1].substring(0, token[1]
-                                    .indexOf('('));
+                                    .indexOf('(')); 
                             String[] params = token[1].substring(
                                     token[1].indexOf('(') + 1,
                                     token[1].indexOf(')')).split(",");
                             Transformation tNew = new Transformation(
                                     methodName, methodName);
                             tNew.setNumSelections(params.length);
-                            //If we already have the current function in our  
-                            //transformations list, we are using this one
+                            //If the parsed function is not contained in the list of existing transformations, we add it now
                             if (this.transformations.contains(tNew)) {
                                 newTrans
                                         .add(this.transformations

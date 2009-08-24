@@ -14,16 +14,11 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.transformations;
 
-import java.net.URL;
-
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.mwe.internal.core.Workflow;
-import org.eclipse.emf.mwe.utils.StandaloneSetup;
-
 import org.eclipse.xtend.XtendComponent;
 import org.eclipse.xtend.typesystem.emf.EcoreUtil2;
 import org.eclipse.xtend.typesystem.emf.EmfMetaModel;
-import de.cau.cs.kieler.synccharts.SyncchartsPackage;
 /**
  * An extension of the MWE default workflow.
  * Used to perform custom initializations
@@ -57,7 +52,7 @@ public class KielerWorkflow extends Workflow {
         
         EPackage pack = EcoreUtil2.getEPackageByClassName(basePackage);
         //(EPackage)ClassLoader.getSystemClassLoader().loadClass(basePackage2).cast(EPackage.class);
-        System.out.println(pack.getName());
+        //System.out.println(pack.getName());
         
         emfmodel = new EmfMetaModel( 
                 pack);

@@ -20,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.URI;
 import java.util.LinkedList;
 
 import org.eclipse.core.commands.ExecutionEvent;
@@ -28,6 +29,10 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramCommandStack;
+import org.eclipse.jdt.ui.PreferenceConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
@@ -63,10 +68,11 @@ public class TransformationManager {
         if (selection instanceof StructuredSelection && !selection.isEmpty()) {
             EditPart selectedElement = (EditPart) ((StructuredSelection) selection)
                     .getFirstElement();
-
+            
+            //Create request
             ExecuteTransformationRequest request = new ExecuteTransformationRequest(
                     activeEditor, t.getTransformationName(), editor.getExtFile(), selection,
-                    t.getNumSelections(), editor.getModelPackageFile());
+                    t.getNumSelections(), editor.getModelPackageClass());
             Command transformationCommand = selectedElement.getCommand(request);
 
             // gets a command stack to execute the command
@@ -115,49 +121,71 @@ public class TransformationManager {
     }
     
     /**
-     * Loads the editor settings from ksbase config file
+     * Loads the editor settings from preference store
      */
-    @SuppressWarnings("unchecked")
     public static void initializeTransformations() {
-        //TODO: 
         registeredEditors = new LinkedList<EditorTransformationSettings>();
-        IPath path = KSBasEPlugin.getDefault().getStateLocation();
-        FileInputStream fos;
-        try {
-            fos = new FileInputStream(path.toOSString()+"/ksbase.config");
-            ObjectInputStream oos = new ObjectInputStream(fos);
-            registeredEditors = (LinkedList<EditorTransformationSettings>) oos.readObject(); 
-            for (EditorTransformationSettings ed : registeredEditors) {
-                ed.parseTransformationsFromFile();
+        IPreferenceStore store = KSBasEPlugin.getDefault().getPreferenceStore();
+        
+        String[] editors = store.getString("registertedEditors").split(",");
+        for ( String editor : editors) {
+            EditorTransformationSettings settings = new EditorTransformationSettings(editor);
+            settings.setModelPackageClass( store.getString(editor+".ModelPackageClass") );
+            settings.setExtFile(store.getString(editor+".ExtFile"),false);
+            settings.setMenuName(store.getString(editor+".MenuName"));
+            settings.setMenuLocation(store.getString(editor+".MenuLocation"));
+            settings.setToolbarLocation(store.getString(editor+".ToolbarLocation"));
+            settings.setVisibilityFlags(store.getInt(editor+".Visibility"));
+            settings.setDefaultIconURI(URI.create(store.getString(editor+".DefaultIcon")));
+            String[] transformations = store.getString(editor+".Transformations").split(",");
+            for (String transformation : transformations) {
+                String prefix = editor+"."+transformation;
+                Transformation t = new Transformation(store.getString(prefix+".Name"), transformation);
+                t.setNumSelections(store.getInt(prefix+".NumSelections"));
+                t.setIconURI(URI.create(store.getString(prefix+".Icon")));
+                t.setKeyboardShortcut(store.getString(prefix+".Shortcut"));
+                t.setPartConfig(store.getString(prefix+".PartConfig").split(","));
+                settings.addTransformation(t);
             }
-        } catch (FileNotFoundException e) {
-        	registeredEditors = new LinkedList<EditorTransformationSettings>();
-        } catch (IOException e) {
-        	registeredEditors = new LinkedList<EditorTransformationSettings>();
-        } catch (ClassNotFoundException e) {
-        	registeredEditors = new LinkedList<EditorTransformationSettings>();
+            registeredEditors.add(settings);
         }
     }
     
     /**
      * Stores the currently registered editor settings to the preference store
+     * Stores the values as strings:
+     * EditorName.ModelPackageName
+     * EditorName.MenuName etc.
      */
     public static void storeTransformations() {
-        IPath path = KSBasEPlugin.getDefault().getStateLocation();
-        FileOutputStream fos;
-        try {
-            fos = new FileOutputStream(path.toOSString()+"/ksbase.config");
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(registeredEditors);
-            oos.flush();
-            oos.close();
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        
+        IPreferenceStore store = KSBasEPlugin.getDefault().getPreferenceStore();
+        String editors = "";
+        for  (EditorTransformationSettings settings : registeredEditors) {
+            String prefix = settings.getEditor();
+            editors += prefix + ",";
+            store.setValue(prefix+".ModelPackageClass", settings.getModelPackageClass() );
+            store.setValue(prefix+".ExtFile", settings.getExtFile());
+            store.setValue(prefix+".MenuName", settings.getMenuName());
+            store.setValue(prefix+".MenuLocation", settings.getMenuLocation());
+            store.setValue(prefix+".ToolbarLocation", settings.getToolbarLocation());
+            store.setValue(prefix+".Visibility", settings.getVisibility() );
+            store.setValue(prefix+".DefaultIcon",settings.getDefaultIconURI().toString() );
+            String transformations = "";
+            for (Transformation t : settings.getTransformations())
+            {
+                String tprefix = prefix + "." + t.getName();
+                transformations += t.getName() + ",";
+                store.setValue(tprefix+".Transformation", t.getTransformationName() );
+                store.setValue(tprefix+".NumSelections", t.getNumSelections());
+                store.setValue(tprefix+".PartConfig",t.getPartConfigList() );
+                store.setValue(tprefix+".Icon", t.getIconString());
+                store.setValue(tprefix+".Shortcut", t.getKeyboardShortcut() );
+            }
+            store.setValue(prefix+".Transformations", transformations.substring(0, transformations.length() -1));
         }
+        //trunc the last ','
+        store.setValue("registertedEditors", editors.substring(0, editors.length() - 1));
     }
 }
 
