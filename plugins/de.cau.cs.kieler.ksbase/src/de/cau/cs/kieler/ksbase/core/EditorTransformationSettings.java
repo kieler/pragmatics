@@ -17,7 +17,6 @@ package de.cau.cs.kieler.ksbase.core;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Serializable;
 import java.net.URI;
 import java.util.LinkedList;
 
@@ -36,9 +35,8 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
  * @author Michael Matzen
  * 
  */
-public class EditorTransformationSettings implements Serializable {
+public class EditorTransformationSettings {
 
-    private static final long serialVersionUID = -7706521956908478893L;
     private String modelPackageClass; // The model package class
     private String menuName; // Name of the menu
     private String menuLocation; // Location of the menu
@@ -208,11 +206,9 @@ public class EditorTransformationSettings implements Serializable {
     public String getExtFile() {
         return extFile;
     }
-
-    public void setExtFile(String extFile, boolean parseFile) {
-        this.extFile = extFile;
-        if (parseFile)
-            parseTransformationsFromFile();
+    
+    public void setExtFile(String file) {
+    	this.extFile = file;
     }
 
     /**
@@ -220,28 +216,34 @@ public class EditorTransformationSettings implements Serializable {
      * This parsing is based on the Xtend function names only! So renaming a
      * function in Xtend will reset the KSbasE transformation
      */
-    public void parseTransformationsFromFile() {
-        // extFile should not be null, only if we read an old config file
-        if (extFile != null && extFile.length() > 0) {
+    public synchronized void parseTransformationsFromFile(String file) {
+        // extFile should not be null, only if we read old settings
+        if (file != null && file.length() > 0) {
             // Create path from fileName
-            IPath path = new Path(extFile);
+            IPath path = new Path(file);
             // Create IFile from path
-            IFile file = ResourcesPlugin.getWorkspace().getRoot()
+            IFile xtfile = ResourcesPlugin.getWorkspace().getRoot()
                     .getFileForLocation(path);
             // If the file does not exist, we create an empty list
-            if (file == null || !file.exists()) {
+            if (xtfile == null || !xtfile.exists()) {
                 this.transformations = new LinkedList<Transformation>();
                 return;
             }
             try { // read Xtend functions
+            	this.extFile = ""; //clear old transformation file
                 LinkedList<Transformation> newTrans = new LinkedList<Transformation>();
                 BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(file.getContents()));
+                        new InputStreamReader(xtfile.getContents()));
+                
                 while (reader.ready()) {
                     // Read one line ... TODO: Check if functions can be defined
                     // over multiple lines...
                     String in = reader.readLine();
-                    // Ugly isn't it? Parsing xtend by hand, assuming we get a
+                    //Store in extFile as String, and append the deleted newline
+                    //so the file remains human readable
+                    extFile += in + "\r\n";
+                    
+                    // Ugly isn't it? Parsing Xtend by hand, assuming we get a
                     // correct file
                     // Split only twice ! so we only split return types and
                     // function

@@ -16,7 +16,6 @@ package de.cau.cs.kieler.ksbase.core;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.net.URI;
 
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
@@ -29,9 +28,8 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
  * @author Michael Matzen
  * 
  */
-public class Transformation implements Serializable {
+public class Transformation {
 
-    private static final long serialVersionUID = -6839991969679808483L;
     private String name; // Menu entry name
     private String transformationName; // Xtend method name
     private int visibilityFlags; // Visibility configuration, any combination of
