@@ -24,15 +24,18 @@ import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.internal.expressions.EnablementExpression;
 import org.eclipse.core.internal.expressions.InstanceofExpression;
 import org.eclipse.core.internal.expressions.IterateExpression;
 import org.eclipse.core.internal.expressions.WithExpression;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.internal.expressions.AlwaysEnabledExpression;
 import org.eclipse.ui.menus.AbstractContributionFactory;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
@@ -76,7 +79,7 @@ public class KSBasEPlugin extends AbstractUIPlugin {
      */
     public KSBasEPlugin() {
     }
-
+     
     /*
      * (non-Javadoc)
      * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
@@ -113,6 +116,7 @@ public class KSBasEPlugin extends AbstractUIPlugin {
                     public void createContributionItems(
                             IServiceLocator serviceLocator,
                             IContributionRoot additions) {
+                        
                         MenuManager dynamicMenu = new MenuManager(settings
                                 .getMenuName(), "de.cau.cs.kieler.ksbase.menu"
                                 + settings.getMenuName());
@@ -137,6 +141,7 @@ public class KSBasEPlugin extends AbstractUIPlugin {
                                     p);
                             if (t.getPartConfig().length > 0) {
                                 try {
+                                    
                                     IterateExpression iterate = new IterateExpression(
                                             "or", "false");
                                     for (String part : t.getPartConfig()) {
@@ -154,14 +159,70 @@ public class KSBasEPlugin extends AbstractUIPlugin {
                         }
                         
                         WithExpression we = new WithExpression("activeEditor");
+                        
                         InstanceofExpression exp = new InstanceofExpression(
                                 settings.getEditor());
                         we.add(exp);
-
+                        
                         additions.addContributionItem(dynamicMenu, we);
                     }
                 };
                 menuService.addContributionFactory(menuContribution);
+            }
+            if (settings.isShownIToolbar() 
+                    && settings.getToolbarLocation().length() > 0) {
+                // Create menu contributions
+                AbstractContributionFactory toolbarContribution = new AbstractContributionFactory(
+                        settings.getToolbarLocation(), null) {
+
+                    @SuppressWarnings("restriction")
+                    @Override
+                    public void createContributionItems(
+                            IServiceLocator serviceLocator,
+                            IContributionRoot additions) {
+                        
+                        ToolBarManager dynamicToolbar = new ToolBarManager();
+                                //+ settings.getMenuName());
+                        for (final Transformation t : settings
+                                .getTransformations()) {
+                            String cmdID = "de.cau.cs.kieler.ksbase.commands"
+                                    + settings.getMenuName() + "."
+                                    + t.getName().replace(' ', '_');
+                            Command transformationCommand = cmdService
+                                    .getCommand(cmdID);
+                            if (!transformationCommand.isDefined()) {
+                                transformationCommand.define(t.getName(), "",
+                                        kielerCategory);
+                            }
+                            transformationCommand
+                                    .setHandler(new TransformationCommandHandler(
+                                            settings, t));
+                            CommandContributionItemParameter p = new CommandContributionItemParameter(
+                                    PlatformUI.getWorkbench(), null, cmdID,
+                                    CommandContributionItem.STYLE_PUSH);
+                            CommandContributionItem cmd = new CommandContributionItem(
+                                    p);
+                            if (t.getPartConfig().length > 0) {
+                                try {
+                                    
+                                    IterateExpression iterate = new IterateExpression(
+                                            "or", "false");
+                                    for (String part : t.getPartConfig()) {
+                                        InstanceofExpression instance = new InstanceofExpression(
+                                                part);
+                                        iterate.add(instance);
+                                    }
+                                    additions.registerVisibilityForChild(cmd,
+                                            iterate);
+                                    dynamicToolbar.add(cmd);
+                                } catch (CoreException e) {
+
+                                }
+                            }
+                        }
+                    }
+                };
+                menuService.addContributionFactory(toolbarContribution);
             }
         }
     }

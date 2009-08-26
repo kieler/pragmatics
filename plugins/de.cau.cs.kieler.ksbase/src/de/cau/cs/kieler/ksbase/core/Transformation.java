@@ -16,6 +16,7 @@ package de.cau.cs.kieler.ksbase.core;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.URI;
 
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
@@ -28,12 +29,15 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
  * @author Michael Matzen
  * 
  */
-public class Transformation {
+public class Transformation implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 513784171695543063L;
     private String name; // Menu entry name
     private String transformationName; // Xtend method name
-    private int visibilityFlags; // Visibility configuration, any combination of
-                                 // visibility Flags from KSBasePlugin
+    private int visibilityFlags; // Visibility configuration, any combination of visibility Flags from KSBasePlugin
     private int numSelections; // Number of selections;
     private URI iconURI; // URI to icon
     private String keyboardShortcut; // Assigned keyboard shortcut

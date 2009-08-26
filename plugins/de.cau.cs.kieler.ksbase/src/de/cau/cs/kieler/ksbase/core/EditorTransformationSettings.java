@@ -17,6 +17,7 @@ package de.cau.cs.kieler.ksbase.core;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.URI;
 import java.util.LinkedList;
 
@@ -35,8 +36,12 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
  * @author Michael Matzen
  * 
  */
-public class EditorTransformationSettings {
+public class EditorTransformationSettings implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -208150422554311871L;
     private String modelPackageClass; // The model package class
     private String menuName; // Name of the menu
     private String menuLocation; // Location of the menu
