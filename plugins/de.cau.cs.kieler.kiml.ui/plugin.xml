@@ -164,6 +164,18 @@ point="org.eclipse.ui.menus">
        </knownOption>
     </layoutProvider>
  </extension>
+ <extension
+       point="org.eclipse.ui.views">
+    <view
+          allowMultiple="false"
+          category="de.cau.cs.kieler"
+          class="de.cau.cs.kieler.kiml.ui.views.LayoutViewPart"
+          icon="icons/view16/layout.gif"
+          id="de.cau.cs.kieler.kiml.views.layout"
+          name="%view.name.0"
+          restorable="true">
+    </view>
+ </extension>
  
    
 </plugin>

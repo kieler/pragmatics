@@ -67,6 +67,8 @@ public class LayoutServiceBuilder {
     public static final String ELEMENT_OPTION = "option";
     /** name of the 'layoutListener' element in the 'layout listeners' extension point */
     public static final String ELEMENT_LAYOUT_LISTENER = "layoutListener";
+    /** name of the 'appliesTo' attribute in the extension points */
+    public static final String ATTRIBUTE_APPLIESTO = "appliesTo";
     /** name of the 'category' attribute in the extension points */
     public static final String ATTRIBUTE_CATEGORY = "category";
     /** name of the 'class' attribute in the extension points */
@@ -278,6 +280,7 @@ public class LayoutServiceBuilder {
 		        optionData.description = element.getAttribute(ATTRIBUTE_DESCRIPTION);
 		        if (optionData.description == null)
 		        	optionData.description = "";
+		        optionData.setTargets(element.getAttribute(ATTRIBUTE_APPLIESTO));
 		        LayoutServices.REGISTRY.addLayoutOption(optionData);
 		    }
 		}

@@ -54,7 +54,7 @@ public class LayoutServices {
 			= new LinkedHashMap<String, LayoutProviderData>();
 	/** mapping of layout option identifiers to their data instances */
 	private Map<String, LayoutOptionData> layoutOptionMap
-			= new HashMap<String, LayoutOptionData>();
+			= new LinkedHashMap<String, LayoutOptionData>();
 	/** mapping of layout type identifiers to their names */
 	private Map<String, String> layoutTypeMap = new HashMap<String, String>();
 	/** mapping of category identifiers to their names */
@@ -290,6 +290,15 @@ public class LayoutServices {
 	 */
 	public LayoutOptionData getLayoutOptionData(String id) {
 	    return layoutOptionMap.get(id);
+	}
+	
+	/**
+	 * Returns a data collection for all registered layout options.
+	 * 
+	 * @return collection of registered layout options
+	 */
+	public Collection<LayoutOptionData> getLayoutOptionData() {
+	    return layoutOptionMap.values();
 	}
 
 	/**

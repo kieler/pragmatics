@@ -25,6 +25,7 @@ import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.ScrollPane;
 import org.eclipse.draw2d.geometry.Insets;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CommandStack;
@@ -114,7 +115,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                         break;
                     }
                 }
-                optionIter.add(option);
+                optionIter.add((KOption)EcoreUtil.copy(option));
             }
         }
     }

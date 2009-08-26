@@ -33,6 +33,8 @@ public class LayoutOptions {
     /**
      * Resolves the class of an enumeration given by an identifier.
      * 
+     * FIXME this implementation is restricted to internally defined enums, should be extended for all enums
+     * 
      * @param optionId identifier of a layout option that is represented by an enumeration
      * @return the corresponding enumeration class
      */

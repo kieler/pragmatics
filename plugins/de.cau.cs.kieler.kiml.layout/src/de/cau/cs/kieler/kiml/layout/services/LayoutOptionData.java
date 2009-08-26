@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.layout.services;
 
+import java.util.StringTokenizer;
+
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KBooleanOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KFloatOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KIntOption;
@@ -40,9 +42,35 @@ public class LayoutOptionData {
 	/** literal value constant for enumerations */
 	public static final String ENUM_LITERAL = "enum";
 	
-	/** Data type enumeration */
+	/** data type enumeration */
 	public enum Type {
 		UNDEFINED, BOOLEAN, INT, STRING, FLOAT, ENUM;
+	}
+	
+	/** literal value constant for diagram target */
+	public static final String PARENTS_LITERAL = "parents";
+	/** bit mask for diagram target */
+	private static final int PARENTS_MASK = 0x01;
+	/** literal value constant for nodes target */
+	public static final String NODES_LITERAL = "nodes";
+	/** bit mask for nodes target */
+	private static final int NODES_MASK = 0x02;
+	/** literal value constant for edges target */
+	public static final String EDGES_LITERAL = "edges";
+	/** bit mask for edges target */
+	private static final int EDGES_MASK = 0x04;
+	/** literal value constant for ports target */
+	public static final String PORTS_LITERAL = "ports";
+	/** bit mask for ports target */
+	private static final int PORTS_MASK = 0x08;
+	/** literal value constant for labels target */
+	public static final String LABELS_LITERAL = "labels";
+	/** bit mask for labels target */
+	private static final int LABELS_MASK = 0x10;
+	
+	/** option target enumeration */
+	public enum Target {
+	    PARENTS, NODES, EDGES, PORTS, LABELS;
 	}
 	
 	/** identifier of the layout option */
@@ -54,9 +82,28 @@ public class LayoutOptionData {
     /** a description to be displayed in the UI */
     public String description;
     
+    /** configured targets (accessed through bit masks) */
+    private int targets;
+    
     /** cached value of the enumeration class, used for ENUM typed options */
     @SuppressWarnings("unchecked")
     private Class<? extends Enum> enumClass = null;
+    
+    /*
+     * (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public boolean equals(Object obj) {
+        return obj instanceof LayoutOptionData && id.equals((LayoutOptionData)obj);
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    public int hashCode() {
+       return id.hashCode(); 
+    }
     
     /**
      * Sets the type field depending on the given literal.
@@ -66,15 +113,15 @@ public class LayoutOptionData {
      * @throws IllegalArgumentException if the type literal is invalid
      */
     public void setType(String typeLiteral) {
-    	if (BOOLEAN_LITERAL.equals(typeLiteral))
+    	if (BOOLEAN_LITERAL.equalsIgnoreCase(typeLiteral))
     		type = Type.BOOLEAN;
-    	else if (INT_LITERAL.equals(typeLiteral))
+    	else if (INT_LITERAL.equalsIgnoreCase(typeLiteral))
     		type = Type.INT;
-    	else if (STRING_LITERAL.equals(typeLiteral))
+    	else if (STRING_LITERAL.equalsIgnoreCase(typeLiteral))
     		type = Type.STRING;
-    	else if (FLOAT_LITERAL.equals(typeLiteral))
+    	else if (FLOAT_LITERAL.equalsIgnoreCase(typeLiteral))
     		type = Type.FLOAT;
-    	else if (ENUM_LITERAL.equals(typeLiteral))
+    	else if (ENUM_LITERAL.equalsIgnoreCase(typeLiteral))
     	    type = Type.ENUM;
     	else throw new IllegalArgumentException("The given type literal is invalid.");
     }
@@ -125,6 +172,29 @@ public class LayoutOptionData {
             }
         default:
             throw new IllegalStateException("Invalid type set for this layout option.");
+        }
+    }
+    
+    /**
+     * Creates an array of choices that can be selected by the user to set a value for this option.
+     * 
+     * @return an array of values to be displayed for the user
+     */
+    public String[] getChoices() {
+        switch (type) {
+        case ENUM:
+            if (enumClass == null)
+                enumClass = LayoutOptions.getEnumClass(id);
+            if (enumClass == null)
+                throw new IllegalStateException("Unknown enumeration type set for this layout option.");
+            Enum<?>[] enums = enumClass.getEnumConstants();
+            String[] choices = new String[enums.length];
+            for (int i = 0; i < enums.length; i++) {
+                choices[i] = enums[i].toString();
+            }
+            return choices;
+        default:
+            return new String[0];
         }
     }
     
@@ -183,6 +253,96 @@ public class LayoutOptionData {
         default:
             throw new IllegalStateException("Invalid type set for this layout option.");
         }
+    }
+
+    /**
+     * Sets the targets property of this layout option data.
+     * 
+     * @param targetsString comma separated list of targets
+     */
+    public void setTargets(String targetsString) {
+        targets = 0;
+        if (targetsString != null) {
+            StringTokenizer tokenizer = new StringTokenizer(targetsString, ", \t");
+            while (tokenizer.hasMoreTokens()) {
+                String token = tokenizer.nextToken();
+                if (token.equalsIgnoreCase(PARENTS_LITERAL))
+                    targets |= PARENTS_MASK;
+                else if (token.equalsIgnoreCase(NODES_LITERAL))
+                    targets |= NODES_MASK;
+                else if (token.equalsIgnoreCase(EDGES_LITERAL))
+                    targets |= EDGES_MASK;
+                else if (token.equalsIgnoreCase(PORTS_LITERAL))
+                    targets |= PORTS_MASK;
+                else if (token.equalsIgnoreCase(LABELS_LITERAL))
+                    targets |= LABELS_MASK;
+            }
+        }
+    }
+    
+    /**
+     * Checks whether the given target is active for this layout option.
+     * 
+     * @param target a layout option target
+     * @return true if the target is active
+     */
+    public boolean hasTarget(Target target) {
+        switch (target) {
+        case PARENTS:
+            return (targets & PARENTS_MASK) != 0;
+        case NODES:
+            return (targets & NODES_MASK) != 0;
+        case EDGES:
+            return (targets & EDGES_MASK) != 0;
+        case PORTS:
+            return (targets & PORTS_MASK) != 0;
+        case LABELS:
+            return (targets & LABELS_MASK) != 0;
+        default:
+            return false;
+        }
+    }
+    
+    /**
+     * Returns a user friendly description of the active targets of this layout option.
+     * 
+     * @return a description of the active targets, or {@code null} if there are no active targets
+     */
+    public String getTargetsDescription() {
+        int bitCount = Integer.bitCount(targets);
+        if (bitCount == 0)
+            return null;
+        StringBuffer description = new StringBuffer();
+        int highest = Integer.SIZE - Integer.numberOfLeadingZeros(targets);
+        int bitsRead = 0;
+        for (int i = 0; i < highest; i++) {
+            int mask = 1 << i;
+            if ((targets & mask) != 0) {
+                switch (mask) {
+                case PARENTS_MASK:
+                    description.append("Parents");
+                    break;
+                case NODES_MASK:
+                    description.append("Nodes");
+                    break;
+                case EDGES_MASK:
+                    description.append("Edges");
+                    break;
+                case PORTS_MASK:
+                    description.append("Ports");
+                    break;
+                case LABELS_MASK:
+                    description.append("Labels");
+                    break;
+                }
+                bitsRead++;
+                if (bitCount - bitsRead >= 2)
+                    description.append(", ");
+                else if (bitCount - bitsRead == 1)
+                    description.append(" and ");
+            }
+        }
+        return description.toString();
     }
     
 }

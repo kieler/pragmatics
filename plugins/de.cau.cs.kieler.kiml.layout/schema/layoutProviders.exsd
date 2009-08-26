@@ -217,6 +217,13 @@ Apart from a set of default layout types offered by KIML, new layout providers a
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="appliesTo" type="string">
+            <annotation>
+               <documentation>
+                  A comma separated list of targets on which the layout option can be applied; a target can be either &lt;code&gt;parents&lt;/code&gt;, &lt;code&gt;nodes&lt;/code&gt;, &lt;code&gt;edges&lt;/code&gt;, &lt;code&gt;ports&lt;/code&gt;, or &lt;code&gt;labels&lt;/code&gt;. If omitted, the layout option is not shown to the user.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
