@@ -39,18 +39,19 @@ import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsPackage;
  */
 public class GmfLayoutPropertySource implements IPropertySource {
 
+    /** list of layout option data */
     private List<LayoutOptionData> optionDataList;
-    
+    /** array of property descriptors for the option data */
     private IPropertyDescriptor[] propertyDescriptors;
-    
+    /** the editing domain used to perform changes to the notation view */
     private TransactionalEditingDomain editingDomain;
-    
+    /** the notation view where layout options are kept persistently */
     private View notationView;
-    
+    /** the layout option style stored in the notation view */
     private LayoutOptionStyle optionStyle;
-    
+    /** map of layout option data to KOptions from the layout option style */
     private Map<LayoutOptionData, KOption> koptionMap = new HashMap<LayoutOptionData, KOption>();
-    
+    /** map of layout option data to the default values that were read on class creation */
     private Map<LayoutOptionData, Object> defaultValueMap = new HashMap<LayoutOptionData, Object>();
     
     /**

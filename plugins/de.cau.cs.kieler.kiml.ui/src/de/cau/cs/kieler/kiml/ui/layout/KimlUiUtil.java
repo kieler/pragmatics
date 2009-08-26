@@ -58,6 +58,13 @@ public class KimlUiUtil {
         }
     }
     
+    /**
+     * Adds a layout option style to the given notation view by using the command stack.
+     * 
+     * @param notationView notation view of a graphical edit part
+     * @param editingDomain the editing domain of the edit part
+     * @return the new layout option style
+     */
     public static LayoutOptionStyle addLayoutOptionStyle(final View notationView,
             TransactionalEditingDomain editingDomain) {
         final Maybe<LayoutOptionStyle> optionStyleWrap = new Maybe<LayoutOptionStyle>();
@@ -71,6 +78,14 @@ public class KimlUiUtil {
         return optionStyleWrap.object;
     }
     
+    /**
+     * Adds a {@link KOption} to the given layout option style by using the command stack.
+     * 
+     * @param optionStyle layout option style of a notation view
+     * @param optionData the layout option data for which the {@code KOption} shall be created
+     * @param editingDomain the editing domain of the related edit part
+     * @return the new {@code KOption}
+     */
     public static KOption addKOption(final LayoutOptionStyle optionStyle,
             final LayoutOptionData optionData, TransactionalEditingDomain editingDomain) {
         final Maybe<KOption> koptionWrap = new Maybe<KOption>();
@@ -100,6 +115,13 @@ public class KimlUiUtil {
         return koptionWrap.object;
     }
 
+    /**
+     * Returns the value of the given {@link KOption} as an {@code Object}.
+     * 
+     * @param koption the {@code KOption} for which the value shall be retrieved
+     * @param optionData the layout option data related with the option
+     * @return the current value of the option
+     */
     public static Object getValue(KOption koption, LayoutOptionData optionData) {
         switch (optionData.type) {
         case STRING:
@@ -116,6 +138,14 @@ public class KimlUiUtil {
         }
     }
     
+    /**
+     * Sets the value of the given {@link KOption} by using the command stack.
+     * 
+     * @param koption the {@code KOption} for which the value shall be set
+     * @param optionData the layout option data related with the option
+     * @param value the new value of the option
+     * @param editingDomain the editing domain of the related edit part
+     */
     public static void setValue(final KOption koption, final LayoutOptionData optionData,
             final Object value, TransactionalEditingDomain editingDomain) {
         editingDomain.getCommandStack().execute(new RecordingCommand(editingDomain) {

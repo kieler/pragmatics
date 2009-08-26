@@ -13,14 +13,19 @@
  */
 package de.cau.cs.kieler.kiml.ui.views;
 
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
+import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -38,6 +43,8 @@ import org.eclipse.ui.views.properties.PropertySheetPage;
  */
 public class LayoutViewPart extends ViewPart implements ISelectionChangedListener {
 
+    /** the form container for the property sheet page */
+    private ScrolledForm form;
     /** the page that is displayed in this view part */
     private PropertySheetPage page;
     /** the part listener that tracks the active editor part */
@@ -50,8 +57,8 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
      */
     public void createPartControl(Composite parent) {
         FormToolkit toolkit = new FormToolkit(parent.getDisplay());
-        ScrolledForm form = toolkit.createScrolledForm(parent);
-        form.setText("Layout");
+        form = toolkit.createScrolledForm(parent);
+        form.setText("");
         form.setExpandHorizontal(true);
         form.setExpandVertical(true);
         Composite content = form.getBody();
@@ -69,7 +76,12 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
             }
         });
         IWorkbenchWindow workbenchWindow = getSite().getWorkbenchWindow();
-        setInput(workbenchWindow.getActivePage().getActivePart());
+        IWorkbenchPage activePage = workbenchWindow.getActivePage();
+        if (activePage != null) {
+            IWorkbenchPart activePart = activePage.getActivePart();
+            if (activePart != null)
+                setInput(activePart);
+        }
         
         
         partListener = new IPartListener() {
@@ -121,6 +133,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
             currentEditor = (DiagramEditor)part;
             ISelection selection = currentEditor.getDiagramGraphicalViewer().getSelection();
             page.selectionChanged(currentEditor, selection);
+            setPartText(selection);
             currentEditor.getDiagramGraphicalViewer().addSelectionChangedListener(this);
         }        
     }
@@ -131,6 +144,52 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
     public void selectionChanged(SelectionChangedEvent event) {
         if (currentEditor != null) {
             page.selectionChanged(currentEditor, event.getSelection());
+            setPartText(event.getSelection());
+        }
+    }
+    
+    /**
+     * Sets a text line for the view part.
+     * 
+     * @param selection the current selection
+     */
+    private void setPartText(ISelection selection) {
+        if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
+            Object firstElement = ((IStructuredSelection)selection).getFirstElement();
+            if (firstElement instanceof EditPart) {
+                Object model = ((EditPart)firstElement).getModel();
+                if (model instanceof View)
+                    model = ((View)model).getElement();
+                StringBuffer textBuffer = new StringBuffer();
+                if (model instanceof EObject)
+                    textBuffer.append(((EObject)model).eClass().getName());
+                else
+                    textBuffer.append(model.getClass().getSimpleName());
+                String name = getProperty(model, "Name");
+                if (name == null)
+                    name = getProperty(model, "Label");
+                if (name == null)
+                    name = getProperty(model, "Id");
+                if (name != null)
+                    textBuffer.append(" '" + name + "'");
+                form.setText(textBuffer.toString());
+            }
+        }
+    }
+    
+    /**
+     * Gets a property of the given object by invoking its getter method.
+     * 
+     * @param object the object from which the property shall be fetched
+     * @param property the name of a property, starting with a capital
+     * @return the named property, or {@code null} if there is no such property
+     */
+    private static String getProperty(Object object, String property) {
+        try {
+            return (String)object.getClass().getMethod("get" + property).invoke(object);
+        }
+        catch (Exception exception) {
+            return null;
         }
     }
 
