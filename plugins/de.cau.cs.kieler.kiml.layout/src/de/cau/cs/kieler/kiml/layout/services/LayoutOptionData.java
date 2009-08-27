@@ -89,6 +89,17 @@ public class LayoutOptionData {
     @SuppressWarnings("unchecked")
     private Class<? extends Enum> enumClass = null;
     
+    /**
+     * Checks whether the enumeration class is set correctly. This method must not be called
+     * for options other than enumerations.
+     */
+    private void checkEnumClass() {
+        if (enumClass == null)
+            enumClass = LayoutOptions.getEnumClass(id);
+        if (enumClass == null)
+            throw new IllegalStateException("Unknown enumeration type set for this layout option.");
+    }
+    
     /*
      * (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
@@ -161,10 +172,7 @@ public class LayoutOptionData {
             }
         case ENUM:
             try {
-                if (enumClass == null)
-                    enumClass = LayoutOptions.getEnumClass(id);
-                if (enumClass == null)
-                    throw new IllegalStateException("Unknown enumeration type set for this layout option.");
+                checkEnumClass();
                 return Enum.valueOf(enumClass, valueString);
             }
             catch (IllegalArgumentException exception) {
@@ -177,16 +185,14 @@ public class LayoutOptionData {
     
     /**
      * Creates an array of choices that can be selected by the user to set a value for this option.
+     * This makes only sense for enumeration type options.
      * 
      * @return an array of values to be displayed for the user
      */
     public String[] getChoices() {
         switch (type) {
         case ENUM:
-            if (enumClass == null)
-                enumClass = LayoutOptions.getEnumClass(id);
-            if (enumClass == null)
-                throw new IllegalStateException("Unknown enumeration type set for this layout option.");
+            checkEnumClass();
             Enum<?>[] enums = enumClass.getEnumConstants();
             String[] choices = new String[enums.length];
             for (int i = 0; i < enums.length; i++) {
@@ -195,6 +201,23 @@ public class LayoutOptionData {
             return choices;
         default:
             return new String[0];
+        }
+    }
+    
+    /**
+     * Returns the enumeration value for a given index.
+     * 
+     * @param intValue zero-based index of the enumeration value
+     * @return the corresponding enumeration value
+     */
+    public Enum<?> getEnumValue(int intValue) {
+        switch (type) {
+        case ENUM:
+            checkEnumClass();
+            Enum<?>[] enums = enumClass.getEnumConstants();
+            return enums[intValue];
+        default:
+            return null;
         }
     }
     

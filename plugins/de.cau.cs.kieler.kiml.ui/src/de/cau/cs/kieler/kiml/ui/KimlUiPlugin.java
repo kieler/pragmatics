@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.kiml.ui;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -26,12 +27,51 @@ import de.cau.cs.kieler.kiml.ui.layout.LayoutServiceBuilder;
  */
 public class KimlUiPlugin extends AbstractUIPlugin {
 
-	// The plug-in ID
+	/** the plug-in ID */
 	public static final String PLUGIN_ID = "de.cau.cs.kieler.kiml.ui";
 
-	// The shared instance
+	/** the shared instance */
 	private static KimlUiPlugin plugin;
 
+	/** nested class used to store images that are loaded at runtime */
+	public static class Images {
+	    
+	    public Image propChoice;
+	    public Image propFalse;
+	    public Image propFloat;
+	    public Image propInt;
+	    public Image propText;
+	    public Image propTrue;
+	    
+	    /**
+	     * Loads all images for the KIML UI plugin.
+	     */
+	    Images() {
+	        propChoice = getImageDescriptor("icons/obj16/prop_choice.gif").createImage();
+	        propFalse = getImageDescriptor("icons/obj16/prop_false.gif").createImage();
+	        propFloat = getImageDescriptor("icons/obj16/prop_float.gif").createImage();
+	        propInt = getImageDescriptor("icons/obj16/prop_int.gif").createImage();
+	        propText = getImageDescriptor("icons/obj16/prop_text.gif").createImage();
+	        propTrue = getImageDescriptor("icons/obj16/prop_true.gif").createImage();
+	    }
+	    
+	    /**
+	     * Frees all resources used by loaded images.
+	     */
+	    void dispose() {
+	        propChoice.dispose();
+	        propFalse.dispose();
+	        propFloat.dispose();
+	        propInt.dispose();
+	        propText.dispose();
+	        propTrue.dispose();
+	    }
+	    
+	}
+	
+	/** the singleton images class instance */
+	public static Images images;
+	
 	/**
 	 * The constructor
 	 */
@@ -48,6 +88,7 @@ public class KimlUiPlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		images = new Images();
 		LayoutServiceBuilder.buildLayoutServices();
 	}
 
@@ -60,6 +101,10 @@ public class KimlUiPlugin extends AbstractUIPlugin {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
+		if (images != null) {
+		    images.dispose();
+		    images = null;
+		}
 		super.stop(context);
 	}
 

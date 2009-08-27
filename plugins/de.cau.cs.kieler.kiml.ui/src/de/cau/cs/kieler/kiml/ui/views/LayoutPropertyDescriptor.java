@@ -20,10 +20,12 @@ import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 import de.cau.cs.kieler.kiml.layout.services.LayoutOptionData;
+import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 
 /**
@@ -33,6 +35,46 @@ import de.cau.cs.kieler.kiml.ui.Messages;
  */
 public class LayoutPropertyDescriptor implements IPropertyDescriptor {
 
+    /** label provider used for layout options */
+    private class LayoutOptionLabelProvider extends LabelProvider {
+
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
+         */
+        public Image getImage(Object element) {
+            switch (optionData.type) {
+            case STRING:
+                return KimlUiPlugin.images.propText;
+            case BOOLEAN:
+                if (((Boolean)element).booleanValue())
+                    return KimlUiPlugin.images.propTrue;
+                else
+                    return KimlUiPlugin.images.propFalse;
+            case ENUM:
+                return KimlUiPlugin.images.propChoice;
+            case INT:
+                return KimlUiPlugin.images.propInt;
+            case FLOAT:
+                return KimlUiPlugin.images.propFloat;
+            default:
+                return null;
+            }
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
+         */
+        public String getText(Object element) {
+            switch (optionData.type) {
+            case ENUM:
+                return optionData.getEnumValue(((Integer)element).intValue()).toString();
+            default:
+                return element.toString();
+            }
+        }
+        
+    }
+    
     /** the layout option data associated with this property descriptor */
     private LayoutOptionData optionData;
     
@@ -135,7 +177,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
      * @see org.eclipse.ui.views.properties.IPropertyDescriptor#getLabelProvider()
      */
     public ILabelProvider getLabelProvider() {
-        return new LabelProvider();
+        return new LayoutOptionLabelProvider();
     }
 
     /* (non-Javadoc)

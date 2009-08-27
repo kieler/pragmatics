@@ -22,7 +22,9 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPage;
@@ -59,14 +61,20 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
         FormToolkit toolkit = new FormToolkit(parent.getDisplay());
         form = toolkit.createScrolledForm(parent);
         form.setText("");
-        form.setExpandHorizontal(true);
-        form.setExpandVertical(true);
         Composite content = form.getBody();
-        content.setLayout(new FillLayout());
+        FormLayout contentLayout = new FormLayout();
+        contentLayout.marginWidth = 4;
+        content.setLayout(contentLayout);
         
         page = new PropertySheetPage();
         page.setRootEntry(new PropertySheetEntry());
         page.createControl(content);
+        FormData formData = new FormData();
+        formData.left = new FormAttachment(0, 0);
+        formData.right = new FormAttachment(100, 0);
+        formData.top = new FormAttachment(0, 0);
+        formData.bottom = new FormAttachment(100, 0);
+        page.getControl().setLayoutData(formData);
         page.setPropertySourceProvider(new IPropertySourceProvider() {
             public IPropertySource getPropertySource(Object object) {
                 if (object instanceof IGraphicalEditPart)
@@ -105,7 +113,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
      * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
      */
     public void setFocus() {
-        page.setFocus();
+        form.setFocus();
     }
     
     /*
