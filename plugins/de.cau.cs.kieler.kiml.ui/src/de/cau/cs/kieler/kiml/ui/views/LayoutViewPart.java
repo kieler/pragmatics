@@ -13,11 +13,15 @@
  */
 package de.cau.cs.kieler.kiml.ui.views;
 
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.gmf.runtime.notation.View;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -30,9 +34,11 @@ import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.IPropertySourceProvider;
 import org.eclipse.ui.views.properties.PropertySheetEntry;
@@ -45,6 +51,9 @@ import org.eclipse.ui.views.properties.PropertySheetPage;
  */
 public class LayoutViewPart extends ViewPart implements ISelectionChangedListener {
 
+    /** the view identifier */
+    public static final String VIEW_ID = "de.cau.cs.kieler.kiml.views.layout";
+    
     /** the form container for the property sheet page */
     private ScrolledForm form;
     /** the page that is displayed in this view part */
@@ -53,6 +62,30 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
     private IPartListener partListener;
     /** the currently tracked diagram editor */
     private DiagramEditor currentEditor;
+    
+    /**
+     * Finds an active layout view and refreshes it.
+     */
+    public static void refreshLayoutView() {
+        try {
+            IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
+            progressService.runInUI(progressService, new IRunnableWithProgress() {
+                public void run(IProgressMonitor monitor) throws InvocationTargetException,
+                        InterruptedException {
+                    IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+                    if (activeWindow != null) {
+                        IWorkbenchPage activePage = activeWindow.getActivePage();
+                        if (activePage != null) {
+                            LayoutViewPart layoutViewPart = (LayoutViewPart)activePage.findView(VIEW_ID);
+                            if (layoutViewPart != null)
+                                layoutViewPart.page.refresh();
+                        }
+                    }
+                }
+            }, null);
+        }
+        catch (Exception exception) {}
+    }
     
     /* (non-Javadoc)
      * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
@@ -113,7 +146,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
      * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
      */
     public void setFocus() {
-        form.setFocus();
+        page.setFocus();
     }
     
     /*

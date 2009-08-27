@@ -37,6 +37,7 @@ import de.cau.cs.kieler.kiml.layout.services.LayoutServices;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.layout.LayoutServiceBuilder;
+import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
 
 /**
  * Preference page for general KIML preferences.
@@ -200,6 +201,7 @@ public class LayoutPreferencePage extends PreferencePage
                 }
             }
         }
+        LayoutViewPart.refreshLayoutView();
         return true;
     }
 

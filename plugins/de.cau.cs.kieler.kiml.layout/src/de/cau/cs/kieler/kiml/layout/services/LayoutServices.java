@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.layout.services;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -252,10 +253,27 @@ public class LayoutServices {
     public Collection<LayoutProviderData> getLayoutProviderData() {
         return layoutProviderMap.values();
     }
-	
+
+    /**
+     * Returns the layout provider with highest priority for the given layout hint and
+     * diagram type.
+     * 
+     * @param layoutHint identifier of either a layout provider or a layout type
+     * @param diagramType identifier of a diagram type
+     * @return the layout provider with highest priority, or {@code null} if there is
+     *     no registered layout provider
+     */
+    public LayoutProviderData getLayoutProviderData(String layoutHint, String diagramType) {
+        // try to get a specific provider for the given node
+        LayoutProviderData providerData = layoutProviderMap.get(layoutHint);
+        if (providerData != null)
+            return providerData;
+        // find the most appropriate provider from the layout type and diagram type
+        return findAppropriateProvider(layoutHint, diagramType);
+    }
+    
 	/**
-	 * Returns the most appropriate layout provider for the given
-	 * node.
+	 * Returns the most appropriate layout provider for the given node.
 	 * 
 	 * @param layoutNode node for which a layout provider is requested
 	 * @return a layout provider instance that fits the layout hints for
@@ -265,21 +283,15 @@ public class LayoutServices {
 	public AbstractLayoutProvider getLayoutProvider(KNode layoutNode)
 	        throws KielerException {
 	    KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
-	    String layoutHint = LayoutOptions.getLayoutHint(nodeLayout);
-	    // try to get a specific provider for the given node
-	    LayoutProviderData providerData = layoutProviderMap.get(layoutHint);
-	    if (providerData != null)
-	        return providerData.instance;
-
-	    // find the most appropriate provider from the layout type and diagram type
-	    String diagramType = LayoutOptions.getDiagramType(nodeLayout);
-	    providerData = findAppropriateProvider(layoutHint, diagramType);
+        String layoutHint = LayoutOptions.getLayoutHint(nodeLayout);
+        String diagramType = LayoutOptions.getDiagramType(nodeLayout);
+        LayoutProviderData providerData = getLayoutProviderData(layoutHint, diagramType);
 	    if (providerData != null)
 	        return providerData.instance;
 	    else
 	        throw new KielerException("No registered layout provider is available.");
 	}
-
+	
 	/**
 	 * Returns the layout option data associated with the given
 	 * identifier.
@@ -299,6 +311,32 @@ public class LayoutServices {
 	 */
 	public Collection<LayoutOptionData> getLayoutOptionData() {
 	    return layoutOptionMap.values();
+	}
+	
+	/**
+	 * Returns a list of layout options that are suitable for the given layout provider
+	 * and layout option targets. The layout provider must know the layout options and
+	 * at least one of the targets must be active for each option.
+	 * 
+	 * @param providerData layout provider data
+	 * @param targets array of layout option targets
+	 * @return list of suitable layout options
+	 */
+	public List<LayoutOptionData> getLayoutOptions(LayoutProviderData providerData,
+	        LayoutOptionData.Target[] targets) {
+	    List<LayoutOptionData> optionDataList = new ArrayList<LayoutOptionData>();
+        for (LayoutOptionData optionData : layoutOptionMap.values()) {
+            if (providerData.knowsOption(optionData.id)
+                    || LayoutOptions.LAYOUT_HINT.equals(optionData.id)) {
+                for (LayoutOptionData.Target target : targets) {
+                    if (optionData.hasTarget(target)) {
+                        optionDataList.add(optionData);
+                        break;
+                    }
+                }
+            }
+        }
+        return optionDataList;
 	}
 
 	/**
@@ -360,6 +398,24 @@ public class LayoutServices {
 	}
 
 	/**
+	 * Retrieves the preconfigured layout option with given identifier for
+	 * an edit part type.
+	 * 
+	 * @param editPartType a type of edit part
+	 * @param optionId the layout option identifier
+	 * @return the preconfigured value of the option, or {@code null} if the
+	 *     option is not set for the given edit part
+	 */
+	public Object getOption(Class<?> editPartType, String optionId) {
+        String bindingId = editPartBindingMap.get(editPartType);
+        if (bindingId != null) {
+            Map<String, Object> options = optionSetupMap.get(bindingId);
+            return options.get(optionId);            
+        }
+        else return null;
+	}
+	
+	/**
 	 * Checks whether the diagram type configured for the given edit part is
 	 * a "no layout" diagram.
 	 * 
@@ -367,13 +423,8 @@ public class LayoutServices {
 	 * @return true if no layout must be performed for the given edit part
 	 */
 	public boolean isNolayout(Class<?> editPartType) {
-	    String bindingId = editPartBindingMap.get(editPartType);
-        if (bindingId != null) {
-            Map<String, Object> options = optionSetupMap.get(bindingId);
-            String diagramType = (String)options.get(LayoutOptions.DIAGRAM_TYPE);
-            return DIAGRAM_TYPE_NOLAYOUT.equals(diagramType);
-        }
-        else return false;
+	    String diagramType = (String)getOption(editPartType, LayoutOptions.DIAGRAM_TYPE);
+        return DIAGRAM_TYPE_NOLAYOUT.equals(diagramType);
 	}
 
 	/**

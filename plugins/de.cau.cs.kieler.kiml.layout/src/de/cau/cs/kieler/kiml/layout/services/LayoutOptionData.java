@@ -84,10 +84,11 @@ public class LayoutOptionData {
     
     /** configured targets (accessed through bit masks) */
     private int targets;
-    
     /** cached value of the enumeration class, used for ENUM typed options */
     @SuppressWarnings("unchecked")
     private Class<? extends Enum> enumClass = null;
+    /** cached value of the available choices */
+    private String[] choices = null;
     
     /**
      * Checks whether the enumeration class is set correctly. This method must not be called
@@ -113,7 +114,7 @@ public class LayoutOptionData {
      * @see java.lang.Object#hashCode()
      */
     public int hashCode() {
-       return id.hashCode(); 
+       return id.hashCode();
     }
     
     /**
@@ -190,18 +191,21 @@ public class LayoutOptionData {
      * @return an array of values to be displayed for the user
      */
     public String[] getChoices() {
-        switch (type) {
-        case ENUM:
-            checkEnumClass();
-            Enum<?>[] enums = enumClass.getEnumConstants();
-            String[] choices = new String[enums.length];
-            for (int i = 0; i < enums.length; i++) {
-                choices[i] = enums[i].toString();
+        if (choices == null) {
+            switch (type) {
+            case ENUM:
+                checkEnumClass();
+                Enum<?>[] enums = enumClass.getEnumConstants();
+                choices = new String[enums.length];
+                for (int i = 0; i < enums.length; i++) {
+                    choices[i] = enums[i].toString();
+                }
+                break;
+            default:
+                choices = new String[0];
             }
-            return choices;
-        default:
-            return new String[0];
         }
+        return choices;
     }
     
     /**

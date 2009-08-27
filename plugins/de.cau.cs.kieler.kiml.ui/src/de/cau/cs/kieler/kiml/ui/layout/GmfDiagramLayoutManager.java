@@ -38,7 +38,6 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.figures.ResizableCompartmentFigure;
-import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramCommandStack;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
 import org.eclipse.swt.graphics.Font;
@@ -56,7 +55,6 @@ import de.cau.cs.kieler.kiml.layout.klayoutdata.KOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.layout.options.EdgeLabelPlacement;
-import de.cau.cs.kieler.kiml.layout.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.options.PortConstraints;
 import de.cau.cs.kieler.kiml.layout.services.LayoutServices;
@@ -93,8 +91,10 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     private LinkedList<ConnectionEditPart> connections = new LinkedList<ConnectionEditPart>();
     /** editor part of the currently layouted diagram */
     private DiagramEditor diagramEditorPart;
-    /** top edit part of the currently layouted diagram */
+    /** diagram edit part of the currently layouted diagram */
     private DiagramEditPart diagramEditPart;
+    /** root of the currently layouted selection */
+    private GraphicalEditPart layoutRootPart;
     
     /**
      * Sets all layout options that are stored in the notation view of the given edit
@@ -103,7 +103,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      * @param editPart edit part for which the notation view is queried for layout options
      * @param layoutData layout data to which the layout options are added
      */
-    public void setNotationLayoutOptions(IGraphicalEditPart editPart, KLayoutData layoutData) {
+    public static void setNotationLayoutOptions(IGraphicalEditPart editPart, KLayoutData layoutData) {
         LayoutOptionStyle optionStyle = (LayoutOptionStyle)editPart.getNotationView()
                 .getStyle(LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
         if (optionStyle != null) {
@@ -158,7 +158,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             diagramEditorPart = null;
         
         // choose the layout root edit part
-        GraphicalEditPart layoutRootPart = null;
+        layoutRootPart = null;
         if (editPart instanceof ShapeNodeEditPart || editPart instanceof DiagramEditPart)
             layoutRootPart = (GraphicalEditPart) editPart;
         else {
@@ -211,14 +211,14 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         progressMonitor.worked(3);
         
         // gets a command stack to execute the command
-        DiagramCommandStack commandStack = null;
+        CommandStack commandStack = null;
         if (diagramEditorPart != null) {
             Object adapter = diagramEditorPart.getAdapter(CommandStack.class);
-            if (adapter instanceof DiagramCommandStack)
-                commandStack = (DiagramCommandStack) adapter;
+            if (adapter instanceof CommandStack)
+                commandStack = (CommandStack)adapter;
         }
         if (commandStack == null)
-            commandStack = new DiagramCommandStack(null);
+            commandStack = layoutRootPart.getDiagramEditDomain().getDiagramCommandStack();
         commandStack.execute(applyLayoutCommand);
         progressMonitor.done();
     }
@@ -232,49 +232,29 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 	 */
 	private KNode doBuildLayoutGraph(GraphicalEditPart layoutRootPart) {
         KNode layoutGraph = KimlLayoutUtil.createInitializedNode();
-        // start with a specific node as root for layout
-		if (layoutRootPart instanceof ShapeNodeEditPart) {
-			ShapeNodeEditPart rootEditPart = (ShapeNodeEditPart) layoutRootPart;
-			KShapeLayout shapeLayout = KimlLayoutUtil.getShapeLayout(layoutGraph);
-
-			// set location and size
-			Rectangle rootBounds = rootEditPart.getFigure().getBounds();
-			shapeLayout.setXpos(rootBounds.x);
-			shapeLayout.setYpos(rootBounds.y);
-			shapeLayout.setHeight(rootBounds.height);
-			shapeLayout.setWidth(rootBounds.width);
-
-			// map the root EditPart to the top KNode
-			editPart2NodeMap.put(rootEditPart, layoutGraph);
-			node2EditPartMap.put(layoutGraph, rootEditPart);
-
-			// wander recursively through the diagram
-			buildLayoutGraphRecursively(rootEditPart, layoutGraph, 0.0f, 0.0f);
-			
-			// set preconfigured layout options for the root node
-			LayoutServices.INSTANCE.setLayoutOptions(rootEditPart.getClass(), shapeLayout);
-			// set user defined layout options for the root node
-			setNotationLayoutOptions(rootEditPart, shapeLayout);
-		}
+        KShapeLayout shapeLayout = KimlLayoutUtil.getShapeLayout(layoutGraph);
+        Rectangle rootBounds = layoutRootPart.getFigure().getBounds();
 		// start with the whole diagram as root for layout
-		else if (layoutRootPart instanceof DiagramEditPart) {
-		    KShapeLayout shapeLayout = KimlLayoutUtil.getShapeLayout(layoutGraph);
-		    shapeLayout.setWidth(layoutRootPart.getFigure().getBounds().width);
-		    shapeLayout.setHeight(layoutRootPart.getFigure().getBounds().height);
+		if (layoutRootPart instanceof DiagramEditPart) {
 			layoutGraph.getLabel().setText(((DiagramEditPart)layoutRootPart)
 			        .getDiagramView().getName());
-			editPart2NodeMap.put(layoutRootPart, layoutGraph);
-			node2EditPartMap.put(layoutGraph, layoutRootPart);
-			buildLayoutGraphRecursively(layoutRootPart, layoutGraph, 0.0f, 0.0f);
-			
-			// set preconfigured layout options for the diagram
-			LayoutServices.INSTANCE.setLayoutOptions(layoutRootPart.getClass(), shapeLayout);
-			// set user defined layout options for the diagram
-			setNotationLayoutOptions(layoutRootPart, shapeLayout);
 		}
-		else throw new UnsupportedOperationException("Not supported by this layout manager: "
-		        + layoutRootPart);
+        // start with a specific node as root for layout
+		else {
+            shapeLayout.setXpos(rootBounds.x);
+            shapeLayout.setYpos(rootBounds.y);		    
+		}
 		
+        shapeLayout.setHeight(rootBounds.height);
+        shapeLayout.setWidth(rootBounds.width);
+        editPart2NodeMap.put(layoutRootPart, layoutGraph);
+        node2EditPartMap.put(layoutGraph, layoutRootPart);
+		// traverse the children of the layout root part
+        buildLayoutGraphRecursively(layoutRootPart, layoutGraph, 0.0f, 0.0f);
+        // set preconfigured layout options for the diagram
+        LayoutServices.INSTANCE.setLayoutOptions(layoutRootPart.getClass(), shapeLayout);
+        // set user defined layout options for the diagram
+        setNotationLayoutOptions(layoutRootPart, shapeLayout);		
 	    // transform all connections in the selected area
         processConnections();
         
@@ -361,7 +341,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 		    
 			// process compartments, which may contain other elements
 			else if (obj instanceof CompartmentEditPart
-					&& ((CompartmentEditPart) obj).getChildren().size() != 0) {
+					&& ((CompartmentEditPart) obj).getChildren().size() > 0) {
 				CompartmentEditPart compartment = (CompartmentEditPart)obj;
 			    if (!LayoutServices.INSTANCE.isNolayout(compartment.getClass())) {
     			    Rectangle parentBounds = currentEditPart.getFigure().getBounds();
@@ -419,9 +399,12 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 editPart2NodeMap.put(childNodeEditPart, childLayoutNode);
                 node2EditPartMap.put(childLayoutNode, childNodeEditPart);
                 hasChildNodes = true;
-                // process the child as new current edit part, as it may contain other elements
-                buildLayoutGraphRecursively(childNodeEditPart,
-                        childLayoutNode, 0.0f, 0.0f);
+                if (!LayoutServices.INSTANCE.isNolayout(childLayoutNode.getClass())) {
+                    Insets insets = childNodeEditPart.getFigure().getInsets();
+                    // process the child as new current edit part, as it may contain other elements
+                    buildLayoutGraphRecursively(childNodeEditPart,
+                            childLayoutNode, insets.left, insets.top);
+                }
                 
                 // set preconfigured layout options for the node
                 LayoutServices.INSTANCE.setLayoutOptions(childNodeEditPart.getClass(),
@@ -466,10 +449,6 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 		}
 		
         KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(currentLayoutNode);
-        // set default layout direction option
-		if (hasChildNodes) {
-            LayoutOptions.setLayoutDirection(nodeLayout, LayoutDirection.HORIZONTAL);
-		}
 		// set default fixed size option
 		if (!hasChildNodes && !hasChildCompartments && !isCollapsed) {
 		    LayoutOptions.setFixedSize(nodeLayout, true);

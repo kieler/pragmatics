@@ -45,6 +45,7 @@ import org.eclipse.gmf.runtime.notation.datatype.RelativeBendpoint;
  * @see org.eclipse.gmf.runtime.diagram.ui.internal.commands.SetConnectionBendpointsCommand
  * @see org.eclipse.gmf.runtime.diagram.core.commands.SetConnectionAnchorsCommand
  */
+@SuppressWarnings("restriction")
 public class GmfLayoutCommand extends AbstractTransactionalCommand {
 
     /** layout data for node shapes */

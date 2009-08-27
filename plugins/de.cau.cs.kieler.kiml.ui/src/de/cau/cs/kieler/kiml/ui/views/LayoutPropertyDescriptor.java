@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.ui.views;
 
+import java.util.Map;
+
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckboxCellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
@@ -20,11 +22,15 @@ import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
+import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.services.LayoutOptionData;
+import de.cau.cs.kieler.kiml.layout.services.LayoutProviderData;
+import de.cau.cs.kieler.kiml.layout.services.LayoutServices;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 
@@ -66,6 +72,22 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
          */
         public String getText(Object element) {
             switch (optionData.type) {
+            case STRING:
+                if (LayoutOptions.LAYOUT_HINT.equals(optionData.id)) {
+                    String layoutHint = layoutHintValueMap.get(element);
+                    String layoutType = LayoutServices.INSTANCE.getLayoutTypeName(layoutHint);
+                    if (layoutType != null)
+                        return layoutType;
+                    LayoutProviderData providerData = LayoutServices.INSTANCE.getLayoutProviderData(layoutHint);
+                    if (providerData != null) {
+                        String category = LayoutServices.INSTANCE.getCategoryName(providerData.category);
+                        if (category == null)
+                            return providerData.name;
+                        else
+                            return providerData.name + " (" + category + ")";
+                    }
+                }
+                else return (String)element;
             case ENUM:
                 return optionData.getEnumValue(((Integer)element).intValue()).toString();
             default:
@@ -77,14 +99,22 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
     
     /** the layout option data associated with this property descriptor */
     private LayoutOptionData optionData;
+    /** array of choices for the layout hint option */
+    private String[] layoutHintChoices;
+    /** map of choice indices to layout hint values */
+    private Map<Integer, String> layoutHintValueMap;
     
     /**
      * Creates a layout property descriptor based on a specific layout option.
      * 
      * @param optionData the layout option data
+     * @param layoutHintChoices the array of choices for the layout hint option
      */
-    public LayoutPropertyDescriptor(LayoutOptionData optionData) {
+    public LayoutPropertyDescriptor(LayoutOptionData optionData, String[] layoutHintChoices,
+            Map<Integer, String> layoutHintValueMap) {
         this.optionData = optionData;
+        this.layoutHintChoices = layoutHintChoices;
+        this.layoutHintValueMap = layoutHintValueMap;
     }
     
     /* (non-Javadoc)
@@ -93,7 +123,10 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
     public CellEditor createPropertyEditor(Composite parent) {
         switch (optionData.type) {
         case STRING:
-            return new TextCellEditor(parent);
+            if (LayoutOptions.LAYOUT_HINT.equals(optionData.id))
+                return new ComboBoxCellEditor(parent, layoutHintChoices, SWT.READ_ONLY);
+            else
+                return new TextCellEditor(parent);
         case BOOLEAN:
             return new CheckboxCellEditor(parent);
         case INT:
@@ -125,7 +158,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
             });
             return floatEditor;
         case ENUM:
-            return new ComboBoxCellEditor(parent, optionData.getChoices());
+            return new ComboBoxCellEditor(parent, optionData.getChoices(), SWT.READ_ONLY);
         default:
             return null;
         }
