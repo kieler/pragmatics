@@ -242,7 +242,11 @@ public class GmfLayoutPropertySource implements IPropertySource {
             value = KimlUiUtil.getValue(koption, optionData);
         if (LayoutOptions.LAYOUT_HINT.equals(optionData.id))
             return layoutHintIndexMap.get(value);
-        else return value;
+        else if (optionData.type == LayoutOptionData.Type.INT
+                || optionData.type == LayoutOptionData.Type.FLOAT)
+            return value.toString();
+        else
+            return value;
     }
     
     /* (non-Javadoc)
@@ -261,8 +265,13 @@ public class GmfLayoutPropertySource implements IPropertySource {
             KimlUiUtil.setValue(koption, optionData, layoutHintValues[((Integer)value).intValue()], editingDomain);
             LayoutViewPart.refreshLayoutView();
         }
-        else
+        else {
+            if (optionData.type == LayoutOptionData.Type.INT)
+                value = Integer.valueOf((String)value);
+            else if (optionData.type == LayoutOptionData.Type.FLOAT)
+                value = Float.valueOf((String)value);
             KimlUiUtil.setValue(koption, optionData, value, editingDomain);
+        }
     }
     
     /* (non-Javadoc)

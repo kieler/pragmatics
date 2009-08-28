@@ -102,6 +102,8 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
     private String[] layoutHintChoices;
     /** array of identifiers for the layout hint option */
     private String[] layoutHintValues;
+    /** the label provider for this property descriptor */
+    private LayoutOptionLabelProvider labelProvider;
     
     /**
      * Creates a layout property descriptor based on a specific layout option.
@@ -209,7 +211,9 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
      * @see org.eclipse.ui.views.properties.IPropertyDescriptor#getLabelProvider()
      */
     public ILabelProvider getLabelProvider() {
-        return new LayoutOptionLabelProvider();
+        if (labelProvider == null)
+            labelProvider = new LayoutOptionLabelProvider();
+        return labelProvider;
     }
 
     /* (non-Javadoc)
