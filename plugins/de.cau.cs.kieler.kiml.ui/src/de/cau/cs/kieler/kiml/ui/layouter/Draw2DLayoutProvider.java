@@ -80,6 +80,21 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
         progressMonitor.done();
     }
     
+    /*
+     * (non-Javadoc)
+     * @see de.cau.cs.kieler.kiml.layout.services.AbstractLayoutProvider#getDefault(java.lang.String)
+     */
+    public Object getDefault(String optionId) {
+        if (LayoutOptions.MIN_SPACING.equals(optionId))
+            return DEF_MIN_SPACING;
+        else if (LayoutOptions.LAYOUT_DIRECTION.equals(optionId))
+            return LayoutDirection.VERTICAL;
+        else if (LayoutOptions.FIXED_SIZE.equals(optionId))
+            return false;
+        else
+            return null;
+    }
+    
     /**
      * Builds the graph which is used internally by the Draw2D layout algorithm.
      * 

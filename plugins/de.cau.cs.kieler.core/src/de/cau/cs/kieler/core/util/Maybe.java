@@ -39,4 +39,39 @@ public class Maybe<T> {
         this.object = object;
     }
     
+    /*
+     * (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public boolean equals(Object obj) {
+        if (obj instanceof Maybe<?>) {
+            Maybe<?> other = (Maybe<?>)obj;
+            return this.object == null ? other.object == null
+                    : this.object.equals(other.object);
+        }
+        else return false;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    public int hashCode() {
+        if (object == null)
+            return 0;
+        else
+            return object.hashCode();
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        if (object == null)
+            return "maybe(null)";
+        else
+            return "maybe(" + object.toString() + ")";
+    }
+    
 }

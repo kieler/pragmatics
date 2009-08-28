@@ -117,6 +117,17 @@ public class LayoutOptionData {
        return id.hashCode();
     }
     
+    /*
+     * (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        if (name != null && name.length() > 0)
+            return name;
+        else
+            return id;
+    }
+    
     /**
      * Sets the type field depending on the given literal.
      * 

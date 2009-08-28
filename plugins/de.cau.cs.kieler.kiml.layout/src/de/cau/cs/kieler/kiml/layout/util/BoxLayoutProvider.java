@@ -64,4 +64,19 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         progressMonitor.done();
     }
     
+    /*
+     * (non-Javadoc)
+     * @see de.cau.cs.kieler.kiml.layout.services.AbstractLayoutProvider#getDefault(java.lang.String)
+     */
+    public Object getDefault(String optionId) {
+       if (LayoutOptions.MIN_SPACING.equals(optionId))
+           return DEFAULT_SPACING;
+       else if (LayoutOptions.PRIORITY.equals(optionId))
+           return 0;
+       else if (LayoutOptions.EXPAND_NODES.equals(optionId))
+           return false;
+       else
+           return null;
+    }
+    
 }

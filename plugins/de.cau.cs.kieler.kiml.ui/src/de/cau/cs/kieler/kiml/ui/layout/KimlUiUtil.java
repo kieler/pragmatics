@@ -15,6 +15,8 @@ package de.cau.cs.kieler.kiml.ui.layout;
 
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.gef.EditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.notation.View;
 
 import de.cau.cs.kieler.core.util.Maybe;
@@ -25,8 +27,11 @@ import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KStringOption;
 import de.cau.cs.kieler.kiml.layout.services.LayoutOptionData;
+import de.cau.cs.kieler.kiml.layout.services.LayoutProviderData;
+import de.cau.cs.kieler.kiml.layout.services.LayoutServices;
 import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyle;
 import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsFactory;
+import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsPackage;
 
 /**
  * Utility methods used for the KIML UI.
@@ -39,23 +44,55 @@ public class KimlUiUtil {
      * Retrieves the default value for the given layout option.
      * 
      * @param optionData a layout option data
+     * @param providerData the active layout provider data
+     * @param editPart the current edit part
      * @return an object with the default value
      */
-    public static Object getDefault(LayoutOptionData optionData) {
-        // TODO retrieve the default value
-        switch (optionData.type) {
-        case STRING:
-            return "";
-        case BOOLEAN:
-            return Boolean.FALSE;
-        case ENUM:
-        case INT:
-            return Integer.valueOf(0);
-        case FLOAT:
-            return Float.valueOf(0.0f);
-        default:
-            return null;
+    public static Object getDefault(LayoutOptionData optionData, LayoutProviderData providerData,
+            EditPart editPart) {
+        Object result = editPart != null ? LayoutServices.INSTANCE.getOption(
+                editPart.getClass(), optionData.id) : null;
+        if (result == null) {
+            result = providerData != null ? providerData.instance.getDefault(optionData.id) : null;
+            if (result == null) {
+                switch (optionData.type) {
+                case STRING:
+                    return "";
+                case BOOLEAN:
+                    return Boolean.FALSE;
+                case ENUM:
+                case INT:
+                    return Integer.valueOf(0);
+                case FLOAT:
+                    return Float.valueOf(0.0f);
+                default:
+                    return null;
+                }
+            }
         }
+        if (result instanceof Enum<?>)
+            return ((Enum<?>)result).ordinal();
+        else
+            return result;
+    }
+    
+    /**
+     * Returns the {@link KOption} with given key that is stored for the edit part.
+     * 
+     * @param editPart the edit part for which the option shall be fetched
+     * @param optionId the identifier of the option
+     * @return the corresponding option, or {@code null} if there is no such option
+     */
+    public static KOption getKOption(IGraphicalEditPart editPart, String optionId) {
+        LayoutOptionStyle optionStyle = (LayoutOptionStyle)editPart.getNotationView()
+                .getStyle(LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
+        if (optionStyle != null) {
+            for (KOption koption : optionStyle.getOptions()) {
+                if (koption.getKey().equals(optionId))
+                    return koption;
+            }
+        }
+        return null;
     }
     
     /**

@@ -13,8 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.ui.views;
 
-import java.util.Map;
-
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckboxCellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
@@ -74,10 +72,10 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
             switch (optionData.type) {
             case STRING:
                 if (LayoutOptions.LAYOUT_HINT.equals(optionData.id)) {
-                    String layoutHint = layoutHintValueMap.get(element);
+                    String layoutHint = layoutHintValues[((Integer)element).intValue()];
                     String layoutType = LayoutServices.INSTANCE.getLayoutTypeName(layoutHint);
                     if (layoutType != null)
-                        return layoutType;
+                        return layoutType + " " + Messages.getString("kiml.ui.9");
                     LayoutProviderData providerData = LayoutServices.INSTANCE.getLayoutProviderData(layoutHint);
                     if (providerData != null) {
                         String category = LayoutServices.INSTANCE.getCategoryName(providerData.category);
@@ -86,6 +84,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
                         else
                             return providerData.name + " (" + category + ")";
                     }
+                    return layoutHint;
                 }
                 else return (String)element;
             case ENUM:
@@ -101,8 +100,8 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
     private LayoutOptionData optionData;
     /** array of choices for the layout hint option */
     private String[] layoutHintChoices;
-    /** map of choice indices to layout hint values */
-    private Map<Integer, String> layoutHintValueMap;
+    /** array of identifiers for the layout hint option */
+    private String[] layoutHintValues;
     
     /**
      * Creates a layout property descriptor based on a specific layout option.
@@ -111,10 +110,10 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
      * @param layoutHintChoices the array of choices for the layout hint option
      */
     public LayoutPropertyDescriptor(LayoutOptionData optionData, String[] layoutHintChoices,
-            Map<Integer, String> layoutHintValueMap) {
+            String[] layoutHintValues) {
         this.optionData = optionData;
         this.layoutHintChoices = layoutHintChoices;
-        this.layoutHintValueMap = layoutHintValueMap;
+        this.layoutHintValues = layoutHintValues;
     }
     
     /* (non-Javadoc)

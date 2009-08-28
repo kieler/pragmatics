@@ -67,4 +67,49 @@ public class Pair <F, S> {
         }
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+	    if (obj instanceof Pair<?,?>) {
+	        Pair<?,?> other = (Pair<?,?>)obj;
+	        return this.first == null ? other.first == null
+	                && (this.second == null ? other.second == null : this.second.equals(other.second))
+	                : this.first.equals(other.first)
+	                && (this.second == null ? other.second == null : this.second.equals(other.second));
+	    }
+	    else return false;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+	    if (first == null && second == null)
+	        return 0;
+	    else if (first == null)
+	        return second.hashCode();
+	    else if (second == null)
+	        return first.hashCode();
+	    else
+	        return first.hashCode() + second.hashCode();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+	    if (first == null && second == null)
+	        return "pair(null,null)";
+	    else if (first == null)
+	        return "pair(null," + second.toString() + ")";
+	    else if (second == null)
+	        return "pair(" + first.toString() + ",null)";
+	    else
+	        return "pair(" + first.toString() + "," + second.toString() + ")";
+	}
+	
 }

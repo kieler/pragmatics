@@ -315,25 +315,21 @@ public class LayoutServices {
 	
 	/**
 	 * Returns a list of layout options that are suitable for the given layout provider
-	 * and layout option targets. The layout provider must know the layout options and
-	 * at least one of the targets must be active for each option.
+	 * and layout option target. The layout provider must know the layout options and
+	 * at the target must be active for each option.
 	 * 
 	 * @param providerData layout provider data
-	 * @param targets array of layout option targets
+	 * @param target layout option target
 	 * @return list of suitable layout options
 	 */
 	public List<LayoutOptionData> getLayoutOptions(LayoutProviderData providerData,
-	        LayoutOptionData.Target[] targets) {
+	        LayoutOptionData.Target target) {
 	    List<LayoutOptionData> optionDataList = new ArrayList<LayoutOptionData>();
         for (LayoutOptionData optionData : layoutOptionMap.values()) {
             if (providerData.knowsOption(optionData.id)
                     || LayoutOptions.LAYOUT_HINT.equals(optionData.id)) {
-                for (LayoutOptionData.Target target : targets) {
-                    if (optionData.hasTarget(target)) {
-                        optionDataList.add(optionData);
-                        break;
-                    }
-                }
+                if (optionData.hasTarget(target))
+                    optionDataList.add(optionData);
             }
         }
         return optionDataList;
@@ -410,7 +406,7 @@ public class LayoutServices {
         String bindingId = editPartBindingMap.get(editPartType);
         if (bindingId != null) {
             Map<String, Object> options = optionSetupMap.get(bindingId);
-            return options.get(optionId);            
+            return options.get(optionId);
         }
         else return null;
 	}

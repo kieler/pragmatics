@@ -51,6 +51,17 @@ public class LayoutProviderData {
     /** list of supported diagrams */
     private List<SupportedDiagram> supportedDiagrams = new LinkedList<SupportedDiagram>();
 
+    /*
+     * (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        if (name != null && name.length() > 0)
+            return name;
+        else
+            return id;
+    }
+    
     /**
      * Sets the knowledge status of the given layout option.
      * 

@@ -31,6 +31,7 @@ import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.layout.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.layout.options.PortConstraints;
 import de.cau.cs.kieler.kiml.layout.services.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.layout.util.GraphConverter;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
@@ -151,6 +152,23 @@ public class HierarchicalDataflowLayoutProvider extends
 		restoreCycles();
 		
 		progressMonitor.done();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.cau.cs.kieler.kiml.layout.services.AbstractLayoutProvider#getDefault(java.lang.String)
+	 */
+	public Object getDefault(String optionId) {
+	    if (LayoutOptions.FIXED_SIZE.equals(optionId))
+	        return false;
+	    else if (LayoutOptions.LAYOUT_DIRECTION.equals(optionId))
+	        return LayoutDirection.HORIZONTAL;
+	    else if (LayoutOptions.MIN_SPACING.equals(optionId))
+	        return DEF_MIN_DIST;
+	    else if (LayoutOptions.PORT_CONSTRAINTS.equals(optionId))
+	        return PortConstraints.UNDEFINED;
+	    else
+	        return null;
 	}
 
 	/**

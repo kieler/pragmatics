@@ -77,13 +77,13 @@ public class GraphvizLayouter {
     public final static String FDP_COMMAND = "fdp";
     /** command for Circo layout */
     public final static String CIRCO_COMMAND = "circo";
+    /** default value for minimal spacing */
+    public final static float DEF_MIN_SPACING = 16.0f;
     
     /** if true, debug output is enabled, which writes dot files to the home folder */
     private final static boolean ENABLE_DEBUG = false;
     /** dots per inch specification, needed by Graphviz for some values */
     private final static float DPI = 72.0f;
-    /** default value for minimal spacing */
-    private final static float DEF_MIN_SPACING = 16.0f;
     /** set of delimiters used to parse attribute values */
     private final static String ATTRIBUTE_DELIM = "\", \t\n\r\\";
 

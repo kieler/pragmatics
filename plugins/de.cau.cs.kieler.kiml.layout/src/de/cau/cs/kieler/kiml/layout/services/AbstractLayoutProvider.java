@@ -13,13 +13,9 @@
  */
 package de.cau.cs.kieler.kiml.layout.services;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KOption;
 
 /**
  * A layout provider executes a layout algorithm to layout the child elements of
@@ -53,5 +49,17 @@ public abstract class AbstractLayoutProvider {
 	 */
 	public abstract void doLayout(KNode layoutNode,
 			IKielerProgressMonitor progressMonitor) throws KielerException;
+	
+	/**
+	 * Returns the default value for the given layout option. The default
+	 * implementation always returns {@code null}.
+	 * 
+	 * @param optionId identifier of a layout option
+	 * @return the default value for the given option, or {@code null} if this layout
+	 *     provider does not know that option
+	 */
+	public Object getDefault(String optionId) {
+	    return null;
+	}
 	
 }

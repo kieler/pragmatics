@@ -11,7 +11,7 @@
             category="de.cau.cs.kieler.kiml.categories.zest"
             class="de.cau.cs.kieler.kiml.zest.ZestLayoutProvider"
             id="de.cau.cs.kieler.kiml.zest.spring"
-            name="Zest Spring"
+            name="Spring Layout"
             parameter="SpringLayout"
             type="de.cau.cs.kieler.layout.types.force">
          <supportedDiagram
@@ -23,7 +23,7 @@
             category="de.cau.cs.kieler.kiml.categories.zest"
             class="de.cau.cs.kieler.kiml.zest.ZestLayoutProvider"
             id="de.cau.cs.kieler.kiml.zest.grid"
-            name="Zest Grid"
+            name="Grid Layout"
             parameter="GridLayout">
          <supportedDiagram
                priority="9"
@@ -34,7 +34,7 @@
             category="de.cau.cs.kieler.kiml.categories.zest"
             class="de.cau.cs.kieler.kiml.zest.ZestLayoutProvider"
             id="de.cau.cs.kieler.kiml.zest.radial"
-            name="Zest Radial"
+            name="Radial Layout"
             parameter="RadialLayout"
             type="de.cau.cs.kieler.layout.types.radial">
          <supportedDiagram

@@ -16,6 +16,8 @@ package de.cau.cs.kieler.kiml.graphviz.layouter;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.layout.options.LayoutDirection;
+import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.services.AbstractLayoutProvider;
 
 /**
@@ -54,6 +56,21 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
         if (command == null)
             command = GraphvizLayouter.DOT_COMMAND;
         graphvizLayouter.layout(layoutNode, progressMonitor, command);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.cau.cs.kieler.kiml.layout.services.AbstractLayoutProvider#getDefault(java.lang.String)
+	 */
+	public Object getDefault(String optionId) {
+	    if (LayoutOptions.LAYOUT_DIRECTION.equals(optionId))
+	        return LayoutDirection.HORIZONTAL;
+	    else if (LayoutOptions.MIN_SPACING.equals(optionId))
+	        return GraphvizLayouter.DEF_MIN_SPACING;
+	    else if (LayoutOptions.FIXED_SIZE.equals(optionId))
+	        return false;
+	    else
+	        return null;
 	}
 	
 }
