@@ -30,6 +30,7 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -116,6 +117,10 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
                     return null;
             }
         });
+        IActionBars actionBars = getViewSite().getActionBars();
+        page.makeContributions(actionBars.getMenuManager(), actionBars
+                .getToolBarManager(), actionBars.getStatusLineManager());
+        
         IWorkbenchWindow workbenchWindow = getSite().getWorkbenchWindow();
         IWorkbenchPage activePage = workbenchWindow.getActivePage();
         if (activePage != null) {
@@ -123,7 +128,6 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
             if (activePart != null)
                 setInput(activePart);
         }
-        
         
         partListener = new IPartListener() {
             public void partActivated(IWorkbenchPart part) {
