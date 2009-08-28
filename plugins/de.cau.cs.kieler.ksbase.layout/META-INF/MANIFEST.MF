@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: KSBasE Layout
+Bundle-SymbolicName: de.cau.cs.kieler.ksbase.layout;singleton:=true
+Bundle-Version: 0.1.0
+Bundle-Activator: de.cau.cs.kieler.ksbase.layout.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ de.cau.cs.kieler.viewmanagement;bundle-version="1.0.0",
+ de.cau.cs.kieler.viewmanagement.combination;bundle-version="1.0.0",
+ de.cau.cs.kieler.viewmanagement.effects;bundle-version="1.0.0",
+ de.cau.cs.kieler.viewmanagement.triggers;bundle-version="1.0.0",
+ org.eclipse.gef;bundle-version="3.5.0",
+ de.cau.cs.kieler.kiml.ui;bundle-version="0.1.0",
+ org.eclipse.gmf.runtime.diagram.ui;bundle-version="1.2.0"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: de.cau.cs.kieler.ksbase.layout
