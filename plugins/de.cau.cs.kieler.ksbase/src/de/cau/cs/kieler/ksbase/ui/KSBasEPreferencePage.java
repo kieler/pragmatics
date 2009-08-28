@@ -219,7 +219,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
 
     public KSBasEPreferencePage() {
         setDescription(Messages.KSBasEPreferencePage_Title);
-        manager = TransformationManager.getInstance();
+        manager = TransformationManager.instance;
     }
 
     /**
@@ -871,7 +871,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
                                             activeEditor
                                                     .parseTransformationsFromFile(tmpFile
                                                             .getAbsolutePath());
-                                            TransformationManager.getInstance()
+                                            manager
                                                     .storeTransformations();
                                             dirty = false;
                                             return;

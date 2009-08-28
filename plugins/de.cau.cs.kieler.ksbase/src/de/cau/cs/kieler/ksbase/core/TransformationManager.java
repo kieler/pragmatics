@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.URI;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -34,22 +35,30 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CommandStack;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editpolicies.CanonicalEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramCommandStack;
+import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
+import de.cau.cs.kieler.ksbase.ui.AutoLayoutTrigger;
 import de.cau.cs.kieler.ksbase.ui.handler.ExecuteTransformationRequest;
+import de.cau.cs.kieler.viewmanagement.ATrigger;
+import de.cau.cs.kieler.viewmanagement.RunLogic;
 
 /**
  * The main storage and management class. Contains a list of currently
@@ -67,22 +76,13 @@ public class TransformationManager {
     // editors
 
     // Thread-safe initialization
-    private static TransformationManager instance = new TransformationManager();
+    public static TransformationManager instance = new TransformationManager();
 
     /**
      * Since this is a singleton class the constructor is private
      */
     private TransformationManager() {
         registeredEditors = new LinkedList<EditorTransformationSettings>();
-    }
-
-    /**
-     * Used to get the transformation manager instance
-     * 
-     * @return The singleton instance of the manager
-     */
-    public static TransformationManager getInstance() {
-        return instance;
     }
 
     /**
@@ -116,8 +116,8 @@ public class TransformationManager {
             File file = null;
             try {
                 IPath path = ResourcesPlugin.getPlugin().getStateLocation();
-                file = File.createTempFile(
-                        "extension", ".ext", new File(path.toOSString()));
+                file = File.createTempFile("extension", ".ext", new File(path
+                        .toOSString()));
                 FileOutputStream out = new FileOutputStream(file);
                 if (!file.exists()) {
                     file.createNewFile();
@@ -126,34 +126,65 @@ public class TransformationManager {
                 out.flush();
                 out.close();
 
-            // IProject p =
-            // ((FileEditorInput)activeEditor.getEditorInput()).getFile().getProject();
-            // System.out.println(p.getName());
+                // IProject p =
+                // ((FileEditorInput)activeEditor.getEditorInput()).getFile().getProject();
+                // System.out.println(p.getName());
 
-            // Create request
-            ExecuteTransformationRequest request = new ExecuteTransformationRequest(
-                    activeEditor, transformation.getTransformationName(), file
-                            .getAbsolutePath(), selection, transformation
-                            .getNumSelections(), editor.getModelPackageClass());
-            Command transformationCommand = selectedElement.getCommand(request);
+                // Create request
+                ExecuteTransformationRequest request = new ExecuteTransformationRequest(
+                        activeEditor, transformation.getTransformationName(),
+                        file.getAbsolutePath(), selection, transformation
+                                .getNumSelections(), editor
+                                .getModelPackageClass());
+                Command transformationCommand = selectedElement
+                        .getCommand(request);
 
-            // gets a command stack to execute the command
-            DiagramCommandStack commandStack = null;
-            Object adapter = activeEditor.getAdapter(CommandStack.class);
-            if (adapter instanceof DiagramCommandStack)
-                commandStack = (DiagramCommandStack) adapter;
-            if (commandStack == null)
-                commandStack = new DiagramCommandStack(null);
-            commandStack.execute(transformationCommand);
+                // gets a command stack to execute the command
+                DiagramCommandStack commandStack = null;
+                Object adapter = activeEditor.getAdapter(CommandStack.class);
+                if (adapter instanceof DiagramCommandStack)
+                    commandStack = (DiagramCommandStack) adapter;
+                if (commandStack == null)
+                    commandStack = new DiagramCommandStack(null);
+                commandStack.execute(transformationCommand);
             } catch (FileNotFoundException e) {
 
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
-            }
-            finally {
-                if ( file != null)
+            } finally {
+                // Remove temporary Xtend file
+                if (file != null)
                     file.delete();
+                // update edit policies, so gmf will generate diagram elements
+                // for model elements which have been generated during the
+                // transformation but
+                // not translated to gmf now:
+                if (activeEditor instanceof DiagramEditor) {
+                    EObject obj = ((View) ((DiagramEditor) activeEditor)
+                            .getDiagramEditPart().getModel()).getElement();
+                    List<?> editPolicies = CanonicalEditPolicy
+                            .getRegisteredEditPolicies(obj);
+                    for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
+                        CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it
+                                .next();
+                        nextEditPolicy.refresh();
+                    }
+
+                    // If auto-layout is activated, execute now:
+                    if (editor.isPerformAutoLayout()) {
+                        EditPart e = ((DiagramEditor) activeEditor)
+                                .getDiagramEditPart().getRoot().getContents();
+                        while (!(e instanceof ShapeEditPart)) {
+                            e = (EditPart) e.getChildren().get(0);
+                        }
+                        ((AutoLayoutTrigger) RunLogic
+                                .getTrigger("de.cau.cs.kieler.ksbase.AutoLayoutTrigger"))
+                                .triggerAutoLayout(e, activeEditor);
+
+                    }
+                }
+
             }
         }
     }
@@ -256,8 +287,8 @@ public class TransformationManager {
                 for (String transformation : transformations) {
                     if (transformation.length() > 0) {
                         String prefix = editor + "." + transformation; //$NON-NLS-1$
-                        Transformation t = new Transformation(store.getString(prefix + ".Name"),
-                                transformation);
+                        Transformation t = new Transformation(store
+                                .getString(prefix + ".Name"), transformation);
                         t
                                 .setNumSelections(store
                                         .getInt(prefix
@@ -335,9 +366,7 @@ public class TransformationManager {
             for (Transformation t : settings.getTransformations()) {
                 String tprefix = prefix + "." + t.getTransformationName(); //$NON-NLS-1$
                 transformations += t.getTransformationName() + ","; //$NON-NLS-1$
-                store.setValue(tprefix
-                        + ".Name", t
-                        .getName());
+                store.setValue(tprefix + ".Name", t.getName());
                 store.setValue(tprefix
                         + Messages.Preferences_Transformation_Selections, t
                         .getNumSelections());

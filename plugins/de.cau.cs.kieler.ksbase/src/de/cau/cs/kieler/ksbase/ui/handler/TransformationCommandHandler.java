@@ -22,7 +22,7 @@ public class TransformationCommandHandler extends AbstractHandler implements
     }
 
     public Object execute(ExecutionEvent event) throws ExecutionException {
-        TransformationManager.getInstance()
+        TransformationManager.instance
                 .createAndExecuteTransformationCommand(event, editor,
                         transformation);
         return null;

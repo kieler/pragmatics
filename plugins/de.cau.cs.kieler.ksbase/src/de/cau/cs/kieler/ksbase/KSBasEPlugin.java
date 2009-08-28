@@ -87,7 +87,7 @@ public class KSBasEPlugin extends AbstractUIPlugin {
     public void start(BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
-        TransformationManager.getInstance().initializeTransformations();
+        TransformationManager.instance.initializeTransformations();
         createMenu();
     }
 
@@ -104,7 +104,8 @@ public class KSBasEPlugin extends AbstractUIPlugin {
         // Expressions !!
 
         for (final EditorTransformationSettings settings : TransformationManager
-                .getInstance().getEditors()) {
+                .instance.getEditors()) {
+            
             if (settings.isShownInMenu()
                     && settings.getMenuLocation().length() > 0) {
                 // Create menu contributions
@@ -118,11 +119,11 @@ public class KSBasEPlugin extends AbstractUIPlugin {
                             IContributionRoot additions) {
                         
                         MenuManager dynamicMenu = new MenuManager(settings
-                                .getMenuName(), "de.cau.cs.kieler.ksbase.menu"
+                                .getMenuName(), "de.cau.cs.kieler.ksbase.menu."
                                 + settings.getMenuName());
                         for (final Transformation t : settings
                                 .getTransformations()) {
-                            String cmdID = "de.cau.cs.kieler.ksbase.commands"
+                            String cmdID = "de.cau.cs.kieler.ksbase.commands."
                                     + settings.getMenuName() + "."
                                     + t.getName().replace(' ', '_');
                             Command transformationCommand = cmdService
@@ -149,6 +150,7 @@ public class KSBasEPlugin extends AbstractUIPlugin {
                                                 part);
                                         iterate.add(instance);
                                     }
+                                    
                                     additions.registerVisibilityForChild(cmd,
                                             iterate);
                                     dynamicMenu.add(cmd);
@@ -182,10 +184,11 @@ public class KSBasEPlugin extends AbstractUIPlugin {
                             IContributionRoot additions) {
                         
                         ToolBarManager dynamicToolbar = new ToolBarManager();
+                        
                                 //+ settings.getMenuName());
                         for (final Transformation t : settings
                                 .getTransformations()) {
-                            String cmdID = "de.cau.cs.kieler.ksbase.commands"
+                            String cmdID = "de.cau.cs.kieler.ksbase.commands."
                                     + settings.getMenuName() + "."
                                     + t.getName().replace(' ', '_');
                             Command transformationCommand = cmdService
@@ -205,18 +208,22 @@ public class KSBasEPlugin extends AbstractUIPlugin {
                             if (t.getPartConfig().length > 0) {
                                 try {
                                     
+                                    
                                     IterateExpression iterate = new IterateExpression(
                                             "or", "false");
+                                    
                                     for (String part : t.getPartConfig()) {
                                         InstanceofExpression instance = new InstanceofExpression(
                                                 part);
                                         iterate.add(instance);
                                     }
+                                    /*
                                     additions.registerVisibilityForChild(cmd,
                                             iterate);
+                                    */
                                     dynamicToolbar.add(cmd);
                                 } catch (CoreException e) {
-
+                                    e.printStackTrace();
                                 }
                             }
                         }

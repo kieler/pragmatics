@@ -19,5 +19,26 @@
          </Priority>
       </editpolicyProvider>
    </extension>
+   <extension
+         point="de.cau.cs.kieler.viewmanagement.effects">
+      <effect
+            class="de.cau.cs.kieler.ksbase.ui.AutoLayoutEffect"
+            name="de.cau.cs.kieler.ksbase.AutoLayoutEffect">
+      </effect>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.viewmanagement.combination">
+      <combination
+            class="de.cau.cs.kieler.ksbase.ui.AutoLayoutCombination"
+            name="de.cau.cs.kieler.ksbase.AutoLayoutCombination">
+      </combination>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.viewmanagement.triggers">
+      <trigger
+            class="de.cau.cs.kieler.ksbase.ui.AutoLayoutTrigger"
+            name="de.cau.cs.kieler.ksbase.AutoLayoutTrigger">
+      </trigger>
+   </extension>
 
 </plugin>
