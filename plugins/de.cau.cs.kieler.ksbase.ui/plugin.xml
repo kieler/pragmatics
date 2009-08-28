@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.gmf.runtime.diagram.ui.editpolicyProviders">
+      <editpolicyProvider
+            class="de.cau.cs.kieler.ksbase.ui.handler.TransformationEditPolicyProvider">
+         <Priority
+               name="Lowest">
+         </Priority>
+      </editpolicyProvider>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="de.cau.cs.kieler"
+            class="de.cau.cs.kieler.ksbase.ui.KSBasEPreferencePage"
+            id="de.cau.cs.kieler.ksbase.PreferencePage"
+            name="KSBasE">
+      </page>
+   </extension>
+
+</plugin>
