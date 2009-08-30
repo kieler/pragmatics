@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="de.cau.cs.kieler.ksbase" version="2">
+    <resource path="src/de/cau/cs/kieler/ksbase/core/KielerWorkflow.java" type="de.cau.cs.kieler.ksbase.core.KielerWorkflow">
+        <filter id="576720909">
+            <message_arguments>
+                <message_argument value="Workflow"/>
+                <message_argument value="KielerWorkflow"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

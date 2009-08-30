@@ -1,44 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            category="de.cau.cs.kieler"
-            class="de.cau.cs.kieler.ksbase.ui.KSBasEPreferencePage"
-            id="de.cau.cs.kieler.ksbase.PreferencePage"
-            name="KSBasE">
-      </page>
-   </extension>
-   <extension
-         point="org.eclipse.gmf.runtime.diagram.ui.editpolicyProviders">
-      <editpolicyProvider
-            class="de.cau.cs.kieler.ksbase.ui.handler.TransformationEditPolicyProvider">
-         <Priority
-               name="Lowest">
-         </Priority>
-      </editpolicyProvider>
-   </extension>
-   <extension
-         point="de.cau.cs.kieler.viewmanagement.effects">
-      <effect
-            class="de.cau.cs.kieler.ksbase.ui.AutoLayoutEffect"
-            name="de.cau.cs.kieler.ksbase.AutoLayoutEffect">
-      </effect>
-   </extension>
-   <extension
-         point="de.cau.cs.kieler.viewmanagement.combination">
-      <combination
-            class="de.cau.cs.kieler.ksbase.ui.AutoLayoutCombination"
-            name="de.cau.cs.kieler.ksbase.AutoLayoutCombination">
-      </combination>
-   </extension>
-   <extension
-         point="de.cau.cs.kieler.viewmanagement.triggers">
-      <trigger
-            class="de.cau.cs.kieler.ksbase.ui.AutoLayoutTrigger"
-            name="de.cau.cs.kieler.ksbase.AutoLayoutTrigger">
-      </trigger>
-   </extension>
 
 </plugin>
