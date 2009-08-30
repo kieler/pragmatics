@@ -105,8 +105,30 @@ public class KSBasEPreferencePage extends PreferencePage implements
     // The classes which have to be implemented/extended by a class to be used
     // as selections for a transformation
     protected static final String DIAGRAM_EDIT_PARTS[] = new String[] {
-            "org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart", //$NON-NLS-1$
-            "org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionNodeEditPart" }; //$NON-NLS-1$
+    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderedShapeEditPart",
+    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderItemEditPart",
+    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.BorderedBorderItemEditPart",
+    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.CompartmentEditPart",
+    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart",
+    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionNodeEditPart",
+    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart",
+    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramRootEditPart",
+    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramRootEditPart.DiagramScalableFreeformLayeredPane",
+    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart",
+    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart",
+    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.ListCompartmentEditPart",
+    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.ListItemEditPart",
+    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.NestableListItemEditPart",
+    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.NoteEditPart",
+    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.ResizableCompartmentEditPart",
+    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.SemanticListCompartmentEditPart",
+    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeCompartmentEditPart",
+    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeCompartmentEditPart.ConnectionRefreshMgr",
+    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeEditPart",
+    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart",
+            "org.eclipse.gmf.runtime.diagram.ui.editparts.TextCompartmentEditPart", //$NON-NLS-1$
+            "org.eclipse.gmf.runtime.diagram.ui.editparts.TopGraphicEditPart" }; //$NON-NLS-1$
+    
     protected static final String DIAGRAM_PACKAGES[] = new String[] { "org.eclipse.emf.ecore.EPackage" }; //$NON-NLS-1$
 
     /**

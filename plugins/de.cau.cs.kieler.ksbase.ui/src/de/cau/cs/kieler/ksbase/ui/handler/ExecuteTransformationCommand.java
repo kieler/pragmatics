@@ -141,19 +141,28 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
         if (s.size() != numSelections)
             return false;
 
-        Object selectedObject = s.getFirstElement();
-        if (selectedObject instanceof EditPart) {
-            if (fileName.contains(".")) { // Remove .ext from fileName //$NON-NLS-1$
-                fileName = fileName.substring(0, fileName.lastIndexOf(".")); //$NON-NLS-1$
-            }
-
-            workflow = new KielerWorkflow(command, fileName, basePackage);
-            Object model = ((EditPart) selectedObject).getModel();
-            if (model instanceof View) {
-                context.set("model", ((View) model).getElement()); //$NON-NLS-1$
-            }
-
+        if (fileName.contains(".")) { // Remove .ext from fileName //$NON-NLS-1$
+            fileName = fileName.substring(0, fileName.lastIndexOf(".")); //$NON-NLS-1$
         }
+
+        
+        String modelSelection = "";
+        List<?> list = s.toList();
+        for ( int i = 0; i < list.size(); ++i ) {
+        	if ( i > 0)
+        		modelSelection += ",";
+        	
+        	String currentModel = "model"+String.valueOf(i);
+        	modelSelection += currentModel;
+        	Object selectedObject = list.get(i);
+        	if (selectedObject instanceof EditPart) {
+        		Object model = ((EditPart) selectedObject).getModel();
+        		if (model instanceof View) {
+        			context.set(currentModel, ((View) model).getElement()); //$NON-NLS-1$
+        		}
+        	}
+        }
+        workflow = new KielerWorkflow(command, fileName, basePackage,modelSelection);
         return true;
     }
 
