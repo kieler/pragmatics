@@ -42,7 +42,7 @@ public class KielerWorkflow extends Workflow {
      * @param modelSelections
      *            selected model elements
      */
-    public KielerWorkflow(String operation, String fileName, String basePackage) {
+    public KielerWorkflow(String operation, String fileName, String basePackage, String modelSelection) {
         super();
 
         /*
@@ -64,7 +64,7 @@ public class KielerWorkflow extends Workflow {
         // Set metaModel-Slot
         xtendComponent.addMetaModel(emfmodel);
 
-        String value = fileName + "::" + operation + "(model)";
+        String value = fileName + "::" + operation + "("+modelSelection+")";
 
         xtendComponent.setInvoke(value);
 
