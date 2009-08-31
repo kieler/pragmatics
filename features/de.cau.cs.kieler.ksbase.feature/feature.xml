@@ -32,12 +32,12 @@ Group
       <import plugin="org.eclipse.xtend.typesystem.emf"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="de.cau.cs.kieler.viewmanagement" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.cau.cs.kieler.viewmanagement.combination" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.cau.cs.kieler.viewmanagement.effects" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.cau.cs.kieler.viewmanagement.triggers" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.cau.cs.kieler.viewmanagement"/>
+      <import plugin="de.cau.cs.kieler.viewmanagement.combination"/>
+      <import plugin="de.cau.cs.kieler.viewmanagement.effects"/>
+      <import plugin="de.cau.cs.kieler.viewmanagement.triggers"/>
       <import plugin="org.eclipse.gef" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="de.cau.cs.kieler.kiml.ui" version="0.1.0" match="greaterOrEqual"/>
+      <import plugin="de.cau.cs.kieler.kiml.ui"/>
       <import plugin="org.eclipse.jdt.core" version="3.5.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.jdt.ui" version="3.5.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.ide" version="3.5.0" match="greaterOrEqual"/>
