@@ -69,7 +69,8 @@ public class TransformationUIManager {
                         .toOSString()));
                 FileOutputStream out = new FileOutputStream(file);
                 if (!file.exists()) {
-                    file.createNewFile();
+                    if (!file.createNewFile()) 
+                        return;//FIXME: We were unable to create the file ! Add Error-log
                 }
                 out.write(editor.getExtFile().getBytes());
                 out.flush();
@@ -99,8 +100,10 @@ public class TransformationUIManager {
                 e.printStackTrace();
             } finally {
                 // Remove temporary Xtend file
-                if (file != null)
-                    file.delete();
+                if (file != null) {
+                    if ( !file.delete() )
+                        System.out.println("Warning, unable to delete temporary xtend file"); //maybe just ignore or add a warning 
+                }
                 // update edit policies, so GMF will generate diagram elements
                 // for model elements which have been generated during the
                 // transformation but

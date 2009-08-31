@@ -23,7 +23,7 @@ import org.eclipse.emf.ecore.EObject;
  */
 public class Util {
 
-	public static void Select(EObject list) {
+	public static void select(EObject list) {
 		System.out.println(list.eClass());
 	}
 }

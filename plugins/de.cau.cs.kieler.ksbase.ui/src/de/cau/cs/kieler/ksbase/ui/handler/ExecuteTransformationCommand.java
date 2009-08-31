@@ -50,7 +50,6 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
     private WorkflowContext context;
     private Issues issues;
     private NullProgressMonitor monitor;
-    private List<IFile> affectedFiles;
 
     /**
      * Creates a command to execute a transformation.
@@ -169,10 +168,7 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
     @SuppressWarnings("unchecked")
     @Override
     public List getAffectedFiles() {
-        if (affectedFiles != null)
-            return affectedFiles;
-        else
-            return super.getAffectedFiles();
+         return super.getAffectedFiles();
     }
 
 }

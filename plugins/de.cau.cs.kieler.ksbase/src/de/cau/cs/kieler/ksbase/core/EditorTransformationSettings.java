@@ -221,7 +221,7 @@ public class EditorTransformationSettings implements Serializable {
      * This parsing is based on the Xtend function names only! So renaming a
      * function in Xtend will reset the KSbasE transformation
      */
-    public synchronized void parseTransformationsFromFile(String file) {
+    public void parseTransformationsFromFile(String file) {
         // extFile should not be null, only if we read old settings
         if (file != null && file.length() > 0) {
             // Create path from fileName
@@ -283,6 +283,7 @@ public class EditorTransformationSettings implements Serializable {
                         }
                     }
                 }
+                reader.close();
                 this.transformations = newTrans;
             } catch (CoreException e) {
                 // ignore

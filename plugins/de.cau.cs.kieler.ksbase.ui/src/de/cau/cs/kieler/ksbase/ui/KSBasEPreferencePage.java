@@ -139,7 +139,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
      * 
      * @author Michael Matzen
      */
-    private class CheckBoxDialog extends Dialog {
+    private static class CheckBoxDialog extends Dialog {
 
         protected Object result;
         Button btMenu, btContext, btToolbar, btBalloon;
@@ -149,7 +149,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
         }
 
         public Object open(boolean[] initalSelections) {
-            if (initalSelections == null | initalSelections.length != 4)
+            if (initalSelections == null || initalSelections.length != 4)
                 return null;
 
             Shell parent = getParent();
@@ -233,7 +233,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
     protected Combo cbEditors;
     protected Button bfShowMenu, bfShowToolbar, bfShowPopup, bfShowBalloon,
             bfAutoLayout, btBrowseXtend, btModelPackage;
-    FileFieldEditor dfDefaultIcon, btTableRemove, btTableAdd;
+    FileFieldEditor dfDefaultIcon;
     protected EditorTransformationSettings activeEditor;
     protected Table table;
     Composite tableComp, browserContainer, btComp;

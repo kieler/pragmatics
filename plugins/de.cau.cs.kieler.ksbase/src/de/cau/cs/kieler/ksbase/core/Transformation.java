@@ -165,6 +165,11 @@ public class Transformation implements Serializable {
         }
     }
 
+    @Override
+    public int hashCode() {
+        return transformationName.hashCode()+numSelections;
+    }
+    
     /**
      * Two transformations are equal, when they have the same transformation
      * name and the same number of parameters

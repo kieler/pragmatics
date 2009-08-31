@@ -9,12 +9,6 @@ import de.cau.cs.kieler.viewmanagement.TriggerEventObject;
 public class AutoLayoutTrigger extends ATrigger {
 
     TriggerEventObject triggerEvent;
-    
-    @Override
-    public void finalize() {
-        // TODO Auto-generated method stub
-
-    }
 
     public void triggerAutoLayout(EditPart editPart, IEditorPart editorPart) {
         triggerEvent = new TriggerEventObject();
@@ -22,5 +16,10 @@ public class AutoLayoutTrigger extends ATrigger {
         triggerEvent.setAffectedObject( translateToURI(editPart) );
         triggerEvent.setParameters(editorPart );
         notifyTrigger(triggerEvent);
+    }
+
+    public void finalize()
+    {
+        //have to implement this, but it's useless here
     }
 }
