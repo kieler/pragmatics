@@ -16,7 +16,7 @@
             category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.ksbase.ui.KSBasEPreferencePage"
             id="de.cau.cs.kieler.ksbase.PreferencePage"
-            name="KSBasE">
+            name="Structure based editing">
       </page>
    </extension>
 

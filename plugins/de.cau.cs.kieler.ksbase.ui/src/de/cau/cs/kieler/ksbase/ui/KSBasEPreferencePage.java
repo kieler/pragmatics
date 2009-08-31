@@ -771,7 +771,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
                                     // characters
                                     String ex = ""; //$NON-NLS-1$
                                     if (ex.length() > 0)
-                                        ex += "+"; //$NON-NLS-1$
+                                        ex += "\u002B"; //$NON-NLS-1$
                                     if ((e.stateMask & SWT.CTRL) != 0) {
                                         ex += Messages.KSBasEPreferencePage_Shortcut_CTRL;
                                     }
@@ -782,11 +782,11 @@ public class KSBasEPreferencePage extends PreferencePage implements
                                         ex += Messages.KSBasEPreferencePage_Shortcut_SHIFT;
                                     }
                                     if (keys.getText().length() > 0)
-                                        ex += keys;
+                                        ex += keys.getText();
 
                                     keys.append(String
                                             .valueOf((char) e.keyCode)
-                                            + " + "); //$NON-NLS-1$
+                                            + "\u002B"); //$NON-NLS-1$
 
                                     ex += (char) e.keyCode;
                                     text.setText(ex.toUpperCase());
