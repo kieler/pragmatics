@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.cau.cs.kieler.ksbase"
-      label="KIELER Structure Based Editing for Diagrams"
+      label="Structure Based Editing for Diagrams"
       version="0.1.0.vqualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel">
 
@@ -26,7 +26,7 @@ Group
    </license>
 
    <url>
-      <update label="KIELER Update Site" url="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite"/>
+      <update label="KIELER nightly builds Update Site" url="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly"/>
    </url>
 
    <requires>

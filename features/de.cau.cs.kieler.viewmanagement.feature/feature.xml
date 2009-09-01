@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.cau.cs.kieler.viewmanagement"
-      label="KIELER Viewmanagement"
+      label="Viewmanagement"
       version="0.1.0.vqualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel">
 
@@ -216,6 +216,10 @@ Agreement more than one year after the cause of action arose.
 Each party waives its rights to a jury trial in any resulting
 litigation.
    </license>
+
+   <url>
+      <update label="KIELER nightly builds Update Site" url="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/"/>
+   </url>
 
    <plugin
          id="de.cau.cs.kieler.viewmanagement"
