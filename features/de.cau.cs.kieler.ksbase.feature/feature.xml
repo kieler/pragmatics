@@ -8,8 +8,7 @@
    <description url="http://rtsys.informatik.uni-kiel.de/trac/kieler/wiki/Projects/KSBasE">
       KIELER Structure Based Editing Framework for GMF based Diagram
 Editors.
-This Framework allows Developers to add editing features based
-on the underlying meta model. 
+This Framework allows Developers to add editing features for editors created with EMF/GMF, ased n the underlying meta model. 
 The features are defined using the MWE Xtend framework and can
 easily be modified in the Eclipse preference pages.
    </description>
