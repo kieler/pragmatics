@@ -36,6 +36,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeCompartmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.figures.ResizableCompartmentFigure;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
@@ -340,7 +341,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 		    }
 		    
 			// process compartments, which may contain other elements
-			else if (obj instanceof CompartmentEditPart
+			else if (obj instanceof ShapeCompartmentEditPart
 					&& ((CompartmentEditPart) obj).getChildren().size() > 0) {
 				CompartmentEditPart compartment = (CompartmentEditPart)obj;
 			    if (!LayoutServices.INSTANCE.isNolayout(compartment.getClass())) {
