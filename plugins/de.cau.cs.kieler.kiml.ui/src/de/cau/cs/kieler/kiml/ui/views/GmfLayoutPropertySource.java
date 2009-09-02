@@ -263,7 +263,7 @@ public class GmfLayoutPropertySource implements IPropertySource {
         }
         if (LayoutOptions.LAYOUT_HINT.equals(optionData.id)) {
             KimlUiUtil.setValue(koption, optionData, layoutHintValues[((Integer)value).intValue()], editingDomain);
-            LayoutViewPart.refreshLayoutView();
+//            LayoutViewPart.refreshLayoutView();
         }
         else {
             if (optionData.type == LayoutOptionData.Type.INT)
@@ -316,8 +316,8 @@ public class GmfLayoutPropertySource implements IPropertySource {
             }
             KimlUiUtil.setValue(koption, optionData, defaultValue, editingDomain);
         }
-        if (LayoutOptions.LAYOUT_HINT.equals(optionData.id))
-            LayoutViewPart.refreshLayoutView();
+//        if (LayoutOptions.LAYOUT_HINT.equals(optionData.id))
+//            LayoutViewPart.refreshLayoutView();
     }
 
     /**
