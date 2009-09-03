@@ -706,7 +706,6 @@ public class KSBasEPreferencePage extends PreferencePage implements
                     final Text text = new Text(cursor, SWT.NONE);
                     text.addKeyListener(new KeyAdapter() {
 
-                        @Override
                         public void keyPressed(KeyEvent e) {
                             if (e.character == SWT.CR) {
                                 // TableItem innerRow = cursor.getRow();
@@ -824,7 +823,6 @@ public class KSBasEPreferencePage extends PreferencePage implements
                     final Text keys = new Text(cursor, SWT.NONE);
                     text.addKeyListener(new KeyAdapter() {
 
-                        @Override
                         public void keyPressed(KeyEvent e) {
                             if (e.keyCode == SWT.DEL || e.keyCode == SWT.BS) {
                                 text.setText(""); //$NON-NLS-1$
