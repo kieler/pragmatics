@@ -19,5 +19,23 @@
             name="Structure based editing">
       </page>
    </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="de.cau.cs.kieler.ksbase.ui.menuContribution1">
+         <dynamic
+               class="de.cau.cs.kieler.ksbase.ui.menus.DynamicMenuContribution"
+               id="de.cau.cs.kieler.ksbase.ui.dynamic1">
+         </dynamic>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            description="KIELER Structure based editing commands"
+            id="de.cau.cs.kieler.ksbase.ui.ksbaseCategory"
+            name="KSBasE">
+      </category>
+   </extension>
 
 </plugin>

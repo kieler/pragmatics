@@ -17,8 +17,10 @@ package de.cau.cs.kieler.ksbase.ui;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.net.URI;
+import java.util.Collection;
 import java.util.LinkedList;
 
+import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -42,6 +44,10 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ControlEditor;
@@ -52,6 +58,7 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
@@ -79,9 +86,18 @@ import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.contexts.IContext;
+import org.eclipse.ui.contexts.IContextManager;
+import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
 import org.eclipse.ui.dialogs.SelectionDialog;
+import org.eclipse.ui.internal.contexts.ContextService;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.services.IServiceLocator;
 
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
@@ -105,30 +121,30 @@ public class KSBasEPreferencePage extends PreferencePage implements
     // The classes which have to be implemented/extended by a class to be used
     // as selections for a transformation
     protected static final String DIAGRAM_EDIT_PARTS[] = new String[] {
-    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderedShapeEditPart",
-    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderItemEditPart",
-    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.BorderedBorderItemEditPart",
-    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.CompartmentEditPart",
-    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart",
-    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionNodeEditPart",
-    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart",
-    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramRootEditPart",
-    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramRootEditPart.DiagramScalableFreeformLayeredPane",
-    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart",
-    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart",
-    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.ListCompartmentEditPart",
-    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.ListItemEditPart",
-    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.NestableListItemEditPart",
-    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.NoteEditPart",
-    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.ResizableCompartmentEditPart",
-    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.SemanticListCompartmentEditPart",
-    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeCompartmentEditPart",
-    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeCompartmentEditPart.ConnectionRefreshMgr",
-    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeEditPart",
-    	    "org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart",
+            "org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderedShapeEditPart",
+            "org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderItemEditPart",
+            "org.eclipse.gmf.runtime.diagram.ui.editparts.BorderedBorderItemEditPart",
+            "org.eclipse.gmf.runtime.diagram.ui.editparts.CompartmentEditPart",
+            "org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart",
+            "org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionNodeEditPart",
+            "org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart",
+            "org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramRootEditPart",
+            "org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramRootEditPart.DiagramScalableFreeformLayeredPane",
+            "org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart",
+            "org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart",
+            "org.eclipse.gmf.runtime.diagram.ui.editparts.ListCompartmentEditPart",
+            "org.eclipse.gmf.runtime.diagram.ui.editparts.ListItemEditPart",
+            "org.eclipse.gmf.runtime.diagram.ui.editparts.NestableListItemEditPart",
+            "org.eclipse.gmf.runtime.diagram.ui.editparts.NoteEditPart",
+            "org.eclipse.gmf.runtime.diagram.ui.editparts.ResizableCompartmentEditPart",
+            "org.eclipse.gmf.runtime.diagram.ui.editparts.SemanticListCompartmentEditPart",
+            "org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeCompartmentEditPart",
+            "org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeCompartmentEditPart.ConnectionRefreshMgr",
+            "org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeEditPart",
+            "org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart",
             "org.eclipse.gmf.runtime.diagram.ui.editparts.TextCompartmentEditPart", //$NON-NLS-1$
             "org.eclipse.gmf.runtime.diagram.ui.editparts.TopGraphicEditPart" }; //$NON-NLS-1$
-    
+
     protected static final String DIAGRAM_PACKAGES[] = new String[] { "org.eclipse.emf.ecore.EPackage" }; //$NON-NLS-1$
 
     /**
@@ -229,10 +245,11 @@ public class KSBasEPreferencePage extends PreferencePage implements
         }
     }
 
-    protected Text sfMetaModel, sfMenu, sfMenuLoc, sfToolbarLoc;
+    protected Text sfMetaModel, sfMenu, sfMenuLoc, sfToolbarLoc, sfContext;
     protected Combo cbEditors;
     protected Button bfShowMenu, bfShowToolbar, bfShowPopup, bfShowBalloon,
-            bfAutoLayout, btBrowseXtend, btModelPackage;
+            btContext, bfAutoLayout, btBrowseXtend, btModelPackage,
+            btTableEdit, btImport, btExport;
     FileFieldEditor dfDefaultIcon;
     protected EditorTransformationSettings activeEditor;
     protected Table table;
@@ -273,6 +290,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
                     sfMenu.setText(editor.getMenuName());
                     sfMenuLoc.setText(editor.getMenuLocation());
                     sfToolbarLoc.setText(editor.getToolbarLocation());
+                    sfContext.setText(editor.getContext());
                     bfShowMenu.setSelection(editor.isShownInMenu());
                     bfShowPopup.setSelection(editor.isShownInContext());
                     bfShowToolbar.setSelection(editor.isShownIToolbar());
@@ -319,7 +337,10 @@ public class KSBasEPreferencePage extends PreferencePage implements
                     sfToolbarLoc.setEnabled(true);
                     browserContainer.setEnabled(true);
                     tableComp.setEnabled(true);
-                    btComp.setEnabled(true);
+                    btExport.setEnabled(true);
+                    btBrowseXtend.setEnabled(true);
+                    btTableEdit.setEnabled(true);
+                    btContext.setEnabled(true);
                     bfShowMenu.setEnabled(true);
                     bfShowToolbar.setEnabled(true);
                     bfShowPopup.setEnabled(true);
@@ -434,7 +455,10 @@ public class KSBasEPreferencePage extends PreferencePage implements
                         sfToolbarLoc.setText(""); //$NON-NLS-1$
                         browserContainer.setEnabled(false);
                         tableComp.setEnabled(false);
-                        btComp.setEnabled(false);
+                        btExport.setEnabled(true);
+                        btBrowseXtend.setEnabled(true);
+                        btTableEdit.setEnabled(true);
+                        btContext.setEnabled(true);
                         bfShowMenu.setEnabled(false);
                         bfShowToolbar.setEnabled(false);
                         bfShowPopup.setEnabled(false);
@@ -492,8 +516,9 @@ public class KSBasEPreferencePage extends PreferencePage implements
              * FileDialog in which a file can be selected
              */
             public void widgetSelected(SelectionEvent e) {
-                String[] res = openElementSelectionDialog(DIAGRAM_PACKAGES,
-                        false, editContainer);
+                String[] res = openElementSelectionDialog(
+                        KSBasEPreferencePage.DIAGRAM_PACKAGES, false,
+                        editContainer);
                 String modelPack = ""; //$NON-NLS-1$
                 if (res != null) {
                     if (res.length > 0 && res[0].length() > 0)
@@ -522,6 +547,44 @@ public class KSBasEPreferencePage extends PreferencePage implements
 
         });
         sfMetaModel.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true,
+                false));
+
+        new Label(browserContainer, SWT.NONE).setText("Diagram Context:");
+        sfContext = new Text(browserContainer, SWT.SINGLE | SWT.BORDER
+                | SWT.READ_ONLY);
+        btContext = new Button(browserContainer, SWT.NONE);
+        btContext.setText(Messages.KSBasEPreferencePage_Button_Browse);
+        btContext.addSelectionListener(new SelectionListener() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                String context = "";
+                Collection<?> definedContexts = ((ContextService) PlatformUI
+                        .getWorkbench().getService(IContextService.class))
+                        .getDefinedContextIds();
+                ElementListSelectionDialog dlg = new ElementListSelectionDialog(
+                        getShell(), new LabelProvider());
+                dlg.setTitle("Select diagram context");
+                dlg.setMessage("Select a context");
+                dlg.setElements(definedContexts.toArray());
+                dlg.setAllowDuplicates(false);
+                dlg.setMatchEmptyString(true);
+                dlg.setMultipleSelection(false);
+                dlg
+                        .setEmptyListMessage("No context found, please check your workspace settings");
+
+                if (dlg.open() == ElementListSelectionDialog.OK) {
+                    activeEditor.setContext((String) dlg.getFirstResult());
+                    cbEditors.notifyListeners(SWT.Selection, null);
+                }
+            }
+
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+            }
+
+        });
+        sfContext.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true,
                 false));
 
         dfDefaultIcon = new FileFieldEditor(
@@ -715,7 +778,8 @@ public class KSBasEPreferencePage extends PreferencePage implements
                 } else if (col == 3) {
                     // Open a dialog to select diagram elements
                     String[] res = openElementSelectionDialog(
-                            DIAGRAM_EDIT_PARTS, true, editContainer);
+                            KSBasEPreferencePage.DIAGRAM_EDIT_PARTS, true,
+                            editContainer);
 
                     if (res == null) {
 
@@ -786,7 +850,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
 
                                     keys.append(String
                                             .valueOf((char) e.keyCode)
-                                            + "\u002B"); //$NON-NLS-1$
+                                            + " "); //$NON-NLS-1$
 
                                     ex += (char) e.keyCode;
                                     text.setText(ex.toUpperCase());
@@ -819,12 +883,11 @@ public class KSBasEPreferencePage extends PreferencePage implements
 
         btComp = new Composite(parent, SWT.NONE);
         btComp.setLayout(new GridLayout(4, false));
-        btComp.setEnabled(false);
 
-        Button btTableAdd = new Button(btComp, SWT.NONE);
-        btTableAdd
+        btTableEdit = new Button(btComp, SWT.NONE);
+        btTableEdit
                 .setText(Messages.KSBasEPreferencePage_Button_Edit_Transformations);
-        btTableAdd.addSelectionListener(new SelectionListener() {
+        btTableEdit.addSelectionListener(new SelectionListener() {
 
             public void widgetDefaultSelected(SelectionEvent e) {
             }
@@ -894,8 +957,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
                                             activeEditor
                                                     .parseTransformationsFromFile(tmpFile
                                                             .getAbsolutePath());
-                                            manager
-                                                    .storeTransformations();
+                                            manager.storeTransformations();
                                             dirty = false;
                                             return;
                                         } else {
@@ -916,9 +978,10 @@ public class KSBasEPreferencePage extends PreferencePage implements
                 }
             }
         });
-
+        btTableEdit.setEnabled(false);
         btBrowseXtend = new Button(btComp, SWT.NONE);
         btBrowseXtend.setText("Load Xtend File");
+        btBrowseXtend.setEnabled(false);
         btBrowseXtend.addSelectionListener(new SelectionListener() {
 
             public void widgetDefaultSelected(SelectionEvent e) {
@@ -968,60 +1031,55 @@ public class KSBasEPreferencePage extends PreferencePage implements
 
         });
 
-        Button btImport = new Button(btComp, SWT.RIGHT);
+        btImport = new Button(btComp, SWT.RIGHT);
         btImport.setText("Import Settings");
         btImport.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, false));
         btImport.addSelectionListener(new SelectionListener() {
-            
+
             public void widgetSelected(SelectionEvent e) {
                 FileDialog dlg = new FileDialog(getShell(), SWT.OPEN);
                 dlg.setFilterPath(ResourcesPlugin.getWorkspace().getRoot()
                         .getLocation().toOSString());
-                dlg
-                        .setFileName("ksbase.config");
-                dlg
-                        .setFilterExtensions(new String[] { ".config" });
-                dlg
-                        .setText("Import KSBasE settings");
-                
+                dlg.setFileName("ksbase.config");
+                dlg.setFilterExtensions(new String[] { ".config" });
+                dlg.setText("Import KSBasE settings");
+
                 String result = dlg.open();
                 if (result != null) {
                     manager.importSettings(result);
                     cbEditors.notifyListeners(SWT.Selection, null);
                 }
             }
-            
+
             public void widgetDefaultSelected(SelectionEvent e) {
                 // TODO Auto-generated method stub
-                
+
             }
         });
-        Button btExport = new Button(btComp, SWT.RIGHT);
+        btExport = new Button(btComp, SWT.RIGHT);
         btExport.setText("Export Settings");
         btExport.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false, false));
+        btExport.setEnabled(false);
         btExport.addSelectionListener(new SelectionListener() {
-            
+
             public void widgetSelected(SelectionEvent e) {
                 FileDialog dlg = new FileDialog(getShell(), SWT.SAVE);
                 dlg.setFilterPath(ResourcesPlugin.getWorkspace().getRoot()
                         .getLocation().toOSString());
-                dlg
-                        .setFileName("ksbase.config");
-                dlg
-                        .setFilterExtensions(new String[] { ".config" });
-                dlg
-                        .setText("Export KSBasE settings");
+                dlg.setFileName("ksbase.config");
+                dlg.setFilterExtensions(new String[] { ".config" });
+                dlg.setText("Export KSBasE settings");
                 dlg.setOverwrite(true);
                 String result = dlg.open();
                 if (result != null) {
                     manager.exportSettings(result);
                 }
             }
-            
+
             public void widgetDefaultSelected(SelectionEvent e) {
             }
         });
-        
+
         btComp.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, false));
 
         // Fill editors combo box with existing editors

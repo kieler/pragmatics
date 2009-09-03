@@ -146,6 +146,7 @@ public class TransformationManager {
                         + Messages.Preferences_Visibility));
                 settings.setDefaultIconURI(URI.create(store.getString(editor
                         + Messages.Preferences_DefaultIcon)));
+                settings.setContext(store.getString(editor+".Context"));
                 String[] transformations = store.getString(
                         editor + Messages.Preferences_Transformations).split(
                         ","); //$NON-NLS-2$

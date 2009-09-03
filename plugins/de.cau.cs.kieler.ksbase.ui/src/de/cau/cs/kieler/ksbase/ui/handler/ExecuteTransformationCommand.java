@@ -17,7 +17,6 @@ package de.cau.cs.kieler.ksbase.ui.handler;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.mwe.core.WorkflowContext;

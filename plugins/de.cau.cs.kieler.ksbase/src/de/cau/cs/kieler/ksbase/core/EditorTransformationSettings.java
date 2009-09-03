@@ -53,6 +53,7 @@ public class EditorTransformationSettings implements Serializable {
     private String editor; // Editor to which this setting is assigned
     private String extFile; // Xtend file in which the transformations are
                             // defined
+    private String context; //The context for the diagram editor, required for key bindings
     private LinkedList<Transformation> transformations; // The current List of
                                                         // Transformations
 
@@ -72,6 +73,7 @@ public class EditorTransformationSettings implements Serializable {
         this.toolbarLocation = Messages.EditorTransformationSettings_Default_Toolbar_Location;
         this.defaultIconURI = URI.create(""); //$NON-NLS-1$
         this.extFile = ""; //$NON-NLS-1$
+        this.context = "";
         this.transformations = new LinkedList<Transformation>();
         this.performAutoLayout = true;
     }
@@ -214,6 +216,14 @@ public class EditorTransformationSettings implements Serializable {
     
     public void setExtFile(String file) {
     	this.extFile = file;
+    }
+
+    public String getContext() {
+        return context;
+    }
+
+    public void setContext(String context) {
+        this.context = context;
     }
 
     /**

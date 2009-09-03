@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.bindings.Binding;
+import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeyBinding;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
@@ -49,6 +50,9 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
     // The shared instance
     private static KSBasEUIPlugin plugin;
 
+    // The menu instance
+    private static AbstractContributionFactory menuContribution = null;
+
     /**
      * The constructor
      */
@@ -58,17 +62,15 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
     }
 
     public void createMenu() {
-        // Foreach editor create menus:
+
         IMenuService menuService = (IMenuService) PlatformUI.getWorkbench()
                 .getService(IMenuService.class);
+        final IBindingService bindService = (IBindingService) PlatformUI
+                .getWorkbench().getService(IBindingService.class);
         final ICommandService cmdService = (ICommandService) PlatformUI
                 .getWorkbench().getService(ICommandService.class);
-        final IBindingService bindService = (IBindingService)PlatformUI.getWorkbench().getService(IBindingService.class);
         final Category kielerCategory = cmdService
-                .getCategory("de.cau.cs.kieler.commands.category");
-        final Context context = new ContextManager()
-                .getContext("de.cau.cs.kieler.ksbase.context");
-        context.define("de.cau.cs.kieler.ksbase.context", "KSBasE Comtext","org.eclipse.gmf.runtime.diagram.ui.diagramContext");
+                .getCategory("de.cau.cs.kieler.ksbase.ui.ksbaseCategory");
         
         final ArrayList<Binding> bindings = new ArrayList<Binding>();
         for (Binding b : bindService.getBindings()) {
@@ -78,15 +80,18 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
         //
         // !! Hier weiter mit den anderen Menüs und vor allem den visibleWhen
         // Expressions !!
-        
+
         for (final EditorTransformationSettings settings : TransformationManager.instance
                 .getEditors()) {
 
             if (settings.isShownInMenu()
                     && settings.getMenuLocation().length() > 0) {
                 // Create menu contributions
-                AbstractContributionFactory menuContribution = new AbstractContributionFactory(
-                        settings.getMenuLocation(), "de.cau.cs.kieler") {
+                if (menuContribution != null)
+                    menuService.removeContributionFactory(menuContribution);
+
+                menuContribution = new AbstractContributionFactory(settings
+                        .getMenuLocation(), "de.cau.cs.kieler") {
 
                     @Override
                     public void createContributionItems(
@@ -114,37 +119,48 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
 
                                 String shortcut = t.getKeyboardShortcut();
                                 if (shortcut.length() > 0) {
+                                    String[] keyString = shortcut.split(" ");
                                     // shortcut = "CTRL\u002Bx";
                                     KeyStroke ks = KeyStroke
-                                            .getInstance(shortcut);
-                                    KeySequence k = KeySequence.getInstance(ks);
+                                            .getInstance(keyString[0]);
+                                    KeySequence k;
+                                    if (keyString.length > 1)
+                                        k = KeySequence.getInstance(ks
+                                                + "\u007F" + keyString[1]);
+                                    else
+                                        k = KeySequence.getInstance(ks);
                                     ParameterizedCommand pCommand = new ParameterizedCommand(
                                             transformationCommand, null);
+                                    TriggerSequence[] oldBind =  bindService.getActiveBindingsFor(pCommand);
+                                    
                                     KeyBinding kb = new KeyBinding(
                                             k,
                                             pCommand,
                                             "org.eclipse.ui.defaultAcceleratorConfiguration",
-                                            "de.cau.cs.kieler.ksbase.context",
+                                            settings.getContext(),
                                             null, null, null, KeyBinding.USER);
                                     
-                                    bindings.add(kb);
-                                    
+                                    if (oldBind != null && oldBind.length > 0) {
+                                            //Don't add sequence, or we will have a mess after a few additions
+                                            oldBind[0] = kb.getTriggerSequence();
+                                    }
+                                    else {
+                                        bindings.add(kb);
+                                    }
+
                                 }
+
                                 CommandContributionItemParameter p = new CommandContributionItemParameter(
                                         PlatformUI.getWorkbench(), null, cmdID,
-                                        CommandContributionItem.STYLE_PUSH);
-                                
+                                        null, null, null, null, t.getName(), t
+                                                .getKeyboardShortcut(), t
+                                                .getTransformationName(),
+                                        CommandContributionItem.STYLE_PUSH,
+                                        null, true);
                                 CommandContributionItem cmd = new CommandContributionItem(
                                         p);
 
-                                // create the following structure
-                                // iterate and
-                                // with selection
-                                // iterate or
-                                // instance-of class
-                                // with selection
-                                // count #
-
+                                // create the visibleWhen expressions:
                                 IterateExpression baseIterate = new IterateExpression(
                                         "and", "false");
                                 // Create visibility with instance-of
@@ -192,7 +208,11 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
                         additions.addContributionItem(dynamicMenu, we);
                     }
                 };
-                menuService.addContributionFactory(menuContribution);
+                try {
+                    menuService.addContributionFactory(menuContribution);
+                } catch (IndexOutOfBoundsException e) {
+                    System.out.println("strange error here");
+                }
             }
             if (settings.isShownIToolbar()
                     && settings.getToolbarLocation().length() > 0) {
@@ -227,7 +247,8 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
                                     CommandContributionItem.STYLE_PUSH);
                             CommandContributionItem cmd = new CommandContributionItem(
                                     p);
-                            if (t.getPartConfig().length > 0) {
+                            if (t.getPartConfig() != null
+                                    && t.getPartConfig().length > 0) {
                                 try {
 
                                     IterateExpression iterate = new IterateExpression(
@@ -255,8 +276,13 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
         }
         try {
             Binding[] bs = new Binding[bindings.size()];
+            
             System.arraycopy(bindings.toArray(), 0, bs, 0, bindings.size());
-            bindService.savePreferences(bindService.getScheme("org.eclipse.ui.defaultAcceleratorConfiguration"), bs);
+            bindService
+                    .savePreferences(
+                            bindService
+                                    .getScheme("org.eclipse.ui.defaultAcceleratorConfiguration"),
+                            bs);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
