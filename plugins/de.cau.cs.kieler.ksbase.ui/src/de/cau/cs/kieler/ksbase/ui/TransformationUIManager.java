@@ -10,6 +10,7 @@ import java.util.List;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.draw2d.IFigure;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.commands.Command;
@@ -18,6 +19,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.CanonicalEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramCommandStack;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
+import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramGraphicalViewer;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -118,7 +120,11 @@ public class TransformationUIManager {
                                 .next();
                         nextEditPolicy.refresh();
                     }
-
+                    //IFigure figure = ((DiagramEditor)activeEditor).getDiagramEditPart().getFigure();
+                    //figure.invalidateTree();
+                    IDiagramGraphicalViewer graphViewer = ((DiagramEditor)activeEditor).getDiagramGraphicalViewer();
+                    graphViewer.flush();
+                                        
                     // If auto-layout is activated, execute now:
                     if (editor.isPerformAutoLayout()) {
                         EditPart e = ((DiagramEditor) activeEditor)
@@ -126,6 +132,7 @@ public class TransformationUIManager {
                         while (!(e instanceof ShapeEditPart)) {
                             e = (EditPart) e.getChildren().get(0);
                         }
+                        
                         ((AutoLayoutTrigger) RunLogic
                                 .getTrigger("de.cau.cs.kieler.ksbase.layout.AutoLayoutTrigger"))
                                 .triggerAutoLayout(e, activeEditor);
