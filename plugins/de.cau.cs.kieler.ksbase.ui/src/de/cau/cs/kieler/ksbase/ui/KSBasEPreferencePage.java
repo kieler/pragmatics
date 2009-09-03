@@ -556,7 +556,6 @@ public class KSBasEPreferencePage extends PreferencePage implements
         btContext.setText(Messages.KSBasEPreferencePage_Button_Browse);
         btContext.addSelectionListener(new SelectionListener() {
 
-            @Override
             public void widgetSelected(SelectionEvent e) {
                 String context = "";
                 Collection<?> definedContexts = ((ContextService) PlatformUI
@@ -579,7 +578,6 @@ public class KSBasEPreferencePage extends PreferencePage implements
                 }
             }
 
-            @Override
             public void widgetDefaultSelected(SelectionEvent e) {
             }
 
