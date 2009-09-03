@@ -224,6 +224,7 @@ public class TransformationManager {
                     .getMenuLocation());
             store.setValue(prefix + Messages.Preferences_ToolbarLocation,
                     settings.getToolbarLocation());
+            store.setValue(prefix + ".Context", settings.getContext());
             store.setValue(prefix + Messages.Preferences_Visibility, settings
                     .getVisibility());
             store.setValue(prefix + Messages.Preferences_DefaultIcon, settings

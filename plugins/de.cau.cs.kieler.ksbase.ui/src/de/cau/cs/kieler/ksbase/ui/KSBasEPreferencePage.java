@@ -17,16 +17,25 @@ package de.cau.cs.kieler.ksbase.ui;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
-import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.gmf.runtime.common.ui.services.editor.EditorService;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
@@ -44,9 +53,6 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.swt.SWT;
@@ -58,7 +64,6 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
@@ -86,18 +91,12 @@ import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.contexts.IContext;
-import org.eclipse.ui.contexts.IContextManager;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
-import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.internal.contexts.ContextService;
-import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.services.IServiceLocator;
 
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
@@ -147,6 +146,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
 
     protected static final String DIAGRAM_PACKAGES[] = new String[] { "org.eclipse.emf.ecore.EPackage" }; //$NON-NLS-1$
 
+    protected DiagramDocumentEditor diagram;
     /**
      * A Dialog which contains 4 check boxes Show in Menu, Show in Context, Show
      * in Toolbar, Show in Balloon. Used to configure the visibility of
@@ -369,34 +369,55 @@ public class KSBasEPreferencePage extends PreferencePage implements
              * workspace that can be used as editors
              */
             public void widgetSelected(SelectionEvent e) {
-                String[] res = openElementSelectionDialog(DIAGRAM_EDITORS,
-                        false, editContainer);
-                String editorName = ""; //$NON-NLS-1$
-                if (res != null) {
-                    if (res.length > 0 && res[0].length() > 0)
-                        editorName = res[0];
-                    else
-                        return;
-                } else {
-                    InputDialog dlg = new InputDialog(
-                            getShell(),
-                            Messages.KSBasEPreferencePage_DiagramEditor_NoDiagram_Title,
-                            Messages.KSBasEPreferencePage_DiagramEditor_NoDiagram_Message,
-                            Messages.KSBasEPreferencePage_DiagramEditor_NoDiagram_Default,
-                            null);
-                    if (dlg.open() == InputDialog.OK) {
-                        editorName = dlg.getValue();
-                    } else {
-                        return;
+                IConfigurationElement[] elements = Platform
+                        .getExtensionRegistry().getConfigurationElementsFor(
+                                "org.eclipse.ui.editors");
+                ArrayList<String> editors = new ArrayList<String>();
+
+                for (int i = 0; i < elements.length; ++i) {
+
+                    if (elements[i] != null
+                            && elements[i].getAttribute("class") != null) {
+
+                        try {
+                            Object element = elements[i]
+                                    .createExecutableExtension("class");
+                            if (element instanceof DiagramDocumentEditor) {
+                                Map<?,?> m =  ((DiagramDocumentEditor)element).getDiagramGraphicalViewer().getEditPartRegistry();
+                                System.out.println(m.isEmpty());
+                                editors.add(((DiagramDocumentEditor) element)
+                                        .getClass().getCanonicalName());
+                            }
+                        } catch (CoreException e1) {
+                        }
+
                     }
+
                 }
-                // only add a diagram once !
-                if (manager.getEditorByName(editorName) == null) {
-                    EditorTransformationSettings editor = manager
-                            .addEditor(editorName);
-                    cbEditors.add(editor.getEditor());
-                    cbEditors.select(cbEditors.indexOf(editor.getEditor()));
-                    cbEditors.notifyListeners(SWT.Selection, null);
+
+                ElementListSelectionDialog dlg = new ElementListSelectionDialog(
+                        getShell(), new LabelProvider());
+                dlg.setTitle("Select diagram");
+                dlg.setMessage("Select a diagram");
+                dlg.setElements(editors.toArray());
+                dlg.setAllowDuplicates(false);
+                dlg.setMatchEmptyString(true);
+                dlg.setMultipleSelection(false);
+                dlg
+                        .setEmptyListMessage("No diagram found, please check your workspace settings.");
+
+                if (dlg.open() == ElementListSelectionDialog.OK) {
+
+                    String editorName = ((String) dlg.getFirstResult())
+                            .split("@")[0];
+                    // only add a diagram once !
+                    if (manager.getEditorByName(editorName) == null) {
+                        EditorTransformationSettings editor = manager
+                                .addEditor(editorName);
+                        cbEditors.add(editor.getEditor());
+                        cbEditors.select(cbEditors.indexOf(editor.getEditor()));
+                        cbEditors.notifyListeners(SWT.Selection, null);
+                    }
                 }
             }
 
@@ -516,33 +537,42 @@ public class KSBasEPreferencePage extends PreferencePage implements
              * FileDialog in which a file can be selected
              */
             public void widgetSelected(SelectionEvent e) {
-                String[] res = openElementSelectionDialog(
-                        KSBasEPreferencePage.DIAGRAM_PACKAGES, false,
-                        editContainer);
-                String modelPack = ""; //$NON-NLS-1$
-                if (res != null) {
-                    if (res.length > 0 && res[0].length() > 0)
-                        modelPack = res[0];
-                    else
-                        return;
-                } else {
-                    InputDialog dlg = new InputDialog(
-                            getShell(),
-                            Messages.KSBasEPreferencePage_ModelPackage_NoPackageFound_Title,
-                            Messages.KSBasEPreferencePage_ModelPackage_NoPackageFound_Message,
-                            Messages.KSBasEPreferencePage_ModelPackage_NoPackageFound_Default,
-                            null);
-                    if (dlg.open() == InputDialog.OK) {
-                        modelPack = dlg.getValue();
-                    } else {
-                        return;
+                IConfigurationElement[] elements = Platform
+                        .getExtensionRegistry().getConfigurationElementsFor(
+                                "org.eclipse.emf.ecore.generated_package");
+                ArrayList<String> editors = new ArrayList<String>();
+
+                for (int i = 0; i < elements.length; ++i) {
+
+                    if (elements[i] != null
+                            && elements[i].getAttribute("class") != null) {
+                        editors.add(elements[i].getAttribute("class"));
                     }
                 }
 
-                EditorTransformationSettings editor = manager
-                        .getEditorByName(cbEditors.getText());
-                editor.setModelPackageClass(modelPack);
-                cbEditors.notifyListeners(SWT.Selection, null);
+                ElementListSelectionDialog dlg = new ElementListSelectionDialog(
+                        getShell(), new LabelProvider());
+                dlg.setTitle("Select Package");
+                dlg.setMessage("Select a Package");
+                dlg.setElements(editors.toArray());
+                dlg.setAllowDuplicates(false);
+                dlg.setMatchEmptyString(true);
+                dlg.setMultipleSelection(false);
+                dlg
+                        .setEmptyListMessage("No Package found, please check your workspace settings.");
+
+                if (dlg.open() == ElementListSelectionDialog.OK) {
+
+                    String modelPackage = ((String) dlg.getFirstResult())
+                            .split("@")[0];
+                    // only add a diagram once !
+                    if (manager.getEditorByName(modelPackage) == null) {
+                        EditorTransformationSettings editor = manager
+                                .getEditorByName(cbEditors.getText());
+                        editor.setModelPackageClass(modelPackage);
+                        cbEditors.notifyListeners(SWT.Selection, null);
+                    }
+                }
             }
 
         });
@@ -773,28 +803,40 @@ public class KSBasEPreferencePage extends PreferencePage implements
                         cbEditors.notifyListeners(SWT.Selection, null);
                     }
                 } else if (col == 3) {
-                    // Open a dialog to select diagram elements
-                    String[] res = openElementSelectionDialog(
-                            KSBasEPreferencePage.DIAGRAM_EDIT_PARTS, true,
-                            editContainer);
-
-                    if (res == null) {
-
-                        InputDialog dlg = new InputDialog(
-                                getShell(),
-                                Messages.KSBasEPreferencePage_DiagramElements_NoElements_Title,
-                                Messages.KSBasEPreferencePage_DiagramElements_NoElements_Message,
-                                Messages.KSBasEPreferencePage_DiagramElements_NoElements_Default,
-                                null);
-                        if (dlg.open() == InputDialog.OK) {
-                            res = dlg.getValue().split(","); //$NON-NLS-1$
-                        } else {
-                            return;
+                    List<?> activeEditorParts =  EditorService.getInstance().getRegisteredEditorParts();
+                    ArrayList<String> validEditParts = new ArrayList<String>();
+                    for (Object o : activeEditorParts) {
+                        
+                        if ( o instanceof DiagramDocumentEditor && o.getClass().getCanonicalName().equals(activeEditor.getEditor())) {
+                            Map<?,?> editPart = ((DiagramDocumentEditor)o).getDiagramGraphicalViewer().getEditPartRegistry();
+                            for (Object p : editPart.keySet()) {
+                                Object value = editPart.get(p);
+                                if ( value instanceof GraphicalEditPart ) {
+                                    validEditParts.add( value.getClass().getCanonicalName() );
+                                }
+                            }
                         }
                     }
-                    if (res.length > 0 && res[0].length() > 0) {
-                        transformation.setPartConfig(res);
-                        cbEditors.notifyListeners(SWT.Selection, null);
+                    ElementListSelectionDialog dlg = new ElementListSelectionDialog(
+                            getShell(), new LabelProvider());
+                    dlg.setTitle("Select Diagram Elements");
+                    dlg.setMessage("Select one or more diagram element for which this transformation is defined");
+                    dlg.setElements(validEditParts.toArray());
+                    dlg.setAllowDuplicates(false);
+                    dlg.setMatchEmptyString(true);
+                    dlg.setMultipleSelection(false);
+                    dlg  
+                            .setEmptyListMessage("No elements found, please check your workspace settings. It may be necessary to open the diagram editor you whish to use.");
+
+                    if (dlg.open() == ElementListSelectionDialog.OK) {
+                        Object[] res = dlg.getResult();
+                        if (res.length > 0 ) {
+                            String[] parts = new String[res.length];
+                            System.arraycopy(res, 0, parts, 0, res.length);
+                            transformation.setPartConfig(parts);
+                            cbEditors.notifyListeners(SWT.Selection, null);
+                        }
+
                     }
 
                 } else if (col == 5) { // Icon
@@ -1110,6 +1152,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
             activeEditor.setMenuName(sfMenu.getText());
             activeEditor.setMenuLocation(sfMenuLoc.getText());
             activeEditor.setToolbarLocation(sfToolbarLoc.getText());
+            activeEditor.setContext(sfContext.getText());
             int flags = 0;
             if (bfShowMenu.getSelection())
                 flags |= KSBasEPlugin.SHOW_MENU;
