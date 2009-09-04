@@ -380,8 +380,6 @@ public class KSBasEPreferencePage extends PreferencePage implements
                             Object element = elements[i]
                                     .createExecutableExtension("class");
                             if (element instanceof DiagramDocumentEditor) {
-                                Map<?,?> m =  ((DiagramDocumentEditor)element).getDiagramGraphicalViewer().getEditPartRegistry();
-                                System.out.println(m.isEmpty());
                                 editors.add(((DiagramDocumentEditor) element)
                                         .getClass().getCanonicalName());
                             }
