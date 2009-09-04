@@ -99,6 +99,7 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.Transformation;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
+import de.cau.cs.kieler.ksbase.ui.menus.DynamicMenuContributions;
 
 /**
  * The KSBasE preference page
@@ -383,7 +384,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
                                 editors.add(((DiagramDocumentEditor) element)
                                         .getClass().getCanonicalName());
                             }
-                        } catch (CoreException e1) {
+                        } catch (Exception e1) {
                         }
 
                     }
@@ -1163,10 +1164,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
                     .getStringValue()));
             manager.storeTransformations();
         }
-
-        // Recreate menu, or add new :P
-        KSBasEUIPlugin.getDefault().createMenu();
-
+        DynamicMenuContributions.instance.createMenuContributions(activeEditor);
         return super.performOk();
     }
 

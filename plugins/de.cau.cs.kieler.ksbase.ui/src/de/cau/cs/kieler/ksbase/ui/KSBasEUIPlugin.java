@@ -55,7 +55,7 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
      * The constructor
      */
     public KSBasEUIPlugin() {
-        createMenu();
+        //createMenu();
 
     }
 
@@ -85,8 +85,8 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
             if (settings.isShownInMenu()
                     && settings.getMenuLocation().length() > 0) {
                 // Create menu contributions
-                if (menuContribution != null)
-                    menuService.removeContributionFactory(menuContribution);
+                //if (menuContribution != null)
+                  //  menuService.removeContributionFactory(menuContribution);
 
                 menuContribution = new AbstractContributionFactory(settings
                         .getMenuLocation(), "de.cau.cs.kieler") {
@@ -177,7 +177,7 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
                                     withSelection.add(iterate);
                                     baseIterate.add(withSelection);
                                 }
-
+                                
                                 // Create visibility with count expression
                                 WithExpression withSelection = new WithExpression(
                                         "selection");
