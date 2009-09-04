@@ -1,0 +1,14 @@
+«IMPORT 'http://www.eclipse.org/gmf/2009/GenModel'»
+«EXTENSION xpt::GenEditorGenerator»
+
+«AROUND additions FOR gmfgen::GenPlugin»
+
+    <extension
+         point="org.eclipse.emf.transaction.editingDomains">
+      <!-- ITEMIS CHANGE: register diagram editing domain factory --> 
+      <editingDomain
+            factory="org.eclipse.gmf.runtime.diagram.core.DiagramEditingDomainFactory"
+            id="«editorGen.diagram.editingDomainID»">
+      </editingDomain>
+   </extension>
+«ENDAROUND»

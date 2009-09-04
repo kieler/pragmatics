@@ -1,0 +1,62 @@
+«IMPORT "http://www.eclipse.org/gmf/2008/GenModel"»
+
+«AROUND constructor FOR gmfgen::GenDiagram-»
+	«EXPAND xpt::Common::generatedMemberComment»
+public ResourceSetInfo(org.eclipse.gmf.runtime.diagram.ui.resources.editor.document.IDiagramDocument document, org.eclipse.ui.IEditorInput editorInput) {
+	super(document);
+	myDocument = document;
+	myEditorInput = editorInput;
+	«IF null == editorGen.application-»
+	startResourceListening();
+	«ENDIF-»
+	myResourceSetListener = new ResourceSetModificationListener(this);
+	getResourceSet().eAdapters().add(myResourceSetListener);
+	// ITEMIS CHANGE: If one of the resources in the shared editing domain is dirty, we have to set the dirty flag 
+	fCanBeSaved = resourceSetIsDirty(); 
+}
+«ENDAROUND»
+
+«AROUND dispose FOR gmfgen::GenDiagram-»
+	«EXPAND xpt::Common::generatedMemberComment»
+public void dispose() {
+	«IF null == editorGen.application-»
+	stopResourceListening();
+	«ENDIF-»
+	getResourceSet().eAdapters().remove(myResourceSetListener);
+	// ITEMIS CHANGE: Unload resources selectively, as they can still be used by other editors
+	//for (java.util.Iterator/*<org.eclipse.emf.ecore.resource.Resource>*/ it = getLoadedResourcesIterator(); it.hasNext();) {
+	//	org.eclipse.emf.ecore.resource.Resource resource = (org.eclipse.emf.ecore.resource.Resource) it.next();
+	//	resource.unload();
+	//}
+	de.itemis.gmf.runtime.editingdomain.ResourceUnloadingTool.unloadEditorInput(getResourceSet(), myEditorInput);
+}
+«ENDAROUND»
+
+«AROUND handleResourceChangedSD FOR gmfgen::GenDiagram-»
+	«EXPAND xpt::Common::generatedMemberComment»
+public boolean handleResourceChanged(final org.eclipse.emf.ecore.resource.Resource resource) {
+	// ITEMIS CHANGE: As we use a singleton editing domain, we ignore changes
+	/*
+	«EXPAND xpt::editor::ResourceSetInfo::updateSynchStateSD-»
+	org.eclipse.swt.widgets.Display.getDefault().asyncExec(new java.lang.Runnable() {
+		public void run() {
+			handleElementChanged(ResourceSetInfo.this, resource, null);
+		}
+	});
+	*/
+	return true;
+}
+«ENDAROUND»
+
+«AROUND additions FOR gmfgen::GenDiagram-»
+	«EXPAND xpt::Common::generatedMemberComment»
+private boolean resourceSetIsDirty() {
+	// ITEMIS CHANGE: Find out if the resource set is already dirty
+	for(org.eclipse.emf.ecore.resource.Resource resource : getResourceSet().getResources()) {
+		if(resource.isLoaded() && !getEditingDomain().isReadOnly(resource) && resource.isModified()) {
+			return true;
+		}
+	}
+	return false;
+}
+«ENDAROUND»
