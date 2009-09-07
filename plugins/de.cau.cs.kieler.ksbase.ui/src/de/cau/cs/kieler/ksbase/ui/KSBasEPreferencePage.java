@@ -145,6 +145,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
     protected static final String DIAGRAM_PACKAGES[] = new String[] { "org.eclipse.emf.ecore.EPackage" }; //$NON-NLS-1$
 
     protected DiagramDocumentEditor diagram;
+
     /**
      * A Dialog which contains 4 check boxes Show in Menu, Show in Context, Show
      * in Toolbar, Show in Balloon. Used to configure the visibility of
@@ -247,12 +248,15 @@ public class KSBasEPreferencePage extends PreferencePage implements
     protected Combo cbEditors;
     protected Button bfShowMenu, bfShowToolbar, bfShowPopup, bfShowBalloon,
             btContext, bfAutoLayout, btBrowseXtend, btModelPackage,
-            btTableEdit, btImport, btExport;
+            btAddEditor, btModifyEditor, btDelEditor, btTableEdit, btImport,
+            btExport;
     FileFieldEditor dfDefaultIcon;
     protected EditorTransformationSettings activeEditor;
     protected Table table;
     Composite tableComp, browserContainer, btComp;
     private TransformationManager manager;
+    protected Button cbWorkspaceSettings;
+    protected boolean workspaceSettings;
 
     public KSBasEPreferencePage() {
         setDescription(Messages.KSBasEPreferencePage_Title);
@@ -266,6 +270,75 @@ public class KSBasEPreferencePage extends PreferencePage implements
     protected Control createContents(Composite parent) {
         Composite container = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(2, false);
+
+        new Label(container, SWT.NONE)
+                .setText("Enable Workspace specific settings");
+        cbWorkspaceSettings = new Button(container, SWT.CHECK);
+        workspaceSettings = TransformationManager.instance
+                .isWorkspaceSpecific();
+        cbWorkspaceSettings.setSelection(workspaceSettings);
+        cbWorkspaceSettings.addSelectionListener(new SelectionListener() {
+
+            public void widgetSelected(SelectionEvent e) {
+                if (cbWorkspaceSettings.getSelection()) {
+                    MessageBox box = new MessageBox(getShell(), SWT.YES
+                            | SWT.NO);
+                    box
+                            .setMessage("Changes made in the extension points will be ignore from now on.\nContinue?");
+                    box.setText("Warning");
+                    if (box.open() == SWT.YES) {
+                        workspaceSettings = true;
+                        btImport.setEnabled(true);
+                        btAddEditor.setEnabled(true);
+                        TransformationManager.instance
+                                .setWorkspaceSpecific(true);
+                        readEditors();
+                        cbEditors.notifyListeners(SWT.Selection, null);
+                    } else {
+                        cbWorkspaceSettings.setEnabled(false);
+                        e.doit = false;
+                    }
+                } else {
+                    cbWorkspaceSettings.setSelection(false);
+                    TransformationManager.instance.setWorkspaceSpecific(false);
+                    sfMetaModel.setEnabled(false);
+                    sfMenu.setEnabled(false);
+                    sfMenuLoc.setEnabled(false);
+                    sfToolbarLoc.setEnabled(false);
+                    browserContainer.setEnabled(false);
+                    tableComp.setEnabled(false);
+                    btExport.setEnabled(false);
+                    btBrowseXtend.setEnabled(false);
+                    btTableEdit.setEnabled(false);
+                    btContext.setEnabled(false);
+                    bfShowMenu.setEnabled(false);
+                    bfShowToolbar.setEnabled(false);
+                    bfShowPopup.setEnabled(false);
+                    bfShowBalloon.setEnabled(false);
+                    bfAutoLayout.setEnabled(false);
+                    btModifyEditor.setEnabled(false);
+                    btDelEditor.setEnabled(false);
+                    btAddEditor.setEnabled(false);
+                    btImport.setEnabled(false);
+                    sfMetaModel.setText("");
+                    sfContext.setText("");
+                    dfDefaultIcon.setStringValue("");
+                    sfMenu.setText("");
+                    sfMenuLoc.setText("");
+                    sfToolbarLoc.setText("");
+                    table.clearAll();
+                    table.setEnabled(false);
+                    cbEditors.removeAll();
+                    cbEditors.clearSelection();
+                    cbEditors.setEnabled(false);
+                }
+            }
+
+            public void widgetDefaultSelected(SelectionEvent e) {
+                // TODO Auto-generated method stub
+
+            }
+        });
 
         Label editorLabel = new Label(container, SWT.NONE);
         editorLabel
@@ -328,22 +401,30 @@ public class KSBasEPreferencePage extends PreferencePage implements
                                 String.valueOf(t.getNumSelections()),
                                 t.getIconString(), t.getKeyboardShortcut() });
                     }
-                    // enable controls
-                    sfMetaModel.setEnabled(true);
-                    sfMenu.setEnabled(true);
-                    sfMenuLoc.setEnabled(true);
-                    sfToolbarLoc.setEnabled(true);
-                    browserContainer.setEnabled(true);
-                    tableComp.setEnabled(true);
-                    btExport.setEnabled(true);
-                    btBrowseXtend.setEnabled(true);
-                    btTableEdit.setEnabled(true);
-                    btContext.setEnabled(true);
-                    bfShowMenu.setEnabled(true);
-                    bfShowToolbar.setEnabled(true);
-                    bfShowPopup.setEnabled(true);
-                    bfShowBalloon.setEnabled(true);
-                    bfAutoLayout.setEnabled(true);
+                    if (workspaceSettings) {
+                        // enable controls
+                        sfMetaModel.setEnabled(true);
+                        sfMenu.setEnabled(true);
+                        sfMenuLoc.setEnabled(true);
+                        sfToolbarLoc.setEnabled(true);
+                        browserContainer.setEnabled(true);
+                        tableComp.setEnabled(true);
+                        btExport.setEnabled(true);
+                        btBrowseXtend.setEnabled(true);
+                        btTableEdit.setEnabled(true);
+                        btContext.setEnabled(true);
+                        bfShowMenu.setEnabled(true);
+                        bfShowToolbar.setEnabled(true);
+                        bfShowPopup.setEnabled(true);
+                        bfShowBalloon.setEnabled(true);
+                        bfAutoLayout.setEnabled(true);
+                        table.setEnabled(true);
+                        cbEditors.setEnabled(true);
+                        if (cbEditors.getItemCount() > 0) {
+                            btModifyEditor.setEnabled(true);
+                            btDelEditor.setEnabled(true);
+                        }
+                    }
                 }
             }
 
@@ -355,7 +436,8 @@ public class KSBasEPreferencePage extends PreferencePage implements
 
         final Composite editContainer = new Composite(container, SWT.NONE);
         editContainer.setLayout(new RowLayout());
-        Button btAddEditor = new Button(editContainer, SWT.RIGHT);
+        editContainer.setEnabled(workspaceSettings);
+        btAddEditor = new Button(editContainer, SWT.RIGHT);
         btAddEditor.setText(Messages.KSBasEPreferencePage_EditorSelection_Add);
         btAddEditor.addSelectionListener(new SelectionListener() {
 
@@ -418,10 +500,11 @@ public class KSBasEPreferencePage extends PreferencePage implements
             }
 
         });
-        btAddEditor.setEnabled(true);
-        Button btModifyEditor = new Button(editContainer, SWT.RIGHT);
+        btAddEditor.setEnabled(workspaceSettings);
+        btModifyEditor = new Button(editContainer, SWT.RIGHT);
         btModifyEditor
                 .setText(Messages.KSBasEPreferencePage_EditorSelection_Editor);
+        btModifyEditor.setEnabled(false);
         btModifyEditor.addSelectionListener(new SelectionListener() {
 
             public void widgetDefaultSelected(SelectionEvent e) {
@@ -443,7 +526,8 @@ public class KSBasEPreferencePage extends PreferencePage implements
             }
 
         });
-        Button btDelEditor = new Button(editContainer, SWT.RIGHT);
+        btDelEditor = new Button(editContainer, SWT.RIGHT);
+        btDelEditor.setEnabled(false);
         btDelEditor
                 .setText(Messages.KSBasEPreferencePage_EditorSelection_Delete);
         btDelEditor.addSelectionListener(new SelectionListener() {
@@ -798,16 +882,22 @@ public class KSBasEPreferencePage extends PreferencePage implements
                         cbEditors.notifyListeners(SWT.Selection, null);
                     }
                 } else if (col == 3) {
-                    List<?> activeEditorParts =  EditorService.getInstance().getRegisteredEditorParts();
+                    List<?> activeEditorParts = EditorService.getInstance()
+                            .getRegisteredEditorParts();
                     ArrayList<String> validEditParts = new ArrayList<String>();
                     for (Object o : activeEditorParts) {
-                        
-                        if ( o instanceof DiagramDocumentEditor && o.getClass().getCanonicalName().equals(activeEditor.getEditor())) {
-                            Map<?,?> editPart = ((DiagramDocumentEditor)o).getDiagramGraphicalViewer().getEditPartRegistry();
+
+                        if (o instanceof DiagramDocumentEditor
+                                && o.getClass().getCanonicalName().equals(
+                                        activeEditor.getEditor())) {
+                            Map<?, ?> editPart = ((DiagramDocumentEditor) o)
+                                    .getDiagramGraphicalViewer()
+                                    .getEditPartRegistry();
                             for (Object p : editPart.keySet()) {
                                 Object value = editPart.get(p);
-                                if ( value instanceof GraphicalEditPart ) {
-                                    validEditParts.add( value.getClass().getCanonicalName() );
+                                if (value instanceof GraphicalEditPart) {
+                                    validEditParts.add(value.getClass()
+                                            .getCanonicalName());
                                 }
                             }
                         }
@@ -815,17 +905,18 @@ public class KSBasEPreferencePage extends PreferencePage implements
                     ElementListSelectionDialog dlg = new ElementListSelectionDialog(
                             getShell(), new LabelProvider());
                     dlg.setTitle("Select Diagram Elements");
-                    dlg.setMessage("Select one or more diagram element for which this transformation is defined");
+                    dlg
+                            .setMessage("Select one or more diagram element for which this transformation is defined");
                     dlg.setElements(validEditParts.toArray());
                     dlg.setAllowDuplicates(false);
                     dlg.setMatchEmptyString(true);
                     dlg.setMultipleSelection(false);
-                    dlg  
+                    dlg
                             .setEmptyListMessage("No elements found, please check your workspace settings. It may be necessary to open the diagram editor you whish to use.");
 
                     if (dlg.open() == ElementListSelectionDialog.OK) {
                         Object[] res = dlg.getResult();
-                        if (res.length > 0 ) {
+                        if (res.length > 0) {
                             String[] parts = new String[res.length];
                             System.arraycopy(res, 0, parts, 0, res.length);
                             transformation.setPartConfig(parts);
@@ -1067,6 +1158,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
         btImport = new Button(btComp, SWT.RIGHT);
         btImport.setText("Import Settings");
         btImport.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, false));
+        btImport.setEnabled(workspaceSettings);
         btImport.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent e) {
@@ -1114,7 +1206,11 @@ public class KSBasEPreferencePage extends PreferencePage implements
         });
 
         btComp.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, false));
+        readEditors();
+        return null;
+    }
 
+    private void readEditors() {
         // Fill editors combo box with existing editors
         if (manager.getEditors() != null) {
             for (EditorTransformationSettings s : manager.getEditors()) {
@@ -1125,7 +1221,6 @@ public class KSBasEPreferencePage extends PreferencePage implements
                 cbEditors.notifyListeners(SWT.Selection, null);
             }
         }
-        return null;
     }
 
     /**
@@ -1142,29 +1237,32 @@ public class KSBasEPreferencePage extends PreferencePage implements
      */
     @Override
     public boolean performOk() {
-        if (activeEditor != null) {
-            activeEditor.setModelPackageClass(sfMetaModel.getText());
-            activeEditor.setMenuName(sfMenu.getText());
-            activeEditor.setMenuLocation(sfMenuLoc.getText());
-            activeEditor.setToolbarLocation(sfToolbarLoc.getText());
-            activeEditor.setContext(sfContext.getText());
-            int flags = 0;
-            if (bfShowMenu.getSelection())
-                flags |= KSBasEPlugin.SHOW_MENU;
-            if (bfShowPopup.getSelection())
-                flags |= KSBasEPlugin.SHOW_CONTEXT;
-            if (bfShowToolbar.getSelection())
-                flags |= KSBasEPlugin.SHOW_TOOLBAR;
-            if (bfShowBalloon.getSelection())
-                flags |= KSBasEPlugin.SHOW_BALLOON;
+        if (workspaceSettings) {
+            if (activeEditor != null) {
+                activeEditor.setModelPackageClass(sfMetaModel.getText());
+                activeEditor.setMenuName(sfMenu.getText());
+                activeEditor.setMenuLocation(sfMenuLoc.getText());
+                activeEditor.setToolbarLocation(sfToolbarLoc.getText());
+                activeEditor.setContext(sfContext.getText());
+                int flags = 0;
+                if (bfShowMenu.getSelection())
+                    flags |= KSBasEPlugin.SHOW_MENU;
+                if (bfShowPopup.getSelection())
+                    flags |= KSBasEPlugin.SHOW_CONTEXT;
+                if (bfShowToolbar.getSelection())
+                    flags |= KSBasEPlugin.SHOW_TOOLBAR;
+                if (bfShowBalloon.getSelection())
+                    flags |= KSBasEPlugin.SHOW_BALLOON;
 
-            activeEditor.setVisibilityFlags(flags);
-            activeEditor.setPerformAutoLayout(bfAutoLayout.getSelection());
-            activeEditor.setDefaultIconURI(URI.create(dfDefaultIcon
-                    .getStringValue()));
-            manager.storeTransformations();
+                activeEditor.setVisibilityFlags(flags);
+                activeEditor.setPerformAutoLayout(bfAutoLayout.getSelection());
+                activeEditor.setDefaultIconURI(URI.create(dfDefaultIcon
+                        .getStringValue()));
+                manager.storeTransformations();
+            }
+            DynamicMenuContributions.instance
+                    .createMenuContributions(activeEditor);
         }
-        DynamicMenuContributions.instance.createMenuContributions(activeEditor);
         return super.performOk();
     }
 

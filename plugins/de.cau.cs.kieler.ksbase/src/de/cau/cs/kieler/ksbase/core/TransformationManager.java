@@ -23,6 +23,8 @@ import java.io.ObjectOutputStream;
 import java.net.URI;
 import java.util.LinkedList;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
@@ -37,11 +39,9 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
  */
 public class TransformationManager {
 
-    private LinkedList<EditorTransformationSettings> registeredEditors;// The
-    // currently
-    // registered
-    // editors
-
+    private LinkedList<EditorTransformationSettings> registeredEditors;// The currently registered editors
+    private boolean workspaceSettings;
+    
     // Thread-safe initialization
     public static TransformationManager instance = new TransformationManager();
 
@@ -49,10 +49,9 @@ public class TransformationManager {
      * Since this is a singleton class the constructor is private
      */
     private TransformationManager() {
+        workspaceSettings = false;
         registeredEditors = new LinkedList<EditorTransformationSettings>();
     }
-
- 
 
     /**
      * Get the currently registered editors
@@ -118,63 +117,122 @@ public class TransformationManager {
                 registeredEditors.remove(i);
         }
     }
+    
+    public boolean isWorkspaceSpecific() {
+        return workspaceSettings;
+    }
 
+    public void setWorkspaceSpecific(boolean value) {
+        workspaceSettings = value;
+        IPreferenceStore store = KSBasEPlugin.getDefault().getPreferenceStore();
+        store.setValue("workspaceSpecific", value);
+        initializeTransformations();
+    }
+    
     /**
      * Loads the editor settings from preference store
      */
     public void initializeTransformations() {
         registeredEditors = new LinkedList<EditorTransformationSettings>();
         IPreferenceStore store = KSBasEPlugin.getDefault().getPreferenceStore();
-
-        String[] editors = store.getString(
-                Messages.Preferences_RegisteredEditors).split(","); //$NON-NLS-2$
-        for (String editor : editors) {
-            if (editor.length() > 0) {
-                EditorTransformationSettings settings = new EditorTransformationSettings(
-                        editor);
-                settings.setModelPackageClass(store.getString(editor
-                        + Messages.Preferences_ModelPackageClass));
-                settings.setExtFile(store.getString(editor
-                        + Messages.Preferences_ExtFile));
-                settings.setMenuName(store.getString(editor
-                        + Messages.Preferences_MenuName));
-                settings.setMenuLocation(store.getString(editor
-                        + Messages.Preferences_MenuLocation));
-                settings.setToolbarLocation(store.getString(editor
-                        + Messages.Preferences_ToolbarLocation));
-                settings.setVisibilityFlags(store.getInt(editor
-                        + Messages.Preferences_Visibility));
-                settings.setDefaultIconURI(URI.create(store.getString(editor
-                        + Messages.Preferences_DefaultIcon)));
-                settings.setContext(store.getString(editor+".Context"));
-                String[] transformations = store.getString(
-                        editor + Messages.Preferences_Transformations).split(
-                        ","); //$NON-NLS-2$
-                for (String transformation : transformations) {
-                    if (transformation.length() > 0) {
-                        String prefix = editor + "." + transformation; //$NON-NLS-1$
-                        Transformation t = new Transformation(store
-                                .getString(prefix + ".Name"), transformation);
-                        t
-                                .setNumSelections(store
-                                        .getInt(prefix
-                                                + Messages.Preferences_Transformation_Selections));
-                        t.setIconURI(URI.create(store.getString(prefix
-                                + Messages.Preferences_Transformation_Icon)));
-                        t
-                                .setKeyboardShortcut(store
-                                        .getString(prefix
-                                                + Messages.Preferences_Transformation_Shortcut));
-                        t
-                                .setPartConfig(store
-                                        .getString(
-                                                prefix
-                                                        + Messages.Preferences_Transformation_PartConfig)
-                                        .split(",")); //$NON-NLS-1$
-                        settings.addTransformation(t);
+        workspaceSettings = store.getBoolean("workspaceSpecific");
+       
+        if (store.getBoolean("workspaceSpecific")) {
+            String[] editors = store.getString(
+                    Messages.Preferences_RegisteredEditors).split(","); //$NON-NLS-2$
+            for (String editor : editors) {
+                if (editor.length() > 0) {
+                    EditorTransformationSettings settings = new EditorTransformationSettings(
+                            editor);
+                    settings.setModelPackageClass(store.getString(editor
+                            + Messages.Preferences_ModelPackageClass));
+                    settings.setExtFile(store.getString(editor
+                            + Messages.Preferences_ExtFile));
+                    settings.setMenuName(store.getString(editor
+                            + Messages.Preferences_MenuName));
+                    settings.setMenuLocation(store.getString(editor
+                            + Messages.Preferences_MenuLocation));
+                    settings.setToolbarLocation(store.getString(editor
+                            + Messages.Preferences_ToolbarLocation));
+                    settings.setVisibilityFlags(store.getInt(editor
+                            + Messages.Preferences_Visibility));
+                    settings.setDefaultIconURI(URI.create(store
+                            .getString(editor
+                                    + Messages.Preferences_DefaultIcon)));
+                    settings.setContext(store.getString(editor + ".Context"));
+                    String[] transformations = store.getString(
+                            editor + Messages.Preferences_Transformations)
+                            .split(","); //$NON-NLS-2$
+                    for (String transformation : transformations) {
+                        if (transformation.length() > 0) {
+                            String prefix = editor + "." + transformation; //$NON-NLS-1$
+                            Transformation t = new Transformation(store
+                                    .getString(prefix + ".Name"),
+                                    transformation);
+                            t
+                                    .setNumSelections(store
+                                            .getInt(prefix
+                                                    + Messages.Preferences_Transformation_Selections));
+                            t
+                                    .setIconURI(URI
+                                            .create(store
+                                                    .getString(prefix
+                                                            + Messages.Preferences_Transformation_Icon)));
+                            t
+                                    .setKeyboardShortcut(store
+                                            .getString(prefix
+                                                    + Messages.Preferences_Transformation_Shortcut));
+                            t
+                                    .setPartConfig(store
+                                            .getString(
+                                                    prefix
+                                                            + Messages.Preferences_Transformation_PartConfig)
+                                            .split(",")); //$NON-NLS-1$
+                            settings.addTransformation(t);
+                        }
                     }
+                    registeredEditors.add(settings);
                 }
-                registeredEditors.add(settings);
+            }
+        }
+        else {
+            //use extension points
+            IConfigurationElement[] configurations = Platform.getExtensionRegistry().getConfigurationElementsFor("de.cau.cs.kieler.ksbase.configuration");
+            for ( IConfigurationElement settings : configurations) {
+                EditorTransformationSettings editor = new EditorTransformationSettings(settings.getAttribute("editor"));
+                editor.setContext(settings.getAttribute("contextID"));
+                editor.setExtFile(settings.getAttribute("XtendFile"));
+                editor.setMenuLocation(settings.getAttribute("menuLocationURI"));
+                editor.setToolbarLocation(settings.getAttribute("toolbarLocationURI"));
+                int flags = 0;
+                if ( settings.getAttribute("createMenu").equals("true"))
+                    flags += KSBasEPlugin.SHOW_MENU;
+                if ( settings.getAttribute("createToolbar").equals("true"))
+                    flags += KSBasEPlugin.SHOW_TOOLBAR;
+                editor.setVisibilityFlags(flags);
+                editor.setModelPackageClass(settings.getAttribute("packageName"));
+                editor.setPerformAutoLayout(true);
+                for ( IConfigurationElement t : settings.getChildren("transformation")) {
+                    Transformation transformation = new Transformation(t.getAttribute("name"), t.getAttribute("transformation"));
+                    transformation.setNumSelections(Integer.valueOf(t.getAttribute("selectionCount")));
+                    transformation.setKeyboardShortcut(t.getAttribute("keyboardShortcut"));
+                    int tflags = 0;
+                    if ( t.getAttribute("showInMenu").equals("true"))
+                        tflags += KSBasEPlugin.SHOW_MENU;
+                    if ( t.getAttribute("showInToolbar").equals("true"))
+                        tflags += KSBasEPlugin.SHOW_TOOLBAR;
+                    transformation.setVisibility(tflags);
+                    IConfigurationElement[] parts = t.getChildren("element_selection");
+                    if ( parts != null && parts.length > 0) {
+                        String[] partConfig = new String[parts.length];
+                        for (int i = 0; i < parts.length; ++i) {
+                            partConfig[i] = parts[i].getAttribute("class");
+                        }
+                        transformation.setPartConfig(partConfig);
+                    }
+                    editor.addTransformation(transformation);
+                }
+                registeredEditors.add(editor);
             }
         }
     }

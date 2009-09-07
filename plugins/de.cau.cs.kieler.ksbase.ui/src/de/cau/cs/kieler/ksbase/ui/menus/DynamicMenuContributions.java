@@ -69,7 +69,6 @@ public class DynamicMenuContributions {
         editorCommands = new HashMap<String, LinkedList<CommandContributionItem>>();
     }
 
-    @SuppressWarnings("restriction")
     public void createUICommandsForEditor(
             final EditorTransformationSettings editor, IContributionRoot additions) {
         if (editorCommands.containsKey(editor.getEditor())) {
@@ -141,6 +140,7 @@ public class DynamicMenuContributions {
      */
     public void createMenuContributions(
             final EditorTransformationSettings editor) {
+        
         // let's see if we already have this editor in our map.
         if (registeredContributions.containsKey(editor.getEditor())) {
             menuService.removeContributionFactory(registeredContributions
