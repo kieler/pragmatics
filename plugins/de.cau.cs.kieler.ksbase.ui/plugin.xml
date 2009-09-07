@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension-point id="de.cau.cs.kieler.ksbase.configuration" name="Structure based editing feature" schema="schema/de.cau.cs.kieler.ksbase.configuration.exsd"/>
+   
    <extension
          point="org.eclipse.gmf.runtime.diagram.ui.editpolicyProviders">
       <editpolicyProvider
@@ -31,5 +31,4 @@
             name="KSBasE">
       </category>
    </extension>
-
 </plugin>

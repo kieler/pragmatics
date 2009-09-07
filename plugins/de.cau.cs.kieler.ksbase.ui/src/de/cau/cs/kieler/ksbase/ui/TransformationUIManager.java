@@ -1,3 +1,17 @@
+/******************************************************************************
+ * KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2009 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ * 
+ *****************************************************************************/
 package de.cau.cs.kieler.ksbase.ui;
 
 import java.io.File;
@@ -119,8 +133,8 @@ public class TransformationUIManager {
                                 .next();
                         nextEditPolicy.refresh();
                     }
-                    //IFigure figure = ((DiagramEditor)activeEditor).getDiagramEditPart().getFigure();
-                    //figure.invalidateTree();
+                    //Update the graphical viewer to calculate diagram 
+                    //element sizes and positions for new objects
                     IDiagramGraphicalViewer graphViewer = ((DiagramEditor)activeEditor).getDiagramGraphicalViewer();
                     graphViewer.flush();
                                         
@@ -132,9 +146,11 @@ public class TransformationUIManager {
                             e = (EditPart) e.getChildren().get(0);
                         }
                         
-                        ((AutoLayoutTrigger) RunLogic
-                                .getTrigger("de.cau.cs.kieler.ksbase.layout.AutoLayoutTrigger"))
-                                .triggerAutoLayout(e, activeEditor);
+                        AutoLayoutTrigger trigger = ((AutoLayoutTrigger) RunLogic
+                                .getTrigger("de.cau.cs.kieler.ksbase.layout.AutoLayoutTrigger"));
+                        if ( trigger != null) {
+                               trigger.triggerAutoLayout(e, activeEditor);
+                        }
 
                     }
                 }

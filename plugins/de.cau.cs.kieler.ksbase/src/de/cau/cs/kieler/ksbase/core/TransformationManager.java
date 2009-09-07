@@ -18,6 +18,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.URI;
@@ -111,6 +112,10 @@ public class TransformationManager {
             return null;
     }
 
+    /**
+     * Removes an editor from the registry. 
+     * @param editor The fqn class name of the editor
+     */
     public void removeEditor(String editor) {
         for (int i = 0; i < registeredEditors.size(); ++i) {
             if (registeredEditors.get(i).getEditor().equals(editor))
@@ -118,10 +123,20 @@ public class TransformationManager {
         }
     }
     
+    /**
+     * Returns true if the workspace specific settings are enabled.
+     * @return
+     */
     public boolean isWorkspaceSpecific() {
         return workspaceSettings;
     }
-
+    
+    /**
+     * Sets the workspace specific settings flag.
+     * After setting the flag and storing it in 
+     * the preference store, the transformations are reinitialized from the new source
+     * @param value
+     */
     public void setWorkspaceSpecific(boolean value) {
         workspaceSettings = value;
         IPreferenceStore store = KSBasEPlugin.getDefault().getPreferenceStore();
@@ -130,7 +145,8 @@ public class TransformationManager {
     }
     
     /**
-     * Loads the editor settings from preference store
+     * Loads the editor settings either from the extension point settings
+     * or the preference store
      */
     public void initializeTransformations() {
         registeredEditors = new LinkedList<EditorTransformationSettings>();
@@ -201,8 +217,8 @@ public class TransformationManager {
             for ( IConfigurationElement settings : configurations) {
                 EditorTransformationSettings editor = new EditorTransformationSettings(settings.getAttribute("editor"));
                 editor.setContext(settings.getAttribute("contextID"));
-                editor.setExtFile(settings.getAttribute("XtendFile"));
                 editor.setMenuLocation(settings.getAttribute("menuLocationURI"));
+                editor.setMenuName(settings.getAttribute("menuName"));
                 editor.setToolbarLocation(settings.getAttribute("toolbarLocationURI"));
                 int flags = 0;
                 if ( settings.getAttribute("createMenu").equals("true"))
@@ -232,6 +248,19 @@ public class TransformationManager {
                     }
                     editor.addTransformation(transformation);
                 }
+                //Read Xtend file from extension point configuration
+                String content = "";
+                InputStream path;
+                    try {
+                        path = Platform.getBundle(settings.getContributor().getName()).getEntry("/"+settings.getAttribute("XtendFile")).openStream();
+                        while ( path.available() > 0) {
+                            content += (char)path.read();
+                        }
+                        editor.setExtFile(content);
+                    } catch (IOException e) {
+                        System.err.println("KSBasE configuration exception: Can't read Xtend file");
+                    }
+
                 registeredEditors.add(editor);
             }
         }

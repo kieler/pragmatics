@@ -50,51 +50,99 @@ public class ExecuteTransformationRequest extends Request {
         this.selection = selection;
         this.selectionCount = selectionCount;
     }
-
+    
+    /**
+     * Sets the model package
+     * @param modelPackage
+     */
     public void setModelPackage(String modelPackage) {
         this.modelPackage = modelPackage;
     }
 
+    /**
+     * Gets the model package
+     * @return modelPackage
+     */
     public String getModelPackage() {
         return this.modelPackage;
     }
-
+    
+    /**
+     * Sets the edit part
+     * @param part
+     */
     public void setEditPart(IEditorPart part) {
         this.editPart = part;
     }
 
+    /**
+     * Gets the edit part
+     * @return the editPart
+     */
     public IEditorPart getEditPart() {
         return this.editPart;
     }
 
+    /**
+     * Sets the transformation command
+     * @param command
+     */
     public void setCommand(String command) {
         this.command = command;
     }
 
+    /**
+     * Gets the transformation command
+     * @return A Xtend method name
+     */
     public String getCommand() {
         return this.command;
     }
 
+    /**
+     * Sets the filename
+     * @param fileName
+     */
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
 
+    /**
+     * Gets the filename
+     * @return A Xtend file name 
+     */
     public String getFileName() {
         return this.fileName;
     }
 
+    /**
+     * Sets the current selection
+     * @param selection
+     */
     public void setSelection(ISelection selection) {
         this.selection = selection;
     }
 
+    /**
+     * The current selection
+     * @return an ISelection object
+     */
     public ISelection getSelection() {
         return this.selection;
     }
 
+    /**
+     * Sets the number of selections
+     * @param count
+     */
     public void setSelectionCount(int count) {
         this.selectionCount = count;
     }
 
+    /**
+     * Gets the number of selections
+     * @return
+     */
     public int getSelectionCount() {
         return this.selectionCount;
     }

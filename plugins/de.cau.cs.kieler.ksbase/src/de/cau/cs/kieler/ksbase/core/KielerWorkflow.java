@@ -45,25 +45,19 @@ public class KielerWorkflow extends Workflow {
     public KielerWorkflow(String operation, String fileName, String basePackage, String modelSelection) {
         super();
 
-        /*
-        StandaloneSetup setup = new StandaloneSetup();
-        setup.addRegisterGeneratedEPackage("de.cau.cs.kieler.synccharts.SyncchartsPackage");
-        this.addBean(setup);
-        */
         // We are using the XtendComponent,
         xtendComponent = new XtendComponent();
         // with an EMFMetaMetaModel,
         EmfMetaModel emfmodel;
-
+        
+        //Load the EPackage class by using EcoreUtils 
         EPackage pack = EcoreUtil2.getEPackageByClassName(basePackage);
-        // (EPackage)ClassLoader.getSystemClassLoader().loadClass(basePackage2).cast(EPackage.class);
-        // System.out.println(pack.getName());
-
+        //create EMFMetaModel with the given EPackage
         emfmodel = new EmfMetaModel(pack);
 
         // Set metaModel-Slot
         xtendComponent.addMetaModel(emfmodel);
-
+        //Create transformation value
         String value = fileName + "::" + operation + "("+modelSelection+")";
 
         xtendComponent.setInvoke(value);

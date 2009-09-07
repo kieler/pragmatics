@@ -22,18 +22,16 @@ import java.net.URI;
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 
 /**
- * The connection between Xtend functions and the KSBasE plugin Stores
+ * The connection between Xtend functions and the KSBasE plug-In. Stores
  * additional information about how the transformation can be executed by the
- * user/workbench
+ * user/workbench.
+ * This class is serializable.
  * 
  * @author Michael Matzen
  * 
  */
 public class Transformation implements Serializable {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 513784171695543063L;
     private String name; // Menu entry name
     private String transformationName; // Xtend method name
@@ -41,9 +39,7 @@ public class Transformation implements Serializable {
     private int numSelections; // Number of selections;
     private URI iconURI; // URI to icon
     private String keyboardShortcut; // Assigned keyboard shortcut
-    private String[] partConfig; // Parts for which this transformation is
-
-    // defined
+    private String[] partConfig; // Parts for which this transformation is defined
 
     /**
      * Creates a new Transformation
@@ -60,58 +56,119 @@ public class Transformation implements Serializable {
         partConfig = null;
     }
 
+    /**
+     * Sets the name of the transformation used in the menus
+     * @param name 
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Sets the name of the transformation to be executed.
+     * The value is unchecked so giving an invalid name here will result in an Xtend error.
+     * @param value 
+     */
     public void setTransformationName(String value) {
         this.transformationName = value;
     }
 
+    /**
+     * Sets the visibility for the transformation.
+     * @see KSBasEPlugin for valid visibility flags
+     * @param value
+     */
     public void setVisibility(int value) {
         this.visibilityFlags = value;
     }
 
+    /**
+     * Sets the number of diagram elements that have to be selected in order to 
+     * execute this transformation
+     * @param value
+     */
     public void setNumSelections(int value) {
         this.numSelections = value;
     }
 
+    /**
+     * Sets the iconURI used by the toolbar and the balloon menus
+     * @param uri
+     */
     public void setIconURI(URI uri) {
         this.iconURI = uri;
     }
 
+    /**
+     * Returns the transformation name used by the menus
+     * @return
+     */
     public String getName() {
         return this.name;
     }
 
+    /**
+     * Returns the Xtend transformation method name
+     * @return
+     */
     public String getTransformationName() {
         return this.transformationName;
     }
 
+    /**
+     * Returns true if this transformation should be visible in the menu 
+     * @return
+     */
     public boolean isShownInMenu() {
         return (this.visibilityFlags & KSBasEPlugin.SHOW_MENU) == KSBasEPlugin.SHOW_MENU;
     }
 
+    /**
+     * Returns true if this transformation should be visible in the toolbar
+     * @return
+     */
     public boolean isShownIToolbar() {
         return (this.visibilityFlags & KSBasEPlugin.SHOW_TOOLBAR) == KSBasEPlugin.SHOW_TOOLBAR;
     }
-
+    
+    /**
+     * Returns true if this transformation should be visible in the context menu
+     * @return
+     */
     public boolean isShownInContext() {
         return (this.visibilityFlags & KSBasEPlugin.SHOW_CONTEXT) == KSBasEPlugin.SHOW_CONTEXT;
     }
-
+    
+    /**
+     * Returns true if this transformation should be visible in the balloon menu
+     * @return
+     */
     public boolean isShownInBalloon() {
         return (this.visibilityFlags & KSBasEPlugin.SHOW_BALLOON) == KSBasEPlugin.SHOW_BALLOON;
     }
 
+    /**
+     * Returns the value of the visibility flags
+     * @see KSBasEPlugin for valid visibility flags
+     * @return
+     */
     public int getVisiblity() {
         return this.visibilityFlags;
     }
 
+    /**
+     * Returns the number of selections this transformation is defined for
+     * @return
+     */
     public int getNumSelections() {
         return this.numSelections;
     }
 
+    /**
+     * Returns the icon URI as a String
+     * Simply calls iconURI.toString
+     * @return
+     */
     public String getIconString() {
         if (iconURI == null)
             return "";
@@ -119,18 +176,35 @@ public class Transformation implements Serializable {
             return iconURI.toString();
     }
 
+    /**
+     * Returns the icon URI
+     * @return
+     */
     public URI getIconURI() {
         return this.iconURI;
     }
 
+    /**
+     * Sets the diagram parts this transformation is defined for.
+     * The parts are fqn of the diagram element classes 
+     * @param parts
+     */
     public void setPartConfig(String[] parts) {
         this.partConfig = parts;
     }
-
+    
+    /**
+     * Returns the array of diagram parts this transformation is defined for
+     * @return
+     */
     public String[] getPartConfig() {
         return this.partConfig;
     }
 
+    /**
+     * Returns the list of diagram parts this transformation is defined for 
+     * @return
+     */
     public String getPartConfigList() {
         if (partConfig == null)
             return "";
@@ -144,14 +218,27 @@ public class Transformation implements Serializable {
         return res;
     }
 
+    /**
+     * Returns the keyboard shortcut.
+     * This is only a string, it's not validated or checked for conflicts.
+     * @return
+     */
     public String getKeyboardShortcut() {
         return keyboardShortcut;
     }
 
+    /**
+     * Sets the keyboard shortcut for this transformation.
+     * @param keyboardShortcut
+     */
     public void setKeyboardShortcut(String keyboardShortcut) {
         this.keyboardShortcut = keyboardShortcut;
     }
 
+    /**
+     * Serializes this object to the given ObjectOutputStream
+     * @param writer A valid an opened ObjectOutputStream
+     */
     public void serialize(ObjectOutputStream writer) {
         try {
             writer.writeObject(this.name);
@@ -164,7 +251,11 @@ public class Transformation implements Serializable {
             e.printStackTrace();
         }
     }
-
+    
+    /**
+     * Simple hashCode calculations, uses the hash code of 
+     * the transformation name and adds the number of selections
+     */
     @Override
     public int hashCode() {
         return transformationName.hashCode()+numSelections;

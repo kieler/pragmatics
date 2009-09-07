@@ -107,7 +107,7 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
                     .newErrorCommandResult("Transformation failed. " //$NON-NLS-1$
                             + issues.getErrors()[0]);
         }
-
+ 
         return CommandResult.newOKCommandResult();
     }
 
