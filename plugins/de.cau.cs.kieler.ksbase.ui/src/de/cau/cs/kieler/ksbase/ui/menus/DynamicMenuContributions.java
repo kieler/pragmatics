@@ -15,6 +15,7 @@
 package de.cau.cs.kieler.ksbase.ui.menus;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.eclipse.core.commands.Category;
@@ -26,7 +27,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.keys.IBindingService;
@@ -53,8 +53,6 @@ public class DynamicMenuContributions {
     private final Category kielerCategory = cmdService
             .getCategory("de.cau.cs.kieler.ksbase.ui.ksbaseCategory");
 
-    private final ISelectionService selectionService = (ISelectionService) PlatformUI.getWorkbench().getService(ISelectionService.class);
-    
     // The currently registered contributions
     private HashMap<String, AbstractContributionFactory> registeredContributions;
 
@@ -64,6 +62,81 @@ public class DynamicMenuContributions {
 
     public static DynamicMenuContributions instance = new DynamicMenuContributions();
 
+    private class CheckPartExpression extends Expression {
+        
+        String[] parts;
+        int numSelections;
+        
+        public CheckPartExpression(String[] parts, int numSelections) {
+            super();
+            this.parts = parts;
+            this.numSelections = numSelections;
+        }
+        
+        @Override
+        public EvaluationResult evaluate(IEvaluationContext context)
+                throws CoreException {
+            
+            Object selectionVar =  context.getRoot().getVariable("selection");
+            if ( selectionVar == null || !(selectionVar instanceof ISelection) )
+                return EvaluationResult.TRUE;
+            
+            ISelection selection = (ISelection)selectionVar;
+            
+            if ( selection == null || selection.isEmpty() )
+                    return EvaluationResult.TRUE;
+            if (selection instanceof StructuredSelection) {
+                StructuredSelection s = (StructuredSelection)selection;
+                if (s.size() != numSelections) {
+                    return EvaluationResult.FALSE;
+                }
+
+                Iterator<?> it = s.iterator();
+                //each element has to fit at least one part
+                boolean result = true;
+                while (it.hasNext()) {
+                    boolean partResult = false;
+                    for (String part : parts) {
+                        Object current = it.next();
+                        if ( current != null && current.getClass().getCanonicalName().equals(part) ) {
+                            partResult = true;
+                        }
+                    }
+                    //so result will be false if there is any part which does not fit:
+                    result &= partResult;
+                    
+                }
+                if (result)
+                    return EvaluationResult.TRUE;
+                else
+                    return EvaluationResult.FALSE;
+            }
+            return null;
+        }
+    }
+    private class CheckEditorExpression  extends Expression {
+
+        private String editorID;
+        
+        public CheckEditorExpression(String editorID) {
+            super();
+            this.editorID = editorID;
+        }
+        @Override
+        public EvaluationResult evaluate(IEvaluationContext context)
+                throws CoreException {
+            Object editorVar =  context.getRoot().getVariable("activePart");
+            if (editorVar == null )
+                return EvaluationResult.FALSE;
+            if (editorID == null)
+                return EvaluationResult.TRUE;
+            if ( editorVar.getClass().getCanonicalName().equals(editorID) )
+                return EvaluationResult.TRUE;
+            
+            return EvaluationResult.FALSE;
+        }
+        
+    }
     private DynamicMenuContributions() {
         registeredContributions = new HashMap<String, AbstractContributionFactory>();
         editorCommands = new HashMap<String, LinkedList<CommandContributionItem>>();
@@ -74,10 +147,11 @@ public class DynamicMenuContributions {
         //If the editors are 'null' they are maybe not initialized yet so we give it a try
         if (editors == null) {
             TransformationManager.instance.initializeTransformations();
+            //still 'null' ? Ok then there are no transformations
+            if (editors == null)
+                return;
         }
-        //still 'null' ? Ok then there are no transformations
-        if (editors == null)
-            return;
+        //Create contributions:
         for ( EditorTransformationSettings editor : editors) {
             createMenuContributions(editor);
         }
@@ -105,40 +179,16 @@ public class DynamicMenuContributions {
                     transformationCommand
                             .setHandler(new TransformationCommandHandler(
                                     editor, t));
-
-                    CommandContributionItemParameter p = new CommandContributionItemParameter(
-                            PlatformUI.getWorkbench(), null, cmdID, null,
-                            null, null, null, t.getName(), t
-                                    .getKeyboardShortcut(), t
-                                    .getTransformationName(),
-                            CommandContributionItem.STYLE_PUSH, null, true);
+                    CommandContributionItemParameter p = new CommandContributionItemParameter(PlatformUI.getWorkbench(), null, cmdID,CommandContributionItem.STYLE_PUSH);
+                    p.label = t.getName();
+                    p.tooltip = t.getTransformationName();
                     CommandContributionItem cmd = new CommandContributionItem(
                             p);
 
                     
-                    Expression visibility = new Expression() {
-                        
-                        @Override
-                        public EvaluationResult evaluate(IEvaluationContext context)
-                                throws CoreException {
-                            ISelection selection = selectionService.getSelection();
-                            if ( selection.isEmpty() )
-                                    return EvaluationResult.FALSE;
-                            if (selection instanceof StructuredSelection) {
-                                StructuredSelection s = (StructuredSelection)selection;
-                                if (s.size() != t.getNumSelections()) {
-                                    return EvaluationResult.FALSE;
-                                }
-                                //Check if selection.element instanceof part
-                                for ( String part : t.getPartConfig()) {
-                                    
-                                }
-                            }
-                            return null;
-                        }
-                    };
+                    Expression visibility = new CheckPartExpression(t.getPartConfig(), t.getNumSelections());
                     
-                    //additions.registerVisibilityForChild(cmd,visibility);
+                    additions.registerVisibilityForChild(cmd,visibility);
                     commands.add(cmd);
             }
             editorCommands.put(editor.getEditor(), commands);
@@ -177,8 +227,7 @@ public class DynamicMenuContributions {
                 for (CommandContributionItem item : editorCommands.get(editor.getEditor()))
                     dynamicMenu.add(item);
                 
-
-                additions.addContributionItem(dynamicMenu, null);
+                additions.addContributionItem(dynamicMenu, new CheckEditorExpression(editor.getEditor()));
             }
         };
         registeredContributions.put(editor.getEditor(), editorContribution);

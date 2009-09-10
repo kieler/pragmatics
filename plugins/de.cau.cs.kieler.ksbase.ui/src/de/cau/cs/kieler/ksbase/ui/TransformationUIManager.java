@@ -18,52 +18,32 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.EventObject;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.operations.DefaultOperationHistory;
-import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.emf.common.command.CommandStackListener;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
+import org.eclipse.gef.RootEditPart;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CommandStack;
-import org.eclipse.gef.commands.CommandStackEvent;
-import org.eclipse.gef.commands.CommandStackEventListener;
-import org.eclipse.gmf.runtime.common.core.service.IOperation;
-import org.eclipse.gmf.runtime.common.core.service.IProvider;
-import org.eclipse.gmf.runtime.common.core.service.IProviderChangeListener;
-import org.eclipse.gmf.runtime.common.core.service.ProviderChangeEvent;
-import org.eclipse.gmf.runtime.diagram.core.DiagramEditingDomainFactory;
-import org.eclipse.gmf.runtime.diagram.core.services.ViewService;
-import org.eclipse.gmf.runtime.diagram.ui.commands.SetViewMutabilityCommand;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.CanonicalEditPolicy;
-import org.eclipse.gmf.runtime.diagram.ui.internal.services.editpolicy.EditPolicyService;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramCommandStack;
-import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditDomain;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramGraphicalViewer;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.ui.menus.IMenuService;
 
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.Transformation;
 import de.cau.cs.kieler.ksbase.layout.AutoLayoutTrigger;
 import de.cau.cs.kieler.ksbase.ui.handler.ExecuteTransformationRequest;
-import de.cau.cs.kieler.ksbase.ui.handler.TransformationCommandHandler;
 import de.cau.cs.kieler.viewmanagement.RunLogic;
 
 public class TransformationUIManager {
@@ -85,7 +65,7 @@ public class TransformationUIManager {
             EditorTransformationSettings editor, Transformation transformation) {
     	
         IEditorPart activeEditor = HandlerUtil.getActiveEditor(event);
-        System.out.println("Diag childs (pre): " + ((DiagramEditor)activeEditor).getDiagram().getVisibleChildren().size());
+        //System.out.println("Diag childs (pre): " + ((DiagramEditor)activeEditor).getDiagram().getVisibleChildren().size());
         ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event)
                 .getSelectionService().getSelection();
         
@@ -100,7 +80,7 @@ public class TransformationUIManager {
             EditPart selectedElement = (EditPart) ((StructuredSelection) selection)
                     .getFirstElement();
             
-            System.out.println("# start:" + selectedElement.getParent().getChildren().size());
+            //System.out.println("# start:" + selectedElement.getParent().getChildren().size());
             File file = null;
             try {
                 IPath path = ResourcesPlugin.getPlugin().getStateLocation();
@@ -124,7 +104,6 @@ public class TransformationUIManager {
                 
                 Command transformationCommand = selectedElement
                         .getCommand(request);
-                
                 
                 // gets a command stack to execute the command
                 DiagramCommandStack commandStack = null;
@@ -152,16 +131,8 @@ public class TransformationUIManager {
                 
                 //SetViewMutabilityCommand.makeImmutable((IAdaptable)selectedElement.getParent().getRoot().gets).execute();
                 //ViewService%Provider, Service, ViewProviderConfiguration$ContextDescriptor
-                ViewService vs = ViewService.getInstance();
-                vs.provides(new IOperation() {
-					
-					public Object execute(IProvider provider) {
-						// TODO Auto-generated method stub
-						return null;
-					}
-				});
-                		
-                System.out.println("Diag childs (aft): " + ((DiagramEditor)activeEditor).getDiagram().getVisibleChildren().size());
+                
+                //System.out.println("Diag childs (aft): " + ((DiagramEditor)activeEditor).getDiagram().getVisibleChildren().size());
               
                 // not translated to gmf now:
                 if (activeEditor instanceof DiagramEditor) {
@@ -175,34 +146,37 @@ public class TransformationUIManager {
                         
                         CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it
                                 .next();
-                    
+                        
                         nextEditPolicy.refresh();
                     }
-                    System.out.println("# after refresh:" + selectedElement.getParent().getChildren().size());
-                    IDiagramGraphicalViewer graphViewer = ((DiagramEditor)activeEditor).getDiagramGraphicalViewer();
                     
+                    IDiagramGraphicalViewer graphViewer = ((DiagramEditor)activeEditor).getDiagramGraphicalViewer();
                     graphViewer.flush();
                     //Create View(Affects resource platform:/resource/test/default.synccharts_diagram)
                     //org.eclipse.gmf.runtime.diagram.core.DiagramEditingDomainFactory$DiagramEditingDomain@187f48e
                     //enable canonical mode (label?)
                     
-                    System.out.println("# after flush:" + selectedElement.getParent().getChildren().size());
+                    //System.out.println("# after flush:" + selectedElement.getParent().getChildren().size());
                     //Update the graphical viewer to calculate diagram 
                     //element sizes and positions for new objects
                     //org.eclipse.gmf.runtime.diagram.core.view.factories.ViewFactory 
                                         
                     // If auto-layout is activated, execute now:
-                    if (!editor.isPerformAutoLayout()) {
-                        EditPart e = ((DiagramEditor) activeEditor)
-                                .getDiagramEditPart().getRoot().getContents();
-                        while (!(e instanceof ShapeEditPart)) {
-                            e = (EditPart) e.getChildren().get(0);
+                    if (editor.isPerformAutoLayout()) {
+                        //Get last parent which is a shapeEditPart
+                        EditPart par = selectedElement.getParent();
+                        EditPart layoutTarget = selectedElement;
+                        while (!(par instanceof RootEditPart)) {
+                            if (par instanceof ShapeEditPart )
+                                layoutTarget = par;
+                            par = par.getParent();
                         }
+                        
                         
                         AutoLayoutTrigger trigger = ((AutoLayoutTrigger) RunLogic
                                 .getTrigger("de.cau.cs.kieler.ksbase.layout.AutoLayoutTrigger"));
                         if ( trigger != null) {
-                               trigger.triggerAutoLayout(e, activeEditor);
+                               trigger.triggerAutoLayout(layoutTarget, activeEditor);
                         }
 
                     }

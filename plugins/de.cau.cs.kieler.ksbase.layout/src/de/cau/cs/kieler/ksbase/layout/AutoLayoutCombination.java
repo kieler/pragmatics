@@ -35,7 +35,7 @@ public class AutoLayoutCombination extends ACombination {
     
     AutoLayoutTrigger trigger; //the auto layout trigger
     AutoLayoutEffect effect; //the auto layout effect
-    ShapeEditPart targetEditPart; //the shape edit part that is used as a target for the layout action
+    EditPart targetEditPart; //the shape edit part that is used as a target for the layout action
     IEditorPart activeEditorPart; //the active editor part 
     
     /**
@@ -45,8 +45,8 @@ public class AutoLayoutCombination extends ACombination {
     public boolean evaluate(TriggerEventObject triggerEvent) {
         EditPart affectedObject = translateToEditPart(triggerEvent
                 .getAffectedObject(), parent);
-        if (affectedObject instanceof ShapeEditPart) {
-            this.targetEditPart = (ShapeEditPart)affectedObject;
+        if (affectedObject instanceof EditPart) {
+            this.targetEditPart = (EditPart)affectedObject;
             //Add editorPart if supplied
             if (triggerEvent.getParameters() instanceof IEditorPart)
                 this.activeEditorPart = (IEditorPart) triggerEvent.getParameters();

@@ -15,49 +15,47 @@
 package de.cau.cs.kieler.ksbase.layout;
 
 import org.eclipse.gef.EditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeEditPart;
 import org.eclipse.ui.IEditorPart;
 
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.viewmanagement.AEffect;
 
 /**
- * The effect that is used to perform auto layout 
+ * The effect that is used to perform auto layout
+ * 
  * @author Michael Matzen
- *
+ * 
  */
 public class AutoLayoutEffect extends AEffect {
 
-    
-    EditPart editPart; //the edit part for the auto layout method
-    IEditorPart editorPart; //the editor part for the auto layout method
-    
+    EditPart editPart; // the edit part for the auto layout method
+    IEditorPart editorPart; // the editor part for the auto layout method
+
     /**
-     * Performs auto layout by simply calling the layout method
-     * from {@link DiagramLayoutManager}
+     * Performs auto layout by simply calling the layout method from
+     * {@link DiagramLayoutManager}
      */
     @Override
     public void execute() {
-        DiagramLayoutManager.layout(editorPart, editPart , true, false);
+        DiagramLayoutManager.layout(editorPart, editPart, true, false);
     }
 
     /**
-     * Sets the effect parameters.
-     * In this special case the parameter is an IEditorPart
+     * Sets the effect parameters. In this special case the parameter is an
+     * IEditorPart
      */
     @Override
     public void setParameters(Object parameters) {
         if (parameters instanceof IEditorPart)
-            this.editorPart = (IEditorPart)parameters;
+            this.editorPart = (IEditorPart) parameters;
     }
 
     /**
      * Sets the target ShapeEditPart
      */
-	@Override
-	public void setTarget(EditPart target) {
-		this.editPart = (EditPart)target;
-	}
-    
+    @Override
+    public void setTarget(EditPart target) {
+        this.editPart = (EditPart) target;
+    }
 
 }
