@@ -23,14 +23,27 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.operations.DefaultOperationHistory;
+import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.command.CommandStackListener;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CommandStack;
+import org.eclipse.gef.commands.CommandStackEvent;
+import org.eclipse.gef.commands.CommandStackEventListener;
+import org.eclipse.gmf.runtime.common.core.service.IOperation;
+import org.eclipse.gmf.runtime.common.core.service.IProvider;
+import org.eclipse.gmf.runtime.common.core.service.IProviderChangeListener;
+import org.eclipse.gmf.runtime.common.core.service.ProviderChangeEvent;
 import org.eclipse.gmf.runtime.diagram.core.DiagramEditingDomainFactory;
+import org.eclipse.gmf.runtime.diagram.core.services.ViewService;
+import org.eclipse.gmf.runtime.diagram.ui.commands.SetViewMutabilityCommand;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.CanonicalEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.internal.services.editpolicy.EditPolicyService;
@@ -42,7 +55,9 @@ import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.menus.IMenuService;
 
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.Transformation;
@@ -68,14 +83,9 @@ public class TransformationUIManager {
      */
     public void createAndExecuteTransformationCommand(ExecutionEvent event,
             EditorTransformationSettings editor, Transformation transformation) {
+    	
         IEditorPart activeEditor = HandlerUtil.getActiveEditor(event);
-        org.eclipse.emf.common.command.CommandStack c = ((DiagramEditor)activeEditor).getEditingDomain().getCommandStack();
-        c.addCommandStackListener(new CommandStackListener() {
-            
-            public void commandStackChanged(EventObject event) {
-                System.out.println("event: "+event.getSource());
-            }
-        });
+        System.out.println("Diag childs (pre): " + ((DiagramEditor)activeEditor).getDiagram().getVisibleChildren().size());
         ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event)
                 .getSelectionService().getSelection();
         
@@ -104,7 +114,7 @@ public class TransformationUIManager {
                 out.write(editor.getExtFile().getBytes());
                 out.flush();
                 out.close();
-
+                 
                 // Create request
                 ExecuteTransformationRequest request = new ExecuteTransformationRequest(
                         activeEditor, transformation.getTransformationName(),
@@ -122,23 +132,15 @@ public class TransformationUIManager {
                 if (adapter instanceof DiagramCommandStack)
                     commandStack = (DiagramCommandStack) adapter;
                 if (commandStack == null)
-                    commandStack = new DiagramCommandStack(null);
-                commandStack.addCommandStackListener(new org.eclipse.gef.commands.CommandStackListener() {
-                    
-                    public void commandStackChanged(EventObject event) {
-                        
-                        System.out.println("changed:"+event.getSource().getClass() + ";" + event.getClass());
-                    }
-                });
+                    commandStack = new DiagramCommandStack(((DiagramEditor)activeEditor).getDiagramEditDomain());
                 commandStack.execute(transformationCommand);
-                
-                System.out.println(commandStack.getCommands().length);
             } catch (FileNotFoundException e) {
 
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             } finally {
+            	
                 // Remove temporary Xtend file
                 if (file != null) {
                     if ( !file.delete() )
@@ -147,6 +149,20 @@ public class TransformationUIManager {
                 // update edit policies, so GMF will generate diagram elements
                 // for model elements which have been generated during the
                 // transformation but
+                
+                //SetViewMutabilityCommand.makeImmutable((IAdaptable)selectedElement.getParent().getRoot().gets).execute();
+                //ViewService%Provider, Service, ViewProviderConfiguration$ContextDescriptor
+                ViewService vs = ViewService.getInstance();
+                vs.provides(new IOperation() {
+					
+					public Object execute(IProvider provider) {
+						// TODO Auto-generated method stub
+						return null;
+					}
+				});
+                		
+                System.out.println("Diag childs (aft): " + ((DiagramEditor)activeEditor).getDiagram().getVisibleChildren().size());
+              
                 // not translated to gmf now:
                 if (activeEditor instanceof DiagramEditor) {
                     
@@ -159,16 +175,18 @@ public class TransformationUIManager {
                         
                         CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it
                                 .next();
+                    
                         nextEditPolicy.refresh();
                     }
-                    
+                    System.out.println("# after refresh:" + selectedElement.getParent().getChildren().size());
                     IDiagramGraphicalViewer graphViewer = ((DiagramEditor)activeEditor).getDiagramGraphicalViewer();
+                    
                     graphViewer.flush();
                     //Create View(Affects resource platform:/resource/test/default.synccharts_diagram)
                     //org.eclipse.gmf.runtime.diagram.core.DiagramEditingDomainFactory$DiagramEditingDomain@187f48e
                     //enable canonical mode (label?)
                     
-                    System.out.println("# after:" + selectedElement.getParent().getChildren().size());
+                    System.out.println("# after flush:" + selectedElement.getParent().getChildren().size());
                     //Update the graphical viewer to calculate diagram 
                     //element sizes and positions for new objects
                     //org.eclipse.gmf.runtime.diagram.core.view.factories.ViewFactory 
