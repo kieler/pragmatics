@@ -54,10 +54,10 @@ public class AutoLayoutEffect extends AEffect {
     /**
      * Sets the target ShapeEditPart
      */
-    @Override
-    public void setTarget(ShapeEditPart target) {
-        this.editPart = (EditPart)target;
-    }
+	@Override
+	public void setTarget(EditPart target) {
+		this.editPart = (EditPart)target;
+	}
     
 
 }
