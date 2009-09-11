@@ -23,10 +23,17 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.internal.expressions.AndExpression;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.keys.IBindingService;
@@ -35,6 +42,8 @@ import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.menus.IContributionRoot;
 import org.eclipse.ui.menus.IMenuService;
+import org.eclipse.ui.services.IEvaluationReference;
+import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.IServiceLocator;
 
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
@@ -62,103 +71,79 @@ public class DynamicMenuContributions {
 
     public static DynamicMenuContributions instance = new DynamicMenuContributions();
 
-    private class CheckPartExpression extends Expression {
-        
-        String[] parts;
-        int numSelections;
-        
-        public CheckPartExpression(String[] parts, int numSelections) {
-            super();
-            this.parts = parts;
-            this.numSelections = numSelections;
-        }
-        
-        @Override
-        public EvaluationResult evaluate(IEvaluationContext context)
-                throws CoreException {
-            
-            Object selectionVar =  context.getRoot().getVariable("selection");
-            if ( selectionVar == null || !(selectionVar instanceof ISelection) )
-                return EvaluationResult.TRUE;
-            
-            ISelection selection = (ISelection)selectionVar;
-            
-            if ( selection == null || selection.isEmpty() )
-                    return EvaluationResult.TRUE;
-            if (selection instanceof StructuredSelection) {
-                StructuredSelection s = (StructuredSelection)selection;
-                if (s.size() != numSelections) {
-                    return EvaluationResult.FALSE;
-                }
+    private class DynamicTransformationContributionCommand extends
+            CommandContributionItem {
 
-                Iterator<?> it = s.iterator();
-                //each element has to fit at least one part
-                boolean result = true;
-                while (it.hasNext()) {
-                    boolean partResult = false;
-                    for (String part : parts) {
-                        Object current = it.next();
-                        if ( current != null && current.getClass().getCanonicalName().equals(part) ) {
-                            partResult = true;
-                        }
-                    }
-                    //so result will be false if there is any part which does not fit:
-                    result &= partResult;
-                    
-                }
-                if (result)
-                    return EvaluationResult.TRUE;
-                else
-                    return EvaluationResult.FALSE;
-            }
-            return null;
+        private String[] partConfig;
+        private int numSelections;
+
+        public DynamicTransformationContributionCommand(
+                CommandContributionItemParameter p, String[] partConfig,
+                int numSelections) {
+            super(p);
+            this.numSelections = numSelections;
+            this.partConfig = partConfig;
+        }
+
+        public String[] getPartConfig() {
+            return partConfig;
+        }
+
+        public int getNumSelections() {
+            return numSelections;
         }
     }
-    private class CheckEditorExpression  extends Expression {
+
+    private class CheckEditorExpression extends Expression {
 
         private String editorID;
-        
+
         public CheckEditorExpression(String editorID) {
             super();
             this.editorID = editorID;
         }
+
         @Override
         public EvaluationResult evaluate(IEvaluationContext context)
                 throws CoreException {
-            Object editorVar =  context.getRoot().getVariable("activePart");
-            if (editorVar == null )
+            Object editorVar = context.getRoot().getVariable("activePart");
+            if (editorVar == null)
                 return EvaluationResult.FALSE;
             if (editorID == null)
                 return EvaluationResult.TRUE;
-            if ( editorVar.getClass().getCanonicalName().equals(editorID) )
+            if (editorVar.getClass().getCanonicalName().equals(editorID))
                 return EvaluationResult.TRUE;
-            
+
             return EvaluationResult.FALSE;
         }
-        
+
     }
+
     private DynamicMenuContributions() {
         registeredContributions = new HashMap<String, AbstractContributionFactory>();
         editorCommands = new HashMap<String, LinkedList<CommandContributionItem>>();
     }
 
     public void createAllMenuContributions() {
-        LinkedList<EditorTransformationSettings> editors = TransformationManager.instance.getEditors();
-        //If the editors are 'null' they are maybe not initialized yet so we give it a try
+        LinkedList<EditorTransformationSettings> editors = TransformationManager.instance
+                .getEditors();
+        // If the editors are 'null' they are maybe not initialized yet so we
+        // give it a try
         if (editors == null) {
             TransformationManager.instance.initializeTransformations();
-            //still 'null' ? Ok then there are no transformations
+            // still 'null' ? Ok then there are no transformations
             if (editors == null)
                 return;
         }
-        //Create contributions:
-        for ( EditorTransformationSettings editor : editors) {
+        // Create contributions:
+        for (EditorTransformationSettings editor : editors) {
             createMenuContributions(editor);
         }
     }
-    
+
     public void createUICommandsForEditor(
-            final EditorTransformationSettings editor, IContributionRoot additions) {
+            final EditorTransformationSettings editor,
+            IContributionRoot additions) {
         if (editorCommands.containsKey(editor.getEditor())) {
             System.out.println("editor exists, not regenerating stuff");
             // unregister all commands ? or just return ?
@@ -176,20 +161,34 @@ public class DynamicMenuContributions {
                     transformationCommand.define(t.getName(), "",
                             kielerCategory);
                 }
-                    transformationCommand
-                            .setHandler(new TransformationCommandHandler(
-                                    editor, t));
-                    CommandContributionItemParameter p = new CommandContributionItemParameter(PlatformUI.getWorkbench(), null, cmdID,CommandContributionItem.STYLE_PUSH);
-                    p.label = t.getName();
-                    p.tooltip = t.getTransformationName();
-                    CommandContributionItem cmd = new CommandContributionItem(
-                            p);
+                transformationCommand
+                        .setHandler(new TransformationCommandHandler(editor, t));
+                CommandContributionItemParameter p = new CommandContributionItemParameter(
+                        PlatformUI.getWorkbench(), null, cmdID,
+                        CommandContributionItem.STYLE_PUSH);
+                p.label = t.getName();
+                p.tooltip = t.getTransformationName();
+                DynamicTransformationContributionCommand cmd = new DynamicTransformationContributionCommand(
+                        p, t.getPartConfig(), t.getNumSelections());
+                /*
+                IEvaluationReference expressionReference = new EvaluationReference(
+                        expression, listener, property);
 
+                evaluationAuthority.addEvaluationListener(expressionReference);
+                
+                IEvaluationService is = (IEvaluationService) PlatformUI
+                .getWorkbench().getService(IEvaluationService.class);
+                is.addEvaluationListener(new CheckPartExpression(t.getPartConfig(), t.getNumSelections()), new IPropertyChangeListener() {
                     
-                    Expression visibility = new CheckPartExpression(t.getPartConfig(), t.getNumSelections());
-                    
-                    additions.registerVisibilityForChild(cmd,visibility);
-                    commands.add(cmd);
+                    public void propertyChange(PropertyChangeEvent event) {
+                        System.out.println("does this work?");
+                    }
+                }, "activeWhen" );
+                */
+                // Expression visibility = new
+                // CheckPartExpression(t.getPartConfig(), t.getNumSelections());
+
+                commands.add(cmd);
             }
             editorCommands.put(editor.getEditor(), commands);
         }
@@ -203,14 +202,14 @@ public class DynamicMenuContributions {
      */
     public void createMenuContributions(
             final EditorTransformationSettings editor) {
-        
+
         // let's see if we already have this editor in our map.
         if (registeredContributions.containsKey(editor.getEditor())) {
             menuService.removeContributionFactory(registeredContributions
                     .get(editor.getEditor()));
             registeredContributions.remove(editor.getEditor());
         }
-        
+
         AbstractContributionFactory editorContribution = new AbstractContributionFactory(
                 editor.getMenuLocation(), "de.cau.cs.kieler") {
 
@@ -219,19 +218,57 @@ public class DynamicMenuContributions {
                     IContributionRoot additions) {
                 MenuManager dynamicMenu = new MenuManager(editor.getMenuName(),
                         "de.cau.cs.kieler.ksbase.menu." + editor.getMenuName());
-                
-                //To be sure we have commands for this editor:
-                createUICommandsForEditor(editor,additions);
-                
-                //Add commands to menu
-                for (CommandContributionItem item : editorCommands.get(editor.getEditor()))
+
+                // To be sure we have commands for this editor:
+                createUICommandsForEditor(editor, additions);
+
+                // Add commands to menu
+                for (CommandContributionItem item : editorCommands.get(editor
+                        .getEditor())) {
                     dynamicMenu.add(item);
-                
-                additions.addContributionItem(dynamicMenu, new CheckEditorExpression(editor.getEditor()));
+                }
+                dynamicMenu.addMenuListener(new IMenuListener() {
+
+                    public void menuAboutToShow(IMenuManager manager) {
+                        ISelection selection = PlatformUI.getWorkbench()
+                                .getActiveWorkbenchWindow()
+                                .getSelectionService().getSelection();
+                        if (selection != null && selection instanceof StructuredSelection) {
+                            for (IContributionItem item : manager.getItems()) {
+                                boolean result = false;
+                                if (item instanceof DynamicTransformationContributionCommand
+                                        && ((DynamicTransformationContributionCommand) item)
+                                                .getNumSelections() == ((StructuredSelection) selection)
+                                                .size()) {
+                                    Iterator<?> it = ((StructuredSelection) selection)
+                                            .iterator();
+                                    while (it.hasNext()) {
+                                        Object current = it.next();
+                                        boolean partResult = false;
+
+                                        for (String part : ((DynamicTransformationContributionCommand) item)
+                                                .getPartConfig()) {
+                                            if (current != null
+                                                    && current.getClass()
+                                                            .getCanonicalName()
+                                                            .equals(part)) {
+                                                partResult = true;
+                                            }
+                                            result &= partResult;
+                                        }
+                                    }
+                                }
+                                item.setVisible(result);
+                            }
+                        }
+                    }
+                });
+                additions.addContributionItem(dynamicMenu,
+                        new CheckEditorExpression(editor.getEditor()));
             }
         };
         registeredContributions.put(editor.getEditor(), editorContribution);
-        
+
         menuService.addContributionFactory(editorContribution);
     }
 
