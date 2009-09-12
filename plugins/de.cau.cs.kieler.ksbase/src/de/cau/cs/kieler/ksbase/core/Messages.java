@@ -32,6 +32,7 @@ public class Messages extends NLS {
     public static String Preferences_DefaultIcon;
     public static String Preferences_ExtFile;
     public static String Preferences_MenuLocation;
+    public static String Preferences_PopupLocation;
     public static String Preferences_MenuName;
     public static String Preferences_ModelPackageClass;
     public static String Preferences_RegisteredEditors;

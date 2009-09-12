@@ -42,10 +42,11 @@ public class EditorTransformationSettings implements Serializable {
     private String modelPackageClass; // The model package class
     private String menuName; // Name of the menu
     private String menuLocation; // Location of the menu
-    private String toolbarLocation; // Location of the toolbar
-    private int visibilityFlags; // Visiblity flags (see KSBasePlugin.java)
+    private String toolbarLocation; // Location of the tool bar
+    private String popupLocation; //Location of the popup menu
+    private int visibilityFlags; // Visibility flags (see KSBasePlugin.java)
     private boolean performAutoLayout; // Run auto-layout after transformation
-    private URI defaultIconURI; // Default icon for menu/toolbar/balloon/contextmenu entries
+    private URI defaultIconURI; // Default icon for menu/tool bar/balloon/popup menu entries
     private String editor; // Editor to which this setting is assigned
     private String extFile; // Xtend file in which the transformations are defined
     private String context; // The context for the diagram editor, required for key bindings
@@ -65,6 +66,7 @@ public class EditorTransformationSettings implements Serializable {
         this.menuName = Messages.EditorTransformationSettings_Default_Menu_Name;
         this.menuLocation = Messages.EditorTransformationSettings_Default_Menu_Location;
         this.toolbarLocation = Messages.EditorTransformationSettings_Default_Toolbar_Location;
+        this.popupLocation = "popup:org.eclipse.gmf.runtime.diagram.ui.DiagramEditorContextMenu";
         this.defaultIconURI = URI.create(""); //$NON-NLS-1$
         this.extFile = ""; //$NON-NLS-1$
         this.context = "";
@@ -255,7 +257,15 @@ public class EditorTransformationSettings implements Serializable {
         this.menuLocation = menuLocation;
     }
 
-    /**
+    public String getPopupLocation() {
+		return popupLocation;
+	}
+
+	public void setPopupLocation(String popupLocation) {
+		this.popupLocation = popupLocation;
+	}
+
+	/**
      * Returns the locationURI of the toolbar
      * @return a locationURI representing the position of the toolbar
      */

@@ -168,6 +168,8 @@ public class TransformationManager {
                             + Messages.Preferences_MenuName));
                     settings.setMenuLocation(store.getString(editor
                             + Messages.Preferences_MenuLocation));
+                    settings.setPopupLocation(store.getString(editor
+                            + Messages.Preferences_PopupLocation));
                     settings.setToolbarLocation(store.getString(editor
                             + Messages.Preferences_ToolbarLocation));
                     settings.setVisibilityFlags(store.getInt(editor
@@ -218,13 +220,14 @@ public class TransformationManager {
                 EditorTransformationSettings editor = new EditorTransformationSettings(settings.getAttribute("editor"));
                 editor.setContext(settings.getAttribute("contextID"));
                 editor.setMenuLocation(settings.getAttribute("menuLocationURI"));
+                editor.setPopupLocation(settings.getAttribute("popupLocationURI"));
                 editor.setMenuName(settings.getAttribute("menuName"));
                 editor.setToolbarLocation(settings.getAttribute("toolbarLocationURI"));
                 int flags = 0;
                 if ( settings.getAttribute("createMenu").equals("true"))
                     flags += KSBasEPlugin.SHOW_MENU;
-                if ( settings.getAttribute("createToolbar").equals("true"))
-                    flags += KSBasEPlugin.SHOW_TOOLBAR;
+                if ( settings.getAttribute("createPopup").equals("true"))
+                    flags += KSBasEPlugin.SHOW_CONTEXT;
                 editor.setVisibilityFlags(flags);
                 editor.setModelPackageClass(settings.getAttribute("packageName"));
                 editor.setPerformAutoLayout(true);
@@ -235,7 +238,7 @@ public class TransformationManager {
                     int tflags = 0;
                     if ( t.getAttribute("showInMenu").equals("true"))
                         tflags += KSBasEPlugin.SHOW_MENU;
-                    if ( t.getAttribute("showInToolbar").equals("true"))
+                    if ( t.getAttribute("showInPopup").equals("true"))
                         tflags += KSBasEPlugin.SHOW_TOOLBAR;
                     transformation.setVisibility(tflags);
                     IConfigurationElement[] parts = t.getChildren("element_selection");
@@ -309,6 +312,8 @@ public class TransformationManager {
                     .getMenuName());
             store.setValue(prefix + Messages.Preferences_MenuLocation, settings
                     .getMenuLocation());
+            store.setValue(prefix + Messages.Preferences_PopupLocation, settings
+                    .getPopupLocation());
             store.setValue(prefix + Messages.Preferences_ToolbarLocation,
                     settings.getToolbarLocation());
             store.setValue(prefix + ".Context", settings.getContext());

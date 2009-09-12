@@ -84,10 +84,10 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="createToolbar" type="boolean" use="required">
+         <attribute name="createPopup" type="boolean" use="required">
             <annotation>
                <documentation>
-                  Set to &apos;true&apos; if the feature should have a toolbar contribution
+                  Set to &apos;true&apos; if the feature should have a contribution to the popup menu
                </documentation>
             </annotation>
          </attribute>
@@ -105,10 +105,10 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="toolbarLocationURI" type="string">
+         <attribute name="popupLocationURI" type="string">
             <annotation>
                <documentation>
-                  the locationURI for the toolbar
+                  the locationURI for the popup menu
                </documentation>
             </annotation>
          </attribute>
@@ -162,10 +162,10 @@ This class has to extend &apos;emf.ecore.EPackage&apos;
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="showInToolbar" type="boolean" use="required">
+         <attribute name="showInPopup" type="boolean" use="required">
             <annotation>
                <documentation>
-                  Set to &apos;true&apos; if this transformation should be displayed in the toolbar
+                  Set to &apos;true&apos; if this transformation should be displayed in the popup menu
                </documentation>
             </annotation>
          </attribute>
