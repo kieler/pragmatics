@@ -23,17 +23,13 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.core.internal.expressions.AndExpression;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.keys.IBindingService;
@@ -42,8 +38,6 @@ import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.menus.IContributionRoot;
 import org.eclipse.ui.menus.IMenuService;
-import org.eclipse.ui.services.IEvaluationReference;
-import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.IServiceLocator;
 
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
@@ -76,15 +70,24 @@ public class DynamicMenuContributions {
 
         private String[] partConfig;
         private int numSelections;
-
+        private boolean enabled;
+        
         public DynamicTransformationContributionCommand(
                 CommandContributionItemParameter p, String[] partConfig,
                 int numSelections) {
             super(p);
             this.numSelections = numSelections;
             this.partConfig = partConfig;
+            this.enabled = true;
         }
-
+        
+        public void setEnabeld(boolean enabled) {
+        	this.enabled = enabled;
+        }
+        public boolean isEnabled() {
+        	return this.enabled;
+        }
+        
         public String[] getPartConfig() {
             return partConfig;
         }
@@ -227,12 +230,15 @@ public class DynamicMenuContributions {
                         .getEditor())) {
                     dynamicMenu.add(item);
                 }
-                dynamicMenu.addMenuListener(new IMenuListener() {
 
+                //Adds a menu listener to control enable/disable state of menu items 
+                dynamicMenu.addMenuListener(new IMenuListener() {
+                	
                     public void menuAboutToShow(IMenuManager manager) {
                         ISelection selection = PlatformUI.getWorkbench()
                                 .getActiveWorkbenchWindow()
                                 .getSelectionService().getSelection();
+                        
                         if (selection != null && selection instanceof StructuredSelection) {
                             for (IContributionItem item : manager.getItems()) {
                                 boolean result = false;
@@ -242,27 +248,34 @@ public class DynamicMenuContributions {
                                                 .size()) {
                                     Iterator<?> it = ((StructuredSelection) selection)
                                             .iterator();
+                                    result = true;
                                     while (it.hasNext()) {
                                         Object current = it.next();
                                         boolean partResult = false;
-
                                         for (String part : ((DynamicTransformationContributionCommand) item)
                                                 .getPartConfig()) {
                                             if (current != null
                                                     && current.getClass()
                                                             .getCanonicalName()
                                                             .equals(part)) {
-                                                partResult = true;
+                                                partResult |= true;
                                             }
-                                            result &= partResult;
                                         }
+                                        result &= partResult;
                                     }
                                 }
-                                item.setVisible(result);
+                                //Set enabled state
+                                ((DynamicTransformationContributionCommand)item).setEnabeld(result);
+                                item.update();
                             }
                         }
+
+                        manager.update(true);
+                        manager.setVisible(true);
+                        
                     }
                 });
+                
                 additions.addContributionItem(dynamicMenu,
                         new CheckEditorExpression(editor.getEditor()));
             }
