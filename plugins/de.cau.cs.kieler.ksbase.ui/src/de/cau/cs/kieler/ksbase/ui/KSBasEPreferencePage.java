@@ -243,7 +243,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
         }
     }
 
-    protected Text sfMetaModel, sfMenu, sfMenuLoc, sfToolbarLoc, sfContext;
+    protected Text sfMetaModel, sfMenu, sfMenuLoc, sfToolbarLoc, sfPopupLoc, sfContext;
     protected Combo cbEditors;
     protected Button bfShowMenu, bfShowToolbar, bfShowPopup, bfShowBalloon,
             btContext, bfAutoLayout, btBrowseXtend, btModelPackage,
@@ -303,6 +303,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
                     sfMetaModel.setEnabled(false);
                     sfMenu.setEnabled(false);
                     sfMenuLoc.setEnabled(false);
+                    sfPopupLoc.setEnabled(false);
                     sfToolbarLoc.setEnabled(false);
                     browserContainer.setEnabled(false);
                     tableComp.setEnabled(false);
@@ -359,6 +360,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
                     sfMetaModel.setText(editor.getModelPackageClass());
                     sfMenu.setText(editor.getMenuName());
                     sfMenuLoc.setText(editor.getMenuLocation());
+                    sfPopupLoc.setText(editor.getPopupLocation());
                     sfToolbarLoc.setText(editor.getToolbarLocation());
                     sfContext.setText(editor.getContext());
                     bfShowMenu.setSelection(editor.isShownInMenu());
@@ -405,6 +407,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
                         sfMetaModel.setEnabled(true);
                         sfMenu.setEnabled(true);
                         sfMenuLoc.setEnabled(true);
+                        sfPopupLoc.setEnabled(true);
                         sfToolbarLoc.setEnabled(true);
                         browserContainer.setEnabled(true);
                         tableComp.setEnabled(true);
@@ -587,7 +590,12 @@ public class KSBasEPreferencePage extends PreferencePage implements
         sfMenuLoc.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true,
                 false));
         sfMenuLoc.setEnabled(false);
-
+        
+        new Label(container, SWT.NONE).setText(Messages.KSBasEPreferencePage_PopupLocation);
+        sfPopupLoc = new Text(container, SWT.SINGLE | SWT.BORDER);
+        sfPopupLoc.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+        sfPopupLoc.setEnabled(false);
+        
         new Label(container, SWT.NONE)
                 .setText(Messages.KSBasEPreferencePage_ToolbarLocation);
         sfToolbarLoc = new Text(container, SWT.SINGLE | SWT.BORDER);
@@ -1241,6 +1249,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
                 activeEditor.setModelPackageClass(sfMetaModel.getText());
                 activeEditor.setMenuName(sfMenu.getText());
                 activeEditor.setMenuLocation(sfMenuLoc.getText());
+                activeEditor.setPopupLocation(sfPopupLoc.getText());
                 activeEditor.setToolbarLocation(sfToolbarLoc.getText());
                 activeEditor.setContext(sfContext.getText());
                 int flags = 0;

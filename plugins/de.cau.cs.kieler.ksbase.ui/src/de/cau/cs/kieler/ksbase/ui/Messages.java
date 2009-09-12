@@ -48,6 +48,7 @@ public class Messages extends NLS {
     public static String KSBasEPreferencePage_IconExtension_PNG;
     public static String KSBasEPreferencePage_MenuLocation;
     public static String KSBasEPreferencePage_MenuName;
+    public static String KSBasEPreferencePage_PopupLocation;
     public static String KSBasEPreferencePage_ModelPackage;
     public static String KSBasEPreferencePage_ModelPackage_NoPackageFound_Default;
     public static String KSBasEPreferencePage_ModelPackage_NoPackageFound_Message;
