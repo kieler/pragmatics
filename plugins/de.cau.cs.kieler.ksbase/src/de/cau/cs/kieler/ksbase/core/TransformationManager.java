@@ -141,7 +141,15 @@ public class TransformationManager {
         workspaceSettings = value;
         IPreferenceStore store = KSBasEPlugin.getDefault().getPreferenceStore();
         store.setValue("workspaceSpecific", value);
-        initializeTransformations();
+        if (!value) {
+        	//When deactivating workspace settings, we will overwrite changes
+        	//here but the user will know.
+        	//Read from ext points
+        	initializeTransformations();
+        	//store in pref page
+        	storeTransformations();
+        }
+        
     }
     
     /**

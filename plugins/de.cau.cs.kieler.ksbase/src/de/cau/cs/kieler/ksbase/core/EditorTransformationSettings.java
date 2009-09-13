@@ -262,7 +262,8 @@ public class EditorTransformationSettings implements Serializable {
 	}
 
 	public void setPopupLocation(String popupLocation) {
-		this.popupLocation = popupLocation;
+		if ( popupLocation != null)
+			this.popupLocation = popupLocation;
 	}
 
 	/**
@@ -278,7 +279,8 @@ public class EditorTransformationSettings implements Serializable {
      * @param toolbarLocation a locationURI
      */
     public void setToolbarLocation(String toolbarLocation) {
-        this.toolbarLocation = toolbarLocation;
+    	if (toolbarLocation != null)
+    		this.toolbarLocation = toolbarLocation;
     }
 
     /**
