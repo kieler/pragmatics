@@ -232,9 +232,9 @@ public class TransformationManager {
                 editor.setMenuName(settings.getAttribute("menuName"));
                 editor.setToolbarLocation(settings.getAttribute("toolbarLocationURI"));
                 int flags = 0;
-                if ( settings.getAttribute("createMenu").equals("true"))
+                if ( settings.getAttribute("createMenu") != null && settings.getAttribute("createMenu").equals("true"))
                     flags += KSBasEPlugin.SHOW_MENU;
-                if ( settings.getAttribute("createPopup").equals("true"))
+                if ( settings.getAttribute("createPopup") != null && settings.getAttribute("createPopup").equals("true"))
                     flags += KSBasEPlugin.SHOW_CONTEXT;
                 editor.setVisibilityFlags(flags);
                 editor.setModelPackageClass(settings.getAttribute("packageName"));
@@ -244,10 +244,10 @@ public class TransformationManager {
                     transformation.setNumSelections(Integer.valueOf(t.getAttribute("selectionCount")));
                     transformation.setKeyboardShortcut(t.getAttribute("keyboardShortcut"));
                     int tflags = 0;
-                    if ( t.getAttribute("showInMenu").equals("true"))
+                    if ( t.getAttribute("showInMenu") != null && t.getAttribute("showInMenu").equals("true"))
                         tflags += KSBasEPlugin.SHOW_MENU;
-                    if ( t.getAttribute("showInPopup").equals("true"))
-                        tflags += KSBasEPlugin.SHOW_TOOLBAR;
+                    if ( t.getAttribute("showInPopup") != null && t.getAttribute("showInPopup").equals("true"))
+                        tflags += KSBasEPlugin.SHOW_CONTEXT;
                     transformation.setVisibility(tflags);
                     IConfigurationElement[] parts = t.getChildren("element_selection");
                     if ( parts != null && parts.length > 0) {

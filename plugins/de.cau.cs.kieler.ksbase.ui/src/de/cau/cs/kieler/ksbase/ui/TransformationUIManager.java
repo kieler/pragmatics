@@ -174,7 +174,7 @@ public class TransformationUIManager {
                         
                         
                         AutoLayoutTrigger trigger = ((AutoLayoutTrigger) RunLogic
-                                .getTrigger("de.cau.cs.kieler.ksbase.layout.AutoLayoutTrigger"));
+                                .getTrigger("de.cau.cs.kieler.viewmanagement.combination.SelectionLayoutTrigger"));
                         if ( trigger != null) {
                                trigger.triggerAutoLayout(layoutTarget, activeEditor);
                         }
