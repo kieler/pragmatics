@@ -20,6 +20,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.emf.ecore.EModelElement;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderItemEditPart;
@@ -139,11 +141,17 @@ public class GmfLayoutPropertySource implements IPropertySource {
         } while (parent instanceof IGraphicalEditPart);
         assert partTarget != null && containerEditPart != null;
         
-        // get default options from the notation view
+        // get default options from the notation view or the domain model
         String partLayoutHint = null;
         notationView = editPart.getNotationView();
         editingDomain = editPart.getEditingDomain();
-        optionStyle = (LayoutOptionStyle)notationView.getStyle(LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
+        EObject domainElement = notationView.getElement();
+        if (domainElement instanceof EModelElement)
+            optionStyle = (LayoutOptionStyle)((EModelElement)domainElement)
+                    .getEAnnotation(LayoutOptionStyle.class.getName());
+        if (optionStyle == null)
+            optionStyle = (LayoutOptionStyle)notationView
+                    .getStyle(LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
         if (optionStyle != null) {
             for (KOption koption : optionStyle.getOptions()) {
                 if (LayoutOptions.LAYOUT_HINT.equals(koption.getKey()))

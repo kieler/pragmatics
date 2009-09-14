@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.ui.layout;
 
+import org.eclipse.emf.ecore.EModelElement;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
@@ -96,7 +98,8 @@ public class KimlUiUtil {
     }
     
     /**
-     * Adds a layout option style to the given notation view by using the command stack.
+     * Adds a layout option style to the given notation view or its domain element
+     * by using the command stack.
      * 
      * @param notationView notation view of a graphical edit part
      * @param editingDomain the editing domain of the edit part
@@ -109,7 +112,13 @@ public class KimlUiUtil {
             @SuppressWarnings("unchecked")
             protected void doExecute() {
                 optionStyleWrap.object = LayoutOptionsFactory.eINSTANCE.createLayoutOptionStyle();
-                notationView.getStyles().add(optionStyleWrap.object);
+                EObject domainElement = notationView.getElement();
+                if (domainElement instanceof EModelElement) {
+                    optionStyleWrap.object.setSource(LayoutOptionStyle.class.getName());
+                    ((EModelElement)domainElement).getEAnnotations().add(optionStyleWrap.object);
+                }
+                else
+                    notationView.getStyles().add(optionStyleWrap.object);
             }
         });
         return optionStyleWrap.object;

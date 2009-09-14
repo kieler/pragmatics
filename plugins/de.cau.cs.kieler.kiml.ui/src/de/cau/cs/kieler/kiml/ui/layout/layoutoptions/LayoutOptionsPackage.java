@@ -80,13 +80,67 @@ public interface LayoutOptionsPackage extends EPackage {
     int LAYOUT_OPTION_STYLE = 0;
 
     /**
+     * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int LAYOUT_OPTION_STYLE__EANNOTATIONS = NotationPackage.STYLE_FEATURE_COUNT + 0;
+
+    /**
+     * The feature id for the '<em><b>Source</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int LAYOUT_OPTION_STYLE__SOURCE = NotationPackage.STYLE_FEATURE_COUNT + 1;
+
+    /**
+     * The feature id for the '<em><b>Details</b></em>' map.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int LAYOUT_OPTION_STYLE__DETAILS = NotationPackage.STYLE_FEATURE_COUNT + 2;
+
+    /**
+     * The feature id for the '<em><b>EModel Element</b></em>' container reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int LAYOUT_OPTION_STYLE__EMODEL_ELEMENT = NotationPackage.STYLE_FEATURE_COUNT + 3;
+
+    /**
+     * The feature id for the '<em><b>Contents</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int LAYOUT_OPTION_STYLE__CONTENTS = NotationPackage.STYLE_FEATURE_COUNT + 4;
+
+    /**
+     * The feature id for the '<em><b>References</b></em>' reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int LAYOUT_OPTION_STYLE__REFERENCES = NotationPackage.STYLE_FEATURE_COUNT + 5;
+
+    /**
      * The feature id for the '<em><b>Options</b></em>' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int LAYOUT_OPTION_STYLE__OPTIONS = NotationPackage.STYLE_FEATURE_COUNT + 0;
+    int LAYOUT_OPTION_STYLE__OPTIONS = NotationPackage.STYLE_FEATURE_COUNT + 6;
 
     /**
      * The number of structural features of the '<em>Layout Option Style</em>' class.
@@ -95,7 +149,7 @@ public interface LayoutOptionsPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int LAYOUT_OPTION_STYLE_FEATURE_COUNT = NotationPackage.STYLE_FEATURE_COUNT + 1;
+    int LAYOUT_OPTION_STYLE_FEATURE_COUNT = NotationPackage.STYLE_FEATURE_COUNT + 7;
 
 
     /**

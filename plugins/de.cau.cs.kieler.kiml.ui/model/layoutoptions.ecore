@@ -3,7 +3,7 @@
     xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="layoutoptions"
     nsURI="http://kieler.cs.cau.de/LayoutOptions" nsPrefix="layoutoptions">
-  <eClassifiers xsi:type="ecore:EClass" name="LayoutOptionStyle" eSuperTypes="platform:/plugin/org.eclipse.gmf.runtime.notation/model/notation.ecore#//Style">
+  <eClassifiers xsi:type="ecore:EClass" name="LayoutOptionStyle" eSuperTypes="platform:/plugin/org.eclipse.gmf.runtime.notation/model/notation.ecore#//Style platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EAnnotation">
     <eStructuralFeatures xsi:type="ecore:EReference" name="options" upperBound="-1"
         eType="ecore:EClass ../../de.cau.cs.kieler.kiml.layout/model/klayoutdata.ecore#//KOption"
         containment="true"/>

@@ -19,6 +19,7 @@ import de.cau.cs.kieler.kiml.layout.klayoutdata.KOption;
 
 import org.eclipse.emf.common.util.EList;
 
+import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.gmf.runtime.notation.Style;
 
 /**
@@ -37,7 +38,7 @@ import org.eclipse.gmf.runtime.notation.Style;
  * @model
  * @generated
  */
-public interface LayoutOptionStyle extends Style {
+public interface LayoutOptionStyle extends Style, EAnnotation {
     /**
      * Returns the value of the '<em><b>Options</b></em>' containment reference list.
      * The list contents are of type {@link de.cau.cs.kieler.kiml.layout.klayoutdata.KOption}.
