@@ -12,4 +12,9 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.gmf.runtime.diagram.ui;bundle-version="1.2.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: de.cau.cs.kieler.ksbase.layout
+Export-Package: de.cau.cs.kieler.ksbase.layout;
+  uses:="de.cau.cs.kieler.viewmanagement,
+   org.eclipse.ui,
+   org.eclipse.ui.plugin,
+   org.osgi.framework,
+   org.eclipse.gef"
