@@ -6,18 +6,16 @@
       provider-name="Christian-Albrechts-University of Kiel">
 
    <description url="http://rtsys.informatik.uni-kiel.de/trac/kieler">
-      See http://rtsys.informatik.uni-kiel.de/trac/kieler
+      This feature contains all KIELER plug-ins that are needed to use the dataflow layout algorithms as a standalone library.
    </description>
 
    <copyright>
-      Copyright 2009 by
-+ Christian-Albrechts-University of Kiel
-+ Department of Computer Science
-+ Real-Time and Embedded Systems Group
+      Copyright 2009 by Real-Time and Embedded Systems Group, Department of Computer Science, Christian-Albrechts-University of Kiel
    </copyright>
 
-   <license url="http://www.eclipse.org/org/documents/epl-v10.html">
-      See http://www.eclipse.org/org/documents/epl-v10.html
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      This program and the accompanying materials are made available
+under the terms of the Eclipse Public License (EPL).
    </license>
 
    <requires>
