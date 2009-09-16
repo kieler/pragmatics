@@ -206,6 +206,11 @@ public final class GraphvizAPI {
                 else
                     throw new KielerException("Timeout exceeded while waiting for Graphviz output.");
             }
+            else {
+                // read the error stream anyway - if error stream is not empty, process may not terminate
+                while (errorStream.available() > 0)
+                    errorStream.read();
+            }
         } catch (IOException exception) {
             throw new KielerException("Unable to read Graphviz output.", exception);
         }
