@@ -15,12 +15,9 @@
 package de.cau.cs.kieler.ksbase.ui.menus;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
@@ -29,50 +26,24 @@ import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.draw2d.IFigure;
 import org.eclipse.gef.EditPart;
-import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.Request;
-import org.eclipse.gef.requests.CreateRequest;
-import org.eclipse.gmf.runtime.common.core.service.IProviderChangeListener;
-import org.eclipse.gmf.runtime.common.core.service.ProviderChangeEvent;
-import org.eclipse.gmf.runtime.common.ui.services.icon.IconService;
-import org.eclipse.gmf.runtime.diagram.ui.editpolicies.DiagramPopupBarEditPolicy;
-import org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.PopupBarEditPolicy;
-import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
-import org.eclipse.gmf.runtime.diagram.ui.tools.AddPopupBarTool;
-import org.eclipse.gmf.runtime.diagram.ui.tools.PopupBarTool;
 import org.eclipse.gmf.runtime.emf.type.core.IElementType;
-import org.eclipse.gmf.runtime.emf.ui.services.modelingassistant.IModelingAssistantOperation;
-import org.eclipse.gmf.runtime.emf.ui.services.modelingassistant.IModelingAssistantProvider;
-import org.eclipse.gmf.runtime.emf.ui.services.modelingassistant.ModelingAssistantProvider;
-import org.eclipse.gmf.runtime.emf.ui.services.modelingassistant.ModelingAssistantService;
-import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.bindings.Binding;
-import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeyBinding;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.bindings.keys.ParseException;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.CompoundContributionItem;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.menus.AbstractContributionFactory;
@@ -85,12 +56,10 @@ import org.eclipse.ui.services.IServiceLocator;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.Transformation;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
-import de.cau.cs.kieler.ksbase.ui.handler.ExecuteTransformationCommand;
-import de.cau.cs.kieler.ksbase.ui.handler.ExecuteTransformationRequest;
 import de.cau.cs.kieler.ksbase.ui.handler.TransformationCommandHandler;
 
 public class DynamicMenuContributions {
-    
+
     private final IMenuService menuService = (IMenuService) PlatformUI
             .getWorkbench().getService(IMenuService.class);
     private final IBindingService bindService = (IBindingService) PlatformUI
@@ -101,17 +70,108 @@ public class DynamicMenuContributions {
             .getCategory("de.cau.cs.kieler.ksbase.ui.ksbaseCategory");
 
     // The currently registered contributions
-    private HashMap<String, AbstractContributionFactory> registeredContributions;
+    protected HashMap<String, AbstractContributionFactory> registeredMenuContributions,
+            registeredPopupContributions;
+    
+    // The *Managers
+    protected HashMap<String, MenuManager> menuManagers, popupManagers;
 
     // Since we are using the same commands for multiple menus, we have to store
     // them
-    private HashMap<String, LinkedList<CommandContributionItem>> editorCommands;
-
-    public static DynamicMenuContributions instance = new DynamicMenuContributions();
+    protected HashMap<String, LinkedList<CommandContributionItem>> editorCommands;
+    protected HashMap<String, LinkedList<CommandContributionItemParameter>> editorParamcommands;
     
+    public static DynamicMenuContributions instance = new DynamicMenuContributions();
+
+    private class DynamicCompound extends CompoundContributionItem {
+
+        private String editorName;
+        private LinkedList<IContributionItem> items;
+
+        public DynamicCompound(String editorName) {
+            super();
+            items = new LinkedList<IContributionItem>();
+            this.editorName = editorName;
+        }
+
+        @Override
+        protected IContributionItem[] getContributionItems() {
+            //create items if none are existing
+            if (items.size() == 0) {
+                for (CommandContributionItemParameter item : editorParamcommands
+                        .get(editorName)) {
+                    
+                    items.add(new DynamicTransformationContributionCommand(item,(Transformation) item.parameters.get("transformation"))); 
+                }
+            }
+            return items.toArray(new IContributionItem[items.size()]);
+        }
+    }
+
+    private class DynamicMenuVisibilityListener implements IMenuListener {
+
+        public void menuAboutToShow(IMenuManager manager) {
+            System.out.println("-----------MenuListener-----------");
+            System.out.println("Manager:\n" + manager.getId());
+            System.out.println(manager.getClass());
+            System.out.println(manager.getItems().length + " items : "
+                    + manager.getItems().toString());
+
+            ISelection selection = PlatformUI.getWorkbench()
+                    .getActiveWorkbenchWindow().getSelectionService()
+                    .getSelection();
+            int numvis = 0;
+            if (selection != null && selection instanceof StructuredSelection) {
+                for (IContributionItem item : manager.getItems()) {
+                    boolean result = false;
+                    if (item instanceof DynamicTransformationContributionCommand
+                            && ((DynamicTransformationContributionCommand) item)
+                                    .getTransformation().getNumSelections() == ((StructuredSelection) selection)
+                                    .size()) {
+                        Iterator<?> it = ((StructuredSelection) selection)
+                                .iterator();
+                        result = true;
+                        while (it.hasNext()) {
+                            Object current = it.next();
+                            System.out.println("Currently selected: "
+                                    + current.getClass().getCanonicalName());
+                            boolean partResult = false;
+                            for (String part : ((DynamicTransformationContributionCommand) item)
+                                    .getTransformation().getPartConfig()) {
+                                System.out.println("\tCompared to:" + part);
+                                if (current != null
+                                        && current.getClass()
+                                                .getCanonicalName()
+                                                .equals(part)) {
+                                    numvis++;
+                                    partResult |= true;
+                                }
+                            }
+                            result &= partResult;
+                        }
+                    }
+                    System.out.println("item : " + item + " enablement is: "
+                            + result);
+                    // Set enabled state
+                    ((DynamicTransformationContributionCommand) item)
+                            .setEnabled(result);
+                    item.setVisible(true);
+                    item.update();
+                }
+            }
+            System.out.println("manager contains " + manager.getItems().length
+                    + " items, " + numvis + " enabled" + manager.isEnabled());
+
+            manager.update();
+            manager.setVisible(true);
+            System.out.println("-----------MenuListener END-----------");
+        }
+    }
+
     private class DynamicPopupBarEditPolicy extends PopupBarEditPolicy {
-        
-        private class DynamicPopupBarCommandTool extends org.eclipse.gmf.runtime.diagram.ui.tools.AbstractPopupBarTool {
+
+        private class DynamicPopupBarCommandTool extends
+                org.eclipse.gmf.runtime.diagram.ui.tools.AbstractPopupBarTool {
 
             public DynamicPopupBarCommandTool(EditPart epHost,
                     IElementType elementType) {
@@ -126,26 +186,26 @@ public class DynamicMenuContributions {
 
             @Override
             protected org.eclipse.gef.commands.Command getCommand() {
-                org.eclipse.gef.commands.Command cmd = new org.eclipse.gef.commands.Command("Execute Transformation") {
-                    
+                org.eclipse.gef.commands.Command cmd = new org.eclipse.gef.commands.Command(
+                        "Execute Transformation") {
+
                 };
                 return cmd;
             }
-            
+
         }
+
         public DynamicPopupBarEditPolicy() {
             super();
         }
-        
-                
+
         @Override
         protected void fillPopupBarDescriptors() {
-            
-            
+
         }
 
     }
-    
+
     private class DynamicTransformationContributionCommand extends
             CommandContributionItem {
 
@@ -159,7 +219,13 @@ public class DynamicMenuContributions {
             this.enabled = true;
         }
 
-        public void setEnabeld(boolean enabled) {
+        @Override
+        public void dispose() {
+            System.out.println("command disposed");
+            //super.dispose();
+        }
+
+        public void setEnabled(boolean enabled) {
             this.enabled = enabled;
         }
 
@@ -191,15 +257,19 @@ public class DynamicMenuContributions {
                 return EvaluationResult.TRUE;
             if (editorVar.getClass().getCanonicalName().equals(editorID))
                 return EvaluationResult.TRUE;
-            
+
             return EvaluationResult.FALSE;
         }
 
     }
 
     private DynamicMenuContributions() {
-        registeredContributions = new HashMap<String, AbstractContributionFactory>();
+        registeredMenuContributions = new HashMap<String, AbstractContributionFactory>();
+        registeredPopupContributions = new HashMap<String, AbstractContributionFactory>();
+        menuManagers = new HashMap<String, MenuManager>();
+        popupManagers = new HashMap<String, MenuManager>();
         editorCommands = new HashMap<String, LinkedList<CommandContributionItem>>();
+        editorParamcommands = new HashMap<String, LinkedList<CommandContributionItemParameter>>();
     }
 
     /**
@@ -210,8 +280,7 @@ public class DynamicMenuContributions {
      * @param additions
      */
     public void createUICommandsForEditor(
-            final EditorTransformationSettings editor,
-            IContributionRoot additions) {
+            final EditorTransformationSettings editor) {
         if (editorCommands.containsKey(editor.getEditor())) {
             System.out.println("editor exists, not regenerating stuff");
             // unregister all commands ? or just return ?
@@ -224,7 +293,8 @@ public class DynamicMenuContributions {
             for (Binding b : bindService.getBindings()) {
                 bindingList.add(b);
             }
-            LinkedList<CommandContributionItem> commands = new LinkedList<CommandContributionItem>();
+
+            LinkedList<CommandContributionItemParameter> params = new LinkedList<CommandContributionItemParameter>();
             for (final Transformation t : editor.getTransformations()) {
                 String cmdID = "de.cau.cs.kieler.ksbase.commands."
                         + editor.getMenuName() + "."
@@ -238,12 +308,15 @@ public class DynamicMenuContributions {
                         .setHandler(new TransformationCommandHandler(editor, t));
 
                 CommandContributionItemParameter p = new CommandContributionItemParameter(
-                        PlatformUI.getWorkbench(), null, cmdID,
+                        PlatformUI.getWorkbench(), cmdID, cmdID,
                         CommandContributionItem.STYLE_PUSH);
                 p.label = t.getName();
                 p.tooltip = t.getTransformationName();
-                DynamicTransformationContributionCommand cmd = new DynamicTransformationContributionCommand(
-                        p, t);
+                HashMap<Object,Object> pparams = new HashMap<Object, Object>();
+                pparams.put("transformation", t);
+                p.parameters = pparams;
+                params.add(p);
+                
                 ParameterizedCommand pCommand = new ParameterizedCommand(
                         transformationCommand, null);
                 // Create key bindings
@@ -275,9 +348,8 @@ public class DynamicMenuContributions {
                         System.out.println("invalid shortcut:"
                                 + keyString.toString());
                     }
-                    commands.add(cmd);
                 }
-                editorCommands.put(editor.getEditor(), commands);
+                editorParamcommands.put(editor.getEditor(), params);
             }
             // We now have to write the key bindings
             // this looks a bit ugly but there is no
@@ -311,23 +383,23 @@ public class DynamicMenuContributions {
             // let's see if we already have this editor in our map.
             // until we can see if the editor has changed, we are removing
             // the old one
-            if (registeredContributions.containsKey(editor.getEditor())) {
-                menuService.removeContributionFactory(registeredContributions
-                        .get(editor.getEditor()));
-                registeredContributions.remove(editor.getEditor());
+
+            if (editor.isShownInContext()) {
+                createPopupContributions(editor);
             }
-            
-                        if (editor.isShownInMenu())
-                            createMenuContributions(editor, false);
-                        if (editor.isShownInContext())
-                            createMenuContributions(editor, true);
-            
-            createBalloonContributions(editor);
+            if (editor.isShownInMenu()) {
+                createMenuContributions(editor);
+            }
+            // createBalloonContributions(editor);
         }
     }
 
     public void createToolbarContributions(
             final EditorTransformationSettings editor) {
+
+        // To be sure we have commands for this editor:
+        createUICommandsForEditor(editor);
+
         AbstractContributionFactory editorContribution = new AbstractContributionFactory(
                 editor.getToolbarLocation(), "de.cau.cs.kieler") {
 
@@ -335,9 +407,6 @@ public class DynamicMenuContributions {
             public void createContributionItems(IServiceLocator serviceLocator,
                     IContributionRoot additions) {
                 ToolBarManager dynamicToolbar = new ToolBarManager();
-
-                // To be sure we have commands for this editor:
-                createUICommandsForEditor(editor, additions);
 
                 for (CommandContributionItem item : editorCommands.get(editor
                         .getEditor())) {
@@ -356,9 +425,101 @@ public class DynamicMenuContributions {
         menuService.addContributionFactory(editorContribution);
     }
 
-    public void createContextContributions(
+    public void createPopupContributions(
+            final EditorTransformationSettings editor) {
+        // To be sure we have commands for this editor:
+        createUICommandsForEditor(editor);
+        MenuManager popupManager = popupManagers.get(editor.getEditor());
+
+        if (popupManager == null) {
+            System.out.println("create popup");
+            popupManager = new MenuManager(editor.getMenuName(),
+                    "de.cau.cs.kieler.ksbase.popup." + editor.getMenuName()) {
+                @Override
+                public void dispose() {
+                    System.out.println("disposed!");
+                    // super.dispose();
+                }
+            };
+        } else {
+            System.out.println("recreate popup");
+            // menuService.removeContributionFactory(registeredMenuContributions.get(editor.getEditor()));
+            menuService.releaseContributions(popupManager);
+        }
+
+        // Adds a menu listener to control enable/disable state of menu
+        // items
+        //popupManager.addMenuListener(new DynamicMenuVisibilityListener());
+
+        AbstractContributionFactory editorContribution = new AbstractContributionFactory(
+                editor.getPopupLocation(), "de.cau.cs.kieler") {
+
+            @Override
+            public void createContributionItems(IServiceLocator serviceLocator,
+                    IContributionRoot additions) {
+                MenuManager popupManager = popupManagers
+                        .get(editor.getEditor());
+                popupManager.add(new DynamicCompound(editor.getEditor()));
+                // new CheckEditorExpression(editor.getEditor()
+                additions.addContributionItem(popupManager, null);
+
+            }
+        };
+
+        popupManagers.put(editor.getEditor(), popupManager);
+        registeredPopupContributions
+                .put(editor.getEditor(), editorContribution);
+        menuService.addContributionFactory(editorContribution);
+    }
+
+    /**
+     * Creates or modifies a menu contribution for one specific editor
+     * 
+     * @param editor
+     */
+    public void createMenuContributions(
             final EditorTransformationSettings editor) {
 
+        // To be sure we have commands for this editor:
+        createUICommandsForEditor(editor);
+        MenuManager menuManager = menuManagers.get(editor.getEditor());
+
+        if (menuManager == null) {
+            System.out.println("create menu");
+            menuManager = new MenuManager(editor.getMenuName(),
+                    "de.cau.cs.kieler.ksbase.menu." + editor.getMenuName()) {
+                @Override
+                public void dispose() {
+                    System.out.println("menu disposed");
+                }
+            };
+        } else {
+            System.out.println("recreate menu");
+            // menuService.removeContributionFactory(registeredMenuContributions.get(editor.getEditor()));
+            menuService.releaseContributions(menuManager);
+        }
+
+        // Add commands to menu
+        menuManager.add(new DynamicCompound(editor.getEditor()));
+
+        // Adds a menu listener to control enable/disable state of menu
+        // items
+        //menuManager.addMenuListener(new DynamicMenuVisibilityListener());
+
+        AbstractContributionFactory editorContribution = new AbstractContributionFactory(
+                editor.getMenuLocation(), null) {
+
+            @Override
+            public void createContributionItems(IServiceLocator serviceLocator,
+                    IContributionRoot additions) {
+                MenuManager menuManager = menuManagers.get(editor.getEditor());
+                additions.addContributionItem(menuManager,
+                        new CheckEditorExpression(editor.getEditor()));
+            }
+        };
+        menuManagers.put(editor.getEditor(), menuManager);
+        registeredMenuContributions.put(editor.getEditor(), editorContribution);
+        menuService.addContributionFactory(editorContribution);
     }
 
     public void createBalloonContributions(
@@ -396,116 +557,22 @@ public class DynamicMenuContributions {
             }
         }
         */
-}
+    }
+
     /*
-TODO:
+    TODO:
     - Menüs verschwinden wenn man kontext & menu anklickt
     - Warum diese blöden Fehlermeldungen beim contribute ?
-*/            
-    /**
-     * Creates or modifies a menu contribution for one specific editor
-     * 
-     * @param editor
-     */
-    public void createMenuContributions(
-            final EditorTransformationSettings editor, final boolean popup) {
-        final String location;
-        if (popup)
-            location = editor.getPopupLocation();
-        else
-            location = editor.getMenuLocation();
-
-        AbstractContributionFactory editorContribution = new AbstractContributionFactory(
-                location, "de.cau.cs.kieler") {
-
-            @Override
-            public void createContributionItems(IServiceLocator serviceLocator,
-                    IContributionRoot additions) {
-                MenuManager dynamicMenu = new MenuManager(editor.getMenuName(),
-                        "de.cau.cs.kieler.ksbase.menu." + editor.getMenuName());
-                menuService.populateContributionManager(dynamicMenu, location);
-                // To be sure we have commands for this editor:
-                createUICommandsForEditor(editor, additions);
-
-                // Add commands to menu
-                for (CommandContributionItem item : editorCommands.get(editor
-                        .getEditor())) {
-                    if (item instanceof DynamicTransformationContributionCommand) {
-                        DynamicTransformationContributionCommand cmd = (DynamicTransformationContributionCommand) item;
-                        if (cmd.getTransformation().isShownInMenu()) {
-                            dynamicMenu.add(cmd);
-                        }
-                    }
-                }
-
-                // Adds a menu listener to control enable/disable state of menu
-                // items
-                dynamicMenu.addMenuListener(new IMenuListener() {
-
-                    public void menuAboutToShow(IMenuManager manager) {
-                        ISelection selection = PlatformUI.getWorkbench()
-                                .getActiveWorkbenchWindow()
-                                .getSelectionService().getSelection();
-                        if (selection != null
-                                && selection instanceof StructuredSelection) {
-                            for (IContributionItem item : manager.getItems()) {
-                                boolean result = false;
-                                if (item instanceof DynamicTransformationContributionCommand
-                                        && ((DynamicTransformationContributionCommand) item)
-                                                .getTransformation()
-                                                .getNumSelections() == ((StructuredSelection) selection)
-                                                .size()) {
-                                    Iterator<?> it = ((StructuredSelection) selection)
-                                            .iterator();
-                                    result = true;
-                                    while (it.hasNext()) {
-                                        Object current = it.next();
-                                        System.out.println("Currently selected: "
-                                                + current.getClass()
-                                                        .getCanonicalName());
-                                        boolean partResult = false;
-                                        for (String part : ((DynamicTransformationContributionCommand) item)
-                                                .getTransformation()
-                                                .getPartConfig()) {
-                                            System.out.println("\tCompared to:"
-                                                    + part);
-                                            if (current != null
-                                                    && current.getClass()
-                                                            .getCanonicalName()
-                                                            .equals(part)) {
-                                                partResult |= true;
-                                            }
-                                        }
-                                        result &= partResult;
-                                    }
-                                }
-                                // Set enabled state
-                                ((DynamicTransformationContributionCommand) item)
-                                        .setEnabeld(result);
-                                item.update();
-                            }
-                        }
-
-                        manager.update(true);
-                        manager.setVisible(true);
-
-                    }
-                });
-                
-                additions.addContributionItem(dynamicMenu,
-                        new CheckEditorExpression(editor.getEditor()));
-            }
-        };
-        registeredContributions.put(editor.getEditor(), editorContribution);
-        //menuService.addContributionFactory(editorContribution);
-    }
+    - Pref page muss noch mal überarbeitet werden
+    - MenuIDs als optional (auch ext point)
+    */
 
     public void removeContributionForEditor(
             final EditorTransformationSettings editor) {
-        if (registeredContributions.containsKey(editor.getEditor())) {
-            menuService.removeContributionFactory(registeredContributions
+        if (registeredMenuContributions.containsKey(editor.getEditor())) {
+            menuService.removeContributionFactory(registeredMenuContributions
                     .get(editor.getEditor()));
-            registeredContributions.remove(editor.getEditor());
+            registeredMenuContributions.remove(editor.getEditor());
         }
     }
 
@@ -513,10 +580,10 @@ TODO:
      * Removes all contributions
      */
     public void clearContributions() {
-        for (AbstractContributionFactory value : registeredContributions
+        for (AbstractContributionFactory value : registeredMenuContributions
                 .values()) {
             menuService.removeContributionFactory(value);
         }
-        registeredContributions.clear();
+        registeredMenuContributions.clear();
     }
 }

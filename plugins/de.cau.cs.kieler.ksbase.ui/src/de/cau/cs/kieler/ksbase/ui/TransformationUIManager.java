@@ -42,9 +42,9 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.Transformation;
-import de.cau.cs.kieler.ksbase.layout.AutoLayoutTrigger;
 import de.cau.cs.kieler.ksbase.ui.handler.ExecuteTransformationRequest;
 import de.cau.cs.kieler.viewmanagement.RunLogic;
+import de.cau.cs.kieler.viewmanagement.triggers.LayoutTrigger;
 
 public class TransformationUIManager {
 
@@ -169,11 +169,13 @@ public class TransformationUIManager {
                         while (!(par instanceof RootEditPart)) {
                             if (par instanceof ShapeEditPart )
                                 layoutTarget = par;
+                            if (par.getParent() == null)
+                                break; //FIXME: Crashes when selecting a transition
                             par = par.getParent();
                         }
                         
                         
-                        AutoLayoutTrigger trigger = ((AutoLayoutTrigger) RunLogic
+                        LayoutTrigger trigger = ((LayoutTrigger) RunLogic
                                 .getTrigger("de.cau.cs.kieler.viewmanagement.combination.SelectionLayoutTrigger"));
                         if ( trigger != null) {
                                trigger.triggerAutoLayout(layoutTarget, activeEditor);

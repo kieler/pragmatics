@@ -21,9 +21,6 @@
       </page>
    </extension>
    <extension
-         point="org.eclipse.ui.menus">
-   </extension>
-   <extension
          point="org.eclipse.ui.commands">
       <category
             description="KIELER Structure based editing commands"
