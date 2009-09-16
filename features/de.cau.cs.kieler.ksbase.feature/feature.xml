@@ -41,7 +41,6 @@ under the terms of the Eclipse Public License (EPL).
       <import plugin="org.eclipse.ui.ide" version="3.5.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.emf.mwe.core" version="0.7.2" match="greaterOrEqual"/>
       <import plugin="de.cau.cs.kieler.ksbase" version="0.1.3" match="greaterOrEqual"/>
-      <import plugin="de.cau.cs.kieler.ksbase.layout" version="0.1.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.expressions" version="3.4.100" match="greaterOrEqual"/>
    </requires>
 
@@ -52,15 +51,16 @@ under the terms of the Eclipse Public License (EPL).
          version="0.0.0"
          unpack="false"/>
 
+
    <plugin
-         id="de.cau.cs.kieler.ksbase.layout"
+         id="de.cau.cs.kieler.ksbase.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.ksbase.ui"
+         id="de.cau.cs.kieler.synccharts.sbase"
          download-size="0"
          install-size="0"
          version="0.0.0"
