@@ -117,6 +117,8 @@ public final class GraphvizAPI {
 
     /** parameter used to specify the command */
     private final static String PARAM_COMMAND = "-K";
+    /** arguments additionally passed to the dot executable */
+    private final static String DOT_ARGUMENTS = "-q";
     /** default locations of the dot executable */
     private final static String[] DEFAULT_LOCS = {
         "/opt/local/bin/",
@@ -158,8 +160,9 @@ public final class GraphvizAPI {
         }
 
         try {
-            String argument = PARAM_COMMAND + command;
-            Process process = Runtime.getRuntime().exec(new String[] { dotExecutable, argument });
+            String commandArgument = PARAM_COMMAND + command;
+            Process process = Runtime.getRuntime().exec(new String[] { dotExecutable,
+                    DOT_ARGUMENTS, commandArgument });
             return process;
         } catch (IOException exception) {
             throw new KielerException("Failed to start Graphviz process.", exception);
