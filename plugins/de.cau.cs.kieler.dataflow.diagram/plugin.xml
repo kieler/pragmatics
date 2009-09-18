@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
+<!--
+KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
+
+http://www.informatik.uni-kiel.de/rtsys/kieler/
+
+Copyright 2009 by
++ Christian-Albrechts-University of Kiel
+  + Department of Computer Science
+    + Real-Time and Embedded Systems Group
+
+This code is provided under the terms of the Eclipse Public License (EPL).
+See the file epl-v10.html for the license text.
+-->
 <plugin>
 
    <extension point="org.eclipse.team.core.fileTypes" id="repo-ftype">
@@ -115,9 +128,10 @@
    <extension point="org.eclipse.ui.preferencePages" id="prefpages">
       <?gmfgen generated="true"?>
       <page
+            category="de.cau.cs.kieler"
+            class="de.cau.cs.kieler.dataflow.diagram.preferences.DiagramGeneralPreferencePage"
             id="de.cau.cs.kieler.dataflow.diagram.general"
-            name="%prefpage.de.cau.cs.kieler.dataflow.diagram.general"
-            class="de.cau.cs.kieler.dataflow.diagram.preferences.DiagramGeneralPreferencePage">
+            name="%prefpage.de.cau.cs.kieler.dataflow.diagram.general">
       </page>
       <page
             id="de.cau.cs.kieler.dataflow.diagram.appearance"

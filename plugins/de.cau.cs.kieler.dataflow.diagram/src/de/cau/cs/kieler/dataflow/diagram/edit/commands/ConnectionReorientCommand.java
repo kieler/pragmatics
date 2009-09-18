@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
+ * 
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2009 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.dataflow.diagram.edit.commands;
 
 import org.eclipse.core.commands.ExecutionException;
@@ -8,8 +21,8 @@ import org.eclipse.gmf.runtime.common.core.command.CommandResult;
 import org.eclipse.gmf.runtime.emf.type.core.commands.EditElementCommand;
 import org.eclipse.gmf.runtime.emf.type.core.requests.ReorientRelationshipRequest;
 
-import de.cau.cs.kieler.dataflow.Box;
 import de.cau.cs.kieler.dataflow.Connection;
+import de.cau.cs.kieler.dataflow.DataflowModel;
 import de.cau.cs.kieler.dataflow.Port;
 import de.cau.cs.kieler.dataflow.diagram.edit.policies.DataflowBaseItemSemanticEditPolicy;
 
@@ -67,10 +80,10 @@ public class ConnectionReorientCommand extends EditElementCommand {
             return false;
         }
         Port target = getLink().getTargetPort();
-        if (!(getLink().eContainer() instanceof Box)) {
+        if (!(getLink().eContainer() instanceof DataflowModel)) {
             return false;
         }
-        Box container = (Box) getLink().eContainer();
+        DataflowModel container = (DataflowModel) getLink().eContainer();
         return DataflowBaseItemSemanticEditPolicy.LinkConstraints.canExistConnection_4001(
                 container, getNewSource(), target);
     }
@@ -83,10 +96,10 @@ public class ConnectionReorientCommand extends EditElementCommand {
             return false;
         }
         Port source = getLink().getSourcePort();
-        if (!(getLink().eContainer() instanceof Box)) {
+        if (!(getLink().eContainer() instanceof DataflowModel)) {
             return false;
         }
-        Box container = (Box) getLink().eContainer();
+        DataflowModel container = (DataflowModel) getLink().eContainer();
         return DataflowBaseItemSemanticEditPolicy.LinkConstraints.canExistConnection_4001(
                 container, source, getNewTarget());
     }

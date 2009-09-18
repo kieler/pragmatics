@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
+ * 
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2009 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.dataflow.diagram.edit.parts;
 
 import java.util.ArrayList;
@@ -148,7 +161,7 @@ public class OutputPortEditPart extends BorderedBorderItemEditPart {
      * @generated
      */
     protected NodeFigure createNodePlate() {
-        DefaultSizeNodeFigure result = new DefaultSizeNodeFigure(5, 5);
+        DefaultSizeNodeFigure result = new DefaultSizeNodeFigure(6, 6);
 
         //FIXME: workaround for #154536
         result.getBounds().setSize(result.getPreferredSize());
@@ -319,7 +332,7 @@ public class OutputPortEditPart extends BorderedBorderItemEditPart {
         /**
          * @generated
          */
-        private WrappingLabel fFigurePortNameLabelFigure;
+        private WrappingLabel fFigurePortNameFigure;
 
         /**
          * @generated
@@ -327,8 +340,8 @@ public class OutputPortEditPart extends BorderedBorderItemEditPart {
         public PortFigure() {
             this.setLineWidth(1);
             this.setForegroundColor(ColorConstants.black);
-            this.setBackgroundColor(ColorConstants.black);
-            this.setPreferredSize(new Dimension(getMapMode().DPtoLP(5), getMapMode().DPtoLP(5)));
+            this.setBackgroundColor(THIS_BACK);
+            this.setPreferredSize(new Dimension(getMapMode().DPtoLP(6), getMapMode().DPtoLP(6)));
         }
 
         /**
@@ -353,10 +366,15 @@ public class OutputPortEditPart extends BorderedBorderItemEditPart {
         /**
          * @generated
          */
-        public WrappingLabel getFigurePortNameLabelFigure() {
-            return fFigurePortNameLabelFigure;
+        public WrappingLabel getFigurePortNameFigure() {
+            return fFigurePortNameFigure;
         }
 
     }
+
+    /**
+     * @generated
+     */
+    static final Color THIS_BACK = new Color(null, 68, 4, 4);
 
 }

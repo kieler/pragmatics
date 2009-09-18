@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
+ * 
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2009 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.dataflow.diagram.providers;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -36,7 +49,8 @@ public class DataflowParserProvider extends AbstractProvider implements IParserP
      */
     private IParser getBoxName_5004Parser() {
         if (boxName_5004Parser == null) {
-            EAttribute[] features = new EAttribute[] { DataflowPackage.eINSTANCE.getBox_Name() };
+            EAttribute[] features = new EAttribute[] { DataflowPackage.eINSTANCE
+                    .getDataflowModel_Name() };
             MessageFormatParser parser = new MessageFormatParser(features);
             boxName_5004Parser = parser;
         }
@@ -87,7 +101,8 @@ public class DataflowParserProvider extends AbstractProvider implements IParserP
      */
     private IParser getBoxName_5003Parser() {
         if (boxName_5003Parser == null) {
-            EAttribute[] features = new EAttribute[] { DataflowPackage.eINSTANCE.getBox_Name() };
+            EAttribute[] features = new EAttribute[] { DataflowPackage.eINSTANCE
+                    .getDataflowModel_Name() };
             MessageFormatParser parser = new MessageFormatParser(features);
             boxName_5003Parser = parser;
         }

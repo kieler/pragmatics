@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
+ * 
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2009 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.dataflow.diagram.edit.commands;
 
 import org.eclipse.core.commands.ExecutionException;
@@ -14,7 +27,7 @@ import org.eclipse.gmf.runtime.notation.View;
 
 import de.cau.cs.kieler.dataflow.Box;
 import de.cau.cs.kieler.dataflow.DataflowFactory;
-import de.cau.cs.kieler.dataflow.diagram.providers.DataflowElementTypes;
+import de.cau.cs.kieler.dataflow.DataflowModel;
 
 /**
  * @generated
@@ -55,10 +68,8 @@ public class Box2CreateCommand extends EditElementCommand {
             throws ExecutionException {
         Box newElement = DataflowFactory.eINSTANCE.createBox();
 
-        Box owner = (Box) getElementToEdit();
+        DataflowModel owner = (DataflowModel) getElementToEdit();
         owner.getBoxes().add(newElement);
-
-        DataflowElementTypes.init_Box_3003(newElement);
 
         doConfigure(newElement, monitor, info);
 

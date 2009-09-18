@@ -1,6 +1,18 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
+ * 
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2009 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.dataflow.diagram.edit.parts;
 
-import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Connection;
 import org.eclipse.draw2d.PolygonDecoration;
 import org.eclipse.draw2d.RotatableDecoration;
@@ -9,6 +21,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.ITreeBranchEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.PolylineConnectionEx;
 import org.eclipse.gmf.runtime.notation.View;
+import org.eclipse.swt.graphics.Color;
 
 import de.cau.cs.kieler.dataflow.diagram.edit.policies.ConnectionItemSemanticEditPolicy;
 
@@ -67,7 +80,7 @@ public class ConnectionEditPart extends ConnectionNodeEditPart implements ITreeB
          */
         public ConnectionFigure() {
             this.setLineWidth(1);
-            this.setForegroundColor(ColorConstants.blue);
+            this.setForegroundColor(THIS_FORE);
 
             setTargetDecoration(createTargetDecoration());
         }
@@ -83,5 +96,10 @@ public class ConnectionEditPart extends ConnectionNodeEditPart implements ITreeB
         }
 
     }
+
+    /**
+     * @generated
+     */
+    static final Color THIS_FORE = new Color(null, 22, 64, 45);
 
 }

@@ -1,3 +1,16 @@
+/*
+* KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
+* 
+* http://www.informatik.uni-kiel.de/rtsys/kieler/
+* 
+* Copyright 2009 by
+* + Christian-Albrechts-University of Kiel
+*   + Department of Computer Science
+*     + Real-Time and Embedded Systems Group
+* 
+* This code is provided under the terms of the Eclipse Public License (EPL).
+* See the file epl-v10.html for the license text.
+*/
 package de.cau.cs.kieler.dataflow.diagram.part;
 
 import java.util.Collection;
@@ -380,7 +393,8 @@ public class DataflowDiagramUpdater {
     /**
      * @generated
      */
-    private static Collection getContainedTypeModelFacetLinks_Connection_4001(Box container) {
+    private static Collection getContainedTypeModelFacetLinks_Connection_4001(
+            DataflowModel container) {
         Collection result = new LinkedList();
         for (Iterator links = container.getConnections().iterator(); links.hasNext();) {
             EObject linkObject = (EObject) links.next();
@@ -430,14 +444,14 @@ public class DataflowDiagramUpdater {
      * @generated
      */
     private static Collection getOutgoingTypeModelFacetLinks_Connection_4001(Port source) {
-        Box container = null;
+        DataflowModel container = null;
         // Find container element for the link.
         // Climb up by containment hierarchy starting from the source
         // and return the first element that is instance of the container class.
         for (EObject element = source; element != null && container == null; element = element
                 .eContainer()) {
-            if (element instanceof Box) {
-                container = (Box) element;
+            if (element instanceof DataflowModel) {
+                container = (DataflowModel) element;
             }
         }
         if (container == null) {

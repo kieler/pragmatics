@@ -1,6 +1,15 @@
 /**
- * <copyright>
- * </copyright>
+ * KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
+ * 
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2009 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
  *
  * $Id$
  */
@@ -17,19 +26,14 @@ import java.util.List;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 
-import org.eclipse.emf.common.util.ResourceLocator;
-
 import org.eclipse.emf.ecore.EStructuralFeature;
 
-import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.IItemPropertySource;
 import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
-import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
-import org.eclipse.emf.edit.provider.ItemProviderAdapter;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 
 /**
@@ -39,7 +43,7 @@ import org.eclipse.emf.edit.provider.ViewerNotification;
  * @generated
  */
 public class BoxItemProvider
-    extends ItemProviderAdapter
+    extends DataflowModelItemProvider
     implements
         IEditingDomainItemProvider,
         IStructuredItemContentProvider,
@@ -67,31 +71,8 @@ public class BoxItemProvider
         if (itemPropertyDescriptors == null) {
             super.getPropertyDescriptors(object);
 
-            addNamePropertyDescriptor(object);
         }
         return itemPropertyDescriptors;
-    }
-
-    /**
-     * This adds a property descriptor for the Name feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected void addNamePropertyDescriptor(Object object) {
-        itemPropertyDescriptors.add
-            (createItemPropertyDescriptor
-                (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-                 getResourceLocator(),
-                 getString("_UI_Box_name_feature"),
-                 getString("_UI_PropertyDescriptor_description", "_UI_Box_name_feature", "_UI_Box_type"),
-                 DataflowPackage.Literals.BOX__NAME,
-                 true,
-                 false,
-                 false,
-                 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-                 null,
-                 null));
     }
 
     /**
@@ -108,8 +89,6 @@ public class BoxItemProvider
             super.getChildrenFeatures(object);
             childrenFeatures.add(DataflowPackage.Literals.BOX__INPUTS);
             childrenFeatures.add(DataflowPackage.Literals.BOX__OUTPUTS);
-            childrenFeatures.add(DataflowPackage.Literals.BOX__BOXES);
-            childrenFeatures.add(DataflowPackage.Literals.BOX__CONNECTIONS);
         }
         return childrenFeatures;
     }
@@ -164,13 +143,8 @@ public class BoxItemProvider
         updateChildren(notification);
 
         switch (notification.getFeatureID(Box.class)) {
-            case DataflowPackage.BOX__NAME:
-                fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
-                return;
             case DataflowPackage.BOX__INPUTS:
             case DataflowPackage.BOX__OUTPUTS:
-            case DataflowPackage.BOX__BOXES:
-            case DataflowPackage.BOX__CONNECTIONS:
                 fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
                 return;
         }
@@ -197,32 +171,6 @@ public class BoxItemProvider
             (createChildParameter
                 (DataflowPackage.Literals.BOX__OUTPUTS,
                  DataflowFactory.eINSTANCE.createOutputPort()));
-
-        newChildDescriptors.add
-            (createChildParameter
-                (DataflowPackage.Literals.BOX__BOXES,
-                 DataflowFactory.eINSTANCE.createBox()));
-
-        newChildDescriptors.add
-            (createChildParameter
-                (DataflowPackage.Literals.BOX__BOXES,
-                 DataflowFactory.eINSTANCE.createDataflowModel()));
-
-        newChildDescriptors.add
-            (createChildParameter
-                (DataflowPackage.Literals.BOX__CONNECTIONS,
-                 DataflowFactory.eINSTANCE.createConnection()));
-    }
-
-    /**
-     * Return the resource locator for this item provider's resources.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    public ResourceLocator getResourceLocator() {
-        return DataflowEditPlugin.INSTANCE;
     }
 
 }

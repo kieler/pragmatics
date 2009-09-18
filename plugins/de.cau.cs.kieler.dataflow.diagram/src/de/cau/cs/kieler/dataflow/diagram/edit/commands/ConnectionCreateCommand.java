@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
+ * 
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2009 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.dataflow.diagram.edit.commands;
 
 import org.eclipse.core.commands.ExecutionException;
@@ -12,9 +25,9 @@ import org.eclipse.gmf.runtime.emf.type.core.requests.ConfigureRequest;
 import org.eclipse.gmf.runtime.emf.type.core.requests.CreateElementRequest;
 import org.eclipse.gmf.runtime.emf.type.core.requests.CreateRelationshipRequest;
 
-import de.cau.cs.kieler.dataflow.Box;
 import de.cau.cs.kieler.dataflow.Connection;
 import de.cau.cs.kieler.dataflow.DataflowFactory;
+import de.cau.cs.kieler.dataflow.DataflowModel;
 import de.cau.cs.kieler.dataflow.Port;
 import de.cau.cs.kieler.dataflow.diagram.edit.policies.DataflowBaseItemSemanticEditPolicy;
 
@@ -36,7 +49,7 @@ public class ConnectionCreateCommand extends EditElementCommand {
     /**
      * @generated
      */
-    private final Box container;
+    private final DataflowModel container;
 
     /**
      * @generated
@@ -133,7 +146,7 @@ public class ConnectionCreateCommand extends EditElementCommand {
     /**
      * @generated
      */
-    public Box getContainer() {
+    public DataflowModel getContainer() {
         return container;
     }
 
@@ -142,13 +155,13 @@ public class ConnectionCreateCommand extends EditElementCommand {
      * Modify with appropriate logic.
      * @generated
      */
-    private static Box deduceContainer(EObject source, EObject target) {
+    private static DataflowModel deduceContainer(EObject source, EObject target) {
         // Find container element for the new link.
         // Climb up by containment hierarchy starting from the source
         // and return the first element that is instance of the container class.
         for (EObject element = source; element != null; element = element.eContainer()) {
-            if (element instanceof Box) {
-                return (Box) element;
+            if (element instanceof DataflowModel) {
+                return (DataflowModel) element;
             }
         }
         return null;

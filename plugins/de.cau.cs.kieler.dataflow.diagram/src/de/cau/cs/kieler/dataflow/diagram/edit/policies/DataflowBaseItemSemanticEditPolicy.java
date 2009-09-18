@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
+ * 
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2009 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.dataflow.diagram.edit.policies;
 
 import java.util.Iterator;
@@ -31,7 +44,7 @@ import org.eclipse.gmf.runtime.emf.type.core.requests.ReorientRelationshipReques
 import org.eclipse.gmf.runtime.emf.type.core.requests.SetRequest;
 import org.eclipse.gmf.runtime.notation.View;
 
-import de.cau.cs.kieler.dataflow.Box;
+import de.cau.cs.kieler.dataflow.DataflowModel;
 import de.cau.cs.kieler.dataflow.Port;
 import de.cau.cs.kieler.dataflow.diagram.edit.helpers.DataflowBaseEditHelper;
 import de.cau.cs.kieler.dataflow.diagram.part.DataflowVisualIDRegistry;
@@ -305,19 +318,16 @@ public class DataflowBaseItemSemanticEditPolicy extends SemanticEditPolicy {
         /**
          * @generated
          */
-        private static final String OPPOSITE_END_VAR = "oppositeEnd"; //$NON-NLS-1$
-
-        /**
-         * @generated
-         */
-        public static boolean canCreateConnection_4001(Box container, Port source, Port target) {
+        public static boolean canCreateConnection_4001(DataflowModel container, Port source,
+                Port target) {
             return canExistConnection_4001(container, source, target);
         }
 
         /**
          * @generated
          */
-        public static boolean canExistConnection_4001(Box container, Port source, Port target) {
+        public static boolean canExistConnection_4001(DataflowModel container, Port source,
+                Port target) {
             return true;
         }
     }

@@ -1,6 +1,15 @@
 /**
- * <copyright>
- * </copyright>
+ * KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
+ * 
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2009 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
  *
  * $Id$
  */
@@ -76,6 +85,29 @@ public class DataflowItemProviderAdapterFactory extends DataflowAdapterFactory i
     }
 
     /**
+     * This keeps track of the one adapter used for all {@link de.cau.cs.kieler.dataflow.DataflowModel} instances.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected DataflowModelItemProvider dataflowModelItemProvider;
+
+    /**
+     * This creates an adapter for a {@link de.cau.cs.kieler.dataflow.DataflowModel}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Adapter createDataflowModelAdapter() {
+        if (dataflowModelItemProvider == null) {
+            dataflowModelItemProvider = new DataflowModelItemProvider(this);
+        }
+
+        return dataflowModelItemProvider;
+    }
+
+    /**
      * This keeps track of the one adapter used for all {@link de.cau.cs.kieler.dataflow.Box} instances.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -119,29 +151,6 @@ public class DataflowItemProviderAdapterFactory extends DataflowAdapterFactory i
         }
 
         return connectionItemProvider;
-    }
-
-    /**
-     * This keeps track of the one adapter used for all {@link de.cau.cs.kieler.dataflow.DataflowModel} instances.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected DataflowModelItemProvider dataflowModelItemProvider;
-
-    /**
-     * This creates an adapter for a {@link de.cau.cs.kieler.dataflow.DataflowModel}.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    public Adapter createDataflowModelAdapter() {
-        if (dataflowModelItemProvider == null) {
-            dataflowModelItemProvider = new DataflowModelItemProvider(this);
-        }
-
-        return dataflowModelItemProvider;
     }
 
     /**
@@ -312,9 +321,9 @@ public class DataflowItemProviderAdapterFactory extends DataflowAdapterFactory i
      * @generated
      */
     public void dispose() {
+        if (dataflowModelItemProvider != null) dataflowModelItemProvider.dispose();
         if (boxItemProvider != null) boxItemProvider.dispose();
         if (connectionItemProvider != null) connectionItemProvider.dispose();
-        if (dataflowModelItemProvider != null) dataflowModelItemProvider.dispose();
         if (portItemProvider != null) portItemProvider.dispose();
         if (inputPortItemProvider != null) inputPortItemProvider.dispose();
         if (outputPortItemProvider != null) outputPortItemProvider.dispose();

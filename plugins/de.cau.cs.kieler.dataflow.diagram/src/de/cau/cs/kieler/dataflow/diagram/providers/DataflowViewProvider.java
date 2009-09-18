@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
+ * 
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2009 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.dataflow.diagram.providers;
 
 import java.util.ArrayList;
@@ -85,11 +98,11 @@ public class DataflowViewProvider extends AbstractProvider implements IViewProvi
      */
     protected boolean provides(CreateViewForKindOperation op) {
         /*
-         if (op.getViewKind() == Node.class)
-         return getNodeViewClass(op.getSemanticAdapter(), op.getContainerView(), op.getSemanticHint()) != null;
-         if (op.getViewKind() == Edge.class)
-         return getEdgeViewClass(op.getSemanticAdapter(), op.getContainerView(), op.getSemanticHint()) != null;
-         */
+            if (op.getViewKind() == Node.class)
+              return getNodeViewClass(op.getSemanticAdapter(), op.getContainerView(), op.getSemanticHint()) != null;
+            if (op.getViewKind() == Edge.class)
+              return getEdgeViewClass(op.getSemanticAdapter(), op.getContainerView(), op.getSemanticHint()) != null;
+        */
         return true;
     }
 
@@ -253,7 +266,6 @@ public class DataflowViewProvider extends AbstractProvider implements IViewProvi
         Node node = NotationFactory.eINSTANCE.createNode();
         node.getStyles().add(NotationFactory.eINSTANCE.createDescriptionStyle());
         node.getStyles().add(NotationFactory.eINSTANCE.createFontStyle());
-        node.getStyles().add(NotationFactory.eINSTANCE.createLineStyle());
         node.setLayoutConstraint(NotationFactory.eINSTANCE.createBounds());
         node.setType(DataflowVisualIDRegistry.getType(BoxEditPart.VISUAL_ID));
         ViewUtil.insertChildView(containerView, node, index, persisted);
@@ -261,12 +273,6 @@ public class DataflowViewProvider extends AbstractProvider implements IViewProvi
         stampShortcut(containerView, node);
         // initializeFromPreferences 
         final IPreferenceStore prefStore = (IPreferenceStore) preferencesHint.getPreferenceStore();
-
-        org.eclipse.swt.graphics.RGB lineRGB = PreferenceConverter.getColor(prefStore,
-                IPreferenceConstants.PREF_LINE_COLOR);
-        ViewUtil.setStructuralFeatureValue(node,
-                NotationPackage.eINSTANCE.getLineStyle_LineColor(), FigureUtilities
-                        .RGBToInteger(lineRGB));
         FontStyle nodeFontStyle = (FontStyle) node.getStyle(NotationPackage.Literals.FONT_STYLE);
         if (nodeFontStyle != null) {
             FontData fontData = PreferenceConverter.getFontData(prefStore,
@@ -364,19 +370,12 @@ public class DataflowViewProvider extends AbstractProvider implements IViewProvi
         Node node = NotationFactory.eINSTANCE.createNode();
         node.getStyles().add(NotationFactory.eINSTANCE.createDescriptionStyle());
         node.getStyles().add(NotationFactory.eINSTANCE.createFontStyle());
-        node.getStyles().add(NotationFactory.eINSTANCE.createLineStyle());
         node.setLayoutConstraint(NotationFactory.eINSTANCE.createBounds());
         node.setType(DataflowVisualIDRegistry.getType(Box2EditPart.VISUAL_ID));
         ViewUtil.insertChildView(containerView, node, index, persisted);
         node.setElement(domainElement);
         // initializeFromPreferences 
         final IPreferenceStore prefStore = (IPreferenceStore) preferencesHint.getPreferenceStore();
-
-        org.eclipse.swt.graphics.RGB lineRGB = PreferenceConverter.getColor(prefStore,
-                IPreferenceConstants.PREF_LINE_COLOR);
-        ViewUtil.setStructuralFeatureValue(node,
-                NotationPackage.eINSTANCE.getLineStyle_LineColor(), FigureUtilities
-                        .RGBToInteger(lineRGB));
         FontStyle nodeFontStyle = (FontStyle) node.getStyle(NotationPackage.Literals.FONT_STYLE);
         if (nodeFontStyle != null) {
             FontData fontData = PreferenceConverter.getFontData(prefStore,

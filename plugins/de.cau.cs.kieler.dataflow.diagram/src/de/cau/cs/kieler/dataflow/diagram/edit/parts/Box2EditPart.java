@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
+ * 
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2009 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.dataflow.diagram.edit.parts;
 
 import org.eclipse.draw2d.IFigure;
@@ -308,6 +321,7 @@ public class Box2EditPart extends AbstractBorderedShapeEditPart {
             this.setLayoutManager(layoutThis);
 
             this.setLineWidth(1);
+            this.setForegroundColor(THIS_FORE);
             this.setBackgroundColor(THIS_BACK);
             this.setBorder(new MarginBorder(getMapMode().DPtoLP(5), getMapMode().DPtoLP(5),
                     getMapMode().DPtoLP(5), getMapMode().DPtoLP(5)));
@@ -320,7 +334,7 @@ public class Box2EditPart extends AbstractBorderedShapeEditPart {
         private void createContents() {
 
             fFigureBoxNameFigure = new WrappingLabel();
-            fFigureBoxNameFigure.setText("<...>");
+            fFigureBoxNameFigure.setText("");
 
             this.add(fFigureBoxNameFigure);
 
@@ -357,6 +371,11 @@ public class Box2EditPart extends AbstractBorderedShapeEditPart {
     /**
      * @generated
      */
-    static final Color THIS_BACK = new Color(null, 250, 250, 250);
+    static final Color THIS_FORE = new Color(null, 16, 54, 68);
+
+    /**
+     * @generated
+     */
+    static final Color THIS_BACK = new Color(null, 199, 240, 255);
 
 }
