@@ -196,7 +196,18 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      */
     protected void applyLayout(IKielerProgressMonitor progressMonitor) {
     	progressMonitor.begin("Apply layout to the diagram", 10);
-        // create a new request to change the layout
+    	
+        // get a command stack to execute the command
+        CommandStack commandStack = null;
+        if (diagramEditorPart != null) {
+            Object adapter = diagramEditorPart.getAdapter(CommandStack.class);
+            if (adapter instanceof CommandStack)
+                commandStack = (CommandStack)adapter;
+        }
+        if (commandStack == null)
+            commandStack = layoutRootPart.getDiagramEditDomain().getDiagramCommandStack();
+    	
+    	// create a new request to change the layout
         ApplyLayoutRequest applyLayoutRequest = new ApplyLayoutRequest();
         for (KNode knode : node2EditPartMap.keySet())
             applyLayoutRequest.addElement(knode, node2EditPartMap.get(knode));
@@ -209,18 +220,10 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         
         // retrieve a command for the request; the command is created by GmfLayoutEditPolicy
         Command applyLayoutCommand = diagramEditPart.getCommand(applyLayoutRequest);
-        progressMonitor.worked(3);
-        
-        // gets a command stack to execute the command
-        CommandStack commandStack = null;
-        if (diagramEditorPart != null) {
-            Object adapter = diagramEditorPart.getAdapter(CommandStack.class);
-            if (adapter instanceof CommandStack)
-                commandStack = (CommandStack)adapter;
-        }
-        if (commandStack == null)
-            commandStack = layoutRootPart.getDiagramEditDomain().getDiagramCommandStack();
+        progressMonitor.worked(4);
+        // execute the command
         commandStack.execute(applyLayoutCommand);
+        
         progressMonitor.done();
     }
 

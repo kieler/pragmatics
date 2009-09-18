@@ -5,6 +5,14 @@
    <extension-point id="layoutListeners" name="Layout Listeners" schema="schema/layoutListeners.exsd"/>
    <extension-point id="layoutInfo" name="Layout Info" schema="schema/layoutInfo.exsd"/>
    <extension
+         point="org.eclipse.emf.ecore.generated_package">
+      <package
+            class="de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataPackage"
+            genModel="model/klayoutdata.genmodel"
+            uri="http://kieler.cs.cau.de/KLayoutData">
+      </package>
+   </extension>
+   <extension
          point="de.cau.cs.kieler.kiml.layout.layoutProviders">
       <category
             id="de.cau.cs.kieler.layouter.category"
@@ -138,14 +146,6 @@
             id="de.cau.cs.kieler.layout.diagrams.boxes"
             name="Unconnected Boxes">
       </diagramType>
-   </extension>
-   <extension
-         point="org.eclipse.emf.ecore.generated_package">
-      <package
-            class="de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataPackage"
-            genModel="model/klayoutdata.genmodel"
-            uri="http://kieler.cs.cau.de/KLayoutData">
-      </package>
    </extension>
 
 </plugin>

@@ -220,6 +220,9 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
                 form.setText(textBuffer.toString());
             }
         }
+        else {
+            form.setText("");
+        }
     }
     
     /**

@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.5"?>
 <plugin>
+ <extension
+       point="org.eclipse.emf.ecore.generated_package">
+    <package
+          class="de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsPackage"
+          genModel="model/layoutoptions.genmodel"
+          uri="http://kieler.cs.cau.de/LayoutOptions">
+    </package>
+ </extension>
    
 
    <extension

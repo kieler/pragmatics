@@ -91,8 +91,11 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                 
                 // retrieve layout data from the request and compute layout data for the command
                 for (Pair<KGraphElement, GraphicalEditPart> layoutPair : layoutRequest.getElements()) {
-                    if (layoutPair.first instanceof KNode || layoutPair.first instanceof KPort)
-                        addShapeLayout(command, layoutPair.first, layoutPair.second);
+                    if (layoutPair.first instanceof KNode)
+                        addShapeLayout(command, layoutPair.first, layoutPair.second, null);
+                    else if (layoutPair.first instanceof KPort)
+                        addShapeLayout(command, layoutPair.first, layoutPair.second,
+                                KimlLayoutUtil.getShapeLayout(((KPort)layoutPair.first).getNode()));
                     else if (layoutPair.first instanceof KEdge)
                         addEdgeLayout(command, (KEdge)layoutPair.first,
                                 (ConnectionEditPart)layoutPair.second);
@@ -116,17 +119,21 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      * @param command command to which a shape layout shall be added
      * @param kgraphElement graph element with layout data
      * @param editPart edit part to which layout is applied
+     * @param offsetLayout layout data of the graph element whose position is added
+     *     as offset to the current shape, or {@code null} if no offset shall be added
      */
     private void addShapeLayout(GmfLayoutCommand command, KGraphElement kgraphElement,
-            GraphicalEditPart editPart) {
+            GraphicalEditPart editPart, KShapeLayout offsetLayout) {
         KShapeLayout layoutData = KimlLayoutUtil.getShapeLayout(kgraphElement);
         Rectangle oldBounds = editPart.getFigure().getBounds();
-        Point newLocation = new Point(Math.round(layoutData.getXpos()),
-                Math.round(layoutData.getYpos()));
-        if (newLocation.x == oldBounds.x && newLocation.y == oldBounds.y)
+        Point newLocation = new Point((int)layoutData.getXpos(),
+                (int)layoutData.getYpos());
+        int offsetx = offsetLayout == null ? 0 : (int)offsetLayout.getXpos();
+        int offsety = offsetLayout == null ? 0 : (int)offsetLayout.getYpos();
+        if (newLocation.x + offsetx == oldBounds.x && newLocation.y + offsety == oldBounds.y)
             newLocation = null;
-        Dimension newSize = new Dimension(Math.round(layoutData.getWidth()),
-                Math.round(layoutData.getHeight()));
+        Dimension newSize = new Dimension((int)layoutData.getWidth(),
+                (int)layoutData.getHeight());
         if (newSize.width == oldBounds.width && newSize.height == oldBounds.height)
             newSize = null;
         if (newLocation != null || newSize != null) {
@@ -153,16 +160,16 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         ShapeNodeEditPart sourceEditPart = (ShapeNodeEditPart)connectionEditPart.getSource();
         if (sourcePort != null) {
             KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(sourcePort);
-            sourceExt = new Rectangle(Math.round(portLayout.getXpos()
-                    + sourceLayout.getXpos()), Math.round(portLayout.getYpos()
-                    + sourceLayout.getYpos()), Math.round(portLayout.getWidth()),
-                    Math.round(portLayout.getHeight()));
+            sourceExt = new Rectangle((int)(portLayout.getXpos()
+                    + sourceLayout.getXpos()), (int)(portLayout.getYpos()
+                    + sourceLayout.getYpos()), (int)portLayout.getWidth(),
+                    (int)portLayout.getHeight());
         }
         else {
-            sourceExt = new Rectangle(Math.round(sourceLayout.getXpos()),
-                    Math.round(sourceLayout.getYpos()),
-                    Math.round(sourceLayout.getWidth()),
-                    Math.round(sourceLayout.getHeight()));
+            sourceExt = new Rectangle((int)sourceLayout.getXpos(),
+                    (int)sourceLayout.getYpos(),
+                    (int)sourceLayout.getWidth(),
+                    (int)sourceLayout.getHeight());
         }
         PrecisionPoint sourceRatio = new PrecisionPoint((edgeLayout.getSourcePoint().getX()
                 - sourceExt.preciseX()) / sourceExt.preciseWidth(),
@@ -182,16 +189,16 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         ShapeNodeEditPart targetEditPart = (ShapeNodeEditPart)connectionEditPart.getTarget();
         if (targetPort != null) {
             KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(targetPort);
-            targetExt = new Rectangle(Math.round(portLayout.getXpos()
-                    + targetLayout.getXpos()), Math.round(portLayout.getYpos()
-                    + targetLayout.getYpos()), Math.round(portLayout.getWidth()),
-                    Math.round(portLayout.getHeight()));
+            targetExt = new Rectangle((int)(portLayout.getXpos()
+                    + targetLayout.getXpos()), (int)(portLayout.getYpos()
+                    + targetLayout.getYpos()), (int)portLayout.getWidth(),
+                    (int)portLayout.getHeight());
         }
         else {
-            targetExt = new Rectangle(Math.round(targetLayout.getXpos()),
-                    Math.round(targetLayout.getYpos()),
-                    Math.round(targetLayout.getWidth()),
-                    Math.round(targetLayout.getHeight()));
+            targetExt = new Rectangle((int)targetLayout.getXpos(),
+                    (int)targetLayout.getYpos(),
+                    (int)targetLayout.getWidth(),
+                    (int)targetLayout.getHeight());
         }
         PrecisionPoint targetRatio = new PrecisionPoint((edgeLayout.getTargetPoint().getX()
                 - targetExt.preciseX()) / targetExt.preciseWidth(),
@@ -278,12 +285,12 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         if (pointList == null) {
             pointList = new PointList();
             KPoint sourcePoint = edgeLayout.getSourcePoint();
-            pointList.addPoint(Math.round(sourcePoint.getX()), Math.round(sourcePoint.getY()));
+            pointList.addPoint((int)sourcePoint.getX(), (int)sourcePoint.getY());
             for (KPoint bendPoint : edgeLayout.getBendPoints()) {
-                pointList.addPoint(Math.round(bendPoint.getX()), Math.round(bendPoint.getY()));
+                pointList.addPoint((int)bendPoint.getX(), (int)bendPoint.getY());
             }
             KPoint targetPoint = edgeLayout.getTargetPoint();
-            pointList.addPoint(Math.round(targetPoint.getX()), Math.round(targetPoint.getY()));
+            pointList.addPoint((int)targetPoint.getX(), (int)targetPoint.getY());
             pointListMap.put(edgeLayout, pointList);
         }
         return pointList;
