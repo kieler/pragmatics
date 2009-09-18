@@ -36,7 +36,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link de.cau.cs.kieler.dataflow.impl.InputPortImpl#getInputParent <em>Input Parent</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.dataflow.impl.InputPortImpl#getParentBox <em>Parent Box</em>}</li>
  * </ul>
  * </p>
  *
@@ -44,165 +44,165 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  */
 public class InputPortImpl extends PortImpl implements InputPort {
     /**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
     protected InputPortImpl() {
-		super();
-	}
+        super();
+    }
 
     /**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
     @Override
     protected EClass eStaticClass() {
-		return DataflowPackage.Literals.INPUT_PORT;
-	}
+        return DataflowPackage.Literals.INPUT_PORT;
+    }
 
     /**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @generated
-	 */
-    public Box getInputParent() {
-		if (eContainerFeatureID() != DataflowPackage.INPUT_PORT__INPUT_PARENT) return null;
-		return (Box)eContainer();
-	}
+     * @generated
+     */
+    public Box getParentBox() {
+        if (eContainerFeatureID() != DataflowPackage.INPUT_PORT__PARENT_BOX) return null;
+        return (Box)eContainer();
+    }
 
     /**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @generated
-	 */
-    public NotificationChain basicSetInputParent(Box newInputParent, NotificationChain msgs) {
-		msgs = eBasicSetContainer((InternalEObject)newInputParent, DataflowPackage.INPUT_PORT__INPUT_PARENT, msgs);
-		return msgs;
-	}
+     * @generated
+     */
+    public NotificationChain basicSetParentBox(Box newParentBox, NotificationChain msgs) {
+        msgs = eBasicSetContainer((InternalEObject)newParentBox, DataflowPackage.INPUT_PORT__PARENT_BOX, msgs);
+        return msgs;
+    }
 
     /**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @generated
-	 */
-    public void setInputParent(Box newInputParent) {
-		if (newInputParent != eInternalContainer() || (eContainerFeatureID() != DataflowPackage.INPUT_PORT__INPUT_PARENT && newInputParent != null)) {
-			if (EcoreUtil.isAncestor(this, newInputParent))
-				throw new IllegalArgumentException("Recursive containment not allowed for " + toString());
-			NotificationChain msgs = null;
-			if (eInternalContainer() != null)
-				msgs = eBasicRemoveFromContainer(msgs);
-			if (newInputParent != null)
-				msgs = ((InternalEObject)newInputParent).eInverseAdd(this, DataflowPackage.BOX__INPUTS, Box.class, msgs);
-			msgs = basicSetInputParent(newInputParent, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, DataflowPackage.INPUT_PORT__INPUT_PARENT, newInputParent, newInputParent));
-	}
+     * @generated
+     */
+    public void setParentBox(Box newParentBox) {
+        if (newParentBox != eInternalContainer() || (eContainerFeatureID() != DataflowPackage.INPUT_PORT__PARENT_BOX && newParentBox != null)) {
+            if (EcoreUtil.isAncestor(this, newParentBox))
+                throw new IllegalArgumentException("Recursive containment not allowed for " + toString());
+            NotificationChain msgs = null;
+            if (eInternalContainer() != null)
+                msgs = eBasicRemoveFromContainer(msgs);
+            if (newParentBox != null)
+                msgs = ((InternalEObject)newParentBox).eInverseAdd(this, DataflowPackage.BOX__INPUTS, Box.class, msgs);
+            msgs = basicSetParentBox(newParentBox, msgs);
+            if (msgs != null) msgs.dispatch();
+        }
+        else if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET, DataflowPackage.INPUT_PORT__PARENT_BOX, newParentBox, newParentBox));
+    }
 
     /**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
     @Override
     public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-			case DataflowPackage.INPUT_PORT__INPUT_PARENT:
-				if (eInternalContainer() != null)
-					msgs = eBasicRemoveFromContainer(msgs);
-				return basicSetInputParent((Box)otherEnd, msgs);
-		}
-		return super.eInverseAdd(otherEnd, featureID, msgs);
-	}
+        switch (featureID) {
+            case DataflowPackage.INPUT_PORT__PARENT_BOX:
+                if (eInternalContainer() != null)
+                    msgs = eBasicRemoveFromContainer(msgs);
+                return basicSetParentBox((Box)otherEnd, msgs);
+        }
+        return super.eInverseAdd(otherEnd, featureID, msgs);
+    }
 
     /**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
     @Override
     public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-			case DataflowPackage.INPUT_PORT__INPUT_PARENT:
-				return basicSetInputParent(null, msgs);
-		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
-	}
+        switch (featureID) {
+            case DataflowPackage.INPUT_PORT__PARENT_BOX:
+                return basicSetParentBox(null, msgs);
+        }
+        return super.eInverseRemove(otherEnd, featureID, msgs);
+    }
 
     /**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
     @Override
     public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs) {
-		switch (eContainerFeatureID()) {
-			case DataflowPackage.INPUT_PORT__INPUT_PARENT:
-				return eInternalContainer().eInverseRemove(this, DataflowPackage.BOX__INPUTS, Box.class, msgs);
-		}
-		return super.eBasicRemoveFromContainerFeature(msgs);
-	}
+        switch (eContainerFeatureID()) {
+            case DataflowPackage.INPUT_PORT__PARENT_BOX:
+                return eInternalContainer().eInverseRemove(this, DataflowPackage.BOX__INPUTS, Box.class, msgs);
+        }
+        return super.eBasicRemoveFromContainerFeature(msgs);
+    }
 
     /**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
-		switch (featureID) {
-			case DataflowPackage.INPUT_PORT__INPUT_PARENT:
-				return getInputParent();
-		}
-		return super.eGet(featureID, resolve, coreType);
-	}
+        switch (featureID) {
+            case DataflowPackage.INPUT_PORT__PARENT_BOX:
+                return getParentBox();
+        }
+        return super.eGet(featureID, resolve, coreType);
+    }
 
     /**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
     @Override
     public void eSet(int featureID, Object newValue) {
-		switch (featureID) {
-			case DataflowPackage.INPUT_PORT__INPUT_PARENT:
-				setInputParent((Box)newValue);
-				return;
-		}
-		super.eSet(featureID, newValue);
-	}
+        switch (featureID) {
+            case DataflowPackage.INPUT_PORT__PARENT_BOX:
+                setParentBox((Box)newValue);
+                return;
+        }
+        super.eSet(featureID, newValue);
+    }
 
     /**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
     @Override
     public void eUnset(int featureID) {
-		switch (featureID) {
-			case DataflowPackage.INPUT_PORT__INPUT_PARENT:
-				setInputParent((Box)null);
-				return;
-		}
-		super.eUnset(featureID);
-	}
+        switch (featureID) {
+            case DataflowPackage.INPUT_PORT__PARENT_BOX:
+                setParentBox((Box)null);
+                return;
+        }
+        super.eUnset(featureID);
+    }
 
     /**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
     @Override
     public boolean eIsSet(int featureID) {
-		switch (featureID) {
-			case DataflowPackage.INPUT_PORT__INPUT_PARENT:
-				return getInputParent() != null;
-		}
-		return super.eIsSet(featureID);
-	}
+        switch (featureID) {
+            case DataflowPackage.INPUT_PORT__PARENT_BOX:
+                return getParentBox() != null;
+        }
+        return super.eIsSet(featureID);
+    }
 
 } //InputPortImpl

@@ -36,55 +36,55 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Connection extends EObject {
     /**
-	 * Returns the value of the '<em><b>Source Port</b></em>' reference.
-	 * <!-- begin-user-doc -->
+     * Returns the value of the '<em><b>Source Port</b></em>' reference.
+     * <!-- begin-user-doc -->
      * <p>
      * If the meaning of the '<em>Source Port</em>' reference isn't clear,
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-	 * @return the value of the '<em>Source Port</em>' reference.
-	 * @see #setSourcePort(Port)
-	 * @see de.cau.cs.kieler.dataflow.DataflowPackage#getConnection_SourcePort()
-	 * @model required="true"
-	 * @generated
-	 */
+     * @return the value of the '<em>Source Port</em>' reference.
+     * @see #setSourcePort(Port)
+     * @see de.cau.cs.kieler.dataflow.DataflowPackage#getConnection_SourcePort()
+     * @model required="true"
+     * @generated
+     */
     Port getSourcePort();
 
     /**
-	 * Sets the value of the '{@link de.cau.cs.kieler.dataflow.Connection#getSourcePort <em>Source Port</em>}' reference.
-	 * <!-- begin-user-doc -->
+     * Sets the value of the '{@link de.cau.cs.kieler.dataflow.Connection#getSourcePort <em>Source Port</em>}' reference.
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Source Port</em>' reference.
-	 * @see #getSourcePort()
-	 * @generated
-	 */
+     * @param value the new value of the '<em>Source Port</em>' reference.
+     * @see #getSourcePort()
+     * @generated
+     */
     void setSourcePort(Port value);
 
     /**
-	 * Returns the value of the '<em><b>Target Port</b></em>' reference.
-	 * <!-- begin-user-doc -->
+     * Returns the value of the '<em><b>Target Port</b></em>' reference.
+     * <!-- begin-user-doc -->
      * <p>
      * If the meaning of the '<em>Target Port</em>' reference isn't clear,
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-	 * @return the value of the '<em>Target Port</em>' reference.
-	 * @see #setTargetPort(Port)
-	 * @see de.cau.cs.kieler.dataflow.DataflowPackage#getConnection_TargetPort()
-	 * @model required="true"
-	 * @generated
-	 */
+     * @return the value of the '<em>Target Port</em>' reference.
+     * @see #setTargetPort(Port)
+     * @see de.cau.cs.kieler.dataflow.DataflowPackage#getConnection_TargetPort()
+     * @model required="true"
+     * @generated
+     */
     Port getTargetPort();
 
     /**
-	 * Sets the value of the '{@link de.cau.cs.kieler.dataflow.Connection#getTargetPort <em>Target Port</em>}' reference.
-	 * <!-- begin-user-doc -->
+     * Sets the value of the '{@link de.cau.cs.kieler.dataflow.Connection#getTargetPort <em>Target Port</em>}' reference.
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Target Port</em>' reference.
-	 * @see #getTargetPort()
-	 * @generated
-	 */
+     * @param value the new value of the '<em>Target Port</em>' reference.
+     * @see #getTargetPort()
+     * @generated
+     */
     void setTargetPort(Port value);
 
 } // Connection

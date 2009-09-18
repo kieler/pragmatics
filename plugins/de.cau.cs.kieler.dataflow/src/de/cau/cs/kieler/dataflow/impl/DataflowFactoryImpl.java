@@ -33,131 +33,131 @@ import org.eclipse.emf.ecore.plugin.EcorePlugin;
  */
 public class DataflowFactoryImpl extends EFactoryImpl implements DataflowFactory {
     /**
-	 * Creates the default factory implementation.
-	 * <!-- begin-user-doc -->
+     * Creates the default factory implementation.
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
     public static DataflowFactory init() {
-		try {
-			DataflowFactory theDataflowFactory = (DataflowFactory)EPackage.Registry.INSTANCE.getEFactory("http://kieler.cs.cau.de/Dataflow"); 
-			if (theDataflowFactory != null) {
-				return theDataflowFactory;
-			}
-		}
-		catch (Exception exception) {
-			EcorePlugin.INSTANCE.log(exception);
-		}
-		return new DataflowFactoryImpl();
-	}
+        try {
+            DataflowFactory theDataflowFactory = (DataflowFactory)EPackage.Registry.INSTANCE.getEFactory("http://kieler.cs.cau.de/Dataflow"); 
+            if (theDataflowFactory != null) {
+                return theDataflowFactory;
+            }
+        }
+        catch (Exception exception) {
+            EcorePlugin.INSTANCE.log(exception);
+        }
+        return new DataflowFactoryImpl();
+    }
 
     /**
-	 * Creates an instance of the factory.
-	 * <!-- begin-user-doc -->
+     * Creates an instance of the factory.
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
     public DataflowFactoryImpl() {
-		super();
-	}
+        super();
+    }
 
     /**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
     @Override
     public EObject create(EClass eClass) {
-		switch (eClass.getClassifierID()) {
-			case DataflowPackage.BOX: return createBox();
-			case DataflowPackage.CONNECTION: return createConnection();
-			case DataflowPackage.DATAFLOW_MODEL: return createDataflowModel();
-			case DataflowPackage.PORT: return createPort();
-			case DataflowPackage.INPUT_PORT: return createInputPort();
-			case DataflowPackage.OUTPUT_PORT: return createOutputPort();
-			default:
-				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
-		}
-	}
+        switch (eClass.getClassifierID()) {
+            case DataflowPackage.DATAFLOW_MODEL: return createDataflowModel();
+            case DataflowPackage.BOX: return createBox();
+            case DataflowPackage.CONNECTION: return createConnection();
+            case DataflowPackage.PORT: return createPort();
+            case DataflowPackage.INPUT_PORT: return createInputPort();
+            case DataflowPackage.OUTPUT_PORT: return createOutputPort();
+            default:
+                throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
+        }
+    }
 
     /**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @generated
-	 */
-    public Box createBox() {
-		BoxImpl box = new BoxImpl();
-		return box;
-	}
-
-    /**
-	 * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-	 * @generated
-	 */
-    public Connection createConnection() {
-		ConnectionImpl connection = new ConnectionImpl();
-		return connection;
-	}
-
-    /**
-	 * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
     public DataflowModel createDataflowModel() {
-		DataflowModelImpl dataflowModel = new DataflowModelImpl();
-		return dataflowModel;
-	}
+        DataflowModelImpl dataflowModel = new DataflowModelImpl();
+        return dataflowModel;
+    }
 
     /**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
+    public Box createBox() {
+        BoxImpl box = new BoxImpl();
+        return box;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public Connection createConnection() {
+        ConnectionImpl connection = new ConnectionImpl();
+        return connection;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public Port createPort() {
-		PortImpl port = new PortImpl();
-		return port;
-	}
+        PortImpl port = new PortImpl();
+        return port;
+    }
 
     /**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
     public InputPort createInputPort() {
-		InputPortImpl inputPort = new InputPortImpl();
-		return inputPort;
-	}
+        InputPortImpl inputPort = new InputPortImpl();
+        return inputPort;
+    }
 
     /**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
     public OutputPort createOutputPort() {
-		OutputPortImpl outputPort = new OutputPortImpl();
-		return outputPort;
-	}
+        OutputPortImpl outputPort = new OutputPortImpl();
+        return outputPort;
+    }
 
     /**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
     public DataflowPackage getDataflowPackage() {
-		return (DataflowPackage)getEPackage();
-	}
+        return (DataflowPackage)getEPackage();
+    }
 
     /**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @deprecated
-	 * @generated
-	 */
+     * @deprecated
+     * @generated
+     */
     @Deprecated
     public static DataflowPackage getPackage() {
-		return DataflowPackage.eINSTANCE;
-	}
+        return DataflowPackage.eINSTANCE;
+    }
 
 } //DataflowFactoryImpl

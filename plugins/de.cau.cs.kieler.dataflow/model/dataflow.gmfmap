@@ -7,120 +7,106 @@
     xmlns:gmftool="http://www.eclipse.org/gmf/2005/ToolDefinition">
   <nodes>
     <containmentFeature
-        href="Dataflow.ecore#//Box/boxes"/>
+        href="dataflow.ecore#//DataflowModel/boxes"/>
     <childrenFeature
-        href="Dataflow.ecore#//Box/boxes"/>
+        href="dataflow.ecore#//DataflowModel/boxes"/>
     <ownedChild>
       <domainMetaElement
-          href="Dataflow.ecore#//Box"/>
-      <domainInitializer
-          xsi:type="gmfmap:FeatureSeqInitializer">
-        <initializers
-            xsi:type="gmfmap:FeatureValueSpec">
-          <feature
-              xsi:type="ecore:EAttribute"
-              href="Dataflow.ecore#//Box/name"/>
-          <value
-              body="'Box'"/>
-        </initializers>
-      </domainInitializer>
+          href="dataflow.ecore#//Box"/>
       <labelMappings
-          xsi:type="gmfmap:FeatureLabelMapping"
-          viewPattern=""
-          editorPattern=""
-          editPattern="">
+          xsi:type="gmfmap:FeatureLabelMapping">
         <diagramLabel
-            href="Dataflow.gmfgraph#BoxName"/>
+            href="dataflow.gmfgraph#BoxName"/>
         <features
-            href="Dataflow.ecore#//Box/name"/>
+            href="dataflow.ecore#//DataflowModel/name"/>
       </labelMappings>
       <tool
           xsi:type="gmftool:CreationTool"
-          href="Dataflow.gmftool#//@palette/@tools.0/@tools.0"/>
+          href="dataflow.gmftool#//@palette/@tools.0/@tools.0"/>
       <diagramNode
-          href="Dataflow.gmfgraph#Box"/>
+          href="dataflow.gmfgraph#Box"/>
       <children
           referencedChild="//@nodes.0/@ownedChild/@children.0/@ownedChild">
         <containmentFeature
-            href="Dataflow.ecore#//Box/inputs"/>
+            href="dataflow.ecore#//Box/inputs"/>
         <ownedChild>
           <domainMetaElement
-              href="Dataflow.ecore#//InputPort"/>
+              href="dataflow.ecore#//InputPort"/>
           <labelMappings
               xsi:type="gmfmap:FeatureLabelMapping">
             <diagramLabel
-                href="Dataflow.gmfgraph#PortName"/>
+                href="dataflow.gmfgraph#PortName"/>
             <features
-                href="Dataflow.ecore#//Port/name"/>
+                href="dataflow.ecore#//Port/name"/>
           </labelMappings>
           <tool
               xsi:type="gmftool:CreationTool"
-              href="Dataflow.gmftool#//@palette/@tools.0/@tools.2"/>
+              href="dataflow.gmftool#//@palette/@tools.0/@tools.2"/>
           <diagramNode
-              href="Dataflow.gmfgraph#InputPort"/>
+              href="dataflow.gmfgraph#InputPort"/>
         </ownedChild>
       </children>
       <children
           referencedChild="//@nodes.0/@ownedChild/@children.1/@ownedChild">
         <containmentFeature
-            href="Dataflow.ecore#//Box/outputs"/>
+            href="dataflow.ecore#//Box/outputs"/>
         <ownedChild>
           <domainMetaElement
-              href="Dataflow.ecore#//OutputPort"/>
+              href="dataflow.ecore#//OutputPort"/>
           <labelMappings
               xsi:type="gmfmap:FeatureLabelMapping">
             <diagramLabel
-                href="Dataflow.gmfgraph#PortName"/>
+                href="dataflow.gmfgraph#PortName"/>
             <features
-                href="Dataflow.ecore#//Port/name"/>
+                href="dataflow.ecore#//Port/name"/>
           </labelMappings>
           <tool
               xsi:type="gmftool:CreationTool"
-              href="Dataflow.gmftool#//@palette/@tools.0/@tools.2"/>
+              href="dataflow.gmftool#//@palette/@tools.0/@tools.2"/>
           <diagramNode
-              href="Dataflow.gmfgraph#OutputPort"/>
+              href="dataflow.gmfgraph#OutputPort"/>
         </ownedChild>
       </children>
       <children
           compartment="//@nodes.0/@ownedChild/@compartments.0"
           referencedChild="//@nodes.0/@ownedChild">
         <containmentFeature
-            href="Dataflow.ecore#//Box/boxes"/>
+            href="dataflow.ecore#//DataflowModel/boxes"/>
         <childrenFeature
-            href="Dataflow.ecore#//Box/boxes"/>
+            href="dataflow.ecore#//DataflowModel/boxes"/>
       </children>
       <compartments
           children="//@nodes.0/@ownedChild/@children.2">
         <compartment
-            href="Dataflow.gmfgraph#BoxCompartment"/>
+            href="dataflow.gmfgraph#BoxCompartment"/>
       </compartments>
     </ownedChild>
   </nodes>
   <links>
     <domainMetaElement
-        href="Dataflow.ecore#//Connection"/>
+        href="dataflow.ecore#//Connection"/>
     <containmentFeature
-        href="Dataflow.ecore#//Box/connections"/>
+        href="dataflow.ecore#//DataflowModel/connections"/>
     <tool
         xsi:type="gmftool:CreationTool"
-        href="Dataflow.gmftool#//@palette/@tools.0/@tools.1"/>
+        href="dataflow.gmftool#//@palette/@tools.0/@tools.1"/>
     <diagramLink
-        href="Dataflow.gmfgraph#Connection"/>
+        href="dataflow.gmfgraph#Connection"/>
     <sourceMetaFeature
         xsi:type="ecore:EReference"
-        href="Dataflow.ecore#//Connection/sourcePort"/>
+        href="dataflow.ecore#//Connection/sourcePort"/>
     <linkMetaFeature
         xsi:type="ecore:EReference"
-        href="Dataflow.ecore#//Connection/targetPort"/>
+        href="dataflow.ecore#//Connection/targetPort"/>
   </links>
   <diagram>
     <diagramCanvas
-        href="Dataflow.gmfgraph#dataflow"/>
+        href="dataflow.gmfgraph#dataflow"/>
     <domainModel
-        href="Dataflow.ecore#/"/>
+        href="dataflow.ecore#/"/>
     <domainMetaElement
-        href="Dataflow.ecore#//DataflowModel"/>
+        href="dataflow.ecore#//DataflowModel"/>
     <palette
-        href="Dataflow.gmftool#//@palette"/>
+        href="dataflow.gmftool#//@palette"/>
   </diagram>
 </gmfmap:Mapping>

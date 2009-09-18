@@ -27,74 +27,74 @@ import org.eclipse.emf.ecore.EFactory;
  */
 public interface DataflowFactory extends EFactory {
     /**
-	 * The singleton instance of the factory.
-	 * <!-- begin-user-doc -->
+     * The singleton instance of the factory.
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
     DataflowFactory eINSTANCE = de.cau.cs.kieler.dataflow.impl.DataflowFactoryImpl.init();
 
     /**
-	 * Returns a new object of class '<em>Box</em>'.
-	 * <!-- begin-user-doc -->
+     * Returns a new object of class '<em>Model</em>'.
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Box</em>'.
-	 * @generated
-	 */
-    Box createBox();
-
-    /**
-	 * Returns a new object of class '<em>Connection</em>'.
-	 * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Connection</em>'.
-	 * @generated
-	 */
-    Connection createConnection();
-
-    /**
-	 * Returns a new object of class '<em>Model</em>'.
-	 * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Model</em>'.
-	 * @generated
-	 */
+     * @return a new object of class '<em>Model</em>'.
+     * @generated
+     */
     DataflowModel createDataflowModel();
 
     /**
-	 * Returns a new object of class '<em>Port</em>'.
-	 * <!-- begin-user-doc -->
+     * Returns a new object of class '<em>Box</em>'.
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Port</em>'.
-	 * @generated
-	 */
+     * @return a new object of class '<em>Box</em>'.
+     * @generated
+     */
+    Box createBox();
+
+    /**
+     * Returns a new object of class '<em>Connection</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Connection</em>'.
+     * @generated
+     */
+    Connection createConnection();
+
+    /**
+     * Returns a new object of class '<em>Port</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Port</em>'.
+     * @generated
+     */
     Port createPort();
 
     /**
-	 * Returns a new object of class '<em>Input Port</em>'.
-	 * <!-- begin-user-doc -->
+     * Returns a new object of class '<em>Input Port</em>'.
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Input Port</em>'.
-	 * @generated
-	 */
+     * @return a new object of class '<em>Input Port</em>'.
+     * @generated
+     */
     InputPort createInputPort();
 
     /**
-	 * Returns a new object of class '<em>Output Port</em>'.
-	 * <!-- begin-user-doc -->
+     * Returns a new object of class '<em>Output Port</em>'.
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Output Port</em>'.
-	 * @generated
-	 */
+     * @return a new object of class '<em>Output Port</em>'.
+     * @generated
+     */
     OutputPort createOutputPort();
 
     /**
-	 * Returns the package supported by this factory.
-	 * <!-- begin-user-doc -->
+     * Returns the package supported by this factory.
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @return the package supported by this factory.
-	 * @generated
-	 */
+     * @return the package supported by this factory.
+     * @generated
+     */
     DataflowPackage getDataflowPackage();
 
 } //DataflowFactory

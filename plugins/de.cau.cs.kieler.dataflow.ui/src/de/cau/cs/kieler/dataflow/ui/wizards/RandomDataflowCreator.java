@@ -15,13 +15,23 @@ import de.cau.cs.kieler.dataflow.OutputPort;
 public class RandomDataflowCreator {
 
 	DataflowFactory df = DataflowFactory.eINSTANCE;
+	
 	/**
 	 * Probability that a new hierarchy level will be created upon the creation
 	 * of a new box.
 	 */
-	float hierarchyProb = 0.1f;
+	private float hierarchyProb = 0.1f;
 
-	DataflowModel createModel(int nodes, int minConnections,
+	/**
+	 * Creates a random dataflow model according to given parameters.
+	 * 
+	 * @param nodes number of nodes in the model
+	 * @param minConnections minimal number of outgoing connections per node
+	 * @param maxConnections maximal number of outgoing connections per node
+	 * @param hierarchyProb probability of new hierarchy level
+	 * @return a random dataflow model
+	 */
+	public DataflowModel createModel(int nodes, int minConnections,
 	        int maxConnections, float hierarchyProb) {
 		this.hierarchyProb = hierarchyProb;
 		DataflowModel dm = df.createDataflowModel();
@@ -32,11 +42,16 @@ public class RandomDataflowCreator {
 	}
 
 	/**
-	 * Creates a set of child subboxes in the parent, each box will have the
-	 * given amount of outgoing connections. New hierarchy levels are introduced
-	 * by random by the hierarchyProb variable.
+	 * Creates a set of child boxes in the parent, each box will have the
+     * given amount of outgoing connections. New hierarchy levels are introduced
+     * by random by the hierarchyProb variable.
+	 * 
+	 * @param parent the parent model
+	 * @param nodes number of nodes
+	 * @param minConnections minimal number of outgoing connections per node
+	 * @param maxConnections maximal number of outgoing connections per node
 	 */
-	void createBoxes(Box parent, int nodes, int minConnections, int maxConnections) {
+	private void createBoxes(DataflowModel parent, int nodes, int minConnections, int maxConnections) {
 		if (nodes <= 0)
 			return;
 		do {
@@ -47,16 +62,16 @@ public class RandomDataflowCreator {
 		} while (Math.random() > hierarchyProb && nodes > 0);
 
 		int thisLayerSize = parent.getBoxes().size();
-		for (Object box : parent.getBoxes()) {
+		for (Box box : parent.getBoxes()) {
 			// create new hierarchical layers by calling this recursively
-			createBoxes((Box) box, nodes / thisLayerSize, minConnections, maxConnections);
+			createBoxes(box, nodes / thisLayerSize, minConnections, maxConnections);
 			// connect inter-level hierarchy levels
-			connectInterlevelPorts((Box) box);
+			connectInterlevelPorts(box);
 			// connect this hierarchy layer
 			int connections = (int)Math.round(Math.random() * (maxConnections - minConnections))
 			        + minConnections;
 			for (int i = 0; i < connections; i++)
-				connectBox((Box) box, parent);
+				connectBox(box, parent);
 		}
 	}
 
@@ -66,10 +81,10 @@ public class RandomDataflowCreator {
 	 * Will create a new output port for the box and an input port for the
 	 * target box.
 	 * 
-	 * @param box
-	 * @param parent
+	 * @param box box to connect
+	 * @param parent the parent model
 	 */
-	void connectBox(Box box, Box parent) {
+	private void connectBox(Box box, DataflowModel parent) {
 		// find a random box on same hierarchy layer
 		int thisLayerSize = parent.getBoxes().size();
 		int randomIndex = randomInt(0, thisLayerSize - 1);
@@ -94,9 +109,10 @@ public class RandomDataflowCreator {
 	 * Takes a Box and creates new connections between its inputs/outputs
 	 * and lower level components. Each lower level component will
 	 * get a new input/output.
-	 * @param box
+	 * 
+	 * @param box box for which connections shall be created
 	 */
-	void connectInterlevelPorts(Box box) {
+	private void connectInterlevelPorts(Box box) {
 		// connect input ports with some random child box
 		for (Object inputPort : box.getInputs()) {
 			InputPort input = (InputPort) inputPort;
@@ -149,11 +165,11 @@ public class RandomDataflowCreator {
 	 * Returns a random integer number in the given range (including the
 	 * boundaries).
 	 * 
-	 * @param from
-	 * @param to
-	 * @return
+	 * @param from minimal number
+	 * @param to maximal number
+	 * @return a random integer number
 	 */
-	int randomInt(int from, int to) {
+	private int randomInt(int from, int to) {
 		double random = Math.random();
 		int size = to - from;
 		int offset = (int) Math.round(size * random);

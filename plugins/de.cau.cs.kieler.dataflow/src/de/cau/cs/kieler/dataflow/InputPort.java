@@ -24,7 +24,7 @@ package de.cau.cs.kieler.dataflow;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link de.cau.cs.kieler.dataflow.InputPort#getInputParent <em>Input Parent</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.dataflow.InputPort#getParentBox <em>Parent Box</em>}</li>
  * </ul>
  * </p>
  *
@@ -34,31 +34,31 @@ package de.cau.cs.kieler.dataflow;
  */
 public interface InputPort extends Port {
     /**
-	 * Returns the value of the '<em><b>Input Parent</b></em>' container reference.
-	 * It is bidirectional and its opposite is '{@link de.cau.cs.kieler.dataflow.Box#getInputs <em>Inputs</em>}'.
-	 * <!-- begin-user-doc -->
+     * Returns the value of the '<em><b>Parent Box</b></em>' container reference.
+     * It is bidirectional and its opposite is '{@link de.cau.cs.kieler.dataflow.Box#getInputs <em>Inputs</em>}'.
+     * <!-- begin-user-doc -->
      * <p>
-     * If the meaning of the '<em>Input Parent</em>' container reference isn't clear,
+     * If the meaning of the '<em>Parent Box</em>' container reference isn't clear,
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-	 * @return the value of the '<em>Input Parent</em>' container reference.
-	 * @see #setInputParent(Box)
-	 * @see de.cau.cs.kieler.dataflow.DataflowPackage#getInputPort_InputParent()
-	 * @see de.cau.cs.kieler.dataflow.Box#getInputs
-	 * @model opposite="inputs" required="true" transient="false"
-	 * @generated
-	 */
-    Box getInputParent();
+     * @return the value of the '<em>Parent Box</em>' container reference.
+     * @see #setParentBox(Box)
+     * @see de.cau.cs.kieler.dataflow.DataflowPackage#getInputPort_ParentBox()
+     * @see de.cau.cs.kieler.dataflow.Box#getInputs
+     * @model opposite="inputs" required="true" transient="false"
+     * @generated
+     */
+    Box getParentBox();
 
     /**
-	 * Sets the value of the '{@link de.cau.cs.kieler.dataflow.InputPort#getInputParent <em>Input Parent</em>}' container reference.
-	 * <!-- begin-user-doc -->
+     * Sets the value of the '{@link de.cau.cs.kieler.dataflow.InputPort#getParentBox <em>Parent Box</em>}' container reference.
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Input Parent</em>' container reference.
-	 * @see #getInputParent()
-	 * @generated
-	 */
-    void setInputParent(Box value);
+     * @param value the new value of the '<em>Parent Box</em>' container reference.
+     * @see #getParentBox()
+     * @generated
+     */
+    void setParentBox(Box value);
 
 } // InputPort
