@@ -21,6 +21,7 @@ import org.eclipse.core.commands.IHandler;
 
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.Transformation;
+import de.cau.cs.kieler.ksbase.core.TransformationManager;
 import de.cau.cs.kieler.ksbase.ui.TransformationUIManager;
 
 /**
@@ -34,15 +35,19 @@ public class TransformationCommandHandler extends AbstractHandler implements
     private EditorTransformationSettings editor; //The editor that contains the settings for this handler
     private Transformation transformation; //The transformation that should be executed
 
+    public TransformationCommandHandler() {
+        editor = null;
+        transformation = null;
+    }
     /**
      * Creates a new command handler
      * @param editor The editor that contains the settings for this handler
      * @param transformation The transformation that should be executed
      */
-    public TransformationCommandHandler(EditorTransformationSettings editor,
-            Transformation transformation) {
-        this.editor = editor;
-        this.transformation = transformation;
+    public TransformationCommandHandler(String editorAndTransformation) {
+        String[] parameters = editorAndTransformation.split(":");
+        this.editor = TransformationManager.instance.getEditorByName(parameters[0]);
+        this.transformation = editor.getTransformationByName(parameters[1]);
     }
 
     /**

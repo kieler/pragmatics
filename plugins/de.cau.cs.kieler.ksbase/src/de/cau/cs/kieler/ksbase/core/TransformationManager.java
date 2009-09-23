@@ -353,6 +353,7 @@ public class TransformationManager {
                                 transformations.length() - 1));
             }
         }
+        if (editors.length() > 0)
         // trunc the last ','
         store.setValue(Messages.Preferences_RegisteredEditors, editors
                 .substring(0, editors.length() - 1));

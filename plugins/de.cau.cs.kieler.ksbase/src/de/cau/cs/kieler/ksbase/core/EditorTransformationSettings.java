@@ -204,7 +204,19 @@ public class EditorTransformationSettings implements Serializable {
     public LinkedList<Transformation> getTransformations() {
         return transformations;
     }
-
+    
+    /**
+     * Tries to find a transformation with a given name
+     * @param transformation
+     * @return
+     */
+    public Transformation getTransformationByName(String transformation) {
+        for ( Transformation t : transformations) {
+            if ( t.getTransformationName().equals(transformation))
+                return t;
+        }
+        return null;
+    }
     /**
      * Sets the transformation list
      * @param transformations A LinkedList containing the transformations
