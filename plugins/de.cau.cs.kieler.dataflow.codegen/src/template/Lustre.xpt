@@ -4,7 +4,8 @@
 
 «DEFINE main FOR DataflowModel»
 	«FILE (name==null?"Dummy":name) + ".lus"»
-«this.init()-»	
+
+«FOREACH boxes AS box-»«box.init()-»«ENDFOREACH-»	
 «FOREACH boxes AS box-»«box.initIO()-»«ENDFOREACH-»	
 «FOREACH boxes AS box-»«box.inferTypes()-»«ENDFOREACH-»
 node «name» (
@@ -16,7 +17,7 @@ node «name» (
   «output.getName()»: «getType(output)»; 
 «ENDFOREACH-»
 );
-«IF hasLocals()-»
+«IF this.boxes.first().hasLocals()-»
 var
 «FOREACH getLocals() AS local-»
   «local.getName()»: «getType(local)»;  
