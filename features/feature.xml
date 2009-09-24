@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="de.cau.cs.kieler.krep"
+      label="Krep EvalBench"
+      version="0.1.0.qualifier"
+      provider-name="Christian-Albrechts-Universität zu Kiel">
+
+   <description url="http://www.informatik.uni-kiel.de/rtsys/krep">
+      Evaluation Bench for Kiel reactive processors
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <url>
+      <update label="KIELER nightly builds Update Site" url="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly"/>
+   </url>
+
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.apache.log4j"/>
+      <import plugin="de.cau.cs.kieler.krep.evalbench.base" version="0.1.0" match="greaterOrEqual"/>
+   </requires>
+
+   <plugin
+         id="de.cau.cs.kieler.krep.evalbench.base"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.krep.help"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="de.cau.cs.kieler.krep.proc.kep"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"/>
+
+   <plugin
+         id="de.cau.cs.kieler.krep.proc.klp"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"/>
+
+</feature>
