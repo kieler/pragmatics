@@ -32,32 +32,25 @@ import de.cau.cs.kieler.ksbase.ui.TransformationUIManager;
 public class TransformationCommandHandler extends AbstractHandler implements
         IHandler {
 
-    private EditorTransformationSettings editor; //The editor that contains the settings for this handler
-    private Transformation transformation; //The transformation that should be executed
-
-    public TransformationCommandHandler() {
-        editor = null;
-        transformation = null;
-    }
+	//FIXME: Check if we need editor, transformation settings for non-extension point commands
     /**
      * Creates a new command handler
-     * @param editor The editor that contains the settings for this handler
-     * @param transformation The transformation that should be executed
      */
-    public TransformationCommandHandler(String editorAndTransformation) {
-        String[] parameters = editorAndTransformation.split(":");
-        this.editor = TransformationManager.instance.getEditorByName(parameters[0]);
-        this.transformation = editor.getTransformationByName(parameters[1]);
+    public TransformationCommandHandler() {
     }
 
     /**
-     * Execute the transformation.
+     * Execute a transformation.
+     * The editor and transformation settings are given by the extension point parameters
      * Uses the TransformationUI manager to create and execute the transformation
      */
     public Object execute(ExecutionEvent event) throws ExecutionException {
+    	//FIXME: Check for null params
+    	EditorTransformationSettings editor = TransformationManager.instance.getEditorByName(event.getParameter("editor"));
+    	
         TransformationUIManager.instance
                 .createAndExecuteTransformationCommand(event, editor,
-                        transformation);
+                        editor.getTransformationByName(event.getParameter("transformation")));
         return null;
     }
 }

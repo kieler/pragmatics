@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+	<extension point="org.eclipse.ui.commands">
+		<command
+        categoryId="de.cau.cs.kieler.ksbase.ui.ksbaseCategory"
+        id="de.cau.cs.kieler.ksbase.de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor.Add_Successor_State"
+        name="Add Successor State">
+     <commandParameter
+           id="addsucstate"
+           name="editor"
+           optional="true"
+           values="de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor">
+     </commandParameter>
+  </command>
+		<command categoryId="de.cau.cs.kieler.ksbase.ui.ksbaseCategory"
+			id="de.cau.cs.kieler.ksbase.de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor.Add_Predecessor_State"
+			name="Add Predecessor State" />
+		<command categoryId="de.cau.cs.kieler.ksbase.ui.ksbaseCategory"
+			id="de.cau.cs.kieler.ksbase.de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor.Add_Choice"
+			name="Add Choice" />
+		<command categoryId="de.cau.cs.kieler.ksbase.ui.ksbaseCategory"
+			id="de.cau.cs.kieler.ksbase.de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor.Flip_Transition"
+			name="Flip Transition" />
+	</extension>
+	<extension point="org.eclipse.ui.menus">
+		<menuContribution locationURI="menu:org.eclipse.ui.main.menu?after=window">
+			<menu
+				id="de.cau.cs.kieler.ksbase.menu.de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor"
+				label="KIELER">
+				<visibleWhen checkEnabled="false">
+					<iterate ifEmpty="false" operator="or">
+						<with variable="activeEditor">
+							<instanceof
+								value="de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor" />
+						</with>
+					</iterate>
+				</visibleWhen>
+				<command
+					commandId="de.cau.cs.kieler.ksbase.de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor.Add_Successor_State"
+					label="Add Successor State" />
+				<command
+					commandId="de.cau.cs.kieler.ksbase.de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor.Add_Predecessor_State"
+					label="Add Predecessor State" />
+				<command
+					commandId="de.cau.cs.kieler.ksbase.de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor.Add_Choice"
+					label="Add Choice" />
+				<command
+					commandId="de.cau.cs.kieler.ksbase.de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor.Flip_Transition"
+					label="Flip Transition" />
+			</menu>
+		</menuContribution>
+	</extension>
+	<extension point="org.eclipse.ui.bindings">
+		<key
+			commandId="de.cau.cs.kieler.ksbase.de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor.Add_Successor_State"
+			contextId="de.cau.cs.kieler.synccharts.diagram.ui.diagramContext"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" sequence="CTRL+K S" />
+		<key
+			commandId="de.cau.cs.kieler.ksbase.de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor.Add_Predecessor_State"
+			contextId="de.cau.cs.kieler.synccharts.diagram.ui.diagramContext"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" sequence="CTRL+K P" />
+		<key
+			commandId="de.cau.cs.kieler.ksbase.de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor.Add_Choice"
+			contextId="de.cau.cs.kieler.synccharts.diagram.ui.diagramContext"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" sequence="CTRL+K C" />
+		<key
+			commandId="de.cau.cs.kieler.ksbase.de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor.Flip_Transition"
+			contextId="de.cau.cs.kieler.synccharts.diagram.ui.diagramContext"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" sequence="CTRL+K F" />
+	</extension>
+	<extension point="org.eclipse.ui.handlers">
+		<handler
+			commandId="de.cau.cs.kieler.ksbase.de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor.Add_Successor_State">
+			<class
+				class="de.cau.cs.kieler.ksbase.ui.handler.TransformationCommandHandler">
+				<parameter name="editor"
+					value="de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor" />
+				<parameter name="transformation" value="addSuccessorState" />
+			</class>
+		</handler>
+		<handler
+			commandId="de.cau.cs.kieler.ksbase.de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor.Add_Predecessor_State">
+			<class
+				class="de.cau.cs.kieler.ksbase.ui.handler.TransformationCommandHandler">
+				<parameter name="editor"
+					value="de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor" />
+				<parameter name="transformation" value="addPredecessorState" />
+			</class>
+		</handler>
+		<handler
+			commandId="de.cau.cs.kieler.ksbase.de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor.Add_Choice">
+			<class
+				class="de.cau.cs.kieler.ksbase.ui.handler.TransformationCommandHandler">
+				<parameter name="editor"
+					value="de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor" />
+				<parameter name="transformation" value="addChoice" />
+			</class>
+		</handler>
+		<handler
+			commandId="de.cau.cs.kieler.ksbase.de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor.Flip_Transition">
+			<class
+				class="de.cau.cs.kieler.ksbase.ui.handler.TransformationCommandHandler">
+				<parameter name="editor"
+					value="de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor" />
+				<parameter name="transformation" value="flipTransition" />
+			</class>
+		</handler>
+	</extension>
+</plugin>
