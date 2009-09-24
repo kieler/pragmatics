@@ -26,32 +26,45 @@ import de.cau.cs.kieler.ksbase.ui.TransformationUIManager;
 
 /**
  * The generic transformation handler used for all UI elements
+ * 
  * @author Michael Matzen
- *
+ * 
  */
 public class TransformationCommandHandler extends AbstractHandler implements
-        IHandler {
+		IHandler {
 
-	//FIXME: Check if we need editor, transformation settings for non-extension point commands
-    /**
-     * Creates a new command handler
-     */
-    public TransformationCommandHandler() {
-    }
+	public static final String EDITOR_PARAM = "de.cau.cs.kieler.ksbase.editorParameter";
+	public static final String TRANSFORMATION_PARAM = "de.cau.cs.kieler.ksbase.transformationParameter";
 
-    /**
-     * Execute a transformation.
-     * The editor and transformation settings are given by the extension point parameters
-     * Uses the TransformationUI manager to create and execute the transformation
-     */
-    public Object execute(ExecutionEvent event) throws ExecutionException {
-    	//FIXME: Check for null params
-    	EditorTransformationSettings editor = TransformationManager.instance.getEditorByName(event.getParameter("editor"));
-    	
-        TransformationUIManager.instance
-                .createAndExecuteTransformationCommand(event, editor,
-                        editor.getTransformationByName(event.getParameter("transformation")));
-        return null;
-    }
+	// FIXME: Check if we need editor, transformation settings for non-extension
+	// point commands
+	/**
+	 * Creates a new command handler
+	 */
+	public TransformationCommandHandler() {
+	}
+
+	/**
+	 * Execute a transformation. The editor and transformation settings are
+	 * given by the extension point parameters Uses the TransformationUI manager
+	 * to create and execute the transformation
+	 */
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+
+		if (!TransformationManager.instance.isInitalized()) {
+			TransformationManager.instance.initializeTransformations();
+		}
+		EditorTransformationSettings editor = TransformationManager.instance
+				.getEditorByName(event.getParameter(EDITOR_PARAM));
+		if (editor != null) {
+			TransformationUIManager.instance
+					.createAndExecuteTransformationCommand(event, editor,
+							editor.getTransformationByName(event
+									.getParameter(TRANSFORMATION_PARAM)));
+		}
+		else {
+			System.err.println("error no transformation defined!");
+		}
+		return null;
+	}
 }
- 

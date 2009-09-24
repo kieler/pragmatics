@@ -42,6 +42,7 @@ import org.w3c.dom.Element;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.Transformation;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
+import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 import de.cau.cs.kieler.viewmanagement.Activator;
 
 public class DynamicMenuContributions {
@@ -119,6 +120,14 @@ public class DynamicMenuContributions {
                         command.setAttribute("name", t.getName());
                         command.setAttribute("categoryId",
                                 "de.cau.cs.kieler.ksbase.ui.ksbaseCategory");
+                        Element commandParameter = extension.createElement("commandParameter");
+                        commandParameter.setAttribute("id", "de.cau.cs.kieler.ksbase.editorParameter");
+                        commandParameter.setAttribute("name", "editor");
+                        command.appendChild(commandParameter);
+                        commandParameter = extension.createElement("commandParameter");
+                        commandParameter.setAttribute("id", "de.cau.cs.kieler.ksbase.transformationParameter");
+                        commandParameter.setAttribute("name", "transformation");
+                        command.appendChild(commandParameter);
                         commandExtension.appendChild(command);
                         
                         // KeyBindings
@@ -139,46 +148,49 @@ public class DynamicMenuContributions {
                             // FIXME: menuCommand.setAttribute("icon",
                             // "icons/");
                             menuCommand.setAttribute("label", t.getName());
+                            //Set command parameters
+                            Element handlerParam = extension.createElement("parameter");
+                            handlerParam.setAttribute("name", "de.cau.cs.kieler.ksbase.editorParameter");
+                            handlerParam.setAttribute("value", editor.getEditor());
+                            menuCommand.appendChild(handlerParam);
+                            handlerParam = extension.createElement("parameter");
+                            handlerParam.setAttribute("name", "de.cau.cs.kieler.ksbase.transformationParameter");
+                            handlerParam.setAttribute("value", t.getTransformationName());
+                            menuCommand.appendChild(handlerParam);
                             menu.appendChild(menuCommand);
                             
                             //Command handler extensions
                             Element handlerCommand = extension.createElement("handler");
                             handlerCommand.setAttribute("commandId", commandID);
-                            //Set handler class
-                            Element handlerClass = extension.createElement("class");
-                            handlerClass.setAttribute("class", "de.cau.cs.kieler.ksbase.ui.handler.TransformationCommandHandler");
-                            //Set class parameters
-                            Element handlerParam = extension.createElement("parameter");
-                            handlerParam.setAttribute("name", "editor");
-                            handlerParam.setAttribute("value", editor.getEditor());
-                            handlerClass.appendChild(handlerParam);
-                            handlerParam = extension.createElement("parameter");
-                            handlerParam.setAttribute("name", "transformation");
-                            handlerParam.setAttribute("value", t.getTransformationName());
-                            handlerClass.appendChild(handlerParam);
-                            handlerCommand.appendChild(handlerClass);
+                            handlerCommand.setAttribute("class", "de.cau.cs.kieler.ksbase.ui.handler.TransformationCommandHandler");
+                            
                             //Handler restrictions
                             Element handlerEnabled = extension
                                     .createElement("enabledWhen");
                             Element visAnd = extension.createElement("and");
+                            Element visWith = extension.createElement("with");
+                            visWith.setAttribute("variable", "selection");
                             Element visCount = extension.createElement("count");
                             visCount.setAttribute("value", String.valueOf(t.getNumSelections()));
-                            visAnd.appendChild(visCount);
+                            visWith.appendChild(visCount);
+                            
+                            Element visOr = extension.createElement("or");
                             
                             if (t.getPartConfig().length > 0) {
-                                Element visIterate = extension
-                                        .createElement("iterate");
-                                visIterate.setAttribute("ifEmpty", "false");
-                                visIterate.setAttribute("operator", "or");
                                 for (String part : t.getPartConfig()) {
+                                    Element visIterate = extension
+                                            .createElement("iterate");
                                     Element visInstance = extension
                                             .createElement("instanceof");
                                     visInstance.setAttribute("value", part);
                                     visIterate.appendChild(visInstance);
+                                    visOr.appendChild(visIterate);
                                 }
-                                visAnd.appendChild(visIterate);
                             }
+                            visWith.appendChild(visOr);
+                            visAnd.appendChild(visWith);
                             handlerEnabled.appendChild(visAnd);
+                            
                             handlerCommand.appendChild(handlerEnabled);
                             handlerExtension.appendChild(handlerCommand);
                             
@@ -210,9 +222,10 @@ public class DynamicMenuContributions {
                 Object key = ((ExtensionRegistry)reg).getTemporaryUserToken();
                 //FIXME: Use 'this' ?
                 Bundle bundle = Activator.getDefault().getBundle();
+                
                 IContributor contributor = ContributorFactoryOSGi.createContributor(bundle);
                 ByteArrayInputStream is = new ByteArrayInputStream(str.toString().getBytes("UTF-8"));
-                //reg.addContribution(is, contributor, false, null, null, key);
+                reg.addContribution(is, contributor, false, null, null, key);
              
             } catch (IOException e) {
                 // TODO Auto-generated catch block
