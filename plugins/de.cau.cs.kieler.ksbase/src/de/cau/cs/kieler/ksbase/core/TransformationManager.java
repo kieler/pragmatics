@@ -42,6 +42,7 @@ public class TransformationManager {
 
     private LinkedList<EditorTransformationSettings> registeredEditors;// The currently registered editors
     private boolean workspaceSettings;
+    private boolean isInitialized;
     
     // Thread-safe initialization
     public static TransformationManager instance = new TransformationManager();
@@ -51,6 +52,7 @@ public class TransformationManager {
      */
     private TransformationManager() {
         workspaceSettings = false;
+        isInitialized = false;
         registeredEditors = new LinkedList<EditorTransformationSettings>();
     }
 
@@ -79,6 +81,9 @@ public class TransformationManager {
         return null;
     }
 
+    public boolean isInitalized() {
+    	return isInitialized;
+    }
     /**
      * Adds a new editor to the list of registered editors.
      * 
@@ -275,6 +280,7 @@ public class TransformationManager {
                 registeredEditors.add(editor);
             }
         }
+        isInitialized = true;
     }
 
     /**
