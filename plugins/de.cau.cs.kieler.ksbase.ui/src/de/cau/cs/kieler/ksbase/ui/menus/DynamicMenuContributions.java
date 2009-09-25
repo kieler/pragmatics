@@ -15,9 +15,6 @@
 package de.cau.cs.kieler.ksbase.ui.menus;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.LinkedList;
@@ -31,6 +28,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.internal.registry.ExtensionRegistry;
+import org.eclipse.core.internal.runtime.Activator;
 import org.eclipse.core.runtime.ContributorFactoryOSGi;
 import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -42,9 +40,8 @@ import org.w3c.dom.Element;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.Transformation;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
-import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
-import de.cau.cs.kieler.viewmanagement.Activator;
 
+@SuppressWarnings("restriction")
 public class DynamicMenuContributions {
 
     public static final DynamicMenuContributions instance = new DynamicMenuContributions();
@@ -138,7 +135,7 @@ public class DynamicMenuContributions {
                                 .setAttribute("schemeId",
                                         "org.eclipse.ui.defaultAcceleratorConfiguration");
                         key.setAttribute("sequence", t.getKeyboardShortcut());
-                        bindingExtension.appendChild(key);
+                        
 
                         if (editor.isShownInMenu() && t.isShownInMenu()) {
                             // Menu commands
@@ -153,17 +150,30 @@ public class DynamicMenuContributions {
                             handlerParam.setAttribute("name", "de.cau.cs.kieler.ksbase.editorParameter");
                             handlerParam.setAttribute("value", editor.getEditor());
                             menuCommand.appendChild(handlerParam);
+                            
+                            //key needs attribute 'id' instead of name ....
+                            Element keyParam = (Element)handlerParam.cloneNode(true);
+                            keyParam.removeAttribute("name");
+                            keyParam.setAttribute("id",  "de.cau.cs.kieler.ksbase.editorParameter");
+                            key.appendChild(keyParam);
+                            
                             handlerParam = extension.createElement("parameter");
                             handlerParam.setAttribute("name", "de.cau.cs.kieler.ksbase.transformationParameter");
                             handlerParam.setAttribute("value", t.getTransformationName());
                             menuCommand.appendChild(handlerParam);
                             menu.appendChild(menuCommand);
                             
+                            keyParam = (Element) handlerParam.cloneNode(true);
+                            keyParam.removeAttribute("name");
+                            keyParam.setAttribute("id",  "de.cau.cs.kieler.ksbase.transformationParameter");
+                            key.appendChild(keyParam);
+                            
                             //Command handler extensions
                             Element handlerCommand = extension.createElement("handler");
                             handlerCommand.setAttribute("commandId", commandID);
-                            handlerCommand.setAttribute("class", "de.cau.cs.kieler.ksbase.ui.handler.TransformationCommandHandler");
-                            
+                            Element classHandler = extension.createElement("class");
+                            classHandler.setAttribute("class", "de.cau.cs.kieler.ksbase.ui.handler.TransformationCommandHandler");
+                            handlerCommand.appendChild(classHandler);
                             //Handler restrictions
                             Element handlerEnabled = extension
                                     .createElement("enabledWhen");
@@ -192,6 +202,7 @@ public class DynamicMenuContributions {
                             handlerEnabled.appendChild(visAnd);
                             
                             handlerCommand.appendChild(handlerEnabled);
+                            bindingExtension.appendChild(key);
                             handlerExtension.appendChild(handlerCommand);
                             
                         }
@@ -216,12 +227,13 @@ public class DynamicMenuContributions {
                                 new StreamResult(
                                         str));
                 
-                System.out.println(str.toString());
+                //System.out.println(str.toString());
                 
                 IExtensionRegistry reg = RegistryFactory.getRegistry();
                 Object key = ((ExtensionRegistry)reg).getTemporaryUserToken();
                 //FIXME: Use 'this' ?
-                Bundle bundle = Activator.getDefault().getBundle();
+                
+                Bundle bundle = Activator.getDefault().getBundle("de.cau.cs.kieler.ksbase.ui");
                 
                 IContributor contributor = ContributorFactoryOSGi.createContributor(bundle);
                 ByteArrayInputStream is = new ByteArrayInputStream(str.toString().getBytes("UTF-8"));
