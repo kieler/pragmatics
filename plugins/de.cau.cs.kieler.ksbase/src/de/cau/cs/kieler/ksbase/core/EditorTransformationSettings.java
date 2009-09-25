@@ -18,7 +18,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
-import java.net.URI;
 import java.util.LinkedList;
 
 import org.eclipse.core.resources.IFile;
@@ -40,18 +39,20 @@ public class EditorTransformationSettings implements Serializable {
 
     private static final long serialVersionUID = -208150422554311871L;
     private String modelPackageClass; // The model package class
-    private String menuName; // Name of the menu
+    private String menuName; // Name of the menu 
     private String menuLocation; // Location of the menu
     private String toolbarLocation; // Location of the tool bar
     private String popupLocation; //Location of the popup menu
     private int visibilityFlags; // Visibility flags (see KSBasePlugin.java)
     private boolean performAutoLayout; // Run auto-layout after transformation
-    private URI defaultIconURI; // Default icon for menu/tool bar/balloon/popup menu entries
+    private String defaultIcon; // Default icon for menu/tool bar/balloon/popup menu entries
     private String editor; // Editor to which this setting is assigned
     private String extFile; // Xtend file in which the transformations are defined
     private String context; // The context for the diagram editor, required for key bindings
     private LinkedList<Transformation> transformations; // The current List of Transformations
 
+    //for internal uses
+    private String contributor; //The contributor which contains the extension points
     /**
      * Creates a new transformation setting with the given editor diagram class
      * 
@@ -67,11 +68,12 @@ public class EditorTransformationSettings implements Serializable {
         this.menuLocation = Messages.EditorTransformationSettings_Default_Menu_Location;
         this.toolbarLocation = Messages.EditorTransformationSettings_Default_Toolbar_Location;
         this.popupLocation = "popup:org.eclipse.gmf.runtime.diagram.ui.DiagramEditorContextMenu";
-        this.defaultIconURI = URI.create(""); //$NON-NLS-1$
+        this.defaultIcon = "";
         this.extFile = ""; //$NON-NLS-1$
         this.context = "";
         this.transformations = new LinkedList<Transformation>();
         this.performAutoLayout = true;
+        this.contributor = "";
     }
 
     /**
@@ -161,7 +163,7 @@ public class EditorTransformationSettings implements Serializable {
      * Toolbar visibility 
      * @return true if a toolbar should be visible
      */
-    public boolean isShownIToolbar() {
+    public boolean isShownInToolbar() {
         return (this.visibilityFlags & KSBasEPlugin.SHOW_TOOLBAR) == KSBasEPlugin.SHOW_TOOLBAR;
     }
 
@@ -185,16 +187,16 @@ public class EditorTransformationSettings implements Serializable {
      * Returns the URI to the default icon
      * @return URI to the default icon, no checks are done if this is a valid URI
      */
-    public URI getDefaultIconURI() {
-        return defaultIconURI;
+    public String getDefaultIcon() {
+        return defaultIcon;
     }
 
     /**
      * Sets the URI to the default icon
      * @param defaultIconURI URI to the default icon
      */
-    public void setDefaultIconURI(URI defaultIconURI) {
-        this.defaultIconURI = defaultIconURI;
+    public void setDefaultIcon(String icon) {
+        this.defaultIcon= icon;
     }
 
     /**
@@ -325,6 +327,14 @@ public class EditorTransformationSettings implements Serializable {
      */
     public void setExtFile(String file) {
         this.extFile = file;
+    }
+
+    public String getContributor() {
+        return contributor;
+    }
+
+    public void setContributor(String contributor) {
+        this.contributor = contributor;
     }
 
     /**

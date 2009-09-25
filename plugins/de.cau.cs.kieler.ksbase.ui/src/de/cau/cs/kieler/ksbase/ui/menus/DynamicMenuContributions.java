@@ -76,7 +76,7 @@ public class DynamicMenuContributions {
                         "org.eclipse.ui.bindings");
                 Element menuExtension = extension.createElement("extension");
                 menuExtension.setAttribute("point", "org.eclipse.ui.menus");
-                
+
                 Element menuContribution = extension
                         .createElement("menuContribution");
                 Element menu = extension.createElement("menu");
@@ -84,6 +84,9 @@ public class DynamicMenuContributions {
                 Element popupContribution = extension
                         .createElement("menuContribution");
                 Element popup = extension.createElement("menu");
+
+                Element toolbarContribution = extension
+                        .createElement("menuContribution");
 
                 Element handlerExtension = extension.createElement("extension");
                 handlerExtension.setAttribute("point",
@@ -102,10 +105,12 @@ public class DynamicMenuContributions {
                         System.out.println("add to exsiting");
                     else
                         System.out.println("create new");
-                    
+
                     String menuID = "de.cau.cs.kieler.ksbase.menu."
                             + editor.getEditor();
                     String popupID = "de.cau.cs.kieler.ksbase.popup."
+                            + editor.getEditor();
+                    String toolbarID = "de.cau.cs.kieler.ksbase.toolbar." 
                             + editor.getEditor();
 
                     // Create visibility flags for menus
@@ -140,7 +145,16 @@ public class DynamicMenuContributions {
                         popup.setAttribute("label", editor.getMenuName());
                         popup.appendChild(menuVisible.cloneNode(true));
                     }
-
+                    if (editor.isShownInToolbar()) {
+                        // Toolbar contributions
+                        toolbarContribution.setAttribute("locationURI", editor
+                                .getToolbarLocation());
+                        if (!addtoExisting) {
+                            toolbarContribution.setAttribute("id", toolbarID);
+                            toolbarContribution.appendChild(menuVisible
+                                    .cloneNode(true));
+                        }
+                    }
                     for (Transformation t : editor.getTransformations()) {
                         // Command extension points
                         String commandID = "de.cau.cs.kieler.ksbase."
@@ -175,11 +189,21 @@ public class DynamicMenuContributions {
                                         "org.eclipse.ui.defaultAcceleratorConfiguration");
                         key.setAttribute("sequence", t.getKeyboardShortcut());
 
-                        if (editor.isShownInMenu() || editor.isShownInContext()) {
+                        if (editor.isShownInMenu() || editor.isShownInContext()
+                                || editor.isShownInToolbar()) {
                             // Menu commands
                             Element menuCommand = extension
                                     .createElement("command");
                             menuCommand.setAttribute("commandId", commandID);
+                            if (t.getIcon() != null && t.getIcon().length() > 0) {
+                                System.out.println("has transition icon");
+                                menuCommand.setAttribute("icon", t.getIcon());
+                            } else if (editor.getDefaultIcon() != null
+                                    && editor.getDefaultIcon().length() > 0) {
+                                System.out.println("has editor default icon");
+                                menuCommand.setAttribute("icon", editor
+                                        .getDefaultIcon());
+                            }
                             // FIXME: menuCommand.setAttribute("icon",
                             // "icons/");
                             menuCommand.setAttribute("label", t.getName());
@@ -225,7 +249,12 @@ public class DynamicMenuContributions {
                                     popupContribution.appendChild(menuCommand
                                             .cloneNode(true));
                             }
-
+                            if (t.isShownInToolbar()) {
+                                // FIXME: Is it possible to add toolbar
+                                // submenus?
+                                toolbarContribution.appendChild(menuCommand
+                                        .cloneNode(true));
+                            }
                             keyParam = (Element) handlerParam.cloneNode(true);
                             keyParam.removeAttribute("name");
                             keyParam
@@ -288,42 +317,47 @@ public class DynamicMenuContributions {
                     if (editor.isShownInMenu()) {
                         // completing menu
                         menuExtension.appendChild(menuContribution);
-                        if ( !addtoExisting)
-                        menuContribution.appendChild(menu);
+                        if (!addtoExisting)
+                            menuContribution.appendChild(menu);
                     }
-
-                    
                     if (editor.isShownInContext()) {
                         // completing popup
                         menuExtension.appendChild(popupContribution);
                         if (!addtoExisting)
-                        popupContribution.appendChild(popup);
+                            popupContribution.appendChild(popup);
+                    }
+                    if (editor.isShownInToolbar()) {
+                        // completing toolbar
+                        menuExtension.appendChild(toolbarContribution);
+                    }
+
+                    plugin.appendChild(commandExtension);
+                    plugin.appendChild(menuExtension);
+                    plugin.appendChild(bindingExtension);
+                    plugin.appendChild(handlerExtension);
+                    extension.appendChild(plugin);
+                    StringWriter str = new StringWriter();
+                    TransformerFactory.newInstance().newTransformer()
+                            .transform(new DOMSource(extension),
+                                    new StreamResult(str));
+
+                    System.out.println(str.toString());
+
+                    IExtensionRegistry reg = RegistryFactory.getRegistry();
+                    Object key = ((ExtensionRegistry) reg)
+                            .getTemporaryUserToken();
+                    if (editor.getContributor() != null) {
+                        Bundle bundle = Activator.getDefault().getBundle(
+                                editor.getContributor());
+
+                        IContributor contributor = ContributorFactoryOSGi
+                                .createContributor(bundle);
+                        ByteArrayInputStream is = new ByteArrayInputStream(str
+                                .toString().getBytes("UTF-8"));
+                        reg.addContribution(is, contributor, false, null, null,
+                                key);
                     }
                 }
-
-                plugin.appendChild(commandExtension);
-                plugin.appendChild(menuExtension);
-                plugin.appendChild(bindingExtension);
-                plugin.appendChild(handlerExtension);
-                extension.appendChild(plugin);
-                StringWriter str = new StringWriter();
-                TransformerFactory.newInstance().newTransformer().transform(
-                        new DOMSource(extension), new StreamResult(str));
-
-                System.out.println(str.toString());
-
-                IExtensionRegistry reg = RegistryFactory.getRegistry();
-                Object key = ((ExtensionRegistry) reg).getTemporaryUserToken();
-                // FIXME: Use 'this' ?
-
-                Bundle bundle = Activator.getDefault().getBundle(
-                        "de.cau.cs.kieler.ksbase.ui");
-
-                IContributor contributor = ContributorFactoryOSGi
-                        .createContributor(bundle);
-                ByteArrayInputStream is = new ByteArrayInputStream(str
-                        .toString().getBytes("UTF-8"));
-                reg.addContribution(is, contributor, false, null, null, key);
 
             } catch (IOException e) {
                 // TODO Auto-generated catch block

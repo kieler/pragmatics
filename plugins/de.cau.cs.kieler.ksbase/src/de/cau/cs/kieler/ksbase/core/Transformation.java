@@ -17,7 +17,6 @@ package de.cau.cs.kieler.ksbase.core;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.net.URI;
 
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 
@@ -37,7 +36,7 @@ public class Transformation implements Serializable {
     private String transformationName; // Xtend method name
     private int visibilityFlags; // Visibility configuration, any combination of visibility Flags from KSBasePlugin
     private int numSelections; // Number of selections;
-    private URI iconURI; // URI to icon
+    private String icon; // URI to icon
     private String keyboardShortcut; // Assigned keyboard shortcut
     private String[] partConfig; // Parts for which this transformation is defined
 
@@ -51,7 +50,7 @@ public class Transformation implements Serializable {
                 | KSBasEPlugin.SHOW_CONTEXT | KSBasEPlugin.SHOW_TOOLBAR
                 | KSBasEPlugin.SHOW_BALLOON;
         numSelections = 1;
-        iconURI = URI.create("");
+        icon = "";
         keyboardShortcut = "";
         partConfig = null;
     }
@@ -95,8 +94,8 @@ public class Transformation implements Serializable {
      * Sets the iconURI used by the toolbar and the balloon menus
      * @param uri
      */
-    public void setIconURI(URI uri) {
-        this.iconURI = uri;
+    public void setIcon(String uri) {
+        this.icon = uri;
     }
 
     /**
@@ -127,7 +126,7 @@ public class Transformation implements Serializable {
      * Returns true if this transformation should be visible in the toolbar
      * @return
      */
-    public boolean isShownIToolbar() {
+    public boolean isShownInToolbar() {
         return (this.visibilityFlags & KSBasEPlugin.SHOW_TOOLBAR) == KSBasEPlugin.SHOW_TOOLBAR;
     }
     
@@ -169,19 +168,8 @@ public class Transformation implements Serializable {
      * Simply calls iconURI.toString
      * @return
      */
-    public String getIconString() {
-        if (iconURI == null)
-            return "";
-        else
-            return iconURI.toString();
-    }
-
-    /**
-     * Returns the icon URI
-     * @return
-     */
-    public URI getIconURI() {
-        return this.iconURI;
+    public String getIcon() {
+        return icon;
     }
 
     /**
@@ -245,7 +233,7 @@ public class Transformation implements Serializable {
             writer.writeObject(this.transformationName);
             writer.writeInt(this.visibilityFlags);
             writer.writeInt(this.numSelections);
-            writer.writeObject(this.iconURI);
+            writer.writeObject(this.icon);
             writer.writeObject(this.partConfig);
         } catch (IOException e) {
             e.printStackTrace();

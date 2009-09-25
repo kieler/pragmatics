@@ -16,7 +16,6 @@ package de.cau.cs.kieler.ksbase.ui;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -379,10 +378,10 @@ public class KSBasEPreferencePage extends PreferencePage implements
 					sfContext.setText(editor.getContext());
 					bfShowMenu.setSelection(editor.isShownInMenu());
 					bfShowPopup.setSelection(editor.isShownInContext());
-					bfShowToolbar.setSelection(editor.isShownIToolbar());
+					bfShowToolbar.setSelection(editor.isShownInToolbar());
 					bfShowBalloon.setSelection(editor.isShownInBalloon());
 					bfAutoLayout.setSelection(editor.isPerformAutoLayout());
-					dfDefaultIcon.setStringValue(editor.getDefaultIconURI()
+					dfDefaultIcon.setStringValue(editor.getDefaultIcon()
 							.toString());
 					// Fill table with transformations
 					table.removeAll();
@@ -399,7 +398,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
 									showIn += Messages.KSBasEPreferencePage_ShowIn_Separator;
 								showIn += Messages.KSBasEPreferencePage_ShowIn_Popup;
 							}
-							if (t.isShownIToolbar()) {
+							if (t.isShownInToolbar()) {
 								if (showIn.length() > 0)
 									showIn += Messages.KSBasEPreferencePage_ShowIn_Separator;
 								showIn += Messages.KSBasEPreferencePage_ShowIn_Toolbar;
@@ -414,7 +413,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
 								t.getTransformationName(), showIn,
 								t.getPartConfigList(),
 								String.valueOf(t.getNumSelections()),
-								t.getIconString(), t.getKeyboardShortcut() });
+								t.getIcon(), t.getKeyboardShortcut() });
 					}
 					if (workspaceSettings) {
 						// enable controls
@@ -887,7 +886,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
 					Object result = dlg.open(new boolean[] {
 							transformation.isShownInMenu(),
 							transformation.isShownInContext(),
-							transformation.isShownIToolbar(),
+							transformation.isShownInToolbar(),
 							transformation.isShownInBalloon() });
 					if (result != null) {
 						boolean[] bRes = (boolean[]) result;
@@ -916,8 +915,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
 							Map<?, ?> editPart = ((DiagramDocumentEditor) o)
 									.getDiagramGraphicalViewer()
 									.getEditPartRegistry();
-							for (Object p : editPart.keySet()) {
-								Object value = editPart.get(p);
+							for (Object value : editPart.entrySet()) {
 								if (value instanceof GraphicalEditPart) {
 									validEditParts.add(value.getClass()
 											.getCanonicalName());
@@ -955,7 +953,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
 							Messages.KSBasEPreferencePage_IconExtension_ICO });
 					String fileName = dlg.open();
 					if (fileName != null) {
-						transformation.setIconURI(URI.create(fileName));
+						transformation.setIcon(fileName);
 						cbEditors.notifyListeners(SWT.Selection, null);
 					}
 				} else if (col == 6) { // Keyboard shortcut
@@ -1280,8 +1278,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
 
 				activeEditor.setVisibilityFlags(flags);
 				activeEditor.setPerformAutoLayout(bfAutoLayout.getSelection());
-				activeEditor.setDefaultIconURI(URI.create(dfDefaultIcon
-						.getStringValue()));
+				activeEditor.setDefaultIcon(dfDefaultIcon.getStringValue());
 				manager.storeTransformations();
 			}
 		}

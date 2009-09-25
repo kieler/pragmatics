@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.URI;
 import java.util.LinkedList;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -40,10 +39,13 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
  */
 public class TransformationManager {
 
-    private LinkedList<EditorTransformationSettings> registeredEditors;// The currently registered editors
+    private LinkedList<EditorTransformationSettings> registeredEditors;// The
+    // currently
+    // registered
+    // editors
     private boolean workspaceSettings;
     private boolean isInitialized;
-    
+
     // Thread-safe initialization
     public static TransformationManager instance = new TransformationManager();
 
@@ -82,8 +84,9 @@ public class TransformationManager {
     }
 
     public boolean isInitalized() {
-    	return isInitialized;
+        return isInitialized;
     }
+
     /**
      * Adds a new editor to the list of registered editors.
      * 
@@ -118,8 +121,10 @@ public class TransformationManager {
     }
 
     /**
-     * Removes an editor from the registry. 
-     * @param editor The fqn class name of the editor
+     * Removes an editor from the registry.
+     * 
+     * @param editor
+     *            The fqn class name of the editor
      */
     public void removeEditor(String editor) {
         for (int i = 0; i < registeredEditors.size(); ++i) {
@@ -127,19 +132,21 @@ public class TransformationManager {
                 registeredEditors.remove(i);
         }
     }
-    
+
     /**
      * Returns true if the workspace specific settings are enabled.
+     * 
      * @return
      */
     public boolean isWorkspaceSpecific() {
         return workspaceSettings;
     }
-    
+
     /**
-     * Sets the workspace specific settings flag.
-     * After setting the flag and storing it in 
-     * the preference store, the transformations are reinitialized from the new source
+     * Sets the workspace specific settings flag. After setting the flag and
+     * storing it in the preference store, the transformations are reinitialized
+     * from the new source
+     * 
      * @param value
      */
     public void setWorkspaceSpecific(boolean value) {
@@ -147,25 +154,25 @@ public class TransformationManager {
         IPreferenceStore store = KSBasEPlugin.getDefault().getPreferenceStore();
         store.setValue("workspaceSpecific", value);
         if (!value) {
-        	//When deactivating workspace settings, we will overwrite changes
-        	//here but the user will know.
-        	//Read from ext points
-        	initializeTransformations();
-        	//store in pref page
-        	storeTransformations();
+            // When deactivating workspace settings, we will overwrite changes
+            // here but the user will know.
+            // Read from ext points
+            initializeTransformations();
+            // store in pref page
+            storeTransformations();
         }
-        
+
     }
-    
+
     /**
-     * Loads the editor settings either from the extension point settings
-     * or the preference store
+     * Loads the editor settings either from the extension point settings or the
+     * preference store
      */
     public void initializeTransformations() {
         registeredEditors = new LinkedList<EditorTransformationSettings>();
         IPreferenceStore store = KSBasEPlugin.getDefault().getPreferenceStore();
         workspaceSettings = store.getBoolean("workspaceSpecific");
-       
+
         if (store.getBoolean("workspaceSpecific")) {
             String[] editors = store.getString(
                     Messages.Preferences_RegisteredEditors).split(","); //$NON-NLS-2$
@@ -187,9 +194,8 @@ public class TransformationManager {
                             + Messages.Preferences_ToolbarLocation));
                     settings.setVisibilityFlags(store.getInt(editor
                             + Messages.Preferences_Visibility));
-                    settings.setDefaultIconURI(URI.create(store
-                            .getString(editor
-                                    + Messages.Preferences_DefaultIcon)));
+                    settings.setDefaultIcon(store.getString(editor
+                            + Messages.Preferences_DefaultIcon));
                     settings.setContext(store.getString(editor + ".Context"));
                     String[] transformations = store.getString(
                             editor + Messages.Preferences_Transformations)
@@ -205,10 +211,9 @@ public class TransformationManager {
                                             .getInt(prefix
                                                     + Messages.Preferences_Transformation_Selections));
                             t
-                                    .setIconURI(URI
-                                            .create(store
-                                                    .getString(prefix
-                                                            + Messages.Preferences_Transformation_Icon)));
+                                    .setIcon(store
+                                            .getString(prefix
+                                                    + Messages.Preferences_Transformation_Icon));
                             t
                                     .setKeyboardShortcut(store
                                             .getString(prefix
@@ -225,37 +230,67 @@ public class TransformationManager {
                     registeredEditors.add(settings);
                 }
             }
-        }
-        else {
-            //use extension points
-            IConfigurationElement[] configurations = Platform.getExtensionRegistry().getConfigurationElementsFor("de.cau.cs.kieler.ksbase.configuration");
-            for ( IConfigurationElement settings : configurations) {
-                EditorTransformationSettings editor = new EditorTransformationSettings(settings.getAttribute("editor"));
-                editor.setContext(settings.getAttribute("contextID"));
-                editor.setMenuLocation(settings.getAttribute("menuLocationURI"));
-                editor.setPopupLocation(settings.getAttribute("popupLocationURI"));
+        } else {
+            // use extension points
+            IConfigurationElement[] configurations = Platform
+                    .getExtensionRegistry().getConfigurationElementsFor(
+                            "de.cau.cs.kieler.ksbase.configuration");
+            for (IConfigurationElement settings : configurations) {
+                
+                EditorTransformationSettings editor = new EditorTransformationSettings(
+                        settings.getAttribute("editor"));
+                editor.setContributor(settings.getContributor().getName());
+                editor.setContext(settings.getAttribute("contextId"));
+                editor
+                        .setMenuLocation(settings
+                                .getAttribute("menuLocationURI"));
+                editor.setPopupLocation(settings
+                        .getAttribute("popupLocationURI"));
                 editor.setMenuName(settings.getAttribute("menuName"));
-                editor.setToolbarLocation(settings.getAttribute("toolbarLocationURI"));
+                editor.setToolbarLocation(settings
+                        .getAttribute("toolbarLocationURI"));
                 int flags = 0;
-                if ( settings.getAttribute("createMenu") != null && settings.getAttribute("createMenu").equals("true"))
+                if (settings.getAttribute("createMenu") != null
+                        && settings.getAttribute("createMenu").equals("true"))
                     flags += KSBasEPlugin.SHOW_MENU;
-                if ( settings.getAttribute("createPopup") != null && settings.getAttribute("createPopup").equals("true"))
+                if (settings.getAttribute("createPopup") != null
+                        && settings.getAttribute("createPopup").equals("true"))
                     flags += KSBasEPlugin.SHOW_CONTEXT;
+                if (settings.getAttribute("createToolbar") != null
+                        && settings.getAttribute("createToolbar")
+                                .equals("true"))
+                    flags += KSBasEPlugin.SHOW_TOOLBAR;
+                System.out.println("loading editor default icon : "+settings.getAttribute("defautlIcon"));
+                editor.setDefaultIcon(settings.getAttribute("defautlIcon"));
                 editor.setVisibilityFlags(flags);
-                editor.setModelPackageClass(settings.getAttribute("packageName"));
+                editor.setModelPackageClass(settings
+                        .getAttribute("packageName"));
                 editor.setPerformAutoLayout(true);
-                for ( IConfigurationElement t : settings.getChildren("transformation")) {
-                    Transformation transformation = new Transformation(t.getAttribute("name"), t.getAttribute("transformation"));
-                    transformation.setNumSelections(Integer.valueOf(t.getAttribute("selectionCount")));
-                    transformation.setKeyboardShortcut(t.getAttribute("keyboardShortcut"));
+                for (IConfigurationElement t : settings
+                        .getChildren("transformation")) {
+                    Transformation transformation = new Transformation(t
+                            .getAttribute("name"), t
+                            .getAttribute("transformation"));
+                    transformation.setNumSelections(Integer.valueOf(t
+                            .getAttribute("selectionCount")));
+                    transformation.setKeyboardShortcut(t
+                            .getAttribute("keyboardShortcut"));
                     int tflags = 0;
-                    if ( t.getAttribute("showInMenu") != null && t.getAttribute("showInMenu").equals("true"))
+                    if (t.getAttribute("showInMenu") != null
+                            && t.getAttribute("showInMenu").equals("true"))
                         tflags += KSBasEPlugin.SHOW_MENU;
-                    if ( t.getAttribute("showInPopup") != null && t.getAttribute("showInPopup").equals("true"))
+                    if (t.getAttribute("showInPopup") != null
+                            && t.getAttribute("showInPopup").equals("true"))
                         tflags += KSBasEPlugin.SHOW_CONTEXT;
+                    if (t.getAttribute("showInToolbar") != null
+                            && t.getAttribute("showInToolbar").equals("true"))
+                        tflags += KSBasEPlugin.SHOW_TOOLBAR;
+                    
                     transformation.setVisibility(tflags);
-                    IConfigurationElement[] parts = t.getChildren("element_selection");
-                    if ( parts != null && parts.length > 0) {
+                    transformation.setIcon(t.getAttribute("icon"));
+                    IConfigurationElement[] parts = t
+                            .getChildren("element_selection");
+                    if (parts != null && parts.length > 0) {
                         String[] partConfig = new String[parts.length];
                         for (int i = 0; i < parts.length; ++i) {
                             partConfig[i] = parts[i].getAttribute("class");
@@ -264,18 +299,22 @@ public class TransformationManager {
                     }
                     editor.addTransformation(transformation);
                 }
-                //Read Xtend file from extension point configuration
+                // Read Xtend file from extension point configuration
                 String content = "";
                 InputStream path;
-                    try {
-                        path = Platform.getBundle(settings.getContributor().getName()).getEntry("/"+settings.getAttribute("XtendFile")).openStream();
-                        while ( path.available() > 0) {
-                            content += (char)path.read();
-                        }
-                        editor.setExtFile(content);
-                    } catch (IOException e) {
-                        System.err.println("KSBasE configuration exception: Can't read Xtend file");
+                try {
+                    path = Platform.getBundle(
+                            settings.getContributor().getName()).getEntry(
+                            "/" + settings.getAttribute("XtendFile"))
+                            .openStream();
+                    while (path.available() > 0) {
+                        content += (char) path.read();
                     }
+                    editor.setExtFile(content);
+                } catch (IOException e) {
+                    System.err
+                            .println("KSBasE configuration exception: Can't read Xtend file");
+                }
 
                 registeredEditors.add(editor);
             }
@@ -326,15 +365,15 @@ public class TransformationManager {
                     .getMenuName());
             store.setValue(prefix + Messages.Preferences_MenuLocation, settings
                     .getMenuLocation());
-            store.setValue(prefix + Messages.Preferences_PopupLocation, settings
-                    .getPopupLocation());
+            store.setValue(prefix + Messages.Preferences_PopupLocation,
+                    settings.getPopupLocation());
             store.setValue(prefix + Messages.Preferences_ToolbarLocation,
                     settings.getToolbarLocation());
             store.setValue(prefix + ".Context", settings.getContext());
             store.setValue(prefix + Messages.Preferences_Visibility, settings
                     .getVisibility());
             store.setValue(prefix + Messages.Preferences_DefaultIcon, settings
-                    .getDefaultIconURI().toString());
+                    .getDefaultIcon().toString());
             String transformations = ""; //$NON-NLS-1$
             for (Transformation t : settings.getTransformations()) {
                 String tprefix = prefix + "." + t.getTransformationName(); //$NON-NLS-1$
@@ -346,12 +385,17 @@ public class TransformationManager {
                 store.setValue(tprefix
                         + Messages.Preferences_Transformation_PartConfig, t
                         .getPartConfigList());
-                store.setValue(tprefix
-                        + Messages.Preferences_Transformation_Icon, t
-                        .getIconString());
+                store
+                        .setValue(tprefix
+                                + Messages.Preferences_Transformation_Icon, t
+                                .getIcon());
                 store.setValue(tprefix
                         + Messages.Preferences_Transformation_Shortcut, t
                         .getKeyboardShortcut());
+                store
+                        .setValue(tprefix
+                                + Messages.Preferences_Transformation_Icon, t
+                                .getIcon());
             }
             if (transformations.length() > 0) {
                 store.setValue(prefix + Messages.Preferences_Transformations,
@@ -360,9 +404,9 @@ public class TransformationManager {
             }
         }
         if (editors.length() > 0)
-        // trunc the last ','
-        store.setValue(Messages.Preferences_RegisteredEditors, editors
-                .substring(0, editors.length() - 1));
+            // trunc the last ','
+            store.setValue(Messages.Preferences_RegisteredEditors, editors
+                    .substring(0, editors.length() - 1));
 
     }
 
