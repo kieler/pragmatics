@@ -66,7 +66,7 @@ public class DynamicMenuContributions {
                 Document extension = javax.xml.parsers.DocumentBuilderFactory
                         .newInstance().newDocumentBuilder().newDocument();
                 extension.setXmlStandalone(true);
-                //Create extension point elements:
+                // Create extension point elements:
                 Element plugin = extension.createElement("plugin");
                 Element commandExtension = extension.createElement("extension");
                 commandExtension.setAttribute("point",
@@ -75,36 +75,70 @@ public class DynamicMenuContributions {
                 bindingExtension.setAttribute("point",
                         "org.eclipse.ui.bindings");
                 Element menuExtension = extension.createElement("extension");
-                Element menuContribution = extension
-                .createElement("menuContribution");
-                Element menu = extension.createElement("menu");
                 menuExtension.setAttribute("point", "org.eclipse.ui.menus");
+                
+                Element menuContribution = extension
+                        .createElement("menuContribution");
+                Element menu = extension.createElement("menu");
+
+                Element popupContribution = extension
+                        .createElement("menuContribution");
+                Element popup = extension.createElement("menu");
+
                 Element handlerExtension = extension.createElement("extension");
-                handlerExtension.setAttribute("point", "org.eclipse.ui.handlers");
-                //Iterate through editors and create extension point contents
+                handlerExtension.setAttribute("point",
+                        "org.eclipse.ui.handlers");
+                // Iterate through editors and create extension point contents
+
                 for (EditorTransformationSettings editor : editors) {
+                    boolean addtoExisting;
+                    if (editor.getMenuName() == null
+                            || editor.getMenuName().length() == 0)
+                        addtoExisting = true;
+                    else
+                        addtoExisting = false;
+
+                    if (addtoExisting)
+                        System.out.println("add to exsiting");
+                    else
+                        System.out.println("create new");
+                    
                     String menuID = "de.cau.cs.kieler.ksbase.menu."
                             + editor.getEditor();
+                    String popupID = "de.cau.cs.kieler.ksbase.popup."
+                            + editor.getEditor();
+
+                    // Create visibility flags for menus
+                    Element menuVisible = extension
+                            .createElement("visibleWhen");
+                    menuVisible.setAttribute("checkEnabled", "false");
+                    Element visIterate = extension.createElement("iterate");
+                    visIterate.setAttribute("ifEmpty", "false");
+                    visIterate.setAttribute("operator", "or");
+                    Element visWith = extension.createElement("with");
+                    visWith.setAttribute("variable", "activeEditor");
+                    Element visInstance = extension.createElement("instanceof");
+                    visInstance.setAttribute("value", editor.getEditor());
+                    visWith.appendChild(visInstance);
+                    visIterate.appendChild(visWith);
+                    menuVisible.appendChild(visIterate);
+
                     if (editor.isShownInMenu()) {
-                        // Menu Contributions
+                        // Menu contributions
                         menuContribution.setAttribute("locationURI", editor
                                 .getMenuLocation());
-                        // FIXME: Add menu to existing location
                         menu.setAttribute("id", menuID);
                         menu.setAttribute("label", editor.getMenuName());
-                        Element menuVisible = extension.createElement("visibleWhen");
-                        menuVisible.setAttribute("checkEnabled", "false");
-                        Element visIterate = extension.createElement("iterate");
-                        visIterate.setAttribute("ifEmpty", "false");
-                        visIterate.setAttribute("operator", "or");
-                        Element visWith = extension.createElement("with");
-                        visWith.setAttribute("variable", "activeEditor");
-                        Element visInstance = extension.createElement("instanceof");
-                        visInstance.setAttribute("value", editor.getEditor());
-                        visWith.appendChild(visInstance);
-                        visIterate.appendChild(visWith);
-                        menuVisible.appendChild(visIterate);
-                        menu.appendChild(menuVisible);
+                        menu.appendChild(menuVisible.cloneNode(true));
+
+                    }
+                    if (editor.isShownInContext()) {
+                        // Popup contributions
+                        popupContribution.setAttribute("locationURI", editor
+                                .getPopupLocation());
+                        popup.setAttribute("id", popupID);
+                        popup.setAttribute("label", editor.getMenuName());
+                        popup.appendChild(menuVisible.cloneNode(true));
                     }
 
                     for (Transformation t : editor.getTransformations()) {
@@ -117,16 +151,21 @@ public class DynamicMenuContributions {
                         command.setAttribute("name", t.getName());
                         command.setAttribute("categoryId",
                                 "de.cau.cs.kieler.ksbase.ui.ksbaseCategory");
-                        Element commandParameter = extension.createElement("commandParameter");
-                        commandParameter.setAttribute("id", "de.cau.cs.kieler.ksbase.editorParameter");
+                        Element commandParameter = extension
+                                .createElement("commandParameter");
+                        commandParameter.setAttribute("id",
+                                "de.cau.cs.kieler.ksbase.editorParameter");
                         commandParameter.setAttribute("name", "editor");
                         command.appendChild(commandParameter);
-                        commandParameter = extension.createElement("commandParameter");
-                        commandParameter.setAttribute("id", "de.cau.cs.kieler.ksbase.transformationParameter");
+                        commandParameter = extension
+                                .createElement("commandParameter");
+                        commandParameter
+                                .setAttribute("id",
+                                        "de.cau.cs.kieler.ksbase.transformationParameter");
                         commandParameter.setAttribute("name", "transformation");
                         command.appendChild(commandParameter);
                         commandExtension.appendChild(command);
-                        
+
                         // KeyBindings
                         Element key = extension.createElement("key");
                         key.setAttribute("commandId", commandID);
@@ -135,9 +174,8 @@ public class DynamicMenuContributions {
                                 .setAttribute("schemeId",
                                         "org.eclipse.ui.defaultAcceleratorConfiguration");
                         key.setAttribute("sequence", t.getKeyboardShortcut());
-                        
 
-                        if (editor.isShownInMenu() && t.isShownInMenu()) {
+                        if (editor.isShownInMenu() || editor.isShownInContext()) {
                             // Menu commands
                             Element menuCommand = extension
                                     .createElement("command");
@@ -145,100 +183,148 @@ public class DynamicMenuContributions {
                             // FIXME: menuCommand.setAttribute("icon",
                             // "icons/");
                             menuCommand.setAttribute("label", t.getName());
-                            //Set command parameters
-                            Element handlerParam = extension.createElement("parameter");
-                            handlerParam.setAttribute("name", "de.cau.cs.kieler.ksbase.editorParameter");
-                            handlerParam.setAttribute("value", editor.getEditor());
+                            // Set command parameters
+                            Element handlerParam = extension
+                                    .createElement("parameter");
+                            handlerParam.setAttribute("name",
+                                    "de.cau.cs.kieler.ksbase.editorParameter");
+                            handlerParam.setAttribute("value", editor
+                                    .getEditor());
                             menuCommand.appendChild(handlerParam);
-                            
-                            //key needs attribute 'id' instead of name ....
-                            Element keyParam = (Element)handlerParam.cloneNode(true);
+
+                            // key needs attribute 'id' instead of name ....
+                            Element keyParam = (Element) handlerParam
+                                    .cloneNode(true);
                             keyParam.removeAttribute("name");
-                            keyParam.setAttribute("id",  "de.cau.cs.kieler.ksbase.editorParameter");
+                            keyParam.setAttribute("id",
+                                    "de.cau.cs.kieler.ksbase.editorParameter");
                             key.appendChild(keyParam);
-                            
+
                             handlerParam = extension.createElement("parameter");
-                            handlerParam.setAttribute("name", "de.cau.cs.kieler.ksbase.transformationParameter");
-                            handlerParam.setAttribute("value", t.getTransformationName());
+                            handlerParam
+                                    .setAttribute("name",
+                                            "de.cau.cs.kieler.ksbase.transformationParameter");
+                            handlerParam.setAttribute("value", t
+                                    .getTransformationName());
                             menuCommand.appendChild(handlerParam);
-                            menu.appendChild(menuCommand);
-                            
+
+                            // Add to menus
+                            if (t.isShownInMenu()) {
+                                if (!addtoExisting)
+                                    menu.appendChild(menuCommand
+                                            .cloneNode(true));
+                                else
+                                    menuContribution.appendChild(menuCommand
+                                            .cloneNode(true));
+                            }
+                            if (t.isShownInContext()) {
+                                if (!addtoExisting)
+                                    popup.appendChild(menuCommand
+                                            .cloneNode(true));
+                                else
+                                    popupContribution.appendChild(menuCommand
+                                            .cloneNode(true));
+                            }
+
                             keyParam = (Element) handlerParam.cloneNode(true);
                             keyParam.removeAttribute("name");
-                            keyParam.setAttribute("id",  "de.cau.cs.kieler.ksbase.transformationParameter");
+                            keyParam
+                                    .setAttribute("id",
+                                            "de.cau.cs.kieler.ksbase.transformationParameter");
                             key.appendChild(keyParam);
-                            
-                            //Command handler extensions
-                            Element handlerCommand = extension.createElement("handler");
+
+                            // Command handler extensions
+                            Element handlerCommand = extension
+                                    .createElement("handler");
                             handlerCommand.setAttribute("commandId", commandID);
-                            Element classHandler = extension.createElement("class");
-                            classHandler.setAttribute("class", "de.cau.cs.kieler.ksbase.ui.handler.TransformationCommandHandler");
+                            Element classHandler = extension
+                                    .createElement("class");
+                            classHandler
+                                    .setAttribute("class",
+                                            "de.cau.cs.kieler.ksbase.ui.handler.TransformationCommandHandler");
                             handlerCommand.appendChild(classHandler);
-                            //Handler restrictions
+                            // Handler restrictions
                             Element handlerEnabled = extension
                                     .createElement("enabledWhen");
-                            Element visAnd = extension.createElement("and");
-                            Element visWith = extension.createElement("with");
-                            visWith.setAttribute("variable", "selection");
-                            Element visCount = extension.createElement("count");
-                            visCount.setAttribute("value", String.valueOf(t.getNumSelections()));
-                            visWith.appendChild(visCount);
-                            
-                            Element visOr = extension.createElement("or");
-                            
+                            Element handlerVisAnd = extension
+                                    .createElement("and");
+                            Element handlerVisWith = extension
+                                    .createElement("with");
+                            handlerVisWith
+                                    .setAttribute("variable", "selection");
+                            Element handlerVisCount = extension
+                                    .createElement("count");
+                            handlerVisCount.setAttribute("value", String
+                                    .valueOf(t.getNumSelections()));
+                            handlerVisWith.appendChild(handlerVisCount);
+
+                            Element handlerVisOr = extension
+                                    .createElement("or");
+
                             if (t.getPartConfig().length > 0) {
                                 for (String part : t.getPartConfig()) {
-                                    Element visIterate = extension
+                                    Element handlerVisIterate = extension
                                             .createElement("iterate");
-                                    Element visInstance = extension
+                                    Element handlerVisInstance = extension
                                             .createElement("instanceof");
-                                    visInstance.setAttribute("value", part);
-                                    visIterate.appendChild(visInstance);
-                                    visOr.appendChild(visIterate);
+                                    handlerVisInstance.setAttribute("value",
+                                            part);
+                                    handlerVisIterate
+                                            .appendChild(handlerVisInstance);
+                                    handlerVisOr.appendChild(handlerVisIterate);
                                 }
                             }
-                            visWith.appendChild(visOr);
-                            visAnd.appendChild(visWith);
-                            handlerEnabled.appendChild(visAnd);
-                            
+                            handlerVisWith.appendChild(handlerVisOr);
+                            handlerVisAnd.appendChild(handlerVisWith);
+                            handlerEnabled.appendChild(handlerVisAnd);
+
                             handlerCommand.appendChild(handlerEnabled);
                             bindingExtension.appendChild(key);
                             handlerExtension.appendChild(handlerCommand);
-                            
+
                         }
 
                     }
+                    if (editor.isShownInMenu()) {
+                        // completing menu
+                        menuExtension.appendChild(menuContribution);
+                        if ( !addtoExisting)
+                        menuContribution.appendChild(menu);
+                    }
+
+                    
+                    if (editor.isShownInContext()) {
+                        // completing popup
+                        menuExtension.appendChild(popupContribution);
+                        if (!addtoExisting)
+                        popupContribution.appendChild(popup);
+                    }
                 }
-                //completing menu
-                menuContribution.appendChild(menu);
-                menuExtension.appendChild(menuContribution);
-                
+
                 plugin.appendChild(commandExtension);
                 plugin.appendChild(menuExtension);
                 plugin.appendChild(bindingExtension);
                 plugin.appendChild(handlerExtension);
                 extension.appendChild(plugin);
                 StringWriter str = new StringWriter();
-                TransformerFactory
-                        .newInstance()
-                        .newTransformer()
-                        .transform(
-                                new DOMSource(extension),
-                                new StreamResult(
-                                        str));
-                
-                //System.out.println(str.toString());
-                
+                TransformerFactory.newInstance().newTransformer().transform(
+                        new DOMSource(extension), new StreamResult(str));
+
+                System.out.println(str.toString());
+
                 IExtensionRegistry reg = RegistryFactory.getRegistry();
-                Object key = ((ExtensionRegistry)reg).getTemporaryUserToken();
-                //FIXME: Use 'this' ?
-                
-                Bundle bundle = Activator.getDefault().getBundle("de.cau.cs.kieler.ksbase.ui");
-                
-                IContributor contributor = ContributorFactoryOSGi.createContributor(bundle);
-                ByteArrayInputStream is = new ByteArrayInputStream(str.toString().getBytes("UTF-8"));
+                Object key = ((ExtensionRegistry) reg).getTemporaryUserToken();
+                // FIXME: Use 'this' ?
+
+                Bundle bundle = Activator.getDefault().getBundle(
+                        "de.cau.cs.kieler.ksbase.ui");
+
+                IContributor contributor = ContributorFactoryOSGi
+                        .createContributor(bundle);
+                ByteArrayInputStream is = new ByteArrayInputStream(str
+                        .toString().getBytes("UTF-8"));
                 reg.addContribution(is, contributor, false, null, null, key);
-             
+
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
