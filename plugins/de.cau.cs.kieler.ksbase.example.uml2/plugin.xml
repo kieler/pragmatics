@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.ksbase.configuration">
+      <configuration
+            XtendFile="src/transformations/features.ext"
+            contextId="org.eclipse.uml2.diagram.clazz.ui.diagramContext"
+            createMenu="true"
+            createPopup="true"
+            createToolbar="false"
+            editor="org.eclipse.uml2.diagram.clazz.part.UMLDiagramEditor"
+            menuLocationURI="menu:de.cau.cs.kieler"
+            packageName="org.eclipse.uml2.uml.UMLPackage"
+            popupLocationURI="toolbar:de.cau.cs.kieler"
+            toolbarLocationURI="popup:de.cau.cs.kieler">
+         <transformation
+               keyboardShortcut="CTRL+K I"
+               name="Add Implementation"
+               selectionCount="1"
+               showInMenu="true"
+               showInPopup="true"
+               showInToolbar="false"
+               transformation="createImplements">
+            <element_selection
+                  class="org.eclipse.uml2.diagram.clazz.edit.parts.Interface2EditPart">
+            </element_selection>
+            <element_selection
+                  class="org.eclipse.uml2.diagram.component.edit.parts.Interface2EditPart">
+            </element_selection>
+         </transformation>
+      </configuration>
+   </extension>
+
+</plugin>
