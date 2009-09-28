@@ -11,6 +11,7 @@
          </Priority>
       </editpolicyProvider>
    </extension>
+   <!-- Preference page is temporally deactivated
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
@@ -20,6 +21,7 @@
             name="Structure based editing">
       </page>
    </extension>
+   !-->
    <extension
          point="org.eclipse.ui.commands">
       <category

@@ -39,10 +39,7 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
  */
 public class TransformationManager {
 
-    private LinkedList<EditorTransformationSettings> registeredEditors;// The
-    // currently
-    // registered
-    // editors
+    private LinkedList<EditorTransformationSettings> registeredEditors;// The currently registered editors
     private boolean workspaceSettings;
     private boolean isInitialized;
 
@@ -241,28 +238,7 @@ public class TransformationManager {
                         settings.getAttribute("editor"));
                 editor.setContributor(settings.getContributor().getName());
                 editor.setContext(settings.getAttribute("contextId"));
-                editor
-                        .setMenuLocation(settings
-                                .getAttribute("menuLocationURI"));
-                editor.setPopupLocation(settings
-                        .getAttribute("popupLocationURI"));
-                editor.setMenuName(settings.getAttribute("menuName"));
-                editor.setToolbarLocation(settings
-                        .getAttribute("toolbarLocationURI"));
-                int flags = 0;
-                if (settings.getAttribute("createMenu") != null
-                        && settings.getAttribute("createMenu").equals("true"))
-                    flags += KSBasEPlugin.SHOW_MENU;
-                if (settings.getAttribute("createPopup") != null
-                        && settings.getAttribute("createPopup").equals("true"))
-                    flags += KSBasEPlugin.SHOW_CONTEXT;
-                if (settings.getAttribute("createToolbar") != null
-                        && settings.getAttribute("createToolbar")
-                                .equals("true"))
-                    flags += KSBasEPlugin.SHOW_TOOLBAR;
-                System.out.println("loading editor default icon : "+settings.getAttribute("defautlIcon"));
                 editor.setDefaultIcon(settings.getAttribute("defautlIcon"));
-                editor.setVisibilityFlags(flags);
                 editor.setModelPackageClass(settings
                         .getAttribute("packageName"));
                 editor.setPerformAutoLayout(true);
@@ -275,18 +251,7 @@ public class TransformationManager {
                             .getAttribute("selectionCount")));
                     transformation.setKeyboardShortcut(t
                             .getAttribute("keyboardShortcut"));
-                    int tflags = 0;
-                    if (t.getAttribute("showInMenu") != null
-                            && t.getAttribute("showInMenu").equals("true"))
-                        tflags += KSBasEPlugin.SHOW_MENU;
-                    if (t.getAttribute("showInPopup") != null
-                            && t.getAttribute("showInPopup").equals("true"))
-                        tflags += KSBasEPlugin.SHOW_CONTEXT;
-                    if (t.getAttribute("showInToolbar") != null
-                            && t.getAttribute("showInToolbar").equals("true"))
-                        tflags += KSBasEPlugin.SHOW_TOOLBAR;
-                    
-                    transformation.setVisibility(tflags);
+                    transformation.setTransformationID(t.getAttribute("transformationId"));
                     transformation.setIcon(t.getAttribute("icon"));
                     IConfigurationElement[] parts = t
                             .getChildren("element_selection");
@@ -298,6 +263,22 @@ public class TransformationManager {
                         transformation.setPartConfig(partConfig);
                     }
                     editor.addTransformation(transformation);
+                }
+                //Read menu contributions
+                for (IConfigurationElement c : settings.getChildren("menuContribution")) {
+                    KSBasEMenuContribution contrib = new KSBasEMenuContribution(c.getAttribute("locationURI"));
+                    for ( IConfigurationElement m : c.getChildren("menu")) {
+                        KSBasEMenuContribution menu = new KSBasEMenuContribution(m.getAttribute("id"));
+                        menu.setLabel(m.getAttribute("label"));
+                        for ( IConfigurationElement com : m.getChildren()) {
+                            menu.addCommand(com.getAttribute("transformationId"));
+                        }
+                        contrib.addSubMenu(menu);
+                    }
+                    for (IConfigurationElement com : c.getChildren("transformationCommand")) {
+                        contrib.addCommand(com.getAttribute("transformationId"));
+                    }
+                    editor.addMenuContribution(contrib);
                 }
                 // Read Xtend file from extension point configuration
                 String content = "";

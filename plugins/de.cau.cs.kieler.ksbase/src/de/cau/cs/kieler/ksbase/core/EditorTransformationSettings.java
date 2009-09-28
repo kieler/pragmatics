@@ -50,7 +50,8 @@ public class EditorTransformationSettings implements Serializable {
     private String extFile; // Xtend file in which the transformations are defined
     private String context; // The context for the diagram editor, required for key bindings
     private LinkedList<Transformation> transformations; // The current List of Transformations
-
+    private LinkedList<KSBasEMenuContribution> menuContributions; //List of menu contributions
+    
     //for internal uses
     private String contributor; //The contributor which contains the extension points
     /**
@@ -72,6 +73,7 @@ public class EditorTransformationSettings implements Serializable {
         this.extFile = ""; //$NON-NLS-1$
         this.context = "";
         this.transformations = new LinkedList<Transformation>();
+        this.menuContributions = new LinkedList<KSBasEMenuContribution>();
         this.performAutoLayout = true;
         this.contributor = "";
     }
@@ -183,6 +185,19 @@ public class EditorTransformationSettings implements Serializable {
         return (this.visibilityFlags & KSBasEPlugin.SHOW_BALLOON) == KSBasEPlugin.SHOW_BALLOON;
     }
 
+    public LinkedList<KSBasEMenuContribution> getMenuContributions() {
+        return menuContributions;
+    }
+
+    public void setMenuContributions(
+            LinkedList<KSBasEMenuContribution> menuContributions) {
+        this.menuContributions = menuContributions;
+    }
+    
+    public void addMenuContribution(KSBasEMenuContribution contrib) {
+        this.menuContributions.add(contrib);
+    }
+
     /**
      * Returns the URI to the default icon
      * @return URI to the default icon, no checks are done if this is a valid URI
@@ -215,6 +230,14 @@ public class EditorTransformationSettings implements Serializable {
     public Transformation getTransformationByName(String transformation) {
         for ( Transformation t : transformations) {
             if ( t.getTransformationName().equals(transformation))
+                return t;
+        }
+        return null;
+    }
+    
+    public Transformation getTransformationById(String tid) {
+        for ( Transformation t : transformations) {
+            if ( t.getTransformationID().equals(tid))
                 return t;
         }
         return null;

@@ -56,6 +56,7 @@
       <complexType>
          <sequence minOccurs="1" maxOccurs="unbounded">
             <element ref="transformation"/>
+            <element ref="menuContribution" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="editor" type="string" use="required">
             <annotation>
@@ -75,55 +76,6 @@
                <appinfo>
                   <meta.attribute kind="resource"/>
                </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="createMenu" type="boolean" use="required">
-            <annotation>
-               <documentation>
-                  Set to &apos;true&apos; if the feature should have a menu contribution
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="createPopup" type="boolean" use="required">
-            <annotation>
-               <documentation>
-                  Set to &apos;true&apos; if the feature should have a contribution to the popup menu
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="menuName" type="string">
-            <annotation>
-               <documentation>
-                  If you want to add the commands to an existing menu, leave this field empty
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="createToolbar" type="boolean" use="required">
-            <annotation>
-               <documentation>
-                  Set to &apos;true&apos; if the feature should have a contribution to the tool bar
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="menuLocationURI" type="string">
-            <annotation>
-               <documentation>
-                  the locationURI for the toolbar menu
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="popupLocationURI" type="string">
-            <annotation>
-               <documentation>
-                  the locationURI for the toolbar menu
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="toolbarLocationURI" type="string">
-            <annotation>
-               <documentation>
-                  the locationURI for the toolbar menu
-               </documentation>
             </annotation>
          </attribute>
          <attribute name="packageName" type="string">
@@ -165,6 +117,13 @@ This class has to extend &apos;emf.ecore.EPackage&apos;
          <sequence minOccurs="1" maxOccurs="unbounded">
             <element ref="element_selection"/>
          </sequence>
+         <attribute name="transformationId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id of this transformation
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
@@ -176,27 +135,6 @@ This class has to extend &apos;emf.ecore.EPackage&apos;
             <annotation>
                <documentation>
                   The name of the Xtend transformation method (without parameters). This method has to exist in the Xtend file else it will be ignored
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="showInMenu" type="boolean" use="required">
-            <annotation>
-               <documentation>
-                  Set to &apos;true&apos; if this transformation should be displayed in the menu
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="showInPopup" type="boolean" use="required">
-            <annotation>
-               <documentation>
-                  Set to &apos;true&apos; if this transformation should be displayed in the popup menu
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="showInToolbar" type="boolean" use="required">
-            <annotation>
-               <documentation>
-                  Set to &apos;true&apos; if this transformation should be displayed in the tool bar
                </documentation>
             </annotation>
          </attribute>
@@ -242,6 +180,61 @@ This class has to extend &apos;emf.ecore.EPackage&apos;
                <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart:"/>
                </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="menuContribution">
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="transformationCommand" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="menu" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="locationURI" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The locationURI of this contribution
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="transformationCommand">
+      <annotation>
+         <documentation>
+            Used to add a transformation command to a menu
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="transformationId" type="string">
+            <annotation>
+               <documentation>
+                  The id of the referenced transformation
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="menu">
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="transformationCommand" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id of this menu
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
             </annotation>
          </attribute>
       </complexType>

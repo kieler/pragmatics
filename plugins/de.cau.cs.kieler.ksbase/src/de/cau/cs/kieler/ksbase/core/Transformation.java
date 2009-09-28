@@ -39,7 +39,7 @@ public class Transformation implements Serializable {
     private String icon; // URI to icon
     private String keyboardShortcut; // Assigned keyboard shortcut
     private String[] partConfig; // Parts for which this transformation is defined
-
+    private String transformationID; //Id for this transformation, defined via the ext. point
     /**
      * Creates a new Transformation
      */
@@ -52,6 +52,7 @@ public class Transformation implements Serializable {
         numSelections = 1;
         icon = "";
         keyboardShortcut = "";
+        transformationID = "";
         partConfig = null;
     }
 
@@ -204,6 +205,24 @@ public class Transformation implements Serializable {
                 res += ",";
         }
         return res;
+    }
+
+    /**
+     * Returns the Id for this transformation.
+     * This is used for menu contributions only, so 
+     * it does not need to be set.
+     * @return
+     */
+    public String getTransformationID() {
+        return transformationID;
+    }
+
+    /**
+     * Sets the Id for this transformation
+     * @param transformationID
+     */
+    public void setTransformationID(String transformationID) {
+        this.transformationID = transformationID;
     }
 
     /**
