@@ -14,6 +14,8 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.ui.handler;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,16 +87,25 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
     @Override
     protected CommandResult doExecuteWithResult(IProgressMonitor monitor,
             IAdaptable info) throws ExecutionException {
-        // TOOD: Suppress messages from xtend/mwe
+        //This is a very ugly way to suppress messages from xtend
+        PrintStream syse = System.err;
+        PrintStream syso = System.out;
+        
         if (workflow == null) {
             return CommandResult
                     .newErrorCommandResult(Messages.ExecuteTransformationCommand_Workflow_Initialization_Error);
         }
         try {
+            System.setErr(new PrintStream(new ByteArrayOutputStream()));
+            System.setOut(new PrintStream(new ByteArrayOutputStream()));
             workflow.invoke(this.context, this.monitor, this.issues);
         } catch (Exception e) {
             return CommandResult
                     .newErrorCommandResult(Messages.ExecuteTransformationCommand_Workflow_Invoke_Error);
+        }
+        finally {
+            System.setErr(syse);
+            System.setOut(syso);
         }
         if (issues.hasWarnings()) {
             for (MWEDiagnostic warnings : issues.getWarnings()) {
@@ -113,7 +124,6 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
                     .newErrorCommandResult("Transformation failed. " //$NON-NLS-1$
                             + issues.getErrors()[0]);
         }
- 
         return CommandResult.newOKCommandResult();
     }
 

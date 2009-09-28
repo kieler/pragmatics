@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 
 /**
  * The connection between Xtend functions and the KSBasE plug-In. Stores
@@ -34,7 +33,6 @@ public class Transformation implements Serializable {
     private static final long serialVersionUID = 513784171695543063L;
     private String name; // Menu entry name
     private String transformationName; // Xtend method name
-    private int visibilityFlags; // Visibility configuration, any combination of visibility Flags from KSBasePlugin
     private int numSelections; // Number of selections;
     private String icon; // URI to icon
     private String keyboardShortcut; // Assigned keyboard shortcut
@@ -46,9 +44,6 @@ public class Transformation implements Serializable {
     public Transformation(String name, String transformation) {
         this.name = name;
         this.transformationName = transformation;
-        this.visibilityFlags = KSBasEPlugin.SHOW_MENU
-                | KSBasEPlugin.SHOW_CONTEXT | KSBasEPlugin.SHOW_TOOLBAR
-                | KSBasEPlugin.SHOW_BALLOON;
         numSelections = 1;
         icon = "";
         keyboardShortcut = "";
@@ -71,15 +66,6 @@ public class Transformation implements Serializable {
      */
     public void setTransformationName(String value) {
         this.transformationName = value;
-    }
-
-    /**
-     * Sets the visibility for the transformation.
-     * @see KSBasEPlugin for valid visibility flags
-     * @param value
-     */
-    public void setVisibility(int value) {
-        this.visibilityFlags = value;
     }
 
     /**
@@ -113,47 +99,6 @@ public class Transformation implements Serializable {
      */
     public String getTransformationName() {
         return this.transformationName;
-    }
-
-    /**
-     * Returns true if this transformation should be visible in the menu 
-     * @return
-     */
-    public boolean isShownInMenu() {
-        return (this.visibilityFlags & KSBasEPlugin.SHOW_MENU) == KSBasEPlugin.SHOW_MENU;
-    }
-
-    /**
-     * Returns true if this transformation should be visible in the toolbar
-     * @return
-     */
-    public boolean isShownInToolbar() {
-        return (this.visibilityFlags & KSBasEPlugin.SHOW_TOOLBAR) == KSBasEPlugin.SHOW_TOOLBAR;
-    }
-    
-    /**
-     * Returns true if this transformation should be visible in the context menu
-     * @return
-     */
-    public boolean isShownInContext() {
-        return (this.visibilityFlags & KSBasEPlugin.SHOW_CONTEXT) == KSBasEPlugin.SHOW_CONTEXT;
-    }
-    
-    /**
-     * Returns true if this transformation should be visible in the balloon menu
-     * @return
-     */
-    public boolean isShownInBalloon() {
-        return (this.visibilityFlags & KSBasEPlugin.SHOW_BALLOON) == KSBasEPlugin.SHOW_BALLOON;
-    }
-
-    /**
-     * Returns the value of the visibility flags
-     * @see KSBasEPlugin for valid visibility flags
-     * @return
-     */
-    public int getVisiblity() {
-        return this.visibilityFlags;
     }
 
     /**
@@ -250,7 +195,6 @@ public class Transformation implements Serializable {
         try {
             writer.writeObject(this.name);
             writer.writeObject(this.transformationName);
-            writer.writeInt(this.visibilityFlags);
             writer.writeInt(this.numSelections);
             writer.writeObject(this.icon);
             writer.writeObject(this.partConfig);

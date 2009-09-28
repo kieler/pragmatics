@@ -208,6 +208,12 @@ public class DynamicMenuContributions {
                                 .createElement("menuContribution");
                         menuContribution.setAttribute("locationURI", contrib
                                 .getData());
+                        for (String tid : contrib.getCommands()) {
+                            // Create commands for root menu
+                            Node menuCommand = createElementForMenu(tid,
+                                    extension, editor);
+                            menuContribution.appendChild(menuCommand);
+                        }
                         // create sub menus
                         for (KSBasEMenuContribution m : contrib.getMenus()) {
                             Element menu = extension.createElement("menu");
@@ -224,12 +230,7 @@ public class DynamicMenuContributions {
                             }
                             menuContribution.appendChild(menu);
                         }
-                        for (String tid : contrib.getCommands()) {
-                            // Create commands for root menu
-                            Node menuCommand = createElementForMenu(tid,
-                                    extension, editor);
-                            menuContribution.appendChild(menuCommand);
-                        }
+
                         menuExtension.appendChild(menuContribution);
                     }
                     plugin.appendChild(commandExtension);

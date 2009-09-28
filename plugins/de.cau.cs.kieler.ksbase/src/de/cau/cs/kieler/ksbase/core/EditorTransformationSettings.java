@@ -26,8 +26,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
-import de.cau.cs.kieler.ksbase.KSBasEPlugin;
-
 /**
  * Stores the KSBasE settings for one specific editor. class is serializable so
  * it can be stored in an external File
@@ -39,11 +37,6 @@ public class EditorTransformationSettings implements Serializable {
 
     private static final long serialVersionUID = -208150422554311871L;
     private String modelPackageClass; // The model package class
-    private String menuName; // Name of the menu 
-    private String menuLocation; // Location of the menu
-    private String toolbarLocation; // Location of the tool bar
-    private String popupLocation; //Location of the popup menu
-    private int visibilityFlags; // Visibility flags (see KSBasePlugin.java)
     private boolean performAutoLayout; // Run auto-layout after transformation
     private String defaultIcon; // Default icon for menu/tool bar/balloon/popup menu entries
     private String editor; // Editor to which this setting is assigned
@@ -61,14 +54,7 @@ public class EditorTransformationSettings implements Serializable {
      */
     public EditorTransformationSettings(String editor) {
         this.editor = editor;
-        this.visibilityFlags = KSBasEPlugin.SHOW_MENU
-                | KSBasEPlugin.SHOW_CONTEXT | KSBasEPlugin.SHOW_TOOLBAR
-                | KSBasEPlugin.SHOW_BALLOON;
         this.modelPackageClass = ""; //$NON-NLS-1$
-        this.menuName = Messages.EditorTransformationSettings_Default_Menu_Name;
-        this.menuLocation = Messages.EditorTransformationSettings_Default_Menu_Location;
-        this.toolbarLocation = Messages.EditorTransformationSettings_Default_Toolbar_Location;
-        this.popupLocation = "popup:org.eclipse.gmf.runtime.diagram.ui.DiagramEditorContextMenu";
         this.defaultIcon = "";
         this.extFile = ""; //$NON-NLS-1$
         this.context = "";
@@ -117,75 +103,7 @@ public class EditorTransformationSettings implements Serializable {
     public void setModelPackageClass(String modelPackageClass) {
         this.modelPackageClass = modelPackageClass;
     }
-
-    /**
-     * Gets the menu name
-     * 
-     * @return Name of the menu
-     */
-    public String getMenuName() {
-        return menuName;
-    }
-
-    /**
-     * Sets the menu name
-     * @param menuName
-     */
-    public void setMenuName(String menuName) {
-        this.menuName = menuName;
-    }
-
-    /**
-     * Returns the number representing the contributions visibility
-     * @see KSBasEPlugin for visibility flags 
-     * @return
-     */
-    public int getVisibility() {
-        return visibilityFlags;
-    }
-
-    /**
-     * Sets the visibility flags.
-     * @see KSBasEPlugin  for valid flags 
-     * @param flags
-     */
-    public void setVisibilityFlags(int flags) {
-        this.visibilityFlags = flags;
-    }
-
-    /**
-     * Menu visibility  
-     * @return true if a menu should be visible 
-     */
-    public boolean isShownInMenu() {
-        return (this.visibilityFlags & KSBasEPlugin.SHOW_MENU) == KSBasEPlugin.SHOW_MENU;
-    }
-
-    /**
-     * Toolbar visibility 
-     * @return true if a toolbar should be visible
-     */
-    public boolean isShownInToolbar() {
-        return (this.visibilityFlags & KSBasEPlugin.SHOW_TOOLBAR) == KSBasEPlugin.SHOW_TOOLBAR;
-    }
-
-    /**
-     * Context menu visibility
-     * @return true if a context menu should be visible
-     */
-    public boolean isShownInContext() {
-        return (this.visibilityFlags & KSBasEPlugin.SHOW_CONTEXT) == KSBasEPlugin.SHOW_CONTEXT;
-    }
-
-    /**
-     * Balloon menu visibility
-     * @return true if a balloon menu should be visible
-     */
-    public boolean isShownInBalloon() {
-        return (this.visibilityFlags & KSBasEPlugin.SHOW_BALLOON) == KSBasEPlugin.SHOW_BALLOON;
-    }
-
-    public LinkedList<KSBasEMenuContribution> getMenuContributions() {
+        public LinkedList<KSBasEMenuContribution> getMenuContributions() {
         return menuContributions;
     }
 
@@ -277,49 +195,6 @@ public class EditorTransformationSettings implements Serializable {
             transformations.remove(oldVal);
         transformations.add(newVal);
     }
-
-    /**
-     * Returns the locationURI of the menu 
-     * @return a locationURI representing the position of the menu
-     */
-    public String getMenuLocation() {
-        return menuLocation;
-    }
-
-    /**
-     * Sets the locationURI of the menu
-     * @param menuLocation a locationURI
-     */
-    public void setMenuLocation(String menuLocation) {
-        this.menuLocation = menuLocation;
-    }
-
-    public String getPopupLocation() {
-		return popupLocation;
-	}
-
-	public void setPopupLocation(String popupLocation) {
-		if ( popupLocation != null)
-			this.popupLocation = popupLocation;
-	}
-
-	/**
-     * Returns the locationURI of the toolbar
-     * @return a locationURI representing the position of the toolbar
-     */
-    public String getToolbarLocation() {
-        return toolbarLocation;
-    }
-
-    /**
-     * Sets the locationURI of the toolbar
-     * @param toolbarLocation a locationURI
-     */
-    public void setToolbarLocation(String toolbarLocation) {
-    	if (toolbarLocation != null)
-    		this.toolbarLocation = toolbarLocation;
-    }
-
     /**
      * The auto layout setting
      * @return true if auto layout should be performed after execution
