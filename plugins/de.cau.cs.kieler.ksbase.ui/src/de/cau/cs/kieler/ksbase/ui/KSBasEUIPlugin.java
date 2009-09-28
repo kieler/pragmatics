@@ -35,6 +35,16 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
      * The constructor
      */
     public KSBasEUIPlugin() {
+        /*
+        PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().addPostSelectionListener(new ISelectionListener() {
+            
+            public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+                if ( selection instanceof StructuredSelection) {
+                    System.out.println(((StructuredSelection)selection).getFirstElement());
+                }
+            }
+        });
+        */
         System.out.println("ksbase activated");
         DynamicMenuContributions.instance.createAllMenuContributions();
     }

@@ -54,9 +54,9 @@
          </documentation>
       </annotation>
       <complexType>
-         <sequence minOccurs="1" maxOccurs="unbounded">
-            <element ref="transformation"/>
-            <element ref="menuContribution" minOccurs="1" maxOccurs="unbounded"/>
+         <sequence>
+            <element ref="menus"/>
+            <element ref="transformations"/>
          </sequence>
          <attribute name="editor" type="string" use="required">
             <annotation>
@@ -237,6 +237,22 @@ This class has to extend &apos;emf.ecore.EPackage&apos;
                </documentation>
             </annotation>
          </attribute>
+      </complexType>
+   </element>
+
+   <element name="menus">
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="menuContribution" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+      </complexType>
+   </element>
+
+   <element name="transformations">
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="transformation"/>
+         </sequence>
       </complexType>
    </element>
 

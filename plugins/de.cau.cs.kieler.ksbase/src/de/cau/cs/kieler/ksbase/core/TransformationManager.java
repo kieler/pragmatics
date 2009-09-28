@@ -37,9 +37,9 @@ import org.eclipse.core.runtime.Platform;
 public class TransformationManager {
 
     private LinkedList<EditorTransformationSettings> registeredEditors;// The
-                                                                       // currently
-                                                                       // registered
-                                                                       // editors
+    // currently
+    // registered
+    // editors
     private boolean isInitialized;
 
     // Thread-safe initialization
@@ -147,47 +147,63 @@ public class TransformationManager {
             editor.setDefaultIcon(settings.getAttribute("defautlIcon"));
             editor.setModelPackageClass(settings.getAttribute("packageName"));
             editor.setPerformAutoLayout(true);
-            for (IConfigurationElement t : settings
-                    .getChildren("transformation")) {
-                Transformation transformation = new Transformation(t
-                        .getAttribute("name"), t.getAttribute("transformation"));
-                transformation.setNumSelections(Integer.valueOf(t
-                        .getAttribute("selectionCount")));
-                transformation.setKeyboardShortcut(t
-                        .getAttribute("keyboardShortcut"));
-                transformation.setTransformationID(t
-                        .getAttribute("transformationId"));
-                transformation.setIcon(t.getAttribute("icon"));
-                IConfigurationElement[] parts = t
-                        .getChildren("element_selection");
-                if (parts != null && parts.length > 0) {
-                    String[] partConfig = new String[parts.length];
-                    for (int i = 0; i < parts.length; ++i) {
-                        partConfig[i] = parts[i].getAttribute("class");
+
+            IConfigurationElement[] transformations = settings
+                    .getChildren("transformations");
+            if (transformations != null && transformations.length > 0) {
+                // since we only allowed one single <transformations> child, we
+                // are using it w/o iteration
+                for (IConfigurationElement t : transformations[0]
+                        .getChildren("transformation")) {
+                    Transformation transformation = new Transformation(t
+                            .getAttribute("name"), t
+                            .getAttribute("transformation"));
+                    transformation.setNumSelections(Integer.valueOf(t
+                            .getAttribute("selectionCount")));
+                    transformation.setKeyboardShortcut(t
+                            .getAttribute("keyboardShortcut"));
+                    transformation.setTransformationID(t
+                            .getAttribute("transformationId"));
+                    transformation.setIcon(t.getAttribute("icon"));
+                    IConfigurationElement[] parts = t
+                            .getChildren("element_selection");
+                    if (parts != null && parts.length > 0) {
+                        String[] partConfig = new String[parts.length];
+                        for (int i = 0; i < parts.length; ++i) {
+                            partConfig[i] = parts[i].getAttribute("class");
+                        }
+                        transformation.setPartConfig(partConfig);
                     }
-                    transformation.setPartConfig(partConfig);
+                    editor.addTransformation(transformation);
                 }
-                editor.addTransformation(transformation);
             }
             // Read menu contributions
-            for (IConfigurationElement c : settings
-                    .getChildren("menuContribution")) {
-                KSBasEMenuContribution contrib = new KSBasEMenuContribution(c
-                        .getAttribute("locationURI"));
-                for (IConfigurationElement m : c.getChildren("menu")) {
-                    KSBasEMenuContribution menu = new KSBasEMenuContribution(m
-                            .getAttribute("id"));
-                    menu.setLabel(m.getAttribute("label"));
-                    for (IConfigurationElement com : m.getChildren()) {
-                        menu.addCommand(com.getAttribute("transformationId"));
+            IConfigurationElement[] menus = settings.getChildren("menus");
+            if (menus != null && menus.length > 0) {
+                // since we only allowed one single <transformations> child, we
+                // are using it w/o iteration
+                for (IConfigurationElement c : menus[0]
+                        .getChildren("menuContribution")) {
+                    KSBasEMenuContribution contrib = new KSBasEMenuContribution(
+                            c.getAttribute("locationURI"));
+                    for (IConfigurationElement m : c.getChildren("menu")) {
+                        KSBasEMenuContribution menu = new KSBasEMenuContribution(
+                                m.getAttribute("id"));
+                        menu.setLabel(m.getAttribute("label"));
+                        for (IConfigurationElement com : m.getChildren()) {
+                            menu.addCommand(com
+                                    .getAttribute("transformationId"));
+                        }
+                        contrib.addSubMenu(menu);
                     }
-                    contrib.addSubMenu(menu);
+                    for (IConfigurationElement com : c
+                            .getChildren("transformationCommand")) {
+                        contrib
+                                .addCommand(com
+                                        .getAttribute("transformationId"));
+                    }
+                    editor.addMenuContribution(contrib);
                 }
-                for (IConfigurationElement com : c
-                        .getChildren("transformationCommand")) {
-                    contrib.addCommand(com.getAttribute("transformationId"));
-                }
-                editor.addMenuContribution(contrib);
             }
             // Read Xtend file from extension point configuration
             String content = "";
@@ -233,7 +249,6 @@ public class TransformationManager {
             e.printStackTrace();
         }
     }
-
 
     /**
      * Exports the settings to an external file
