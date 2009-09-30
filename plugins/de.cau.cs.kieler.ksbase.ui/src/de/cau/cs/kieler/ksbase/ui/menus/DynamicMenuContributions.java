@@ -179,7 +179,7 @@ public class DynamicMenuContributions {
                         handlerVisCount.setAttribute("value", String.valueOf(t
                                 .getNumSelections()));
                         handlerVisWith.appendChild(handlerVisCount);
-
+                        
                         Element handlerVisOr = extension.createElement("or");
 
                         if (t.getPartConfig().length > 0) {
@@ -212,6 +212,7 @@ public class DynamicMenuContributions {
                             // Create commands for root menu
                             Node menuCommand = createElementForMenu(tid,
                                     extension, editor);
+                            menuCommand.appendChild(menuVisible.cloneNode(true));
                             menuContribution.appendChild(menuCommand);
                         }
                         // create sub menus
@@ -219,15 +220,16 @@ public class DynamicMenuContributions {
                             Element menu = extension.createElement("menu");
                             menu.setAttribute("id", m.getData());
                             menu.setAttribute("label", m.getLabel());
-                            menu.appendChild(menuVisible);
                             for (String tid : m.getCommands()) {
                                 Node menuCommand = createElementForMenu(tid,
                                         extension, editor);
+                                menuCommand.appendChild(menuVisible.cloneNode(true));
                                 menu.appendChild(menuCommand);
 
                                 cachedTransformationCommands.put(tid,
                                         menuCommand.cloneNode(true));
                             }
+                            menu.appendChild(menuVisible.cloneNode(true));
                             menuContribution.appendChild(menu);
                         }
 

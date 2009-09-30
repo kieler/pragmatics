@@ -31,13 +31,16 @@ public class TransformationEditPolicyProvider extends AbstractProvider
 
     /** the key used to install an <i>execute transformation</i> edit policy */
     public static final String EXECUTE_TRANSFORMATION_ROLE = "ExecuteTransformationEditPolicy";
-
+    /** the key used to install an <i>KSBasE popup bar</i> edit policy */
+    public static final String KSBASE_POPUPBAR = "KSbasEPopupBarEditPolicy";
+    
     /* (non-Javadoc)
      * @see org.eclipse.gmf.runtime.diagram.ui.services.editpolicy.IEditPolicyProvider#createEditPolicies(org.eclipse.gef.EditPart)
      */
     public void createEditPolicies(EditPart editPart) {
         editPart.installEditPolicy(EXECUTE_TRANSFORMATION_ROLE,
                 new ExecuteTransformationEditPolicy());
+        //editPart.installEditPolicy(KSBASE_POPUPBAR, new KSBAsEPopupBarEditPolicy());
     }
 
     /* (non-Javadoc)
