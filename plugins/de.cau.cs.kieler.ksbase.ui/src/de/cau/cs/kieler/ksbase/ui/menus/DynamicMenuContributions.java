@@ -258,6 +258,7 @@ public class DynamicMenuContributions {
                                 .createContributor(bundle);
                         ByteArrayInputStream is = new ByteArrayInputStream(str
                                 .toString().getBytes("UTF-8"));
+                        
                         reg.addContribution(is, contributor, false, null, null,
                                 key);
                     }
