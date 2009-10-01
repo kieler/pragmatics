@@ -269,10 +269,11 @@ public class EditorTransformationSettings implements Serializable {
                 this.transformations = new LinkedList<Transformation>();
                 return;
             }
+            BufferedReader reader = null;
             try { // read Xtend functions
                 this.extFile = ""; // clear old transformation file
                 LinkedList<Transformation> newTrans = new LinkedList<Transformation>();
-                BufferedReader reader = new BufferedReader(
+                 reader = new BufferedReader(
                         new InputStreamReader(xtfile.getContents()));
 
                 while (reader.ready()) {
@@ -321,12 +322,20 @@ public class EditorTransformationSettings implements Serializable {
                 }
                 reader.close();
                 this.transformations = newTrans;
+                
             } catch (CoreException e) {
                 // ignore
             } catch (IOException e) {
                 // ignore
             } catch (IndexOutOfBoundsException e) {
                 // ignore
+            }
+            finally {
+            	try {
+					if (reader != null )
+						reader.close();
+				} catch (IOException e) {
+				}
             }
         }
     }

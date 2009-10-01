@@ -43,7 +43,7 @@ public class TransformationManager {
     private boolean isInitialized;
 
     // Thread-safe initialization
-    public static TransformationManager instance = new TransformationManager();
+    public static final TransformationManager instance = new TransformationManager();
 
     /**
      * Since this is a singleton class the constructor is private
@@ -206,16 +206,17 @@ public class TransformationManager {
                 }
             }
             // Read Xtend file from extension point configuration
-            String content = "";
             InputStream path;
+            StringBuffer contentBuffer = new StringBuffer();
             try {
                 path = Platform.getBundle(settings.getContributor().getName())
                         .getEntry("/" + settings.getAttribute("XtendFile"))
                         .openStream();
                 while (path.available() > 0) {
-                    content += (char) path.read();
+                	contentBuffer.append((char)path.read());
+                    
                 }
-                editor.setExtFile(content);
+                editor.setExtFile(contentBuffer.toString());
             } catch (IOException e) {
                 System.err
                         .println("KSBasE configuration exception: Can't read Xtend file");

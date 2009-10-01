@@ -159,15 +159,16 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
             fileName = fileName.substring(0, fileName.lastIndexOf(".")); //$NON-NLS-1$
         }
 
-        
-        String modelSelection = "";
+        StringBuffer modelSelection = new StringBuffer();
+        //String modelSelection = "";
         List<?> list = s.toList();
         for ( int i = 0; i < list.size(); ++i ) {
         	if ( i > 0)
-        		modelSelection += ",";
-        	
+        		modelSelection.append(",");
+        		
+        	//modelSelection = modelSelectionBuffer.toString();
         	String currentModel = "model"+String.valueOf(i);
-        	modelSelection += currentModel;
+        	modelSelection.append(currentModel);
         	Object selectedObject = list.get(i);
         	if (selectedObject instanceof EditPart) {
         		Object model = ((EditPart) selectedObject).getModel();
@@ -176,7 +177,7 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
         		}
         	}
         }
-        workflow = new KielerWorkflow(command, fileName, basePackage,modelSelection);
+        workflow = new KielerWorkflow(command, fileName, basePackage,modelSelection.toString());
         return true;
     }
 

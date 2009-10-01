@@ -124,7 +124,7 @@ public class Transformation implements Serializable {
      * @param parts
      */
     public void setPartConfig(String[] parts) {
-        this.partConfig = parts;
+        this.partConfig = parts.clone();
     }
     
     /**
@@ -132,7 +132,7 @@ public class Transformation implements Serializable {
      * @return
      */
     public String[] getPartConfig() {
-        return this.partConfig;
+        return this.partConfig.clone();
     }
 
     /**
@@ -143,13 +143,14 @@ public class Transformation implements Serializable {
         if (partConfig == null)
             return "";
 
-        String res = "";
+        StringBuffer result = new StringBuffer();
         for (int i = 0; i < partConfig.length; ++i) {
-            res += partConfig[i];
+            result.append(partConfig[i]);
             if (i < partConfig.length - 1)
-                res += ",";
+            	result.append(",");
+                
         }
-        return res;
+        return result.toString();
     }
 
     /**

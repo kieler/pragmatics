@@ -49,7 +49,7 @@ import de.cau.cs.kieler.viewmanagement.triggers.LayoutTrigger;
 
 public class TransformationUIManager {
 
-	public static TransformationUIManager instance = new TransformationUIManager();
+	public static final TransformationUIManager instance = new TransformationUIManager();
 
 	/**
 	 * Creates and executes a transformation command by creating a request and

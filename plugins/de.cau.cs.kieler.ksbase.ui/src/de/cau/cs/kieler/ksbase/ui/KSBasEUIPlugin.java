@@ -48,7 +48,7 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
      */
     public void start(BundleContext context) throws Exception {
         super.start(context);
-        plugin = this;
+        KSBasEUIPlugin.plugin = this;
     }
 
     /*
@@ -59,9 +59,8 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
      * )
      */
     public void stop(BundleContext context) throws Exception {
-        System.out.println("stop");
         DynamicMenuContributions.instance.stop();
-        plugin = null;
+        KSBasEUIPlugin.plugin = null;
         super.stop(context);
     }
 

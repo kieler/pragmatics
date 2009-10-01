@@ -17,7 +17,6 @@ package de.cau.cs.kieler.ksbase.ui.handler;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
 
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
@@ -29,8 +28,7 @@ import de.cau.cs.kieler.ksbase.ui.TransformationUIManager;
  * @author Michael Matzen
  * 
  */
-public class TransformationCommandHandler extends AbstractHandler implements
-		IHandler {
+public class TransformationCommandHandler extends AbstractHandler{
 
 	public static final String EDITOR_PARAM = "de.cau.cs.kieler.ksbase.editorParameter";
 	public static final String TRANSFORMATION_PARAM = "de.cau.cs.kieler.ksbase.transformationParameter";
