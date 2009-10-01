@@ -50,9 +50,18 @@ public class DynamicMenuContributions {
     public static final DynamicMenuContributions instance = new DynamicMenuContributions();
     private HashMap<String, Node> cachedTransformationCommands = new HashMap<String, Node>();
     private HashMap<Transformation, String> commandIds = new HashMap<Transformation, String>();
+    private Object token = null;
 
     private DynamicMenuContributions() {
 
+    }
+
+    public void stop() {
+        if (token != null) {
+            IExtensionRegistry reg = RegistryFactory.getRegistry();
+            reg.stop(token);
+            token = null;
+        }
     }
 
     public void createAllMenuContributions() {
@@ -179,7 +188,7 @@ public class DynamicMenuContributions {
                         handlerVisCount.setAttribute("value", String.valueOf(t
                                 .getNumSelections()));
                         handlerVisWith.appendChild(handlerVisCount);
-                        
+
                         Element handlerVisOr = extension.createElement("or");
 
                         if (t.getPartConfig().length > 0) {
@@ -212,7 +221,8 @@ public class DynamicMenuContributions {
                             // Create commands for root menu
                             Node menuCommand = createElementForMenu(tid,
                                     extension, editor);
-                            menuCommand.appendChild(menuVisible.cloneNode(true));
+                            menuCommand
+                                    .appendChild(menuVisible.cloneNode(true));
                             menuContribution.appendChild(menuCommand);
                         }
                         // create sub menus
@@ -223,7 +233,8 @@ public class DynamicMenuContributions {
                             for (String tid : m.getCommands()) {
                                 Node menuCommand = createElementForMenu(tid,
                                         extension, editor);
-                                menuCommand.appendChild(menuVisible.cloneNode(true));
+                                menuCommand.appendChild(menuVisible
+                                        .cloneNode(true));
                                 menu.appendChild(menuCommand);
 
                                 cachedTransformationCommands.put(tid,
@@ -248,8 +259,7 @@ public class DynamicMenuContributions {
                     System.out.println(str.toString());
 
                     IExtensionRegistry reg = RegistryFactory.getRegistry();
-                    Object key = ((ExtensionRegistry) reg)
-                            .getTemporaryUserToken();
+
                     if (editor.getContributor() != null) {
                         Bundle bundle = Activator.getDefault().getBundle(
                                 editor.getContributor());
@@ -258,9 +268,12 @@ public class DynamicMenuContributions {
                                 .createContributor(bundle);
                         ByteArrayInputStream is = new ByteArrayInputStream(str
                                 .toString().getBytes("UTF-8"));
-                        
+                        System.err.println("adding");
+                        token = ((ExtensionRegistry) reg)
+                                .getTemporaryUserToken();
                         reg.addContribution(is, contributor, false, null, null,
-                                key);
+                                token);
+
                     }
                 }
             } catch (TransformerConfigurationException e) {

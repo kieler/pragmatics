@@ -15,6 +15,7 @@
 package de.cau.cs.kieler.ksbase.ui;
 
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
@@ -22,6 +23,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import de.cau.cs.kieler.ksbase.ui.menus.DynamicMenuContributions;
+import de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -39,16 +41,6 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
      * The constructor
      */
     public KSBasEUIPlugin() {
-        /*
-        PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().addPostSelectionListener(new ISelectionListener() {
-            
-            public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-                if ( selection instanceof StructuredSelection) {
-                    System.out.println(((StructuredSelection)selection).getFirstElement());
-                }
-            }
-        });
-        */
         System.out.println("ksbase activated");
         DynamicMenuContributions.instance.createAllMenuContributions();
     }
@@ -73,6 +65,8 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
      * )
      */
     public void stop(BundleContext context) throws Exception {
+        System.out.println("stop");
+        DynamicMenuContributions.instance.stop();
         plugin = null;
         super.stop(context);
     }
