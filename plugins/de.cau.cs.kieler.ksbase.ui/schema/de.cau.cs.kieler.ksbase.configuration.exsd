@@ -3,7 +3,7 @@
 <schema targetNamespace="de.cau.cs.kieler.ksbase.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="de.cau.cs.kieler.ksbase.ui" id="de.cau.cs.kieler.ksbase.configuration" name="Structure based editing feature"/>
+         <meta.schema plugin="de.cau.cs.kieler.ksbase.ui" id="configuration" name="Structure based editing feature"/>
       </appinfo>
       <documentation>
          [Enter description of this extension point.]
@@ -113,9 +113,14 @@ This class has to extend &apos;emf.ecore.EPackage&apos;
    </element>
 
    <element name="transformation">
+      <annotation>
+         <documentation>
+            The transformation properties.
+         </documentation>
+      </annotation>
       <complexType>
          <sequence minOccurs="1" maxOccurs="unbounded">
-            <element ref="element_selection"/>
+            <element ref="diagramElements"/>
          </sequence>
          <attribute name="transformationId" type="string" use="required">
             <annotation>
@@ -165,17 +170,20 @@ This class has to extend &apos;emf.ecore.EPackage&apos;
       </complexType>
    </element>
 
-   <element name="element_selection">
+   <element name="diagramElements">
       <annotation>
          <documentation>
-            A diagram element which needs to be selected in order to execute the transformation.
+            A diagram element which needs to be selected in order to execute the transformation. If you want to use multiple, optional elements you have to add elements to this selection. If you want to define multiple non optional elements you have to add more element_selections to this transformation.
          </documentation>
       </annotation>
       <complexType>
-         <attribute name="class" type="string" use="required">
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="diagramElement"/>
+         </sequence>
+         <attribute name="class" type="string">
             <annotation>
                <documentation>
-                  A class which represents a diagram element.
+                  You can either define one class here or, to add multiple optional elements, add diagramElement children.
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart:"/>
@@ -213,6 +221,9 @@ This class has to extend &apos;emf.ecore.EPackage&apos;
                <documentation>
                   The id of the referenced transformation
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.ksbase.configuration/configuration/transformations/transformation/@transformationId"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -253,6 +264,21 @@ This class has to extend &apos;emf.ecore.EPackage&apos;
          <sequence minOccurs="1" maxOccurs="unbounded">
             <element ref="transformation"/>
          </sequence>
+      </complexType>
+   </element>
+
+   <element name="diagramElement">
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart:"/>
+               </appinfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

@@ -15,12 +15,10 @@
                name="Add Implementation"
                selectionCount="1"
                transformation="createImplements">
-            <element_selection
-                  class="org.eclipse.uml2.diagram.clazz.edit.parts.Interface2EditPart">
-            </element_selection>
-            <element_selection
-                  class="org.eclipse.uml2.diagram.component.edit.parts.Interface2EditPart">
-            </element_selection>
+               <diagramElements>
+               <diagramElement class="org.eclipse.uml2.diagram.clazz.edit.parts.Interface2EditPart" />
+            	<diagramElement class="org.eclipse.uml2.diagram.component.edit.parts.Interface2EditPart" />
+            </diagramElements>
          </transformation>
        </transformations>
        <menus>

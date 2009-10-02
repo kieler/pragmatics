@@ -144,13 +144,13 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
      */
     public boolean initalize(IEditorPart editPart, ISelection selection,
             String command, int numSelections, String fileName,
-            String basePackage) {
+            String basePackage, Object[] paramConfig) {
         StructuredSelection s;
 
         if (selection instanceof StructuredSelection)
             s = (StructuredSelection) selection;
         else
-            return false; // TODO: Throw unsupported exception to user
+            return false;
 
         if (s.size() != numSelections)
             return false;
@@ -158,18 +158,48 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
         if (fileName.contains(".")) { // Remove .ext from fileName //$NON-NLS-1$
             fileName = fileName.substring(0, fileName.lastIndexOf(".")); //$NON-NLS-1$
         }
-
-        StringBuffer modelSelection = new StringBuffer();
-        //String modelSelection = "";
-        List<?> list = s.toList();
-        for ( int i = 0; i < list.size(); ++i ) {
+        
+        StringBuffer modelSelection = new StringBuffer(); 
+        List<Object> orderedList = new ArrayList<Object>(); //Ordered list of elements
+        List<Object> leftovers = new ArrayList<Object>(); //Elements that could not be matched with a parameter
+        
+        for ( Object param : paramConfig) {
+        	List<?> list = s.toList();
+        	if ( param instanceof String) {
+        		//look if one of the parameters matches the paramConfig 
+        		for (Object elem : list) {
+        			if ( elem.getClass().getCanonicalName().equals(param)) {
+        				orderedList.add(elem);
+        				break;
+        			}
+        		}
+        		leftovers.add(param); //no matching parameter found
+        	}
+        	else if (param instanceof String[]) {
+        		boolean inserted = false;
+        		for (String parameter : (String[])param) {
+        			if (inserted) //only insert once
+        				break;
+        			for (Object elem : list) {
+            			if ( elem.getClass().getCanonicalName().equals(parameter)) {
+            				orderedList.add(elem);
+            				inserted = true;
+            				break; //breaks the Object elem : list loop
+            			}
+            		}
+        		}
+        		leftovers.add(param); //no matching parameter found
+        	}
+        }
+        orderedList.addAll(leftovers); //append leftover elements to the end of the list
+        
+        for ( int i = 0; i < orderedList.size(); ++i ) {
         	if ( i > 0)
         		modelSelection.append(",");
-        		
-        	//modelSelection = modelSelectionBuffer.toString();
+        	
         	String currentModel = "model"+String.valueOf(i);
         	modelSelection.append(currentModel);
-        	Object selectedObject = list.get(i);
+        	Object selectedObject = orderedList.get(i);
         	if (selectedObject instanceof EditPart) {
         		Object model = ((EditPart) selectedObject).getModel();
         		if (model instanceof View) {

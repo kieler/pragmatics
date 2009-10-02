@@ -104,7 +104,7 @@ public class TransformationUIManager {
 						activeEditor, transformation.getTransformationName(),
 						file.getAbsolutePath(), selection, transformation
 								.getNumSelections(), editor
-								.getModelPackageClass());
+								.getModelPackageClass(), transformation.getPartConfig());
 
 				Command transformationCommand = selectedElement
 						.getCommand(request);

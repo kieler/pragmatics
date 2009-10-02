@@ -36,7 +36,7 @@ public class Transformation implements Serializable {
     private int numSelections; // Number of selections;
     private String icon; // URI to icon
     private String keyboardShortcut; // Assigned keyboard shortcut
-    private String[] partConfig; // Parts for which this transformation is defined
+    private Object[] partConfig; // Parts for which this transformation is defined
     private String transformationID; //Id for this transformation, defined via the ext. point
     /**
      * Creates a new Transformation
@@ -123,7 +123,7 @@ public class Transformation implements Serializable {
      * The parts are fqn of the diagram element classes 
      * @param parts
      */
-    public void setPartConfig(String[] parts) {
+    public void setPartConfig(Object[] parts) {
         this.partConfig = parts.clone();
     }
     
@@ -131,7 +131,7 @@ public class Transformation implements Serializable {
      * Returns the array of diagram parts this transformation is defined for
      * @return
      */
-    public String[] getPartConfig() {
+    public Object[] getPartConfig() {
         return this.partConfig.clone();
     }
 

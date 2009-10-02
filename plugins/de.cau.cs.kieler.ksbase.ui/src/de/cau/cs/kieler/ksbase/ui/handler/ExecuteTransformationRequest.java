@@ -35,13 +35,14 @@ public class ExecuteTransformationRequest extends Request {
     private ISelection selection;
     private int selectionCount;
     private String modelPackage;
+    private Object[] paramConfig;
 
     /**
      * Creates a transformation request
      */
     public ExecuteTransformationRequest(IEditorPart ePart, String command,
             String fileName, ISelection selection, int selectionCount,
-            String modelPackage) {
+            String modelPackage, Object[] paramConfig) {
         super(REQ_EXEC_TRANS);
         this.editPart = ePart;
         this.command = command;
@@ -49,6 +50,7 @@ public class ExecuteTransformationRequest extends Request {
         this.modelPackage = modelPackage;
         this.selection = selection;
         this.selectionCount = selectionCount;
+        this.paramConfig = paramConfig;
     }
     
     /**
@@ -146,4 +148,12 @@ public class ExecuteTransformationRequest extends Request {
     public int getSelectionCount() {
         return this.selectionCount;
     }
+
+	public Object[] getParamConfig() {
+		return paramConfig;
+	}
+
+	public void setParamConfig(Object[] paramConfig) {
+		this.paramConfig = paramConfig;
+	}
 }
