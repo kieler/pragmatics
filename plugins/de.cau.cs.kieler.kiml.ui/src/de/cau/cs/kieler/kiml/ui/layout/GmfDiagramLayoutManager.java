@@ -224,6 +224,13 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         // execute the command
         commandStack.execute(applyLayoutCommand);
         
+        for (GraphicalEditPart editPart : port2EditPartMap.values()) {
+            ((IGraphicalEditPart)editPart.getParent()).getFigure().getUpdateManager().performUpdate();
+            IFigure figure = editPart.getFigure();
+            figure.getUpdateManager().addInvalidFigure(figure);
+            figure.getUpdateManager().performUpdate();
+        }
+        
         progressMonitor.done();
     }
 
