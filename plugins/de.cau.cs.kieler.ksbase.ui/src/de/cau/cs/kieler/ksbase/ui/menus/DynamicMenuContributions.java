@@ -77,26 +77,29 @@ public class DynamicMenuContributions {
 		}
 		try {
 			try {
-				Document extension = javax.xml.parsers.DocumentBuilderFactory
-						.newInstance().newDocumentBuilder().newDocument();
-				extension.setXmlStandalone(true);
-				// Create extension point elements:
-				Element plugin = extension.createElement("plugin");
-				Element commandExtension = extension.createElement("extension");
-				commandExtension.setAttribute("point",
-						"org.eclipse.ui.commands");
-				Element bindingExtension = extension.createElement("extension");
-				bindingExtension.setAttribute("point",
-						"org.eclipse.ui.bindings");
-				Element menuExtension = extension.createElement("extension");
-				menuExtension.setAttribute("point", "org.eclipse.ui.menus");
-
-				Element handlerExtension = extension.createElement("extension");
-				handlerExtension.setAttribute("point",
-						"org.eclipse.ui.handlers");
-
 				// Iterate through editors and create extension point contents
 				for (EditorTransformationSettings editor : editors) {
+					Document extension = javax.xml.parsers.DocumentBuilderFactory
+							.newInstance().newDocumentBuilder().newDocument();
+					extension.setXmlStandalone(true);
+					// Create extension point elements:
+					Element plugin = extension.createElement("plugin");
+					Element commandExtension = extension
+							.createElement("extension");
+					commandExtension.setAttribute("point",
+							"org.eclipse.ui.commands");
+					Element bindingExtension = extension
+							.createElement("extension");
+					bindingExtension.setAttribute("point",
+							"org.eclipse.ui.bindings");
+					Element menuExtension = extension
+							.createElement("extension");
+					menuExtension.setAttribute("point", "org.eclipse.ui.menus");
+
+					Element handlerExtension = extension
+							.createElement("extension");
+					handlerExtension.setAttribute("point",
+							"org.eclipse.ui.handlers");
 
 					// Create visibility flags for menus
 					Element menuVisible = extension
@@ -188,36 +191,42 @@ public class DynamicMenuContributions {
 						handlerVisCount.setAttribute("value", String.valueOf(t
 								.getNumSelections()));
 						handlerVisWith.appendChild(handlerVisCount);
-						
-						Element handlerElementsAnd = extension.createElement("and");
-						
+
+						Element handlerElementsAnd = extension
+								.createElement("and");
+
 						if (t.getPartConfig().length > 0) {
 							for (Object part : t.getPartConfig()) {
 								Element handlerVisIterate = extension
-								.createElement("iterate");
-								handlerVisIterate.setAttribute("operator", "or");
-								handlerVisIterate.setAttribute("ifEmpty", "true");
-						
+										.createElement("iterate");
+								handlerVisIterate
+										.setAttribute("operator", "or");
+								handlerVisIterate.setAttribute("ifEmpty",
+										"true");
+
 								if (part instanceof String) {
 									Element handlerVisInstance = extension
 											.createElement("instanceof");
 									handlerVisInstance.setAttribute("value",
-											(String)part);
+											(String) part);
 									handlerVisIterate
 											.appendChild(handlerVisInstance);
-								}
-								else if (part instanceof String[]) {
-									Element handlerVisOr = extension.createElement("or");
-									for (String inPart : (String[])part) {
+								} else if (part instanceof String[]) {
+									Element handlerVisOr = extension
+											.createElement("or");
+									for (String inPart : (String[]) part) {
 										Element handlerVisInstance = extension
-										.createElement("instanceof");
-										handlerVisInstance.setAttribute("value",inPart);
-										handlerVisOr.appendChild(handlerVisInstance);
+												.createElement("instanceof");
+										handlerVisInstance.setAttribute(
+												"value", inPart);
+										handlerVisOr
+												.appendChild(handlerVisInstance);
 									}
 									handlerVisIterate.appendChild(handlerVisOr);
-									
+
 								}
-								handlerElementsAnd.appendChild(handlerVisIterate);
+								handlerElementsAnd
+										.appendChild(handlerVisIterate);
 							}
 						}
 						handlerVisWith.appendChild(handlerElementsAnd);
@@ -268,12 +277,13 @@ public class DynamicMenuContributions {
 					plugin.appendChild(bindingExtension);
 					plugin.appendChild(handlerExtension);
 					extension.appendChild(plugin);
+
 					StringWriter str = new StringWriter();
 					TransformerFactory.newInstance().newTransformer()
 							.transform(new DOMSource(extension),
 									new StreamResult(str));
 
-					System.out.println(str.toString());
+					//System.out.println(str.toString());
 
 					IExtensionRegistry reg = RegistryFactory.getRegistry();
 
@@ -285,7 +295,6 @@ public class DynamicMenuContributions {
 								.createContributor(bundle);
 						ByteArrayInputStream is = new ByteArrayInputStream(str
 								.toString().getBytes("UTF-8"));
-						System.err.println("adding");
 						token = ((ExtensionRegistry) reg)
 								.getTemporaryUserToken();
 						reg.addContribution(is, contributor, false, null, null,

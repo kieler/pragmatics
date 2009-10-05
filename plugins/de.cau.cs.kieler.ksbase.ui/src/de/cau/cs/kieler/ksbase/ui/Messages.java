@@ -70,6 +70,8 @@ public class Messages extends NLS {
     public static String KSBasEPreferencePage_ShowMenu;
     public static String KSBasEPreferencePage_ShowPopup;
     public static String KSBasEPreferencePage_ShowToolbar;
+    public static String KSBasEPreferencePage_Table_Col_Id;
+    public static String KSBasEPreferencePage_Table_Col_Id_ToolTip;
     public static String KSBasEPreferencePage_Table_Col_Elements;
     public static String KSBasEPreferencePage_Table_Col_Elements_ToolTip;
     public static String KSBasEPreferencePage_Table_Col_Icon;

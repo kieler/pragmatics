@@ -36,6 +36,7 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
      */
     public KSBasEUIPlugin() {
         System.out.println("ksbase activated");
+        
         DynamicMenuContributions.instance.createAllMenuContributions();
     }
 

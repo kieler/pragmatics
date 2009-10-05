@@ -161,7 +161,7 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
         
         StringBuffer modelSelection = new StringBuffer(); 
         List<Object> orderedList = new ArrayList<Object>(); //Ordered list of elements
-        List<Object> leftovers = new ArrayList<Object>(); //Elements that could not be matched with a parameter
+        //List<Object> leftovers = new ArrayList<Object>(); //Elements that could not be matched with a parameter
         
         for ( Object param : paramConfig) {
         	List<?> list = s.toList();
@@ -173,7 +173,7 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
         				break;
         			}
         		}
-        		leftovers.add(param); //no matching parameter found
+        		//leftovers.add(param); //no matching parameter found
         	}
         	else if (param instanceof String[]) {
         		boolean inserted = false;
@@ -188,10 +188,16 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
             			}
             		}
         		}
-        		leftovers.add(param); //no matching parameter found
+        		//leftovers.add(); //no matching parameter found
         	}
         }
-        orderedList.addAll(leftovers); //append leftover elements to the end of the list
+        if ( paramConfig.length != orderedList.size()) {
+        	//Is it possible to have any elements here ?
+        	//We may need to either add unassigned elements
+        	//or check if we added one parameters more than once
+        	//but right now this works quite well, so we'll wait for an error :)
+        }
+        //orderedList.addAll(leftovers); //append leftover elements to the end of the list
         
         for ( int i = 0; i < orderedList.size(); ++i ) {
         	if ( i > 0)

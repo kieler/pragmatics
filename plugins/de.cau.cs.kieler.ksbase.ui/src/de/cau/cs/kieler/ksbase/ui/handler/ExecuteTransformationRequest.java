@@ -50,7 +50,7 @@ public class ExecuteTransformationRequest extends Request {
         this.modelPackage = modelPackage;
         this.selection = selection;
         this.selectionCount = selectionCount;
-        this.paramConfig = paramConfig;
+        this.paramConfig = paramConfig.clone();
     }
     
     /**
@@ -150,10 +150,10 @@ public class ExecuteTransformationRequest extends Request {
     }
 
 	public Object[] getParamConfig() {
-		return paramConfig;
+		return paramConfig.clone();
 	}
 
 	public void setParamConfig(Object[] paramConfig) {
-		this.paramConfig = paramConfig;
+		this.paramConfig = paramConfig.clone();
 	}
 }
