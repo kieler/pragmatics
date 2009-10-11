@@ -57,7 +57,6 @@
          <sequence>
             <element ref="menus"/>
             <element ref="transformations"/>
-            <element ref="parameterDiagramMapping"/>
          </sequence>
          <attribute name="editor" type="string" use="required">
             <annotation>
@@ -138,13 +137,6 @@ This class has to extend &apos;emf.ecore.EPackage&apos;
             <annotation>
                <documentation>
                   The name of the Xtend transformation method (without parameters). This method has to exist in the Xtend file else it will be ignored
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="selectionCount" type="string" use="required">
-            <annotation>
-               <documentation>
-                  Number of selected diagram elements for which this transformation is defined (i.e.  the number of parameters).
                </documentation>
             </annotation>
          </attribute>
@@ -239,44 +231,6 @@ This class has to extend &apos;emf.ecore.EPackage&apos;
          <sequence minOccurs="1" maxOccurs="unbounded">
             <element ref="transformation"/>
          </sequence>
-      </complexType>
-   </element>
-
-   <element name="diagramElement">
-      <complexType>
-         <attribute name="class" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart:"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="parameterDiagramMapping">
-      <complexType>
-         <sequence minOccurs="1" maxOccurs="unbounded">
-            <element ref="mapping"/>
-         </sequence>
-      </complexType>
-   </element>
-
-   <element name="mapping">
-      <complexType>
-         <sequence minOccurs="1" maxOccurs="unbounded">
-            <element ref="diagramElement"/>
-         </sequence>
-         <attribute name="parameter" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
       </complexType>
    </element>
 

@@ -56,10 +56,9 @@ public class ExecuteTransformationEditPolicy extends AbstractEditPolicy {
                 command.initalize(transformationRequest.getEditPart(),
                         transformationRequest.getSelection(),
                         transformationRequest.getCommand(),
-                        transformationRequest.getSelectionCount(),
                         transformationRequest.getFileName(),
                         transformationRequest.getModelPackage(),
-                        transformationRequest.getParamConfig());
+                        transformationRequest.getParameter());
                 return new ICommandProxy(command);
             } else
                 return null;

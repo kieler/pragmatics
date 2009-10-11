@@ -182,58 +182,21 @@ public class DynamicMenuContributions {
 						// Handler restrictions
 						Element handlerEnabled = extension
 								.createElement("enabledWhen");
-						Element handlerVisAnd = extension.createElement("and");
-						Element handlerVisWith = extension
-								.createElement("with");
-						handlerVisWith.setAttribute("variable", "selection");
-						Element handlerVisCount = extension
-								.createElement("count");
-						handlerVisCount.setAttribute("value", String.valueOf(t
-								.getNumSelections()));
-						handlerVisWith.appendChild(handlerVisCount);
-
-						Element handlerElementsAnd = extension
-								.createElement("and");
-
-						if (t.getPartConfig().length > 0) {
-							for (Object part : t.getPartConfig()) {
-								Element handlerVisIterate = extension
-										.createElement("iterate");
-								handlerVisIterate
-										.setAttribute("operator", "or");
-								handlerVisIterate.setAttribute("ifEmpty",
-										"true");
-
-								if (part instanceof String) {
-									Element handlerVisInstance = extension
-											.createElement("instanceof");
-									handlerVisInstance.setAttribute("value",
-											(String) part);
-									handlerVisIterate
-											.appendChild(handlerVisInstance);
-								} else if (part instanceof String[]) {
-									Element handlerVisOr = extension
-											.createElement("or");
-									for (String inPart : (String[]) part) {
-										Element handlerVisInstance = extension
-												.createElement("instanceof");
-										handlerVisInstance.setAttribute(
-												"value", inPart);
-										handlerVisOr
-												.appendChild(handlerVisInstance);
-									}
-									handlerVisIterate.appendChild(handlerVisOr);
-
-								}
-								handlerElementsAnd
-										.appendChild(handlerVisIterate);
-							}
-						}
-						handlerVisWith.appendChild(handlerElementsAnd);
-						handlerVisAnd.appendChild(handlerVisWith);
-						handlerEnabled.appendChild(handlerVisAnd);
+						Element handlerWith = extension.createElement("with");
+						handlerWith.setAttribute("variable", "selection");
+						Element handlerIt = extension.createElement("iterate");
+						handlerIt.setAttribute("ifEmpty", "false");
+						handlerIt.setAttribute("operator", "and");
+						Element handlerTest = extension.createElement("test");
+						handlerTest.setAttribute("args", editor.getEditor()+","+t.getTransformationId());
+						handlerTest.setAttribute("forcePluginActivation", "true");
+						handlerTest.setAttribute("property", "de.cau.cs.kieler.ksbase.ui.modelTesting.isModelInstance");
+						handlerIt.appendChild(handlerTest);
+						handlerWith.appendChild(handlerIt);
+						handlerEnabled.appendChild(handlerWith);
 						handlerCommand.appendChild(handlerEnabled);
 						handlerExtension.appendChild(handlerCommand);
+						
 					}
 					// Create menu extension:
 					for (KSBasEMenuContribution contrib : editor
@@ -283,7 +246,7 @@ public class DynamicMenuContributions {
 							.transform(new DOMSource(extension),
 									new StreamResult(str));
 
-					//System.out.println(str.toString());
+					System.out.println(str.toString());
 
 					IExtensionRegistry reg = RegistryFactory.getRegistry();
 

@@ -102,9 +102,8 @@ public class TransformationUIManager {
 				// Create request
 				ExecuteTransformationRequest request = new ExecuteTransformationRequest(
 						activeEditor, transformation.getTransformationName(),
-						file.getAbsolutePath(), selection, transformation
-								.getNumSelections(), editor
-								.getModelPackageClass(), transformation.getPartConfig());
+						file.getAbsolutePath(), selection, editor
+								.getModelPackageClass(), transformation.getParameter());
 
 				Command transformationCommand = selectedElement
 						.getCommand(request);

@@ -19,8 +19,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
@@ -30,8 +28,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.gmf.runtime.common.ui.services.editor.EditorService;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
@@ -49,13 +45,7 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.viewers.IBaseLabelProvider;
-import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ControlEditor;
@@ -68,24 +58,18 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPropertyListener;
@@ -120,193 +104,6 @@ import de.cau.cs.kieler.ksbase.core.TransformationManager;
 @SuppressWarnings("restriction")
 public class KSBasEPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
-
-	private static class SelectionTreeDialog extends Dialog {
-
-		public SelectionTreeDialog(Shell parent) {
-			super(parent);
-		}
-
-		public Object open(final Transformation t,
-				final EditorTransformationSettings editor) {
-			Shell parent = getParent();
-			final Shell shell = new Shell(parent, SWT.APPLICATION_MODAL
-					| SWT.RESIZE | SWT.DIALOG_TRIM);
-			shell.setText(Messages.KSBasEPreferencePage_CheckBoxDialog_Title);
-			shell.setLayout(new GridLayout(1, false));
-
-			final Tree tree = new Tree(shell, SWT.BORDER);
-			for (Object o : t.getPartConfig()) {
-				final TreeItem item = new TreeItem(tree, SWT.NULL);
-				if (o instanceof String) {
-					item.setText((String) o);
-				} else if (o instanceof String[]) {
-					item
-							.setText(Messages.KSBasEPreferencePage_Diagram_Elements);
-					for (String s : (String[]) o) {
-						TreeItem child = new TreeItem(item, SWT.NULL);
-						child.setText(s);
-					}
-				}
-			}
-			tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
-			Composite pane = new Composite(shell, SWT.NONE | SWT.SINGLE);
-			pane.setLayout(new GridLayout(5, false));
-			Button addElements, removeElement, addClass, addElement, editElement;
-
-			addClass = new Button(pane, SWT.PUSH);
-			addClass.setText("New Element");
-			addClass.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false,
-					false));
-			addClass.addSelectionListener(new SelectionListener() {
-
-				public void widgetSelected(SelectionEvent e) {
-					final TreeItem item = new TreeItem(tree, SWT.NULL);
-					item
-							.setText("org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart");
-				}
-
-				public void widgetDefaultSelected(SelectionEvent e) {
-				}
-			});
-
-			addElement = new Button(pane, SWT.PUSH);
-			addElement.setText("Add Element");
-			addElement.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false,
-					false));
-			addElement.addSelectionListener(new SelectionListener() {
-
-				public void widgetSelected(SelectionEvent e) {
-					if (tree.getSelection() != null
-							&& tree.getSelection().length > 0) {
-						TreeItem parent = tree.getSelection()[0];
-						if (parent.getText().equals(
-								Messages.KSBasEPreferencePage_Diagram_Elements)) {
-							final TreeItem item = new TreeItem(parent, SWT.NULL);
-							item
-									.setText("org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart");
-						}
-					}
-				}
-
-				public void widgetDefaultSelected(SelectionEvent e) {
-					// TODO Auto-generated method stub
-
-				}
-			});
-
-			addElements = new Button(pane, SWT.PUSH);
-			addElements.setText("Add Element Collection");
-			addElements.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false,
-					false));
-			addElements.addSelectionListener(new SelectionListener() {
-
-				public void widgetSelected(SelectionEvent e) {
-					final TreeItem item = new TreeItem(tree, SWT.NULL);
-					item
-							.setText(Messages.KSBasEPreferencePage_Diagram_Elements);
-					final TreeItem elem = new TreeItem(item, SWT.NULL);
-					elem
-							.setText("org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart");
-				}
-
-				public void widgetDefaultSelected(SelectionEvent e) {
-				}
-			});
-
-			editElement = new Button(pane, SWT.PUSH);
-			editElement.setText("Edit Element");
-			editElement.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true,
-					false));
-			editElement.addSelectionListener(new SelectionListener() {
-
-				public void widgetSelected(SelectionEvent e) {
-					if (tree.getSelection() != null
-							&& tree.getSelection().length > 0) {
-						TreeItem item = tree.getSelection()[0];
-						if (item.getItemCount() == 0) {
-							List<?> activeEditorParts = EditorService
-									.getInstance().getRegisteredEditorParts();
-							ArrayList<String> validEditParts = new ArrayList<String>();
-							for (Object o : activeEditorParts) {
-
-								if (o instanceof DiagramDocumentEditor
-										&& o.getClass().getCanonicalName()
-												.equals(editor.getEditor())) {
-									Map<?, ?> editPart = ((DiagramDocumentEditor) o)
-											.getDiagramGraphicalViewer()
-											.getEditPartRegistry();
-									for (Object value : editPart.values()) {
-										if (value instanceof GraphicalEditPart) {
-											validEditParts.add(value.getClass()
-													.getCanonicalName());
-										}
-									}
-								}
-							}
-							ElementListSelectionDialog dlg = new ElementListSelectionDialog(
-									getParent(), new LabelProvider());
-							dlg.setTitle("Select Diagram Elements");
-							dlg
-									.setMessage("Select a diagram element for which this transformation is defined\nHint: You mave have to open the corresponding editor in order to see all available elements.");
-							dlg.setElements(validEditParts.toArray());
-							dlg.setAllowDuplicates(false);
-							dlg.setMatchEmptyString(true);
-							dlg.setMultipleSelection(false);
-							dlg
-									.setEmptyListMessage("No elements found, please check your workspace settings.\nHint: You mave have to open the corresponding editor in order to see all available elements.");
-
-							if (dlg.open() == ElementListSelectionDialog.OK) {
-								Object[] res = dlg.getResult();
-								if (res.length > 0) {
-									item.setText((String) res[0]);
-								}
-
-							}
-						}
-					}
-				}
-
-				public void widgetDefaultSelected(SelectionEvent e) {
-				}
-			});
-
-			removeElement = new Button(pane, SWT.PUSH);
-			removeElement.setText("Remove Element");
-			removeElement.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true,
-					false));
-			removeElement.addSelectionListener(new SelectionListener() {
-
-				public void widgetSelected(SelectionEvent e) {
-					if (tree.getSelection() != null
-							&& tree.getSelection().length > 0) {
-						TreeItem item = tree.getSelection()[0];
-						item.removeAll();
-						item.dispose();
-					}
-				}
-
-				public void widgetDefaultSelected(SelectionEvent e) {
-				}
-			});
-
-			pane.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, false));
-			shell.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
-			shell.layout();
-			shell.pack();
-			shell.open();
-
-			Display display = parent.getDisplay();
-
-			while (!shell.isDisposed()) {
-				if (!display.readAndDispatch())
-					display.sleep();
-			}
-			return null;
-		}
-	}
 
 	// The classes which have to be implemented/extended by a class to be used
 	// as an editor
@@ -370,9 +167,8 @@ public class KSBasEPreferencePage extends PreferencePage implements
 					for (Transformation t : editor.getTransformations()) {
 						TableItem tItem = new TableItem(table, SWT.NONE);
 						
-						tItem.setText(new String[] { t.getTransformationID(),
+						tItem.setText(new String[] { t.getTransformationId(),
 								t.getName(), t.getTransformationName(),
-								t.partConfigToString(),
 								String.valueOf(t.getNumSelections()),
 								t.getIcon(), t.getKeyboardShortcut() });
 
@@ -602,16 +398,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
 							if (e.character == SWT.CR) {
 								// TableItem innerRow = cursor.getRow();
 								int col = cursor.getColumn();
-								if (col == 4) { // Number of selections has to
-									// be an int-value
-									try {
-										int number = Integer.parseInt(text
-												.getText());
-										transformation.setNumSelections(number);
-									} catch (NumberFormatException excep) {
-										// ignore invalid input
-									}
-								} else if (col == 0) {
+								if (col == 0) {
 									// TODO: Check for duplicate Id's
 									transformation.setTransformationID(text
 											.getText());
@@ -627,16 +414,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
 					text.addFocusListener(new FocusAdapter() {
 						public void focusLost(FocusEvent e) {
 							int col = cursor.getColumn();
-							if (col == 4) { // Number of selections has to
-								// be an int-value
-								try {
-									int number = Integer.parseInt(text
-											.getText());
-									transformation.setNumSelections(number);
-								} catch (NumberFormatException excep) {
-									// ignore invalid input
-								}
-							} else if (col == 0) {
+							if (col == 0) {
 								transformation.setTransformationID(text
 										.getText());
 							} else if (col == 1) {
@@ -648,11 +426,6 @@ public class KSBasEPreferencePage extends PreferencePage implements
 					text.setText(row.getText(col));
 					editor.setEditor(text);
 					text.setFocus();
-				} else if (col == 3) {
-					SelectionTreeDialog dlg = new SelectionTreeDialog(
-							getShell());
-					dlg.open(transformation, activeEditor);
-
 				} else if (col == 5) { // Icon
 					FileDialog dlg = new FileDialog(getShell(), SWT.OPEN);
 					dlg.setFilterExtensions(new String[] {
@@ -808,9 +581,11 @@ public class KSBasEPreferencePage extends PreferencePage implements
 										int propId) {
 									if (propId == IWorkbenchPartConstants.PROP_DIRTY) {
 										if (dirty) {
+											/*
 											activeEditor
 													.parseTransformationsFromFile(tmpFile
 															.getAbsolutePath());
+											*/
 											// TODO:
 											// manager.storeTransformations();
 											dirty = false;
@@ -876,8 +651,10 @@ public class KSBasEPreferencePage extends PreferencePage implements
 							box.open();
 							return;
 						} else {
+							/*
 							manager.getEditorByName(cbEditors.getText())
 									.parseTransformationsFromFile(result);
+							*/
 							cbEditors.notifyListeners(SWT.Selection, null);
 						}
 					}

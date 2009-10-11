@@ -419,21 +419,14 @@
 			<class
 				class="de.cau.cs.kieler.ksbase.ui.handler.TransformationCommandHandler" />
 			<enabledWhen>
-				<and>
-					<with variable="selection">
-						<count value="1" />
-						<and>
-							<iterate ifEmpty="true" operator="or">
-								<or>
-									<instanceof
-										value="de.cau.cs.kieler.synccharts.diagram.edit.parts.StateEditPart" />
-									<instanceof
-										value="de.cau.cs.kieler.synccharts.diagram.edit.parts.State2EditPart" />
-								</or>
-							</iterate>
-						</and>
-					</with>
-				</and>
+				<with variable="selection">
+					<iterate ifEmpty="false" operator="and">
+						<test
+							args="de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor,de.cau.cs.kieler.sbase.addSuc"
+							forcePluginActivation="true"
+							property="de.cau.cs.kieler.ksbase.ui.modelTesting.isModelInstance" />
+					</iterate>
+				</with>
 			</enabledWhen>
 		</handler>
 		<handler
@@ -441,21 +434,14 @@
 			<class
 				class="de.cau.cs.kieler.ksbase.ui.handler.TransformationCommandHandler" />
 			<enabledWhen>
-				<and>
-					<with variable="selection">
-						<count value="1" />
-						<and>
-							<iterate ifEmpty="true" operator="or">
-								<or>
-									<instanceof
-										value="de.cau.cs.kieler.synccharts.diagram.edit.parts.StateEditPart" />
-									<instanceof
-										value="de.cau.cs.kieler.synccharts.diagram.edit.parts.State2EditPart" />
-								</or>
-							</iterate>
-						</and>
-					</with>
-				</and>
+				<with variable="selection">
+					<iterate ifEmpty="false" operator="and">
+						<test
+							args="de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor,de.cau.cs.kieler.sbase.addPred"
+							forcePluginActivation="true"
+							property="de.cau.cs.kieler.ksbase.ui.modelTesting.isModelInstance" />
+					</iterate>
+				</with>
 			</enabledWhen>
 		</handler>
 		<handler
@@ -463,21 +449,14 @@
 			<class
 				class="de.cau.cs.kieler.ksbase.ui.handler.TransformationCommandHandler" />
 			<enabledWhen>
-				<and>
-					<with variable="selection">
-						<count value="1" />
-						<and>
-							<iterate ifEmpty="true" operator="or">
-								<or>
-									<instanceof
-										value="de.cau.cs.kieler.synccharts.diagram.edit.parts.StateEditPart" />
-									<instanceof
-										value="de.cau.cs.kieler.synccharts.diagram.edit.parts.State2EditPart" />
-								</or>
-							</iterate>
-						</and>
-					</with>
-				</and>
+				<with variable="selection">
+					<iterate ifEmpty="false" operator="and">
+						<test
+							args="de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor,de.cau.cs.kieler.sbase.addChoice"
+							forcePluginActivation="true"
+							property="de.cau.cs.kieler.ksbase.ui.modelTesting.isModelInstance" />
+					</iterate>
+				</with>
 			</enabledWhen>
 		</handler>
 		<handler
@@ -485,19 +464,14 @@
 			<class
 				class="de.cau.cs.kieler.ksbase.ui.handler.TransformationCommandHandler" />
 			<enabledWhen>
-				<and>
-					<with variable="selection">
-						<count value="1" />
-						<and>
-							<iterate ifEmpty="true" operator="or">
-								<or>
-									<instanceof
-										value="de.cau.cs.kieler.synccharts.diagram.edit.parts.TransitionEditPart" />
-								</or>
-							</iterate>
-						</and>
-					</with>
-				</and>
+				<with variable="selection">
+					<iterate ifEmpty="false" operator="and">
+						<test
+							args="de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor,de.cau.cs.kieler.sbase.flip"
+							forcePluginActivation="true"
+							property="de.cau.cs.kieler.ksbase.ui.modelTesting.isModelInstance" />
+					</iterate>
+				</with>
 			</enabledWhen>
 		</handler>
 		<handler
@@ -505,17 +479,14 @@
 			<class
 				class="de.cau.cs.kieler.ksbase.ui.handler.TransformationCommandHandler" />
 			<enabledWhen>
-				<and>
-					<with variable="selection">
-						<count value="2" />
-						<and>
-							<iterate ifEmpty="true" operator="or">
-								<instanceof
-									value="de.cau.cs.kieler.synccharts.diagram.edit.parts.State2EditPart" />
-							</iterate>
-						</and>
-					</with>
-				</and>
+				<with variable="selection">
+					<iterate ifEmpty="false" operator="and">
+						<test
+							args="de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor,de.cau.cs.kieler.sbase.connect"
+							forcePluginActivation="true"
+							property="de.cau.cs.kieler.ksbase.ui.modelTesting.isModelInstance" />
+					</iterate>
+				</with>
 			</enabledWhen>
 		</handler>
 		<handler
@@ -523,17 +494,14 @@
 			<class
 				class="de.cau.cs.kieler.ksbase.ui.handler.TransformationCommandHandler" />
 			<enabledWhen>
-				<and>
-					<with variable="selection">
-						<count value="1" />
-						<and>
-							<iterate ifEmpty="true" operator="or">
-								<instanceof
-									value="de.cau.cs.kieler.synccharts.diagram.edit.parts.Region2EditPart" />
-							</iterate>
-						</and>
-					</with>
-				</and>
+				<with variable="selection">
+					<iterate ifEmpty="false" operator="and">
+						<test
+							args="de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor,de.cau.cs.kieler.sbase.addABRO"
+							forcePluginActivation="true"
+							property="de.cau.cs.kieler.ksbase.ui.modelTesting.isModelInstance" />
+					</iterate>
+				</with>
 			</enabledWhen>
 		</handler>
 		<handler
@@ -541,17 +509,14 @@
 			<class
 				class="de.cau.cs.kieler.ksbase.ui.handler.TransformationCommandHandler" />
 			<enabledWhen>
-				<and>
-					<with variable="selection">
-						<count value="1" />
-						<and>
-							<iterate ifEmpty="true" operator="or">
-								<instanceof
-									value="de.cau.cs.kieler.synccharts.diagram.edit.parts.Region2EditPart" />
-							</iterate>
-						</and>
-					</with>
-				</and>
+				<with variable="selection">
+					<iterate ifEmpty="false" operator="and">
+						<test
+							args="de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor,de.cau.cs.kieler.sbase.empty"
+							forcePluginActivation="true"
+							property="de.cau.cs.kieler.ksbase.ui.modelTesting.isModelInstance" />
+					</iterate>
+				</with>
 			</enabledWhen>
 		</handler>
 		<handler
@@ -559,25 +524,14 @@
 			<class
 				class="de.cau.cs.kieler.ksbase.ui.handler.TransformationCommandHandler" />
 			<enabledWhen>
-				<and>
-					<with variable="selection">
-						<count value="2" />
-						<and>
-							<iterate ifEmpty="true" operator="or">
-								<or>
-									<instanceof
-										value="de.cau.cs.kieler.synccharts.diagram.edit.parts.State2EditPart" />
-									<instanceof
-										value="de.cau.cs.kieler.synccharts.diagram.edit.parts.StateEditPart" />
-								</or>
-							</iterate>
-							<iterate ifEmpty="true" operator="or">
-								<instanceof
-									value="de.cau.cs.kieler.synccharts.diagram.edit.parts.TransitionEditPart" />
-							</iterate>
-						</and>
-					</with>
-				</and>
+				<with variable="selection">
+					<iterate ifEmpty="false" operator="and">
+						<test
+							args="de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor,de.cau.cs.kieler.sbase.rerouteTarget"
+							forcePluginActivation="true"
+							property="de.cau.cs.kieler.ksbase.ui.modelTesting.isModelInstance" />
+					</iterate>
+				</with>
 			</enabledWhen>
 		</handler>
 		<handler
@@ -585,25 +539,14 @@
 			<class
 				class="de.cau.cs.kieler.ksbase.ui.handler.TransformationCommandHandler" />
 			<enabledWhen>
-				<and>
-					<with variable="selection">
-						<count value="2" />
-						<and>
-							<iterate ifEmpty="true" operator="or">
-								<or>
-									<instanceof
-										value="de.cau.cs.kieler.synccharts.diagram.edit.parts.State2EditPart" />
-									<instanceof
-										value="de.cau.cs.kieler.synccharts.diagram.edit.parts.StateEditPart" />
-								</or>
-							</iterate>
-							<iterate ifEmpty="true" operator="or">
-								<instanceof
-									value="de.cau.cs.kieler.synccharts.diagram.edit.parts.TransitionEditPart" />
-							</iterate>
-						</and>
-					</with>
-				</and>
+				<with variable="selection">
+					<iterate ifEmpty="false" operator="and">
+						<test
+							args="de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditor,de.cau.cs.kieler.sbase.rerouteSource"
+							forcePluginActivation="true"
+							property="de.cau.cs.kieler.ksbase.ui.modelTesting.isModelInstance" />
+					</iterate>
+				</with>
 			</enabledWhen>
 		</handler>
 	</extension>
