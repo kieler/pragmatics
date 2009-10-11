@@ -127,7 +127,8 @@ public class KSBasEPreferencePage extends PreferencePage implements
 			super(parent);
 		}
 
-		public Object open(final Transformation t, final EditorTransformationSettings editor) {
+		public Object open(final Transformation t,
+				final EditorTransformationSettings editor) {
 			Shell parent = getParent();
 			final Shell shell = new Shell(parent, SWT.APPLICATION_MODAL
 					| SWT.RESIZE | SWT.DIALOG_TRIM);
@@ -140,7 +141,8 @@ public class KSBasEPreferencePage extends PreferencePage implements
 				if (o instanceof String) {
 					item.setText((String) o);
 				} else if (o instanceof String[]) {
-					item.setText("Diagram Elements");
+					item
+							.setText(Messages.KSBasEPreferencePage_Diagram_Elements);
 					for (String s : (String[]) o) {
 						TreeItem child = new TreeItem(item, SWT.NULL);
 						child.setText(s);
@@ -179,9 +181,12 @@ public class KSBasEPreferencePage extends PreferencePage implements
 					if (tree.getSelection() != null
 							&& tree.getSelection().length > 0) {
 						TreeItem parent = tree.getSelection()[0];
-						final TreeItem item = new TreeItem(parent, SWT.NULL);
-						item
-								.setText("org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart");
+						if (parent.getText().equals(
+								Messages.KSBasEPreferencePage_Diagram_Elements)) {
+							final TreeItem item = new TreeItem(parent, SWT.NULL);
+							item
+									.setText("org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart");
+						}
 					}
 				}
 
@@ -199,7 +204,8 @@ public class KSBasEPreferencePage extends PreferencePage implements
 
 				public void widgetSelected(SelectionEvent e) {
 					final TreeItem item = new TreeItem(tree, SWT.NULL);
-					item.setText("Diagram Elements");
+					item
+							.setText(Messages.KSBasEPreferencePage_Diagram_Elements);
 					final TreeItem elem = new TreeItem(item, SWT.NULL);
 					elem
 							.setText("org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart");
@@ -210,7 +216,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
 			});
 
 			editElement = new Button(pane, SWT.PUSH);
-			editElement.setText("Edit");
+			editElement.setText("Edit Element");
 			editElement.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true,
 					false));
 			editElement.addSelectionListener(new SelectionListener() {
@@ -227,9 +233,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
 
 								if (o instanceof DiagramDocumentEditor
 										&& o.getClass().getCanonicalName()
-												.equals(
-														editor
-																.getEditor())) {
+												.equals(editor.getEditor())) {
 									Map<?, ?> editPart = ((DiagramDocumentEditor) o)
 											.getDiagramGraphicalViewer()
 											.getEditPartRegistry();
@@ -245,21 +249,18 @@ public class KSBasEPreferencePage extends PreferencePage implements
 									getParent(), new LabelProvider());
 							dlg.setTitle("Select Diagram Elements");
 							dlg
-									.setMessage("Select one or more diagram element for which this transformation is defined\nHint: You mave habe");
+									.setMessage("Select a diagram element for which this transformation is defined\nHint: You mave have to open the corresponding editor in order to see all available elements.");
 							dlg.setElements(validEditParts.toArray());
 							dlg.setAllowDuplicates(false);
 							dlg.setMatchEmptyString(true);
 							dlg.setMultipleSelection(false);
 							dlg
-									.setEmptyListMessage("No elements found, please check your workspace settings. It may be necessary to open the diagram editor you whish to use.");
+									.setEmptyListMessage("No elements found, please check your workspace settings.\nHint: You mave have to open the corresponding editor in order to see all available elements.");
 
 							if (dlg.open() == ElementListSelectionDialog.OK) {
 								Object[] res = dlg.getResult();
 								if (res.length > 0) {
-									String[] parts = new String[res.length];
-									System.arraycopy(res, 0, parts, 0,
-											res.length);
-
+									item.setText((String) res[0]);
 								}
 
 							}
@@ -368,10 +369,10 @@ public class KSBasEPreferencePage extends PreferencePage implements
 					table.removeAll();
 					for (Transformation t : editor.getTransformations()) {
 						TableItem tItem = new TableItem(table, SWT.NONE);
-
+						
 						tItem.setText(new String[] { t.getTransformationID(),
 								t.getName(), t.getTransformationName(),
-								t.getPartConfigList(),
+								t.partConfigToString(),
 								String.valueOf(t.getNumSelections()),
 								t.getIcon(), t.getKeyboardShortcut() });
 
@@ -650,7 +651,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
 				} else if (col == 3) {
 					SelectionTreeDialog dlg = new SelectionTreeDialog(
 							getShell());
-					dlg.open(transformation,activeEditor);
+					dlg.open(transformation, activeEditor);
 
 				} else if (col == 5) { // Icon
 					FileDialog dlg = new FileDialog(getShell(), SWT.OPEN);

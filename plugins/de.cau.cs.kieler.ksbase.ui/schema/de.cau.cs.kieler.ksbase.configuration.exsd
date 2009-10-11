@@ -57,6 +57,7 @@
          <sequence>
             <element ref="menus"/>
             <element ref="transformations"/>
+            <element ref="parameterDiagramMapping"/>
          </sequence>
          <attribute name="editor" type="string" use="required">
             <annotation>
@@ -119,9 +120,6 @@ This class has to extend &apos;emf.ecore.EPackage&apos;
          </documentation>
       </annotation>
       <complexType>
-         <sequence minOccurs="1" maxOccurs="unbounded">
-            <element ref="diagramElements"/>
-         </sequence>
          <attribute name="transformationId" type="string" use="required">
             <annotation>
                <documentation>
@@ -164,29 +162,6 @@ This class has to extend &apos;emf.ecore.EPackage&apos;
                </documentation>
                <appinfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="diagramElements">
-      <annotation>
-         <documentation>
-            A diagram element which needs to be selected in order to execute the transformation. If you want to use multiple, optional elements you have to add elements to this selection. If you want to define multiple non optional elements you have to add more element_selections to this transformation.
-         </documentation>
-      </annotation>
-      <complexType>
-         <sequence minOccurs="0" maxOccurs="unbounded">
-            <element ref="diagramElement"/>
-         </sequence>
-         <attribute name="class" type="string">
-            <annotation>
-               <documentation>
-                  You can either define one class here or, to add multiple optional elements, add diagramElement children.
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart:"/>
                </appinfo>
             </annotation>
          </attribute>
@@ -277,6 +252,29 @@ This class has to extend &apos;emf.ecore.EPackage&apos;
                <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart:"/>
                </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="parameterDiagramMapping">
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="mapping"/>
+         </sequence>
+      </complexType>
+   </element>
+
+   <element name="mapping">
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="diagramElement"/>
+         </sequence>
+         <attribute name="parameter" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
             </annotation>
          </attribute>
       </complexType>
