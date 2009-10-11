@@ -158,8 +158,6 @@ public class TransformationManager {
 					Transformation transformation = new Transformation(t
 							.getAttribute("name"), t
 							.getAttribute("transformation"));
-					transformation.setNumSelections(Integer.valueOf(t
-							.getAttribute("selectionCount")));
 					transformation.setKeyboardShortcut(t
 							.getAttribute("keyboardShortcut"));
 					transformation.setTransformationID(t
@@ -196,10 +194,7 @@ public class TransformationManager {
 					editor.addMenuContribution(contrib);
 				}
 			}
-			IConfigurationElement[] mappings = settings.getChildren("parameterDiagramMapping");
-			for (IConfigurationElement mapping : mappings) {
-				hier weiter
-			}
+			
 			// Read Xtend file from extension point configuration
 			InputStream path;
 			StringBuffer contentBuffer = new StringBuffer();

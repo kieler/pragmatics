@@ -17,6 +17,8 @@ package de.cau.cs.kieler.ksbase.core;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -33,22 +35,20 @@ public class Transformation implements Serializable {
     private static final long serialVersionUID = 513784171695543063L;
     private String name; // Menu entry name
     private String transformationName; // Xtend method name
-    private int numSelections; // Number of selections;
     private String icon; // URI to icon
     private String keyboardShortcut; // Assigned keyboard shortcut
-    private Object[] partConfig; // Parts for which this transformation is defined
-    private String transformationID; //Id for this transformation, defined via the ext. point
+    private String[] parameter; //Ordered parameters
+    private String transformationId; //Id for this transformation, defined via the ext. point
     /**
      * Creates a new Transformation
      */
     public Transformation(String name, String transformation) {
         this.name = name;
         this.transformationName = transformation;
-        numSelections = 1;
         icon = "";
         keyboardShortcut = "";
-        transformationID = "";
-        partConfig = null;
+        transformationId = "";
+        parameter = null;
     }
 
     /**
@@ -68,14 +68,6 @@ public class Transformation implements Serializable {
         this.transformationName = value;
     }
 
-    /**
-     * Sets the number of diagram elements that have to be selected in order to 
-     * execute this transformation
-     * @param value
-     */
-    public void setNumSelections(int value) {
-        this.numSelections = value;
-    }
 
     /**
      * Sets the iconURI used by the toolbar and the balloon menus
@@ -106,7 +98,7 @@ public class Transformation implements Serializable {
      * @return
      */
     public int getNumSelections() {
-        return this.numSelections;
+        return this.parameter.length;
     }
 
     /**
@@ -117,51 +109,22 @@ public class Transformation implements Serializable {
     public String getIcon() {
         return icon;
     }
-
-    /**
-     * Sets the diagram parts this transformation is defined for.
-     * The parts are fqn of the diagram element classes 
-     * @param parts
-     */
-    public void setPartConfig(Object[] parts) {
-        this.partConfig = parts.clone();
+    
+    public List<String> getParameterList() {
+    	ArrayList<String> res = new ArrayList<String>();
+    	for (String s: parameter) {
+			res.add(s);
+		}
+    	return res;
     }
     
-    /**
-     * Returns the array of diagram parts this transformation is defined for
-     * @return
-     */
-    public Object[] getPartConfig() {
-        return this.partConfig.clone();
-    }
+    public String[] getParameter() {
+		return parameter;
+	}
 
-    /**
-     * Returns the list of diagram parts this transformation is defined for 
-     * @return
-     */
-    public String getPartConfigList() {
-        if (partConfig == null)
-            return "";
-        
-        StringBuffer result = new StringBuffer();
-        for (int i = 0; i < partConfig.length; ++i) {
-            result.append(partConfig[i]);
-            if (i < partConfig.length - 1)
-            	result.append(",");
-                
-        }
-        return result.toString();
-    }
-    
-    public String partConfigToString() {
-    	if (partConfig == null || partConfig.length == 0)
-    		return "";
-    	
-    	if ( partConfig[0] instanceof String)
-    		return (String)partConfig[0];
-    	else
-    		return "Diagram Elements";
-    }
+	public void setParameter(String[] parameter) {
+		this.parameter = parameter;
+	}
 
     /**
      * Returns the Id for this transformation.
@@ -169,16 +132,16 @@ public class Transformation implements Serializable {
      * it does not need to be set.
      * @return
      */
-    public String getTransformationID() {
-        return transformationID;
+    public String getTransformationId() {
+        return transformationId;
     }
 
     /**
      * Sets the Id for this transformation
      * @param transformationID
      */
-    public void setTransformationID(String transformationID) {
-        this.transformationID = transformationID;
+    public void setTransformationID(String transformationId) {
+        this.transformationId = transformationId;
     }
 
     /**
@@ -206,9 +169,8 @@ public class Transformation implements Serializable {
         try {
             writer.writeObject(this.name);
             writer.writeObject(this.transformationName);
-            writer.writeInt(this.numSelections);
+            writer.writeObject(this.parameter);
             writer.writeObject(this.icon);
-            writer.writeObject(this.partConfig);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -220,7 +182,7 @@ public class Transformation implements Serializable {
      */
     @Override
     public int hashCode() {
-        return transformationName.hashCode()+numSelections;
+        return transformationName.hashCode();
     }
     
     /**
@@ -230,7 +192,7 @@ public class Transformation implements Serializable {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Transformation) {
-            return (numSelections == ((Transformation) obj).getNumSelections())
+            return (parameter.length == ((Transformation) obj).getNumSelections())
                     && (transformationName.equals(((Transformation) obj)
                             .getTransformationName()));
         }
