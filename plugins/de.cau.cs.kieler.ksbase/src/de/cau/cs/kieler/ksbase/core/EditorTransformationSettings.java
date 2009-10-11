@@ -14,16 +14,19 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.core;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.io.StringReader;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 /**
@@ -44,7 +47,8 @@ public class EditorTransformationSettings implements Serializable {
     private String context; // The context for the diagram editor, required for key bindings
     private LinkedList<Transformation> transformations; // The current List of Transformations
     private LinkedList<KSBasEMenuContribution> menuContributions; //List of menu contributions
-    
+    private HashMap<String, String[]> transformationParameters; //List of parameters for all defined methods
+    private HashMap<String,String[]> xtendDiagramParmeterMapping; //Mapping of Xtend parameters to GMF Diagram Objects
     //for internal uses
     private String contributor; //The contributor which contains the extension points
     /**
@@ -60,6 +64,8 @@ public class EditorTransformationSettings implements Serializable {
         this.context = "";
         this.transformations = new LinkedList<Transformation>();
         this.menuContributions = new LinkedList<KSBasEMenuContribution>();
+        this.transformationParameters = new HashMap<String, String[]>();
+        this.xtendDiagramParmeterMapping = new HashMap<String, String[]>();
         this.performAutoLayout = true;
         this.contributor = "";
     }
@@ -225,6 +231,7 @@ public class EditorTransformationSettings implements Serializable {
      */
     public void setExtFile(String file) {
         this.extFile = file;
+        parseTransformations();
     }
 
     public String getContributor() {
@@ -252,91 +259,46 @@ public class EditorTransformationSettings implements Serializable {
     }
 
     /**
-     * Parses the given Xtend file and stores the in-place m2m transformations.
-     * This parsing is based on the Xtend function names only! So renaming a
-     * function in Xtend will reset the KSbasE transformation
+     * Parses the Xtend file to read transformation names & parameters
      */
-    public void parseTransformationsFromFile(String file) {
-        // extFile should not be null, only if we read old settings
-        if (file != null && file.length() > 0) {
-            // Create path from fileName
-            IPath path = new Path(file);
-            // Create IFile from path
-            IFile xtfile = ResourcesPlugin.getWorkspace().getRoot()
-                    .getFileForLocation(path);
-            // If the file does not exist, we create an empty list
-            if (xtfile == null || !xtfile.exists()) {
-                this.transformations = new LinkedList<Transformation>();
-                return;
-            }
-            BufferedReader reader = null;
-            try { // read Xtend functions
-                this.extFile = ""; // clear old transformation file
-                LinkedList<Transformation> newTrans = new LinkedList<Transformation>();
-                 reader = new BufferedReader(
-                        new InputStreamReader(xtfile.getContents()));
-
-                while (reader.ready()) {
-                    // Read one line ... TODO: Check if functions can be defined
-                    // over multiple lines...
-                    String in = reader.readLine();
-                    // Store in extFile as String, and append the deleted
-                    // newline
-                    // so the file remains human readable
-                    extFile += in + "\r\n";
-
-                    // Ugly isn't it? Parsing Xtend by hand, assuming we get a
-                    // correct file
-                    // Split only twice ! so we only split return types and
-                    // function
-                    // declarations but not the parameters
-                    String[] token = in.split(" ", 2); //$NON-NLS-1$
-                    if (token != null && token.length > 0) {
-                        if (token[0].equalsIgnoreCase("import")) { //$NON-NLS-1$
-                            // we don't need the import statement, cause it's
-                            // Xtend only
-                        } else if (token[0].equalsIgnoreCase("void")) { //$NON-NLS-1$
-                            // Only parse 'Void' functions
-                            String methodName = token[1].substring(0, token[1]
-                                    .indexOf('('));
-                            String[] params = token[1].substring(
-                                    token[1].indexOf('(') + 1,
-                                    token[1].indexOf(')')).split(","); //$NON-NLS-1$
-                            Transformation tNew = new Transformation(
-                                    methodName, methodName);
-                            tNew.setNumSelections(params.length);
-                            // If the parsed function is not contained in the
-                            // list of existing transformations, we add it now
-                            if (this.transformations.contains(tNew)) {
-                                newTrans
-                                        .add(this.transformations
-                                                .get(this.transformations
-                                                        .indexOf(tNew)));
-                            } else {
-                                // else we simply add a new default
-                                // transformation
-                                newTrans.add(tNew);
-                            }
-                        }
-                    }
-                }
-                reader.close();
-                this.transformations = newTrans;
-                
-            } catch (CoreException e) {
-                // ignore
-            } catch (IOException e) {
-                // ignore
-            } catch (IndexOutOfBoundsException e) {
-                // ignore
-            }
-            finally {
-            	try {
-					if (reader != null )
-						reader.close();
-				} catch (IOException e) {
-				}
-            }
+    public void parseTransformations() {
+        if (extFile != null && extFile.length() > 0) {
+        	//Let's find all in-place m2m transformations, defined in this file
+        	//They are defined by :
+        	//Starting with 'void '
+        	//End with ':'
+        	String[] methods = extFile.split(";");
+        	for (String m : methods) {
+        		try {
+        		String method = m.toLowerCase(); //just to be sure
+        		if (!method.contains("void")) { //we only want void methods
+        			continue;
+        		}
+        		//We have to eliminate random occurrences of the 'void' 
+        		//keyword, e.g. in comments
+        		String[] voidMethod = method.split(" ");
+        		if (voidMethod.length == 0 || !voidMethod[0].trim().equals("void"))
+        			continue;
+        		
+        		method = method.trim().replaceAll("//.*\n", "");
+        		//method = method.replaceAll("/\\*.*\\", "");
+        		String[] tokens = method.split("void ");
+        		String[] head = tokens[1].split(":");
+        		String[] parts = head[0].split("\\(");
+        		String name = parts[0];
+        		String param = parts[1].replace(")", "");
+        		String[] parameterAndNames = param.split(",");
+        		String[] parameters = new String[parameterAndNames.length];
+        		for ( int i = 0; i < parameterAndNames.length; ++i) {
+        			parameters[i] = parameterAndNames[i].split(" ")[1];
+        		}
+        		transformationParameters.put(name, parameters);
+        		}
+        		catch (NullPointerException exp)
+        		{
+        			System.err.println("invalid xtend file");
+        		}
+        	}
         }
     }
 }

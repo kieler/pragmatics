@@ -142,7 +142,7 @@ public class Transformation implements Serializable {
     public String getPartConfigList() {
         if (partConfig == null)
             return "";
-
+        
         StringBuffer result = new StringBuffer();
         for (int i = 0; i < partConfig.length; ++i) {
             result.append(partConfig[i]);
@@ -151,6 +151,16 @@ public class Transformation implements Serializable {
                 
         }
         return result.toString();
+    }
+    
+    public String partConfigToString() {
+    	if (partConfig == null || partConfig.length == 0)
+    		return "";
+    	
+    	if ( partConfig[0] instanceof String)
+    		return (String)partConfig[0];
+    	else
+    		return "Diagram Elements";
     }
 
     /**

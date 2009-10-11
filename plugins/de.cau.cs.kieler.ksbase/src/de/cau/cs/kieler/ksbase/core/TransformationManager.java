@@ -165,33 +165,6 @@ public class TransformationManager {
 					transformation.setTransformationID(t
 							.getAttribute("transformationId"));
 					transformation.setIcon(t.getAttribute("icon"));
-					IConfigurationElement[] parts = t
-							.getChildren("diagramElements");
-					if (parts != null && parts.length > 0) {
-						Object[] partConfig = new Object[parts.length];
-						for (int i = 0; i < parts.length; ++i) {
-							// The configuration elements either have a single
-							// class attribute defined
-							IConfigurationElement part = parts[i];
-							if (part.getAttribute("class") != null) {
-								partConfig[i] = part.getAttribute("class");
-							}
-							// or have a list of elements defining optional
-							// classes
-							else {
-								IConfigurationElement[] configElements = part
-										.getChildren();
-								String[] partElements = new String[configElements.length];
-								for (int j = 0; j < configElements.length; ++j) {
-									partElements[j] = configElements[j]
-											.getAttribute("class");
-								}
-								partConfig[i] = partElements;
-							}
-							transformation.setPartConfig(partConfig);
-						}
-					}
-
 					editor.addTransformation(transformation);
 				}
 			}
@@ -222,6 +195,10 @@ public class TransformationManager {
 					}
 					editor.addMenuContribution(contrib);
 				}
+			}
+			IConfigurationElement[] mappings = settings.getChildren("parameterDiagramMapping");
+			for (IConfigurationElement mapping : mappings) {
+				hier weiter
 			}
 			// Read Xtend file from extension point configuration
 			InputStream path;
