@@ -22,8 +22,8 @@ import java.util.Map;
 import org.eclipse.draw2d.ConnectionLocator;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
-import org.eclipse.draw2d.ScrollPane;
 import org.eclipse.draw2d.geometry.Insets;
+import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gef.EditPart;
@@ -355,20 +355,14 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 					&& ((CompartmentEditPart) obj).getChildren().size() > 0) {
 				CompartmentEditPart compartment = (CompartmentEditPart)obj;
 			    if (!LayoutServices.INSTANCE.isNolayout(compartment.getClass())) {
-    			    Rectangle parentBounds = currentEditPart.getFigure().getBounds();
-    			    IFigure compartmentFigure = compartment.getFigure();
     			    // calculate insets of the child compartment
-    			    Rectangle compartmentBounds = compartmentFigure.getBounds();
-    			    Insets compartmentInsets = compartmentFigure.getInsets();
-    			    insetTop = compartmentBounds.y - parentBounds.y + compartmentInsets.top;
-    			    insetLeft = compartmentBounds.x - parentBounds.x + compartmentInsets.left;
+			        GraphicalEditPart firstChild = (GraphicalEditPart)compartment.getChildren().get(0);
+    			    Insets insets = calcInsets(currentEditPart.getFigure(), firstChild.getFigure());
+    			    insetTop = insets.top;
+    			    insetLeft = insets.left;
+                    IFigure compartmentFigure = compartment.getFigure();
     			    if (compartmentFigure instanceof ResizableCompartmentFigure) {
     			    	ResizableCompartmentFigure resizableCompartmentFigure = (ResizableCompartmentFigure)compartmentFigure;
-    			    	ScrollPane scrollPane = resizableCompartmentFigure.getScrollPane();
-			            Insets scrollPaneInsets = scrollPane.getInsets();
-			            insetTop += scrollPaneInsets.top;
-			            insetLeft += scrollPaneInsets.left;
-    			    
 			            // check whether the compartment is collapsed
 			    		if (!resizableCompartmentFigure.isExpanded()) {
 			    			isCollapsed = true;
@@ -479,6 +473,38 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 	    	else
 		        LayoutOptions.setPortConstraints(nodeLayout, PortConstraints.FIXED_POS);
 		}
+	}
+	
+	/**
+	 * Determines the insets for a parent figure, relative to the given child.
+	 * 
+	 * @param parent the figure of a parent edit part
+	 * @param child the figure of a child edit part
+	 * @return the insets to add to the relative coordinates of the child
+	 */
+	private static Insets calcInsets(IFigure parent, IFigure child) {
+	    Insets result = new Insets(0);
+	    IFigure currentChild = child;
+	    IFigure currentParent = child.getParent();
+	    Point coordsToAdd = null;
+	    while (currentChild != parent && currentParent != null) {
+	        if (currentParent.isCoordinateSystem()) {
+	            result.add(currentParent.getInsets());
+	            if (coordsToAdd != null) {
+	                result.left += coordsToAdd.x;
+	                result.top += coordsToAdd.y;
+	            }
+	            coordsToAdd = currentParent.getBounds().getLocation();
+	        }
+	        else if (currentParent == parent && coordsToAdd != null) {
+	            Point parentCoords = parent.getBounds().getLocation();
+	            result.left += coordsToAdd.x - parentCoords.x;
+	            result.top += coordsToAdd.y - parentCoords.y;
+	        }
+	        currentChild = currentParent;
+	        currentParent = currentChild.getParent();
+	    }
+	    return result;
 	}
 
 	/**

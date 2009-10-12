@@ -47,9 +47,9 @@ AttributeList: "[" entries+=Attribute ("," entries+=Attribute)* "]";
 
 Attribute: name=DotID ("=" value=DotID)?;
 
-Node: name=DotID (port=Port)?;
+Node: name=DotID (":" port=Port)?;
 
-Port: ":" name=DotID (":" compass_pt=CompassPoint)? | ":" compass_pt=CompassPoint;
+Port: name=DotID (":" compass_pt=CompassPoint)? | compass_pt=CompassPoint;
 
 DotID: ID | FLOAT | STRING;
 

@@ -28,6 +28,7 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
@@ -194,9 +195,10 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
         
         // apply parent node layout
         KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(parentNode);
+        KInsets insets = LayoutOptions.getInsets(parentLayout);
         Dimension layoutSize = graph.getLayoutSize();
-        parentLayout.setWidth(layoutSize.width);
-        parentLayout.setHeight(layoutSize.height);
+        parentLayout.setWidth(insets.getLeft() + layoutSize.width + insets.getRight());
+        parentLayout.setHeight(insets.getTop() + layoutSize.height + insets.getBottom());
         LayoutOptions.setFixedSize(parentLayout, true);
     }
 
