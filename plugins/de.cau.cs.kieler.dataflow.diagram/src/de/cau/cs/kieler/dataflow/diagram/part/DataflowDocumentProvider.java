@@ -878,6 +878,7 @@ public class DataflowDocumentProvider extends AbstractDocumentProvider implement
                 Resource resource = (Resource) it.next();
                 resource.unload();
             }
+            getEditingDomain().dispose();
         }
 
         /**

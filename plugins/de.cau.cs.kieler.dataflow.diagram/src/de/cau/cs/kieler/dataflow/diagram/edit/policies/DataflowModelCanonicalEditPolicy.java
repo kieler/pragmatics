@@ -301,7 +301,8 @@ public class DataflowModelCanonicalEditPolicy extends CanonicalConnectionEditPol
                 continue;
             }
             CreateConnectionViewRequest.ConnectionViewDescriptor descriptor = new CreateConnectionViewRequest.ConnectionViewDescriptor(
-                    nextLinkDescriptor.getSemanticAdapter(), null, ViewUtil.APPEND, false,
+                    nextLinkDescriptor.getSemanticAdapter(), String.valueOf(nextLinkDescriptor
+                            .getVisualID()), ViewUtil.APPEND, false,
                     ((IGraphicalEditPart) getHost()).getDiagramPreferencesHint());
             CreateConnectionViewRequest ccr = new CreateConnectionViewRequest(descriptor);
             ccr.setType(RequestConstants.REQ_CONNECTION_START);
