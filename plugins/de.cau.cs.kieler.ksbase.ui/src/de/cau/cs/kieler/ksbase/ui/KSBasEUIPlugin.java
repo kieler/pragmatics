@@ -20,7 +20,7 @@ import org.osgi.framework.BundleContext;
 import de.cau.cs.kieler.ksbase.ui.menus.DynamicMenuContributions;
 
 /**
- * The activator class controls the plug-in life cycle
+ * The activator class controls the plug-in life cycle.
  */
 
 public class KSBasEUIPlugin extends AbstractUIPlugin {
@@ -32,10 +32,9 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
     private static KSBasEUIPlugin plugin;
 
     /**
-     * The constructor
+     * The constructor.
      */
     public KSBasEUIPlugin() {
-    	
         System.out.println("ksbase activated");
         DynamicMenuContributions.instance.createAllMenuContributions();
     }
@@ -66,7 +65,7 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
     }
 
     /**
-     * Returns the shared instance
+     * Returns the shared instance.
      * 
      * @return the shared instance
      */

@@ -21,7 +21,7 @@ import org.eclipse.gmf.runtime.diagram.ui.services.editpolicy.CreateEditPolicies
 import org.eclipse.gmf.runtime.diagram.ui.services.editpolicy.IEditPolicyProvider;
 
 /**
- * Provides an edit policy the create and execute KSBasE commands
+ * Provides an edit policy the create and execute KSBasE commands.
  * 
  * @author Michael Matzen
  * 

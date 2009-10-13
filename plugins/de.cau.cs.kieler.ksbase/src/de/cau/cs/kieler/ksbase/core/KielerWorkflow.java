@@ -22,7 +22,7 @@ import org.eclipse.xtend.typesystem.emf.EmfMetaModel;
 
 /**
  * An extension of the MWE default workflow. Used to perform custom
- * initializations
+ * initializations.
  * 
  * @author Michael Matzen
  * 
@@ -30,19 +30,19 @@ import org.eclipse.xtend.typesystem.emf.EmfMetaModel;
 @SuppressWarnings("restriction")
 public class KielerWorkflow extends Workflow {
 
-    XtendComponent xtendComponent;
+    private XtendComponent xtendComponent;
 
     /**
-     * Creates and initializes an oAW Workflow
+     * Creates and initializes an oAW Workflow.
      * 
-     * @param modelURI
-     *            URI of model instance
      * @param operation
      *            Xtend function name
+	 * @param basePackage
+	 * 			  The meta model package class to use
      * @param modelSelections
      *            selected model elements
      */
-    public KielerWorkflow(String operation, String fileName, String basePackage, String modelSelection) {
+    public KielerWorkflow(final String operation, final String fileName, final String basePackage, final String modelSelection) {
         super();
 
         // We are using the XtendComponent,
@@ -58,7 +58,7 @@ public class KielerWorkflow extends Workflow {
         // Set metaModel-Slot
         xtendComponent.addMetaModel(emfmodel);
         //Create transformation value
-        String value = fileName + "::" + operation + "("+modelSelection+")";
+        String value = fileName + "::" + operation + "(" + modelSelection + ")";
 
         xtendComponent.setInvoke(value);
 

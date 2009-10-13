@@ -48,15 +48,22 @@ import de.cau.cs.kieler.ksbase.core.TransformationManager;
 public class DynamicMenuContributions {
 
 	public static final DynamicMenuContributions instance = new DynamicMenuContributions();
-	private HashMap<String, Node> cachedTransformationCommands = new HashMap<String, Node>();
-	private HashMap<Transformation, String> commandIds = new HashMap<Transformation, String>();
+	private HashMap<String, Node> cachedTransformationCommands;
+	private HashMap<Transformation, String> commandIds;
 	private Object token = null;
 
+	/**
+	 * Default constructor.
+	 */
 	private DynamicMenuContributions() {
-
+		 cachedTransformationCommands = new HashMap<String, Node>();
+		 commandIds = new HashMap<Transformation, String>();
 	}
 
-	public void stop() {
+	/**
+	 * Tries to stop the contribution.
+	 */
+	final public void stop() {
 		if (token != null) {
 			IExtensionRegistry reg = RegistryFactory.getRegistry();
 			reg.stop(token);
@@ -64,7 +71,11 @@ public class DynamicMenuContributions {
 		}
 	}
 
-	public void createAllMenuContributions() {
+	/**
+	 * Creates a valid plug-in project for each editor and injects it to the eclipse
+	 * run-time.
+	 */
+	final public void createAllMenuContributions() {
 		LinkedList<EditorTransformationSettings> editors = TransformationManager.instance
 				.getEditors();
 		// If the editors are 'null' they are maybe not initialized yet so we
@@ -72,8 +83,9 @@ public class DynamicMenuContributions {
 		if (editors == null || editors.size() == 0) {
 			TransformationManager.instance.initializeTransformations();
 			// still 'null' ? Ok then there are no transformations
-			if (editors == null || editors.size() == 0)
+			if (editors == null || editors.size() == 0) {
 				return;
+			}
 		}
 		try {
 			try {
@@ -283,8 +295,15 @@ public class DynamicMenuContributions {
 		}
 	}
 
-	private Node createElementForMenu(String tid, Document extension,
-			EditorTransformationSettings editor) {
+	/**
+	 * Creates menu commands for menus and sub menus.
+	 * @param tid The transformation id 
+	 * @param extension The base DOM document
+	 * @param editor The current editor
+	 * @return a valid DOM tree containing menu commands
+	 */
+	final private Node createElementForMenu(final String tid, final Document extension,
+			final EditorTransformationSettings editor) {
 		// entry has been created before?
 		if (cachedTransformationCommands.containsKey(tid)) {
 			return cachedTransformationCommands.get(tid).cloneNode(true);
@@ -315,17 +334,5 @@ public class DynamicMenuContributions {
 
 			return menuCommand;
 		}
-	}
-
-	public void removeContributionForEditor(
-			final EditorTransformationSettings editor) {
-
-	}
-
-	/**
-	 * Removes all contributions
-	 */
-	public void clearContributions() {
-
 	}
 }

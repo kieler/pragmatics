@@ -16,18 +16,12 @@ package de.cau.cs.kieler.ksbase.ui.handler;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Locale;
 
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.mwe.core.WorkflowContext;
 import org.eclipse.emf.mwe.core.WorkflowContextDefaultImpl;
 import org.eclipse.emf.mwe.core.issues.Issues;
@@ -47,7 +41,7 @@ import de.cau.cs.kieler.ksbase.core.KielerWorkflow;
 
 /**
  * The command to execute an Xtend transformation. Handles MWE initialization
- * too
+ * too.
  * 
  * @author Michael Matzen
  * 
@@ -69,8 +63,9 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
 	 * @param adapter
 	 *            an adapter to the {@code View} of the base diagram
 	 */
-	public ExecuteTransformationCommand(TransactionalEditingDomain domain,
-			String label, IAdaptable adapter) {
+	public ExecuteTransformationCommand(
+			TransactionalEditingDomain domain, String label,
+			IAdaptable adapter) {
 		super(domain, label, null);
 		context = new WorkflowContextDefaultImpl();
 		issues = new IssuesImpl();
@@ -136,27 +131,31 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
 	 *            Current selection
 	 * @param command
 	 *            The command to execute
-	 * @param numSelections
-	 *            Number of elements that are transformed
 	 * @param fileName
 	 *            Name of the .ext transformation file
-	 * @return
+	 * @param basePackage
+	 *            The package of the underlying meta model
+	 * @param parameter
+	 *            The parameters of the Xtend method
+	 * @return False if an error occurred
 	 */
-	public boolean initalize(IEditorPart editPart, ISelection selection,
-			String command, String fileName, String basePackage,
-			String[] parameter) {
+	final public boolean initalize(final IEditorPart editPart,
+			final ISelection selection, final String command,
+			final String fileName, final String basePackage,
+			final String[] parameter) {
 		StructuredSelection s;
 
-		if (selection instanceof StructuredSelection)
+		if (selection instanceof StructuredSelection) {
 			s = (StructuredSelection) selection;
-		else
+		} else
 			return false;
 
-		if (s.size() != parameter.length)
+		if (s.size() != parameter.length) {
 			return false;
-
-		if (fileName.contains(".")) { // Remove .ext from fileName //$NON-NLS-1$
-			fileName = fileName.substring(0, fileName.lastIndexOf(".")); //$NON-NLS-1$
+		}
+		String file = fileName;
+		if (file.contains(".")) { // Remove .ext from fileName //$NON-NLS-1$
+			file = fileName.substring(0, fileName.lastIndexOf(".")); //$NON-NLS-1$
 		}
 
 		StringBuffer modelSelection = new StringBuffer();
@@ -166,14 +165,16 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
 		int paramCount = 0;
 		for (String param : parameter) {
 			it = s.iterator();
-			if (modelSelection.length() > 0)
+			if (modelSelection.length() > 0) {
 				modelSelection.append(",");
+			}
 			while (it.hasNext()) {
 				Object next = it.next();
 				if (next instanceof EditPart) {
 					Object model = ((EditPart) next).getModel();
 					if (model instanceof View) {
-						if (((View) model).getElement().eClass().getName().toLowerCase().equals(param)) {
+						if (((View) model).getElement().eClass().getName()
+								.toLowerCase(Locale.getDefault()).equals(param)) {
 							String modelName = "model"
 									+ String.valueOf(paramCount++);
 							modelSelection.append(modelName);
@@ -183,26 +184,14 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
 				}
 			}
 		}
-		//check if all parameters have been set
-		if (paramCount != parameter.length) 
-			return false;;
-		
-		workflow = new KielerWorkflow(command, fileName, basePackage,
+		// check if all parameters have been set
+		if (paramCount != parameter.length) {
+			return false;
+		}
+
+		workflow = new KielerWorkflow(command, file, basePackage,
 				modelSelection.toString());
 		return true;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List getAffectedFiles() {
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IPath location = Path
-				.fromOSString("/home/mim/workspace_mtest3/test/default.synccharts_diagram");
-		IFile file = workspace.getRoot().getFileForLocation(location);
-
-		ArrayList<IFile> l = new ArrayList<IFile>();
-		l.add(file);
-		return l;
 	}
 
 }

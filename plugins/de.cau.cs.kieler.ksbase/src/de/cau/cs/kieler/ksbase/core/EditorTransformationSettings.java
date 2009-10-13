@@ -16,10 +16,11 @@ package de.cau.cs.kieler.ksbase.core;
 
 import java.io.Serializable;
 import java.util.LinkedList;
+import java.util.Locale;
 
 /**
  * Stores the KSBasE settings for one specific editor. class is serializable so
- * it can be stored in an external File
+ * it can be stored in an external File.
  * 
  * @author Michael Matzen
  * 
@@ -30,28 +31,32 @@ public class EditorTransformationSettings implements Serializable {
 	private String modelPackageClass; // The model package class
 	private boolean performAutoLayout; // Run auto-layout after transformation
 	private String defaultIcon; // Default icon for menu/tool bar/balloon/popup
-								// menu entries
+	// menu entries
+
 	private String editor; // Editor to which this setting is assigned
+
 	private String extFile; // Xtend file in which the transformations are
-							// defined
+	// defined
+
 	private String context; // The context for the diagram editor, required for
-							// key bindings
+	// key bindings
+
 	private LinkedList<Transformation> transformations; // The current List of
-														// Transformations
-	private LinkedList<KSBasEMenuContribution> menuContributions; // List of
-																	// menu
-																	// contributions
-	// for internal uses
-	private String contributor; // The contributor which contains the extension
-								// points
+	// Transformations
+
+	private LinkedList<KSBasEMenuContribution> menuContributions;
+	// List of menu contributions
+	private String contributor; // The contributor which contains
+
+	// the extension points
 
 	/**
-	 * Creates a new transformation setting with the given editor diagram class
+	 * Creates a new transformation setting with the given editor diagram class.
 	 * 
 	 * @param editor
 	 *            The fqn of the diagram editor
 	 */
-	public EditorTransformationSettings(String editor) {
+	public EditorTransformationSettings(final String editor) {
 		this.editor = editor;
 		this.modelPackageClass = ""; //$NON-NLS-1$
 		this.defaultIcon = "";
@@ -64,225 +69,263 @@ public class EditorTransformationSettings implements Serializable {
 	}
 
 	/**
-	 * Set the editor class
+	 * Set the editor class.
 	 * 
 	 * @param editor
 	 *            The fqn of the diagram editor
 	 */
-	public void setEditor(String editor) {
+	final public void setEditor(final String editor) {
 		this.editor = editor;
 	}
 
 	/**
-	 * Gets the assigned editor
+	 * Gets the assigned editor.
 	 * 
-	 * @return
+	 * @return The fully qualified editor name
 	 */
-	public String getEditor() {
+	final public String getEditor() {
 		return editor;
 	}
 
 	/**
-	 * Gets the model package class name
+	 * Gets the model package class name.
 	 * 
 	 * @return The fqn of the model package class
 	 */
-	public String getModelPackageClass() {
+	final public String getModelPackageClass() {
 
-		if (modelPackageClass == null)
+		if (modelPackageClass == null) {
 			return ""; //$NON-NLS-1$
-		else
+		} else
 			return modelPackageClass;
 	}
 
 	/**
-	 * Sets a model package class
+	 * Sets a model package class.
 	 * 
-	 * @param modelClass
+	 * @param modelPackageClass
+	 *            The package class
 	 */
-	public void setModelPackageClass(String modelPackageClass) {
+	final public void setModelPackageClass(final String modelPackageClass) {
 		this.modelPackageClass = modelPackageClass;
 	}
 
-	public LinkedList<KSBasEMenuContribution> getMenuContributions() {
+	/**
+	 * @return The list of menu contributions for this editor
+	 */
+	final public LinkedList<KSBasEMenuContribution> getMenuContributions() {
 		return menuContributions;
 	}
 
-	public void setMenuContributions(
-			LinkedList<KSBasEMenuContribution> menuContributions) {
-		this.menuContributions = menuContributions;
+	/**
+	 * Sets the menu contributions for this editor and removes any existing
+	 * contributions.
+	 * 
+	 * @param menuContributions
+	 */
+	final public void setMenuContributions(
+			final LinkedList<KSBasEMenuContribution> menuContributions) {
+		this.menuContributions.clear();
+		this.menuContributions.addAll(menuContributions);
 	}
 
-	public void addMenuContribution(KSBasEMenuContribution contrib) {
+	/**
+	 * Adds a menu contribution to this editor.
+	 * 
+	 * @param contrib
+	 */
+	final public void addMenuContribution(final KSBasEMenuContribution contrib) {
 		this.menuContributions.add(contrib);
 	}
 
 	/**
-	 * Returns the URI to the default icon
+	 * Returns the path to the default icon.
 	 * 
-	 * @return URI to the default icon, no checks are done if this is a valid
-	 *         URI
+	 * @return Path to the default icon
 	 */
-	public String getDefaultIcon() {
+	final public String getDefaultIcon() {
 		return defaultIcon;
 	}
 
 	/**
-	 * Sets the URI to the default icon
+	 * Sets the path to the default icon.
 	 * 
-	 * @param defaultIconURI
-	 *            URI to the default icon
+	 * @param icon
+	 *            Icon path
 	 */
-	public void setDefaultIcon(String icon) {
+	final public void setDefaultIcon(final String icon) {
 		this.defaultIcon = icon;
 	}
 
 	/**
-	 * Gets the list of defined transformations
+	 * Gets the list of defined transformations.
 	 * 
 	 * @return A LinkedList containing all transformations
 	 */
-	public LinkedList<Transformation> getTransformations() {
+	final public LinkedList<Transformation> getTransformations() {
 		return transformations;
 	}
 
 	/**
-	 * Tries to find a transformation with a given name
+	 * Tries to find a transformation with a given name.
 	 * 
 	 * @param transformation
-	 * @return
+	 *            The name to find
+	 * @return The first transformation found or null
 	 */
-	public Transformation getTransformationByName(String transformation) {
-		transformation = transformation.toLowerCase();
+	final public Transformation getTransformationByName(
+			final String transformation) {
 		for (Transformation t : transformations) {
-			if (t.getTransformationName().toLowerCase().equals(transformation))
+			if (t.getTransformationName().toLowerCase(Locale.getDefault())
+					.equals(transformation.toLowerCase(Locale.getDefault()))) {
 				return t;
-		}
-		return null;
-	}
-
-	public Transformation getTransformationById(String tid) {
-		for (Transformation t : transformations) {
-			if (t.getTransformationId().equals(tid))
-				return t;
+			}
 		}
 		return null;
 	}
 
 	/**
-	 * Sets the transformation list
+	 * Tries to find a transformation by its identity string.
+	 * 
+	 * @param tid
+	 *            The id to find
+	 * @return The first transformation with the given id or null if no
+	 *         transformation has been found
+	 */
+	final public Transformation getTransformationById(final String tid) {
+		for (Transformation t : transformations) {
+			if (t.getTransformationId().equals(tid)) {
+				return t;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Sets the transformation list.
 	 * 
 	 * @param transformations
 	 *            A LinkedList containing the transformations
 	 */
-	public void setTransformations(LinkedList<Transformation> transformations) {
-		this.transformations = transformations;
+	final public void setTransformations(
+			final LinkedList<Transformation> transformations) {
+		this.transformations.clear();
+		this.transformations.addAll(transformations);
 	}
 
 	/**
-	 * Adds a single transformation to the transformations list
+	 * Adds a single transformation to the transformations list.
 	 * 
 	 * @param t
 	 *            a transformation definition
 	 */
-	public void addTransformation(Transformation t) {
+	final public void addTransformation(final Transformation t) {
 		this.transformations.add(t);
 	}
 
 	/**
-	 * Removes a transformation
+	 * Removes a transformation.
 	 * 
 	 * @param index
 	 *            the index of the element to remove
 	 */
-	public void removeTransformation(int index) {
+	final public void removeTransformation(final int index) {
 		this.transformations.remove(index);
 	}
 
 	/**
-	 * Replaces a transformation with a new one
+	 * Replaces a transformation with a new one.
 	 * 
 	 * @param oldVal
 	 *            The transformation to replace
 	 * @param newVal
 	 *            The transformation to insert
 	 */
-	public void modifyTransformation(Transformation oldVal,
-			Transformation newVal) {
-		if (this.transformations.contains(oldVal))
+	final public void modifyTransformation(final Transformation oldVal,
+			final Transformation newVal) {
+		if (this.transformations.contains(oldVal)) {
 			transformations.remove(oldVal);
+		}
 		transformations.add(newVal);
 	}
 
 	/**
-	 * The auto layout setting
+	 * The auto layout setting.
 	 * 
 	 * @return true if auto layout should be performed after execution
 	 */
-	public boolean isPerformAutoLayout() {
+	final public boolean isPerformAutoLayout() {
 		return performAutoLayout;
 	}
 
 	/**
-	 * Sets the auto layout setting
+	 * Sets the auto layout setting.
 	 * 
 	 * @param performAutoLayout
 	 */
-	public void setPerformAutoLayout(boolean performAutoLayout) {
+	final public void setPerformAutoLayout(final boolean performAutoLayout) {
 		this.performAutoLayout = performAutoLayout;
 	}
 
 	/**
-	 * Returns the text representation of the Xtend file
+	 * Returns the text representation of the Xtend file.
 	 * 
 	 * @return A .ext file in plain text
 	 */
-	public String getExtFile() {
+	final public String getExtFile() {
 		return extFile;
 	}
 
 	/**
-	 * Sets the content of the Xtend file
+	 * Sets the content of the Xtend file.
 	 * 
 	 * @param file
 	 *            a .ext file in plain text
 	 */
-	public void setExtFile(String file) {
+	final public void setExtFile(final String file) {
 		this.extFile = file;
 		parseTransformations();
 	}
 
-	public String getContributor() {
+	/**
+	 * @return The editors contributor project.
+	 */
+	final public String getContributor() {
 		return contributor;
 	}
 
-	public void setContributor(String contributor) {
+	/**
+	 * Sets the editors contributor project.
+	 * 
+	 * @param contributor
+	 */
+	final public void setContributor(final String contributor) {
 		this.contributor = contributor;
 	}
 
 	/**
-	 * Returns the defined diagram context
+	 * Returns the defined diagram context.
 	 * 
 	 * @return A contextID used to bind keyboard shortcuts to commands
 	 */
-	public String getContext() {
+	final public String getContext() {
 		return context;
 	}
 
 	/**
-	 * Sets the diagram context
+	 * Sets the diagram context.
 	 * 
 	 * @param context
 	 *            the contextID to bind keyboard shortcuts
 	 */
-	public void setContext(String context) {
+	final public void setContext(final String context) {
 		this.context = context;
 	}
 
 	/**
-	 * Parses the Xtend file to read transformation names & parameters
+	 * Parses the Xtend file to read transformation names & parameters.
 	 */
-	public void parseTransformations() {
+	final public void parseTransformations() {
 		if (extFile != null && extFile.length() > 0) {
 			// Let's find all in-place m2m transformations, defined in this file
 			// They are defined by :
@@ -300,8 +343,9 @@ public class EditorTransformationSettings implements Serializable {
 					// keyword, e.g. in comments
 					String[] voidMethod = method.split(" ");
 					if (voidMethod.length == 0
-							|| !voidMethod[0].trim().equals("void"))
+							|| !voidMethod[0].trim().equals("void")) {
 						continue;
+					}
 
 					// method = method.replaceAll("/\\*.*\\", "");
 					String[] tokens = method.split("void ");
@@ -315,8 +359,9 @@ public class EditorTransformationSettings implements Serializable {
 						parameters[i] = parameterAndNames[i].trim().split(" ")[0];
 					}
 					Transformation t = getTransformationByName(name);
-					if (t != null)
+					if (t != null) {
 						getTransformationByName(name).setParameter(parameters);
+					}
 				} catch (NullPointerException exp) {
 					System.err.println("invalid xtend file");
 				}

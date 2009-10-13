@@ -12,13 +12,14 @@
  * See the file epl-v10.html for the license text.
  * 
  *****************************************************************************/
-package de.cau.cs.kieler.ksbase.ui;
+package de.cau.cs.kieler.ksbase.ui.preferences;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Locale;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
@@ -92,7 +93,7 @@ import de.cau.cs.kieler.ksbase.core.Transformation;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
 
 /**
- * The KSBasE preference page
+ * The KSBasE preference page.
  * 
  * The preference page is used to modify existing extensions only! Due to
  * technical restrictions, it is not possible to add new settings here. If you'd
@@ -127,13 +128,16 @@ public class KSBasEPreferencePage extends PreferencePage implements
 	Composite tableComp, browserContainer, btComp;
 	private TransformationManager manager;
 
+	/**
+	 * Default constructor. Sets the preference page title.
+	 */
 	public KSBasEPreferencePage() {
 		setDescription(Messages.KSBasEPreferencePage_Title);
 		manager = TransformationManager.instance;
 	}
 
 	/**
-	 * Creates the contents of the preference page
+	 * Creates the contents of the preference page.
 	 */
 	@Override
 	protected Control createContents(Composite parent) {
@@ -400,7 +404,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
 								int col = cursor.getColumn();
 								if (col == 0) {
 									// TODO: Check for duplicate Id's
-									transformation.setTransformationID(text
+									transformation.setTransformationId(text
 											.getText());
 								} else if (col == 1) {
 									transformation.setName(text.getText());
@@ -415,7 +419,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
 						public void focusLost(FocusEvent e) {
 							int col = cursor.getColumn();
 							if (col == 0) {
-								transformation.setTransformationID(text
+								transformation.setTransformationId(text
 										.getText());
 							} else if (col == 1) {
 								transformation.setName(text.getText());
@@ -461,8 +465,9 @@ public class KSBasEPreferencePage extends PreferencePage implements
 									// allow
 									// characters
 									String ex = ""; //$NON-NLS-1$
-									if (ex.length() > 0)
+									if (ex.length() > 0) {
 										ex += "\u002B"; //$NON-NLS-1$
+									}
 									if ((e.stateMask & SWT.CTRL) != 0) {
 										ex += Messages.KSBasEPreferencePage_Shortcut_CTRL;
 									}
@@ -472,15 +477,16 @@ public class KSBasEPreferencePage extends PreferencePage implements
 									if ((e.stateMask & SWT.SHIFT) != 0) {
 										ex += Messages.KSBasEPreferencePage_Shortcut_SHIFT;
 									}
-									if (keys.getText().length() > 0)
+									if (keys.getText().length() > 0) {
 										ex += keys.getText();
+									}
 
 									keys.append(String
 											.valueOf((char) e.keyCode)
 											+ " "); //$NON-NLS-1$
 
 									ex += (char) e.keyCode;
-									text.setText(ex.toUpperCase());
+									text.setText(ex.toUpperCase(Locale.getDefault()));
 								}
 							}
 						}
@@ -718,8 +724,10 @@ public class KSBasEPreferencePage extends PreferencePage implements
 		return null;
 	}
 
-	private void readEditors() {
-		// Fill editors combo box with existing editors
+	/**
+	 * Reads the existing editors from the manager and inserts them to the editor list.
+	 */
+	final private void readEditors() {
 		if (manager.getEditors() != null) {
 			for (EditorTransformationSettings s : manager.getEditors()) {
 				cbEditors.add(s.getEditor());
@@ -732,16 +740,16 @@ public class KSBasEPreferencePage extends PreferencePage implements
 	}
 
 	/**
-	 * Initalizes the preference page
+	 * Initalizes the preference page.
 	 */
-	public void init(IWorkbench workbench) {
+	final public void init(IWorkbench workbench) {
 		setPreferenceStore(KSBasEPlugin.getDefault().getPreferenceStore());
 		manager.initializeTransformations();
 	}
 
 	/**
 	 * Performs an 'OK' command. i.e. stores the settings for the currently
-	 * selected editor
+	 * selected editor.
 	 */
 	@Override
 	public boolean performOk() {
@@ -763,7 +771,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
 	/**
 	 * Opens an TypeSelectionDialog (@see E...) to select either single or
 	 * multiple entries from a filtered list of existing classes in the current
-	 * workspace
+	 * workspace.
 	 * 
 	 * @param types
 	 *            A number of types which have to be implemented or extend by
@@ -772,8 +780,8 @@ public class KSBasEPreferencePage extends PreferencePage implements
 	 *            Allow multiple selection?
 	 * @return The list of selected entries
 	 */
-	protected String[] openElementSelectionDialog(String[] types,
-			boolean multiple, Composite parent) {
+	final protected String[] openElementSelectionDialog(final String[] types,
+			final boolean multiple, final Composite parent) {
 		try {
 			final LinkedList<IJavaElement> javaelements = new LinkedList<IJavaElement>();
 			final ProgressMonitorPart monitor = new ProgressMonitorPart(parent,
@@ -828,8 +836,9 @@ public class KSBasEPreferencePage extends PreferencePage implements
 
 				if (listDlg.open() == ResourceListSelectionDialog.OK) {
 					Object[] dlgResult = listDlg.getResult();
-					if (dlgResult == null)
+					if (dlgResult == null || dlgResult.length == 0) {
 						return null;
+					}
 
 					String[] result = new String[dlgResult.length];
 					for (int i = 0; i < dlgResult.length; ++i) {
@@ -842,9 +851,10 @@ public class KSBasEPreferencePage extends PreferencePage implements
 				} else
 					return new String[] {};
 			}
-		} catch (Exception excep) {
+		} catch (CoreException excep) {
 			excep.printStackTrace();
 		}
+		
 
 		return null;
 	}

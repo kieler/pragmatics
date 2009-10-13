@@ -16,7 +16,7 @@
          point="org.eclipse.ui.preferencePages">
       <page
             category="de.cau.cs.kieler"
-            class="de.cau.cs.kieler.ksbase.ui.KSBasEPreferencePage"
+            class="de.cau.cs.kieler.ksbase.ui.preferences.KSBasEPreferencePage"
             id="de.cau.cs.kieler.ksbase.PreferencePage"
             name="Structure based editing">
       </page>

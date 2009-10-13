@@ -12,7 +12,7 @@
  * See the file epl-v10.html for the license text.
  * 
  *****************************************************************************/
-package de.cau.cs.kieler.ksbase.ui;
+package de.cau.cs.kieler.ksbase.ui.preferences;
 
 import org.eclipse.osgi.util.NLS;
 

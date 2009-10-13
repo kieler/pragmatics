@@ -21,74 +21,55 @@ import org.osgi.framework.BundleContext;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
 
 /**
- * The activator class controls the plug-in life cycle
+ * The activator class controls the plug-in life cycle.
  */
 public class KSBasEPlugin extends AbstractUIPlugin {
 
-    // The plug-in ID
-    public static final String PLUGIN_ID = "de.cau.cs.kieler.ksbase";
+	// The plug-in ID
+	public static final String PLUGIN_ID = "de.cau.cs.kieler.ksbase";
 
-    // The shared instance
-    private static KSBasEPlugin plugin;
+	// The shared instance
+	private static KSBasEPlugin plugin;
 
-    // Visibility flags for menu entries
-    public static final int SHOW_MENU = 1; // Show entry in menu, if activated
-    // or activate menu
-    public static final int SHOW_TOOLBAR = 1 << 1; // Show entry in tool bar, if
-    // activated or activate menu
-    public static final int SHOW_CONTEXT = 1 << 2; // Show entry in context
-    // menu, if activated or
-    // activate context menu
-    public static final int SHOW_BALLOON = 1 << 3; // Show entry in balloon
+	/**
+	 * The constructor.
+	 */
+	public KSBasEPlugin() {
+	}
 
-    // popup, if activated or
-    // activate balloon popups
+	/**
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
+	 */
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		KSBasEPlugin.plugin = this;
+		TransformationManager.instance.initializeTransformations();
+	}
 
-    /**
-     * The constructor
-     */
-    public KSBasEPlugin() {
-    }
-     
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-     */
-    public void start(BundleContext context) throws Exception {
-        super.start(context);
-        KSBasEPlugin.plugin = this;
-        TransformationManager.instance.initializeTransformations();
-    }
+	/**
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
+	 */
+	public void stop(BundleContext context) throws Exception {
+		KSBasEPlugin.plugin = null;
+		super.stop(context);
+	}
 
-    
+	/**
+	 * @return the shared instance.
+	 */
+	public static KSBasEPlugin getDefault() {
+		return plugin;
+	}
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-     */
-    public void stop(BundleContext context) throws Exception {
-    	KSBasEPlugin.plugin = null;
-        super.stop(context);
-    }
-
-    /**
-     * Returns the shared instance
-     * 
-     * @return the shared instance
-     */
-    public static KSBasEPlugin getDefault() {
-        return plugin;
-    }
-
-    /**
-     * Returns an image descriptor for the image file at the given plug-in
-     * relative path
-     * 
-     * @param path
-     *            the path
-     * @return the image descriptor
-     */
-    public static ImageDescriptor getImageDescriptor(String path) {
-        return imageDescriptorFromPlugin(PLUGIN_ID, path);
-    }
+	/**
+	 * Returns an image descriptor for the image file at the given plug-in
+	 * relative path.
+	 * 
+	 * @param path
+	 *            the path
+	 * @return the image descriptor
+	 */
+	public static ImageDescriptor getImageDescriptor(final String path) {
+		return imageDescriptorFromPlugin(PLUGIN_ID, path);
+	}
 }

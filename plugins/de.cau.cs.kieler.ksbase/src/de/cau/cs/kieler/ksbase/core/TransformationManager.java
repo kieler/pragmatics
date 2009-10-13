@@ -46,7 +46,7 @@ public class TransformationManager {
 	public static final TransformationManager instance = new TransformationManager();
 
 	/**
-	 * Since this is a singleton class the constructor is private
+	 * Since this is a singleton class the constructor is private.
 	 */
 	private TransformationManager() {
 		isInitialized = false;
@@ -54,11 +54,11 @@ public class TransformationManager {
 	}
 
 	/**
-	 * Get the currently registered editors
+	 * Get the currently registered editors.
 	 * 
 	 * @return A list of the registered editors
 	 */
-	public LinkedList<EditorTransformationSettings> getEditors() {
+	final public LinkedList<EditorTransformationSettings> getEditors() {
 		return registeredEditors;
 	}
 
@@ -70,15 +70,19 @@ public class TransformationManager {
 	 * @return The first editor in the list of registered editors which has the
 	 *         given name
 	 */
-	public EditorTransformationSettings getEditorByName(String editor) {
+	final public EditorTransformationSettings getEditorByName(final String editor) {
 		for (EditorTransformationSettings settings : registeredEditors) {
-			if (settings.getEditor().equals(editor))
+			if (settings.getEditor().equals(editor)) {
 				return settings;
+			}
 		}
 		return null;
 	}
 
-	public boolean isInitalized() {
+	/**
+	 * return True if the manager is initialized.
+	 */
+	final public boolean isInitialized() {
 		return isInitialized;
 	}
 
@@ -88,11 +92,13 @@ public class TransformationManager {
 	 * @param editor
 	 *            The EditorTransformationSetting that describes the editor
 	 */
-	public void addEditor(EditorTransformationSettings editor) {
-		if (registeredEditors == null)
+	final public void addEditor(final EditorTransformationSettings editor) {
+		if (registeredEditors == null) {
 			registeredEditors = new LinkedList<EditorTransformationSettings>();
-		if (editor.getEditor().length() > 0)
+		}
+		if (editor.getEditor().length() > 0) {
 			registeredEditors.add(editor);
+		}
 	}
 
 	/**
@@ -103,9 +109,10 @@ public class TransformationManager {
 	 *            The name of the new editor
 	 * @return The newly created EditorTransformationSettings
 	 */
-	public EditorTransformationSettings addEditor(String editorName) {
-		if (registeredEditors == null)
+	final public EditorTransformationSettings addEditor(final String editorName) {
+		if (registeredEditors == null) {
 			registeredEditors = new LinkedList<EditorTransformationSettings>();
+		}
 		if (editorName.length() > 0) {
 			EditorTransformationSettings editor = new EditorTransformationSettings(
 					editorName);
@@ -121,18 +128,19 @@ public class TransformationManager {
 	 * @param editor
 	 *            The fqn class name of the editor
 	 */
-	public void removeEditor(String editor) {
+	final public void removeEditor(final String editor) {
 		for (int i = 0; i < registeredEditors.size(); ++i) {
-			if (registeredEditors.get(i).getEditor().equals(editor))
+			if (registeredEditors.get(i).getEditor().equals(editor)) {
 				registeredEditors.remove(i);
+			}
 		}
 	}
 
 	/**
 	 * Loads the editor settings either from the extension point settings or the
-	 * preference store
+	 * preference store.
 	 */
-	public void initializeTransformations() {
+	final public void initializeTransformations() {
 		registeredEditors = new LinkedList<EditorTransformationSettings>();
 
 		IConfigurationElement[] configurations = Platform
@@ -160,7 +168,7 @@ public class TransformationManager {
 							.getAttribute("transformation"));
 					transformation.setKeyboardShortcut(t
 							.getAttribute("keyboardShortcut"));
-					transformation.setTransformationID(t
+					transformation.setTransformationId(t
 							.getAttribute("transformationId"));
 					transformation.setIcon(t.getAttribute("icon"));
 					editor.addTransformation(transformation);
@@ -218,13 +226,13 @@ public class TransformationManager {
 	}
 
 	/**
-	 * Imports settings from an external file
+	 * Imports settings from an external file.
 	 * 
 	 * @param file
 	 *            The absolute file name
 	 */
 	@SuppressWarnings("unchecked")
-	public void importSettings(String file) {
+	final public void importSettings(final String file) {
 		try {
 			ObjectInputStream in = new ObjectInputStream(new FileInputStream(
 					file));
@@ -242,12 +250,12 @@ public class TransformationManager {
 	}
 
 	/**
-	 * Exports the settings to an external file
+	 * Exports the settings to an external file.
 	 * 
 	 * @param file
 	 *            The absolute file name
 	 */
-	public void exportSettings(String file) {
+	final public void exportSettings(final String file) {
 		try {
 			ObjectOutputStream out = new ObjectOutputStream(
 					new FileOutputStream(file));

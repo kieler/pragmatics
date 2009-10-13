@@ -12,7 +12,7 @@
  * See the file epl-v10.html for the license text.
  * 
  *****************************************************************************/
-package de.cau.cs.kieler.ksbase.ui;
+package de.cau.cs.kieler.ksbase.ui.handler;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -43,7 +43,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.Transformation;
-import de.cau.cs.kieler.ksbase.ui.handler.ExecuteTransformationRequest;
 import de.cau.cs.kieler.viewmanagement.RunLogic;
 import de.cau.cs.kieler.viewmanagement.triggers.LayoutTrigger;
 
@@ -53,7 +52,7 @@ public class TransformationUIManager {
 
 	/**
 	 * Creates and executes a transformation command by creating a request and
-	 * execute the resulting command on the diagram command stack
+	 * execute the resulting command on the diagram command stack.
 	 * 
 	 * @param event
 	 *            Execution event for which this command should be created
@@ -62,8 +61,8 @@ public class TransformationUIManager {
 	 * @param transformation
 	 *            The transformation that should be executed
 	 */
-	public void createAndExecuteTransformationCommand(ExecutionEvent event,
-			EditorTransformationSettings editor, Transformation transformation) {
+	final public void createAndExecuteTransformationCommand(final ExecutionEvent event,
+			final EditorTransformationSettings editor, final Transformation transformation) {
 
 		IEditorPart activeEditor = HandlerUtil.getActiveEditor(event);
 		// System.out.println("Diag childs (pre): " +
@@ -82,8 +81,6 @@ public class TransformationUIManager {
 			EditPart selectedElement = (EditPart) ((StructuredSelection) selection)
 					.getFirstElement();
 
-			// System.out.println("# start:" +
-			// selectedElement.getParent().getChildren().size());
 			File file = null;
 			try {
 				IPath path = ResourcesPlugin.getPlugin().getStateLocation();
@@ -91,9 +88,9 @@ public class TransformationUIManager {
 						.toOSString()));
 				FileOutputStream out = new FileOutputStream(file);
 				if (!file.exists()) {
-					if (!file.createNewFile())
-						return;// FIXME: We were unable to create the file ! Add
-					// Error-log
+					if (!file.createNewFile()) {
+						return;// FIXME: We were unable to create the file !
+					}
 				}
 				out.write(editor.getExtFile().getBytes());
 				out.flush();
@@ -111,12 +108,14 @@ public class TransformationUIManager {
 				// gets a command stack to execute the command
 				DiagramCommandStack commandStack = null;
 				Object adapter = activeEditor.getAdapter(CommandStack.class);
-				if (adapter instanceof DiagramCommandStack)
+				if (adapter instanceof DiagramCommandStack) {
 					commandStack = (DiagramCommandStack) adapter;
-				if (commandStack == null)
+					}
+				if (commandStack == null) {
 					commandStack = new DiagramCommandStack(
 							((DiagramEditor) activeEditor)
 									.getDiagramEditDomain());
+				}
 				commandStack.execute(transformationCommand);
 			} catch (FileNotFoundException e) {
 
@@ -126,27 +125,18 @@ public class TransformationUIManager {
 			} finally {
 
 				// Remove temporary Xtend file
+				
 				if (file != null) {
 					if (!file.delete())
 						System.out
-								.println("Warning: Unable to delete temporary xtend file"); // maybe
-					// just
-					// ignore
-					// or
-					// add
-					// a
-					// warning
+								.println("Warning: Unable to delete temporary xtend file"); 
+					// maybe just ignore or add a warning
 				}
+				
 				// update edit policies, so GMF will generate diagram elements
 				// for model elements which have been generated during the
 				// transformation but
 
-				// SetViewMutabilityCommand.makeImmutable((IAdaptable)selectedElement.getParent().getRoot().gets).execute();
-				// ViewService%Provider, Service,
-				// ViewProviderConfiguration$ContextDescriptor
-
-				// System.out.println("Diag childs (aft): " +
-				// ((DiagramEditor)activeEditor).getDiagram().getVisibleChildren().size());
 
 				// not translated to gmf now:
 				if (activeEditor instanceof DiagramEditor) {
@@ -167,17 +157,7 @@ public class TransformationUIManager {
 					IDiagramGraphicalViewer graphViewer = ((DiagramEditor) activeEditor)
 							.getDiagramGraphicalViewer();
 					graphViewer.flush();
-					// Create View(Affects resource
-					// platform:/resource/test/default.synccharts_diagram)
-					// org.eclipse.gmf.runtime.diagram.core.DiagramEditingDomainFactory$DiagramEditingDomain@187f48e
-					// enable canonical mode (label?)
-
-					// System.out.println("# after flush:" +
-					// selectedElement.getParent().getChildren().size());
-					// Update the graphical viewer to calculate diagram
-					// element sizes and positions for new objects
-					// org.eclipse.gmf.runtime.diagram.core.view.factories.ViewFactory
-
+					
 					// If auto-layout is activated, execute now:
 					if (editor.isPerformAutoLayout()) {
 						// Get last parent which is a shapeEditPart
@@ -193,10 +173,12 @@ public class TransformationUIManager {
 						if (par != null) { // if a transition is selected, the
 											// parent is null
 							while (!(par instanceof RootEditPart)) {
-								if (par instanceof ShapeEditPart)
+								if (par instanceof ShapeEditPart) {
 									layoutTarget = par;
-								if (par.getParent() == null)
+								}
+								if (par.getParent() == null) {
 									break;
+								}
 								par = par.getParent();
 							}
 						}

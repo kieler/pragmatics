@@ -1,7 +1,22 @@
+/******************************************************************************
+ * KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2009 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ * 
+ *****************************************************************************/
 package de.cau.cs.kieler.ksbase.ui.test;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.gef.EditPart;
@@ -13,11 +28,14 @@ import org.eclipse.ui.PlatformUI;
 import de.cau.cs.kieler.ksbase.core.Transformation;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
 
+/**
+ * A property tester which checks if a selected diagram object matches
+ * a given model element.
+ * @author Michael Matzen
+ *
+ */
 public class ModelObjectTester extends PropertyTester {
 
-	public ModelObjectTester() {
-		// TODO Auto-generated constructor stub
-	}
 
 	public boolean test(Object receiver, String property, Object[] args,
 			Object expectedValue) {
@@ -38,7 +56,7 @@ public class ModelObjectTester extends PropertyTester {
 					Object model = ((EditPart) testingObject).getModel();
 					if (model instanceof View) {
 						View vep = (View) model;
-						int idx = match.indexOf(vep.getElement().eClass().getName().toLowerCase());
+						int idx = match.indexOf(vep.getElement().eClass().getName().toLowerCase(Locale.getDefault()));
 						if ( idx > -1)
 							match.remove(idx);
 					}

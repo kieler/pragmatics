@@ -39,10 +39,11 @@ public class Transformation implements Serializable {
     private String keyboardShortcut; // Assigned keyboard shortcut
     private String[] parameter; //Ordered parameters
     private String transformationId; //Id for this transformation, defined via the ext. point
+    
     /**
-     * Creates a new Transformation
+     * Creates a new Transformation.
      */
-    public Transformation(String name, String transformation) {
+    public Transformation(final String name, final String transformation) {
         this.name = name;
         this.transformationName = transformation;
         icon = "";
@@ -52,10 +53,10 @@ public class Transformation implements Serializable {
     }
 
     /**
-     * Sets the name of the transformation used in the menus
+     * Sets the name of the transformation used in the menus.
      * @param name 
      */
-    public void setName(String name) {
+    final public void setName(final String name) {
         this.name = name;
     }
 
@@ -64,53 +65,55 @@ public class Transformation implements Serializable {
      * The value is unchecked so giving an invalid name here will result in an Xtend error.
      * @param value 
      */
-    public void setTransformationName(String value) {
+    final public void setTransformationName(final String value) {
         this.transformationName = value;
     }
 
 
     /**
-     * Sets the iconURI used by the toolbar and the balloon menus
+     * Sets the iconURI used by the toolbar and the balloon menus.
      * @param uri
      */
-    public void setIcon(String uri) {
+    final public void setIcon(final String uri) {
         this.icon = uri;
     }
 
     /**
-     * Returns the transformation name used by the menus
+     * Returns the transformation name used by the menus.
      * @return
      */
-    public String getName() {
+    final public String getName() {
         return this.name;
     }
 
     /**
-     * Returns the Xtend transformation method name
-     * @return
+     * Returns the Xtend transformation method name.
+     * @return The name of this transformation
      */
-    public String getTransformationName() {
+    final public String getTransformationName() {
         return this.transformationName;
     }
 
     /**
-     * Returns the number of selections this transformation is defined for
-     * @return
+     * Returns the number of selections this transformation is defined for.
+     * @return The number of selections
      */
-    public int getNumSelections() {
+    final public int getNumSelections() {
         return this.parameter.length;
     }
 
     /**
-     * Returns the icon URI as a String
-     * Simply calls iconURI.toString
-     * @return
+     * Returns the icon with relative path.
+     * @return A path string
      */
-    public String getIcon() {
+    final public String getIcon() {
         return icon;
     }
     
-    public List<String> getParameterList() {
+    /**
+     * @return A list of parameters.
+     */
+    final public List<String> getParameterList() {
     	ArrayList<String> res = new ArrayList<String>();
     	for (String s: parameter) {
 			res.add(s);
@@ -118,38 +121,43 @@ public class Transformation implements Serializable {
     	return res;
     }
     
-    public String[] getParameter() {
-		return parameter;
+    /**
+     * @return An array of parameters, can only be null if not initialized.
+     */
+    final public String[] getParameter() {
+		return parameter.clone();
 	}
 
-	public void setParameter(String[] parameter) {
-		this.parameter = parameter;
+    /**
+     * @param parameter The parameters for this transformation.
+     */
+    final public void setParameter(final String[] parameter) {
+		this.parameter = parameter.clone();
 	}
 
     /**
      * Returns the Id for this transformation.
      * This is used for menu contributions only, so 
      * it does not need to be set.
-     * @return
+     * @return The transformationId
      */
-    public String getTransformationId() {
+    final public String getTransformationId() {
         return transformationId;
     }
 
     /**
-     * Sets the Id for this transformation
-     * @param transformationID
+     * Sets the Id for this transformation.
+     * @param transformationId
      */
-    public void setTransformationID(String transformationId) {
+    final public void setTransformationId(final String transformationId) {
         this.transformationId = transformationId;
     }
 
     /**
-     * Returns the keyboard shortcut.
      * This is only a string, it's not validated or checked for conflicts.
-     * @return
+     * @return The keyboard shortcut
      */
-    public String getKeyboardShortcut() {
+    final public String getKeyboardShortcut() {
         return keyboardShortcut;
     }
 
@@ -157,16 +165,17 @@ public class Transformation implements Serializable {
      * Sets the keyboard shortcut for this transformation.
      * @param keyboardShortcut
      */
-    public void setKeyboardShortcut(String keyboardShortcut) {
+    final public void setKeyboardShortcut(final String keyboardShortcut) {
         this.keyboardShortcut = keyboardShortcut;
     }
 
     /**
-     * Serializes this object to the given ObjectOutputStream
+     * Serializes this object to the given ObjectOutputStream.
      * @param writer A valid an opened ObjectOutputStream
      */
-    public void serialize(ObjectOutputStream writer) {
+    public void serialize(final ObjectOutputStream writer) {
         try {
+        	assert(writer != null);
             writer.writeObject(this.name);
             writer.writeObject(this.transformationName);
             writer.writeObject(this.parameter);
@@ -178,19 +187,19 @@ public class Transformation implements Serializable {
     
     /**
      * Simple hashCode calculations, uses the hash code of 
-     * the transformation name and adds the number of selections
+     * the transformation name and adds the number of selections.
      */
     @Override
-    public int hashCode() {
+    final public int hashCode() {
         return transformationName.hashCode();
     }
     
     /**
      * Two transformations are equal, when they have the same transformation
-     * name and the same number of parameters
+     * name and the same number of parameters.
      */
     @Override
-    public boolean equals(Object obj) {
+    final public boolean equals(final Object obj) {
         if (obj instanceof Transformation) {
             return (parameter.length == ((Transformation) obj).getNumSelections())
                     && (transformationName.equals(((Transformation) obj)

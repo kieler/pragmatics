@@ -33,10 +33,10 @@ public class KSBasEMenuContribution {
     
     /**
      * Creates a new menu contribution with the given data content
-     * (Id or locationURI)
-     * @param data
+     * (Id or locationURI).
+     * @param data The data property
      */
-    public KSBasEMenuContribution(String data) {
+    public KSBasEMenuContribution(final String data) {
         this.data = data;
         this.commands = new LinkedList<String>();
         this.subMenus = new LinkedList<KSBasEMenuContribution>();
@@ -44,60 +44,60 @@ public class KSBasEMenuContribution {
     }
     
     /**
-     * Adds a command to this contribution
-     * @param transformationId
+     * Adds a command to this contribution.
+     * @param transformationId The id of the called transformation
      */
-    public void addCommand(String transformationId) {
+    final public void addCommand(final String transformationId) {
         commands.add(transformationId);
         
     }
     
     /**
-     * Adds a sub menu to this contribution
-     * @param menu
+     * Adds a sub menu to this contribution.
+     * @param menu the menu to add
      */
-    public void addSubMenu(KSBasEMenuContribution menu) {
+    final public void addSubMenu(final KSBasEMenuContribution menu) {
         subMenus.add(menu);
     }
     
     /**
-     * Returns a list of all sub menus contained in this contribution
-     * @return
+     * Returns a list of all sub menus contained in this contribution.
+     * @return A list of menu contributions
      */
-    public LinkedList<KSBasEMenuContribution> getMenus() {
+    final public LinkedList<KSBasEMenuContribution> getMenus() {
         return subMenus;
     }
     
     /**
-     * Returns the list of commands
-     * @return
+     * Returns the list of commands.
+     * @return A list of commands
      */
-    public LinkedList<String> getCommands() {
+    final public LinkedList<String> getCommands() {
         return commands;
     }
     
     /**
-     * Returns the string property 
-     * @return
+     * Returns the string property. 
+     * @return The content of the data property
      */
-    public String getData()
+    final public String getData()
     {
         return data;
     }
 
     /**
-     * Returns the label
-     * @return
+     * Returns the label.
+     * @return The label
      */
-    public String getLabel() {
+    final public String getLabel() {
         return label;
     }
 
     /**
-     * Sets the label
-     * @param label
+     * Sets the label.
+     * @param label the new label
      */
-    public void setLabel(String label) {
+    final public void setLabel(final String label) {
         this.label = label;
     }
 }

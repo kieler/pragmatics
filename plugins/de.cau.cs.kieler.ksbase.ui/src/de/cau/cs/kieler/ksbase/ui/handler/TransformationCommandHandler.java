@@ -20,7 +20,6 @@ import org.eclipse.core.commands.ExecutionException;
 
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
-import de.cau.cs.kieler.ksbase.ui.TransformationUIManager;
 
 /**
  * The generic transformation handler used for all UI elements
@@ -33,10 +32,8 @@ public class TransformationCommandHandler extends AbstractHandler{
 	public static final String EDITOR_PARAM = "de.cau.cs.kieler.ksbase.editorParameter";
 	public static final String TRANSFORMATION_PARAM = "de.cau.cs.kieler.ksbase.transformationParameter";
 
-	// FIXME: Check if we need editor, transformation settings for non-extension
-	// point commands
 	/**
-	 * Creates a new command handler
+	 * Creates a new command handler.
 	 */
 	public TransformationCommandHandler() {
 	}
@@ -44,11 +41,12 @@ public class TransformationCommandHandler extends AbstractHandler{
 	/**
 	 * Execute a transformation. The editor and transformation settings are
 	 * given by the extension point parameters Uses the TransformationUI manager
-	 * to create and execute the transformation
+	 * to create and execute the transformation.
+	 * @param event The source event 
 	 */
-	public Object execute(ExecutionEvent event) throws ExecutionException {
+	public Object execute(final ExecutionEvent event) throws ExecutionException {
 
-		if (!TransformationManager.instance.isInitalized()) {
+		if (!TransformationManager.instance.isInitialized()) {
 			TransformationManager.instance.initializeTransformations();
 		}
 		EditorTransformationSettings editor = TransformationManager.instance

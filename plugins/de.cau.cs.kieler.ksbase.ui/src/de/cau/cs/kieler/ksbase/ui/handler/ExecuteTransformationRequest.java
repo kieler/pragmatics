@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
 
 /**
- * Request for the execution of a model transformation
+ * Request for the execution of a model transformation.
  * 
  * @author Michael Matzen
  */
@@ -37,105 +37,112 @@ public class ExecuteTransformationRequest extends Request {
     private String[] parameter;
 
     /**
-     * Creates a transformation request
+     * Creates a transformation request.
      */
-    public ExecuteTransformationRequest(IEditorPart ePart, String command,
-            String fileName, ISelection selection,
-            String modelPackage, String[] parameter) {
+    public ExecuteTransformationRequest(final IEditorPart ePart, final String command,
+    		final String fileName, final ISelection selection,
+    		final String modelPackage, final String[] parameter) {
         super(REQ_EXEC_TRANS);
         this.editPart = ePart;
         this.command = command;
         this.fileName = fileName;
         this.modelPackage = modelPackage;
         this.selection = selection;
-        this.parameter = parameter;
+        this.parameter = parameter.clone();
     }
     
     /**
      * Sets the model package
      * @param modelPackage
      */
-    public void setModelPackage(String modelPackage) {
+    final public void setModelPackage(final String modelPackage) {
         this.modelPackage = modelPackage;
     }
 
     /**
-     * Gets the model package
+     * Gets the model package.
      * @return modelPackage
      */
-    public String getModelPackage() {
+    final public String getModelPackage() {
         return this.modelPackage;
     }
     
     /**
-     * Sets the edit part
+     * Sets the edit part.
      * @param part
      */
-    public void setEditPart(IEditorPart part) {
+    final public void setEditPart(final IEditorPart part) {
         this.editPart = part;
     }
 
     /**
-     * Gets the edit part
+     * Gets the edit part.
      * @return the editPart
      */
-    public IEditorPart getEditPart() {
+    final public IEditorPart getEditPart() {
         return this.editPart;
     }
 
     /**
-     * Sets the transformation command
+     * Sets the transformation command.
      * @param command
      */
-    public void setCommand(String command) {
+    final public void setCommand(final String command) {
         this.command = command;
     }
 
     /**
-     * Gets the transformation command
+     * Gets the transformation command.
      * @return A Xtend method name
      */
-    public String getCommand() {
+    final public String getCommand() {
         return this.command;
     }
 
     /**
-     * Sets the filename
+     * Sets the filename.
      * @param fileName
      */
-    public void setFileName(String fileName) {
+    final public void setFileName(final String fileName) {
         this.fileName = fileName;
     }
 
     /**
-     * Gets the filename
+     * Gets the filename.
      * @return A Xtend file name 
      */
-    public String getFileName() {
+    final public String getFileName() {
         return this.fileName;
     }
 
     /**
-     * Sets the current selection
+     * Sets the current selection.
      * @param selection
      */
-    public void setSelection(ISelection selection) {
+    final public void setSelection(final ISelection selection) {
         this.selection = selection;
     }
 
     /**
-     * The current selection
+     * The current selection.
      * @return an ISelection object
      */
-    public ISelection getSelection() {
+    final public ISelection getSelection() {
         return this.selection;
     }
 
-	public String[] getParameter() {
-		return parameter;
+    /**
+     * @return The parameters
+     */
+    final public String[] getParameter() {
+		return parameter.clone();
 	}
 
-	public void setParameter(String[] parameter) {
-		this.parameter = parameter;
+	/**
+	 * Sets the parameters for this transformation request 
+	 * @param parameter
+	 */
+    final public void setParameter(final String[] parameter) {
+		this.parameter = parameter.clone();
 	}
 }
