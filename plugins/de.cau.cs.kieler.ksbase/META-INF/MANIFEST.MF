@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Kieler Structure Based Editing Features
+Bundle-SymbolicName: de.cau.cs.kieler.ksbase;singleton:=true
+Bundle-Version: 0.1.3
+Bundle-Activator: de.cau.cs.kieler.ksbase.KSBasEPlugin
+Bundle-Vendor: Christian-Albrechts-Unversität zu Kiel
+Require-Bundle: org.eclipse.xtend;bundle-version="0.7.1",
+ org.eclipse.debug.ui;bundle-version="3.5.0",
+ org.eclipse.core.runtime;bundle-version="3.5.0",
+ org.eclipse.jface;bundle-version="3.5.0",
+ org.eclipse.ui;bundle-version="3.5.0",
+ org.antlr.runtime;bundle-version="3.0.0"
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Import-Package: org.eclipse.xtend.typesystem.emf
+Bundle-ActivationPolicy: lazy
+Export-Package: de.cau.cs.kieler.ksbase,
+ de.cau.cs.kieler.ksbase.core
