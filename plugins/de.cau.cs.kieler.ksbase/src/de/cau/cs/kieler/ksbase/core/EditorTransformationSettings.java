@@ -19,7 +19,7 @@ import java.util.LinkedList;
 import java.util.Locale;
 
 /**
- * Stores the KSBasE settings for one specific editor. class is serializable so
+ * Stores the KSBasE settings for one specific editor. Class is serializable so
  * it can be stored in an external File.
  * 
  * @author Michael Matzen
@@ -46,12 +46,14 @@ public class EditorTransformationSettings implements Serializable {
 
 	private LinkedList<KSBasEMenuContribution> menuContributions;
 	// List of menu contributions
+
 	private String contributor; // The contributor which contains
 
 	// the extension points
 
 	/**
-	 * Creates a new transformation setting with the given editor diagram class.
+	 * Creates a new transformation setting with the given fully qualified
+	 * editor name.
 	 * 
 	 * @param editor
 	 *            The fqn of the diagram editor
@@ -69,12 +71,12 @@ public class EditorTransformationSettings implements Serializable {
 	}
 
 	/**
-	 * Set the editor class.
+	 * Sets the editor class.
 	 * 
 	 * @param editor
 	 *            The fqn of the diagram editor
 	 */
-	final public void setEditor(final String editor) {
+	public final void setEditor(final String editor) {
 		this.editor = editor;
 	}
 
@@ -83,7 +85,7 @@ public class EditorTransformationSettings implements Serializable {
 	 * 
 	 * @return The fully qualified editor name
 	 */
-	final public String getEditor() {
+	public final String getEditor() {
 		return editor;
 	}
 
@@ -92,7 +94,7 @@ public class EditorTransformationSettings implements Serializable {
 	 * 
 	 * @return The fqn of the model package class
 	 */
-	final public String getModelPackageClass() {
+	public final String getModelPackageClass() {
 
 		if (modelPackageClass == null) {
 			return ""; //$NON-NLS-1$
@@ -106,14 +108,14 @@ public class EditorTransformationSettings implements Serializable {
 	 * @param modelPackageClass
 	 *            The package class
 	 */
-	final public void setModelPackageClass(final String modelPackageClass) {
+	public final void setModelPackageClass(final String modelPackageClass) {
 		this.modelPackageClass = modelPackageClass;
 	}
 
 	/**
 	 * @return The list of menu contributions for this editor
 	 */
-	final public LinkedList<KSBasEMenuContribution> getMenuContributions() {
+	public final LinkedList<KSBasEMenuContribution> getMenuContributions() {
 		return menuContributions;
 	}
 
@@ -123,7 +125,7 @@ public class EditorTransformationSettings implements Serializable {
 	 * 
 	 * @param menuContributions
 	 */
-	final public void setMenuContributions(
+	public final void setMenuContributions(
 			final LinkedList<KSBasEMenuContribution> menuContributions) {
 		this.menuContributions.clear();
 		this.menuContributions.addAll(menuContributions);
@@ -134,7 +136,7 @@ public class EditorTransformationSettings implements Serializable {
 	 * 
 	 * @param contrib
 	 */
-	final public void addMenuContribution(final KSBasEMenuContribution contrib) {
+	public final void addMenuContribution(final KSBasEMenuContribution contrib) {
 		this.menuContributions.add(contrib);
 	}
 
@@ -143,7 +145,7 @@ public class EditorTransformationSettings implements Serializable {
 	 * 
 	 * @return Path to the default icon
 	 */
-	final public String getDefaultIcon() {
+	public final String getDefaultIcon() {
 		return defaultIcon;
 	}
 
@@ -153,7 +155,7 @@ public class EditorTransformationSettings implements Serializable {
 	 * @param icon
 	 *            Icon path
 	 */
-	final public void setDefaultIcon(final String icon) {
+	public final void setDefaultIcon(final String icon) {
 		this.defaultIcon = icon;
 	}
 
@@ -162,7 +164,7 @@ public class EditorTransformationSettings implements Serializable {
 	 * 
 	 * @return A LinkedList containing all transformations
 	 */
-	final public LinkedList<Transformation> getTransformations() {
+	public final LinkedList<Transformation> getTransformations() {
 		return transformations;
 	}
 
@@ -173,7 +175,7 @@ public class EditorTransformationSettings implements Serializable {
 	 *            The name to find
 	 * @return The first transformation found or null
 	 */
-	final public Transformation getTransformationByName(
+	public final Transformation getTransformationByName(
 			final String transformation) {
 		for (Transformation t : transformations) {
 			if (t.getTransformationName().toLowerCase(Locale.getDefault())
@@ -192,7 +194,7 @@ public class EditorTransformationSettings implements Serializable {
 	 * @return The first transformation with the given id or null if no
 	 *         transformation has been found
 	 */
-	final public Transformation getTransformationById(final String tid) {
+	public final Transformation getTransformationById(final String tid) {
 		for (Transformation t : transformations) {
 			if (t.getTransformationId().equals(tid)) {
 				return t;
@@ -207,7 +209,7 @@ public class EditorTransformationSettings implements Serializable {
 	 * @param transformations
 	 *            A LinkedList containing the transformations
 	 */
-	final public void setTransformations(
+	public final void setTransformations(
 			final LinkedList<Transformation> transformations) {
 		this.transformations.clear();
 		this.transformations.addAll(transformations);
@@ -219,7 +221,7 @@ public class EditorTransformationSettings implements Serializable {
 	 * @param t
 	 *            a transformation definition
 	 */
-	final public void addTransformation(final Transformation t) {
+	public final void addTransformation(final Transformation t) {
 		this.transformations.add(t);
 	}
 
@@ -229,7 +231,7 @@ public class EditorTransformationSettings implements Serializable {
 	 * @param index
 	 *            the index of the element to remove
 	 */
-	final public void removeTransformation(final int index) {
+	public final void removeTransformation(final int index) {
 		this.transformations.remove(index);
 	}
 
@@ -241,7 +243,7 @@ public class EditorTransformationSettings implements Serializable {
 	 * @param newVal
 	 *            The transformation to insert
 	 */
-	final public void modifyTransformation(final Transformation oldVal,
+	public final void modifyTransformation(final Transformation oldVal,
 			final Transformation newVal) {
 		if (this.transformations.contains(oldVal)) {
 			transformations.remove(oldVal);
@@ -254,7 +256,7 @@ public class EditorTransformationSettings implements Serializable {
 	 * 
 	 * @return true if auto layout should be performed after execution
 	 */
-	final public boolean isPerformAutoLayout() {
+	public final boolean isPerformAutoLayout() {
 		return performAutoLayout;
 	}
 
@@ -263,7 +265,7 @@ public class EditorTransformationSettings implements Serializable {
 	 * 
 	 * @param performAutoLayout
 	 */
-	final public void setPerformAutoLayout(final boolean performAutoLayout) {
+	public final void setPerformAutoLayout(final boolean performAutoLayout) {
 		this.performAutoLayout = performAutoLayout;
 	}
 
@@ -272,7 +274,7 @@ public class EditorTransformationSettings implements Serializable {
 	 * 
 	 * @return A .ext file in plain text
 	 */
-	final public String getExtFile() {
+	public final String getExtFile() {
 		return extFile;
 	}
 
@@ -282,7 +284,7 @@ public class EditorTransformationSettings implements Serializable {
 	 * @param file
 	 *            a .ext file in plain text
 	 */
-	final public void setExtFile(final String file) {
+	public final void setExtFile(final String file) {
 		this.extFile = file;
 		parseTransformations();
 	}
@@ -290,7 +292,7 @@ public class EditorTransformationSettings implements Serializable {
 	/**
 	 * @return The editors contributor project.
 	 */
-	final public String getContributor() {
+	public final String getContributor() {
 		return contributor;
 	}
 
@@ -299,7 +301,7 @@ public class EditorTransformationSettings implements Serializable {
 	 * 
 	 * @param contributor
 	 */
-	final public void setContributor(final String contributor) {
+	public final void setContributor(final String contributor) {
 		this.contributor = contributor;
 	}
 
@@ -308,7 +310,7 @@ public class EditorTransformationSettings implements Serializable {
 	 * 
 	 * @return A contextID used to bind keyboard shortcuts to commands
 	 */
-	final public String getContext() {
+	public final String getContext() {
 		return context;
 	}
 
@@ -318,14 +320,14 @@ public class EditorTransformationSettings implements Serializable {
 	 * @param context
 	 *            the contextID to bind keyboard shortcuts
 	 */
-	final public void setContext(final String context) {
+	public final void setContext(final String context) {
 		this.context = context;
 	}
 
 	/**
 	 * Parses the Xtend file to read transformation names & parameters.
 	 */
-	final public void parseTransformations() {
+	public final void parseTransformations() {
 		if (extFile != null && extFile.length() > 0) {
 			// Let's find all in-place m2m transformations, defined in this file
 			// They are defined by :

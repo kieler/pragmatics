@@ -63,7 +63,7 @@ public class DynamicMenuContributions {
 	/**
 	 * Tries to stop the contribution.
 	 */
-	final public void stop() {
+	public final void stop() {
 		if (token != null) {
 			IExtensionRegistry reg = RegistryFactory.getRegistry();
 			reg.stop(token);
@@ -75,7 +75,7 @@ public class DynamicMenuContributions {
 	 * Creates a valid plug-in project for each editor and injects it to the eclipse
 	 * run-time.
 	 */
-	final public void createAllMenuContributions() {
+	public final void createAllMenuContributions() {
 		LinkedList<EditorTransformationSettings> editors = TransformationManager.instance
 				.getEditors();
 		// If the editors are 'null' they are maybe not initialized yet so we
@@ -302,7 +302,7 @@ public class DynamicMenuContributions {
 	 * @param editor The current editor
 	 * @return a valid DOM tree containing menu commands
 	 */
-	final private Node createElementForMenu(final String tid, final Document extension,
+	private final Node createElementForMenu(final String tid, final Document extension,
 			final EditorTransformationSettings editor) {
 		// entry has been created before?
 		if (cachedTransformationCommands.containsKey(tid)) {

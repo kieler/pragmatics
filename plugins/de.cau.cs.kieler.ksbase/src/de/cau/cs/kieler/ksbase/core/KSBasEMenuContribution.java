@@ -47,7 +47,7 @@ public class KSBasEMenuContribution {
      * Adds a command to this contribution.
      * @param transformationId The id of the called transformation
      */
-    final public void addCommand(final String transformationId) {
+    public final void addCommand(final String transformationId) {
         commands.add(transformationId);
         
     }
@@ -56,7 +56,7 @@ public class KSBasEMenuContribution {
      * Adds a sub menu to this contribution.
      * @param menu the menu to add
      */
-    final public void addSubMenu(final KSBasEMenuContribution menu) {
+    public final void addSubMenu(final KSBasEMenuContribution menu) {
         subMenus.add(menu);
     }
     
@@ -64,7 +64,7 @@ public class KSBasEMenuContribution {
      * Returns a list of all sub menus contained in this contribution.
      * @return A list of menu contributions
      */
-    final public LinkedList<KSBasEMenuContribution> getMenus() {
+    public final LinkedList<KSBasEMenuContribution> getMenus() {
         return subMenus;
     }
     
@@ -72,7 +72,7 @@ public class KSBasEMenuContribution {
      * Returns the list of commands.
      * @return A list of commands
      */
-    final public LinkedList<String> getCommands() {
+    public final LinkedList<String> getCommands() {
         return commands;
     }
     
@@ -80,7 +80,7 @@ public class KSBasEMenuContribution {
      * Returns the string property. 
      * @return The content of the data property
      */
-    final public String getData()
+    public final String getData()
     {
         return data;
     }
@@ -89,7 +89,7 @@ public class KSBasEMenuContribution {
      * Returns the label.
      * @return The label
      */
-    final public String getLabel() {
+    public final String getLabel() {
         return label;
     }
 
@@ -97,7 +97,7 @@ public class KSBasEMenuContribution {
      * Sets the label.
      * @param label the new label
      */
-    final public void setLabel(final String label) {
+    public final void setLabel(final String label) {
         this.label = label;
     }
 }

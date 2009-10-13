@@ -21,7 +21,7 @@ import org.eclipse.xtend.typesystem.emf.EcoreUtil2;
 import org.eclipse.xtend.typesystem.emf.EmfMetaModel;
 
 /**
- * An extension of the MWE default workflow. Used to perform custom
+ * An extension of a MWE default workflow, used to perform custom
  * initializations.
  * 
  * @author Michael Matzen
@@ -33,14 +33,11 @@ public class KielerWorkflow extends Workflow {
     private XtendComponent xtendComponent;
 
     /**
-     * Creates and initializes an oAW Workflow.
+     * Creates and initializes the workflow.
      * 
-     * @param operation
-     *            Xtend function name
-	 * @param basePackage
-	 * 			  The meta model package class to use
-     * @param modelSelections
-     *            selected model elements
+     * @param operation Xtend function name
+	 * @param basePackage The meta model package class to use
+     * @param modelSelection selected model elements
      */
     public KielerWorkflow(final String operation, final String fileName, final String basePackage, final String modelSelection) {
         super();

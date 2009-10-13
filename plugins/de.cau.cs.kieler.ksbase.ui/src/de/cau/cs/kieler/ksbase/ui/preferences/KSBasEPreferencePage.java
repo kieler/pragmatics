@@ -108,13 +108,13 @@ public class KSBasEPreferencePage extends PreferencePage implements
 
 	// The classes which have to be implemented/extended by a class to be used
 	// as an editor
-	protected static final String DIAGRAM_EDITORS[] = new String[] { "org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor" }; //$NON-NLS-1$
+	static protected  final String DIAGRAM_EDITORS[] = new String[] { "org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor" }; //$NON-NLS-1$
 	// The classes which have to be extended by a class to be used
 	// as selections for a transformation. Currently the selections simply
 	// have to be GraphicalEditParts
-	protected static final String DIAGRAM_EDIT_PARTS[] = new String[] { "org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart" }; //$NON-NLS-1$
+	static protected final String DIAGRAM_EDIT_PARTS[] = new String[] { "org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart" }; //$NON-NLS-1$
 
-	protected static final String DIAGRAM_PACKAGES[] = new String[] { "org.eclipse.emf.ecore.EPackage" }; //$NON-NLS-1$
+	static protected  final String DIAGRAM_PACKAGES[] = new String[] { "org.eclipse.emf.ecore.EPackage" }; //$NON-NLS-1$
 
 	protected DiagramDocumentEditor diagram;
 
@@ -164,8 +164,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
 					sfMetaModel.setText(editor.getModelPackageClass());
 					sfContext.setText(editor.getContext());
 					bfAutoLayout.setSelection(editor.isPerformAutoLayout());
-					dfDefaultIcon.setStringValue(editor.getDefaultIcon()
-							.toString());
+					dfDefaultIcon.setStringValue(editor.getDefaultIcon());
 					// Fill table with transformations
 					table.removeAll();
 					for (Transformation t : editor.getTransformations()) {
@@ -742,7 +741,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
 	/**
 	 * Initalizes the preference page.
 	 */
-	final public void init(IWorkbench workbench) {
+	public final void init(IWorkbench workbench) {
 		setPreferenceStore(KSBasEPlugin.getDefault().getPreferenceStore());
 		manager.initializeTransformations();
 	}
@@ -780,7 +779,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
 	 *            Allow multiple selection?
 	 * @return The list of selected entries
 	 */
-	final protected String[] openElementSelectionDialog(final String[] types,
+	protected final String[] openElementSelectionDialog(final String[] types,
 			final boolean multiple, final Composite parent) {
 		try {
 			final LinkedList<IJavaElement> javaelements = new LinkedList<IJavaElement>();

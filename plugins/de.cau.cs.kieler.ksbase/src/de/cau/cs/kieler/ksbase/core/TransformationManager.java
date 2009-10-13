@@ -58,7 +58,7 @@ public class TransformationManager {
 	 * 
 	 * @return A list of the registered editors
 	 */
-	final public LinkedList<EditorTransformationSettings> getEditors() {
+	public final LinkedList<EditorTransformationSettings> getEditors() {
 		return registeredEditors;
 	}
 
@@ -70,7 +70,7 @@ public class TransformationManager {
 	 * @return The first editor in the list of registered editors which has the
 	 *         given name
 	 */
-	final public EditorTransformationSettings getEditorByName(final String editor) {
+	public final EditorTransformationSettings getEditorByName(final String editor) {
 		for (EditorTransformationSettings settings : registeredEditors) {
 			if (settings.getEditor().equals(editor)) {
 				return settings;
@@ -82,7 +82,7 @@ public class TransformationManager {
 	/**
 	 * return True if the manager is initialized.
 	 */
-	final public boolean isInitialized() {
+	public final boolean isInitialized() {
 		return isInitialized;
 	}
 
@@ -92,7 +92,7 @@ public class TransformationManager {
 	 * @param editor
 	 *            The EditorTransformationSetting that describes the editor
 	 */
-	final public void addEditor(final EditorTransformationSettings editor) {
+	public final void addEditor(final EditorTransformationSettings editor) {
 		if (registeredEditors == null) {
 			registeredEditors = new LinkedList<EditorTransformationSettings>();
 		}
@@ -109,7 +109,7 @@ public class TransformationManager {
 	 *            The name of the new editor
 	 * @return The newly created EditorTransformationSettings
 	 */
-	final public EditorTransformationSettings addEditor(final String editorName) {
+	public final EditorTransformationSettings addEditor(final String editorName) {
 		if (registeredEditors == null) {
 			registeredEditors = new LinkedList<EditorTransformationSettings>();
 		}
@@ -128,7 +128,7 @@ public class TransformationManager {
 	 * @param editor
 	 *            The fqn class name of the editor
 	 */
-	final public void removeEditor(final String editor) {
+	public final void removeEditor(final String editor) {
 		for (int i = 0; i < registeredEditors.size(); ++i) {
 			if (registeredEditors.get(i).getEditor().equals(editor)) {
 				registeredEditors.remove(i);
@@ -140,7 +140,7 @@ public class TransformationManager {
 	 * Loads the editor settings either from the extension point settings or the
 	 * preference store.
 	 */
-	final public void initializeTransformations() {
+	public final void initializeTransformations() {
 		registeredEditors = new LinkedList<EditorTransformationSettings>();
 
 		IConfigurationElement[] configurations = Platform
@@ -232,7 +232,7 @@ public class TransformationManager {
 	 *            The absolute file name
 	 */
 	@SuppressWarnings("unchecked")
-	final public void importSettings(final String file) {
+	public final void importSettings(final String file) {
 		try {
 			ObjectInputStream in = new ObjectInputStream(new FileInputStream(
 					file));
@@ -255,7 +255,7 @@ public class TransformationManager {
 	 * @param file
 	 *            The absolute file name
 	 */
-	final public void exportSettings(final String file) {
+	public final void exportSettings(final String file) {
 		try {
 			ObjectOutputStream out = new ObjectOutputStream(
 					new FileOutputStream(file));

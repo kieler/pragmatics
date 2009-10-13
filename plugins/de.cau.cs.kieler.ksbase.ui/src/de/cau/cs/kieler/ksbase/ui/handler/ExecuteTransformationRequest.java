@@ -55,7 +55,7 @@ public class ExecuteTransformationRequest extends Request {
      * Sets the model package
      * @param modelPackage
      */
-    final public void setModelPackage(final String modelPackage) {
+    public final void setModelPackage(final String modelPackage) {
         this.modelPackage = modelPackage;
     }
 
@@ -63,7 +63,7 @@ public class ExecuteTransformationRequest extends Request {
      * Gets the model package.
      * @return modelPackage
      */
-    final public String getModelPackage() {
+    public final String getModelPackage() {
         return this.modelPackage;
     }
     
@@ -71,7 +71,7 @@ public class ExecuteTransformationRequest extends Request {
      * Sets the edit part.
      * @param part
      */
-    final public void setEditPart(final IEditorPart part) {
+    public final void setEditPart(final IEditorPart part) {
         this.editPart = part;
     }
 
@@ -79,7 +79,7 @@ public class ExecuteTransformationRequest extends Request {
      * Gets the edit part.
      * @return the editPart
      */
-    final public IEditorPart getEditPart() {
+    public final IEditorPart getEditPart() {
         return this.editPart;
     }
 
@@ -87,7 +87,7 @@ public class ExecuteTransformationRequest extends Request {
      * Sets the transformation command.
      * @param command
      */
-    final public void setCommand(final String command) {
+    public final void setCommand(final String command) {
         this.command = command;
     }
 
@@ -95,7 +95,7 @@ public class ExecuteTransformationRequest extends Request {
      * Gets the transformation command.
      * @return A Xtend method name
      */
-    final public String getCommand() {
+    public final String getCommand() {
         return this.command;
     }
 
@@ -103,7 +103,7 @@ public class ExecuteTransformationRequest extends Request {
      * Sets the filename.
      * @param fileName
      */
-    final public void setFileName(final String fileName) {
+    public final void setFileName(final String fileName) {
         this.fileName = fileName;
     }
 
@@ -111,7 +111,7 @@ public class ExecuteTransformationRequest extends Request {
      * Gets the filename.
      * @return A Xtend file name 
      */
-    final public String getFileName() {
+    public final String getFileName() {
         return this.fileName;
     }
 
@@ -119,7 +119,7 @@ public class ExecuteTransformationRequest extends Request {
      * Sets the current selection.
      * @param selection
      */
-    final public void setSelection(final ISelection selection) {
+    public final void setSelection(final ISelection selection) {
         this.selection = selection;
     }
 
@@ -127,14 +127,14 @@ public class ExecuteTransformationRequest extends Request {
      * The current selection.
      * @return an ISelection object
      */
-    final public ISelection getSelection() {
+    public final ISelection getSelection() {
         return this.selection;
     }
 
     /**
      * @return The parameters
      */
-    final public String[] getParameter() {
+    public final String[] getParameter() {
 		return parameter.clone();
 	}
 
@@ -142,7 +142,7 @@ public class ExecuteTransformationRequest extends Request {
 	 * Sets the parameters for this transformation request 
 	 * @param parameter
 	 */
-    final public void setParameter(final String[] parameter) {
+    public final void setParameter(final String[] parameter) {
 		this.parameter = parameter.clone();
 	}
 }

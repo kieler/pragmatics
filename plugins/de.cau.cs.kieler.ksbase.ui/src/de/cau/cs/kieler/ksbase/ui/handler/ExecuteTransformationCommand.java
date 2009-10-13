@@ -64,8 +64,8 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
 	 *            an adapter to the {@code View} of the base diagram
 	 */
 	public ExecuteTransformationCommand(
-			TransactionalEditingDomain domain, String label,
-			IAdaptable adapter) {
+			final TransactionalEditingDomain domain, final String label,
+			final IAdaptable adapter) {
 		super(domain, label, null);
 		context = new WorkflowContextDefaultImpl();
 		issues = new IssuesImpl();
@@ -139,7 +139,7 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
 	 *            The parameters of the Xtend method
 	 * @return False if an error occurred
 	 */
-	final public boolean initalize(final IEditorPart editPart,
+	public final boolean initalize(final IEditorPart editPart,
 			final ISelection selection, final String command,
 			final String fileName, final String basePackage,
 			final String[] parameter) {
@@ -147,8 +147,9 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
 
 		if (selection instanceof StructuredSelection) {
 			s = (StructuredSelection) selection;
-		} else
+		} else {
 			return false;
+		}
 
 		if (s.size() != parameter.length) {
 			return false;

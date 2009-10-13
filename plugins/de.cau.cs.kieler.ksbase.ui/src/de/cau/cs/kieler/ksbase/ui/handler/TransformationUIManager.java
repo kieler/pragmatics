@@ -61,7 +61,7 @@ public class TransformationUIManager {
 	 * @param transformation
 	 *            The transformation that should be executed
 	 */
-	final public void createAndExecuteTransformationCommand(final ExecutionEvent event,
+	public final void createAndExecuteTransformationCommand(final ExecutionEvent event,
 			final EditorTransformationSettings editor, final Transformation transformation) {
 
 		IEditorPart activeEditor = HandlerUtil.getActiveEditor(event);

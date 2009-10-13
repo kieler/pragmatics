@@ -56,7 +56,7 @@ public class Transformation implements Serializable {
      * Sets the name of the transformation used in the menus.
      * @param name 
      */
-    final public void setName(final String name) {
+    public final void setName(final String name) {
         this.name = name;
     }
 
@@ -65,7 +65,7 @@ public class Transformation implements Serializable {
      * The value is unchecked so giving an invalid name here will result in an Xtend error.
      * @param value 
      */
-    final public void setTransformationName(final String value) {
+    public final void setTransformationName(final String value) {
         this.transformationName = value;
     }
 
@@ -74,15 +74,14 @@ public class Transformation implements Serializable {
      * Sets the iconURI used by the toolbar and the balloon menus.
      * @param uri
      */
-    final public void setIcon(final String uri) {
+    public final void setIcon(final String uri) {
         this.icon = uri;
     }
 
     /**
-     * Returns the transformation name used by the menus.
-     * @return
+     * @return The transformation name used by the menus. 
      */
-    final public String getName() {
+    public final String getName() {
         return this.name;
     }
 
@@ -90,7 +89,7 @@ public class Transformation implements Serializable {
      * Returns the Xtend transformation method name.
      * @return The name of this transformation
      */
-    final public String getTransformationName() {
+    public final String getTransformationName() {
         return this.transformationName;
     }
 
@@ -98,7 +97,7 @@ public class Transformation implements Serializable {
      * Returns the number of selections this transformation is defined for.
      * @return The number of selections
      */
-    final public int getNumSelections() {
+    public final int getNumSelections() {
         return this.parameter.length;
     }
 
@@ -106,14 +105,14 @@ public class Transformation implements Serializable {
      * Returns the icon with relative path.
      * @return A path string
      */
-    final public String getIcon() {
+    public final String getIcon() {
         return icon;
     }
     
     /**
      * @return A list of parameters.
      */
-    final public List<String> getParameterList() {
+    public final List<String> getParameterList() {
     	ArrayList<String> res = new ArrayList<String>();
     	for (String s: parameter) {
 			res.add(s);
@@ -124,14 +123,14 @@ public class Transformation implements Serializable {
     /**
      * @return An array of parameters, can only be null if not initialized.
      */
-    final public String[] getParameter() {
+    public final String[] getParameter() {
 		return parameter.clone();
 	}
 
     /**
      * @param parameter The parameters for this transformation.
      */
-    final public void setParameter(final String[] parameter) {
+    public final void setParameter(final String[] parameter) {
 		this.parameter = parameter.clone();
 	}
 
@@ -141,7 +140,7 @@ public class Transformation implements Serializable {
      * it does not need to be set.
      * @return The transformationId
      */
-    final public String getTransformationId() {
+    public final String getTransformationId() {
         return transformationId;
     }
 
@@ -149,7 +148,7 @@ public class Transformation implements Serializable {
      * Sets the Id for this transformation.
      * @param transformationId
      */
-    final public void setTransformationId(final String transformationId) {
+    public final void setTransformationId(final String transformationId) {
         this.transformationId = transformationId;
     }
 
@@ -157,7 +156,7 @@ public class Transformation implements Serializable {
      * This is only a string, it's not validated or checked for conflicts.
      * @return The keyboard shortcut
      */
-    final public String getKeyboardShortcut() {
+    public final String getKeyboardShortcut() {
         return keyboardShortcut;
     }
 
@@ -165,7 +164,7 @@ public class Transformation implements Serializable {
      * Sets the keyboard shortcut for this transformation.
      * @param keyboardShortcut
      */
-    final public void setKeyboardShortcut(final String keyboardShortcut) {
+    public final void setKeyboardShortcut(final String keyboardShortcut) {
         this.keyboardShortcut = keyboardShortcut;
     }
 
@@ -190,7 +189,7 @@ public class Transformation implements Serializable {
      * the transformation name and adds the number of selections.
      */
     @Override
-    final public int hashCode() {
+    public final int hashCode() {
         return transformationName.hashCode();
     }
     
@@ -199,7 +198,7 @@ public class Transformation implements Serializable {
      * name and the same number of parameters.
      */
     @Override
-    final public boolean equals(final Object obj) {
+    public final boolean equals(final Object obj) {
         if (obj instanceof Transformation) {
             return (parameter.length == ((Transformation) obj).getNumSelections())
                     && (transformationName.equals(((Transformation) obj)
