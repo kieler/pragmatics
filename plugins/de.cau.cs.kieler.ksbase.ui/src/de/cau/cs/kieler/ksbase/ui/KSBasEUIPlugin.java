@@ -59,7 +59,6 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
      * )
      */
     public void stop(BundleContext context) throws Exception {
-        DynamicMenuContributions.instance.stop();
         KSBasEUIPlugin.plugin = null;
         super.stop(context);
     }

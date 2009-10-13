@@ -13,15 +13,6 @@
       </editpolicyProvider>
    </extension>
    <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            category="de.cau.cs.kieler"
-            class="de.cau.cs.kieler.ksbase.ui.preferences.KSBasEPreferencePage"
-            id="de.cau.cs.kieler.ksbase.PreferencePage"
-            name="Structure based editing">
-      </page>
-   </extension>
-   <extension
          point="org.eclipse.ui.commands">
       <category
             description="KIELER Structure based editing commands"
@@ -39,4 +30,13 @@
             type="org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart">
       </propertyTester>
    </extension>
+  <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="de.cau.cs.kieler"
+            class="de.cau.cs.kieler.ksbase.ui.preferences.KSBasEPreferencePage"
+            id="de.cau.cs.kieler.ksbase.PreferencePage"
+            name="Structure based editing">
+      </page>
+      </extension>
 </plugin>

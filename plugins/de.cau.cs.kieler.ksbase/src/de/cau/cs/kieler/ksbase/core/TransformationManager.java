@@ -70,7 +70,8 @@ public class TransformationManager {
 	 * @return The first editor in the list of registered editors which has the
 	 *         given name
 	 */
-	public final EditorTransformationSettings getEditorByName(final String editor) {
+	public final EditorTransformationSettings getEditorByName(
+			final String editor) {
 		for (EditorTransformationSettings settings : registeredEditors) {
 			if (settings.getEditor().equals(editor)) {
 				return settings;
@@ -146,8 +147,9 @@ public class TransformationManager {
 		IConfigurationElement[] configurations = Platform
 				.getExtensionRegistry().getConfigurationElementsFor(
 						"de.cau.cs.kieler.ksbase.configuration");
+		
 		for (IConfigurationElement settings : configurations) {
-
+			
 			EditorTransformationSettings editor = new EditorTransformationSettings(
 					settings.getAttribute("editor"));
 			editor.setContributor(settings.getContributor().getName());
@@ -176,8 +178,29 @@ public class TransformationManager {
 			}
 			// Read menu contributions
 			IConfigurationElement[] menus = settings.getChildren("menus");
+			// ----DEBUG-START-----
 			if (menus != null && menus.length > 0) {
-				// since we only allowed one single <transformations> child, we
+				for (IConfigurationElement c : menus[0]
+						.getChildren("menuContribution")) {
+					System.out.println("MenuLocation @ "+c.getAttribute("locationURI"));
+					
+					for (IConfigurationElement m : c.getChildren("menu")) {
+						System.out.println("\tMenuContrib: "+ m.getAttribute("id")+ " : "+ m.getAttribute("label"));
+						for (IConfigurationElement com : m.getChildren()) {
+							System.out.println("\t\tTransformation:" +  com .getAttribute("transformationId"));
+						}
+						
+					}
+					for (IConfigurationElement com : c
+							.getChildren("transformationCommand")) {
+						System.out.println("\tTransformation: " + com.getAttribute("transformationId"));
+					}
+				}
+			}
+			// ----DEBUG-END-----
+
+			if (menus != null && menus.length > 0) {
+				// since we only allowed one single <menuContribution> child, we
 				// are using it w/o iteration
 				for (IConfigurationElement c : menus[0]
 						.getChildren("menuContribution")) {
@@ -202,7 +225,7 @@ public class TransformationManager {
 					editor.addMenuContribution(contrib);
 				}
 			}
-			
+
 			// Read Xtend file from extension point configuration
 			InputStream path;
 			StringBuffer contentBuffer = new StringBuffer();

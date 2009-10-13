@@ -61,17 +61,6 @@ public class DynamicMenuContributions {
 	}
 
 	/**
-	 * Tries to stop the contribution.
-	 */
-	public final void stop() {
-		if (token != null) {
-			IExtensionRegistry reg = RegistryFactory.getRegistry();
-			reg.stop(token);
-			token = null;
-		}
-	}
-
-	/**
 	 * Creates a valid plug-in project for each editor and injects it to the eclipse
 	 * run-time.
 	 */
