@@ -13,19 +13,11 @@ Require-Bundle: org.eclipse.jdt.core;bundle-version="3.5.0",
  org.eclipse.gmf.runtime.diagram.ui.resources.editor,
  de.cau.cs.kieler.viewmanagement.triggers;bundle-version="0.1.0",
  de.cau.cs.kieler.kiml.ui;bundle-version="0.1.0",
- org.eclipse.core.expressions;bundle-version="3.4.100"
+ org.eclipse.core.expressions;bundle-version="3.4.100",
+ de.cau.cs.kieler.ksbase;bundle-version="0.1.3"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: de.cau.cs.kieler.ksbase.ui;
-  uses:="org.eclipse.osgi.util,
-   org.eclipse.jface.preference,
-   de.cau.cs.kieler.ksbase.core,
-   org.eclipse.ui,
-   org.eclipse.ui.plugin,
-   org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts,
-   org.osgi.framework,
-   org.eclipse.core.commands,
-   org.eclipse.swt.widgets",
+Export-Package: de.cau.cs.kieler.ksbase.ui;uses:="org.eclipse.ui.plugin,org.osgi.framework",
  de.cau.cs.kieler.ksbase.ui.handler;
   uses:="org.eclipse.core.runtime,
    org.eclipse.gmf.runtime.emf.commands.core.command,
@@ -35,9 +27,19 @@ Export-Package: de.cau.cs.kieler.ksbase.ui;
    org.eclipse.gmf.runtime.common.core.service,
    org.eclipse.gmf.runtime.common.core.command,
    org.eclipse.osgi.util,
+   de.cau.cs.kieler.ksbase.core,
+   org.eclipse.gmf.runtime.diagram.ui.editpolicies,
    org.eclipse.gef.commands,
    org.eclipse.gmf.runtime.diagram.ui.services.editpolicy,
    org.eclipse.jface.viewers,
    org.eclipse.emf.transaction,
    org.eclipse.gef",
- de.cau.cs.kieler.ksbase.ui.menus;uses:="de.cau.cs.kieler.ksbase.core,org.eclipse.ui.services,org.eclipse.ui.menus"
+ de.cau.cs.kieler.ksbase.ui.menus,
+ de.cau.cs.kieler.ksbase.ui.preferences;
+  uses:="org.eclipse.osgi.util,
+   de.cau.cs.kieler.ksbase.core,
+   org.eclipse.jface.preference,
+   org.eclipse.ui,
+   org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts,
+   org.eclipse.swt.widgets",
+ de.cau.cs.kieler.ksbase.ui.test;uses:="org.eclipse.core.expressions"
