@@ -608,7 +608,6 @@ public class GraphvizLayouter {
             parentLayout.setHeight(boundingBox.y + insets.getTop() + insets.getBottom()
             		+ 2 * offset);
         }
-        LayoutOptions.setFixedSize(parentLayout, true);
     }
     
     /**

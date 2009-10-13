@@ -16,6 +16,9 @@ package de.cau.cs.kieler.kiml.layout.services;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
 
 /**
  * Performs layout in a graph with hierarchy by executing a layout provider
@@ -65,6 +68,16 @@ public class RecursiveLayouterEngine {
 			        .getLayoutProvider(layoutNode);
 			lastLayoutProvider.doLayout(layoutNode,
 					progressMonitor.subTask(layoutNode.getChildren().size()));
+			
+			// check the new size of the parent node
+			KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
+			float minWidth = LayoutOptions.getMinWidth(parentLayout);
+			if (parentLayout.getWidth() < minWidth)
+			    parentLayout.setWidth(minWidth);
+			float minHeight = LayoutOptions.getMinHeight(parentLayout);
+			if (parentLayout.getHeight() < minHeight)
+			    parentLayout.setHeight(minHeight);
+			LayoutOptions.setFixedSize(parentLayout, true);
 		}
 	}
 	

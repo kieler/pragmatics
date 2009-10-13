@@ -22,8 +22,8 @@ import java.util.Map;
 import org.eclipse.draw2d.ConnectionLocator;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Insets;
-import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gef.EditPart;
@@ -357,7 +357,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 			    if (!LayoutServices.INSTANCE.isNolayout(compartment.getClass())) {
     			    // calculate insets of the child compartment
 			        GraphicalEditPart firstChild = (GraphicalEditPart)compartment.getChildren().get(0);
-    			    Insets insets = calcInsets(currentEditPart.getFigure(), firstChild.getFigure());
+    			    Insets insets = KimlUiUtil.calcInsets(currentEditPart.getFigure(),
+    			            firstChild.getFigure());
     			    insetTop = insets.top;
     			    insetLeft = insets.left;
                     IFigure compartmentFigure = compartment.getFigure();
@@ -399,6 +400,9 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 nodeLayout.setYpos(childBounds.y);
                 nodeLayout.setHeight(childBounds.height);
                 nodeLayout.setWidth(childBounds.width);
+                Dimension minSize = childNodeEditPart.getFigure().getMinimumSize();
+                LayoutOptions.setMinWidth(nodeLayout, minSize.width);
+                LayoutOptions.setMinHeight(nodeLayout, minSize.height);
 
                 currentLayoutNode.getChildren().add(childLayoutNode);
                 editPart2NodeMap.put(childNodeEditPart, childLayoutNode);
@@ -443,8 +447,13 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     label.setText(text);
                     Rectangle labelBounds = labelFigure.getBounds();
                     KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
-                    labelLayout.setXpos(labelBounds.x - parentLayout.getXpos());
-                    labelLayout.setYpos(labelBounds.y - parentLayout.getYpos());
+                    int xpos = labelBounds.x, ypos = labelBounds.y;
+                    if (!KimlUiUtil.isRelative(currentEditPart.getFigure(), labelFigure)) {
+                        xpos -= parentLayout.getXpos();
+                        ypos -= parentLayout.getYpos();
+                    }
+                    labelLayout.setXpos(xpos);
+                    labelLayout.setYpos(ypos);
                     labelLayout.setWidth(labelFigure.getPreferredSize().width);
                     labelLayout.setHeight(labelFigure.getPreferredSize().height);
 					LayoutOptions.setFontName(labelLayout, font.getFontData()[0].getName());
@@ -473,38 +482,6 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 	    	else
 		        LayoutOptions.setPortConstraints(nodeLayout, PortConstraints.FIXED_POS);
 		}
-	}
-	
-	/**
-	 * Determines the insets for a parent figure, relative to the given child.
-	 * 
-	 * @param parent the figure of a parent edit part
-	 * @param child the figure of a child edit part
-	 * @return the insets to add to the relative coordinates of the child
-	 */
-	private static Insets calcInsets(IFigure parent, IFigure child) {
-	    Insets result = new Insets(0);
-	    IFigure currentChild = child;
-	    IFigure currentParent = child.getParent();
-	    Point coordsToAdd = null;
-	    while (currentChild != parent && currentParent != null) {
-	        if (currentParent.isCoordinateSystem()) {
-	            result.add(currentParent.getInsets());
-	            if (coordsToAdd != null) {
-	                result.left += coordsToAdd.x;
-	                result.top += coordsToAdd.y;
-	            }
-	            coordsToAdd = currentParent.getBounds().getLocation();
-	        }
-	        else if (currentParent == parent && coordsToAdd != null) {
-	            Point parentCoords = parent.getBounds().getLocation();
-	            result.left += coordsToAdd.x - parentCoords.x;
-	            result.top += coordsToAdd.y - parentCoords.y;
-	        }
-	        currentChild = currentParent;
-	        currentParent = currentChild.getParent();
-	    }
-	    return result;
 	}
 
 	/**

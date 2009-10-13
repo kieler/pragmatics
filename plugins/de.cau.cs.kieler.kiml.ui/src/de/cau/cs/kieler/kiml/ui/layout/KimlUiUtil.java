@@ -13,6 +13,9 @@
  */
 package de.cau.cs.kieler.kiml.ui.layout;
 
+import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.geometry.Insets;
+import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
@@ -39,6 +42,58 @@ import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsPackage;
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class KimlUiUtil {
+    
+    /**
+     * Determines the insets for a parent figure, relative to the given child.
+     * 
+     * @param parent the figure of a parent edit part
+     * @param child the figure of a child edit part
+     * @return the insets to add to the relative coordinates of the child
+     */
+    public static Insets calcInsets(IFigure parent, IFigure child) {
+        Insets result = new Insets(0);
+        IFigure currentChild = child;
+        IFigure currentParent = child.getParent();
+        Point coordsToAdd = null;
+        while (currentChild != parent && currentParent != null) {
+            if (currentParent.isCoordinateSystem()) {
+                result.add(currentParent.getInsets());
+                if (coordsToAdd != null) {
+                    result.left += coordsToAdd.x;
+                    result.top += coordsToAdd.y;
+                }
+                coordsToAdd = currentParent.getBounds().getLocation();
+            }
+            else if (currentParent == parent && coordsToAdd != null) {
+                Point parentCoords = parent.getBounds().getLocation();
+                result.left += coordsToAdd.x - parentCoords.x;
+                result.top += coordsToAdd.y - parentCoords.y;
+            }
+            currentChild = currentParent;
+            currentParent = currentChild.getParent();
+        }
+        return result;
+    }
+    
+    /**
+     * Determines whether the position of the given child figure is
+     * relative to the position of the given parent figure. 
+     * 
+     * @param parent the figure of a parent edit part
+     * @param child the figure of a child edit part
+     * @return true if the child position is relative to the parent
+     */
+    public static boolean isRelative(IFigure parent, IFigure child) {
+        IFigure currentChild = child;
+        IFigure currentParent = child.getParent();
+        while (currentChild != parent && currentParent != null) {
+            if (currentParent.isCoordinateSystem())
+                return true;
+            currentChild = currentParent;
+            currentParent = currentChild.getParent();
+        }
+        return false;
+    }
     
     /**
      * Retrieves the default value for the given layout option.

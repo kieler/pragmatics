@@ -49,16 +49,16 @@ public class BoxPlacer extends AbstractAlgorithm {
     public void placeBoxes(List<KNode> sortedBoxes,
             KNode parentNode, float spacing, boolean expandNodes) {
         getMonitor().begin("Box placement", 1);
+        KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(parentNode);
         
         // do place the boxes
-        placeBoxes(sortedBoxes, spacing, expandNodes);
+        placeBoxes(sortedBoxes, spacing, LayoutOptions.getMinWidth(parentLayout),
+                LayoutOptions.getMinHeight(parentLayout), expandNodes);
         
         // adjust parent size
-        KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(parentNode);
         KInsets insets = LayoutOptions.getInsets(parentLayout);
         parentLayout.setWidth(insets.getLeft() + parentWidth + insets.getRight());
         parentLayout.setHeight(insets.getTop() + parentHeight + insets.getBottom());
-        LayoutOptions.setFixedSize(parentLayout, true);
         
         getMonitor().done();
     }
@@ -69,10 +69,12 @@ public class BoxPlacer extends AbstractAlgorithm {
      * 
      * @param sortedBoxes sorted list of boxes
      * @param minSpacing minimal spacing between elements
+     * @param minTotalWidth minimal width of the parent node
+     * @param minTotalHeight minimal height of the parent node
      * @param expandNodes if true, the nodes are expanded to fill their parent
      */
     private void placeBoxes(List<KNode> sortedBoxes, float minSpacing,
-            boolean expandNodes) {
+            float minTotalWidth, float minTotalHeight, boolean expandNodes) {
         // determine the maximal row width by the maximal box width and the total area
         float maxRowWidth = 0.0f;
         float totalArea = 0.0f;
@@ -113,6 +115,12 @@ public class BoxPlacer extends AbstractAlgorithm {
             broadestRow = Math.max(broadestRow, xpos);
             highestBox = Math.max(highestBox, height);
         }
+        broadestRow = Math.max(broadestRow, minTotalWidth);
+        float totalHeight = ypos + highestBox + minSpacing;
+        if (totalHeight < minTotalHeight) {
+            highestBox += minTotalHeight - totalHeight;
+            totalHeight = minTotalHeight;
+        }
         
         // expand nodes if required
         if (expandNodes) {
@@ -140,7 +148,7 @@ public class BoxPlacer extends AbstractAlgorithm {
         
         // set parent size
         parentWidth = broadestRow;
-        parentHeight = ypos + highestBox + minSpacing;
+        parentHeight = totalHeight;
     }
     
 }

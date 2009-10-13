@@ -199,7 +199,6 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
         Dimension layoutSize = graph.getLayoutSize();
         parentLayout.setWidth(insets.getLeft() + layoutSize.width + insets.getRight());
         parentLayout.setHeight(insets.getTop() + layoutSize.height + insets.getBottom());
-        LayoutOptions.setFixedSize(parentLayout, true);
     }
 
 }

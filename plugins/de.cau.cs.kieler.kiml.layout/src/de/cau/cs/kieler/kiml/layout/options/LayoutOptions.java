@@ -580,4 +580,76 @@ public class LayoutOptions {
         expandOption.setValue(expandNodes);
     }
     
+    /** layout option key: minimal width */
+    public static final String MIN_WIDTH = "de.cau.cs.kieler.layout.options.minWidth";
+    
+    /**
+     * Sets the minimal width of the given layout data.
+     * 
+     * @param layoutData layout data to process
+     * @param width minimal width for the corresponding node
+     */
+    public static void setMinWidth(KLayoutData layoutData,
+            int width) {
+        KIntOption sizeOption = (KIntOption)layoutData.getOption(
+                MIN_WIDTH);
+        if (sizeOption == null) {
+            sizeOption = KLayoutDataFactory.eINSTANCE.createKIntOption();
+            sizeOption.setKey(MIN_WIDTH);
+            layoutData.getOptions().add(sizeOption);
+        }
+        sizeOption.setValue(width);
+    }
+    
+    /**
+     * Retrieves the minimal width for a given layout data.
+     * 
+     * @param layoutData layout data to process
+     * @return the minimal width, or 0 if no minimal width is assigned
+     */
+    public static int getMinWidth(KLayoutData layoutData) {
+        KIntOption sizeOption = (KIntOption)layoutData.getOption(
+                MIN_WIDTH);
+        if (sizeOption == null)
+            return 0;
+        else
+            return sizeOption.getValue();
+    }
+    
+    /** layout option key: minimal height */
+    public static final String MIN_HEIGHT = "de.cau.cs.kieler.layout.options.minHeight";
+    
+    /**
+     * Sets the minimal height of the given layout data.
+     * 
+     * @param layoutData layout data to process
+     * @param height minimal height for the corresponding node
+     */
+    public static void setMinHeight(KLayoutData layoutData,
+            int height) {
+        KIntOption sizeOption = (KIntOption)layoutData.getOption(
+                MIN_HEIGHT);
+        if (sizeOption == null) {
+            sizeOption = KLayoutDataFactory.eINSTANCE.createKIntOption();
+            sizeOption.setKey(MIN_HEIGHT);
+            layoutData.getOptions().add(sizeOption);
+        }
+        sizeOption.setValue(height);
+    }
+    
+    /**
+     * Retrieves the minimal height for a given layout data.
+     * 
+     * @param layoutData layout data to process
+     * @return the minimal height, or 0 if no minimal height is assigned
+     */
+    public static int getMinHeight(KLayoutData layoutData) {
+        KIntOption sizeOption = (KIntOption)layoutData.getOption(
+                MIN_HEIGHT);
+        if (sizeOption == null)
+            return 0;
+        else
+            return sizeOption.getValue();
+    }
+    
 }

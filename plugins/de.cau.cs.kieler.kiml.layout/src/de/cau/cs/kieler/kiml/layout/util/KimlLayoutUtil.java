@@ -409,9 +409,9 @@ public class KimlLayoutUtil {
     }
     
     /** minimal size of a node */
-    private static final float MIN_NODE_SIZE = 15.0f;
+    private static final float MIN_NODE_SIZE = 7.0f;
     /** minimal distance of two ports on each side of a node */
-    private static final float MIN_PORT_DISTANCE = 8.0f;
+    private static final float MIN_PORT_DISTANCE = 7.0f;
     /** maximal aspect ratio of node sizes */
     private static final float MAX_SIZE_RATIO = 2.0f;
     
@@ -428,9 +428,8 @@ public class KimlLayoutUtil {
         newWidth += labelLayout.getWidth();
         newHeight += labelLayout.getHeight();
         KShapeLayout nodeLayout = getShapeLayout(node);
-        KInsets insets = LayoutOptions.getInsets(nodeLayout);
-        newWidth = Math.max(newWidth, insets.getLeft() + insets.getRight());
-        newHeight = Math.max(newHeight, insets.getTop() + insets.getBottom());
+        newWidth = Math.max(newWidth, LayoutOptions.getMinWidth(nodeLayout));
+        newHeight = Math.max(newHeight, LayoutOptions.getMinHeight(nodeLayout));
         
         float minNorth = MIN_PORT_DISTANCE, minEast = MIN_PORT_DISTANCE,
             minSouth = MIN_PORT_DISTANCE, minWest = MIN_PORT_DISTANCE;
