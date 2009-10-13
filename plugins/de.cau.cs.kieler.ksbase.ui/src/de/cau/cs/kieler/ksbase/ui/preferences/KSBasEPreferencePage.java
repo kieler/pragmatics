@@ -87,7 +87,6 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.internal.contexts.ContextService;
 import org.eclipse.ui.part.FileEditorInput;
 
-import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.Transformation;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
@@ -742,7 +741,6 @@ public class KSBasEPreferencePage extends PreferencePage implements
 	 * Initalizes the preference page.
 	 */
 	public final void init(IWorkbench workbench) {
-		setPreferenceStore(KSBasEPlugin.getDefault().getPreferenceStore());
 		manager.initializeTransformations();
 	}
 
