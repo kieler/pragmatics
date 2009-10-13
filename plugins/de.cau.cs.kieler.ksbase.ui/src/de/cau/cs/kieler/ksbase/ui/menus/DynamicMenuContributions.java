@@ -29,12 +29,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.internal.registry.ExtensionRegistry;
-import org.eclipse.core.internal.runtime.Activator;
-import org.eclipse.core.runtime.ContributorFactoryOSGi;
-import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.RegistryFactory;
-import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -78,6 +74,9 @@ public class DynamicMenuContributions {
 		}
 		try {
 			try {
+				IExtensionRegistry reg = RegistryFactory.getRegistry();
+				token = ((ExtensionRegistry) reg)
+				.getTemporaryUserToken();
 				// Iterate through editors and create extension point contents
 				for (EditorTransformationSettings editor : editors) {
 					Document extension = javax.xml.parsers.DocumentBuilderFactory
@@ -249,19 +248,19 @@ public class DynamicMenuContributions {
 
 					System.out.println(str.toString());
 
-					IExtensionRegistry reg = RegistryFactory.getRegistry();
-
 					if (editor.getContributor() != null) {
+						/*
 						Bundle bundle = Activator.getDefault().getBundle(
-								editor.getContributor());
-
+								editor.getContributor().getName());
+						
 						IContributor contributor = ContributorFactoryOSGi
 								.createContributor(bundle);
+						
+						IContributor con = editor.getContributor();
+						*/
 						ByteArrayInputStream is = new ByteArrayInputStream(str
 								.toString().getBytes("UTF-8"));
-						token = ((ExtensionRegistry) reg)
-								.getTemporaryUserToken();
-						reg.addContribution(is, contributor, false, null, null,
+						reg.addContribution(is, editor.getContributor(), false, null, null,
 								token);
 
 					}

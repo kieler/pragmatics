@@ -18,6 +18,8 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.Locale;
 
+import org.eclipse.core.runtime.IContributor;
+
 /**
  * Stores the KSBasE settings for one specific editor. Class is serializable so
  * it can be stored in an external File.
@@ -47,7 +49,7 @@ public class EditorTransformationSettings implements Serializable {
 	private LinkedList<KSBasEMenuContribution> menuContributions;
 	// List of menu contributions
 
-	private String contributor; // The contributor which contains
+	private IContributor contributor; // The contributor which contains
 
 	// the extension points
 
@@ -67,7 +69,7 @@ public class EditorTransformationSettings implements Serializable {
 		this.transformations = new LinkedList<Transformation>();
 		this.menuContributions = new LinkedList<KSBasEMenuContribution>();
 		this.performAutoLayout = true;
-		this.contributor = "";
+		this.contributor = null;
 	}
 
 	/**
@@ -292,7 +294,7 @@ public class EditorTransformationSettings implements Serializable {
 	/**
 	 * @return The editors contributor project.
 	 */
-	public final String getContributor() {
+	public final IContributor getContributor() {
 		return contributor;
 	}
 
@@ -301,7 +303,7 @@ public class EditorTransformationSettings implements Serializable {
 	 * 
 	 * @param contributor
 	 */
-	public final void setContributor(final String contributor) {
+	public final void setContributor(final IContributor contributor) {
 		this.contributor = contributor;
 	}
 

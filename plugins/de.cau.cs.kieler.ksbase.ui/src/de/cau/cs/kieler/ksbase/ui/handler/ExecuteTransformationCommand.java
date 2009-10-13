@@ -16,7 +16,8 @@ package de.cau.cs.kieler.ksbase.ui.handler;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 
 import org.eclipse.core.commands.ExecutionException;
@@ -145,7 +146,7 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
 			final String[] parameter) {
 		StructuredSelection s;
 
-		if (selection instanceof StructuredSelection) {
+ 		if (selection instanceof StructuredSelection) {
 			s = (StructuredSelection) selection;
 		} else {
 			return false;
@@ -162,15 +163,16 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
 		StringBuffer modelSelection = new StringBuffer();
 
 		// We are now going to order the selected diagram elements by
-		Iterator<?> it;
+		LinkedList<Object> slist = new LinkedList<Object>();
+		slist.addAll((List<?>)s.toList());
+		
 		int paramCount = 0;
 		for (String param : parameter) {
-			it = s.iterator();
 			if (modelSelection.length() > 0) {
 				modelSelection.append(",");
 			}
-			while (it.hasNext()) {
-				Object next = it.next();
+			for (int i = 0; i < slist.size(); ++i) {
+				Object next = slist.get(i);
 				if (next instanceof EditPart) {
 					Object model = ((EditPart) next).getModel();
 					if (model instanceof View) {
@@ -180,6 +182,8 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
 									+ String.valueOf(paramCount++);
 							modelSelection.append(modelName);
 							context.set(modelName, ((View) model).getElement());
+							slist.remove(i);
+							break;
 						}
 					}
 				}

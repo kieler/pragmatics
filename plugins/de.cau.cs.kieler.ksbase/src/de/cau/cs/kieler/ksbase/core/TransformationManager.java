@@ -152,7 +152,7 @@ public class TransformationManager {
 			
 			EditorTransformationSettings editor = new EditorTransformationSettings(
 					settings.getAttribute("editor"));
-			editor.setContributor(settings.getContributor().getName());
+			editor.setContributor(settings.getContributor());
 			editor.setContext(settings.getAttribute("contextId"));
 			editor.setDefaultIcon(settings.getAttribute("defautlIcon"));
 			editor.setModelPackageClass(settings.getAttribute("packageName"));
