@@ -1,0 +1,7 @@
+# Tracing options for the de.cau.cs.kieler.dataflow.diagram plug-in
+
+# Common issues
+de.cau.cs.kieler.dataflow.diagram/debug=false
+
+# Visual IDs
+de.cau.cs.kieler.dataflow.diagram/debug/visualID=false
