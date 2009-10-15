@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="structure"
+    nsURI="http://structure/1.0" nsPrefix="structure">
+  <eSubpackages name="Extension Points">
+    <eClassifiers xsi:type="ecore:EClass" name="synccharts.sbase"/>
+    <eClassifiers xsi:type="ecore:EClass" name="dataflow.sbase"/>
+    <eClassifiers xsi:type="ecore:EClass" name="uml2.sbase">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="EReference0" eType="#//KSBasE-Core/TransformationManager"/>
+    </eClassifiers>
+  </eSubpackages>
+  <eSubpackages name="KSBasE-Core">
+    <eClassifiers xsi:type="ecore:EClass" name="TransformationManager">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="EReference0" upperBound="-1"
+          eType="#//KSBasE-Core/EditorTransformationSettings"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="EReference1" eType="#//KSBase-UI/DynamicMenu"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="getConfigurationElements"
+          upperBound="-1" eType="#//Extension%20Points/uml2.sbase"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="getUserSettings" upperBound="-1"
+          eType="#//PreferenceStore/StoredUserSettings"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="EditorTransformationSettings">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="" upperBound="-1" eType="#//KSBasE-Core/Transformation"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="" lowerBound="1" eType="#//KSBasE-Core/Xtend%20File"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EDataType" name="EDataType0"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Xtend File"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Transformation"/>
+  </eSubpackages>
+  <eSubpackages name="KSBase-UI">
+    <eClassifiers xsi:type="ecore:EClass" name="DynamicMenu">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="getEditorTransformationSettings"
+          eType="#//KSBasE-Core/TransformationManager"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="for each editor" upperBound="-1"
+          eType="#//KSBase-UI/plugin.xml"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="plugin.xml">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="addContribution" upperBound="-1"
+          eType="#//KSBase-UI/Eclipse%20Runtime"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Eclipse Runtime"/>
+    <eClassifiers xsi:type="ecore:EClass" name="PreferencePages">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="storeSettings" eType="#//PreferenceStore/StoredUserSettings"/>
+    </eClassifiers>
+  </eSubpackages>
+  <eSubpackages name="PreferenceStore">
+    <eClassifiers xsi:type="ecore:EClass" name="StoredUserSettings">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="EReference0" eType="#//Extension%20Points/dataflow.sbase"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="Synchronization ?" eType="#//Extension%20Points/dataflow.sbase"
+          containment="true"/>
+    </eClassifiers>
+  </eSubpackages>
+</ecore:EPackage>
