@@ -15,23 +15,33 @@
 package de.cau.cs.kieler.ksbase.ui.preferences;
 
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 /**
- * The KSBasE preference page, contains the transformation
- * and post-transformation pages.
+ * Preference page that configures the post-transformation
+ * actions.
  * @author Michael Matzen
  *
  */
-public class KSBasEPreferencePage extends PreferencePage implements
+public class PostTransformationPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 
-	public KSBasEPreferencePage() {
-		setDescription(Messages.KSBasEPreferencePage_Title);
-		noDefaultAndApplyButton();
+	public PostTransformationPreferencePage() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public PostTransformationPreferencePage(String title) {
+		super(title);
+		// TODO Auto-generated constructor stub
+	}
+
+	public PostTransformationPreferencePage(String title, ImageDescriptor image) {
+		super(title, image);
+		// TODO Auto-generated constructor stub
 	}
 
 	@Override

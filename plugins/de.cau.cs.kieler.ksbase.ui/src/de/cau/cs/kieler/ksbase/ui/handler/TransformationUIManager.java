@@ -159,7 +159,8 @@ public class TransformationUIManager {
 					graphViewer.flush();
 					
 					// If auto-layout is activated, execute now:
-					if (editor.isPerformAutoLayout()) {
+					//FIXME: Changing to 'execute all selected vm tools'
+					{
 						// Get last parent which is a shapeEditPart
 						EditPart par = selectedElement.getParent();
 						EditPart layoutTarget = selectedElement;

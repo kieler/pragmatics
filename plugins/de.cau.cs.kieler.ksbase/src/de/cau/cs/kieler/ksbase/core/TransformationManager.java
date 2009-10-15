@@ -14,17 +14,26 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.core;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.LinkedList;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.launch.Framework;
 
 /**
  * The main storage and management class. Contains a list of currently
@@ -149,14 +158,12 @@ public class TransformationManager {
 						"de.cau.cs.kieler.ksbase.configuration");
 		
 		for (IConfigurationElement settings : configurations) {
-			
 			EditorTransformationSettings editor = new EditorTransformationSettings(
 					settings.getAttribute("editor"));
 			editor.setContributor(settings.getContributor());
 			editor.setContext(settings.getAttribute("contextId"));
 			editor.setDefaultIcon(settings.getAttribute("defautlIcon"));
 			editor.setModelPackageClass(settings.getAttribute("packageName"));
-			editor.setPerformAutoLayout(true);
 
 			IConfigurationElement[] transformations = settings
 					.getChildren("transformations");
@@ -182,18 +189,23 @@ public class TransformationManager {
 			if (menus != null && menus.length > 0) {
 				for (IConfigurationElement c : menus[0]
 						.getChildren("menuContribution")) {
-					System.out.println("MenuLocation @ "+c.getAttribute("locationURI"));
-					
+					System.out.println("MenuLocation @ "
+							+ c.getAttribute("locationURI"));
+
 					for (IConfigurationElement m : c.getChildren("menu")) {
-						System.out.println("\tMenuContrib: "+ m.getAttribute("id")+ " : "+ m.getAttribute("label"));
+						System.out.println("\tMenuContrib: "
+								+ m.getAttribute("id") + " : "
+								+ m.getAttribute("label"));
 						for (IConfigurationElement com : m.getChildren()) {
-							System.out.println("\t\tTransformation:" +  com .getAttribute("transformationId"));
+							System.out.println("\t\tTransformation:"
+									+ com.getAttribute("transformationId"));
 						}
-						
+
 					}
 					for (IConfigurationElement com : c
 							.getChildren("transformationCommand")) {
-						System.out.println("\tTransformation: " + com.getAttribute("transformationId"));
+						System.out.println("\tTransformation: "
+								+ com.getAttribute("transformationId"));
 					}
 				}
 			}
@@ -249,46 +261,43 @@ public class TransformationManager {
 	}
 
 	/**
-	 * Imports settings from an external file.
-	 * 
-	 * @param file
-	 *            The absolute file name
+	 * Tries to store settings by overwriting the existing extension point
+	 * scheme. This method is executed, when a user changes the settings via the
+	 * preferences pages.
 	 */
-	@SuppressWarnings("unchecked")
-	public final void importSettings(final String file) {
-		try {
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream(
-					file));
-			registeredEditors = new LinkedList<EditorTransformationSettings>();
-			registeredEditors = (LinkedList<EditorTransformationSettings>) in
-					.readObject();
-			in.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Exports the settings to an external file.
-	 * 
-	 * @param file
-	 *            The absolute file name
-	 */
-	public final void exportSettings(final String file) {
-		try {
-			ObjectOutputStream out = new ObjectOutputStream(
-					new FileOutputStream(file));
-			out.writeObject(registeredEditors);
-			out.flush();
-			out.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+	public final void storeSettings() {
+		
+		for (EditorTransformationSettings editor : registeredEditors) {
+			try {
+				Bundle b = Platform.getBundle(editor.getContributor().getName());
+				b.stop();
+				File f  = FileLocator.getBundleFile(b);
+				if (f.isDirectory()) {
+					File[] files = f.listFiles();
+					for (File file : files) {
+						if (file.getName().equals("plugin.xml")) {
+							FileOutputStream fos = new FileOutputStream(file);
+							//create plugin from settings
+							String plugin = "";
+							fos.write(plugin.getBytes());
+							fos.flush();
+							fos.close();
+						}
+					}
+				}
+			} catch (BundleException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvalidRegistryObjectException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 }

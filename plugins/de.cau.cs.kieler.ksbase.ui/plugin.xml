@@ -38,5 +38,17 @@
             id="de.cau.cs.kieler.ksbase.PreferencePage"
             name="Structure based editing">
       </page>
+      <page
+            category="de.cau.cs.kieler.ksbase.PreferencePage"
+            class="de.cau.cs.kieler.ksbase.ui.preferences.TransformationPreferencePage"
+            id="de.cau.cs.kieler.ksbase.ConfigPreferencePage"
+            name="Transformations">
+      </page>
+      <page
+            category="de.cau.cs.kieler.ksbase.PreferencePage"
+            class="de.cau.cs.kieler.ksbase.ui.preferences.PostTransformationPreferencePage"
+            id="de.cau.cs.kieler.ksbase.InteractPreferencePage"
+            name="Post-Transformation">
+      </page>
       </extension>
 </plugin>

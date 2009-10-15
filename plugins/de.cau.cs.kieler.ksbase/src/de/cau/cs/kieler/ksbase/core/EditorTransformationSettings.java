@@ -14,24 +14,20 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.core;
 
-import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.Locale;
 
 import org.eclipse.core.runtime.IContributor;
 
 /**
- * Stores the KSBasE settings for one specific editor. Class is serializable so
- * it can be stored in an external File.
+ * Stores the KSBasE settings for one specific editor.
  * 
  * @author Michael Matzen
  * 
  */
-public class EditorTransformationSettings implements Serializable {
+public class EditorTransformationSettings {
 
-	private static final long serialVersionUID = -208150422554311871L;
 	private String modelPackageClass; // The model package class
-	private boolean performAutoLayout; // Run auto-layout after transformation
 	private String defaultIcon; // Default icon for menu/tool bar/balloon/popup
 	// menu entries
 
@@ -68,7 +64,6 @@ public class EditorTransformationSettings implements Serializable {
 		this.context = "";
 		this.transformations = new LinkedList<Transformation>();
 		this.menuContributions = new LinkedList<KSBasEMenuContribution>();
-		this.performAutoLayout = true;
 		this.contributor = null;
 	}
 
@@ -254,24 +249,6 @@ public class EditorTransformationSettings implements Serializable {
 	}
 
 	/**
-	 * The auto layout setting.
-	 * 
-	 * @return true if auto layout should be performed after execution
-	 */
-	public final boolean isPerformAutoLayout() {
-		return performAutoLayout;
-	}
-
-	/**
-	 * Sets the auto layout setting.
-	 * 
-	 * @param performAutoLayout
-	 */
-	public final void setPerformAutoLayout(final boolean performAutoLayout) {
-		this.performAutoLayout = performAutoLayout;
-	}
-
-	/**
 	 * Returns the text representation of the Xtend file.
 	 * 
 	 * @return A .ext file in plain text
@@ -371,5 +348,33 @@ public class EditorTransformationSettings implements Serializable {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Two editor settings are the same if they have
+	 * the same target editor and the same source contributor
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof EditorTransformationSettings) {
+			EditorTransformationSettings o = (EditorTransformationSettings)obj;
+			//we are using the '==' operator for the contributor
+			//because it may be possible that the contributor is 'null'
+			//and the equals method will throw an exception
+			return (o.getEditor().equals(editor) && o.getContributor() == contributor );
+		}
+		return false;
+	}
+	
+	/**
+	 * The hashcode is calculated from the editors hash and the 
+	 * hashCode of the contributor, if existing.
+	 */
+	@Override
+	public int hashCode() {
+		int hash = editor.hashCode();
+		if (contributor != null);
+		hash += contributor.hashCode();
+		return hash;
 	}
 }

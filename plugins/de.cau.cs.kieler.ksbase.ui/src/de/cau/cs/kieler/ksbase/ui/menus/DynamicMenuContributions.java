@@ -29,8 +29,13 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.internal.registry.ExtensionRegistry;
+import org.eclipse.core.runtime.ContributorFactoryOSGi;
+import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.RegistryFactory;
+import org.osgi.framework.Bundle;
+import org.osgi.service.packageadmin.PackageAdmin;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -39,6 +44,7 @@ import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasEMenuContribution;
 import de.cau.cs.kieler.ksbase.core.Transformation;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
+import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 
 @SuppressWarnings("restriction")
 public class DynamicMenuContributions {
@@ -248,22 +254,22 @@ public class DynamicMenuContributions {
 
 					System.out.println(str.toString());
 
+					IContributor contributor;
 					if (editor.getContributor() != null) {
-						/*
-						Bundle bundle = Activator.getDefault().getBundle(
-								editor.getContributor().getName());
-						
-						IContributor contributor = ContributorFactoryOSGi
-								.createContributor(bundle);
-						
-						IContributor con = editor.getContributor();
-						*/
-						ByteArrayInputStream is = new ByteArrayInputStream(str
-								.toString().getBytes("UTF-8"));
-						reg.addContribution(is, editor.getContributor(), false, null, null,
-								token);
+						contributor = editor.getContributor();
 
 					}
+					else {
+						Bundle bundle = KSBasEUIPlugin.getDefault().getBundle();
+						
+						contributor = ContributorFactoryOSGi
+								.createContributor(bundle);
+					}
+					
+					ByteArrayInputStream is = new ByteArrayInputStream(str
+							.toString().getBytes("UTF-8"));
+					reg.addContribution(is, contributor, false, null, null,
+							token);
 				}
 			} catch (TransformerConfigurationException e) {
 				// TODO Auto-generated catch block
