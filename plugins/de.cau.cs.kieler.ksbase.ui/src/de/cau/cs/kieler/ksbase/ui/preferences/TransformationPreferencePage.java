@@ -86,7 +86,7 @@ import de.cau.cs.kieler.ksbase.core.TransformationManager;
 public class TransformationPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 
-	static protected  final String DIAGRAM_PACKAGES[] = new String[] { "org.eclipse.emf.ecore.EPackage" }; //$NON-NLS-1$
+	protected final static String DIAGRAM_PACKAGES[] = new String[] { "org.eclipse.emf.ecore.EPackage" }; //$NON-NLS-1$
 
 	protected DiagramDocumentEditor diagram;
 

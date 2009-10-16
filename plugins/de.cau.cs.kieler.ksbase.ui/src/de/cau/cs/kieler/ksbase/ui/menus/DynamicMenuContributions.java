@@ -252,7 +252,7 @@ public class DynamicMenuContributions {
 							.transform(new DOMSource(extension),
 									new StreamResult(str));
 
-					System.out.println(str.toString());
+					//System.out.println(str.toString());
 
 					IContributor contributor;
 					if (editor.getContributor() != null) {

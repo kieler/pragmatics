@@ -316,7 +316,7 @@ public class EditorTransformationSettings {
 			for (String m : methods) {
 				try {
 					m = m.trim().replaceAll("//.*\n", "");
-					String method = m.toLowerCase(); // just to be sure
+					String method = m.toLowerCase(Locale.getDefault()); // just to be sure
 					if (!method.contains("void")) { // we only want void methods
 						continue;
 					}
@@ -373,8 +373,9 @@ public class EditorTransformationSettings {
 	@Override
 	public int hashCode() {
 		int hash = editor.hashCode();
-		if (contributor != null);
-		hash += contributor.hashCode();
+		if (contributor != null) {
+			hash += contributor.hashCode();
+		}
 		return hash;
 	}
 }
