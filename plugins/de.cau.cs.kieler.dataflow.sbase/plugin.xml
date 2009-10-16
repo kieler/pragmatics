@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.ksbase.configuration">
+      <configuration
+            XtendFile="src/transformations/feature.ext"
+            contextId="de.cau.cs.kieler.dataflow.diagram.ui.diagramContext"
+            editor="de.cau.cs.kieler.dataflow.diagram.part.DataflowDiagramEditor"
+            packageName="de.cau.cs.kieler.dataflow.DataflowPackage">
+         <menus>
+            <menuContribution
+                  locationURI="menu:de.cau.cs.kieler">
+               <transformationCommand
+                     transformationId="de.cau.cs.kieler.dataflow.sbase.connectBoxes">
+               </transformationCommand>
+               <transformationCommand
+                     transformationId="de.cau.cs.kieler.dataflow.sbase.connectPorts">
+               </transformationCommand>
+               <transformationCommand
+                     transformationId="de.cau.cs.kieler.dataflow.sbase.Suc">
+               </transformationCommand>
+               <transformationCommand
+                     transformationId="de.cau.cs.kieler.dataflow.sbase.Predec">
+               </transformationCommand>
+            </menuContribution>
+         </menus>
+         <transformations>
+            <transformation
+                  keyboardShortcut="M1+K P"
+                  name="Connect Ports"
+                  transformation="connectPorts"
+                  transformationId="de.cau.cs.kieler.dataflow.sbase.connectPorts">
+            </transformation>
+            <transformation
+                  keyboardShortcut="M1+K B"
+                  name="Connect Boxes"
+                  transformation="connectBoxes"
+                  transformationId="de.cau.cs.kieler.dataflow.sbase.connectBoxes">
+            </transformation>
+            <transformation
+                  keyboardShortcut="M1+K L"
+                  name="Create Successor"
+                  transformation="createSuccessor"
+                  transformationId="de.cau.cs.kieler.dataflow.sbase.Suc">
+            </transformation>
+            <transformation
+                  keyboardShortcut="M1+K N"
+                  name="Create Predecessor"
+                  transformation="createPredecessor"
+                  transformationId="de.cau.cs.kieler.dataflow.sbase.Predec">
+            </transformation>
+         </transformations>
+      </configuration>
+   </extension>
+
+</plugin>

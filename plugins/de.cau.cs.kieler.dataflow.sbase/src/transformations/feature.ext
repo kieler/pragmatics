@@ -1,0 +1,28 @@
+import dataflow;
+
+Void connectPorts(OutputPort out, InputPort in):
+ let con = new Connection:
+ con.setSourcePort(out) ->
+ con.setTargetPort(in) ->
+ out.parentBox.connections.add(con)
+;
+
+Void connectBoxes(Box source, Box target):
+ let out = new OutputPort:
+ let in = new InputPort:
+ source.outputs.add(out) ->
+ target.inputs.add(in) ->
+ connectPorts(out,in)
+;
+
+Void createSuccessor(Box source):
+ let target = new Box:
+ connectBoxes(source,target) ->
+ ((DataflowModel)source.eContainer).boxes.add(target)
+;
+
+Void createPredecessor(Box target):
+ let source = new Box:
+ connectBoxes(source,target) ->
+ ((DataflowModel)target.eContainer).boxes.add(source)
+;
