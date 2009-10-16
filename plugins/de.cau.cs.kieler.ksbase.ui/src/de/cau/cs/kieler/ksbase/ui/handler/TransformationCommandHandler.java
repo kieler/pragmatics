@@ -22,12 +22,12 @@ import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
 
 /**
- * The generic transformation handler used for all UI elements
+ * The generic transformation handler used for all UI actions.
  * 
  * @author Michael Matzen
  * 
  */
-public class TransformationCommandHandler extends AbstractHandler{
+public class TransformationCommandHandler extends AbstractHandler {
 
 	public static final String EDITOR_PARAM = "de.cau.cs.kieler.ksbase.editorParameter";
 	public static final String TRANSFORMATION_PARAM = "de.cau.cs.kieler.ksbase.transformationParameter";
@@ -39,10 +39,14 @@ public class TransformationCommandHandler extends AbstractHandler{
 	}
 
 	/**
-	 * Execute a transformation. The editor and transformation settings are
+	 * Executes a transformation. The editor and transformation settings are
 	 * given by the extension point parameters Uses the TransformationUI manager
 	 * to create and execute the transformation.
-	 * @param event The source event 
+	 * 
+	 * @param event
+	 *            The source event
+	 * @throws ExecutionExceptions
+	 * @return Nothing
 	 */
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 
@@ -56,8 +60,7 @@ public class TransformationCommandHandler extends AbstractHandler{
 					.createAndExecuteTransformationCommand(event, editor,
 							editor.getTransformationByName(event
 									.getParameter(TRANSFORMATION_PARAM)));
-		}
-		else {
+		} else {
 			System.err.println("error no transformation defined!");
 		}
 		return null;

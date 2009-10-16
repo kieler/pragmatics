@@ -32,10 +32,8 @@ import org.eclipse.core.internal.registry.ExtensionRegistry;
 import org.eclipse.core.runtime.ContributorFactoryOSGi;
 import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.osgi.framework.Bundle;
-import org.osgi.service.packageadmin.PackageAdmin;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -47,7 +45,7 @@ import de.cau.cs.kieler.ksbase.core.TransformationManager;
 import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 
 @SuppressWarnings("restriction")
-public class DynamicMenuContributions {
+public final class DynamicMenuContributions {
 
 	public static final DynamicMenuContributions instance = new DynamicMenuContributions();
 	private HashMap<String, Node> cachedTransformationCommands;
@@ -58,13 +56,13 @@ public class DynamicMenuContributions {
 	 * Default constructor.
 	 */
 	private DynamicMenuContributions() {
-		 cachedTransformationCommands = new HashMap<String, Node>();
-		 commandIds = new HashMap<Transformation, String>();
+		cachedTransformationCommands = new HashMap<String, Node>();
+		commandIds = new HashMap<Transformation, String>();
 	}
 
 	/**
-	 * Creates a valid plug-in project for each editor and injects it to the eclipse
-	 * run-time.
+	 * Creates a valid plug-in project for each editor and injects it to the
+	 * eclipse run-time.
 	 */
 	public final void createAllMenuContributions() {
 		LinkedList<EditorTransformationSettings> editors = TransformationManager.instance
@@ -81,8 +79,7 @@ public class DynamicMenuContributions {
 		try {
 			try {
 				IExtensionRegistry reg = RegistryFactory.getRegistry();
-				token = ((ExtensionRegistry) reg)
-				.getTemporaryUserToken();
+				token = ((ExtensionRegistry) reg).getTemporaryUserToken();
 				// Iterate through editors and create extension point contents
 				for (EditorTransformationSettings editor : editors) {
 					Document extension = javax.xml.parsers.DocumentBuilderFactory
@@ -194,15 +191,19 @@ public class DynamicMenuContributions {
 						handlerIt.setAttribute("ifEmpty", "false");
 						handlerIt.setAttribute("operator", "and");
 						Element handlerTest = extension.createElement("test");
-						handlerTest.setAttribute("args", editor.getEditor()+","+t.getTransformationId());
-						handlerTest.setAttribute("forcePluginActivation", "true");
-						handlerTest.setAttribute("property", "de.cau.cs.kieler.ksbase.ui.modelTesting.isModelInstance");
+						handlerTest.setAttribute("args", editor.getEditor()
+								+ "," + t.getTransformationId());
+						handlerTest.setAttribute("forcePluginActivation",
+								"true");
+						handlerTest
+								.setAttribute("property",
+										"de.cau.cs.kieler.ksbase.ui.modelTesting.isModelInstance");
 						handlerIt.appendChild(handlerTest);
 						handlerWith.appendChild(handlerIt);
 						handlerEnabled.appendChild(handlerWith);
 						handlerCommand.appendChild(handlerEnabled);
 						handlerExtension.appendChild(handlerCommand);
-						
+
 					}
 					// Create menu extension:
 					for (KSBasEMenuContribution contrib : editor
@@ -252,20 +253,18 @@ public class DynamicMenuContributions {
 							.transform(new DOMSource(extension),
 									new StreamResult(str));
 
-					//System.out.println(str.toString());
+					// System.out.println(str.toString());
 
 					IContributor contributor;
 					if (editor.getContributor() != null) {
 						contributor = editor.getContributor();
-
-					}
-					else {
+					} else {
 						Bundle bundle = KSBasEUIPlugin.getDefault().getBundle();
-						
+
 						contributor = ContributorFactoryOSGi
 								.createContributor(bundle);
 					}
-					
+
 					ByteArrayInputStream is = new ByteArrayInputStream(str
 							.toString().getBytes("UTF-8"));
 					reg.addContribution(is, contributor, false, null, null,
@@ -285,19 +284,23 @@ public class DynamicMenuContributions {
 				e.printStackTrace();
 			}
 		} catch (ParserConfigurationException pce) {
-
+			pce.printStackTrace();
 		}
 	}
 
 	/**
 	 * Creates menu commands for menus and sub menus.
-	 * @param tid The transformation id 
-	 * @param extension The base DOM document
-	 * @param editor The current editor
+	 * 
+	 * @param tid
+	 *            The transformation id
+	 * @param extension
+	 *            The base DOM document
+	 * @param editor
+	 *            The current editor
 	 * @return a valid DOM tree containing menu commands
 	 */
-	private final Node createElementForMenu(final String tid, final Document extension,
-			final EditorTransformationSettings editor) {
+	private Node createElementForMenu(final String tid,
+			final Document extension, final EditorTransformationSettings editor) {
 		// entry has been created before?
 		if (cachedTransformationCommands.containsKey(tid)) {
 			return cachedTransformationCommands.get(tid).cloneNode(true);

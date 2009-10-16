@@ -38,6 +38,13 @@ public class ExecuteTransformationRequest extends Request {
 
     /**
      * Creates a transformation request.
+     * 
+     * @param ePart The active EditPart
+     * @param command The transformation command
+     * @param fileName Name of the Xtend transformation file
+     * @param selection The active selection
+     * @param modelPackage The model package for the active editor
+     * @param parameter[] The parameters of the Xtend transformation
      */
     public ExecuteTransformationRequest(final IEditorPart ePart, final String command,
     		final String fileName, final ISelection selection,
@@ -52,7 +59,7 @@ public class ExecuteTransformationRequest extends Request {
     }
     
     /**
-     * Sets the model package
+     * Sets the model package.
      * @param modelPackage
      */
     public final void setModelPackage(final String modelPackage) {
@@ -61,7 +68,7 @@ public class ExecuteTransformationRequest extends Request {
 
     /**
      * Gets the model package.
-     * @return modelPackage
+     * @return modelPackage 
      */
     public final String getModelPackage() {
         return this.modelPackage;
@@ -132,14 +139,15 @@ public class ExecuteTransformationRequest extends Request {
     }
 
     /**
-     * @return The parameters
+     * Gets the list of parameters
+     * @return a string array of parameters
      */
     public final String[] getParameter() {
 		return parameter.clone();
 	}
 
 	/**
-	 * Sets the parameters for this transformation request 
+	 * Sets the parameters for this transformation request .
 	 * @param parameter
 	 */
     public final void setParameter(final String[] parameter) {

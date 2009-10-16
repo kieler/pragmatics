@@ -7,13 +7,46 @@ Void connectPorts(OutputPort out, InputPort in):
  out.parentBox.connections.add(con)
 ;
 
+//Connects two boxes
+//If any of the boxes has an unused port, the connection is using this port
 Void connectBoxes(Box source, Box target):
  let out = new OutputPort:
  let in = new InputPort:
- source.outputs.add(out) ->
- target.inputs.add(in) ->
- connectPorts(out,in)
+ let sourcePort = source.outputs.selectFirst(e| !source.connections.exists(c|c.sourcePort == e) ) :
+ let targetPort = target.inputs.selectFirst(e| !target.connections.exists(c|c.targetPort == e) ) :
+ 
+ if (sourcePort == null ) then {
+ 	source.outputs.add(out) ->
+ 	if (targetPort == null) then {
+		connectPorts(out,in)	 
+	}
+	else {
+		connectPorts(out,targetPort)
+	}
+ } else {
+ 	if (targetPort == null) then {
+ 		connectPorts(sourcePort,in)
+ 	}
+ 	else {
+ 		connectPorts(sourcePort,targetPort)
+ 	}
+ }
 ;
+
+Void connectOutputsToInputs(OutputPort out,List[InputPort] in):
+if (in.size > 0) then {
+ out.connectPorts(in.last())->
+ in.remove(in.last())
+ }
+;
+
+Void connectAllBoxPorts(Box source, Box target):
+ let sourceList = source.outputs.select(e| !source.connections.exists(c|c.sourcePort == e)):
+ let targetList = target.inputs.select(e| !target.connections.exists(c|c.targetPort == e)):
+ sourceList.connectOutputsToInputs(targetList)
+;
+
+
 
 Void createSuccessor(Box source):
  let target = new Box:

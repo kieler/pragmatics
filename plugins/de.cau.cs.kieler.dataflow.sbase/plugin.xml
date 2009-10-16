@@ -23,6 +23,9 @@
                <transformationCommand
                      transformationId="de.cau.cs.kieler.dataflow.sbase.Predec">
                </transformationCommand>
+               <transformationCommand
+                     transformationId="de.cau.cs.kieler.dataflow.sbase.connectAll">
+               </transformationCommand>
             </menuContribution>
          </menus>
          <transformations>
@@ -49,6 +52,12 @@
                   name="Create Predecessor"
                   transformation="createPredecessor"
                   transformationId="de.cau.cs.kieler.dataflow.sbase.Predec">
+            </transformation>
+            <transformation
+                  keyboardShortcut="M1+K J"
+                  name="Connect All Ports"
+                  transformation="connectAllBoxPorts"
+                  transformationId="de.cau.cs.kieler.dataflow.sbase.connectAll">
             </transformation>
          </transformations>
       </configuration>

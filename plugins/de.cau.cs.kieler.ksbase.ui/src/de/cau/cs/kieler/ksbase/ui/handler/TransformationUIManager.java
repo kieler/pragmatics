@@ -69,7 +69,7 @@ public class TransformationUIManager {
 		// ((DiagramEditor)activeEditor).getDiagram().getVisibleChildren().size());
 		ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event)
 				.getSelectionService().getSelection();
-
+		
 		if (selection instanceof StructuredSelection && !selection.isEmpty()) {
 
 			// First, we have to store the transformation file because Xtend
@@ -89,7 +89,8 @@ public class TransformationUIManager {
 				FileOutputStream out = new FileOutputStream(file);
 				if (!file.exists()) {
 					if (!file.createNewFile()) {
-						return;// FIXME: We were unable to create the file !
+						// FIXME: We were unable to create the file !
+						return; 
 					}
 				}
 				out.write(editor.getExtFile().getBytes());
@@ -127,10 +128,10 @@ public class TransformationUIManager {
 				// Remove temporary Xtend file
 				
 				if (file != null) {
-					if (!file.delete())
+					if (!file.delete()) {
 						System.out
-								.println("Warning: Unable to delete temporary xtend file"); 
-					// maybe just ignore or add a warning
+								.println("Warning: Unable to delete temporary xtend file");
+					}
 				}
 				
 				// update edit policies, so GMF will generate diagram elements

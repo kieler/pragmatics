@@ -25,51 +25,52 @@ import de.cau.cs.kieler.ksbase.ui.menus.DynamicMenuContributions;
 
 public class KSBasEUIPlugin extends AbstractUIPlugin {
 
-    // The plug-in ID
-    public static final String PLUGIN_ID = "de.cau.cs.kieler.ksbase.ui";
+	// The plug-in ID
+	public static final String PLUGIN_ID = "de.cau.cs.kieler.ksbase.ui";
 
-    // The shared instance
-    private static KSBasEUIPlugin plugin;
+	// The shared instance
+	private static KSBasEUIPlugin plugin;
 
-    /**
-     * The constructor.
-     */
-    public KSBasEUIPlugin() {
-        System.out.println("ksbase activated");
-        DynamicMenuContributions.instance.createAllMenuContributions();
-    }
+	/**
+	 * The constructor.
+	 */
+	public KSBasEUIPlugin() {
+		DynamicMenuContributions.instance.createAllMenuContributions();
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
-     * )
-     */
-    public void start(BundleContext context) throws Exception {
-        super.start(context);
-        KSBasEUIPlugin.plugin = this;
-    }
+	/**
+	 * Starts the plug-in.
+	 * 
+	 * @param context
+	 *            The bundle context for this plug-in
+	 * 
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
+	 */
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		KSBasEUIPlugin.plugin = this;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
-     * )
-     */
-    public void stop(BundleContext context) throws Exception {
-        KSBasEUIPlugin.plugin = null;
-        super.stop(context);
-    }
+	/**
+	 * Stops the plug-in.
+	 * 
+	 *  @param context
+	 *  		The bundle context for this plug-in
+	 * @see
+	 * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
+	 */
+	public void stop(BundleContext context) throws Exception {
+		KSBasEUIPlugin.plugin = null;
+		super.stop(context);
+	}
 
-    /**
-     * Returns the shared instance.
-     * 
-     * @return the shared instance
-     */
-    public static KSBasEUIPlugin getDefault() {
-        return plugin;
-    }
+	/**
+	 * Returns the shared instance.
+	 * 
+	 * @return the shared instance
+	 */
+	public static KSBasEUIPlugin getDefault() {
+		return plugin;
+	}
 
 }

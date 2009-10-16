@@ -14,19 +14,12 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.core;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.util.LinkedList;
 
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleException;
 
 /**
  * The main storage and management class. Contains a list of currently
@@ -178,31 +171,6 @@ public class TransformationManager {
 			}
 			// Read menu contributions
 			IConfigurationElement[] menus = settings.getChildren("menus");
-			// ----DEBUG-START-----
-			if (menus != null && menus.length > 0) {
-				for (IConfigurationElement c : menus[0]
-						.getChildren("menuContribution")) {
-					System.out.println("MenuLocation @ "
-							+ c.getAttribute("locationURI"));
-
-					for (IConfigurationElement m : c.getChildren("menu")) {
-						System.out.println("\tMenuContrib: "
-								+ m.getAttribute("id") + " : "
-								+ m.getAttribute("label"));
-						for (IConfigurationElement com : m.getChildren()) {
-							System.out.println("\t\tTransformation:"
-									+ com.getAttribute("transformationId"));
-						}
-
-					}
-					for (IConfigurationElement com : c
-							.getChildren("transformationCommand")) {
-						System.out.println("\tTransformation: "
-								+ com.getAttribute("transformationId"));
-					}
-				}
-			}
-			// ----DEBUG-END-----
 
 			if (menus != null && menus.length > 0) {
 				// since we only allowed one single <menuContribution> child, we
@@ -253,44 +221,4 @@ public class TransformationManager {
 		isInitialized = true;
 	}
 
-	/**
-	 * Tries to store settings by overwriting the existing extension point
-	 * scheme. This method is executed, when a user changes the settings via the
-	 * preferences pages.
-	 */
-	public final void storeSettings() {
-		
-		for (EditorTransformationSettings editor : registeredEditors) {
-			try {
-				Bundle b = Platform.getBundle(editor.getContributor().getName());
-				b.stop();
-				File f  = FileLocator.getBundleFile(b);
-				if (f.isDirectory()) {
-					File[] files = f.listFiles();
-					for (File file : files) {
-						if (file.getName().equals("plugin.xml")) {
-							FileOutputStream fos = new FileOutputStream(file);
-							//create plugin from settings
-							String plugin = "";
-							fos.write(plugin.getBytes());
-							fos.flush();
-							fos.close();
-						}
-					}
-				}
-			} catch (BundleException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InvalidRegistryObjectException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
 }

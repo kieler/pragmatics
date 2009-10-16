@@ -73,10 +73,13 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
 		monitor = new NullProgressMonitor();
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Executes the command.
 	 * 
-	 * @seeorg.eclipse.gmf.runtime.emf.commands.core.command.
+	 * @param monitor Progress monitor for the execution
+	 * @param info Additional informations for the command
+	 * 
+	 * @see org.eclipse.gmf.runtime.emf.commands.core.command.
 	 * AbstractTransactionalCommand
 	 * #doExecuteWithResult(org.eclipse.core.runtime.IProgressMonitor,
 	 * org.eclipse.core.runtime.IAdaptable)
@@ -124,7 +127,7 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
 	}
 
 	/**
-	 * Initializes the transformation
+	 * Initializes the transformation.
 	 * 
 	 * @param editPart
 	 *            Current edit part
@@ -146,7 +149,7 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
 			final String[] parameter) {
 		StructuredSelection s;
 
- 		if (selection instanceof StructuredSelection) {
+		if (selection instanceof StructuredSelection) {
 			s = (StructuredSelection) selection;
 		} else {
 			return false;
@@ -164,8 +167,8 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
 
 		// We are now going to order the selected diagram elements by
 		LinkedList<Object> slist = new LinkedList<Object>();
-		slist.addAll((List<?>)s.toList());
-		
+		slist.addAll((List<?>) s.toList());
+
 		int paramCount = 0;
 		for (String param : parameter) {
 			if (modelSelection.length() > 0) {
