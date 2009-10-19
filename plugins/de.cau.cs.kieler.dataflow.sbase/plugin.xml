@@ -42,20 +42,20 @@
                   transformationId="de.cau.cs.kieler.dataflow.sbase.connectBoxes">
             </transformation>
             <transformation
-                  keyboardShortcut="M1+K L"
+                  keyboardShortcut="M1+K S"
                   name="Create Successor"
                   transformation="createSuccessor"
                   transformationId="de.cau.cs.kieler.dataflow.sbase.Suc">
             </transformation>
             <transformation
-                  keyboardShortcut="M1+K N"
+                  keyboardShortcut="M1+K P"
                   name="Create Predecessor"
                   transformation="createPredecessor"
                   transformationId="de.cau.cs.kieler.dataflow.sbase.Predec">
             </transformation>
             <transformation
-                  keyboardShortcut="M1+K J"
-                  name="Connect All Ports"
+                  keyboardShortcut="M1+K A"
+                  name="Connect All Open Ports"
                   transformation="connectAllBoxPorts"
                   transformationId="de.cau.cs.kieler.dataflow.sbase.connectAll">
             </transformation>

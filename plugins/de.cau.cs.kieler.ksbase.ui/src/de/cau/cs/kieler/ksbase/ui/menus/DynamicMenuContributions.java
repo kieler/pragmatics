@@ -227,14 +227,21 @@ public final class DynamicMenuContributions {
 							menu.setAttribute("id", m.getData());
 							menu.setAttribute("label", m.getLabel());
 							for (String tid : m.getCommands()) {
-								Node menuCommand = createElementForMenu(tid,
-										extension, editor);
-								menuCommand.appendChild(menuVisible
-										.cloneNode(true));
-								menu.appendChild(menuCommand);
+								Node menuCommand;
+								if (cachedTransformationCommands
+										.containsKey(tid)) {
+									menuCommand = cachedTransformationCommands
+											.get(tid).cloneNode(true);
+								} else {
+									menuCommand = createElementForMenu(tid,
+											extension, editor);
+									menuCommand.appendChild(menuVisible
+											.cloneNode(true));
+									menu.appendChild(menuCommand);
 
-								cachedTransformationCommands.put(tid,
-										menuCommand.cloneNode(true));
+									cachedTransformationCommands.put(tid,
+											menuCommand.cloneNode(true));
+								}
 							}
 							menu.appendChild(menuVisible.cloneNode(true));
 							menuContribution.appendChild(menu);
@@ -253,7 +260,7 @@ public final class DynamicMenuContributions {
 							.transform(new DOMSource(extension),
 									new StreamResult(str));
 
-					// System.out.println(str.toString());
+					//System.out.println(str.toString());
 
 					IContributor contributor;
 					if (editor.getContributor() != null) {
@@ -301,35 +308,30 @@ public final class DynamicMenuContributions {
 	 */
 	private Node createElementForMenu(final String tid,
 			final Document extension, final EditorTransformationSettings editor) {
-		// entry has been created before?
-		if (cachedTransformationCommands.containsKey(tid)) {
-			return cachedTransformationCommands.get(tid).cloneNode(true);
-		} else {
-			// create menu command
-			Transformation t = editor.getTransformationById(tid);
-			// Menu commands
-			Element menuCommand = extension.createElement("command");
-			menuCommand.setAttribute("commandId", commandIds.get(t));
-			if (t.getIcon() != null && t.getIcon().length() > 0) {
-				menuCommand.setAttribute("icon", t.getIcon());
-			} else if (editor.getDefaultIcon() != null
-					&& editor.getDefaultIcon().length() > 0) {
-				menuCommand.setAttribute("icon", editor.getDefaultIcon());
-			}
-			menuCommand.setAttribute("label", t.getName());
-			// Set command parameters
-			Element handlerParam = extension.createElement("parameter");
-			handlerParam.setAttribute("name",
-					"de.cau.cs.kieler.ksbase.editorParameter");
-			handlerParam.setAttribute("value", editor.getEditor());
-			menuCommand.appendChild(handlerParam);
-			handlerParam = extension.createElement("parameter");
-			handlerParam.setAttribute("name",
-					"de.cau.cs.kieler.ksbase.transformationParameter");
-			handlerParam.setAttribute("value", t.getTransformationName());
-			menuCommand.appendChild(handlerParam);
-
-			return menuCommand;
+		// create menu command
+		Transformation t = editor.getTransformationById(tid);
+		// Menu commands
+		Element menuCommand = extension.createElement("command");
+		menuCommand.setAttribute("commandId", commandIds.get(t));
+		if (t.getIcon() != null && t.getIcon().length() > 0) {
+			menuCommand.setAttribute("icon", t.getIcon());
+		} else if (editor.getDefaultIcon() != null
+				&& editor.getDefaultIcon().length() > 0) {
+			menuCommand.setAttribute("icon", editor.getDefaultIcon());
 		}
+		menuCommand.setAttribute("label", t.getName());
+		// Set command parameters
+		Element handlerParam = extension.createElement("parameter");
+		handlerParam.setAttribute("name",
+				"de.cau.cs.kieler.ksbase.editorParameter");
+		handlerParam.setAttribute("value", editor.getEditor());
+		menuCommand.appendChild(handlerParam);
+		handlerParam = extension.createElement("parameter");
+		handlerParam.setAttribute("name",
+				"de.cau.cs.kieler.ksbase.transformationParameter");
+		handlerParam.setAttribute("value", t.getTransformationName());
+		menuCommand.appendChild(handlerParam);
+
+		return menuCommand;
 	}
 }
