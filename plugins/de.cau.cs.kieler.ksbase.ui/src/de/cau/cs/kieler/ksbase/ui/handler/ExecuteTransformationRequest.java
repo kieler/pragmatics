@@ -44,7 +44,7 @@ public class ExecuteTransformationRequest extends Request {
      * @param fileName Name of the Xtend transformation file
      * @param selection The active selection
      * @param modelPackage The model package for the active editor
-     * @param parameter[] The parameters of the Xtend transformation
+     * @param parameter The parameters of the Xtend transformation
      */
     public ExecuteTransformationRequest(final IEditorPart ePart, final String command,
     		final String fileName, final ISelection selection,

@@ -12,37 +12,40 @@ Void connectPorts(OutputPort out, InputPort in):
 Void connectBoxes(Box source, Box target):
  let out = new OutputPort:
  let in = new InputPort:
- let sourcePort = source.outputs.selectFirst(e| !source.connections.exists(c|c.sourcePort == e) ) :
- let targetPort = target.inputs.selectFirst(e| !target.connections.exists(c|c.targetPort == e) ) :
+ let sourcePorts = source.outputs.select(e|  !source.connections.exists(c|c.sourcePort == e) ) :
+ //hint: this may lead to a bad performance in larger diagrams!
+ let targetPorts = target.inputs.select( in | !((Box)source.eContainer).boxes.connections.exists(c| c.targetPort == in)):
  
- if (sourcePort == null ) then {
+ if (sourcePorts.size == 0 ) then {
  	source.outputs.add(out) ->
- 	if (targetPort == null) then {
+ 	if (targetPorts == null) then {
 		connectPorts(out,in)	 
 	}
 	else {
-		connectPorts(out,targetPort)
+		connectPorts(out,targetPorts.first())
 	}
  } else {
- 	if (targetPort == null) then {
- 		connectPorts(sourcePort,in)
+ 	if (targetPorts.size == 0) then {
+ 		connectPorts(sourcePorts.first(),in)
  	}
  	else {
- 		connectPorts(sourcePort,targetPort)
+ 		connectPorts(sourcePorts.first(),targetPorts.first())
  	}
  }
 ;
 
 Void connectOutputsToInputs(OutputPort out,List[InputPort] in):
 if (in.size > 0) then {
- out.connectPorts(in.last())->
- in.remove(in.last())
+ out.connectPorts(in.first())->
+ in.remove(in.first())
  }
 ;
 
+
 Void connectAllBoxPorts(Box source, Box target):
  let sourceList = source.outputs.select(e| !source.connections.exists(c|c.sourcePort == e)):
- let targetList = target.inputs.select(e| !target.connections.exists(c|c.targetPort == e)):
+ //hint: this may lead to a bad performance in larger diagrams!
+ let targetList = target.inputs.select( in | !((Box)source.eContainer).boxes.connections.exists(c| c.targetPort == in)):
  sourceList.connectOutputsToInputs(targetList)
 ;
 

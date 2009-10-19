@@ -36,10 +36,9 @@ public class ExecuteTransformationEditPolicy extends AbstractEditPolicy {
 	 * Checks if a given request is understood from this editPolicy.
 	 * 
 	 * @param req The request to check.
-	 * @returns True if this editPolicy can handle the given request.
+	 * @return True if this editPolicy can handle the given request.
 	 * @see
-	 * org.eclipse.gef.editpolicies.AbstractEditPolicy#understandsRequest(org
-	 * .eclipse.gef.Request)
+	 * org.eclipse.gef.editpolicies.AbstractEditPolicy#understandsRequest(org.eclipse.gef.Request)
 	 */
 	@Override
 	public boolean understandsRequest(Request req) {
@@ -55,8 +54,7 @@ public class ExecuteTransformationEditPolicy extends AbstractEditPolicy {
 	 * 	is an @link ExecuteTransformationRequest.  
 	 * 
 	 * @see
-	 * org.eclipse.gef.editpolicies.AbstractEditPolicy#getCommand(org.eclipse
-	 * .gef.Request)
+	 * org.eclipse.gef.editpolicies.AbstractEditPolicy#getCommand(org.eclipse.gef.Request)
 	 */
 	@Override
 	public Command getCommand(Request req) {
