@@ -16,7 +16,6 @@ package de.cau.cs.kieler.dataflow.codegen;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -25,9 +24,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.mwe.core.WorkflowContext;
 import org.eclipse.emf.mwe.core.WorkflowContextDefaultImpl;
-import org.eclipse.emf.mwe.core.WorkflowRunner;
 import org.eclipse.emf.mwe.core.issues.Issues;
-import org.eclipse.emf.mwe.core.issues.IssuesImpl;
 import org.eclipse.emf.mwe.core.issues.MWEDiagnostic;
 import org.eclipse.emf.mwe.core.monitor.NullProgressMonitor;
 import org.eclipse.emf.mwe.internal.core.Workflow;
@@ -42,6 +39,12 @@ import org.eclipse.xtend.typesystem.emf.EmfMetaModel;
 
 import de.cau.cs.kieler.dataflow.DataflowPackage;
 
+/**
+ * Generate Lustre code from Dataflow diagram
+ * 
+ * @author ctr
+ * 
+ */
 public class LustreGenerator extends AbstractHandler implements IHandler {
 
 	@Override
@@ -54,12 +57,10 @@ public class LustreGenerator extends AbstractHandler implements IHandler {
 			model = model.substring(0, model.length() - 8);
 		}
 		Map<String, String> properties = new HashMap<String, String>();
-		// Map<String, Object> slotContents = new HashMap<String, Object>();
 
 		properties.put("model", model);
 		properties.put("src-gen", ".");
 
-		// WorkflowRunner runner = new WorkflowRunner();
 		// Workflow
 		Workflow workflow = new Workflow();
 
@@ -69,8 +70,7 @@ public class LustreGenerator extends AbstractHandler implements IHandler {
 		emfReader.setModelSlot("model");
 
 		// Meta model
-		EmfMetaModel metaModel = new EmfMetaModel(
-				de.cau.cs.kieler.dataflow.DataflowPackage.eINSTANCE);
+		EmfMetaModel metaModel = new EmfMetaModel(DataflowPackage.eINSTANCE);
 
 		// Outlet
 		Outlet outlet = new Outlet();
@@ -91,20 +91,21 @@ public class LustreGenerator extends AbstractHandler implements IHandler {
 		workflow.addComponent(generator);
 		workflow.invoke(wfx, monitor, issues);
 
-		String issue = generator.getLogMessage() + "\n" + issues.getInfos()
-				+ issues.getIssues() + issues.getWarnings()
-				+ issues.getErrors().toString();
-		/*
-		 * String generator = "src/lustre.mwe"; boolean success =
-		 * runner.prepare(generator, new NullProgressMonitor(), properties);
-		 * final Issues issues = new IssuesImpl(); if (success) { success =
-		 * runner.executeWorkflow(slotContents, issues); }
-		 * 
-		 * ;
-		 */
-
+		StringBuffer issue = new StringBuffer(generator.getLogMessage() + "\n");
+		for(MWEDiagnostic s: issues.getIssues()){
+			issue.append(s + "\n");
+		}
+		for(MWEDiagnostic s: issues.getErrors()){
+			issue.append(s + "\n");
+		}
+		for(MWEDiagnostic s: issues.getWarnings()){
+			issue.append(s + "\n");
+		}
+		for(MWEDiagnostic s: issues.getInfos()){
+			issue.append(s + "\n");
+		}
 		StatusManager.getManager().handle(
-				new Status(IStatus.WARNING, Activator.PLUGIN_ID, issue, null),
+				new Status(IStatus.WARNING, Activator.PLUGIN_ID, issue.toString(), null),
 				StatusManager.LOG);
 
 		return null;

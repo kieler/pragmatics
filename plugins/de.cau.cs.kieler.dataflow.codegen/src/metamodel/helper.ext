@@ -29,8 +29,8 @@ boolean hasLocals(Box box) :
   getLocals(box).size > 0;  
   
 String getName(Port p) :
-  JAVA de.cau.cs.kieler.dataflow.codegen.Helper.getName(de.cau.cs.kieler.dataflow.Port);
-
+  p.name;
+  
 String getType(Port p) :
   JAVA de.cau.cs.kieler.dataflow.codegen.TypeHelper.getType(de.cau.cs.kieler.dataflow.Port);
   

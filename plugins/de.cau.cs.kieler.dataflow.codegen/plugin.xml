@@ -20,14 +20,6 @@
             id="de.cau.cs.kieler.dataflow.codegen.GenLustre"
             name="GenLustre">
       </command>
-      <command
-            category="de.cau.cs.kieler"
-            categoryId="de.cau.cs.kieler"
-            defaultHandler="de.cau.cs.kieler.dataflow.codegen.ScadeGenerator"
-            description="Generate Scade code"
-            id="de.cau.cs.kieler.dataflow.codegen.genScade"
-            name="genScade">
-      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">

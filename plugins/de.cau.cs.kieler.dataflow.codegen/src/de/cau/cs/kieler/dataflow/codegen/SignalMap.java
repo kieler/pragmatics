@@ -13,12 +13,6 @@
  */
 package de.cau.cs.kieler.dataflow.codegen;
 
-/**
- * @author ctr
- *
- * Basically a MultiMap implementation. Should use 
- * org.apache.commons.collections.MultiValueMap instead.
- */
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,11 +20,21 @@ import java.util.HashSet;
 
 import de.cau.cs.kieler.dataflow.*;
 
+/**
+ * @author ctr
+ *
+ * Basically a MultiMap implementation. Should use 
+ * org.apache.commons.collections.MultiValueMap instead.
+ */
 
 public class SignalMap {
 	private HashMap<Box, HashSet<String>> signals = new HashMap<Box, HashSet<String>>();
 	
-	public HashSet<String> get(Box box){
+	/**
+	 * @param box
+	 * @return all signals ofthe given box
+	 */
+	public HashSet<String> get(final Box box){
 		HashSet<String> s = signals.get(box);
 		if (s == null){
 			return new HashSet<String>();
@@ -39,7 +43,11 @@ public class SignalMap {
 		}
 	}
 	
-	public void put(Box key, String value){
+	/**
+	 * @param key
+	 * @param value
+	 */
+	public void put(final Box key, final String value){
 		HashSet<String> s = signals.get(key);
 		if(s==null){
 			s = new HashSet<String>();
@@ -48,7 +56,11 @@ public class SignalMap {
 		s.add(value);
 	}
 	
-	public void remove(Box key, String value){
+	/**
+	 * @param key
+	 * @param value
+	 */
+	public void remove(final Box key, final String value){
 		if(signals.containsKey(key)){
 			signals.get(key).remove(value);
 		}
