@@ -16,6 +16,7 @@ package de.cau.cs.kieler.ksbase.ui.handler;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -23,6 +24,7 @@ import java.util.Locale;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.mwe.core.WorkflowContext;
 import org.eclipse.emf.mwe.core.WorkflowContextDefaultImpl;
 import org.eclipse.emf.mwe.core.issues.Issues;
@@ -32,11 +34,15 @@ import org.eclipse.emf.mwe.core.monitor.NullProgressMonitor;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.common.core.command.CommandResult;
+import org.eclipse.gmf.runtime.diagram.ui.editpolicies.CanonicalEditPolicy;
+import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
+import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramGraphicalViewer;
 import org.eclipse.gmf.runtime.emf.commands.core.command.AbstractTransactionalCommand;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.ksbase.core.KielerWorkflow;
 
@@ -76,13 +82,15 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
 	/**
 	 * Executes the command.
 	 * 
-	 * @param monitor Progress monitor for the execution
-	 * @param info Additional informations for the command
+	 * @param monitor
+	 *            Progress monitor for the execution
+	 * @param info
+	 *            Additional informations for the command
 	 * 
 	 * @see org.eclipse.gmf.runtime.emf.commands.core.command.
-	 * AbstractTransactionalCommand
-	 * #doExecuteWithResult(org.eclipse.core.runtime.IProgressMonitor,
-	 * org.eclipse.core.runtime.IAdaptable)
+	 *      AbstractTransactionalCommand
+	 *      #doExecuteWithResult(org.eclipse.core.runtime.IProgressMonitor,
+	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
 	@Override
 	protected CommandResult doExecuteWithResult(IProgressMonitor monitor,
@@ -122,6 +130,26 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
 			return CommandResult
 					.newErrorCommandResult("Transformation failed. " //$NON-NLS-1$
 							+ issues.getErrors()[0]);
+		}
+		IEditorPart activeEditor = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+		if (activeEditor instanceof DiagramEditor) {
+			EObject obj = ((View) ((DiagramEditor) activeEditor)
+					.getDiagramEditPart().getModel()).getElement();
+
+			List<?> editPolicies = CanonicalEditPolicy
+					.getRegisteredEditPolicies(obj);
+			for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
+
+				CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it
+						.next();
+
+				nextEditPolicy.refresh();
+			}
+
+			IDiagramGraphicalViewer graphViewer = ((DiagramEditor) activeEditor)
+					.getDiagramGraphicalViewer();
+			graphViewer.flush();
 		}
 		return CommandResult.newOKCommandResult();
 	}

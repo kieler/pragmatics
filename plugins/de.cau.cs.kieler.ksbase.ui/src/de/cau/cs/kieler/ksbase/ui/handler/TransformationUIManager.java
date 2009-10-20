@@ -18,23 +18,17 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.RootEditPart;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editpolicies.CanonicalEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramCommandStack;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
-import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramGraphicalViewer;
-import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
@@ -142,23 +136,6 @@ public class TransformationUIManager {
 				// not translated to gmf now:
 				if (activeEditor instanceof DiagramEditor) {
 
-					EObject obj = ((View) ((DiagramEditor) activeEditor)
-							.getDiagramEditPart().getModel()).getElement();
-
-					List<?> editPolicies = CanonicalEditPolicy
-							.getRegisteredEditPolicies(obj);
-					for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
-
-						CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it
-								.next();
-
-						nextEditPolicy.refresh();
-					}
-
-					IDiagramGraphicalViewer graphViewer = ((DiagramEditor) activeEditor)
-							.getDiagramGraphicalViewer();
-					graphViewer.flush();
-					
 					// If auto-layout is activated, execute now:
 					//FIXME: Changing to 'execute all selected vm tools'
 					{
@@ -169,7 +146,7 @@ public class TransformationUIManager {
 															// been selected, so
 															// layout active
 															// element
-							//Until Viewmanagment works for root elements
+							//Until Viewmanagement works for root elements
 							DiagramLayoutManager.layout(activeEditor, selectedElement, true, false);
 						}
 						if (par != null) { // if a transition is selected, the
