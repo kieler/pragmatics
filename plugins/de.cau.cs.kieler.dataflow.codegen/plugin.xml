@@ -33,11 +33,12 @@
                tooltip="generate Lustre code for current Diagram">
             <visibleWhen
                   checkEnabled="false">
-               <or>
-                  <reference
-                        definitionId="de.cau.cs.kieler.expression.editorActive">
-                  </reference>
-               </or>
+               <with
+                     variable="activePart">
+                  <instanceof
+                        value="de.cau.cs.kieler.dataflow.diagram.part.DataflowDiagramEditor">
+                  </instanceof>
+               </with>
             </visibleWhen>
          </command>
       </menuContribution>
