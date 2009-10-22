@@ -19,6 +19,7 @@ Void connectBoxes(Box source, Box target):
  if (sourcePorts.size == 0 ) then {
  	source.outputs.add(out) ->
  	if (targetPorts == null) then {
+ 		target.inputs.add(in) ->
 		connectPorts(out,in)	 
 	}
 	else {
@@ -26,6 +27,7 @@ Void connectBoxes(Box source, Box target):
 	}
  } else {
  	if (targetPorts.size == 0) then {
+ 		target.inputs.add(in) ->
  		connectPorts(sourcePorts.first(),in)
  	}
  	else {

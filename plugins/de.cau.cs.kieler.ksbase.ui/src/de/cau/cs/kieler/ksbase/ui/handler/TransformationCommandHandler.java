@@ -20,6 +20,7 @@ import org.eclipse.core.commands.ExecutionException;
 
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
+import de.cau.cs.kieler.ksbase.ui.TransformationUIManager;
 
 /**
  * The generic transformation handler used for all UI actions.

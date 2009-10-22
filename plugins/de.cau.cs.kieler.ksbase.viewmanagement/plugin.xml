@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.viewmanagement.combination">
+      <combination
+            class="de.cau.cs.kieler.ksbase.viewmanagement.combinations.KSBasECombination"
+            name="KSBasECombination">
+      </combination>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.viewmanagement.triggers">
+      <trigger
+            class="de.cau.cs.kieler.ksbase.viewmanagement.triggers.KSBasETrigger"
+            name="KSBasETrigger">
+      </trigger>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      
+      <page
+            category="de.cau.cs.kieler.ksbase.PreferencePage"
+            class="de.cau.cs.kieler.ksbase.viewmanagement.preferences.PostTransformationPreferencePage"
+            id="de.cau.cs.kieler.ksbase.InteractPreferencePage"
+            name="Post-Transformation">
+      </page>
+   </extension>
+
+</plugin>

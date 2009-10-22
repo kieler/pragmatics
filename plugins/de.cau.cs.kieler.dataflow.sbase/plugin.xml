@@ -30,7 +30,7 @@
          </menus>
          <transformations>
             <transformation
-                  keyboardShortcut="M1+K P"
+                  keyboardShortcut="M1+K O"
                   name="Connect Ports"
                   transformation="connectPorts"
                   transformationId="de.cau.cs.kieler.dataflow.sbase.connectPorts">

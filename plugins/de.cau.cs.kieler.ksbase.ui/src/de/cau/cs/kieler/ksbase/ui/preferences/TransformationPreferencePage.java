@@ -104,7 +104,7 @@ public class TransformationPreferencePage extends PreferencePage implements
 	 * Default constructor. Sets the preference page title.
 	 */
 	public TransformationPreferencePage() {
-		setDescription(Messages.KSBasEPreferencePage_Title);
+		super(Messages.KSBasEPreferencePage_Title);
 		manager = TransformationManager.instance;
 	}
 

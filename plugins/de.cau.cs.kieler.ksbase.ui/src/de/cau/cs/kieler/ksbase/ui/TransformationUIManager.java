@@ -12,23 +12,30 @@
  * See the file epl-v10.html for the license text.
  * 
  *****************************************************************************/
-package de.cau.cs.kieler.ksbase.ui.handler;
+package de.cau.cs.kieler.ksbase.ui;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.RootEditPart;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editpolicies.CanonicalEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramCommandStack;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
+import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramGraphicalViewer;
+import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
@@ -37,12 +44,28 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.Transformation;
-import de.cau.cs.kieler.viewmanagement.RunLogic;
-import de.cau.cs.kieler.viewmanagement.triggers.LayoutTrigger;
+import de.cau.cs.kieler.ksbase.ui.handler.ExecuteTransformationRequest;
+import de.cau.cs.kieler.ksbase.ui.listener.ITransformationEventListener;
 
 public class TransformationUIManager {
 
 	public static final TransformationUIManager instance = new TransformationUIManager();
+	private LinkedList<ITransformationEventListener> postTransformationEventListeners;
+
+	private TransformationUIManager() {
+		postTransformationEventListeners = new LinkedList<ITransformationEventListener>();
+	}
+
+	public final void addPostTransformationListener(
+			ITransformationEventListener listener) {
+		System.out.println("listener add");
+		postTransformationEventListeners.add(listener);
+	}
+
+	public final void removePostTransformationListener(
+			ITransformationEventListener listener) {
+		postTransformationEventListeners.remove(listener);
+	}
 
 	/**
 	 * Creates and executes a transformation command by creating a request and
@@ -55,15 +78,17 @@ public class TransformationUIManager {
 	 * @param transformation
 	 *            The transformation that should be executed
 	 */
-	public final void createAndExecuteTransformationCommand(final ExecutionEvent event,
-			final EditorTransformationSettings editor, final Transformation transformation) {
+	public final void createAndExecuteTransformationCommand(
+			final ExecutionEvent event,
+			final EditorTransformationSettings editor,
+			final Transformation transformation) {
 
 		IEditorPart activeEditor = HandlerUtil.getActiveEditor(event);
 		// System.out.println("Diag childs (pre): " +
 		// ((DiagramEditor)activeEditor).getDiagram().getVisibleChildren().size());
 		ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event)
 				.getSelectionService().getSelection();
-		
+
 		if (selection instanceof StructuredSelection && !selection.isEmpty()) {
 
 			// First, we have to store the transformation file because Xtend
@@ -84,7 +109,7 @@ public class TransformationUIManager {
 				if (!file.exists()) {
 					if (!file.createNewFile()) {
 						// FIXME: We were unable to create the file !
-						return; 
+						return;
 					}
 				}
 				out.write(editor.getExtFile().getBytes());
@@ -95,7 +120,8 @@ public class TransformationUIManager {
 				ExecuteTransformationRequest request = new ExecuteTransformationRequest(
 						activeEditor, transformation.getTransformationName(),
 						file.getAbsolutePath(), selection, editor
-								.getModelPackageClass(), transformation.getParameter());
+								.getModelPackageClass(), transformation
+								.getParameter());
 
 				Command transformationCommand = selectedElement
 						.getCommand(request);
@@ -105,7 +131,7 @@ public class TransformationUIManager {
 				Object adapter = activeEditor.getAdapter(CommandStack.class);
 				if (adapter instanceof DiagramCommandStack) {
 					commandStack = (DiagramCommandStack) adapter;
-					}
+				}
 				if (commandStack == null) {
 					commandStack = new DiagramCommandStack(
 							((DiagramEditor) activeEditor)
@@ -120,37 +146,55 @@ public class TransformationUIManager {
 			} finally {
 
 				// Remove temporary Xtend file
-				
+
 				if (file != null) {
 					if (!file.delete()) {
 						System.out
 								.println("Warning: Unable to delete temporary xtend file");
 					}
 				}
-				
+
 				// update edit policies, so GMF will generate diagram elements
 				// for model elements which have been generated during the
 				// transformation but
 
+				if (activeEditor instanceof DiagramEditor) {
+					EObject obj = ((View) ((DiagramEditor) activeEditor)
+							.getDiagramEditPart().getModel()).getElement();
 
+					List<?> editPolicies = CanonicalEditPolicy
+							.getRegisteredEditPolicies(obj);
+					for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
+
+						CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it
+								.next();
+
+						nextEditPolicy.refresh();
+					}
+
+					IDiagramGraphicalViewer graphViewer = ((DiagramEditor) activeEditor)
+							.getDiagramGraphicalViewer();
+					graphViewer.flush();
+				}
 				// not translated to gmf now:
 				if (activeEditor instanceof DiagramEditor) {
 
 					// If auto-layout is activated, execute now:
-					//FIXME: Changing to 'execute all selected vm tools'
+					// FIXME: Changing to 'execute all selected vm tools'
 					{
 						// Get last parent which is a shapeEditPart
 						EditPart par = selectedElement.getParent();
 						EditPart layoutTarget = selectedElement;
 						if (par instanceof RootEditPart) { // root element has
-															// been selected, so
-															// layout active
-															// element
-							//Until Viewmanagement works for root elements
-							DiagramLayoutManager.layout(activeEditor, selectedElement, true, false);
+							// been selected, so
+							// layout active
+							// element
+							// Until Viewmanagement works for root elements
+							DiagramLayoutManager.layout(activeEditor,
+									selectedElement, true, false);
 						}
 						if (par != null) { // if a transition is selected, the
-											// parent is null
+							// parent is null
 							while (!(par instanceof RootEditPart)) {
 								if (par instanceof ShapeEditPart) {
 									layoutTarget = par;
@@ -161,15 +205,11 @@ public class TransformationUIManager {
 								par = par.getParent();
 							}
 						}
-						/*
-						RunLogic.getInstance().init();
-						RunLogic.getInstance().registerListeners();
-						*/
-						LayoutTrigger trigger = ((LayoutTrigger) RunLogic
-								.getTrigger("LayoutTrigger"));
-						if (trigger != null) {
-							trigger.triggerAutoLayout(layoutTarget,
-									activeEditor);
+						// Notify event listeners:
+						for (ITransformationEventListener transformationEvent : postTransformationEventListeners) {
+							transformationEvent
+									.transformationExecuted(new Object[] {
+											layoutTarget, activeEditor });
 						}
 					}
 				}
