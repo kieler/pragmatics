@@ -20,7 +20,7 @@ import org.osgi.framework.BundleContext;
 import de.cau.cs.kieler.ksbase.viewmanagement.combinations.KSBasECombination;
 /**
  * The activator class controls the plug-in life cycle
- * @author Michael Matzen
+ * @author Michael Matzen - mim AT informatik.uni-kiel.de
  */
 public class KSBasEViewManagementPlugin extends AbstractUIPlugin {
 

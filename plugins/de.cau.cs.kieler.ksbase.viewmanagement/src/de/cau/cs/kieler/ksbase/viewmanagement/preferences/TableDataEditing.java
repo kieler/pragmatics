@@ -20,7 +20,6 @@ import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
 
-import de.cau.cs.kieler.ksbase.ui.preferences.DataTableViewer;
 import de.cau.cs.kieler.ksbase.viewmanagement.combinations.KSBasECombination;
 
 /**

@@ -28,7 +28,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import de.cau.cs.kieler.ksbase.ui.TransformationUIManager;
-import de.cau.cs.kieler.ksbase.ui.preferences.DataTableViewer;
 import de.cau.cs.kieler.ksbase.viewmanagement.KSBasEViewManagementPlugin;
 import de.cau.cs.kieler.ksbase.viewmanagement.combinations.KSBasECombination;
 import de.cau.cs.kieler.viewmanagement.RunLogic;
@@ -36,7 +35,7 @@ import de.cau.cs.kieler.viewmanagement.RunLogic;
 /**
  * Preference page that configures the post-transformation
  * actions.
- * @author Michael Matzen
+ * @author Michael Matzen - mim AT informatik.uni-kiel.de
  *
  */
 public class PostTransformationPreferencePage extends PreferencePage implements

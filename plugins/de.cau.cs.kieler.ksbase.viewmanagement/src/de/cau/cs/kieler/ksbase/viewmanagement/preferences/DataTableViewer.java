@@ -12,7 +12,7 @@
  * See the file epl-v10.html for the license text.
  ******************************************************************************/
 
-package de.cau.cs.kieler.ksbase.ui.preferences;
+package de.cau.cs.kieler.ksbase.viewmanagement.preferences;
 
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;

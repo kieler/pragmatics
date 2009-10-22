@@ -44,6 +44,14 @@ import de.cau.cs.kieler.ksbase.core.Transformation;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
 import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 
+/**
+ * Creates menus for all registered editor
+ * transformation settings and contributes them when
+ * starting an eclipse instance.
+ * 
+ * @author Michael Matzen - mim AT informatik.uni-kiel.de
+ *
+ */
 @SuppressWarnings("restriction")
 public final class DynamicMenuContributions {
 

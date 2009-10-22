@@ -21,7 +21,7 @@ import org.eclipse.ui.IEditorPart;
 /**
  * Request for the execution of a model transformation.
  * 
- * @author Michael Matzen
+ * @author Michael Matzen - mim AT informatik.uni-kiel.de
  */
 public class ExecuteTransformationRequest extends Request {
 

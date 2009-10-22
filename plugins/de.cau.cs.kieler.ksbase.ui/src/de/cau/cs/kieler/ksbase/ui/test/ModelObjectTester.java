@@ -31,7 +31,8 @@ import de.cau.cs.kieler.ksbase.core.TransformationManager;
 /**
  * A property tester which checks if a selected diagram object matches
  * a given model element.
- * @author Michael Matzen
+ * 
+ * @author Michael Matzen - mim AT informatik.uni-kiel.de
  *
  */
 public class ModelObjectTester extends PropertyTester {

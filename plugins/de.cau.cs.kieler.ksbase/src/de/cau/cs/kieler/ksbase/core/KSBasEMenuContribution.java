@@ -20,7 +20,8 @@ import java.util.LinkedList;
 /**
  * A menu contribution, defined by an extension point.
  * Contains a list of commands, sub menus and a data property. 
- * @author mim
+ * 
+ * @author Michael Matzen - mim AT informatik.uni-kiel.de
  *
  */
 public class KSBasEMenuContribution {

@@ -24,7 +24,7 @@ import de.cau.cs.kieler.ksbase.ui.listener.ITransformationEventListener;
 /**
  * A viewmanagement trigger which is called when a transformation command
  * has been executed.
- * @author Michael Matzen
+ * @author Michael Matzen - mim AT informatik.uni-kiel.de
  *
  */
 public class KSBasETrigger extends ATrigger implements

@@ -24,7 +24,7 @@ import org.eclipse.xtend.typesystem.emf.EmfMetaModel;
  * An extension of a MWE default workflow, used to perform custom
  * initializations.
  * 
- * @author Michael Matzen
+ * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
  */
 @SuppressWarnings("restriction")

@@ -23,10 +23,10 @@ import org.eclipse.core.runtime.Platform;
 
 /**
  * The main storage and management class. Contains a list of currently
- * registered editors. Manages the creation of ExecuteTransformationCommands.
+ * registered editors.
  * Handles import, export and Xtend file parsing.
  * 
- * @author Michael Matzen
+ * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
  */
 public class TransformationManager {

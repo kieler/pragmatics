@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IContributor;
 /**
  * Stores the KSBasE settings for one specific editor.
  * 
- * @author Michael Matzen
+ * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
  */
 public class EditorTransformationSettings {

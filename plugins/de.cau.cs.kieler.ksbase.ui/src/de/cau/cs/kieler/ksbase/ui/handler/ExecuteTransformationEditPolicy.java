@@ -28,7 +28,7 @@ import de.cau.cs.kieler.ksbase.core.Messages;
  * Edit policy used to execute a specific transformation. This edit policy
  * creates a {@link ExecuteTransformationCommand} to execute the transformation.
  * 
- * @author Michael Matzen
+ * @author Michael Matzen - mim AT informatik.uni-kiel.de
  */
 public class ExecuteTransformationEditPolicy extends AbstractEditPolicy {
 

@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.eclipse.swt.widgets.Display;
 
-import de.cau.cs.kieler.ksbase.ui.preferences.DataTableViewer;
 
 /**
  * The class TableDataList implements a list of TableData elements

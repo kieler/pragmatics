@@ -27,7 +27,7 @@ import java.util.List;
  * user/workbench.
  * This class is serializable.
  * 
- * @author Michael Matzen
+ * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
  */
 public class Transformation implements Serializable {

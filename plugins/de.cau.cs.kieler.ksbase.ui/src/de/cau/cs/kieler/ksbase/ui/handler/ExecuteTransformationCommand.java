@@ -50,7 +50,7 @@ import de.cau.cs.kieler.ksbase.core.KielerWorkflow;
  * The command to execute an Xtend transformation. Handles MWE initialization
  * too.
  * 
- * @author Michael Matzen
+ * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
  */
 public class ExecuteTransformationCommand extends AbstractTransactionalCommand {

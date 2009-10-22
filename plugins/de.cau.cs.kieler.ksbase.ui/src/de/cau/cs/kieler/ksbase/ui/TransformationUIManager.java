@@ -47,6 +47,14 @@ import de.cau.cs.kieler.ksbase.core.Transformation;
 import de.cau.cs.kieler.ksbase.ui.handler.ExecuteTransformationRequest;
 import de.cau.cs.kieler.ksbase.ui.listener.ITransformationEventListener;
 
+/**
+ * Transformation-UI manager. 
+ * Handles creation and execution of commands and 
+ * notify of transformationEvent listeners
+ * 
+ * @author Michael Matzen - mim AT informatik.uni-kiel.de
+ *
+ */
 public class TransformationUIManager {
 
 	public static final TransformationUIManager instance = new TransformationUIManager();
