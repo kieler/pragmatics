@@ -24,36 +24,21 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * for the content of an TableData entry within the table ViewPart.
  * 
  * @author Christian Motika - cmot AT informatik.uni-kiel.de
+ * 
+ * @changed Michael Matzen - mim AT informatik.uni-kiel.de
  */
 public class TableDataLabelProvider implements ITableLabelProvider {
 
 	// define icons
 	/** The Constant CHECKED. */
 	private static final Image CHECKED = AbstractUIPlugin
-			.imageDescriptorFromPlugin("de.cau.cs.kieler.viewmanagement",
+			.imageDescriptorFromPlugin("de.cau.cs.kieler.ksbase.viewmanagement",
 					"icons/checked.png").createImage();
 	
-//	/** The Constant CHECKED_DISABLED. */
-//	private static final Image CHECKED_DISABLED = AbstractUIPlugin
-//			.imageDescriptorFromPlugin("de.cau.cs.kieler.sim.table",
-//					"icons/checkedDisabled.png").createImage();
-//	
 	/** The Constant UNCHECKED. */
 	private static final Image UNCHECKED = AbstractUIPlugin
-			.imageDescriptorFromPlugin("de.cau.cs.kieler.viewmanagement",
+			.imageDescriptorFromPlugin("de.cau.cs.kieler.ksbase.viewmanagement",
 					"icons/unchecked.png").createImage();
-	
-//	/** The Constant UNCHECKED_DISABLED. */
-//	private static final Image UNCHECKED_DISABLED = AbstractUIPlugin
-//			.imageDescriptorFromPlugin("de.cau.cs.kieler.sim.table",
-//					"icons/uncheckedDisabled.png").createImage();
-//	
-//	/** The Constant PERMANENT. */
-//	private static final Image PERMANENT = AbstractUIPlugin
-//			.imageDescriptorFromPlugin("de.cau.cs.kieler.sim.table",
-//					"icons/permanent.png").createImage();
-
-	//-------------------------------------------------------------------------
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
@@ -61,30 +46,12 @@ public class TableDataLabelProvider implements ITableLabelProvider {
 	public Image getColumnImage(Object element, int columnIndex) {
 		TableData tableData = (TableData) element;
 		if (columnIndex == 0) {
-////			if (!tableData.isPermanent()) {
-				if (tableData.isComboActive())
+				if (tableData.isEffectActive())
 					return CHECKED;
 		
 				else 
 					return UNCHECKED;
 		}
-//				else
-//					return null;
-////			}
-//			else {
-//				if (tableData.isPresent())
-//					return CHECKED_DISABLED;
-//				else if (tableData.isSignal())
-//					return UNCHECKED_DISABLED;
-//				else
-//					return null;
-//			}
-//		}
-//		if (columnIndex == 2) {
-//			if (tableData.isPermanent()) {
-//				return PERMANENT;
-//			}
-//		}
 		return null;
 	}
 
@@ -101,7 +68,7 @@ public class TableDataLabelProvider implements ITableLabelProvider {
 		case 1 :  // PRESENT_COLUMN
 			return tableData.getEffectName();
 		case 2 : 
-			if (tableData.isComboActive()) {
+			if (tableData.isEffectActive()) {
 				return String.valueOf(tableData.getPriority());
 			}
 			else {

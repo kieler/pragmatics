@@ -65,19 +65,6 @@ public class TableDataList {
 		return tableDataList.indexOf(tableData);
 	}
 	
-	//-------------------------------------------------------------------------
-
-	/**
-	 * Resets the modified flag of an entry to false.
-	 */
-//	public void resetModified() {
-//		for (int c = 0; c < tableDataList.size(); c++) {
-//			tableDataList.get(c).setModified(false);
-//		}
-//	}
-//	
-	//-------------------------------------------------------------------------
-
 	/**
 	 * Updates the view of the parent tree table viewer asynchronously.
 	 */

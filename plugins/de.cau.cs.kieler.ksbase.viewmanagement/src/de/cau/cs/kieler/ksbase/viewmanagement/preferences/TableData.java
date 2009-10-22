@@ -21,7 +21,8 @@ package de.cau.cs.kieler.ksbase.viewmanagement.preferences;
  * and a value String expression.
  * 
  * @author Christian Motika - cmot AT informatik.uni-kiel.de
- * @changed nbe
+ * 
+ * @changed Michael Matzen - mim AT informatik.uni-kiel.de
  */
 public class TableData {
 
@@ -37,10 +38,6 @@ public class TableData {
 	/** The effects priority */
 	private int priority;
 	
-	
-	
-	//-------------------------------------------------------------------------
-
 	/**
 	 * Gets the parent TableDataList.
 	 * 
@@ -50,44 +47,13 @@ public class TableData {
 		return tableDataList;
 	}
 	
-	//-------------------------------------------------------------------------
-
 	/**
 	 * Instantiates a new TableData entry.
 	 * 
 	 * @param parentTableDataList the parent TableDataList
-	 */
-//	public TableData(TableDataList parentTableDataList) {
-//		this.tableDataList = parentTableDataList;
-//		this.comboActive = false;
-//			this.comboName = "";
-//	}
-	
-	//-------------------------------------------------------------------------
-
-	/**
-	 * Instantiates a new TableData entry.
-	 * 
-	 * @param parentTableDataList the parent TableDataList
-	 * @param key the key of the entry
-	 */
-//	public TableData(TableDataList parentTableDataList, 
-//					 String key) {
-//		this.tableDataList = parentTableDataList;
-//		this.comboActive = false;
-//		
-//		this.comboName = key;
-//
-//	}
-	
-	//-------------------------------------------------------------------------
-
-	/**
-	 * Instantiates a new TableData entry.
-	 * 
-	 * @param parentTableDataList the parent TableDataList
-	 * @param key the key of the entry
-	 * @param value the value of the entry
+	 * @param effectActive Is the value initially activated?
+	 * @param effectName Name of the effect
+	 * @param priority Initial priority.
 	 */
 	public TableData(TableDataList parentTableDataList,boolean effectActive, 
 			         String effectName, int priority
@@ -99,88 +65,27 @@ public class TableData {
 	
 	}
 	
-	//-------------------------------------------------------------------------
-
 	/**
-	 * Instantiates a new TableData.
+	 * Gets the name of the effect.
 	 * 
-	 * @param parentTableDataList the parent TableDataList
-	 * @param present the present flag of the entry
-	 * @param key the key of the entry
-	 * @param value the value of the entry
-	 */
-//	public TableData(TableDataList parentTableDataList, 
-//					 boolean present, 
-//					 String key, 
-//					 String value) {
-//		this.tableDataList = parentTableDataList;
-//		this.comboActive = present;
-//		this.comboName = key;
-//
-//	}
-
-	//-------------------------------------------------------------------------
-
-	/**
-	 * Instantiates a new TableData.
-	 * 
-	 * @param parentTableDataList the parent TableDataList
-	 * @param present the present flag of the entry
-	 * @param signal the signal flag of the entry
-	 * @param key the key of the entry
-	 * @param value the value of the entry
-	 */
-//	public TableData(TableDataList parentTableDataList, 
-//			 boolean present, 
-//			 boolean signal,
-//			 String key, 
-//			 String value) {
-//		this.tableDataList = parentTableDataList;
-//		this.comboActive = present;
-//
-//		this.comboName = key;
-//
-//	}
-	
-	//-------------------------------------------------------------------------
-
-	/**
-	 * Gets the value of the entry.
-	 * 
-	 * @return the value
-	 */
-//	public String getValue() {
-//		return this.value;
-//	}
-	
-	//-------------------------------------------------------------------------
-
-	/**
-	 * Gets the key of the entry.
-	 * 
-	 * @return the key
+	 * @return The name of the effect
 	 */
 	public String getEffectName() {
 		return this.effectName;
 	}
 
-	//-------------------------------------------------------------------------
-
 	/**
-	 * Sets the value of the entry.
-	 * 
-	 * @param value the new value
+	 * Gets the priority of the entry.
+	 * @return the priority value
 	 */
-//	public void setValue(String value) {
-//		this.value = value;
-//	}
-//	
-	//-------------------------------------------------------------------------
-
 	public int getPriority() {
 		return priority;
 	}
 
+	/**
+	 * Sets the priority value of this entry.
+	 * @param priority The new priority
+	 */
 	public void setPriority(int priority) {
 		this.priority = priority;
 	}
@@ -188,7 +93,7 @@ public class TableData {
 	/**
 	 * Sets the key of the entry.
 	 * 
-	 * @param comboName the new key
+	 * @param effectName the new key
 	 * 
 	 * @throws Exception the exception if the key already exists in the parent
 	 * 			         TableDataList
@@ -199,96 +104,23 @@ public class TableData {
 			throw new Exception("The key '"+effectName+"' already exists!");
 		this.effectName = effectName;
 	}
-//	
-	//-------------------------------------------------------------------------
 
 	/**
 	 * Sets the present flag (for signal entries only).
 	 * 
-	 * @param present the new present
+	 * @param active the new present
 	 */
-	public void setComboActive(boolean active) {
+	public void setEffectActive(boolean active) {
 		this.effectActive = active;
 	}
-	
-	//-------------------------------------------------------------------------
 
 	/**
 	 * Checks whether the signal is present (for signal entries only).
 	 * 
 	 * @return true, if signal is present
 	 */
-	public boolean isComboActive() {
+	public boolean isEffectActive() {
 		//return present flag if signal AND present 
 		return (this.effectActive);
 	}
-
-	//-------------------------------------------------------------------------
-
-	/**
-	 * Sets the signal flag of an entry.
-	 * 
-	 * @param signal true, if entry is a signal
-	 */
-//	public void setSignal(boolean signal) {
-//		this.signal = signal;
-//	}
-	
-	//-------------------------------------------------------------------------
-
-	/**
-	 * Checks whether the entry is a signal.
-	 * 
-	 * @return true, if entry is a signal
-	 */
-//	public boolean isSignal() {
-//		//return signal 
-//		return this.signal;
-//	}
-//	
-	//-------------------------------------------------------------------------
-
-	/**
-	 * Sets the modified flag of an entry.
-	 * 
-	 * @param modified true, if entry was modified
-	 */
-//	public void setModified(boolean modified) {
-//		this.modified = modified;
-//	}
-	
-	//-------------------------------------------------------------------------
-
-	/**
-	 * Checks whether entry is flagged as modified.
-	 * 
-	 * @return true, entry is modified
-	 */
-//	public boolean isModified() {
-//		//return modified flag if modified OR permanent 
-//		return (this.modified || this.permanent);
-//	}
-
-	//-------------------------------------------------------------------------
-
-	/**
-	 * Sets the permanent flag of an entry.
-	 * 
-	 * @param permanent true, if entry is permanent
-	 */
-//	public void setPermanent(boolean permanent) {
-//		this.permanent = permanent;
-//	}
-//	
-	//-------------------------------------------------------------------------
-
-	/**
-	 * Checks whether entry is flagged as permanent.
-	 * 
-	 * @return true, if entry is permanent
-	 */
-//	public boolean isPermanent() {
-//		return this.permanent;
-//	}
-	
 }

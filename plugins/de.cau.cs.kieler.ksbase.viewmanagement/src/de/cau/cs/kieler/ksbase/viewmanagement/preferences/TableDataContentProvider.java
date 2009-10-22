@@ -14,12 +14,9 @@
 
 package de.cau.cs.kieler.ksbase.viewmanagement.preferences;
 
-
-//import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-//IStructuredContentProvider
 /**
  * The Class TableDataContentProvider.
  *

@@ -34,6 +34,8 @@ import de.cau.cs.kieler.ksbase.viewmanagement.combinations.KSBasECombination;
  * access to the DataTableViewer.
  * 
  * @author Christian Motika - cmot AT informatik.uni-kiel.de
+ * 
+ * @changed Michael Matzen - mim AT informatik.uni-kiel.de
  */
 public class TableDataEditing extends EditingSupport {
 	
@@ -106,7 +108,7 @@ public class TableDataEditing extends EditingSupport {
 
 		switch (this.columnIndex) {
 		case 0:
-			if(tableData.isComboActive()){
+			if(tableData.isEffectActive()){
 				return true;
 			}
 			else return false;
@@ -114,7 +116,7 @@ public class TableDataEditing extends EditingSupport {
 		case 1:
 			break;
 		case 2:
-			if (tableData.isComboActive()) {
+			if (tableData.isEffectActive()) {
 				return "";
 			}
 			else {
@@ -135,14 +137,14 @@ public class TableDataEditing extends EditingSupport {
 				if (element instanceof TableData){
 					TableData data = (TableData)element;
 					KSBasECombination.addEffect(data.getEffectName(), data.getPriority());
-					data.setComboActive(true);
+					data.setEffectActive(true);
 				}
 			}
 			else {
 				if (element instanceof TableData){
 					TableData data = (TableData)element;
 					KSBasECombination.removeEffect(data.getEffectName(), data.getPriority());
-					data.setComboActive(false);
+					data.setEffectActive(false);
 				}
 			}
 			break;
@@ -152,7 +154,7 @@ public class TableDataEditing extends EditingSupport {
 			try {
 				int newPrio = Integer.valueOf((String) value);
 				TableData data = (TableData)element;
-				if (data.isComboActive()) {
+				if (data.isEffectActive()) {
 					KSBasECombination.changePriority(data.getEffectName(), data.getPriority(), newPrio);
 				}
 				data.setPriority(newPrio);
