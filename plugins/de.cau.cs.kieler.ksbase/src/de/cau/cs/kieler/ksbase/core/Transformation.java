@@ -79,6 +79,7 @@ public class Transformation implements Serializable {
     }
 
     /**
+     * Gets the name of the transformation.
      * @return The transformation name used by the menus. 
      */
     public final String getName() {
@@ -110,6 +111,7 @@ public class Transformation implements Serializable {
     }
     
     /**
+     * Gets the list of parameters.
      * @return A list of parameters.
      */
     public final List<String> getParameterList() {
@@ -121,7 +123,8 @@ public class Transformation implements Serializable {
     }
     
     /**
-     * @return An array of parameters, can only be null if not initialized.
+     * Gets the list of parameters as an array, may be null if not initialized.
+     * @return An array of parameters.
      */
     public final String[] getParameter() {
 		return parameter.clone();

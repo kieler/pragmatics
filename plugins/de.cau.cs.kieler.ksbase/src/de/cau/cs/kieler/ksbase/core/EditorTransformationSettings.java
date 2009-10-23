@@ -109,7 +109,7 @@ public class EditorTransformationSettings {
 		this.modelPackageClass = modelPackageClass;
 	}
 
-	/**
+	/** Gets the list of existing menu contributions.
 	 * @return The list of menu contributions for this editor
 	 */
 	public final LinkedList<KSBasEMenuContribution> getMenuContributions() {

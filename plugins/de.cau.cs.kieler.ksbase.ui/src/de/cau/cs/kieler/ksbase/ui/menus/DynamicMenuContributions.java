@@ -33,6 +33,11 @@ import org.eclipse.core.runtime.ContributorFactoryOSGi;
 import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.jface.bindings.BindingManagerEvent;
+import org.eclipse.jface.bindings.IBindingManagerListener;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.keys.BindingService;
+import org.eclipse.ui.keys.IBindingService;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -155,7 +160,7 @@ public final class DynamicMenuContributions {
 
 						// KeyBindings
 						if (t.getKeyboardShortcut() != null
-								&& t.getKeyboardShortcut().length() > 0) {
+								&& t.getKeyboardShortcut().length() > 0 && editor.getContext() != null && editor.getContext().length() > 0) {
 							Element key = extension.createElement("key");
 							key.setAttribute("commandId", commandID);
 							key.setAttribute("contextId", editor.getContext());
@@ -268,8 +273,16 @@ public final class DynamicMenuContributions {
 							.transform(new DOMSource(extension),
 									new StreamResult(str));
 
-					//System.out.println(str.toString());
-
+					System.out.println(str.toString());
+					IBindingService bserv = (BindingService) PlatformUI.getWorkbench().getService(IBindingService.class);
+					bserv.addBindingManagerListener(new IBindingManagerListener() {
+						
+						public void bindingManagerChanged(BindingManagerEvent event) {
+							if (event.isActiveBindingsChanged()) {
+								
+							}
+						}
+					});
 					IContributor contributor;
 					if (editor.getContributor() != null) {
 						contributor = editor.getContributor();
