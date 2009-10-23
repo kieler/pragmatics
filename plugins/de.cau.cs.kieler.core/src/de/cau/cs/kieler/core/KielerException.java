@@ -40,6 +40,7 @@ public class KielerException extends Exception {
 		LAYOUT_NOT_APPLICABLE,
 	}
 	
+	/** the type of exception */
 	private Type type = Type.UNDEFINED;
 	
 	/**
