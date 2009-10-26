@@ -54,24 +54,43 @@ import de.cau.cs.kieler.ksbase.ui.listener.ITransformationEventListener;
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
  */
-public class TransformationUIManager {
+public final class TransformationUIManager {
 
-    public static final TransformationUIManager instance = new TransformationUIManager();
+    /** Thread-safe initialization. **/
+    public static final TransformationUIManager INSTANCE = new TransformationUIManager();
+    /**
+     * The list of listeners to notify after a transformation has been executed.
+     **/
     private LinkedList<ITransformationEventListener> postTransformationEventListeners;
 
+    /**
+     * The default constructor.
+     */
     private TransformationUIManager() {
-	postTransformationEventListeners = new LinkedList<ITransformationEventListener>();
+        postTransformationEventListeners = new LinkedList<ITransformationEventListener>();
     }
 
-    public final void addPostTransformationListener(
-	    ITransformationEventListener listener) {
-	System.out.println("listener add");
-	postTransformationEventListeners.add(listener);
+    /**
+     * Adds a listener to the transformation listener queue.
+     * 
+     * @param listener
+     *            The listener to add
+     */
+    public void addPostTransformationListener(
+            final ITransformationEventListener listener) {
+        System.out.println("listener add");
+        postTransformationEventListeners.add(listener);
     }
 
-    public final void removePostTransformationListener(
-	    ITransformationEventListener listener) {
-	postTransformationEventListeners.remove(listener);
+    /**
+     * Removes a listener from the listener queue.
+     * 
+     * @param listener
+     *            The listener to remove.
+     */
+    public void removePostTransformationListener(
+            final ITransformationEventListener listener) {
+        postTransformationEventListeners.remove(listener);
     }
 
     /**
@@ -85,143 +104,137 @@ public class TransformationUIManager {
      * @param transformation
      *            The transformation that should be executed
      */
-    public final void createAndExecuteTransformationCommand(
-	    final ExecutionEvent event,
-	    final EditorTransformationSettings editor,
-	    final Transformation transformation) {
+    public void createAndExecuteTransformationCommand(
+            final ExecutionEvent event,
+            final EditorTransformationSettings editor,
+            final Transformation transformation) {
 
-	IEditorPart activeEditor = HandlerUtil.getActiveEditor(event);
-	// System.out.println("Diag childs (pre): " +
-	// ((DiagramEditor)activeEditor).getDiagram().getVisibleChildren().size());
-	ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event)
-	        .getSelectionService().getSelection();
+        IEditorPart activeEditor = HandlerUtil.getActiveEditor(event);
+        // System.out.println("Diag childs (pre): " +
+        // ((DiagramEditor)activeEditor).getDiagram().getVisibleChildren().size());
+        ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event)
+                .getSelectionService().getSelection();
 
-	if (selection instanceof StructuredSelection && !selection.isEmpty()) {
+        if (selection instanceof StructuredSelection && !selection.isEmpty()) {
 
-	    // First, we have to store the transformation file because Xtend
-	    // doesn't execute strings
-	    // We have to do this every time, because we can't be sure that the
-	    // file we wrote last time is still valid. We will write it
-	    // to the meta-inf folder:
+            // First, we have to store the transformation file because Xtend
+            // doesn't execute strings
+            // We have to do this every time, because we can't be sure that the
+            // file we wrote last time is still valid. We will write it
+            // to the meta-inf folder:
 
-	    EditPart selectedElement = (EditPart) ((StructuredSelection) selection)
-		    .getFirstElement();
+            EditPart selectedElement = (EditPart) ((StructuredSelection) selection)
+                    .getFirstElement();
 
-	    File file = null;
-	    try {
-		IPath path = ResourcesPlugin.getPlugin().getStateLocation();
-		file = File.createTempFile("extension", ".ext", new File(path
-		        .toOSString()));
-		FileOutputStream out = new FileOutputStream(file);
-		if (!file.exists()) {
-		    if (!file.createNewFile()) {
-			// FIXME: We were unable to create the file !
-			return;
-		    }
-		}
-		out.write(editor.getExtFile().getBytes());
-		out.flush();
-		out.close();
+            File file = null;
+            try {
+                IPath path = ResourcesPlugin.getPlugin().getStateLocation();
+                file = File.createTempFile("extension", ".ext", new File(path
+                        .toOSString()));
+                FileOutputStream out = new FileOutputStream(file);
+                if (!file.exists()) {
+                    if (!file.createNewFile()) {
+                        // FIXME: We were unable to create the file !
+                        return;
+                    }
+                }
+                out.write(editor.getExtFile().getBytes());
+                out.flush();
+                out.close();
 
-		// Create request
-		ExecuteTransformationRequest request = new ExecuteTransformationRequest(
-		        activeEditor, transformation.getTransformationName(),
-		        file.getAbsolutePath(), selection, editor
-		                .getModelPackageClass(), transformation
-		                .getParameter());
+                // Create request
+                ExecuteTransformationRequest request = new ExecuteTransformationRequest(
+                        activeEditor, transformation.getTransformationName(),
+                        file.getAbsolutePath(), selection, editor
+                                .getModelPackageClass(), transformation
+                                .getParameter());
 
-		Command transformationCommand = selectedElement
-		        .getCommand(request);
+                Command transformationCommand = selectedElement
+                        .getCommand(request);
 
-		// gets a command stack to execute the command
-		DiagramCommandStack commandStack = null;
-		Object adapter = activeEditor.getAdapter(CommandStack.class);
-		if (adapter instanceof DiagramCommandStack) {
-		    commandStack = (DiagramCommandStack) adapter;
-		}
-		if (commandStack == null) {
-		    commandStack = new DiagramCommandStack(
-			    ((DiagramEditor) activeEditor)
-			            .getDiagramEditDomain());
-		}
-		commandStack.execute(transformationCommand);
-	    } catch (FileNotFoundException e) {
+                // gets a command stack to execute the command
+                DiagramCommandStack commandStack = null;
+                Object adapter = activeEditor.getAdapter(CommandStack.class);
+                if (adapter instanceof DiagramCommandStack) {
+                    commandStack = (DiagramCommandStack) adapter;
+                }
+                if (commandStack == null) {
+                    commandStack = new DiagramCommandStack(
+                            ((DiagramEditor) activeEditor)
+                                    .getDiagramEditDomain());
+                }
+                commandStack.execute(transformationCommand);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } finally {
 
-	    } catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	    } finally {
+                // Remove temporary Xtend file
 
-		// Remove temporary Xtend file
+                if (file != null) {
+                    if (!file.delete()) {
+                        System.out
+                                .println("Warning: Unable to delete temporary xtend file");
+                    }
+                }
 
-		if (file != null) {
-		    if (!file.delete()) {
-			System.out
-			        .println("Warning: Unable to delete temporary xtend file");
-		    }
-		}
+                // update edit policies, so GMF will generate diagram elements
+                // for model elements which have been generated during the
+                // transformation but
 
-		// update edit policies, so GMF will generate diagram elements
-		// for model elements which have been generated during the
-		// transformation but
+                if (activeEditor instanceof DiagramEditor) {
+                    EObject obj = ((View) ((DiagramEditor) activeEditor)
+                            .getDiagramEditPart().getModel()).getElement();
 
-		if (activeEditor instanceof DiagramEditor) {
-		    EObject obj = ((View) ((DiagramEditor) activeEditor)
-			    .getDiagramEditPart().getModel()).getElement();
+                    List<?> editPolicies = CanonicalEditPolicy
+                            .getRegisteredEditPolicies(obj);
+                    for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
 
-		    List<?> editPolicies = CanonicalEditPolicy
-			    .getRegisteredEditPolicies(obj);
-		    for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
+                        CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it
+                                .next();
 
-			CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it
-			        .next();
+                        nextEditPolicy.refresh();
+                    }
 
-			nextEditPolicy.refresh();
-		    }
+                    IDiagramGraphicalViewer graphViewer = ((DiagramEditor) activeEditor)
+                            .getDiagramGraphicalViewer();
+                    graphViewer.flush();
+                }
+                // not translated to gmf now:
+                if (activeEditor instanceof DiagramEditor) {
 
-		    IDiagramGraphicalViewer graphViewer = ((DiagramEditor) activeEditor)
-			    .getDiagramGraphicalViewer();
-		    graphViewer.flush();
-		}
-		// not translated to gmf now:
-		if (activeEditor instanceof DiagramEditor) {
+                    // Get last parent which is a shapeEditPart
+                    EditPart par = selectedElement.getParent();
+                    EditPart layoutTarget = selectedElement;
+                    if (par instanceof RootEditPart) { // root element has
+                        // been selected, so layout active element until
+                        // Viewmanagement works for root elements
+                        DiagramLayoutManager.layout(activeEditor,
+                                selectedElement, true, false);
+                    }
+                    if (par != null) { // if a transition is selected, the
+                        // parent is null
+                        while (!(par instanceof RootEditPart)) {
+                            if (par instanceof ShapeEditPart) {
+                                layoutTarget = par;
+                            }
+                            if (par.getParent() == null) {
+                                break;
+                            }
+                            par = par.getParent();
+                        }
+                    }
+                    // Notify event listeners:
+                    for (ITransformationEventListener transformationEvent : postTransformationEventListeners) {
+                        transformationEvent
+                                .transformationExecuted(new Object[] {
+                                        layoutTarget, activeEditor });
+                    }
+                }
 
-		    // If auto-layout is activated, execute now:
-		    // FIXME: Changing to 'execute all selected vm tools'
-		    {
-			// Get last parent which is a shapeEditPart
-			EditPart par = selectedElement.getParent();
-			EditPart layoutTarget = selectedElement;
-			if (par instanceof RootEditPart) { // root element has
-			    // been selected, so
-			    // layout active
-			    // element
-			    // Until Viewmanagement works for root elements
-			    DiagramLayoutManager.layout(activeEditor,
-				    selectedElement, true, false);
-			}
-			if (par != null) { // if a transition is selected, the
-			    // parent is null
-			    while (!(par instanceof RootEditPart)) {
-				if (par instanceof ShapeEditPart) {
-				    layoutTarget = par;
-				}
-				if (par.getParent() == null) {
-				    break;
-				}
-				par = par.getParent();
-			    }
-			}
-			// Notify event listeners:
-			for (ITransformationEventListener transformationEvent : postTransformationEventListeners) {
-			    transformationEvent
-				    .transformationExecuted(new Object[] {
-				            layoutTarget, activeEditor });
-			}
-		    }
-		}
-
-	    }
-	}
+            }
+        }
     }
 }

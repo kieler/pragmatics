@@ -37,13 +37,13 @@ import de.cau.cs.kieler.viewmanagement.TriggerEventObject;
  */
 public class KSBasECombination extends ACombination {
 
-    /** List of effect names to execute **/
+    /** List of effect names to execute. **/
     public static HashMap<Integer, LinkedList<String>> effects = new HashMap<Integer, LinkedList<String>>();
-    /** Trigger object **/
+    /** Trigger object. **/
     private KSBasETrigger trigger;
-    /** Target editPart **/
+    /** Target editPart. **/
     private EditPart editPart;
-    /** Additional parameter **/
+    /** Additional parameter. **/
     private Object parameter;
 
     /**
@@ -54,13 +54,15 @@ public class KSBasECombination extends ACombination {
 
     /**
      * Evaluates if triggerEventObject is valid.
+     * @param triggerEvent The event to evaluate.
+     * @return True if the eventObject is valid
      */
     @Override
-    public boolean evaluate(TriggerEventObject triggerEvent) {
-	editPart = translateToEditPart(triggerEvent.getAffectedObject(),
-	        getRootEPAsParent());
-	parameter = triggerEvent.getParameters();
-	return true;
+    public boolean evaluate(final TriggerEventObject triggerEvent) {
+        editPart = translateToEditPart(triggerEvent.getAffectedObject(),
+                getRootEPAsParent());
+        parameter = triggerEvent.getParameters();
+        return true;
     }
 
     /**
@@ -68,18 +70,18 @@ public class KSBasECombination extends ACombination {
      */
     @Override
     public void execute() {
-	for (int prio : KSBasECombination.effects.keySet()) {
-	    for (String effectName : KSBasECombination.effects.get(prio)) {
-		AEffect effect = RunLogic.getEffect(effectName);
-		if (effect != null) {
-		    // Set effect target and parameter
-		    effect.setTarget(editPart);
-		    effect.setParameters(parameter);
-		    // Execute effect
-		    effect.execute();
-		}
-	    }
-	}
+        for (int prio : KSBasECombination.effects.keySet()) {
+            for (String effectName : KSBasECombination.effects.get(prio)) {
+                AEffect effect = RunLogic.getEffect(effectName);
+                if (effect != null) {
+                    // Set effect target and parameter
+                    effect.setTarget(editPart);
+                    effect.setParameters(parameter);
+                    // Execute effect
+                    effect.execute();
+                }
+            }
+        }
     }
 
     /**
@@ -89,12 +91,12 @@ public class KSBasECombination extends ACombination {
      */
     @Override
     public List<ATrigger> getTriggers() {
-	// Get trigger
-	this.trigger = (KSBasETrigger) RunLogic.getTrigger("KSBasETrigger");
-	// return trigger
-	List<ATrigger> triggers = new LinkedList<ATrigger>();
-	triggers.add(trigger);
-	return triggers;
+        // Get trigger
+        this.trigger = (KSBasETrigger) RunLogic.getTrigger("KSBasETrigger");
+        // return trigger
+        List<ATrigger> triggers = new LinkedList<ATrigger>();
+        triggers.add(trigger);
+        return triggers;
     }
 
     /**
@@ -106,15 +108,15 @@ public class KSBasECombination extends ACombination {
      *            Priority of the effect
      */
     public static final void addEffect(final String effectName,
-	    final int priority) {
-	LinkedList<String> list;
-	if (!KSBasECombination.effects.containsKey(priority)) {
-	    list = new LinkedList<String>();
-	} else {
-	    list = KSBasECombination.effects.get(priority);
-	}
-	list.add(effectName);
-	KSBasECombination.effects.put(priority, list);
+            final int priority) {
+        LinkedList<String> list;
+        if (!KSBasECombination.effects.containsKey(priority)) {
+            list = new LinkedList<String>();
+        } else {
+            list = KSBasECombination.effects.get(priority);
+        }
+        list.add(effectName);
+        KSBasECombination.effects.put(priority, list);
     }
 
     /**
@@ -126,11 +128,11 @@ public class KSBasECombination extends ACombination {
      *            Priority of the effect
      */
     public static final void removeEffect(final String effectName,
-	    final int priority) {
-	KSBasECombination.effects.get(priority).remove(effectName);
-	if (KSBasECombination.effects.get(priority).isEmpty()) {
-	    KSBasECombination.effects.remove(priority);
-	}
+            final int priority) {
+        KSBasECombination.effects.get(priority).remove(effectName);
+        if (KSBasECombination.effects.get(priority).isEmpty()) {
+            KSBasECombination.effects.remove(priority);
+        }
     }
 
     /**
@@ -144,9 +146,9 @@ public class KSBasECombination extends ACombination {
      *            New priority
      */
     public static final void changePriority(final String effectName,
-	    final int oldPrio, final int newPrio) {
-	KSBasECombination.removeEffect(effectName, oldPrio);
-	KSBasECombination.addEffect(effectName, newPrio);
+            final int oldPrio, final int newPrio) {
+        KSBasECombination.removeEffect(effectName, oldPrio);
+        KSBasECombination.addEffect(effectName, newPrio);
     }
 
     /**
@@ -155,22 +157,22 @@ public class KSBasECombination extends ACombination {
      * @param prefStore
      *            The store to read from
      */
-    public static final void storeEffects(IPreferenceStore prefStore) {
-	String effects = "";
-	for (int prio : KSBasECombination.effects.keySet()) {
-	    for (String effect : KSBasECombination.effects.get(prio)) {
-		if (effect.contains(";")) {
-		    // FIXME: ignore, because we are using ; as a separator, is
-		    // there a 'non valid' name char ?
-		    continue;
-		}
-		effects += effect + ";";
-		prefStore.setValue(effect, prio);
-	    }
-	}
-	// removing last ';' when storing effects
-	prefStore.setValue("storedEffects", effects.substring(0, effects
-	        .length() - 1));
+    public static final void storeEffects(final IPreferenceStore prefStore) {
+        String effectString = "";
+        for (int prio : KSBasECombination.effects.keySet()) {
+            for (String effect : KSBasECombination.effects.get(prio)) {
+                if (effect.contains(";")) {
+                    // FIXME: ignore, because we are using ; as a separator, is
+                    // there a 'non valid' name char ?
+                    continue;
+                }
+                effectString += effect + ";";
+                prefStore.setValue(effect, prio);
+            }
+        }
+        // removing last ';' when storing effects
+        prefStore.setValue("storedEffects", effectString.substring(0, effectString
+                .length() - 1));
     }
 
     /**
@@ -178,26 +180,26 @@ public class KSBasECombination extends ACombination {
      * odd to do this here, it is necessary because we want to use stored
      * settings even if the preference page has not been opened yet.
      * 
-     * @param prefStore
+     * @param prefStore The preference store that contains the stored objects
      */
-    public static final void initalizeEffects(IPreferenceStore prefStore) {
-	HashMap<Integer, LinkedList<String>> effects = new HashMap<Integer, LinkedList<String>>();
-	// First: read all stored effects
-	String storedEffects = prefStore.getString("storedEffects");
-	if (storedEffects != null && storedEffects.length() > 0) {
-	    // The effects are separated by ';'
-	    for (String effect : storedEffects.split(";")) {
-		int prio = prefStore.getInt(effect);
-		LinkedList<String> list;
-		if (effects.containsKey(prio)) {
-		    list = effects.get(prio);
-		} else {
-		    list = new LinkedList<String>();
-		}
-		list.add(effect);
-		effects.put(prio, list);
-	    }
-	    KSBasECombination.effects = effects;
-	}
+    public static final void initalizeEffects(final IPreferenceStore prefStore) {
+        HashMap<Integer, LinkedList<String>> effectList = new HashMap<Integer, LinkedList<String>>();
+        // First: read all stored effects
+        String storedEffects = prefStore.getString("storedEffects");
+        if (storedEffects != null && storedEffects.length() > 0) {
+            // The effects are separated by ';'
+            for (String effect : storedEffects.split(";")) {
+                int prio = prefStore.getInt(effect);
+                LinkedList<String> list;
+                if (effectList.containsKey(prio)) {
+                    list = effectList.get(prio);
+                } else {
+                    list = new LinkedList<String>();
+                }
+                list.add(effect);
+                effectList.put(prio, list);
+            }
+            KSBasECombination.effects = effectList;
+        }
     }
 }

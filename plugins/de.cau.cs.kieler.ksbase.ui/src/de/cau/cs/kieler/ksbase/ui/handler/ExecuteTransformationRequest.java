@@ -25,10 +25,10 @@ import org.eclipse.ui.IEditorPart;
  */
 public class ExecuteTransformationRequest extends Request {
 
-    /** The request, used to initiate a transformation */
+    /** The request, used to initiate a transformation. */
     public static final String REQ_EXEC_TRANS = "execute transformation";
 
-    // Variables used to initialize the command
+    /** Variables used to initialize the command. **/
     private IEditorPart editPart;
     private String command;
     private String fileName;
@@ -41,37 +41,37 @@ public class ExecuteTransformationRequest extends Request {
      * 
      * @param ePart
      *            The active EditPart
-     * @param command
+     * @param cmd
      *            The transformation command
-     * @param fileName
+     * @param file
      *            Name of the Xtend transformation file
-     * @param selection
+     * @param sel
      *            The active selection
-     * @param modelPackage
+     * @param modelPackageClass
      *            The model package for the active editor
-     * @param parameter
+     * @param parameters
      *            The parameters of the Xtend transformation
      */
     public ExecuteTransformationRequest(final IEditorPart ePart,
-	    final String command, final String fileName,
-	    final ISelection selection, final String modelPackage,
-	    final String[] parameter) {
-	super(REQ_EXEC_TRANS);
-	this.editPart = ePart;
-	this.command = command;
-	this.fileName = fileName;
-	this.modelPackage = modelPackage;
-	this.selection = selection;
-	this.parameter = parameter.clone();
+            final String cmd, final String file,
+            final ISelection sel, final String modelPackageClass,
+            final String[] parameters) {
+        super(REQ_EXEC_TRANS);
+        this.editPart = ePart;
+        this.command = cmd;
+        this.fileName = file;
+        this.modelPackage = modelPackageClass;
+        this.selection = sel;
+        this.parameter = parameters.clone();
     }
 
     /**
      * Sets the model package.
      * 
-     * @param modelPackage
+     * @param modelPackageClass The model package class.
      */
-    public final void setModelPackage(final String modelPackage) {
-	this.modelPackage = modelPackage;
+    public final void setModelPackage(final String modelPackageClass) {
+        this.modelPackage = modelPackageClass;
     }
 
     /**
@@ -80,16 +80,16 @@ public class ExecuteTransformationRequest extends Request {
      * @return modelPackage
      */
     public final String getModelPackage() {
-	return this.modelPackage;
+        return this.modelPackage;
     }
 
     /**
      * Sets the edit part.
      * 
-     * @param part
+     * @param epart The target edit part.
      */
-    public final void setEditPart(final IEditorPart part) {
-	this.editPart = part;
+    public final void setEditPart(final IEditorPart epart) {
+        this.editPart = epart;
     }
 
     /**
@@ -98,16 +98,16 @@ public class ExecuteTransformationRequest extends Request {
      * @return the editPart
      */
     public final IEditorPart getEditPart() {
-	return this.editPart;
+        return this.editPart;
     }
 
     /**
      * Sets the transformation command.
      * 
-     * @param command
+     * @param cmd The transformation command.
      */
-    public final void setCommand(final String command) {
-	this.command = command;
+    public final void setCommand(final String cmd) {
+        this.command = cmd;
     }
 
     /**
@@ -116,16 +116,16 @@ public class ExecuteTransformationRequest extends Request {
      * @return A Xtend method name
      */
     public final String getCommand() {
-	return this.command;
+        return this.command;
     }
 
     /**
      * Sets the filename.
      * 
-     * @param fileName
+     * @param file Name of the Xtend file.
      */
-    public final void setFileName(final String fileName) {
-	this.fileName = fileName;
+    public final void setFileName(final String file) {
+        this.fileName = file;
     }
 
     /**
@@ -134,16 +134,16 @@ public class ExecuteTransformationRequest extends Request {
      * @return A Xtend file name
      */
     public final String getFileName() {
-	return this.fileName;
+        return this.fileName;
     }
 
     /**
      * Sets the current selection.
      * 
-     * @param selection
+     * @param sel The active selection object 
      */
-    public final void setSelection(final ISelection selection) {
-	this.selection = selection;
+    public final void setSelection(final ISelection sel) {
+        this.selection = sel;
     }
 
     /**
@@ -152,24 +152,24 @@ public class ExecuteTransformationRequest extends Request {
      * @return an ISelection object
      */
     public final ISelection getSelection() {
-	return this.selection;
+        return this.selection;
     }
 
     /**
-     * Gets the list of parameters
+     * Gets the list of parameters.
      * 
      * @return a string array of parameters
      */
     public final String[] getParameter() {
-	return parameter.clone();
+        return parameter.clone();
     }
 
     /**
      * Sets the parameters for this transformation request .
      * 
-     * @param parameter
+     * @param parameters The transformation parameters
      */
-    public final void setParameter(final String[] parameter) {
-	this.parameter = parameter.clone();
+    public final void setParameter(final String[] parameters) {
+        this.parameter = parameters.clone();
     }
 }

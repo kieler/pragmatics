@@ -30,20 +30,31 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 public class KSBasEPreferencePage extends PreferencePage implements
         IWorkbenchPreferencePage {
 
+    /**
+     * Default constructor.
+     */
     public KSBasEPreferencePage() {
-	setDescription(Messages.KSBasEPreferencePage_Title);
-	noDefaultAndApplyButton();
+        setDescription(Messages.KSBasEPreferencePage_Title);
+        noDefaultAndApplyButton();
     }
 
+    /**
+     * Creates the contents of this page.
+     * Since this is only a group-page there is no content here.
+     * @param parent The parent composite.
+     * @return The created control.
+     */
     @Override
-    protected Control createContents(Composite parent) {
-	// TODO Auto-generated method stub
-	return null;
+    protected Control createContents(final Composite parent) {
+        return null;
     }
 
-    public void init(IWorkbench workbench) {
-	// TODO Auto-generated method stub
-
+    /**
+     * Initializes this preference page.
+     * @param workbench The workbench for this preference page.
+     */
+    public void init(final IWorkbench workbench) {
+        return;
     }
 
 }

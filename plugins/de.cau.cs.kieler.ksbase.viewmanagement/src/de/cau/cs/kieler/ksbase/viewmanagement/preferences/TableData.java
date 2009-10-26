@@ -27,12 +27,13 @@ public class TableData {
     /** The parent TableDataList the entry contains to. */
     private TableDataList tableDataList;
 
+    /** The status of the current entry. */
     private boolean effectActive;
 
     /** The key of the entry. */
     private String effectName;
 
-    /** The effects priority */
+    /** The effects priority. */
     private int priority;
 
     /**
@@ -41,7 +42,7 @@ public class TableData {
      * @return the parent TableDataList
      */
     public TableDataList getParentTableDataList() {
-	return tableDataList;
+        return tableDataList;
     }
 
     /**
@@ -49,19 +50,19 @@ public class TableData {
      * 
      * @param parentTableDataList
      *            the parent TableDataList
-     * @param effectActive
+     * @param isEffectActive
      *            Is the value initially activated?
-     * @param effectName
+     * @param effect
      *            Name of the effect
-     * @param priority
+     * @param prio
      *            Initial priority.
      */
-    public TableData(TableDataList parentTableDataList, boolean effectActive,
-	    String effectName, int priority) {
-	this.tableDataList = parentTableDataList;
-	this.effectActive = effectActive;
-	this.priority = priority;
-	this.effectName = effectName;
+    public TableData(final TableDataList parentTableDataList, final boolean isEffectActive,
+            final String effect, final int prio) {
+        this.tableDataList = parentTableDataList;
+        this.effectActive = isEffectActive;
+        this.priority = prio;
+        this.effectName = effect;
 
     }
 
@@ -71,7 +72,7 @@ public class TableData {
      * @return The name of the effect
      */
     public String getEffectName() {
-	return this.effectName;
+        return this.effectName;
     }
 
     /**
@@ -80,34 +81,35 @@ public class TableData {
      * @return the priority value
      */
     public int getPriority() {
-	return priority;
+        return priority;
     }
 
     /**
      * Sets the priority value of this entry.
      * 
-     * @param priority
+     * @param prio
      *            The new priority
      */
-    public void setPriority(int priority) {
-	this.priority = priority;
+    public void setPriority(final int prio) {
+        this.priority = prio;
     }
 
     /**
      * Sets the key of the entry.
      * 
-     * @param effectName
+     * @param effect
      *            the new key
      * 
      * @throws Exception
      *             the exception if the key already exists in the parent
      *             TableDataList
      */
-    public void setKey(String effectName) throws Exception {
-	// only set the key if unique
-	if (this.tableDataList.containsOther(effectName, this))
-	    throw new Exception("The key '" + effectName + "' already exists!");
-	this.effectName = effectName;
+    public void setKey(final String effect) throws Exception {
+        // only set the key if unique
+        if (this.tableDataList.containsOther(effect, this)) {
+            throw new Exception("The key '" + effect + "' already exists!");
+        }
+        this.effectName = effect;
     }
 
     /**
@@ -116,8 +118,8 @@ public class TableData {
      * @param active
      *            the new present
      */
-    public void setEffectActive(boolean active) {
-	this.effectActive = active;
+    public void setEffectActive(final boolean active) {
+        this.effectActive = active;
     }
 
     /**
@@ -126,7 +128,7 @@ public class TableData {
      * @return true, if signal is present
      */
     public boolean isEffectActive() {
-	// return present flag if signal AND present
-	return (this.effectActive);
+        // return present flag if signal AND present
+        return (this.effectActive);
     }
 }

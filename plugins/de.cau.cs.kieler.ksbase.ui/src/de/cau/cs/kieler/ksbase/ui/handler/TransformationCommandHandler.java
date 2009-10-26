@@ -30,7 +30,15 @@ import de.cau.cs.kieler.ksbase.ui.TransformationUIManager;
  */
 public class TransformationCommandHandler extends AbstractHandler {
 
+    /**
+     * The list of classes an editor has to implement/extend to be valid for
+     * this framework.
+     **/
     public static final String EDITOR_PARAM = "de.cau.cs.kieler.ksbase.editorParameter";
+    /**
+     * The list of classes a diagram element has to implement/extend to be valid
+     * for this framework.
+     **/
     public static final String TRANSFORMATION_PARAM = "de.cau.cs.kieler.ksbase.transformationParameter";
 
     /**
@@ -46,24 +54,24 @@ public class TransformationCommandHandler extends AbstractHandler {
      * 
      * @param event
      *            The source event
-     * @throws ExecutionExceptions
+     * @throws ExecutionException If the execution failed.
      * @return Nothing
      */
     public Object execute(final ExecutionEvent event) throws ExecutionException {
 
-	if (!TransformationManager.instance.isInitialized()) {
-	    TransformationManager.instance.initializeTransformations();
-	}
-	EditorTransformationSettings editor = TransformationManager.instance
-	        .getEditorByName(event.getParameter(EDITOR_PARAM));
-	if (editor != null) {
-	    TransformationUIManager.instance
-		    .createAndExecuteTransformationCommand(event, editor,
-		            editor.getTransformationByName(event
-		                    .getParameter(TRANSFORMATION_PARAM)));
-	} else {
-	    System.err.println("error no transformation defined!");
-	}
-	return null;
+        if (!TransformationManager.INSTANCE.isInitialized()) {
+            TransformationManager.INSTANCE.initializeTransformations();
+        }
+        EditorTransformationSettings editor = TransformationManager.INSTANCE
+                .getEditorByName(event.getParameter(EDITOR_PARAM));
+        if (editor != null) {
+            TransformationUIManager.INSTANCE
+                    .createAndExecuteTransformationCommand(event, editor,
+                            editor.getTransformationByName(event
+                                    .getParameter(TRANSFORMATION_PARAM)));
+        } else {
+            System.err.println("error no transformation defined!");
+        }
+        return null;
     }
 }

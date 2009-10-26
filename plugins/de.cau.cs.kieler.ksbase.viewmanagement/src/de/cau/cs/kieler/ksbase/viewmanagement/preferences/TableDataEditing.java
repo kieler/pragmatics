@@ -51,130 +51,143 @@ public class TableDataEditing extends EditingSupport {
     /**
      * Instantiates a new table data editing.
      * 
-     * @param viewer
+     * @param view
      *            the viewer
-     * @param columnIndex
+     * @param columnIdx
      *            the column index
      */
-    public TableDataEditing(DataTableViewer viewer, int columnIndex) {
-	super(viewer);
+    public TableDataEditing(final DataTableViewer view, final int columnIdx) {
+        super(view);
 
-	this.viewer = viewer;
+        this.viewer = view;
 
-	// Create the correct editor based on the column index
-	switch (columnIndex) {
-	case 0:
-	    editor = new CheckboxCellEditor(null, SWT.CHECK);
-	    break;
-	case 2:
-	    editor = new TextCellEditor(((DataTableViewer) viewer).getTree());
-	    break;
-	default:
-	    break;
-	}
-	this.columnIndex = columnIndex;
+        // Create the correct editor based on the column index
+        switch (columnIndex) {
+        case 0:
+            editor = new CheckboxCellEditor(null, SWT.CHECK);
+            break;
+        case 2:
+            editor = new TextCellEditor(((DataTableViewer) viewer).getTree());
+            break;
+        default:
+            break;
+        }
+        this.columnIndex = columnIdx;
     }
 
     // -------------------------------------------------------------------------
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Checks if the given element can be modified.
      * 
      * @see org.eclipse.jface.viewers.EditingSupport#canEdit(java.lang.Object)
+     * @param element
+     *            The element to evaluate.
+     * @return True if the element can be modified.
      */
     @Override
-    protected boolean canEdit(Object element) {
-	return true;
+    protected boolean canEdit(final Object element) {
+        return true;
     }
 
     // -------------------------------------------------------------------------
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Gets the cell editor for the given element.
      * 
-     * @see
-     * org.eclipse.jface.viewers.EditingSupport#getCellEditor(java.lang.Object)
+     * @see org.eclipse.jface.viewers.EditingSupport#getCellEditor(java.lang.Object)
+     * @param element
+     *            The element to evaluate
+     * @return The cell editor, if there is none, null is returned.
+     * 
      */
     @Override
-    protected CellEditor getCellEditor(Object element) {
-	return editor;
+    protected CellEditor getCellEditor(final Object element) {
+        return editor;
     }
 
     // -------------------------------------------------------------------------
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Gets the value of an element.
      * 
      * @see org.eclipse.jface.viewers.EditingSupport#getValue(java.lang.Object)
+     * @param element
+     *            The element to evaluate.
+     * @return The value of the given element.
      */
     @Override
-    protected Object getValue(Object element) {
-	TableData tableData = (TableData) element;
+    protected Object getValue(final Object element) {
+        TableData tableData = (TableData) element;
 
-	switch (this.columnIndex) {
-	case 0:
-	    if (tableData.isEffectActive()) {
-		return true;
-	    } else
-		return false;
-
-	case 1:
-	    break;
-	case 2:
-	    if (tableData.isEffectActive()) {
-		return "";
-	    } else {
-		return String.valueOf(tableData.getPriority());
-	    }
-	default:
-	    break;
-	}
-	return null;
+        switch (this.columnIndex) {
+        case 0:
+            return tableData.isEffectActive();
+        case 1:
+            break;
+        case 2:
+            if (tableData.isEffectActive()) {
+                return "";
+            } else {
+                return String.valueOf(tableData.getPriority());
+            }
+        default:
+            break;
+        }
+        return null;
     }
 
     // -------------------------------------------------------------------------
 
-    protected void setValue(Object element, Object value) {
-	switch (this.columnIndex) {
-	case 0:
-	    if (value.toString().equals("true")) {
-		if (element instanceof TableData) {
-		    TableData data = (TableData) element;
-		    KSBasECombination.addEffect(data.getEffectName(), data
-			    .getPriority());
-		    data.setEffectActive(true);
-		}
-	    } else {
-		if (element instanceof TableData) {
-		    TableData data = (TableData) element;
-		    KSBasECombination.removeEffect(data.getEffectName(), data
-			    .getPriority());
-		    data.setEffectActive(false);
-		}
-	    }
-	    break;
-	case 1:
-	    break;
-	case 2:
-	    try {
-		int newPrio = Integer.valueOf((String) value);
-		TableData data = (TableData) element;
-		if (data.isEffectActive()) {
-		    KSBasECombination.changePriority(data.getEffectName(), data
-			    .getPriority(), newPrio);
-		}
-		data.setPriority(newPrio);
-	    } catch (NumberFormatException e) {
-		break;
-	    } catch (ClassCastException e) {
-		break;
-	    }
-	default:
-	    break;
-	}
+    /**
+     * Sets the value of an element.
+     * 
+     * @param element
+     *            The target element
+     * @param value
+     *            The value to set.
+     */
+    protected void setValue(final Object element, final Object value) {
+        switch (this.columnIndex) {
+        case 0:
+            if (value.toString().equals("true")) {
+                if (element instanceof TableData) {
+                    TableData data = (TableData) element;
+                    KSBasECombination.addEffect(data.getEffectName(), data
+                            .getPriority());
+                    data.setEffectActive(true);
+                }
+            } else {
+                if (element instanceof TableData) {
+                    TableData data = (TableData) element;
+                    KSBasECombination.removeEffect(data.getEffectName(), data
+                            .getPriority());
+                    data.setEffectActive(false);
+                }
+            }
+            break;
+        case 1:
+            break;
+        case 2:
+            try {
+                int newPrio = Integer.valueOf((String) value);
+                TableData data = (TableData) element;
+                if (data.isEffectActive()) {
+                    KSBasECombination.changePriority(data.getEffectName(), data
+                            .getPriority(), newPrio);
+                }
+                data.setPriority(newPrio);
+            } catch (NumberFormatException e) {
+                break;
+            } catch (ClassCastException e) {
+                break;
+            }
+        default:
+            break;
+        }
 
-	// updates the table
-	getViewer().update(element, null);
+        // updates the table
+        getViewer().update(element, null);
     }
 
 }

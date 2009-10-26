@@ -24,29 +24,68 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public class TableDataContentProvider implements ITreeContentProvider {
 
-    public Object[] getElements(Object inputElement) {
-	return ((TableDataList) inputElement).getArray();
+    /**
+     * Returns the list of Elements for the given input element.
+     * 
+     * @param inputElement
+     *            The input element to evaluate.
+     * @return An array of elements.
+     */
+    public Object[] getElements(final Object inputElement) {
+        return ((TableDataList) inputElement).getArray();
     }
 
+    /**
+     * Disposes this provider.
+     */
     public void dispose() {
     }
 
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+    /**
+     * Called when the input has changed.
+     * 
+     * @param viewer
+     *            the viewer.
+     * @param oldInput
+     *            the old input.
+     * @param newInput
+     *            the new input.
+     * 
+     */
+    public void inputChanged(final Viewer viewer, final Object oldInput,
+            final Object newInput) {
     }
 
-    public Object[] getChildren(Object parentElement) {
-	// TODO Auto-generated method stub
-	return null;
+    /**
+     * Gets all children of the given element.
+     * 
+     * @param parentElement
+     *            The element to evaluate.
+     * @return An array of children objects.
+     */
+    public Object[] getChildren(final Object parentElement) {
+        return null;
     }
 
-    public Object getParent(Object element) {
-	// TODO Auto-generated method stub
-	return null;
+    /**
+     * Gets the parent object of a given element.
+     * 
+     * @param element
+     *            the element to evaluate.
+     * @return The parent object if exists.
+     */
+    public Object getParent(final Object element) {
+        return null;
     }
 
-    public boolean hasChildren(Object element) {
-	// TODO Auto-generated method stub
-	return false;
+    /**
+     * Checks if the given element has children.
+     * 
+     * @param element The element to evaluate.
+     * @return True if this element has childen
+     */
+    public boolean hasChildren(final Object element) {
+        return false;
     }
 
 }

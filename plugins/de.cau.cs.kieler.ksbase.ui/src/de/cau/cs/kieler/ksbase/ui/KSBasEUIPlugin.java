@@ -27,10 +27,10 @@ import de.cau.cs.kieler.ksbase.ui.menus.DynamicMenuContributions;
 
 public class KSBasEUIPlugin extends AbstractUIPlugin {
 
-    // The plug-in ID
+    /** The plug-in ID. **/
     public static final String PLUGIN_ID = "de.cau.cs.kieler.ksbase.ui";
 
-    // The shared instance
+    /** The shared instance. **/
     private static KSBasEUIPlugin plugin;
 
     /**
@@ -42,28 +42,32 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
     /**
      * Starts the plug-in.
      * 
+     * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
      * @param context
      *            The bundle context for this plug-in
+     * @throws Exception
+     *             When starting this plug-in fails.
      * 
-     * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
      */
-    public void start(BundleContext context) throws Exception {
-	super.start(context);
-	KSBasEUIPlugin.plugin = this;
+    public void start(final BundleContext context) throws Exception {
+        super.start(context);
+        KSBasEUIPlugin.plugin = this;
 
-	DynamicMenuContributions.instance.createAllMenuContributions();
+        DynamicMenuContributions.INSTANCE.createAllMenuContributions();
     }
 
     /**
      * Stops the plug-in.
      * 
+     * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
      * @param context
      *            The bundle context for this plug-in
-     * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
+     * @throws Exception
+     *             When stopping this plug-in fails.
      */
-    public void stop(BundleContext context) throws Exception {
-	KSBasEUIPlugin.plugin = null;
-	super.stop(context);
+    public void stop(final BundleContext context) throws Exception {
+        KSBasEUIPlugin.plugin = null;
+        super.stop(context);
     }
 
     /**
@@ -72,7 +76,7 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
      * @return the shared instance
      */
     public static KSBasEUIPlugin getDefault() {
-	return plugin;
+        return plugin;
     }
 
 }

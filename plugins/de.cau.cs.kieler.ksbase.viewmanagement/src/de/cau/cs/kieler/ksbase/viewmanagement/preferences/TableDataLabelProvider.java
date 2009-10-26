@@ -31,110 +31,126 @@ public class TableDataLabelProvider implements ITableLabelProvider {
     // define icons
     /** The Constant CHECKED. */
     private static final Image CHECKED = AbstractUIPlugin
-	    .imageDescriptorFromPlugin(
-	            "de.cau.cs.kieler.ksbase.viewmanagement",
-	            "icons/checked.png").createImage();
+            .imageDescriptorFromPlugin(
+                    "de.cau.cs.kieler.ksbase.viewmanagement",
+                    "icons/checked.png").createImage();
 
     /** The Constant UNCHECKED. */
     private static final Image UNCHECKED = AbstractUIPlugin
-	    .imageDescriptorFromPlugin(
-	            "de.cau.cs.kieler.ksbase.viewmanagement",
-	            "icons/unchecked.png").createImage();
+            .imageDescriptorFromPlugin(
+                    "de.cau.cs.kieler.ksbase.viewmanagement",
+                    "icons/unchecked.png").createImage();
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Gets the column image for a given element.
      * 
      * @see
      * org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang
      * .Object, int)
+     * 
+     * @param element The element to evaluate
+     * @param columnIndex The column index.
+     * @return The corresponding image if there is one.
      */
-    public Image getColumnImage(Object element, int columnIndex) {
-	TableData tableData = (TableData) element;
-	if (columnIndex == 0) {
-	    if (tableData.isEffectActive())
-		return CHECKED;
-
-	    else
-		return UNCHECKED;
-	}
-	return null;
+    public Image getColumnImage(final Object element, final int columnIndex) {
+        TableData tableData = (TableData) element;
+        if (columnIndex == 0) {
+            if (tableData.isEffectActive()) {
+                return CHECKED;
+            } else {
+                return UNCHECKED;
+            }
+        }
+        return null;
     }
 
     // -------------------------------------------------------------------------
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Gets the text of a given element.
      * 
      * @see
      * org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang
      * .Object, int)
+     * 
+     * @param element The element to evaluate
+     * @param columnIndex The column index.
+     * @return The corresponding text if there is one.
      */
-    public String getColumnText(Object element, int columnIndex) {
-	TableData tableData = (TableData) element;
-	switch (columnIndex) {
-	case 0: // NOT_VISIBLE_COLUMN
-	    return "";
-	case 1: // PRESENT_COLUMN
-	    return tableData.getEffectName();
-	case 2:
-	    if (tableData.isEffectActive()) {
-		return String.valueOf(tableData.getPriority());
-	    } else {
-		return "";
-	    }
-	default:
-	    throw new RuntimeException("columnIndex out of bounds (3)");
-	}
+    public String getColumnText(final Object element, final int columnIndex) {
+        TableData tableData = (TableData) element;
+        switch (columnIndex) {
+        case 0: // NOT_VISIBLE_COLUMN
+            return "";
+        case 1: // PRESENT_COLUMN
+            return tableData.getEffectName();
+        case 2:
+            if (tableData.isEffectActive()) {
+                return String.valueOf(tableData.getPriority());
+            } else {
+                return "";
+            }
+        default:
+            throw new RuntimeException("columnIndex out of bounds (3)");
+        }
     }
 
     // -------------------------------------------------------------------------
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Adds a label listener.
      * 
      * @see
      * org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.
      * jface.viewers.ILabelProviderListener)
+     * 
+     * @param listener The listener to add
      */
-    public void addListener(ILabelProviderListener listener) {
-	// noop
+    public void addListener(final ILabelProviderListener listener) {
+        // noop
     }
 
     // -------------------------------------------------------------------------
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Disposes this label provider.
      * 
      * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
      */
     public void dispose() {
-	// noop
+        // noop
     }
 
     // -------------------------------------------------------------------------
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Checks if the given property is the label of the given element.
      * 
      * @see
      * org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang
      * .Object, java.lang.String)
+     * 
+     * @param element The element to evaluate.
+     * @param property The property to check
+     * @return False.
      */
-    public boolean isLabelProperty(Object element, String property) {
-	return false;
+    public boolean isLabelProperty(final Object element, final String property) {
+        return false;
     }
 
     // -------------------------------------------------------------------------
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Removes the listener from the listener list.
      * 
      * @see
      * org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse
      * .jface.viewers.ILabelProviderListener)
+     * 
+     * @param listener The listener to remove.
      */
-    public void removeListener(ILabelProviderListener listener) {
-	// noop
+    public void removeListener(final ILabelProviderListener listener) {
+        // noop
     }
 
 }

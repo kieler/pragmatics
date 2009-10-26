@@ -42,13 +42,13 @@ public class TableDataList {
     /**
      * Instantiates a new TableDataList.
      * 
-     * @param viewer
+     * @param view
      *            the parent tree table viewer for refreshes
      */
-    public TableDataList(DataTableViewer viewer) {
-	this.viewer = viewer;
-	tableDataList = new ArrayList<TableData>();
-	instance = this;
+    public TableDataList(final DataTableViewer view) {
+        this.viewer = view;
+        tableDataList = new ArrayList<TableData>();
+        instance = this;
     }
 
     // -------------------------------------------------------------------------
@@ -61,20 +61,20 @@ public class TableDataList {
      * 
      * @return the index
      */
-    public int indexOf(TableData tableData) {
-	return tableDataList.indexOf(tableData);
+    public int indexOf(final TableData tableData) {
+        return tableDataList.indexOf(tableData);
     }
 
     /**
      * Updates the view of the parent tree table viewer asynchronously.
      */
     public void updateViewAsync() {
-	// asynchronously update the table
-	Display.getDefault().asyncExec(new Runnable() {
-	    public void run() {
-		viewer.refresh();
-	    }
-	});
+        // asynchronously update the table
+        Display.getDefault().asyncExec(new Runnable() {
+            public void run() {
+                viewer.refresh();
+            }
+        });
     }
 
     // -------------------------------------------------------------------------
@@ -85,10 +85,11 @@ public class TableDataList {
      * @param tableData
      *            the TableData entry
      */
-    public void add(TableData tableData) {
-	if (contains(tableData.getEffectName()))
-	    remove(tableData.getEffectName());
-	tableDataList.add(tableData);
+    public void add(final TableData tableData) {
+        if (contains(tableData.getEffectName())) {
+            remove(tableData.getEffectName());
+        }
+        tableDataList.add(tableData);
     }
 
     // -------------------------------------------------------------------------
@@ -101,12 +102,13 @@ public class TableDataList {
      * 
      * @return the TableData entry
      */
-    public TableData get(String key) {
-	for (int c = 0; c < tableDataList.size(); c++) {
-	    if (tableDataList.get(c).getEffectName().equals(key))
-		return tableDataList.get(c);
-	}
-	return null;
+    public TableData get(final String key) {
+        for (int c = 0; c < tableDataList.size(); c++) {
+            if (tableDataList.get(c).getEffectName().equals(key)) {
+                return tableDataList.get(c);
+            }
+        }
+        return null;
     }
 
     // -------------------------------------------------------------------------
@@ -119,8 +121,8 @@ public class TableDataList {
      * 
      * @return the TableData entry
      */
-    public TableData get(int index) {
-	return tableDataList.get(index);
+    public TableData get(final int index) {
+        return tableDataList.get(index);
     }
 
     // -------------------------------------------------------------------------
@@ -133,8 +135,8 @@ public class TableDataList {
      * 
      * @return true, if list contains that TableData entry
      */
-    public boolean contains(String key) {
-	return (get(key) != null);
+    public boolean contains(final String key) {
+        return (get(key) != null);
     }
 
     // -------------------------------------------------------------------------
@@ -150,13 +152,14 @@ public class TableDataList {
      * 
      * @return true, if list contains another TableData entry
      */
-    public boolean containsOther(String key, TableData tableData) {
-	for (int c = 0; c < tableDataList.size(); c++) {
-	    if ((tableDataList.get(c).getEffectName().equals(key))
-		    && (tableData != tableDataList.get(c)))
-		return true;
-	}
-	return false;
+    public boolean containsOther(final String key, final TableData tableData) {
+        for (int c = 0; c < tableDataList.size(); c++) {
+            if ((tableDataList.get(c).getEffectName().equals(key))
+                    && (tableData != tableDataList.get(c))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // -------------------------------------------------------------------------
@@ -167,12 +170,12 @@ public class TableDataList {
      * @param key
      *            the identifier key
      */
-    public void remove(String key) {
-	for (int c = 0; c < tableDataList.size(); c++) {
-	    if (tableDataList.get(c).getEffectName().equals(key)) {
-		tableDataList.remove(c);
-	    }
-	}
+    public void remove(final String key) {
+        for (int c = 0; c < tableDataList.size(); c++) {
+            if (tableDataList.get(c).getEffectName().equals(key)) {
+                tableDataList.remove(c);
+            }
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -183,10 +186,10 @@ public class TableDataList {
      * @return single instance of TableDataList
      */
     public static synchronized TableDataList getInstance() {
-	if (instance != null) {
-	    return instance;
-	}
-	return null;
+        if (instance != null) {
+            return instance;
+        }
+        return null;
     }
 
     // -------------------------------------------------------------------------
@@ -197,7 +200,7 @@ public class TableDataList {
      * @return the size
      */
     public int size() {
-	return tableDataList.size();
+        return tableDataList.size();
     }
 
     // -------------------------------------------------------------------------
@@ -208,11 +211,11 @@ public class TableDataList {
      * @return the TableData[] array
      */
     public TableData[] getArray() {
-	TableData array[] = new TableData[this.size()];
-	for (int c = 0; c < this.size(); c++) {
-	    array[c] = this.get(c);
-	}
-	return array;
+        TableData[] array = new TableData[this.size()];
+        for (int c = 0; c < this.size(); c++) {
+            array[c] = this.get(c);
+        }
+        return array;
     }
 
 }

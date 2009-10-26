@@ -31,6 +31,7 @@ import de.cau.cs.kieler.ksbase.ui.listener.ITransformationEventListener;
 public class KSBasETrigger extends ATrigger implements
         ITransformationEventListener {
 
+    /** The trigger event object. **/
     private TriggerEventObject triggerObject;
 
     /**
@@ -38,8 +39,8 @@ public class KSBasETrigger extends ATrigger implements
      * postTransformationListeners in the TransformationUIManager.
      */
     public KSBasETrigger() {
-	// Add to post transformation queue
-	TransformationUIManager.instance.addPostTransformationListener(this);
+        // Add to post transformation queue
+        TransformationUIManager.INSTANCE.addPostTransformationListener(this);
     }
 
     /**
@@ -47,22 +48,23 @@ public class KSBasETrigger extends ATrigger implements
      */
     @Override
     public void finalize() {
-	// Remove from post transformation queue
-	TransformationUIManager.instance.removePostTransformationListener(this);
+        // Remove from post transformation queue
+        TransformationUIManager.INSTANCE.removePostTransformationListener(this);
     }
 
     /**
      * Called when a transformation is executed.
+     * @param args The arguments for this event. Needs be the Array : [EditPart,EditorPart]
      */
     @Override
-    public void transformationExecuted(Object[] args) {
-	if (args.length == 2 && args[0] instanceof EditPart) {
-	    this.triggerObject = new TriggerEventObject();
-	    triggerObject.setAffectedObject(translateToURI(args[0]));
-	    triggerObject.setParameters(args[1]);
-	    triggerObject.setTriggerActive(true);
-	    notifyTrigger(triggerObject);
-	}
+    public void transformationExecuted(final Object[] args) {
+        if (args.length == 2 && args[0] instanceof EditPart) {
+            this.triggerObject = new TriggerEventObject();
+            triggerObject.setAffectedObject(translateToURI(args[0]));
+            triggerObject.setParameters(args[1]);
+            triggerObject.setTriggerActive(true);
+            notifyTrigger(triggerObject);
+        }
     }
 
 }

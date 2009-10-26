@@ -37,34 +37,36 @@ public class KielerWorkflow extends Workflow {
      * 
      * @param operation
      *            Xtend function name
+     * @param fileName
+     *            The name of the Xtend file
      * @param basePackage
      *            The meta model package class to use
      * @param modelSelection
      *            selected model elements
      */
     public KielerWorkflow(final String operation, final String fileName,
-	    final String basePackage, final String modelSelection) {
-	super();
+            final String basePackage, final String modelSelection) {
+        super();
 
-	// We are using the XtendComponent,
-	xtendComponent = new XtendComponent();
-	// with an EMFMetaMetaModel,
-	EmfMetaModel emfmodel;
+        // We are using the XtendComponent,
+        xtendComponent = new XtendComponent();
+        // with an EMFMetaMetaModel,
+        EmfMetaModel emfmodel;
 
-	// Load the EPackage class by using EcoreUtils
-	EPackage pack = EcoreUtil2.getEPackageByClassName(basePackage);
-	// create EMFMetaModel with the given EPackage
-	emfmodel = new EmfMetaModel(pack);
+        // Load the EPackage class by using EcoreUtils
+        EPackage pack = EcoreUtil2.getEPackageByClassName(basePackage);
+        // create EMFMetaModel with the given EPackage
+        emfmodel = new EmfMetaModel(pack);
 
-	// Set metaModel-Slot
-	xtendComponent.addMetaModel(emfmodel);
-	// Create transformation value
-	String value = fileName + "::" + operation + "(" + modelSelection + ")";
+        // Set metaModel-Slot
+        xtendComponent.addMetaModel(emfmodel);
+        // Create transformation value
+        String value = fileName + "::" + operation + "(" + modelSelection + ")";
 
-	xtendComponent.setInvoke(value);
+        xtendComponent.setInvoke(value);
 
-	// Don't forget to add the components to the workflow !!
-	this.addComponent(xtendComponent);
+        // Don't forget to add the components to the workflow !!
+        this.addComponent(xtendComponent);
 
     }
 }
