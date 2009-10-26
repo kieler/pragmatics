@@ -65,3 +65,20 @@ Void createPredecessor(Box target):
  connectBoxes(source,target) ->
  ((DataflowModel)target.eContainer).boxes.add(source)
 ;
+
+Void insertBoxInConnection(Connection source):
+let box = new Box:
+let con = new Connection:
+let tempPort = source.targetPort:
+let inP = new InputPort:
+let outP = new OutputPort:
+box.inputs.add(inP) ->
+box.outputs.add(outP) ->
+source.setTargetPort(inP) ->
+con.setSourcePort(outP) ->
+con.setTargetPort(tempPort) ->
+//Carefull here: this wont work with hierarchy, cause
+//the eContainer is not a DataflowModel but a Box
+((DataflowModel)source.sourcePort.eContainer.eContainer).boxes.add(box) ->
+box.connections.add(con)
+;

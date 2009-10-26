@@ -26,6 +26,9 @@
                <transformationCommand
                      transformationId="de.cau.cs.kieler.dataflow.sbase.connectAll">
                </transformationCommand>
+               <transformationCommand
+                     transformationId="de.cau.cs.kieler.dataflow.sbase.insertBox">
+               </transformationCommand>
             </menuContribution>
          </menus>
          <transformations>
@@ -58,6 +61,12 @@
                   name="Connect All Open Ports"
                   transformation="connectAllBoxPorts"
                   transformationId="de.cau.cs.kieler.dataflow.sbase.connectAll">
+            </transformation>
+            <transformation
+                  keyboardShortcut="M1+K I"
+                  name="Insert Box"
+                  transformation="insertBoxInConnection"
+                  transformationId="de.cau.cs.kieler.dataflow.sbase.insertBox">
             </transformation>
          </transformations>
       </configuration>
