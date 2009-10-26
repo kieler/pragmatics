@@ -1,5 +1,7 @@
 import dataflow;
 
+//Simply connects two ports
+//by adding a connection
 Void connectPorts(OutputPort out, InputPort in):
  let con = new Connection:
  con.setSourcePort(out) ->
@@ -37,6 +39,8 @@ Void connectBoxes(Box source, Box target):
  }
 ;
 
+//Connects an output port to this first input port
+//given. This method is called by ConnectAllBoxPorts
 Void connectOutputsToInputs(OutputPort out,List[InputPort] in):
 if (in.size > 0) then {
  out.connectPorts(in.first())->
@@ -45,6 +49,12 @@ if (in.size > 0) then {
 ;
 
 
+//Connects all open output ports of the source box
+//to all open input ports of the target box.
+//No ports are created here, if one of the boxes has
+//more empty ports they won't be touched.
+//Since there is no enumeration of ports in a 
+//Box, this will mess up the source<->target port order
 Void connectAllBoxPorts(Box source, Box target):
  let sourceList = source.outputs.select(e| !source.connections.exists(c|c.sourcePort == e)):
  //hint: this may lead to a bad performance in larger diagrams!
@@ -52,20 +62,22 @@ Void connectAllBoxPorts(Box source, Box target):
  sourceList.connectOutputsToInputs(targetList)
 ;
 
-
-
+//Creates a successor box to the source box
 Void createSuccessor(Box source):
  let target = new Box:
  connectBoxes(source,target) ->
  ((DataflowModel)source.eContainer).boxes.add(target)
 ;
 
+//Creates a predecessor box to the target box
 Void createPredecessor(Box target):
  let source = new Box:
  connectBoxes(source,target) ->
  ((DataflowModel)target.eContainer).boxes.add(source)
 ;
 
+//Splits the given connection an inserts a new box in
+//between source and target. 
 Void insertBoxInConnection(Connection source):
 let box = new Box:
 let con = new Connection:
