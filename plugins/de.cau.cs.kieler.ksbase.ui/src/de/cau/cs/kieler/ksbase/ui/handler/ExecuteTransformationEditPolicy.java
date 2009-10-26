@@ -32,52 +32,52 @@ import de.cau.cs.kieler.ksbase.core.Messages;
  */
 public class ExecuteTransformationEditPolicy extends AbstractEditPolicy {
 
-	/**
-	 * Checks if a given request is understood from this editPolicy.
-	 * 
-	 * @param req The request to check.
-	 * @return True if this editPolicy can handle the given request.
-	 * @see
-	 * org.eclipse.gef.editpolicies.AbstractEditPolicy#understandsRequest(org.eclipse.gef.Request)
-	 */
-	@Override
-	public boolean understandsRequest(Request req) {
-		return (ExecuteTransformationRequest.REQ_EXEC_TRANS).equals(req
-				.getType());
-	}
+    /**
+     * Checks if a given request is understood from this editPolicy.
+     * 
+     * @param req
+     *            The request to check.
+     * @return True if this editPolicy can handle the given request.
+     * @see org.eclipse.gef.editpolicies.AbstractEditPolicy#understandsRequest(org.eclipse.gef.Request)
+     */
+    @Override
+    public boolean understandsRequest(Request req) {
+	return (ExecuteTransformationRequest.REQ_EXEC_TRANS).equals(req
+	        .getType());
+    }
 
-	/**
-	 * Creates a transformation command for every valid request.
-	 * 
-	 * @param req The request to fulfill
-	 * @return An @link ExecuteTransformationCommand if the request parameter
-	 * 	is an @link ExecuteTransformationRequest.  
-	 * 
-	 * @see
-	 * org.eclipse.gef.editpolicies.AbstractEditPolicy#getCommand(org.eclipse.gef.Request)
-	 */
-	@Override
-	public Command getCommand(Request req) {
-		if (ExecuteTransformationRequest.REQ_EXEC_TRANS.equals(req.getType())) {
-			if (req instanceof ExecuteTransformationRequest) {
-				ExecuteTransformationRequest transformationRequest = (ExecuteTransformationRequest) req;
-				IGraphicalEditPart hostEPart = (IGraphicalEditPart) getHost();
-				ExecuteTransformationCommand command = new ExecuteTransformationCommand(
-						hostEPart.getEditingDomain(),
-						Messages.ExecuteTransformationEditPolicy_Transformation_Command_Name,
-						new EObjectAdapter((View) hostEPart.getModel()));
-				command.initalize(transformationRequest.getEditPart(),
-						transformationRequest.getSelection(),
-						transformationRequest.getCommand(),
-						transformationRequest.getFileName(),
-						transformationRequest.getModelPackage(),
-						transformationRequest.getParameter());
-				return new ICommandProxy(command);
-			} else {
-				return null;
-			}
-		} else {
-			return super.getCommand(req);
-		}
+    /**
+     * Creates a transformation command for every valid request.
+     * 
+     * @param req
+     *            The request to fulfill
+     * @return An @link ExecuteTransformationCommand if the request parameter is
+     *         an @link ExecuteTransformationRequest.
+     * 
+     * @see org.eclipse.gef.editpolicies.AbstractEditPolicy#getCommand(org.eclipse.gef.Request)
+     */
+    @Override
+    public Command getCommand(Request req) {
+	if (ExecuteTransformationRequest.REQ_EXEC_TRANS.equals(req.getType())) {
+	    if (req instanceof ExecuteTransformationRequest) {
+		ExecuteTransformationRequest transformationRequest = (ExecuteTransformationRequest) req;
+		IGraphicalEditPart hostEPart = (IGraphicalEditPart) getHost();
+		ExecuteTransformationCommand command = new ExecuteTransformationCommand(
+		        hostEPart.getEditingDomain(),
+		        Messages.ExecuteTransformationEditPolicy_Transformation_Command_Name,
+		        new EObjectAdapter((View) hostEPart.getModel()));
+		command.initalize(transformationRequest.getEditPart(),
+		        transformationRequest.getSelection(),
+		        transformationRequest.getCommand(),
+		        transformationRequest.getFileName(),
+		        transformationRequest.getModelPackage(),
+		        transformationRequest.getParameter());
+		return new ICommandProxy(command);
+	    } else {
+		return null;
+	    }
+	} else {
+	    return super.getCommand(req);
 	}
+    }
 }

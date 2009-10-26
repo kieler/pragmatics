@@ -19,34 +19,34 @@ import org.eclipse.jface.viewers.Viewer;
 
 /**
  * The Class TableDataContentProvider.
- *
+ * 
  * @author Christian Motika - cmot AT informatik.uni-kiel.de
  */
-public class TableDataContentProvider implements ITreeContentProvider  {
+public class TableDataContentProvider implements ITreeContentProvider {
 
-	public Object[] getElements(Object inputElement) {
-		return ((TableDataList)inputElement).getArray();
-	}
+    public Object[] getElements(Object inputElement) {
+	return ((TableDataList) inputElement).getArray();
+    }
 
-	public void dispose() {
-	}
+    public void dispose() {
+    }
 
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-	}
+    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+    }
 
-	public Object[] getChildren(Object parentElement) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public Object[] getChildren(Object parentElement) {
+	// TODO Auto-generated method stub
+	return null;
+    }
 
-	public Object getParent(Object element) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public Object getParent(Object element) {
+	// TODO Auto-generated method stub
+	return null;
+    }
 
-	public boolean hasChildren(Object element) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    public boolean hasChildren(Object element) {
+	// TODO Auto-generated method stub
+	return false;
+    }
 
 }

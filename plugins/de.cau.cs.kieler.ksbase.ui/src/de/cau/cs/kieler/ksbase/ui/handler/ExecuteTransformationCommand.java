@@ -55,179 +55,179 @@ import de.cau.cs.kieler.ksbase.core.KielerWorkflow;
  */
 public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
 
-	private KielerWorkflow workflow;
-	private WorkflowContext context;
-	private Issues issues;
-	private NullProgressMonitor monitor;
+    private KielerWorkflow workflow;
+    private WorkflowContext context;
+    private Issues issues;
+    private NullProgressMonitor monitor;
 
-	/**
-	 * Creates a command to execute a transformation.
-	 * 
-	 * @param domain
-	 *            the editing domain through which model changes are made
-	 * @param label
-	 *            the command label
-	 * @param adapter
-	 *            an adapter to the {@code View} of the base diagram
-	 */
-	public ExecuteTransformationCommand(
-			final TransactionalEditingDomain domain, final String label,
-			final IAdaptable adapter) {
-		super(domain, label, null);
-		context = new WorkflowContextDefaultImpl();
-		issues = new IssuesImpl();
-		monitor = new NullProgressMonitor();
+    /**
+     * Creates a command to execute a transformation.
+     * 
+     * @param domain
+     *            the editing domain through which model changes are made
+     * @param label
+     *            the command label
+     * @param adapter
+     *            an adapter to the {@code View} of the base diagram
+     */
+    public ExecuteTransformationCommand(
+	    final TransactionalEditingDomain domain, final String label,
+	    final IAdaptable adapter) {
+	super(domain, label, null);
+	context = new WorkflowContextDefaultImpl();
+	issues = new IssuesImpl();
+	monitor = new NullProgressMonitor();
+    }
+
+    /**
+     * Executes the command.
+     * 
+     * @param monitor
+     *            Progress monitor for the execution
+     * @param info
+     *            Additional informations for the command
+     * 
+     * @see org.eclipse.gmf.runtime.emf.commands.core.command.
+     *      AbstractTransactionalCommand
+     *      #doExecuteWithResult(org.eclipse.core.runtime.IProgressMonitor,
+     *      org.eclipse.core.runtime.IAdaptable)
+     */
+    @Override
+    protected CommandResult doExecuteWithResult(IProgressMonitor monitor,
+	    IAdaptable info) throws ExecutionException {
+	// This is a very ugly way to suppress messages from xtend
+	PrintStream syse = System.err;
+	PrintStream syso = System.out;
+
+	if (workflow == null) {
+	    return CommandResult
+		    .newErrorCommandResult(Messages.ExecuteTransformationCommand_Workflow_Initialization_Error);
+	}
+	try {
+	    System.setErr(new PrintStream(new ByteArrayOutputStream()));
+	    System.setOut(new PrintStream(new ByteArrayOutputStream()));
+	    workflow.invoke(this.context, this.monitor, this.issues);
+	} catch (Exception e) {
+	    return CommandResult
+		    .newErrorCommandResult(Messages.ExecuteTransformationCommand_Workflow_Invoke_Error);
+	} finally {
+	    System.setErr(syse);
+	    System.setOut(syso);
+	}
+	if (issues.hasWarnings()) {
+	    for (MWEDiagnostic warnings : issues.getWarnings()) {
+		System.err.println("Warning: " + warnings.getMessage()); //$NON-NLS-1$
+	    } // TODO: Check how to write multiple warnings, or write directly
+	    // to the log
+	    return CommandResult.newWarningCommandResult(
+		    "Transformation completed with warnings. " //$NON-NLS-1$
+		            + issues.getWarnings()[0], null);
+	} else if (issues.hasErrors()) {
+	    for (MWEDiagnostic errors : issues.getErrors()) {
+		System.err.println("Error: " + errors.getMessage()); //$NON-NLS-1$
+	    } // TODO: Check how to write multiple errors, or write directly to
+	    // the log
+	    return CommandResult
+		    .newErrorCommandResult("Transformation failed. " //$NON-NLS-1$
+		            + issues.getErrors()[0]);
+	}
+	IEditorPart activeEditor = PlatformUI.getWorkbench()
+	        .getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+	if (activeEditor instanceof DiagramEditor) {
+	    EObject obj = ((View) ((DiagramEditor) activeEditor)
+		    .getDiagramEditPart().getModel()).getElement();
+
+	    List<?> editPolicies = CanonicalEditPolicy
+		    .getRegisteredEditPolicies(obj);
+	    for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
+
+		CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it
+		        .next();
+
+		nextEditPolicy.refresh();
+	    }
+
+	    IDiagramGraphicalViewer graphViewer = ((DiagramEditor) activeEditor)
+		    .getDiagramGraphicalViewer();
+	    graphViewer.flush();
+	}
+	return CommandResult.newOKCommandResult();
+    }
+
+    /**
+     * Initializes the transformation.
+     * 
+     * @param editPart
+     *            Current edit part
+     * @param selection
+     *            Current selection
+     * @param command
+     *            The command to execute
+     * @param fileName
+     *            Name of the .ext transformation file
+     * @param basePackage
+     *            The package of the underlying meta model
+     * @param parameter
+     *            The parameters of the Xtend method
+     * @return False if an error occurred
+     */
+    public final boolean initalize(final IEditorPart editPart,
+	    final ISelection selection, final String command,
+	    final String fileName, final String basePackage,
+	    final String[] parameter) {
+	StructuredSelection s;
+
+	if (selection instanceof StructuredSelection) {
+	    s = (StructuredSelection) selection;
+	} else {
+	    return false;
 	}
 
-	/**
-	 * Executes the command.
-	 * 
-	 * @param monitor
-	 *            Progress monitor for the execution
-	 * @param info
-	 *            Additional informations for the command
-	 * 
-	 * @see org.eclipse.gmf.runtime.emf.commands.core.command.
-	 *      AbstractTransactionalCommand
-	 *      #doExecuteWithResult(org.eclipse.core.runtime.IProgressMonitor,
-	 *      org.eclipse.core.runtime.IAdaptable)
-	 */
-	@Override
-	protected CommandResult doExecuteWithResult(IProgressMonitor monitor,
-			IAdaptable info) throws ExecutionException {
-		// This is a very ugly way to suppress messages from xtend
-		PrintStream syse = System.err;
-		PrintStream syso = System.out;
-
-		if (workflow == null) {
-			return CommandResult
-					.newErrorCommandResult(Messages.ExecuteTransformationCommand_Workflow_Initialization_Error);
-		}
-		try {
-			System.setErr(new PrintStream(new ByteArrayOutputStream()));
-			System.setOut(new PrintStream(new ByteArrayOutputStream()));
-			workflow.invoke(this.context, this.monitor, this.issues);
-		} catch (Exception e) {
-			return CommandResult
-					.newErrorCommandResult(Messages.ExecuteTransformationCommand_Workflow_Invoke_Error);
-		} finally {
-			System.setErr(syse);
-			System.setOut(syso);
-		}
-		if (issues.hasWarnings()) {
-			for (MWEDiagnostic warnings : issues.getWarnings()) {
-				System.err.println("Warning: " + warnings.getMessage()); //$NON-NLS-1$
-			} // TODO: Check how to write multiple warnings, or write directly
-			// to the log
-			return CommandResult.newWarningCommandResult(
-					"Transformation completed with warnings. " //$NON-NLS-1$
-							+ issues.getWarnings()[0], null);
-		} else if (issues.hasErrors()) {
-			for (MWEDiagnostic errors : issues.getErrors()) {
-				System.err.println("Error: " + errors.getMessage()); //$NON-NLS-1$
-			} // TODO: Check how to write multiple errors, or write directly to
-			// the log
-			return CommandResult
-					.newErrorCommandResult("Transformation failed. " //$NON-NLS-1$
-							+ issues.getErrors()[0]);
-		}
-		IEditorPart activeEditor = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getActivePage().getActiveEditor();
-		if (activeEditor instanceof DiagramEditor) {
-			EObject obj = ((View) ((DiagramEditor) activeEditor)
-					.getDiagramEditPart().getModel()).getElement();
-
-			List<?> editPolicies = CanonicalEditPolicy
-					.getRegisteredEditPolicies(obj);
-			for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
-
-				CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it
-						.next();
-
-				nextEditPolicy.refresh();
-			}
-
-			IDiagramGraphicalViewer graphViewer = ((DiagramEditor) activeEditor)
-					.getDiagramGraphicalViewer();
-			graphViewer.flush();
-		}
-		return CommandResult.newOKCommandResult();
+	if (s.size() != parameter.length) {
+	    return false;
+	}
+	String file = fileName;
+	if (file.contains(".")) { // Remove .ext from fileName //$NON-NLS-1$
+	    file = fileName.substring(0, fileName.lastIndexOf(".")); //$NON-NLS-1$
 	}
 
-	/**
-	 * Initializes the transformation.
-	 * 
-	 * @param editPart
-	 *            Current edit part
-	 * @param selection
-	 *            Current selection
-	 * @param command
-	 *            The command to execute
-	 * @param fileName
-	 *            Name of the .ext transformation file
-	 * @param basePackage
-	 *            The package of the underlying meta model
-	 * @param parameter
-	 *            The parameters of the Xtend method
-	 * @return False if an error occurred
-	 */
-	public final boolean initalize(final IEditorPart editPart,
-			final ISelection selection, final String command,
-			final String fileName, final String basePackage,
-			final String[] parameter) {
-		StructuredSelection s;
+	StringBuffer modelSelection = new StringBuffer();
 
-		if (selection instanceof StructuredSelection) {
-			s = (StructuredSelection) selection;
-		} else {
-			return false;
-		}
+	// We are now going to order the selected diagram elements by
+	LinkedList<Object> slist = new LinkedList<Object>();
+	slist.addAll((List<?>) s.toList());
 
-		if (s.size() != parameter.length) {
-			return false;
-		}
-		String file = fileName;
-		if (file.contains(".")) { // Remove .ext from fileName //$NON-NLS-1$
-			file = fileName.substring(0, fileName.lastIndexOf(".")); //$NON-NLS-1$
-		}
-
-		StringBuffer modelSelection = new StringBuffer();
-
-		// We are now going to order the selected diagram elements by
-		LinkedList<Object> slist = new LinkedList<Object>();
-		slist.addAll((List<?>) s.toList());
-
-		int paramCount = 0;
-		for (String param : parameter) {
-			if (modelSelection.length() > 0) {
-				modelSelection.append(",");
+	int paramCount = 0;
+	for (String param : parameter) {
+	    if (modelSelection.length() > 0) {
+		modelSelection.append(",");
+	    }
+	    for (int i = 0; i < slist.size(); ++i) {
+		Object next = slist.get(i);
+		if (next instanceof EditPart) {
+		    Object model = ((EditPart) next).getModel();
+		    if (model instanceof View) {
+			if (((View) model).getElement().eClass().getName()
+			        .toLowerCase(Locale.getDefault()).equals(param)) {
+			    String modelName = "model"
+				    + String.valueOf(paramCount++);
+			    modelSelection.append(modelName);
+			    context.set(modelName, ((View) model).getElement());
+			    slist.remove(i);
+			    break;
 			}
-			for (int i = 0; i < slist.size(); ++i) {
-				Object next = slist.get(i);
-				if (next instanceof EditPart) {
-					Object model = ((EditPart) next).getModel();
-					if (model instanceof View) {
-						if (((View) model).getElement().eClass().getName()
-								.toLowerCase(Locale.getDefault()).equals(param)) {
-							String modelName = "model"
-									+ String.valueOf(paramCount++);
-							modelSelection.append(modelName);
-							context.set(modelName, ((View) model).getElement());
-							slist.remove(i);
-							break;
-						}
-					}
-				}
-			}
+		    }
 		}
-		// check if all parameters have been set
-		if (paramCount != parameter.length) {
-			return false;
-		}
-
-		workflow = new KielerWorkflow(command, file, basePackage,
-				modelSelection.toString());
-		return true;
+	    }
 	}
+	// check if all parameters have been set
+	if (paramCount != parameter.length) {
+	    return false;
+	}
+
+	workflow = new KielerWorkflow(command, file, basePackage,
+	        modelSelection.toString());
+	return true;
+    }
 
 }

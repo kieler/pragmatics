@@ -35,32 +35,36 @@ public class KielerWorkflow extends Workflow {
     /**
      * Creates and initializes the workflow.
      * 
-     * @param operation Xtend function name
-	 * @param basePackage The meta model package class to use
-     * @param modelSelection selected model elements
+     * @param operation
+     *            Xtend function name
+     * @param basePackage
+     *            The meta model package class to use
+     * @param modelSelection
+     *            selected model elements
      */
-    public KielerWorkflow(final String operation, final String fileName, final String basePackage, final String modelSelection) {
-        super();
+    public KielerWorkflow(final String operation, final String fileName,
+	    final String basePackage, final String modelSelection) {
+	super();
 
-        // We are using the XtendComponent,
-        xtendComponent = new XtendComponent();
-        // with an EMFMetaMetaModel,
-        EmfMetaModel emfmodel;
-        
-        //Load the EPackage class by using EcoreUtils 
-        EPackage pack = EcoreUtil2.getEPackageByClassName(basePackage);
-        //create EMFMetaModel with the given EPackage
-        emfmodel = new EmfMetaModel(pack);
+	// We are using the XtendComponent,
+	xtendComponent = new XtendComponent();
+	// with an EMFMetaMetaModel,
+	EmfMetaModel emfmodel;
 
-        // Set metaModel-Slot
-        xtendComponent.addMetaModel(emfmodel);
-        //Create transformation value
-        String value = fileName + "::" + operation + "(" + modelSelection + ")";
+	// Load the EPackage class by using EcoreUtils
+	EPackage pack = EcoreUtil2.getEPackageByClassName(basePackage);
+	// create EMFMetaModel with the given EPackage
+	emfmodel = new EmfMetaModel(pack);
 
-        xtendComponent.setInvoke(value);
+	// Set metaModel-Slot
+	xtendComponent.addMetaModel(emfmodel);
+	// Create transformation value
+	String value = fileName + "::" + operation + "(" + modelSelection + ")";
 
-        // Don't forget to add the components to the workflow !!
-        this.addComponent(xtendComponent);
+	xtendComponent.setInvoke(value);
+
+	// Don't forget to add the components to the workflow !!
+	this.addComponent(xtendComponent);
 
     }
 }

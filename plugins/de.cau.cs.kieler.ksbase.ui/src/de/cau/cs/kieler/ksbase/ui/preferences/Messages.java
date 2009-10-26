@@ -18,8 +18,9 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * Messages used in the de.cau.cs.kieler.ksbase.ui package
+ * 
  * @author Michael Matzen
- *
+ * 
  */
 public class Messages extends NLS {
     private static final String BUNDLE_NAME = "de.cau.cs.kieler.ksbase.ui.preferences.messages"; //$NON-NLS-1$
@@ -58,8 +59,8 @@ public class Messages extends NLS {
     public static String KSBasEPreferencePage_XtendFile_Extension;
     public static String KSBasEPreferencePage_XtendFile_InvalidFile;
     static {
-        // initialize resource bundle
-        NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+	// initialize resource bundle
+	NLS.initializeMessages(BUNDLE_NAME, Messages.class);
     }
 
     private Messages() {

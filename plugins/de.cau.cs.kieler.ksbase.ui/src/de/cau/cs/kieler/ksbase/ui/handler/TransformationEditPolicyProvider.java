@@ -33,21 +33,30 @@ public class TransformationEditPolicyProvider extends AbstractProvider
     public static final String EXECUTE_TRANSFORMATION_ROLE = "ExecuteTransformationEditPolicy";
     /** the key used to install an <i>KSBasE popup bar</i> edit policy */
     public static final String KSBASE_POPUPBAR = "KSbasEPopupBarEditPolicy";
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.gmf.runtime.diagram.ui.services.editpolicy.IEditPolicyProvider#createEditPolicies(org.eclipse.gef.EditPart)
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.eclipse.gmf.runtime.diagram.ui.services.editpolicy.IEditPolicyProvider
+     * #createEditPolicies(org.eclipse.gef.EditPart)
      */
     public void createEditPolicies(EditPart editPart) {
-        editPart.installEditPolicy(EXECUTE_TRANSFORMATION_ROLE,
-                new ExecuteTransformationEditPolicy());
-        //editPart.installEditPolicy(KSBASE_POPUPBAR, new KSBAsEPopupBarEditPolicy());
+	editPart.installEditPolicy(EXECUTE_TRANSFORMATION_ROLE,
+	        new ExecuteTransformationEditPolicy());
+	// editPart.installEditPolicy(KSBASE_POPUPBAR, new
+	// KSBAsEPopupBarEditPolicy());
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.gmf.runtime.common.core.service.IProvider#provides(org.eclipse.gmf.runtime.common.core.service.IOperation)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.eclipse.gmf.runtime.common.core.service.IProvider#provides(org.eclipse
+     * .gmf.runtime.common.core.service.IOperation)
      */
     public boolean provides(IOperation operation) {
-        return operation instanceof CreateEditPoliciesOperation;
+	return operation instanceof CreateEditPoliciesOperation;
     }
 
 }

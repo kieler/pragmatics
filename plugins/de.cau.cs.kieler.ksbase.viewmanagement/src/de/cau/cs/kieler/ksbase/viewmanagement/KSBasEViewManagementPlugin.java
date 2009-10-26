@@ -18,51 +18,59 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import de.cau.cs.kieler.ksbase.viewmanagement.combinations.KSBasECombination;
+
 /**
  * The activator class controls the plug-in life cycle
+ * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  */
 public class KSBasEViewManagementPlugin extends AbstractUIPlugin {
 
-	// The plug-in ID
-	public static final String PLUGIN_ID = "de.cau.cs.kieler.ksbase.viewmanagement";
+    // The plug-in ID
+    public static final String PLUGIN_ID = "de.cau.cs.kieler.ksbase.viewmanagement";
 
-	// The shared instance
-	private static KSBasEViewManagementPlugin plugin;
-	
-	/**
-	 * The constructor
-	 */
-	public KSBasEViewManagementPlugin() {
-	}
+    // The shared instance
+    private static KSBasEViewManagementPlugin plugin;
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-		plugin = this;
-		//Initialize pref page to load all stored settings
-		KSBasECombination.initalizeEffects(plugin.getPreferenceStore());
-	}
+    /**
+     * The constructor
+     */
+    public KSBasEViewManagementPlugin() {
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 */
-	public void stop(BundleContext context) throws Exception {
-		plugin = null;
-		super.stop(context);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
+     * )
+     */
+    public void start(BundleContext context) throws Exception {
+	super.start(context);
+	plugin = this;
+	// Initialize pref page to load all stored settings
+	KSBasECombination.initalizeEffects(plugin.getPreferenceStore());
+    }
 
-	/**
-	 * Returns the shared instance
-	 *
-	 * @return the shared instance
-	 */
-	public static KSBasEViewManagementPlugin getDefault() {
-		return plugin;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
+     * )
+     */
+    public void stop(BundleContext context) throws Exception {
+	plugin = null;
+	super.stop(context);
+    }
+
+    /**
+     * Returns the shared instance
+     * 
+     * @return the shared instance
+     */
+    public static KSBasEViewManagementPlugin getDefault() {
+	return plugin;
+    }
 
 }

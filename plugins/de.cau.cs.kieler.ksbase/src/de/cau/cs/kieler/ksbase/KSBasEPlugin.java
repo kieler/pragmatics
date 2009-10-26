@@ -27,51 +27,51 @@ import de.cau.cs.kieler.ksbase.core.TransformationManager;
  */
 public class KSBasEPlugin extends AbstractUIPlugin {
 
-	// The plug-in ID
-	public static final String PLUGIN_ID = "de.cau.cs.kieler.ksbase";
+    // The plug-in ID
+    public static final String PLUGIN_ID = "de.cau.cs.kieler.ksbase";
 
-	// The shared instance
-	private static KSBasEPlugin plugin;
+    // The shared instance
+    private static KSBasEPlugin plugin;
 
-	/**
-	 * The constructor.
-	 */
-	public KSBasEPlugin() {
-	}
+    /**
+     * The constructor.
+     */
+    public KSBasEPlugin() {
+    }
 
-	/**
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-		KSBasEPlugin.plugin = this;
-		TransformationManager.instance.initializeTransformations();
-	}
+    /**
+     * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
+     */
+    public void start(BundleContext context) throws Exception {
+	super.start(context);
+	KSBasEPlugin.plugin = this;
+	TransformationManager.instance.initializeTransformations();
+    }
 
-	/**
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 */
-	public void stop(BundleContext context) throws Exception {
-		KSBasEPlugin.plugin = null;
-		super.stop(context);
-	}
+    /**
+     * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
+     */
+    public void stop(BundleContext context) throws Exception {
+	KSBasEPlugin.plugin = null;
+	super.stop(context);
+    }
 
-	/**
-	 * @return the shared instance.
-	 */
-	public static KSBasEPlugin getDefault() {
-		return plugin;
-	}
+    /**
+     * @return the shared instance.
+     */
+    public static KSBasEPlugin getDefault() {
+	return plugin;
+    }
 
-	/**
-	 * Returns an image descriptor for the image file at the given plug-in
-	 * relative path.
-	 * 
-	 * @param path
-	 *            the path
-	 * @return the image descriptor
-	 */
-	public static ImageDescriptor getImageDescriptor(final String path) {
-		return imageDescriptorFromPlugin(PLUGIN_ID, path);
-	}
+    /**
+     * Returns an image descriptor for the image file at the given plug-in
+     * relative path.
+     * 
+     * @param path
+     *            the path
+     * @return the image descriptor
+     */
+    public static ImageDescriptor getImageDescriptor(final String path) {
+	return imageDescriptorFromPlugin(PLUGIN_ID, path);
+    }
 }

@@ -27,355 +27,359 @@ import org.eclipse.core.runtime.IContributor;
  */
 public class EditorTransformationSettings {
 
-	private String modelPackageClass; // The model package class
-	private String defaultIcon; // Default icon for menu/tool bar/balloon/popup
-	// menu entries
+    private String modelPackageClass; // The model package class
+    private String defaultIcon; // Default icon for menu/tool bar/balloon/popup
+    // menu entries
 
-	private String editor; // Editor to which this setting is assigned
+    private String editor; // Editor to which this setting is assigned
 
-	private String extFile; // Xtend file in which the transformations are
-	// defined
+    private String extFile; // Xtend file in which the transformations are
+    // defined
 
-	private String context; // The context for the diagram editor, required for
-	// key bindings
+    private String context; // The context for the diagram editor, required for
+    // key bindings
 
-	private LinkedList<Transformation> transformations; // The current List of
-	// Transformations
+    private LinkedList<Transformation> transformations; // The current List of
+    // Transformations
 
-	private LinkedList<KSBasEMenuContribution> menuContributions;
-	// List of menu contributions
+    private LinkedList<KSBasEMenuContribution> menuContributions;
+    // List of menu contributions
 
-	private IContributor contributor; // The contributor which contains
+    private IContributor contributor; // The contributor which contains
 
-	// the extension points
+    // the extension points
 
-	/**
-	 * Creates a new transformation setting with the given fully qualified
-	 * editor name.
-	 * 
-	 * @param editor
-	 *            The fqn of the diagram editor
-	 */
-	public EditorTransformationSettings(final String editor) {
-		this.editor = editor;
-		this.modelPackageClass = ""; //$NON-NLS-1$
-		this.defaultIcon = "";
-		this.extFile = ""; //$NON-NLS-1$
-		this.context = "";
-		this.transformations = new LinkedList<Transformation>();
-		this.menuContributions = new LinkedList<KSBasEMenuContribution>();
-		this.contributor = null;
+    /**
+     * Creates a new transformation setting with the given fully qualified
+     * editor name.
+     * 
+     * @param editor
+     *            The fqn of the diagram editor
+     */
+    public EditorTransformationSettings(final String editor) {
+	this.editor = editor;
+	this.modelPackageClass = ""; //$NON-NLS-1$
+	this.defaultIcon = "";
+	this.extFile = ""; //$NON-NLS-1$
+	this.context = "";
+	this.transformations = new LinkedList<Transformation>();
+	this.menuContributions = new LinkedList<KSBasEMenuContribution>();
+	this.contributor = null;
+    }
+
+    /**
+     * Sets the editor class.
+     * 
+     * @param editor
+     *            The fqn of the diagram editor
+     */
+    public final void setEditor(final String editor) {
+	this.editor = editor;
+    }
+
+    /**
+     * Gets the assigned editor.
+     * 
+     * @return The fully qualified editor name
+     */
+    public final String getEditor() {
+	return editor;
+    }
+
+    /**
+     * Gets the model package class name.
+     * 
+     * @return The fqn of the model package class
+     */
+    public final String getModelPackageClass() {
+
+	if (modelPackageClass == null) {
+	    return ""; //$NON-NLS-1$
+	} else
+	    return modelPackageClass;
+    }
+
+    /**
+     * Sets a model package class.
+     * 
+     * @param modelPackageClass
+     *            The package class
+     */
+    public final void setModelPackageClass(final String modelPackageClass) {
+	this.modelPackageClass = modelPackageClass;
+    }
+
+    /**
+     * Gets the list of existing menu contributions.
+     * 
+     * @return The list of menu contributions for this editor
+     */
+    public final LinkedList<KSBasEMenuContribution> getMenuContributions() {
+	return menuContributions;
+    }
+
+    /**
+     * Sets the menu contributions for this editor and removes any existing
+     * contributions.
+     * 
+     * @param menuContributions
+     */
+    public final void setMenuContributions(
+	    final LinkedList<KSBasEMenuContribution> menuContributions) {
+	this.menuContributions.clear();
+	this.menuContributions.addAll(menuContributions);
+    }
+
+    /**
+     * Adds a menu contribution to this editor.
+     * 
+     * @param contrib
+     */
+    public final void addMenuContribution(final KSBasEMenuContribution contrib) {
+	this.menuContributions.add(contrib);
+    }
+
+    /**
+     * Returns the path to the default icon.
+     * 
+     * @return Path to the default icon
+     */
+    public final String getDefaultIcon() {
+	return defaultIcon;
+    }
+
+    /**
+     * Sets the path to the default icon.
+     * 
+     * @param icon
+     *            Icon path
+     */
+    public final void setDefaultIcon(final String icon) {
+	this.defaultIcon = icon;
+    }
+
+    /**
+     * Gets the list of defined transformations.
+     * 
+     * @return A LinkedList containing all transformations
+     */
+    public final LinkedList<Transformation> getTransformations() {
+	return transformations;
+    }
+
+    /**
+     * Tries to find a transformation with a given name.
+     * 
+     * @param transformation
+     *            The name to find
+     * @return The first transformation found or null
+     */
+    public final Transformation getTransformationByName(
+	    final String transformation) {
+	for (Transformation t : transformations) {
+	    if (t.getTransformationName().toLowerCase(Locale.getDefault())
+		    .equals(transformation.toLowerCase(Locale.getDefault()))) {
+		return t;
+	    }
 	}
+	return null;
+    }
 
-	/**
-	 * Sets the editor class.
-	 * 
-	 * @param editor
-	 *            The fqn of the diagram editor
-	 */
-	public final void setEditor(final String editor) {
-		this.editor = editor;
+    /**
+     * Tries to find a transformation by its identity string.
+     * 
+     * @param tid
+     *            The id to find
+     * @return The first transformation with the given id or null if no
+     *         transformation has been found
+     */
+    public final Transformation getTransformationById(final String tid) {
+	for (Transformation t : transformations) {
+	    if (t.getTransformationId().equals(tid)) {
+		return t;
+	    }
 	}
+	return null;
+    }
 
-	/**
-	 * Gets the assigned editor.
-	 * 
-	 * @return The fully qualified editor name
-	 */
-	public final String getEditor() {
-		return editor;
+    /**
+     * Sets the transformation list.
+     * 
+     * @param transformations
+     *            A LinkedList containing the transformations
+     */
+    public final void setTransformations(
+	    final LinkedList<Transformation> transformations) {
+	this.transformations.clear();
+	this.transformations.addAll(transformations);
+    }
+
+    /**
+     * Adds a single transformation to the transformations list.
+     * 
+     * @param t
+     *            a transformation definition
+     */
+    public final void addTransformation(final Transformation t) {
+	this.transformations.add(t);
+    }
+
+    /**
+     * Removes a transformation.
+     * 
+     * @param index
+     *            the index of the element to remove
+     */
+    public final void removeTransformation(final int index) {
+	this.transformations.remove(index);
+    }
+
+    /**
+     * Replaces a transformation with a new one.
+     * 
+     * @param oldVal
+     *            The transformation to replace
+     * @param newVal
+     *            The transformation to insert
+     */
+    public final void modifyTransformation(final Transformation oldVal,
+	    final Transformation newVal) {
+	if (this.transformations.contains(oldVal)) {
+	    transformations.remove(oldVal);
 	}
+	transformations.add(newVal);
+    }
 
-	/**
-	 * Gets the model package class name.
-	 * 
-	 * @return The fqn of the model package class
-	 */
-	public final String getModelPackageClass() {
+    /**
+     * Returns the text representation of the Xtend file.
+     * 
+     * @return A .ext file in plain text
+     */
+    public final String getExtFile() {
+	return extFile;
+    }
 
-		if (modelPackageClass == null) {
-			return ""; //$NON-NLS-1$
-		} else
-			return modelPackageClass;
-	}
+    /**
+     * Sets the content of the Xtend file.
+     * 
+     * @param file
+     *            a .ext file in plain text
+     */
+    public final void setExtFile(final String file) {
+	this.extFile = file;
+	parseTransformations();
+    }
 
-	/**
-	 * Sets a model package class.
-	 * 
-	 * @param modelPackageClass
-	 *            The package class
-	 */
-	public final void setModelPackageClass(final String modelPackageClass) {
-		this.modelPackageClass = modelPackageClass;
-	}
+    /**
+     * @return The editors contributor project.
+     */
+    public final IContributor getContributor() {
+	return contributor;
+    }
 
-	/** Gets the list of existing menu contributions.
-	 * @return The list of menu contributions for this editor
-	 */
-	public final LinkedList<KSBasEMenuContribution> getMenuContributions() {
-		return menuContributions;
-	}
+    /**
+     * Sets the editors contributor project.
+     * 
+     * @param contributor
+     */
+    public final void setContributor(final IContributor contributor) {
+	this.contributor = contributor;
+    }
 
-	/**
-	 * Sets the menu contributions for this editor and removes any existing
-	 * contributions.
-	 * 
-	 * @param menuContributions
-	 */
-	public final void setMenuContributions(
-			final LinkedList<KSBasEMenuContribution> menuContributions) {
-		this.menuContributions.clear();
-		this.menuContributions.addAll(menuContributions);
-	}
+    /**
+     * Returns the defined diagram context.
+     * 
+     * @return A contextID used to bind keyboard shortcuts to commands
+     */
+    public final String getContext() {
+	return context;
+    }
 
-	/**
-	 * Adds a menu contribution to this editor.
-	 * 
-	 * @param contrib
-	 */
-	public final void addMenuContribution(final KSBasEMenuContribution contrib) {
-		this.menuContributions.add(contrib);
-	}
+    /**
+     * Sets the diagram context.
+     * 
+     * @param context
+     *            the contextID to bind keyboard shortcuts
+     */
+    public final void setContext(final String context) {
+	this.context = context;
+    }
 
-	/**
-	 * Returns the path to the default icon.
-	 * 
-	 * @return Path to the default icon
-	 */
-	public final String getDefaultIcon() {
-		return defaultIcon;
-	}
+    /**
+     * Parses the Xtend file to read transformation names & parameters.
+     */
+    public final void parseTransformations() {
+	if (extFile != null && extFile.length() > 0) {
+	    // Let's find all in-place m2m transformations, defined in this file
+	    // They are defined by :
+	    // Starting with 'void '
+	    // End with ':'
+	    String[] methods = extFile.split(";");
+	    for (String m : methods) {
+		try {
+		    m = m.trim().replaceAll("//.*\n", "");
+		    String method = m.toLowerCase(Locale.getDefault()); // just
+									// to be
+									// sure
+		    if (!method.contains("void")) { // we only want void methods
+			continue;
+		    }
+		    // We have to eliminate random occurrences of the 'void'
+		    // keyword, e.g. in comments
+		    String[] voidMethod = method.split(" ");
+		    if (voidMethod.length == 0
+			    || !voidMethod[0].trim().equals("void")) {
+			continue;
+		    }
 
-	/**
-	 * Sets the path to the default icon.
-	 * 
-	 * @param icon
-	 *            Icon path
-	 */
-	public final void setDefaultIcon(final String icon) {
-		this.defaultIcon = icon;
-	}
-
-	/**
-	 * Gets the list of defined transformations.
-	 * 
-	 * @return A LinkedList containing all transformations
-	 */
-	public final LinkedList<Transformation> getTransformations() {
-		return transformations;
-	}
-
-	/**
-	 * Tries to find a transformation with a given name.
-	 * 
-	 * @param transformation
-	 *            The name to find
-	 * @return The first transformation found or null
-	 */
-	public final Transformation getTransformationByName(
-			final String transformation) {
-		for (Transformation t : transformations) {
-			if (t.getTransformationName().toLowerCase(Locale.getDefault())
-					.equals(transformation.toLowerCase(Locale.getDefault()))) {
-				return t;
-			}
+		    // method = method.replaceAll("/\\*.*\\", "");
+		    String[] tokens = method.split("void ");
+		    String[] head = tokens[1].split(":");
+		    String[] parts = head[0].split("\\(");
+		    String name = parts[0];
+		    String param = parts[1].replace(")", "");
+		    String[] parameterAndNames = param.split(",");
+		    String[] parameters = new String[parameterAndNames.length];
+		    for (int i = 0; i < parameterAndNames.length; ++i) {
+			parameters[i] = parameterAndNames[i].trim().split(" ")[0];
+		    }
+		    Transformation t = getTransformationByName(name);
+		    if (t != null) {
+			getTransformationByName(name).setParameter(parameters);
+		    }
+		} catch (NullPointerException exp) {
+		    System.err.println("invalid xtend file");
 		}
-		return null;
+	    }
 	}
+    }
 
-	/**
-	 * Tries to find a transformation by its identity string.
-	 * 
-	 * @param tid
-	 *            The id to find
-	 * @return The first transformation with the given id or null if no
-	 *         transformation has been found
-	 */
-	public final Transformation getTransformationById(final String tid) {
-		for (Transformation t : transformations) {
-			if (t.getTransformationId().equals(tid)) {
-				return t;
-			}
-		}
-		return null;
+    /**
+     * Two editor settings are the same if they have the same target editor and
+     * the same source contributor
+     */
+    @Override
+    public boolean equals(Object obj) {
+	if (obj instanceof EditorTransformationSettings) {
+	    EditorTransformationSettings o = (EditorTransformationSettings) obj;
+	    // we are using the '==' operator for the contributor
+	    // because it may be possible that the contributor is 'null'
+	    // and the equals method will throw an exception
+	    return (o.getEditor().equals(editor) && o.getContributor() == contributor);
 	}
+	return false;
+    }
 
-	/**
-	 * Sets the transformation list.
-	 * 
-	 * @param transformations
-	 *            A LinkedList containing the transformations
-	 */
-	public final void setTransformations(
-			final LinkedList<Transformation> transformations) {
-		this.transformations.clear();
-		this.transformations.addAll(transformations);
+    /**
+     * The hashcode is calculated from the editors hash and the hashCode of the
+     * contributor, if existing.
+     */
+    @Override
+    public int hashCode() {
+	int hash = editor.hashCode();
+	if (contributor != null) {
+	    hash += contributor.hashCode();
 	}
-
-	/**
-	 * Adds a single transformation to the transformations list.
-	 * 
-	 * @param t
-	 *            a transformation definition
-	 */
-	public final void addTransformation(final Transformation t) {
-		this.transformations.add(t);
-	}
-
-	/**
-	 * Removes a transformation.
-	 * 
-	 * @param index
-	 *            the index of the element to remove
-	 */
-	public final void removeTransformation(final int index) {
-		this.transformations.remove(index);
-	}
-
-	/**
-	 * Replaces a transformation with a new one.
-	 * 
-	 * @param oldVal
-	 *            The transformation to replace
-	 * @param newVal
-	 *            The transformation to insert
-	 */
-	public final void modifyTransformation(final Transformation oldVal,
-			final Transformation newVal) {
-		if (this.transformations.contains(oldVal)) {
-			transformations.remove(oldVal);
-		}
-		transformations.add(newVal);
-	}
-
-	/**
-	 * Returns the text representation of the Xtend file.
-	 * 
-	 * @return A .ext file in plain text
-	 */
-	public final String getExtFile() {
-		return extFile;
-	}
-
-	/**
-	 * Sets the content of the Xtend file.
-	 * 
-	 * @param file
-	 *            a .ext file in plain text
-	 */
-	public final void setExtFile(final String file) {
-		this.extFile = file;
-		parseTransformations();
-	}
-
-	/**
-	 * @return The editors contributor project.
-	 */
-	public final IContributor getContributor() {
-		return contributor;
-	}
-
-	/**
-	 * Sets the editors contributor project.
-	 * 
-	 * @param contributor
-	 */
-	public final void setContributor(final IContributor contributor) {
-		this.contributor = contributor;
-	}
-
-	/**
-	 * Returns the defined diagram context.
-	 * 
-	 * @return A contextID used to bind keyboard shortcuts to commands
-	 */
-	public final String getContext() {
-		return context;
-	}
-
-	/**
-	 * Sets the diagram context.
-	 * 
-	 * @param context
-	 *            the contextID to bind keyboard shortcuts
-	 */
-	public final void setContext(final String context) {
-		this.context = context;
-	}
-
-	/**
-	 * Parses the Xtend file to read transformation names & parameters.
-	 */
-	public final void parseTransformations() {
-		if (extFile != null && extFile.length() > 0) {
-			// Let's find all in-place m2m transformations, defined in this file
-			// They are defined by :
-			// Starting with 'void '
-			// End with ':'
-			String[] methods = extFile.split(";");
-			for (String m : methods) {
-				try {
-					m = m.trim().replaceAll("//.*\n", "");
-					String method = m.toLowerCase(Locale.getDefault()); // just to be sure
-					if (!method.contains("void")) { // we only want void methods
-						continue;
-					}
-					// We have to eliminate random occurrences of the 'void'
-					// keyword, e.g. in comments
-					String[] voidMethod = method.split(" ");
-					if (voidMethod.length == 0
-							|| !voidMethod[0].trim().equals("void")) {
-						continue;
-					}
-
-					// method = method.replaceAll("/\\*.*\\", "");
-					String[] tokens = method.split("void ");
-					String[] head = tokens[1].split(":");
-					String[] parts = head[0].split("\\(");
-					String name = parts[0];
-					String param = parts[1].replace(")", "");
-					String[] parameterAndNames = param.split(",");
-					String[] parameters = new String[parameterAndNames.length];
-					for (int i = 0; i < parameterAndNames.length; ++i) {
-						parameters[i] = parameterAndNames[i].trim().split(" ")[0];
-					}
-					Transformation t = getTransformationByName(name);
-					if (t != null) {
-						getTransformationByName(name).setParameter(parameters);
-					}
-				} catch (NullPointerException exp) {
-					System.err.println("invalid xtend file");
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Two editor settings are the same if they have
-	 * the same target editor and the same source contributor
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof EditorTransformationSettings) {
-			EditorTransformationSettings o = (EditorTransformationSettings)obj;
-			//we are using the '==' operator for the contributor
-			//because it may be possible that the contributor is 'null'
-			//and the equals method will throw an exception
-			return (o.getEditor().equals(editor) && o.getContributor() == contributor );
-		}
-		return false;
-	}
-	
-	/**
-	 * The hashcode is calculated from the editors hash and the 
-	 * hashCode of the contributor, if existing.
-	 */
-	@Override
-	public int hashCode() {
-		int hash = editor.hashCode();
-		if (contributor != null) {
-			hash += contributor.hashCode();
-		}
-		return hash;
-	}
+	return hash;
+    }
 }

@@ -21,28 +21,29 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 /**
- * The KSBasE preference page, contains the transformation
- * and post-transformation pages.
+ * The KSBasE preference page, contains the transformation and
+ * post-transformation pages.
+ * 
  * @author Michael Matzen
- *
+ * 
  */
 public class KSBasEPreferencePage extends PreferencePage implements
-		IWorkbenchPreferencePage {
+        IWorkbenchPreferencePage {
 
-	public KSBasEPreferencePage() {
-		setDescription(Messages.KSBasEPreferencePage_Title);
-		noDefaultAndApplyButton();
-	}
+    public KSBasEPreferencePage() {
+	setDescription(Messages.KSBasEPreferencePage_Title);
+	noDefaultAndApplyButton();
+    }
 
-	@Override
-	protected Control createContents(Composite parent) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    protected Control createContents(Composite parent) {
+	// TODO Auto-generated method stub
+	return null;
+    }
 
-	public void init(IWorkbench workbench) {
-		// TODO Auto-generated method stub
+    public void init(IWorkbench workbench) {
+	// TODO Auto-generated method stub
 
-	}
+    }
 
 }

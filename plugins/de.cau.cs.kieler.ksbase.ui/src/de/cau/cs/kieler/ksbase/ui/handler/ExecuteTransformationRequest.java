@@ -39,118 +39,137 @@ public class ExecuteTransformationRequest extends Request {
     /**
      * Creates a transformation request.
      * 
-     * @param ePart The active EditPart
-     * @param command The transformation command
-     * @param fileName Name of the Xtend transformation file
-     * @param selection The active selection
-     * @param modelPackage The model package for the active editor
-     * @param parameter The parameters of the Xtend transformation
+     * @param ePart
+     *            The active EditPart
+     * @param command
+     *            The transformation command
+     * @param fileName
+     *            Name of the Xtend transformation file
+     * @param selection
+     *            The active selection
+     * @param modelPackage
+     *            The model package for the active editor
+     * @param parameter
+     *            The parameters of the Xtend transformation
      */
-    public ExecuteTransformationRequest(final IEditorPart ePart, final String command,
-    		final String fileName, final ISelection selection,
-    		final String modelPackage, final String[] parameter) {
-        super(REQ_EXEC_TRANS);
-        this.editPart = ePart;
-        this.command = command;
-        this.fileName = fileName;
-        this.modelPackage = modelPackage;
-        this.selection = selection;
-        this.parameter = parameter.clone();
+    public ExecuteTransformationRequest(final IEditorPart ePart,
+	    final String command, final String fileName,
+	    final ISelection selection, final String modelPackage,
+	    final String[] parameter) {
+	super(REQ_EXEC_TRANS);
+	this.editPart = ePart;
+	this.command = command;
+	this.fileName = fileName;
+	this.modelPackage = modelPackage;
+	this.selection = selection;
+	this.parameter = parameter.clone();
     }
-    
+
     /**
      * Sets the model package.
+     * 
      * @param modelPackage
      */
     public final void setModelPackage(final String modelPackage) {
-        this.modelPackage = modelPackage;
+	this.modelPackage = modelPackage;
     }
 
     /**
      * Gets the model package.
-     * @return modelPackage 
+     * 
+     * @return modelPackage
      */
     public final String getModelPackage() {
-        return this.modelPackage;
+	return this.modelPackage;
     }
-    
+
     /**
      * Sets the edit part.
+     * 
      * @param part
      */
     public final void setEditPart(final IEditorPart part) {
-        this.editPart = part;
+	this.editPart = part;
     }
 
     /**
      * Gets the edit part.
+     * 
      * @return the editPart
      */
     public final IEditorPart getEditPart() {
-        return this.editPart;
+	return this.editPart;
     }
 
     /**
      * Sets the transformation command.
+     * 
      * @param command
      */
     public final void setCommand(final String command) {
-        this.command = command;
+	this.command = command;
     }
 
     /**
      * Gets the transformation command.
+     * 
      * @return A Xtend method name
      */
     public final String getCommand() {
-        return this.command;
+	return this.command;
     }
 
     /**
      * Sets the filename.
+     * 
      * @param fileName
      */
     public final void setFileName(final String fileName) {
-        this.fileName = fileName;
+	this.fileName = fileName;
     }
 
     /**
      * Gets the filename.
-     * @return A Xtend file name 
+     * 
+     * @return A Xtend file name
      */
     public final String getFileName() {
-        return this.fileName;
+	return this.fileName;
     }
 
     /**
      * Sets the current selection.
+     * 
      * @param selection
      */
     public final void setSelection(final ISelection selection) {
-        this.selection = selection;
+	this.selection = selection;
     }
 
     /**
      * The current selection.
+     * 
      * @return an ISelection object
      */
     public final ISelection getSelection() {
-        return this.selection;
+	return this.selection;
     }
 
     /**
      * Gets the list of parameters
+     * 
      * @return a string array of parameters
      */
     public final String[] getParameter() {
-		return parameter.clone();
-	}
+	return parameter.clone();
+    }
 
-	/**
-	 * Sets the parameters for this transformation request .
-	 * @param parameter
-	 */
+    /**
+     * Sets the parameters for this transformation request .
+     * 
+     * @param parameter
+     */
     public final void setParameter(final String[] parameter) {
-		this.parameter = parameter.clone();
-	}
+	this.parameter = parameter.clone();
+    }
 }

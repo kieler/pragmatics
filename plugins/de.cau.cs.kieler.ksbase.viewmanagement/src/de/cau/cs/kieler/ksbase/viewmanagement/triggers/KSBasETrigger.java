@@ -22,46 +22,47 @@ import de.cau.cs.kieler.ksbase.ui.TransformationUIManager;
 import de.cau.cs.kieler.ksbase.ui.listener.ITransformationEventListener;
 
 /**
- * A viewmanagement trigger which is called when a transformation command
- * has been executed.
+ * A viewmanagement trigger which is called when a transformation command has
+ * been executed.
+ * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
- *
+ * 
  */
 public class KSBasETrigger extends ATrigger implements
-		ITransformationEventListener {
+        ITransformationEventListener {
 
-	private TriggerEventObject triggerObject;
+    private TriggerEventObject triggerObject;
 
-	/**
-	 * Creates a new KSbasETrigger and adds itself to the list
-	 * of postTransformationListeners in the TransformationUIManager.
-	 */
-	public KSBasETrigger() {
-		// Add to post transformation queue
-		TransformationUIManager.instance.addPostTransformationListener(this);
-	}
+    /**
+     * Creates a new KSbasETrigger and adds itself to the list of
+     * postTransformationListeners in the TransformationUIManager.
+     */
+    public KSBasETrigger() {
+	// Add to post transformation queue
+	TransformationUIManager.instance.addPostTransformationListener(this);
+    }
 
-	/**
-	 * Unregisters from the postTransformationListener.
-	 */
-	@Override
-	public void finalize() {
-		// Remove from post transformation queue
-		TransformationUIManager.instance.removePostTransformationListener(this);
+    /**
+     * Unregisters from the postTransformationListener.
+     */
+    @Override
+    public void finalize() {
+	// Remove from post transformation queue
+	TransformationUIManager.instance.removePostTransformationListener(this);
+    }
+
+    /**
+     * Called when a transformation is executed.
+     */
+    @Override
+    public void transformationExecuted(Object[] args) {
+	if (args.length == 2 && args[0] instanceof EditPart) {
+	    this.triggerObject = new TriggerEventObject();
+	    triggerObject.setAffectedObject(translateToURI(args[0]));
+	    triggerObject.setParameters(args[1]);
+	    triggerObject.setTriggerActive(true);
+	    notifyTrigger(triggerObject);
 	}
-	
-	/**
-	 * Called when a transformation is executed. 
-	 */
-	@Override
-	public void transformationExecuted(Object[] args) {
-		if (args.length == 2 && args[0] instanceof EditPart) {
-			this.triggerObject = new TriggerEventObject();
-			triggerObject.setAffectedObject(translateToURI(args[0]));
-			triggerObject.setParameters(args[1]);
-			triggerObject.setTriggerActive(true);
-			notifyTrigger(triggerObject);
-		}
-	}
+    }
 
 }

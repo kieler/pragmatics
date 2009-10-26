@@ -16,89 +16,102 @@ package de.cau.cs.kieler.ksbase.core;
 
 import java.util.LinkedList;
 
-
 /**
- * A menu contribution, defined by an extension point.
- * Contains a list of commands, sub menus and a data property. 
+ * A menu contribution, defined by an extension point. Contains a list of
+ * commands, sub menus and a data property.
  * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
- *
+ * 
  */
 public class KSBasEMenuContribution {
-    
-    private String data; //If this contribution is a root contribution, the data is a
-                        //locationURI, else it is the id of a menu.
-    private String label; //The label for this contribution, currently used only for menus
-    private LinkedList<String> commands; //The list of commands
-    private LinkedList<KSBasEMenuContribution> subMenus; //The list of sub menus
-    
+
+    private String data; // If this contribution is a root contribution, the
+			 // data is a
+    // locationURI, else it is the id of a menu.
+    private String label; // The label for this contribution, currently used
+			  // only for menus
+    private LinkedList<String> commands; // The list of commands
+    private LinkedList<KSBasEMenuContribution> subMenus; // The list of sub
+							 // menus
+
     /**
-     * Creates a new menu contribution with the given data content
-     * (Id or locationURI).
-     * @param data The data property
+     * Creates a new menu contribution with the given data content (Id or
+     * locationURI).
+     * 
+     * @param data
+     *            The data property
      */
     public KSBasEMenuContribution(final String data) {
-        this.data = data;
-        this.commands = new LinkedList<String>();
-        this.subMenus = new LinkedList<KSBasEMenuContribution>();
-        this.label = "";
+	this.data = data;
+	this.commands = new LinkedList<String>();
+	this.subMenus = new LinkedList<KSBasEMenuContribution>();
+	this.label = "";
     }
-    
+
     /**
      * Adds a command to this contribution.
-     * @param transformationId The id of the called transformation
+     * 
+     * @param transformationId
+     *            The id of the called transformation
      */
     public final void addCommand(final String transformationId) {
-        commands.add(transformationId);
-        
+	commands.add(transformationId);
+
     }
-    
+
     /**
      * Adds a sub menu to this contribution.
-     * @param menu the menu to add
+     * 
+     * @param menu
+     *            the menu to add
      */
     public final void addSubMenu(final KSBasEMenuContribution menu) {
-        subMenus.add(menu);
+	subMenus.add(menu);
     }
-    
+
     /**
      * Returns a list of all sub menus contained in this contribution.
+     * 
      * @return A list of menu contributions
      */
     public final LinkedList<KSBasEMenuContribution> getMenus() {
-        return subMenus;
+	return subMenus;
     }
-    
+
     /**
      * Returns the list of commands.
+     * 
      * @return A list of commands
      */
     public final LinkedList<String> getCommands() {
-        return commands;
+	return commands;
     }
-    
+
     /**
-     * Returns the string property. 
+     * Returns the string property.
+     * 
      * @return The content of the data property
      */
-    public final String getData()
-    {
-        return data;
+    public final String getData() {
+	return data;
     }
 
     /**
      * Returns the label.
+     * 
      * @return The label
      */
     public final String getLabel() {
-        return label;
+	return label;
     }
 
     /**
      * Sets the label.
-     * @param label the new label
+     * 
+     * @param label
+     *            the new label
      */
     public final void setLabel(final String label) {
-        this.label = label;
+	this.label = label;
     }
 }
