@@ -39,8 +39,6 @@ public class TransformationEditPolicyProvider extends AbstractProvider
      * 
      * @param editPart
      *            The editPart to register this policy with.
-     * @see org.eclipse.gmf.runtime.diagram.ui.services.editpolicy.IEditPolicyProvider
-     *      #createEditPolicies(org.eclipse.gef.EditPart)
      */
     public void createEditPolicies(final EditPart editPart) {
         editPart.installEditPolicy(EXECUTE_TRANSFORMATION_ROLE,

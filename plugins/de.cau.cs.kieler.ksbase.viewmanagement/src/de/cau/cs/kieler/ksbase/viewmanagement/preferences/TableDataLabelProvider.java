@@ -44,9 +44,6 @@ public class TableDataLabelProvider implements ITableLabelProvider {
     /**
      * Gets the column image for a given element.
      * 
-     * @see
-     * org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang
-     * .Object, int)
      * 
      * @param element The element to evaluate
      * @param columnIndex The column index.
@@ -68,10 +65,6 @@ public class TableDataLabelProvider implements ITableLabelProvider {
 
     /**
      * Gets the text of a given element.
-     * 
-     * @see
-     * org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang
-     * .Object, int)
      * 
      * @param element The element to evaluate
      * @param columnIndex The column index.
@@ -100,9 +93,6 @@ public class TableDataLabelProvider implements ITableLabelProvider {
     /**
      * Adds a label listener.
      * 
-     * @see
-     * org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.
-     * jface.viewers.ILabelProviderListener)
      * 
      * @param listener The listener to add
      */
@@ -114,8 +104,6 @@ public class TableDataLabelProvider implements ITableLabelProvider {
 
     /**
      * Disposes this label provider.
-     * 
-     * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
      */
     public void dispose() {
         // noop
@@ -125,10 +113,6 @@ public class TableDataLabelProvider implements ITableLabelProvider {
 
     /**
      * Checks if the given property is the label of the given element.
-     * 
-     * @see
-     * org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang
-     * .Object, java.lang.String)
      * 
      * @param element The element to evaluate.
      * @param property The property to check
@@ -143,9 +127,6 @@ public class TableDataLabelProvider implements ITableLabelProvider {
     /**
      * Removes the listener from the listener list.
      * 
-     * @see
-     * org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse
-     * .jface.viewers.ILabelProviderListener)
      * 
      * @param listener The listener to remove.
      */
