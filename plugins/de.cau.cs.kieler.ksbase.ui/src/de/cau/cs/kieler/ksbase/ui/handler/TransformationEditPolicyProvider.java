@@ -51,9 +51,6 @@ public class TransformationEditPolicyProvider extends AbstractProvider
      * Checks if this edit policy provides an operation.
      * 
      * @param operation The operation to check.
-     * @see
-     * org.eclipse.gmf.runtime.common.core.service.IProvider#provides(org.eclipse
-     * .gmf.runtime.common.core.service.IOperation)
      * @return True if this edit policy provides the given operation
      */
     public boolean provides(final IOperation operation) {
