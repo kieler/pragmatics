@@ -30,6 +30,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import de.cau.cs.kieler.ksbase.ui.TransformationUIManager;
 import de.cau.cs.kieler.ksbase.viewmanagement.KSBasEViewManagementPlugin;
 import de.cau.cs.kieler.ksbase.viewmanagement.combinations.KSBasECombination;
+
 //import de.cau.cs.kieler.viewmanagement.RunLogic;
 
 /**
@@ -54,7 +55,7 @@ public class PostTransformationPreferencePage extends PreferencePage implements
         manager = TransformationUIManager.INSTANCE;
         prefStore = null;
     }
-    
+
     /**
      * Creates the contents of the preference page.
      * 
@@ -71,9 +72,8 @@ public class PostTransformationPreferencePage extends PreferencePage implements
                 .setText("Select the effects that should be executed after a transformation.");
         new Label(container, SWT.NONE)
                 .setText("If some effects have to be executed earlier, give them a lower priority");
-        DataTableViewer viewer = new DataTableViewer(container,
-                SWT.HIDE_SELECTION | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL
-                        | SWT.SINGLE);
+        DataTableViewer viewer = new DataTableViewer(container, SWT.HIDE_SELECTION | SWT.MULTI
+                | SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE);
         createColumns(viewer);
         viewer.setContentProvider(new TableDataContentProvider());
         viewer.setLabelProvider(new TableDataLabelProvider());
@@ -82,30 +82,24 @@ public class PostTransformationPreferencePage extends PreferencePage implements
         container.setLayout(layout);
         container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         /*
-    	WILL NEED A CHANGE IN KIELER.Viewmanagement to work !!
-        for (String effect : RunLogic.getEffects()) {
-            boolean active = false;
-            int effectPrio = 0;
-            for (Integer prio : KSBasECombination.effects.keySet()) {
-                if (KSBasECombination.effects.get(prio).contains(effect)) {
-                    active = true;
-                    effectPrio = prio;
-                }
-            }
-            TableData effData = new TableData(input, active, effect, effectPrio);
-
-            input.add(effData);
-        }
-        */
+         * WILL NEED A CHANGE IN KIELER.Viewmanagement to work !! for (String
+         * effect : RunLogic.getEffects()) { boolean active = false; int
+         * effectPrio = 0; for (Integer prio :
+         * KSBasECombination.effects.keySet()) { if
+         * (KSBasECombination.effects.get(prio).contains(effect)) { active =
+         * true; effectPrio = prio; } } TableData effData = new TableData(input,
+         * active, effect, effectPrio);
+         * 
+         * input.add(effData); }
+         */
         viewer.setInput(input);
         container.pack();
         return null;
     }
 
     private void createColumns(final DataTableViewer viewer) {
-        String[] titles = {"Active","Effect","Priority" };
-        String[] toolTip = {"Status of Effect","Name of Effect",
-                "Priority of Effect" };
+        String[] titles = { "Active", "Effect", "Priority" };
+        String[] toolTip = { "Status of Effect", "Name of Effect", "Priority of Effect" };
         int[] bounds = { 52, 450, 45 };
 
         for (int i = 0; i < titles.length; i++) {
@@ -127,21 +121,24 @@ public class PostTransformationPreferencePage extends PreferencePage implements
 
     /**
      * Initializes the preference page.
-     * @param workbench The workbench for this preference page
+     * 
+     * @param workbench
+     *            The workbench for this preference page
      */
     public void init(final IWorkbench workbench) {
-        KSBasECombination.initalizeEffects(KSBasEViewManagementPlugin
-                .getDefault().getPreferenceStore());
+        KSBasECombination.initalizeEffects(KSBasEViewManagementPlugin.getDefault()
+                .getPreferenceStore());
     }
 
     /**
      * Performs an 'OK' command. i.e. stores the settings.
+     * 
      * @return False if an error occurred while storing the settings.
      */
     @Override
     public boolean performOk() {
-        KSBasECombination.storeEffects(KSBasEViewManagementPlugin.getDefault()
-                .getPreferenceStore());
+        KSBasECombination
+                .storeEffects(KSBasEViewManagementPlugin.getDefault().getPreferenceStore());
         return true;
     }
 }
