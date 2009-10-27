@@ -64,7 +64,7 @@ public class ExecuteTransformationEditPolicy extends AbstractEditPolicy {
                 IGraphicalEditPart hostEPart = (IGraphicalEditPart) getHost();
                 ExecuteTransformationCommand command = new ExecuteTransformationCommand(
                         hostEPart.getEditingDomain(),
-                        Messages.ExecuteTransformationEditPolicy_Transformation_Command_Name,
+                        Messages.executeTransformationEditPolicyTransformationCommandName,
                         new EObjectAdapter((View) hostEPart.getModel()));
                 command.initalize(transformationRequest.getEditPart(),
                         transformationRequest.getSelection(),

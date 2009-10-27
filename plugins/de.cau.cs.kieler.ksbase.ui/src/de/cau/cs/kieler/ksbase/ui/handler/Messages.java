@@ -17,37 +17,22 @@ package de.cau.cs.kieler.ksbase.ui.handler;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * Messages used in the de.cau.cs.kieler.ksbase.ui.handler package
+ * Messages used in the de.cau.cs.kieler.ksbase.ui.handler package.
  * 
  * @author Michael Matzen
  * 
  */
-public class Messages extends NLS {
+public final class Messages extends NLS {
+    /** Name of the target bundle. **/
     private static final String BUNDLE_NAME = "de.cau.cs.kieler.ksbase.core.messages"; //$NON-NLS-1$
-    public static String EditorTransformationSettings_Default_Menu_Location;
-    public static String EditorTransformationSettings_Default_Menu_Name;
-    public static String EditorTransformationSettings_Default_Toolbar_Location;
-    public static String ExecuteTransformationCommand_Workflow_Initialization_Error;
-    public static String ExecuteTransformationCommand_Workflow_Invoke_Error;
-    public static String ExecuteTransformationEditPolicy_Transformation_Command_Name;
-    public static String Preferences_DefaultIcon;
-    public static String Preferences_ExtFile;
-    public static String Preferences_MenuLocation;
-    public static String Preferences_MenuName;
-    public static String Preferences_ModelPackageClass;
-    public static String Preferences_RegisteredEditors;
-    public static String Preferences_ToolbarLocation;
-    public static String Preferences_Transformation_Command;
-    public static String Preferences_Transformation_Icon;
-    public static String Preferences_Transformation_Name;
-    public static String Preferences_Transformation_PartConfig;
-    public static String Preferences_Transformation_Selections;
-    public static String Preferences_Transformation_Shortcut;
-    public static String Preferences_Transformations;
-    public static String Preferences_Visibility;
+
+    /** Name of the localized message in messages.properties. **/
+    public static String executeTransformationCommandWorkflowInitializationError;
+    /** Name of the localized message in messages.properties. **/
+    public static String executeTransformationCommandWorkflowInvokeError;
     static {
-	// initialize resource bundle
-	NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+        // initialize resource bundle
+        NLS.initializeMessages(BUNDLE_NAME, Messages.class);
     }
 
     private Messages() {

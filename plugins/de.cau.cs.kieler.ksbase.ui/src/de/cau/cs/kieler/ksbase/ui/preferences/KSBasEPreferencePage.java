@@ -34,7 +34,7 @@ public class KSBasEPreferencePage extends PreferencePage implements
      * Default constructor.
      */
     public KSBasEPreferencePage() {
-        setDescription(Messages.KSBasEPreferencePage_Title);
+        setDescription(Messages.kSBasEPreferencePageTitle);
         noDefaultAndApplyButton();
     }
 

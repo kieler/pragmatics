@@ -1,4 +1,4 @@
-/*
+/**
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
@@ -80,9 +80,8 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
      * @param adapter
      *            an adapter to the {@code View} of the base diagram
      */
-    public ExecuteTransformationCommand(
-            final TransactionalEditingDomain domain, final String label,
-            final IAdaptable adapter) {
+    public ExecuteTransformationCommand(final TransactionalEditingDomain domain,
+            final String label, final IAdaptable adapter) {
         super(domain, label, null);
         context = new WorkflowContextDefaultImpl();
         issues = new IssuesImpl();
@@ -96,13 +95,15 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
      *      AbstractTransactionalCommand
      *      #doExecuteWithResult(org.eclipse.core.runtime.IProgressMonitor,
      *      org.eclipse.core.runtime.IAdaptable)
-     *      
+     * 
      * @param monitor
      *            Progress monitor for the execution
      * @param info
      *            Additional informations for the command
-     * @return Either an Error/Warning command result if the execution failed, or OK else
-     * @throws ExecutionException if the Execution faild due to a critical error.
+     * @return Either an Error/Warning command result if the execution failed,
+     *         or OK else
+     * @throws ExecutionException
+     *             if the Execution faild due to a critical error.
      */
     @Override
     protected CommandResult doExecuteWithResult(final IProgressMonitor monitor,
@@ -113,7 +114,8 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
 
         if (workflow == null) {
             return CommandResult
-                    .newErrorCommandResult(Messages.ExecuteTransformationCommand_Workflow_Initialization_Error);
+                    .newErrorCommandResult(
+                            Messages.executeTransformationCommandWorkflowInitializationError);
         }
         try {
             System.setErr(new PrintStream(new ByteArrayOutputStream()));
@@ -121,7 +123,7 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
             workflow.invoke(this.context, this.xtendMonitor, this.issues);
         } catch (Exception e) {
             return CommandResult
-                    .newErrorCommandResult(Messages.ExecuteTransformationCommand_Workflow_Invoke_Error);
+                    .newErrorCommandResult(Messages.executeTransformationCommandWorkflowInvokeError);
         } finally {
             System.setErr(syse);
             System.setOut(syso);
@@ -133,28 +135,25 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
             // to the log
             return CommandResult.newWarningCommandResult(
                     "Transformation completed with warnings. " //$NON-NLS-1$
-                            + issues.getWarnings()[0], null);
+                    + issues.getWarnings()[0], null);
         } else if (issues.hasErrors()) {
             for (MWEDiagnostic errors : issues.getErrors()) {
                 System.err.println("Error: " + errors.getMessage()); //$NON-NLS-1$
             } // TODO: Check how to write multiple errors, or write directly to
             // the log
-            return CommandResult
-                    .newErrorCommandResult("Transformation failed. " //$NON-NLS-1$
-                            + issues.getErrors()[0]);
+            return CommandResult.newErrorCommandResult("Transformation failed. " //$NON-NLS-1$
+                    + issues.getErrors()[0]);
         }
-        IEditorPart activeEditor = PlatformUI.getWorkbench()
-                .getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+        IEditorPart activeEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                .getActivePage().getActiveEditor();
         if (activeEditor instanceof DiagramEditor) {
-            EObject obj = ((View) ((DiagramEditor) activeEditor)
-                    .getDiagramEditPart().getModel()).getElement();
+            EObject obj = ((View) ((DiagramEditor) activeEditor).getDiagramEditPart().getModel())
+                    .getElement();
 
-            List<?> editPolicies = CanonicalEditPolicy
-                    .getRegisteredEditPolicies(obj);
+            List<?> editPolicies = CanonicalEditPolicy.getRegisteredEditPolicies(obj);
             for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
 
-                CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it
-                        .next();
+                CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it.next();
 
                 nextEditPolicy.refresh();
             }
@@ -183,9 +182,8 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
      *            The parameters of the Xtend method
      * @return False if an error occurred
      */
-    public final boolean initalize(final IEditorPart editPart,
-            final ISelection selection, final String command,
-            final String fileName, final String basePackage,
+    public final boolean initalize(final IEditorPart editPart, final ISelection selection,
+            final String command, final String fileName, final String basePackage,
             final String[] parameter) {
         StructuredSelection s;
 
@@ -219,10 +217,9 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
                 if (next instanceof EditPart) {
                     Object model = ((EditPart) next).getModel();
                     if (model instanceof View) {
-                        if (((View) model).getElement().eClass().getName()
-                                .toLowerCase(Locale.getDefault()).equals(param)) {
-                            String modelName = "model"
-                                    + String.valueOf(paramCount++);
+                        if (((View) model).getElement().eClass().getName().toLowerCase(
+                                Locale.getDefault()).equals(param)) {
+                            String modelName = "model" + String.valueOf(paramCount++);
                             modelSelection.append(modelName);
                             context.set(modelName, ((View) model).getElement());
                             slist.remove(i);
@@ -237,8 +234,7 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
             return false;
         }
 
-        workflow = new KielerWorkflow(command, file, basePackage,
-                modelSelection.toString());
+        workflow = new KielerWorkflow(command, file, basePackage, modelSelection.toString());
         return true;
     }
 

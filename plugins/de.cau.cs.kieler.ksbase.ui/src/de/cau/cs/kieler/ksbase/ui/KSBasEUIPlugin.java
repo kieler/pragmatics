@@ -1,4 +1,4 @@
-/*
+/**
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
@@ -53,7 +53,6 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
     public void start(final BundleContext context) throws Exception {
         super.start(context);
         KSBasEUIPlugin.plugin = this;
-
         DynamicMenuContributions.INSTANCE.createAllMenuContributions();
     }
 
