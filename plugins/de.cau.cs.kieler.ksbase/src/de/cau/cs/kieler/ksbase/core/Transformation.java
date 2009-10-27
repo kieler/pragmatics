@@ -152,7 +152,7 @@ public class Transformation implements Serializable {
      *            The parameters for this transformation.
      */
     public final void setParameter(final String[] param) {
-        this.parameter = parameter.clone();
+        this.parameter = param.clone();
     }
 
     /**
