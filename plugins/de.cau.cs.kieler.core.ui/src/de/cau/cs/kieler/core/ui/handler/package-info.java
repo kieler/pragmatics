@@ -13,6 +13,6 @@
  */
 
 /**
- * Preferences for the Graphviz layouter.
+ * General handlers for the KIELER user interface.
  */
-package de.cau.cs.kieler.kiml.graphviz.layouter.preferences;
+package de.cau.cs.kieler.core.ui.handler;

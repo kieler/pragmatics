@@ -1,4 +1,4 @@
-/******************************************************************************
+/*
  * KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
