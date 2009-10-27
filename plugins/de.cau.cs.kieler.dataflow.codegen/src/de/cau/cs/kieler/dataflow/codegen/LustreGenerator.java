@@ -40,74 +40,74 @@ import org.eclipse.xtend.typesystem.emf.EmfMetaModel;
 import de.cau.cs.kieler.dataflow.DataflowPackage;
 
 /**
- * Generate Lustre code from Dataflow diagram
+ * Generate Lustre code from Dataflow diagram.
  * 
  * @author ctr
  * 
  */
 public class LustreGenerator extends AbstractHandler implements IHandler {
 
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IEditorPart ed = HandlerUtil.getActiveEditor(event);
+    @Override
+    public Object execute(final ExecutionEvent event) throws ExecutionException {
+        IEditorPart ed = HandlerUtil.getActiveEditor(event);
 
-		FileEditorInput uri = (FileEditorInput) ed.getEditorInput();
-		String model = "file:" + uri.getURI().getRawPath();
-		if (model.endsWith("_diagram")) {
-			model = model.substring(0, model.length() - 8);
-		}
-		Map<String, String> properties = new HashMap<String, String>();
+        FileEditorInput uri = (FileEditorInput) ed.getEditorInput();
+        String model = "file:" + uri.getURI().getRawPath();
+        if (model.endsWith("_diagram")) {
+            model = model.substring(0, model.length() - "_diagram".length());
+        }
+        Map<String, String> properties = new HashMap<String, String>();
 
-		properties.put("model", model);
-		properties.put("src-gen", ".");
+        properties.put("model", model);
+        properties.put("src-gen", ".");
 
-		// Workflow
-		Workflow workflow = new Workflow();
+        // Workflow
+        Workflow workflow = new Workflow();
 
-		// EMF reader
-		Reader emfReader = new Reader();
-		emfReader.setUri(model);
-		emfReader.setModelSlot("model");
+        // EMF reader
+        Reader emfReader = new Reader();
+        emfReader.setUri(model);
+        emfReader.setModelSlot("model");
 
-		// Meta model
-		EmfMetaModel metaModel = new EmfMetaModel(DataflowPackage.eINSTANCE);
+        // Meta model
+        EmfMetaModel metaModel = new EmfMetaModel(DataflowPackage.eINSTANCE);
 
-		// Outlet
-		Outlet outlet = new Outlet();
-		outlet.setPath(".");
+        // Outlet
+        Outlet outlet = new Outlet();
+        outlet.setPath(".");
 
-		// Generator
-		Generator generator = new Generator();
-		generator.addMetaModel(metaModel);
-		generator.addOutlet(outlet);
+        // Generator
+        Generator generator = new Generator();
+        generator.addMetaModel(metaModel);
+        generator.addOutlet(outlet);
 
-		generator.setExpand("template::Lustre::main FOR model");
+        generator.setExpand("template::Lustre::main FOR model");
 
-		WorkflowContext wfx = new WorkflowContextDefaultImpl();
-		Issues issues = new org.eclipse.emf.mwe.core.issues.IssuesImpl();
-		NullProgressMonitor monitor = new NullProgressMonitor();
+        WorkflowContext wfx = new WorkflowContextDefaultImpl();
+        Issues issues = new org.eclipse.emf.mwe.core.issues.IssuesImpl();
+        NullProgressMonitor monitor = new NullProgressMonitor();
 
-		workflow.addComponent(emfReader);
-		workflow.addComponent(generator);
-		workflow.invoke(wfx, monitor, issues);
+        workflow.addComponent(emfReader);
+        workflow.addComponent(generator);
+        workflow.invoke(wfx, monitor, issues);
 
-		StringBuffer issue = new StringBuffer(generator.getLogMessage() + "\n");
-		for(MWEDiagnostic s: issues.getIssues()){
-			issue.append(s + "\n");
-		}
-		for(MWEDiagnostic s: issues.getErrors()){
-			issue.append(s + "\n");
-		}
-		for(MWEDiagnostic s: issues.getWarnings()){
-			issue.append(s + "\n");
-		}
-		for(MWEDiagnostic s: issues.getInfos()){
-			issue.append(s + "\n");
-		}
-		StatusManager.getManager().handle(
-				new Status(IStatus.WARNING, Activator.PLUGIN_ID, issue.toString(), null),
-				StatusManager.LOG);
+        StringBuffer issue = new StringBuffer(generator.getLogMessage() + "\n");
+        for (MWEDiagnostic s : issues.getIssues()) {
+            issue.append(s + "\n");
+        }
+        for (MWEDiagnostic s : issues.getErrors()) {
+            issue.append(s + "\n");
+        }
+        for (MWEDiagnostic s : issues.getWarnings()) {
+            issue.append(s + "\n");
+        }
+        for (MWEDiagnostic s : issues.getInfos()) {
+            issue.append(s + "\n");
+        }
+        StatusManager.getManager().handle(
+                new Status(IStatus.WARNING, Activator.PLUGIN_ID, issue
+                        .toString(), null), StatusManager.LOG);
 
-		return null;
-	}
+        return null;
+    }
 }

@@ -36,6 +36,11 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
+		<buildCommand>
+			<name>net.sf.eclipsecs.core.CheckstyleBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.pde.PluginNature</nature>
@@ -43,5 +48,6 @@
 		<nature>org.openarchitectureware.base.oawNature</nature>
 		<nature>org.eclipse.xtend.shared.ui.xtendXPandNature</nature>
 		<nature>org.eclipse.emf.index.ui.emfIndexNature</nature>
+		<nature>net.sf.eclipsecs.core.CheckstyleNature</nature>
 	</natures>
 </projectDescription>
