@@ -1,5 +1,5 @@
 /******************************************************************************
- * KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
@@ -30,7 +30,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import de.cau.cs.kieler.ksbase.ui.TransformationUIManager;
 import de.cau.cs.kieler.ksbase.viewmanagement.KSBasEViewManagementPlugin;
 import de.cau.cs.kieler.ksbase.viewmanagement.combinations.KSBasECombination;
-import de.cau.cs.kieler.viewmanagement.RunLogic;
+//import de.cau.cs.kieler.viewmanagement.RunLogic;
 
 /**
  * Preference page that configures the post-transformation actions.
@@ -81,7 +81,8 @@ public class PostTransformationPreferencePage extends PreferencePage implements
 
         container.setLayout(layout);
         container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
+        /*
+    	WILL NEED A CHANGE IN KIELER.Viewmanagement to work !!
         for (String effect : RunLogic.getEffects()) {
             boolean active = false;
             int effectPrio = 0;
@@ -95,6 +96,7 @@ public class PostTransformationPreferencePage extends PreferencePage implements
 
             input.add(effData);
         }
+        */
         viewer.setInput(input);
         container.pack();
         return null;

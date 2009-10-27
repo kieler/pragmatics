@@ -1,5 +1,5 @@
 /******************************************************************************
- * KIELER - Kiel Integrated Environment for Layout for the Eclipse RCP
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
@@ -18,12 +18,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.gef.EditPart;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import de.cau.cs.kieler.ksbase.viewmanagement.triggers.KSBasETrigger;
 import de.cau.cs.kieler.viewmanagement.ACombination;
-import de.cau.cs.kieler.viewmanagement.AEffect;
+
 import de.cau.cs.kieler.viewmanagement.ATrigger;
 import de.cau.cs.kieler.viewmanagement.RunLogic;
 import de.cau.cs.kieler.viewmanagement.TriggerEventObject;
@@ -32,6 +31,7 @@ import de.cau.cs.kieler.viewmanagement.TriggerEventObject;
  * The KSBasE combination used to execute a set of effects, selected by the user
  * via the preference pages.
  * 
+ * ILL NEED A CHANGE IN KIELER.Viewmanagement to work !!
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
  */
@@ -42,9 +42,9 @@ public class KSBasECombination extends ACombination {
     /** Trigger object. **/
     private KSBasETrigger trigger;
     /** Target editPart. **/
-    private EditPart editPart;
+    //private EditPart editPart;
     /** Additional parameter. **/
-    private Object parameter;
+    //private Object parameter;
 
     /**
      * Creates a new KSBasECombination.
@@ -59,9 +59,10 @@ public class KSBasECombination extends ACombination {
      */
     @Override
     public boolean evaluate(final TriggerEventObject triggerEvent) {
-        editPart = translateToEditPart(triggerEvent.getAffectedObject(),
+        /*editPart = translateToEditPart(triggerEvent.getAffectedObject(),
                 getRootEPAsParent());
         parameter = triggerEvent.getParameters();
+        */
         return true;
     }
 
@@ -70,6 +71,7 @@ public class KSBasECombination extends ACombination {
      */
     @Override
     public void execute() {
+        /*
         for (int prio : KSBasECombination.effects.keySet()) {
             for (String effectName : KSBasECombination.effects.get(prio)) {
                 AEffect effect = RunLogic.getEffect(effectName);
@@ -81,7 +83,7 @@ public class KSBasECombination extends ACombination {
                     effect.execute();
                 }
             }
-        }
+        }*/
     }
 
     /**
