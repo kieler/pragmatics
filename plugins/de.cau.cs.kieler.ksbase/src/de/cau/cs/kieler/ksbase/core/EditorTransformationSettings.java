@@ -1,4 +1,4 @@
-/*
+/**
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
@@ -323,8 +323,8 @@ public class EditorTransformationSettings {
                 try {
                     m = m.trim().replaceAll("//.*\n", "");
                     String method = m.toLowerCase(Locale.getDefault()); // just
-                    // to be
-                    // sure
+                                                                        // to be
+                                                                        // sure
                     if (!method.contains("void")) { // we only want void methods
                         continue;
                     }
