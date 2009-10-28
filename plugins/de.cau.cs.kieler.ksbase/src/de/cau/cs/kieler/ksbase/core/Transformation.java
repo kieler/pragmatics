@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -131,11 +132,14 @@ public class Transformation implements Serializable {
      * @return A list of parameters.
      */
     public final List<String> getParameterList() {
-        ArrayList<String> res = new ArrayList<String>();
-        for (String s : parameter) {
-            res.add(s);
+        if (parameter != null) {
+            ArrayList<String> res = new ArrayList<String>();
+            for (String s : parameter) {
+                res.add(s);
+            }
+            return res;
         }
-        return res;
+        else return new LinkedList<String>();
     }
 
     /**
@@ -235,10 +239,8 @@ public class Transformation implements Serializable {
     @Override
     public final boolean equals(final Object obj) {
         if (obj instanceof Transformation) {
-            return (parameter.length == ((Transformation) obj)
-                    .getNumSelections())
-                    && (transformationName.equals(((Transformation) obj)
-                            .getTransformationName()));
+            return (parameter.length == ((Transformation) obj).getNumSelections())
+                    && (transformationName.equals(((Transformation) obj).getTransformationName()));
         }
         return false;
     }
