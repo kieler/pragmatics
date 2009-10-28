@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.kiml.layout.layoutProviders">
+      <category
+            id="de.cau.cs.kieler.kiml.categories.ogdf"
+            name="OGDF">
+      </category>
+      <layoutProvider
+            category="de.cau.cs.kieler.kiml.categories.ogdf"
+            class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
+            id="de.cau.cs.kieler.kiml.ogdf.sugiyama"
+            name="OGDF Sugiyama"
+            parameter="SUGIYAMA"
+            type="de.cau.cs.kieler.layout.types.layered">
+      </layoutProvider>
+   </extension>
+
+</plugin>

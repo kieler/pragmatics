@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OGDF Layouter Bridge
+Bundle-SymbolicName: de.cau.cs.kieler.kiml.ogdf;singleton:=true
+Bundle-Version: 0.1.0.vqualifier
+Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Require-Bundle: de.cau.cs.kieler.core,
+ de.cau.cs.kieler.kiml.layout,
+ net.ogdf.lib
