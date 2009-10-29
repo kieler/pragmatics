@@ -114,7 +114,11 @@ public class Transformation implements Serializable {
      * @return The number of selections
      */
     public final int getNumSelections() {
-        return this.parameter.length;
+        if (parameter != null) {
+            return this.parameter.length;
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -138,8 +142,8 @@ public class Transformation implements Serializable {
                 res.add(s);
             }
             return res;
-        }
-        else return new LinkedList<String>();
+        } else
+            return new LinkedList<String>();
     }
 
     /**
@@ -148,10 +152,9 @@ public class Transformation implements Serializable {
      * @return An array of parameters.
      */
     public final String[] getParameter() {
-        if ( parameter != null) {
+        if (parameter != null) {
             return parameter.clone();
-        }
-        else { 
+        } else {
             return null;
         }
     }
@@ -161,7 +164,9 @@ public class Transformation implements Serializable {
      *            The parameters for this transformation.
      */
     public final void setParameter(final String[] param) {
-        this.parameter = param.clone();
+        if (param != null) {
+            this.parameter = param.clone();
+        }
     }
 
     /**
@@ -244,8 +249,10 @@ public class Transformation implements Serializable {
     @Override
     public final boolean equals(final Object obj) {
         if (obj instanceof Transformation) {
-            return (parameter.length == ((Transformation) obj).getNumSelections())
-                    && (transformationName.equals(((Transformation) obj).getTransformationName()));
+            return (parameter.length == ((Transformation) obj)
+                    .getNumSelections())
+                    && (transformationName.equals(((Transformation) obj)
+                            .getTransformationName()));
         }
         return false;
     }
