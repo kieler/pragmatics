@@ -343,7 +343,7 @@ public class EditorTransformationSettings {
                     }
                     Transformation t = getTransformationByName(name);
                     if (t != null) {
-                        getTransformationByName(name).setParameter(parameters);
+                        t.setParameter(parameters);
                     }
                 } catch (NullPointerException exp) {
                     System.err.println("invalid xtend file");

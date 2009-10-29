@@ -16,14 +16,16 @@ package de.cau.cs.kieler.ksbase.core;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.LinkedList;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.osgi.framework.Bundle;
 
 /**
- * The main storage and management class. Contains a list of currently registered editors. Handles
- * import, export and Xtend file parsing.
+ * The main storage and management class. Contains a list of currently
+ * registered editors. Handles import, export and Xtend file parsing.
  * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
@@ -33,12 +35,12 @@ public final class TransformationManager {
     /** The currently registered editors. **/
     private LinkedList<EditorTransformationSettings> registeredEditors;
     /**
-     * Manage state, set to true when {@link TransformationManager.initializeTransformations} has
-     * been called.
+     * Manage state, set to true when
+     * {@link TransformationManager.initializeTransformations} has been called.
      **/
     private boolean isInitialized;
 
-    /** Thread-safe initialization. **/
+    /** Transformation-Manager instance **/
     public static final TransformationManager INSTANCE = new TransformationManager();
 
     /**
@@ -55,16 +57,18 @@ public final class TransformationManager {
      * @return A list of EditorTransformationSettings
      */
     public LinkedList<EditorTransformationSettings> getEditors() {
+        assert (registeredEditors != null);
         return registeredEditors;
     }
 
     /**
-     * Gets the list of user defined editors. This is done by checking if the contributor is 'null'
-     * and is used by the preference page.
+     * Gets the list of user defined editors. This is done by checking if the
+     * contributor is 'null' and is used by the preference page.
      * 
      * @return A list of EditorTransformationSettings
      */
     public LinkedList<EditorTransformationSettings> getUserDefinedEditors() {
+        assert (registeredEditors != null);
         LinkedList<EditorTransformationSettings> userSettings = new LinkedList<EditorTransformationSettings>();
         for (EditorTransformationSettings ed : registeredEditors) {
             if (ed.getContributor() == null) {
@@ -79,30 +83,40 @@ public final class TransformationManager {
      * 
      * @param editor
      *            The editor's name.
-     * @return The first editor in the list of registered editors which has the given name
+     * @return The first editor in the list of registered editors which has the
+     *         given name
      */
     public EditorTransformationSettings getEditorByName(final String editor) {
-        for (EditorTransformationSettings settings : registeredEditors) {
-            if (settings.getEditor().equals(editor)) {
-                return settings;
+        assert (registeredEditors != null);
+        if (editor != null && editor.length() > 0) {
+            for (EditorTransformationSettings settings : registeredEditors) {
+                if (settings.getEditor().equals(editor)) {
+                    return settings;
+                }
             }
         }
         return null;
     }
 
     /**
-     * Tries to find an user defined editor with it's name.
-     * Only returns an editor if the name matches and the editor has no contributor.
-     * Called by the preference pages.
+     * Tries to find an user defined editor with it's name. Only returns an
+     * editor if the name matches and the editor has no contributor. Called by
+     * the preference pages.
      * 
      * @param editor
      *            The editor's name.
-     * @return The first editor in the list of registered editors which has the given name
+     * @return The first editor in the list of registered editors which has the
+     *         given name
      */
-    public EditorTransformationSettings getUserDefinedEditorByName(final String editor) {
-        for (EditorTransformationSettings settings : registeredEditors) {
-            if (settings.getContributor() == null && settings.getEditor().equals(editor)) {
-                return settings;
+    public EditorTransformationSettings getUserDefinedEditorByName(
+            final String editor) {
+        assert (registeredEditors != null);
+        if (editor != null && editor.length() > 0) {
+            for (EditorTransformationSettings settings : registeredEditors) {
+                if (settings.getContributor() == null
+                        && settings.getEditor().equals(editor)) {
+                    return settings;
+                }
             }
         }
         return null;
@@ -122,35 +136,41 @@ public final class TransformationManager {
      *            The EditorTransformationSetting that describes the editor
      */
     public void addEditor(final EditorTransformationSettings editor) {
+        if (editor != null) {
+            if (registeredEditors == null) {
+                registeredEditors = new LinkedList<EditorTransformationSettings>();
+            }
+            if (registeredEditors.contains(editor)) {
+                System.out.println("editor exists");
 
-        if (registeredEditors == null) {
-            registeredEditors = new LinkedList<EditorTransformationSettings>();
+            } else {
+                registeredEditors.add(editor);
+            }
         }
-        if (registeredEditors.contains(editor)) {
-            System.out.println("editor exists");
-
-        } else {
-            registeredEditors.add(editor);
-        }
-
     }
 
     /**
-     * Adds a new editor to the list of registered editors. This class creates an empty
-     * EditorTransformationSetting with the given editorName.
+     * Adds a new editor to the list of registered editors. This class creates
+     * an empty EditorTransformationSetting with the given editorName.
      * 
      * @param editorName
      *            The name of the new editor
      * @return The newly created EditorTransformationSettings
      */
     public EditorTransformationSettings addEditor(final String editorName) {
-        if (registeredEditors == null) {
-            registeredEditors = new LinkedList<EditorTransformationSettings>();
-        }
-        if (editorName.length() > 0) {
-            EditorTransformationSettings editor = new EditorTransformationSettings(editorName);
-            registeredEditors.add(editor);
-            return editor;
+        assert (registeredEditors != null);
+        if (editorName != null && editorName.length() > 0) {
+            if (registeredEditors == null) {
+                registeredEditors = new LinkedList<EditorTransformationSettings>();
+            }
+            if (editorName.length() > 0) {
+                EditorTransformationSettings editor = new EditorTransformationSettings(
+                        editorName);
+                registeredEditors.add(editor);
+                return editor;
+            } else {
+                return null;
+            }
         } else {
             return null;
         }
@@ -163,39 +183,63 @@ public final class TransformationManager {
      *            The fqn class name of the editor
      */
     public void removeEditor(final String editor) {
-        for (int i = 0; i < registeredEditors.size(); ++i) {
-            if (registeredEditors.get(i).getEditor().equals(editor)) {
-                registeredEditors.remove(i);
+        assert (registeredEditors != null);
+        if (editor != null && editor.length() > 0) {
+            for (int i = 0; i < registeredEditors.size(); ++i) {
+                if (registeredEditors.get(i).getEditor().equals(editor)) {
+                    registeredEditors.remove(i);
+                }
             }
         }
     }
 
     /**
-     * Loads the editor settings either from the extension point settings or the preference store.
+     * Loads the editor settings either from the extension point settings or the
+     * preference store.
      */
     public void initializeTransformations() {
         registeredEditors = new LinkedList<EditorTransformationSettings>();
-
-        IConfigurationElement[] configurations = Platform.getExtensionRegistry()
-                .getConfigurationElementsFor("de.cau.cs.kieler.ksbase.configuration");
-
+        
+        IConfigurationElement[] configurations = Platform
+                .getExtensionRegistry().getConfigurationElementsFor(
+                        "de.cau.cs.kieler.ksbase.configuration");
+        if (configurations == null)
+            return;
         for (IConfigurationElement settings : configurations) {
-            EditorTransformationSettings editor = new EditorTransformationSettings(settings
-                    .getAttribute("editor"));
+            // Check for valid Configuration:
+            if (settings.getAttribute("editor") == null
+                    || settings.getAttribute("contextId") == null
+                    || settings.getAttribute("packageName") == null) {
+                continue;
+            }
+
+            EditorTransformationSettings editor = new EditorTransformationSettings(
+                    settings.getAttribute("editor"));
             editor.setContributor(settings.getContributor());
             editor.setContext(settings.getAttribute("contextId"));
             editor.setDefaultIcon(settings.getAttribute("defautlIcon"));
             editor.setModelPackageClass(settings.getAttribute("packageName"));
 
-            IConfigurationElement[] transformations = settings.getChildren("transformations");
+            IConfigurationElement[] transformations = settings
+                    .getChildren("transformations");
             if (transformations != null && transformations.length > 0) {
                 // since we only allowed one single <transformations> child, we
                 // are using it w/o iteration
-                for (IConfigurationElement t : transformations[0].getChildren("transformation")) {
-                    Transformation transformation = new Transformation(t.getAttribute("name"), t
+                for (IConfigurationElement t : transformations[0]
+                        .getChildren("transformation")) {
+                    // Check for valid Configuration:
+                    if (t == null || t.getAttribute("name") == null
+                            || t.getAttribute("transformation") == null
+                            || t.getAttribute("transformationId") == null) {
+                        continue;
+                    }
+                    Transformation transformation = new Transformation(t
+                            .getAttribute("name"), t
                             .getAttribute("transformation"));
-                    transformation.setKeyboardShortcut(t.getAttribute("keyboardShortcut"));
-                    transformation.setTransformationId(t.getAttribute("transformationId"));
+                    transformation.setKeyboardShortcut(t
+                            .getAttribute("keyboardShortcut"));
+                    transformation.setTransformationId(t
+                            .getAttribute("transformationId"));
                     transformation.setIcon(t.getAttribute("icon"));
                     editor.addTransformation(transformation);
                 }
@@ -206,20 +250,25 @@ public final class TransformationManager {
             if (menus != null && menus.length > 0) {
                 // since we only allowed one single <menuContribution> child, we
                 // are using it w/o iteration
-                for (IConfigurationElement c : menus[0].getChildren("menuContribution")) {
-                    KSBasEMenuContribution contrib = new KSBasEMenuContribution(c
-                            .getAttribute("locationURI"));
+                for (IConfigurationElement c : menus[0]
+                        .getChildren("menuContribution")) {
+                    KSBasEMenuContribution contrib = new KSBasEMenuContribution(
+                            c.getAttribute("locationURI"));
                     for (IConfigurationElement m : c.getChildren("menu")) {
-                        KSBasEMenuContribution menu = new KSBasEMenuContribution(m
-                                .getAttribute("id"));
+                        KSBasEMenuContribution menu = new KSBasEMenuContribution(
+                                m.getAttribute("id"));
                         menu.setLabel(m.getAttribute("label"));
                         for (IConfigurationElement com : m.getChildren()) {
-                            menu.addCommand(com.getAttribute("transformationId"));
+                            menu.addCommand(com
+                                    .getAttribute("transformationId"));
                         }
                         contrib.addSubMenu(menu);
                     }
-                    for (IConfigurationElement com : c.getChildren("transformationCommand")) {
-                        contrib.addCommand(com.getAttribute("transformationId"));
+                    for (IConfigurationElement com : c
+                            .getChildren("transformationCommand")) {
+                        contrib
+                                .addCommand(com
+                                        .getAttribute("transformationId"));
                     }
                     editor.addMenuContribution(contrib);
                 }
@@ -229,20 +278,32 @@ public final class TransformationManager {
             InputStream path;
             StringBuffer contentBuffer = new StringBuffer();
             try {
-                path = Platform.getBundle(settings.getContributor().getName()).getEntry(
-                        "/" + settings.getAttribute("XtendFile")).openStream();
-                while (path.available() > 0) {
-                    contentBuffer.append((char) path.read());
+                if (settings.getContributor() != null
+                        && settings.getAttribute("XtendFile") != null) {
+                    Bundle bundle = Platform.getBundle(settings
+                            .getContributor().getName());
+                    if (bundle != null) {
+                        URL urlPath = bundle.getEntry("/"
+                                + settings.getAttribute("XtendFile"));
+                        if (urlPath != null) {
+                            path = urlPath.openStream();
+                            while (path.available() > 0) {
+                                contentBuffer.append((char) path.read());
 
+                            }
+                        }
+                    }
+                    if (contentBuffer != null) {
+                        editor.setExtFile(contentBuffer.toString());
+                    }
                 }
-                editor.setExtFile(contentBuffer.toString());
             } catch (IOException e) {
-                System.err.println("KSBasE configuration exception: Can't read Xtend file");
+                System.err
+                        .println("KSBasE configuration exception: Can't read Xtend file");
             }
 
             registeredEditors.add(editor);
         }
         isInitialized = true;
     }
-
 }

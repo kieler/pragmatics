@@ -63,7 +63,9 @@ public class Transformation implements Serializable {
      *            The name for this transformation
      */
     public final void setName(final String value) {
-        this.name = value;
+        if (value != null) {
+            this.name = value;
+        }
     }
 
     /**
@@ -74,7 +76,9 @@ public class Transformation implements Serializable {
      *            The name of the Xtend transformation to execute
      */
     public final void setTransformationName(final String value) {
-        this.transformationName = value;
+        if (value != null) {
+            this.transformationName = value;
+        }
     }
 
     /**
@@ -84,7 +88,9 @@ public class Transformation implements Serializable {
      *            The URI to the icon to use for this transformation.
      */
     public final void setIcon(final String iconUri) {
-        this.icon = iconUri;
+        if (iconUri != null) {
+            this.icon = iconUri;
+        }
     }
 
     /**
@@ -93,6 +99,7 @@ public class Transformation implements Serializable {
      * @return The transformation name used by the menus.
      */
     public final String getName() {
+        assert (this.name != null);
         return this.name;
     }
 
@@ -102,6 +109,7 @@ public class Transformation implements Serializable {
      * @return The name of this transformation
      */
     public final String getTransformationName() {
+        assert (this.transformationName != null);
         return this.transformationName;
     }
 
@@ -111,6 +119,7 @@ public class Transformation implements Serializable {
      * @return The number of selections
      */
     public final int getNumSelections() {
+        assert (this.parameter != null);
         return this.parameter.size();
     }
 
@@ -120,6 +129,7 @@ public class Transformation implements Serializable {
      * @return A path string
      */
     public final String getIcon() {
+        assert (this.icon != null);
         return icon;
     }
 
@@ -129,7 +139,9 @@ public class Transformation implements Serializable {
      * @return A list of parameters.
      */
     public final List<String> getParameterList() {
-        return parameter;
+        assert (this.parameter != null);
+        //never return the references!
+        return new LinkedList<String>(parameter);
     }
 
     /**
@@ -138,6 +150,7 @@ public class Transformation implements Serializable {
      * @return An array of parameters.
      */
     public final String[] getParameter() {
+        assert (this.parameter != null);
         return parameter.toArray(new String[parameter.size()]);
     }
 
@@ -161,6 +174,7 @@ public class Transformation implements Serializable {
      * @return The transformationId
      */
     public final String getTransformationId() {
+        assert (transformationId != null);
         return transformationId;
     }
 
@@ -171,7 +185,9 @@ public class Transformation implements Serializable {
      *            The new Id for this transformation
      */
     public final void setTransformationId(final String id) {
-        this.transformationId = id;
+        if (id != null) {
+            this.transformationId = id;
+        }
     }
 
     /**
@@ -180,6 +196,7 @@ public class Transformation implements Serializable {
      * @return The keyboard shortcut
      */
     public final String getKeyboardShortcut() {
+        assert (this.keyboardShortcut != null);
         return keyboardShortcut;
     }
 
@@ -190,7 +207,9 @@ public class Transformation implements Serializable {
      *            The new shortcut assigned to this transformation
      */
     public final void setKeyboardShortcut(final String shortcut) {
-        this.keyboardShortcut = shortcut;
+        if (shortcut != null) {
+            this.keyboardShortcut = shortcut;
+        }
     }
 
     /**
@@ -219,6 +238,7 @@ public class Transformation implements Serializable {
      */
     @Override
     public final int hashCode() {
+        assert (this.transformationName != null);
         return transformationName.hashCode();
     }
 
@@ -233,8 +253,8 @@ public class Transformation implements Serializable {
      */
     @Override
     public final boolean equals(final Object obj) {
-        if (obj instanceof Transformation) {
-            return (parameter.size() == ((Transformation) obj)
+        if (obj != null && obj instanceof Transformation) {
+            return (getNumSelections() == ((Transformation) obj)
                     .getNumSelections())
                     && (transformationName.equals(((Transformation) obj)
                             .getTransformationName()));
