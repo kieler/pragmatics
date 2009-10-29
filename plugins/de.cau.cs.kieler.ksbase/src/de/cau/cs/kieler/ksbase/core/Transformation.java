@@ -148,7 +148,12 @@ public class Transformation implements Serializable {
      * @return An array of parameters.
      */
     public final String[] getParameter() {
-        return parameter.clone();
+        if ( parameter != null) {
+            return parameter.clone();
+        }
+        else { 
+            return null;
+        }
     }
 
     /**
