@@ -14,7 +14,6 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.viewmanagement.preferences;
 
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.swt.SWT;
@@ -27,7 +26,6 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import de.cau.cs.kieler.ksbase.ui.TransformationUIManager;
 import de.cau.cs.kieler.ksbase.viewmanagement.KSBasEViewManagementPlugin;
 import de.cau.cs.kieler.ksbase.viewmanagement.combinations.KSBasECombination;
 
@@ -42,18 +40,11 @@ import de.cau.cs.kieler.ksbase.viewmanagement.combinations.KSBasECombination;
 public class PostTransformationPreferencePage extends PreferencePage implements
         IWorkbenchPreferencePage {
 
-    /** The transformation ui manager used by the pref page. **/
-    TransformationUIManager manager;
-    /** The preference store for this page. **/
-    IPreferenceStore prefStore;
-
     /**
      * Default constructor.
      */
     public PostTransformationPreferencePage() {
         super("KSBasE Post-Transformation Settings");
-        manager = TransformationUIManager.INSTANCE;
-        prefStore = null;
     }
 
     /**

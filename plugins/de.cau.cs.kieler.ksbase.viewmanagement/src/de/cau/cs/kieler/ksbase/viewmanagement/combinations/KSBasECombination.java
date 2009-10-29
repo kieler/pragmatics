@@ -176,7 +176,7 @@ public class KSBasECombination extends ACombination {
 	 *            The store to read from
 	 */
 	public static final void storeEffects(final IPreferenceStore prefStore) {
-		String effectString = "";
+		StringBuffer effectString = new StringBuffer();
 		for (int prio : KSBasECombination.effects.keySet()) {
 			for (String effect : KSBasECombination.effects.get(prio)) {
 				if (effect.contains(";")) {
@@ -184,7 +184,7 @@ public class KSBasECombination extends ACombination {
 					// there a 'non valid' name char ?
 					continue;
 				}
-				effectString += effect + ";";
+				effectString.append(effect + ";");
 				prefStore.setValue(effect, prio);
 			}
 		}

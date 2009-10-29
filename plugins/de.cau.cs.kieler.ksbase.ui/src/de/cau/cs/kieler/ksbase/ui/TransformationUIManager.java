@@ -119,16 +119,18 @@ public final class TransformationUIManager {
                     .getFirstElement();
 
             File file = null;
+            FileOutputStream out = null;
             try {
                 IPath path = ResourcesPlugin.getPlugin().getStateLocation();
                 file = File.createTempFile("extension", ".ext", new File(path.toOSString()));
-                FileOutputStream out = new FileOutputStream(file);
+                out = new FileOutputStream(file);
                 if (!file.exists()) {
                     if (!file.createNewFile()) {
                         // FIXME: We were unable to create the file !
                         return;
                     }
                 }
+                
                 out.write(editor.getExtFile().getBytes());
                 out.flush();
                 out.close();
@@ -162,6 +164,14 @@ public final class TransformationUIManager {
                 if (file != null) {
                     if (!file.delete()) {
                         System.out.println("Warning: Unable to delete temporary xtend file");
+                    }
+                }
+                //Close stream 
+                if (out != null) {
+                    try {
+                        out.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
 

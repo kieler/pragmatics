@@ -77,9 +77,10 @@ import de.cau.cs.kieler.ksbase.core.TransformationManager;
 /**
  * The KSBasE transformation preference page.
  * 
- * The preference page is used to modify existing extensions only! Due to technical restrictions, it
- * is not possible to add new settings here. If you'd like to create features for a new editor
- * please use the 'ksbase.configuration' extension point provided by this project
+ * The preference page is used to modify existing extensions only! Due to
+ * technical restrictions, it is not possible to add new settings here. If you'd
+ * like to create features for a new editor please use the
+ * 'ksbase.configuration' extension point provided by this project
  * 
  * @author Michael Matzen
  */
@@ -87,10 +88,26 @@ import de.cau.cs.kieler.ksbase.core.TransformationManager;
 public class TransformationPreferencePage extends PreferencePage implements
         IWorkbenchPreferencePage {
 
-    /** The classes which have to be implemented/extended by a class to be used as an editor **/
-    static protected final String DIAGRAM_EDITORS[] = new String[] {"org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor" }; //$NON-NLS-1$
+    private static final int TABLE_COL_NORMAL = 75;
+    private static final int TABLE_COL_MIN = 50;
+    private static final int TABLE_COL_LARGE = 150;
+    private static final int TABLE_COL_TRANSFORMATION = 2;
+    private static final int TABLE_COLS = 5;
+    private static final int TABLE_COL_NAME = 1;
+    private static final int TABLE_COL_ID = 0;
+    private static final int TABLE_COL_ICON = 3;
+    private static final int TABLE_COL_KEYBOARD = 4;
+    private static final int KEYCHAR_MAX = 122;
+    private static final int KEYCHAR_MIN = 97;
+    /**
+     * The classes which have to be implemented/extended by a class to be used
+     * as an editor.
+     **/
+    protected static final String[] DIAGRAM_EDITORS = new String[] {"org.eclipse.gmf.runtime."
+            + "diagram.ui.resources.editor.parts.DiagramDocumentEditor" }; //$NON-NLS-1$
     /** The list of classes that provide ecore packages. **/
-    protected static final String[] DIAGRAM_PACKAGES = new String[] {"org.eclipse.emf.ecore.EPackage" }; //$NON-NLS-1$
+    protected static final String[] DIAGRAM_PACKAGES = new String[] {"org.eclipse.emf."
+            + "ecore.EPackage" }; //$NON-NLS-1$
     /** The diagram document editor defining the diagram to use. **/
     protected DiagramDocumentEditor diagram;
     /** Text boxes. **/
@@ -98,8 +115,8 @@ public class TransformationPreferencePage extends PreferencePage implements
     /** Combo boxes. **/
     protected Combo cbEditors;
     /** Buttons. **/
-    protected Button btContext, btBrowseXtend, btModelPackage, btTableEdit, btEditorAdd,
-            btEditorDel;
+    protected Button btContext, btBrowseXtend, btModelPackage, btTableEdit,
+            btEditorAdd, btEditorDel;
     /** The file editor used to select an icon from the project folder. **/
     FileFieldEditor dfDefaultIcon;
     /** The currently selected editor. **/
@@ -109,8 +126,8 @@ public class TransformationPreferencePage extends PreferencePage implements
     /** Composites used to layout the preference page. **/
     Composite tableComp, browserContainer, btComp;
     /**
-     * The transformation manager instance used in this class so we don't have to get the instance
-     * every time.
+     * The transformation manager instance used in this class so we don't have
+     * to get the instance every time.
      **/
     private TransformationManager manager;
 
@@ -146,8 +163,9 @@ public class TransformationPreferencePage extends PreferencePage implements
              * Handles the selection of an editor from the combo box.
              */
             public void widgetSelected(final SelectionEvent e) {
-                EditorTransformationSettings editor = manager.getUserDefinedEditorByName(((Combo) e
-                        .getSource()).getText());
+                EditorTransformationSettings editor = manager
+                        .getUserDefinedEditorByName(((Combo) e.getSource())
+                                .getText());
                 activeEditor = editor;
                 if (activeEditor != null) { // Load editor settings
                     sfMetaModel.setText(editor.getModelPackageClass());
@@ -158,8 +176,9 @@ public class TransformationPreferencePage extends PreferencePage implements
                     for (Transformation t : editor.getTransformations()) {
                         TableItem tItem = new TableItem(table, SWT.NONE);
 
-                        tItem.setText(new String[] {t.getTransformationId(), t.getName(),
-                                t.getTransformationName(), t.getIcon(), t.getKeyboardShortcut() });
+                        tItem.setText(new String[] {t.getTransformationId(),
+                                t.getName(), t.getTransformationName(),
+                                t.getIcon(), t.getKeyboardShortcut() });
 
                     }
                     // enable controls
@@ -183,34 +202,36 @@ public class TransformationPreferencePage extends PreferencePage implements
         btEditorAdd.setText("Add Editor");
         btEditorAdd.addSelectionListener(new SelectionListener() {
 
-            public void widgetSelected(SelectionEvent arg0) {
-                IConfigurationElement[] elements = Platform.getExtensionRegistry()
-                        .getConfigurationElementsFor("org.eclipse.ui.editors");
+            public void widgetSelected(final SelectionEvent arg0) {
+                IConfigurationElement[] elements = Platform
+                        .getExtensionRegistry().getConfigurationElementsFor(
+                                "org.eclipse.ui.editors");
 
                 LinkedList<String> gmfEditors = new LinkedList<String>();
                 for (IConfigurationElement element : elements) {
                     gmfEditors.add(element.getAttribute("class"));
                 }
-                ElementListSelectionDialog dlg = new ElementListSelectionDialog(getShell(),
-                        new LabelProvider());
+                ElementListSelectionDialog dlg = new ElementListSelectionDialog(
+                        getShell(), new LabelProvider());
                 dlg.setTitle("Select editor");
                 dlg.setMessage("Select a diagram editor");
                 dlg.setElements(gmfEditors.toArray());
                 dlg.setAllowDuplicates(false);
                 dlg.setMatchEmptyString(true);
                 dlg.setMultipleSelection(false);
-                dlg.setEmptyListMessage("No editor found, please check your workspace settings.");
+                dlg
+                        .setEmptyListMessage("No editor found, please check your workspace settings.");
 
                 if (dlg.open() == ElementListSelectionDialog.OK) {
-                    EditorTransformationSettings editor = new EditorTransformationSettings(dlg
-                            .getFirstResult().toString());
+                    EditorTransformationSettings editor = new EditorTransformationSettings(
+                            dlg.getFirstResult().toString());
                     manager.addEditor(editor);
                     readEditors();
                 }
 
             }
 
-            public void widgetDefaultSelected(SelectionEvent arg0) {
+            public void widgetDefaultSelected(final SelectionEvent arg0) {
             }
         });
 
@@ -218,16 +239,17 @@ public class TransformationPreferencePage extends PreferencePage implements
         btEditorDel.setText("Delete Editor");
         btEditorDel.addSelectionListener(new SelectionListener() {
 
-            public void widgetSelected(SelectionEvent arg0) {
+            public void widgetSelected(final SelectionEvent arg0) {
                 // TODO Auto-generated method stub
 
             }
 
-            public void widgetDefaultSelected(SelectionEvent arg0) {
+            public void widgetDefaultSelected(final SelectionEvent arg0) {
             }
         });
         buttonContainer.setLayout(new GridLayout(2, false));
-        buttonContainer.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, false, false));
+        buttonContainer.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING,
+                false, false));
 
         GridData gData = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
         cbEditors.setLayoutData(gData);
@@ -235,8 +257,10 @@ public class TransformationPreferencePage extends PreferencePage implements
         browserContainer = new Composite(parent, SWT.NONE);
         browserContainer.setLayout(new GridLayout(3, true));
 
-        new Label(browserContainer, SWT.NONE).setText(Messages.kSBasEPreferencePageModelPackage);
-        sfMetaModel = new Text(browserContainer, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
+        new Label(browserContainer, SWT.NONE)
+                .setText(Messages.kSBasEPreferencePageModelPackage);
+        sfMetaModel = new Text(browserContainer, SWT.SINGLE | SWT.BORDER
+                | SWT.READ_ONLY);
         sfMetaModel.setEnabled(false);
         btModelPackage = new Button(browserContainer, SWT.NONE);
         btModelPackage.setText(Messages.kSBasEPreferencePageButtonBrowse);
@@ -246,35 +270,39 @@ public class TransformationPreferencePage extends PreferencePage implements
             }
 
             /**
-             * Handles the 'browse model package' event. Shows a simple FileDialog in which a file
-             * can be selected
+             * Handles the 'browse model package' event. Shows a simple
+             * FileDialog in which a file can be selected
              */
             public void widgetSelected(final SelectionEvent e) {
                 assert (activeEditor != null);
-                IConfigurationElement[] elements = Platform.getExtensionRegistry()
-                        .getConfigurationElementsFor("org.eclipse.emf.ecore.generated_package");
+                IConfigurationElement[] elements = Platform
+                        .getExtensionRegistry().getConfigurationElementsFor(
+                                "org.eclipse.emf.ecore.generated_package");
                 ArrayList<String> editors = new ArrayList<String>();
 
                 for (int i = 0; i < elements.length; ++i) {
 
-                    if (elements[i] != null && elements[i].getAttribute("class") != null) {
+                    if (elements[i] != null
+                            && elements[i].getAttribute("class") != null) {
                         editors.add(elements[i].getAttribute("class"));
                     }
                 }
 
-                ElementListSelectionDialog dlg = new ElementListSelectionDialog(getShell(),
-                        new LabelProvider());
+                ElementListSelectionDialog dlg = new ElementListSelectionDialog(
+                        getShell(), new LabelProvider());
                 dlg.setTitle("Select Package");
                 dlg.setMessage("Select a Package");
                 dlg.setElements(editors.toArray());
                 dlg.setAllowDuplicates(false);
                 dlg.setMatchEmptyString(true);
                 dlg.setMultipleSelection(false);
-                dlg.setEmptyListMessage("No Package found, please check your workspace settings.");
+                dlg
+                        .setEmptyListMessage("No Package found, please check your workspace settings.");
 
                 if (dlg.open() == ElementListSelectionDialog.OK) {
 
-                    String modelPackage = ((String) dlg.getFirstResult()).split("@")[0];
+                    String modelPackage = ((String) dlg.getFirstResult())
+                            .split("@")[0];
                     // only add a diagram once !
                     if (manager.getUserDefinedEditorByName(modelPackage) == null) {
                         activeEditor.setModelPackageClass(modelPackage);
@@ -284,27 +312,31 @@ public class TransformationPreferencePage extends PreferencePage implements
             }
 
         });
-        sfMetaModel.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+        sfMetaModel.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true,
+                false));
 
         new Label(browserContainer, SWT.NONE).setText("Diagram Context:");
-        sfContext = new Text(browserContainer, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
+        sfContext = new Text(browserContainer, SWT.SINGLE | SWT.BORDER
+                | SWT.READ_ONLY);
         btContext = new Button(browserContainer, SWT.NONE);
         btContext.setText(Messages.kSBasEPreferencePageButtonBrowse);
         btContext.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(final SelectionEvent e) {
                 assert (activeEditor != null);
-                Collection<?> definedContexts = ((ContextService) PlatformUI.getWorkbench()
-                        .getService(IContextService.class)).getDefinedContextIds();
-                ElementListSelectionDialog dlg = new ElementListSelectionDialog(getShell(),
-                        new LabelProvider());
+                Collection<?> definedContexts = ((ContextService) PlatformUI
+                        .getWorkbench().getService(IContextService.class))
+                        .getDefinedContextIds();
+                ElementListSelectionDialog dlg = new ElementListSelectionDialog(
+                        getShell(), new LabelProvider());
                 dlg.setTitle("Select diagram context");
                 dlg.setMessage("Select a context");
                 dlg.setElements(definedContexts.toArray());
                 dlg.setAllowDuplicates(false);
                 dlg.setMatchEmptyString(true);
                 dlg.setMultipleSelection(false);
-                dlg.setEmptyListMessage("No context found, please check your workspace settings");
+                dlg
+                        .setEmptyListMessage("No context found, please check your workspace settings");
 
                 if (dlg.open() == ElementListSelectionDialog.OK) {
                     activeEditor.setContext((String) dlg.getFirstResult());
@@ -316,19 +348,23 @@ public class TransformationPreferencePage extends PreferencePage implements
             }
 
         });
-        sfContext.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+        sfContext.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true,
+                false));
 
-        dfDefaultIcon = new FileFieldEditor(Messages.kSBasEPreferencePageDefaultIconName,
+        dfDefaultIcon = new FileFieldEditor(
+                Messages.kSBasEPreferencePageDefaultIconName,
                 Messages.kSBasEPreferencePageDefaultIcon, browserContainer);
         dfDefaultIcon.setFileExtensions(new String[] {
                 Messages.kSBasEPreferencePageIconExtensionPNG,
                 Messages.kSBasEPreferencePageIconExtensionICO });
 
-        browserContainer.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+        browserContainer.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING,
+                true, false));
         browserContainer.setEnabled(false);
 
         container.setLayout(layout);
-        container.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, false, false));
+        container.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, false,
+                false));
 
         tableComp = new Composite(parent, SWT.NONE);
         tableComp.setLayout(new GridLayout(1, false));
@@ -340,31 +376,36 @@ public class TransformationPreferencePage extends PreferencePage implements
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
 
-        TableColumn[] titleCols = new TableColumn[5];
+        TableColumn[] titleCols = new TableColumn[TABLE_COLS];
 
-        titleCols[0] = new TableColumn(table, SWT.NONE);
-        titleCols[0].setText(Messages.kSBasEPreferencePageTableColId);
-        titleCols[0].setToolTipText(Messages.kSBasEPreferencePageTableColIdToolTip);
-        titleCols[0].setWidth(150);
+        titleCols[TABLE_COL_ID] = new TableColumn(table, SWT.NONE);
+        titleCols[TABLE_COL_ID].setText(Messages.kSBasEPreferencePageTableColId);
+        titleCols[TABLE_COL_ID]
+                .setToolTipText(Messages.kSBasEPreferencePageTableColIdToolTip);
+        titleCols[TABLE_COL_ID].setWidth(TABLE_COL_LARGE);
 
-        titleCols[1] = new TableColumn(table, SWT.NONE);
-        titleCols[1].setText(Messages.kSBasEPreferencePageTableColName);
-        titleCols[1].setToolTipText(Messages.kSBasEPreferencePageTableColNameToolTip);
-        titleCols[1].setWidth(150);
+        titleCols[TABLE_COL_NAME] = new TableColumn(table, SWT.NONE);
+        titleCols[TABLE_COL_NAME].setText(Messages.kSBasEPreferencePageTableColName);
+        titleCols[TABLE_COL_NAME]
+                .setToolTipText(Messages.kSBasEPreferencePageTableColNameToolTip);
+        titleCols[TABLE_COL_NAME].setWidth(TABLE_COL_LARGE);
 
-        titleCols[2] = new TableColumn(table, SWT.NONE);
-        titleCols[2].setText(Messages.kSBasEPreferencePageTableColTransformation);
-        titleCols[2].setToolTipText(Messages.kSBasEPreferencePageTableColTransformationToolTip);
-        titleCols[2].setWidth(150);
+        titleCols[TABLE_COL_TRANSFORMATION] = new TableColumn(table, SWT.NONE);
+        titleCols[TABLE_COL_TRANSFORMATION]
+                .setText(Messages.kSBasEPreferencePageTableColTransformation);
+        titleCols[TABLE_COL_TRANSFORMATION]
+                .setToolTipText(Messages.kSBasEPreferencePageTableColTransformationToolTip);
+        titleCols[TABLE_COL_TRANSFORMATION].setWidth(TABLE_COL_LARGE);
 
-        titleCols[3] = new TableColumn(table, SWT.NONE);
-        titleCols[3].setText(Messages.kSBasEPreferencePageTableColIcon);
-        titleCols[3].setWidth(50);
+        titleCols[TABLE_COL_ICON] = new TableColumn(table, SWT.NONE);
+        titleCols[TABLE_COL_ICON].setText(Messages.kSBasEPreferencePageTableColIcon);
+        titleCols[TABLE_COL_ICON].setWidth(TABLE_COL_MIN);
 
-        titleCols[4] = new TableColumn(table, SWT.NONE);
-        titleCols[4].setText(Messages.kSBasEPreferencePageTableColShortcut);
-        titleCols[4].setWidth(75);
-        titleCols[4].setToolTipText(Messages.kSBasEPreferencePageTableColShortcutToolTip);
+        titleCols[TABLE_COL_KEYBOARD] = new TableColumn(table, SWT.NONE);
+        titleCols[TABLE_COL_KEYBOARD].setText(Messages.kSBasEPreferencePageTableColShortcut);
+        titleCols[TABLE_COL_KEYBOARD].setWidth(TABLE_COL_NORMAL);
+        titleCols[TABLE_COL_KEYBOARD]
+                .setToolTipText(Messages.kSBasEPreferencePageTableColShortcutToolTip);
 
         // Cursor to edit Table cells
         final TableCursor cursor = new TableCursor(table, SWT.NONE);
@@ -384,9 +425,9 @@ public class TransformationPreferencePage extends PreferencePage implements
                 assert (activeEditor != null);
                 TableItem row = cursor.getRow();
                 int col = cursor.getColumn();
-                final Transformation transformation = activeEditor.getTransformations().get(
-                        table.indexOf(row));
-                if (col == 0 || col == 1) {
+                final Transformation transformation = activeEditor
+                        .getTransformations().get(table.indexOf(row));
+                if (col == TABLE_COL_ID || col == TABLE_COL_NAME) {
                     // Name and Id can be edited directly
                     final Text text = new Text(cursor, SWT.NONE);
                     text.addKeyListener(new KeyAdapter() {
@@ -394,10 +435,11 @@ public class TransformationPreferencePage extends PreferencePage implements
                         public void keyPressed(final KeyEvent e) {
                             if (e.character == SWT.CR) {
                                 int col = cursor.getColumn();
-                                if (col == 0) {
+                                if (col == TABLE_COL_ID) {
                                     // TODO: Check for duplicate Id's
-                                    transformation.setTransformationId(text.getText());
-                                } else if (col == 1) {
+                                    transformation.setTransformationId(text
+                                            .getText());
+                                } else if (col == TABLE_COL_NAME) {
                                     transformation.setName(text.getText());
                                 }
                                 text.dispose();
@@ -410,7 +452,8 @@ public class TransformationPreferencePage extends PreferencePage implements
                         public void focusLost(final FocusEvent e) {
                             int col = cursor.getColumn();
                             if (col == 0) {
-                                transformation.setTransformationId(text.getText());
+                                transformation.setTransformationId(text
+                                        .getText());
                             } else if (col == 1) {
                                 transformation.setName(text.getText());
                             }
@@ -420,7 +463,7 @@ public class TransformationPreferencePage extends PreferencePage implements
                     text.setText(row.getText(col));
                     editor.setEditor(text);
                     text.setFocus();
-                } else if (col == 3) { // Icon
+                } else if (col == TABLE_COL_ICON) { // Icon
                     FileDialog dlg = new FileDialog(getShell(), SWT.OPEN);
                     dlg.setFilterExtensions(new String[] {
                             Messages.kSBasEPreferencePageIconExtensionPNG,
@@ -430,7 +473,7 @@ public class TransformationPreferencePage extends PreferencePage implements
                         transformation.setIcon(fileName);
                         cbEditors.notifyListeners(SWT.Selection, null);
                     }
-                } else if (col == 4) { // Keyboard shortcut
+                } else if (col == TABLE_COL_KEYBOARD) { // Keyboard shortcut
                     // We are using two text fields here
                     // one for storing the actual shortcut text including
                     // modifiers ('text') and one
@@ -451,7 +494,7 @@ public class TransformationPreferencePage extends PreferencePage implements
                                 text.setText(""); //$NON-NLS-1$
                                 keys.setText(""); //$NON-NLS-1$
                             } else {
-                                if (e.keyCode >= 97 && e.keyCode <= 122) { // only
+                                if (e.keyCode >= KEYCHAR_MIN && e.keyCode <= KEYCHAR_MAX) { // only
                                     // allow
                                     // characters
                                     String ex = ""; //$NON-NLS-1$
@@ -471,10 +514,13 @@ public class TransformationPreferencePage extends PreferencePage implements
                                         ex += keys.getText();
                                     }
 
-                                    keys.append(String.valueOf((char) e.keyCode) + " "); //$NON-NLS-1$
+                                    keys.append(String
+                                            .valueOf((char) e.keyCode)
+                                            + " "); //$NON-NLS-1$
 
                                     ex += (char) e.keyCode;
-                                    text.setText(ex.toUpperCase(Locale.getDefault()));
+                                    text.setText(ex.toUpperCase(Locale
+                                            .getDefault()));
                                 }
                             }
                         }
@@ -483,7 +529,8 @@ public class TransformationPreferencePage extends PreferencePage implements
                         public void focusLost(final FocusEvent e) {
 
                             if (text.getText().length() > 0) {
-                                transformation.setKeyboardShortcut(text.getText());
+                                transformation.setKeyboardShortcut(text
+                                        .getText());
                                 cbEditors.notifyListeners(SWT.Selection, null);
                             }
                             text.dispose();
@@ -505,25 +552,29 @@ public class TransformationPreferencePage extends PreferencePage implements
         btComp.setLayout(new GridLayout(4, false));
 
         btTableEdit = new Button(btComp, SWT.NONE);
-        btTableEdit.setText(Messages.kSBasEPreferencePageButtonEditTransformations);
+        btTableEdit
+                .setText(Messages.kSBasEPreferencePageButtonEditTransformations);
         btTableEdit.addSelectionListener(new SelectionListener() {
 
             public void widgetDefaultSelected(final SelectionEvent e) {
             }
 
             /**
-             * Handles the 'Edit transformations' event. Closes the preferences page and opens the
-             * Xtend file in a new workbench editor
+             * Handles the 'Edit transformations' event. Closes the preferences
+             * page and opens the Xtend file in a new workbench editor
              */
             public void widgetSelected(final SelectionEvent e) {
                 assert (activeEditor != null);
                 MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.CANCEL);
-                box.setMessage(Messages.kSBasEPreferencePageEditTransformationsMessage);
-                box.setText(Messages.kSBasEPreferencePageEditTransformationsTitle);
+                box
+                        .setMessage(Messages.kSBasEPreferencePageEditTransformationsMessage);
+                box
+                        .setText(Messages.kSBasEPreferencePageEditTransformationsTitle);
                 if (box.open() == SWT.OK) {
                     try {
-                        ContainerSelectionDialog dlg = new ContainerSelectionDialog(getShell(),
-                                ResourcesPlugin.getWorkspace().getRoot(), false,
+                        ContainerSelectionDialog dlg = new ContainerSelectionDialog(
+                                getShell(), ResourcesPlugin.getWorkspace()
+                                        .getRoot(), false,
                                 "Select a source folder to store and open the transformation file");
                         dlg.showClosedProjects(false);
                         dlg.setBlockOnOpen(true);
@@ -534,29 +585,40 @@ public class TransformationPreferencePage extends PreferencePage implements
                                 File path = null;
                                 if (res[0] instanceof IContainer) {
                                     System.out.println("container");
-                                       path = ((IContainer) res[0]).getFullPath().toFile();
+                                    path = ((IContainer) res[0]).getFullPath()
+                                            .toFile();
                                 }
                                 if (res[0] instanceof Path) {
-                                    System.out.println("path :"+((Path)res[0]).toFile().getAbsoluteFile().getAbsolutePath());
-                                    
-                                    path = ((Path)res[0]).makeAbsolute().toFile();
-                                }
-                                else 
+                                    System.out.println("path :"
+                                            + ((Path) res[0]).toFile()
+                                                    .getAbsoluteFile()
+                                                    .getAbsolutePath());
+
+                                    path = ((Path) res[0]).makeAbsolute()
+                                            .toFile();
+                                } else {
                                     return;
-                                System.out.println(path.toString()+"\n");
-                                
-                                final File tmpFile = File.createTempFile("extension", ".ext",
-                                        path);
-                                
-                                IEditorDescriptor desc = PlatformUI.getWorkbench()
-                                        .getEditorRegistry().getDefaultEditor("feature.ext");
-                                IWorkspace workspace = ResourcesPlugin.getWorkspace();
-                                IPath location = Path.fromOSString(tmpFile.getAbsolutePath());
-                                IFile file = workspace.getRoot().getFileForLocation(location);
+                                }
+                                System.out.println(path.toString() + "\n");
+
+                                final File tmpFile = File.createTempFile(
+                                        "extension", ".ext", path);
+
+                                IEditorDescriptor desc = PlatformUI
+                                        .getWorkbench().getEditorRegistry()
+                                        .getDefaultEditor("feature.ext");
+                                IWorkspace workspace = ResourcesPlugin
+                                        .getWorkspace();
+                                IPath location = Path.fromOSString(tmpFile
+                                        .getAbsolutePath());
+                                IFile file = workspace.getRoot()
+                                        .getFileForLocation(location);
                                 if (file == null) {
-                                    MessageBox errorBox = new MessageBox(getShell(), SWT.OK);
+                                    MessageBox errorBox = new MessageBox(
+                                            getShell(), SWT.OK);
                                     errorBox
-                                            .setMessage("Invalid folder. Please use a folder in your current worksapce");
+                                            .setMessage("Invalid folder. Please use "
+                                                    + "a folder in your current worksapce");
                                     errorBox.setText("Error");
                                     errorBox.open();
                                     return;
@@ -564,19 +626,24 @@ public class TransformationPreferencePage extends PreferencePage implements
                                 ByteArrayInputStream extStream = new ByteArrayInputStream(
                                         activeEditor.getExtFile().getBytes());
                                 if (file.exists()) {
-                                    file.setContents(extStream, IFile.FORCE, null);
+                                    file.setContents(extStream, IFile.FORCE,
+                                            null);
                                 } else {
                                     file.create(extStream, IFile.FORCE, null);
                                 }
                                 IWorkbenchPage page = PlatformUI.getWorkbench()
-                                        .getActiveWorkbenchWindow().getActivePage();
-                                FileEditorInput input = new FileEditorInput(file);
-                                IEditorPart editor = page.openEditor(input, desc.getId());
+                                        .getActiveWorkbenchWindow()
+                                        .getActivePage();
+                                FileEditorInput input = new FileEditorInput(
+                                        file);
+                                IEditorPart editor = page.openEditor(input,
+                                        desc.getId());
                                 IPropertyListener list = new IPropertyListener() {
 
                                     private boolean dirty = false;
 
-                                    public void propertyChanged(final Object source,
+                                    public void propertyChanged(
+                                            final Object source,
                                             final int propId) {
                                         if (propId == IWorkbenchPartConstants.PROP_DIRTY) {
                                             if (dirty) {
@@ -616,33 +683,38 @@ public class TransformationPreferencePage extends PreferencePage implements
             }
 
             /**
-             * Handles the 'browse xtend file' event Shows a simple FileDialog in which a file can
-             * be selected
+             * Handles the 'browse xtend file' event Shows a simple FileDialog
+             * in which a file can be selected
              */
             public void widgetSelected(final SelectionEvent e) {
                 assert (activeEditor != null);
                 MessageBox box = new MessageBox(getShell(), SWT.YES | SWT.NO);
-                box.setMessage("Loading an xtend file may reset the "
-                        + "existing transformations.\r\n Do you want continue?");
-                box.setText(Messages.kSBasEPreferencePageEditTransformationsTitle);
+                box
+                        .setMessage("Loading an xtend file may reset the "
+                                + "existing transformations.\r\n Do you want continue?");
+                box
+                        .setText(Messages.kSBasEPreferencePageEditTransformationsTitle);
                 if (box.open() == SWT.YES) {
                     FileDialog dlg = new FileDialog(getShell());
-                    dlg.setFilterPath(ResourcesPlugin.getWorkspace().getRoot().getLocation()
-                            .toOSString());
-                    dlg.setFileName(Messages.kSBasEPreferencePageXtendFileDefaultName);
+                    dlg.setFilterPath(ResourcesPlugin.getWorkspace().getRoot()
+                            .getLocation().toOSString());
+                    dlg
+                            .setFileName(Messages.kSBasEPreferencePageXtendFileDefaultName);
                     dlg
                             .setFilterExtensions(new String[] {Messages.kSBasEPreferencePageXtendFileExtension });
-                    dlg.setText(Messages.kSBasEPreferencePageXtendFileDialogTitle);
+                    dlg
+                            .setText(Messages.kSBasEPreferencePageXtendFileDialogTitle);
                     String result = dlg.open();
                     if (result != null) {
                         IPath path = new Path(result);
 
-                        IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(
-                                path);
+                        IFile file = ResourcesPlugin.getWorkspace().getRoot()
+                                .getFileForLocation(path);
 
                         if (file == null) {
                             box = new MessageBox(getShell(), SWT.OK);
-                            box.setMessage(Messages.kSBasEPreferencePageXtendFileInvalidFile);
+                            box
+                                    .setMessage(Messages.kSBasEPreferencePageXtendFileInvalidFile);
                             box.open();
                             return;
                         } else {
@@ -661,11 +733,13 @@ public class TransformationPreferencePage extends PreferencePage implements
     }
 
     /**
-     * Reads the existing editors from the manager and inserts them to the editor list.
+     * Reads the existing editors from the manager and inserts them to the
+     * editor list.
      */
-    private final void readEditors() {
+    private void readEditors() {
         if (manager.getEditors() != null) {
-            for (EditorTransformationSettings s : manager.getUserDefinedEditors()) {
+            for (EditorTransformationSettings s : manager
+                    .getUserDefinedEditors()) {
                 cbEditors.add(s.getEditor());
             }
             if (cbEditors.getItemCount() > 0) {
@@ -686,7 +760,8 @@ public class TransformationPreferencePage extends PreferencePage implements
     }
 
     /**
-     * Performs an 'OK' command. i.e. stores the settings for the currently selected editor.
+     * Performs an 'OK' command. i.e. stores the settings for the currently
+     * selected editor.
      * 
      * @return False if an error occurred while storing the settings.
      */

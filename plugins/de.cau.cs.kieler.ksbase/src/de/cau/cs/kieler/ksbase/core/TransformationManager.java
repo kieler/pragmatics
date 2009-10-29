@@ -158,11 +158,7 @@ public final class TransformationManager {
      * @return The newly created EditorTransformationSettings
      */
     public EditorTransformationSettings addEditor(final String editorName) {
-        assert (registeredEditors != null);
         if (editorName != null && editorName.length() > 0) {
-            if (registeredEditors == null) {
-                registeredEditors = new LinkedList<EditorTransformationSettings>();
-            }
             if (editorName.length() > 0) {
                 EditorTransformationSettings editor = new EditorTransformationSettings(
                         editorName);
@@ -199,7 +195,7 @@ public final class TransformationManager {
      */
     public void initializeTransformations() {
         registeredEditors = new LinkedList<EditorTransformationSettings>();
-        
+
         IConfigurationElement[] configurations = Platform
                 .getExtensionRegistry().getConfigurationElementsFor(
                         "de.cau.cs.kieler.ksbase.configuration");
