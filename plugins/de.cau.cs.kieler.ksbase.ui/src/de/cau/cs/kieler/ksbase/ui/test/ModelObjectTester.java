@@ -38,49 +38,61 @@ import de.cau.cs.kieler.ksbase.core.TransformationManager;
 public class ModelObjectTester extends PropertyTester {
 
     /**
-     * Test method called by the eclipse menu framework when 
-     * checking for menu visibility. This is kind of a hack, 
-     * because we are ignoring the given items and using the
-     * PlatformUI class to get the current selection object.
-     * This results in multiple calls for all selected object
-     * but is the only good way to do this.
+     * Test method called by the eclipse menu framework when checking for menu
+     * visibility. This is kind of a hack, because we are ignoring the given
+     * items and using the PlatformUI class to get the current selection object.
+     * This results in multiple calls for all selected object but is the only
+     * good way to do this.
      * 
-     *  @param receiver The receiver object
-     *  @param property The property to check
-     *  @param args The arguments, in this case this has to be the array[Editor,Transformation]
-     *  @param expectedValue The expected value
-     *  @return True if all selected objects are matching to the current selection.
+     * @param receiver
+     *            The receiver object
+     * @param property
+     *            The property to check
+     * @param args
+     *            The arguments, in this case this has to be the
+     *            array[Editor,Transformation]
+     * @param expectedValue
+     *            The expected value
+     * @return True if all selected objects are matching to the current
+     *         selection.
      */
-    public boolean test(final Object receiver, final String property, final Object[] args,
-            final Object expectedValue) {
+    public boolean test(final Object receiver, final String property,
+            final Object[] args, final Object expectedValue) {
         assert (args.length == 2);
         assert (args[0] instanceof String);
         assert (args[1] instanceof String);
 
         Transformation t = TransformationManager.INSTANCE.getEditorByName(
                 (String) args[0]).getTransformationById((String) args[1]);
-        List<String> match = t.getParameterList();
-
-        ISelection sel = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                .getSelectionService().getSelection();
-        if (sel instanceof StructuredSelection) {
-            Iterator<?> it = ((StructuredSelection) sel).iterator();
-            while (it.hasNext()) {
-                Object testingObject = it.next();
-                if (testingObject instanceof EditPart) {
-                    Object model = ((EditPart) testingObject).getModel();
-                    if (model instanceof View) {
-                        View vep = (View) model;
-                        int idx = match.indexOf(vep.getElement().eClass()
-                                .getName().toLowerCase(Locale.getDefault()));
-                        if (idx > -1) {
-                            match.remove(idx);
+        if (t != null) {
+            List<String> match = t.getParameterList();
+            if (match != null) {
+                ISelection sel = PlatformUI.getWorkbench()
+                        .getActiveWorkbenchWindow().getSelectionService()
+                        .getSelection();
+                if (sel instanceof StructuredSelection) {
+                    Iterator<?> it = ((StructuredSelection) sel).iterator();
+                    while (it.hasNext()) {
+                        Object testingObject = it.next();
+                        if (testingObject instanceof EditPart) {
+                            Object model = ((EditPart) testingObject)
+                                    .getModel();
+                            if (model instanceof View) {
+                                View vep = (View) model;
+                                int idx = match.indexOf(vep.getElement()
+                                        .eClass().getName().toLowerCase(
+                                                Locale.getDefault()));
+                                if (idx > -1) {
+                                    match.remove(idx);
+                                }
+                            }
                         }
                     }
                 }
+                return match.isEmpty();
             }
         }
-        return match.isEmpty();
+        return false;
     }
 
 }

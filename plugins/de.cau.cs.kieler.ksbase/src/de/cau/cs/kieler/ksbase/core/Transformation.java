@@ -17,7 +17,6 @@ package de.cau.cs.kieler.ksbase.core;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,10 +35,8 @@ public class Transformation implements Serializable {
     private String transformationName; // Xtend method name
     private String icon; // URI to icon
     private String keyboardShortcut; // Assigned keyboard shortcut
-    private String[] parameter; // Ordered parameters
-    private String transformationId; // Id for this transformation, defined via
-
-    // the ext. point
+    private LinkedList<String> parameter; // Ordered parameters
+    private String transformationId; // Id for this transformation
 
     /**
      * Creates a new Transformation.
@@ -56,7 +53,7 @@ public class Transformation implements Serializable {
         icon = "";
         keyboardShortcut = "";
         transformationId = "";
-        parameter = null;
+        parameter = new LinkedList<String>();
     }
 
     /**
@@ -114,11 +111,7 @@ public class Transformation implements Serializable {
      * @return The number of selections
      */
     public final int getNumSelections() {
-        if (parameter != null) {
-            return this.parameter.length;
-        } else {
-            return 0;
-        }
+        return this.parameter.size();
     }
 
     /**
@@ -136,14 +129,7 @@ public class Transformation implements Serializable {
      * @return A list of parameters.
      */
     public final List<String> getParameterList() {
-        if (parameter != null) {
-            ArrayList<String> res = new ArrayList<String>();
-            for (String s : parameter) {
-                res.add(s);
-            }
-            return res;
-        } else
-            return new LinkedList<String>();
+        return parameter;
     }
 
     /**
@@ -152,11 +138,7 @@ public class Transformation implements Serializable {
      * @return An array of parameters.
      */
     public final String[] getParameter() {
-        if (parameter != null) {
-            return parameter.clone();
-        } else {
-            return null;
-        }
+        return (String[]) parameter.toArray();
     }
 
     /**
@@ -164,8 +146,11 @@ public class Transformation implements Serializable {
      *            The parameters for this transformation.
      */
     public final void setParameter(final String[] param) {
-        if (param != null) {
-            this.parameter = param.clone();
+        if (param != null && param.length > 0) {
+            this.parameter.clear();
+            for (String para : param) {
+                this.parameter.add(para);
+            }
         }
     }
 
@@ -249,7 +234,7 @@ public class Transformation implements Serializable {
     @Override
     public final boolean equals(final Object obj) {
         if (obj instanceof Transformation) {
-            return (parameter.length == ((Transformation) obj)
+            return (parameter.size() == ((Transformation) obj)
                     .getNumSelections())
                     && (transformationName.equals(((Transformation) obj)
                             .getTransformationName()));
