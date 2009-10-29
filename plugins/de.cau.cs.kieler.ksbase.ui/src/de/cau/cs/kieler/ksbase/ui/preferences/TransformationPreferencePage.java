@@ -18,19 +18,40 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Locale;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.gmf.runtime.common.ui.services.editor.EditorService;
+import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.search.IJavaSearchConstants;
+import org.eclipse.jdt.core.search.IJavaSearchScope;
+import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.core.search.SearchMatch;
+import org.eclipse.jdt.core.search.SearchParticipant;
+import org.eclipse.jdt.core.search.SearchPattern;
+import org.eclipse.jdt.core.search.SearchRequestor;
+import org.eclipse.jdt.internal.core.ResolvedBinaryType;
+import org.eclipse.jdt.internal.core.ResolvedSourceType;
+import org.eclipse.jdt.internal.core.SourceType;
+import org.eclipse.jdt.ui.IJavaElementSearchConstants;
+import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ControlEditor;
 import org.eclipse.swt.custom.TableCursor;
@@ -64,7 +85,10 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
+import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.internal.contexts.ContextService;
 import org.eclipse.ui.part.FileEditorInput;
 
@@ -75,10 +99,9 @@ import de.cau.cs.kieler.ksbase.core.TransformationManager;
 /**
  * The KSBasE transformation preference page.
  * 
- * The preference page is used to modify existing extensions only! Due to
- * technical restrictions, it is not possible to add new settings here. If you'd
- * like to create features for a new editor please use the
- * 'ksbase.configuration' extension point provided by this project
+ * The preference page is used to modify existing extensions only! Due to technical restrictions, it
+ * is not possible to add new settings here. If you'd like to create features for a new editor
+ * please use the 'ksbase.configuration' extension point provided by this project
  * 
  * @author Michael Matzen
  */
@@ -86,8 +109,10 @@ import de.cau.cs.kieler.ksbase.core.TransformationManager;
 public class TransformationPreferencePage extends PreferencePage implements
         IWorkbenchPreferencePage {
 
+    /** The classes which have to be implemented/extended by a class to be used as an editor **/
+    static protected final String DIAGRAM_EDITORS[] = new String[] {"org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor" }; //$NON-NLS-1$
     /** The list of classes that provide ecore packages. **/
-    protected static final String[] DIAGRAM_PACKAGES = new String[] { "org.eclipse.emf.ecore.EPackage" }; //$NON-NLS-1$
+    protected static final String[] DIAGRAM_PACKAGES = new String[] {"org.eclipse.emf.ecore.EPackage" }; //$NON-NLS-1$
     /** The diagram document editor defining the diagram to use. **/
     protected DiagramDocumentEditor diagram;
     /** Text boxes. **/
@@ -95,7 +120,8 @@ public class TransformationPreferencePage extends PreferencePage implements
     /** Combo boxes. **/
     protected Combo cbEditors;
     /** Buttons. **/
-    protected Button btContext, btBrowseXtend, btModelPackage, btTableEdit;
+    protected Button btContext, btBrowseXtend, btModelPackage, btTableEdit, btEditorAdd,
+            btEditorDel;
     /** The file editor used to select an icon from the project folder. **/
     FileFieldEditor dfDefaultIcon;
     /** The currently selected editor. **/
@@ -105,8 +131,8 @@ public class TransformationPreferencePage extends PreferencePage implements
     /** Composites used to layout the preference page. **/
     Composite tableComp, browserContainer, btComp;
     /**
-     * The transformation manager instance used in this class so we don't have
-     * to get the instance every time.
+     * The transformation manager instance used in this class so we don't have to get the instance
+     * every time.
      **/
     private TransformationManager manager;
 
@@ -142,7 +168,7 @@ public class TransformationPreferencePage extends PreferencePage implements
              * Handles the selection of an editor from the combo box.
              */
             public void widgetSelected(final SelectionEvent e) {
-                EditorTransformationSettings editor = manager.getEditorByName(((Combo) e
+                EditorTransformationSettings editor = manager.getUserDefinedEditorByName(((Combo) e
                         .getSource()).getText());
                 activeEditor = editor;
                 if (activeEditor != null) { // Load editor settings
@@ -154,7 +180,7 @@ public class TransformationPreferencePage extends PreferencePage implements
                     for (Transformation t : editor.getTransformations()) {
                         TableItem tItem = new TableItem(table, SWT.NONE);
 
-                        tItem.setText(new String[] { t.getTransformationId(), t.getName(),
+                        tItem.setText(new String[] {t.getTransformationId(), t.getName(),
                                 t.getTransformationName(), t.getIcon(), t.getKeyboardShortcut() });
 
                     }
@@ -173,6 +199,57 @@ public class TransformationPreferencePage extends PreferencePage implements
         });
 
         new Label(container, SWT.NONE);
+        Composite buttonContainer = new Composite(container, SWT.NONE);
+
+        btEditorAdd = new Button(buttonContainer, SWT.NONE);
+        btEditorAdd.setText("Add Editor");
+        btEditorAdd.addSelectionListener(new SelectionListener() {
+
+            public void widgetSelected(SelectionEvent arg0) {
+                IConfigurationElement[] elements = Platform.getExtensionRegistry()
+                        .getConfigurationElementsFor("org.eclipse.ui.editors");
+
+                LinkedList<String> gmfEditors = new LinkedList<String>();
+                for (IConfigurationElement element : elements) {
+                    gmfEditors.add(element.getAttribute("class"));
+                }
+                ElementListSelectionDialog dlg = new ElementListSelectionDialog(getShell(),
+                        new LabelProvider());
+                dlg.setTitle("Select editor");
+                dlg.setMessage("Select a diagram editor");
+                dlg.setElements(gmfEditors.toArray());
+                dlg.setAllowDuplicates(false);
+                dlg.setMatchEmptyString(true);
+                dlg.setMultipleSelection(false);
+                dlg.setEmptyListMessage("No editor found, please check your workspace settings.");
+
+                if (dlg.open() == ElementListSelectionDialog.OK) {
+                    EditorTransformationSettings editor = new EditorTransformationSettings(dlg
+                            .getFirstResult().toString());
+                    manager.addEditor(editor);
+                    readEditors();
+                }
+
+            }
+
+            public void widgetDefaultSelected(SelectionEvent arg0) {
+            }
+        });
+
+        btEditorDel = new Button(buttonContainer, SWT.NONE);
+        btEditorDel.setText("Delete Editor");
+        btEditorDel.addSelectionListener(new SelectionListener() {
+
+            public void widgetSelected(SelectionEvent arg0) {
+                // TODO Auto-generated method stub
+
+            }
+
+            public void widgetDefaultSelected(SelectionEvent arg0) {
+            }
+        });
+        buttonContainer.setLayout(new GridLayout(2, false));
+        buttonContainer.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, false, false));
 
         GridData gData = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
         cbEditors.setLayoutData(gData);
@@ -191,8 +268,8 @@ public class TransformationPreferencePage extends PreferencePage implements
             }
 
             /**
-             * Handles the 'browse model package' event. Shows a simple
-             * FileDialog in which a file can be selected
+             * Handles the 'browse model package' event. Shows a simple FileDialog in which a file
+             * can be selected
              */
             public void widgetSelected(final SelectionEvent e) {
                 assert (activeEditor != null);
@@ -221,7 +298,7 @@ public class TransformationPreferencePage extends PreferencePage implements
 
                     String modelPackage = ((String) dlg.getFirstResult()).split("@")[0];
                     // only add a diagram once !
-                    if (manager.getEditorByName(modelPackage) == null) {
+                    if (manager.getUserDefinedEditorByName(modelPackage) == null) {
                         activeEditor.setModelPackageClass(modelPackage);
                         cbEditors.notifyListeners(SWT.Selection, null);
                     }
@@ -319,7 +396,7 @@ public class TransformationPreferencePage extends PreferencePage implements
 
         cursor.addSelectionListener(new SelectionListener() {
             public void widgetDefaultSelected(final SelectionEvent e) {
-                table.setSelection(new TableItem[] { cursor.getRow() });
+                table.setSelection(new TableItem[] {cursor.getRow() });
             }
 
             /**
@@ -457,8 +534,8 @@ public class TransformationPreferencePage extends PreferencePage implements
             }
 
             /**
-             * Handles the 'Edit transformations' event. Closes the preferences
-             * page and opens the Xtend file in a new workbench editor
+             * Handles the 'Edit transformations' event. Closes the preferences page and opens the
+             * Xtend file in a new workbench editor
              */
             public void widgetSelected(final SelectionEvent e) {
                 assert (activeEditor != null);
@@ -467,67 +544,81 @@ public class TransformationPreferencePage extends PreferencePage implements
                 box.setText(Messages.kSBasEPreferencePageEditTransformationsTitle);
                 if (box.open() == SWT.OK) {
                     try {
+                        ContainerSelectionDialog dlg = new ContainerSelectionDialog(getShell(),
+                                ResourcesPlugin.getWorkspace().getRoot(), false,
+                                "Select a source folder to store and open the transformation file");
+                        dlg.showClosedProjects(false);
+                        dlg.setBlockOnOpen(true);
 
-                        DirectoryDialog dlg = new DirectoryDialog(getShell());
-                        dlg.setFilterPath(ResourcesPlugin.getWorkspace().getRoot().getLocation()
-                                .toOSString());
-                        dlg
-                                .setMessage("Select a source folder to store and open the transformation file");
+                        if (dlg.open() == ContainerSelectionDialog.OK) {
+                            Object[] res = dlg.getResult();
+                            if (res != null && res.length > 0) {
+                                File path = null;
+                                if (res[0] instanceof IContainer) {
+                                    System.out.println("container");
+                                       path = ((IContainer) res[0]).getFullPath().toFile();
+                                }
+                                if (res[0] instanceof Path) {
+                                    System.out.println("path :"+((Path)res[0]).toFile().getAbsoluteFile().getAbsolutePath());
+                                    
+                                    path = ((Path)res[0]).makeAbsolute().toFile();
+                                }
+                                else 
+                                    return;
+                                System.out.println(path.toString()+"\n");
+                                
+                                final File tmpFile = File.createTempFile("extension", ".ext",
+                                        path);
+                                
+                                IEditorDescriptor desc = PlatformUI.getWorkbench()
+                                        .getEditorRegistry().getDefaultEditor("feature.ext");
+                                IWorkspace workspace = ResourcesPlugin.getWorkspace();
+                                IPath location = Path.fromOSString(tmpFile.getAbsolutePath());
+                                IFile file = workspace.getRoot().getFileForLocation(location);
+                                if (file == null) {
+                                    MessageBox errorBox = new MessageBox(getShell(), SWT.OK);
+                                    errorBox
+                                            .setMessage("Invalid folder. Please use a folder in your current worksapce");
+                                    errorBox.setText("Error");
+                                    errorBox.open();
+                                    return;
+                                }
+                                ByteArrayInputStream extStream = new ByteArrayInputStream(
+                                        activeEditor.getExtFile().getBytes());
+                                if (file.exists()) {
+                                    file.setContents(extStream, IFile.FORCE, null);
+                                } else {
+                                    file.create(extStream, IFile.FORCE, null);
+                                }
+                                IWorkbenchPage page = PlatformUI.getWorkbench()
+                                        .getActiveWorkbenchWindow().getActivePage();
+                                FileEditorInput input = new FileEditorInput(file);
+                                IEditorPart editor = page.openEditor(input, desc.getId());
+                                IPropertyListener list = new IPropertyListener() {
 
-                        String result = dlg.open();
-                        if (result != null && result.length() > 0) {
-                            final File tmpFile = File.createTempFile("extension", ".ext", new File(
-                                    result));
+                                    private boolean dirty = false;
 
-                            IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry()
-                                    .getDefaultEditor("feature.ext");
-                            IWorkspace workspace = ResourcesPlugin.getWorkspace();
-                            IPath location = Path.fromOSString(tmpFile.getAbsolutePath());
-                            IFile file = workspace.getRoot().getFileForLocation(location);
-                            if (file == null) {
-                                MessageBox errorBox = new MessageBox(getShell(), SWT.OK);
-                                errorBox
-                                        .setMessage("Invalid folder. Please use a folder in your current worksapce");
-                                errorBox.setText("Error");
-                                errorBox.open();
-                                return;
-                            }
-                            ByteArrayInputStream extStream = new ByteArrayInputStream(activeEditor
-                                    .getExtFile().getBytes());
-                            if (file.exists()) {
-                                file.setContents(extStream, IFile.FORCE, null);
-                            } else {
-                                file.create(extStream, IFile.FORCE, null);
-                            }
-                            IWorkbenchPage page = PlatformUI.getWorkbench()
-                                    .getActiveWorkbenchWindow().getActivePage();
-                            FileEditorInput input = new FileEditorInput(file);
-                            IEditorPart editor = page.openEditor(input, desc.getId());
-                            IPropertyListener list = new IPropertyListener() {
+                                    public void propertyChanged(final Object source,
+                                            final int propId) {
+                                        if (propId == IWorkbenchPartConstants.PROP_DIRTY) {
+                                            if (dirty) {
 
-                                private boolean dirty = false;
+                                                // activeEditor.setExtFile(tmpFile.)
 
-                                public void propertyChanged(final Object source, final int propId) {
-                                    if (propId == IWorkbenchPartConstants.PROP_DIRTY) {
-                                        if (dirty) {
-                                            /*
-                                             * activeEditor
-                                             * .parseTransformationsFromFile
-                                             * (tmpFile .getAbsolutePath());
-                                             */
-                                            // TODO:
-                                            // manager.storeTransformations();
-                                            dirty = false;
-                                            return;
-                                        } else {
-                                            dirty = true;
+                                                // TODO:
+                                                // manager.storeTransformations();
+                                                dirty = false;
+                                                return;
+                                            } else {
+                                                dirty = true;
+                                            }
                                         }
                                     }
-                                }
-                            };
+                                };
 
-                            editor.addPropertyListener(list);
-                            performOk();
+                                editor.addPropertyListener(list);
+                                performOk();
+                            }
                         }
                     } catch (PartInitException excep) {
                         excep.printStackTrace();
@@ -547,8 +638,8 @@ public class TransformationPreferencePage extends PreferencePage implements
             }
 
             /**
-             * Handles the 'browse xtend file' event Shows a simple FileDialog
-             * in which a file can be selected
+             * Handles the 'browse xtend file' event Shows a simple FileDialog in which a file can
+             * be selected
              */
             public void widgetSelected(final SelectionEvent e) {
                 assert (activeEditor != null);
@@ -562,7 +653,7 @@ public class TransformationPreferencePage extends PreferencePage implements
                             .toOSString());
                     dlg.setFileName(Messages.kSBasEPreferencePageXtendFileDefaultName);
                     dlg
-                            .setFilterExtensions(new String[] { Messages.kSBasEPreferencePageXtendFileExtension });
+                            .setFilterExtensions(new String[] {Messages.kSBasEPreferencePageXtendFileExtension });
                     dlg.setText(Messages.kSBasEPreferencePageXtendFileDialogTitle);
                     String result = dlg.open();
                     if (result != null) {
@@ -592,12 +683,11 @@ public class TransformationPreferencePage extends PreferencePage implements
     }
 
     /**
-     * Reads the existing editors from the manager and inserts them to the
-     * editor list.
+     * Reads the existing editors from the manager and inserts them to the editor list.
      */
-    private void readEditors() {
+    private final void readEditors() {
         if (manager.getEditors() != null) {
-            for (EditorTransformationSettings s : manager.getEditors()) {
+            for (EditorTransformationSettings s : manager.getUserDefinedEditors()) {
                 cbEditors.add(s.getEditor());
             }
             if (cbEditors.getItemCount() > 0) {
@@ -614,21 +704,16 @@ public class TransformationPreferencePage extends PreferencePage implements
      *            The workbench for this preference page
      */
     public final void init(final IWorkbench workbench) {
-        manager.initializeTransformations();
+        // TODO: Load from Pref store
     }
 
     /**
-     * Performs an 'OK' command. i.e. stores the settings for the currently
-     * selected editor.
+     * Performs an 'OK' command. i.e. stores the settings for the currently selected editor.
      * 
      * @return False if an error occurred while storing the settings.
      */
     @Override
     public boolean performOk() {
-        // TODO: The tricky part: Store transformations in existing extension
-        // point scheme
-        // Alot of tricky parts here: Find extension point, serialize settings
-        // to XML scheme, overwrite existing
         if (activeEditor != null) {
             activeEditor.setModelPackageClass(sfMetaModel.getText());
             activeEditor.setContext(sfContext.getText());
