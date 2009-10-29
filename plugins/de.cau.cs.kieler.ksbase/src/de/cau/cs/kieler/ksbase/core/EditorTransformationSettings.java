@@ -42,14 +42,13 @@ public class EditorTransformationSettings {
     /** List of menu contributions. **/
     private LinkedList<KSBasEMenuContribution> menuContributions;
     /**
-     * The contributor which contains the extension points. When the settings
-     * have been defined using the preference pages this will be null.
+     * The contributor which contains the extension points. When the settings have been defined
+     * using the preference pages this will be null.
      **/
     private IContributor contributor;
 
     /**
-     * Creates a new transformation setting with the given fully qualified
-     * editor name.
+     * Creates a new transformation setting with the given fully qualified editor name.
      * 
      * @param editorClass
      *            The fqn of the diagram editor
@@ -72,7 +71,9 @@ public class EditorTransformationSettings {
      *            The fqn of the diagram editor
      */
     public final void setEditor(final String editorClass) {
-        this.editor = editorClass;
+        if (editorClass != null && editorClass.length() > 0) {
+            this.editor = editorClass;
+        }
     }
 
     /**
@@ -118,14 +119,12 @@ public class EditorTransformationSettings {
     }
 
     /**
-     * Sets the menu contributions for this editor and removes any existing
-     * contributions.
+     * Sets the menu contributions for this editor and removes any existing contributions.
      * 
      * @param contributionList
      *            The list of menu contributions to use
      */
-    public final void setMenuContributions(
-            final LinkedList<KSBasEMenuContribution> contributionList) {
+    public final void setMenuContributions(final LinkedList<KSBasEMenuContribution> contributionList) {
         this.menuContributions.clear();
         this.menuContributions.addAll(contributionList);
     }
@@ -136,8 +135,7 @@ public class EditorTransformationSettings {
      * @param contribution
      *            The contribution to append to the list of menu contributions.
      */
-    public final void addMenuContribution(
-            final KSBasEMenuContribution contribution) {
+    public final void addMenuContribution(final KSBasEMenuContribution contribution) {
         this.menuContributions.add(contribution);
     }
 
@@ -176,11 +174,10 @@ public class EditorTransformationSettings {
      *            The name to find
      * @return The first transformation found or null
      */
-    public final Transformation getTransformationByName(
-            final String transformation) {
+    public final Transformation getTransformationByName(final String transformation) {
         for (Transformation t : transformations) {
-            if (t.getTransformationName().toLowerCase(Locale.getDefault())
-                    .equals(transformation.toLowerCase(Locale.getDefault()))) {
+            if (t.getTransformationName().toLowerCase(Locale.getDefault()).equals(
+                    transformation.toLowerCase(Locale.getDefault()))) {
                 return t;
             }
         }
@@ -192,8 +189,8 @@ public class EditorTransformationSettings {
      * 
      * @param tid
      *            The id to find
-     * @return The first transformation with the given id or null if no
-     *         transformation has been found
+     * @return The first transformation with the given id or null if no transformation has been
+     *         found
      */
     public final Transformation getTransformationById(final String tid) {
         for (Transformation t : transformations) {
@@ -210,8 +207,7 @@ public class EditorTransformationSettings {
      * @param transformationList
      *            A LinkedList containing the transformations
      */
-    public final void setTransformations(
-            final LinkedList<Transformation> transformationList) {
+    public final void setTransformations(final LinkedList<Transformation> transformationList) {
         this.transformations.clear();
         this.transformations.addAll(transformationList);
     }
@@ -244,8 +240,7 @@ public class EditorTransformationSettings {
      * @param newVal
      *            The transformation to insert
      */
-    public final void modifyTransformation(final Transformation oldVal,
-            final Transformation newVal) {
+    public final void modifyTransformation(final Transformation oldVal, final Transformation newVal) {
         if (this.transformations.contains(oldVal)) {
             transformations.remove(oldVal);
         }
@@ -280,8 +275,8 @@ public class EditorTransformationSettings {
     }
 
     /**
-     * Sets the editors contributor project. May return null if the editor has
-     * been defined by the user.
+     * Sets the editors contributor project. May return null if the editor has been defined by the
+     * user.
      * 
      * @param contrib
      *            The contribution that is assigned with this editor.
@@ -323,16 +318,15 @@ public class EditorTransformationSettings {
                 try {
                     m = m.trim().replaceAll("//.*\n", "");
                     String method = m.toLowerCase(Locale.getDefault()); // just
-                                                                        // to be
-                                                                        // sure
+                    // to be
+                    // sure
                     if (!method.contains("void")) { // we only want void methods
                         continue;
                     }
                     // We have to eliminate random occurrences of the 'void'
                     // keyword, e.g. in comments
                     String[] voidMethod = method.split(" ");
-                    if (voidMethod.length == 0
-                            || !voidMethod[0].trim().equals("void")) {
+                    if (voidMethod.length == 0 || !voidMethod[0].trim().equals("void")) {
                         continue;
                     }
 
@@ -359,15 +353,14 @@ public class EditorTransformationSettings {
     }
 
     /**
-     * Two editor settings are the same if they have the same target editor and
-     * the same source contributor. So we will have an implicit distinction
-     * between extension point and user defined settings, because user defined
-     * settings will have 'null' as contributor.
+     * Two editor settings are the same if they have the same target editor and the same source
+     * contributor. So we will have an implicit distinction between extension point and user defined
+     * settings, because user defined settings will have 'null' as contributor.
      * 
      * @param obj
      *            The Object to compare
-     * @return True if the given Object is an EditorTransformationSetting and
-     *         has the same contributor
+     * @return True if the given Object is an EditorTransformationSetting and has the same
+     *         contributor
      */
     @Override
     public boolean equals(final Object obj) {
@@ -382,8 +375,8 @@ public class EditorTransformationSettings {
     }
 
     /**
-     * The hashcode is calculated from the editors hash and the hashCode of the
-     * contributor, if existing.
+     * The hashcode is calculated from the editors hash and the hashCode of the contributor, if
+     * existing.
      * 
      * @return The hashCode
      */

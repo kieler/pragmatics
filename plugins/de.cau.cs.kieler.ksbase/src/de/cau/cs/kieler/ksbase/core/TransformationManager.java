@@ -22,8 +22,8 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
 /**
- * The main storage and management class. Contains a list of currently
- * registered editors. Handles import, export and Xtend file parsing.
+ * The main storage and management class. Contains a list of currently registered editors. Handles
+ * import, export and Xtend file parsing.
  * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
@@ -33,8 +33,8 @@ public final class TransformationManager {
     /** The currently registered editors. **/
     private LinkedList<EditorTransformationSettings> registeredEditors;
     /**
-     * Manage state, set to true when
-     * {@link TransformationManager.initializeTransformations} has been called.
+     * Manage state, set to true when {@link TransformationManager.initializeTransformations} has
+     * been called.
      **/
     private boolean isInitialized;
 
@@ -59,8 +59,8 @@ public final class TransformationManager {
     }
 
     /**
-     * Gets the list of user defined editors. This is done by checking if the
-     * contributor is 'null' and is used by the preference page.
+     * Gets the list of user defined editors. This is done by checking if the contributor is 'null'
+     * and is used by the preference page.
      * 
      * @return A list of EditorTransformationSettings
      */
@@ -79,12 +79,29 @@ public final class TransformationManager {
      * 
      * @param editor
      *            The editor's name.
-     * @return The first editor in the list of registered editors which has the
-     *         given name
+     * @return The first editor in the list of registered editors which has the given name
      */
     public EditorTransformationSettings getEditorByName(final String editor) {
         for (EditorTransformationSettings settings : registeredEditors) {
             if (settings.getEditor().equals(editor)) {
+                return settings;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Tries to find an user defined editor with it's name.
+     * Only returns an editor if the name matches and the editor has no contributor.
+     * Called by the preference pages.
+     * 
+     * @param editor
+     *            The editor's name.
+     * @return The first editor in the list of registered editors which has the given name
+     */
+    public EditorTransformationSettings getUserDefinedEditorByName(final String editor) {
+        for (EditorTransformationSettings settings : registeredEditors) {
+            if (settings.getContributor() == null && settings.getEditor().equals(editor)) {
                 return settings;
             }
         }
@@ -105,17 +122,22 @@ public final class TransformationManager {
      *            The EditorTransformationSetting that describes the editor
      */
     public void addEditor(final EditorTransformationSettings editor) {
+
         if (registeredEditors == null) {
             registeredEditors = new LinkedList<EditorTransformationSettings>();
         }
-        if (editor.getEditor().length() > 0) {
+        if (registeredEditors.contains(editor)) {
+            System.out.println("editor exists");
+
+        } else {
             registeredEditors.add(editor);
         }
+
     }
 
     /**
-     * Adds a new editor to the list of registered editors. This class creates
-     * an empty EditorTransformationSetting with the given editorName.
+     * Adds a new editor to the list of registered editors. This class creates an empty
+     * EditorTransformationSetting with the given editorName.
      * 
      * @param editorName
      *            The name of the new editor
@@ -149,8 +171,7 @@ public final class TransformationManager {
     }
 
     /**
-     * Loads the editor settings either from the extension point settings or the
-     * preference store.
+     * Loads the editor settings either from the extension point settings or the preference store.
      */
     public void initializeTransformations() {
         registeredEditors = new LinkedList<EditorTransformationSettings>();
