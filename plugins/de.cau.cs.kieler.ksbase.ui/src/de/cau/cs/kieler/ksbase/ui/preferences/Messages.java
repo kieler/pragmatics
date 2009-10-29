@@ -41,6 +41,8 @@ public final class Messages extends NLS {
     /** Name of the localized message in messages.properties. **/
     public static String kSBasEPreferencePageEditTransformationsTitle;
     /** Name of the localized message in messages.properties. **/
+    public static String kSBasETPreferencePageTitle;
+    /** Name of the localized message in messages.properties. **/
     public static String kSBasEPreferencePageIconExtensionICO;
     /** Name of the localized message in messages.properties. **/
     public static String kSBasEPreferencePageIconExtensionPNG;

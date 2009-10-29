@@ -64,7 +64,7 @@ public class TableDataContentProvider implements ITreeContentProvider {
      * @return An array of children objects.
      */
     public Object[] getChildren(final Object parentElement) {
-        return null;
+        return new Object[0];
     }
 
     /**

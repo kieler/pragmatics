@@ -14,6 +14,7 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.core;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
 /**
@@ -23,8 +24,10 @@ import java.util.LinkedList;
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
  */
-public class KSBasEMenuContribution {
+public class KSBasEMenuContribution implements Serializable {
 
+    /** Serialization Id  **/
+    private static final long serialVersionUID = 7361142074727714589L;
     /**
      * If this contribution is a root contribution, the data is a locationURI,
      * else it is the id of a menu.

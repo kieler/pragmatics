@@ -1,4 +1,4 @@
-/*
+/**
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
@@ -14,14 +14,24 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.core;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.util.LinkedList;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
+
+import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 
 /**
  * The main storage and management class. Contains a list of currently
@@ -188,12 +198,48 @@ public final class TransformationManager {
     }
 
     /**
+     * Stores the user defined settings in the KSbasE state location folder
+     */
+    public void storeUserDefinedTransformations() {
+
+        LinkedList<EditorTransformationSettings> userEditors = getUserDefinedEditors();
+        if (userEditors != null && userEditors.size() > 0) {
+            IPath metaPath = KSBasEPlugin.getDefault().getStateLocation();
+            for (EditorTransformationSettings editor : userEditors) {
+                ObjectOutputStream oos = null;
+                try {
+                    oos =
+                            new ObjectOutputStream(new FileOutputStream(metaPath.append(
+                                    editor.getEditor() + ".sbase").toFile()));
+                    oos.writeObject(editor);
+
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (oos != null) {
+                        try {
+                            oos.flush();
+                            oos.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+
+    /**
      * Loads the editor settings either from the extension point settings or the
      * preference store.
      */
     public void initializeTransformations() {
         registeredEditors = new LinkedList<EditorTransformationSettings>();
 
+        // From extension points first:
         IConfigurationElement[] configurations =
                 Platform.getExtensionRegistry().getConfigurationElementsFor(
                         "de.cau.cs.kieler.ksbase.configuration");
@@ -278,7 +324,7 @@ public final class TransformationManager {
                         }
                     }
                     if (contentBuffer != null) {
-                        editor.setExtFile(contentBuffer.toString());
+                        editor.setExtFile(contentBuffer.toString(), false);
                     }
                 }
             } catch (IOException e) {
@@ -286,6 +332,49 @@ public final class TransformationManager {
             }
 
             registeredEditors.add(editor);
+        }
+        // Now let's load the settings from the state location:
+        File metaPath = KSBasEPlugin.getDefault().getStateLocation().toFile();
+        if (metaPath != null && metaPath.isDirectory()) {
+
+            File[] files = metaPath.listFiles(new FilenameFilter() {
+
+                public boolean accept(File dir, String name) {
+                    if (name.endsWith(".sbase")) {
+                        return true;
+                    }
+                    return false;
+                }
+            });
+            if (files != null && files.length > 0) {
+                for (File file : files) {
+                    ObjectInputStream ois = null;
+                    try {
+                        ois = new ObjectInputStream(new FileInputStream(file));
+                        Object content = ois.readObject();
+                        if (content instanceof EditorTransformationSettings) {
+                            registeredEditors.add( (EditorTransformationSettings)content);
+                        }
+                    } catch (FileNotFoundException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (ClassNotFoundException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } finally {
+                        if (ois != null) {
+                            try {
+                                ois.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }
         }
         isInitialized = true;
     }

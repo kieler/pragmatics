@@ -14,6 +14,7 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.core;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.Locale;
 
@@ -25,8 +26,10 @@ import org.eclipse.core.runtime.IContributor;
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
  */
-public class EditorTransformationSettings {
+public class EditorTransformationSettings implements Serializable {
 
+    /** Serialization Id  **/
+    private static final long serialVersionUID = 836873211581178353L;
     /** The model package class. **/
     private String modelPackageClass;
     /** Default icon for menu entries. **/
@@ -42,13 +45,14 @@ public class EditorTransformationSettings {
     /** List of menu contributions. **/
     private LinkedList<KSBasEMenuContribution> menuContributions;
     /**
-     * The contributor which contains the extension points. When the settings have been defined
-     * using the preference pages this will be null.
+     * The contributor which contains the extension points. When the settings
+     * have been defined using the preference pages this will be null.
      **/
-    private IContributor contributor;
+    private transient IContributor contributor;
 
     /**
-     * Creates a new transformation setting with the given fully qualified editor name.
+     * Creates a new transformation setting with the given fully qualified
+     * editor name.
      * 
      * @param editorClass
      *            The fqn of the diagram editor
@@ -119,7 +123,8 @@ public class EditorTransformationSettings {
     }
 
     /**
-     * Sets the menu contributions for this editor and removes any existing contributions.
+     * Sets the menu contributions for this editor and removes any existing
+     * contributions.
      * 
      * @param contributionList
      *            The list of menu contributions to use
@@ -189,8 +194,8 @@ public class EditorTransformationSettings {
      * 
      * @param tid
      *            The id to find
-     * @return The first transformation with the given id or null if no transformation has been
-     *         found
+     * @return The first transformation with the given id or null if no
+     *         transformation has been found
      */
     public final Transformation getTransformationById(final String tid) {
         for (Transformation t : transformations) {
@@ -261,10 +266,13 @@ public class EditorTransformationSettings {
      * 
      * @param file
      *            a .ext file in plain text
+     * @param createTransformations 
+     *          indicates if the editor transformations
+     *          should be created while parsing the file.
      */
-    public final void setExtFile(final String file) {
+    public final void setExtFile(final String file, final boolean createTransformations) {
         this.extFile = file;
-        parseTransformations();
+        parseTransformations(createTransformations);
     }
 
     /**
@@ -275,8 +283,8 @@ public class EditorTransformationSettings {
     }
 
     /**
-     * Sets the editors contributor project. May return null if the editor has been defined by the
-     * user.
+     * Sets the editors contributor project. May return null if the editor has
+     * been defined by the user.
      * 
      * @param contrib
      *            The contribution that is assigned with this editor.
@@ -305,10 +313,20 @@ public class EditorTransformationSettings {
     }
 
     /**
-     * Parses the Xtend file to read transformation names & parameters.
+     * Parses the Xtend file to read transformations and parameters.
+     * 
+     * @param createTransformations
+     *            If this flag is set the transformations are created while
+     *            parsing. If not, the parameters of the existing
+     *            transformations are matched with the file.
      */
-    public final void parseTransformations() {
+    public final void parseTransformations(boolean createTransformations) {
         if (extFile != null && extFile.length() > 0) {
+            //To check if we have any invalid transformations, i.e.
+            //if it has no transformation match in the xtend file,
+            //we want to remove it now. 
+            LinkedList<Transformation> cachedTransformations = new LinkedList<Transformation>();
+            
             // Let's find all in-place m2m transformations, defined in this file
             // They are defined by :
             // Starting with 'void '
@@ -344,23 +362,33 @@ public class EditorTransformationSettings {
                     Transformation t = getTransformationByName(name);
                     if (t != null) {
                         t.setParameter(parameters);
+                        cachedTransformations.add(t.clone());
+                    } else if (createTransformations) {
+                        t = new Transformation(name, name);
+                        t.setParameter(parameters);
+                        t.setTransformationId(editor+"."+name);
+                        cachedTransformations.add(t);
                     }
                 } catch (NullPointerException exp) {
                     System.err.println("invalid xtend file");
                 }
             }
+
+            transformations.clear();
+            transformations.addAll(cachedTransformations);
         }
     }
 
     /**
-     * Two editor settings are the same if they have the same target editor and the same source
-     * contributor. So we will have an implicit distinction between extension point and user defined
-     * settings, because user defined settings will have 'null' as contributor.
+     * Two editor settings are the same if they have the same target editor and
+     * the same source contributor. So we will have an implicit distinction
+     * between extension point and user defined settings, because user defined
+     * settings will have 'null' as contributor.
      * 
      * @param obj
      *            The Object to compare
-     * @return True if the given Object is an EditorTransformationSetting and has the same
-     *         contributor
+     * @return True if the given Object is an EditorTransformationSetting and
+     *         has the same contributor
      */
     @Override
     public boolean equals(final Object obj) {
@@ -375,8 +403,8 @@ public class EditorTransformationSettings {
     }
 
     /**
-     * The hashcode is calculated from the editors hash and the hashCode of the contributor, if
-     * existing.
+     * The hashcode is calculated from the editors hash and the hashCode of the
+     * contributor, if existing.
      * 
      * @return The hashCode
      */

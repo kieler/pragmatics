@@ -28,15 +28,22 @@ import java.util.List;
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
  */
-public class Transformation implements Serializable {
+public class Transformation implements Serializable,Cloneable {
 
+    /** Serialization Id  **/
     private static final long serialVersionUID = 513784171695543063L;
-    private String name; // Menu entry name
-    private String transformationName; // Xtend method name
-    private String icon; // URI to icon
-    private String keyboardShortcut; // Assigned keyboard shortcut
-    private LinkedList<String> parameter; // Ordered parameters
-    private String transformationId; // Id for this transformation
+    /**  Menu entry name **/
+    private String name;
+    /** Xtend method name **/
+    private String transformationName;
+    /** URI to icon **/
+    private String icon;
+    /** Assigned keyboard shortcut **/
+    private String keyboardShortcut; 
+    /** Ordered parameters **/
+    private LinkedList<String> parameter;
+    /** Id for this transformation **/
+    private String transformationId;
 
     /**
      * Creates a new Transformation.
@@ -56,6 +63,27 @@ public class Transformation implements Serializable {
         parameter = new LinkedList<String>();
     }
 
+    /**
+     * Copy constructor.
+     * @param t Transformation which shall be copied
+     */
+    public Transformation(Transformation t) {
+        this.name = t.name;
+        this.transformationName = t.transformationName;
+        this.icon = t.icon;
+        this.transformationId = t.transformationId;
+        this.keyboardShortcut = t.keyboardShortcut;
+        this.parameter = new LinkedList<String>(t.parameter);
+        
+    }
+    
+    /**
+     * Clone operation.
+     */
+    public final Transformation clone() {
+        Transformation t = new Transformation(this);
+        return t;
+    }
     /**
      * Sets the name of the transformation used in the menus.
      * 
