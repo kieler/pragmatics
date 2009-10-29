@@ -6,9 +6,9 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.cau.cs.kieler.dataflow.sbase.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- de.cau.cs.kieler.dataflow;bundle-version="0.1.0",
- de.cau.cs.kieler.dataflow.diagram;bundle-version="0.1.0",
- de.cau.cs.kieler.ksbase.ui;bundle-version="0.1.0",
- de.cau.cs.kieler.ksbase;bundle-version="0.1.3"
+ de.cau.cs.kieler.dataflow,
+ de.cau.cs.kieler.dataflow.diagram,
+ de.cau.cs.kieler.ksbase.ui,
+ de.cau.cs.kieler.ksbase
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
