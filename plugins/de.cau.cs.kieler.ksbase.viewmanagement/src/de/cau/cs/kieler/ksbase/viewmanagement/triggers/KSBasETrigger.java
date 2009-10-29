@@ -56,7 +56,6 @@ public class KSBasETrigger extends ATrigger implements
      * Called when a transformation is executed.
      * @param args The arguments for this event. Needs be the Array : [EditPart,EditorPart]
      */
-    @Override
     public void transformationExecuted(final Object[] args) {
         if (args.length == 2 && args[0] instanceof EditPart) {
             this.triggerObject = new TriggerEventObject();
