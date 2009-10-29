@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Kieler Structure Based Editing Features
 Bundle-SymbolicName: de.cau.cs.kieler.ksbase;singleton:=true
-Bundle-Version: 0.1.3
+Bundle-Version: 0.1.4
 Bundle-Activator: de.cau.cs.kieler.ksbase.KSBasEPlugin
 Bundle-Vendor: Christian-Albrechts-Unversität zu Kiel
 Require-Bundle: org.eclipse.xtend;bundle-version="0.7.1",
