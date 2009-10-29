@@ -37,8 +37,8 @@ import de.cau.cs.kieler.ksbase.viewmanagement.combinations.KSBasECombination;
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
  */
-public class PostTransformationPreferencePage extends PreferencePage implements
-        IWorkbenchPreferencePage {
+public class PostTransformationPreferencePage extends PreferencePage
+        implements IWorkbenchPreferencePage {
 
     /**
      * Default constructor.
@@ -63,8 +63,9 @@ public class PostTransformationPreferencePage extends PreferencePage implements
                 .setText("Select the effects that should be executed after a transformation.");
         new Label(container, SWT.NONE)
                 .setText("If some effects have to be executed earlier, give them a lower priority");
-        DataTableViewer viewer = new DataTableViewer(container, SWT.HIDE_SELECTION | SWT.MULTI
-                | SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE);
+        DataTableViewer viewer =
+                new DataTableViewer(container, SWT.HIDE_SELECTION
+                        | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE);
         createColumns(viewer);
         viewer.setContentProvider(new TableDataContentProvider());
         viewer.setLabelProvider(new TableDataLabelProvider());
@@ -89,9 +90,9 @@ public class PostTransformationPreferencePage extends PreferencePage implements
     }
 
     private void createColumns(final DataTableViewer viewer) {
-        String[] titles = { "Active", "Effect", "Priority" };
-        String[] toolTip = { "Status of Effect", "Name of Effect", "Priority of Effect" };
-        int[] bounds = { 52, 450, 45 };
+        String[] titles = {"Active", "Effect", "Priority" };
+        String[] toolTip = {"Status of Effect", "Name of Effect", "Priority of Effect" };
+        int[] bounds = {52, 450, 45 };
 
         for (int i = 0; i < titles.length; i++) {
             TreeViewerColumn column = new TreeViewerColumn(viewer, SWT.NONE);
@@ -117,8 +118,8 @@ public class PostTransformationPreferencePage extends PreferencePage implements
      *            The workbench for this preference page
      */
     public void init(final IWorkbench workbench) {
-        KSBasECombination.initalizeEffects(KSBasEViewManagementPlugin.getDefault()
-                .getPreferenceStore());
+        KSBasECombination.initalizeEffects(KSBasEViewManagementPlugin
+                .getDefault().getPreferenceStore());
     }
 
     /**

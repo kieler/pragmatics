@@ -79,8 +79,8 @@ public final class DynamicMenuContributions {
      * eclipse run-time.
      */
     public void createAllMenuContributions() {
-        LinkedList<EditorTransformationSettings> editors = TransformationManager.INSTANCE
-                .getEditors();
+        LinkedList<EditorTransformationSettings> editors =
+                TransformationManager.INSTANCE.getEditors();
         // If the editors are 'null' they are maybe not initialized yet so we
         // give it a try
         if (editors == null || editors.size() == 0) {
@@ -93,38 +93,31 @@ public final class DynamicMenuContributions {
         try {
             try {
 
-                IExtensionRegistry reg = Platform.getExtensionRegistry();// RegistryFactory.getRegistry();
+                IExtensionRegistry reg = Platform.getExtensionRegistry();
 
                 token = ((ExtensionRegistry) reg).getTemporaryUserToken();
                 // RegistryStrategy rs = new RegistryStrategy(null, null);
                 // reg = RegistryFactory.createRegistry(rs, token, token);
                 // Iterate through editors and create extension point contents
                 for (EditorTransformationSettings editor : editors) {
-                    Document extension = javax.xml.parsers.DocumentBuilderFactory
-                            .newInstance().newDocumentBuilder().newDocument();
+                    Document extension =
+                            javax.xml.parsers.DocumentBuilderFactory
+                                    .newInstance().newDocumentBuilder().newDocument();
                     extension.setXmlStandalone(true);
                     // Create extension point elements:
                     Element plugin = extension.createElement("plugin");
-                    Element commandExtension = extension
-                            .createElement("extension");
-                    commandExtension.setAttribute("point",
-                            "org.eclipse.ui.commands");
-                    Element bindingExtension = extension
-                            .createElement("extension");
-                    bindingExtension.setAttribute("point",
-                            "org.eclipse.ui.bindings");
-                    Element menuExtension = extension
-                            .createElement("extension");
+                    Element commandExtension = extension.createElement("extension");
+                    commandExtension.setAttribute("point", "org.eclipse.ui.commands");
+                    Element bindingExtension = extension.createElement("extension");
+                    bindingExtension.setAttribute("point", "org.eclipse.ui.bindings");
+                    Element menuExtension = extension.createElement("extension");
                     menuExtension.setAttribute("point", "org.eclipse.ui.menus");
 
-                    Element handlerExtension = extension
-                            .createElement("extension");
-                    handlerExtension.setAttribute("point",
-                            "org.eclipse.ui.handlers");
+                    Element handlerExtension = extension.createElement("extension");
+                    handlerExtension.setAttribute("point", "org.eclipse.ui.handlers");
 
                     // Create visibility flags for menus
-                    Element menuVisible = extension
-                            .createElement("visibleWhen");
+                    Element menuVisible = extension.createElement("visibleWhen");
                     menuVisible.setAttribute("checkEnabled", "false");
                     Element visIterate = extension.createElement("iterate");
                     visIterate.setAttribute("ifEmpty", "false");
@@ -138,27 +131,24 @@ public final class DynamicMenuContributions {
                     menuVisible.appendChild(visIterate);
                     // Create command extensions for all transformations:
                     for (Transformation t : editor.getTransformations()) {
-                        String commandID = "de.cau.cs.kieler.ksbase."
-                                + editor.getEditor() + "."
-                                + t.getName().replace(' ', '_');
+                        String commandID =
+                                "de.cau.cs.kieler.ksbase."
+                                        + editor.getEditor() + "." + t.getName().replace(' ', '_');
                         // store id
                         commandIds.put(t, commandID);
                         Element command = extension.createElement("command");
                         command.setAttribute("id", commandID);
                         command.setAttribute("name", t.getName());
-                        command.setAttribute("categoryId",
-                                "de.cau.cs.kieler.ksbase.ui.ksbaseCategory");
-                        Element commandParameter = extension
-                                .createElement("commandParameter");
-                        commandParameter.setAttribute("id",
-                                "de.cau.cs.kieler.ksbase.editorParameter");
+                        command.setAttribute(
+                                "categoryId", "de.cau.cs.kieler.ksbase.ui.ksbaseCategory");
+                        Element commandParameter = extension.createElement("commandParameter");
+                        commandParameter.setAttribute(
+                                "id", "de.cau.cs.kieler.ksbase.editorParameter");
                         commandParameter.setAttribute("name", "editor");
                         command.appendChild(commandParameter);
-                        commandParameter = extension
-                                .createElement("commandParameter");
-                        commandParameter
-                                .setAttribute("id",
-                                        "de.cau.cs.kieler.ksbase.transformationParameter");
+                        commandParameter = extension.createElement("commandParameter");
+                        commandParameter.setAttribute(
+                                "id", "de.cau.cs.kieler.ksbase.transformationParameter");
                         commandParameter.setAttribute("name", "transformation");
                         command.appendChild(commandParameter);
                         commandExtension.appendChild(command);
@@ -166,46 +156,35 @@ public final class DynamicMenuContributions {
                         // KeyBindings
                         if (t.getKeyboardShortcut() != null
                                 && t.getKeyboardShortcut().length() > 0
-                                && editor.getContext() != null
-                                && editor.getContext().length() > 0) {
+                                && editor.getContext() != null && editor.getContext().length() > 0) {
                             Element key = extension.createElement("key");
                             key.setAttribute("commandId", commandID);
                             key.setAttribute("contextId", editor.getContext());
-                            key
-                                    .setAttribute("schemeId",
-                                            "org.eclipse.ui.defaultAcceleratorConfiguration");
-                            key.setAttribute("sequence", t
-                                    .getKeyboardShortcut());
+                            key.setAttribute(
+                                    "schemeId", "org.eclipse.ui.defaultAcceleratorConfiguration");
+                            key.setAttribute("sequence", t.getKeyboardShortcut());
                             // Set key parameters
-                            Element keyParam = extension
-                                    .createElement("parameter");
-                            keyParam.setAttribute("id",
-                                    "de.cau.cs.kieler.ksbase.editorParameter");
+                            Element keyParam = extension.createElement("parameter");
+                            keyParam.setAttribute("id", "de.cau.cs.kieler.ksbase.editorParameter");
                             keyParam.setAttribute("value", editor.getEditor());
                             key.appendChild(keyParam);
                             keyParam = extension.createElement("parameter");
-                            keyParam
-                                    .setAttribute("id",
-                                            "de.cau.cs.kieler.ksbase.transformationParameter");
-                            keyParam.setAttribute("value", t
-                                    .getTransformationName());
+                            keyParam.setAttribute(
+                                    "id", "de.cau.cs.kieler.ksbase.transformationParameter");
+                            keyParam.setAttribute("value", t.getTransformationName());
                             key.appendChild(keyParam);
                             bindingExtension.appendChild(key);
                         }
 
                         // Create handler commands for transformations:
-                        Element handlerCommand = extension
-                                .createElement("handler");
-                        handlerCommand.setAttribute("commandId", commandIds
-                                .get(t));
+                        Element handlerCommand = extension.createElement("handler");
+                        handlerCommand.setAttribute("commandId", commandIds.get(t));
                         Element classHandler = extension.createElement("class");
-                        classHandler
-                                .setAttribute("class",
-                                        "de.cau.cs.kieler.ksbase.ui.handler.TransformationCommandHandler");
+                        classHandler.setAttribute("class", "de.cau.cs.kieler.ksbase.ui.handler"
+                                + ".TransformationCommandHandler");
                         handlerCommand.appendChild(classHandler);
                         // Handler restrictions
-                        Element handlerEnabled = extension
-                                .createElement("enabledWhen");
+                        Element handlerEnabled = extension.createElement("enabledWhen");
                         Element handlerWith = extension.createElement("with");
                         handlerWith.setAttribute("variable", "selection");
                         Element handlerIt = extension.createElement("iterate");
@@ -214,11 +193,10 @@ public final class DynamicMenuContributions {
                         Element handlerTest = extension.createElement("test");
                         handlerTest.setAttribute("args", editor.getEditor()
                                 + "," + t.getTransformationId());
-                        handlerTest.setAttribute("forcePluginActivation",
-                                "true");
-                        handlerTest
-                                .setAttribute("property",
-                                        "de.cau.cs.kieler.ksbase.ui.modelTesting.isModelInstance");
+                        handlerTest.setAttribute("forcePluginActivation", "true");
+                        handlerTest.setAttribute(
+                                "property",
+                                "de.cau.cs.kieler.ksbase.ui.modelTesting.isModelInstance");
                         handlerIt.appendChild(handlerTest);
                         handlerWith.appendChild(handlerIt);
                         handlerEnabled.appendChild(handlerWith);
@@ -227,19 +205,14 @@ public final class DynamicMenuContributions {
 
                     }
                     // Create menu extension:
-                    for (KSBasEMenuContribution contrib : editor
-                            .getMenuContributions()) {
+                    for (KSBasEMenuContribution contrib : editor.getMenuContributions()) {
                         // <extension point="org.eclipse.ui.menus>
-                        Element menuContribution = extension
-                                .createElement("menuContribution");
-                        menuContribution.setAttribute("locationURI", contrib
-                                .getData());
+                        Element menuContribution = extension.createElement("menuContribution");
+                        menuContribution.setAttribute("locationURI", contrib.getData());
                         for (String tid : contrib.getCommands()) {
                             // Create commands for root menu
-                            Node menuCommand = createElementForMenu(tid,
-                                    extension, editor);
-                            menuCommand
-                                    .appendChild(menuVisible.cloneNode(true));
+                            Node menuCommand = createElementForMenu(tid, extension, editor);
+                            menuCommand.appendChild(menuVisible.cloneNode(true));
                             menuContribution.appendChild(menuCommand);
                         }
                         // create sub menus
@@ -249,19 +222,16 @@ public final class DynamicMenuContributions {
                             menu.setAttribute("label", m.getLabel());
                             for (String tid : m.getCommands()) {
                                 Node menuCommand;
-                                if (cachedTransformationCommands
-                                        .containsKey(tid)) {
-                                    menuCommand = cachedTransformationCommands
-                                            .get(tid).cloneNode(true);
+                                if (cachedTransformationCommands.containsKey(tid)) {
+                                    menuCommand =
+                                            cachedTransformationCommands.get(tid).cloneNode(true);
                                 } else {
-                                    menuCommand = createElementForMenu(tid,
-                                            extension, editor);
-                                    menuCommand.appendChild(menuVisible
-                                            .cloneNode(true));
+                                    menuCommand = createElementForMenu(tid, extension, editor);
+                                    menuCommand.appendChild(menuVisible.cloneNode(true));
                                     menu.appendChild(menuCommand);
 
-                                    cachedTransformationCommands.put(tid,
-                                            menuCommand.cloneNode(true));
+                                    cachedTransformationCommands.put(tid, menuCommand
+                                            .cloneNode(true));
                                 }
                             }
                             menu.appendChild(menuVisible.cloneNode(true));
@@ -277,9 +247,8 @@ public final class DynamicMenuContributions {
                     extension.appendChild(plugin);
 
                     StringWriter str = new StringWriter();
-                    TransformerFactory.newInstance().newTransformer()
-                            .transform(new DOMSource(extension),
-                                    new StreamResult(str));
+                    TransformerFactory.newInstance().newTransformer().transform(
+                            new DOMSource(extension), new StreamResult(str));
 
                     // System.out.println(str.toString());
 
@@ -289,15 +258,13 @@ public final class DynamicMenuContributions {
                     } else {
                         Bundle bundle = KSBasEUIPlugin.getDefault().getBundle();
 
-                        contributor = ContributorFactoryOSGi
-                                .createContributor(bundle);
+                        contributor = ContributorFactoryOSGi.createContributor(bundle);
                     }
 
-                    ByteArrayInputStream is = new ByteArrayInputStream(str
-                            .toString().getBytes("UTF-8"));
+                    ByteArrayInputStream is =
+                            new ByteArrayInputStream(str.toString().getBytes("UTF-8"));
 
-                    reg.addContribution(is, contributor, false, null, null,
-                            token);
+                    reg.addContribution(is, contributor, false, null, null, token);
 
                 }
             } catch (TransformerConfigurationException e) {
@@ -329,8 +296,8 @@ public final class DynamicMenuContributions {
      *            The current editor
      * @return a valid DOM tree containing menu commands
      */
-    private Node createElementForMenu(final String tid,
-            final Document extension, final EditorTransformationSettings editor) {
+    private Node createElementForMenu(
+            final String tid, final Document extension, final EditorTransformationSettings editor) {
         // create menu command
         Transformation t = editor.getTransformationById(tid);
         // Menu commands
@@ -338,20 +305,17 @@ public final class DynamicMenuContributions {
         menuCommand.setAttribute("commandId", commandIds.get(t));
         if (t.getIcon() != null && t.getIcon().length() > 0) {
             menuCommand.setAttribute("icon", t.getIcon());
-        } else if (editor.getDefaultIcon() != null
-                && editor.getDefaultIcon().length() > 0) {
+        } else if (editor.getDefaultIcon() != null && editor.getDefaultIcon().length() > 0) {
             menuCommand.setAttribute("icon", editor.getDefaultIcon());
         }
         menuCommand.setAttribute("label", t.getName());
         // Set command parameters
         Element handlerParam = extension.createElement("parameter");
-        handlerParam.setAttribute("name",
-                "de.cau.cs.kieler.ksbase.editorParameter");
+        handlerParam.setAttribute("name", "de.cau.cs.kieler.ksbase.editorParameter");
         handlerParam.setAttribute("value", editor.getEditor());
         menuCommand.appendChild(handlerParam);
         handlerParam = extension.createElement("parameter");
-        handlerParam.setAttribute("name",
-                "de.cau.cs.kieler.ksbase.transformationParameter");
+        handlerParam.setAttribute("name", "de.cau.cs.kieler.ksbase.transformationParameter");
         handlerParam.setAttribute("value", t.getTransformationName());
         menuCommand.appendChild(handlerParam);
 

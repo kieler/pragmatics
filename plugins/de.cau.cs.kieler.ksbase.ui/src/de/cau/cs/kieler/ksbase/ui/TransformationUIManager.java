@@ -45,8 +45,8 @@ import de.cau.cs.kieler.ksbase.ui.handler.ExecuteTransformationRequest;
 import de.cau.cs.kieler.ksbase.ui.listener.ITransformationEventListener;
 
 /**
- * Transformation-UI manager. Handles creation and execution of commands and notify of
- * transformationEvent listeners
+ * Transformation-UI manager. Handles creation and execution of commands and
+ * notify of transformationEvent listeners
  * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
@@ -88,8 +88,8 @@ public final class TransformationUIManager {
     }
 
     /**
-     * Creates and executes a transformation command by creating a request and execute the resulting
-     * command on the diagram command stack.
+     * Creates and executes a transformation command by creating a request and
+     * execute the resulting command on the diagram command stack.
      * 
      * @param event
      *            Execution event for which this command should be created
@@ -98,14 +98,15 @@ public final class TransformationUIManager {
      * @param transformation
      *            The transformation that should be executed
      */
-    public void createAndExecuteTransformationCommand(final ExecutionEvent event,
-            final EditorTransformationSettings editor, final Transformation transformation) {
+    public void createAndExecuteTransformationCommand(
+            final ExecutionEvent event, final EditorTransformationSettings editor,
+            final Transformation transformation) {
 
         IEditorPart activeEditor = HandlerUtil.getActiveEditor(event);
         // System.out.println("Diag childs (pre): " +
         // ((DiagramEditor)activeEditor).getDiagram().getVisibleChildren().size());
-        ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event).getSelectionService()
-                .getSelection();
+        ISelection selection =
+                HandlerUtil.getActiveWorkbenchWindow(event).getSelectionService().getSelection();
 
         if (selection instanceof StructuredSelection && !selection.isEmpty()) {
 
@@ -115,8 +116,8 @@ public final class TransformationUIManager {
             // file we wrote last time is still valid. We will write it
             // to the meta-inf folder:
 
-            EditPart selectedElement = (EditPart) ((StructuredSelection) selection)
-                    .getFirstElement();
+            EditPart selectedElement =
+                    (EditPart) ((StructuredSelection) selection).getFirstElement();
 
             File file = null;
             FileOutputStream out = null;
@@ -130,16 +131,16 @@ public final class TransformationUIManager {
                         return;
                     }
                 }
-                
+
                 out.write(editor.getExtFile().getBytes());
                 out.flush();
                 out.close();
 
                 // Create request
-                ExecuteTransformationRequest request = new ExecuteTransformationRequest(
-                        activeEditor, transformation.getTransformationName(), file
-                                .getAbsolutePath(), selection, editor.getModelPackageClass(),
-                        transformation.getParameter());
+                ExecuteTransformationRequest request =
+                        new ExecuteTransformationRequest(activeEditor, transformation
+                                .getTransformationName(), file.getAbsolutePath(), selection, editor
+                                .getModelPackageClass(), transformation.getParameter());
 
                 Command transformationCommand = selectedElement.getCommand(request);
 
@@ -150,8 +151,9 @@ public final class TransformationUIManager {
                     commandStack = (DiagramCommandStack) adapter;
                 }
                 if (commandStack == null) {
-                    commandStack = new DiagramCommandStack(((DiagramEditor) activeEditor)
-                            .getDiagramEditDomain());
+                    commandStack =
+                            new DiagramCommandStack(((DiagramEditor) activeEditor)
+                                    .getDiagramEditDomain());
                 }
                 commandStack.execute(transformationCommand);
             } catch (FileNotFoundException e) {
@@ -166,7 +168,7 @@ public final class TransformationUIManager {
                         System.out.println("Warning: Unable to delete temporary xtend file");
                     }
                 }
-                //Close stream 
+                // Close stream
                 if (out != null) {
                     try {
                         out.close();
@@ -180,8 +182,9 @@ public final class TransformationUIManager {
                 // transformation but
 
                 if (activeEditor instanceof DiagramEditor) {
-                    EObject obj = ((View) ((DiagramEditor) activeEditor).getDiagramEditPart()
-                            .getModel()).getElement();
+                    EObject obj =
+                            ((View) ((DiagramEditor) activeEditor).getDiagramEditPart().getModel())
+                                    .getElement();
 
                     List<?> editPolicies = CanonicalEditPolicy.getRegisteredEditPolicies(obj);
                     for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
@@ -191,8 +194,8 @@ public final class TransformationUIManager {
                         nextEditPolicy.refresh();
                     }
 
-                    IDiagramGraphicalViewer graphViewer = ((DiagramEditor) activeEditor)
-                            .getDiagramGraphicalViewer();
+                    IDiagramGraphicalViewer graphViewer =
+                            ((DiagramEditor) activeEditor).getDiagramGraphicalViewer();
                     graphViewer.flush();
                 }
                 // not translated to gmf now:
@@ -200,8 +203,8 @@ public final class TransformationUIManager {
 
                     // Notify event listeners:
                     for (ITransformationEventListener transformationEvent : postTransformationEventListeners) {
-                        transformationEvent.transformationExecuted(new Object[] {selectedElement,
-                                activeEditor });
+                        transformationEvent.transformationExecuted(new Object[] {
+                                selectedElement, activeEditor });
                     }
                 }
 

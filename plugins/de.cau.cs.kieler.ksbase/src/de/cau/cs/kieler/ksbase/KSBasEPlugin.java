@@ -49,7 +49,7 @@ public class KSBasEPlugin extends AbstractUIPlugin {
     public void start(final BundleContext context) throws Exception {
         super.start(context);
         KSBasEPlugin.plugin = this;
-        assert(TransformationManager.INSTANCE != null);
+        assert (TransformationManager.INSTANCE != null);
         TransformationManager.INSTANCE.initializeTransformations();
     }
 
