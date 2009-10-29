@@ -138,7 +138,7 @@ public class Transformation implements Serializable {
      * @return An array of parameters.
      */
     public final String[] getParameter() {
-        return (String[]) parameter.toArray();
+        return parameter.toArray(new String[parameter.size()]);
     }
 
     /**

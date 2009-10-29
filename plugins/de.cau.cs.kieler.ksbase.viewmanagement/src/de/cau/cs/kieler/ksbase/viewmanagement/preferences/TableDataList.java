@@ -48,7 +48,7 @@ public class TableDataList {
     public TableDataList(final DataTableViewer view) {
         this.viewer = view;
         tableDataList = new ArrayList<TableData>();
-        instance = this;
+        TableDataList.instance = this;
     }
 
     // -------------------------------------------------------------------------

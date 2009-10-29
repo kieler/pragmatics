@@ -62,7 +62,7 @@ public class TableDataEditing extends EditingSupport {
         this.viewer = view;
 
         // Create the correct editor based on the column index
-        switch (columnIndex) {
+        switch (columnIdx) {
         case 0:
             editor = new CheckboxCellEditor(null, SWT.CHECK);
             break;
