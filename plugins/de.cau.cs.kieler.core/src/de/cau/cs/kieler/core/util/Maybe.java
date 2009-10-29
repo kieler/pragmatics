@@ -16,11 +16,12 @@ package de.cau.cs.kieler.core.util;
 /**
  * Object that may contain another object, inspired by the Haskell type <i>Maybe</i>.
  * 
+ * @param <T> type of contained object
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class Maybe<T> {
 
-    /** the contained object, which may be {@code null} */
+    /** the contained object, which may be {@code null}. */
     public T object;
     
     /**
@@ -33,45 +34,51 @@ public class Maybe<T> {
     /**
      * Creates a maybe with the given object.
      * 
-     * @param object the object to contain
+     * @param theobject the object to contain
      */
-    public Maybe(T object) {
-        this.object = object;
+    public Maybe(final T theobject) {
+        this.object = theobject;
     }
     
     /*
      * (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
-    public boolean equals(Object obj) {
+    @Override
+    public boolean equals(final Object obj) {
         if (obj instanceof Maybe<?>) {
             Maybe<?> other = (Maybe<?>)obj;
             return this.object == null ? other.object == null
                     : this.object.equals(other.object);
+        } else {
+            return false;
         }
-        else return false;
     }
     
     /*
      * (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
+    @Override
     public int hashCode() {
-        if (object == null)
+        if (object == null) {
             return 0;
-        else
+        } else {
             return object.hashCode();
+        }
     }
     
     /*
      * (non-Javadoc)
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString() {
-        if (object == null)
+        if (object == null) {
             return "maybe(null)";
-        else
+        } else {
             return "maybe(" + object.toString() + ")";
+        }
     }
     
 }

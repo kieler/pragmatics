@@ -23,14 +23,14 @@ import de.cau.cs.kieler.core.slimgraph.KGraphSection;
  */
 public interface IPlanarityTester extends IAlgorithm {
 
-	/**
-	 * Tests planarity of the given biconnected graph section. Any edge
-	 * that is found to be incident with a node of the given section,
-	 * but not part of the section itself, is removed from the graph.
-	 * 
-	 * @param biconnectedSection biconnected graph section
-	 * @return true if the input graph is planar
-	 */
-	public boolean isPlanar(KGraphSection biconnectedSection);
-	
+    /**
+     * Tests planarity of the given biconnected graph section. Any edge that is
+     * found to be incident with a node of the given section, but not part of
+     * the section itself, is removed from the graph.
+     * 
+     * @param biconnectedSection biconnected graph section
+     * @return true if the input graph is planar
+     */
+    boolean isPlanar(KGraphSection biconnectedSection);
+
 }

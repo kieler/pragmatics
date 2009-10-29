@@ -14,9 +14,9 @@
 package de.cau.cs.kieler.kiml.ui.preferences;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
-import org.eclipse.jface.preference.IPreferenceStore;
+//import org.eclipse.jface.preference.IPreferenceStore;
 
-import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
+//import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 
 
 /**
@@ -31,7 +31,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
 	public void initializeDefaultPreferences() {
-		IPreferenceStore store = KimlUiPlugin.getDefault().getPreferenceStore();
+		//IPreferenceStore store = KimlUiPlugin.getDefault().getPreferenceStore();
 		
 		// FIXME there are no preferences to initialize yet
 	}

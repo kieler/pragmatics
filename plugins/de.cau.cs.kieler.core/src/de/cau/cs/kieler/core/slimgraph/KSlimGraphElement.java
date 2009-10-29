@@ -20,45 +20,52 @@ package de.cau.cs.kieler.core.slimgraph;
  */
 public abstract class KSlimGraphElement implements Comparable<KSlimGraphElement> {
 
-	/** identifier of this element, determined at creation time */
-	public int id;
-	/** rank of this element, used by various algorithms */
-	public int rank = 0;
-	/** object contained in this element, or null if there is none */
-	public Object object = null;
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
-	public int compareTo(KSlimGraphElement other) {
-		return this.id - other.id;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	public boolean equals(Object other) {
-		return (other instanceof KSlimGraphElement
-		        && other.getClass() == this.getClass())
-				&& ((KSlimGraphElement)other).id == this.id;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	public int hashCode() {
-	    return getClass().hashCode() + id;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString() {
-		return getClass().getSimpleName() + "(" + id + ")";
-	}
-	
+    /** identifier of this element, determined at creation time. */
+    public int id;
+    /** rank of this element, used by various algorithms. */
+    public int rank = 0;
+    /** object contained in this element, or null if there is none. */
+    public Object object = null;
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Comparable#compareTo(java.lang.Object)
+     */
+    /** {@inheritDoc} */
+    public int compareTo(final KSlimGraphElement other) {
+        return this.id - other.id;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(final Object other) {
+        return (other instanceof KSlimGraphElement && other.getClass() == this.getClass())
+                && ((KSlimGraphElement) other).id == this.id;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return getClass().hashCode() + id;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "(" + id + ")";
+    }
+
 }

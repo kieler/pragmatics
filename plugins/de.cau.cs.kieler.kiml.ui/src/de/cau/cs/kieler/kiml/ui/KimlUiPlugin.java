@@ -69,14 +69,23 @@ public class KimlUiPlugin extends AbstractUIPlugin {
 	    
 	}
 	
-	/** the singleton images class instance */
-	public static Images images;
-	
 	/**
 	 * The constructor
 	 */
 	public KimlUiPlugin() {
 	}
+	
+    /** the images class instance */
+    private Images images;
+
+    /**
+     * Returns the images, or {@code null} if the plugin was disposed.
+     * 
+     * @return the images
+     */
+    public Images getImages() {
+        return images;
+    }
 
 	/*
 	 * (non-Javadoc)

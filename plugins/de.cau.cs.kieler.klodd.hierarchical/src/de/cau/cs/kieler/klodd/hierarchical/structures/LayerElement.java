@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klodd.hierarchical.structures;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -677,7 +678,10 @@ public class LayerElement {
 	/**
 	 * Comparator used to sort ports using a list of abstract ranks.
 	 */
-	private static class DirectedPortComparator implements Comparator<KPort> {
+	private static class DirectedPortComparator implements Comparator<KPort>, Serializable {
+        /** the serial version UID */
+        private static final long serialVersionUID = 8667388280121765908L;
+        /** abstract ranks for some ports */
         private Map<KPort, Double> abstractPortRanks;
         private boolean forward, definedFirst;
         
@@ -756,7 +760,9 @@ public class LayerElement {
 	/**
      * Comparator used to sort ports using two lists of abstract ranks.
      */
-    private static class SymmetricPortComparator implements Comparator<KPort> {
+    private static class SymmetricPortComparator implements Comparator<KPort>, Serializable {
+        /** the serial version UID */
+        private static final long serialVersionUID = -2258577968632647502L;
         private Map<KPort, Double> abstractPortRanks1, abstractPortRanks2;
         private boolean list1First, firstForward;
         

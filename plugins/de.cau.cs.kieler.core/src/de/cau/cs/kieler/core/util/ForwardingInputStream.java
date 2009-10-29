@@ -24,29 +24,32 @@ import java.io.OutputStream;
  */
 public class ForwardingInputStream extends InputStream {
 
-    /** the input stream that is wrapped by this instance */
+    /** the input stream that is wrapped by this instance. */
     private InputStream inputStream;
-    /** the output stream to which all read data is forwarded */
+    /** the output stream to which all read data is forwarded. */
     private OutputStream outputStream;
     
     /**
      * Creates a forwarding input stream with the given input and output streams.
      * 
-     * @param inputStream the input stream from which data is read
-     * @param outputStream the output stream to which data is written
+     * @param theinputStream the input stream from which data is read
+     * @param theoutputStream the output stream to which data is written
      */
-    public ForwardingInputStream(InputStream inputStream, OutputStream outputStream) {
-        this.inputStream = inputStream;
-        this.outputStream = outputStream;
+    public ForwardingInputStream(final InputStream theinputStream,
+            final OutputStream theoutputStream) {
+        this.inputStream = theinputStream;
+        this.outputStream = theoutputStream;
     }
     
     /* (non-Javadoc)
      * @see java.io.InputStream#read()
      */
+    @Override
     public int read() throws IOException {
         int data = inputStream.read();
-        if (data >= 0)
+        if (data >= 0) {
             outputStream.write(data);
+        }
         return data;
     }
     
@@ -54,10 +57,12 @@ public class ForwardingInputStream extends InputStream {
      * (non-Javadoc)
      * @see java.io.InputStream#read(byte[])
      */
-    public int read(byte b[]) throws IOException {
+    @Override
+    public int read(final byte[] b) throws IOException {
         int count = inputStream.read(b);
-        if (count > 0)
+        if (count > 0) {
             outputStream.write(b, 0, count);
+        }
         return count;
     }
     
@@ -65,10 +70,12 @@ public class ForwardingInputStream extends InputStream {
      * (non-Javadoc)
      * @see java.io.InputStream#read(byte[], int, int)
      */
-    public int read(byte b[], int off, int len) throws IOException {
+    @Override
+    public int read(final byte[] b, final int off, final int len) throws IOException {
         int count = inputStream.read(b, off, len);
-        if (count > 0)
+        if (count > 0) {
             outputStream.write(b, off, count);
+        }
         return count;
     }
     
@@ -76,7 +83,8 @@ public class ForwardingInputStream extends InputStream {
      * (non-Javadoc)
      * @see java.io.InputStream#skip(long)
      */
-    public long skip(long n) throws IOException {
+    @Override
+    public long skip(final long n) throws IOException {
         return inputStream.skip(n);
     }
 
@@ -84,6 +92,7 @@ public class ForwardingInputStream extends InputStream {
      * (non-Javadoc)
      * @see java.io.InputStream#available()
      */
+    @Override
     public int available() throws IOException {
         return inputStream.available();
     }
@@ -102,7 +111,8 @@ public class ForwardingInputStream extends InputStream {
      * (non-Javadoc)
      * @see java.io.InputStream#mark(int)
      */
-    public synchronized void mark(int readlimit) {
+    @Override
+    public synchronized void mark(final int readlimit) {
         inputStream.mark(readlimit);
     }
     
@@ -110,6 +120,7 @@ public class ForwardingInputStream extends InputStream {
      * (non-Javadoc)
      * @see java.io.InputStream#reset()
      */
+    @Override
     public synchronized void reset() throws IOException {
         inputStream.reset();
     }
@@ -118,6 +129,7 @@ public class ForwardingInputStream extends InputStream {
      * (non-Javadoc)
      * @see java.io.InputStream#markSupported()
      */
+    @Override
     public boolean markSupported() {
         return inputStream.markSupported();
     }

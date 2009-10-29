@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.layout.util;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -46,8 +47,12 @@ public class KimlLayoutUtil {
     /**
      * Comparator class used to sort ports according to their ranks.
      */
-    public static class PortComparator implements Comparator<KPort> {
+    public static class PortComparator implements Comparator<KPort>, Serializable {
+        /** the serial version UID */
+        private static final long serialVersionUID = 7489650936528433087L;
+        /** indicates whether to treat ranks in forward direction */
         private boolean forward;
+        /** horizontal or vertical layout direction */
         private LayoutDirection layoutDirection;
 
         /**

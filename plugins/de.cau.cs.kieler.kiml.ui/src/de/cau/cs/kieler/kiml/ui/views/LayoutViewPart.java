@@ -16,6 +16,8 @@ package de.cau.cs.kieler.kiml.ui.views;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
@@ -40,10 +42,13 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.IPropertySourceProvider;
 import org.eclipse.ui.views.properties.PropertySheetEntry;
 import org.eclipse.ui.views.properties.PropertySheetPage;
+
+import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 
 /**
  * A view that displays layout options for selected objects.
@@ -85,7 +90,11 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
                 }
             }, null);
         }
-        catch (Exception exception) {}
+        catch (Exception exception) {
+            IStatus status = new Status(IStatus.WARNING, KimlUiPlugin.PLUGIN_ID,
+                    0, "Could not refresh the layout view.", exception);
+            StatusManager.getManager().handle(status, StatusManager.LOG);
+        }
     }
     
     /* (non-Javadoc)

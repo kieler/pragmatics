@@ -19,6 +19,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
@@ -349,14 +350,15 @@ public class GmfLayoutPropertySource implements IPropertySource {
         layoutHintValues = new String[choicesCount];
         layoutHintIndexMap = new HashMap<String, Integer>();
         int i = 0;
-        for (String typeId : typeMap.keySet()) {
+        for (Entry<String, List<LayoutProviderData>> entry : typeMap.entrySet()) {
+            String typeId = entry.getKey();
             String typeName = LayoutServices.INSTANCE.getLayoutTypeName(typeId);
             if (typeName == null)
                 typeName = Messages.getString("kiml.ui.8");
             layoutHintValues[i] = typeId;
             layoutHintIndexMap.put(typeId, Integer.valueOf(i));
             layoutHintChoices[i++] = typeName + " " + Messages.getString("kiml.ui.9");
-            for (LayoutProviderData providerData : typeMap.get(typeId)) {
+            for (LayoutProviderData providerData : entry.getValue()) {
                 String providerName = "  - " + providerData.name;
                 String category = LayoutServices.INSTANCE.getCategoryName(providerData.category);
                 if (category != null)

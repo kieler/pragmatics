@@ -106,7 +106,10 @@ public class LayoutOptionData {
      * @see java.lang.Object#equals(java.lang.Object)
      */
     public boolean equals(Object obj) {
-        return obj instanceof LayoutOptionData && id.equals((LayoutOptionData)obj);
+        if (obj instanceof LayoutOptionData)
+            return id.equals((LayoutOptionData)obj);
+        else
+            return false;
     }
     
     /*

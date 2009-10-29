@@ -46,20 +46,21 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
          * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
          */
         public Image getImage(Object element) {
+            KimlUiPlugin.Images images = KimlUiPlugin.getDefault().getImages();
             switch (optionData.type) {
             case STRING:
-                return KimlUiPlugin.images.propText;
+                return images.propText;
             case BOOLEAN:
                 if (((Boolean)element).booleanValue())
-                    return KimlUiPlugin.images.propTrue;
+                    return images.propTrue;
                 else
-                    return KimlUiPlugin.images.propFalse;
+                    return images.propFalse;
             case ENUM:
-                return KimlUiPlugin.images.propChoice;
+                return images.propChoice;
             case INT:
-                return KimlUiPlugin.images.propInt;
+                return images.propInt;
             case FLOAT:
-                return KimlUiPlugin.images.propFloat;
+                return images.propFloat;
             default:
                 return null;
             }

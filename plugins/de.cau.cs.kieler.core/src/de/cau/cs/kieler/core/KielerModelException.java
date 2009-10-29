@@ -24,34 +24,38 @@ package de.cau.cs.kieler.core;
  */
 public class KielerModelException extends KielerException {
 
-    Object causingModelObject;
+    /** the serial version UID. */
+    private static final long serialVersionUID = 6763552087561256313L;
+    /** the model object. */
+    private Object causingModelObject;
     
     /**
      * @param message exception message
-     * @param causingModelObject the model object that has caused the exception.
+     * @param thecausingModelObject the model object that has caused the exception.
      *        Likely an EObject, if the metamodel is EMF.
      */
-    public KielerModelException(String message, Object causingModelObject) {
+    public KielerModelException(final String message, final Object thecausingModelObject) {
         super(message);
-        this.causingModelObject = causingModelObject;
+        this.causingModelObject = thecausingModelObject;
     }
 
     /**
      * @param message exception message
-     * @param causingModelObject the model object that has caused the exception.
+     * @param thecausingModelObject the model object that has caused the exception.
      *        Likely an EObject, if the metamodel is EMF.
      * @param cause Causing Exception
      */
-    public KielerModelException(String message, Object causingModelObject, Exception cause) {
+    public KielerModelException(final String message, final Object thecausingModelObject,
+            final Exception cause) {
         super(message, cause);
-        this.causingModelObject = causingModelObject;
+        this.causingModelObject = thecausingModelObject;
     }
     
     /**
      * @return the model object that has caused this Exception. Likely to be an
      *         EMF EObject if the used metamodeling framework is EMF.
      */
-    public Object getModelObject(){
+    public Object getModelObject() {
         return causingModelObject;
     }
     

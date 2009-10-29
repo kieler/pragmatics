@@ -86,6 +86,27 @@ public class ToponumLayerwiseEdgePlacer extends AbstractAlgorithm implements
                         : (crossings1 < crossings2 ? -1 : 0);
             }
         }
+        
+        /*
+         * (non-Javadoc)
+         * @see java.lang.Object#equals(java.lang.Object)
+         */
+        public boolean equals(Object other) {
+            if (other instanceof TopoRoutingSlot) { 
+                return this.compareTo((TopoRoutingSlot)other) == 0;
+            }
+            else return false;
+        }
+        
+        /*
+         * (non-Javadoc)
+         * @see java.lang.Object#hashCode()
+         */
+        public int hashCode() {
+            return sourcePosis.hashCode() ^ targetPosis.hashCode()
+                    ^ Float.valueOf(start).hashCode()
+                    ^ Float.valueOf(end).hashCode();
+        }
     }
 	
 	/** factor for the minimal distance value for edge spacing */

@@ -91,8 +91,7 @@ public class ZestAlgorithmWrapper {
 					SIZE_ADDITION, SIZE_ADDITION, width, height, false, false);
 		}
 		catch (InvalidLayoutConfiguration exception) {
-			throw new KielerException(exception.getMessage(),
-					KielerException.Type.EXTERNAL_ERROR);
+			throw new KielerException(exception.getMessage());
 		}
 		progressMonitor.worked(8);
 		

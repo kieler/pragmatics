@@ -26,31 +26,29 @@ import de.cau.cs.kieler.core.slimgraph.KSlimGraph;
  */
 public interface ICycleRemover extends IAlgorithm {
 
-	/** rank value for edges that were reversed */
-	public static final int REVERSED = 1;
-	
-	/**
-	 * Remove cycles in a given graph. Loops on a single node are
-	 * ignored and have to be processed properly in later steps. Each
-	 * edge is assigned a rank with value <code>REVERSED</code> if and
-	 * only if the edge was reversed for cycle removal.
-	 * 
-	 * @param graph graph to be processed
-	 */
-	public void removeCycles(KSlimGraph graph);
-	
-	/**
-	 * Restore the original graph after cycles have been removed.
-	 */
-	public void restoreGraph();
-	
-	/**
-	 * Returns the list of edges that were reversed for cycle removal;
-	 * 
-	 * @return list of reversed edges
-	 * @throws IllegalStateException if <code>removeCycles</code> was not
-	 *     called prior to this method call
-	 */
-	public List<KSlimEdge> getReversedEdges() throws IllegalStateException;
-	
+    /** rank value for edges that were reversed. */
+    int REVERSED = 1;
+
+    /**
+     * Remove cycles in a given graph. Loops on a single node are ignored and
+     * have to be processed properly in later steps. Each edge is assigned a
+     * rank with value <code>REVERSED</code> if and only if the edge was
+     * reversed for cycle removal.
+     * 
+     * @param graph graph to be processed
+     */
+    void removeCycles(KSlimGraph graph);
+
+    /**
+     * Restore the original graph after cycles have been removed.
+     */
+    void restoreGraph();
+
+    /**
+     * Returns the list of edges that were reversed for cycle removal.
+     * 
+     * @return list of reversed edges
+     */
+    List<KSlimEdge> getReversedEdges();
+
 }

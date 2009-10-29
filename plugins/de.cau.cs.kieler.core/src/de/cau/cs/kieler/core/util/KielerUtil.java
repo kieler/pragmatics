@@ -14,35 +14,41 @@
 package de.cau.cs.kieler.core.util;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
- * Debugger Class to visualize the contents of a Map. Simply prints the Map
- * contents into a String.
+ * Static class with utility methods.
  * 
  * @author <a href="mailto:haf@informatik.uni-kiel.de">Hauke Fuhrmann</a>
  */
-public class MapPrinter {
-	
+public final class KielerUtil {
+
+    /**
+     * Hidden default constructor to avoid instantiation.
+     */
+    private KielerUtil() {
+    }
+    
     /**
      * Prints the contents of the given map.
      * 
      * @param map the map to be printed
      * @return a string representation of the map
      */
-	public static String toString(Map<?,?> map){
-		StringBuffer buffer = new StringBuffer();
-		
-		for (Object key : map.keySet()) {
-			if (key == null) {
-			    buffer.append("null ");
-			}
-			else {
-			    buffer.append(key + " (" + key.hashCode() + ") ");
-			}
-		    buffer.append(" = " + map.get(key) + "\n");
-		}
-		
-		return buffer.toString();
-	}
-	
+    public static String toString(final Map<?, ?> map) {
+        StringBuffer buffer = new StringBuffer();
+
+        for (Entry<?, ?> entry : map.entrySet()) {
+            Object key = entry.getKey();
+            if (key == null) {
+                buffer.append("null ");
+            } else {
+                buffer.append(key + " (" + key.hashCode() + ") ");
+            }
+            buffer.append(" = " + entry.getValue() + "\n");
+        }
+
+        return buffer.toString();
+    }
+
 }

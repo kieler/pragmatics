@@ -26,17 +26,17 @@ import java.util.List;
  */
 public class ForkedOutputStream extends OutputStream {
 
-    /** the list of output streams to which this stream will write */
+    /** the list of output streams to which this stream will write. */
     private List<OutputStream> outputStreams;
     
     /**
      * Creates a forked output stream that writes to all output streams
      * in the given list.
      * 
-     * @param outputStreams list of output streams
+     * @param theoutputStreams list of output streams
      */
-    public ForkedOutputStream(List<OutputStream> outputStreams) {
-        this.outputStreams = outputStreams;
+    public ForkedOutputStream(final List<OutputStream> theoutputStreams) {
+        this.outputStreams = theoutputStreams;
     }
     
     /**
@@ -46,7 +46,7 @@ public class ForkedOutputStream extends OutputStream {
      * @param stream1 an output stream
      * @param stream2 an output stream
      */
-    public ForkedOutputStream(OutputStream stream1, OutputStream stream2) {
+    public ForkedOutputStream(final OutputStream stream1, final OutputStream stream2) {
         this.outputStreams = new LinkedList<OutputStream>();
         outputStreams.add(stream1);
         outputStreams.add(stream2);
@@ -55,7 +55,8 @@ public class ForkedOutputStream extends OutputStream {
     /* (non-Javadoc)
      * @see java.io.OutputStream#write(int)
      */
-    public void write(int b) throws IOException {
+    @Override
+    public void write(final int b) throws IOException {
         for (OutputStream stream : outputStreams) {
             stream.write(b);
         }
@@ -65,6 +66,7 @@ public class ForkedOutputStream extends OutputStream {
      * (non-Javadoc)
      * @see java.io.OutputStream#flush()
      */
+    @Override
     public void flush() throws IOException {
         for (OutputStream stream : outputStreams) {
             stream.flush();
@@ -75,6 +77,7 @@ public class ForkedOutputStream extends OutputStream {
      * (non-Javadoc)
      * @see java.io.OutputStream#close()
      */
+    @Override
     public void close() throws IOException {
         for (OutputStream stream : outputStreams) {
             stream.close();

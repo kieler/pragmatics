@@ -102,7 +102,7 @@ public class LayoutServiceBuilder {
 	 */
 	public static void buildLayoutServices() {
 		// create instance of the layout service holder class
-		LayoutServices.INSTANCE = new LayoutServices();
+		LayoutServices.createLayoutServices();
 		// build layout services for all extension points
 		loadLayoutProviderExtensions();
 		loadLayoutListenerExtensions();

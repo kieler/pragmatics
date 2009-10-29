@@ -59,6 +59,25 @@ public class SortingNodewiseEdgePlacer extends AbstractAlgorithm implements
                 return -1;
             else return 0;
         }
+        
+        /*
+         * (non-Javadoc)
+         * @see java.lang.Object#equals(java.lang.Object)
+         */
+        public boolean equals(Object other) {
+            if (other instanceof RoutingSlot) {
+                return this.compareTo((RoutingSlot)other) == 0;
+            }
+            else return false;
+        }
+        
+        /*
+         * (non-Javadoc)
+         * @see java.lang.Object#hashCode()
+         */
+        public int hashCode() {
+            return ((int)start << 16) + (int)end;
+        }
 	}
 	
 	/** layout direction configured for the given layered graph */
@@ -257,7 +276,7 @@ public class SortingNodewiseEdgePlacer extends AbstractAlgorithm implements
 						toPos = Float.MAX_VALUE;
 					if (hasIncoming(element, port1))
 						fromPos = -Float.MAX_VALUE;
-					if (fromPos != toPos)
+					if (!equal(fromPos, toPos))
 						addToSlot(node, port1, eastSlots, eastMap, fromPos, toPos);
 					break;
 				case SOUTH:
@@ -613,6 +632,12 @@ public class SortingNodewiseEdgePlacer extends AbstractAlgorithm implements
     			return slot.rank;
     	}
     	return ranks;
+    }
+    
+    private static final float EQUAL_THRES = 0.0001f;
+    
+    private static boolean equal(float f1, float f2) {
+        return Math.abs(f1 - f2) < EQUAL_THRES;
     }
 
 }

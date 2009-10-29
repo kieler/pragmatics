@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -36,7 +37,7 @@ import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
  * 
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
-public class LayoutServices {
+public final class LayoutServices {
 
     /** identifier of the 'general' diagram type, which applies to all diagrams */
     public static final String DIAGRAM_TYPE_GENERAL = "de.cau.cs.kieler.layout.diagrams.general";
@@ -71,15 +72,28 @@ public class LayoutServices {
 	
 
 	/**
+	 * The default constructor is package-visible to prevent others from
+	 * instantiating this singleton class.
+	 */
+	LayoutServices() {}
+	
+	/**
 	 * Creates an instance of the layout services and assigns the singleton
 	 * instance of the registry.
 	 */
-	public LayoutServices() {
-		REGISTRY = new Registry();
+	public static void createLayoutServices() {
+	    INSTANCE = new LayoutServices();
+		REGISTRY = INSTANCE.new Registry();
 	}
 	
 	/** Class used to register the layout services */
-	public class Registry {
+	public final class Registry {
+	    
+	    /**
+	     * The default constructor is package-visible to prevent others from
+	     * instantiating this singleton class.
+	     */
+	    Registry() {}
 		
 		/** list of unprocessed layout options */
 		private List<String[]> unprocessedOptions = new LinkedList<String[]>();
@@ -385,10 +399,9 @@ public class LayoutServices {
 	    String bindingId = editPartBindingMap.get(editPartType);
 	    if (bindingId != null) {
 	        Map<String, Object> options = optionSetupMap.get(bindingId);
-	        for (String option : options.keySet()) {
-	            Object value = options.get(option);
-	            LayoutOptionData optionData = layoutOptionMap.get(option);
-                optionData.setValue(layoutData, value);
+	        for (Entry<String, Object> entry : options.entrySet()) {
+	            LayoutOptionData optionData = layoutOptionMap.get(entry.getKey());
+                optionData.setValue(layoutData, entry.getValue());
 	        }
 	    }
 	}

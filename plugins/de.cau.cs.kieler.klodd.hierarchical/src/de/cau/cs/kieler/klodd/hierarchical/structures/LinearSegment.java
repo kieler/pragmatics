@@ -78,4 +78,12 @@ public class LinearSegment implements Comparable<LinearSegment> {
 				&& ((LinearSegment)obj).rank == this.rank;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+	    return rank;
+	}
+	
 }

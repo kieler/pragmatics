@@ -182,6 +182,8 @@ public class SortingLayerwiseEdgePlacer extends AbstractAlgorithm implements
 		RoutingSlot[] sortedSlots = slotMap.values().toArray(new RoutingSlot[0]);
 		Arrays.sort(sortedSlots, new Comparator<RoutingSlot>() {
 			public int compare(RoutingSlot s1, RoutingSlot s2) {
+			    assert s1 instanceof SortableRoutingSlot
+			            && s2 instanceof SortableRoutingSlot;
 				SortableRoutingSlot slot1 = (SortableRoutingSlot)s1;
 				SortableRoutingSlot slot2 = (SortableRoutingSlot)s2;
 				if (slot1.outgoingAtStart && !slot2.outgoingAtStart

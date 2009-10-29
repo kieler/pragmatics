@@ -42,7 +42,7 @@ public interface IKielerPreferenceStore {
      * @return <code>true</code> if either a current value or a default
      *  value is known for the named preference, and <code>false</code> otherwise
      */
-    public boolean contains(String name);
+    boolean contains(String name);
 
     /**
      * Returns the current value of the boolean-valued preference with the
@@ -54,7 +54,7 @@ public interface IKielerPreferenceStore {
      * @param name the name of the preference
      * @return the boolean-valued preference
      */
-    public boolean getBoolean(String name);
+    boolean getBoolean(String name);
 
     /**
      * 
@@ -67,7 +67,7 @@ public interface IKielerPreferenceStore {
      * @param name the name of the preference
      * @return the default value of the named preference
      */
-    public boolean getDefaultBoolean(String name);
+    boolean getDefaultBoolean(String name);
 
     /**
      * Returns the default value for the double-valued preference
@@ -79,7 +79,7 @@ public interface IKielerPreferenceStore {
      * @param name the name of the preference
      * @return the default value of the named preference
      */
-    public double getDefaultDouble(String name);
+    double getDefaultDouble(String name);
 
     /**
      * Returns the default value for the float-valued preference
@@ -91,7 +91,7 @@ public interface IKielerPreferenceStore {
      * @param name the name of the preference
      * @return the default value of the named preference
      */
-    public float getDefaultFloat(String name);
+    float getDefaultFloat(String name);
 
     /**
      * Returns the default value for the integer-valued preference
@@ -103,7 +103,7 @@ public interface IKielerPreferenceStore {
      * @param name the name of the preference
      * @return the default value of the named preference
      */
-    public int getDefaultInt(String name);
+    int getDefaultInt(String name);
 
     /**
      * Returns the default value for the long-valued preference
@@ -115,7 +115,7 @@ public interface IKielerPreferenceStore {
      * @param name the name of the preference
      * @return the default value of the named preference
      */
-    public long getDefaultLong(String name);
+    long getDefaultLong(String name);
 
     /**
      * Returns the default value for the string-valued preference
@@ -127,7 +127,7 @@ public interface IKielerPreferenceStore {
      * @param name the name of the preference
      * @return the default value of the named preference
      */
-    public String getDefaultString(String name);
+    String getDefaultString(String name);
 
     /**
      * Returns the current value of the double-valued preference with the
@@ -139,7 +139,7 @@ public interface IKielerPreferenceStore {
      * @param name the name of the preference
      * @return the double-valued preference
      */
-    public double getDouble(String name);
+    double getDouble(String name);
 
     /**
      * Returns the current value of the float-valued preference with the
@@ -151,7 +151,7 @@ public interface IKielerPreferenceStore {
      * @param name the name of the preference
      * @return the float-valued preference
      */
-    public float getFloat(String name);
+    float getFloat(String name);
 
     /**
      * Returns the current value of the integer-valued preference with the
@@ -163,7 +163,7 @@ public interface IKielerPreferenceStore {
      * @param name the name of the preference
      * @return the int-valued preference
      */
-    public int getInt(String name);
+    int getInt(String name);
 
     /**
      * Returns the current value of the long-valued preference with the
@@ -175,7 +175,7 @@ public interface IKielerPreferenceStore {
      * @param name the name of the preference
      * @return the long-valued preference
      */
-    public long getLong(String name);
+    long getLong(String name);
 
     /**
      * Returns the current value of the string-valued preference with the
@@ -187,7 +187,7 @@ public interface IKielerPreferenceStore {
      * @param name the name of the preference
      * @return the string-valued preference
      */
-    public String getString(String name);
+    String getString(String name);
 
     /**
      * Returns whether the current value of the preference with the given name
@@ -198,7 +198,7 @@ public interface IKielerPreferenceStore {
      * and its current value is the same, and <code>false</code> otherwise
      * (including the case where the preference is unknown to this store)
      */
-    public boolean isDefault(String name);
+    boolean isDefault(String name);
 
     /**
      * Sets the default value for the double-valued preference with the
@@ -213,7 +213,7 @@ public interface IKielerPreferenceStore {
      * @param name the name of the preference
      * @param value the new default value for the preference
      */
-    public void setDefault(String name, double value);
+    void setDefault(String name, double value);
 
     /**
      * Sets the default value for the float-valued preference with the
@@ -228,7 +228,7 @@ public interface IKielerPreferenceStore {
      * @param name the name of the preference
      * @param value the new default value for the preference
      */
-    public void setDefault(String name, float value);
+    void setDefault(String name, float value);
 
     /**
      * Sets the default value for the integer-valued preference with the
@@ -243,7 +243,7 @@ public interface IKielerPreferenceStore {
      * @param name the name of the preference
      * @param value the new default value for the preference
      */
-    public void setDefault(String name, int value);
+    void setDefault(String name, int value);
 
     /**
      * Sets the default value for the long-valued preference with the
@@ -258,7 +258,7 @@ public interface IKielerPreferenceStore {
      * @param name the name of the preference
      * @param value the new default value for the preference
      */
-    public void setDefault(String name, long value);
+    void setDefault(String name, long value);
 
     /**
      * Sets the default value for the string-valued preference with the
@@ -273,7 +273,7 @@ public interface IKielerPreferenceStore {
      * @param name the name of the preference
      * @param defaultObject the new default value for the preference
      */
-    public void setDefault(String name, String defaultObject);
+    void setDefault(String name, String defaultObject);
 
     /**
      * Sets the default value for the boolean-valued preference with the
@@ -288,7 +288,7 @@ public interface IKielerPreferenceStore {
      * @param name the name of the preference
      * @param value the new default value for the preference
      */
-    public void setDefault(String name, boolean value);
+    void setDefault(String name, boolean value);
 
     /**
      * Sets the current value of the preference with the given name back
@@ -302,7 +302,7 @@ public interface IKielerPreferenceStore {
      *
      * @param name the name of the preference
      */
-    public void setToDefault(String name);
+    void setToDefault(String name);
 
     /**
      * Sets the current value of the double-valued preference with the
@@ -315,7 +315,7 @@ public interface IKielerPreferenceStore {
      * @param name the name of the preference
      * @param value the new current value of the preference
      */
-    public void setValue(String name, double value);
+    void setValue(String name, double value);
 
     /**
      * Sets the current value of the float-valued preference with the
@@ -328,7 +328,7 @@ public interface IKielerPreferenceStore {
      * @param name the name of the preference
      * @param value the new current value of the preference
      */
-    public void setValue(String name, float value);
+    void setValue(String name, float value);
 
     /**
      * Sets the current value of the integer-valued preference with the
@@ -341,7 +341,7 @@ public interface IKielerPreferenceStore {
      * @param name the name of the preference
      * @param value the new current value of the preference
      */
-    public void setValue(String name, int value);
+    void setValue(String name, int value);
 
     /**
      * Sets the current value of the long-valued preference with the
@@ -354,7 +354,7 @@ public interface IKielerPreferenceStore {
      * @param name the name of the preference
      * @param value the new current value of the preference
      */
-    public void setValue(String name, long value);
+    void setValue(String name, long value);
 
     /**
      * Sets the current value of the string-valued preference with the
@@ -367,7 +367,7 @@ public interface IKielerPreferenceStore {
      * @param name the name of the preference
      * @param value the new current value of the preference
      */
-    public void setValue(String name, String value);
+    void setValue(String name, String value);
 
     /**
      * Sets the current value of the boolean-valued preference with the
@@ -380,6 +380,6 @@ public interface IKielerPreferenceStore {
      * @param name the name of the preference
      * @param value the new current value of the preference
      */
-    public void setValue(String name, boolean value);
-	
+    void setValue(String name, boolean value);
+
 }

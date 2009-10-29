@@ -115,7 +115,8 @@ public class GraphvizLayouter {
         
         progressMonitor.begin("Graphviz layout (" + command + ")", 40);
         graphElementMap.clear();
-        debugFileName = Integer.toString(parentNode.hashCode());
+        if (ENABLE_DEBUG)
+            debugFileName = Integer.toString(parentNode.hashCode());
         // return if there is nothing in this node
         if (parentNode.getChildren().isEmpty()) {
             progressMonitor.done();
