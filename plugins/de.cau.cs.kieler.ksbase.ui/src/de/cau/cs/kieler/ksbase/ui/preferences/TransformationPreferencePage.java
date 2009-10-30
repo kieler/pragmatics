@@ -171,13 +171,12 @@ public class TransformationPreferencePage extends PreferencePage
          */
         public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
             /*
-            if (oldInput != null) {
-
-            }
-            if (newInput != null) {
-
-            }
-            */
+             * if (oldInput != null) {
+             * 
+             * } if (newInput != null) {
+             * 
+             * }
+             */
         }
 
     }
@@ -767,8 +766,8 @@ public class TransformationPreferencePage extends PreferencePage
                                         activeEditor.setExtFile(contentBuffer.toString(), true);
                                     }
                                 } catch (IOException exce) {
-                                    System.err
-                                            .println("KSBasE configuration exception: Can't read Xtend file");
+                                    System.err.println("KSBasE configuration exception:"
+                                            + " Can't read Xtend file");
                                 } catch (CoreException exce) {
                                     System.err.println("Invalid file.");
                                     exce.printStackTrace();
@@ -777,8 +776,8 @@ public class TransformationPreferencePage extends PreferencePage
                             }
                         } else {
                             box = new MessageBox(getShell(), SWT.OK);
-                            box
-                                    .setMessage("Invalid selection please select a single file that contains the transformations");
+                            box.setMessage("Invalid selection please select a single "
+                                    + "file that contains the transformations");
                             box.setText(Messages.kSBasEPreferencePageXtendFileInvalidFile);
                             box.open();
                             return;

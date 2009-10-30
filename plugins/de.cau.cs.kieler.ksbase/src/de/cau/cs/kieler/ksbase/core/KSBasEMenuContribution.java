@@ -26,7 +26,7 @@ import java.util.LinkedList;
  */
 public class KSBasEMenuContribution implements Serializable {
 
-    /** Serialization Id  **/
+    /** Serialization Id.  **/
     private static final long serialVersionUID = 7361142074727714589L;
     /**
      * If this contribution is a root contribution, the data is a locationURI,

@@ -53,7 +53,7 @@ import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
  */
 @SuppressWarnings("restriction")
 public final class DynamicMenuContributions {
-    /** Thread-safe initialization. **/
+    /** DynamicMenuContribution instance. **/
     public static final DynamicMenuContributions INSTANCE = new DynamicMenuContributions();
     /**
      * A list of cached commands used to increase performance because we will
@@ -75,7 +75,13 @@ public final class DynamicMenuContributions {
         token = ((ExtensionRegistry) Platform.getExtensionRegistry()).getTemporaryUserToken();
     }
 
-    public void createMenuForEditor(EditorTransformationSettings editor) {
+    /**
+     * Creates a menu for an editor.
+     * 
+     * @param editor
+     *            The editor to create the menu for.
+     */
+    public void createMenuForEditor(final EditorTransformationSettings editor) {
         try {
             try {
                 IExtensionRegistry reg = Platform.getExtensionRegistry();
@@ -241,16 +247,12 @@ public final class DynamicMenuContributions {
                 reg.addContribution(is, contributor, false, null, null, token);
 
             } catch (TransformerConfigurationException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             } catch (TransformerException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             } catch (TransformerFactoryConfigurationError e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             } catch (UnsupportedEncodingException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         } catch (ParserConfigurationException pce) {
@@ -258,16 +260,23 @@ public final class DynamicMenuContributions {
         }
     }
 
+    /**
+     * Creates all menu contributions for all existing editors.
+     */
     public void createAllMenuContributions() {
         LinkedList<EditorTransformationSettings> editors =
-            TransformationManager.INSTANCE.getEditors();
+                TransformationManager.INSTANCE.getEditors();
         createMenuForEditors(editors);
     }
+
     /**
      * Creates a valid plug-in project for each editor and injects it to the
      * eclipse run-time.
+     * 
+     * @param editors
+     *            The list of editors to create the menu for
      */
-    public void createMenuForEditors(LinkedList<EditorTransformationSettings> editors) {
+    public void createMenuForEditors(final LinkedList<EditorTransformationSettings> editors) {
         // If the editors are 'null' they are maybe not initialized yet so we
         // give it a try
         if (editors == null || editors.size() == 0) {

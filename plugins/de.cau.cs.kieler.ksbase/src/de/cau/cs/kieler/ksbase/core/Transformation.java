@@ -30,19 +30,19 @@ import java.util.List;
  */
 public class Transformation implements Serializable,Cloneable {
 
-    /** Serialization Id  **/
+    /** Serialization Id.  **/
     private static final long serialVersionUID = 513784171695543063L;
-    /**  Menu entry name **/
+    /**  Menu entry name. **/
     private String name;
-    /** Xtend method name **/
+    /** Xtend method name. **/
     private String transformationName;
-    /** URI to icon **/
+    /** URI to icon. **/
     private String icon;
-    /** Assigned keyboard shortcut **/
+    /** Assigned keyboard shortcut. **/
     private String keyboardShortcut; 
-    /** Ordered parameters **/
+    /** Ordered parameters. **/
     private LinkedList<String> parameter;
-    /** Id for this transformation **/
+    /** Id for this transformation. **/
     private String transformationId;
 
     /**
@@ -67,7 +67,7 @@ public class Transformation implements Serializable,Cloneable {
      * Copy constructor.
      * @param t Transformation which shall be copied
      */
-    public Transformation(Transformation t) {
+    public Transformation(final Transformation t) {
         this.name = t.name;
         this.transformationName = t.transformationName;
         this.icon = t.icon;
@@ -79,6 +79,7 @@ public class Transformation implements Serializable,Cloneable {
     
     /**
      * Clone operation.
+     * @return A cloned transformation
      */
     public final Transformation clone() {
         Transformation t = new Transformation(this);

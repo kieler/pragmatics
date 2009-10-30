@@ -1,4 +1,4 @@
-/*
+/**
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
@@ -39,6 +39,10 @@ import de.cau.cs.kieler.ksbase.viewmanagement.combinations.KSBasECombination;
  */
 public class PostTransformationPreferencePage extends PreferencePage
         implements IWorkbenchPreferencePage {
+
+    private static final int TABLE_PRIORITY_BOUNDS = 45;
+    private static final int TABLE_EFFECT_BOUNDS = 450;
+    private static final int TABLE_ACTIVE_BOUNDS = 52;
 
     /**
      * Default constructor.
@@ -92,7 +96,7 @@ public class PostTransformationPreferencePage extends PreferencePage
     private void createColumns(final DataTableViewer viewer) {
         String[] titles = {"Active", "Effect", "Priority" };
         String[] toolTip = {"Status of Effect", "Name of Effect", "Priority of Effect" };
-        int[] bounds = {52, 450, 45 };
+        int[] bounds = {TABLE_ACTIVE_BOUNDS, TABLE_EFFECT_BOUNDS, TABLE_PRIORITY_BOUNDS };
 
         for (int i = 0; i < titles.length; i++) {
             TreeViewerColumn column = new TreeViewerColumn(viewer, SWT.NONE);

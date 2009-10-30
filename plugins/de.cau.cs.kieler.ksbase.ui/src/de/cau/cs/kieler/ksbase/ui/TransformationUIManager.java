@@ -53,7 +53,7 @@ import de.cau.cs.kieler.ksbase.ui.listener.ITransformationEventListener;
  */
 public final class TransformationUIManager {
 
-    /** Thread-safe initialization. **/
+    /** Transformation-UI instance. **/
     public static final TransformationUIManager INSTANCE = new TransformationUIManager();
     /**
      * The list of listeners to notify after a transformation has been executed.

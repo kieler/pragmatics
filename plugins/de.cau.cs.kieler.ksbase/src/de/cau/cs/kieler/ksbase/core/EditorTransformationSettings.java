@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.IContributor;
  */
 public class EditorTransformationSettings implements Serializable {
 
-    /** Serialization Id  **/
+    /** Serialization Id. **/
     private static final long serialVersionUID = 836873211581178353L;
     /** The model package class. **/
     private String modelPackageClass;
@@ -266,9 +266,9 @@ public class EditorTransformationSettings implements Serializable {
      * 
      * @param file
      *            a .ext file in plain text
-     * @param createTransformations 
-     *          indicates if the editor transformations
-     *          should be created while parsing the file.
+     * @param createTransformations
+     *            indicates if the editor transformations should be created
+     *            while parsing the file.
      */
     public final void setExtFile(final String file, final boolean createTransformations) {
         this.extFile = file;
@@ -320,13 +320,13 @@ public class EditorTransformationSettings implements Serializable {
      *            parsing. If not, the parameters of the existing
      *            transformations are matched with the file.
      */
-    public final void parseTransformations(boolean createTransformations) {
+    public final void parseTransformations(final boolean createTransformations) {
         if (extFile != null && extFile.length() > 0) {
-            //To check if we have any invalid transformations, i.e.
-            //if it has no transformation match in the xtend file,
-            //we want to remove it now. 
+            // To check if we have any invalid transformations, i.e.
+            // if it has no transformation match in the xtend file,
+            // we want to remove it now.
             LinkedList<Transformation> cachedTransformations = new LinkedList<Transformation>();
-            
+
             // Let's find all in-place m2m transformations, defined in this file
             // They are defined by :
             // Starting with 'void '
@@ -366,7 +366,7 @@ public class EditorTransformationSettings implements Serializable {
                     } else if (createTransformations) {
                         t = new Transformation(name, name);
                         t.setParameter(parameters);
-                        t.setTransformationId(editor+"."+name);
+                        t.setTransformationId(editor + "." + name);
                         cachedTransformations.add(t);
                     }
                 } catch (NullPointerException exp) {

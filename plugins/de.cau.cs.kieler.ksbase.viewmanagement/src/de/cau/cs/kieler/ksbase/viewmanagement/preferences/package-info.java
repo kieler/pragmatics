@@ -17,3 +17,4 @@
  * plug-in.
  */
 package de.cau.cs.kieler.ksbase.viewmanagement.preferences;
+

@@ -198,7 +198,7 @@ public final class TransformationManager {
     }
 
     /**
-     * Stores the user defined settings in the KSbasE state location folder
+     * Stores the user defined settings in the KSbasE state location folder.
      */
     public void storeUserDefinedTransformations() {
 
@@ -339,7 +339,7 @@ public final class TransformationManager {
 
             File[] files = metaPath.listFiles(new FilenameFilter() {
 
-                public boolean accept(File dir, String name) {
+                public boolean accept(final File dir, final String name) {
                     if (name.endsWith(".sbase")) {
                         return true;
                     }
@@ -353,7 +353,7 @@ public final class TransformationManager {
                         ois = new ObjectInputStream(new FileInputStream(file));
                         Object content = ois.readObject();
                         if (content instanceof EditorTransformationSettings) {
-                            registeredEditors.add( (EditorTransformationSettings)content);
+                            registeredEditors.add((EditorTransformationSettings) content);
                         }
                     } catch (FileNotFoundException e) {
                         // TODO Auto-generated catch block
