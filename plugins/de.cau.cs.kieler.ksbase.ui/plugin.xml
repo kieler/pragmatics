@@ -40,8 +40,14 @@
       </page>
       <page
             category="de.cau.cs.kieler.ksbase.PreferencePage"
+            class="de.cau.cs.kieler.ksbase.ui.preferences.EditorsPreferencePage"
+            id="de.cau.cs.kieler.ksbase.EditorPreferencePage"
+            name="Editors">
+      </page>
+      <page
+            category="de.cau.cs.kieler.ksbase.EditorPreferencePage"
             class="de.cau.cs.kieler.ksbase.ui.preferences.TransformationPreferencePage"
-            id="de.cau.cs.kieler.ksbase.ConfigPreferencePage"
+            id="de.cau.cs.kieler.ksbase.ui.TransformationPrefPage"
             name="Transformations">
       </page>
       </extension>
