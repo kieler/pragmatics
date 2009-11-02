@@ -43,7 +43,7 @@ import de.cau.cs.kieler.viewmanagement.TriggerEventObject;
 public class KSBasECombination extends ACombination {
 
     /** List of effect names to execute. **/
-    public static HashMap<Integer, LinkedList<String>> effects =
+    protected static HashMap<Integer, LinkedList<String>> effects =
             new HashMap<Integer, LinkedList<String>>();
     /** Trigger object. **/
     private KSBasETrigger trigger;

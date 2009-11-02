@@ -48,7 +48,7 @@ public class Activator extends AbstractUIPlugin {
      */
     public void start(final BundleContext context) throws Exception {
         super.start(context);
-        plugin = this;
+        Activator.setDefault(this);
     }
 
     /**
@@ -61,7 +61,7 @@ public class Activator extends AbstractUIPlugin {
      *             When stopping this plug-in fails.
      */
     public void stop(final BundleContext context) throws Exception {
-        plugin = null;
+        Activator.setDefault(null);
         super.stop(context);
     }
 
@@ -72,5 +72,13 @@ public class Activator extends AbstractUIPlugin {
      */
     public static Activator getDefault() {
         return plugin;
+    }
+    
+    /**
+     * Sets the shared instance.
+     * @param value The new shared instance value
+     */
+    public static void setDefault(final Activator value) { 
+        plugin = value;
     }
 }
