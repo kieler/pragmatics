@@ -52,7 +52,7 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
      */
     public void start(final BundleContext context) throws Exception {
         super.start(context);
-        KSBasEUIPlugin.plugin = this;
+        KSBasEUIPlugin.setPlugin(this);
         DynamicMenuContributions.INSTANCE.createAllMenuContributions();
     }
 
@@ -66,7 +66,7 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
      *             When stopping this plug-in fails.
      */
     public void stop(final BundleContext context) throws Exception {
-        KSBasEUIPlugin.plugin = null;
+        KSBasEUIPlugin.setPlugin(null);
         super.stop(context);
     }
 
@@ -77,6 +77,16 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
      */
     public static KSBasEUIPlugin getDefault() {
         return plugin;
+    }
+
+    /**
+     * Used to set the plug-in instance.
+     * 
+     * @param pluginValue
+     *            The value to set.
+     */
+    public static void setPlugin(final KSBasEUIPlugin pluginValue) {
+        plugin = pluginValue;
     }
 
 }

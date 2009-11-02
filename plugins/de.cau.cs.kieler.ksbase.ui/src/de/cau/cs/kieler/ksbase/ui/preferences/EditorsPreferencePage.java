@@ -67,6 +67,9 @@ import de.cau.cs.kieler.ksbase.ui.menus.DynamicMenuContributions;
 public class EditorsPreferencePage extends PreferencePage
         implements IWorkbenchPreferencePage {
 
+    private static final int MENU_BUTTON_GRID_LAYOUT = 3;
+    private static final int BROWSER_CONTAINER_GRIDLAYOUT = 3;
+
     /**
      * A content provider for the MenuTreeView used in this page.
      * 
@@ -312,7 +315,7 @@ public class EditorsPreferencePage extends PreferencePage
             public void widgetSelected(final SelectionEvent e) {
                 EditorTransformationSettings editor =
                         manager.getEditorByName(((Combo) e.getSource()).getText());
-                activeEditor = editor;
+                EditorsPreferencePage.setActiveEditor(editor);
                 if (activeEditor != null) { // Load editor settings
                     sfMetaModel.setText(editor.getModelPackageClass());
                     sfContext.setText(editor.getContext());
@@ -381,6 +384,8 @@ public class EditorsPreferencePage extends PreferencePage
         btEditorDel.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(final SelectionEvent arg0) {
+                manager.removeEditor(activeEditor.getEditor());
+                readEditors();
             }
 
             public void widgetDefaultSelected(final SelectionEvent arg0) {
@@ -393,7 +398,7 @@ public class EditorsPreferencePage extends PreferencePage
         cbEditors.setLayoutData(gData);
 
         browserContainer = new Composite(parent, SWT.NONE);
-        browserContainer.setLayout(new GridLayout(3, true));
+        browserContainer.setLayout(new GridLayout(BROWSER_CONTAINER_GRIDLAYOUT, true));
 
         new Label(browserContainer, SWT.NONE).setText(Messages.kSBasEPreferencePageModelPackage);
         sfMetaModel = new Text(browserContainer, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
@@ -504,7 +509,7 @@ public class EditorsPreferencePage extends PreferencePage
         menuComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         Composite menuButtonComposite = new Composite(parent, SWT.NONE);
-        menuButtonComposite.setLayout(new GridLayout(3, true));
+        menuButtonComposite.setLayout(new GridLayout(MENU_BUTTON_GRID_LAYOUT, true));
         menuButtonComposite.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, true));
         readEditors();
         return null;
@@ -568,5 +573,13 @@ public class EditorsPreferencePage extends PreferencePage
      */
     protected static EditorTransformationSettings getActiveEditor() {
         return activeEditor;
+    }
+    
+    /**
+     * Sets the currently active editor.
+     * @param editor The new active editor
+     */
+    public static void setActiveEditor(final EditorTransformationSettings editor) {
+        activeEditor = editor;
     }
 }

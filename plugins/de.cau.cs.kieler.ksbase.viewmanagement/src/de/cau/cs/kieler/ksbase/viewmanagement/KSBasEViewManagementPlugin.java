@@ -50,7 +50,7 @@ public class KSBasEViewManagementPlugin extends AbstractUIPlugin {
      */
     public void start(final BundleContext context) throws Exception {
         super.start(context);
-        plugin = this;
+        KSBasEViewManagementPlugin.setPlugin(this);
         // Initialize pref page to load all stored settings
         KSBasECombination.initalizeEffects(plugin.getPreferenceStore());
     }
@@ -65,7 +65,7 @@ public class KSBasEViewManagementPlugin extends AbstractUIPlugin {
      *             When stopping this plug-in fails.
      */
     public void stop(final BundleContext context) throws Exception {
-        plugin = null;
+        KSBasEViewManagementPlugin.setPlugin(null);
         super.stop(context);
     }
 
@@ -78,4 +78,13 @@ public class KSBasEViewManagementPlugin extends AbstractUIPlugin {
         return plugin;
     }
 
+    /**
+     * Used to set the plug-in instance.
+     * 
+     * @param pluginValue
+     *            The value to set.
+     */
+    public static void setPlugin(final KSBasEViewManagementPlugin pluginValue) {
+        plugin = pluginValue;
+    }
 }

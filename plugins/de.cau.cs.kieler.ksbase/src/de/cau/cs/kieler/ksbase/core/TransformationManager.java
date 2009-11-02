@@ -54,6 +54,29 @@ public final class TransformationManager {
     public static final TransformationManager INSTANCE = new TransformationManager();
 
     /**
+     * FileNameFilter to check a file for a valid extension.
+     * The extension has to be '.sbase' to be valid.
+     * 
+     * @author Michael Matzen - mim AT informatik.uni-kiel.de
+     *
+     */
+    private static class XtendFileNameFilter implements FilenameFilter {
+        /**
+         * Checks if the given input is valid.
+         * @param dir The file directory.
+         * @param name The filename.
+         * @return True if the extension of the given file is .sbase
+         */
+        public boolean accept(final File dir, final String name) {
+            if (name.endsWith(".sbase")) {
+                return true;
+            }
+            return false;
+        }
+
+    }
+
+    /**
      * Since this is a singleton class the constructor is private.
      */
     private TransformationManager() {
@@ -181,7 +204,7 @@ public final class TransformationManager {
     }
 
     /**
-     * Removes an editor from the registry.
+     * Removes an editor from the list of registered user defined editors.
      * 
      * @param editor
      *            The fqn class name of the editor
@@ -190,7 +213,8 @@ public final class TransformationManager {
         assert (registeredEditors != null);
         if (editor != null && editor.length() > 0) {
             for (int i = 0; i < registeredEditors.size(); ++i) {
-                if (registeredEditors.get(i).getEditor().equals(editor)) {
+                if (registeredEditors.get(i).getEditor().equals(editor)
+                        && registeredEditors.get(i).getContributor() == null) {
                     registeredEditors.remove(i);
                 }
             }
@@ -337,15 +361,8 @@ public final class TransformationManager {
         File metaPath = KSBasEPlugin.getDefault().getStateLocation().toFile();
         if (metaPath != null && metaPath.isDirectory()) {
 
-            File[] files = metaPath.listFiles(new FilenameFilter() {
+            File[] files = metaPath.listFiles(new XtendFileNameFilter());
 
-                public boolean accept(final File dir, final String name) {
-                    if (name.endsWith(".sbase")) {
-                        return true;
-                    }
-                    return false;
-                }
-            });
             if (files != null && files.length > 0) {
                 for (File file : files) {
                     ObjectInputStream ois = null;
@@ -356,8 +373,12 @@ public final class TransformationManager {
                             registeredEditors.add((EditorTransformationSettings) content);
                         }
                     } catch (FileNotFoundException e) {
+                        System.out.println("Error while parsing settings: file not found");
                     } catch (IOException e) {
+                        System.out.println("Error while parsing settings: file could not be read");
                     } catch (ClassNotFoundException e) {
+                        System.out
+                                .println("Error while parsing settings: file could not be parsed");
                     } finally {
                         if (ois != null) {
                             try {

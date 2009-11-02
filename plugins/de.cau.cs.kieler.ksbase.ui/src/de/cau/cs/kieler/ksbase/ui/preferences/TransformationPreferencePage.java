@@ -1,3 +1,17 @@
+/**
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2009 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ * 
+ *****************************************************************************/
 package de.cau.cs.kieler.ksbase.ui.preferences;
 
 import java.io.IOException;
@@ -36,9 +50,16 @@ import org.eclipse.ui.dialogs.ResourceSelectionDialog;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.Transformation;
 
+/**
+ * Preference page to configure transformations.
+ * 
+ * @author Michael Matzen - mim AT informatik.uni-kiel.de
+ * 
+ */
 public class TransformationPreferencePage extends PreferencePage
         implements IWorkbenchPreferencePage {
 
+    private static final int BUTTON_GRIDLAYOUT = 4;
     /** The table used to display the existing transformation. **/
     protected Table table;
     /** Composites used to layout the preference page. **/
@@ -81,26 +102,31 @@ public class TransformationPreferencePage extends PreferencePage
      */
     @Override
     protected Control createContents(final Composite parent) {
+        boolean activated;
         activeEditor = EditorsPreferencePage.getActiveEditor();
         if (activeEditor == null) {
-            //Set all controls to deactivated
+            activated = false;
+        } else {
+            activated = true;
         }
+
         // Since the title wont be display for setTitle oder super() we are
         // simply inserting a label
         new Label(parent, SWT.NONE).setText(Messages.kSBasETPreferencePageTitle);
 
         // Fill table with transformations
         table.removeAll();
-        for (Transformation t : activeEditor.getTransformations()) {
-            TableItem tItem = new TableItem(table, SWT.NONE);
+        if (activeEditor != null) {
+            for (Transformation t : activeEditor.getTransformations()) {
+                TableItem tItem = new TableItem(table, SWT.NONE);
 
-            tItem.setText(new String[] {
-                    t.getTransformationId(), t.getName(), t.getTransformationName(), t.getIcon(),
-                    t.getKeyboardShortcut() });
+                tItem.setText(new String[] {
+                        t.getTransformationId(), t.getName(), t.getTransformationName(),
+                        t.getIcon(), t.getKeyboardShortcut() });
 
+            }
         }
-
-        table.setEnabled(true);
+        table.setEnabled(activated);
 
         tableComp = new Composite(parent, SWT.NONE);
         tableComp.setLayout(new GridLayout(1, false));
@@ -281,7 +307,7 @@ public class TransformationPreferencePage extends PreferencePage
         tableComp.setEnabled(false);
 
         btComp = new Composite(parent, SWT.NONE);
-        btComp.setLayout(new GridLayout(4, false));
+        btComp.setLayout(new GridLayout(BUTTON_GRIDLAYOUT, false));
 
         btBrowseXtend = new Button(btComp, SWT.NONE);
         btBrowseXtend.setText("Load Xtend File");
@@ -358,9 +384,14 @@ public class TransformationPreferencePage extends PreferencePage
         return null;
     }
 
-    public void init(IWorkbench workbench) {
-        // TODO Auto-generated method stub
-
+    /**
+     * Initializes this preference page.
+     * 
+     * @param workbench
+     *            The parent workbench
+     */
+    public void init(final IWorkbench workbench) {
+        // nothing to be done here right now
     }
 
 }

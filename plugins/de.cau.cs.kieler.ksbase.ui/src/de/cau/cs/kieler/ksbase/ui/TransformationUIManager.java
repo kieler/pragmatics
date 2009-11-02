@@ -202,8 +202,8 @@ public final class TransformationUIManager {
                 if (activeEditor instanceof DiagramEditor) {
 
                     // Notify event listeners:
-                    for (ITransformationEventListener transformationEvent : postTransformationEventListeners) {
-                        transformationEvent.transformationExecuted(new Object[] {
+                    for (ITransformationEventListener te : postTransformationEventListeners) {
+                        te.transformationExecuted(new Object[] {
                                 selectedElement, activeEditor });
                     }
                 }

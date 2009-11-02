@@ -82,6 +82,11 @@ public class Transformation implements Serializable,Cloneable {
      * @return A cloned transformation
      */
     public final Transformation clone() {
+        try {
+            super.clone();
+        } catch (CloneNotSupportedException e) {
+            System.out.println("KSBASE: Error while cloning a transformation.");
+        }
         Transformation t = new Transformation(this);
         return t;
     }

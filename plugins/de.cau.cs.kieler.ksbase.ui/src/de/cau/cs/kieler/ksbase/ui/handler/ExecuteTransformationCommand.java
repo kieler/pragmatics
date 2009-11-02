@@ -80,8 +80,8 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
      * @param adapter
      *            an adapter to the {@code View} of the base diagram
      */
-    public ExecuteTransformationCommand(final TransactionalEditingDomain domain,
-            final String label, final IAdaptable adapter) {
+    public ExecuteTransformationCommand(
+            final TransactionalEditingDomain domain, final String label, final IAdaptable adapter) {
         super(domain, label, null);
         context = new WorkflowContextDefaultImpl();
         issues = new IssuesImpl();
@@ -106,35 +106,28 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
      *             if the Execution faild due to a critical error.
      */
     @Override
-    protected CommandResult doExecuteWithResult(final IProgressMonitor monitor,
-            final IAdaptable info) throws ExecutionException {
+    protected CommandResult doExecuteWithResult(
+            final IProgressMonitor monitor, final IAdaptable info) throws ExecutionException {
         // This is a very ugly way to suppress messages from xtend
         PrintStream syse = System.err;
         PrintStream syso = System.out;
 
         if (workflow == null) {
             return CommandResult
-                    .newErrorCommandResult(
-                            Messages.executeTransformationCommandWorkflowInitializationError);
+                    .newErrorCommandResult(Messages.workflowInitializationError);
         }
-        try {
-            System.setErr(new PrintStream(new ByteArrayOutputStream()));
-            System.setOut(new PrintStream(new ByteArrayOutputStream()));
-            workflow.invoke(this.context, this.xtendMonitor, this.issues);
-        } catch (Exception e) {
-            return CommandResult
-                    .newErrorCommandResult(Messages.executeTransformationCommandWorkflowInvokeError);
-        } finally {
-            System.setErr(syse);
-            System.setOut(syso);
-        }
+        System.setErr(new PrintStream(new ByteArrayOutputStream()));
+        System.setOut(new PrintStream(new ByteArrayOutputStream()));
+        workflow.invoke(this.context, this.xtendMonitor, this.issues);
+        System.setErr(syse);
+        System.setOut(syso);
         if (issues.hasWarnings()) {
             for (MWEDiagnostic warnings : issues.getWarnings()) {
                 System.err.println("Warning: " + warnings.getMessage()); //$NON-NLS-1$
             } // TODO: Check how to write multiple warnings, or write directly
             // to the log
-            return CommandResult.newWarningCommandResult(
-                    "Transformation completed with warnings. " //$NON-NLS-1$
+            return CommandResult.newWarningCommandResult("Transformation"
+                    + " completed with warnings. " //$NON-NLS-1$
                     + issues.getWarnings()[0], null);
         } else if (issues.hasErrors()) {
             for (MWEDiagnostic errors : issues.getErrors()) {
@@ -144,11 +137,14 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
             return CommandResult.newErrorCommandResult("Transformation failed. " //$NON-NLS-1$
                     + issues.getErrors()[0]);
         }
-        IEditorPart activeEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                .getActivePage().getActiveEditor();
+        IEditorPart activeEditor =
+                PlatformUI
+                        .getWorkbench().getActiveWorkbenchWindow().getActivePage()
+                        .getActiveEditor();
         if (activeEditor instanceof DiagramEditor) {
-            EObject obj = ((View) ((DiagramEditor) activeEditor).getDiagramEditPart().getModel())
-                    .getElement();
+            EObject obj =
+                    ((View) ((DiagramEditor) activeEditor).getDiagramEditPart().getModel())
+                            .getElement();
 
             List<?> editPolicies = CanonicalEditPolicy.getRegisteredEditPolicies(obj);
             for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
@@ -158,8 +154,8 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
                 nextEditPolicy.refresh();
             }
 
-            IDiagramGraphicalViewer graphViewer = ((DiagramEditor) activeEditor)
-                    .getDiagramGraphicalViewer();
+            IDiagramGraphicalViewer graphViewer =
+                    ((DiagramEditor) activeEditor).getDiagramGraphicalViewer();
             graphViewer.flush();
         }
         return CommandResult.newOKCommandResult();
@@ -182,9 +178,9 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
      *            The parameters of the Xtend method
      * @return False if an error occurred
      */
-    public final boolean initalize(final IEditorPart editPart, final ISelection selection,
-            final String command, final String fileName, final String basePackage,
-            final String[] parameter) {
+    public final boolean initalize(
+            final IEditorPart editPart, final ISelection selection, final String command,
+            final String fileName, final String basePackage, final String[] parameter) {
         StructuredSelection s;
 
         if (selection instanceof StructuredSelection) {

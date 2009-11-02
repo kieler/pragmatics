@@ -48,9 +48,16 @@ public class TableDataList {
     public TableDataList(final DataTableViewer view) {
         this.viewer = view;
         tableDataList = new ArrayList<TableData>();
-        TableDataList.instance = this;
+        TableDataList.setTableInstance(this);
     }
 
+    /**
+     * Sets the instance of the table data list.
+     * @param value The new instance
+     */
+    public static void setTableInstance(final TableDataList value) {
+        instance = value;
+    }
     // -------------------------------------------------------------------------
 
     /**
