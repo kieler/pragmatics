@@ -41,7 +41,13 @@ import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsPackage;
  *
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
-public class KimlUiUtil {
+public final class KimlUiUtil {
+    
+    /**
+     * Hidden constructor.
+     */
+    private KimlUiUtil() {
+    }
     
     /**
      * Determines the insets for a parent figure, relative to the given child.
@@ -50,7 +56,7 @@ public class KimlUiUtil {
      * @param child the figure of a child edit part
      * @return the insets to add to the relative coordinates of the child
      */
-    public static Insets calcInsets(IFigure parent, IFigure child) {
+    public static Insets calcInsets(final IFigure parent, final IFigure child) {
         Insets result = new Insets(0);
         IFigure currentChild = child;
         IFigure currentParent = child.getParent();
@@ -63,8 +69,7 @@ public class KimlUiUtil {
                     result.top += coordsToAdd.y;
                 }
                 coordsToAdd = currentParent.getBounds().getLocation();
-            }
-            else if (currentParent == parent && coordsToAdd != null) {
+            } else if (currentParent == parent && coordsToAdd != null) {
                 Point parentCoords = parent.getBounds().getLocation();
                 result.left += coordsToAdd.x - parentCoords.x;
                 result.top += coordsToAdd.y - parentCoords.y;
@@ -83,12 +88,13 @@ public class KimlUiUtil {
      * @param child the figure of a child edit part
      * @return true if the child position is relative to the parent
      */
-    public static boolean isRelative(IFigure parent, IFigure child) {
+    public static boolean isRelative(final IFigure parent, final IFigure child) {
         IFigure currentChild = child;
         IFigure currentParent = child.getParent();
         while (currentChild != parent && currentParent != null) {
-            if (currentParent.isCoordinateSystem())
+            if (currentParent.isCoordinateSystem()) {
                 return true;
+            }
             currentChild = currentParent;
             currentParent = currentChild.getParent();
         }
@@ -103,9 +109,9 @@ public class KimlUiUtil {
      * @param editPart the current edit part
      * @return an object with the default value
      */
-    public static Object getDefault(LayoutOptionData optionData, LayoutProviderData providerData,
-            EditPart editPart) {
-        Object result = editPart != null ? LayoutServices.INSTANCE.getOption(
+    public static Object getDefault(final LayoutOptionData optionData,
+            final LayoutProviderData providerData, final EditPart editPart) {
+        Object result = editPart != null ? LayoutServices.getInstance().getOption(
                 editPart.getClass(), optionData.id) : null;
         if (result == null) {
             result = providerData != null ? providerData.instance.getDefault(optionData.id) : null;
@@ -125,10 +131,11 @@ public class KimlUiUtil {
                 }
             }
         }
-        if (result instanceof Enum<?>)
+        if (result instanceof Enum<?>) {
             return ((Enum<?>)result).ordinal();
-        else
+        } else {
             return result;
+        }
     }
     
     /**
@@ -138,13 +145,14 @@ public class KimlUiUtil {
      * @param optionId the identifier of the option
      * @return the corresponding option, or {@code null} if there is no such option
      */
-    public static KOption getKOption(IGraphicalEditPart editPart, String optionId) {
+    public static KOption getKOption(final IGraphicalEditPart editPart, final String optionId) {
         LayoutOptionStyle optionStyle = (LayoutOptionStyle)editPart.getNotationView()
                 .getStyle(LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
         if (optionStyle != null) {
             for (KOption koption : optionStyle.getOptions()) {
-                if (koption.getKey().equals(optionId))
+                if (koption.getKey().equals(optionId)) {
                     return koption;
+                }
             }
         }
         return null;
@@ -159,7 +167,7 @@ public class KimlUiUtil {
      * @return the new layout option style
      */
     public static LayoutOptionStyle addLayoutOptionStyle(final View notationView,
-            TransactionalEditingDomain editingDomain) {
+            final TransactionalEditingDomain editingDomain) {
         final Maybe<LayoutOptionStyle> optionStyleWrap = new Maybe<LayoutOptionStyle>();
         editingDomain.getCommandStack().execute(new RecordingCommand(editingDomain) {
             @SuppressWarnings("unchecked")
@@ -186,7 +194,7 @@ public class KimlUiUtil {
      * @return the new {@code KOption}
      */
     public static KOption addKOption(final LayoutOptionStyle optionStyle,
-            final LayoutOptionData optionData, TransactionalEditingDomain editingDomain) {
+            final LayoutOptionData optionData, final TransactionalEditingDomain editingDomain) {
         final Maybe<KOption> koptionWrap = new Maybe<KOption>();
         editingDomain.getCommandStack().execute(new RecordingCommand(editingDomain) {
             protected void doExecute() {
@@ -221,7 +229,7 @@ public class KimlUiUtil {
      * @param optionData the layout option data related with the option
      * @return the current value of the option
      */
-    public static Object getValue(KOption koption, LayoutOptionData optionData) {
+    public static Object getValue(final KOption koption, final LayoutOptionData optionData) {
         switch (optionData.type) {
         case STRING:
             return ((KStringOption)koption).getValue();
@@ -246,7 +254,7 @@ public class KimlUiUtil {
      * @param editingDomain the editing domain of the related edit part
      */
     public static void setValue(final KOption koption, final LayoutOptionData optionData,
-            final Object value, TransactionalEditingDomain editingDomain) {
+            final Object value, final TransactionalEditingDomain editingDomain) {
         editingDomain.getCommandStack().execute(new RecordingCommand(editingDomain) {
             protected void doExecute() {
                 switch (optionData.type) {

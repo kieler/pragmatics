@@ -44,32 +44,24 @@ public class GmfDebugCanvas extends LayoutGraphCanvas {
     /**
      * @param parent
      */
-    public GmfDebugCanvas(Composite parent) {
+    public GmfDebugCanvas(final Composite parent) {
         super(parent);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * de.cau.cs.kieler.kiml.viewer.views.LayoutGraphCanvas#paintControl(org
-     * .eclipse.swt.events.PaintEvent)
+    /**
+     * {@inheritDoc}
      */
     @Override
-    public void paintControl(PaintEvent event) {
+    public void paintControl(final PaintEvent event) {
         GC graphics = event.gc;
-        super.paintControl(event,3);
+        super.paintControl(event, 3);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * de.cau.cs.kieler.kiml.viewer.views.LayoutGraphCanvas#paintLayoutGraph
-     * (org.eclipse.swt.graphics.GC, org.eclipse.swt.graphics.Point)
+    /**
+     * {@inheritDoc}
      */
     @Override
-    public void paintLayoutGraph(GC graphics, Point size) {
+    public void paintLayoutGraph(final GC graphics, final Point size) {
         super.paintLayoutGraph(graphics, size,3);
         
     }
@@ -80,7 +72,7 @@ public class GmfDebugCanvas extends LayoutGraphCanvas {
      * returns null.
      * @return Currently active DiagramDocumentEditor or null
      */
-    public DiagramDocumentEditor getGmfEditor(){
+    public DiagramDocumentEditor getGmfEditor() {
         IEditorPart editor = PlatformUI.getWorkbench()
         .getActiveWorkbenchWindow().getActivePage()
         .getActiveEditor();

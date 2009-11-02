@@ -27,53 +27,57 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
  */
 public class ExecutionContentProvider implements ITreeContentProvider {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
-	 */
-	public Object[] getChildren(Object parentElement) {
-		if (parentElement instanceof IKielerProgressMonitor)
-			return ((IKielerProgressMonitor)parentElement).getSubMonitors()
-					.toArray();
-		else return new IKielerProgressMonitor[0];
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public Object[] getChildren(final Object parentElement) {
+        if (parentElement instanceof IKielerProgressMonitor) {
+            return ((IKielerProgressMonitor) parentElement).getSubMonitors().toArray();
+        } else {
+            return new IKielerProgressMonitor[0];
+        }
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
-	 */
-	public Object getParent(Object element) {
-		if (element instanceof IKielerProgressMonitor)
-			return ((IKielerProgressMonitor)element).getParentMonitor();
-		else return null;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public Object getParent(final Object element) {
+        if (element instanceof IKielerProgressMonitor) {
+            return ((IKielerProgressMonitor) element).getParentMonitor();
+        } else {
+            return null;
+        }
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-	 */
-	public boolean hasChildren(Object element) {
-		return element instanceof IKielerProgressMonitor
-				&& !((IKielerProgressMonitor)element).getSubMonitors().isEmpty();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public boolean hasChildren(final Object element) {
+        return element instanceof IKielerProgressMonitor
+                && !((IKielerProgressMonitor) element).getSubMonitors().isEmpty();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-	 */
-	public Object[] getElements(Object inputElement) {
-		if (inputElement instanceof List)
-			return ((List<?>)inputElement).toArray();
-		else
-			return new Object[0];
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public Object[] getElements(final Object inputElement) {
+        if (inputElement instanceof List<?>) {
+            return ((List<?>) inputElement).toArray();
+        } else {
+            return new Object[0];
+        }
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-	 */
-	public void dispose() {
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void dispose() {
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-	 */
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
+    }
 
 }

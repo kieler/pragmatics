@@ -22,13 +22,13 @@ import de.cau.cs.kieler.klodd.hierarchical.structures.LayeredGraph;
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public interface IEdgeRouter extends IAlgorithm {
-	
-	/**
-	 * Route the edges of the given layered graph.
-	 * 
-	 * @param layeredGraph layered graph to process
-	 * @param minDist minimal distance between two edges
-	 */
-	public void routeEdges(LayeredGraph layeredGraph, float minDist);
+
+    /**
+     * Route the edges of the given layered graph.
+     * 
+     * @param layeredGraph layered graph to process
+     * @param minDist minimal distance between two edges
+     */
+    void routeEdges(LayeredGraph layeredGraph, float minDist);
 
 }

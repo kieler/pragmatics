@@ -35,10 +35,8 @@ public class GreedyCycleRemover extends AbstractCycleRemover {
     /** list of sink nodes. */
     LinkedList<KSlimNode> sinks = new LinkedList<KSlimNode>();
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see de.cau.cs.kieler.core.graph.alg.AbstractCycleRemover#reset()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public void reset() {
@@ -47,14 +45,9 @@ public class GreedyCycleRemover extends AbstractCycleRemover {
         sinks.clear();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * de.cau.cs.kieler.core.graph.alg.ICycleRemover#removeCycles(de.cau.cs.
-     * kieler.core.graph.KGraph)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public void removeCycles(final KSlimGraph graph) {
         getMonitor().begin("Greedy cycle removal", 1);
         reversedEdges = new LinkedList<KSlimEdge>();

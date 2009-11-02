@@ -50,10 +50,8 @@ public class HopcroftTarjanPlanarityTester extends AbstractAlgorithm
     /** the second lowest point values. */
     private int[] lowpt2;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see de.cau.cs.kieler.klodd.core.algorithms.AbstractAlgorithm#reset()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public void reset() {
@@ -61,13 +59,9 @@ public class HopcroftTarjanPlanarityTester extends AbstractAlgorithm
         nextDfsnum = 0;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see de.cau.cs.kieler.klodd.orthogonal.modules.IPlanarityTester#isPlanar(de
-     *     .cau.cs.kieler.klodd.orthogonal.structures.GraphSection)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public boolean isPlanar(final KGraphSection thebiconnectedSection) {
         int sectionSize = thebiconnectedSection.nodes.size();
         this.biconnectedSection = thebiconnectedSection;

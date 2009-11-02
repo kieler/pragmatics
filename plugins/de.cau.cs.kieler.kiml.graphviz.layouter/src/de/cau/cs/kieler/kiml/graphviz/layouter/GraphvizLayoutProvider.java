@@ -21,8 +21,8 @@ import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.services.AbstractLayoutProvider;
 
 /**
- * Layout provider for the Graphviz layout tool. The actual interface to Graphviz
- * is implemented in {@link GraphvizLayouter}.
+ * Layout provider for the Graphviz layout tool. The actual interface to
+ * Graphviz is implemented in {@link GraphvizLayouter}.
  * <p>
  * The actual Graphviz layout that is applied is determined by the parameter
  * passed in the {@link #initialize(String)} method. If no parameter is passed,
@@ -32,45 +32,47 @@ import de.cau.cs.kieler.kiml.layout.services.AbstractLayoutProvider;
  */
 public class GraphvizLayoutProvider extends AbstractLayoutProvider {
 
-	/** actual Graphviz layouter used to do the layout */
-	private GraphvizLayouter graphvizLayouter = new GraphvizLayouter();;
-	/** command string passed to the layouter */
-	private String command = null;
-	
-	/**
-	 * Initializes the Graphviz layout provider with the given parameter
-	 * string as command.
-	 * 
-	 * @param parameter parameter string that is interpreted as Graphviz command
-	 */
-	public void initialize(String parameter) {
-	    this.command = parameter;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.cau.cs.kieler.kiml.layout.services.AbstractLayoutProvider#doLayout(de.cau.cs.kieler.core.kgraph.KNode, de.cau.cs.kieler.core.alg.IKielerProgressMonitor)
-	 */
-	public void doLayout(KNode layoutNode,
-			IKielerProgressMonitor progressMonitor) throws KielerException {
-        if (command == null)
+    /** actual Graphviz layouter used to do the layout. */
+    private GraphvizLayouter graphvizLayouter = new GraphvizLayouter();;
+    /** command string passed to the layouter. */
+    private String command = null;
+
+    /**
+     * Initializes the Graphviz layout provider with the given parameter string
+     * as command.
+     * 
+     * @param parameter parameter string that is interpreted as Graphviz command
+     */
+    public void initialize(final String parameter) {
+        this.command = parameter;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor)
+            throws KielerException {
+        if (command == null) {
             command = GraphvizLayouter.DOT_COMMAND;
+        }
         graphvizLayouter.layout(layoutNode, progressMonitor, command);
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.cau.cs.kieler.kiml.layout.services.AbstractLayoutProvider#getDefault(java.lang.String)
-	 */
-	public Object getDefault(String optionId) {
-	    if (LayoutOptions.LAYOUT_DIRECTION.equals(optionId))
-	        return LayoutDirection.HORIZONTAL;
-	    else if (LayoutOptions.MIN_SPACING.equals(optionId))
-	        return GraphvizLayouter.DEF_MIN_SPACING;
-	    else if (LayoutOptions.FIXED_SIZE.equals(optionId))
-	        return false;
-	    else
-	        return null;
-	}
-	
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object getDefault(final String optionId) {
+        if (LayoutOptions.LAYOUT_DIRECTION.equals(optionId)) {
+            return LayoutDirection.HORIZONTAL;
+        } else if (LayoutOptions.MIN_SPACING.equals(optionId)) {
+            return GraphvizLayouter.DEF_MIN_SPACING;
+        } else if (LayoutOptions.FIXED_SIZE.equals(optionId)) {
+            return false;
+        } else {
+            return null;
+        }
+    }
+
 }

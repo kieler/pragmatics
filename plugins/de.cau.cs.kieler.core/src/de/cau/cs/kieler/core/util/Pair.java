@@ -48,12 +48,9 @@ public class Pair<F, S> {
             Serializable {
         private static final long serialVersionUID = 1;
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+        /**
+         * {@inheritDoc}
          */
-        /** {@inheritDoc} */
         public int compare(final Pair<F, S> o1, final Pair<F, S> o2) {
             return o1.first.compareTo(o2.first);
         }
@@ -66,21 +63,16 @@ public class Pair<F, S> {
             Serializable {
         private static final long serialVersionUID = 1;
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+        /**
+         * {@inheritDoc}
          */
-        /** {@inheritDoc} */
         public int compare(final Pair<F, S> o1, final Pair<F, S> o2) {
             return o1.second.compareTo(o2.second);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#equals(java.lang.Object)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public boolean equals(final Object obj) {
@@ -96,10 +88,8 @@ public class Pair<F, S> {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#hashCode()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public int hashCode() {
@@ -114,10 +104,8 @@ public class Pair<F, S> {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public String toString() {

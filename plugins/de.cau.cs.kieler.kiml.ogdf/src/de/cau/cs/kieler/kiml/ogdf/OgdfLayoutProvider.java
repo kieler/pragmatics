@@ -43,26 +43,25 @@ public class OgdfLayoutProvider extends AbstractLayoutProvider {
         Ogdf.loadLibrary();
     }
     
-    /** definition of available layout algorithms */
+    /** definition of available layout algorithms. */
     enum LayoutAlgorithm {
         SUGIYAMA
     }
     
-    /** the layout algorithm selected for this layout provider */
+    /** the layout algorithm selected for this layout provider. */
     private LayoutAlgorithm layoutAlgorithm;
     
-    /*
-     * (non-Javadoc)
-     * @see de.cau.cs.kieler.kiml.layout.services.AbstractLayoutProvider#initialize(java.lang.String)
+    /**
+     * {@inheritDoc}
      */
-    public void initialize(String parameter) {
+    public void initialize(final String parameter) {
         layoutAlgorithm = LayoutAlgorithm.valueOf(parameter);
     }
     
-    /* (non-Javadoc)
-     * @see de.cau.cs.kieler.kiml.layout.services.AbstractLayoutProvider#doLayout(de.cau.cs.kieler.core.kgraph.KNode, de.cau.cs.kieler.kiml.layout.services.IKielerProgressMonitor)
+    /**
+     * {@inheritDoc}
      */
-    public void doLayout(KNode layoutNode, IKielerProgressMonitor progressMonitor)
+    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor)
             throws KielerException {
         progressMonitor.begin("OGDF layout", 100);
         
@@ -83,12 +82,18 @@ public class OgdfLayoutProvider extends AbstractLayoutProvider {
         progressMonitor.done();
     }
     
-    /** map of KIELER nodes to OGDF nodes */
+    /** map of KIELER nodes to OGDF nodes. */
     private Map<KNode, NodeElement> knode2ogdfNodeMap = new LinkedHashMap<KNode, NodeElement>();
-    /** map of KIELER edges to OGDF edges */
+    /** map of KIELER edges to OGDF edges. */
     private Map<KEdge, EdgeElement> kedge2ogdfEdgeMap = new LinkedHashMap<KEdge, EdgeElement>();
     
-    private GraphAttributes transformGraph(KNode layoutNode) {
+    /**
+     * Transforms the given layout graph into an OGDF graph.
+     * 
+     * @param layoutNode the parent node of the layout graph.
+     * @return an OGDF graph with attached layout attributes
+     */
+    private GraphAttributes transformGraph(final KNode layoutNode) {
         knode2ogdfNodeMap.clear();
         Graph graph = new Graph();
         GraphAttributes graphAttributes = new GraphAttributes(graph,
@@ -113,7 +118,12 @@ public class OgdfLayoutProvider extends AbstractLayoutProvider {
         return graphAttributes;
     }
     
-    private void applyLayout(GraphAttributes graphAttributes) {
+    /**
+     * Applies the layout result to the original graph.
+     * 
+     * @param graphAttributes OGDF graph with attached layout attributes
+     */
+    private void applyLayout(final GraphAttributes graphAttributes) {
         // apply node layout
         for (KNode knode : knode2ogdfNodeMap.keySet()) {
             NodeElement ogdfNode = knode2ogdfNodeMap.get(knode);

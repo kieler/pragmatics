@@ -21,32 +21,31 @@ import de.cau.cs.kieler.core.kgraph.KNode;
  * register using the {@code layoutListeners} extension point.
  * <p>
  * Layout listeners are primarily used to analyze and debug the results of a
- * layout algorithm. For example, a layout listener could store the layout
- * graph structure into an XMI file to enable easy browsing of the structure.
+ * layout algorithm. For example, a layout listener could store the layout graph
+ * structure into an XMI file to enable easy browsing of the structure.
  * 
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public interface ILayoutListener {
 
-	/**
-	 * Called when layout is requested for the given layout graph.
-	 * The given layout graph must not be modified by this method. As
-	 * the graph is modified by the layout algorithm, a copy of it
-	 * should be created to reflect its state before layout is applied.
-	 * 
-	 * @param layoutGraph layout graph that will be processed after
-	 *     this method returns
-	 */
-	public void layoutRequested(KNode layoutGraph);
-	
-	/**
-	 * Called after layout was performed for the given layout graph.
-	 * The given layout graph must not be modified by this method.
-	 * 
-	 * @param layoutGraph layout graph that was layouted
-	 * @param monitor progress monitor containing execution time results
-	 */
-	public void layoutPerformed(KNode layoutGraph,
-			IKielerProgressMonitor monitor);
-	
+    /**
+     * Called when layout is requested for the given layout graph. The given
+     * layout graph must not be modified by this method. As the graph is
+     * modified by the layout algorithm, a copy of it should be created to
+     * reflect its state before layout is applied.
+     * 
+     * @param layoutGraph layout graph that will be processed after this method
+     *            returns
+     */
+    void layoutRequested(KNode layoutGraph);
+
+    /**
+     * Called after layout was performed for the given layout graph. The given
+     * layout graph must not be modified by this method.
+     * 
+     * @param layoutGraph layout graph that was layouted
+     * @param monitor progress monitor containing execution time results
+     */
+    void layoutPerformed(KNode layoutGraph, IKielerProgressMonitor monitor);
+
 }

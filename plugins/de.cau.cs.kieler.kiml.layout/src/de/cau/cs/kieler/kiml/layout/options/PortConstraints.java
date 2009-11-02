@@ -20,17 +20,17 @@ package de.cau.cs.kieler.kiml.layout.options;
  */
 public enum PortConstraints {
 
-    /** undefined constraints */
+    /** undefined constraints. */
     UNDEFINED,
-    /** all ports are free */
+    /** all ports are free. */
     FREE_PORTS,
-    /** the side is fixed for each port */
+    /** the side is fixed for each port. */
     FIXED_SIDE,
     /** the side is fixed for each port, and the order of ports
-     * is fixed for each side
+     * is fixed for each side.
      */
     FIXED_ORDER,
-    /** the exact position is fixed for each port */
+    /** the exact position is fixed for each port. */
     FIXED_POS;
     
     /**
@@ -39,7 +39,7 @@ public enum PortConstraints {
      * @param i ordinal value
      * @return the related enumeration value
      */
-    public static PortConstraints valueOf(int i) {
+    public static PortConstraints valueOf(final int i) {
         return values()[i];
     }
     

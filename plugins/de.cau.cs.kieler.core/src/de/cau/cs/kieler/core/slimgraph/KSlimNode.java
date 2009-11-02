@@ -97,10 +97,8 @@ public class KSlimNode extends KSlimGraphElement {
             }
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see java.lang.Object#toString()
+        /**
+         * {@inheritDoc}
          */
         @Override
         public String toString() {

@@ -53,40 +53,42 @@ import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsPackage;
  */
 public class GmfLayoutPropertySource implements IPropertySource {
 
-    /** array of choices for the layout hint option */
+    /** array of choices for the layout hint option. */
     private static String[] layoutHintChoices;
-    /** array of identifiers for the layout hint option */
+    /** array of identifiers for the layout hint option. */
     private static String[] layoutHintValues;
-    /** map of layout hint identifiers to their respective indices in the above arrays */
+    /** map of layout hint identifiers to their respective indices in the above arrays. */
     private static Map<String, Integer> layoutHintIndexMap;
     
-    /** list of layout option data */
+    /** list of layout option data. */
     private List<LayoutOptionData> optionDataList;
-    /** array of property descriptors for the option data */
+    /** array of property descriptors for the option data. */
     private IPropertyDescriptor[] propertyDescriptors;
-    /** the editing domain used to perform changes to the notation view */
+    /** the editing domain used to perform changes to the notation view. */
     private TransactionalEditingDomain editingDomain;
-    /** the notation view where layout options are kept persistently */
+    /** the notation view where layout options are kept persistently. */
     private View notationView;
-    /** the layout option style stored in the notation view */
+    /** the layout option style stored in the notation view. */
     private LayoutOptionStyle optionStyle;
-    /** map of layout option data to KOptions from the layout option style */
+    /** map of layout option data to KOptions from the layout option style. */
     private Map<LayoutOptionData, KOption> koptionMap = new HashMap<LayoutOptionData, KOption>();
-    /** map of layout option data to the default values that were read on class creation */
+    /** map of layout option data to the default values that were read on class creation. */
     private Map<LayoutOptionData, Object> defaultValueMap = new HashMap<LayoutOptionData, Object>();
-    /** layout provider data of the container edit part */
+    /** layout provider data of the container edit part. */
     private LayoutProviderData containerProviderData;
-    /** edit parts associated with this property source */
+    /** edit parts associated with this property source. */
     IGraphicalEditPart containerEditPart, childCompartmentEditPart;
     
     /**
      * Creates a layout property source for the given graphical edit part.
      * 
-     * @param editPart a graphical edit part from a GMF diagram
+     * @param theeditPart a graphical edit part from a GMF diagram
      */
-    public GmfLayoutPropertySource(IGraphicalEditPart editPart) {
+    public GmfLayoutPropertySource(final IGraphicalEditPart theeditPart) {
         // find an appropriate property source and set the layout option targets
-        EditPart parent = editPart;
+        LayoutServices layoutServices = LayoutServices.getInstance();
+        IGraphicalEditPart editPart = theeditPart;
+        EditPart parent = theeditPart;
         LayoutOptionData.Target partTarget = null;
         do {
             editPart = (IGraphicalEditPart)parent;
@@ -94,18 +96,20 @@ public class GmfLayoutPropertySource implements IPropertySource {
                 partTarget = LayoutOptionData.Target.PORTS;
                 containerEditPart = (IGraphicalEditPart)editPart.getParent().getParent();
                 break;
-            }
-            else if (editPart instanceof ShapeNodeEditPart) {
-                if (!LayoutServices.INSTANCE.isNolayout(editPart.getClass())) {
+            } else if (editPart instanceof ShapeNodeEditPart) {
+                if (!layoutServices.isNolayout(editPart.getClass())) {
                     // check whether the node is a parent
                     for (Object child : editPart.getChildren()) {
-                        if (child instanceof ShapeNodeEditPart && !(child instanceof AbstractBorderItemEditPart)
-                                || child instanceof CompartmentEditPart && ((CompartmentEditPart) child).getChildren().size() > 0) {
+                        if (child instanceof ShapeNodeEditPart
+                                && !(child instanceof AbstractBorderItemEditPart)
+                                || child instanceof CompartmentEditPart
+                                && ((CompartmentEditPart) child).getChildren().size() > 0) {
                             if (((IGraphicalEditPart)child).getFigure().isVisible()) {
-                                if (child instanceof CompartmentEditPart)
+                                if (child instanceof CompartmentEditPart) {
                                     childCompartmentEditPart = (IGraphicalEditPart)child;
-                                else
+                                } else {
                                     childCompartmentEditPart = editPart;
+                                }
                                 break;
                             }
                         }
@@ -114,24 +118,24 @@ public class GmfLayoutPropertySource implements IPropertySource {
                     containerEditPart = (IGraphicalEditPart)editPart.getParent();
                 }
                 break;
-            }
-            else if (editPart instanceof ConnectionEditPart) {
+            } else if (editPart instanceof ConnectionEditPart) {
                 partTarget = LayoutOptionData.Target.EDGES;
-                containerEditPart = (IGraphicalEditPart)((ConnectionEditPart)editPart).getSource().getParent();
+                containerEditPart = (IGraphicalEditPart)((ConnectionEditPart)editPart)
+                        .getSource().getParent();
                 break;
-            }
-            else if (editPart instanceof LabelEditPart) {
+            } else if (editPart instanceof LabelEditPart) {
                 partTarget = LayoutOptionData.Target.LABELS;
                 containerEditPart = (IGraphicalEditPart)editPart.getParent();
-                if (containerEditPart instanceof ConnectionEditPart)
-                    containerEditPart = (IGraphicalEditPart)((ConnectionEditPart)containerEditPart).getSource().getParent();
-                else if (containerEditPart instanceof AbstractBorderItemEditPart)
+                if (containerEditPart instanceof ConnectionEditPart) {
+                    containerEditPart = (IGraphicalEditPart)((ConnectionEditPart)containerEditPart)
+                            .getSource().getParent();
+                } else if (containerEditPart instanceof AbstractBorderItemEditPart) {
                     containerEditPart =  (IGraphicalEditPart)containerEditPart.getParent().getParent();
-                else if (containerEditPart instanceof ShapeNodeEditPart)
+                } else if (containerEditPart instanceof ShapeNodeEditPart) {
                     containerEditPart = (IGraphicalEditPart)containerEditPart.getParent();
+                }
                 break;
-            }
-            else if (editPart instanceof DiagramEditPart) {
+            } else if (editPart instanceof DiagramEditPart) {
                 partTarget = LayoutOptionData.Target.PARENTS;
                 containerEditPart = editPart;
                 break;
@@ -153,9 +157,10 @@ public class GmfLayoutPropertySource implements IPropertySource {
                 .getStyle(LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
         if (optionStyle != null) {
             for (KOption koption : optionStyle.getOptions()) {
-                if (LayoutOptions.LAYOUT_HINT.equals(koption.getKey()))
+                if (LayoutOptions.LAYOUT_HINT.equals(koption.getKey())) {
                     partLayoutHint = ((KStringOption)koption).getValue();
-                LayoutOptionData optionData = LayoutServices.INSTANCE.getLayoutOptionData(koption.getKey());
+                }
+                LayoutOptionData optionData = layoutServices.getLayoutOptionData(koption.getKey());
                 koptionMap.put(optionData, koption);
                 Object defaultValue = KimlUiUtil.getValue(koption, optionData);
                 defaultValueMap.put(optionData, defaultValue);
@@ -164,56 +169,65 @@ public class GmfLayoutPropertySource implements IPropertySource {
 
         // set default options from the GMF diagram layout manager
         if (partTarget == LayoutOptionData.Target.NODES) {
-            LayoutOptionData portConstraintsOptionData = LayoutServices.INSTANCE.getLayoutOptionData(LayoutOptions.PORT_CONSTRAINTS);
+            LayoutOptionData portConstraintsOptionData = layoutServices
+                    .getLayoutOptionData(LayoutOptions.PORT_CONSTRAINTS);
             if (childCompartmentEditPart == null) {
-                LayoutOptionData fixedSizeOptionData = LayoutServices.INSTANCE.getLayoutOptionData(LayoutOptions.FIXED_SIZE);
-                if (!defaultValueMap.containsKey(fixedSizeOptionData))
+                LayoutOptionData fixedSizeOptionData = layoutServices
+                        .getLayoutOptionData(LayoutOptions.FIXED_SIZE);
+                if (!defaultValueMap.containsKey(fixedSizeOptionData)) {
                     defaultValueMap.put(fixedSizeOptionData, Boolean.TRUE);
-                if (!defaultValueMap.containsKey(portConstraintsOptionData))
+                }
+                if (!defaultValueMap.containsKey(portConstraintsOptionData)) {
                     defaultValueMap.put(portConstraintsOptionData, PortConstraints.FIXED_POS.ordinal());
-            }
-            else {
-                if (!defaultValueMap.containsKey(portConstraintsOptionData))
-                    defaultValueMap.put(portConstraintsOptionData, PortConstraints.FREE_PORTS.ordinal());                
+                }
+            } else {
+                if (!defaultValueMap.containsKey(portConstraintsOptionData)) {
+                    defaultValueMap.put(portConstraintsOptionData, PortConstraints.FREE_PORTS.ordinal());
+                }
             }
         }
         
         // create the list of shown layout options
-        KOption containerLayoutHintOption = KimlUiUtil.getKOption(containerEditPart, LayoutOptions.LAYOUT_HINT);
+        KOption containerLayoutHintOption = KimlUiUtil.getKOption(containerEditPart,
+                LayoutOptions.LAYOUT_HINT);
         String containerLayoutHint = containerLayoutHintOption instanceof KStringOption
                 ? ((KStringOption)containerLayoutHintOption).getValue() : null;
-        String containerDiagramType = (String)LayoutServices.INSTANCE.getOption(containerEditPart.getClass(),
+        String containerDiagramType = (String)layoutServices.getOption(containerEditPart.getClass(),
                 LayoutOptions.DIAGRAM_TYPE);
-        containerProviderData = LayoutServices.INSTANCE.getLayoutProviderData(
+        containerProviderData = layoutServices.getLayoutProviderData(
                 containerLayoutHint, containerDiagramType);
         if (containerProviderData == null) {
             optionDataList = new ArrayList<LayoutOptionData>();
-        }
-        else {
-            LayoutOptionData layoutHintData = LayoutServices.INSTANCE.getLayoutOptionData(LayoutOptions.LAYOUT_HINT);
-            optionDataList = LayoutServices.INSTANCE.getLayoutOptions(containerProviderData, partTarget);
-            if (partTarget == LayoutOptionData.Target.PARENTS && !defaultValueMap.containsKey(layoutHintData))
+        } else {
+            LayoutOptionData layoutHintData = layoutServices.getLayoutOptionData(
+                    LayoutOptions.LAYOUT_HINT);
+            optionDataList = layoutServices.getLayoutOptions(containerProviderData, partTarget);
+            if (partTarget == LayoutOptionData.Target.PARENTS
+                    && !defaultValueMap.containsKey(layoutHintData)) {
                 defaultValueMap.put(layoutHintData, containerProviderData.id);
+            }
             if (childCompartmentEditPart != null) {
-                String childCompartmentDiagramType = (String)LayoutServices.INSTANCE.getOption(
+                String childCompartmentDiagramType = (String)layoutServices.getOption(
                         childCompartmentEditPart.getClass(), LayoutOptions.DIAGRAM_TYPE);
-                LayoutProviderData partProviderData = LayoutServices.INSTANCE.getLayoutProviderData(
+                LayoutProviderData partProviderData = layoutServices.getLayoutProviderData(
                         partLayoutHint, childCompartmentDiagramType);
-                optionDataList.addAll(LayoutServices.INSTANCE.getLayoutOptions(partProviderData,
+                optionDataList.addAll(layoutServices.getLayoutOptions(partProviderData,
                         LayoutOptionData.Target.PARENTS));
-                if (!defaultValueMap.containsKey(layoutHintData))
+                if (!defaultValueMap.containsKey(layoutHintData)) {
                     defaultValueMap.put(layoutHintData, partProviderData.id);
+                }
             }
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertySource#getPropertyDescriptors()
+    /**
+     * {@inheritDoc}
      */
     public IPropertyDescriptor[] getPropertyDescriptors() {
         if (propertyDescriptors == null) {
-            if (layoutHintChoices == null)
+            if (layoutHintChoices == null) {
                 createLayoutHintChoices();
+            }
             propertyDescriptors = new IPropertyDescriptor[optionDataList.size()];
             for (int i = 0; i < propertyDescriptors.length; i++) {
                 propertyDescriptors[i] = new LayoutPropertyDescriptor(optionDataList.get(i),
@@ -223,103 +237,113 @@ public class GmfLayoutPropertySource implements IPropertySource {
         return propertyDescriptors;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertySource#getPropertyValue(java.lang.Object)
+    /**
+     * {@inheritDoc}
      */
-    public Object getPropertyValue(Object id) {
-        LayoutOptionData optionData = LayoutServices.INSTANCE.getLayoutOptionData((String)id);
+    public Object getPropertyValue(final Object id) {
+        LayoutServices layoutServices = LayoutServices.getInstance();
+        LayoutOptionData optionData = layoutServices.getLayoutOptionData((String)id);
         KOption koption = koptionMap.get(optionData);
         Object value = null;
         if (koption == null) {
             Object defaultValue = defaultValueMap.get(optionData);
             if (defaultValue == null) {
                 if (optionData.hasTarget(LayoutOptionData.Target.PARENTS)) {
-                    LayoutProviderData partProviderData = LayoutServices.INSTANCE.getLayoutProviderData(
-                            (String)defaultValueMap.get(LayoutServices.INSTANCE
+                    LayoutProviderData partProviderData = layoutServices.getLayoutProviderData(
+                            (String)defaultValueMap.get(layoutServices
                             .getLayoutOptionData(LayoutOptions.LAYOUT_HINT)));
-                    value = KimlUiUtil.getDefault(optionData, partProviderData, childCompartmentEditPart);
-                }
-                else
+                    value = KimlUiUtil.getDefault(optionData, partProviderData,
+                            childCompartmentEditPart);
+                } else {
                     value = KimlUiUtil.getDefault(optionData, containerProviderData, containerEditPart);
-            }
-            else
+                }
+            } else {
                 value = defaultValue;
-        }
-        else
+            }
+        } else {
             value = KimlUiUtil.getValue(koption, optionData);
-        if (LayoutOptions.LAYOUT_HINT.equals(optionData.id))
+        }
+        if (LayoutOptions.LAYOUT_HINT.equals(optionData.id)) {
             return layoutHintIndexMap.get(value);
-        else if (optionData.type == LayoutOptionData.Type.INT
-                || optionData.type == LayoutOptionData.Type.FLOAT)
+        } else if (optionData.type == LayoutOptionData.Type.INT
+                || optionData.type == LayoutOptionData.Type.FLOAT) {
             return value.toString();
-        else
+        } else {
             return value;
+        }
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertySource#setPropertyValue(java.lang.Object, java.lang.Object)
+    /**
+     * {@inheritDoc}
      */
-    public void setPropertyValue(Object id, Object value) {
-        LayoutOptionData optionData = LayoutServices.INSTANCE.getLayoutOptionData((String)id);
+    public void setPropertyValue(final Object id, final Object thevalue) {
+        Object value = thevalue;
+        LayoutOptionData optionData = LayoutServices.getInstance().getLayoutOptionData((String)id);
         KOption koption = koptionMap.get(optionData);
         if (koption == null) {
-            if (optionStyle == null)
+            if (optionStyle == null) {
                 optionStyle = KimlUiUtil.addLayoutOptionStyle(notationView, editingDomain);
+            }
             koption = KimlUiUtil.addKOption(optionStyle, optionData, editingDomain);
             koptionMap.put(optionData, koption);
         }
         if (LayoutOptions.LAYOUT_HINT.equals(optionData.id)) {
-            KimlUiUtil.setValue(koption, optionData, layoutHintValues[((Integer)value).intValue()], editingDomain);
+            KimlUiUtil.setValue(koption, optionData, layoutHintValues[((Integer)value).intValue()],
+                    editingDomain);
 //            LayoutViewPart.refreshLayoutView();
-        }
-        else {
-            if (optionData.type == LayoutOptionData.Type.INT)
+        } else {
+            if (optionData.type == LayoutOptionData.Type.INT) {
                 value = Integer.valueOf((String)value);
-            else if (optionData.type == LayoutOptionData.Type.FLOAT)
+            } else if (optionData.type == LayoutOptionData.Type.FLOAT) {
                 value = Float.valueOf((String)value);
+            }
             KimlUiUtil.setValue(koption, optionData, value, editingDomain);
         }
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertySource#getEditableValue()
+    /**
+     * {@inheritDoc}
      */
     public Object getEditableValue() {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertySource#isPropertySet(java.lang.Object)
+    /**
+     * {@inheritDoc}
      */
-    public boolean isPropertySet(Object id) {
-        LayoutOptionData optionData = LayoutServices.INSTANCE.getLayoutOptionData((String)id);
+    public boolean isPropertySet(final Object id) {
+        LayoutOptionData optionData = LayoutServices.getInstance().getLayoutOptionData((String)id);
         KOption koption = koptionMap.get(optionData);
         if (koption != null) {
             Object defaultValue = defaultValueMap.get(optionData);
-            if (defaultValue == null)
+            if (defaultValue == null) {
                 return true;
+            }
             return defaultValue.equals(KimlUiUtil.getValue(koption, optionData));
         }
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertySource#resetPropertyValue(java.lang.Object)
+    /**
+     * {@inheritDoc}
      */
-    public void resetPropertyValue(Object id) {
-        LayoutOptionData optionData = LayoutServices.INSTANCE.getLayoutOptionData((String)id);
+    public void resetPropertyValue(final Object id) {
+        LayoutServices layoutServices = LayoutServices.getInstance();
+        LayoutOptionData optionData = layoutServices.getLayoutOptionData((String)id);
         KOption koption = koptionMap.get(optionData);
         if (koption != null) {
             Object defaultValue = defaultValueMap.get(optionData);
             if (defaultValue == null) {
                 if (optionData.hasTarget(LayoutOptionData.Target.PARENTS)) {
-                    LayoutProviderData partProviderData = LayoutServices.INSTANCE.getLayoutProviderData(
-                            (String)defaultValueMap.get(LayoutServices.INSTANCE
+                    LayoutProviderData partProviderData = layoutServices.getLayoutProviderData(
+                            (String)defaultValueMap.get(layoutServices
                             .getLayoutOptionData(LayoutOptions.LAYOUT_HINT)));
-                    defaultValue = KimlUiUtil.getDefault(optionData, partProviderData, childCompartmentEditPart);
+                    defaultValue = KimlUiUtil.getDefault(optionData, partProviderData,
+                            childCompartmentEditPart);
+                } else {
+                    defaultValue = KimlUiUtil.getDefault(optionData, containerProviderData,
+                            containerEditPart);
                 }
-                else
-                    defaultValue = KimlUiUtil.getDefault(optionData, containerProviderData, containerEditPart);
             }
             KimlUiUtil.setValue(koption, optionData, defaultValue, editingDomain);
         }
@@ -331,12 +355,15 @@ public class GmfLayoutPropertySource implements IPropertySource {
      * Creates the array of layout hint choices to be displayed to the user.
      */
     private static void createLayoutHintChoices() {
-        Map<String, List<LayoutProviderData>> typeMap = new LinkedHashMap<String, List<LayoutProviderData>>();
+        LayoutServices layoutServices = LayoutServices.getInstance();
+        Map<String, List<LayoutProviderData>> typeMap
+                = new LinkedHashMap<String, List<LayoutProviderData>>();
         int choicesCount = 0;
-        for (LayoutProviderData providerData : LayoutServices.INSTANCE.getLayoutProviderData()) {
+        for (LayoutProviderData providerData : layoutServices.getLayoutProviderData()) {
             String key = providerData.type;
-            if (LayoutServices.INSTANCE.getLayoutTypeName(key) == null)
+            if (layoutServices.getLayoutTypeName(key) == null) {
                 key = "";
+            }
             List<LayoutProviderData> typeList = typeMap.get(key);
             if (typeList == null) {
                 typeList = new LinkedList<LayoutProviderData>();
@@ -352,17 +379,19 @@ public class GmfLayoutPropertySource implements IPropertySource {
         int i = 0;
         for (Entry<String, List<LayoutProviderData>> entry : typeMap.entrySet()) {
             String typeId = entry.getKey();
-            String typeName = LayoutServices.INSTANCE.getLayoutTypeName(typeId);
-            if (typeName == null)
+            String typeName = layoutServices.getLayoutTypeName(typeId);
+            if (typeName == null) {
                 typeName = Messages.getString("kiml.ui.8");
+            }
             layoutHintValues[i] = typeId;
             layoutHintIndexMap.put(typeId, Integer.valueOf(i));
             layoutHintChoices[i++] = typeName + " " + Messages.getString("kiml.ui.9");
             for (LayoutProviderData providerData : entry.getValue()) {
                 String providerName = "  - " + providerData.name;
-                String category = LayoutServices.INSTANCE.getCategoryName(providerData.category);
-                if (category != null)
+                String category = layoutServices.getCategoryName(providerData.category);
+                if (category != null) {
                     providerName += " (" + category + ")";
+                }
                 layoutHintValues[i] = providerData.id;
                 layoutHintIndexMap.put(providerData.id, Integer.valueOf(i));
                 layoutHintChoices[i++] = providerName;

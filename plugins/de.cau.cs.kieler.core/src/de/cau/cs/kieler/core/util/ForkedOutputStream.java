@@ -52,8 +52,8 @@ public class ForkedOutputStream extends OutputStream {
         outputStreams.add(stream2);
     }
     
-    /* (non-Javadoc)
-     * @see java.io.OutputStream#write(int)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public void write(final int b) throws IOException {
@@ -62,9 +62,8 @@ public class ForkedOutputStream extends OutputStream {
         }
     }
     
-    /*
-     * (non-Javadoc)
-     * @see java.io.OutputStream#flush()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public void flush() throws IOException {
@@ -73,9 +72,8 @@ public class ForkedOutputStream extends OutputStream {
         }
     }
     
-    /*
-     * (non-Javadoc)
-     * @see java.io.OutputStream#close()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public void close() throws IOException {

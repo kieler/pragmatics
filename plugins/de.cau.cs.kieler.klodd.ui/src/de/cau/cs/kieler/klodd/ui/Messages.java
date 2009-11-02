@@ -21,25 +21,31 @@ import java.util.ResourceBundle;
  * 
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
-public class Messages {
+public final class Messages {
 
-	private static final String BUNDLE_NAME = "de.cau.cs.kieler.klodd.ui.messages"; //$NON-NLS-1$
-	private static ResourceBundle resourceBundle = null;
+    /**
+     * Hidden constructor.
+     */
+    private Messages() {
+    }
 
-	/**
-	 * Returns a string for the given key.
-	 * 
-	 * @param key key to lookup
-	 * @return readable message string
-	 */
-	public static String getString(String key) {
-		try {
-			if (resourceBundle == null) {
-				resourceBundle = ResourceBundle.getBundle(BUNDLE_NAME);
-			}
-			return resourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return '!' + key + '!';
-		}
-	}
+    private static final String BUNDLE_NAME = "de.cau.cs.kieler.klodd.ui.messages"; //$NON-NLS-1$
+    private static ResourceBundle resourceBundle = null;
+
+    /**
+     * Returns a string for the given key.
+     * 
+     * @param key key to lookup
+     * @return readable message string
+     */
+    public static String getString(final String key) {
+        try {
+            if (resourceBundle == null) {
+                resourceBundle = ResourceBundle.getBundle(BUNDLE_NAME);
+            }
+            return resourceBundle.getString(key);
+        } catch (MissingResourceException e) {
+            return '!' + key + '!';
+        }
+    }
 }

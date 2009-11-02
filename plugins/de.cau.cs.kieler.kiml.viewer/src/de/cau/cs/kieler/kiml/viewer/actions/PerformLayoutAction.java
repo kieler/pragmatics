@@ -26,11 +26,10 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.kiml.layout.services.LayoutServices;
 import de.cau.cs.kieler.kiml.layout.services.RecursiveLayouterEngine;
-import de.cau.cs.kieler.kiml.ui.layout.LayoutServiceBuilder;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 import de.cau.cs.kieler.kiml.viewer.KimlViewerPlugin;
 import de.cau.cs.kieler.kiml.viewer.Messages;
 import de.cau.cs.kieler.kiml.viewer.views.LayoutGraphView;
-
 
 /**
  * Action that performs layout on the currently loaded XMI resource.
@@ -39,83 +38,85 @@ import de.cau.cs.kieler.kiml.viewer.views.LayoutGraphView;
  */
 public class PerformLayoutAction extends Action {
 
-	/** identifier string for this action */
+    /** identifier string for this action. */
     private static final String ACTION_ID = "de.cau.cs.kieler.kiml.viewer.performLayout";
-    /** relative path to the icon to use for this action */
+    /** relative path to the icon to use for this action. */
     private static final String ICON_PATH = "icons/kieler-arrange.png";
-	
-	/** the layout graph view associated with this action */
-	private LayoutGraphView view;
-	
-	/**
-	 * Creates a perform layout action for a given layout graph view.
-	 * 
-	 * @param view layout graph view that created this action
-	 */
-	public PerformLayoutAction(LayoutGraphView view) {
-		this.view = view;
-		setId(ACTION_ID);
-		setText(Messages.getString("kiml.viewer.11"));
-		setToolTipText(Messages.getString("kiml.viewer.12"));
-		setImageDescriptor(KimlViewerPlugin.imageDescriptorFromPlugin(
-			KimlViewerPlugin.PLUGIN_ID, ICON_PATH));
-	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
-	public void run() {
-	    KNode layoutGraph = view.getXmiGraph();
-	    if (layoutGraph != null) {
-    	    // display the layout graph in the pre canvas
+    /** the layout graph view associated with this action. */
+    private LayoutGraphView view;
+
+    /**
+     * Creates a perform layout action for a given layout graph view.
+     * 
+     * @param theview layout graph view that created this action
+     */
+    public PerformLayoutAction(final LayoutGraphView theview) {
+        this.view = theview;
+        setId(ACTION_ID);
+        setText(Messages.getString("kiml.viewer.11"));
+        setToolTipText(Messages.getString("kiml.viewer.12"));
+        setImageDescriptor(KimlViewerPlugin.imageDescriptorFromPlugin(KimlViewerPlugin.PLUGIN_ID,
+                ICON_PATH));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void run() {
+        KNode layoutGraph = view.getXmiGraph();
+        if (layoutGraph != null) {
+            // display the layout graph in the pre canvas
             view.setLayoutGraph(layoutGraph, LayoutGraphView.PRE);
-            
+
             // get a layouter engine for layout
-            if (LayoutServices.INSTANCE == null)
-                LayoutServiceBuilder.buildLayoutServices();
+            if (LayoutServices.getInstance() == null) {
+                EclipseLayoutServices.createLayoutServices();
+            }
             final RecursiveLayouterEngine layouterEngine = new RecursiveLayouterEngine();
-            
+
             // copy the layout graph
-            final KNode layoutGraphCopy = (KNode)EcoreUtil.copy(layoutGraph);
-            
+            final KNode layoutGraphCopy = (KNode) EcoreUtil.copy(layoutGraph);
+
             // perform layout on the new copy
             try {
                 PlatformUI.getWorkbench().getProgressService().run(false, false,
                         new IRunnableWithProgress() {
-                    public void run(IProgressMonitor monitor) {
-                        try {
-                            layouterEngine.layout(layoutGraphCopy,
-                                    new KielerProgressMonitor(monitor));
-                        } catch (Throwable throwable) {
-                            String message = "Failed to perform layout.";
-                            if (layouterEngine.getLastLayoutProvider() != null)
-                                message += " (" + layouterEngine.getLastLayoutProvider().toString() + ")";
-                            handleError(throwable, message);
-                        }
-                    }
-                });
-            }
-            catch (Throwable throwable) {
+                            public void run(final IProgressMonitor monitor) {
+                                try {
+                                    layouterEngine.layout(layoutGraphCopy, new KielerProgressMonitor(
+                                            monitor));
+                                } catch (Throwable throwable) {
+                                    String message = "Failed to perform layout.";
+                                    if (layouterEngine.getLastLayoutProvider() != null) {
+                                        message += " ("
+                                                + layouterEngine.getLastLayoutProvider().toString()
+                                                + ")";
+                                    }
+                                    handleError(throwable, message);
+                                }
+                            }
+                        });
+            } catch (Throwable throwable) {
                 handleError(throwable, "Failed to perform layout: Could not run progress service.");
             }
-            
+
             // display the layouted layout graph in the post canvas
             view.setLayoutGraph(layoutGraphCopy, LayoutGraphView.POST);
-	    }
-	}
-	
-	/**
-	 * Handles an error by delegating it to the status manager.
-	 * 
-	 * @param throwable error that has been thrown
-	 * @param message additional message to show
-	 */
-	private static void handleError(Throwable throwable, String message) {
-        Status status = new Status(IStatus.ERROR,
-                KimlViewerPlugin.PLUGIN_ID, message, throwable);
+        }
+    }
+
+    /**
+     * Handles an error by delegating it to the status manager.
+     * 
+     * @param throwable error that has been thrown
+     * @param message additional message to show
+     */
+    private static void handleError(final Throwable throwable, final String message) {
+        Status status = new Status(IStatus.ERROR, KimlViewerPlugin.PLUGIN_ID, message, throwable);
         StatusManager.getManager().handle(status, StatusManager.SHOW);
         StatusManager.getManager().handle(status, StatusManager.LOG);
-	}
+    }
 
 }

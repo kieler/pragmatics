@@ -32,19 +32,16 @@ public class MapPreferenceStore implements IKielerPreferenceStore {
     /** hash map used to store default preference values in memory. */
     protected Map<String, Object> defaultMap = new LinkedHashMap<String, Object>();
     
-    /*
-     * (non-Javadoc)
-     * @see de.cau.cs.kieler.core.IKielerPreferenceStore#contains(java.lang.String)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public boolean contains(final String name) {
         return currentMap.get(name) != null || defaultMap.get(name) != null;
     }
 
-    /* (non-Javadoc)
-     * @see de.cau.cs.kieler.core.IKielerPreferenceStore#getBoolean(java.lang.String)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public boolean getBoolean(final String name) {
         Object currentValue = currentMap.get(name);
         if (currentValue instanceof Boolean) {
@@ -57,10 +54,9 @@ public class MapPreferenceStore implements IKielerPreferenceStore {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see de.cau.cs.kieler.core.IKielerPreferenceStore#getDefaultBoolean(java.lang.String)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public boolean getDefaultBoolean(final String name) {
         Object defaultValue = defaultMap.get(name);
         if (defaultValue instanceof Boolean) {
@@ -69,10 +65,9 @@ public class MapPreferenceStore implements IKielerPreferenceStore {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see de.cau.cs.kieler.core.IKielerPreferenceStore#getDefaultDouble(java.lang.String)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public double getDefaultDouble(final String name) {
         Object defaultValue = defaultMap.get(name);
         if (defaultValue instanceof Double) {
@@ -81,10 +76,9 @@ public class MapPreferenceStore implements IKielerPreferenceStore {
         return 0.0;
     }
 
-    /* (non-Javadoc)
-     * @see de.cau.cs.kieler.core.IKielerPreferenceStore#getDefaultFloat(java.lang.String)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public float getDefaultFloat(final String name) {
         Object defaultValue = defaultMap.get(name);
         if (defaultValue instanceof Float) {
@@ -93,10 +87,9 @@ public class MapPreferenceStore implements IKielerPreferenceStore {
         return 0.0f;
     }
 
-    /* (non-Javadoc)
-     * @see de.cau.cs.kieler.core.IKielerPreferenceStore#getDefaultInt(java.lang.String)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public int getDefaultInt(final String name) {
         Object defaultValue = defaultMap.get(name);
         if (defaultValue instanceof Integer) {
@@ -105,10 +98,9 @@ public class MapPreferenceStore implements IKielerPreferenceStore {
         return 0;
     }
 
-    /* (non-Javadoc)
-     * @see de.cau.cs.kieler.core.IKielerPreferenceStore#getDefaultLong(java.lang.String)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public long getDefaultLong(final String name) {
         Object defaultValue = defaultMap.get(name);
         if (defaultValue instanceof Long) {
@@ -117,10 +109,9 @@ public class MapPreferenceStore implements IKielerPreferenceStore {
         return 0;
     }
 
-    /* (non-Javadoc)
-     * @see de.cau.cs.kieler.core.IKielerPreferenceStore#getDefaultString(java.lang.String)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public String getDefaultString(final String name) {
         Object defaultValue = defaultMap.get(name);
         if (defaultValue instanceof String) {
@@ -129,10 +120,9 @@ public class MapPreferenceStore implements IKielerPreferenceStore {
         return "";
     }
 
-    /* (non-Javadoc)
-     * @see de.cau.cs.kieler.core.IKielerPreferenceStore#getDouble(java.lang.String)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public double getDouble(final String name) {
         Object currentValue = currentMap.get(name);
         if (currentValue instanceof Double) {
@@ -145,10 +135,9 @@ public class MapPreferenceStore implements IKielerPreferenceStore {
         return 0.0;
     }
 
-    /* (non-Javadoc)
-     * @see de.cau.cs.kieler.core.IKielerPreferenceStore#getFloat(java.lang.String)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public float getFloat(final String name) {
         Object currentValue = currentMap.get(name);
         if (currentValue instanceof Float) {
@@ -161,10 +150,9 @@ public class MapPreferenceStore implements IKielerPreferenceStore {
         return 0.0f;
     }
 
-    /* (non-Javadoc)
-     * @see de.cau.cs.kieler.core.IKielerPreferenceStore#getInt(java.lang.String)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public int getInt(final String name) {
         Object currentValue = currentMap.get(name);
         if (currentValue instanceof Integer) {
@@ -177,10 +165,9 @@ public class MapPreferenceStore implements IKielerPreferenceStore {
         return 0;
     }
 
-    /* (non-Javadoc)
-     * @see de.cau.cs.kieler.core.IKielerPreferenceStore#getLong(java.lang.String)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public long getLong(final String name) {
         Object currentValue = currentMap.get(name);
         if (currentValue instanceof Long) {
@@ -193,10 +180,9 @@ public class MapPreferenceStore implements IKielerPreferenceStore {
         return 0;
     }
 
-    /* (non-Javadoc)
-     * @see de.cau.cs.kieler.core.IKielerPreferenceStore#getString(java.lang.String)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public String getString(final String name) {
         Object currentValue = currentMap.get(name);
         if (currentValue instanceof String) {
@@ -209,10 +195,9 @@ public class MapPreferenceStore implements IKielerPreferenceStore {
         return "";
     }
 
-    /* (non-Javadoc)
-     * @see de.cau.cs.kieler.core.IKielerPreferenceStore#isDefault(java.lang.String)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public boolean isDefault(final String name) {
         Object currentValue = currentMap.get(name);
         Object defaultValue = defaultMap.get(name);
@@ -220,106 +205,93 @@ public class MapPreferenceStore implements IKielerPreferenceStore {
                 || currentValue.equals(defaultValue));
     }
 
-    /* (non-Javadoc)
-     * @see de.cau.cs.kieler.core.IKielerPreferenceStore#setDefault(java.lang.String, double)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public void setDefault(final String name, final double value) {
         defaultMap.put(name, Double.valueOf(value));
     }
 
-    /* (non-Javadoc)
-     * @see de.cau.cs.kieler.core.IKielerPreferenceStore#setDefault(java.lang.String, float)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public void setDefault(final String name, final float value) {
         defaultMap.put(name, Float.valueOf(value));
     }
 
-    /* (non-Javadoc)
-     * @see de.cau.cs.kieler.core.IKielerPreferenceStore#setDefault(java.lang.String, int)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public void setDefault(final String name, final int value) {
         defaultMap.put(name, Integer.valueOf(value));
     }
 
-    /* (non-Javadoc)
-     * @see de.cau.cs.kieler.core.IKielerPreferenceStore#setDefault(java.lang.String, long)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public void setDefault(final String name, final long value) {
         defaultMap.put(name, Long.valueOf(value));
     }
 
-    /* (non-Javadoc)
-     * @see de.cau.cs.kieler.core.IKielerPreferenceStore#setDefault(java.lang.String, java.lang.String)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public void setDefault(final String name, final String defaultObject) {
         defaultMap.put(name, defaultObject);
     }
 
-    /* (non-Javadoc)
-     * @see de.cau.cs.kieler.core.IKielerPreferenceStore#setDefault(java.lang.String, boolean)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public void setDefault(final String name, final boolean value) {
         defaultMap.put(name, Boolean.valueOf(value));
     }
 
-    /* (non-Javadoc)
-     * @see de.cau.cs.kieler.core.IKielerPreferenceStore#setToDefault(java.lang.String)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public void setToDefault(final String name) {
         currentMap.remove(name);
     }
 
-    /* (non-Javadoc)
-     * @see de.cau.cs.kieler.core.IKielerPreferenceStore#setValue(java.lang.String, double)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public void setValue(final String name, final double value) {
         currentMap.put(name, Double.valueOf(value));
     }
 
-    /* (non-Javadoc)
-     * @see de.cau.cs.kieler.core.IKielerPreferenceStore#setValue(java.lang.String, float)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public void setValue(final String name, final float value) {
         currentMap.put(name, Float.valueOf(value));
     }
 
-    /* (non-Javadoc)
-     * @see de.cau.cs.kieler.core.IKielerPreferenceStore#setValue(java.lang.String, int)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public void setValue(final String name, final int value) {
         currentMap.put(name, Integer.valueOf(value));
     }
 
-    /* (non-Javadoc)
-     * @see de.cau.cs.kieler.core.IKielerPreferenceStore#setValue(java.lang.String, long)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public void setValue(final String name, final long value) {
         currentMap.put(name, Long.valueOf(value));
     }
 
-    /* (non-Javadoc)
-     * @see de.cau.cs.kieler.core.IKielerPreferenceStore#setValue(java.lang.String, java.lang.String)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public void setValue(final String name, final String value) {
         currentMap.put(name, value);
     }
 
-    /* (non-Javadoc)
-     * @see de.cau.cs.kieler.core.IKielerPreferenceStore#setValue(java.lang.String, boolean)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public void setValue(final String name, final boolean value) {
         currentMap.put(name, Boolean.valueOf(value));
     }

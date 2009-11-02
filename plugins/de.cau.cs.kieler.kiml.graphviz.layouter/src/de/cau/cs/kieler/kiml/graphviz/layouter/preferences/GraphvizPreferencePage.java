@@ -29,31 +29,30 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayouterPlugin;
 import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizAPI;
 
-
 /**
  * The Graphviz preference page.
  * 
  * @author <a href="mailto:ars@informatik.uni-kiel.de">Arne Schipper</a>
  */
-public class GraphvizPreferencePage extends FieldEditorPreferencePage
-        implements IWorkbenchPreferencePage {
+public class GraphvizPreferencePage extends FieldEditorPreferencePage implements
+        IWorkbenchPreferencePage {
 
-    /** identifier of the preference page */
-	public static final String ID = "de.cau.cs.kieler.kiml.graphviz.preferences";
-	
-	/**
-	 * Creates a Graphviz preference page.
-	 */
-	public GraphvizPreferencePage() {
-	    super(FLAT);
-	    setDescription("Preferences for the Graphviz layouter.");
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
-	 */
-	public void createFieldEditors() {
+    /** identifier of the preference page. */
+    public static final String ID = "de.cau.cs.kieler.kiml.graphviz.preferences";
+
+    /**
+     * Creates a Graphviz preference page.
+     */
+    public GraphvizPreferencePage() {
+        super(FLAT);
+        setDescription("Preferences for the Graphviz layouter.");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void createFieldEditors() {
         // process group
         Composite parent = getFieldEditorParent();
         Group processGroup = new Group(parent, SWT.NONE);
@@ -64,26 +63,25 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage
         GridData labelLayoutData = new GridData(SWT.LEFT, SWT.FILL, false, false, 3, 1);
         labelLayoutData.widthHint = 450;
         label.setLayoutData(labelLayoutData);
-        FileFieldEditor executableEditor = new FileFieldEditor(
-                GraphvizAPI.PREF_GRAPHVIZ_EXECUTABLE, "Set path to the 'dot' executable:", processGroup);
+        FileFieldEditor executableEditor = new FileFieldEditor(GraphvizAPI.PREF_GRAPHVIZ_EXECUTABLE,
+                "Set path to the 'dot' executable:", processGroup);
         executableEditor.setValidateStrategy(FileFieldEditor.VALIDATE_ON_KEY_STROKE);
         addField(executableEditor);
-        
-        IntegerFieldEditor timeoutEditor = new IntegerFieldEditor(
-                GraphvizAPI.PREF_TIMEOUT, "Timeout for Graphviz output (ms):", processGroup);
+
+        IntegerFieldEditor timeoutEditor = new IntegerFieldEditor(GraphvizAPI.PREF_TIMEOUT,
+                "Timeout for Graphviz output (ms):", processGroup);
         timeoutEditor.setValidRange(GraphvizAPI.PROCESS_MIN_TIMEOUT, Integer.MAX_VALUE);
         addField(timeoutEditor);
-        
+
         processGroup.setLayout(new GridLayout(3, false));
         parent.setLayout(new FillLayout());
-	}
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
-	public void init(IWorkbench workbench) {
+    /**
+     * {@inheritDoc}
+     */
+    public void init(final IWorkbench workbench) {
         setPreferenceStore(GraphvizLayouterPlugin.getDefault().getPreferenceStore());
-	}
+    }
 
 }

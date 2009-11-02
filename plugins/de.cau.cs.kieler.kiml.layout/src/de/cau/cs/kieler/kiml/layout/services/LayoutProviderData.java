@@ -24,42 +24,44 @@ import java.util.ListIterator;
  */
 public class LayoutProviderData {
 
-    /** The minimal allowed priority value. Values less or equal to this value are treated as 'not supported'. */
+    /** The minimal allowed priority value. Values less or equal to this value
+     *  are treated as 'not supported'. */
     public static final int MIN_PRIORITY = Integer.MIN_VALUE >> 2;
 
-    /** internal data type for storage of supported diagram information */
+    /** internal data type for storage of supported diagram information. */
     private static class SupportedDiagram {
-        /** identifier of the diagram type */
+        /** identifier of the diagram type. */
         String type;
-        /** associated priority value, must be greater than MIN_PRIORITY */
+        /** associated priority value, must be greater than MIN_PRIORITY. */
         int priority = 0;
     }
     
-    /** identifier of the layout provider */
+    /** identifier of the layout provider. */
     public String id;
-    /** user friendly name of the layout provider */
+    /** user friendly name of the layout provider. */
     public String name;
-    /** runtime instance of the layout provider */
+    /** runtime instance of the layout provider. */
     public AbstractLayoutProvider instance;
-    /** layout type identifier */
+    /** layout type identifier. */
     public String type;
-    /** category identifier */
+    /** category identifier. */
     public String category;
     
-    /** list of known layout options */
+    /** list of known layout options. */
     private List<String> knownOptions = new LinkedList<String>();
-    /** list of supported diagrams */
+    /** list of supported diagrams. */
     private List<SupportedDiagram> supportedDiagrams = new LinkedList<SupportedDiagram>();
 
-    /*
-     * (non-Javadoc)
-     * @see java.lang.Object#toString()
+    /**
+     * {@inheritDoc}
      */
+    @Override
     public String toString() {
-        if (name != null && name.length() > 0)
+        if (name != null && name.length() > 0) {
             return name;
-        else
+        } else {
             return id;
+        }
     }
     
     /**
@@ -69,12 +71,13 @@ public class LayoutProviderData {
      * @param known indicates whether the layout provider should know
      *     the option
      */
-    public void setOption(String layoutOption, boolean known) {
+    public void setOption(final String layoutOption, final boolean known) {
         if (layoutOption != null) {
-            if (known && !knownOptions.contains(layoutOption))
+            if (known && !knownOptions.contains(layoutOption)) {
                 knownOptions.add(layoutOption);
-            else if (!known)
+            } else if (!known) {
                 knownOptions.remove(layoutOption);
+            }
         }
     }
     
@@ -85,7 +88,7 @@ public class LayoutProviderData {
      * @param layoutOption identifier of layout option
      * @return true if the associated layout provider know the option
      */
-    public boolean knowsOption(String layoutOption) {
+    public boolean knowsOption(final String layoutOption) {
         return knownOptions.contains(layoutOption);
     }
     
@@ -97,7 +100,7 @@ public class LayoutProviderData {
      * @param priority priority value, or {@code MIN_PRIORITY} if the diagram type
      *     is not supported
      */
-    public void setDiagramSupport(String diagramType, int priority) {
+    public void setDiagramSupport(final String diagramType, final int priority) {
         if (priority > MIN_PRIORITY) {
             SupportedDiagram supportedDiagram0 = null;
             for (SupportedDiagram supportedDiagram1 : supportedDiagrams) {
@@ -112,8 +115,7 @@ public class LayoutProviderData {
                 supportedDiagrams.add(supportedDiagram0);
             }
             supportedDiagram0.priority = priority;
-        }
-        else {
+        } else {
             ListIterator<SupportedDiagram> suppdIter = supportedDiagrams.listIterator();
             while (suppdIter.hasNext()) {
                 SupportedDiagram supportedDiagram = suppdIter.next();
@@ -133,11 +135,12 @@ public class LayoutProviderData {
      * @return associated priority, or {@code MIN_PRIORITY} if the diagram
      *     type is not supported
      */
-    public int getSupportedPriority(String diagramType) {
+    public int getSupportedPriority(final String diagramType) {
         if (diagramType != null) {
             for (SupportedDiagram supportedDiagram : supportedDiagrams) {
-                if (diagramType.equals(supportedDiagram.type))
+                if (diagramType.equals(supportedDiagram.type)) {
                     return supportedDiagram.priority;
+                }
             }
         }
         return MIN_PRIORITY;

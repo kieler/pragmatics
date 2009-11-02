@@ -17,22 +17,21 @@ import de.cau.cs.kieler.core.alg.IAlgorithm;
 import de.cau.cs.kieler.klodd.hierarchical.structures.LayeredGraph;
 
 /**
- * Interface for algorithms that determine a placement for each node
- * in a layered graph.
+ * Interface for algorithms that determine a placement for each node in a
+ * layered graph.
  * 
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public interface INodePlacer extends IAlgorithm {
 
-	/**
-	 * Determine a placement for each node in the given layered graph.
-	 * 
-	 * @param layeredGraph layered graph to process
-	 * @param minDist minimal distance between two nodes or edges in each layer
-	 * @param balanceOverSize indicates whether node balancing has
-	 *     priority over diagram size
-	 */
-	public void placeNodes(LayeredGraph layeredGraph, float minDist,
-	        boolean balanceOverSize);
-	
+    /**
+     * Determine a placement for each node in the given layered graph.
+     * 
+     * @param layeredGraph layered graph to process
+     * @param minDist minimal distance between two nodes or edges in each layer
+     * @param balanceOverSize indicates whether node balancing has priority over
+     *            diagram size
+     */
+    void placeNodes(LayeredGraph layeredGraph, float minDist, boolean balanceOverSize);
+
 }

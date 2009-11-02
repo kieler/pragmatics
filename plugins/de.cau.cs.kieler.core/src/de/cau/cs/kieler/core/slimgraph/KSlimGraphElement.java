@@ -27,20 +27,15 @@ public abstract class KSlimGraphElement implements Comparable<KSlimGraphElement>
     /** object contained in this element, or null if there is none. */
     public Object object = null;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public int compareTo(final KSlimGraphElement other) {
         return this.id - other.id;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#equals(java.lang.Object)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public boolean equals(final Object other) {
@@ -48,20 +43,16 @@ public abstract class KSlimGraphElement implements Comparable<KSlimGraphElement>
                 && ((KSlimGraphElement) other).id == this.id;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#hashCode()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public int hashCode() {
         return getClass().hashCode() + id;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public String toString() {

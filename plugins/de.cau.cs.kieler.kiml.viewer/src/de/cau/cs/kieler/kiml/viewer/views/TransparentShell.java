@@ -64,9 +64,10 @@ public class TransparentShell implements Runnable{
         }
         image = new Image(display, size.x, size.y);
         canvas.paintLayoutGraph(new GC(image), size);
-        if (image == null)
+        if (image == null) {
             image = display.getSystemImage(SWT.ICON_INFORMATION);
-        shell = new Shell (display, SWT.NO_TRIM);
+        }
+        shell = new Shell(display, SWT.NO_TRIM);
         region = new Region();
         imageData = image.getImageData();
         if (imageData.alphaData != null) {
@@ -111,7 +112,7 @@ public class TransparentShell implements Runnable{
 
         Listener l = new Listener() {
                 int startX, startY;
-                public void handleEvent(Event e)  {
+                public void handleEvent(final Event e)  {
                         if (e.type == SWT.KeyDown && e.character == SWT.ESC) {
                                 shell.dispose();
                         }
@@ -141,27 +142,29 @@ public class TransparentShell implements Runnable{
     /**
      * Set the position of this shell to the same position of the GMF Editor canvas.
      */
-    void positionOverCanvas(){
-        try{
-        FigureCanvas gmfCanvas = (FigureCanvas)canvas.getGmfEditor().getDiagramGraphicalViewer().getControl();
-        Point pos = gmfCanvas.toDisplay(0, 0);
-        shell.setLocation(pos.x,pos.y);
-        }catch(Exception e){/*nothing*/}
+    void positionOverCanvas() {
+        try {
+            FigureCanvas gmfCanvas = (FigureCanvas)canvas.getGmfEditor().getDiagramGraphicalViewer().getControl();
+            Point pos = gmfCanvas.toDisplay(0, 0);
+            shell.setLocation(pos.x,pos.y);
+        } catch(Exception e) {/*nothing*/}
     }
     
  
-    /* (non-Javadoc)
-     * @see java.lang.Runnable#run()
+    /**
+     * {@inheritDoc}
      */
     public void run() {
         init();
         positionOverCanvas();
-        shell.open ();
-        while (!shell.isDisposed ()) {
-                if (!display.readAndDispatch ()) display.sleep ();
+        shell.open();
+        while (!shell.isDisposed()) {
+                if (!display.readAndDispatch()) {
+                    display.sleep();
+                }
         }
         region.dispose();
-        image.dispose ();
+        image.dispose();
         //display.dispose ();
     }
 }

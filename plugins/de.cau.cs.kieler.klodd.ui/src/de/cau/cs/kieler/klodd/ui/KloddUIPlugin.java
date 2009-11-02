@@ -22,64 +22,65 @@ import de.cau.cs.kieler.core.ui.KielerPreferenceStore;
 import de.cau.cs.kieler.klodd.hierarchical.HierarchicalDataflowLayoutProvider;
 
 /**
- * The activator class controls the plug-in life cycle
+ * The activator class controls the plug-in life cycle.
+ * 
+ * @author <a href="msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class KloddUIPlugin extends AbstractUIPlugin {
 
-	/** the plug-in ID */
-	public static final String PLUGIN_ID = "de.cau.cs.kieler.klodd.core";
-	/** name of the KLoDD layouters collection */
-	public static final String COLLECTION_NAME = "KLoDD Layouters";
-	
-	/** the shared instance */
-	private static KloddUIPlugin plugin;
-	
-	/**
-	 * The constructor
-	 */
-	public KloddUIPlugin() {
-	}
+    /** the plug-in ID. */
+    public static final String PLUGIN_ID = "de.cau.cs.kieler.klodd.core";
+    /** name of the KLoDD layouters collection. */
+    public static final String COLLECTION_NAME = "KLoDD Layouters";
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-		plugin = this;
-		// set preference stores
-		IKielerPreferenceStore preferenceStore =
-				new KielerPreferenceStore(getPreferenceStore());
-		HierarchicalDataflowLayoutProvider.setPreferenceStore(preferenceStore);
-		//OrthogonalDataflowLayoutProvider.setPreferenceStore(preferenceStore);
-	}
+    /** the shared instance. */
+    private static KloddUIPlugin plugin;
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 */
-	public void stop(BundleContext context) throws Exception {
-		plugin = null;
-		super.stop(context);
-	}
+    /**
+     * The constructor.
+     */
+    public KloddUIPlugin() {
+    }
 
-	/**
-	 * Returns the shared instance.
-	 *
-	 * @return the shared instance
-	 */
-	public static KloddUIPlugin getDefault() {
-		return plugin;
-	}
-	
-	/**
-	 * Returns an image descriptor for the image file at the given
-	 * plug-in relative path
-	 *
-	 * @param path the path
-	 * @return the image descriptor
-	 */
-	public static ImageDescriptor getImageDescriptor(String path) {
-		return imageDescriptorFromPlugin(PLUGIN_ID, path);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void start(final BundleContext context) throws Exception {
+        super.start(context);
+        plugin = this;
+        // set preference stores
+        IKielerPreferenceStore preferenceStore = new KielerPreferenceStore(getPreferenceStore());
+        HierarchicalDataflowLayoutProvider.setPreferenceStore(preferenceStore);
+        // OrthogonalDataflowLayoutProvider.setPreferenceStore(preferenceStore);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void stop(final BundleContext context) throws Exception {
+        plugin = null;
+        super.stop(context);
+    }
+
+    /**
+     * Returns the shared instance.
+     * 
+     * @return the shared instance
+     */
+    public static KloddUIPlugin getDefault() {
+        return plugin;
+    }
+
+    /**
+     * Returns an image descriptor for the image file at the given plug-in
+     * relative path.
+     * 
+     * @param path the path
+     * @return the image descriptor
+     */
+    public static ImageDescriptor getImageDescriptor(final String path) {
+        return imageDescriptorFromPlugin(PLUGIN_ID, path);
+    }
 }

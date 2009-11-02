@@ -36,7 +36,7 @@ import de.cau.cs.kieler.kiml.layout.services.LayoutProviderData;
 import de.cau.cs.kieler.kiml.layout.services.LayoutServices;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
-import de.cau.cs.kieler.kiml.ui.layout.LayoutServiceBuilder;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
 
 /**
@@ -44,53 +44,52 @@ import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
  * 
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
-public class LayoutPreferencePage extends PreferencePage
-		implements IWorkbenchPreferencePage {
+public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-    /** array of layout provider identifiers */
+    /** array of layout provider identifiers. */
     private String[] providerIds;
-    /** array of diagram type identifiers */
+    /** array of diagram type identifiers. */
     private String[] diagramTypes;
-    /** data matrix: rows represent layout providers, columns represent diagram types */
+    /** data matrix: rows represent layout providers, columns represent diagram types. */
     private int[][] data;
-    /** the provider class that manages content of the priority table */
+    /** the provider class that manages content of the priority table. */
     private PriorityTableProvider tableProvider;
-    
-	/**
-	 * Creates the layout preference page.
-	 */
-	public LayoutPreferencePage() {
-		super();
-		setDescription(Messages.getString("kiml.ui.0")); //$NON-NLS-1$
-	}
-	
-	/**
-	 * Builds the preference name associated with the supported priority value
-	 * of the given layout provider for the given diagram type.
-	 * 
-	 * @param layoutProvider identifier of layout provider
-	 * @param diagramType identifier of diagram type
-	 * @return a preference name for the supported priority value
-	 */
-	public static String getPreference(String layoutProvider, String diagramType) {
-	    return layoutProvider + "-" + diagramType; //$NON-NLS-1$
-	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
+    /**
+     * Creates the layout preference page.
      */
-    protected Control createContents(Composite parent) {
+    public LayoutPreferencePage() {
+        super();
+        setDescription(Messages.getString("kiml.ui.0")); //$NON-NLS-1$
+    }
+
+    /**
+     * Builds the preference name associated with the supported priority value
+     * of the given layout provider for the given diagram type.
+     * 
+     * @param layoutProvider identifier of layout provider
+     * @param diagramType identifier of diagram type
+     * @return a preference name for the supported priority value
+     */
+    public static String getPreference(final String layoutProvider, final String diagramType) {
+        return layoutProvider + "-" + diagramType; //$NON-NLS-1$
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected Control createContents(final Composite parent) {
         Group prioritiesGroup = new Group(parent, SWT.NONE);
         prioritiesGroup.setText(Messages.getString("kiml.ui.2")); //$NON-NLS-1$
-        
-        Collection<LayoutProviderData> layoutProviderData = LayoutServices
-                .INSTANCE.getLayoutProviderData();
+        LayoutServices layoutServices = LayoutServices.getInstance();
+
+        Collection<LayoutProviderData> layoutProviderData = layoutServices.getLayoutProviderData();
         int layoutProviderCount = layoutProviderData.size();
-        diagramTypes = LayoutServices.INSTANCE.getDiagramTypes().toArray(new String[0]);
+        diagramTypes = layoutServices.getDiagramTypes().toArray(new String[0]);
         providerIds = new String[layoutProviderCount];
         data = new int[layoutProviderCount][diagramTypes.length];
-        PriorityTableProvider.DataEntry[] tableEntries = new PriorityTableProvider
-                .DataEntry[layoutProviderCount];
+        PriorityTableProvider.DataEntry[] tableEntries
+                = new PriorityTableProvider.DataEntry[layoutProviderCount];
         String[] layouterNames = new String[layoutProviderCount];
         int i = 0;
         for (LayoutProviderData providerData : layoutProviderData) {
@@ -104,7 +103,7 @@ public class LayoutPreferencePage extends PreferencePage
             }
             i++;
         }
-        
+
         // construct the priorities table
         Label tableHeaderLabel = new Label(prioritiesGroup, SWT.WRAP);
         tableHeaderLabel.setText(Messages.getString("kiml.ui.3")); //$NON-NLS-1$
@@ -112,13 +111,13 @@ public class LayoutPreferencePage extends PreferencePage
         tableHeaderLabel.setLayoutData(labelLayoutData);
         Table prioritiesTable = new Table(prioritiesGroup, SWT.BORDER);
         TableColumn[] columns = new TableColumn[diagramTypes.length + 1];
-        columns[0] =  new TableColumn(prioritiesTable, SWT.NONE);
+        columns[0] = new TableColumn(prioritiesTable, SWT.NONE);
         columns[0].setText(Messages.getString("kiml.ui.4")); //$NON-NLS-1$
         for (int j = 0; j < diagramTypes.length; j++) {
-            columns[j+1] = new TableColumn(prioritiesTable, SWT.NONE);
-            String diagramTypeName = LayoutServices.INSTANCE.getDiagramTypeName(diagramTypes[j]);
-            columns[j+1].setText(getAbbrev(diagramTypeName));
-            columns[j+1].setToolTipText(diagramTypeName);
+            columns[j + 1] = new TableColumn(prioritiesTable, SWT.NONE);
+            String diagramTypeName = layoutServices.getDiagramTypeName(diagramTypes[j]);
+            columns[j + 1].setText(getAbbrev(diagramTypeName));
+            columns[j + 1].setToolTipText(diagramTypeName);
         }
         prioritiesTable.setHeaderVisible(true);
         TableViewer priorityTableViewer = new TableViewer(prioritiesTable);
@@ -126,73 +125,73 @@ public class LayoutPreferencePage extends PreferencePage
         CellEditor[] cellEditors = new CellEditor[diagramTypes.length + 1];
         columnProperties[0] = PriorityTableProvider.LAYOUTERS_PROPERTY;
         for (int j = 0; j < diagramTypes.length; j++) {
-            columnProperties[j+1] = Integer.toString(j);
-            cellEditors[j+1] = new TextCellEditor(prioritiesTable);
+            columnProperties[j + 1] = Integer.toString(j);
+            cellEditors[j + 1] = new TextCellEditor(prioritiesTable);
         }
         priorityTableViewer.setColumnProperties(columnProperties);
-        tableProvider = new PriorityTableProvider(
-                priorityTableViewer, data, layouterNames);
+        tableProvider = new PriorityTableProvider(priorityTableViewer, data, layouterNames);
         priorityTableViewer.setContentProvider(tableProvider);
         priorityTableViewer.setLabelProvider(tableProvider);
         priorityTableViewer.setCellEditors(cellEditors);
         priorityTableViewer.setCellModifier(tableProvider);
         priorityTableViewer.setInput(tableEntries);
-        for (TableColumn column : columns)
+        for (TableColumn column : columns) {
             column.pack();
+        }
         prioritiesTable.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
         prioritiesTable.pack();
         labelLayoutData.widthHint = prioritiesTable.getSize().x;
-        
+
         prioritiesGroup.setLayout(new GridLayout(1, false));
         return prioritiesGroup;
     }
-    
+
     /**
      * Creates an abbreviation for the given diagram type.
      * 
      * @param diagramType a diagram type name
      * @return an abbreviation for the diagram type
      */
-    private String getAbbrev(String diagramType) {
-        if (diagramType.length() <= 7)
+    private String getAbbrev(final String diagramType) {
+        if (diagramType.length() <= 7) {
             return diagramType;
-        else {
+        } else {
             StringBuffer abbrev = new StringBuffer();
             StringTokenizer tokenizer = new StringTokenizer(diagramType);
-            while (tokenizer.hasMoreTokens())
+            while (tokenizer.hasMoreTokens()) {
                 abbrev.append(tokenizer.nextToken().charAt(0));
+            }
             return abbrev.toString();
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
+    /**
+     * {@inheritDoc}
      */
-    public void init(IWorkbench workbench) {
+    public void init(final IWorkbench workbench) {
         setPreferenceStore(KimlUiPlugin.getDefault().getPreferenceStore());
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
+    /**
+     * {@inheritDoc}
      */
+    @Override
     protected void performDefaults() {
         super.performDefaults();
-        LayoutServiceBuilder.readSupportPriorities(data, providerIds, diagramTypes);
+        EclipseLayoutServices.readSupportPriorities(data, providerIds, diagramTypes);
         tableProvider.refresh();
     }
-    
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.jface.preference.PreferencePage#performOk()
+
+    /**
+     * {@inheritDoc}
      */
+    @Override
     public boolean performOk() {
         for (int i = 0; i < providerIds.length; i++) {
-            LayoutProviderData providerData = LayoutServices.INSTANCE
-                    .getLayoutProviderData(providerIds[i]);
+            LayoutProviderData providerData = LayoutServices.getInstance().getLayoutProviderData(
+                    providerIds[i]);
             for (int j = 0; j < diagramTypes.length; j++) {
-                int oldPriority = providerData.getSupportedPriority(
-                        diagramTypes[j]);
+                int oldPriority = providerData.getSupportedPriority(diagramTypes[j]);
                 int newPriority = data[i][j];
                 if (oldPriority != newPriority) {
                     providerData.setDiagramSupport(diagramTypes[j], newPriority);

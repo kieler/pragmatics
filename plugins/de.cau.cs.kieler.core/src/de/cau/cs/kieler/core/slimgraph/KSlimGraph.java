@@ -48,10 +48,8 @@ public class KSlimGraph {
     /** next available identifier for faces. */
     int nextFaceId = 0;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public String toString() {

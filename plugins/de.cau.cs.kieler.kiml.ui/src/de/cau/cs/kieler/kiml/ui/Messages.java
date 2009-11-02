@@ -21,20 +21,26 @@ import java.util.ResourceBundle;
  * 
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
-public class Messages {
+public final class Messages {
 
-    /** the bundle name */
+    /** the bundle name. */
     private static final String BUNDLE_NAME = "de.cau.cs.kieler.kiml.ui.messages"; //$NON-NLS-1$
-    /** the resource bundle instance */
+    /** the resource bundle instance. */
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
+    /**
+     * Hidden constructor.
+     */
+    private Messages() {
+    }
+    
     /**
      * Returns the string associated with the given key.
      * 
      * @param key key to look up in the {@code messages.properties} file
      * @return the associated string
      */
-    public static String getString(String key) {
+    public static String getString(final String key) {
         try {
             return RESOURCE_BUNDLE.getString(key);
         } catch (MissingResourceException e) {

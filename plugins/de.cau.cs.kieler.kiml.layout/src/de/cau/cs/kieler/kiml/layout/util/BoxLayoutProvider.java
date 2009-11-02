@@ -25,58 +25,61 @@ import de.cau.cs.kieler.kiml.layout.util.alg.BoxPlacer;
 import de.cau.cs.kieler.kiml.layout.util.alg.BoxSorter;
 
 /**
- * A layout algorithm that does not take edges into account, but
- * treats all nodes as isolated boxes.
+ * A layout algorithm that does not take edges into account, but treats all
+ * nodes as isolated boxes.
  * 
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class BoxLayoutProvider extends AbstractLayoutProvider {
 
-    /** default value for spacing between boxes */
-    private final static float DEFAULT_SPACING = 15.0f;
-    
-    /** the algorithm used to sort boxes */
+    /** default value for spacing between boxes. */
+    private static final float DEFAULT_SPACING = 15.0f;
+
+    /** the algorithm used to sort boxes. */
     private BoxSorter boxSorter = new BoxSorter();
-    /** the algorithm used to place boxes */
+    /** the algorithm used to place boxes. */
     private BoxPlacer boxPlacer = new BoxPlacer();
-    
-    /* (non-Javadoc)
-     * @see de.cau.cs.kieler.kiml.layout.services.AbstractLayoutProvider#doLayout(de.cau.cs.kieler.core.kgraph.KNode, de.cau.cs.kieler.kiml.layout.services.IKielerProgressMonitor)
+
+    /**
+     * {@inheritDoc}
      */
-    public void doLayout(KNode layoutNode,
-            IKielerProgressMonitor progressMonitor) throws KielerException {
+    @Override
+    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor)
+            throws KielerException {
         progressMonitor.begin("Box layout", 20);
         KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
         // set option for minimal spacing
         float spacing = LayoutOptions.getMinSpacing(parentLayout);
-        if (Float.isNaN(spacing))
+        if (Float.isNaN(spacing)) {
             spacing = DEFAULT_SPACING;
+        }
         // set expand nodes option
         boolean expandNodes = LayoutOptions.isExpandNodes(parentLayout);
-        
+
         // sort boxes according to priority and size
         boxSorter.reset(progressMonitor.subTask(10));
         List<KNode> sortedBoxes = boxSorter.sort(layoutNode);
         // place boxes on the plane
         boxPlacer.reset(progressMonitor.subTask(10));
         boxPlacer.placeBoxes(sortedBoxes, layoutNode, spacing, expandNodes);
-        
+
         progressMonitor.done();
     }
-    
-    /*
-     * (non-Javadoc)
-     * @see de.cau.cs.kieler.kiml.layout.services.AbstractLayoutProvider#getDefault(java.lang.String)
+
+    /**
+     * {@inheritDoc}
      */
-    public Object getDefault(String optionId) {
-       if (LayoutOptions.MIN_SPACING.equals(optionId))
-           return DEFAULT_SPACING;
-       else if (LayoutOptions.PRIORITY.equals(optionId))
-           return 0;
-       else if (LayoutOptions.EXPAND_NODES.equals(optionId))
-           return false;
-       else
-           return null;
+    @Override
+    public Object getDefault(final String optionId) {
+        if (LayoutOptions.MIN_SPACING.equals(optionId)) {
+            return DEFAULT_SPACING;
+        } else if (LayoutOptions.PRIORITY.equals(optionId)) {
+            return 0;
+        } else if (LayoutOptions.EXPAND_NODES.equals(optionId)) {
+            return false;
+        } else {
+            return null;
+        }
     }
-    
+
 }

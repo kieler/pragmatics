@@ -32,42 +32,43 @@ import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
  */
 public class LayoutHandler extends AbstractHandler implements IHandler {
 
-    /** parameter identifier for the scope of automatic layout */
+    /** parameter identifier for the scope of automatic layout. */
     public static final String PARAM_LAYOUT_SCOPE = "de.cau.cs.kieler.kiml.ui.layoutScope";
-    /** value for diagram scope */
-	public static final String VAL_DIAGRAM = "diagram";
-	/** value for selection scope */
-	public static final String VAL_SELECTION = "selection";
+    /** value for diagram scope. */
+    public static final String VAL_DIAGRAM = "diagram";
+    /** value for selection scope. */
+    public static final String VAL_SELECTION = "selection";
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-	 */
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		ISelection selection = null;
-		
-		// check parameter for layout scope, default is diagram scope
-		String layoutScope = event.getParameter(PARAM_LAYOUT_SCOPE);
-		if (layoutScope != null && layoutScope.equals(VAL_SELECTION)) {
-		     selection = HandlerUtil.getActiveMenuSelection(event);
-		        if (selection == null)
-		            selection = HandlerUtil.getCurrentSelection(event);
-		}
-		
+    /**
+     * {@inheritDoc}
+     */
+    public Object execute(final ExecutionEvent event) throws ExecutionException {
+        ISelection selection = null;
+
+        // check parameter for layout scope, default is diagram scope
+        String layoutScope = event.getParameter(PARAM_LAYOUT_SCOPE);
+        if (layoutScope != null && layoutScope.equals(VAL_SELECTION)) {
+            selection = HandlerUtil.getActiveMenuSelection(event);
+            if (selection == null) {
+                selection = HandlerUtil.getCurrentSelection(event);
+            }
+        }
+
         IEditorPart editorPart = HandlerUtil.getActiveEditor(event);
-		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
-		    // perform layout with the given selection
-		    IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-		    EditPart selectedElement = null;
-		    if (structuredSelection.getFirstElement() instanceof EditPart)
-		        selectedElement = (EditPart)structuredSelection.getFirstElement();
-    		DiagramLayoutManager.layout(editorPart, selectedElement, true, true);
-		}
-		else
-		    // perform layout on the whole diagram
-		    DiagramLayoutManager.layout(editorPart, null, true, true);
+        if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
+            // perform layout with the given selection
+            IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+            EditPart selectedElement = null;
+            if (structuredSelection.getFirstElement() instanceof EditPart) {
+                selectedElement = (EditPart) structuredSelection.getFirstElement();
+            }
+            DiagramLayoutManager.layout(editorPart, selectedElement, true, true);
+        } else {
+            // perform layout on the whole diagram
+            DiagramLayoutManager.layout(editorPart, null, true, true);
+        }
 
-		return null;
-	}
+        return null;
+    }
 
 }

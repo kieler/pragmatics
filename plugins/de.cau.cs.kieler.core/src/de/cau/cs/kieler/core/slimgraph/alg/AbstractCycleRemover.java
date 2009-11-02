@@ -32,10 +32,8 @@ public abstract class AbstractCycleRemover extends AbstractAlgorithm implements 
     /** list of edges that are reversed and later restored. */
     protected LinkedList<KSlimEdge> reversedEdges = null;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see de.cau.cs.kieler.core.alg.AbstractAlgorithm#reset()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public void reset() {
@@ -43,10 +41,8 @@ public abstract class AbstractCycleRemover extends AbstractAlgorithm implements 
         reversedEdges = null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see de.cau.cs.kieler.core.graph.alg.ICycleRemover#restoreGraph()
+    /**
+     * {@inheritDoc}
      */
     /** {@inheritDoc} */
     public void restoreGraph() {
@@ -55,10 +51,8 @@ public abstract class AbstractCycleRemover extends AbstractAlgorithm implements 
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see de.cau.cs.kieler.core.graph.alg.ICycleRemover#getReversedEdges()
+    /**
+     * {@inheritDoc}
      */
     /** {@inheritDoc} */
     public List<KSlimEdge> getReversedEdges() {

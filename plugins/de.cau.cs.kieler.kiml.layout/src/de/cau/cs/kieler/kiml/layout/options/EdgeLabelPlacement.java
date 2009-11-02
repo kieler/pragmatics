@@ -20,13 +20,13 @@ package de.cau.cs.kieler.kiml.layout.options;
  */
 public enum EdgeLabelPlacement {
 
-    /** undefined label placement */
+    /** undefined label placement. */
     UNDEFINED,
-    /** label is centered on the edge */
+    /** label is centered on the edge. */
     CENTER,
-    /** label is at the head (target) of the edge */
+    /** label is at the head (target) of the edge. */
     HEAD,
-    /** label is at the tail (source) of the edge */
+    /** label is at the tail (source) of the edge. */
     TAIL;
     
     /**
@@ -35,7 +35,7 @@ public enum EdgeLabelPlacement {
      * @param i ordinal value
      * @return the related enumeration value
      */
-    public static EdgeLabelPlacement valueOf(int i) {
+    public static EdgeLabelPlacement valueOf(final int i) {
         return values()[i];
     }
     

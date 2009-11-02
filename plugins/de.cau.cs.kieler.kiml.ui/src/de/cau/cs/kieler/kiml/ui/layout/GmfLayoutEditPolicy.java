@@ -65,14 +65,14 @@ import de.cau.cs.kieler.kiml.ui.Messages;
  */
 public class GmfLayoutEditPolicy extends AbstractEditPolicy {
 
-    /** map of edge layouts to existing point lists */
+    /** map of edge layouts to existing point lists. */
     private Map<KEdgeLayout, PointList> pointListMap = new HashMap<KEdgeLayout, PointList>();
     
     /* (non-Javadoc)
      * @see org.eclipse.gef.editpolicies.AbstractEditPolicy#understandsRequest(org.eclipse.gef.Request)
      */
     @Override
-    public boolean understandsRequest(Request req) {
+    public boolean understandsRequest(final Request req) {
         return (ApplyLayoutRequest.REQ_APPLY_LAYOUT.equals(req.getType()));
     }
     
@@ -80,7 +80,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      * @see org.eclipse.gef.editpolicies.AbstractEditPolicy#getCommand(org.eclipse.gef.Request)
      */
     @Override
-    public Command getCommand(Request request) {
+    public Command getCommand(final Request request) {
         if (ApplyLayoutRequest.REQ_APPLY_LAYOUT.equals(request.getType())) {
             if (request instanceof ApplyLayoutRequest) {
                 ApplyLayoutRequest layoutRequest = (ApplyLayoutRequest)request;
@@ -91,26 +91,28 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                 
                 // retrieve layout data from the request and compute layout data for the command
                 for (Pair<KGraphElement, GraphicalEditPart> layoutPair : layoutRequest.getElements()) {
-                    if (layoutPair.first instanceof KNode)
+                    if (layoutPair.first instanceof KNode) {
                         addShapeLayout(command, layoutPair.first, layoutPair.second, null);
-                    else if (layoutPair.first instanceof KPort)
+                    } else if (layoutPair.first instanceof KPort) {
                         addShapeLayout(command, layoutPair.first, layoutPair.second,
                                 KimlLayoutUtil.getShapeLayout(((KPort)layoutPair.first).getNode()));
-                    else if (layoutPair.first instanceof KEdge)
+                    } else if (layoutPair.first instanceof KEdge) {
                         addEdgeLayout(command, (KEdge)layoutPair.first,
                                 (ConnectionEditPart)layoutPair.second);
-                    else if (layoutPair.first instanceof KLabel)
+                    } else if (layoutPair.first instanceof KLabel) {
                         addEdgeLabelLayout(command, (KLabel)layoutPair.first,
                                 (LabelEditPart)layoutPair.second);
+                    }
                 }
                 
                 pointListMap.clear();
                 return new ICommandProxy(command);
+            } else {
+                return null;
             }
-            else return null;
-        }
-        else
+        } else {
             return super.getCommand(request);
+        }
     }
 
     /**
@@ -122,20 +124,22 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      * @param offsetLayout layout data of the graph element whose position is added
      *     as offset to the current shape, or {@code null} if no offset shall be added
      */
-    private void addShapeLayout(GmfLayoutCommand command, KGraphElement kgraphElement,
-            GraphicalEditPart editPart, KShapeLayout offsetLayout) {
+    private void addShapeLayout(final GmfLayoutCommand command, final KGraphElement kgraphElement,
+            final GraphicalEditPart editPart, final KShapeLayout offsetLayout) {
         KShapeLayout layoutData = KimlLayoutUtil.getShapeLayout(kgraphElement);
         Rectangle oldBounds = editPart.getFigure().getBounds();
         Point newLocation = new Point((int)layoutData.getXpos(),
                 (int)layoutData.getYpos());
         int offsetx = offsetLayout == null ? 0 : (int)offsetLayout.getXpos();
         int offsety = offsetLayout == null ? 0 : (int)offsetLayout.getYpos();
-        if (newLocation.x + offsetx == oldBounds.x && newLocation.y + offsety == oldBounds.y)
+        if (newLocation.x + offsetx == oldBounds.x && newLocation.y + offsety == oldBounds.y) {
             newLocation = null;
+        }
         Dimension newSize = new Dimension((int)layoutData.getWidth(),
                 (int)layoutData.getHeight());
-        if (newSize.width == oldBounds.width && newSize.height == oldBounds.height)
+        if (newSize.width == oldBounds.width && newSize.height == oldBounds.height) {
             newSize = null;
+        }
         if (newLocation != null || newSize != null) {
             View view = (View)editPart.getModel();
             command.addShapeLayout(view, newLocation, newSize);
@@ -149,8 +153,8 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      * @param kedge edge with layout data
      * @param connectionEditPart edit part to which layout is applied
      */
-    private void addEdgeLayout(GmfLayoutCommand command, KEdge kedge,
-            ConnectionEditPart connectionEditPart) {
+    private void addEdgeLayout(final GmfLayoutCommand command, final KEdge kedge,
+            final ConnectionEditPart connectionEditPart) {
         KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
         PointList bendPoints = getBendPoints(edgeLayout);
         Rectangle sourceExt, targetExt;
@@ -164,8 +168,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                     + sourceLayout.getXpos()), (int)(portLayout.getYpos()
                     + sourceLayout.getYpos()), (int)portLayout.getWidth(),
                     (int)portLayout.getHeight());
-        }
-        else {
+        } else {
             sourceExt = new Rectangle((int)sourceLayout.getXpos(),
                     (int)sourceLayout.getYpos(),
                     (int)sourceLayout.getWidth(),
@@ -193,8 +196,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                     + targetLayout.getXpos()), (int)(portLayout.getYpos()
                     + targetLayout.getYpos()), (int)portLayout.getWidth(),
                     (int)portLayout.getHeight());
-        }
-        else {
+        } else {
             targetExt = new Rectangle((int)targetLayout.getXpos(),
                     (int)targetLayout.getYpos(),
                     (int)targetLayout.getWidth(),
@@ -224,8 +226,8 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      * @param klabel label with layout data
      * @param labelEditPart edit part to which layout is applied
      */
-    private void addEdgeLabelLayout(GmfLayoutCommand command, KLabel klabel,
-            LabelEditPart labelEditPart) {
+    private void addEdgeLabelLayout(final GmfLayoutCommand command, final KLabel klabel,
+            final LabelEditPart labelEditPart) {
         KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(klabel);
         ConnectionEditPart connectionEditPart = (ConnectionEditPart)labelEditPart.getParent();
         IFigure sourceFigure = ((GraphicalEditPart)connectionEditPart.getSource())
@@ -239,7 +241,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
         PointList bendPoints = getBendPoints(edgeLayout);
         PointList absoluteBendPoints = new PointList();
-        for (int i = 0; i < bendPoints.size(); i++){
+        for (int i = 0; i < bendPoints.size(); i++) {
             Point point = bendPoints.getPoint(i);
             sourceFigure.translateToAbsolute(point);
             absoluteBendPoints.addPoint(point);
@@ -280,7 +282,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      * @param edgeLayout the edge layout
      * @return point list with the bend points of the edge layout
      */
-    private PointList getBendPoints(KEdgeLayout edgeLayout) {
+    private PointList getBendPoints(final KEdgeLayout edgeLayout) {
         PointList pointList = pointListMap.get(edgeLayout);
         if (pointList == null) {
             pointList = new PointList();
@@ -308,8 +310,8 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      * @return a {@code Point} which represents a value offset from the {@code refPoint}
      *     point oriented based on the nearest line segment
      */
-    public static Point offsetFromRelativeCoordinate(IFigure label, Rectangle bounds,
-            PointList points, Point refPoint) {
+    public static Point offsetFromRelativeCoordinate(final IFigure label, final Rectangle bounds,
+            final PointList points, final Point refPoint) {
         Rectangle rect = new Rectangle(bounds);
         // compensate for the fact that we are using the figure center
         rect.translate(rect.width / 2, rect.height / 2);
@@ -349,8 +351,9 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                     double dy = p1.getDistance(refPoint) * ((p1.y < refPoint.y) ? -1 : 1);
                     Point orth = new Point(dx, dy);
                     // reflection in the y axis
-                    if (segment.getOrigin().x > segment.getTerminus().x)
+                    if (segment.getOrigin().x > segment.getTerminus().x) {
                         orth = orth.scale(-1, -1);
+                    }
                     return orth;
                 }
             }

@@ -71,10 +71,8 @@ public class KSlimEdge extends KSlimGraphElement {
             return edge;
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see java.lang.Object#toString()
+        /**
+         * {@inheritDoc}
          */
         @Override
         public String toString() {
@@ -192,10 +190,8 @@ public class KSlimEdge extends KSlimGraphElement {
         incIter.add(new KSlimNode.IncEntry(this, KSlimNode.IncEntry.Type.IN));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see de.cau.cs.kieler.klodd.orthogonal.structures.TSMGraphElement#toString()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public String toString() {

@@ -72,19 +72,15 @@ public class ConcatenableList<E> extends AbstractSequentialList<E> {
             }
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see java.util.ListIterator#hasNext()
+        /**
+         * {@inheritDoc}
          */
         public boolean hasNext() {
             return nextIndex != size;
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see java.util.ListIterator#next()
+        /**
+         * {@inheritDoc}
          */
         public E next() {
             if (nextIndex == size) {
@@ -97,19 +93,15 @@ public class ConcatenableList<E> extends AbstractSequentialList<E> {
             return lastReturned.element;
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see java.util.ListIterator#hasPrevious()
+        /**
+         * {@inheritDoc}
          */
         public boolean hasPrevious() {
             return nextIndex != 0;
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see java.util.ListIterator#previous()
+        /**
+         * {@inheritDoc}
          */
         public E previous() {
             if (nextIndex == 0) {
@@ -122,28 +114,22 @@ public class ConcatenableList<E> extends AbstractSequentialList<E> {
             return lastReturned.element;
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see java.util.ListIterator#nextIndex()
+        /**
+         * {@inheritDoc}
          */
         public int nextIndex() {
             return nextIndex;
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see java.util.ListIterator#previousIndex()
+        /**
+         * {@inheritDoc}
          */
         public int previousIndex() {
             return nextIndex - 1;
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see java.util.ListIterator#remove()
+        /**
+         * {@inheritDoc}
          */
         public void remove() {
             Entry<E> lastNext = lastReturned.next;
@@ -161,10 +147,8 @@ public class ConcatenableList<E> extends AbstractSequentialList<E> {
             expectedModCount++;
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see java.util.ListIterator#set(java.lang.Object)
+        /**
+         * {@inheritDoc}
          */
         public void set(final E e) {
             if (lastReturned == header) {
@@ -173,10 +157,8 @@ public class ConcatenableList<E> extends AbstractSequentialList<E> {
             lastReturned.element = e;
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see java.util.ListIterator#add(java.lang.Object)
+        /**
+         * {@inheritDoc}
          */
         public void add(final E e) {
             lastReturned = header;
@@ -199,30 +181,24 @@ public class ConcatenableList<E> extends AbstractSequentialList<E> {
         header.next = header;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.AbstractSequentialList#listIterator(int)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public ListIterator<E> listIterator(final int index) {
         return new ConcatenableListIterator(index);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.AbstractCollection#size()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public int size() {
         return size;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.AbstractList#add(java.lang.Object)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public boolean add(final E e) {

@@ -34,40 +34,44 @@ import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 public class PriorityTableProvider extends LabelProvider
         implements IStructuredContentProvider, ITableLabelProvider, ICellModifier {
 
-    /** property name of the layouters column */
-    public final static String LAYOUTERS_PROPERTY = "layouters";
+    /** property name of the layouters column. */
+    public static final String LAYOUTERS_PROPERTY = "layouters";
     
-    /** path to the icon for active layouters */
-    private final static String ACTIVE_IMAGE_PATH = "icons/obj16/active.gif";
+    /** path to the icon for active layouters. */
+    private static final String ACTIVE_IMAGE_PATH = "icons/obj16/active.gif";
     
-    /** table viewer that makes use of this provider */
+    /** table viewer that makes use of this provider. */
     private TableViewer priorityTableViewer;
-    /** priority data matrix */
+    /** priority data matrix. */
     private int[][] data;
-    /** array of user friendly layouter names */
+    /** array of user friendly layouter names. */
     private String[] layouterNames;
-    /** array of indices of the layouters with maximal priority */
+    /** array of indices of the layouters with maximal priority. */
     private int[] maxIndices;
-    /** image used for active layouters */
+    /** image used for active layouters. */
     private Image activeImage;
 
-    /** data type for row entries in the table */
+    /** data type for row entries in the table. */
     public static class DataEntry {
-        /** index of the layouter */
+        /** index of the layouter. */
         int layouterIndex;
-        /** array of priorities for the layout provider */
+        /** array of priorities for the layout provider. */
         int[] priorities;
     }
 
     /**
      * Creates a table provider instance.
+     * 
+     * @param thetableViewer table viewer that makes use of this provider
+     * @param thedata priority data matrix
+     * @param thelayouterNames array of user friendly layouter names
      */
-    public PriorityTableProvider(TableViewer tableViewer, int[][] data,
-            String[] layouterNames) {
-        this.priorityTableViewer = tableViewer;
-        this.data = data;
-        this.layouterNames = layouterNames;
-        this.maxIndices = new int[data[0].length];
+    public PriorityTableProvider(final TableViewer thetableViewer, final int[][] thedata,
+            final String[] thelayouterNames) {
+        this.priorityTableViewer = thetableViewer;
+        this.data = thedata;
+        this.layouterNames = thelayouterNames;
+        this.maxIndices = new int[thedata[0].length];
         this.activeImage = KimlUiPlugin.getImageDescriptor(ACTIVE_IMAGE_PATH).createImage();
         refresh();
     }
@@ -79,7 +83,7 @@ public class PriorityTableProvider extends LabelProvider
      * @param col column of the diagram type for which the highest priority shall
      *     be determined
      */
-    private void calcMaxIndex(int col) {
+    private void calcMaxIndex(final int col) {
         int max = LayoutProviderData.MIN_PRIORITY;
         int index = -1;
         for (int i = 0; i < data.length; i++) {
@@ -95,95 +99,98 @@ public class PriorityTableProvider extends LabelProvider
      * Refreshes internally cached data for display in the table.
      */
     public void refresh() {
-        for (int j = 0; j < data[0].length; j++)
+        for (int j = 0; j < data[0].length; j++) {
             calcMaxIndex(j);
+        }
         priorityTableViewer.refresh();
     }
     
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.jface.viewers.BaseLabelProvider#dispose()
+    /**
+     * {@inheritDoc}
      */
+    @Override
     public void dispose() {
         activeImage.dispose();
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+    /**
+     * {@inheritDoc}
      */
-    public Object[] getElements(Object inputElement) {
-        if (inputElement instanceof DataEntry[])
+    public Object[] getElements(final Object inputElement) {
+        if (inputElement instanceof DataEntry[]) {
             return (DataEntry[])inputElement;
-        else
+        } else {
             return null;
+        }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+    /**
+     * {@inheritDoc}
      */
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+    public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
+    /**
+     * {@inheritDoc}
      */
-    public Image getColumnImage(Object element, int columnIndex) {
+    public Image getColumnImage(final Object element, final int columnIndex) {
         if (element instanceof DataEntry) {
             DataEntry entry = (DataEntry)element;
-            if (columnIndex > 0 && maxIndices[columnIndex - 1] == entry.layouterIndex)
+            if (columnIndex > 0 && maxIndices[columnIndex - 1] == entry.layouterIndex) {
                 return activeImage;
+            }
         }
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
+    /**
+     * {@inheritDoc}
      */
-    public String getColumnText(Object element, int columnIndex) {
+    public String getColumnText(final Object element, final int columnIndex) {
         if (element instanceof DataEntry) {
             DataEntry entry = (DataEntry)element;
-            if (columnIndex == 0)
+            if (columnIndex == 0) {
                 return layouterNames[entry.layouterIndex];
+            }
             int prio = entry.priorities[columnIndex - 1];
             return prio <= LayoutProviderData.MIN_PRIORITY
                     ? null : Integer.toString(prio);
+        } else {
+            return null;
         }
-        else return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.ICellModifier#canModify(java.lang.Object, java.lang.String)
+    /**
+     * {@inheritDoc}
      */
-    public boolean canModify(Object element, String property) {
+    public boolean canModify(final Object element, final String property) {
         return !property.equals(LAYOUTERS_PROPERTY);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.ICellModifier#getValue(java.lang.Object, java.lang.String)
+    /**
+     * {@inheritDoc}
      */
-    public Object getValue(Object element, String property) {
+    public Object getValue(final Object element, final String property) {
         DataEntry entry = (DataEntry)element;
         try {
             int typeIndex = Integer.parseInt(property);
             int prio = entry.priorities[typeIndex];
             return prio <= LayoutProviderData.MIN_PRIORITY
                     ? "0" : Integer.toString(prio);
-        }
-        catch (NumberFormatException exception) {
+        } catch (NumberFormatException exception) {
             return null;
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.ICellModifier#modify(java.lang.Object, java.lang.String, java.lang.Object)
+    /**
+     * {@inheritDoc}
      */
-    public void modify(Object element, String property, Object value) {
+    public void modify(final Object element, final String property, final Object value) {
         DataEntry entry = (DataEntry)((TableItem)element).getData();
         int typeIndex = Integer.parseInt(property);
         try {
             entry.priorities[typeIndex] = Integer.parseInt((String)value);
-        }
-        catch (NumberFormatException exception) {
+        } catch (NumberFormatException exception) {
             entry.priorities[typeIndex] = LayoutProviderData.MIN_PRIORITY;
         }
         calcMaxIndex(typeIndex);

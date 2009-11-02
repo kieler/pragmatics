@@ -20,15 +20,15 @@ package de.cau.cs.kieler.kiml.layout.options;
  */
 public enum PortSide {
     
-    /** the side is undefined */
+    /** the side is undefined. */
     UNDEFINED,
-    /** top side */
+    /** top side. */
     NORTH,
-    /** right side */
+    /** right side. */
     EAST,
-    /** bottom side */
+    /** bottom side. */
     SOUTH,
-    /** left side */
+    /** left side. */
     WEST;
     
     /**
@@ -37,7 +37,7 @@ public enum PortSide {
      * @param i ordinal value
      * @return the related enumeration value
      */
-    public static PortSide valueOf(int i) {
+    public static PortSide valueOf(final int i) {
         return values()[i];
     }
     

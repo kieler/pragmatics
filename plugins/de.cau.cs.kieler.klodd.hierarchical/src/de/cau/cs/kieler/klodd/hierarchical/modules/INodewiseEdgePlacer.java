@@ -24,12 +24,12 @@ import de.cau.cs.kieler.klodd.hierarchical.structures.LayeredGraph;
  */
 public interface INodewiseEdgePlacer extends IAlgorithm {
 
-	/**
-	 * Determine placement for all edges starting or ending at
-	 * regular nodes of the given layered graph.
-	 * 
-	 * @param layeredGraph
-	 */
-	public void placeEdges(LayeredGraph layeredGraph);
-	
+    /**
+     * Determine placement for all edges starting or ending at regular nodes of
+     * the given layered graph.
+     * 
+     * @param layeredGraph the layered graph to process
+     */
+    void placeEdges(LayeredGraph layeredGraph);
+
 }

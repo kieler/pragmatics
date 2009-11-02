@@ -17,47 +17,49 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 /**
- * The activator class controls the plug-in life cycle
+ * The activator class controls the plug-in life cycle.
+ * 
+ * @author <a href="msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class KimlViewerPlugin extends AbstractUIPlugin {
 
-	// The plug-in ID
-	public static final String PLUGIN_ID = "de.cau.cs.kieler.kiml.viewer";
+    /** the plug-in ID. */
+    public static final String PLUGIN_ID = "de.cau.cs.kieler.kiml.viewer";
 
-	// The shared instance
-	private static KimlViewerPlugin plugin;
-	
-	/**
-	 * The constructor
-	 */
-	public KimlViewerPlugin() {
-	}
+    /** the shared instance. */
+    private static KimlViewerPlugin plugin;
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-		plugin = this;
-	}
+    /**
+     * The constructor.
+     */
+    public KimlViewerPlugin() {
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 */
-	public void stop(BundleContext context) throws Exception {
-		plugin = null;
-		super.stop(context);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void start(final BundleContext context) throws Exception {
+        super.start(context);
+        plugin = this;
+    }
 
-	/**
-	 * Returns the shared instance
-	 *
-	 * @return the shared instance
-	 */
-	public static KimlViewerPlugin getDefault() {
-		return plugin;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void stop(final BundleContext context) throws Exception {
+        plugin = null;
+        super.stop(context);
+    }
+
+    /**
+     * Returns the shared instance.
+     * 
+     * @return the shared instance
+     */
+    public static KimlViewerPlugin getDefault() {
+        return plugin;
+    }
 
 }

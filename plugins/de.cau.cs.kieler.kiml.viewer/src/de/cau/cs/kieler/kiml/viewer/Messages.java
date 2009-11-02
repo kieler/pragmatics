@@ -21,22 +21,28 @@ import java.util.ResourceBundle;
  * 
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
-public class Messages {
-	
-	private static final String BUNDLE_NAME = "de.cau.cs.kieler.kiml.viewer.messages"; //$NON-NLS-1$
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
+public final class Messages {
 
-	/**
-	 * Gets the string associated with the given key.
-	 * 
-	 * @param key key to look up
-	 * @return the associated string
-	 */
-	public static String getString(String key) {
-		try {
-			return RESOURCE_BUNDLE.getString(key);
-		} catch (MissingResourceException e) {
-			return '!' + key + '!';
-		}
-	}
+    /**
+     * Hidden constructor.
+     */
+    private Messages() {
+    }
+
+    private static final String BUNDLE_NAME = "de.cau.cs.kieler.kiml.viewer.messages"; //$NON-NLS-1$
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
+
+    /**
+     * Gets the string associated with the given key.
+     * 
+     * @param key key to look up
+     * @return the associated string
+     */
+    public static String getString(final String key) {
+        try {
+            return RESOURCE_BUNDLE.getString(key);
+        } catch (MissingResourceException e) {
+            return '!' + key + '!';
+        }
+    }
 }

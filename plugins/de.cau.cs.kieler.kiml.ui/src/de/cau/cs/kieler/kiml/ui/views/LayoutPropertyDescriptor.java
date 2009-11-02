@@ -39,22 +39,24 @@ import de.cau.cs.kieler.kiml.ui.Messages;
  */
 public class LayoutPropertyDescriptor implements IPropertyDescriptor {
 
-    /** label provider used for layout options */
+    /** label provider used for layout options. */
     private class LayoutOptionLabelProvider extends LabelProvider {
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
+        /**
+         * {@inheritDoc}
          */
-        public Image getImage(Object element) {
+        @Override
+        public Image getImage(final Object element) {
             KimlUiPlugin.Images images = KimlUiPlugin.getDefault().getImages();
             switch (optionData.type) {
             case STRING:
                 return images.propText;
             case BOOLEAN:
-                if (((Boolean)element).booleanValue())
+                if (((Boolean)element).booleanValue()) {
                     return images.propTrue;
-                else
+                } else {
                     return images.propFalse;
+                }
             case ENUM:
                 return images.propChoice;
             case INT:
@@ -66,28 +68,33 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
             }
         }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
+        /**
+         * {@inheritDoc}
          */
-        public String getText(Object element) {
+        @Override
+        public String getText(final Object element) {
             switch (optionData.type) {
             case STRING:
+                LayoutServices layoutServices = LayoutServices.getInstance();
                 if (LayoutOptions.LAYOUT_HINT.equals(optionData.id)) {
                     String layoutHint = layoutHintValues[((Integer)element).intValue()];
-                    String layoutType = LayoutServices.INSTANCE.getLayoutTypeName(layoutHint);
-                    if (layoutType != null)
+                    String layoutType = layoutServices.getLayoutTypeName(layoutHint);
+                    if (layoutType != null) {
                         return layoutType + " " + Messages.getString("kiml.ui.9");
-                    LayoutProviderData providerData = LayoutServices.INSTANCE.getLayoutProviderData(layoutHint);
+                    }
+                    LayoutProviderData providerData = layoutServices.getLayoutProviderData(layoutHint);
                     if (providerData != null) {
-                        String category = LayoutServices.INSTANCE.getCategoryName(providerData.category);
-                        if (category == null)
+                        String category = layoutServices.getCategoryName(providerData.category);
+                        if (category == null) {
                             return providerData.name;
-                        else
+                        } else {
                             return providerData.name + " (" + category + ")";
+                        }
                     }
                     return layoutHint;
+                } else {
+                    return (String)element;
                 }
-                else return (String)element;
             case ENUM:
                 return optionData.getEnumValue(((Integer)element).intValue()).toString();
             default:
@@ -97,49 +104,50 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
         
     }
     
-    /** the layout option data associated with this property descriptor */
+    /** the layout option data associated with this property descriptor. */
     private LayoutOptionData optionData;
-    /** array of choices for the layout hint option */
+    /** array of choices for the layout hint option. */
     private String[] layoutHintChoices;
-    /** array of identifiers for the layout hint option */
+    /** array of identifiers for the layout hint option. */
     private String[] layoutHintValues;
-    /** the label provider for this property descriptor */
+    /** the label provider for this property descriptor. */
     private LayoutOptionLabelProvider labelProvider;
     
     /**
      * Creates a layout property descriptor based on a specific layout option.
      * 
-     * @param optionData the layout option data
-     * @param layoutHintChoices the array of choices for the layout hint option
+     * @param theoptionData the layout option data
+     * @param thelayoutHintChoices the array of choices for the layout hint option
+     * @param thelayoutHintValues the array of identifiers for the layout hint option
      */
-    public LayoutPropertyDescriptor(LayoutOptionData optionData, String[] layoutHintChoices,
-            String[] layoutHintValues) {
-        this.optionData = optionData;
-        this.layoutHintChoices = layoutHintChoices;
-        this.layoutHintValues = layoutHintValues;
+    public LayoutPropertyDescriptor(final LayoutOptionData theoptionData,
+            final String[] thelayoutHintChoices, final String[] thelayoutHintValues) {
+        this.optionData = theoptionData;
+        this.layoutHintChoices = thelayoutHintChoices;
+        this.layoutHintValues = thelayoutHintValues;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertyDescriptor#createPropertyEditor(org.eclipse.swt.widgets.Composite)
+    /**
+     * {@inheritDoc}
      */
-    public CellEditor createPropertyEditor(Composite parent) {
+    public CellEditor createPropertyEditor(final Composite parent) {
         switch (optionData.type) {
         case STRING:
-            if (LayoutOptions.LAYOUT_HINT.equals(optionData.id))
+            if (LayoutOptions.LAYOUT_HINT.equals(optionData.id)) {
                 return new ComboBoxCellEditor(parent, layoutHintChoices, SWT.READ_ONLY);
-            else
+            } else {
                 return new TextCellEditor(parent);
+            }
         case BOOLEAN:
             return new CheckboxCellEditor(parent);
         case INT:
             CellEditor intEditor = new TextCellEditor(parent);
             intEditor.setValidator(new ICellEditorValidator() {
-                public String isValid(Object value) {
+                public String isValid(final Object value) {
                     try {
                         Integer.parseInt((String)value);
                         return null;
-                    }
-                    catch (NumberFormatException exception) {
+                    } catch (NumberFormatException exception) {
                         return Messages.getString("kiml.ui.6");
                     }
                 }
@@ -148,12 +156,11 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
         case FLOAT:
             CellEditor floatEditor = new TextCellEditor(parent);
             floatEditor.setValidator(new ICellEditorValidator() {
-                public String isValid(Object value) {
+                public String isValid(final Object value) {
                     try {
                         Float.parseFloat((String)value);
                         return null;
-                    }
-                    catch (NumberFormatException exception) {
+                    } catch (NumberFormatException exception) {
                         return Messages.getString("kiml.ui.7");
                     }
                 }
@@ -166,61 +173,62 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertyDescriptor#getCategory()
+    /**
+     * {@inheritDoc}
      */
     public String getCategory() {
         return optionData.getTargetsDescription();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertyDescriptor#getDescription()
+    /**
+     * {@inheritDoc}
      */
     public String getDescription() {
         return optionData.description;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertyDescriptor#getDisplayName()
+    /**
+     * {@inheritDoc}
      */
     public String getDisplayName() {
         return optionData.name;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertyDescriptor#getFilterFlags()
+    /**
+     * {@inheritDoc}
      */
     public String[] getFilterFlags() {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertyDescriptor#getHelpContextIds()
+    /**
+     * {@inheritDoc}
      */
     public Object getHelpContextIds() {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertyDescriptor#getId()
+    /**
+     * {@inheritDoc}
      */
     public Object getId() {
         return optionData.id;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertyDescriptor#getLabelProvider()
+    /**
+     * {@inheritDoc}
      */
     public ILabelProvider getLabelProvider() {
-        if (labelProvider == null)
+        if (labelProvider == null) {
             labelProvider = new LayoutOptionLabelProvider();
+        }
         return labelProvider;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.properties.IPropertyDescriptor#isCompatibleWith(org.eclipse.ui.views.properties.IPropertyDescriptor)
+    /**
+     * {@inheritDoc}
      */
-    public boolean isCompatibleWith(IPropertyDescriptor anotherProperty) {
+    public boolean isCompatibleWith(final IPropertyDescriptor anotherProperty) {
         return anotherProperty instanceof LayoutPropertyDescriptor
                 && this.optionData.id.equals(anotherProperty.getId());
     }

@@ -27,10 +27,10 @@ import de.cau.cs.kieler.kiml.viewer.KimlViewerPlugin;
  */
 public class ExecutionLabelProvider extends LabelProvider {
 
-	/** path to the image used for elements */
+	/** path to the image used for elements. */
 	private static final String IMAGE_PATH = "/icons/execution.gif";
 	
-	/** the image used for each element */
+	/** the image used for each element. */
 	private Image elementImage;
 	
 	/**
@@ -41,39 +41,46 @@ public class ExecutionLabelProvider extends LabelProvider {
 				KimlViewerPlugin.PLUGIN_ID, IMAGE_PATH).createImage();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
+	/**
+	 * {@inheritDoc}
 	 */
-	public Image getImage(Object element) {
-		if (element instanceof IKielerProgressMonitor)
+	@Override
+	public Image getImage(final Object element) {
+		if (element instanceof IKielerProgressMonitor) {
 			return elementImage;
-		else return null;
+		} else {
+		    return null;
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
+	/**
+	 * {@inheritDoc}
 	 */
-	public String getText(Object element) {
+	@Override
+	public String getText(final Object element) {
 		if (element instanceof IKielerProgressMonitor) {
 			IKielerProgressMonitor monitor = (IKielerProgressMonitor)element;
 			String baseText = monitor.getTaskName() + ": ";
 			double time = monitor.getExecutionTime();
-			if (time >= 1.0)
+			if (time >= 1.0) {
 				return baseText + String.format("%1$.3f s", time);
-			else
+			} else {
 				return baseText + String.format("%1$.3f ms", time * 1000);
+			}
+		} else {
+		    return null;
 		}
-		else return null;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.BaseLabelProvider#dispose()
+	/**
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
-		if (elementImage != null)
+		if (elementImage != null) {
 			elementImage.dispose();
+		}
 	}
 
 }

@@ -20,11 +20,11 @@ package de.cau.cs.kieler.kiml.layout.options;
  */
 public enum LayoutDirection {
 
-    /** undefined layout direction */
+    /** undefined layout direction. */
     UNDEFINED,
-    /** horizontal layout */
+    /** horizontal layout. */
     HORIZONTAL,
-    /** vertical layout */
+    /** vertical layout. */
     VERTICAL;
     
     /**
@@ -33,7 +33,7 @@ public enum LayoutDirection {
      * @param i ordinal value
      * @return the related enumeration value
      */
-    public static LayoutDirection valueOf(int i) {
+    public static LayoutDirection valueOf(final int i) {
         return values()[i];
     }
     

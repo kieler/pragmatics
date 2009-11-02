@@ -41,8 +41,8 @@ public class ForwardingInputStream extends InputStream {
         this.outputStream = theoutputStream;
     }
     
-    /* (non-Javadoc)
-     * @see java.io.InputStream#read()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public int read() throws IOException {
@@ -53,9 +53,8 @@ public class ForwardingInputStream extends InputStream {
         return data;
     }
     
-    /*
-     * (non-Javadoc)
-     * @see java.io.InputStream#read(byte[])
+    /**
+     * {@inheritDoc}
      */
     @Override
     public int read(final byte[] b) throws IOException {
@@ -66,9 +65,8 @@ public class ForwardingInputStream extends InputStream {
         return count;
     }
     
-    /*
-     * (non-Javadoc)
-     * @see java.io.InputStream#read(byte[], int, int)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public int read(final byte[] b, final int off, final int len) throws IOException {
@@ -79,18 +77,16 @@ public class ForwardingInputStream extends InputStream {
         return count;
     }
     
-    /*
-     * (non-Javadoc)
-     * @see java.io.InputStream#skip(long)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public long skip(final long n) throws IOException {
         return inputStream.skip(n);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see java.io.InputStream#available()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public int available() throws IOException {
@@ -107,27 +103,24 @@ public class ForwardingInputStream extends InputStream {
         inputStream.close();
     }
     
-    /*
-     * (non-Javadoc)
-     * @see java.io.InputStream#mark(int)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public synchronized void mark(final int readlimit) {
         inputStream.mark(readlimit);
     }
     
-    /*
-     * (non-Javadoc)
-     * @see java.io.InputStream#reset()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public synchronized void reset() throws IOException {
         inputStream.reset();
     }
     
-    /*
-     * (non-Javadoc)
-     * @see java.io.InputStream#markSupported()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public boolean markSupported() {

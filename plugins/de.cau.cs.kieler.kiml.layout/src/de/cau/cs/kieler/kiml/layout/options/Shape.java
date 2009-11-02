@@ -19,23 +19,23 @@ package de.cau.cs.kieler.kiml.layout.options;
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public enum Shape {
-	
-	/** undefined shape */
-	UNDEFINED,
-	/** rectangle shape */
-	RECTANGLE,
-	/** ellipse shape */
-	ELLIPSE,
-	/** triangle shape */
-	TRIANGLE;
-	
+
+    /** undefined shape. */
+    UNDEFINED,
+    /** rectangle shape. */
+    RECTANGLE,
+    /** ellipse shape. */
+    ELLIPSE,
+    /** triangle shape. */
+    TRIANGLE;
+
     /**
      * Returns the enumeration value related to the given ordinal.
      * 
      * @param i ordinal value
      * @return the related enumeration value
      */
-    public static Shape valueOf(int i) {
+    public static Shape valueOf(final int i) {
         return values()[i];
     }
 

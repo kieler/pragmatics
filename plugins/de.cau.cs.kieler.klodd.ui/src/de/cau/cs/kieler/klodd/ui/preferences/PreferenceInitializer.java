@@ -19,7 +19,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import de.cau.cs.kieler.klodd.hierarchical.HierarchicalDataflowLayoutProvider;
 import de.cau.cs.kieler.klodd.ui.KloddUIPlugin;
 
-
 /**
  * Initializer for the KLoDD layouter plugin preferences.
  * 
@@ -27,22 +26,22 @@ import de.cau.cs.kieler.klodd.ui.KloddUIPlugin;
  */
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
-	 */
-	public void initializeDefaultPreferences() {
-		IPreferenceStore store = KloddUIPlugin.getDefault().getPreferenceStore();
+    /**
+     * {@inheritDoc}
+     */
+    public void initializeDefaultPreferences() {
+        IPreferenceStore store = KloddUIPlugin.getDefault().getPreferenceStore();
 
-		// initialize options for hierarchical layout
-		store.setDefault(HierarchicalDataflowLayoutProvider.PREF_CYCLE_REM,
-				HierarchicalDataflowLayoutProvider.VAL_GREEDY_CYCLE_REM);
-		store.setDefault(HierarchicalDataflowLayoutProvider.PREF_LAYER_ASS,
-				HierarchicalDataflowLayoutProvider.VAL_BAL_LAYER_ASS);
-		store.setDefault(HierarchicalDataflowLayoutProvider.PREF_LAYER_EDGEROUTER,
-		        HierarchicalDataflowLayoutProvider.VAL_TOPO_LAYER_EDGEROUTER);
-		store.setDefault(HierarchicalDataflowLayoutProvider.PREF_CROSSRED_PASSES,
-		        HierarchicalDataflowLayoutProvider.DEF_CROSSRED_PASSES);
-		store.setDefault(HierarchicalDataflowLayoutProvider.PREF_BALANCE_VS_SIZE, true);
-	}
+        // initialize options for hierarchical layout
+        store.setDefault(HierarchicalDataflowLayoutProvider.PREF_CYCLE_REM,
+                HierarchicalDataflowLayoutProvider.VAL_GREEDY_CYCLE_REM);
+        store.setDefault(HierarchicalDataflowLayoutProvider.PREF_LAYER_ASS,
+                HierarchicalDataflowLayoutProvider.VAL_BAL_LAYER_ASS);
+        store.setDefault(HierarchicalDataflowLayoutProvider.PREF_LAYER_EDGEROUTER,
+                HierarchicalDataflowLayoutProvider.VAL_TOPO_LAYER_EDGEROUTER);
+        store.setDefault(HierarchicalDataflowLayoutProvider.PREF_CROSSRED_PASSES,
+                HierarchicalDataflowLayoutProvider.DEF_CROSSRED_PASSES);
+        store.setDefault(HierarchicalDataflowLayoutProvider.PREF_BALANCE_VS_SIZE, true);
+    }
 
 }

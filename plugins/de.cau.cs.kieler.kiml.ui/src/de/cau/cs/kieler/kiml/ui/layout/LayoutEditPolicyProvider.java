@@ -29,23 +29,24 @@ import org.eclipse.gmf.runtime.diagram.ui.services.editpolicy.IEditPolicyProvide
 public class LayoutEditPolicyProvider extends AbstractProvider implements
         IEditPolicyProvider {
 
-    /** the key used to install an <i>apply layout</i> edit policy  */
+    /** the key used to install an <i>apply layout</i> edit policy. */
     public static final String APPLY_LAYOUT_ROLE = "ApplyLayoutEditPolicy";
     
-    /* (non-Javadoc)
-     * @see org.eclipse.gmf.runtime.diagram.ui.services.editpolicy.IEditPolicyProvider#createEditPolicies(org.eclipse.gef.EditPart)
+    /**
+     * {@inheritDoc}
      */
-    public void createEditPolicies(EditPart editPart) {
+    public void createEditPolicies(final EditPart editPart) {
         if (editPart instanceof DiagramEditPart) {
             editPart.installEditPolicy(APPLY_LAYOUT_ROLE,
                     new GmfLayoutEditPolicy());
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.gmf.runtime.common.core.service.IProvider#provides(org.eclipse.gmf.runtime.common.core.service.IOperation)
+    /**
+     * {@inheritDoc}
      */
-    public boolean provides(IOperation operation) {
+    @Override
+    public boolean provides(final IOperation operation) {
         return operation instanceof CreateEditPoliciesOperation;
     }
 

@@ -47,12 +47,9 @@ public class BasicProgressMonitor implements IKielerProgressMonitor {
     /** the number of work units that can be completed in total. */
     private int totalWork;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see de.cau.cs.kieler.core.alg.IKielerProgressMonitor#begin(java.lang.String, int)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public final void begin(final String name, final int thetotalWork) {
         if (!closed) {
             this.taskName = name;
@@ -76,12 +73,9 @@ public class BasicProgressMonitor implements IKielerProgressMonitor {
     /** factor for nanoseconds. */
     private static final double NANO_FACT = 1e-9;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see de.cau.cs.kieler.core.alg.IKielerProgressMonitor#done()
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public final void done() {
         if (!closed) {
             totalTime = (System.nanoTime() - startTime) * NANO_FACT;
@@ -101,42 +95,30 @@ public class BasicProgressMonitor implements IKielerProgressMonitor {
     protected void doDone(final boolean topInstance) {
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see de.cau.cs.kieler.core.alg.IKielerProgressMonitor#getExecutionTime()
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public final double getExecutionTime() {
         return totalTime;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see de.cau.cs.kieler.core.alg.IKielerProgressMonitor#getSubMonitors()
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public final List<IKielerProgressMonitor> getSubMonitors() {
         return children;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see de.cau.cs.kieler.core.alg.IKielerProgressMonitor#getParentMonitor()
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public final IKielerProgressMonitor getParentMonitor() {
         return parentMonitor;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see de.cau.cs.kieler.core.alg.IKielerProgressMonitor#getTaskName()
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public String getTaskName() {
         return taskName;
     }
@@ -150,12 +132,9 @@ public class BasicProgressMonitor implements IKielerProgressMonitor {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see de.cau.cs.kieler.core.alg.IKielerProgressMonitor#subTask(int)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public final IKielerProgressMonitor subTask(final int work) {
         if (!closed) {
             BasicProgressMonitor subMonitor = doSubTask(work);
@@ -180,12 +159,9 @@ public class BasicProgressMonitor implements IKielerProgressMonitor {
         return new BasicProgressMonitor();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see de.cau.cs.kieler.core.alg.IKielerProgressMonitor#worked(int)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public void worked(final int work) {
         if (work > 0 && !closed) {
             internalWorked(work);

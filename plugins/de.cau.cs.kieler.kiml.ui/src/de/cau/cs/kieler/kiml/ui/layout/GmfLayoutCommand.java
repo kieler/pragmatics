@@ -48,14 +48,14 @@ import org.eclipse.gmf.runtime.notation.datatype.RelativeBendpoint;
 @SuppressWarnings("restriction")
 public class GmfLayoutCommand extends AbstractTransactionalCommand {
 
-    /** layout data for node shapes */
+    /** layout data for node shapes. */
     private static class ShapeLayoutData {
         View view;
         Point location;
         Dimension size;
     }
     
-    /** layout data for edges */
+    /** layout data for edges. */
     private static class EdgeLayoutData {
         Edge edge;
         PointList bends;
@@ -63,11 +63,11 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
         String targetTerminal;
     }
     
-    /** adapter for the view of the base diagram */
+    /** adapter for the view of the base diagram. */
     private IAdaptable diagramViewAdapter;
-    /** list of shape layouts to be applied to nodes */
+    /** list of shape layouts to be applied to nodes. */
     private List<ShapeLayoutData> shapeLayouts = new LinkedList<ShapeLayoutData>();
-    /** list of edge layouts to be applied to edges */
+    /** list of edge layouts to be applied to edges. */
     private List<EdgeLayoutData> edgeLayouts = new LinkedList<EdgeLayoutData>();
     
     
@@ -78,8 +78,8 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
      * @param label the command label
      * @param adapter an adapter to the {@code View} of the base diagram
      */
-    public GmfLayoutCommand(TransactionalEditingDomain domain, String label,
-            IAdaptable adapter) {
+    public GmfLayoutCommand(final TransactionalEditingDomain domain, final String label,
+            final IAdaptable adapter) {
         super(domain, label, null);
         this.diagramViewAdapter = adapter;
     }
@@ -93,7 +93,7 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
      * @param size new size for the view, or {@code null} if the size
      *     shall not be changed
      */
-    public void addShapeLayout(View view, Point location, Dimension size) {
+    public void addShapeLayout(final View view, final Point location, final Dimension size) {
         assert view != null;
         ShapeLayoutData layout = new ShapeLayoutData();
         layout.view = view;
@@ -113,8 +113,8 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
      * @param targetTerminal new target terminal, encoded as string, or
      *     {@code null} if the target terminal shall not be changed
      */
-    public void addEdgeLayout(Edge edge, PointList bends, String sourceTerminal,
-            String targetTerminal) {
+    public void addEdgeLayout(final Edge edge, final PointList bends, final String sourceTerminal,
+            final String targetTerminal) {
         assert edge != null;
         EdgeLayoutData layout = new EdgeLayoutData();
         layout.edge = edge;
@@ -124,28 +124,28 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
         edgeLayouts.add(layout);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.gmf.runtime.emf.commands.core.command.AbstractTransactionalCommand#doExecuteWithResult(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
+    /**
+     * {@inheritDoc}
      */
     @Override
-    protected CommandResult doExecuteWithResult(IProgressMonitor monitor,
-            IAdaptable info) throws ExecutionException {
-        monitor.beginTask(getLabel(), 100);
+    protected CommandResult doExecuteWithResult(final IProgressMonitor monitor,
+            final IAdaptable info) throws ExecutionException {
+        monitor.beginTask(getLabel(), 1);
         // process shape layout data
         for (ShapeLayoutData shapeLayout : shapeLayouts) {
             // set new location of the element
             if (shapeLayout.location != null) {
-                ViewUtil.setStructuralFeatureValue(shapeLayout.view, NotationPackage.eINSTANCE.getLocation_X(),
-                        Integer.valueOf(shapeLayout.location.x));
-                ViewUtil.setStructuralFeatureValue(shapeLayout.view, NotationPackage.eINSTANCE.getLocation_Y(),
-                        Integer.valueOf(shapeLayout.location.y));
+                ViewUtil.setStructuralFeatureValue(shapeLayout.view, NotationPackage.eINSTANCE
+                        .getLocation_X(), Integer.valueOf(shapeLayout.location.x));
+                ViewUtil.setStructuralFeatureValue(shapeLayout.view, NotationPackage.eINSTANCE
+                        .getLocation_Y(), Integer.valueOf(shapeLayout.location.y));
             }
             // set new size of the element
             if (shapeLayout.size != null) {
-                ViewUtil.setStructuralFeatureValue(shapeLayout.view, NotationPackage.eINSTANCE.getSize_Width(),
-                        Integer.valueOf(shapeLayout.size.width));
-                ViewUtil.setStructuralFeatureValue(shapeLayout.view, NotationPackage.eINSTANCE.getSize_Height(),
-                        Integer.valueOf(shapeLayout.size.height));
+                ViewUtil.setStructuralFeatureValue(shapeLayout.view, NotationPackage.eINSTANCE
+                        .getSize_Width(), Integer.valueOf(shapeLayout.size.width));
+                ViewUtil.setStructuralFeatureValue(shapeLayout.view, NotationPackage.eINSTANCE
+                        .getSize_Height(), Integer.valueOf(shapeLayout.size.height));
             }
         }
         shapeLayouts.clear();
@@ -194,9 +194,8 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
         return CommandResult.newOKCommandResult();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.gmf.runtime.emf.commands.core.command.AbstractTransactionalCommand#getAffectedFiles()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public List<?> getAffectedFiles() {

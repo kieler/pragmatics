@@ -18,7 +18,7 @@
             class="de.cau.cs.kieler.kiml.viewer.views.ExecutionView"
             icon="icons/clock.gif"
             id="de.cau.cs.kieler.kiml.viewer.execution"
-            name="Execution"
+            name="Layout Time"
             restorable="true">
       </view>
    </extension>

@@ -30,11 +30,12 @@ import de.cau.cs.kieler.core.util.Pair;
  */
 public class ApplyLayoutRequest extends Request {
 
-    /** the request type used to apply layout */
+    /** the request type used to apply layout. */
     public static final String REQ_APPLY_LAYOUT = "apply layout";
     
-    /** list of layout graph elements and the corresponding edit parts */
-    private List<Pair<KGraphElement, GraphicalEditPart>> mappingList = new LinkedList<Pair<KGraphElement, GraphicalEditPart>>();
+    /** list of layout graph elements and the corresponding edit parts. */
+    private List<Pair<KGraphElement, GraphicalEditPart>> mappingList
+            = new LinkedList<Pair<KGraphElement, GraphicalEditPart>>();
     
     /**
      * Creates a request to apply layout.
@@ -49,7 +50,7 @@ public class ApplyLayoutRequest extends Request {
      * @param element graph element with layout data
      * @param editPart the corresponding edit part
      */
-    public void addElement(KGraphElement element, GraphicalEditPart editPart) {
+    public void addElement(final KGraphElement element, final GraphicalEditPart editPart) {
         mappingList.add(new Pair<KGraphElement, GraphicalEditPart>(element, editPart));
     }
     

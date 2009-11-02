@@ -47,28 +47,28 @@ import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
  */
 public class Draw2DLayoutProvider extends AbstractLayoutProvider {
 
-    /** parameter value for the compound version of the layout algorithm */
+    /** parameter value for the compound version of the layout algorithm. */
     public static final String PARAM_COMPOUND = "Compound";
 
-    /** default value for minimal spacing */
+    /** default value for minimal spacing. */
     private static final float DEF_MIN_SPACING = 16.0f;
     
-    /** indicates whether the compound graph version of the algorithm shall be used */
+    /** indicates whether the compound graph version of the algorithm shall be used. */
     private boolean compoundMode = false;
     
-    /*
-     * (non-Javadoc)
-     * @see de.cau.cs.kieler.kiml.layout.services.AbstractLayoutProvider#initialize(java.lang.String)
+    /**
+     * {@inheritDoc}
      */
-    public void initialize(String parameter) {
+    @Override
+    public void initialize(final String parameter) {
         compoundMode = PARAM_COMPOUND.equals(parameter);
     }
     
-    /*
-     * (non-Javadoc)
-     * @see de.cau.cs.kieler.kiml.layout.services.AbstractLayoutProvider#doLayout(de.cau.cs.kieler.core.kgraph.KNode, de.cau.cs.kieler.core.alg.IKielerProgressMonitor)
+    /**
+     * {@inheritDoc}
      */
-    public void doLayout(KNode layoutNode, IKielerProgressMonitor progressMonitor)
+    @Override
+    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor)
             throws KielerException {
         progressMonitor.begin("Draw2D Directed Graph layout", 10);
         
@@ -81,19 +81,20 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
         progressMonitor.done();
     }
     
-    /*
-     * (non-Javadoc)
-     * @see de.cau.cs.kieler.kiml.layout.services.AbstractLayoutProvider#getDefault(java.lang.String)
+    /**
+     * {@inheritDoc}
      */
-    public Object getDefault(String optionId) {
-        if (LayoutOptions.MIN_SPACING.equals(optionId))
+    @Override
+    public Object getDefault(final String optionId) {
+        if (LayoutOptions.MIN_SPACING.equals(optionId)) {
             return DEF_MIN_SPACING;
-        else if (LayoutOptions.LAYOUT_DIRECTION.equals(optionId))
+        } else if (LayoutOptions.LAYOUT_DIRECTION.equals(optionId)) {
             return LayoutDirection.VERTICAL;
-        else if (LayoutOptions.FIXED_SIZE.equals(optionId))
+        } else if (LayoutOptions.FIXED_SIZE.equals(optionId)) {
             return false;
-        else
+        } else {
             return null;
+        }
     }
     
     /**
@@ -103,14 +104,15 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
      * @return a graph that contains the children of the given parent
      */
     @SuppressWarnings("unchecked")
-    private DirectedGraph buildDraw2dGraph(KNode layoutNode) {
+    private DirectedGraph buildDraw2dGraph(final KNode layoutNode) {
         DirectedGraph graph = new DirectedGraph();
         
         // set layout options for the graph
         KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
         float minSpacing = LayoutOptions.getMinSpacing(parentLayout);
-        if (Float.isNaN(minSpacing))
+        if (Float.isNaN(minSpacing)) {
             minSpacing = DEF_MIN_SPACING;
+        }
         graph.setDefaultPadding(new Insets((int)minSpacing));
         graph.setMargin(new Insets((int)minSpacing));
         LayoutDirection layoutDirection = LayoutOptions.getLayoutDirection(parentLayout);
@@ -153,7 +155,7 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
      * @param parentNode the parent layout node
      * @param graph the Draw2D graph
      */
-    private void applyLayout(KNode parentNode, DirectedGraph graph) {
+    private void applyLayout(final KNode parentNode, final DirectedGraph graph) {
         // apply node layouts
         for (int i = 0; i < graph.nodes.size(); i++) {
             Node node = graph.nodes.getNode(i);

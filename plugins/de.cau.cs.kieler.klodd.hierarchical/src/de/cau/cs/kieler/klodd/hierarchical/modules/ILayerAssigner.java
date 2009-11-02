@@ -24,19 +24,18 @@ import de.cau.cs.kieler.klodd.hierarchical.structures.LayeredGraph;
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public interface ILayerAssigner extends IAlgorithm {
-	
-	/**
-	 * Create a layered graph and assign layers to each node. The input
-	 * ports must be put into the first layer (rank == 0), the output
-	 * ports into the last layer (height == 0).
-	 * 
-	 * @param slimGraph graph structure that contains no directed cycles
-	 * @param parentNode the parent layout node
-	 * @param balanceOverSize indicates whether node balancing has priority
-	 *     over diagram size
-	 * @return a layered graph
-	 */
-	public LayeredGraph assignLayers(KSlimGraph slimGraph, KNode parentNode,
-	        boolean balanceOverSize);
+
+    /**
+     * Create a layered graph and assign layers to each node. The input ports
+     * must be put into the first layer (rank == 0), the output ports into the
+     * last layer (height == 0).
+     * 
+     * @param slimGraph graph structure that contains no directed cycles
+     * @param parentNode the parent layout node
+     * @param balanceOverSize indicates whether node balancing has priority over
+     *            diagram size
+     * @return a layered graph
+     */
+    LayeredGraph assignLayers(KSlimGraph slimGraph, KNode parentNode, boolean balanceOverSize);
 
 }

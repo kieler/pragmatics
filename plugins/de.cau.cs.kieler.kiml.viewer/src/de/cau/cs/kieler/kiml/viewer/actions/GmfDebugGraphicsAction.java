@@ -28,15 +28,15 @@ import de.cau.cs.kieler.kiml.viewer.views.LayoutGraphView;
  */
 public class GmfDebugGraphicsAction extends Action {
 
-    /** Icon for the Action */
+    /** Icon for the Action. */
     private static final String ICON_PATH = "icons/overlay.gif";
     
     LayoutGraphView view;
     
     /**
-     * @param layoutGraphView
+     * @param layoutGraphView the layout graph view
      */
-    public GmfDebugGraphicsAction(LayoutGraphView layoutGraphView) {
+    public GmfDebugGraphicsAction(final LayoutGraphView layoutGraphView) {
         view = layoutGraphView;
         
         setText(Messages.getString("Overlay"));

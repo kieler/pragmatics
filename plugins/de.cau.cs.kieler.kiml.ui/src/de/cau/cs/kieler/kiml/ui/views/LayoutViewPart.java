@@ -57,16 +57,16 @@ import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
  */
 public class LayoutViewPart extends ViewPart implements ISelectionChangedListener {
 
-    /** the view identifier */
+    /** the view identifier. */
     public static final String VIEW_ID = "de.cau.cs.kieler.kiml.views.layout";
     
-    /** the form container for the property sheet page */
+    /** the form container for the property sheet page. */
     private ScrolledForm form;
-    /** the page that is displayed in this view part */
+    /** the page that is displayed in this view part. */
     private PropertySheetPage page;
-    /** the part listener that tracks the active editor part */
+    /** the part listener that tracks the active editor part. */
     private IPartListener partListener;
-    /** the currently tracked diagram editor */
+    /** the currently tracked diagram editor. */
     private DiagramEditor currentEditor;
     
     /**
@@ -76,31 +76,32 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
         try {
             IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
             progressService.runInUI(progressService, new IRunnableWithProgress() {
-                public void run(IProgressMonitor monitor) throws InvocationTargetException,
+                public void run(final IProgressMonitor monitor) throws InvocationTargetException,
                         InterruptedException {
                     IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
                     if (activeWindow != null) {
                         IWorkbenchPage activePage = activeWindow.getActivePage();
                         if (activePage != null) {
                             LayoutViewPart layoutViewPart = (LayoutViewPart)activePage.findView(VIEW_ID);
-                            if (layoutViewPart != null)
+                            if (layoutViewPart != null) {
                                 layoutViewPart.page.refresh();
+                            }
                         }
                     }
                 }
             }, null);
-        }
-        catch (Exception exception) {
+        } catch (Exception exception) {
             IStatus status = new Status(IStatus.WARNING, KimlUiPlugin.PLUGIN_ID,
                     0, "Could not refresh the layout view.", exception);
             StatusManager.getManager().handle(status, StatusManager.LOG);
         }
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
+    /**
+     * {@inheritDoc}
      */
-    public void createPartControl(Composite parent) {
+    @Override
+    public void createPartControl(final Composite parent) {
         FormToolkit toolkit = new FormToolkit(parent.getDisplay());
         form = toolkit.createScrolledForm(parent);
         form.setText("");
@@ -119,11 +120,12 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
         formData.bottom = new FormAttachment(100, 0);
         page.getControl().setLayoutData(formData);
         page.setPropertySourceProvider(new IPropertySourceProvider() {
-            public IPropertySource getPropertySource(Object object) {
-                if (object instanceof IGraphicalEditPart)
+            public IPropertySource getPropertySource(final Object object) {
+                if (object instanceof IGraphicalEditPart) {
                     return new GmfLayoutPropertySource((IGraphicalEditPart)object);
-                else
+                } else {
                     return null;
+                }
             }
         });
         IActionBars actionBars = getViewSite().getActionBars();
@@ -134,38 +136,44 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
         IWorkbenchPage activePage = workbenchWindow.getActivePage();
         if (activePage != null) {
             IWorkbenchPart activePart = activePage.getActivePart();
-            if (activePart != null)
+            if (activePart != null) {
                 setInput(activePart);
+            }
         }
         
         partListener = new IPartListener() {
-            public void partActivated(IWorkbenchPart part) {
+            public void partActivated(final IWorkbenchPart part) {
                 setInput(part);
             }
-            public void partDeactivated(IWorkbenchPart part) {
+            public void partDeactivated(final IWorkbenchPart part) {
                 if (part == currentEditor) {
-                    currentEditor.getDiagramGraphicalViewer().removeSelectionChangedListener(LayoutViewPart.this);
+                    currentEditor.getDiagramGraphicalViewer()
+                            .removeSelectionChangedListener(LayoutViewPart.this);
                     currentEditor = null;
                 }
             }
-            public void partBroughtToTop(IWorkbenchPart part) {}
-            public void partClosed(IWorkbenchPart part) {}
-            public void partOpened(IWorkbenchPart part) {}
+            public void partBroughtToTop(final IWorkbenchPart part) {
+            }
+            public void partClosed(final IWorkbenchPart part) {
+            }
+            public void partOpened(final IWorkbenchPart part) {
+            }
         };
         workbenchWindow.getPartService().addPartListener(partListener);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
+    /**
+     * {@inheritDoc}
      */
+    @Override
     public void setFocus() {
         page.setFocus();
     }
     
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.ui.part.WorkbenchPart#dispose()
+    /**
+     * {@inheritDoc}
      */
+    @Override
     public void dispose() {
         super.dispose();
         getSite().getWorkbenchWindow().getPartService().removePartListener(partListener);
@@ -180,10 +188,11 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
      * 
      * @param part the active workbench part
      */
-    private void setInput(IWorkbenchPart part) {
+    private void setInput(final IWorkbenchPart part) {
         if (part instanceof DiagramEditor) {
-            if (currentEditor != null)
+            if (currentEditor != null) {
                 currentEditor.getDiagramGraphicalViewer().removeSelectionChangedListener(this);
+            }
             currentEditor = (DiagramEditor)part;
             ISelection selection = currentEditor.getDiagramGraphicalViewer().getSelection();
             page.selectionChanged(currentEditor, selection);
@@ -192,10 +201,10 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
         }        
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+    /**
+     * {@inheritDoc}
      */
-    public void selectionChanged(SelectionChangedEvent event) {
+    public void selectionChanged(final SelectionChangedEvent event) {
         if (currentEditor != null) {
             page.selectionChanged(currentEditor, event.getSelection());
             setPartText(event.getSelection());
@@ -207,29 +216,33 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
      * 
      * @param selection the current selection
      */
-    private void setPartText(ISelection selection) {
+    private void setPartText(final ISelection selection) {
         if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
             Object firstElement = ((IStructuredSelection)selection).getFirstElement();
             if (firstElement instanceof EditPart) {
                 Object model = ((EditPart)firstElement).getModel();
-                if (model instanceof View)
+                if (model instanceof View) {
                     model = ((View)model).getElement();
+                }
                 StringBuffer textBuffer = new StringBuffer();
-                if (model instanceof EObject)
+                if (model instanceof EObject) {
                     textBuffer.append(((EObject)model).eClass().getName());
-                else
+                } else {
                     textBuffer.append(model.getClass().getSimpleName());
+                }
                 String name = getProperty(model, "Name");
-                if (name == null)
+                if (name == null) {
                     name = getProperty(model, "Label");
-                if (name == null)
+                }
+                if (name == null) {
                     name = getProperty(model, "Id");
-                if (name != null)
+                }
+                if (name != null) {
                     textBuffer.append(" '" + name + "'");
+                }
                 form.setText(textBuffer.toString());
             }
-        }
-        else {
+        } else {
             form.setText("");
         }
     }
@@ -241,11 +254,10 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
      * @param property the name of a property, starting with a capital
      * @return the named property, or {@code null} if there is no such property
      */
-    private static String getProperty(Object object, String property) {
+    private static String getProperty(final Object object, final String property) {
         try {
             return (String)object.getClass().getMethod("get" + property).invoke(object);
-        }
-        catch (Exception exception) {
+        } catch (Exception exception) {
             return null;
         }
     }

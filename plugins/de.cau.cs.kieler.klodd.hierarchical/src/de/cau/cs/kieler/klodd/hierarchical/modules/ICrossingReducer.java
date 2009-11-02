@@ -23,12 +23,12 @@ import de.cau.cs.kieler.klodd.hierarchical.structures.LayeredGraph;
  */
 public interface ICrossingReducer extends IAlgorithm {
 
-	/**
-	 * Reduces the number of crossings in a given layered directed
-	 * graph by changing the order of nodes in each layer.
-	 * 
-	 * @param layeredGraph layered graph to process
-	 */
-	public void reduceCrossings(LayeredGraph layeredGraph);
-	
+    /**
+     * Reduces the number of crossings in a given layered directed graph by
+     * changing the order of nodes in each layer.
+     * 
+     * @param layeredGraph layered graph to process
+     */
+    void reduceCrossings(LayeredGraph layeredGraph);
+
 }

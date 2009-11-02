@@ -30,13 +30,9 @@ public class DFSCycleRemover extends AbstractCycleRemover {
     /** next DFS number to use. */
     private int nextDfs;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see de.cau.cs.kieler.core.graph.alg.ICycleRemover#removeCycles(de.cau.cs.
-     *     kieler.core.graph.KGraph)
+    /**
+     * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public void removeCycles(final KSlimGraph graph) {
         getMonitor().begin("DFS cycle removal", 1);
         reversedEdges = new LinkedList<KSlimEdge>();

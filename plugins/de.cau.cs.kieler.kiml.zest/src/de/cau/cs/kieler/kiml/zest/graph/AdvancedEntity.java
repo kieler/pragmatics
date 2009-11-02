@@ -22,18 +22,19 @@ import org.eclipse.zest.layouts.exampleStructures.SimpleNode;
  */
 public class AdvancedEntity extends SimpleNode {
 
-	/**
-	 * Initializes the entity.
-	 * 
-	 * @param realObject reference to the corresponding layout node in the layout graph
-	 * @param x current horizontal position
-	 * @param y current vertical position
-	 * @param width current width
-	 * @param height current height
-	 */
-	public AdvancedEntity(Object realObject, double x, double y, double width,
-			double height) {
-		super(realObject, x, y, width, height);
-	}
+    /**
+     * Initializes the entity.
+     * 
+     * @param realObject reference to the corresponding layout node in the
+     *            layout graph
+     * @param x current horizontal position
+     * @param y current vertical position
+     * @param width current width
+     * @param height current height
+     */
+    public AdvancedEntity(final Object realObject, final double x,
+            final double y, final double width, final double height) {
+        super(realObject, x, y, width, height);
+    }
 
 }
