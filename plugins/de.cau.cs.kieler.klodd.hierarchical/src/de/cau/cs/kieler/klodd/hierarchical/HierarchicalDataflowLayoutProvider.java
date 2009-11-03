@@ -29,6 +29,7 @@ import de.cau.cs.kieler.core.slimgraph.alg.ICycleRemover;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KPoint;
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.layout.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.options.PortConstraints;
@@ -128,10 +129,16 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
         progressMonitor.begin("Hierarchical layout", 75);
         // get the currently configured modules
         updateModules();
-        // set option for minimal distance
-        float minDist = LayoutOptions.getMinSpacing(KimlLayoutUtil.getShapeLayout(layoutNode));
-        if (Float.isNaN(minDist)) {
-            minDist = DEF_MIN_DIST;
+        KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
+        // set option for minimal object spacing
+        float objSpacing = LayoutOptions.getMinSpacing(parentLayout);
+        if (Float.isNaN(objSpacing)) {
+            objSpacing = DEF_MIN_DIST;
+        }
+        // set option for border spacing
+        float borderSpacing = LayoutOptions.getBorderSpacing(parentLayout);
+        if (Float.isNaN(borderSpacing)) {
+            borderSpacing = DEF_MIN_DIST;
         }
 
         // perform some pre-processing
@@ -155,10 +162,10 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
             nodewiseEdgePlacer.placeEdges(layeredGraph);
             // determine a crosswise placement for each node
             nodePlacer.reset(progressMonitor.subTask(10));
-            nodePlacer.placeNodes(layeredGraph, minDist, balanceOverSize);
+            nodePlacer.placeNodes(layeredGraph, objSpacing, borderSpacing, balanceOverSize);
             // route edges between nodes
             edgeRouter.reset(progressMonitor.subTask(10));
-            edgeRouter.routeEdges(layeredGraph, minDist);
+            edgeRouter.routeEdges(layeredGraph, objSpacing, borderSpacing);
         }
         layeredGraph.applyLayout();
         restoreCycles();
@@ -176,6 +183,8 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
         } else if (LayoutOptions.LAYOUT_DIRECTION.equals(optionId)) {
             return LayoutDirection.HORIZONTAL;
         } else if (LayoutOptions.MIN_SPACING.equals(optionId)) {
+            return DEF_MIN_DIST;
+        } else if (LayoutOptions.BORDER_SPACING.equals(optionId)) {
             return DEF_MIN_DIST;
         } else if (LayoutOptions.PORT_CONSTRAINTS.equals(optionId)) {
             return PortConstraints.UNDEFINED;

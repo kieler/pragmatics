@@ -27,8 +27,9 @@ public interface IEdgeRouter extends IAlgorithm {
      * Route the edges of the given layered graph.
      * 
      * @param layeredGraph layered graph to process
-     * @param minDist minimal distance between two edges
+     * @param objSpacing minimal distance between two edges
+     * @param borderSpacing spacing to the border
      */
-    void routeEdges(LayeredGraph layeredGraph, float minDist);
+    void routeEdges(LayeredGraph layeredGraph, float objSpacing, float borderSpacing);
 
 }

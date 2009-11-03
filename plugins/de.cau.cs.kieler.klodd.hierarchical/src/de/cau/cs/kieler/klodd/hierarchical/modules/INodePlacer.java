@@ -28,10 +28,12 @@ public interface INodePlacer extends IAlgorithm {
      * Determine a placement for each node in the given layered graph.
      * 
      * @param layeredGraph layered graph to process
-     * @param minDist minimal distance between two nodes or edges in each layer
+     * @param objSpacing minimal distance between two nodes or edges in each layer
+     * @param borderSpacing spacing to the border
      * @param balanceOverSize indicates whether node balancing has priority over
      *            diagram size
      */
-    void placeNodes(LayeredGraph layeredGraph, float minDist, boolean balanceOverSize);
+    void placeNodes(LayeredGraph layeredGraph, float objSpacing, float borderSpacing,
+            boolean balanceOverSize);
 
 }

@@ -31,6 +31,9 @@
                option="de.cau.cs.kieler.layout.options.minSpacing">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.layout.options.borderSpacing">
+         </knownOption>
+         <knownOption
                option="de.cau.cs.kieler.layout.options.priority">
          </knownOption>
          <knownOption
@@ -102,7 +105,14 @@
             appliesTo="parents"
             description="Minimal amount of space to be left between objects"
             id="de.cau.cs.kieler.layout.options.minSpacing"
-            name="Minimal Spacing"
+            name="Object Spacing"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            description="Minimal amount of space to be left to the border"
+            id="de.cau.cs.kieler.layout.options.borderSpacing"
+            name="Border Spacing"
             type="float">
       </layoutOption>
       <layoutOption

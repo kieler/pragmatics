@@ -43,17 +43,18 @@ public class BoxPlacer extends AbstractAlgorithm {
      * 
      * @param sortedBoxes sorted list of boxes
      * @param parentNode parent node
-     * @param spacing minimal spacing between elements
+     * @param objSpacing minimal spacing between elements
+     * @param borderSpacing spacing to the border
      * @param expandNodes if true, the nodes are expanded to fill their parent
      */
     public void placeBoxes(final List<KNode> sortedBoxes, final KNode parentNode,
-            final float spacing, final boolean expandNodes) {
+            final float objSpacing, final float borderSpacing, final boolean expandNodes) {
         getMonitor().begin("Box placement", 1);
         KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(parentNode);
 
         // do place the boxes
-        placeBoxes(sortedBoxes, spacing, LayoutOptions.getMinWidth(parentLayout), LayoutOptions
-                .getMinHeight(parentLayout), expandNodes);
+        placeBoxes(sortedBoxes, objSpacing, borderSpacing, LayoutOptions.getMinWidth(parentLayout),
+                LayoutOptions.getMinHeight(parentLayout), expandNodes);
 
         // adjust parent size
         KInsets insets = LayoutOptions.getInsets(parentLayout);
@@ -69,12 +70,14 @@ public class BoxPlacer extends AbstractAlgorithm {
      * 
      * @param sortedBoxes sorted list of boxes
      * @param minSpacing minimal spacing between elements
+     * @param borderSpacing spacing to the border
      * @param minTotalWidth minimal width of the parent node
      * @param minTotalHeight minimal height of the parent node
      * @param expandNodes if true, the nodes are expanded to fill their parent
      */
     private void placeBoxes(final List<KNode> sortedBoxes, final float minSpacing,
-            final float minTotalWidth, final float minTotalHeight, final boolean expandNodes) {
+            final float borderSpacing, final float minTotalWidth, final float minTotalHeight,
+            final boolean expandNodes) {
         // determine the maximal row width by the maximal box width and the
         // total area
         float maxRowWidth = 0.0f;
@@ -87,10 +90,12 @@ public class BoxPlacer extends AbstractAlgorithm {
             maxRowWidth = Math.max(maxRowWidth, boxLayout.getWidth());
             totalArea += boxLayout.getWidth() * boxLayout.getHeight();
         }
-        maxRowWidth = Math.max(maxRowWidth, (float) Math.sqrt(totalArea)) * MAX_BROADEN;
+        maxRowWidth = Math.max(maxRowWidth, (float) Math.sqrt(totalArea)) * MAX_BROADEN
+                + borderSpacing;
 
         // place nodes iteratively into rows
-        float xpos = minSpacing, ypos = minSpacing, highestBox = 0.0f, broadestRow = 2 * minSpacing;
+        float xpos = borderSpacing, ypos = borderSpacing, highestBox = 0.0f,
+                broadestRow = 2 * borderSpacing;
         LinkedList<Integer> rowIndices = new LinkedList<Integer>();
         rowIndices.add(Integer.valueOf(0));
         LinkedList<Float> rowHeights = new LinkedList<Float>();
@@ -105,19 +110,19 @@ public class BoxPlacer extends AbstractAlgorithm {
                     rowHeights.addLast(Float.valueOf(highestBox));
                     rowIndices.addLast(Integer.valueOf(boxIter.previousIndex()));
                 }
-                xpos = minSpacing;
+                xpos = borderSpacing;
                 ypos += highestBox + minSpacing;
                 highestBox = 0.0f;
-                broadestRow = Math.max(broadestRow, 2 * minSpacing + width);
+                broadestRow = Math.max(broadestRow, 2 * borderSpacing + width);
             }
             boxLayout.setXpos(xpos);
             boxLayout.setYpos(ypos);
-            xpos += width + minSpacing;
-            broadestRow = Math.max(broadestRow, xpos);
+            broadestRow = Math.max(broadestRow, xpos + width + borderSpacing);
             highestBox = Math.max(highestBox, height);
+            xpos += width + minSpacing;
         }
         broadestRow = Math.max(broadestRow, minTotalWidth);
-        float totalHeight = ypos + highestBox + minSpacing;
+        float totalHeight = ypos + highestBox + borderSpacing;
         if (totalHeight < minTotalHeight) {
             highestBox += minTotalHeight - totalHeight;
             totalHeight = minTotalHeight;
@@ -125,7 +130,7 @@ public class BoxPlacer extends AbstractAlgorithm {
 
         // expand nodes if required
         if (expandNodes) {
-            xpos = minSpacing;
+            xpos = borderSpacing;
             boxIter = sortedBoxes.listIterator();
             rowIndices.addLast(Integer.valueOf(sortedBoxes.size()));
             ListIterator<Integer> rowIndexIter = rowIndices.listIterator();
@@ -135,14 +140,14 @@ public class BoxPlacer extends AbstractAlgorithm {
             float rowHeight = 0.0f;
             while (boxIter.hasNext()) {
                 if (boxIter.nextIndex() == nextRowIndex) {
-                    xpos = minSpacing;
+                    xpos = borderSpacing;
                     rowHeight = rowHeightIter.next();
                     nextRowIndex = rowIndexIter.next();
                 }
                 KShapeLayout boxLayout = KimlLayoutUtil.getShapeLayout(boxIter.next());
                 boxLayout.setHeight(rowHeight);
                 if (boxIter.nextIndex() == nextRowIndex) {
-                    boxLayout.setWidth(broadestRow - xpos - minSpacing);
+                    boxLayout.setWidth(broadestRow - xpos - borderSpacing);
                 }
                 xpos += boxLayout.getWidth() + minSpacing;
             }

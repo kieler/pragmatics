@@ -47,6 +47,9 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.fixedSize">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.borderSpacing">
+         </knownOption>
       </layoutProvider>
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.graphviz"
@@ -64,6 +67,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.layout.options.fixedSize">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.borderSpacing">
          </knownOption>
       </layoutProvider>
       <layoutProvider
@@ -83,6 +89,9 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.fixedSize">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.borderSpacing">
+         </knownOption>
       </layoutProvider>
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.graphviz"
@@ -101,6 +110,9 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.fixedSize">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.borderSpacing">
+         </knownOption>
       </layoutProvider>
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.graphviz"
@@ -118,6 +130,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.layout.options.fixedSize">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.borderSpacing">
          </knownOption>
       </layoutProvider>
    </extension>

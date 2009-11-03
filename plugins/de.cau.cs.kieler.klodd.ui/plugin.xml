@@ -23,6 +23,9 @@
                option="de.cau.cs.kieler.layout.options.minSpacing">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.layout.options.borderSpacing">
+         </knownOption>
+         <knownOption
                option="de.cau.cs.kieler.layout.options.portConstraints">
          </knownOption>
       </layoutProvider>

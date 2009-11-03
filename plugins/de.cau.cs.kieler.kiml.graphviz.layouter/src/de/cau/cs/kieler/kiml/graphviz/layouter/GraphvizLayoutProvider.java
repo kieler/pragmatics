@@ -66,6 +66,8 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
     public Object getDefault(final String optionId) {
         if (LayoutOptions.LAYOUT_DIRECTION.equals(optionId)) {
             return LayoutDirection.HORIZONTAL;
+        } else if (LayoutOptions.BORDER_SPACING.equals(optionId)) {
+            return GraphvizLayouter.DEF_MIN_SPACING / 2;
         } else if (LayoutOptions.MIN_SPACING.equals(optionId)) {
             return GraphvizLayouter.DEF_MIN_SPACING;
         } else if (LayoutOptions.FIXED_SIZE.equals(optionId)) {

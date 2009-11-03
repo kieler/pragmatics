@@ -62,9 +62,9 @@ public class GraphvizLayouter {
     private static class Point {
         float x, y;
 
-        Point(final float x, final float y) {
-            this.x = x;
-            this.y = y;
+        Point(final float thex, final float they) {
+            this.x = thex;
+            this.y = they;
         }
     }
 
@@ -110,6 +110,8 @@ public class GraphvizLayouter {
      * 
      * @param parentNode the node to process
      * @param progressMonitor a monitor to which progress is reported
+     * @param command Graphviz command to use, determines the layout algorithm
+     * @throws KielerException if Graphviz layout fails
      */
     public void layout(final KNode parentNode, final IKielerProgressMonitor progressMonitor,
             final String command) throws KielerException {
@@ -183,7 +185,7 @@ public class GraphvizLayouter {
         graphAttrStatement.setType(AttributeType.GRAPH);
         AttributeList graphAttrs = DotFactory.eINSTANCE.createAttributeList();
         KLayoutData parentLayout = KimlLayoutUtil.getShapeLayout(parent);
-        // set minimal spacing and offset
+        // set minimal spacing
         float minSpacing = LayoutOptions.getMinSpacing(parentLayout);
         if (Float.isNaN(minSpacing)) {
             minSpacing = DEF_MIN_SPACING;
@@ -203,7 +205,11 @@ public class GraphvizLayouter {
             edgeAttrStatement.setAttributes(edgeAttrs);
             graph.getStatements().add(edgeAttrStatement);
         }
-        offset = minSpacing;
+        // set offset to border
+        offset = LayoutOptions.getBorderSpacing(parentLayout);
+        if (Float.isNaN(offset)) {
+            offset = DEF_MIN_SPACING / 2;
+        }
         // set layout direction
         if (command.equals(DOT_COMMAND)) {
             if (LayoutOptions.getLayoutDirection(parentLayout) == LayoutDirection.VERTICAL) {

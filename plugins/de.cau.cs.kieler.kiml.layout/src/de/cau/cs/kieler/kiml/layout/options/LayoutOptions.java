@@ -397,6 +397,41 @@ public final class LayoutOptions {
         }
         spacingOption.setValue(spacing);
     }
+    
+    /** layout option key: distance to border of the drawing. */
+    public static final String BORDER_SPACING = "de.cau.cs.kieler.layout.options.borderSpacing";
+
+    /**
+     * Returns the border spacing for a given layout data instance.
+     * 
+     * @param layoutData layout data for a parent node
+     * @return the border spacing for the given layout data, or {@code NaN} if
+     *         there is no such option
+     */
+    public static float getBorderSpacing(final KLayoutData layoutData) {
+        KFloatOption spacingOption = (KFloatOption) layoutData.getOption(BORDER_SPACING);
+        if (spacingOption == null) {
+            return Float.NaN;
+        } else {
+            return spacingOption.getValue();
+        }
+    }
+
+    /**
+     * Sets the border spacing for the given layout data instance.
+     * 
+     * @param layoutData layout data for a parent node
+     * @param spacing border spacing to set
+     */
+    public static void setBorderSpacing(final KLayoutData layoutData, final float spacing) {
+        KFloatOption spacingOption = (KFloatOption) layoutData.getOption(BORDER_SPACING);
+        if (spacingOption == null) {
+            spacingOption = KLayoutDataFactory.eINSTANCE.createKFloatOption();
+            spacingOption.setKey(BORDER_SPACING);
+            layoutData.getOptions().add(spacingOption);
+        }
+        spacingOption.setValue(spacing);
+    }
 
     /** layout option key: priority of elements. */
     public static final String PRIORITY = "de.cau.cs.kieler.layout.options.priority";

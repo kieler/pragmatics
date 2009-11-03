@@ -47,7 +47,9 @@ public class BasicNodePlacer extends AbstractAlgorithm implements INodePlacer {
     private static final float DIST_FACTOR = 1.37f;
 
     /** minimal distance between two nodes or edges in each layer. */
-    private float minDist;
+    private float objSpacing;
+    /** spacing to the border. */
+    private float borderSpacing;
     /** layout direction for this algorithm instance. */
     private LayoutDirection layoutDirection;
     /** array of sorted segments. */
@@ -70,11 +72,12 @@ public class BasicNodePlacer extends AbstractAlgorithm implements INodePlacer {
     /**
      * {@inheritDoc}
      */
-    public void placeNodes(final LayeredGraph layeredGraph, final float theminDist,
-            final boolean balanceOverSize) {
+    public void placeNodes(final LayeredGraph layeredGraph, final float theobjSpacing,
+            final float theborderSpacing, final boolean balanceOverSize) {
         getMonitor().begin("Basic node placement", 1);
 
-        this.minDist = theminDist;
+        this.objSpacing = theobjSpacing;
+        this.borderSpacing = theborderSpacing;
         this.layoutDirection = layeredGraph.getLayoutDirection();
         this.lastElements = new LayerElement[layeredGraph.getLayers().size()
                 + layeredGraph.getLayers().get(0).rank];
@@ -96,7 +99,7 @@ public class BasicNodePlacer extends AbstractAlgorithm implements INodePlacer {
 
         // set the proper crosswise dimension for the whole graph
         for (Layer layer : layeredGraph.getLayers()) {
-            layer.crosswiseDim += theminDist;
+            layer.crosswiseDim += theborderSpacing;
             layeredGraph.crosswiseDim = Math.max(layeredGraph.crosswiseDim, layer.crosswiseDim);
         }
 
@@ -217,15 +220,16 @@ public class BasicNodePlacer extends AbstractAlgorithm implements INodePlacer {
                 leftmostPlace = Math.max(leftmostPlace, element.getLayer().crosswiseDim);
             }
             // apply the leftmost / uppermost placement to all elements
-            float newPos = leftmostPlace + DIST_FACTOR * minDist;
+            float newPos = leftmostPlace < borderSpacing ? borderSpacing
+                    : leftmostPlace + DIST_FACTOR * objSpacing;
             for (LayerElement element : segment.elements) {
                 Layer layer = element.getLayer();
                 if (lastElements[layer.rank] != null) {
                     spacingMap.put(lastElements[layer.rank], Float.valueOf(leftmostPlace
                             - layer.crosswiseDim));
                 }
-                element.setCrosswisePos(newPos, minDist);
-                float totalCrosswiseDim = element.getTotalCrosswiseDim(minDist);
+                element.setCrosswisePos(newPos, objSpacing);
+                float totalCrosswiseDim = element.getTotalCrosswiseDim(objSpacing);
                 layer.crosswiseDim = newPos + totalCrosswiseDim;
                 layer.lengthwiseDim = Math.max(layer.lengthwiseDim,
                         layoutDirection == LayoutDirection.VERTICAL ? element.getRealHeight() : element

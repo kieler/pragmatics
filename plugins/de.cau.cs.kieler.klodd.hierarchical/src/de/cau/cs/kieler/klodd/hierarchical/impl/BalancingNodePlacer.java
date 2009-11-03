@@ -37,7 +37,7 @@ public class BalancingNodePlacer extends AbstractAlgorithm implements INodePlace
     /** basic node placer that is executed before this algorithm begins. */
     private BasicNodePlacer basicNodePlacer;
     /** minimal distance between two nodes or edges in each layer. */
-    private float minDist;
+    private float objSpacing;
     /** maximal crosswise dimension of the layered graph. */
     private float maxWidth;
     /** layout direction for this algorithm instance. */
@@ -63,16 +63,16 @@ public class BalancingNodePlacer extends AbstractAlgorithm implements INodePlace
     /**
      * {@inheritDoc}
      */
-    public void placeNodes(final LayeredGraph layeredGraph, final float theminDist,
-            final boolean thebalanceOverSize) {
+    public void placeNodes(final LayeredGraph layeredGraph, final float theobjSpacing,
+            final float borderSpacing, final boolean thebalanceOverSize) {
         getMonitor().begin("Balancing node placement", 2);
 
-        this.minDist = theminDist;
+        this.objSpacing = theobjSpacing;
         this.layoutDirection = layeredGraph.getLayoutDirection();
         this.balanceOverSize = thebalanceOverSize;
         // apply the basic node placement
         basicNodePlacer.reset(getMonitor().subTask(1));
-        basicNodePlacer.placeNodes(layeredGraph, theminDist, thebalanceOverSize);
+        basicNodePlacer.placeNodes(layeredGraph, theobjSpacing, borderSpacing, thebalanceOverSize);
         int movableCount = basicNodePlacer.getMovableSegments().length;
 
         // create array of move requests
@@ -147,10 +147,10 @@ public class BalancingNodePlacer extends AbstractAlgorithm implements INodePlace
             LayerElement lastElem = layer2.getElements().get(layer2.getElements().size() - 1);
             layer2.crosswiseDim = (layoutDirection == LayoutDirection.VERTICAL
                     ? lastElem.getPosition().getX()
-                            + lastElem.getRealWidth() + lastElem.eastRanks * theminDist
+                            + lastElem.getRealWidth() + lastElem.eastRanks * theobjSpacing
                     : lastElem.getPosition().getY()
-                        + lastElem.getRealHeight() + lastElem.southRanks * theminDist)
-                    + theminDist;
+                        + lastElem.getRealHeight() + lastElem.southRanks * theobjSpacing)
+                    + borderSpacing;
             layeredGraph.crosswiseDim = Math.max(layeredGraph.crosswiseDim, layer2.crosswiseDim);
         }
 
@@ -223,8 +223,8 @@ public class BalancingNodePlacer extends AbstractAlgorithm implements INodePlace
      * @return position difference
      */
     private float calcPosDelta(final LayerConnection connection, final boolean forward) {
-        float sourcePos = connection.calcSourcePos(minDist);
-        float targetPos = connection.calcTargetPos(minDist);
+        float sourcePos = connection.calcSourcePos(objSpacing);
+        float targetPos = connection.calcTargetPos(objSpacing);
 
         // determine position delta, considering previous move requests
         if (forward) {
