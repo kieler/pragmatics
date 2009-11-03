@@ -22,12 +22,12 @@ import de.cau.cs.kieler.core.slimgraph.KSlimGraph;
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public interface IOrthogonalizer extends IAlgorithm {
-	
-	/**
-	 * Performs orthogonalization of a given TSM graph.
-	 * 
-	 * @param graph TSM graph that is to be filled with shape information
-	 */
-	public void orthogonalize(KSlimGraph graph);
+
+    /**
+     * Performs orthogonalization of a given TSM graph.
+     * 
+     * @param graph TSM graph that is to be filled with shape information
+     */
+    void orthogonalize(KSlimGraph graph);
 
 }

@@ -35,8 +35,22 @@ import de.cau.cs.kieler.kiml.layout.options.PortConstraints;
 import de.cau.cs.kieler.kiml.layout.services.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.layout.util.GraphConverter;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
-import de.cau.cs.kieler.klodd.hierarchical.impl.*;
-import de.cau.cs.kieler.klodd.hierarchical.modules.*;
+import de.cau.cs.kieler.klodd.hierarchical.impl.BalancingLayerAssigner;
+import de.cau.cs.kieler.klodd.hierarchical.impl.BalancingNodePlacer;
+import de.cau.cs.kieler.klodd.hierarchical.impl.BarycenterCrossingReducer;
+import de.cau.cs.kieler.klodd.hierarchical.impl.BasicNodePlacer;
+import de.cau.cs.kieler.klodd.hierarchical.impl.LayerSweepCrossingReducer;
+import de.cau.cs.kieler.klodd.hierarchical.impl.LongestPathLayerAssigner;
+import de.cau.cs.kieler.klodd.hierarchical.impl.RectilinearEdgeRouter;
+import de.cau.cs.kieler.klodd.hierarchical.impl.SortingLayerwiseEdgePlacer;
+import de.cau.cs.kieler.klodd.hierarchical.impl.SortingNodewiseEdgePlacer;
+import de.cau.cs.kieler.klodd.hierarchical.impl.ToponumLayerwiseEdgePlacer;
+import de.cau.cs.kieler.klodd.hierarchical.modules.ICrossingReducer;
+import de.cau.cs.kieler.klodd.hierarchical.modules.IEdgeRouter;
+import de.cau.cs.kieler.klodd.hierarchical.modules.ILayerAssigner;
+import de.cau.cs.kieler.klodd.hierarchical.modules.ILayerwiseEdgePlacer;
+import de.cau.cs.kieler.klodd.hierarchical.modules.INodePlacer;
+import de.cau.cs.kieler.klodd.hierarchical.modules.INodewiseEdgePlacer;
 import de.cau.cs.kieler.klodd.hierarchical.structures.LayeredGraph;
 
 /**

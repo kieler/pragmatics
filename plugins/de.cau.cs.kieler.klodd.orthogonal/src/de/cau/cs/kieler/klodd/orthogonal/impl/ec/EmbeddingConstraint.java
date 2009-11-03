@@ -23,44 +23,46 @@ import java.util.List;
  */
 public class EmbeddingConstraint {
 
-	/**
-	 * Definition of constraint types.
-	 */
-	public enum Type {
-		/** this constraint object contains an input edge */
-		IN_EDGE,
-		/** this constraint object contains an output edge */
-		OUT_EDGE,
-		/** the order of children is fixed */
-		ORIENTED,
-		/** the order of children may be reversed */
-		MIRROR,
-		/** the order of children may be arbitrarily permuted */
-		GROUPING
-	}
+    /**
+     * Definition of constraint types.
+     */
+    public enum Type {
+        /** this constraint object contains an input edge. */
+        IN_EDGE,
+        /** this constraint object contains an output edge. */
+        OUT_EDGE,
+        /** the order of children is fixed. */
+        ORIENTED,
+        /** the order of children may be reversed. */
+        MIRROR,
+        /** the order of children may be arbitrarily permuted. */
+        GROUPING
+    }
 
-	/** the type of embedding constraint */
-	public Type type;
-	/** the children of this embedding constraint */
-	public List<EmbeddingConstraint> children = null;
-	/** the parent of this embedding constraint */
-	public EmbeddingConstraint parent;
-	/** the contained object */
-	public Object object;
-	
-	/**
-	 * Creates an embedding constraint of given type.
-	 * 
-	 * @param type the type of embedding constraint
-	 * @param parent the parent constraint, or null if there is no parent
-	 * @param the object to be contained
-	 */
-	public EmbeddingConstraint(Type type, EmbeddingConstraint parent, Object obj) {
-		this.type = type;
-		this.parent = parent;
-		this.object = obj;
-		if (type != Type.IN_EDGE && type != Type.OUT_EDGE)
-			this.children = new LinkedList<EmbeddingConstraint>();
-	}
-	
+    /** the type of embedding constraint. */
+    public Type type;
+    /** the children of this embedding constraint. */
+    public List<EmbeddingConstraint> children = null;
+    /** the parent of this embedding constraint. */
+    public EmbeddingConstraint parent;
+    /** the contained object. */
+    public Object object;
+
+    /**
+     * Creates an embedding constraint of given type.
+     * 
+     * @param thetype the type of embedding constraint
+     * @param theparent the parent constraint, or null if there is no parent
+     * @param obj the object to be contained
+     */
+    public EmbeddingConstraint(final Type thetype, final EmbeddingConstraint theparent,
+            final Object obj) {
+        this.type = thetype;
+        this.parent = theparent;
+        this.object = obj;
+        if (thetype != Type.IN_EDGE && thetype != Type.OUT_EDGE) {
+            this.children = new LinkedList<EmbeddingConstraint>();
+        }
+    }
+
 }

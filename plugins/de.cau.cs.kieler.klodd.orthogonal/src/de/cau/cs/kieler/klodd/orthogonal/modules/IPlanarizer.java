@@ -23,12 +23,12 @@ import de.cau.cs.kieler.core.slimgraph.KSlimGraph;
  */
 public interface IPlanarizer extends IAlgorithm {
 
-	/**
-	 * Performs planarization of the given graph. This is done by adding
-	 * dummy nodes to replace edge crossings.
-	 * 
-	 * @param graph graph to be planarized
-	 */
-	public void planarize(KSlimGraph graph);
-	
+    /**
+     * Performs planarization of the given graph. This is done by adding dummy
+     * nodes to replace edge crossings.
+     * 
+     * @param graph graph to be planarized
+     */
+    void planarize(KSlimGraph graph);
+
 }

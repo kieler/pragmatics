@@ -13,36 +13,39 @@
  */
 package de.cau.cs.kieler.klodd.orthogonal.structures;
 
-import de.cau.cs.kieler.core.slimgraph.*;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KInsets;
-
+import de.cau.cs.kieler.core.slimgraph.KSlimEdge;
+import de.cau.cs.kieler.core.slimgraph.KSlimGraph;
+import de.cau.cs.kieler.core.slimgraph.KSlimNode;
 
 /**
- * The graph structure used internally for the topology-shape-metrics
- * approach.
+ * The graph structure used internally for the topology-shape-metrics approach.
  * 
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class TSMGraph extends KSlimGraph {
 
-	/**
-	 * Applies all layout information to the contained layout graph objects.
-	 */
-	public void applyLayout(float offsetX, float offsetY, KInsets insets) {
-		float totalXoff = offsetX + insets.getLeft();
-		float totalYoff = offsetY + insets.getTop();
-		
-		// apply node layout
-		for (KSlimNode node : nodes)
-			((TSMNode)node).applyLayout(totalXoff, totalYoff);
-		
-		// apply edge layout
-		for (KSlimEdge edge : edges)
-			edge.rank = 0;
-		for (KSlimEdge edge : edges) {
-			if (edge.rank == 0)
-				((TSMEdge)edge).applyLayout(totalXoff, totalYoff);
-		}
-	}
-	
+    /**
+     * Applies all layout information to the contained layout graph objects.
+     * 
+     * @param offsetX offset to add on X axis
+     * @param offsetY offset to add on Y axis
+     */
+    public void applyLayout(final float offsetX, final float offsetY) {
+
+        // apply node layout
+        for (KSlimNode node : nodes) {
+            ((TSMNode) node).applyLayout(offsetX, offsetY);
+        }
+
+        // apply edge layout
+        for (KSlimEdge edge : edges) {
+            edge.rank = 0;
+        }
+        for (KSlimEdge edge : edges) {
+            if (edge.rank == 0) {
+                ((TSMEdge) edge).applyLayout(offsetX, offsetY);
+            }
+        }
+    }
+
 }

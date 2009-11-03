@@ -18,41 +18,37 @@ import de.cau.cs.kieler.core.slimgraph.KSlimEdge;
 import de.cau.cs.kieler.core.slimgraph.KSlimGraph;
 import de.cau.cs.kieler.core.slimgraph.KSlimNode;
 import de.cau.cs.kieler.klodd.orthogonal.modules.IPlanarizer;
-import de.cau.cs.kieler.klodd.orthogonal.structures.*;
-
+import de.cau.cs.kieler.klodd.orthogonal.structures.TSMNode;
 
 /**
- * Planarizer implementation that handles embedding constraints by
- * inserting all edges with an EC edge inserter.
+ * Planarizer implementation that handles embedding constraints by inserting all
+ * edges with an EC edge inserter.
  * 
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
-public class EdgeInsertionECPlanarizer extends AbstractAlgorithm implements
-		IPlanarizer {
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.cau.cs.kieler.klodd.orthogonal.modules.IPlanarizer#planarize(de.cau.cs.kieler.klodd.orthogonal.structures.TSMGraph)
-	 */
-	public void planarize(KSlimGraph graph) {
-		getMonitor().begin("Edge insertion planarization", graph.edges.size());
-		// remove all edges from the incidence lists
-		for (KSlimNode node : graph.nodes)
-			node.incidence.clear();
-		
-		// insert the stored edges, one by one, and preserve planarity
-		ECEdgeInserter edgeInserter = new ECEdgeInserter();
-		edgeInserter.setGraph(graph);
-		for (KSlimEdge edge : graph.edges) {
-			EmbeddingConstraint sourceConstraint = ((TSMNode)edge.source)
-					.embeddingConstraint;
-			EmbeddingConstraint targetConstraint = ((TSMNode)edge.target)
-					.embeddingConstraint;
-			edgeInserter.setProgressMonitor(getMonitor().subTask(1));
-			edgeInserter.insertEdge(edge, sourceConstraint, targetConstraint);
-		}
-		
-		getMonitor().done();
-	}
+public class EdgeInsertionECPlanarizer extends AbstractAlgorithm implements IPlanarizer {
+
+    /**
+     * {@inheritDoc}
+     */
+    public void planarize(final KSlimGraph graph) {
+        getMonitor().begin("Edge insertion planarization", graph.edges.size());
+        // remove all edges from the incidence lists
+        for (KSlimNode node : graph.nodes) {
+            node.incidence.clear();
+        }
+
+        // insert the stored edges, one by one, and preserve planarity
+        ECEdgeInserter edgeInserter = new ECEdgeInserter();
+        edgeInserter.setGraph(graph);
+        for (KSlimEdge edge : graph.edges) {
+            EmbeddingConstraint sourceConstraint = ((TSMNode) edge.source).embeddingConstraint;
+            EmbeddingConstraint targetConstraint = ((TSMNode) edge.target).embeddingConstraint;
+            edgeInserter.setProgressMonitor(getMonitor().subTask(1));
+            edgeInserter.insertEdge(edge, sourceConstraint, targetConstraint);
+        }
+
+        getMonitor().done();
+    }
 
 }

@@ -23,12 +23,12 @@ import de.cau.cs.kieler.core.slimgraph.KSlimGraph;
  */
 public interface ICompacter extends IAlgorithm {
 
-	/**
-	 * Performs compaction of a given TSM graph.
-	 * 
-	 * @param graph TSM graph that is to be filled with metrics information.
-	 * @param minDist minimal distance between elements
-	 */
-	public void compact(KSlimGraph graph, float minDist);
-	
+    /**
+     * Performs compaction of a given TSM graph.
+     * 
+     * @param graph TSM graph that is to be filled with metrics information.
+     * @param minDist minimal distance between elements
+     */
+    void compact(KSlimGraph graph, float minDist);
+
 }

@@ -17,73 +17,69 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * A linear segment of layer elements that represents a long edge in
- * a layered graph.
+ * A linear segment of layer elements that represents a long edge in a layered
+ * graph.
  * 
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class LinearSegment implements Comparable<LinearSegment> {
-	
-	/** list of layer elements contained in this linear segment */
-	public List<LayerElement> elements = new LinkedList<LayerElement>();
-	/** current rank of the linear segment */
-	public int rank = -1;
-	
-	/**
-	 * Determines whether the given element has preceding elements in this
-	 * linear segment.
-	 * 
-	 * @param elem element to test
-	 * @return true if there are other elements before <code>elem</code>
-	 */
-	public boolean hasPreceding(LayerElement elem) {
-	    return elements.indexOf(elem) > 0;
-	}
-	
-	/**
-	 * Determines whether the given element has following elements in this
+
+    /** list of layer elements contained in this linear segment. */
+    public List<LayerElement> elements = new LinkedList<LayerElement>();
+    /** current rank of the linear segment. */
+    public int rank = -1;
+
+    /**
+     * Determines whether the given element has preceding elements in this
+     * linear segment.
+     * 
+     * @param elem element to test
+     * @return true if there are other elements before <code>elem</code>
+     */
+    public boolean hasPreceding(final LayerElement elem) {
+        return elements.indexOf(elem) > 0;
+    }
+
+    /**
+     * Determines whether the given element has following elements in this
      * linear segment.
      * 
      * @param elem element to test
      * @return true if there are other elements after <code>elem</code>
      */
-	public boolean hasFollowing(LayerElement elem) {
-	    return elements.indexOf(elem) < elements.size() - 1;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString() {
-	    return "seg:" + rank;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
-	public int compareTo(LinearSegment other) {
-		return this.rank == other.rank ? 0
-				: (this.rank > other.rank ? 1
-				: -1);
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	public boolean equals(Object obj) {
-		return obj instanceof LinearSegment
-				&& ((LinearSegment)obj).rank == this.rank;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	public int hashCode() {
-	    return rank;
-	}
-	
+    public boolean hasFollowing(final LayerElement elem) {
+        return elements.indexOf(elem) < elements.size() - 1;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "seg:" + rank;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int compareTo(final LinearSegment other) {
+        return this.rank == other.rank ? 0 : (this.rank > other.rank ? 1 : -1);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        return obj instanceof LinearSegment && ((LinearSegment) obj).rank == this.rank;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return rank;
+    }
+
 }

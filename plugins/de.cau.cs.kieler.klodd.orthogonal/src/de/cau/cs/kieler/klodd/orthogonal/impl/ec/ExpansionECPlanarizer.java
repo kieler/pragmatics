@@ -17,30 +17,27 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.slimgraph.KSlimGraph;
 import de.cau.cs.kieler.klodd.orthogonal.modules.IPlanarizer;
 
-
 /**
- * Planarizer implementation that handles embedding constraints by
- * performing EC expansion and EC planarity test.
+ * Planarizer implementation that handles embedding constraints by performing EC
+ * expansion and EC planarity test.
  * 
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
-public class ExpansionECPlanarizer extends AbstractAlgorithm implements
-		IPlanarizer {
+public class ExpansionECPlanarizer extends AbstractAlgorithm implements IPlanarizer {
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.cau.cs.kieler.klodd.orthogonal.modules.IPlanarizer#planarize(de.cau.cs.kieler.klodd.orthogonal.structures.TSMGraph)
-	 */
-	public void planarize(KSlimGraph graph) {
-		getMonitor().begin("EC Expansion planarization", 1);
-		
-		// expand the given embedding constraints
-		ConstraintExpander constraintExpander = new ConstraintExpander();
-		constraintExpander.expand(graph);
+    /**
+     * {@inheritDoc}
+     */
+    public void planarize(final KSlimGraph graph) {
+        getMonitor().begin("EC Expansion planarization", 1);
 
-		// TODO implement EC-planarization of the expanded graph
-		
-		getMonitor().done();
-	}
+        // expand the given embedding constraints
+        ConstraintExpander constraintExpander = new ConstraintExpander();
+        constraintExpander.expand(graph);
+
+        // TODO implement EC-planarization of the expanded graph
+
+        getMonitor().done();
+    }
 
 }
