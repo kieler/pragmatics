@@ -18,6 +18,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.gef.EditPart;
+import org.eclipse.gef.ui.parts.GraphicalEditor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
@@ -55,16 +56,16 @@ public class LayoutHandler extends AbstractHandler implements IHandler {
         }
 
         IEditorPart editorPart = HandlerUtil.getActiveEditor(event);
-        if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
-            // perform layout with the given selection
-            IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-            EditPart selectedElement = null;
-            if (structuredSelection.getFirstElement() instanceof EditPart) {
-                selectedElement = (EditPart) structuredSelection.getFirstElement();
+        if (editorPart instanceof GraphicalEditor) {
+            if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
+                // perform layout with the given selection
+                IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+                if (structuredSelection.getFirstElement() instanceof EditPart) {
+                    EditPart selectedElement = (EditPart) structuredSelection.getFirstElement();
+                    DiagramLayoutManager.layout(editorPart, selectedElement, true, true);
+                    return null;
+                }
             }
-            DiagramLayoutManager.layout(editorPart, selectedElement, true, true);
-        } else {
-            // perform layout on the whole diagram
             DiagramLayoutManager.layout(editorPart, null, true, true);
         }
 

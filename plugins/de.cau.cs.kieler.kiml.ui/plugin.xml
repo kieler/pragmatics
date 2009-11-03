@@ -136,7 +136,6 @@ point="org.eclipse.ui.menus">
          point="org.eclipse.ui.bindings">
       <key
             commandId="de.cau.cs.kieler.kiml.ui.command.layout"
-            contextId="org.eclipse.gmf.runtime.diagram.ui.diagramContext"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+K L">
       </key>
