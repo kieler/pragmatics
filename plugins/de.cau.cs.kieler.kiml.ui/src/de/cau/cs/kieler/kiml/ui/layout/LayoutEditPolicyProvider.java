@@ -45,7 +45,6 @@ public class LayoutEditPolicyProvider extends AbstractProvider implements
     /**
      * {@inheritDoc}
      */
-    @Override
     public boolean provides(final IOperation operation) {
         return operation instanceof CreateEditPoliciesOperation;
     }

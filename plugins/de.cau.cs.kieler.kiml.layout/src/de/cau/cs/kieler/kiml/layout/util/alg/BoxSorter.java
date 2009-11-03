@@ -39,22 +39,22 @@ public class BoxSorter extends AbstractAlgorithm {
      * @param parentNode parent node
      * @return sorted list of children
      */
-    public List<KNode> sort(KNode parentNode) {
+    public List<KNode> sort(final KNode parentNode) {
         getMonitor().begin("Box sorting", 1);
         List<KNode> sortedBoxes = new LinkedList<KNode>(
                 parentNode.getChildren());
         
         Collections.sort(sortedBoxes, new Comparator<KNode>() {
-            public int compare(KNode child1, KNode child2) {
+            public int compare(final KNode child1, final KNode child2) {
                 KShapeLayout layout1 = KimlLayoutUtil.getShapeLayout(child1);
                 int prio1 = LayoutOptions.getPriority(layout1);
                 KShapeLayout layout2 = KimlLayoutUtil.getShapeLayout(child2);
                 int prio2 = LayoutOptions.getPriority(layout2);
-                if (prio1 > prio2)
+                if (prio1 > prio2) {
                     return -1;
-                else if (prio1 < prio2)
+                } else if (prio1 < prio2) {
                     return 1;
-                else {
+                } else {
                     // boxes have same priority - compare their size
                     float size1 = layout1.getWidth() * layout1.getHeight();
                     float size2 = layout2.getWidth() * layout2.getHeight();
