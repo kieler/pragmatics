@@ -47,8 +47,7 @@ import org.eclipse.ui.PlatformUI;
 import de.cau.cs.kieler.ksbase.core.KielerWorkflow;
 
 /**
- * The command to execute an Xtend transformation. Handles MWE initialization
- * too.
+ * The command to execute an Xtend transformation. Handles MWE initialization too.
  * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
@@ -60,13 +59,12 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
     /** The worklfow context for the workflow. **/
     private WorkflowContext context;
     /**
-     * The issues container which is used during the execution of a
-     * transformation.
+     * The issues container which is used during the execution of a transformation.
      **/
     private Issues issues;
     /**
-     * The monitor which is used by Xtend. This is a null monitor because we
-     * don't want any process feedback.
+     * The monitor which is used by Xtend. This is a null monitor because we don't want any process
+     * feedback.
      **/
     private NullProgressMonitor xtendMonitor;
 
@@ -80,8 +78,8 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
      * @param adapter
      *            an adapter to the {@code View} of the base diagram
      */
-    public ExecuteTransformationCommand(
-            final TransactionalEditingDomain domain, final String label, final IAdaptable adapter) {
+    public ExecuteTransformationCommand(final TransactionalEditingDomain domain,
+            final String label, final IAdaptable adapter) {
         super(domain, label, null);
         context = new WorkflowContextDefaultImpl();
         issues = new IssuesImpl();
@@ -91,8 +89,7 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
     /**
      * Executes the command.
      * 
-     * @see org.eclipse.gmf.runtime.emf.commands.core.command.
-     *      AbstractTransactionalCommand
+     * @see org.eclipse.gmf.runtime.emf.commands.core.command. AbstractTransactionalCommand
      *      #doExecuteWithResult(org.eclipse.core.runtime.IProgressMonitor,
      *      org.eclipse.core.runtime.IAdaptable)
      * 
@@ -100,21 +97,19 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
      *            Progress monitor for the execution
      * @param info
      *            Additional informations for the command
-     * @return Either an Error/Warning command result if the execution failed,
-     *         or OK else
+     * @return Either an Error/Warning command result if the execution failed, or OK else
      * @throws ExecutionException
      *             if the Execution faild due to a critical error.
      */
     @Override
-    protected CommandResult doExecuteWithResult(
-            final IProgressMonitor monitor, final IAdaptable info) throws ExecutionException {
+    protected CommandResult doExecuteWithResult(final IProgressMonitor monitor,
+            final IAdaptable info) throws ExecutionException {
         // This is a very ugly way to suppress messages from xtend
         PrintStream syse = System.err;
         PrintStream syso = System.out;
 
         if (workflow == null) {
-            return CommandResult
-                    .newErrorCommandResult(Messages.workflowInitializationError);
+            return CommandResult.newErrorCommandResult(Messages.workflowInitializationError);
         }
         System.setErr(new PrintStream(new ByteArrayOutputStream()));
         System.setOut(new PrintStream(new ByteArrayOutputStream()));
@@ -137,14 +132,11 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
             return CommandResult.newErrorCommandResult("Transformation failed. " //$NON-NLS-1$
                     + issues.getErrors()[0]);
         }
-        IEditorPart activeEditor =
-                PlatformUI
-                        .getWorkbench().getActiveWorkbenchWindow().getActivePage()
-                        .getActiveEditor();
+        IEditorPart activeEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                .getActivePage().getActiveEditor();
         if (activeEditor instanceof DiagramEditor) {
-            EObject obj =
-                    ((View) ((DiagramEditor) activeEditor).getDiagramEditPart().getModel())
-                            .getElement();
+            EObject obj = ((View) ((DiagramEditor) activeEditor).getDiagramEditPart().getModel())
+                    .getElement();
 
             List<?> editPolicies = CanonicalEditPolicy.getRegisteredEditPolicies(obj);
             for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
@@ -154,8 +146,8 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
                 nextEditPolicy.refresh();
             }
 
-            IDiagramGraphicalViewer graphViewer =
-                    ((DiagramEditor) activeEditor).getDiagramGraphicalViewer();
+            IDiagramGraphicalViewer graphViewer = ((DiagramEditor) activeEditor)
+                    .getDiagramGraphicalViewer();
             graphViewer.flush();
         }
         return CommandResult.newOKCommandResult();
@@ -178,9 +170,9 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
      *            The parameters of the Xtend method
      * @return False if an error occurred
      */
-    public final boolean initalize(
-            final IEditorPart editPart, final ISelection selection, final String command,
-            final String fileName, final String basePackage, final String[] parameter) {
+    public final boolean initalize(final IEditorPart editPart, final ISelection selection,
+            final String command, final String fileName, final String basePackage,
+            final String[] parameter) {
         StructuredSelection s;
 
         if (selection instanceof StructuredSelection) {

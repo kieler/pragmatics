@@ -197,15 +197,13 @@ public final class TransformationUIManager {
                     IDiagramGraphicalViewer graphViewer =
                             ((DiagramEditor) activeEditor).getDiagramGraphicalViewer();
                     graphViewer.flush();
-                }
-                // not translated to gmf now:
-                if (activeEditor instanceof DiagramEditor) {
-
+                 
                     // Notify event listeners:
                     for (ITransformationEventListener te : postTransformationEventListeners) {
                         te.transformationExecuted(new Object[] {
-                                selectedElement, activeEditor });
+                                obj, activeEditor });
                     }
+                    
                 }
 
             }

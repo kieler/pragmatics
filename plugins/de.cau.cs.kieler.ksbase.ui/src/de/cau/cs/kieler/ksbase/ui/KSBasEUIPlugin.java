@@ -53,6 +53,9 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
     public void start(final BundleContext context) throws Exception {
         super.start(context);
         KSBasEUIPlugin.setPlugin(this);
+        //.....activating vm plug-in
+        
+        //.....
         DynamicMenuContributions.INSTANCE.createAllMenuContributions();
     }
 
