@@ -32,8 +32,8 @@ import de.cau.cs.kieler.viewmanagement.RunLogic;
 import de.cau.cs.kieler.viewmanagement.TriggerEventObject;
 
 /**
- * The KSBasE combination used to execute a set of effects, selected by the user
- * via the preference pages.
+ * The KSBasE combination used to execute a set of effects, selected by the user via the preference
+ * pages.
  * 
  * ILL NEED A CHANGE IN KIELER.Viewmanagement to work !!
  * 
@@ -52,6 +52,9 @@ public class KSBasECombination extends ACombination {
     private EditPart editPart;
     /** Additional parameter. **/
     private Object parameter;
+
+    // temporary :
+    protected static boolean executeLayout = true;
 
     /**
      * Creates a new KSBasECombination.
@@ -81,23 +84,21 @@ public class KSBasECombination extends ACombination {
     @Override
     public void execute() {
         // FIXME: This is just a temporary hack....
-        if (parameter != null && parameter instanceof IEditorPart) {
+        if (executeLayout && parameter != null && parameter instanceof IEditorPart) {
             final IWorkbench workbench = PlatformUI.getWorkbench();
             workbench.getDisplay().asyncExec(new Runnable() {
                 public void run() {
-                    DiagramLayoutManager.layout(
-                            (IEditorPart) parameter, editPart.getRoot(), true, false);
+                    DiagramLayoutManager.layout((IEditorPart) parameter, editPart.getRoot(), true,
+                            false);
                 }
             });
         }
         // Thats how it should be done if vm is fixed
         /*
-         * for (int prio : KSBasECombination.effects.keySet()) { for (String
-         * effectName : KSBasECombination.effects.get(prio)) { AEffect effect =
-         * RunLogic.getEffect(effectName); if (effect != null) { // Set effect
-         * target and parameter effect.setTarget(editPart);
-         * effect.setParameters(parameter); // Execute effect effect.execute();
-         * } } }
+         * for (int prio : KSBasECombination.effects.keySet()) { for (String effectName :
+         * KSBasECombination.effects.get(prio)) { AEffect effect = RunLogic.getEffect(effectName);
+         * if (effect != null) { // Set effect target and parameter effect.setTarget(editPart);
+         * effect.setParameters(parameter); // Execute effect effect.execute(); } } }
          */
 
     }
@@ -126,14 +127,12 @@ public class KSBasECombination extends ACombination {
      *            Priority of the effect
      */
     public static final void addEffect(final String effectName, final int priority) {
-        LinkedList<String> list;
-        if (!KSBasECombination.effects.containsKey(priority)) {
-            list = new LinkedList<String>();
-        } else {
-            list = KSBasECombination.effects.get(priority);
-        }
-        list.add(effectName);
-        KSBasECombination.effects.put(priority, list);
+        /*
+         * LinkedList<String> list; if (!KSBasECombination.effects.containsKey(priority)) { list =
+         * new LinkedList<String>(); } else { list = KSBasECombination.effects.get(priority); }
+         * list.add(effectName); KSBasECombination.effects.put(priority, list);
+         */
+        executeLayout = true;
     }
 
     /**
@@ -145,10 +144,13 @@ public class KSBasECombination extends ACombination {
      *            Priority of the effect
      */
     public static final void removeEffect(final String effectName, final int priority) {
-        KSBasECombination.effects.get(priority).remove(effectName);
-        if (KSBasECombination.effects.get(priority).isEmpty()) {
-            KSBasECombination.effects.remove(priority);
-        }
+        /*
+         * if (KSBasECombination.effects != null) {
+         * KSBasECombination.effects.get(priority).remove(effectName); if
+         * (KSBasECombination.effects.get(priority).isEmpty()) {
+         * KSBasECombination.effects.remove(priority); } }
+         */
+        executeLayout = false;
     }
 
     /**
@@ -161,8 +163,8 @@ public class KSBasECombination extends ACombination {
      * @param newPrio
      *            New priority
      */
-    public static final void changePriority(
-            final String effectName, final int oldPrio, final int newPrio) {
+    public static final void changePriority(final String effectName, final int oldPrio,
+            final int newPrio) {
         KSBasECombination.removeEffect(effectName, oldPrio);
         KSBasECombination.addEffect(effectName, newPrio);
     }
@@ -191,16 +193,15 @@ public class KSBasECombination extends ACombination {
     }
 
     /**
-     * Reads the settings from the given preference store. Although it may seem
-     * odd to do this here, it is necessary because we want to use stored
-     * settings even if the preference page has not been opened yet.
+     * Reads the settings from the given preference store. Although it may seem odd to do this here,
+     * it is necessary because we want to use stored settings even if the preference page has not
+     * been opened yet.
      * 
      * @param prefStore
      *            The preference store that contains the stored objects
      */
     public static final void initalizeEffects(final IPreferenceStore prefStore) {
-        HashMap<Integer, LinkedList<String>> effectList =
-                new HashMap<Integer, LinkedList<String>>();
+        HashMap<Integer, LinkedList<String>> effectList = new HashMap<Integer, LinkedList<String>>();
         // First: read all stored effects
         String storedEffects = prefStore.getString("storedEffects");
         if (storedEffects != null && storedEffects.length() > 0) {

@@ -26,8 +26,8 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import de.cau.cs.kieler.ksbase.viewmanagement.KSBasEViewManagementPlugin;
-import de.cau.cs.kieler.ksbase.viewmanagement.combinations.KSBasECombination;
+//import de.cau.cs.kieler.ksbase.viewmanagement.KSBasEViewManagementPlugin;
+//import de.cau.cs.kieler.ksbase.viewmanagement.combinations.KSBasECombination;
 
 //import de.cau.cs.kieler.viewmanagement.RunLogic;
 
@@ -77,6 +77,8 @@ public class PostTransformationPreferencePage extends PreferencePage
 
         container.setLayout(layout);
         container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        TableData tableData = new TableData(input,true,"Auto-Layout",0);
+        input.add(tableData);
         /*
          * WILL NEED A CHANGE IN KIELER.Viewmanagement to work !! for (String
          * effect : RunLogic.getEffects()) { boolean active = false; int
@@ -122,8 +124,7 @@ public class PostTransformationPreferencePage extends PreferencePage
      *            The workbench for this preference page
      */
     public void init(final IWorkbench workbench) {
-        KSBasECombination.initalizeEffects(KSBasEViewManagementPlugin
-                .getDefault().getPreferenceStore());
+        //KSBasECombination.initalizeEffects(KSBasEViewManagementPlugin.getDefault().getPreferenceStore());
     }
 
     /**
@@ -133,8 +134,7 @@ public class PostTransformationPreferencePage extends PreferencePage
      */
     @Override
     public boolean performOk() {
-        KSBasECombination
-                .storeEffects(KSBasEViewManagementPlugin.getDefault().getPreferenceStore());
+        //KSBasECombination.storeEffects(KSBasEViewManagementPlugin.getDefault().getPreferenceStore());
         return true;
     }
 }
