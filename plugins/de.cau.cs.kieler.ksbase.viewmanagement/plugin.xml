@@ -15,6 +15,7 @@
             name="KSBasETrigger">
       </trigger>
    </extension>
+   <!-- Pref page currently disabled
    <extension
          point="org.eclipse.ui.preferencePages">
       
@@ -25,5 +26,5 @@
             name="Post-Transformation">
       </page>
    </extension>
-
+-->
 </plugin>
