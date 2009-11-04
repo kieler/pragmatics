@@ -265,7 +265,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         editPart2NodeMap.put(layoutRootPart, layoutGraph);
         node2EditPartMap.put(layoutGraph, layoutRootPart);
         // traverse the children of the layout root part
-        buildLayoutGraphRecursively(layoutRootPart, layoutGraph, 0.0f, 0.0f);
+        buildLayoutGraphRecursively(layoutRootPart, layoutGraph, layoutRootPart);
         // set preconfigured layout options for the diagram
         LayoutServices.getInstance().setLayoutOptions(layoutRootPart.getClass(), shapeLayout);
         // set user defined layout options for the diagram
@@ -280,18 +280,17 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      * Recursively builds a layout graph by analyzing the children of the given
      * edit part.
      * 
-     * @param currentEditPart the edit part whose children will be processed
-     * @param currentLayoutNode the corresponding KNode
-     * @param insetTop inset value to be set on the top side of the parent node
-     * @param insetLeft inset value to be set on the left, right, and bottom
-     *            side of the parent node
+     * @param parentEditPart the parent edit part of the current elements
+     * @param parentLayoutNode the corresponding KNode
+     * @param currentEditPart the currently analyzed edit part
      */
-    private void buildLayoutGraphRecursively(final GraphicalEditPart currentEditPart,
-            final KNode currentLayoutNode, final float insetTopHint, final float insetLeftHint) {
+    private void buildLayoutGraphRecursively(final GraphicalEditPart parentEditPart,
+            final KNode parentLayoutNode, final GraphicalEditPart currentEditPart) {
         boolean hasChildNodes = false, hasChildCompartments = false,
                 hasPorts = false, isCollapsed = false;
-        float insetTop = insetTopHint, insetLeft = insetLeftHint;
+        Insets insets = null;
         LayoutServices layoutServices = LayoutServices.getInstance();
+        IFigure parentFigure = parentEditPart.getFigure();
         // iterate through the children of the element
         for (Object obj : currentEditPart.getChildren()) {
 
@@ -309,11 +308,11 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 KPort port = KimlLayoutUtil.createInitializedPort();
                 port2EditPartMap.put(port, borderItem);
                 editPart2PortMap.put(borderItem, port);
-                port.setNode(currentLayoutNode);
+                port.setNode(parentLayoutNode);
                 // set the port's layout, relative to the node position
                 KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(port);
                 Rectangle portBounds = borderItem.getFigure().getBounds();
-                KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(currentLayoutNode);
+                KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(parentLayoutNode);
                 portLayout.setXpos(portBounds.x - nodeLayout.getXpos());
                 portLayout.setYpos(portBounds.y - nodeLayout.getYpos());
                 portLayout.setWidth(portBounds.width);
@@ -356,17 +355,11 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     }
                 }
 
-                // process compartments, which may contain other elements
+            // process compartments, which may contain other elements
             } else if (obj instanceof ShapeCompartmentEditPart
                     && ((CompartmentEditPart) obj).getChildren().size() > 0) {
                 CompartmentEditPart compartment = (CompartmentEditPart) obj;
                 if (!layoutServices.isNolayout(compartment.getClass())) {
-                    // calculate insets of the child compartment
-                    GraphicalEditPart firstChild = (GraphicalEditPart) compartment.getChildren().get(0);
-                    Insets insets = KimlUiUtil.calcInsets(currentEditPart.getFigure(),
-                            firstChild.getFigure());
-                    insetTop = insets.top;
-                    insetLeft = insets.left;
                     IFigure compartmentFigure = compartment.getFigure();
                     if (compartmentFigure instanceof ResizableCompartmentFigure) {
                         ResizableCompartmentFigure resizableCompartmentFigure
@@ -379,18 +372,19 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     }
 
                     hasChildCompartments = true;
-                    buildLayoutGraphRecursively(compartment, currentLayoutNode, insetTop, insetLeft);
+                    buildLayoutGraphRecursively(parentEditPart, parentLayoutNode, compartment);
 
                     // set preconfigured layout options for the compartment
                     layoutServices.setLayoutOptions(compartment.getClass(),
-                            KimlLayoutUtil.getShapeLayout(currentLayoutNode));
+                            KimlLayoutUtil.getShapeLayout(parentLayoutNode));
                 }
 
-                // process nodes, which may be parents of compartments
+            // process nodes, which may be parents of compartments
             } else if (obj instanceof ShapeNodeEditPart) {
                 ShapeNodeEditPart childNodeEditPart = (ShapeNodeEditPart) obj;
+                IFigure nodeFigure = childNodeEditPart.getFigure();
                 KNode childLayoutNode = KimlLayoutUtil.createInitializedNode();
-                Rectangle childBounds = childNodeEditPart.getFigure().getBounds();
+                Rectangle childBounds = nodeFigure.getBounds();
                 KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(childLayoutNode);
 
                 // store all the connections to process them later
@@ -401,24 +395,33 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 }
 
                 // set location and size
-                nodeLayout.setXpos(childBounds.x);
-                nodeLayout.setYpos(childBounds.y);
+                if (KimlUiUtil.isRelative(parentFigure, nodeFigure)) {
+                    nodeLayout.setXpos(childBounds.x);
+                    nodeLayout.setYpos(childBounds.y);
+                } else {
+                    Rectangle parentBounds = parentFigure.getBounds();
+                    nodeLayout.setXpos(childBounds.x - parentBounds.x);
+                    nodeLayout.setYpos(childBounds.y - parentBounds.y);
+                }
                 nodeLayout.setHeight(childBounds.height);
                 nodeLayout.setWidth(childBounds.width);
-                Dimension minSize = childNodeEditPart.getFigure().getMinimumSize();
+                Dimension minSize = nodeFigure.getMinimumSize();
                 LayoutOptions.setMinWidth(nodeLayout, minSize.width);
                 LayoutOptions.setMinHeight(nodeLayout, minSize.height);
+                
+                // set insets if not yet defined
+                if (insets == null) {
+                    insets = KimlUiUtil.calcInsets(parentFigure, nodeFigure);
+                }
 
-                currentLayoutNode.getChildren().add(childLayoutNode);
+                parentLayoutNode.getChildren().add(childLayoutNode);
                 editPart2NodeMap.put(childNodeEditPart, childLayoutNode);
                 node2EditPartMap.put(childLayoutNode, childNodeEditPart);
                 hasChildNodes = true;
                 if (!layoutServices.isNolayout(childLayoutNode.getClass())) {
-                    Insets insets = childNodeEditPart.getFigure().getInsets();
                     // process the child as new current edit part, as it may
                     // contain other elements
-                    buildLayoutGraphRecursively(childNodeEditPart, childLayoutNode, insets.left,
-                            insets.top);
+                    buildLayoutGraphRecursively(childNodeEditPart, childLayoutNode, childNodeEditPart);
                 }
 
                 // set preconfigured layout options for the node
@@ -426,7 +429,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 // set user defined layout options for the node
                 setNotationLayoutOptions(childNodeEditPart, nodeLayout);
 
-                // process labels of nodes
+            // process labels of nodes
             } else if (obj instanceof GraphicalEditPart) {
 
                 GraphicalEditPart graphicalEditPart = (GraphicalEditPart) obj;
@@ -449,13 +452,13 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     label.setText(text);
                     Rectangle labelBounds = labelFigure.getBounds();
                     KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
-                    int xpos = labelBounds.x, ypos = labelBounds.y;
-                    if (!KimlUiUtil.isRelative(currentEditPart.getFigure(), labelFigure)) {
-                        xpos -= parentLayout.getXpos();
-                        ypos -= parentLayout.getYpos();
-                    }
-                    labelLayout.setXpos(xpos);
-                    labelLayout.setYpos(ypos);
+//                    int xpos = labelBounds.x, ypos = labelBounds.y;
+//                    if (!KimlUiUtil.isRelative(parentFigure, labelFigure)) {
+//                        xpos -= parentLayout.getXpos();
+//                        ypos -= parentLayout.getYpos();
+//                    }
+//                    labelLayout.setXpos(xpos);
+//                    labelLayout.setYpos(ypos);
                     labelLayout.setWidth(labelFigure.getPreferredSize().width);
                     labelLayout.setHeight(labelFigure.getPreferredSize().height);
                     LayoutOptions.setFontName(labelLayout, font.getFontData()[0].getName());
@@ -464,18 +467,18 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             }
         }
 
-        KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(currentLayoutNode);
+        KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(parentLayoutNode);
         // set default fixed size option
         if (!hasChildNodes && !hasChildCompartments && !isCollapsed) {
             LayoutOptions.setFixedSize(nodeLayout, true);
         }
         // set default insets option
-        if (hasChildNodes || isCollapsed) {
-            KInsets insets = LayoutOptions.getInsets(nodeLayout);
-            insets.setTop(insetTop);
-            insets.setLeft(insetLeft);
-            insets.setRight(insetLeft);
-            insets.setBottom(insetLeft);
+        if ((hasChildNodes || isCollapsed) && insets != null) {
+            KInsets kinsets = LayoutOptions.getInsets(nodeLayout);
+            kinsets.setTop(insets.top);
+            kinsets.setLeft(insets.left);
+            kinsets.setRight(insets.right);
+            kinsets.setBottom(insets.bottom);
         }
         // set default port constraints option
         if (hasPorts) {
@@ -575,15 +578,20 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             for (Object obj : connection.getChildren()) {
                 if (obj instanceof LabelEditPart) {
                     LabelEditPart labelEditPart = (LabelEditPart) obj;
-                    Rectangle labelBounds = labelEditPart.getFigure().getBounds();
-                    String labelText = "";
+                    IFigure labelFigure = labelEditPart.getFigure();
+                    Rectangle labelBounds = labelFigure.getBounds();
+                    String labelText = null;
                     Font font = null;
-                    if (labelEditPart.getFigure() instanceof WrappingLabel) {
-                        WrappingLabel wrappingLabel = (WrappingLabel) labelEditPart.getFigure();
+                    if (labelFigure instanceof WrappingLabel) {
+                        WrappingLabel wrappingLabel = (WrappingLabel) labelFigure;
                         labelText = wrappingLabel.getText();
                         font = wrappingLabel.getFont();
+                    } else if (labelFigure instanceof Label) {
+                        Label label = (Label) labelFigure;
+                        labelText = label.getText();
+                        font = label.getFont();
                     }
-                    if (labelText.length() > 0) {
+                    if (labelText != null && labelText.length() > 0) {
                         KLabel label = KimlLayoutUtil.createInitializedLabel(edge);
                         KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
                         switch (labelEditPart.getKeyPoint()) {

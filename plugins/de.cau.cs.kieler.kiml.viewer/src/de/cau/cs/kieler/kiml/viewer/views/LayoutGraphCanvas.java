@@ -266,10 +266,7 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
     private List<KNode> layoutGraph = null;
     /** mapping of each layout graph element to its computed bounds. */
     private Map<Object, PaintRectangle> boundsMap = new LinkedHashMap<Object, PaintRectangle>();
-    /**
-     * mapping of nodes or ports to bend point iterators of edges on that node
-     * or port
-     */
+    /** mapping of nodes or ports to bend point iterators of edges on that node or port. */
     private Map<Object, List<BendsIterator>> bendsMap = new HashMap<Object, List<BendsIterator>>();
     /** font used for node labels. */
     private Font nodeFont;
@@ -459,7 +456,8 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
                 portOffset.setY(rect.y);
                 rect = boundsMap.get(port.getLabel());
                 if (rect == null) {
-                    rect = new PaintRectangle(KimlLayoutUtil.getShapeLayout(port.getLabel()), portOffset);
+                    rect = new PaintRectangle(KimlLayoutUtil.getShapeLayout(port.getLabel()),
+                            portOffset);
                     boundsMap.put(port.getLabel(), rect);
                 }
                 if (!rect.painted && rect.intersects(area)) {
@@ -510,16 +508,19 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
                 }
             }
 
-            // paint edges
+            // paint edges, deactivate label painting for incoming edges
             graphics.setForeground(EDGE_COLOR[color % EDGE_COLOR.length]);
             graphics.setBackground(EDGE_COLOR[color % EDGE_COLOR.length]);
             graphics.setAlpha(EDGE_ALPHA);
             graphics.setFont(edgeFont);
+            boolean oldPaintLabels = paintLabels;
+            paintLabels = false;
             for (KEdge edge : child.getIncomingEdges()) {
                 if (edge.getSource().getParent() != child) {
                     paintEdge(edge, graphics, area, subOffset);
                 }
             }
+            paintLabels = oldPaintLabels;
             for (KEdge edge : child.getOutgoingEdges()) {
                 if (edge.getTarget().getParent() != child) {
                     paintEdge(edge, graphics, area, subOffset);
@@ -539,34 +540,41 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
     private void paintEdge(final KEdge edge, final GC graphics, final PaintRectangle area,
             final KPoint offset) {
         KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(edge);
-        BendsIterator sourceIter = new BendsIterator(edgeLayout, true);
-        BendsIterator targetIter = new BendsIterator(edgeLayout, false);
-        List<BendsIterator> sourceBends = edge.getSourcePort() == null ? bendsMap.get(edge.getSource())
-                : bendsMap.get(edge.getSourcePort());
-        List<BendsIterator> targetBends = edge.getTargetPort() == null ? bendsMap.get(edge.getTarget())
-                : bendsMap.get(edge.getTargetPort());
+        boolean hasPorts = edge.getSourcePort() != null && edge.getTargetPort() != null;
+        BendsIterator sourceIter = null, targetIter = null;
+        List<BendsIterator> sourceBends = null, targetBends = null;
+        if (hasPorts) {
+            sourceIter = new BendsIterator(edgeLayout, true);
+            targetIter = new BendsIterator(edgeLayout, false);
+            sourceBends = edge.getSourcePort() == null ? bendsMap.get(edge.getSource())
+                    : bendsMap.get(edge.getSourcePort());
+            targetBends = edge.getTargetPort() == null ? bendsMap.get(edge.getTarget())
+                    : bendsMap.get(edge.getTargetPort());
+        }
         PaintRectangle rect = boundsMap.get(edge);
         if (rect == null) {
             rect = new PaintRectangle(edgeLayout, offset);
             boundsMap.put(edge, rect);
-            if (sourceBends == null) {
-                sourceBends = new LinkedList<BendsIterator>();
-                if (edge.getSourcePort() == null) {
-                    bendsMap.put(edge.getSource(), sourceBends);
-                } else {
-                    bendsMap.put(edge.getSourcePort(), sourceBends);
+            if (hasPorts) {
+                if (sourceBends == null) {
+                    sourceBends = new LinkedList<BendsIterator>();
+                    if (edge.getSourcePort() == null) {
+                        bendsMap.put(edge.getSource(), sourceBends);
+                    } else {
+                        bendsMap.put(edge.getSourcePort(), sourceBends);
+                    }
                 }
-            }
-            sourceBends.add(sourceIter);
-            if (targetBends == null) {
-                targetBends = new LinkedList<BendsIterator>();
-                if (edge.getTargetPort() == null) {
-                    bendsMap.put(edge.getTarget(), targetBends);
-                } else {
-                    bendsMap.put(edge.getTargetPort(), targetBends);
+                sourceBends.add(sourceIter);
+                if (targetBends == null) {
+                    targetBends = new LinkedList<BendsIterator>();
+                    if (edge.getTargetPort() == null) {
+                        bendsMap.put(edge.getTarget(), targetBends);
+                    } else {
+                        bendsMap.put(edge.getTargetPort(), targetBends);
+                    }
                 }
+                targetBends.add(targetIter);
             }
-            targetBends.add(targetIter);
         }
         if (!rect.painted && rect.intersects(area)) {
             KPoint sourcePoint = edgeLayout.getSourcePoint();
@@ -590,9 +598,11 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
                 graphics.fillPolygon(arrowPoly);
             }
             rect.painted = true;
-            // paint junctures of the given edge
-            paintJunctures(sourceBends, sourceIter, graphics, offset);
-            paintJunctures(targetBends, targetIter, graphics, offset);
+            if (hasPorts) {
+                // paint junctures of the given edge
+                paintJunctures(sourceBends, sourceIter, graphics, offset);
+                paintJunctures(targetBends, targetIter, graphics, offset);
+            }
         }
         if (paintLabels) {
             for (KLabel edgeLabel : edge.getLabels()) {

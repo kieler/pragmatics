@@ -91,7 +91,7 @@ public class GraphvizLayouter {
     /** set of delimiters used to parse attribute values. */
     private static final String ATTRIBUTE_DELIM = "\", \t\n\r\\";
     /** multiplier for font sizes. */
-    private static final double FONT_MULTIPLIER = 1.2;
+    private static final double FONT_MULTIPLIER = 1.4;
 
     /** maps each identifier of a graph element to the instance of the element. */
     private HashMap<String, KGraphElement> graphElementMap = new HashMap<String, KGraphElement>();
@@ -339,23 +339,23 @@ public class GraphvizLayouter {
 
     /**
      * Creates a properly parsable string by adding the escape character '\\'
-     * wherever needed.
+     * wherever needed and replacing illegal characters.
      * 
      * @param label a label string from the KGraph structure
      * @return string to be used in the Graphviz model
      */
-    private String createString(final String label) {
+    private static String createString(final String label) {
         StringBuffer escapeBuffer = new StringBuffer(label.length() + 2);
         // prefix the label with an underscore to prevent it from being equal to
         // a keyword
         escapeBuffer.append("\"_");
         for (int i = 0; i < label.length(); i++) {
             char c = label.charAt(i);
-            if (c == '\"' || c == '\\') {
+            if (c == '\"' || c == '\\' || c >= 127) {
                 escapeBuffer.append('_');
             } else if (c == '\n') {
                 escapeBuffer.append("\\n");
-            } else if (c != '\r') {
+            } else if (c >= 32) {
                 escapeBuffer.append(c);
             }
         }

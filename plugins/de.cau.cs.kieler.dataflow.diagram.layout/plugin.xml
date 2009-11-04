@@ -20,5 +20,10 @@
             option="de.cau.cs.kieler.layout.options.diagramType"
             value="de.cau.cs.kieler.layout.diagrams.dataFlow">
       </option>
+      <option
+            object="de.cau.cs.kieler.dataflow"
+            option="de.cau.cs.kieler.layout.options.borderSpacing"
+            value="10.0">
+      </option>
    </extension>
 </plugin>

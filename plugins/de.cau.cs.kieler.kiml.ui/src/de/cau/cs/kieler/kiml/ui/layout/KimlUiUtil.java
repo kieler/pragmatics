@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kiml.ui.layout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Insets;
 import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
@@ -61,8 +62,10 @@ public final class KimlUiUtil {
         IFigure currentChild = child;
         IFigure currentParent = child.getParent();
         Point coordsToAdd = null;
+        boolean isRelative = false;
         while (currentChild != parent && currentParent != null) {
             if (currentParent.isCoordinateSystem()) {
+                isRelative = true;
                 result.add(currentParent.getInsets());
                 if (coordsToAdd != null) {
                     result.left += coordsToAdd.x;
@@ -77,6 +80,14 @@ public final class KimlUiUtil {
             currentChild = currentParent;
             currentParent = currentChild.getParent();
         }
+        if (!isRelative) {
+            Rectangle parentBounds = parent.getBounds();
+            Rectangle containerBounds = child.getParent().getBounds();
+            result.left = containerBounds.x - parentBounds.x;
+            result.top = containerBounds.y - parentBounds.y;
+        }
+        result.right = result.left;
+        result.bottom = result.left;
         return result;
     }
     
