@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.kiml.layout.layoutInfo">
+      <binding
+            class="org.eclipse.uml2.diagram.activity.edit.parts.ActivityEditPart"
+            id="de.cau.cs.kieler.uml2tools.activity">
+      </binding>
+      <binding
+            class="org.eclipse.uml2.diagram.activity.edit.parts.PackageEditPart"
+            id="de.cau.cs.kieler.uml2tools.activity.package">
+      </binding>
+      <option
+            object="de.cau.cs.kieler.uml2tools.activity.package"
+            option="de.cau.cs.kieler.layout.options.diagramType"
+            value="de.cau.cs.kieler.layout.diagrams.boxes">
+      </option>
+      <option
+            object="de.cau.cs.kieler.uml2tools.activity"
+            option="de.cau.cs.kieler.layout.options.diagramType"
+            value="de.cau.cs.kieler.layout.diagrams.stateMachine">
+      </option>
+      <option
+            object="de.cau.cs.kieler.uml2tools.activity"
+            option="de.cau.cs.kieler.layout.options.layoutDirection"
+            value="VERTICAL">
+      </option>
+      <option
+            object="de.cau.cs.kieler.uml2tools.activity"
+            option="de.cau.cs.kieler.layout.options.borderSpacing"
+            value="20.0">
+      </option>
+      <option
+            object="de.cau.cs.kieler.uml2tools.activity"
+            option="de.cau.cs.kieler.layout.options.minSpacing"
+            value="25.0">
+      </option>
+   </extension>
+
+</plugin>
