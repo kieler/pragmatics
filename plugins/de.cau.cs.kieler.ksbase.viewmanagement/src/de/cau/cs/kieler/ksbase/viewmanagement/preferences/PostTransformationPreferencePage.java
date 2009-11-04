@@ -14,6 +14,9 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.viewmanagement.preferences;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.swt.SWT;
@@ -26,10 +29,11 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-//import de.cau.cs.kieler.ksbase.viewmanagement.KSBasEViewManagementPlugin;
-//import de.cau.cs.kieler.ksbase.viewmanagement.combinations.KSBasECombination;
+import de.cau.cs.kieler.ksbase.viewmanagement.KSBasEViewManagementPlugin;
+import de.cau.cs.kieler.ksbase.viewmanagement.combinations.KSBasECombination;
 
-//import de.cau.cs.kieler.viewmanagement.RunLogic;
+import de.cau.cs.kieler.viewmanagement.AEffect;
+import de.cau.cs.kieler.viewmanagement.RunLogic;
 
 /**
  * Preference page that configures the post-transformation actions.
@@ -37,8 +41,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
  */
-public class PostTransformationPreferencePage extends PreferencePage
-        implements IWorkbenchPreferencePage {
+public class PostTransformationPreferencePage extends PreferencePage implements
+        IWorkbenchPreferencePage {
 
     private static final int TABLE_PRIORITY_BOUNDS = 45;
     private static final int TABLE_EFFECT_BOUNDS = 450;
@@ -67,9 +71,8 @@ public class PostTransformationPreferencePage extends PreferencePage
                 .setText("Select the effects that should be executed after a transformation.");
         new Label(container, SWT.NONE)
                 .setText("If some effects have to be executed earlier, give them a lower priority");
-        DataTableViewer viewer =
-                new DataTableViewer(container, SWT.HIDE_SELECTION
-                        | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE);
+        DataTableViewer viewer = new DataTableViewer(container, SWT.HIDE_SELECTION | SWT.MULTI
+                | SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE);
         createColumns(viewer);
         viewer.setContentProvider(new TableDataContentProvider());
         viewer.setLabelProvider(new TableDataLabelProvider());
@@ -77,19 +80,29 @@ public class PostTransformationPreferencePage extends PreferencePage
 
         container.setLayout(layout);
         container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        TableData tableData = new TableData(input,true,"Auto-Layout",0);
-        input.add(tableData);
-        /*
-         * WILL NEED A CHANGE IN KIELER.Viewmanagement to work !! for (String
-         * effect : RunLogic.getEffects()) { boolean active = false; int
-         * effectPrio = 0; for (Integer prio :
-         * KSBasECombination.effects.keySet()) { if
-         * (KSBasECombination.effects.get(prio).contains(effect)) { active =
-         * true; effectPrio = prio; } } TableData effData = new TableData(input,
-         * active, effect, effectPrio);
-         * 
-         * input.add(effData); }
-         */
+
+        //Check if VM is initialized
+        if (!RunLogic.getInstance().getRunlogicState()) {
+           
+            RunLogic.getInstance().registerListeners();
+            RunLogic.getCombination("KSBasECombination").setActive(true);
+        }
+        
+        for (AEffect effect : RunLogic.getEffects()) {
+            boolean active = false;
+            int effectPrio = 0;
+            HashMap<Integer, LinkedList<String>> effects = KSBasECombination.getEffects();
+            for (Integer prio : effects.keySet()) {
+                if (effects.get(prio).contains(effect.getClass().getCanonicalName())) {
+                    active = true;
+                    effectPrio = prio;
+                }
+            }
+            TableData effData = new TableData(input, active, effect.getClass().getCanonicalName(), effectPrio);
+
+            input.add(effData);
+        }
+
         viewer.setInput(input);
         container.pack();
         return null;
@@ -124,7 +137,7 @@ public class PostTransformationPreferencePage extends PreferencePage
      *            The workbench for this preference page
      */
     public void init(final IWorkbench workbench) {
-        //KSBasECombination.initalizeEffects(KSBasEViewManagementPlugin.getDefault().getPreferenceStore());
+        KSBasECombination.initalizeEffects(KSBasEViewManagementPlugin.getDefault().getPreferenceStore());
     }
 
     /**
@@ -134,7 +147,7 @@ public class PostTransformationPreferencePage extends PreferencePage
      */
     @Override
     public boolean performOk() {
-        //KSBasECombination.storeEffects(KSBasEViewManagementPlugin.getDefault().getPreferenceStore());
+        KSBasECombination.storeEffects(KSBasEViewManagementPlugin.getDefault().getPreferenceStore());
         return true;
     }
 }

@@ -14,12 +14,12 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.viewmanagement.triggers;
 
-import org.eclipse.gef.EditPart;
+import org.eclipse.emf.ecore.EObject;
 
-import de.cau.cs.kieler.viewmanagement.ATrigger;
-import de.cau.cs.kieler.viewmanagement.TriggerEventObject;
 import de.cau.cs.kieler.ksbase.ui.TransformationUIManager;
 import de.cau.cs.kieler.ksbase.ui.listener.ITransformationEventListener;
+import de.cau.cs.kieler.viewmanagement.ATrigger;
+import de.cau.cs.kieler.viewmanagement.TriggerEventObject;
 
 /**
  * A viewmanagement trigger which is called when a transformation command has
@@ -55,12 +55,12 @@ public class KSBasETrigger extends ATrigger implements
 
     /**
      * Called when a transformation is executed.
-     * @param args The arguments for this event. Needs be the Array : [EditPart,EditorPart]
+     * @param args The arguments for this event. Needs be the Array : [EObject,EditorPart]
      */
     public void transformationExecuted(final Object[] args) {
-        if (args.length == 2 && args[0] instanceof EditPart) {
+        if (args.length == 2 && args[0] instanceof EObject) {
             this.triggerObject = new TriggerEventObject();
-            triggerObject.setAffectedObject(translateToURI(args[0]));
+            triggerObject.setAffectedObject( (EObject) args[0]);
             triggerObject.setParameters(args[1]);
             triggerObject.setTriggerActive(true);
             notifyTrigger(triggerObject);

@@ -19,8 +19,8 @@ package de.cau.cs.kieler.ksbase.viewmanagement.preferences;
  * or signal within the data table. If it is a signal, then it can be present or
  * absent. An entry always contains of a key and a value String expression.
  * 
- * @author Christian Motika - cmot AT informatik.uni-kiel.de changed Michael
- *         Matzen - mim AT informatik.uni-kiel.de
+ * @author Christian Motika - cmot AT informatik.uni-kiel.de 
+ * 
  */
 public class TableData {
 
@@ -129,6 +129,6 @@ public class TableData {
      */
     public boolean isEffectActive() {
         // return present flag if signal AND present
-        return (this.effectActive);
+        return this.effectActive;
     }
 }

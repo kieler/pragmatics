@@ -18,15 +18,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.gef.EditPart;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.PlatformUI;
 
-import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.ksbase.viewmanagement.triggers.KSBasETrigger;
 import de.cau.cs.kieler.viewmanagement.ACombination;
+import de.cau.cs.kieler.viewmanagement.AEffect;
 import de.cau.cs.kieler.viewmanagement.ATrigger;
 import de.cau.cs.kieler.viewmanagement.RunLogic;
 import de.cau.cs.kieler.viewmanagement.TriggerEventObject;
@@ -35,26 +32,20 @@ import de.cau.cs.kieler.viewmanagement.TriggerEventObject;
  * The KSBasE combination used to execute a set of effects, selected by the user via the preference
  * pages.
  * 
- * ILL NEED A CHANGE IN KIELER.Viewmanagement to work !!
- * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
  */
 public class KSBasECombination extends ACombination {
 
     /** List of effect names to execute. **/
-    protected static HashMap<Integer, LinkedList<String>> effects =
-            new HashMap<Integer, LinkedList<String>>();
+    protected static HashMap<Integer, LinkedList<String>> effects = new HashMap<Integer, LinkedList<String>>();
     /** Trigger object. **/
     private KSBasETrigger trigger;
 
     /** Target editPart. **/
-    private EditPart editPart;
+    private EObject affectedObject;
     /** Additional parameter. **/
     private Object parameter;
-
-    // temporary :
-    protected static boolean executeLayout = true;
 
     /**
      * Creates a new KSBasECombination.
@@ -72,7 +63,7 @@ public class KSBasECombination extends ACombination {
     @Override
     public boolean evaluate(final TriggerEventObject triggerEvent) {
 
-        editPart = translateToEditPart(triggerEvent.getAffectedObject(), getRootEPAsParent());
+        affectedObject = triggerEvent.getAffectedObject();
         parameter = triggerEvent.getParameters();
 
         return true;
@@ -83,23 +74,17 @@ public class KSBasECombination extends ACombination {
      */
     @Override
     public void execute() {
-        // FIXME: This is just a temporary hack....
-        if (executeLayout && parameter != null && parameter instanceof IEditorPart) {
-            final IWorkbench workbench = PlatformUI.getWorkbench();
-            workbench.getDisplay().asyncExec(new Runnable() {
-                public void run() {
-                    DiagramLayoutManager.layout((IEditorPart) parameter, editPart.getRoot(), true,
-                            false);
+
+        for (int prio : KSBasECombination.effects.keySet()) {
+            for (String effectName : KSBasECombination.effects.get(prio)) {
+                AEffect effect = RunLogic.getEffect(effectName.toLowerCase());
+                if (effect != null) { // Set effect target and parameter
+                    effect.setTarget(getEditPart(affectedObject));
+                    effect.setParameters(parameter); // Execute effect
+                    effect.execute();
                 }
-            });
+            }
         }
-        // Thats how it should be done if vm is fixed
-        /*
-         * for (int prio : KSBasECombination.effects.keySet()) { for (String effectName :
-         * KSBasECombination.effects.get(prio)) { AEffect effect = RunLogic.getEffect(effectName);
-         * if (effect != null) { // Set effect target and parameter effect.setTarget(editPart);
-         * effect.setParameters(parameter); // Execute effect effect.execute(); } } }
-         */
 
     }
 
@@ -127,12 +112,16 @@ public class KSBasECombination extends ACombination {
      *            Priority of the effect
      */
     public static final void addEffect(final String effectName, final int priority) {
-        /*
-         * LinkedList<String> list; if (!KSBasECombination.effects.containsKey(priority)) { list =
-         * new LinkedList<String>(); } else { list = KSBasECombination.effects.get(priority); }
-         * list.add(effectName); KSBasECombination.effects.put(priority, list);
-         */
-        executeLayout = true;
+
+        LinkedList<String> list;
+        if (!KSBasECombination.effects.containsKey(priority)) {
+            list = new LinkedList<String>();
+        } else {
+            list = KSBasECombination.effects.get(priority);
+        }
+        list.add(effectName);
+        KSBasECombination.effects.put(priority, list);
+
     }
 
     /**
@@ -144,13 +133,14 @@ public class KSBasECombination extends ACombination {
      *            Priority of the effect
      */
     public static final void removeEffect(final String effectName, final int priority) {
-        /*
-         * if (KSBasECombination.effects != null) {
-         * KSBasECombination.effects.get(priority).remove(effectName); if
-         * (KSBasECombination.effects.get(priority).isEmpty()) {
-         * KSBasECombination.effects.remove(priority); } }
-         */
-        executeLayout = false;
+
+        if (KSBasECombination.effects != null) {
+            KSBasECombination.effects.get(priority).remove(effectName);
+            if (KSBasECombination.effects.get(priority).isEmpty()) {
+                KSBasECombination.effects.remove(priority);
+            }
+        }
+
     }
 
     /**
@@ -219,5 +209,14 @@ public class KSBasECombination extends ACombination {
             }
             KSBasECombination.effects = effectList;
         }
+    }
+
+    /**
+     * Gets the registered effects.
+     * 
+     * @return A hash map containing the transformations ordered by their priority
+     */
+    public static HashMap<Integer, LinkedList<String>> getEffects() {
+        return effects;
     }
 }

@@ -50,7 +50,16 @@ public class KSBasEViewManagementPlugin extends AbstractUIPlugin {
      */
     public void start(final BundleContext context) throws Exception {
         super.start(context);
+        System.out.println("ksbase vm active");
         KSBasEViewManagementPlugin.setPlugin(this);
+        /* Does not work here
+        //Check if VM is initialized
+        if (!RunLogic.getInstance().getRunlogicState()) {
+           
+            RunLogic.getInstance().registerListeners();
+            RunLogic.getCombination("KSBasECombination").setActive(true);
+        }
+        */
         // Initialize pref page to load all stored settings
         KSBasECombination.initalizeEffects(plugin.getPreferenceStore());
     }
