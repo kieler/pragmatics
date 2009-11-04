@@ -30,7 +30,9 @@
             type="org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart">
       </propertyTester>
    </extension>
+  <!-- Preference page currently disabled
   <extension
+  
          point="org.eclipse.ui.preferencePages">
       <page
             category="de.cau.cs.kieler"
@@ -51,4 +53,5 @@
             name="Transformations">
       </page>
       </extension>
+      -->
 </plugin>
