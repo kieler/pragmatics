@@ -114,9 +114,14 @@ public class TransformationPreferencePage extends PreferencePage
         // simply inserting a label
         new Label(parent, SWT.NONE).setText(Messages.kSBasETPreferencePageTitle);
 
-        // Fill table with transformations
+        tableComp = new Composite(parent, SWT.NONE);
+        tableComp.setLayout(new GridLayout(1, false));
+        Label tableLabel = new Label(tableComp, SWT.NONE);
+        tableLabel.setText(Messages.kSBasEPreferencePageTableTitle);
+
+        table = new Table(tableComp, SWT.BORDER | SWT.SINGLE);
         table.removeAll();
-        if (activeEditor != null) {
+        if (activeEditor != null && activeEditor.getTransformations() != null) {
             for (Transformation t : activeEditor.getTransformations()) {
                 TableItem tItem = new TableItem(table, SWT.NONE);
 
@@ -127,14 +132,6 @@ public class TransformationPreferencePage extends PreferencePage
             }
         }
         table.setEnabled(activated);
-
-        tableComp = new Composite(parent, SWT.NONE);
-        tableComp.setLayout(new GridLayout(1, false));
-        Label tableLabel = new Label(tableComp, SWT.NONE);
-        tableLabel.setText(Messages.kSBasEPreferencePageTableTitle);
-
-        table = new Table(tableComp, SWT.BORDER | SWT.SINGLE);
-
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
 
