@@ -257,7 +257,7 @@ public class SortingNodewiseEdgePlacer extends AbstractAlgorithm implements INod
             }
 
             // process routing to other layers
-            if (layoutDirection == LayoutDirection.VERTICAL) {
+            if (layoutDirection == LayoutDirection.DOWN) {
                 switch (placement) {
                 case NORTH:
                     if (hasOutgoing(element, port1)) {
@@ -353,7 +353,7 @@ public class SortingNodewiseEdgePlacer extends AbstractAlgorithm implements INod
         element.westRanks = assignRanks(westSlots);
 
         // calculate edge routing for all incoming or outgoing connections
-        if (layoutDirection == LayoutDirection.VERTICAL) {
+        if (layoutDirection == LayoutDirection.DOWN) {
             for (LayerConnection connection : element.getIncomingConnections()) {
                 KPort port = connection.getTargetPort();
                 switch (LayoutOptions.getPortSide(KimlLayoutUtil.getShapeLayout(port))) {

@@ -84,10 +84,10 @@ public final class KimlLayoutUtil {
             PortSide side1 = LayoutOptions.getPortSide(layout1);
             PortSide side2 = LayoutOptions.getPortSide(layout2);
             if (side1 == side2) {
-                return layoutDirection == LayoutDirection.VERTICAL && !forward
-                        || layoutDirection == LayoutDirection.HORIZONTAL && forward ? rank1 - rank2
+                return layoutDirection == LayoutDirection.DOWN && !forward
+                        || layoutDirection == LayoutDirection.RIGHT && forward ? rank1 - rank2
                         : rank2 - rank1;
-            } else if (layoutDirection == LayoutDirection.VERTICAL) {
+            } else if (layoutDirection == LayoutDirection.DOWN) {
                 if (forward) {
                     return side1 == PortSide.NORTH || side1 == PortSide.EAST
                             && (side2 == PortSide.SOUTH || side2 == PortSide.WEST)
@@ -241,22 +241,40 @@ public final class KimlLayoutUtil {
         }
 
         // determine port placement from the incident edges
-        if (layoutDirection == LayoutDirection.VERTICAL) {
-            int flow = calcFlow(port);
+        int flow = calcFlow(port);
+        switch (layoutDirection) {
+        case DOWN:
             if (flow > 0) {
                 return PortSide.SOUTH;
             }
             if (flow < 0) {
                 return PortSide.NORTH;
             }
-        } else {
-            int flow = calcFlow(port);
+            break;
+        case UP:
+            if (flow > 0) {
+                return PortSide.NORTH;
+            }
+            if (flow < 0) {
+                return PortSide.SOUTH;
+            }
+            break;            
+        case LEFT:
+            if (flow > 0) {
+                return PortSide.WEST;
+            }
+            if (flow < 0) {
+                return PortSide.EAST;
+            }
+            break;
+        case RIGHT:
             if (flow > 0) {
                 return PortSide.EAST;
             }
             if (flow < 0) {
                 return PortSide.WEST;
             }
+            break;
         }
         return PortSide.UNDEFINED;
     }
@@ -350,16 +368,31 @@ public final class KimlLayoutUtil {
         PortConstraints portConstraints = LayoutOptions.getPortConstraints(layoutData);
         if (portConstraints == PortConstraints.FREE_PORTS) {
             // set port sides according to layout direction
-            if (layoutDirection == LayoutDirection.VERTICAL) {
+            switch (layoutDirection) {
+            case DOWN:
                 for (KPort port : node.getPorts()) {
-                    LayoutOptions.setPortSide(getShapeLayout(port), calcFlow(port) < 0 ? PortSide.NORTH
-                            : PortSide.SOUTH);
+                    LayoutOptions.setPortSide(getShapeLayout(port), calcFlow(port) < 0
+                            ? PortSide.NORTH : PortSide.SOUTH);
                 }
-            } else {
+                break;
+            case UP:
                 for (KPort port : node.getPorts()) {
-                    LayoutOptions.setPortSide(getShapeLayout(port), calcFlow(port) < 0 ? PortSide.WEST
-                            : PortSide.EAST);
+                    LayoutOptions.setPortSide(getShapeLayout(port), calcFlow(port) < 0
+                            ? PortSide.SOUTH : PortSide.NORTH);
                 }
+                break;
+            case LEFT:
+                for (KPort port : node.getPorts()) {
+                    LayoutOptions.setPortSide(getShapeLayout(port), calcFlow(port) < 0
+                            ? PortSide.EAST : PortSide.WEST);
+                }
+                break;
+            default:
+                for (KPort port : node.getPorts()) {
+                    LayoutOptions.setPortSide(getShapeLayout(port), calcFlow(port) < 0
+                            ? PortSide.WEST : PortSide.EAST);
+                }
+                break;
             }
             LayoutOptions.setPortConstraints(layoutData, PortConstraints.FIXED_SIDE);
         } else if (portConstraints != PortConstraints.UNDEFINED) {

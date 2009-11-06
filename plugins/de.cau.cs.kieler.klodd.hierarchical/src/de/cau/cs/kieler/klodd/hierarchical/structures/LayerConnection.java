@@ -166,11 +166,11 @@ public class LayerConnection {
             KShapeLayout sourceLayout = KimlLayoutUtil.getShapeLayout(sourceNode);
             sourcePoint.setX(sourceElement.getPosition().getX()
                     + sourceElement.getPosOffset().getX()
-                    + (layoutDirection == LayoutDirection.VERTICAL ? sourceLayout.getWidth() / 2
+                    + (layoutDirection == LayoutDirection.DOWN ? sourceLayout.getWidth() / 2
                             : sourceLayout.getWidth()));
             sourcePoint.setY(sourceElement.getPosition().getY()
                     + sourceElement.getPosOffset().getY()
-                    + (layoutDirection == LayoutDirection.VERTICAL ? sourceLayout.getHeight()
+                    + (layoutDirection == LayoutDirection.DOWN ? sourceLayout.getHeight()
                             : sourceLayout.getHeight() / 2));
             edgeLayout.setSourcePoint(sourcePoint);
         }
@@ -208,12 +208,12 @@ public class LayerConnection {
             targetPoint
                     .setX(targetElement.getPosition().getX()
                             + targetElement.getPosOffset().getX()
-                            + (layoutDirection == LayoutDirection.VERTICAL ? targetLayout.getWidth() / 2
+                            + (layoutDirection == LayoutDirection.DOWN ? targetLayout.getWidth() / 2
                                     : 0.0f));
             targetPoint
                     .setY(targetElement.getPosition().getY()
                             + targetElement.getPosOffset().getY()
-                            + (layoutDirection == LayoutDirection.VERTICAL ? 0.0f : targetLayout
+                            + (layoutDirection == LayoutDirection.DOWN ? 0.0f : targetLayout
                                     .getHeight() / 2));
             edgeLayout.setTargetPoint(targetPoint);
         }
@@ -278,27 +278,27 @@ public class LayerConnection {
     public float calcSourcePos(final float minDist) {
         LayeredGraph layeredGraph = sourceElement.getLayer().getLayeredGraph();
         LayoutDirection layoutDirection = layeredGraph.getLayoutDirection();
-        sourceAnchorPos = layoutDirection == LayoutDirection.VERTICAL ? sourceElement.getPosition()
+        sourceAnchorPos = layoutDirection == LayoutDirection.DOWN ? sourceElement.getPosition()
                 .getX() : sourceElement.getPosition().getY();
         if (sourceSidePos == 0) {
             if (sourcePort == null) {
                 // there is no source port, find appropriate anchor
-                sourceAnchorPos += layoutDirection == LayoutDirection.VERTICAL ? sourceElement
+                sourceAnchorPos += layoutDirection == LayoutDirection.DOWN ? sourceElement
                         .getRealWidth() / 2 : sourceElement.getRealHeight() / 2;
             } else {
                 // align the edge to the source port
                 KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(sourcePort);
-                sourceAnchorPos += layoutDirection == LayoutDirection.VERTICAL
+                sourceAnchorPos += layoutDirection == LayoutDirection.DOWN
                         ? portLayout.getWidth() / 2 : portLayout.getHeight() / 2;
                 if (sourcePort.getNode() != layeredGraph.getParentNode()) {
-                    sourceAnchorPos += layoutDirection == LayoutDirection.VERTICAL ? portLayout
+                    sourceAnchorPos += layoutDirection == LayoutDirection.DOWN ? portLayout
                             .getXpos()
                             + sourceElement.getPosOffset().getX() : portLayout.getYpos()
                             + sourceElement.getPosOffset().getY();
                 }
             }
         } else if (sourceSidePos > 0) {
-            sourceAnchorPos += (layoutDirection == LayoutDirection.VERTICAL ? sourceElement
+            sourceAnchorPos += (layoutDirection == LayoutDirection.DOWN ? sourceElement
                     .getRealWidth() : sourceElement.getRealHeight())
                     + sourceSidePos * minDist;
         } else if (sourceSidePos < 0) {
@@ -317,26 +317,26 @@ public class LayerConnection {
     public float calcTargetPos(final float minDist) {
         LayeredGraph layeredGraph = sourceElement.getLayer().getLayeredGraph();
         LayoutDirection layoutDirection = layeredGraph.getLayoutDirection();
-        targetAnchorPos = layoutDirection == LayoutDirection.VERTICAL ? targetElement.getPosition()
+        targetAnchorPos = layoutDirection == LayoutDirection.DOWN ? targetElement.getPosition()
                 .getX() : targetElement.getPosition().getY();
         if (targetSidePos == 0) {
             if (targetPort == null) {
                 // there is no source port, find appropriate anchor
-                targetAnchorPos += layoutDirection == LayoutDirection.VERTICAL ? targetElement
+                targetAnchorPos += layoutDirection == LayoutDirection.DOWN ? targetElement
                         .getRealWidth() / 2 : targetElement.getRealHeight() / 2;
             } else {
                 KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(targetPort);
-                targetAnchorPos += layoutDirection == LayoutDirection.VERTICAL
+                targetAnchorPos += layoutDirection == LayoutDirection.DOWN
                         ? portLayout.getWidth() / 2 : portLayout.getHeight() / 2;
                 if (targetPort.getNode() != layeredGraph.getParentNode()) {
-                    targetAnchorPos += layoutDirection == LayoutDirection.VERTICAL ? portLayout
+                    targetAnchorPos += layoutDirection == LayoutDirection.DOWN ? portLayout
                             .getXpos()
                             + targetElement.getPosOffset().getX() : portLayout.getYpos()
                             + targetElement.getPosOffset().getY();
                 }
             }
         } else if (targetSidePos > 0) {
-            targetAnchorPos += (layoutDirection == LayoutDirection.VERTICAL ? targetElement
+            targetAnchorPos += (layoutDirection == LayoutDirection.DOWN ? targetElement
                     .getRealWidth() : targetElement.getRealHeight())
                     + targetSidePos * minDist;
         } else if (targetSidePos < 0) {

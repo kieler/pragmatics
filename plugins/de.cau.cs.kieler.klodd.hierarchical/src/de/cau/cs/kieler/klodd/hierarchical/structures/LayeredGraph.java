@@ -61,7 +61,7 @@ public class LayeredGraph {
     private Map<KPort, LinearSegment> longEdgesMap = new HashMap<KPort, LinearSegment>();
     /** list of linear segments in this layered graph. */
     private List<LinearSegment> linearSegments = new LinkedList<LinearSegment>();
-    /** layout direction for this layered graph: HORIZONTAL or VERTICAL. */
+    /** layout direction for this layered graph: RIGHT or DOWN. */
     private LayoutDirection layoutDirection;
     /** port constraints for the external ports. */
     private PortConstraints externalPortConstraints;
@@ -83,7 +83,7 @@ public class LayeredGraph {
         KLayoutData layoutData = KimlLayoutUtil.getShapeLayout(theparentNode);
         layoutDirection = LayoutOptions.getLayoutDirection(layoutData);
         if (layoutDirection == LayoutDirection.UNDEFINED) {
-            layoutDirection = LayoutDirection.HORIZONTAL;
+            layoutDirection = LayoutDirection.RIGHT;
         }
         externalPortConstraints = LayoutOptions.getPortConstraints(layoutData);
     }
@@ -273,7 +273,7 @@ public class LayeredGraph {
         // update the size of the parent layout node
         float width = insets.getLeft() + insets.getRight();
         float height = insets.getTop() + insets.getBottom();
-        if (layoutDirection == LayoutDirection.VERTICAL) {
+        if (layoutDirection == LayoutDirection.DOWN) {
             width += crosswiseDim;
             height += lengthwiseDim;
         } else {
@@ -289,7 +289,7 @@ public class LayeredGraph {
     }
 
     /**
-     * Gets the layout direction: HORIZONTAL or VERTICAL.
+     * Gets the layout direction: RIGHT or DOWN.
      * 
      * @return the layout direction
      */

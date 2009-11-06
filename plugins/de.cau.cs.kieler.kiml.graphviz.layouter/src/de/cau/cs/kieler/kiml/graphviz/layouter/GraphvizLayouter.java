@@ -82,7 +82,7 @@ public class GraphvizLayouter {
     public static final float DEF_MIN_SPACING = 16.0f;
 
     /** if true, debug output is enabled, which writes dot files to the home folder. */
-    private static final boolean ENABLE_DEBUG = true;
+    private static final boolean ENABLE_DEBUG = false;
     /** dots per inch specification, needed by Graphviz for some values. */
     private static final float DPI = 72.0f;
     /** set of delimiters used to parse attribute values. */
@@ -209,10 +209,19 @@ public class GraphvizLayouter {
         }
         // set layout direction
         if (command.equals(DOT_COMMAND)) {
-            if (LayoutOptions.getLayoutDirection(parentLayout) == LayoutDirection.VERTICAL) {
+            switch (LayoutOptions.getLayoutDirection(parentLayout)) {
+            case DOWN:
                 graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_RANKDIR, "TB"));
-            } else {
+                break;
+            case UP:
+                graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_RANKDIR, "BT"));
+                break;
+            case LEFT:
+                graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_RANKDIR, "RL"));
+                break;
+            default:
                 graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_RANKDIR, "LR"));
+                break;
             }
         }
         // enable node overlap avoidance for neato

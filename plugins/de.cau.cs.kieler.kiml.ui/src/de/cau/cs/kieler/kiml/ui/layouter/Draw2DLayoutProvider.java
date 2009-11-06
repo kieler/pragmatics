@@ -93,7 +93,7 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
         if (LayoutOptions.MIN_SPACING.equals(optionId)) {
             return DEF_MIN_SPACING;
         } else if (LayoutOptions.LAYOUT_DIRECTION.equals(optionId)) {
-            return LayoutDirection.VERTICAL;
+            return LayoutDirection.DOWN;
         } else if (LayoutOptions.FIXED_SIZE.equals(optionId)) {
             return false;
         } else {
@@ -120,8 +120,15 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
         graph.setDefaultPadding(new Insets((int)minSpacing));
         graph.setMargin(new Insets((int)minSpacing));
         LayoutDirection layoutDirection = LayoutOptions.getLayoutDirection(parentLayout);
-        graph.setDirection(layoutDirection == LayoutDirection.HORIZONTAL
-                ? PositionConstants.EAST : PositionConstants.SOUTH);
+        switch (layoutDirection) {
+        case RIGHT:
+        case LEFT:
+            graph.setDirection(PositionConstants.EAST);
+            break;
+        default:
+            graph.setDirection(PositionConstants.SOUTH);
+            break;
+        }
         
         // add nodes to the graph
         Map<KNode, Node> nodeMap = new HashMap<KNode, Node>();

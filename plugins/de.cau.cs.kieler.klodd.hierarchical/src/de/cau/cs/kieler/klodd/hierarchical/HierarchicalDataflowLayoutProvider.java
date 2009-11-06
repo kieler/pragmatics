@@ -181,7 +181,7 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
         if (LayoutOptions.FIXED_SIZE.equals(optionId)) {
             return false;
         } else if (LayoutOptions.LAYOUT_DIRECTION.equals(optionId)) {
-            return LayoutDirection.HORIZONTAL;
+            return LayoutDirection.RIGHT;
         } else if (LayoutOptions.MIN_SPACING.equals(optionId)) {
             return DEF_MIN_DIST;
         } else if (LayoutOptions.BORDER_SPACING.equals(optionId)) {

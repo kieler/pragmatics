@@ -102,7 +102,7 @@ public class Layer {
 
         // determine padding values
         for (LayerElement element : elements) {
-            float sideSpace = (lengthwiseDim - (layoutDirection == LayoutDirection.VERTICAL ? element
+            float sideSpace = (lengthwiseDim - (layoutDirection == LayoutDirection.DOWN ? element
                     .getRealHeight() : element.getRealWidth())) / 2;
             backPadding = Math.max(backPadding, element.getEdgesBack() * minDist - sideSpace);
             frontPadding = Math.max(frontPadding, element.getEdgesFront() * minDist - sideSpace);
@@ -113,7 +113,7 @@ public class Layer {
         for (LayerElement element : elements) {
             if (rank > 0 && height > 0) {
                 float sideSpace;
-                if (layoutDirection == LayoutDirection.VERTICAL) {
+                if (layoutDirection == LayoutDirection.DOWN) {
                     if (element.getIncomingConnections().isEmpty()
                             && !element.getOutgoingConnections().isEmpty()) {
                         sideSpace = (lengthwiseDim - element.getRealHeight());

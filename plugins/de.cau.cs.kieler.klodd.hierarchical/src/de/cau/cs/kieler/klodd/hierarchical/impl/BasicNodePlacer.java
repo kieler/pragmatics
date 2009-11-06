@@ -232,7 +232,7 @@ public class BasicNodePlacer extends AbstractAlgorithm implements INodePlacer {
                 float totalCrosswiseDim = element.getTotalCrosswiseDim(objSpacing);
                 layer.crosswiseDim = newPos + totalCrosswiseDim;
                 layer.lengthwiseDim = Math.max(layer.lengthwiseDim,
-                        layoutDirection == LayoutDirection.VERTICAL ? element.getRealHeight() : element
+                        layoutDirection == LayoutDirection.DOWN ? element.getRealHeight() : element
                                 .getRealWidth());
                 lastElements[layer.rank] = element;
             }
@@ -255,7 +255,7 @@ public class BasicNodePlacer extends AbstractAlgorithm implements INodePlacer {
                 KPoint position = element.getPosition();
                 position.setX(portLayout.getXpos());
                 position.setY(portLayout.getYpos());
-                if (layoutDirection == LayoutDirection.VERTICAL) {
+                if (layoutDirection == LayoutDirection.DOWN) {
                     layer.lengthwiseDim = Math.max(layer.lengthwiseDim, element.getRealHeight());
                     if (placement != PortSide.EAST && placement != PortSide.WEST) {
                         layer.crosswiseDim = Math.max(layer.crosswiseDim,

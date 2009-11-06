@@ -409,7 +409,7 @@ public class LayerElement {
      */
     public void setCrosswisePos(final float pos, final float minDist) {
         LayoutDirection layoutDirection = layer.getLayeredGraph().getLayoutDirection();
-        if (layoutDirection == LayoutDirection.VERTICAL) {
+        if (layoutDirection == LayoutDirection.DOWN) {
             position.setX(pos + westRanks * minDist);
         } else {
             position.setY(pos + northRanks * minDist);
@@ -426,7 +426,7 @@ public class LayerElement {
     public float getTotalCrosswiseDim(final float minDist) {
         if (totalCrosswiseDim < 0.0f) {
             LayoutDirection layoutDirection = layer.getLayeredGraph().getLayoutDirection();
-            if (layoutDirection == LayoutDirection.VERTICAL) {
+            if (layoutDirection == LayoutDirection.DOWN) {
                 totalCrosswiseDim = (westRanks + eastRanks) * minDist + realWidth;
             } else {
                 totalCrosswiseDim = (northRanks + southRanks) * minDist + realHeight;
@@ -486,7 +486,7 @@ public class LayerElement {
      */
     public int getEdgesFront() {
         LayoutDirection layoutDirection = layer.getLayeredGraph().getLayoutDirection();
-        return layoutDirection == LayoutDirection.VERTICAL ? northRanks : westRanks;
+        return layoutDirection == LayoutDirection.DOWN ? northRanks : westRanks;
     }
 
     /**
@@ -496,7 +496,7 @@ public class LayerElement {
      */
     public int getEdgesBack() {
         LayoutDirection layoutDirection = layer.getLayeredGraph().getLayoutDirection();
-        return layoutDirection == LayoutDirection.VERTICAL ? southRanks : eastRanks;
+        return layoutDirection == LayoutDirection.DOWN ? southRanks : eastRanks;
     }
 
     /**
@@ -717,7 +717,7 @@ public class LayerElement {
      *            outgoing connections, else for incoming connections
      */
     public void sortPorts(final Map<KPort, Double> abstractPortRanks, final boolean isoutgoing) {
-        boolean vertical = layer.getLayeredGraph().getLayoutDirection() == LayoutDirection.VERTICAL;
+        boolean vertical = layer.getLayeredGraph().getLayoutDirection() == LayoutDirection.DOWN;
         Arrays.sort(northPorts, new DirectedPortComparator(abstractPortRanks, vertical ? !isoutgoing
                 : isoutgoing, !isoutgoing));
         Arrays.sort(eastPorts, new DirectedPortComparator(abstractPortRanks, vertical ? !isoutgoing
@@ -784,7 +784,7 @@ public class LayerElement {
      */
     public void sortPorts(final Map<KPort, Double> outgoingPortRanks,
             final Map<KPort, Double> incomingPortRanks) {
-        boolean vertical = layer.getLayeredGraph().getLayoutDirection() == LayoutDirection.VERTICAL;
+        boolean vertical = layer.getLayeredGraph().getLayoutDirection() == LayoutDirection.DOWN;
         Arrays.sort(northPorts, new SymmetricPortComparator(outgoingPortRanks, incomingPortRanks, false,
                 vertical));
         Arrays.sort(eastPorts, new SymmetricPortComparator(outgoingPortRanks, incomingPortRanks,

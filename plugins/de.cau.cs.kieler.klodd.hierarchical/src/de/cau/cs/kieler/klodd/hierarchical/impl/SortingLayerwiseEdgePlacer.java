@@ -110,7 +110,7 @@ public class SortingLayerwiseEdgePlacer extends AbstractAlgorithm implements ILa
                 if (layer.rank == 0) {
                     PortSide placement = LayoutOptions.getPortSide(KimlLayoutUtil
                             .getShapeLayout(connection.getSourcePort()));
-                    if (layoutDirection == LayoutDirection.VERTICAL) {
+                    if (layoutDirection == LayoutDirection.DOWN) {
                         if (placement == PortSide.WEST) {
                             sourcePos = 0.0f;
                         } else if (placement == PortSide.EAST) {
@@ -130,7 +130,7 @@ public class SortingLayerwiseEdgePlacer extends AbstractAlgorithm implements ILa
                 } else if (layer.height == 1) {
                     PortSide placement = LayoutOptions.getPortSide(KimlLayoutUtil
                             .getShapeLayout(connection.getTargetPort()));
-                    if (layoutDirection == LayoutDirection.VERTICAL) {
+                    if (layoutDirection == LayoutDirection.DOWN) {
                         if (placement == PortSide.WEST) {
                             targetPos = 0.0f;
                         } else if (placement == PortSide.EAST) {

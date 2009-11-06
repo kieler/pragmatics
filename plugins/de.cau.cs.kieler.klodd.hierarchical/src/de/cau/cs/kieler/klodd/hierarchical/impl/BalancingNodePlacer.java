@@ -133,7 +133,7 @@ public class BalancingNodePlacer extends AbstractAlgorithm implements INodePlace
             if (!Float.isNaN(moveDelta)) {
                 for (LayerElement element : linearSegment.elements) {
                     KPoint pos = element.getPosition();
-                    if (layoutDirection == LayoutDirection.VERTICAL) {
+                    if (layoutDirection == LayoutDirection.DOWN) {
                         pos.setX(pos.getX() + moveDelta);
                     } else {
                         pos.setY(pos.getY() + moveDelta);
@@ -145,7 +145,7 @@ public class BalancingNodePlacer extends AbstractAlgorithm implements INodePlace
         // update crosswise dimension for the whole graph
         for (Layer layer2 : layeredGraph.getLayers()) {
             LayerElement lastElem = layer2.getElements().get(layer2.getElements().size() - 1);
-            layer2.crosswiseDim = (layoutDirection == LayoutDirection.VERTICAL
+            layer2.crosswiseDim = (layoutDirection == LayoutDirection.DOWN
                     ? lastElem.getPosition().getX()
                             + lastElem.getRealWidth() + lastElem.eastRanks * theobjSpacing
                     : lastElem.getPosition().getY()

@@ -112,7 +112,7 @@ public class RectilinearEdgeRouter extends AbstractAlgorithm implements IEdgeRou
         // update dimension of the whole graph
         Layer lastLayer = layeredGraph.getLayers().get(layeredGraph.getLayers().size() - 1);
         layerPos = lastLayer.lengthwisePos + lastLayer.lengthwiseDim + theborderSpacing;
-        if (layeredGraph.getLayoutDirection() == LayoutDirection.VERTICAL) {
+        if (layeredGraph.getLayoutDirection() == LayoutDirection.DOWN) {
             layeredGraph.crosswiseDim = maxCrosswisePos + layeredGraph.getPosition().getX();
             layeredGraph.lengthwiseDim = Math.max(layeredGraph.lengthwiseDim, layerPos
                     + maxLengthwiseAddPos + layeredGraph.getPosition().getY());
@@ -146,7 +146,7 @@ public class RectilinearEdgeRouter extends AbstractAlgorithm implements IEdgeRou
                 if (layer.rank == 0) {
                     PortSide placement = LayoutOptions.getPortSide(KimlLayoutUtil
                             .getShapeLayout(connection.getSourcePort()));
-                    if (layoutDirection == LayoutDirection.VERTICAL) {
+                    if (layoutDirection == LayoutDirection.DOWN) {
                         if (placement == PortSide.WEST) {
                             externalRouting = ExternalRouting.FIRST;
                             firstExtEdges++;
@@ -172,7 +172,7 @@ public class RectilinearEdgeRouter extends AbstractAlgorithm implements IEdgeRou
                 } else if (layer.height == 1) {
                     PortSide placement = LayoutOptions.getPortSide(KimlLayoutUtil
                             .getShapeLayout(connection.getTargetPort()));
-                    if (layoutDirection == LayoutDirection.VERTICAL) {
+                    if (layoutDirection == LayoutDirection.DOWN) {
                         if (placement == PortSide.WEST) {
                             externalRouting = ExternalRouting.FIRST;
                             firstExtEdges++;
@@ -229,7 +229,7 @@ public class RectilinearEdgeRouter extends AbstractAlgorithm implements IEdgeRou
                     KPoint point1 = KLayoutDataFactory.eINSTANCE.createKPoint();
                     KPoint point2 = KLayoutDataFactory.eINSTANCE.createKPoint();
                     KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(connection.getSourcePort());
-                    if (layoutDirection == LayoutDirection.VERTICAL) {
+                    if (layoutDirection == LayoutDirection.DOWN) {
                         point1.setX(sourceXbase + portLayout.getXpos() + portLayout.getWidth() / 2);
                         point1.setY(sourcePos.getY() - connection.sourceBackPos * objSpacing);
                         point2.setX(connection.sourceAnchorPos);
@@ -247,7 +247,7 @@ public class RectilinearEdgeRouter extends AbstractAlgorithm implements IEdgeRou
                 } else if (connection.sourceSidePos != 0) {
                     KPoint point = KLayoutDataFactory.eINSTANCE.createKPoint();
                     KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(connection.getSourcePort());
-                    if (layoutDirection == LayoutDirection.VERTICAL) {
+                    if (layoutDirection == LayoutDirection.DOWN) {
                         point.setX(connection.sourceAnchorPos);
                         point.setY(sourceYbase + portLayout.getYpos() + portLayout.getHeight() / 2);
                     } else {
@@ -276,7 +276,7 @@ public class RectilinearEdgeRouter extends AbstractAlgorithm implements IEdgeRou
                     KPoint point1 = KLayoutDataFactory.eINSTANCE.createKPoint();
                     KPoint point2 = KLayoutDataFactory.eINSTANCE.createKPoint();
                     KPoint point3 = KLayoutDataFactory.eINSTANCE.createKPoint();
-                    if (layoutDirection == LayoutDirection.VERTICAL) {
+                    if (layoutDirection == LayoutDirection.DOWN) {
                         if (externalRouting == ExternalRouting.FIRST) {
                             point1.setX(-(layeredGraphPos.getX() + firstExtIndex * objSpacing));
                             firstExtIndex++;
@@ -318,7 +318,7 @@ public class RectilinearEdgeRouter extends AbstractAlgorithm implements IEdgeRou
                     KPoint point2 = KLayoutDataFactory.eINSTANCE.createKPoint();
                     KPoint point3 = KLayoutDataFactory.eINSTANCE.createKPoint();
                     KPoint point4 = KLayoutDataFactory.eINSTANCE.createKPoint();
-                    if (layoutDirection == LayoutDirection.VERTICAL) {
+                    if (layoutDirection == LayoutDirection.DOWN) {
                         point1.setY(-aroundExtIndex * objSpacing);
                         point2.setY(point1.getY());
                         if (layer.rank == 0) {
@@ -362,7 +362,7 @@ public class RectilinearEdgeRouter extends AbstractAlgorithm implements IEdgeRou
                     // perform normal routing between anchor points
                     KPoint point1 = KLayoutDataFactory.eINSTANCE.createKPoint();
                     KPoint point2 = KLayoutDataFactory.eINSTANCE.createKPoint();
-                    if (layoutDirection == LayoutDirection.VERTICAL) {
+                    if (layoutDirection == LayoutDirection.DOWN) {
                         point1.setX(connection.sourceAnchorPos);
                         point1.setY(connectionsPos + slot.rank * objSpacing);
                         point2.setX(connection.targetAnchorPos);
@@ -386,7 +386,7 @@ public class RectilinearEdgeRouter extends AbstractAlgorithm implements IEdgeRou
                     KPoint point1 = KLayoutDataFactory.eINSTANCE.createKPoint();
                     KPoint point2 = KLayoutDataFactory.eINSTANCE.createKPoint();
                     KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(connection.getTargetPort());
-                    if (layoutDirection == LayoutDirection.VERTICAL) {
+                    if (layoutDirection == LayoutDirection.DOWN) {
                         point1.setX(connection.targetAnchorPos);
                         point1.setY(targetPos.getY() + connection.getTargetElement().getRealHeight()
                                 + connection.targetFrontPos * objSpacing);
@@ -406,7 +406,7 @@ public class RectilinearEdgeRouter extends AbstractAlgorithm implements IEdgeRou
                 } else if (connection.targetSidePos != 0) {
                     KPoint point = KLayoutDataFactory.eINSTANCE.createKPoint();
                     KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(connection.getTargetPort());
-                    if (layoutDirection == LayoutDirection.VERTICAL) {
+                    if (layoutDirection == LayoutDirection.DOWN) {
                         point.setX(connection.targetAnchorPos);
                         point.setY(targetYbase + portLayout.getYpos() + portLayout.getHeight() / 2);
                     } else {
@@ -419,7 +419,7 @@ public class RectilinearEdgeRouter extends AbstractAlgorithm implements IEdgeRou
         }
 
         // update dimension of the layered graph
-        if (layoutDirection == LayoutDirection.VERTICAL) {
+        if (layoutDirection == LayoutDirection.DOWN) {
             layeredGraphPos.setX(layeredGraphPos.getX() + firstExtEdges * objSpacing);
             if (layer.height == 0) {
                 layeredGraphPos.setY(layeredGraphPos.getY() + aroundExtEdges * objSpacing);
@@ -500,7 +500,7 @@ public class RectilinearEdgeRouter extends AbstractAlgorithm implements IEdgeRou
         float maxInputPos = 0.0f;
         float maxOutputPos = 0.0f;
         if (inputLayer.rank == 0) {
-            if (layoutDirection == LayoutDirection.VERTICAL) {
+            if (layoutDirection == LayoutDirection.DOWN) {
                 for (LayerElement element : inputLayer.getElements()) {
                     KPort port = (KPort) element.getElemObj();
                     if (LayoutOptions.getPortSide(KimlLayoutUtil.getShapeLayout(port))
@@ -519,7 +519,7 @@ public class RectilinearEdgeRouter extends AbstractAlgorithm implements IEdgeRou
             }
         }
         if (outputLayer.height == 0) {
-            if (layoutDirection == LayoutDirection.VERTICAL) {
+            if (layoutDirection == LayoutDirection.DOWN) {
                 for (LayerElement element : outputLayer.getElements()) {
                     KPort port = (KPort) element.getElemObj();
                     if (LayoutOptions.getPortSide(KimlLayoutUtil.getShapeLayout(port))
@@ -584,7 +584,7 @@ public class RectilinearEdgeRouter extends AbstractAlgorithm implements IEdgeRou
                     break;
                 }
             }
-            if (layoutDirection == LayoutDirection.VERTICAL) {
+            if (layoutDirection == LayoutDirection.DOWN) {
                 if (layer.rank == 0) {
                     KimlLayoutUtil.placePoints(westPorts, 0.0f, layeredGraph.lengthwiseDim / 2, offsetY,
                             true, true);
@@ -620,7 +620,7 @@ public class RectilinearEdgeRouter extends AbstractAlgorithm implements IEdgeRou
         }
 
         // adjust the position of each external port
-        if (layoutDirection == LayoutDirection.VERTICAL) {
+        if (layoutDirection == LayoutDirection.DOWN) {
             for (LayerElement element : layer.getElements()) {
                 KPort port = (KPort) element.getElemObj();
                 KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(port);

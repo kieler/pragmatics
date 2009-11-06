@@ -22,10 +22,14 @@ public enum LayoutDirection {
 
     /** undefined layout direction. */
     UNDEFINED,
-    /** horizontal layout. */
-    HORIZONTAL,
-    /** vertical layout. */
-    VERTICAL;
+    /** rightward horizontal layout. */
+    RIGHT,
+    /** leftward horizontal layout. */
+    LEFT,
+    /** downward vertical layout. */
+    DOWN,
+    /** upward vertical layout. */
+    UP;
     
     /**
      * Returns the enumeration value related to the given ordinal.
