@@ -130,8 +130,10 @@ public class EditorTransformationSettings implements Serializable {
      *            The list of menu contributions to use
      */
     public final void setMenuContributions(final LinkedList<KSBasEMenuContribution> contributionList) {
-        this.menuContributions.clear();
-        this.menuContributions.addAll(contributionList);
+        if (contributionList != null && contributionList.size() > 0) {
+            this.menuContributions.clear();
+            this.menuContributions.addAll(contributionList);
+        }
     }
 
     /**
@@ -141,7 +143,9 @@ public class EditorTransformationSettings implements Serializable {
      *            The contribution to append to the list of menu contributions.
      */
     public final void addMenuContribution(final KSBasEMenuContribution contribution) {
-        this.menuContributions.add(contribution);
+        if (contribution != null) {
+            this.menuContributions.add(contribution);
+        }
     }
 
     /**
@@ -180,10 +184,12 @@ public class EditorTransformationSettings implements Serializable {
      * @return The first transformation found or null
      */
     public final Transformation getTransformationByName(final String transformation) {
-        for (Transformation t : transformations) {
-            if (t.getTransformationName().toLowerCase(Locale.getDefault()).equals(
-                    transformation.toLowerCase(Locale.getDefault()))) {
-                return t;
+        if (transformation != null) {
+            for (Transformation t : transformations) {
+                if (t.getTransformationName().toLowerCase(Locale.getDefault()).equals(
+                        transformation.toLowerCase(Locale.getDefault()))) {
+                    return t;
+                }
             }
         }
         return null;
@@ -198,9 +204,11 @@ public class EditorTransformationSettings implements Serializable {
      *         transformation has been found
      */
     public final Transformation getTransformationById(final String tid) {
-        for (Transformation t : transformations) {
-            if (t.getTransformationId().equals(tid)) {
-                return t;
+        if (tid != null) {
+            for (Transformation t : transformations) {
+                if (t.getTransformationId().equals(tid)) {
+                    return t;
+                }
             }
         }
         return null;
@@ -213,8 +221,10 @@ public class EditorTransformationSettings implements Serializable {
      *            A LinkedList containing the transformations
      */
     public final void setTransformations(final LinkedList<Transformation> transformationList) {
-        this.transformations.clear();
-        this.transformations.addAll(transformationList);
+        if (transformationList != null) {
+            this.transformations.clear();
+            this.transformations.addAll(transformationList);
+        }
     }
 
     /**
@@ -224,7 +234,9 @@ public class EditorTransformationSettings implements Serializable {
      *            a transformation definition
      */
     public final void addTransformation(final Transformation t) {
-        this.transformations.add(t);
+        if (t != null) {
+            this.transformations.add(t);
+        }
     }
 
     /**
@@ -234,7 +246,9 @@ public class EditorTransformationSettings implements Serializable {
      *            the index of the element to remove
      */
     public final void removeTransformation(final int index) {
-        this.transformations.remove(index);
+        if (index > -1 && index < transformations.size()) {
+            this.transformations.remove(index);
+        }
     }
 
     /**
@@ -249,7 +263,9 @@ public class EditorTransformationSettings implements Serializable {
         if (this.transformations.contains(oldVal)) {
             transformations.remove(oldVal);
         }
-        transformations.add(newVal);
+        if (newVal != null) {
+            transformations.add(newVal);
+        }
     }
 
     /**
@@ -276,6 +292,9 @@ public class EditorTransformationSettings implements Serializable {
     }
 
     /**
+     * Gets the contributor. May return null if the editor has been added via
+     * the preference pages.
+     * 
      * @return The editors contributor project.
      */
     public final IContributor getContributor() {
@@ -283,11 +302,11 @@ public class EditorTransformationSettings implements Serializable {
     }
 
     /**
-     * Sets the editors contributor project. May return null if the editor has
-     * been defined by the user.
+     * Sets the editors contributor project.
      * 
      * @param contrib
-     *            The contribution that is assigned with this editor.
+     *            The contribution that is assigned with this editor. May be
+     *            null if the editor has been defined by the user.
      */
     public final void setContributor(final IContributor contrib) {
         this.contributor = contrib;

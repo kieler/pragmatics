@@ -20,6 +20,8 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
+
 /**
  * The connection between Xtend functions and the KSBasE plug-In. Stores
  * additional information about how the transformation can be executed by the
@@ -133,7 +135,6 @@ public class Transformation implements Serializable,Cloneable {
      * @return The transformation name used by the menus.
      */
     public final String getName() {
-        assert (this.name != null);
         return this.name;
     }
 
@@ -143,7 +144,6 @@ public class Transformation implements Serializable,Cloneable {
      * @return The name of this transformation
      */
     public final String getTransformationName() {
-        assert (this.transformationName != null);
         return this.transformationName;
     }
 
@@ -153,7 +153,7 @@ public class Transformation implements Serializable,Cloneable {
      * @return The number of selections
      */
     public final int getNumSelections() {
-        assert (this.parameter != null);
+        Assert.isNotNull(parameter);
         return this.parameter.size();
     }
 
@@ -163,7 +163,6 @@ public class Transformation implements Serializable,Cloneable {
      * @return A path string
      */
     public final String getIcon() {
-        assert (this.icon != null);
         return icon;
     }
 
@@ -173,7 +172,7 @@ public class Transformation implements Serializable,Cloneable {
      * @return A list of parameters.
      */
     public final List<String> getParameterList() {
-        assert (this.parameter != null);
+        Assert.isNotNull(this.parameter);
         //never return the references!
         return new LinkedList<String>(parameter);
     }
@@ -184,7 +183,7 @@ public class Transformation implements Serializable,Cloneable {
      * @return An array of parameters.
      */
     public final String[] getParameter() {
-        assert (this.parameter != null);
+        Assert.isNotNull(this.parameter);
         return parameter.toArray(new String[parameter.size()]);
     }
 
@@ -208,7 +207,6 @@ public class Transformation implements Serializable,Cloneable {
      * @return The transformationId
      */
     public final String getTransformationId() {
-        assert (transformationId != null);
         return transformationId;
     }
 
@@ -230,7 +228,6 @@ public class Transformation implements Serializable,Cloneable {
      * @return The keyboard shortcut
      */
     public final String getKeyboardShortcut() {
-        assert (this.keyboardShortcut != null);
         return keyboardShortcut;
     }
 
@@ -254,7 +251,7 @@ public class Transformation implements Serializable,Cloneable {
      */
     public void serialize(final ObjectOutputStream writer) {
         try {
-            assert (writer != null);
+            Assert.isNotNull(writer);
             writer.writeObject(this.name);
             writer.writeObject(this.transformationName);
             writer.writeObject(this.parameter);
@@ -272,7 +269,6 @@ public class Transformation implements Serializable,Cloneable {
      */
     @Override
     public final int hashCode() {
-        assert (this.transformationName != null);
         return transformationName.hashCode();
     }
 

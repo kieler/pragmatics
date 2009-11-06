@@ -90,7 +90,6 @@ public final class TransformationManager {
      * @return A list of EditorTransformationSettings
      */
     public LinkedList<EditorTransformationSettings> getEditors() {
-        assert (registeredEditors != null);
         return registeredEditors;
     }
 
@@ -101,7 +100,6 @@ public final class TransformationManager {
      * @return A list of EditorTransformationSettings
      */
     public LinkedList<EditorTransformationSettings> getUserDefinedEditors() {
-        assert (registeredEditors != null);
         LinkedList<EditorTransformationSettings> userSettings =
                 new LinkedList<EditorTransformationSettings>();
         for (EditorTransformationSettings ed : registeredEditors) {
@@ -121,7 +119,6 @@ public final class TransformationManager {
      *         given name
      */
     public EditorTransformationSettings getEditorByName(final String editor) {
-        assert (registeredEditors != null);
         if (editor != null && editor.length() > 0) {
             for (EditorTransformationSettings settings : registeredEditors) {
                 if (settings.getEditor().equals(editor)) {
@@ -143,7 +140,6 @@ public final class TransformationManager {
      *         given name
      */
     public EditorTransformationSettings getUserDefinedEditorByName(final String editor) {
-        assert (registeredEditors != null);
         if (editor != null && editor.length() > 0) {
             for (EditorTransformationSettings settings : registeredEditors) {
                 if (settings.getContributor() == null && settings.getEditor().equals(editor)) {
@@ -210,7 +206,6 @@ public final class TransformationManager {
      *            The fqn class name of the editor
      */
     public void removeEditor(final String editor) {
-        assert (registeredEditors != null);
         if (editor != null && editor.length() > 0) {
             for (int i = 0; i < registeredEditors.size(); ++i) {
                 if (registeredEditors.get(i).getEditor().equals(editor)

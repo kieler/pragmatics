@@ -14,6 +14,7 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -49,7 +50,7 @@ public class KSBasEPlugin extends AbstractUIPlugin {
     public void start(final BundleContext context) throws Exception {
         super.start(context);
         KSBasEPlugin.setPlugin(this);
-        assert (TransformationManager.INSTANCE != null);
+        Assert.isNotNull(TransformationManager.INSTANCE != null);
         TransformationManager.INSTANCE.initializeTransformations();
     }
 
