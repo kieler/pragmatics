@@ -32,7 +32,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import de.cau.cs.kieler.ksbase.viewmanagement.KSBasEViewManagementPlugin;
 import de.cau.cs.kieler.ksbase.viewmanagement.combinations.KSBasECombination;
 
-import de.cau.cs.kieler.viewmanagement.AEffect;
 import de.cau.cs.kieler.viewmanagement.RunLogic;
 
 /**
@@ -88,17 +87,17 @@ public class PostTransformationPreferencePage extends PreferencePage implements
             RunLogic.getCombination("KSBasECombination").setActive(true);
         }
         
-        for (AEffect effect : RunLogic.getEffects()) {
+        for (String effect : RunLogic.getEffects()) {
             boolean active = false;
             int effectPrio = 0;
             HashMap<Integer, LinkedList<String>> effects = KSBasECombination.getEffects();
             for (Integer prio : effects.keySet()) {
-                if (effects.get(prio).contains(effect.getClass().getCanonicalName())) {
+                if (effects.get(prio).contains(effect)) {
                     active = true;
                     effectPrio = prio;
                 }
             }
-            TableData effData = new TableData(input, active, effect.getClass().getCanonicalName(), effectPrio);
+            TableData effData = new TableData(input, active, effect, effectPrio);
 
             input.add(effData);
         }
