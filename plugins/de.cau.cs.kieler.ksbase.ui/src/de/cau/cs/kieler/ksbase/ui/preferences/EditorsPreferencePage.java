@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
@@ -64,11 +65,10 @@ import de.cau.cs.kieler.ksbase.ui.menus.DynamicMenuContributions;
  * @author Michael Matzen
  */
 @SuppressWarnings("restriction")
-public class EditorsPreferencePage extends PreferencePage
-        implements IWorkbenchPreferencePage {
+public class EditorsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-    private static final int MENU_BUTTON_GRID_LAYOUT = 3;
-    private static final int BROWSER_CONTAINER_GRIDLAYOUT = 3;
+    private static final int GRIDSIZE_MENU_BUTTONS = 3;
+    private static final int GRIDSIZE_BROWSER_CONTAINER = 3;
 
     /**
      * A content provider for the MenuTreeView used in this page.
@@ -261,7 +261,8 @@ public class EditorsPreferencePage extends PreferencePage
     /** Combo boxes. **/
     protected Combo cbEditors;
     /** Buttons. **/
-    protected Button btContext, btModelPackage, btEditorAdd, btEditorDel;
+    protected Button btContext, btModelPackage, btEditorAdd, btEditorDel, btContribution, btMenu,
+            btCommand;
     /** The file editor used to select an icon from the project folder. **/
     FileFieldEditor dfDefaultIcon;
     /** The currently selected editor. **/
@@ -286,21 +287,13 @@ public class EditorsPreferencePage extends PreferencePage
     }
 
     /**
-     * Creates the contents of the preference page.
-     * 
-     * @param parent
-     *            The parent of this preference page.
-     * @return The created controls.
+     * Creates the editor setting part of the page.
+     * @param parent The parent o
      */
-    @Override
-    protected Control createContents(final Composite parent) {
-        // Since the title wont be display for setTitle oder super() we are
-        // simply inserting a label
-        new Label(parent, SWT.NONE).setText(Messages.kSBasETPreferencePageTitle);
-
+    private void createEditorContent(final Composite parent) {
         Composite container = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(2, false);
-
+        
         Label editorLabel = new Label(container, SWT.NONE);
         editorLabel.setText(Messages.kSBasEPreferencePageEditorSelectionTitle);
         cbEditors = new Combo(container, SWT.DROP_DOWN | SWT.READ_ONLY);
@@ -314,13 +307,13 @@ public class EditorsPreferencePage extends PreferencePage
              */
             public void widgetSelected(final SelectionEvent e) {
                 EditorTransformationSettings editor =
-                        manager.getEditorByName(((Combo) e.getSource()).getText());
+                        manager.getUserDefinedEditorByName(((Combo) e.getSource()).getText());
                 EditorsPreferencePage.setActiveEditor(editor);
                 if (activeEditor != null) { // Load editor settings
                     sfMetaModel.setText(editor.getModelPackageClass());
                     sfContext.setText(editor.getContext());
                     dfDefaultIcon.setStringValue(editor.getDefaultIcon());
-                    
+
                     // Fill menu tree viewer
                     if (menuTreeViewer != null
                             && menuTreeViewer.getContentProvider() != null
@@ -333,8 +326,22 @@ public class EditorsPreferencePage extends PreferencePage
                     sfMetaModel.setEnabled(true);
                     browserContainer.setEnabled(true);
                     btContext.setEnabled(true);
+                    btEditorDel.setEnabled(true);
                     cbEditors.setEnabled(true);
-                    //enable transformation page!
+                } else {
+                    // clear texts
+                    cbEditors.setText("");
+                    cbEditors.clearSelection();
+                    cbEditors.removeAll();
+                    sfMetaModel.setText("");
+                    sfContext.setText("");
+                    dfDefaultIcon.setStringValue("");
+
+                    // Disable controls
+                    sfMetaModel.setEnabled(false);
+                    browserContainer.setEnabled(false);
+                    btContext.setEnabled(false);
+                    btEditorDel.setEnabled(false);
                 }
             }
 
@@ -398,7 +405,7 @@ public class EditorsPreferencePage extends PreferencePage
         cbEditors.setLayoutData(gData);
 
         browserContainer = new Composite(parent, SWT.NONE);
-        browserContainer.setLayout(new GridLayout(BROWSER_CONTAINER_GRIDLAYOUT, true));
+        browserContainer.setLayout(new GridLayout(GRIDSIZE_BROWSER_CONTAINER, true));
 
         new Label(browserContainer, SWT.NONE).setText(Messages.kSBasEPreferencePageModelPackage);
         sfMetaModel = new Text(browserContainer, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
@@ -499,18 +506,50 @@ public class EditorsPreferencePage extends PreferencePage
         container.setLayout(layout);
         container.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, false, false));
 
+    }
+    /**
+     * Creates the contents of the preference page.
+     * 
+     * @param parent
+     *            The parent of this preference page.
+     * @return The created controls.
+     */
+    @Override
+    protected Control createContents(final Composite parent) {
+        // Since the title wont be display for setTitle oder super() we are
+        // simply inserting a label
+        new Label(parent, SWT.NONE).setText(Messages.kSBasETPreferencePageTitle);
+
+        createEditorContent(parent);
         
-        Composite menuComposite = new Composite(parent, SWT.NONE);
+        Group menuContributionGroup =
+                new Group(parent, SWT.SHADOW_ETCHED_IN | SWT.SHADOW_ETCHED_OUT);
+        menuContributionGroup.setText("Menu Contributions");
+        menuContributionGroup.setLayout(new GridLayout(2, true));
+
+        Composite menuComposite = new Composite(menuContributionGroup, SWT.NONE);
         menuComposite.setLayout(new GridLayout(2, true));
         // Treeview used for display the menu structure
         menuTreeViewer = new TreeViewer(menuComposite);
         menuTreeViewer.setContentProvider(new MenuTreeViewContentProvider());
         menuTreeViewer.setLabelProvider(new MenuTreeViewLabelProvider());
+        menuTreeViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        Composite menuEditingComposite = new Composite(menuContributionGroup, SWT.NONE);
+        menuEditingComposite.setLayout(new GridLayout(1, true));
+
         menuComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-        Composite menuButtonComposite = new Composite(parent, SWT.NONE);
-        menuButtonComposite.setLayout(new GridLayout(MENU_BUTTON_GRID_LAYOUT, true));
-        menuButtonComposite.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, true));
+        Composite menuButtonComposite = new Composite(menuContributionGroup, SWT.NONE);
+        menuButtonComposite.setLayout(new GridLayout(GRIDSIZE_MENU_BUTTONS, true));
+        btContribution = new Button(menuButtonComposite, SWT.PUSH);
+        btContribution.setText("Add Contribution");
+        btMenu = new Button(menuButtonComposite, SWT.PUSH);
+        btMenu.setText("Add Menu");
+        btCommand = new Button(menuButtonComposite, SWT.PUSH);
+        btCommand.setText("Add Command");
+        btCommand.setLayoutData(new GridData(SWT.LEFT, SWT.BOTTOM, false, false));
+        menuButtonComposite.setLayoutData(new GridData(SWT.LEFT, SWT.BOTTOM, false, false));
+        menuContributionGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         readEditors();
         return null;
     }
@@ -526,8 +565,8 @@ public class EditorsPreferencePage extends PreferencePage
             }
             if (cbEditors.getItemCount() > 0) {
                 cbEditors.select(0);
-                cbEditors.notifyListeners(SWT.Selection, null);
             }
+            cbEditors.notifyListeners(SWT.Selection, null);
         }
     }
 
@@ -565,21 +604,26 @@ public class EditorsPreferencePage extends PreferencePage
 
         return super.performOk();
     }
-    
+
     /**
-     * Gets the active editor.
-     * Called by the {@link TransformationPreferencePage}
-     * @return The active editor, may return null if no editor available or selected
+     * Gets the active editor. Called by the
+     * {@link TransformationPreferencePage}
+     * 
+     * @return The active editor, may return null if no editor available or
+     *         selected
      */
     protected static EditorTransformationSettings getActiveEditor() {
         return activeEditor;
     }
-    
+
     /**
-     * Sets the currently active editor.
-     * @param editor The new active editor
+     * Sets the new active editor. The new editor ''may be null'' this is used
+     * for some checks, so the missing null-check is intended.
+     * 
+     * @param editor
+     *            The new editor
      */
-    public static void setActiveEditor(final EditorTransformationSettings editor) {
+    protected static void setActiveEditor(final EditorTransformationSettings editor) {
         activeEditor = editor;
     }
 }

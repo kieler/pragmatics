@@ -31,6 +31,8 @@ public final class Messages extends NLS {
     public static String executeTransformationCommandWorkflowInvokeError;
     /** Name of the localized message in messages.properties. **/
     public static String executeTransformationEditPolicyTransformationCommandName;
+    /** Name of the localized message in messages.properties. **/
+    public static String workflowInitializationError;
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

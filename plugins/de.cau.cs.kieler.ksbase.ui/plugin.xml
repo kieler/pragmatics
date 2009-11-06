@@ -30,8 +30,8 @@
             type="org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart">
       </propertyTester>
    </extension>
+   <!--
   <extension
-  
          point="org.eclipse.ui.preferencePages">
       <page
             category="de.cau.cs.kieler"
@@ -39,8 +39,6 @@
             id="de.cau.cs.kieler.ksbase.PreferencePage"
             name="Structure based editing">
       </page>
-      
-  		<!-- Preference page currently disabled
       <page
             category="de.cau.cs.kieler.ksbase.PreferencePage"
             class="de.cau.cs.kieler.ksbase.ui.preferences.EditorsPreferencePage"
@@ -53,6 +51,6 @@
             id="de.cau.cs.kieler.ksbase.ui.TransformationPrefPage"
             name="Transformations">
       </page>
-      -->
       </extension>
+      -->
 </plugin>

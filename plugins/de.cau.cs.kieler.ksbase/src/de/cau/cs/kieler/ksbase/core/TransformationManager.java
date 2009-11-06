@@ -216,6 +216,12 @@ public final class TransformationManager {
                 if (registeredEditors.get(i).getEditor().equals(editor)
                         && registeredEditors.get(i).getContributor() == null) {
                     registeredEditors.remove(i);
+                    //Remove exsiting .sbase file settings for editor:
+                    IPath metaPath = KSBasEPlugin.getDefault().getStateLocation();
+                    File storedSettings = metaPath.append(editor+".sbase").toFile();
+                    if ( storedSettings.exists()) {
+                        storedSettings.delete();
+                    }
                 }
             }
         }

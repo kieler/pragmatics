@@ -15,9 +15,11 @@
 
 package de.cau.cs.kieler.ksbase.ui;
 
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import de.cau.cs.kieler.ksbase.ui.menus.DynamicBundleLoader;
 import de.cau.cs.kieler.ksbase.ui.menus.DynamicMenuContributions;
 
 /**
@@ -53,10 +55,12 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
     public void start(final BundleContext context) throws Exception {
         super.start(context);
         KSBasEUIPlugin.setPlugin(this);
-        //.....activating vm plug-in
-        
-        //.....
+        // Creating bundles
         DynamicMenuContributions.INSTANCE.createAllMenuContributions();
+        // Adding a part listener to check when to activate a bundle
+        if (PlatformUI.getWorkbench() != null) {
+            PlatformUI.getWorkbench().addWindowListener(DynamicBundleLoader.INSTANCE);
+        }
     }
 
     /**

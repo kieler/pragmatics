@@ -31,7 +31,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import de.cau.cs.kieler.ksbase.viewmanagement.KSBasEViewManagementPlugin;
 import de.cau.cs.kieler.ksbase.viewmanagement.combinations.KSBasECombination;
-
 import de.cau.cs.kieler.viewmanagement.RunLogic;
 
 /**
@@ -40,8 +39,8 @@ import de.cau.cs.kieler.viewmanagement.RunLogic;
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
  */
-public class PostTransformationPreferencePage extends PreferencePage implements
-        IWorkbenchPreferencePage {
+public class PostTransformationPreferencePage extends PreferencePage
+        implements IWorkbenchPreferencePage {
 
     private static final int TABLE_PRIORITY_BOUNDS = 45;
     private static final int TABLE_EFFECT_BOUNDS = 450;
@@ -70,8 +69,9 @@ public class PostTransformationPreferencePage extends PreferencePage implements
                 .setText("Select the effects that should be executed after a transformation.");
         new Label(container, SWT.NONE)
                 .setText("If some effects have to be executed earlier, give them a lower priority");
-        DataTableViewer viewer = new DataTableViewer(container, SWT.HIDE_SELECTION | SWT.MULTI
-                | SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE);
+        DataTableViewer viewer =
+                new DataTableViewer(container, SWT.HIDE_SELECTION
+                        | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE);
         createColumns(viewer);
         viewer.setContentProvider(new TableDataContentProvider());
         viewer.setLabelProvider(new TableDataLabelProvider());
@@ -80,13 +80,11 @@ public class PostTransformationPreferencePage extends PreferencePage implements
         container.setLayout(layout);
         container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-        //Check if VM is initialized
+        // Check if VM is initialized
         if (!RunLogic.getInstance().getRunlogicState()) {
-           
+
             RunLogic.getInstance().registerListeners();
-            RunLogic.getCombination("KSBasECombination").setActive(true);
         }
-        
         for (String effect : RunLogic.getEffects()) {
             boolean active = false;
             int effectPrio = 0;
@@ -136,7 +134,8 @@ public class PostTransformationPreferencePage extends PreferencePage implements
      *            The workbench for this preference page
      */
     public void init(final IWorkbench workbench) {
-        KSBasECombination.initalizeEffects(KSBasEViewManagementPlugin.getDefault().getPreferenceStore());
+        KSBasECombination.initalizeEffects(KSBasEViewManagementPlugin
+                .getDefault().getPreferenceStore());
     }
 
     /**
@@ -146,7 +145,8 @@ public class PostTransformationPreferencePage extends PreferencePage implements
      */
     @Override
     public boolean performOk() {
-        KSBasECombination.storeEffects(KSBasEViewManagementPlugin.getDefault().getPreferenceStore());
+        KSBasECombination
+                .storeEffects(KSBasEViewManagementPlugin.getDefault().getPreferenceStore());
         return true;
     }
 }

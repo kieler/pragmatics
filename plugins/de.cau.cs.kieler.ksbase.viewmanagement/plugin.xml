@@ -18,10 +18,10 @@
    <extension
          point="org.eclipse.ui.preferencePages">
                <page
-            category="de.cau.cs.kieler.ksbase.PreferencePage"
+            category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.ksbase.viewmanagement.preferences.PostTransformationPreferencePage"
-            id="de.cau.cs.kieler.ksbase.InteractPreferencePage"
-            name="Post-Transformation">
+            id="de.cau.cs.kieler.ksbase.PostPreferencePage"
+            name="KSBasE">
       </page>
    </extension>
 </plugin>

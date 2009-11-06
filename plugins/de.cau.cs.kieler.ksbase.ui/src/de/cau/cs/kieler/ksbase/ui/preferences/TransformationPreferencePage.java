@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -45,21 +46,25 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.dialogs.ResourceSelectionDialog;
 
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.Transformation;
 
 /**
- * Preference page to configure transformations.
+ * The post-transformation preference page.
+ * Contains a list of existing effects which can be 
+ * executed after a transformation has been executed.
+ * The effects can be ordered with a simply priority scheme.
  * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
- * 
+ *
  */
 public class TransformationPreferencePage extends PreferencePage
         implements IWorkbenchPreferencePage {
 
-    private static final int BUTTON_GRIDLAYOUT = 4;
+    private static final int BUTTON_CONTAINER_GRIDSIZE = 4;
     /** The table used to display the existing transformation. **/
     protected Table table;
     /** Composites used to layout the preference page. **/
@@ -102,26 +107,41 @@ public class TransformationPreferencePage extends PreferencePage
      */
     @Override
     protected Control createContents(final Composite parent) {
-        boolean activated;
         activeEditor = EditorsPreferencePage.getActiveEditor();
+
         if (activeEditor == null) {
-            activated = false;
+            // Insert a link to the editor preference page and do not display
+            // anything more.
+            Link l = new Link(parent, SWT.NONE);
+            l.setText("No valid editor has been selected,"
+                    + " please return to the <A>editor settings page</A>");
+            l.addSelectionListener(new SelectionListener() {
+
+                public void widgetSelected(final SelectionEvent e) {
+                    PreferencesUtil.createPreferenceDialogOn(
+                            getShell(), "de.cau.cs.kieler.ksbase.EditorPreferencePage", null, null);
+                }
+
+                public void widgetDefaultSelected(final SelectionEvent e) {
+                }
+            });
+            noDefaultAndApplyButton();
+            return null;
         } else {
-            activated = true;
+            new Label(parent, SWT.NONE).setText(Messages.kSBasETPreferencePageTitle);
         }
-
-        // Since the title wont be display for setTitle oder super() we are
-        // simply inserting a label
-        new Label(parent, SWT.NONE).setText(Messages.kSBasETPreferencePageTitle);
-
         tableComp = new Composite(parent, SWT.NONE);
         tableComp.setLayout(new GridLayout(1, false));
         Label tableLabel = new Label(tableComp, SWT.NONE);
         tableLabel.setText(Messages.kSBasEPreferencePageTableTitle);
 
         table = new Table(tableComp, SWT.BORDER | SWT.SINGLE);
+
+        table.setHeaderVisible(true);
+        table.setLinesVisible(true);
+        // Fill table with transformations
         table.removeAll();
-        if (activeEditor != null && activeEditor.getTransformations() != null) {
+        if (activeEditor.getTransformations() != null) {
             for (Transformation t : activeEditor.getTransformations()) {
                 TableItem tItem = new TableItem(table, SWT.NONE);
 
@@ -131,9 +151,8 @@ public class TransformationPreferencePage extends PreferencePage
 
             }
         }
-        table.setEnabled(activated);
-        table.setHeaderVisible(true);
-        table.setLinesVisible(true);
+
+        table.setEnabled(true);
 
         TableColumn[] titleCols = new TableColumn[TABLE_COLS];
 
@@ -304,7 +323,7 @@ public class TransformationPreferencePage extends PreferencePage
         tableComp.setEnabled(false);
 
         btComp = new Composite(parent, SWT.NONE);
-        btComp.setLayout(new GridLayout(BUTTON_GRIDLAYOUT, false));
+        btComp.setLayout(new GridLayout(BUTTON_CONTAINER_GRIDSIZE, false));
 
         btBrowseXtend = new Button(btComp, SWT.NONE);
         btBrowseXtend.setText("Load Xtend File");
@@ -382,13 +401,10 @@ public class TransformationPreferencePage extends PreferencePage
     }
 
     /**
-     * Initializes this preference page.
-     * 
-     * @param workbench
-     *            The parent workbench
+     * Initializes the preference page.
+     * @param workbench The workbench object to use.
      */
     public void init(final IWorkbench workbench) {
-        // nothing to be done here right now
     }
 
 }
