@@ -131,12 +131,17 @@ public final class GraphvizAPI {
     /** minimal timeout for waiting for Graphviz to give some output. */
     public static final int PROCESS_MIN_TIMEOUT = 200;
 
-    /** parameter used to specify the command. */
-    private static final String PARAM_COMMAND = "-K";
-    /** arguments additionally passed to the dot executable. */
-    private static final String DOT_ARGUMENTS = "-q";
+    /** argument used to specify the command. */
+    private static final String ARG_COMMAND = "-K";
+    /** argument to suppress warnings of the executable. */
+    private static final String ARG_NOWARNINGS = "-q";
+    /** argument to invert the Y axis to conform with SWT. */
+    private static final String ARG_INVERTYAXIS = "-y";
     /** default locations of the dot executable. */
-    private static final String[] DEFAULT_LOCS = { "/opt/local/bin/", "/usr/local/bin/", "/usr/bin/",
+    private static final String[] DEFAULT_LOCS = {
+            "/opt/local/bin/",
+            "/usr/local/bin/",
+            "/usr/bin/",
             "/bin/" };
     /**
      * number of milliseconds to wait if no input is available from the Graphviz
@@ -184,9 +189,9 @@ public final class GraphvizAPI {
         }
 
         try {
-            String commandArgument = PARAM_COMMAND + command;
             Process process = Runtime.getRuntime().exec(
-                    new String[] {dotExecutable, DOT_ARGUMENTS, commandArgument});
+                    new String[] {dotExecutable, ARG_NOWARNINGS, ARG_INVERTYAXIS,
+                            ARG_COMMAND + command});
             return process;
         } catch (IOException exception) {
             throw new KielerException("Failed to start Graphviz process.", exception);

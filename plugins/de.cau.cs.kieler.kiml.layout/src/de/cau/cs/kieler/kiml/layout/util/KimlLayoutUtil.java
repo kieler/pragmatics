@@ -542,5 +542,45 @@ public final class KimlLayoutUtil {
         }
         return false;
     }
+    
+    /**
+     * Translates the contents of the given node by an offset.
+     * 
+     * @param parent parent node whose children shall be translated
+     * @param xoffset x coordinate offset
+     * @param yoffset y coordinate offset
+     */
+    public static void translate(final KNode parent, final float xoffset, final float yoffset) {
+        for (KNode node : parent.getChildren()) {
+            KShapeLayout nodeLayout = getShapeLayout(node);
+            nodeLayout.setXpos(nodeLayout.getXpos() + xoffset);
+            nodeLayout.setYpos(nodeLayout.getYpos() + yoffset);
+            for (KEdge edge : node.getOutgoingEdges()) {
+                KEdgeLayout edgeLayout = getEdgeLayout(edge);
+                translate(edgeLayout.getSourcePoint(), xoffset, yoffset);
+                for (KPoint bendPoint : edgeLayout.getBendPoints()) {
+                    translate(bendPoint, xoffset, yoffset);
+                }
+                translate(edgeLayout.getTargetPoint(), xoffset, yoffset);
+                for (KLabel edgeLabel : edge.getLabels()) {
+                    KShapeLayout labelLayout = getShapeLayout(edgeLabel);
+                    labelLayout.setXpos(labelLayout.getXpos() + xoffset);
+                    labelLayout.setYpos(labelLayout.getYpos() + yoffset);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Translates the given point by an offset.
+     * 
+     * @param point point that shall be translated
+     * @param xoffset x coordinate offset
+     * @param yoffset y coordinate offset
+     */
+    public static void translate(final KPoint point, final float xoffset, final float yoffset) {
+        point.setX(point.getX() + xoffset);
+        point.setY(point.getY() + yoffset);
+    }
 
 }

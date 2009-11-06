@@ -81,11 +81,8 @@ public class GraphvizLayouter {
     /** default value for minimal spacing. */
     public static final float DEF_MIN_SPACING = 16.0f;
 
-    /**
-     * if true, debug output is enabled, which writes dot files to the home
-     * folder.
-     */
-    private static final boolean ENABLE_DEBUG = false;
+    /** if true, debug output is enabled, which writes dot files to the home folder. */
+    private static final boolean ENABLE_DEBUG = true;
     /** dots per inch specification, needed by Graphviz for some values. */
     private static final float DPI = 72.0f;
     /** set of delimiters used to parse attribute values. */
@@ -213,13 +210,13 @@ public class GraphvizLayouter {
         // set layout direction
         if (command.equals(DOT_COMMAND)) {
             if (LayoutOptions.getLayoutDirection(parentLayout) == LayoutDirection.VERTICAL) {
-                graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_RANKDIR, "BT"));
+                graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_RANKDIR, "TB"));
             } else {
                 graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_RANKDIR, "LR"));
             }
         }
-        // enable overlap avoidance
-        if (!command.equals(DOT_COMMAND)) {
+        // enable node overlap avoidance for neato
+        if (command.equals(NEATO_COMMAND)) {
             graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_OVERLAP, "false"));
         }
         // configure initial placement of nodes
@@ -279,8 +276,7 @@ public class GraphvizLayouter {
                     AttributeList attributes = DotFactory.eINSTANCE.createAttributeList();
                     // disable drawing arrows for the edges
                     attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_EDGEDIR, "none"));
-                    // as Graphviz only supports positioning of a single label,
-                    // all labels
+                    // as Graphviz only supports positioning of a single label, all labels
                     // are stacked to one big label as workaround
                     StringBuffer unifiedLabel = new StringBuffer();
                     for (KLabel label : outgoingEdge.getLabels()) {
@@ -610,12 +606,13 @@ public class GraphvizLayouter {
                             try {
                                 StringTokenizer tokenizer = new StringTokenizer(attribute.getValue(),
                                         ATTRIBUTE_DELIM);
-                                float xoffset = Float.parseFloat(tokenizer.nextToken());
-                                float yoffset = Float.parseFloat(tokenizer.nextToken());
-                                float width = Float.parseFloat(tokenizer.nextToken());
-                                float height = Float.parseFloat(tokenizer.nextToken());
-                                boundingBox = new Point(width - xoffset, height - yoffset);
+                                float leftx = Float.parseFloat(tokenizer.nextToken());
+                                float bottomy = Float.parseFloat(tokenizer.nextToken());
+                                float rightx = Float.parseFloat(tokenizer.nextToken());
+                                float topy = Float.parseFloat(tokenizer.nextToken());
+                                boundingBox = new Point(rightx - leftx, bottomy - topy);
                             } catch (NumberFormatException exception) {
+                                // ignore exception
                             }
                         }
                     }

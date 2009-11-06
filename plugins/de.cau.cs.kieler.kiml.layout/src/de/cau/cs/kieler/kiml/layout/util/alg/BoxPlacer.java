@@ -144,10 +144,14 @@ public class BoxPlacer extends AbstractAlgorithm {
                     rowHeight = rowHeightIter.next();
                     nextRowIndex = rowIndexIter.next();
                 }
-                KShapeLayout boxLayout = KimlLayoutUtil.getShapeLayout(boxIter.next());
+                KNode box = boxIter.next();
+                KShapeLayout boxLayout = KimlLayoutUtil.getShapeLayout(box);
                 boxLayout.setHeight(rowHeight);
                 if (boxIter.nextIndex() == nextRowIndex) {
-                    boxLayout.setWidth(broadestRow - xpos - borderSpacing);
+                    float newWidth = broadestRow - xpos - borderSpacing;
+                    float oldWidth = boxLayout.getWidth();
+                    boxLayout.setWidth(newWidth);
+                    KimlLayoutUtil.translate(box, (newWidth - oldWidth) / 2, 0.0f);
                 }
                 xpos += boxLayout.getWidth() + minSpacing;
             }
