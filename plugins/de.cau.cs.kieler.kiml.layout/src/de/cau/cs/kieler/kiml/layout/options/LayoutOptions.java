@@ -673,5 +673,39 @@ public final class LayoutOptions {
             return sizeOption.getValue();
         }
     }
+    
+    /** layout option key: randomization seed. */
+    public static final String RANDOM_SEED = "de.cau.cs.kieler.layout.options.randomSeed";
 
+    /**
+     * Sets the randomization seed of the given layout data.
+     * 
+     * @param layoutData layout data to process
+     * @param seed randomization seed for the corresponding node
+     */
+    public static void setRandomSeed(final KLayoutData layoutData, final int seed) {
+        KIntOption seedOption = (KIntOption) layoutData.getOption(RANDOM_SEED);
+        if (seedOption == null) {
+            seedOption = KLayoutDataFactory.eINSTANCE.createKIntOption();
+            seedOption.setKey(RANDOM_SEED);
+            layoutData.getOptions().add(seedOption);
+        }
+        seedOption.setValue(seed);
+    }
+
+    /**
+     * Retrieves the randomization seed for a given layout data.
+     * 
+     * @param layoutData layout data to process
+     * @return the randomization seed, or 1 if no seed is assigned
+     */
+    public static int getRandomSeed(final KLayoutData layoutData) {
+        KIntOption seedOption = (KIntOption) layoutData.getOption(RANDOM_SEED);
+        if (seedOption == null) {
+            return 1;
+        } else {
+            return seedOption.getValue();
+        }
+    }
+    
 }

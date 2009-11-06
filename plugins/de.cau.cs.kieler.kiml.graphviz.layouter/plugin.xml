@@ -62,6 +62,10 @@
                priority="9"
                type="de.cau.cs.kieler.layout.diagrams.general">
          </supportedDiagram>
+         <supportedDiagram
+               priority="10"
+               type="de.cau.cs.kieler.layout.diagrams.usecaseDiagram">
+         </supportedDiagram>
          <knownOption
                option="de.cau.cs.kieler.layout.options.minSpacing">
          </knownOption>
@@ -70,6 +74,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.layout.options.borderSpacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.randomSeed">
          </knownOption>
       </layoutProvider>
       <layoutProvider
@@ -83,6 +90,10 @@
                priority="6"
                type="de.cau.cs.kieler.layout.diagrams.general">
          </supportedDiagram>
+         <supportedDiagram
+               priority="6"
+               type="de.cau.cs.kieler.layout.diagrams.usecaseDiagram">
+         </supportedDiagram>
          <knownOption
                option="de.cau.cs.kieler.layout.options.minSpacing">
          </knownOption>
@@ -91,6 +102,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.layout.options.borderSpacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.randomSeed">
          </knownOption>
       </layoutProvider>
       <layoutProvider

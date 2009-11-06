@@ -26,8 +26,8 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.graphviz.layouter.preferences.GraphvizPreferencePage;
 
 /**
- * Defines constants used in the Graphviz Dot language and static methods to
- * access Graphviz via a separate process.
+ * Defines constants used in the Graphviz Dot language and static methods to access Graphviz via a
+ * separate process.
  * 
  * @author <a href="mailto:tkl@informatik.uni-kiel.de">Tobias Kloss</a>
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
@@ -44,14 +44,11 @@ public final class GraphvizAPI {
     public static final String ATTR_COMMENT = "comment";
     /** Set edge type for drawing arrowheads. */
     public static final String ATTR_EDGEDIR = "dir";
-    /**
-     * This specifies the expected number of pixels per inch on a display
-     * device.
-     */
+    /** This specifies the expected number of pixels per inch on a display device. */
     public static final String ATTR_DPI = "dpi";
     /**
-     * If true, the node size is specified by the values of the width and height
-     * attributes only and is not expanded to contain the text label.
+     * If true, the node size is specified by the values of the width and height attributes only and
+     * is not expanded to contain the text label.
      */
     public static final String ATTR_FIXEDSIZE = "fixedsize";
     /** Font used for text. */
@@ -65,13 +62,13 @@ public final class GraphvizAPI {
     /** Text label attached to objects. */
     public static final String ATTR_LABEL = "label";
     /**
-     * This, along with labeldistance, determine where the headlabel (taillabel)
-     * are placed with respect to the head (tail) in polar coordinates.
+     * This, along with labeldistance, determine where the headlabel (taillabel) are placed with
+     * respect to the head (tail) in polar coordinates.
      */
     public static final String ATTR_LABELANGLE = "labelangle";
     /**
-     * Multiplicative scaling factor adjusting the distance that the
-     * headlabel(taillabel) is from the head(tail) node.
+     * Multiplicative scaling factor adjusting the distance that the headlabel(taillabel) is from
+     * the head(tail) node.
      */
     public static final String ATTR_LABELDISTANCE = "labeldistance";
     /** Font used for headlabel and taillabel. */
@@ -89,8 +86,8 @@ public final class GraphvizAPI {
     /** Determines if and how node overlaps should be removed (not dot). */
     public static final String ATTR_OVERLAP = "overlap";
     /**
-     * The pad attribute specifies how much, in inches, to extend the drawing
-     * area around the minimal area needed to draw the graph.
+     * The pad attribute specifies how much, in inches, to extend the drawing area around the
+     * minimal area needed to draw the graph.
      */
     public static final String ATTR_PAD = "pad";
     /** Position of node, or spline control points. */
@@ -102,8 +99,8 @@ public final class GraphvizAPI {
     /** Sets direction of graph layout (dot only). */
     public static final String ATTR_RANKDIR = "rankdir";
     /**
-     * In dot, this gives the desired rank separation, in inches. In twopi,
-     * specifies radial separation of concentric circles. (twopi, dot only)
+     * In dot, this gives the desired rank separation, in inches. In twopi, specifies radial
+     * separation of concentric circles. (twopi, dot only)
      */
     public static final String ATTR_RANKSEP = "ranksep";
     /** If 90, set drawing orientation to landscape. */
@@ -111,9 +108,11 @@ public final class GraphvizAPI {
     /** Set the shape of a node. */
     public static final String ATTR_SHAPE = "shape";
     /**
-     * Parameter used to determine the initial layout of nodes (fdp, neato
-     * only).
+     * Controls how, and if, edges are represented. If true, edges are drawn as splines routed
+     * around nodes; if false, edges are drawn as line segments.
      */
+    public static final String ATTR_SPLINES = "splines";
+    /** Parameter used to determine the initial layout of nodes (fdp, neato only). */
     public static final String ATTR_START = "start";
     /** Text label to be placed near tail of edge. */
     public static final String ATTR_TAILLABEL = "taillabel";
@@ -144,8 +143,7 @@ public final class GraphvizAPI {
             "/usr/bin/",
             "/bin/" };
     /**
-     * number of milliseconds to wait if no input is available from the Graphviz
-     * process.
+     * number of milliseconds to wait if no input is available from the Graphviz process.
      */
     private static final int PROCESS_INPUT_WAIT = 20;
     /**
@@ -162,9 +160,11 @@ public final class GraphvizAPI {
     /**
      * Starts a new Graphviz process with the given command.
      * 
-     * @param command the graphviz command to use
+     * @param command
+     *            the graphviz command to use
      * @return an instance of the graphviz process
-     * @throws KielerException if creating the process fails
+     * @throws KielerException
+     *             if creating the process fails
      */
     public static Process startProcess(final String command) throws KielerException {
         IPreferenceStore preferenceStore = GraphvizLayouterPlugin.getDefault().getPreferenceStore();
@@ -189,9 +189,10 @@ public final class GraphvizAPI {
         }
 
         try {
-            Process process = Runtime.getRuntime().exec(
-                    new String[] {dotExecutable, ARG_NOWARNINGS, ARG_INVERTYAXIS,
-                            ARG_COMMAND + command});
+            Process process = Runtime.getRuntime()
+                    .exec(
+                            new String[] {dotExecutable, ARG_NOWARNINGS, ARG_INVERTYAXIS,
+                                    ARG_COMMAND + command});
             return process;
         } catch (IOException exception) {
             throw new KielerException("Failed to start Graphviz process.", exception);
@@ -199,13 +200,16 @@ public final class GraphvizAPI {
     }
 
     /**
-     * Waits until there is some input from the given input stream, with a
-     * customizable timeout.
+     * Waits until there is some input from the given input stream, with a customizable timeout.
      * 
-     * @param inputStream input stream from which input is expected
-     * @param errorStream error stream that is queried if there is no input
-     * @param monitor monitor to which progress is reported
-     * @throws KielerException if the timeout is exceeded while waiting
+     * @param inputStream
+     *            input stream from which input is expected
+     * @param errorStream
+     *            error stream that is queried if there is no input
+     * @param monitor
+     *            monitor to which progress is reported
+     * @throws KielerException
+     *             if the timeout is exceeded while waiting
      */
     public static void waitForInput(final InputStream inputStream, final InputStream errorStream,
             final IKielerProgressMonitor monitor) throws KielerException {

@@ -129,6 +129,13 @@
             name="Expand Nodes"
             type="boolean">
       </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            description="Seed used for pseudo-random number generators to control the layout algorithm"
+            id="de.cau.cs.kieler.layout.options.randomSeed"
+            name="Randomization Seed"
+            type="int">
+      </layoutOption>
    </extension>
    <extension
          point="de.cau.cs.kieler.kiml.layout.layoutInfo">
@@ -151,6 +158,10 @@
       <diagramType
             id="de.cau.cs.kieler.layout.diagrams.classDiagram"
             name="Class Diagram">
+      </diagramType>
+      <diagramType
+            id="de.cau.cs.kieler.layout.diagrams.usecaseDiagram"
+            name="Use Case Diagram">
       </diagramType>
       <diagramType
             id="de.cau.cs.kieler.layout.diagrams.boxes"

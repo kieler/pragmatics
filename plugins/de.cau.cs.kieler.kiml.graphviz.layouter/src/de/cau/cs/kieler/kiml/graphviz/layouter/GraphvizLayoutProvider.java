@@ -72,6 +72,8 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
             return GraphvizLayouter.DEF_MIN_SPACING;
         } else if (LayoutOptions.FIXED_SIZE.equals(optionId)) {
             return false;
+        } else if (LayoutOptions.RANDOM_SEED.equals(optionId)) {
+            return 1;
         } else {
             return null;
         }

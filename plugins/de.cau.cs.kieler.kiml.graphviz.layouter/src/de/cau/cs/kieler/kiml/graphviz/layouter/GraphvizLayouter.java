@@ -34,14 +34,33 @@ import org.eclipse.xtext.parsetree.reconstr.SerializerUtil;
 import com.google.inject.Injector;
 
 import de.cau.cs.kieler.kiml.graphviz.DotStandaloneSetup;
-import de.cau.cs.kieler.kiml.graphviz.dot.*;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.*;
-import de.cau.cs.kieler.kiml.layout.options.LayoutDirection;
+import de.cau.cs.kieler.kiml.graphviz.dot.Attribute;
+import de.cau.cs.kieler.kiml.graphviz.dot.AttributeList;
+import de.cau.cs.kieler.kiml.graphviz.dot.AttributeStatement;
+import de.cau.cs.kieler.kiml.graphviz.dot.AttributeType;
+import de.cau.cs.kieler.kiml.graphviz.dot.DotFactory;
+import de.cau.cs.kieler.kiml.graphviz.dot.EdgeStatement;
+import de.cau.cs.kieler.kiml.graphviz.dot.EdgeTarget;
+import de.cau.cs.kieler.kiml.graphviz.dot.Graph;
+import de.cau.cs.kieler.kiml.graphviz.dot.GraphType;
+import de.cau.cs.kieler.kiml.graphviz.dot.GraphvizModel;
+import de.cau.cs.kieler.kiml.graphviz.dot.Node;
+import de.cau.cs.kieler.kiml.graphviz.dot.NodeStatement;
+import de.cau.cs.kieler.kiml.graphviz.dot.Statement;
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KInsets;
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutData;
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataFactory;
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KPoint;
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.*;
+import de.cau.cs.kieler.core.kgraph.KEdge;
+import de.cau.cs.kieler.core.kgraph.KGraphElement;
+import de.cau.cs.kieler.core.kgraph.KLabel;
+import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.ForkedOutputStream;
 import de.cau.cs.kieler.core.util.ForwardingInputStream;
 
@@ -224,13 +243,16 @@ public class GraphvizLayouter {
                 break;
             }
         }
-        // enable node overlap avoidance for neato
-        if (command.equals(NEATO_COMMAND)) {
+        // enable node overlap avoidance
+        if (!command.equals(DOT_COMMAND)) {
             graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_OVERLAP, "false"));
         }
+        // enable drawing of splines
+        graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_SPLINES, "true"));
         // configure initial placement of nodes
         if (command.equals(NEATO_COMMAND) || command.equals(FDP_COMMAND)) {
-            graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_START, "random1"));
+            int seed = LayoutOptions.getRandomSeed(parentLayout);
+            graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_START, "random" + seed));
         }
         graphAttrStatement.setAttributes(graphAttrs);
         graph.getStatements().add(graphAttrStatement);
