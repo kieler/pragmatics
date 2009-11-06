@@ -24,7 +24,7 @@
       <option
             object="de.cau.cs.kieler.uml2tools.activity"
             option="de.cau.cs.kieler.layout.options.layoutDirection"
-            value="VERTICAL">
+            value="DOWN">
       </option>
       <option
             object="de.cau.cs.kieler.uml2tools.activity"

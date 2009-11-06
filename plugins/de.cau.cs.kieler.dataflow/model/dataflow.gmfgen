@@ -368,7 +368,7 @@
   <plugin
       name="Dataflow Diagram Plugin"
       provider="Christian-Albrechts-Universität zu Kiel"
-      version="0.1.0.vqualifier">
+      version="0.1.0.qualifier">
     <requiredPlugins>org.eclipse.draw2d</requiredPlugins>
     <requiredPlugins>org.eclipse.gmf.runtime.draw2d.ui</requiredPlugins>
   </plugin>
