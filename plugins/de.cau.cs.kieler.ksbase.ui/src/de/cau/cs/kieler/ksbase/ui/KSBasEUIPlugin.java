@@ -15,7 +15,6 @@
 
 package de.cau.cs.kieler.ksbase.ui;
 
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -57,10 +56,20 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
         KSBasEUIPlugin.setPlugin(this);
         // Creating bundles
         DynamicMenuContributions.INSTANCE.createAllMenuContributions();
+        //Temporary fix for "not loading features"-bug
+        DynamicBundleLoader.INSTANCE.activateAllEditors();
+        /*
         // Adding a part listener to check when to activate a bundle
+        System.out.println("activated");
+        
         if (PlatformUI.getWorkbench() != null) {
+            System.out.println("workbench found");
+            System.out.println("work windows: " + PlatformUI.getWorkbench().getWorkbenchWindows().length);
+            System.out.println("active: " + PlatformUI.getWorkbench().getActiveWorkbenchWindow().getClass().getCanonicalName());
+            
             PlatformUI.getWorkbench().addWindowListener(DynamicBundleLoader.INSTANCE);
-        }
+        }#
+       */
     }
 
     /**
