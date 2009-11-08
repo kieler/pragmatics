@@ -17,6 +17,7 @@ package de.cau.cs.kieler.ksbase.viewmanagement.combinations;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -167,19 +168,26 @@ public class KSBasECombination extends ACombination {
      */
     public static final void storeEffects(final IPreferenceStore prefStore) {
         StringBuffer effectString = new StringBuffer();
-        for (int prio : KSBasECombination.effects.keySet()) {
-            for (String effect : KSBasECombination.effects.get(prio)) {
-                if (effect.contains(";")) {
-                    // FIXME: ignore, because we are using ; as a separator, is
-                    // there a 'non valid' name char ?
-                    continue;
+        if (KSBasECombination.effects != null && KSBasECombination.effects.size() > 0) {
+            for (Entry<Integer, LinkedList<String>> entries : KSBasECombination.effects.entrySet()) {
+                for (String effect : entries.getValue()) {
+                    if (effect.contains(";")) {
+                        // FIXME: ignore, because we are using ; as a separator, is
+                        // there a 'non valid' name char ?
+                        continue;
+                    }
+                    effectString.append(effect + ";");
+                    prefStore.setValue(effect, entries.getKey());
                 }
-                effectString.append(effect + ";");
-                prefStore.setValue(effect, prio);
             }
         }
         // removing last ';' when storing effects
+        if ( effectString.length() > 1) {
         prefStore.setValue("storedEffects", effectString.substring(0, effectString.length() - 1));
+        }
+        else {
+            prefStore.setValue("storedEffects","");
+        }
     }
 
     /**
@@ -194,7 +202,7 @@ public class KSBasECombination extends ACombination {
         HashMap<Integer, LinkedList<String>> effectList = new HashMap<Integer, LinkedList<String>>();
         // First: read all stored effects
         String storedEffects = prefStore.getString("storedEffects");
-        if (storedEffects != null && storedEffects.length() > 0) {
+        if (storedEffects != null) {
             // The effects are separated by ';'
             for (String effect : storedEffects.split(";")) {
                 int prio = prefStore.getInt(effect);
@@ -208,6 +216,25 @@ public class KSBasECombination extends ACombination {
                 effectList.put(prio, list);
             }
             KSBasECombination.effects = effectList;
+        }
+        // No effects have been stored, so we are trying to add
+        // two defaults: layout & zoom:
+        else {
+            LinkedList<String> list = new LinkedList<String>();
+            AEffect layoutEffect = RunLogic
+                    .getEffect("de.cau.cs.kieler.viewmanagement.effects.layouteffect");
+            if (layoutEffect != null) {
+                list.add(layoutEffect.getClass().getCanonicalName());
+            }
+            AEffect zoomEffect = RunLogic
+                    .getEffect("de.cau.cs.kieler.viewmanagement.effects.zoomeffect");
+            if (zoomEffect != null) {
+                list.add(zoomEffect.getClass().getCanonicalName());
+            }
+            if (list.size() > 0) {
+                effectList.put(0, list);
+                KSBasECombination.effects = effectList;
+            }
         }
     }
 
