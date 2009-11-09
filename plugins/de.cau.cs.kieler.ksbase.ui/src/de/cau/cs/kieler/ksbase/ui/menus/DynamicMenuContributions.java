@@ -252,22 +252,17 @@ public final class DynamicMenuContributions {
                         new DOMSource(extension), new StreamResult(str));
 
                 // Create jar bundle
+                Bundle contributorBundle = ContributorFactoryOSGi.resolve(editor.getContributor());
+                
                 String pluginBundle = editor.getEditor() + ".jar";
-                String editorDiagramName = "";
-                //String editorContext = editor.getContext() + ".sbase";
-                if (editor.getEditor().contains(".")) {
-                    editorDiagramName =
-                            editor.getEditor().substring(editor.getEditor().lastIndexOf(".") + 1);
-                } else {
-                    editorDiagramName = editor.getEditor();
-                }
+                String editorDiagramName = contributorBundle.getSymbolicName() + ".generated";
 
                 File jarFile =
                         KSBasEUIPlugin
                                 .getDefault().getStateLocation().append(pluginBundle).toFile();
                 StringBuffer sbuf = new StringBuffer();
                 //Now we are importing the dependencies from the contributing plug-in:  
-                Bundle contributorBundle = ContributorFactoryOSGi.resolve(editor.getContributor());
+                
                 Dictionary<?, ?> dict = contributorBundle.getHeaders();
                 Object dependencies = dict.get("Require-Bundle");
                 //And set the rest of the manifest attributes

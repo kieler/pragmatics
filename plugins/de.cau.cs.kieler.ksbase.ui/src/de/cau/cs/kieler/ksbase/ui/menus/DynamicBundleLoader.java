@@ -108,34 +108,45 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
                 // Create bundle with jar archive
                 Bundle bundle = ContributorFactoryOSGi.resolve(editor.getContributor());
                 // System.out.println("activating ksbase for" + activeEditor);
-                String editorDiagramName = "";
-                if (editor.getEditor().contains(".")) {
-                    editorDiagramName =
-                            editor.getEditor().substring(editor.getEditor().lastIndexOf(".") + 1);
-                } else {
-                    editorDiagramName = editor.getEditor();
-                }
-
+                String editorDiagramName = bundle.getSymbolicName() + ".generated";
+                
                 try {
                     // To avoid %20 exceptions in paths
                     String val = entry.getValue().toString().replace("%20", " ");
+                    
                     URL url = new URL("reference:" + val);
 
                     InputStream in = url.openStream();
-
-                    Bundle b = bundle.getBundleContext().installBundle(editorDiagramName, in);
-                    // b.start();
-                    // Activating bundle with package admin service
                     ServiceReference ref =
                             bundle.getBundleContext().getServiceReference(
                                     PackageAdmin.class.getName());
                     PackageAdmin admin = (PackageAdmin) bundle.getBundleContext().getService(ref);
-
-                    boolean res = admin.resolveBundles(new Bundle[] {b });
-                    if (!res) {
-                        System.out.println("Error while resolving bundle " + b);
+                    //Does the bundle we are about to load is alreay existing ?
+                    Bundle[] existing = admin.getBundles(editorDiagramName, null);
+                    //If yes, never,ever try to load it !
+                    if (existing == null || existing.length == 0) {
+                        Bundle b = bundle.getBundleContext().installBundle(editorDiagramName, in);
+                        // b.start();
+                        // Activating bundle with package admin service
+                        System.out.println("Bundle state : " + b.getState());
+                        if (b.getState() != Bundle.STARTING) {
+                            if (b.getState() == Bundle.INSTALLED) {
+                                System.out.println("resolving");
+                                boolean res = admin.resolveBundles(new Bundle[] {b });
+                                if (!res) {
+                                    System.out.println("Error while resolving bundle " + b);
+                                }
+                            }
+                            if (b.getState() == Bundle.RESOLVED) {
+                                System.out.println("starting");
+                                b.start();
+                            }
+                        }
+                        installedBundles.put(editor, b);
+                    } else {
+                        installedBundles.put(editor, null);
                     }
-                    installedBundles.put(editor, b);
+
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
