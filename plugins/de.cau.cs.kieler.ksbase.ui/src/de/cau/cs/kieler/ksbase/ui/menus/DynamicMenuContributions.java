@@ -297,6 +297,11 @@ public final class DynamicMenuContributions {
                 for (String resource : resources) {
                     copyResourceToJarBundle(jos, resource, editor.getContributor());
                 }
+                //don't forget the transformation file !
+                JarEntry xtendFile = new JarEntry("src/transformations/features.ext");
+                jos.putNextEntry(xtendFile);
+                jos.write(editor.getExtFile().getBytes("UTF-8"));
+                
                 jos.flush();
                 jos.close();
 
