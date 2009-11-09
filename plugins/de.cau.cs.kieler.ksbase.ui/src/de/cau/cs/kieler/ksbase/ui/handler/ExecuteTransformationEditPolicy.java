@@ -26,7 +26,7 @@ import de.cau.cs.kieler.ksbase.core.Messages;
 
 /**
  * Edit policy used to execute a specific transformation. This edit policy
- * creates a {@link ExecuteTransformationCommand} to execute the transformation.
+ * creates a {@link XtendTransformationCommand} to execute the transformation.
  * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  */
@@ -51,7 +51,7 @@ public class ExecuteTransformationEditPolicy extends AbstractEditPolicy {
      * 
      * @param req
      *            The request to fulfill
-     * @return An @link ExecuteTransformationCommand if the request parameter is
+     * @return An @link XtendTransformationCommand if the request parameter is
      *         an @link ExecuteTransformationRequest.
      * 
      * @see org.eclipse.gef.editpolicies.AbstractEditPolicy#getCommand(org.eclipse.gef.Request)
@@ -62,7 +62,7 @@ public class ExecuteTransformationEditPolicy extends AbstractEditPolicy {
             if (req instanceof ExecuteTransformationRequest) {
                 ExecuteTransformationRequest transformationRequest = (ExecuteTransformationRequest) req;
                 IGraphicalEditPart hostEPart = (IGraphicalEditPart) getHost();
-                ExecuteTransformationCommand command = new ExecuteTransformationCommand(
+                XtendTransformationCommand command = new XtendTransformationCommand(
                         hostEPart.getEditingDomain(),
                         Messages.executeTransformationEditPolicyTransformationCommandName,
                         new EObjectAdapter((View) hostEPart.getModel()));

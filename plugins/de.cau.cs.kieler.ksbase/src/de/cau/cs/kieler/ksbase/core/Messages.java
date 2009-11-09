@@ -26,7 +26,7 @@ public final class Messages extends NLS {
     /** Name of the target bundle. **/
     private static final String BUNDLE_NAME = "de.cau.cs.kieler.ksbase.core.messages"; //$NON-NLS-1$
     /** Name of the localized message in messages.properties. **/
-    public static String executeTransformationCommandWorkflowInitializationError;
+    public static String transformationCommandWorkflowInitializationError;
     /** Name of the localized message in messages.properties. **/
     public static String executeTransformationCommandWorkflowInvokeError;
     /** Name of the localized message in messages.properties. **/

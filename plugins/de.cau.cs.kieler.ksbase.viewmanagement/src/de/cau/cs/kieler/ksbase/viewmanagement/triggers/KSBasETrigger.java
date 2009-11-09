@@ -28,8 +28,7 @@ import de.cau.cs.kieler.viewmanagement.TriggerEventObject;
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
  */
-public class KSBasETrigger extends ATrigger implements
-        ITransformationEventListener {
+public class KSBasETrigger extends ATrigger implements ITransformationEventListener {
 
     /** The trigger event object. **/
     private TriggerEventObject triggerObject;
@@ -55,12 +54,15 @@ public class KSBasETrigger extends ATrigger implements
 
     /**
      * Called when a transformation is executed.
-     * @param args The arguments for this event. Needs be the Array : [EObject,EditorPart]
+     * 
+     * @param args
+     *            The arguments for this event. Needs be the Array :
+     *            [EObject,EditorPart]
      */
     public void transformationExecuted(final Object[] args) {
         if (args.length == 2 && args[0] instanceof EObject) {
             this.triggerObject = new TriggerEventObject();
-            triggerObject.setAffectedObject( (EObject) args[0]);
+            triggerObject.setAffectedObject((EObject) args[0]);
             triggerObject.setParameters(args[1]);
             triggerObject.setTriggerActive(true);
             notifyTrigger(triggerObject);

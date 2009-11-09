@@ -17,6 +17,7 @@ package de.cau.cs.kieler.ksbase.viewmanagement.combinations;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map.Entry;
 
 import org.eclipse.emf.ecore.EObject;
@@ -30,8 +31,8 @@ import de.cau.cs.kieler.viewmanagement.RunLogic;
 import de.cau.cs.kieler.viewmanagement.TriggerEventObject;
 
 /**
- * The KSBasE combination used to execute a set of effects, selected by the user via the preference
- * pages.
+ * The KSBasE combination used to execute a set of effects, selected by the user
+ * via the preference pages.
  * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
@@ -39,7 +40,8 @@ import de.cau.cs.kieler.viewmanagement.TriggerEventObject;
 public class KSBasECombination extends ACombination {
 
     /** List of effect names to execute. **/
-    protected static HashMap<Integer, LinkedList<String>> effects = new HashMap<Integer, LinkedList<String>>();
+    private static HashMap<Integer, LinkedList<String>> effects =
+            new HashMap<Integer, LinkedList<String>>();
     /** Trigger object. **/
     private KSBasETrigger trigger;
 
@@ -78,7 +80,7 @@ public class KSBasECombination extends ACombination {
 
         for (int prio : KSBasECombination.effects.keySet()) {
             for (String effectName : KSBasECombination.effects.get(prio)) {
-                AEffect effect = RunLogic.getEffect(effectName.toLowerCase());
+                AEffect effect = RunLogic.getEffect(effectName.toLowerCase(Locale.getDefault()));
                 if (effect != null) { // Set effect target and parameter
                     effect.setTarget(getEditPart(affectedObject));
                     effect.setParameters(parameter); // Execute effect
@@ -154,8 +156,8 @@ public class KSBasECombination extends ACombination {
      * @param newPrio
      *            New priority
      */
-    public static final void changePriority(final String effectName, final int oldPrio,
-            final int newPrio) {
+    public static final void changePriority(
+            final String effectName, final int oldPrio, final int newPrio) {
         KSBasECombination.removeEffect(effectName, oldPrio);
         KSBasECombination.addEffect(effectName, newPrio);
     }
@@ -172,7 +174,8 @@ public class KSBasECombination extends ACombination {
             for (Entry<Integer, LinkedList<String>> entries : KSBasECombination.effects.entrySet()) {
                 for (String effect : entries.getValue()) {
                     if (effect.contains(";")) {
-                        // FIXME: ignore, because we are using ; as a separator, is
+                        // FIXME: ignore, because we are using ; as a separator,
+                        // is
                         // there a 'non valid' name char ?
                         continue;
                     }
@@ -182,24 +185,25 @@ public class KSBasECombination extends ACombination {
             }
         }
         // removing last ';' when storing effects
-        if ( effectString.length() > 1) {
-        prefStore.setValue("storedEffects", effectString.substring(0, effectString.length() - 1));
-        }
-        else {
-            prefStore.setValue("storedEffects","");
+        if (effectString.length() > 1) {
+            prefStore.setValue("storedEffects", effectString
+                    .substring(0, effectString.length() - 1));
+        } else {
+            prefStore.setValue("storedEffects", "");
         }
     }
 
     /**
-     * Reads the settings from the given preference store. Although it may seem odd to do this here,
-     * it is necessary because we want to use stored settings even if the preference page has not
-     * been opened yet.
+     * Reads the settings from the given preference store. Although it may seem
+     * odd to do this here, it is necessary because we want to use stored
+     * settings even if the preference page has not been opened yet.
      * 
      * @param prefStore
      *            The preference store that contains the stored objects
      */
     public static final void initalizeEffects(final IPreferenceStore prefStore) {
-        HashMap<Integer, LinkedList<String>> effectList = new HashMap<Integer, LinkedList<String>>();
+        HashMap<Integer, LinkedList<String>> effectList =
+                new HashMap<Integer, LinkedList<String>>();
         // First: read all stored effects
         String storedEffects = prefStore.getString("storedEffects");
         if (storedEffects != null) {
@@ -216,18 +220,17 @@ public class KSBasECombination extends ACombination {
                 effectList.put(prio, list);
             }
             KSBasECombination.effects = effectList;
-        }
-        // No effects have been stored, so we are trying to add
-        // two defaults: layout & zoom:
-        else {
+        } else {
+            // No effects have been stored, so we are trying to add
+            // two defaults: layout & zoom:
             LinkedList<String> list = new LinkedList<String>();
-            AEffect layoutEffect = RunLogic
-                    .getEffect("de.cau.cs.kieler.viewmanagement.effects.layouteffect");
+            AEffect layoutEffect =
+                    RunLogic.getEffect("de.cau.cs.kieler.viewmanagement.effects.layouteffect");
             if (layoutEffect != null) {
                 list.add(layoutEffect.getClass().getCanonicalName());
             }
-            AEffect zoomEffect = RunLogic
-                    .getEffect("de.cau.cs.kieler.viewmanagement.effects.zoomeffect");
+            AEffect zoomEffect =
+                    RunLogic.getEffect("de.cau.cs.kieler.viewmanagement.effects.zoomeffect");
             if (zoomEffect != null) {
                 list.add(zoomEffect.getClass().getCanonicalName());
             }
@@ -241,7 +244,8 @@ public class KSBasECombination extends ACombination {
     /**
      * Gets the registered effects.
      * 
-     * @return A hash map containing the transformations ordered by their priority
+     * @return A hash map containing the transformations ordered by their
+     *         priority
      */
     public static HashMap<Integer, LinkedList<String>> getEffects() {
         return effects;

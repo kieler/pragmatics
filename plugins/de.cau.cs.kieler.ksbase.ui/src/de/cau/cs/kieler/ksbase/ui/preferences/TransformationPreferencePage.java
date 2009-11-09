@@ -66,16 +66,16 @@ public class TransformationPreferencePage extends PreferencePage
 
     private static final int BUTTON_CONTAINER_GRIDSIZE = 4;
     /** The table used to display the existing transformation. **/
-    protected Table table;
+    private  Table table;
     /** Composites used to layout the preference page. **/
-    Composite tableComp, btComp;
+    private Composite tableComp, btComp;
     /**
      * The currently selected editor (retrieved from the
      * {@link EditorsPreferencePage}).
      **/
-    protected EditorTransformationSettings activeEditor;
+    private  EditorTransformationSettings activeEditor;
     /** The 'Browse Xtend File' Button. **/
-    protected Button btBrowseXtend;
+    private Button btBrowseXtend;
 
     /** Number constants. **/
     private static final int TABLE_COL_NORMAL = 75;

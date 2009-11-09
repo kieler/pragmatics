@@ -20,7 +20,6 @@ import java.util.LinkedList;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -254,23 +253,21 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
     /** The list of classes that provide ecore packages. **/
     static final String[] DIAGRAM_PACKAGES =
             new String[] {"org.eclipse.emf." + "ecore.EPackage" }; //$NON-NLS-1$
-    /** The diagram document editor defining the diagram to use. **/
-    protected DiagramDocumentEditor diagram;
     /** Text boxes. **/
-    protected Text sfMetaModel, sfContext;
+    private Text sfMetaModel, sfContext;
     /** Combo boxes. **/
-    protected Combo cbEditors;
+    private Combo cbEditors;
     /** Buttons. **/
-    protected Button btContext, btModelPackage, btEditorAdd, btEditorDel, btContribution, btMenu,
+    private Button btContext, btModelPackage, btEditorAdd, btEditorDel, btContribution, btMenu,
             btCommand;
     /** The file editor used to select an icon from the project folder. **/
-    FileFieldEditor dfDefaultIcon;
+    private FileFieldEditor dfDefaultIcon;
     /** The currently selected editor. **/
-    protected static EditorTransformationSettings activeEditor;
+    private static EditorTransformationSettings activeEditor;
     /** The treeViewer used to display the menus. **/
-    protected TreeViewer menuTreeViewer;
+    private TreeViewer menuTreeViewer;
     /** Composites used to layout the preference page. **/
-    protected Composite browserContainer;
+    private Composite browserContainer;
     /**
      * The transformation manager instance used in this class so we don't have
      * to get the instance every time.
@@ -281,14 +278,14 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
      * Default constructor. Sets the preference page title.
      */
     public EditorsPreferencePage() {
-        // Strangely, this does not set the title of the pref page
-        super(Messages.kSBasETPreferencePageTitle);
+        setTitle(Messages.kSBasETPreferencePageTitle);
         manager = TransformationManager.INSTANCE;
     }
 
+
     /**
      * Creates the editor setting part of the page.
-     * @param parent The parent o
+     * @param parent The parent composite object
      */
     private void createEditorContent(final Composite parent) {
         Composite container = new Composite(parent, SWT.NONE);

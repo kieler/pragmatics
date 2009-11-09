@@ -53,7 +53,7 @@ import de.cau.cs.kieler.ksbase.core.KielerWorkflow;
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
  */
-public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
+public class XtendTransformationCommand extends AbstractTransactionalCommand {
 
     /** The workflow that handles execution of Xtend. **/
     private KielerWorkflow workflow;
@@ -80,7 +80,7 @@ public class ExecuteTransformationCommand extends AbstractTransactionalCommand {
      * @param adapter
      *            an adapter to the {@code View} of the base diagram
      */
-    public ExecuteTransformationCommand(
+    public XtendTransformationCommand(
             final TransactionalEditingDomain domain, final String label, final IAdaptable adapter) {
         super(domain, label, null);
         context = new WorkflowContextDefaultImpl();

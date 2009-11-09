@@ -16,6 +16,7 @@ package de.cau.cs.kieler.ksbase.viewmanagement.preferences;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map.Entry;
 
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.TreeViewerColumn;
@@ -89,12 +90,13 @@ public class PostTransformationPreferencePage extends PreferencePage
             boolean active = false;
             int effectPrio = 0;
             HashMap<Integer, LinkedList<String>> effects = KSBasECombination.getEffects();
-            for (Integer prio : effects.keySet()) {
-                if (effects.get(prio).contains(effect)) {
+            for (Entry<Integer,LinkedList<String>> effectEntry : effects.entrySet()) {
+                if (effectEntry.getValue().contains(effect)) {
                     active = true;
-                    effectPrio = prio;
+                    effectPrio = effectEntry.getKey();
                 }
             }
+            
             TableData effData = new TableData(input, active, effect, effectPrio);
 
             input.add(effData);

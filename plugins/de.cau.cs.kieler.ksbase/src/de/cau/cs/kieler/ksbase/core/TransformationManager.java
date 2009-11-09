@@ -54,17 +54,20 @@ public final class TransformationManager {
     public static final TransformationManager INSTANCE = new TransformationManager();
 
     /**
-     * FileNameFilter to check a file for a valid extension.
-     * The extension has to be '.sbase' to be valid.
+     * FileNameFilter to check a file for a valid extension. The extension has
+     * to be '.sbase' to be valid.
      * 
      * @author Michael Matzen - mim AT informatik.uni-kiel.de
-     *
+     * 
      */
     private static class XtendFileNameFilter implements FilenameFilter {
         /**
          * Checks if the given input is valid.
-         * @param dir The file directory.
-         * @param name The filename.
+         * 
+         * @param dir
+         *            The file directory.
+         * @param name
+         *            The filename.
          * @return True if the extension of the given file is .sbase
          */
         public boolean accept(final File dir, final String name) {
@@ -211,11 +214,19 @@ public final class TransformationManager {
                 if (registeredEditors.get(i).getEditor().equals(editor)
                         && registeredEditors.get(i).getContributor() == null) {
                     registeredEditors.remove(i);
-                    //Remove exsiting .sbase file settings for editor:
-                    IPath metaPath = KSBasEPlugin.getDefault().getStateLocation();
-                    File storedSettings = metaPath.append(editor+".sbase").toFile();
-                    if ( storedSettings.exists()) {
-                        storedSettings.delete();
+                    // Remove exsiting .sbase file settings for editor:
+                    try {
+                        IPath metaPath = KSBasEPlugin.getDefault().getStateLocation();
+                        File storedSettings = metaPath.append(editor + ".sbase").toFile();
+                        if (storedSettings.exists()) {
+                            if (!storedSettings.delete()) {
+                                throw new SecurityException("Unable to delete stored settings!");
+                            }
+                        }
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
+                    } catch (SecurityException e) {
+                        System.out.println(e.getMessage());
                     }
                 }
             }

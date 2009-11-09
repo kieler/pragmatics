@@ -67,6 +67,7 @@ public class KSBasEPlugin extends AbstractUIPlugin {
     }
 
     /**
+     * Gets the shared instance.
      * @return the shared instance.
      */
     public static KSBasEPlugin getDefault() {

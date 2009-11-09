@@ -44,7 +44,7 @@ public class TableDataEditing extends EditingSupport {
     private int columnIndex;
 
     /** The DataTableViewer to set the currently editing flag. */
-    DataTableViewer viewer;
+    private DataTableViewer viewer;
 
     // -------------------------------------------------------------------------
 
