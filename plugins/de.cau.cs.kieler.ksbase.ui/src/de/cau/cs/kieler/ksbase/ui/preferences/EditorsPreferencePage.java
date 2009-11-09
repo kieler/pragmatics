@@ -248,11 +248,11 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
      * The classes which have to be implemented/extended by a class to be used
      * as an editor.
      **/
-    protected static final String[] DIAGRAM_EDITORS =
+    static final String[] DIAGRAM_EDITORS =
             new String[] {"org.eclipse.gmf.runtime."
                     + "diagram.ui.resources.editor.parts.DiagramDocumentEditor" }; //$NON-NLS-1$
     /** The list of classes that provide ecore packages. **/
-    protected static final String[] DIAGRAM_PACKAGES =
+    static final String[] DIAGRAM_PACKAGES =
             new String[] {"org.eclipse.emf." + "ecore.EPackage" }; //$NON-NLS-1$
     /** The diagram document editor defining the diagram to use. **/
     protected DiagramDocumentEditor diagram;
