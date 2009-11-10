@@ -49,7 +49,7 @@ public class TSMEdge extends KSlimEdge {
     public TSMEdge(final KSlimGraph graph, final KSlimNode source, final KSlimNode target,
             final KEdge layoutEdge) {
         super(graph, source, target);
-        this.object = layoutEdge;
+        this.setObject(layoutEdge);
     }
 
     /**
@@ -71,7 +71,7 @@ public class TSMEdge extends KSlimEdge {
      * @param offsetY y offset to be added
      */
     public void applyLayout(final float offsetX, final float offsetY) {
-        KEdge layoutEdge = (KEdge) object;
+        KEdge layoutEdge = (KEdge) getObject();
         KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(layoutEdge);
         KShapeLayout sourceLayout = KimlLayoutUtil.getShapeLayout(layoutEdge.getSource());
         KShapeLayout targetLayout = KimlLayoutUtil.getShapeLayout(layoutEdge.getTarget());
@@ -89,15 +89,15 @@ public class TSMEdge extends KSlimEdge {
         List<KPoint> bendPoints = edgeLayout.getBendPoints();
         bendPoints.clear();
         do {
-            for (Bend bend : currentEdge.bends) {
+            for (Bend bend : currentEdge.getBends()) {
                 KPoint newPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-                newPoint.setX(bend.xpos + offsetX);
-                newPoint.setY(bend.ypos + offsetY);
+                newPoint.setX(bend.getXpos() + offsetX);
+                newPoint.setY(bend.getYpos() + offsetY);
                 bendPoints.add(newPoint);
             }
             lastEdge = currentEdge;
             // mark the edge as visited
-            currentEdge.rank = 1;
+            currentEdge.setRank(1);
             currentEdge = currentEdge.nextEdge;
         } while (currentEdge != null);
 
@@ -105,7 +105,7 @@ public class TSMEdge extends KSlimEdge {
         KPoint newPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
         float xpos = sourceLayout.getXpos() + sourcePortLayout.getXpos();
         float ypos = sourceLayout.getYpos() + sourcePortLayout.getYpos();
-        switch (firstEdge.sourceSide) {
+        switch (firstEdge.getSourceSide()) {
         case NORTH:
             xpos += sourcePortLayout.getWidth() / 2;
             break;
@@ -129,7 +129,7 @@ public class TSMEdge extends KSlimEdge {
         newPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
         xpos = targetLayout.getXpos() + targetPortLayout.getXpos();
         ypos = targetLayout.getYpos() + targetPortLayout.getYpos();
-        switch (lastEdge.targetSide) {
+        switch (lastEdge.getTargetSide()) {
         case NORTH:
             xpos += targetPortLayout.getWidth() / 2;
             break;

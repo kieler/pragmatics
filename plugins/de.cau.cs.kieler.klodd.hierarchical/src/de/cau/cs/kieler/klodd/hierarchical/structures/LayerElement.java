@@ -246,11 +246,11 @@ public class LayerElement {
     public List<KSlimEdge> getOutgoingEdges() {
         if (kNode != null) {
             LinkedList<KSlimEdge> nonLoopEdges = new LinkedList<KSlimEdge>();
-            for (KSlimNode.IncEntry edgeEntry : kNode.incidence) {
+            for (KSlimNode.IncEntry edgeEntry : kNode.getIncidence()) {
                 // ignore loops over a single node
-                if (edgeEntry.type == KSlimNode.IncEntry.Type.OUT
-                        && edgeEntry.edge.source.id != edgeEntry.edge.target.id) {
-                    nonLoopEdges.add(edgeEntry.edge);
+                if (edgeEntry.getType() == KSlimNode.IncEntry.Type.OUT
+                        && edgeEntry.getEdge().getSource().getId() != edgeEntry.getEdge().getTarget().getId()) {
+                    nonLoopEdges.add(edgeEntry.getEdge());
                 }
             }
             return nonLoopEdges;

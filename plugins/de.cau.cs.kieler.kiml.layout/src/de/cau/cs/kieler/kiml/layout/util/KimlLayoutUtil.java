@@ -224,20 +224,31 @@ public final class KimlLayoutUtil {
         // determine port placement from port position
         float nodeWidth = nodeLayout.getWidth();
         float nodeHeight = nodeLayout.getHeight();
-        float relx = (portLayout.getXpos() + portLayout.getWidth() / 2) - (nodeWidth / 2);
-        float rely = (portLayout.getYpos() + portLayout.getHeight() / 2) - (nodeHeight / 2);
-
-        if (relx > nodeWidth / 4 && rely > -nodeHeight / 2 + 3 && rely < nodeHeight / 2 - 3) {
-            return PortSide.EAST;
-        }
-        if (relx < -nodeWidth / 4 && rely > -nodeHeight / 2 + 3 && rely < nodeHeight / 2 - 3) {
-            return PortSide.WEST;
-        }
-        if (rely > nodeHeight / 4 && relx > -nodeWidth / 2 + 3 && relx < nodeWidth / 2 - 3) {
-            return PortSide.SOUTH;
-        }
-        if (rely < -nodeHeight / 4 && relx > -nodeWidth / 2 + 3 && relx < nodeWidth / 2 - 3) {
-            return PortSide.NORTH;
+        if (nodeWidth > 0) {
+            float relx = (portLayout.getXpos() + portLayout.getWidth() / 2) - (nodeWidth / 2);
+            float rely = (portLayout.getYpos() + portLayout.getHeight() / 2) - (nodeHeight / 2);
+    
+            if (relx != 0) {
+                float nodeRatio = Math.abs(nodeHeight / nodeWidth);
+                float portRatio = Math.abs(rely / relx);
+                if (portRatio < nodeRatio) {
+                    if (relx > 0) {
+                        return PortSide.EAST;
+                    } else if (relx < 0) {
+                        return PortSide.WEST;
+                    }
+                } else if (portRatio > nodeRatio) {
+                    if (rely > 0) {
+                        return PortSide.SOUTH;
+                    } else if (rely < 0) {
+                        return PortSide.NORTH;
+                    }
+                }
+            } else if (rely > 0) {
+                return PortSide.SOUTH;
+            } else if (rely < 0) {
+                return PortSide.NORTH;
+            }
         }
 
         // determine port placement from the incident edges

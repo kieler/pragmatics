@@ -69,6 +69,11 @@ public class ZestAlgorithmWrapper {
         this.layoutAlgorithm = theLayoutAlgorithm;
     }
 
+    /** amount of work for small tasks. */
+    private static final int SMALL_TASK = 5;
+    /** amount of work for large tasks. */
+    private static final int LARGE_TASK = 20;
+    
     /**
      * Applies the predefined algorithm on the given layout node.
      * 
@@ -78,11 +83,11 @@ public class ZestAlgorithmWrapper {
      */
     public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor)
             throws KielerException {
-        progressMonitor.begin("Zest layout", 15);
+        progressMonitor.begin("Zest layout", SMALL_TASK + LARGE_TASK + SMALL_TASK);
         // build layout entities and relationships
         LayoutEntity[] entities = buildEntities(layoutNode);
         LayoutRelationship[] relationships = buildRelationships(layoutNode);
-        progressMonitor.worked(3);
+        progressMonitor.worked(SMALL_TASK);
 
         // compute preferred height and width of the graph
         float scaleBase = Activator.getDefault().getPreferenceStore().getFloat(
@@ -97,7 +102,7 @@ public class ZestAlgorithmWrapper {
         } catch (InvalidLayoutConfiguration exception) {
             throw new KielerException(exception.getMessage());
         }
-        progressMonitor.worked(8);
+        progressMonitor.worked(LARGE_TASK);
 
         // transfer layout results to the original graph
         transferLayoutResult(layoutNode, entities, relationships);

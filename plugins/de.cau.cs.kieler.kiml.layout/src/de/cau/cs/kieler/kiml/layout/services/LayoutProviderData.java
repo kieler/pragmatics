@@ -29,23 +29,26 @@ public class LayoutProviderData {
     public static final int MIN_PRIORITY = Integer.MIN_VALUE >> 2;
 
     /** internal data type for storage of supported diagram information. */
-    private static class SupportedDiagram {
+    private static final class SupportedDiagram {
         /** identifier of the diagram type. */
-        String type;
+        private String type;
         /** associated priority value, must be greater than MIN_PRIORITY. */
-        int priority = 0;
+        private int priority = 0;
+        
+        private SupportedDiagram() {
+        }
     }
     
     /** identifier of the layout provider. */
-    public String id;
+    private String id;
     /** user friendly name of the layout provider. */
-    public String name;
+    private String name;
     /** runtime instance of the layout provider. */
-    public AbstractLayoutProvider instance;
+    private AbstractLayoutProvider instance;
     /** layout type identifier. */
-    public String type;
+    private String type;
     /** category identifier. */
-    public String category;
+    private String category;
     
     /** list of known layout options. */
     private List<String> knownOptions = new LinkedList<String>();
@@ -57,10 +60,10 @@ public class LayoutProviderData {
      */
     @Override
     public String toString() {
-        if (name != null && name.length() > 0) {
-            return name;
+        if (getName() != null && getName().length() > 0) {
+            return getName();
         } else {
-            return id;
+            return getId();
         }
     }
     
@@ -144,6 +147,96 @@ public class LayoutProviderData {
             }
         }
         return MIN_PRIORITY;
+    }
+
+    /**
+     * Sets the id.
+     *
+     * @param theid the id to set
+     */
+    public void setId(final String theid) {
+        this.id = theid;
+    }
+
+    /**
+     * Returns the id.
+     *
+     * @return the id
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Sets the name.
+     *
+     * @param thename the name to set
+     */
+    public void setName(final String thename) {
+        this.name = thename;
+    }
+
+    /**
+     * Returns the name.
+     *
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Sets the instance.
+     *
+     * @param theinstance the instance to set
+     */
+    public void setInstance(final AbstractLayoutProvider theinstance) {
+        this.instance = theinstance;
+    }
+
+    /**
+     * Returns the instance.
+     *
+     * @return the instance
+     */
+    public AbstractLayoutProvider getInstance() {
+        return instance;
+    }
+
+    /**
+     * Sets the type.
+     *
+     * @param thetype the type to set
+     */
+    public void setType(final String thetype) {
+        this.type = thetype;
+    }
+
+    /**
+     * Returns the type.
+     *
+     * @return the type
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * Sets the category.
+     *
+     * @param thecategory the category to set
+     */
+    public void setCategory(final String thecategory) {
+        this.category = thecategory;
+    }
+
+    /**
+     * Returns the category.
+     *
+     * @return the category
+     */
+    public String getCategory() {
+        return category;
     }
     
 }

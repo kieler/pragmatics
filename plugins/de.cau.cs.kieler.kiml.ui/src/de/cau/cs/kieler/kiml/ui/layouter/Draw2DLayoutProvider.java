@@ -74,7 +74,7 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
     @Override
     public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor)
             throws KielerException {
-        progressMonitor.begin("Draw2D Directed Graph layout", 10);
+        progressMonitor.begin("Draw2D Directed Graph layout", 1);
         
         DirectedGraph graph = buildDraw2dGraph(layoutNode);
         DirectedGraphLayout draw2dLayout = compoundMode ? new CompoundDirectedGraphLayout()

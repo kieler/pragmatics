@@ -30,7 +30,7 @@ import de.cau.cs.kieler.core.slimgraph.KSlimNode;
 public abstract class AbstractCycleRemover extends AbstractAlgorithm implements ICycleRemover {
 
     /** list of edges that are reversed and later restored. */
-    protected LinkedList<KSlimEdge> reversedEdges = null;
+    private LinkedList<KSlimEdge> reversedEdges = null;
 
     /**
      * {@inheritDoc}
@@ -44,7 +44,6 @@ public abstract class AbstractCycleRemover extends AbstractAlgorithm implements 
     /**
      * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public void restoreGraph() {
         if (reversedEdges != null) {
             reverseEdges();
@@ -54,13 +53,21 @@ public abstract class AbstractCycleRemover extends AbstractAlgorithm implements 
     /**
      * {@inheritDoc}
      */
-    /** {@inheritDoc} */
     public List<KSlimEdge> getReversedEdges() {
         if (reversedEdges == null) {
             throw new IllegalStateException("removeCycles must be called before getReversedEdges.");
         } else {
             return reversedEdges;
         }
+    }
+    
+    /**
+     * Sets the reversed edges.
+     * 
+     * @param thereversedEdges the reversed edges
+     */
+    protected void setReversedEdges(final LinkedList<KSlimEdge> thereversedEdges) {
+        this.reversedEdges = thereversedEdges;
     }
 
     /**
@@ -69,26 +76,26 @@ public abstract class AbstractCycleRemover extends AbstractAlgorithm implements 
      */
     protected void reverseEdges() {
         for (KSlimEdge edge : reversedEdges) {
-            edge.rank = ICycleRemover.REVERSED;
+            edge.setRank(ICycleRemover.REVERSED);
             // change incidence type at source and target
-            ListIterator<KSlimNode.IncEntry> sourceIter = edge.source.getIterator(edge, true);
-            ListIterator<KSlimNode.IncEntry> targetIter = edge.target.getIterator(edge, false);
+            ListIterator<KSlimNode.IncEntry> sourceIter = edge.getSource().getIterator(edge, true);
+            ListIterator<KSlimNode.IncEntry> targetIter = edge.getTarget().getIterator(edge, false);
             if (sourceIter != null) {
-                sourceIter.previous().type = KSlimNode.IncEntry.Type.IN;
+                sourceIter.previous().setType(KSlimNode.IncEntry.Type.IN);
             }
             if (targetIter != null) {
-                targetIter.previous().type = KSlimNode.IncEntry.Type.OUT;
+                targetIter.previous().setType(KSlimNode.IncEntry.Type.OUT);
             }
 
             // reverse source and target node
-            KSlimNode source = edge.source;
-            KSlimNode.Side sourceSide = edge.sourceSide;
-            KSlimNode target = edge.target;
-            KSlimNode.Side targetSide = edge.targetSide;
-            edge.source = target;
-            edge.sourceSide = targetSide;
-            edge.target = source;
-            edge.targetSide = sourceSide;
+            KSlimNode source = edge.getSource();
+            KSlimNode.Side sourceSide = edge.getSourceSide();
+            KSlimNode target = edge.getTarget();
+            KSlimNode.Side targetSide = edge.getTargetSide();
+            edge.setSource(target);
+            edge.setSourceSide(targetSide);
+            edge.setTarget(source);
+            edge.setTargetSide(sourceSide);
         }
     }
 

@@ -210,10 +210,10 @@ public class LayeredGraph {
                 List<KSlimEdge> outgoingEdges = element.getOutgoingEdges();
                 if (outgoingEdges != null) {
                     for (KSlimEdge edge : outgoingEdges) {
-                        KEdge layoutEdge = (KEdge) edge.object;
+                        KEdge layoutEdge = (KEdge) edge.getObject();
                         KNode targetNode;
                         KPort sourcePort, targetPort;
-                        if (edge.rank == ICycleRemover.REVERSED) {
+                        if (edge.getRank() == ICycleRemover.REVERSED) {
                             targetNode = layoutEdge.getSource();
                             sourcePort = layoutEdge.getTargetPort();
                             targetPort = layoutEdge.getSourcePort();
@@ -223,7 +223,7 @@ public class LayeredGraph {
                             targetPort = layoutEdge.getTargetPort();
                         }
 
-                        if (edge.target.object instanceof KNode) {
+                        if (edge.getTarget().getObject() instanceof KNode) {
                             createConnection(element, obj2LayerElemMap.get(targetNode), layoutEdge,
                                     sourcePort, targetPort);
                         } else if (targetPort != null) {

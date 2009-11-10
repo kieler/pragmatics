@@ -97,6 +97,17 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
         }
     }
     
+    /** margin width for the form layout. */
+    private static final int MARGIN_WIDTH = 4;
+    /** position for left attachment. */
+    private static final int FORM_LEFT = 0;
+    /** position for right attachment. */
+    private static final int FORM_RIGHT = 100;
+    /** position for top attachment. */
+    private static final int FORM_TOP = 0;
+    /** position for bottom attachment. */
+    private static final int FORM_BOTTOM = 100;
+    
     /**
      * {@inheritDoc}
      */
@@ -107,17 +118,17 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
         form.setText("");
         Composite content = form.getBody();
         FormLayout contentLayout = new FormLayout();
-        contentLayout.marginWidth = 4;
+        contentLayout.marginWidth = MARGIN_WIDTH;
         content.setLayout(contentLayout);
         
         page = new PropertySheetPage();
         page.setRootEntry(new PropertySheetEntry());
         page.createControl(content);
         FormData formData = new FormData();
-        formData.left = new FormAttachment(0, 0);
-        formData.right = new FormAttachment(100, 0);
-        formData.top = new FormAttachment(0, 0);
-        formData.bottom = new FormAttachment(100, 0);
+        formData.left = new FormAttachment(FORM_LEFT, 0);
+        formData.right = new FormAttachment(FORM_RIGHT, 0);
+        formData.top = new FormAttachment(FORM_TOP, 0);
+        formData.bottom = new FormAttachment(FORM_BOTTOM, 0);
         page.getControl().setLayoutData(formData);
         page.setPropertySourceProvider(new IPropertySourceProvider() {
             public IPropertySource getPropertySource(final Object object) {

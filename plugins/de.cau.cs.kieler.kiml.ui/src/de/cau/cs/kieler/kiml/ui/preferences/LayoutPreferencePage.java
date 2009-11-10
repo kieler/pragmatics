@@ -93,11 +93,11 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         String[] layouterNames = new String[layoutProviderCount];
         int i = 0;
         for (LayoutProviderData providerData : layoutProviderData) {
-            providerIds[i] = providerData.id;
+            providerIds[i] = providerData.getId();
             tableEntries[i] = new PriorityTableProvider.DataEntry();
-            tableEntries[i].layouterIndex = i;
-            tableEntries[i].priorities = data[i];
-            layouterNames[i] = providerData.name;
+            tableEntries[i].setLayouterIndex(i);
+            tableEntries[i].setPriorities(data[i]);
+            layouterNames[i] = providerData.getName();
             for (int j = 0; j < diagramTypes.length; j++) {
                 data[i][j] = providerData.getSupportedPriority(diagramTypes[j]);
             }
@@ -146,6 +146,9 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         return prioritiesGroup;
     }
 
+    /** maximal length of displayed diagram type names. */
+    private static final int MAX_DIAGTYPE_LENGTH = 7;
+    
     /**
      * Creates an abbreviation for the given diagram type.
      * 
@@ -153,7 +156,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
      * @return an abbreviation for the diagram type
      */
     private String getAbbrev(final String diagramType) {
-        if (diagramType.length() <= 7) {
+        if (diagramType.length() <= MAX_DIAGTYPE_LENGTH) {
             return diagramType;
         } else {
             StringBuffer abbrev = new StringBuffer();
@@ -195,7 +198,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
                 int newPriority = data[i][j];
                 if (oldPriority != newPriority) {
                     providerData.setDiagramSupport(diagramTypes[j], newPriority);
-                    String preference = getPreference(providerData.id, diagramTypes[j]);
+                    String preference = getPreference(providerData.getId(), diagramTypes[j]);
                     getPreferenceStore().setValue(preference, newPriority);
                 }
             }

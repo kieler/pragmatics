@@ -306,9 +306,9 @@ public class ToponumLayerwiseEdgePlacer extends AbstractAlgorithm implements ILa
             }
             // update all outgoing links
             for (Pair<TopoRoutingSlot, Boolean> outgoingSlot : source.outgoing) {
-                outgoingSlot.first.incomingCount--;
-                if (outgoingSlot.first.incomingCount == 0) {
-                    sources.addLast(outgoingSlot.first);
+                outgoingSlot.getFirst().incomingCount--;
+                if (outgoingSlot.getFirst().incomingCount == 0) {
+                    sources.addLast(outgoingSlot.getFirst());
                 }
             }
         }
@@ -411,23 +411,23 @@ public class ToponumLayerwiseEdgePlacer extends AbstractAlgorithm implements ILa
             ListIterator<Pair<TopoRoutingSlot, Boolean>> slotIter = slot.outgoing.listIterator();
             while (slotIter.hasNext()) {
                 Pair<TopoRoutingSlot, Boolean> outgoingSlot = slotIter.next();
-                if (outgoingSlot.first.visit > 0) {
-                    if (outgoingSlot.second.booleanValue()) {
+                if (outgoingSlot.getFirst().visit > 0) {
+                    if (outgoingSlot.getSecond().booleanValue()) {
                         // found a cycle through a strong link, update result
-                        result = Math.max(result, outgoingSlot.first.visit);
+                        result = Math.max(result, outgoingSlot.getFirst().visit);
                     } else {
                         // found a cycle through a weak link, break it
                         slotIter.remove();
-                        outgoingSlot.first.incomingCount--;
+                        outgoingSlot.getFirst().incomingCount--;
                     }
                 } else {
                     // follow the link
-                    int outgoingRes = breakCycles(outgoingSlot.first);
+                    int outgoingRes = breakCycles(outgoingSlot.getFirst());
                     if (outgoingRes > 0) {
-                        if (outgoingRes == slot.visit || !outgoingSlot.second.booleanValue()) {
+                        if (outgoingRes == slot.visit || !outgoingSlot.getSecond().booleanValue()) {
                             // the link must be removed to break a cycle
                             slotIter.remove();
-                            outgoingSlot.first.incomingCount--;
+                            outgoingSlot.getFirst().incomingCount--;
                         } else {
                             // the cycle can't be broken here, update result
                             result = Math.max(result, outgoingRes);

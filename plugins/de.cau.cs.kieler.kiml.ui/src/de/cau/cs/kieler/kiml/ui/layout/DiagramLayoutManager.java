@@ -36,18 +36,13 @@ import de.cau.cs.kieler.kiml.layout.services.RecursiveLayouterEngine;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 
 /**
- * Abstract superclass for MANAGERS of diagram layout. Contains static methods
+ * Abstract superclass for managers of diagram layout. Contains static methods
  * to layout a specific diagram, and manages selection of an appropriate
  * subclass to translate the diagram into the internal {@code KGraph} structure.
  * 
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public abstract class DiagramLayoutManager {
-
-    /** minimal animation time for diagram layout. */
-    private static final int MIN_ANIMATION_TIME = 500;
-    /** maximal animation time for diagram layout. */
-    private static final int MAX_ANIMATION_TIME = 4000;
 
     /** list of registered diagram layout MANAGERS. */
     private static final List<DiagramLayoutManager> MANAGERS
@@ -121,23 +116,28 @@ public abstract class DiagramLayoutManager {
                 PlatformUI.getWorkbench().getProgressService().run(false, false,
                         new IRunnableWithProgress() {
                             public void run(final IProgressMonitor monitor) {
-                                status.object = doLayout(editorPart, editPart,
-                                        new KielerProgressMonitor(monitor));
+                                status.setObject(doLayout(editorPart, editPart,
+                                        new KielerProgressMonitor(monitor)));
                             }
                         });
             } else {
-                status.object = doLayout(editorPart, editPart, new BasicProgressMonitor());
+                status.setObject(doLayout(editorPart, editPart, new BasicProgressMonitor()));
             }
             if (animate) {
-                Animation.run(calcAnimationTime(status.object.getCode()));
+                Animation.run(calcAnimationTime(status.getObject().getCode()));
             }
         } catch (Exception exception) {
             return new Status(IStatus.ERROR, KimlUiPlugin.PLUGIN_ID,
                     "Failed to perform diagram layout.", exception);
         }
-        return status.object;
+        return status.getObject();
     }
 
+    /** amount of work for a small task. */
+    private static final int SMALL_TASK = 10;
+    /** amount of work for the main task. */
+    private static final int MAIN_TASK = 80;
+    
     /**
      * Performs layout on the given editor or edit part using this layout
      * manager and a specific progress monitor.
@@ -154,20 +154,21 @@ public abstract class DiagramLayoutManager {
     public final synchronized IStatus doLayout(final IEditorPart editorPart,
             final EditPart editPart, final IKielerProgressMonitor progressMonitor) {
         try {
-            progressMonitor.begin("Diagram layout", 100);
+            progressMonitor.begin("Diagram layout", SMALL_TASK + MAIN_TASK + SMALL_TASK);
             LayoutServices layoutServices = LayoutServices.getInstance();
 
             // transform the diagram into a KGraph instance
-            KNode layoutGraph = buildLayoutGraph(editorPart, editPart, progressMonitor.subTask(10));
+            KNode layoutGraph = buildLayoutGraph(editorPart, editPart,
+                    progressMonitor.subTask(SMALL_TASK));
 
             // notify layout listeners about the layout request
             layoutServices.layoutRequested(layoutGraph);
 
             // perform layout on the layout graph
-            layouterEngine.layout(layoutGraph, progressMonitor.subTask(80));
+            layouterEngine.layout(layoutGraph, progressMonitor.subTask(MAIN_TASK));
 
             // apply layout to the model
-            applyLayout(progressMonitor.subTask(10));
+            applyLayout(progressMonitor.subTask(SMALL_TASK));
 
             // notify layout listeners about the performed layout
             progressMonitor.done();
@@ -203,6 +204,13 @@ public abstract class DiagramLayoutManager {
         return count;
     }
 
+    /** minimal animation time for diagram layout. */
+    private static final int MIN_ANIMATION_TIME = 500;
+    /** maximal animation time for diagram layout. */
+    private static final int MAX_ANIMATION_TIME = 4000;
+    /** factor for animation time calculation. */
+    private static final double ANIM_FACT = 100.0;
+    
     /**
      * Calculates animation time for the given graph size.
      * 
@@ -210,7 +218,7 @@ public abstract class DiagramLayoutManager {
      * @return number of milliseconds to animate
      */
     private int calcAnimationTime(final int graphSize) {
-        int time = MIN_ANIMATION_TIME + (int) (100 * Math.sqrt(graphSize));
+        int time = MIN_ANIMATION_TIME + (int) (ANIM_FACT * Math.sqrt(graphSize));
         return time <= MAX_ANIMATION_TIME ? time : MAX_ANIMATION_TIME;
     }
 

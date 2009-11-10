@@ -94,14 +94,13 @@ public class LayoutOptionData {
     }
 
     /** identifier of the layout option. */
-    public String id;
+    private String id;
     /** type of the layout option. */
-    public Type type = Type.UNDEFINED;
+    private Type type = Type.UNDEFINED;
     /** user friendly name of the layout option. */
-    public String name;
+    private String name;
     /** a description to be displayed in the UI. */
-    public String description;
-
+    private String description;
     /** configured targets (accessed through bit masks). */
     private int targets;
     /** cached value of the enumeration class, used for ENUM typed options. */
@@ -116,7 +115,7 @@ public class LayoutOptionData {
      */
     private void checkEnumClass() {
         if (enumClass == null) {
-            enumClass = LayoutOptions.getEnumClass(id);
+            enumClass = LayoutOptions.getEnumClass(getId());
         }
         if (enumClass == null) {
             throw new IllegalStateException("Unknown enumeration type set for this layout option.");
@@ -129,7 +128,7 @@ public class LayoutOptionData {
      @Override
     public boolean equals(final Object obj) {
         if (obj instanceof LayoutOptionData) {
-            return id.equals((LayoutOptionData) obj);
+            return getId().equals((LayoutOptionData) obj);
         } else {
             return false;
         }
@@ -140,7 +139,7 @@ public class LayoutOptionData {
       */
      @Override
     public int hashCode() {
-        return id.hashCode();
+        return getId().hashCode();
     }
 
      /**
@@ -148,10 +147,10 @@ public class LayoutOptionData {
       */
      @Override
     public String toString() {
-        if (name != null && name.length() > 0) {
-            return name;
+        if (getName() != null && getName().length() > 0) {
+            return getName();
         } else {
-            return id;
+            return getId();
         }
     }
 
@@ -190,7 +189,7 @@ public class LayoutOptionData {
             return null;
         }
 
-        switch (type) {
+        switch (getType()) {
         case BOOLEAN:
             return Boolean.valueOf(valueString);
         case INT:
@@ -228,7 +227,7 @@ public class LayoutOptionData {
      */
     public String[] getChoices() {
         if (choices == null) {
-            switch (type) {
+            switch (getType()) {
             case ENUM:
                 checkEnumClass();
                 Enum<?>[] enums = enumClass.getEnumConstants();
@@ -251,7 +250,7 @@ public class LayoutOptionData {
      * @return the corresponding enumeration value
      */
     public Enum<?> getEnumValue(final int intValue) {
-        switch (type) {
+        switch (getType()) {
         case ENUM:
             checkEnumClass();
             Enum<?>[] enums = enumClass.getEnumConstants();
@@ -268,9 +267,9 @@ public class LayoutOptionData {
      * @param value the new value of this option
      */
     public void setValue(final KLayoutData layoutData, final Object value) {
-        KOption option = layoutData.getOption(id);
+        KOption option = layoutData.getOption(getId());
         if (option == null) {
-            switch (type) {
+            switch (getType()) {
             case BOOLEAN:
                 option = KLayoutDataFactory.eINSTANCE.createKBooleanOption();
                 break;
@@ -287,10 +286,10 @@ public class LayoutOptionData {
             default:
                 throw new IllegalStateException("Invalid type set for this layout option.");
             }
-            option.setKey(id);
+            option.setKey(getId());
             layoutData.getOptions().add(option);
         }
-        switch (type) {
+        switch (getType()) {
         case BOOLEAN:
             KBooleanOption booleanOption = (KBooleanOption) option;
             booleanOption.setValue(((Boolean) value).booleanValue());
@@ -409,6 +408,78 @@ public class LayoutOptionData {
             }
         }
         return descriptionBuf.toString();
+    }
+
+    /**
+     * Sets the identifier.
+     *
+     * @param theid the identifier to set
+     */
+    public void setId(final String theid) {
+        this.id = theid;
+    }
+
+    /**
+     * Returns the identifier.
+     *
+     * @return the identifier
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Sets the data type.
+     *
+     * @param thetype the data type to set
+     */
+    public void setType(final Type thetype) {
+        this.type = thetype;
+    }
+
+    /**
+     * Returns the type.
+     *
+     * @return the type
+     */
+    public Type getType() {
+        return type;
+    }
+
+    /**
+     * Sets the name.
+     *
+     * @param thename the name to set
+     */
+    public void setName(final String thename) {
+        this.name = thename;
+    }
+
+    /**
+     * Returns the name.
+     *
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Sets the description.
+     *
+     * @param thedescription the description to set
+     */
+    public void setDescription(final String thedescription) {
+        this.description = thedescription;
+    }
+
+    /**
+     * Returns the description.
+     *
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
     }
 
 }

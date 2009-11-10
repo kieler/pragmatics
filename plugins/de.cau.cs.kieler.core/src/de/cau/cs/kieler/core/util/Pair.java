@@ -26,9 +26,9 @@ import java.util.Comparator;
 public class Pair<F, S> {
 
     /** the first element. */
-    public F first;
+    private F first;
     /** the second element. */
-    public S second;
+    private S second;
 
     /**
      * Constructs a pair given both elements.
@@ -37,8 +37,8 @@ public class Pair<F, S> {
      * @param thesecond the second element
      */
     public Pair(final F thefirst, final S thesecond) {
-        this.first = thefirst;
-        this.second = thesecond;
+        this.setFirst(thefirst);
+        this.setSecond(thesecond);
     }
 
     /**
@@ -52,7 +52,7 @@ public class Pair<F, S> {
          * {@inheritDoc}
          */
         public int compare(final Pair<F, S> o1, final Pair<F, S> o2) {
-            return o1.first.compareTo(o2.first);
+            return o1.getFirst().compareTo(o2.getFirst());
         }
     }
 
@@ -67,7 +67,7 @@ public class Pair<F, S> {
          * {@inheritDoc}
          */
         public int compare(final Pair<F, S> o1, final Pair<F, S> o2) {
-            return o1.second.compareTo(o2.second);
+            return o1.getSecond().compareTo(o2.getSecond());
         }
     }
 
@@ -78,11 +78,12 @@ public class Pair<F, S> {
     public boolean equals(final Object obj) {
         if (obj instanceof Pair<?, ?>) {
             Pair<?, ?> other = (Pair<?, ?>) obj;
-            return this.first == null ? other.first == null
-                    && (this.second == null ? other.second == null : this.second.equals(other.second))
-                    : this.first.equals(other.first)
-                            && (this.second == null ? other.second == null : this.second
-                                    .equals(other.second));
+            return this.getFirst() == null ? other.getFirst() == null
+                    && (this.getSecond() == null ? other.getSecond() == null
+                    : this.getSecond().equals(other.getSecond()))
+                    : this.getFirst().equals(other.getFirst())
+                    && (this.getSecond() == null ? other.getSecond() == null
+                    : this.getSecond().equals(other.getSecond()));
         } else {
             return false;
         }
@@ -93,14 +94,14 @@ public class Pair<F, S> {
      */
     @Override
     public int hashCode() {
-        if (first == null && second == null) {
+        if (getFirst() == null && getSecond() == null) {
             return 0;
-        } else if (first == null) {
-            return second.hashCode();
-        } else if (second == null) {
-            return first.hashCode();
+        } else if (getFirst() == null) {
+            return getSecond().hashCode();
+        } else if (getSecond() == null) {
+            return getFirst().hashCode();
         } else {
-            return first.hashCode() + second.hashCode();
+            return getFirst().hashCode() + getSecond().hashCode();
         }
     }
 
@@ -109,15 +110,51 @@ public class Pair<F, S> {
      */
     @Override
     public String toString() {
-        if (first == null && second == null) {
+        if (getFirst() == null && getSecond() == null) {
             return "pair(null,null)";
-        } else if (first == null) {
-            return "pair(null," + second.toString() + ")";
-        } else if (second == null) {
-            return "pair(" + first.toString() + ",null)";
+        } else if (getFirst() == null) {
+            return "pair(null," + getSecond().toString() + ")";
+        } else if (getSecond() == null) {
+            return "pair(" + getFirst().toString() + ",null)";
         } else {
-            return "pair(" + first.toString() + "," + second.toString() + ")";
+            return "pair(" + getFirst().toString() + "," + getSecond().toString() + ")";
         }
+    }
+
+    /**
+     * Sets the first element.
+     *
+     * @param thefirst the first element to set
+     */
+    public void setFirst(final F thefirst) {
+        this.first = thefirst;
+    }
+
+    /**
+     * Returns the first element.
+     *
+     * @return the first element
+     */
+    public F getFirst() {
+        return first;
+    }
+
+    /**
+     * Sets the second element.
+     *
+     * @param thesecond the second element to set
+     */
+    public void setSecond(final S thesecond) {
+        this.second = thesecond;
+    }
+
+    /**
+     * Returns the second element.
+     *
+     * @return the second element
+     */
+    public S getSecond() {
+        return second;
     }
 
 }

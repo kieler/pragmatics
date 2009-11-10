@@ -35,19 +35,19 @@ public class DFSCycleRemover extends AbstractCycleRemover {
      */
     public void removeCycles(final KSlimGraph graph) {
         getMonitor().begin("DFS cycle removal", 1);
-        reversedEdges = new LinkedList<KSlimEdge>();
+        setReversedEdges(new LinkedList<KSlimEdge>());
         nextDfs = 1;
 
         // initialize node ranks
-        for (KSlimNode node : graph.nodes) {
-            node.rank = -1;
+        for (KSlimNode node : graph.getNodes()) {
+            node.setRank(-1);
         }
 
         // mark back edges of the DFS run
-        Iterator<KSlimNode> nodeIter = graph.nodes.iterator();
+        Iterator<KSlimNode> nodeIter = graph.getNodes().iterator();
         while (nodeIter.hasNext()) {
             KSlimNode node = nodeIter.next();
-            if (node.rank < 0) {
+            if (node.getRank() < 0) {
                 // node was not visited yet
                 dfsVisit(node);
             }
@@ -65,26 +65,26 @@ public class DFSCycleRemover extends AbstractCycleRemover {
      */
     private void dfsVisit(final KSlimNode node) {
         // put DFS mark on the new node
-        node.rank = nextDfs++;
+        node.setRank(nextDfs++);
 
         // process all outgoing edges
-        for (KSlimNode.IncEntry edgeEntry : node.incidence) {
-            if (edgeEntry.type == KSlimNode.IncEntry.Type.OUT) {
-                KSlimNode targetNode = edgeEntry.edge.target;
-                if (targetNode.rank >= 0) {
-                    if (targetNode.rank > 0 && targetNode.id != node.id) {
+        for (KSlimNode.IncEntry edgeEntry : node.getIncidence()) {
+            if (edgeEntry.getType() == KSlimNode.IncEntry.Type.OUT) {
+                KSlimNode targetNode = edgeEntry.getEdge().getTarget();
+                if (targetNode.getRank() >= 0) {
+                    if (targetNode.getRank() > 0 && targetNode.getId() != node.getId()) {
                         // a cycle was found, break it
-                        reversedEdges.add(edgeEntry.edge);
+                        getReversedEdges().add(edgeEntry.getEdge());
                     }
                 } else {
                     // target node was not visited yet
                     dfsVisit(targetNode);
-                    edgeEntry.edge.rank = 0;
+                    edgeEntry.getEdge().setRank(0);
                 }
             }
         }
         // backtracking: set this node's number to 0
-        node.rank = 0;
+        node.setRank(0);
     }
 
 }

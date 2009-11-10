@@ -51,9 +51,9 @@ public class LayoutServices {
     public static final String DIAGRAM_TYPE_NOLAYOUT = "de.cau.cs.kieler.layout.diagrams.nolayout";
 
     /** the singleton instance of the layout service. */
-    protected static LayoutServices instance = null;
+    private static LayoutServices instance = null;
     /** the singleton instance of the registry class. */
-    protected static Registry registry = null;
+    private static Registry registry = null;
 
     /** the list of layout listeners that have been loaded at startup. */
     private List<ILayoutListener> listeners = new LinkedList<ILayoutListener>();
@@ -172,7 +172,7 @@ public class LayoutServices {
          * @param providerData data instance of the layout provider to register
          */
         public void addLayoutProvider(final LayoutProviderData providerData) {
-            layoutProviderMap.put(providerData.id, providerData);
+            layoutProviderMap.put(providerData.getId(), providerData);
         }
 
         /**
@@ -182,7 +182,7 @@ public class LayoutServices {
          * @param optionData data instance of the layout option to register
          */
         public void addLayoutOption(final LayoutOptionData optionData) {
-            layoutOptionMap.put(optionData.id, optionData);
+            layoutOptionMap.put(optionData.getId(), optionData);
         }
 
         /**
@@ -327,7 +327,7 @@ public class LayoutServices {
         String diagramType = LayoutOptions.getDiagramType(nodeLayout);
         LayoutProviderData providerData = getLayoutProviderData(layoutHint, diagramType);
         if (providerData != null) {
-            return providerData.instance;
+            return providerData.getInstance();
         } else {
             throw new KielerException("No registered layout provider is available.");
         }
@@ -366,8 +366,8 @@ public class LayoutServices {
             final LayoutOptionData.Target target) {
         List<LayoutOptionData> optionDataList = new ArrayList<LayoutOptionData>();
         for (LayoutOptionData optionData : layoutOptionMap.values()) {
-            if (providerData.knowsOption(optionData.id)
-                    || LayoutOptions.LAYOUT_HINT.equals(optionData.id)) {
+            if (providerData.knowsOption(optionData.getId())
+                    || LayoutOptions.LAYOUT_HINT.equals(optionData.getId())) {
                 if (optionData.hasTarget(target)) {
                     optionDataList.add(optionData);
                 }
@@ -485,7 +485,7 @@ public class LayoutServices {
             LayoutProviderData providerData = providerIter.next();
             int currentPrio = providerData.getSupportedPriority(diagramType);
             if (matchesLayoutType) {
-                if (providerData.type.equals(layoutType)) {
+                if (providerData.getType().equals(layoutType)) {
                     if (matchesDiagramType) {
                         if (currentPrio > bestPrio) {
                             bestProvider = providerData;
@@ -517,7 +517,7 @@ public class LayoutServices {
                     }
                 }
             } else {
-                if (providerData.type.equals(layoutType)) {
+                if (providerData.getType().equals(layoutType)) {
                     bestProvider = providerData;
                     matchesLayoutType = true;
                     if (currentPrio > LayoutProviderData.MIN_PRIORITY) {

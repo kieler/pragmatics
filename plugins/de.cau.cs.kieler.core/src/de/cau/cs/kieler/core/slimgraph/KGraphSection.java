@@ -28,17 +28,25 @@ import java.util.List;
 public class KGraphSection {
 
     /** nodes of this graph section, sorted by their creation number. */
-    public List<KSlimNode> nodes = new ArrayList<KSlimNode>();
-
+    private List<KSlimNode> nodes = new ArrayList<KSlimNode>();
     /** list of edges that were removed. */
     private List<KSlimEdge> removedEdges = new LinkedList<KSlimEdge>();
+
+    /**
+     * Returns the nodes.
+     * 
+     * @return the nodes
+     */
+    public List<KSlimNode> getNodes() {
+        return nodes;
+    }
 
     /**
      * Sorts the nodes of this graph section. This method must be called prior
      * to any use of <code>contains(TSMNode)</code>.
      */
     public void sortNodes() {
-        Collections.sort(nodes);
+        Collections.sort(getNodes());
     }
 
     /**
@@ -49,13 +57,13 @@ public class KGraphSection {
      * @return true if the given node is contained in <code>nodes</code>
      */
     public boolean contains(final KSlimNode node) {
-        int start = 0, end = nodes.size(), pos;
+        int start = 0, end = getNodes().size(), pos;
         while (start != end) {
             pos = start + (end - start) / 2;
-            int currentNr = nodes.get(pos).id;
-            if (node.id < currentNr) {
+            int currentNr = getNodes().get(pos).getId();
+            if (node.getId() < currentNr) {
                 end = pos;
-            } else if (node.id > currentNr) {
+            } else if (node.getId() > currentNr) {
                 start = pos + 1;
             } else {
                 return true;
@@ -70,9 +78,9 @@ public class KGraphSection {
      * @param edgeEntry edge entry to remove from this graph section
      */
     public void removeEdge(final KSlimNode.IncEntry edgeEntry) {
-        edgeEntry.edge.source.incidence.remove(edgeEntry);
-        edgeEntry.edge.target.incidence.remove(edgeEntry);
-        removedEdges.add(edgeEntry.edge);
+        edgeEntry.getEdge().getSource().getIncidence().remove(edgeEntry);
+        edgeEntry.getEdge().getTarget().getIncidence().remove(edgeEntry);
+        removedEdges.add(edgeEntry.getEdge());
     }
 
     /**

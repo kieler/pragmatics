@@ -63,7 +63,7 @@ public class OgdfLayoutProvider extends AbstractLayoutProvider {
      */
     public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor)
             throws KielerException {
-        progressMonitor.begin("OGDF layout", 100);
+        progressMonitor.begin("OGDF layout", 1);
         
         GraphAttributes graphAttributes = transformGraph(layoutNode);
         

@@ -63,7 +63,7 @@ public class LayeringCompacter extends AbstractAlgorithm implements ICompacter {
             }
             maxXrank = Math.max(maxXrank, topoBar.rank);
         }
-        graph.width = maxXrank + 1;
+        graph.setWidth(maxXrank + 1);
 
         // determine vertical numbering: build horizontal bars
         int maxYrank = 0;
@@ -77,7 +77,7 @@ public class LayeringCompacter extends AbstractAlgorithm implements ICompacter {
             }
             maxYrank = Math.max(maxYrank, topoBar.rank);
         }
-        graph.height = maxYrank + 1;
+        graph.setHeight(maxYrank + 1);
 
         getMonitor().done();
     }
@@ -91,14 +91,14 @@ public class LayeringCompacter extends AbstractAlgorithm implements ICompacter {
      */
     private void buildTopoBars(final KSlimGraph graph, final boolean horizontal) {
         // reset node ranks
-        for (KSlimNode node : graph.nodes) {
-            node.rank = -1;
+        for (KSlimNode node : graph.getNodes()) {
+            node.setRank(-1);
         }
 
         int currentIndex = 0;
         List<TopoBar> topoBarList = new LinkedList<TopoBar>();
-        for (KSlimNode node : graph.nodes) {
-            if (node.rank < 0) {
+        for (KSlimNode node : graph.getNodes()) {
+            if (node.getRank() < 0) {
                 topoBarList.add(getTopoBar((TSMNode) node, horizontal, currentIndex++));
             }
         }
@@ -116,19 +116,19 @@ public class LayeringCompacter extends AbstractAlgorithm implements ICompacter {
     private TopoBar getTopoBar(final TSMNode node, final boolean horizontal, final int index) {
         TopoBar topoBar = new TopoBar();
         topoBar.nodes.add(node);
-        node.rank = index;
+        node.setRank(index);
 
         TSMNode currentNode = node;
         KSlimNode.Side direction = horizontal ? KSlimNode.Side.EAST : KSlimNode.Side.SOUTH;
         while ((currentNode = nextNode(currentNode, direction)) != null) {
             topoBar.nodes.add(currentNode);
-            currentNode.rank = index;
+            currentNode.setRank(index);
         }
         currentNode = node;
         direction = horizontal ? KSlimNode.Side.WEST : KSlimNode.Side.NORTH;
         while ((currentNode = nextNode(currentNode, direction)) != null) {
             topoBar.nodes.add(currentNode);
-            currentNode.rank = index;
+            currentNode.setRank(index);
         }
         return topoBar;
     }
@@ -143,7 +143,7 @@ public class LayeringCompacter extends AbstractAlgorithm implements ICompacter {
      * @return the first node adjacent on the side of the node
      */
     private TSMNode nextNode(final KSlimNode node, final KSlimNode.Side side) {
-        for (KSlimNode.IncEntry edgeEntry : node.incidence) {
+        for (KSlimNode.IncEntry edgeEntry : node.getIncidence()) {
             if (edgeEntry.side() == side) {
                 return (TSMNode) edgeEntry.endpoint();
             }
@@ -163,7 +163,7 @@ public class LayeringCompacter extends AbstractAlgorithm implements ICompacter {
         for (KSlimNode node : topoBar.nodes) {
             KSlimNode connectedNode = nextNode(node, direction);
             if (connectedNode != null) {
-                TopoBar connectedBar = topoBars[connectedNode.rank];
+                TopoBar connectedBar = topoBars[connectedNode.getRank()];
                 if (connectedBar.rank < 0) {
                     visit(connectedBar, direction);
                 }

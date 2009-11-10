@@ -66,14 +66,14 @@ public class DualGraphBuilder extends AbstractAlgorithm {
     public void buildDual(final KSlimGraph graph,
             final ExternalFaceDetector theexternalFaceDetector) {
         this.externalFaceDetector = theexternalFaceDetector;
-        seenLeft = new boolean[graph.edges.size()];
-        seenRight = new boolean[graph.edges.size()];
+        seenLeft = new boolean[graph.getEdges().size()];
+        seenRight = new boolean[graph.getEdges().size()];
 
-        for (KSlimEdge edge : graph.edges) {
-            if (!seenRight[edge.id]) {
+        for (KSlimEdge edge : graph.getEdges()) {
+            if (!seenRight[edge.getId()]) {
                 buildBorder(graph, edge, true);
             }
-            if (!seenLeft[edge.id]) {
+            if (!seenLeft[edge.getId()]) {
                 buildBorder(graph, edge, false);
             }
         }
@@ -92,16 +92,16 @@ public class DualGraphBuilder extends AbstractAlgorithm {
         visit(edge, border, forward);
         KSlimFace face;
         if (externalFaceDetector.isExternal(border)) {
-            face = graph.externalFace;
+            face = graph.getExternalFace();
         } else {
             face = new KSlimFace(graph, true);
         }
-        face.borders.add(border);
+        face.getBorders().add(border);
         for (KSlimFace.BorderEntry borderEntry : border) {
-            if (borderEntry.forward) {
-                borderEntry.edge.rightFace = face;
+            if (borderEntry.isForward()) {
+                borderEntry.getEdge().setRightFace(face);
             } else {
-                borderEntry.edge.leftFace = face;
+                borderEntry.getEdge().setLeftFace(face);
             }
         }
     }
@@ -119,18 +119,18 @@ public class DualGraphBuilder extends AbstractAlgorithm {
             final boolean forward) {
         KSlimNode secondNode;
         if (forward) {
-            seenRight[edge.id] = true;
-            secondNode = edge.target;
+            seenRight[edge.getId()] = true;
+            secondNode = edge.getTarget();
         } else {
-            seenLeft[edge.id] = true;
-            secondNode = edge.source;
+            seenLeft[edge.getId()] = true;
+            secondNode = edge.getSource();
         }
         border.add(new KSlimFace.BorderEntry(edge, forward));
         KSlimNode.IncEntry nextEdge = getNextEdge(secondNode, edge, forward);
-        boolean nextForward = (nextEdge.type == KSlimNode.IncEntry.Type.OUT);
-        if (nextForward && !seenRight[nextEdge.edge.id]
-                      || !nextForward && !seenLeft[nextEdge.edge.id]) {
-            visit(nextEdge.edge, border, nextForward);
+        boolean nextForward = (nextEdge.getType() == KSlimNode.IncEntry.Type.OUT);
+        if (nextForward && !seenRight[nextEdge.getEdge().getId()]
+                      || !nextForward && !seenLeft[nextEdge.getEdge().getId()]) {
+            visit(nextEdge.getEdge(), border, nextForward);
         }
     }
 
@@ -146,18 +146,18 @@ public class DualGraphBuilder extends AbstractAlgorithm {
      */
     private KSlimNode.IncEntry getNextEdge(final KSlimNode node, final KSlimEdge prevEdge,
             final boolean prevIncoming) {
-        ListIterator<KSlimNode.IncEntry> edgeIter = node.incidence.listIterator(node.incidence.size());
+        ListIterator<KSlimNode.IncEntry> edgeIter = node.getIncidence().listIterator(node.getIncidence().size());
         while (edgeIter.hasPrevious()) {
             KSlimNode.IncEntry entry = edgeIter.previous();
-            if (entry.edge.id == prevEdge.id
-                    && prevIncoming == (entry.type == KSlimNode.IncEntry.Type.IN)) {
+            if (entry.getEdge().getId() == prevEdge.getId()
+                    && prevIncoming == (entry.getType() == KSlimNode.IncEntry.Type.IN)) {
                 break;
             }
         }
         if (edgeIter.hasPrevious()) {
             return edgeIter.previous();
         } else {
-            return node.incidence.get(node.incidence.size() - 1);
+            return node.getIncidence().get(node.getIncidence().size() - 1);
         }
     }
 

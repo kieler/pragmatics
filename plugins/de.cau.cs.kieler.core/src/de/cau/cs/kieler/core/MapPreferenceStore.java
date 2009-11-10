@@ -28,9 +28,9 @@ import java.util.Map;
 public class MapPreferenceStore implements IKielerPreferenceStore {
 
     /** hash map used to store current preference values in memory. */
-    protected Map<String, Object> currentMap = new LinkedHashMap<String, Object>();
+    private Map<String, Object> currentMap = new LinkedHashMap<String, Object>();
     /** hash map used to store default preference values in memory. */
-    protected Map<String, Object> defaultMap = new LinkedHashMap<String, Object>();
+    private Map<String, Object> defaultMap = new LinkedHashMap<String, Object>();
     
     /**
      * {@inheritDoc}

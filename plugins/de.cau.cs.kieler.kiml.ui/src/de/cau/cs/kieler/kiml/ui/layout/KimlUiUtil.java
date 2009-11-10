@@ -123,11 +123,12 @@ public final class KimlUiUtil {
     public static Object getDefault(final LayoutOptionData optionData,
             final LayoutProviderData providerData, final EditPart editPart) {
         Object result = editPart != null ? LayoutServices.getInstance().getOption(
-                editPart.getClass(), optionData.id) : null;
+                editPart.getClass(), optionData.getId()) : null;
         if (result == null) {
-            result = providerData != null ? providerData.instance.getDefault(optionData.id) : null;
+            result = providerData != null
+                    ? providerData.getInstance().getDefault(optionData.getId()) : null;
             if (result == null) {
-                switch (optionData.type) {
+                switch (optionData.getType()) {
                 case STRING:
                     return "";
                 case BOOLEAN:
@@ -183,17 +184,17 @@ public final class KimlUiUtil {
         editingDomain.getCommandStack().execute(new RecordingCommand(editingDomain) {
             @SuppressWarnings("unchecked")
             protected void doExecute() {
-                optionStyleWrap.object = LayoutOptionsFactory.eINSTANCE.createLayoutOptionStyle();
+                optionStyleWrap.setObject(LayoutOptionsFactory.eINSTANCE.createLayoutOptionStyle());
 //                EObject domainElement = notationView.getElement();
 //                if (domainElement instanceof EModelElement) {
 //                    optionStyleWrap.object.setSource(LayoutOptionStyle.class.getName());
 //                    ((EModelElement)domainElement).getEAnnotations().add(optionStyleWrap.object);
 //                }
 //                else
-                notationView.getStyles().add(optionStyleWrap.object);
+                notationView.getStyles().add(optionStyleWrap.getObject());
             }
         });
-        return optionStyleWrap.object;
+        return optionStyleWrap.getObject();
     }
     
     /**
@@ -209,28 +210,28 @@ public final class KimlUiUtil {
         final Maybe<KOption> koptionWrap = new Maybe<KOption>();
         editingDomain.getCommandStack().execute(new RecordingCommand(editingDomain) {
             protected void doExecute() {
-                switch (optionData.type) {
+                switch (optionData.getType()) {
                 case STRING:
-                    koptionWrap.object = KLayoutDataFactory.eINSTANCE.createKStringOption();
+                    koptionWrap.setObject(KLayoutDataFactory.eINSTANCE.createKStringOption());
                     break;
                 case BOOLEAN:
-                    koptionWrap.object = KLayoutDataFactory.eINSTANCE.createKBooleanOption();
+                    koptionWrap.setObject(KLayoutDataFactory.eINSTANCE.createKBooleanOption());
                     break;
                 case ENUM:
                 case INT:
-                    koptionWrap.object = KLayoutDataFactory.eINSTANCE.createKIntOption();
+                    koptionWrap.setObject(KLayoutDataFactory.eINSTANCE.createKIntOption());
                     break;
                 case FLOAT:
-                    koptionWrap.object = KLayoutDataFactory.eINSTANCE.createKFloatOption();
+                    koptionWrap.setObject(KLayoutDataFactory.eINSTANCE.createKFloatOption());
                     break;
                 default:
                     return;
                 }
-                koptionWrap.object.setKey(optionData.id);
-                optionStyle.getOptions().add(koptionWrap.object);
+                koptionWrap.getObject().setKey(optionData.getId());
+                optionStyle.getOptions().add(koptionWrap.getObject());
             }
         });
-        return koptionWrap.object;
+        return koptionWrap.getObject();
     }
 
     /**
@@ -241,7 +242,7 @@ public final class KimlUiUtil {
      * @return the current value of the option
      */
     public static Object getValue(final KOption koption, final LayoutOptionData optionData) {
-        switch (optionData.type) {
+        switch (optionData.getType()) {
         case STRING:
             return ((KStringOption)koption).getValue();
         case BOOLEAN:
@@ -268,7 +269,7 @@ public final class KimlUiUtil {
             final Object value, final TransactionalEditingDomain editingDomain) {
         editingDomain.getCommandStack().execute(new RecordingCommand(editingDomain) {
             protected void doExecute() {
-                switch (optionData.type) {
+                switch (optionData.getType()) {
                 case STRING:
                     ((KStringOption)koption).setValue((String)value);
                     break;

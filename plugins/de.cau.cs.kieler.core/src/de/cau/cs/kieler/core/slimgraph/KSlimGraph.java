@@ -28,33 +28,141 @@ import java.util.List;
 public class KSlimGraph {
 
     /** list of nodes in this TSM graph. */
-    public final List<KSlimNode> nodes = new LinkedList<KSlimNode>();
+    private final List<KSlimNode> nodes = new LinkedList<KSlimNode>();
     /** list of edges in this TSM graph. */
-    public final List<KSlimEdge> edges = new LinkedList<KSlimEdge>();
+    private final List<KSlimEdge> edges = new LinkedList<KSlimEdge>();
     /** list of internal faces in this TSM graph. */
-    public final List<KSlimFace> faces = new LinkedList<KSlimFace>();
+    private final List<KSlimFace> faces = new LinkedList<KSlimFace>();
     /** the external face of this TSM graph. */
-    public KSlimFace externalFace = new KSlimFace(this, false);
+    private KSlimFace externalFace = new KSlimFace(this, false);
 
     /** total width of the graph. */
-    public float width;
+    private float width;
     /** total height of the graph. */
-    public float height;
+    private float height;
 
     /** next available identifier for nodes. */
-    int nextNodeId = 0;
+    private int nextNodeId = 0;
     /** next available identifier for edges. */
-    int nextEdgeId = 0;
+    private int nextEdgeId = 0;
     /** next available identifier for faces. */
-    int nextFaceId = 0;
+    private int nextFaceId = 0;
+    
+    /**
+     * Returns the next node identifier and increases it by one.
+     * 
+     * @return the next node id
+     */
+    int nextNodeId() {
+        return nextNodeId++;
+    }
+    
+    /**
+     * Returns the next edge identifier and increases it by one.
+     * 
+     * @return the next edge id
+     */
+    int nextEdgeId() {
+        return nextEdgeId++;
+    }
+    
+    /**
+     * Returns the next face identifier and increases it by one.
+     * 
+     * @return the next face id
+     */
+    int nextFaceId() {
+        return nextFaceId++;
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
     public String toString() {
-        return "SlimGraph(" + nodes.size() + " nodes, " + edges.size()
-                + " edges, " + (faces.size() + 1) + " faces)";
+        return "SlimGraph(" + getNodes().size() + " nodes, " + getEdges().size()
+                + " edges, " + (getFaces().size() + 1) + " faces)";
+    }
+
+    /**
+     * Returns the nodes.
+     *
+     * @return the nodes
+     */
+    public List<KSlimNode> getNodes() {
+        return nodes;
+    }
+
+    /**
+     * Returns the edges.
+     *
+     * @return the edges
+     */
+    public List<KSlimEdge> getEdges() {
+        return edges;
+    }
+
+    /**
+     * Returns the faces.
+     *
+     * @return the faces
+     */
+    public List<KSlimFace> getFaces() {
+        return faces;
+    }
+
+    /**
+     * Sets the externalFace.
+     *
+     * @param theexternalFace the externalFace to set
+     */
+    public void setExternalFace(final KSlimFace theexternalFace) {
+        this.externalFace = theexternalFace;
+    }
+
+    /**
+     * Returns the externalFace.
+     *
+     * @return the externalFace
+     */
+    public KSlimFace getExternalFace() {
+        return externalFace;
+    }
+
+    /**
+     * Sets the width.
+     *
+     * @param thewidth the width to set
+     */
+    public void setWidth(final float thewidth) {
+        this.width = thewidth;
+    }
+
+    /**
+     * Returns the width.
+     *
+     * @return the width
+     */
+    public float getWidth() {
+        return width;
+    }
+
+    /**
+     * Sets the height.
+     *
+     * @param theheight the height to set
+     */
+    public void setHeight(final float theheight) {
+        this.height = theheight;
+    }
+
+    /**
+     * Returns the height.
+     *
+     * @return the height
+     */
+    public float getHeight() {
+        return height;
     }
 
 }

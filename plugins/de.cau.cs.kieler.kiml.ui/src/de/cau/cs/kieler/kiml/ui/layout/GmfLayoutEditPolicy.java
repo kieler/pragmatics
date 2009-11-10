@@ -91,17 +91,17 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                 
                 // retrieve layout data from the request and compute layout data for the command
                 for (Pair<KGraphElement, GraphicalEditPart> layoutPair : layoutRequest.getElements()) {
-                    if (layoutPair.first instanceof KNode) {
-                        addShapeLayout(command, layoutPair.first, layoutPair.second, null);
-                    } else if (layoutPair.first instanceof KPort) {
-                        addShapeLayout(command, layoutPair.first, layoutPair.second,
-                                KimlLayoutUtil.getShapeLayout(((KPort)layoutPair.first).getNode()));
-                    } else if (layoutPair.first instanceof KEdge) {
-                        addEdgeLayout(command, (KEdge)layoutPair.first,
-                                (ConnectionEditPart)layoutPair.second);
-                    } else if (layoutPair.first instanceof KLabel) {
-                        addEdgeLabelLayout(command, (KLabel)layoutPair.first,
-                                (LabelEditPart)layoutPair.second);
+                    if (layoutPair.getFirst() instanceof KNode) {
+                        addShapeLayout(command, layoutPair.getFirst(), layoutPair.getSecond(), null);
+                    } else if (layoutPair.getFirst() instanceof KPort) {
+                        addShapeLayout(command, layoutPair.getFirst(), layoutPair.getSecond(),
+                                KimlLayoutUtil.getShapeLayout(((KPort)layoutPair.getFirst()).getNode()));
+                    } else if (layoutPair.getFirst() instanceof KEdge) {
+                        addEdgeLayout(command, (KEdge)layoutPair.getFirst(),
+                                (ConnectionEditPart)layoutPair.getSecond());
+                    } else if (layoutPair.getFirst() instanceof KLabel) {
+                        addEdgeLabelLayout(command, (KLabel)layoutPair.getFirst(),
+                                (LabelEditPart)layoutPair.getSecond());
                     }
                 }
                 
@@ -219,6 +219,13 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                 bendPoints, sourceTerminal, targetTerminal);
     }
     
+    /** see LabelViewConstants.TARGET_LOCATION. */
+    private static final int SOURCE_LOCATION = 85;
+    /** see LabelViewConstants.MIDDLE_LOCATION. */
+    private static final int MIDDLE_LOCATION = 50;
+    /** see LabelViewConstants.SOURCE_LOCATION. */
+    private static final int TARGET_LOCATION = 15;
+    
     /**
      * Adds an edge label layout to the given command.
      * 
@@ -250,13 +257,14 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         int fromEnd;
         switch (labelEditPart.getKeyPoint()) {
         case ConnectionLocator.SOURCE:
-            fromEnd = 85; // see LabelViewConstants.TARGET_LOCATION
+            fromEnd = SOURCE_LOCATION;
             break;
         case ConnectionLocator.TARGET:
-            fromEnd = 15; // see LabelViewConstants.SOURCE_LOCATION
+            fromEnd = TARGET_LOCATION;
             break;
         default:
-            fromEnd = 50; // see LabelViewConstants.MIDDLE_LOCATION
+            fromEnd = MIDDLE_LOCATION;
+            break;
         }
         Point refPoint = PointListUtilities.calculatePointRelativeToLine(
                 absoluteBendPoints, 0, fromEnd, true);

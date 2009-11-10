@@ -29,12 +29,12 @@ public class ConcatenableList<E> extends AbstractSequentialList<E> {
     /**
      * Entry class used to store data.
      */
-    private static class Entry<E> {
-        E element;
-        Entry<E> next;
-        Entry<E> previous;
+    private static final class Entry<E> {
+        private E element;
+        private Entry<E> next;
+        private Entry<E> previous;
 
-        Entry(final E theelement, final Entry<E> thenext, final Entry<E> theprevious) {
+        private Entry(final E theelement, final Entry<E> thenext, final Entry<E> theprevious) {
             this.element = theelement;
             this.next = thenext;
             this.previous = theprevious;

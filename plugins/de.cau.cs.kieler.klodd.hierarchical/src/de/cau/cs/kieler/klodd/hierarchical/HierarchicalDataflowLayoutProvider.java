@@ -292,7 +292,7 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
     private void restoreCycles() {
         List<KSlimEdge> reversedEdges = cycleRemover.getReversedEdges();
         for (KSlimEdge slimEdge : reversedEdges) {
-            KEdge layoutEdge = (KEdge) slimEdge.object;
+            KEdge layoutEdge = (KEdge) slimEdge.getObject();
             KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(layoutEdge);
             // reverse bend points
             List<KPoint> bendPoints = new LinkedList<KPoint>();

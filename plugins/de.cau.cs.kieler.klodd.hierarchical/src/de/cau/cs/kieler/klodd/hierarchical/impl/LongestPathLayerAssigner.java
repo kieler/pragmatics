@@ -55,7 +55,7 @@ public class LongestPathLayerAssigner extends AbstractAlgorithm implements ILaye
         layeredGraph = new LayeredGraph(parentNode);
 
         // process child nodes
-        for (KSlimNode node : slimGraph.nodes) {
+        for (KSlimNode node : slimGraph.getNodes()) {
             visit(node);
         }
 
@@ -87,12 +87,12 @@ public class LongestPathLayerAssigner extends AbstractAlgorithm implements ILaye
      * @return height of the given node in the layered graph
      */
     private int visit(final KSlimNode node) {
-        LayerElement layerElement = layeredGraph.getLayerElement(node.object);
+        LayerElement layerElement = layeredGraph.getLayerElement(node.getObject());
         if (layerElement != null) {
             // the node was already visited
             return layerElement.getLayer().height;
-        } else if (node.object instanceof KPort) {
-            KPort port = (KPort) node.object;
+        } else if (node.getObject() instanceof KPort) {
+            KPort port = (KPort) node.getObject();
             if (KimlLayoutUtil.calcFlow(port) < 0) {
                 layeredGraph.putFront(port, 0, node);
                 return Layer.UNDEF_HEIGHT;
@@ -102,17 +102,17 @@ public class LongestPathLayerAssigner extends AbstractAlgorithm implements ILaye
             }
         } else {
             int maxHeight = 1;
-            for (KSlimNode.IncEntry edgeEntry : node.incidence) {
-                if (edgeEntry.type == KSlimNode.IncEntry.Type.OUT) {
-                    KSlimNode targetNode = edgeEntry.edge.target;
+            for (KSlimNode.IncEntry edgeEntry : node.getIncidence()) {
+                if (edgeEntry.getType() == KSlimNode.IncEntry.Type.OUT) {
+                    KSlimNode targetNode = edgeEntry.getEdge().getTarget();
                     // do not follow loops over a single node
-                    if (targetNode.id != node.id) {
+                    if (targetNode.getId() != node.getId()) {
                         int height = visit(targetNode) + 1;
                         maxHeight = Math.max(height, maxHeight);
                     }
                 }
             }
-            layeredGraph.putBack((KGraphElement) node.object, maxHeight, node);
+            layeredGraph.putBack((KGraphElement) node.getObject(), maxHeight, node);
             return maxHeight;
         }
     }

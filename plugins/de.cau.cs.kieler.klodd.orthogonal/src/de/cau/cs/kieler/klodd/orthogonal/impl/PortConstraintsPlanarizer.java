@@ -74,8 +74,8 @@ public class PortConstraintsPlanarizer extends AbstractAlgorithm implements IPla
      * @param graph for which constraints shall be created
      */
     private void createConstraints(final KSlimGraph graph) {
-        for (KSlimNode node : graph.nodes) {
-            KNode layoutNode = (KNode) node.object;
+        for (KSlimNode node : graph.getNodes()) {
+            KNode layoutNode = (KNode) node.getObject();
             KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
             PortConstraints portConstraints = LayoutOptions.getPortConstraints(nodeLayout);
             TSMNode tsmNode = (TSMNode) node;
@@ -183,9 +183,9 @@ public class PortConstraintsPlanarizer extends AbstractAlgorithm implements IPla
             final EmbeddingConstraint parent, final TSMNode node) {
         // find edges connected with the given port
         List<TSMEdge> portEdges = new LinkedList<TSMEdge>();
-        for (KSlimNode.IncEntry edgeEntry : node.incidence) {
-            TSMEdge tsmEdge = (TSMEdge) edgeEntry.edge;
-            KEdge layoutEdge = (KEdge) tsmEdge.object;
+        for (KSlimNode.IncEntry edgeEntry : node.getIncidence()) {
+            TSMEdge tsmEdge = (TSMEdge) edgeEntry.getEdge();
+            KEdge layoutEdge = (KEdge) tsmEdge.getObject();
             if (layoutEdge.getSourcePort() == port || layoutEdge.getTargetPort() == port) {
                 portEdges.add(tsmEdge);
             }
@@ -194,7 +194,7 @@ public class PortConstraintsPlanarizer extends AbstractAlgorithm implements IPla
             EmbeddingConstraint groupConstraint = new EmbeddingConstraint(
                     EmbeddingConstraint.Type.GROUPING, parent, port);
             for (TSMEdge edge : portEdges) {
-                KEdge layoutEdge = (KEdge) edge.object;
+                KEdge layoutEdge = (KEdge) edge.getObject();
                 EmbeddingConstraint.Type constraintType = layoutEdge.getSourcePort() == port
                         ? EmbeddingConstraint.Type.OUT_EDGE
                         : EmbeddingConstraint.Type.IN_EDGE;

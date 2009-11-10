@@ -46,7 +46,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
     @Override
     public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor)
             throws KielerException {
-        progressMonitor.begin("Box layout", 20);
+        progressMonitor.begin("Box layout", 2);
         KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
         // set option for minimal spacing
         float objSpacing = LayoutOptions.getMinSpacing(parentLayout);
@@ -62,10 +62,10 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         boolean expandNodes = LayoutOptions.isExpandNodes(parentLayout);
 
         // sort boxes according to priority and size
-        boxSorter.reset(progressMonitor.subTask(10));
+        boxSorter.reset(progressMonitor.subTask(1));
         List<KNode> sortedBoxes = boxSorter.sort(layoutNode);
         // place boxes on the plane
-        boxPlacer.reset(progressMonitor.subTask(10));
+        boxPlacer.reset(progressMonitor.subTask(1));
         boxPlacer.placeBoxes(sortedBoxes, layoutNode, objSpacing, borderSpacing, expandNodes);
 
         progressMonitor.done();

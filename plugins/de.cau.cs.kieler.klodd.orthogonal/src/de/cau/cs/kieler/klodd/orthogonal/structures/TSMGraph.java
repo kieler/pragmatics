@@ -33,16 +33,16 @@ public class TSMGraph extends KSlimGraph {
     public void applyLayout(final float offsetX, final float offsetY) {
 
         // apply node layout
-        for (KSlimNode node : nodes) {
+        for (KSlimNode node : getNodes()) {
             ((TSMNode) node).applyLayout(offsetX, offsetY);
         }
 
         // apply edge layout
-        for (KSlimEdge edge : edges) {
-            edge.rank = 0;
+        for (KSlimEdge edge : getEdges()) {
+            edge.setRank(0);
         }
-        for (KSlimEdge edge : edges) {
-            if (edge.rank == 0) {
+        for (KSlimEdge edge : getEdges()) {
+            if (edge.getRank() == 0) {
                 ((TSMEdge) edge).applyLayout(offsetX, offsetY);
             }
         }

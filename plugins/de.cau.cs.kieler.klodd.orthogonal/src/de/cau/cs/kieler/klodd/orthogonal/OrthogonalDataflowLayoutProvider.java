@@ -130,8 +130,8 @@ public class OrthogonalDataflowLayoutProvider extends AbstractLayoutProvider {
         float currentYpos = 0.0f, maxWidth = 0.0f;
         for (TSMGraph component : components) {
             component.applyLayout(0.0f, currentYpos);
-            currentYpos += component.height;
-            maxWidth = Math.max(maxWidth, component.width);
+            currentYpos += component.getHeight();
+            maxWidth = Math.max(maxWidth, component.getWidth());
         }
 
         // update the size of the parent layout node

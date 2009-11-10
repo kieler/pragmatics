@@ -22,13 +22,13 @@ package de.cau.cs.kieler.core.util;
 public class Maybe<T> {
 
     /** the contained object, which may be {@code null}. */
-    public T object;
+    private T object;
     
     /**
      * Creates a maybe without an object.
      */
     public Maybe() {
-        this.object = null;
+        this.setObject(null);
     }
     
     /**
@@ -37,7 +37,7 @@ public class Maybe<T> {
      * @param theobject the object to contain
      */
     public Maybe(final T theobject) {
-        this.object = theobject;
+        this.setObject(theobject);
     }
     
     /**
@@ -47,8 +47,8 @@ public class Maybe<T> {
     public boolean equals(final Object obj) {
         if (obj instanceof Maybe<?>) {
             Maybe<?> other = (Maybe<?>)obj;
-            return this.object == null ? other.object == null
-                    : this.object.equals(other.object);
+            return this.getObject() == null ? other.getObject() == null
+                    : this.getObject().equals(other.getObject());
         } else {
             return false;
         }
@@ -59,10 +59,10 @@ public class Maybe<T> {
      */
     @Override
     public int hashCode() {
-        if (object == null) {
+        if (getObject() == null) {
             return 0;
         } else {
-            return object.hashCode();
+            return getObject().hashCode();
         }
     }
     
@@ -71,11 +71,29 @@ public class Maybe<T> {
      */
     @Override
     public String toString() {
-        if (object == null) {
+        if (getObject() == null) {
             return "maybe(null)";
         } else {
-            return "maybe(" + object.toString() + ")";
+            return "maybe(" + getObject().toString() + ")";
         }
+    }
+
+    /**
+     * Sets the contained object.
+     *
+     * @param theobject the object to set
+     */
+    public void setObject(final T theobject) {
+        this.object = theobject;
+    }
+
+    /**
+     * Returns the contained object.
+     *
+     * @return the contained object
+     */
+    public T getObject() {
+        return object;
     }
     
 }

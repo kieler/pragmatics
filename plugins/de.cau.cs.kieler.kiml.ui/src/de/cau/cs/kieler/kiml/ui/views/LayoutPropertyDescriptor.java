@@ -48,21 +48,21 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
         @Override
         public Image getImage(final Object element) {
             KimlUiPlugin.Images images = KimlUiPlugin.getDefault().getImages();
-            switch (optionData.type) {
+            switch (optionData.getType()) {
             case STRING:
-                return images.propText;
+                return images.getPropText();
             case BOOLEAN:
                 if (((Boolean)element).booleanValue()) {
-                    return images.propTrue;
+                    return images.getPropTrue();
                 } else {
-                    return images.propFalse;
+                    return images.getPropFalse();
                 }
             case ENUM:
-                return images.propChoice;
+                return images.getPropChoice();
             case INT:
-                return images.propInt;
+                return images.getPropInt();
             case FLOAT:
-                return images.propFloat;
+                return images.getPropFloat();
             default:
                 return null;
             }
@@ -73,10 +73,10 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
          */
         @Override
         public String getText(final Object element) {
-            switch (optionData.type) {
+            switch (optionData.getType()) {
             case STRING:
                 LayoutServices layoutServices = LayoutServices.getInstance();
-                if (LayoutOptions.LAYOUT_HINT.equals(optionData.id)) {
+                if (LayoutOptions.LAYOUT_HINT.equals(optionData.getId())) {
                     String layoutHint = layoutHintValues[((Integer)element).intValue()];
                     String layoutType = layoutServices.getLayoutTypeName(layoutHint);
                     if (layoutType != null) {
@@ -84,11 +84,11 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
                     }
                     LayoutProviderData providerData = layoutServices.getLayoutProviderData(layoutHint);
                     if (providerData != null) {
-                        String category = layoutServices.getCategoryName(providerData.category);
+                        String category = layoutServices.getCategoryName(providerData.getCategory());
                         if (category == null) {
-                            return providerData.name;
+                            return providerData.getName();
                         } else {
-                            return providerData.name + " (" + category + ")";
+                            return providerData.getName() + " (" + category + ")";
                         }
                     }
                     return layoutHint;
@@ -131,9 +131,9 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
      * {@inheritDoc}
      */
     public CellEditor createPropertyEditor(final Composite parent) {
-        switch (optionData.type) {
+        switch (optionData.getType()) {
         case STRING:
-            if (LayoutOptions.LAYOUT_HINT.equals(optionData.id)) {
+            if (LayoutOptions.LAYOUT_HINT.equals(optionData.getId())) {
                 return new ComboBoxCellEditor(parent, layoutHintChoices, SWT.READ_ONLY);
             } else {
                 return new TextCellEditor(parent);
@@ -184,14 +184,14 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
      * {@inheritDoc}
      */
     public String getDescription() {
-        return optionData.description;
+        return optionData.getDescription();
     }
 
     /**
      * {@inheritDoc}
      */
     public String getDisplayName() {
-        return optionData.name;
+        return optionData.getName();
     }
 
     /**
@@ -212,7 +212,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
      * {@inheritDoc}
      */
     public Object getId() {
-        return optionData.id;
+        return optionData.getId();
     }
 
     /**
@@ -230,7 +230,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
      */
     public boolean isCompatibleWith(final IPropertyDescriptor anotherProperty) {
         return anotherProperty instanceof LayoutPropertyDescriptor
-                && this.optionData.id.equals(anotherProperty.getId());
+                && this.optionData.getId().equals(anotherProperty.getId());
     }
 
 }

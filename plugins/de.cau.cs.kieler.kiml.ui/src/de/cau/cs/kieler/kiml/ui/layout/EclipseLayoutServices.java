@@ -107,7 +107,7 @@ public class EclipseLayoutServices extends LayoutServices {
         loadLayoutProviderExtensions();
         loadLayoutListenerExtensions();
         loadLayoutInfoExtensions();
-        registry.initialize();
+        getRegistry().initialize();
         // load preferences for KIML
         loadPreferences();
         // register an instance of the GMF diagram layout manager
@@ -146,6 +146,7 @@ public class EclipseLayoutServices extends LayoutServices {
                                 try {
                                     priorityData[providerIndex][typeIndex] = Integer.parseInt(priority);
                                 } catch (NumberFormatException exception) {
+                                    // ignore exception
                                 }
                             }
                         }
@@ -188,24 +189,24 @@ public class EclipseLayoutServices extends LayoutServices {
                             .createExecutableExtension(ATTRIBUTE_CLASS);
                     if (layoutProvider != null) {
                         LayoutProviderData providerData = new LayoutProviderData();
-                        providerData.instance = layoutProvider;
-                        providerData.id = element.getAttribute(ATTRIBUTE_ID);
-                        if (providerData.id == null || providerData.id.length() == 0) {
+                        providerData.setInstance(layoutProvider);
+                        providerData.setId(element.getAttribute(ATTRIBUTE_ID));
+                        if (providerData.getId() == null || providerData.getId().length() == 0) {
                             reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_ID, null);
                             continue;
                         }
-                        providerData.name = element.getAttribute(ATTRIBUTE_NAME);
-                        if (providerData.name == null || providerData.name.length() == 0) {
-                            providerData.name = DEFAULT_PROVIDER_NAME;
+                        providerData.setName(element.getAttribute(ATTRIBUTE_NAME));
+                        if (providerData.getName() == null || providerData.getName().length() == 0) {
+                            providerData.setName(DEFAULT_PROVIDER_NAME);
                         }
                         layoutProvider.initialize(element.getAttribute(ATTRIBUTE_PARAMETER));
-                        providerData.type = element.getAttribute(ATTRIBUTE_TYPE);
-                        if (providerData.type == null) {
-                            providerData.type = "";
+                        providerData.setType(element.getAttribute(ATTRIBUTE_TYPE));
+                        if (providerData.getType() == null) {
+                            providerData.setType("");
                         }
-                        providerData.category = element.getAttribute(ATTRIBUTE_CATEGORY);
-                        if (providerData.category == null) {
-                            providerData.category = "";
+                        providerData.setCategory(element.getAttribute(ATTRIBUTE_CATEGORY));
+                        if (providerData.getCategory() == null) {
+                            providerData.setCategory("");
                         }
                         for (IConfigurationElement child : element.getChildren()) {
                             if (ELEMENT_KNOWN_OPTION.equals(child.getName())) {
@@ -230,7 +231,7 @@ public class EclipseLayoutServices extends LayoutServices {
                                 }
                             }
                         }
-                        registry.addLayoutProvider(providerData);
+                        getRegistry().addLayoutProvider(providerData);
                     }
                 } catch (CoreException exception) {
                     StatusManager.getManager().handle(exception, KimlUiPlugin.PLUGIN_ID);
@@ -244,7 +245,7 @@ public class EclipseLayoutServices extends LayoutServices {
                 } else if (name == null) {
                     reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_NAME, null);
                 } else {
-                    registry.addLayoutType(id, name);
+                    getRegistry().addLayoutType(id, name);
                 }
             } else if (ELEMENT_CATEGORY.equals(element.getName())) {
                 // register a category from the extension
@@ -255,13 +256,13 @@ public class EclipseLayoutServices extends LayoutServices {
                 } else if (name == null) {
                     reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_NAME, null);
                 } else {
-                    registry.addCategory(id, name);
+                    getRegistry().addCategory(id, name);
                 }
             } else if (ELEMENT_LAYOUT_OPTION.equals(element.getName())) {
                 // register a layout option from the extension
                 LayoutOptionData optionData = new LayoutOptionData();
-                optionData.id = element.getAttribute(ATTRIBUTE_ID);
-                if (optionData.id == null || optionData.id.length() == 0) {
+                optionData.setId(element.getAttribute(ATTRIBUTE_ID));
+                if (optionData.getId() == null || optionData.getId().length() == 0) {
                     reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_ID, null);
                     continue;
                 }
@@ -271,16 +272,16 @@ public class EclipseLayoutServices extends LayoutServices {
                     reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_TYPE, exception);
                     continue;
                 }
-                optionData.name = element.getAttribute(ATTRIBUTE_NAME);
-                if (optionData.name == null) {
-                    optionData.name = DEFAULT_OPTION_NAME;
+                optionData.setName(element.getAttribute(ATTRIBUTE_NAME));
+                if (optionData.getName() == null) {
+                    optionData.setName(DEFAULT_OPTION_NAME);
                 }
-                optionData.description = element.getAttribute(ATTRIBUTE_DESCRIPTION);
-                if (optionData.description == null) {
-                    optionData.description = "";
+                optionData.setDescription(element.getAttribute(ATTRIBUTE_DESCRIPTION));
+                if (optionData.getDescription() == null) {
+                    optionData.setDescription("");
                 }
                 optionData.setTargets(element.getAttribute(ATTRIBUTE_APPLIESTO));
-                registry.addLayoutOption(optionData);
+                getRegistry().addLayoutOption(optionData);
             }
         }
     }
@@ -299,7 +300,7 @@ public class EclipseLayoutServices extends LayoutServices {
                     ILayoutListener layoutListener = (ILayoutListener) element
                             .createExecutableExtension(ATTRIBUTE_CLASS);
                     if (layoutListener != null) {
-                        registry.addLayoutListener(layoutListener);
+                        getRegistry().addLayoutListener(layoutListener);
                     }
                 } catch (CoreException exception) {
                     StatusManager.getManager().handle(exception, KimlUiPlugin.PLUGIN_ID);
@@ -325,7 +326,7 @@ public class EclipseLayoutServices extends LayoutServices {
                 } else if (name == null) {
                     reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_NAME, null);
                 } else {
-                    registry.addDiagramType(id, name);
+                    getRegistry().addDiagramType(id, name);
                 }
             } else if (ELEMENT_BINDING.equals(element.getName())) {
                 // register a binding from the extension
@@ -337,7 +338,7 @@ public class EclipseLayoutServices extends LayoutServices {
                     if (id == null || id.length() == 0) {
                         reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_ID, null);
                     } else {
-                        registry.addEditPartBinding(editPartType, id);
+                        getRegistry().addEditPartBinding(editPartType, id);
                     }
                 } catch (Exception exception) {
                     reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_CLASS, exception);
@@ -355,7 +356,7 @@ public class EclipseLayoutServices extends LayoutServices {
                     if (value == null) {
                         value = "";
                     }
-                    registry.setupOption(object, option, value);
+                    getRegistry().setupOption(object, option, value);
                 }
             }
         }
@@ -366,11 +367,11 @@ public class EclipseLayoutServices extends LayoutServices {
      */
     private static void loadPreferences() {
         IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
-        Collection<LayoutProviderData> layoutProviderData = instance.getLayoutProviderData();
-        Collection<String> diagramTypes = instance.getDiagramTypes();
+        Collection<LayoutProviderData> layoutProviderData = getInstance().getLayoutProviderData();
+        Collection<String> diagramTypes = getInstance().getDiagramTypes();
         for (LayoutProviderData data : layoutProviderData) {
             for (String diagramType : diagramTypes) {
-                String preference = LayoutPreferencePage.getPreference(data.id, diagramType);
+                String preference = LayoutPreferencePage.getPreference(data.getId(), diagramType);
                 if (preferenceStore.contains(preference)) {
                     data.setDiagramSupport(diagramType, preferenceStore.getInt(preference));
                 }

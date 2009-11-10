@@ -32,18 +32,18 @@ public class EdgeInsertionECPlanarizer extends AbstractAlgorithm implements IPla
      * {@inheritDoc}
      */
     public void planarize(final KSlimGraph graph) {
-        getMonitor().begin("Edge insertion planarization", graph.edges.size());
+        getMonitor().begin("Edge insertion planarization", graph.getEdges().size());
         // remove all edges from the incidence lists
-        for (KSlimNode node : graph.nodes) {
-            node.incidence.clear();
+        for (KSlimNode node : graph.getNodes()) {
+            node.getIncidence().clear();
         }
 
         // insert the stored edges, one by one, and preserve planarity
         ECEdgeInserter edgeInserter = new ECEdgeInserter();
         edgeInserter.setGraph(graph);
-        for (KSlimEdge edge : graph.edges) {
-            EmbeddingConstraint sourceConstraint = ((TSMNode) edge.source).embeddingConstraint;
-            EmbeddingConstraint targetConstraint = ((TSMNode) edge.target).embeddingConstraint;
+        for (KSlimEdge edge : graph.getEdges()) {
+            EmbeddingConstraint sourceConstraint = ((TSMNode) edge.getSource()).embeddingConstraint;
+            EmbeddingConstraint targetConstraint = ((TSMNode) edge.getTarget()).embeddingConstraint;
             edgeInserter.setProgressMonitor(getMonitor().subTask(1));
             edgeInserter.insertEdge(edge, sourceConstraint, targetConstraint);
         }

@@ -213,7 +213,7 @@ public final class GraphvizAPI {
      */
     public static void waitForInput(final InputStream inputStream, final InputStream errorStream,
             final IKielerProgressMonitor monitor) throws KielerException {
-        monitor.begin("Wait for Graphviz", 10);
+        monitor.begin("Wait for Graphviz", 1);
         IPreferenceStore preferenceStore = GraphvizLayouterPlugin.getDefault().getPreferenceStore();
         int timeout = preferenceStore.getInt(PREF_TIMEOUT);
         if (timeout < PROCESS_MIN_TIMEOUT) {
@@ -230,6 +230,7 @@ public final class GraphvizAPI {
                     Thread.sleep(PROCESS_INPUT_WAIT);
                 }
             } catch (InterruptedException exception) {
+                // ignore exception
             }
             // read and check error stream if there is still no input from
             // Graphviz

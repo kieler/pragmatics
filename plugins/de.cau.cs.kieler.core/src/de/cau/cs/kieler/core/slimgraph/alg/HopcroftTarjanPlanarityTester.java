@@ -63,23 +63,25 @@ public class HopcroftTarjanPlanarityTester extends AbstractAlgorithm
      * {@inheritDoc}
      */
     public boolean isPlanar(final KGraphSection thebiconnectedSection) {
-        int sectionSize = thebiconnectedSection.nodes.size();
+        int sectionSize = thebiconnectedSection.getNodes().size();
         this.biconnectedSection = thebiconnectedSection;
         this.lowpt = new int[sectionSize];
         this.lowpt2 = new int[sectionSize];
 
         // initialize DFS numbers of each node
-        for (KSlimNode node : thebiconnectedSection.nodes) {
-            node.rank = -1;
+        for (KSlimNode node : thebiconnectedSection.getNodes()) {
+            node.setRank(-1);
         }
         // perform DFS on the biconnected section
-        KSlimNode node0 = thebiconnectedSection.nodes.get(0);
+        KSlimNode node0 = thebiconnectedSection.getNodes().get(0);
         int edgeCount = dfsVisit(node0);
 
+        // CHECKSTYLEOFF MagicNumber
         // check number of edges: if the graph is planar, then m <= 3*n - 6
-        if (edgeCount > 3 * thebiconnectedSection.nodes.size() - 6) {
+        if (edgeCount > 3 * thebiconnectedSection.getNodes().size() - 6) {
             return false;
         }
+        // CHECKSTYLEON MagicNumber
 
         // reorder all edges of the biconnected section according to lowpt
         // values
@@ -87,7 +89,7 @@ public class HopcroftTarjanPlanarityTester extends AbstractAlgorithm
 
         // the first edge of the first DFS node is used as start for
         // the recursive subroutine
-        KSlimEdge edge0 = node0.incidence.get(0).edge;
+        KSlimEdge edge0 = node0.getIncidence().get(0).getEdge();
         List<KSlimNode> attachments = stronglyPlanar(edge0, node0);
 
         return attachments != null;
@@ -102,26 +104,26 @@ public class HopcroftTarjanPlanarityTester extends AbstractAlgorithm
      */
     private int dfsVisit(final KSlimNode node) {
         int edgeCount = 0;
-        node.rank = nextDfsnum++;
-        lowpt[node.rank] = node.rank;
-        lowpt2[node.rank] = node.rank;
+        node.setRank(nextDfsnum++);
+        lowpt[node.getRank()] = node.getRank();
+        lowpt2[node.getRank()] = node.getRank();
         List<KSlimNode.IncEntry> edgesToRemove = null;
-        for (KSlimNode.IncEntry edgeEntry : node.incidence) {
+        for (KSlimNode.IncEntry edgeEntry : node.getIncidence()) {
             KSlimNode endpoint = edgeEntry.endpoint();
             if (biconnectedSection.contains(endpoint)) {
-                if (endpoint.rank < 0) {
-                    edgeEntry.edge.rank = TREE_EDGE;
+                if (endpoint.getRank() < 0) {
+                    edgeEntry.getEdge().setRank(TREE_EDGE);
                     edgeCount = dfsVisit(endpoint) + 1;
-                    if (lowpt[endpoint.rank] < lowpt[node.rank]) {
-                        lowpt2[node.rank] = lowpt[node.rank];
-                        lowpt[node.rank] = lowpt[endpoint.rank];
+                    if (lowpt[endpoint.getRank()] < lowpt[node.getRank()]) {
+                        lowpt2[node.getRank()] = lowpt[node.getRank()];
+                        lowpt[node.getRank()] = lowpt[endpoint.getRank()];
                     }
-                } else if (endpoint.rank >= node.rank) {
-                    edgeEntry.edge.rank = BACK_EDGE;
+                } else if (endpoint.getRank() >= node.getRank()) {
+                    edgeEntry.getEdge().setRank(BACK_EDGE);
                     edgeCount++;
-                    if (node.rank < lowpt[endpoint.rank]) {
-                        lowpt2[endpoint.rank] = lowpt[endpoint.rank];
-                        lowpt[endpoint.rank] = node.rank;
+                    if (node.getRank() < lowpt[endpoint.getRank()]) {
+                        lowpt2[endpoint.getRank()] = lowpt[endpoint.getRank()];
+                        lowpt[endpoint.getRank()] = node.getRank();
                     }
                 }
             } else {
@@ -145,8 +147,8 @@ public class HopcroftTarjanPlanarityTester extends AbstractAlgorithm
      * the <code>lowpt</code> and <code>lowpt2</code> values.
      */
     private void reorderEdges() {
-        for (final KSlimNode node : biconnectedSection.nodes) {
-            Collections.sort(node.incidence, new Comparator<KSlimNode.IncEntry>() {
+        for (final KSlimNode node : biconnectedSection.getNodes()) {
+            Collections.sort(node.getIncidence(), new Comparator<KSlimNode.IncEntry>() {
                 public int compare(final KSlimNode.IncEntry edge1, final KSlimNode.IncEntry edge2) {
                     int value1 = value(edge1);
                     int value2 = value(edge2);
@@ -155,20 +157,20 @@ public class HopcroftTarjanPlanarityTester extends AbstractAlgorithm
 
                 private int value(final KSlimNode.IncEntry edgeEntry) {
                     KSlimNode endpoint = edgeEntry.endpoint();
-                    if (edgeEntry.edge.rank == TREE_EDGE) {
-                        if (node.rank < endpoint.rank) {
-                            if (lowpt2[endpoint.rank] >= node.rank) {
-                                return 2 * lowpt[endpoint.rank];
+                    if (edgeEntry.getEdge().getRank() == TREE_EDGE) {
+                        if (node.getRank() < endpoint.getRank()) {
+                            if (lowpt2[endpoint.getRank()] >= node.getRank()) {
+                                return 2 * lowpt[endpoint.getRank()];
                             } else {
-                                return 2 * lowpt[endpoint.rank] + 1;
+                                return 2 * lowpt[endpoint.getRank()] + 1;
                             }
                         } else {
                             return Integer.MAX_VALUE;
                         }
                     } else {
-                        assert edgeEntry.edge.rank == BACK_EDGE;
-                        if (node.rank >= endpoint.rank) {
-                            return 2 * endpoint.rank;
+                        assert edgeEntry.getEdge().getRank() == BACK_EDGE;
+                        if (node.getRank() >= endpoint.getRank()) {
+                            return 2 * endpoint.getRank();
                         } else {
                             return Integer.MAX_VALUE;
                         }
@@ -182,10 +184,10 @@ public class HopcroftTarjanPlanarityTester extends AbstractAlgorithm
      * Object representing a connected component of the interlacing graph
      * associated with the current step in the algorithm.
      */
-    private static class InterlacingBlock {
-        ConcatenableList<KSlimNode> left, right;
+    private static final class InterlacingBlock {
+        private ConcatenableList<KSlimNode> left, right;
 
-        InterlacingBlock(final ConcatenableList<KSlimNode> theleft,
+        private InterlacingBlock(final ConcatenableList<KSlimNode> theleft,
                 final ConcatenableList<KSlimNode> theright) {
             this.left = theleft;
             this.right = theright;
@@ -207,11 +209,11 @@ public class HopcroftTarjanPlanarityTester extends AbstractAlgorithm
     private ConcatenableList<KSlimNode> stronglyPlanar(final KSlimEdge edge0,
             final KSlimNode x0) {
         KSlimNode y0;
-        if (edge0.source.id == x0.id) {
-            y0 = edge0.target;
+        if (edge0.getSource().getId() == x0.getId()) {
+            y0 = edge0.getTarget();
         } else {
-            assert edge0.target.id == x0.id;
-            y0 = edge0.source;
+            assert edge0.getTarget().getId() == x0.getId();
+            y0 = edge0.getSource();
         }
         // construct the spine of a cycle that starts at (x0, y0)
         LinkedList<KSlimNode> spine = buildSpine(x0, y0);
@@ -221,26 +223,28 @@ public class HopcroftTarjanPlanarityTester extends AbstractAlgorithm
         ListIterator<KSlimNode> spineIter = spine.listIterator(spine.size());
         while (spineIter.previousIndex() > 0) {
             KSlimNode spineNode = spineIter.previous();
-            ListIterator<KSlimNode.IncEntry> edgeIter = spineNode.incidence.listIterator(1);
+            ListIterator<KSlimNode.IncEntry> edgeIter = spineNode.getIncidence().listIterator(1);
             while (edgeIter.hasNext()) {
                 KSlimNode.IncEntry emanatingEdge = edgeIter.next();
                 KSlimNode nextNode = emanatingEdge.endpoint();
                 // check whether the current edge is taken in the proper
                 // direction
-                if (emanatingEdge.edge.rank == TREE_EDGE && nextNode.rank > spineNode.rank
-                        || emanatingEdge.edge.rank == BACK_EDGE && nextNode.rank <= spineNode.rank) {
+                if (emanatingEdge.getEdge().getRank() == TREE_EDGE
+                        && nextNode.getRank() > spineNode.getRank()
+                        || emanatingEdge.getEdge().getRank() == BACK_EDGE
+                        && nextNode.getRank() <= spineNode.getRank()) {
                     // recursive check of strong planarity
-                    ConcatenableList<KSlimNode> attachments = stronglyPlanar(emanatingEdge.edge,
+                    ConcatenableList<KSlimNode> attachments = stronglyPlanar(emanatingEdge.getEdge(),
                             spineNode);
                     if (attachments == null) {
                         return null;
                     }
                     // update the stack of interlacing blocks
                     int lowpte;
-                    if (emanatingEdge.edge.rank == BACK_EDGE) {
-                        lowpte = nextNode.rank;
+                    if (emanatingEdge.getEdge().getRank() == BACK_EDGE) {
+                        lowpte = nextNode.getRank();
                     } else {
-                        lowpte = lowpt[nextNode.rank];
+                        lowpte = lowpt[nextNode.getRank()];
                     }
                     attachments.remove(spineNode);
                     boolean nonPlanar = updateBlockStack(blockStack, attachments, lowpte);
@@ -255,9 +259,9 @@ public class HopcroftTarjanPlanarityTester extends AbstractAlgorithm
             KSlimNode previousNode = spineIter.previous();
             while (!blockStack.isEmpty()) {
                 InterlacingBlock block = blockStack.peek();
-                int leftMax = block.left.isEmpty() ? -1 : block.left.getLast().rank;
-                int rightMax = block.right.isEmpty() ? -1 : block.right.getLast().rank;
-                if (Math.max(leftMax, rightMax) != previousNode.rank) {
+                int leftMax = block.left.isEmpty() ? -1 : block.left.getLast().getRank();
+                int rightMax = block.right.isEmpty() ? -1 : block.right.getLast().getRank();
+                if (Math.max(leftMax, rightMax) != previousNode.getRank()) {
                     break;
                 }
                 block.left.removeLast();
@@ -271,10 +275,10 @@ public class HopcroftTarjanPlanarityTester extends AbstractAlgorithm
 
         // compute list of attachments for the given edge
         ConcatenableList<KSlimNode> attachments = new ConcatenableList<KSlimNode>();
-        int w1 = lowpt[y0.rank] + 1;
+        int w1 = lowpt[y0.getRank()] + 1;
         for (InterlacingBlock block : blockStack) {
-            int leftMax = block.left.isEmpty() ? -1 : block.left.getLast().rank;
-            int rightMax = block.right.isEmpty() ? -1 : block.right.getLast().rank;
+            int leftMax = block.left.isEmpty() ? -1 : block.left.getLast().getRank();
+            int rightMax = block.right.isEmpty() ? -1 : block.right.getLast().getRank();
             if (leftMax >= w1 && rightMax >= w1) {
                 return null;
             }
@@ -299,9 +303,9 @@ public class HopcroftTarjanPlanarityTester extends AbstractAlgorithm
     private LinkedList<KSlimNode> buildSpine(final KSlimNode x0, final KSlimNode y0) {
         LinkedList<KSlimNode> spine = new LinkedList<KSlimNode>();
         KSlimNode nextNode = y0;
-        while (nextNode.rank > x0.rank) {
+        while (nextNode.getRank() > x0.getRank()) {
             spine.addLast(nextNode);
-            nextNode = nextNode.incidence.get(0).endpoint();
+            nextNode = nextNode.getIncidence().get(0).endpoint();
         }
         return spine;
     }
@@ -320,8 +324,8 @@ public class HopcroftTarjanPlanarityTester extends AbstractAlgorithm
         LinkedList<InterlacingBlock> poppedBlocks = new LinkedList<InterlacingBlock>();
         while (!blockStack.isEmpty()) {
             InterlacingBlock block = blockStack.peek();
-            int leftMax = block.left.isEmpty() ? -1 : block.left.getLast().rank;
-            int rightMax = block.right.isEmpty() ? -1 : block.right.getLast().rank;
+            int leftMax = block.left.isEmpty() ? -1 : block.left.getLast().getRank();
+            int rightMax = block.right.isEmpty() ? -1 : block.right.getLast().getRank();
             if (Math.max(leftMax, rightMax) <= lowpte) {
                 break;
             }

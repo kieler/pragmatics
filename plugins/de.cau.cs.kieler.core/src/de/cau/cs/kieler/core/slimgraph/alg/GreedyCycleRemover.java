@@ -31,9 +31,9 @@ public class GreedyCycleRemover extends AbstractCycleRemover {
     /** outdegree values for the nodes. */
     private int[] outdeg;
     /** list of source nodes. */
-    LinkedList<KSlimNode> sources = new LinkedList<KSlimNode>();
+    private final LinkedList<KSlimNode> sources = new LinkedList<KSlimNode>();
     /** list of sink nodes. */
-    LinkedList<KSlimNode> sinks = new LinkedList<KSlimNode>();
+    private final LinkedList<KSlimNode> sinks = new LinkedList<KSlimNode>();
 
     /**
      * {@inheritDoc}
@@ -50,25 +50,25 @@ public class GreedyCycleRemover extends AbstractCycleRemover {
      */
     public void removeCycles(final KSlimGraph graph) {
         getMonitor().begin("Greedy cycle removal", 1);
-        reversedEdges = new LinkedList<KSlimEdge>();
+        setReversedEdges(new LinkedList<KSlimEdge>());
 
         // initialize values for the algorithm
-        int unprocessedNodes = graph.nodes.size();
+        int unprocessedNodes = graph.getNodes().size();
         indeg = new int[unprocessedNodes];
         outdeg = new int[unprocessedNodes];
         int nextRight = -1, nextLeft = 1;
-        for (KSlimNode node : graph.nodes) {
-            node.rank = 0;
-            for (KSlimNode.IncEntry edgeEntry : node.incidence) {
-                if (edgeEntry.type == KSlimNode.IncEntry.Type.OUT) {
-                    outdeg[node.id]++;
+        for (KSlimNode node : graph.getNodes()) {
+            node.setRank(0);
+            for (KSlimNode.IncEntry edgeEntry : node.getIncidence()) {
+                if (edgeEntry.getType() == KSlimNode.IncEntry.Type.OUT) {
+                    outdeg[node.getId()]++;
                 } else {
-                    indeg[node.id]++;
+                    indeg[node.getId()]++;
                 }
             }
-            if (outdeg[node.id] == 0) {
+            if (outdeg[node.getId()] == 0) {
                 sinks.add(node);
-            } else if (indeg[node.id] == 0) {
+            } else if (indeg[node.getId()] == 0) {
                 sources.add(node);
             }
         }
@@ -77,48 +77,48 @@ public class GreedyCycleRemover extends AbstractCycleRemover {
         while (unprocessedNodes > 0) {
             while (!sinks.isEmpty()) {
                 KSlimNode sink = sinks.removeFirst();
-                sink.rank = nextRight--;
+                sink.setRank(nextRight--);
                 updateNeighbors(sink);
                 unprocessedNodes--;
             }
             while (!sources.isEmpty()) {
                 KSlimNode source = sources.removeFirst();
-                source.rank = nextLeft++;
+                source.setRank(nextLeft++);
                 updateNeighbors(source);
                 unprocessedNodes--;
             }
             if (unprocessedNodes != 0) {
                 int maxOutflow = Integer.MIN_VALUE;
                 KSlimNode maxNode = null;
-                for (KSlimNode node : graph.nodes) {
-                    if (node.rank == 0) {
-                        int outflow = outdeg[node.id] - indeg[node.id];
+                for (KSlimNode node : graph.getNodes()) {
+                    if (node.getRank() == 0) {
+                        int outflow = outdeg[node.getId()] - indeg[node.getId()];
                         if (outflow > maxOutflow) {
                             maxOutflow = outflow;
                             maxNode = node;
                         }
                     }
                 }
-                maxNode.rank = nextLeft++;
+                maxNode.setRank(nextLeft++);
                 updateNeighbors(maxNode);
                 unprocessedNodes--;
             }
         }
 
         // shift negative ranks
-        int shiftBase = graph.nodes.size() + 1;
-        for (KSlimNode node : graph.nodes) {
-            if (node.rank < 0) {
-                node.rank += shiftBase;
+        int shiftBase = graph.getNodes().size() + 1;
+        for (KSlimNode node : graph.getNodes()) {
+            if (node.getRank() < 0) {
+                node.setRank(node.getRank() + shiftBase);
             }
         }
 
         // mark edges that point left
-        for (KSlimEdge edge : graph.edges) {
-            if (edge.source.rank > edge.target.rank) {
-                reversedEdges.add(edge);
+        for (KSlimEdge edge : graph.getEdges()) {
+            if (edge.getSource().getRank() > edge.getTarget().getRank()) {
+                getReversedEdges().add(edge);
             } else {
-                edge.rank = 0;
+                edge.setRank(0);
             }
         }
 
@@ -136,17 +136,17 @@ public class GreedyCycleRemover extends AbstractCycleRemover {
      * @param node node for which neighbors are updated
      */
     private void updateNeighbors(final KSlimNode node) {
-        for (KSlimNode.IncEntry edgeEntry : node.incidence) {
+        for (KSlimNode.IncEntry edgeEntry : node.getIncidence()) {
             KSlimNode endpoint = edgeEntry.endpoint();
-            if (endpoint.rank == 0) {
-                if (edgeEntry.type == KSlimNode.IncEntry.Type.OUT) {
-                    indeg[endpoint.id]--;
-                    if (indeg[endpoint.id] == 0 && outdeg[endpoint.id] != 0) {
+            if (endpoint.getRank() == 0) {
+                if (edgeEntry.getType() == KSlimNode.IncEntry.Type.OUT) {
+                    indeg[endpoint.getId()]--;
+                    if (indeg[endpoint.getId()] == 0 && outdeg[endpoint.getId()] != 0) {
                         sources.add(endpoint);
                     }
                 } else {
-                    outdeg[endpoint.id]--;
-                    if (outdeg[endpoint.id] == 0 && indeg[endpoint.id] != 0) {
+                    outdeg[endpoint.getId()]--;
+                    if (outdeg[endpoint.getId()] == 0 && indeg[endpoint.getId()] != 0) {
                         sinks.add(endpoint);
                     }
                 }

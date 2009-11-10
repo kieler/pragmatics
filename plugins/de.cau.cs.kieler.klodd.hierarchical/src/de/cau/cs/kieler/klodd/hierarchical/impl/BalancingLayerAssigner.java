@@ -85,12 +85,12 @@ public class BalancingLayerAssigner extends AbstractAlgorithm implements ILayerA
         Layer currentLayer = element.getLayer();
         KSlimNode kNode = element.getKNode();
         int incoming = 0, outgoing = 0, minShiftRank = 0;
-        for (KSlimNode.IncEntry edgeEntry : kNode.incidence) {
-            if (edgeEntry.type == KSlimNode.IncEntry.Type.OUT) {
+        for (KSlimNode.IncEntry edgeEntry : kNode.getIncidence()) {
+            if (edgeEntry.getType() == KSlimNode.IncEntry.Type.OUT) {
                 outgoing++;
             } else {
                 incoming++;
-                int shiftRank = layeredGraph.getLayerElement(edgeEntry.endpoint().object).getLayer().rank + 1;
+                int shiftRank = layeredGraph.getLayerElement(edgeEntry.endpoint().getObject()).getLayer().rank + 1;
                 minShiftRank = Math.max(minShiftRank, shiftRank);
             }
         }

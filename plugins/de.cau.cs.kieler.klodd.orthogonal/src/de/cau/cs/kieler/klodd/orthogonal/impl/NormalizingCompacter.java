@@ -90,7 +90,7 @@ public class NormalizingCompacter extends AbstractAlgorithm implements ICompacte
         normalizedCompacter.reset(getMonitor().subTask(1));
         normalizedCompacter.compact(normalizedGraph, theminDist);
         // transform abstract metrics to concrete metrics
-        transformMetrics(graph, (int) normalizedGraph.width, (int) normalizedGraph.height);
+        transformMetrics(graph, (int) normalizedGraph.getWidth(), (int) normalizedGraph.getHeight());
 
         getMonitor().done();
     }
@@ -118,11 +118,11 @@ public class NormalizingCompacter extends AbstractAlgorithm implements ICompacte
     private KSlimGraph createNormalizedGraph(final KSlimGraph inputGraph) {
         KSlimGraph normalizedGraph = new KSlimGraph();
         Map<Object, PortDescriptor> portMap = new HashMap<Object, PortDescriptor>();
-        int[] sourceRank = new int[inputGraph.edges.size()];
-        int[] targetRank = new int[inputGraph.edges.size()];
+        int[] sourceRank = new int[inputGraph.getEdges().size()];
+        int[] targetRank = new int[inputGraph.getEdges().size()];
 
         // process the nodes of the graph
-        for (KSlimNode node : inputGraph.nodes) {
+        for (KSlimNode node : inputGraph.getNodes()) {
             TSMNode tsmNode = (TSMNode) node;
             if (tsmNode.type == TSMNode.Type.LAYOUT) {
                 KSlimNode.Side currentSide = KSlimNode.Side.UNDEFINED;
@@ -131,9 +131,9 @@ public class NormalizingCompacter extends AbstractAlgorithm implements ICompacte
                 boolean changedSide = false;
                 KSlimNode startingNode = null;
                 int edgeRank = 0;
-                for (KSlimNode.IncEntry edgeEntry : node.incidence) {
-                    KEdge layoutEdge = (KEdge) edgeEntry.edge.object;
-                    KPort port = (edgeEntry.type == KSlimNode.IncEntry.Type.OUT ? layoutEdge
+                for (KSlimNode.IncEntry edgeEntry : node.getIncidence()) {
+                    KEdge layoutEdge = (KEdge) edgeEntry.getEdge().getObject();
+                    KPort port = (edgeEntry.getType() == KSlimNode.IncEntry.Type.OUT ? layoutEdge
                             .getSourcePort() : layoutEdge.getTargetPort());
                     PortDescriptor portDescriptor = portMap.get(port);
 
@@ -162,14 +162,14 @@ public class NormalizingCompacter extends AbstractAlgorithm implements ICompacte
                     }
 
                     // count the number of edges going left and right
-                    List<KSlimEdge.Bend> bends = edgeEntry.edge.bends;
+                    List<KSlimEdge.Bend> bends = edgeEntry.getEdge().getBends();
                     if (bends.isEmpty()) {
                         portDescriptor.straightEdges++;
                     } else {
-                        if (edgeEntry.type == KSlimNode.IncEntry.Type.OUT
-                                && bends.get(0).type == KSlimEdge.Bend.Type.LEFT
-                                || edgeEntry.type == KSlimNode.IncEntry.Type.IN
-                                && bends.get(bends.size() - 1).type == KSlimEdge.Bend.Type.RIGHT) {
+                        if (edgeEntry.getType() == KSlimNode.IncEntry.Type.OUT
+                                && bends.get(0).getType() == KSlimEdge.Bend.Type.LEFT
+                                || edgeEntry.getType() == KSlimNode.IncEntry.Type.IN
+                                && bends.get(bends.size() - 1).getType() == KSlimEdge.Bend.Type.RIGHT) {
                             portDescriptor.leftEdges++;
                         } else {
                             portDescriptor.rightEdges++;
@@ -177,10 +177,10 @@ public class NormalizingCompacter extends AbstractAlgorithm implements ICompacte
                     }
 
                     // determine the port rank of the current edge
-                    if (edgeEntry.type == KSlimNode.IncEntry.Type.OUT) {
-                        sourceRank[edgeEntry.edge.id] = edgeRank;
+                    if (edgeEntry.getType() == KSlimNode.IncEntry.Type.OUT) {
+                        sourceRank[edgeEntry.getEdge().getId()] = edgeRank;
                     } else {
-                        targetRank[edgeEntry.edge.id] = edgeRank;
+                        targetRank[edgeEntry.getEdge().getId()] = edgeRank;
                     }
                     edgeRank++;
                 }
@@ -210,53 +210,53 @@ public class NormalizingCompacter extends AbstractAlgorithm implements ICompacte
         }
 
         // process the edges of the graph
-        for (KSlimEdge edge : inputGraph.edges) {
+        for (KSlimEdge edge : inputGraph.getEdges()) {
             TSMEdge tsmEdge = (TSMEdge) edge;
-            KEdge layoutEdge = (KEdge) tsmEdge.object;
+            KEdge layoutEdge = (KEdge) tsmEdge.getObject();
             // determine attachment point at source
             TSMNode currentNode = null, targetNode = null;
             boolean sourceBendConsumed = false, targetBendConsumed = false;
-            if (((TSMNode) edge.source).type == TSMNode.Type.LAYOUT) {
+            if (((TSMNode) edge.getSource()).type == TSMNode.Type.LAYOUT) {
                 PortDescriptor portDescriptor = portMap.get(layoutEdge.getSourcePort());
                 Pair<TSMNode, Boolean> endpointResult = getEndpointNode(normalizedGraph, edge,
-                        portDescriptor, sourceRank[edge.id], true);
-                currentNode = (TSMNode) endpointResult.first;
-                sourceBendConsumed = endpointResult.second;
-            } else if (((TSMNode) edge.source).type == TSMNode.Type.CROSSING) {
-                PortDescriptor portDescriptor = portMap.get(edge.source);
+                        portDescriptor, sourceRank[edge.getId()], true);
+                currentNode = (TSMNode) endpointResult.getFirst();
+                sourceBendConsumed = endpointResult.getSecond();
+            } else if (((TSMNode) edge.getSource()).type == TSMNode.Type.CROSSING) {
+                PortDescriptor portDescriptor = portMap.get(edge.getSource());
                 currentNode = (TSMNode) portDescriptor.nodes.get(0);
             }
             // register the new node
             if (sourceBendConsumed) {
-                startNodeMap.put(edge.bends.get(0), currentNode);
+                startNodeMap.put(edge.getBends().get(0), currentNode);
             }
 
             // determine attachment point at target
-            if (((TSMNode) edge.target).type == TSMNode.Type.LAYOUT) {
+            if (((TSMNode) edge.getTarget()).type == TSMNode.Type.LAYOUT) {
                 PortDescriptor portDescriptor = portMap.get(layoutEdge.getTargetPort());
                 Pair<TSMNode, Boolean> endpointResult = getEndpointNode(normalizedGraph, edge,
-                        portDescriptor, targetRank[edge.id], false);
-                targetNode = endpointResult.first;
-                targetBendConsumed = endpointResult.second;
-            } else if (((TSMNode) edge.target).type == TSMNode.Type.CROSSING) {
-                PortDescriptor portDescriptor = portMap.get(edge.target);
+                        portDescriptor, targetRank[edge.getId()], false);
+                targetNode = endpointResult.getFirst();
+                targetBendConsumed = endpointResult.getSecond();
+            } else if (((TSMNode) edge.getTarget()).type == TSMNode.Type.CROSSING) {
+                PortDescriptor portDescriptor = portMap.get(edge.getTarget());
                 targetNode = portDescriptor.nodes.get(0);
             }
             // register the new node
             if (targetBendConsumed) {
-                startNodeMap.put(edge.bends.get(edge.bends.size() - 1), targetNode);
+                startNodeMap.put(edge.getBends().get(edge.getBends().size() - 1), targetNode);
             }
 
             // create dummy nodes for remaining bends
             KSlimNode.Side currentSide = (sourceBendConsumed
-                    ? (edge.bends.get(0).type == KSlimEdge.Bend.Type.LEFT
-                            ? edge.sourceSide.left() : edge.sourceSide.right())
-                    : edge.sourceSide);
-            ListIterator<KSlimEdge.Bend> bendIter = edge.bends.listIterator();
+                    ? (edge.getBends().get(0).getType() == KSlimEdge.Bend.Type.LEFT
+                            ? edge.getSourceSide().left() : edge.getSourceSide().right())
+                    : edge.getSourceSide());
+            ListIterator<KSlimEdge.Bend> bendIter = edge.getBends().listIterator();
             if (sourceBendConsumed) {
                 bendIter.next();
             }
-            int targetIndex = targetBendConsumed ? edge.bends.size() - 1 : edge.bends.size();
+            int targetIndex = targetBendConsumed ? edge.getBends().size() - 1 : edge.getBends().size();
             while (bendIter.nextIndex() < targetIndex) {
                 // add the new node for normalization
                 KSlimEdge.Bend bend = bendIter.next();
@@ -268,7 +268,7 @@ public class NormalizingCompacter extends AbstractAlgorithm implements ICompacte
                 startNodeMap.put(bend, newNode);
 
                 currentNode = newNode;
-                currentSide = (bend.type == KSlimEdge.Bend.Type.LEFT ? currentSide.left() : currentSide
+                currentSide = (bend.getType() == KSlimEdge.Bend.Type.LEFT ? currentSide.left() : currentSide
                         .right());
             }
             KSlimEdge newEdge = new TSMEdge(normalizedGraph, currentNode, targetNode, layoutEdge);
@@ -358,21 +358,21 @@ public class NormalizingCompacter extends AbstractAlgorithm implements ICompacte
         int nodeIndex;
         boolean bendConsumed = false;
         // TODO try to achieve a better merging of edges of the same port
-        if (edge.bends.isEmpty()) {
+        if (edge.getBends().isEmpty()) {
             nodeIndex = Math.max(portDescriptor.leftEdges, portDescriptor.rightEdges);
-        } else if (source && edge.bends.get(0).type == KSlimEdge.Bend.Type.LEFT
-                || !source && edge.bends.get(edge.bends.size() - 1).type == KSlimEdge.Bend.Type.RIGHT) {
+        } else if (source && edge.getBends().get(0).getType() == KSlimEdge.Bend.Type.LEFT
+                || !source && edge.getBends().get(edge.getBends().size() - 1).getType() == KSlimEdge.Bend.Type.RIGHT) {
             nodeIndex = rank + 1;
         } else {
             nodeIndex = portDescriptor.leftEdges + portDescriptor.straightEdges
                     + portDescriptor.rightEdges - rank;
         }
 
-        if (edge.bends.size() == 1
+        if (edge.getBends().size() == 1
                 && nodeIndex == Math.max(portDescriptor.leftEdges, portDescriptor.rightEdges)
                 && portDescriptor.leftEdges != portDescriptor.rightEdges) {
             nodeIndex--;
-        } else if (!edge.bends.isEmpty()) {
+        } else if (!edge.getBends().isEmpty()) {
             bendConsumed = true;
         }
 
@@ -380,8 +380,8 @@ public class NormalizingCompacter extends AbstractAlgorithm implements ICompacte
         for (int i = portDescriptor.nodes.size() - 1; i < nodeIndex; i++) {
             TSMNode newNode = new TSMNode(graph, TSMNode.Type.BEND, edge);
             KSlimEdge newEdge = new TSMEdge(graph, portDescriptor.nodes.get(i), newNode,
-                    (KEdge) edge.object);
-            KSlimNode.Side newSide = source ? edge.sourceSide : edge.targetSide;
+                    (KEdge) edge.getObject());
+            KSlimNode.Side newSide = source ? edge.getSourceSide() : edge.getTargetSide();
             newEdge.connectNodes(newSide, newSide.opposed());
             portDescriptor.nodes.add(newNode);
         }
@@ -428,58 +428,58 @@ public class NormalizingCompacter extends AbstractAlgorithm implements ICompacte
             final int abstrHeight) {
         // create pool of nodes and edge bends
         List<Object> compactables = new LinkedList<Object>();
-        compactables.addAll(origGraph.nodes);
-        for (KSlimEdge edge : origGraph.edges) {
-            compactables.addAll(edge.bends);
+        compactables.addAll(origGraph.getNodes());
+        for (KSlimEdge edge : origGraph.getEdges()) {
+            compactables.addAll(edge.getBends());
         }
 
         // transform horizontal positions
-        origGraph.width = transformMetrics(compactables, origGraph, true, abstrWidth);
+        origGraph.setWidth(transformMetrics(compactables, origGraph, true, abstrWidth));
         // transform vertical positions
-        origGraph.height = transformMetrics(compactables, origGraph, false, abstrHeight);
+        origGraph.setHeight(transformMetrics(compactables, origGraph, false, abstrHeight));
 
         // set proper coordinates for the first and the last bend of each edge
-        for (KSlimEdge edge : origGraph.edges) {
-            int bendsCount = edge.bends.size();
+        for (KSlimEdge edge : origGraph.getEdges()) {
+            int bendsCount = edge.getBends().size();
             if (bendsCount > 0) {
-                KEdge layoutEdge = (KEdge) edge.object;
+                KEdge layoutEdge = (KEdge) edge.getObject();
                 // set source bend
-                KSlimEdge.Bend sourceBend = edge.bends.get(0);
-                if (edge.sourceSide == KSlimNode.Side.NORTH || edge.sourceSide == KSlimNode.Side.SOUTH) {
-                    sourceBend.xpos = edge.source.xpos;
-                    if (((TSMNode) edge.source).type == TSMNode.Type.LAYOUT
+                KSlimEdge.Bend sourceBend = edge.getBends().get(0);
+                if (edge.getSourceSide() == KSlimNode.Side.NORTH || edge.getSourceSide() == KSlimNode.Side.SOUTH) {
+                    sourceBend.setXpos(edge.getSource().getXpos());
+                    if (((TSMNode) edge.getSource()).type == TSMNode.Type.LAYOUT
                             && layoutEdge.getSourcePort() != null) {
                         KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(layoutEdge
                                 .getSourcePort());
-                        sourceBend.xpos += portLayout.getXpos() + portLayout.getWidth() / 2;
+                        sourceBend.setXpos(sourceBend.getXpos() + (portLayout.getXpos() + portLayout.getWidth() / 2));
                     }
                 } else {
-                    sourceBend.ypos = edge.source.ypos;
-                    if (((TSMNode) edge.source).type == TSMNode.Type.LAYOUT
+                    sourceBend.setYpos(edge.getSource().getYpos());
+                    if (((TSMNode) edge.getSource()).type == TSMNode.Type.LAYOUT
                             && layoutEdge.getSourcePort() != null) {
                         KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(layoutEdge
                                 .getSourcePort());
-                        sourceBend.ypos += portLayout.getYpos() + portLayout.getHeight() / 2;
+                        sourceBend.setYpos(sourceBend.getYpos() + (portLayout.getYpos() + portLayout.getHeight() / 2));
                     }
                 }
 
                 // set target bend
-                KSlimEdge.Bend targetBend = edge.bends.get(bendsCount - 1);
-                if (edge.targetSide == KSlimNode.Side.EAST || edge.targetSide == KSlimNode.Side.WEST) {
-                    targetBend.ypos = edge.target.ypos;
-                    if (((TSMNode) edge.target).type == TSMNode.Type.LAYOUT
+                KSlimEdge.Bend targetBend = edge.getBends().get(bendsCount - 1);
+                if (edge.getTargetSide() == KSlimNode.Side.EAST || edge.getTargetSide() == KSlimNode.Side.WEST) {
+                    targetBend.setYpos(edge.getTarget().getYpos());
+                    if (((TSMNode) edge.getTarget()).type == TSMNode.Type.LAYOUT
                             && layoutEdge.getTargetPort() != null) {
                         KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(layoutEdge
                                 .getTargetPort());
-                        targetBend.ypos += portLayout.getYpos() + portLayout.getHeight() / 2;
+                        targetBend.setYpos(targetBend.getYpos() + (portLayout.getYpos() + portLayout.getHeight() / 2));
                     }
                 } else {
-                    targetBend.xpos = edge.target.xpos;
-                    if (((TSMNode) edge.target).type == TSMNode.Type.LAYOUT
+                    targetBend.setXpos(edge.getTarget().getXpos());
+                    if (((TSMNode) edge.getTarget()).type == TSMNode.Type.LAYOUT
                             && layoutEdge.getTargetPort() != null) {
                         KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(layoutEdge
                                 .getTargetPort());
-                        targetBend.xpos += portLayout.getXpos() + portLayout.getWidth() / 2;
+                        targetBend.setXpos(targetBend.getXpos() + (portLayout.getXpos() + portLayout.getWidth() / 2));
                     }
                 }
             }
@@ -565,7 +565,7 @@ public class NormalizingCompacter extends AbstractAlgorithm implements ICompacte
                 if (node.type == TSMNode.Type.LAYOUT) {
                     int endPos = horizontal ? endNodeMap.get(obj).abstrXpos
                             : endNodeMap.get(obj).abstrYpos;
-                    KNode layoutNode = (KNode) node.object;
+                    KNode layoutNode = (KNode) node.getObject();
                     KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
                     float size = horizontal ? nodeLayout.getWidth() : nodeLayout.getHeight();
                     assert endPos - abstrPos > 0;
@@ -578,16 +578,16 @@ public class NormalizingCompacter extends AbstractAlgorithm implements ICompacte
                     maxPos = Math.max(maxPos, concrPos[endPos]);
                 }
                 if (horizontal) {
-                    node.xpos = concrPos[abstrPos];
+                    node.setXpos(concrPos[abstrPos]);
                 } else {
-                    node.ypos = concrPos[abstrPos];
+                    node.setYpos(concrPos[abstrPos]);
                 }
             } else if (obj instanceof KSlimEdge.Bend) {
                 KSlimEdge.Bend edgeBend = (KSlimEdge.Bend) obj;
                 if (horizontal) {
-                    edgeBend.xpos = concrPos[abstrPos];
+                    edgeBend.setXpos(concrPos[abstrPos]);
                 } else {
-                    edgeBend.ypos = concrPos[abstrPos];
+                    edgeBend.setYpos(concrPos[abstrPos]);
                 }
             }
         }

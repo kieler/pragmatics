@@ -37,9 +37,9 @@ public class KSlimNode extends KSlimGraphElement {
         }
 
         /** the edge of this incidence entry. */
-        public KSlimEdge edge;
+        private final KSlimEdge edge;
         /** type of incidence: incoming or outgoing. */
-        public Type type;
+        private Type type;
 
         /**
          * Creates an incidence list entry.
@@ -49,7 +49,7 @@ public class KSlimNode extends KSlimGraphElement {
          */
         public IncEntry(final KSlimEdge theedge, final Type thetype) {
             this.edge = theedge;
-            this.type = thetype;
+            this.setType(thetype);
         }
 
         /**
@@ -60,10 +60,10 @@ public class KSlimNode extends KSlimGraphElement {
          *         target of the edge
          */
         public KSlimNode endpoint() {
-            if (type == Type.IN) {
-                return edge.source;
+            if (getType() == Type.IN) {
+                return getEdge().getSource();
             } else {
-                return edge.target;
+                return getEdge().getTarget();
             }
         }
 
@@ -75,10 +75,10 @@ public class KSlimNode extends KSlimGraphElement {
          *         the left face of the edge
          */
         public KSlimFace leftFace() {
-            if (type == Type.IN) {
-                return edge.rightFace;
+            if (getType() == Type.IN) {
+                return getEdge().getRightFace();
             } else {
-                return edge.leftFace;
+                return getEdge().getLeftFace();
             }
         }
 
@@ -90,10 +90,10 @@ public class KSlimNode extends KSlimGraphElement {
          *         the source side
          */
         public Side side() {
-            if (type == Type.IN) {
-                return edge.targetSide;
+            if (getType() == Type.IN) {
+                return getEdge().getTargetSide();
             } else {
-                return edge.sourceSide;
+                return getEdge().getSourceSide();
             }
         }
 
@@ -102,7 +102,34 @@ public class KSlimNode extends KSlimGraphElement {
          */
         @Override
         public String toString() {
-            return type.toString() + edge.id;
+            return getType().toString() + getEdge().getId();
+        }
+
+        /**
+         * Returns the edge.
+         *
+         * @return the edge
+         */
+        public KSlimEdge getEdge() {
+            return edge;
+        }
+
+        /**
+         * Sets the type.
+         *
+         * @param thetype the type to set
+         */
+        public void setType(final Type thetype) {
+            this.type = thetype;
+        }
+
+        /**
+         * Returns the type.
+         *
+         * @return the type
+         */
+        public Type getType() {
+            return type;
         }
     }
 
@@ -185,11 +212,11 @@ public class KSlimNode extends KSlimGraphElement {
     }
 
     /** list of incident edges. */
-    public final List<IncEntry> incidence = new LinkedList<IncEntry>();
+    private final List<IncEntry> incidence = new LinkedList<IncEntry>();
     /** concrete x coordinate position. */
-    public float xpos;
+    private float xpos;
     /** concrete y coordinate position. */
-    public float ypos;
+    private float ypos;
 
     /**
      * Creates a node containing the given object.
@@ -198,9 +225,9 @@ public class KSlimNode extends KSlimGraphElement {
      * @param obj the object to be contained
      */
     public KSlimNode(final KSlimGraph graph, final Object obj) {
-        graph.nodes.add(this);
-        this.object = obj;
-        this.id = graph.nextNodeId++;
+        graph.getNodes().add(this);
+        this.setObject(obj);
+        this.setId(graph.nextNodeId());
     }
 
     /**
@@ -209,9 +236,9 @@ public class KSlimNode extends KSlimGraphElement {
      * @param graph the graph to which the new node shall be added
      */
     public KSlimNode(final KSlimGraph graph) {
-        graph.nodes.add(this);
-        this.object = null;
-        this.id = graph.nextNodeId++;
+        graph.getNodes().add(this);
+        this.setObject(null);
+        this.setId(graph.nextNodeId());
     }
 
     /**
@@ -226,15 +253,60 @@ public class KSlimNode extends KSlimGraphElement {
      */
     public ListIterator<KSlimNode.IncEntry> getIterator(final KSlimEdge edge,
             final boolean outgoing) {
-        ListIterator<IncEntry> edgeIter = incidence.listIterator();
+        ListIterator<IncEntry> edgeIter = getIncidence().listIterator();
         while (edgeIter.hasNext()) {
             IncEntry nextEntry = edgeIter.next();
-            if (nextEntry.edge.id == edge.id
-                    && (nextEntry.type == IncEntry.Type.OUT) == outgoing) {
+            if (nextEntry.getEdge().getId() == edge.getId()
+                    && (nextEntry.getType() == IncEntry.Type.OUT) == outgoing) {
                 return edgeIter;
             }
         }
         return null;
+    }
+
+    /**
+     * Returns the incidence.
+     *
+     * @return the incidence
+     */
+    public List<IncEntry> getIncidence() {
+        return incidence;
+    }
+
+    /**
+     * Sets the xpos.
+     *
+     * @param thexpos the xpos to set
+     */
+    public void setXpos(final float thexpos) {
+        this.xpos = thexpos;
+    }
+
+    /**
+     * Returns the xpos.
+     *
+     * @return the xpos
+     */
+    public float getXpos() {
+        return xpos;
+    }
+
+    /**
+     * Sets the ypos.
+     *
+     * @param theypos the ypos to set
+     */
+    public void setYpos(final float theypos) {
+        this.ypos = theypos;
+    }
+
+    /**
+     * Returns the ypos.
+     *
+     * @return the ypos
+     */
+    public float getYpos() {
+        return ypos;
     }
 
 }

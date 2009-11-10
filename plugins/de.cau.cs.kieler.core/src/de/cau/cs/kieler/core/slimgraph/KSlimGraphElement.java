@@ -21,17 +21,17 @@ package de.cau.cs.kieler.core.slimgraph;
 public abstract class KSlimGraphElement implements Comparable<KSlimGraphElement> {
 
     /** identifier of this element, determined at creation time. */
-    public int id;
+    private int id;
     /** rank of this element, used by various algorithms. */
-    public int rank = 0;
+    private int rank = 0;
     /** object contained in this element, or null if there is none. */
-    public Object object = null;
+    private Object object = null;
 
     /**
      * {@inheritDoc}
      */
     public int compareTo(final KSlimGraphElement other) {
-        return this.id - other.id;
+        return this.getId() - other.getId();
     }
 
     /**
@@ -40,7 +40,7 @@ public abstract class KSlimGraphElement implements Comparable<KSlimGraphElement>
     @Override
     public boolean equals(final Object other) {
         return (other instanceof KSlimGraphElement && other.getClass() == this.getClass())
-                && ((KSlimGraphElement) other).id == this.id;
+                && ((KSlimGraphElement) other).getId() == this.getId();
     }
 
     /**
@@ -48,7 +48,7 @@ public abstract class KSlimGraphElement implements Comparable<KSlimGraphElement>
      */
     @Override
     public int hashCode() {
-        return getClass().hashCode() + id;
+        return getClass().hashCode() + getId();
     }
 
     /**
@@ -56,7 +56,61 @@ public abstract class KSlimGraphElement implements Comparable<KSlimGraphElement>
      */
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "(" + id + ")";
+        return getClass().getSimpleName() + "(" + getId() + ")";
+    }
+
+    /**
+     * Sets the id.
+     *
+     * @param theid the id to set
+     */
+    protected void setId(final int theid) {
+        this.id = theid;
+    }
+
+    /**
+     * Returns the id.
+     *
+     * @return the id
+     */
+    public int getId() {
+        return id;
+    }
+
+    /**
+     * Sets the rank.
+     *
+     * @param therank the rank to set
+     */
+    public void setRank(final int therank) {
+        this.rank = therank;
+    }
+
+    /**
+     * Returns the rank.
+     *
+     * @return the rank
+     */
+    public int getRank() {
+        return rank;
+    }
+
+    /**
+     * Sets the object.
+     *
+     * @param theobject the object to set
+     */
+    protected void setObject(final Object theobject) {
+        this.object = theobject;
+    }
+
+    /**
+     * Returns the object.
+     *
+     * @return the object
+     */
+    public Object getObject() {
+        return object;
     }
 
 }

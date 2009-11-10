@@ -47,7 +47,7 @@ public class ConstraintExpander extends AbstractAlgorithm {
     public TSMGraph expand(final KSlimGraph graph) {
         expandedGraph = new TSMGraph();
 
-        for (KSlimNode node : graph.nodes) {
+        for (KSlimNode node : graph.getNodes()) {
             TSMNode tsmNode = (TSMNode) node;
             if (tsmNode.embeddingConstraint == null) {
                 expandNode(node);
@@ -67,9 +67,9 @@ public class ConstraintExpander extends AbstractAlgorithm {
      */
     private void expandNode(final KSlimNode node) {
         TSMNode newNode = new TSMNode(expandedGraph, TSMNode.Type.ECEXPANSION, node);
-        for (KSlimNode.IncEntry edgeEntry : node.incidence) {
-            registerEdge(newNode, (TSMEdge) edgeEntry.edge,
-                    edgeEntry.type == KSlimNode.IncEntry.Type.OUT);
+        for (KSlimNode.IncEntry edgeEntry : node.getIncidence()) {
+            registerEdge(newNode, (TSMEdge) edgeEntry.getEdge(),
+                    edgeEntry.getType() == KSlimNode.IncEntry.Type.OUT);
         }
     }
 
@@ -160,7 +160,7 @@ public class ConstraintExpander extends AbstractAlgorithm {
             if (endPoint == null) {
                 outgoing2NodeMap.put(edge, node);
             } else {
-                KSlimEdge newEdge = new TSMEdge(expandedGraph, node, endPoint, (KEdge) edge.object);
+                KSlimEdge newEdge = new TSMEdge(expandedGraph, node, endPoint, (KEdge) edge.getObject());
                 newEdge.connectNodes();
             }
         } else {
@@ -168,7 +168,7 @@ public class ConstraintExpander extends AbstractAlgorithm {
             if (endPoint == null) {
                 incoming2NodeMap.put(edge, node);
             } else {
-                KSlimEdge newEdge = new TSMEdge(expandedGraph, endPoint, node, (KEdge) edge.object);
+                KSlimEdge newEdge = new TSMEdge(expandedGraph, endPoint, node, (KEdge) edge.getObject());
                 newEdge.connectNodes();
             }
         }

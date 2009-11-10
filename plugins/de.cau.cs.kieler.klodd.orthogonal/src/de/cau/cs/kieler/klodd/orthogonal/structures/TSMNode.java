@@ -92,11 +92,11 @@ public class TSMNode extends KSlimNode {
      * @param offsetY y offset to be added
      */
     public void applyLayout(final float offsetX, final float offsetY) {
-        if (object instanceof KNode) {
-            KNode layoutNode = (KNode) object;
+        if (getObject() instanceof KNode) {
+            KNode layoutNode = (KNode) getObject();
             KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
-            nodeLayout.setXpos(xpos + offsetX);
-            nodeLayout.setYpos(ypos + offsetY);
+            nodeLayout.setXpos(getXpos() + offsetX);
+            nodeLayout.setYpos(getYpos() + offsetY);
         }
     }
 
@@ -106,8 +106,8 @@ public class TSMNode extends KSlimNode {
     @Override
     public String toString() {
         String baseString = super.toString();
-        if (object instanceof KNode) {
-            return baseString + " \"" + ((KNode) object).getLabel().getText() + "\"";
+        if (getObject() instanceof KNode) {
+            return baseString + " \"" + ((KNode) getObject()).getLabel().getText() + "\"";
         } else {
             return baseString + " " + type.toString();
         }

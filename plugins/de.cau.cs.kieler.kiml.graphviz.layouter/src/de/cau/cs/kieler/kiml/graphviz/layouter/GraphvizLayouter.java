@@ -78,10 +78,10 @@ import de.cau.cs.kieler.core.util.ForwardingInputStream;
 public class GraphvizLayouter {
 
     /** Internal class for storage of points and dimensions. */
-    private static class Point {
-        float x, y;
+    private static final class Point {
+        private float x, y;
 
-        Point(final float thex, final float they) {
+        private Point(final float thex, final float they) {
             this.x = thex;
             this.y = they;
         }
@@ -118,6 +118,11 @@ public class GraphvizLayouter {
     /** base file name for debug output. */
     private String debugFileName;
 
+    /** amount of work for small tasks. */
+    private static final int SMALL_TASK = 5;
+    /** amount of work for large tasks. */
+    private static final int LARGE_TASK = 10;
+    
     /**
      * Performs the actual work of the layout process. Translates the KNode into
      * a structure GraphViz understands, calls the desired GraphViz layouter and
@@ -138,7 +143,8 @@ public class GraphvizLayouter {
             throw new KielerException("Invalid Graphviz command set for this layout provider.");
         }
 
-        progressMonitor.begin("Graphviz layout (" + command + ")", 40);
+        progressMonitor.begin("Graphviz layout (" + command + ")",
+                SMALL_TASK + SMALL_TASK + LARGE_TASK + LARGE_TASK + LARGE_TASK + SMALL_TASK);
         graphElementMap.clear();
         if (ENABLE_DEBUG) {
             debugFileName = Integer.toString(parentNode.hashCode());
@@ -156,22 +162,22 @@ public class GraphvizLayouter {
 
         // start the graphviz process
         Process graphvizProcess = GraphvizAPI.startProcess(command);
-        progressMonitor.worked(5);
+        progressMonitor.worked(SMALL_TASK);
 
         try {
             // translate the KGraph to Graphviz and write to the process
             GraphvizModel graphvizInput = createDotGraph(parentNode, command);
-            progressMonitor.worked(5);
+            progressMonitor.worked(SMALL_TASK);
             writeDotGraph(graphvizInput, new BufferedOutputStream(
-                    graphvizProcess.getOutputStream()), progressMonitor.subTask(10));
+                    graphvizProcess.getOutputStream()), progressMonitor.subTask(LARGE_TASK));
 
             // wait for Graphviz to give some output
             GraphvizAPI.waitForInput(graphvizProcess.getInputStream(),
-                    graphvizProcess.getErrorStream(), progressMonitor.subTask(10));
+                    graphvizProcess.getErrorStream(), progressMonitor.subTask(LARGE_TASK));
 
             // read graphviz output and apply layout information to the KGraph
             GraphvizModel graphvizOutput = readDotGraph(new BufferedInputStream(graphvizProcess
-                    .getInputStream()), progressMonitor.subTask(10));
+                    .getInputStream()), progressMonitor.subTask(LARGE_TASK));
             retrieveLayoutResult(parentNode, graphvizOutput);
         } finally {
             // destroy the process to release resources
@@ -364,6 +370,11 @@ public class GraphvizLayouter {
         return attribute;
     }
 
+    /** first character that is not replaced by underscore. */
+    private static final char MIN_OUT_CHAR = 32;
+    /** last character that is not replaced by underscore. */
+    private static final char MAX_OUT_CHAR = 126;
+    
     /**
      * Creates a properly parsable string by adding the escape character '\\'
      * wherever needed and replacing illegal characters.
@@ -378,11 +389,11 @@ public class GraphvizLayouter {
         escapeBuffer.append("\"_");
         for (int i = 0; i < label.length(); i++) {
             char c = label.charAt(i);
-            if (c == '\"' || c == '\\' || c >= 127) {
+            if (c == '\"' || c == '\\' || c > MAX_OUT_CHAR) {
                 escapeBuffer.append('_');
             } else if (c == '\n') {
                 escapeBuffer.append("\\n");
-            } else if (c >= 32) {
+            } else if (c >= MIN_OUT_CHAR) {
                 escapeBuffer.append(c);
             }
         }
@@ -401,7 +412,7 @@ public class GraphvizLayouter {
      */
     private void writeDotGraph(final GraphvizModel graphvizModel, final OutputStream processStream,
             final IKielerProgressMonitor monitor) throws KielerException {
-        monitor.begin("Serialize model", 10);
+        monitor.begin("Serialize model", 1);
         OutputStream outputStream = processStream;
         // enable debug output if needed
         FileOutputStream debugStream = null;
@@ -432,6 +443,7 @@ public class GraphvizLayouter {
             try {
                 outputStream.close();
             } catch (IOException exception) {
+                // ignore exception
             }
         }
         monitor.done();
@@ -469,7 +481,7 @@ public class GraphvizLayouter {
     private GraphvizModel readDotGraph(final InputStream processStream,
             final IKielerProgressMonitor monitor)
             throws KielerException {
-        monitor.begin("Parse output", 10);
+        monitor.begin("Parse output", 1);
         InputStream inputStream = processStream;
         // enable debug output if needed
         FileOutputStream debugStream = null;
@@ -497,6 +509,7 @@ public class GraphvizLayouter {
             try {
                 debugStream.close();
             } catch (IOException exception) {
+                // ignore exception
             }
         }
         if (!parseResult.getParseErrors().isEmpty()) {
@@ -556,6 +569,7 @@ public class GraphvizLayouter {
                             height = Float.parseFloat(tokenizer.nextToken()) * DPI;
                         }
                     } catch (NumberFormatException exception) {
+                        // ignore exception
                     }
                 }
                 nodeLayout.setXpos(xpos - width / 2);
@@ -624,6 +638,7 @@ public class GraphvizLayouter {
                             ypos += labelLayout.getHeight();
                         }
                     } catch (NumberFormatException exception) {
+                        // ignore exception
                     }
                 }
                 

@@ -29,16 +29,15 @@ public class KSlimFace extends KSlimGraphElement {
      */
     public static class BorderEntry {
         /** an edge bordering this face. */
-        public KSlimEdge edge;
+        private final KSlimEdge edge;
         /** indicates whether the bordering edge is traversed forward. */
-        public boolean forward;
+        private final boolean forward;
 
         /**
          * Creates a border entry for the given edge.
          * 
          * @param theedge edge bordering the containing face
-         * @param theforward indicates whether the bordering edge is traversed
-         *            forward
+         * @param theforward indicates whether the bordering edge is traversed forward
          */
         public BorderEntry(final KSlimEdge theedge, final boolean theforward) {
             this.edge = theedge;
@@ -51,8 +50,8 @@ public class KSlimFace extends KSlimGraphElement {
          * @param entry border entry to copy
          */
         public BorderEntry(final BorderEntry entry) {
-            this.edge = entry.edge;
-            this.forward = entry.forward;
+            this.edge = entry.getEdge();
+            this.forward = entry.isForward();
         }
 
         /**
@@ -62,10 +61,10 @@ public class KSlimFace extends KSlimGraphElement {
          *         right face
          */
         public KSlimFace opposed() {
-            if (forward) {
-                return edge.leftFace;
+            if (isForward()) {
+                return getEdge().getLeftFace();
             } else {
-                return edge.rightFace;
+                return getEdge().getRightFace();
             }
         }
 
@@ -76,10 +75,10 @@ public class KSlimFace extends KSlimGraphElement {
          * @return the source if the contained edge is forward, else the target
          */
         public KSlimNode firstNode() {
-            if (forward) {
-                return edge.source;
+            if (isForward()) {
+                return getEdge().getSource();
             } else {
-                return edge.target;
+                return getEdge().getTarget();
             }
         }
 
@@ -90,10 +89,10 @@ public class KSlimFace extends KSlimGraphElement {
          * @return the target if the contained edge is forward, else the source
          */
         public KSlimNode secondNode() {
-            if (forward) {
-                return edge.target;
+            if (isForward()) {
+                return getEdge().getTarget();
             } else {
-                return edge.source;
+                return getEdge().getSource();
             }
         }
 
@@ -104,10 +103,10 @@ public class KSlimFace extends KSlimGraphElement {
          *         side at target
          */
         public KSlimNode.Side firstSide() {
-            if (forward) {
-                return edge.sourceSide;
+            if (isForward()) {
+                return getEdge().getSourceSide();
             } else {
-                return edge.targetSide;
+                return getEdge().getTargetSide();
             }
         }
 
@@ -119,10 +118,10 @@ public class KSlimFace extends KSlimGraphElement {
          *         side at source
          */
         public KSlimNode.Side secondSide() {
-            if (forward) {
-                return edge.targetSide;
+            if (isForward()) {
+                return getEdge().getTargetSide();
             } else {
-                return edge.sourceSide;
+                return getEdge().getSourceSide();
             }
         }
 
@@ -131,18 +130,36 @@ public class KSlimFace extends KSlimGraphElement {
          */
         @Override
         public String toString() {
-            if (forward) {
-                return ">" + edge.id;
+            if (isForward()) {
+                return ">" + getEdge().getId();
             } else {
-                return "<" + edge.id;
+                return "<" + getEdge().getId();
             }
+        }
+
+        /**
+         * Returns the edge.
+         *
+         * @return the edge
+         */
+        public KSlimEdge getEdge() {
+            return edge;
+        }
+
+        /**
+         * Returns whether the bordering edge is traversed forward.
+         *
+         * @return the forward
+         */
+        public boolean isForward() {
+            return forward;
         }
     }
 
     /**
      * set of lists of bordering edges (can be multiple lists for the external face).
      */
-    public final List<List<BorderEntry>> borders = new LinkedList<List<BorderEntry>>();
+    private final List<List<BorderEntry>> borders = new LinkedList<List<BorderEntry>>();
 
     /**
      * Creates a face and optionally adds it to the given graph.
@@ -153,9 +170,9 @@ public class KSlimFace extends KSlimGraphElement {
      */
     public KSlimFace(final KSlimGraph graph, final boolean addToInternal) {
         if (addToInternal) {
-            graph.faces.add(this);
+            graph.getFaces().add(this);
         }
-        this.id = graph.nextFaceId++;
+        this.setId(graph.nextFaceId());
     }
 
     /**
@@ -169,16 +186,25 @@ public class KSlimFace extends KSlimGraphElement {
      */
     public ListIterator<KSlimFace.BorderEntry> getIterator(final KSlimEdge edge,
             final boolean forward) {
-        for (List<BorderEntry> border : borders) {
+        for (List<BorderEntry> border : getBorders()) {
             ListIterator<BorderEntry> borderIter = border.listIterator();
             while (borderIter.hasNext()) {
                 BorderEntry nextEntry = borderIter.next();
-                if (nextEntry.edge.id == edge.id && nextEntry.forward == forward) {
+                if (nextEntry.getEdge().getId() == edge.getId() && nextEntry.isForward() == forward) {
                     return borderIter;
                 }
             }
         }
         return null;
+    }
+
+    /**
+     * Returns the borders.
+     *
+     * @return the borders
+     */
+    public List<List<BorderEntry>> getBorders() {
+        return borders;
     }
 
 }

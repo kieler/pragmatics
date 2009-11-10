@@ -49,18 +49,24 @@ import org.eclipse.gmf.runtime.notation.datatype.RelativeBendpoint;
 public class GmfLayoutCommand extends AbstractTransactionalCommand {
 
     /** layout data for node shapes. */
-    private static class ShapeLayoutData {
-        View view;
-        Point location;
-        Dimension size;
+    private static final class ShapeLayoutData {
+        private View view;
+        private Point location;
+        private Dimension size;
+        
+        private ShapeLayoutData() {
+        }
     }
     
     /** layout data for edges. */
-    private static class EdgeLayoutData {
-        Edge edge;
-        PointList bends;
-        String sourceTerminal;
-        String targetTerminal;
+    private static final class EdgeLayoutData {
+        private Edge edge;
+        private PointList bends;
+        private String sourceTerminal;
+        private String targetTerminal;
+        
+        private EdgeLayoutData() {
+        }
     }
     
     /** adapter for the view of the base diagram. */

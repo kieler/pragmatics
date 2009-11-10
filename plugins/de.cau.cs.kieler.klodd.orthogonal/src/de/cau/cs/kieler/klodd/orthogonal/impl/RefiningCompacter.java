@@ -114,7 +114,7 @@ public class RefiningCompacter extends AbstractAlgorithm implements ICompacter {
         getMonitor().begin("Refined compaction", 1);
 
         // refine the internal faces
-        ListIterator<KSlimFace> faceIter = graph.faces.listIterator();
+        ListIterator<KSlimFace> faceIter = graph.getFaces().listIterator();
         while (faceIter.hasNext()) {
             KSlimFace nextFace = faceIter.next();
             List<RefinementEdge> refinements = getRefinements(nextFace);
@@ -128,7 +128,7 @@ public class RefiningCompacter extends AbstractAlgorithm implements ICompacter {
         // refine the external face
         List<RefinementEdge> refinements = getRefinements(oldExternalFace);
         List<KSlimFace> newFaces = applyRefinements(graph, refinements);
-        graph.faces.addAll(newFaces);
+        graph.getFaces().addAll(newFaces);
 
         // execute the embedded compacter
         refinedCompacter.reset(getMonitor().subTask(1));
@@ -144,7 +144,7 @@ public class RefiningCompacter extends AbstractAlgorithm implements ICompacter {
      */
     private List<RefinementEdge> getRefinements(final KSlimFace face) {
         // !! the graph is assumed to be connected here !!
-        List<KSlimFace.BorderEntry> border = face.borders.get(0);
+        List<KSlimFace.BorderEntry> border = face.getBorders().get(0);
         List<RefinementEdge> refinementEdges = new LinkedList<RefinementEdge>();
 
         KSlimFace.BorderEntry currentEntry = border.get(border.size() - 1);
@@ -180,7 +180,7 @@ public class RefiningCompacter extends AbstractAlgorithm implements ICompacter {
                     refinementEdges.add(refinementEdge);
                 } else {
                     refinementEdges.add(new RefinementEdge((TSMNode) currentEntry.secondNode(), side1
-                            .opposed(), (TSMEdge) frontEntry.edge, frontEntry.forward));
+                            .opposed(), (TSMEdge) frontEntry.getEdge(), frontEntry.isForward()));
                 }
             }
             currentEntry = nextEntry;
@@ -247,13 +247,13 @@ public class RefiningCompacter extends AbstractAlgorithm implements ICompacter {
             KSlimNode oldNode2;
             TSMEdge edge2;
             if (refinementEdge.targetForward) {
-                oldNode2 = edge1.target;
-                edge1.target = newNode;
-                edge2 = new TSMEdge(graph, newNode, oldNode2, (KEdge) edge1.object);
+                oldNode2 = edge1.getTarget();
+                edge1.setTarget(newNode);
+                edge2 = new TSMEdge(graph, newNode, oldNode2, (KEdge) edge1.getObject());
             } else {
-                oldNode2 = edge1.source;
-                edge1.source = newNode;
-                edge2 = new TSMEdge(graph, oldNode2, newNode, (KEdge) edge1.object);
+                oldNode2 = edge1.getSource();
+                edge1.setSource(newNode);
+                edge2 = new TSMEdge(graph, oldNode2, newNode, (KEdge) edge1.getObject());
             }
             ListIterator<KSlimNode.IncEntry> oldNode2Iter = oldNode2.getIterator(edge1,
                     !refinementEdge.targetForward);
@@ -261,14 +261,14 @@ public class RefiningCompacter extends AbstractAlgorithm implements ICompacter {
             oldNode2Iter.add(new KSlimNode.IncEntry(edge2,
                     refinementEdge.targetForward ? KSlimNode.IncEntry.Type.IN
                             : KSlimNode.IncEntry.Type.OUT));
-            newNode.incidence.add(new KSlimNode.IncEntry(edge1,
+            newNode.getIncidence().add(new KSlimNode.IncEntry(edge1,
                     refinementEdge.targetForward ? KSlimNode.IncEntry.Type.IN
                             : KSlimNode.IncEntry.Type.OUT));
-            newNode.incidence.add(new KSlimNode.IncEntry(edge2,
+            newNode.getIncidence().add(new KSlimNode.IncEntry(edge2,
                     refinementEdge.targetForward ? KSlimNode.IncEntry.Type.OUT
                             : KSlimNode.IncEntry.Type.IN));
-            edge2.sourceSide = edge1.sourceSide;
-            edge2.targetSide = edge1.targetSide;
+            edge2.setSourceSide(edge1.getSourceSide());
+            edge2.setTargetSide(edge1.getTargetSide());
 
             // update links of chains of split edges
             edge2.nextEdge = edge1.nextEdge;
@@ -279,15 +279,15 @@ public class RefiningCompacter extends AbstractAlgorithm implements ICompacter {
             edge1.nextEdge = edge2;
 
             // update faces left and right of edge1
-            edge2.leftFace = edge1.leftFace;
-            edge2.rightFace = edge1.rightFace;
-            KSlimFace currentFace = refinementEdge.targetForward ? edge1.rightFace : edge1.leftFace;
+            edge2.setLeftFace(edge1.getLeftFace());
+            edge2.setRightFace(edge1.getRightFace());
+            KSlimFace currentFace = refinementEdge.targetForward ? edge1.getRightFace() : edge1.getLeftFace();
             if (refinementEdge.externalSide == KSlimNode.Side.UNDEFINED || frameConnected) {
                 ListIterator<KSlimFace.BorderEntry> currentFaceIter = currentFace.getIterator(edge1,
                         refinementEdge.targetForward);
                 currentFaceIter.add(new KSlimFace.BorderEntry(edge2, refinementEdge.targetForward));
             }
-            KSlimFace opposedFace = refinementEdge.targetForward ? edge1.leftFace : edge1.rightFace;
+            KSlimFace opposedFace = refinementEdge.targetForward ? edge1.getLeftFace() : edge1.getRightFace();
             ListIterator<KSlimFace.BorderEntry> opposedFaceIter = opposedFace.getIterator(edge1,
                     !refinementEdge.targetForward);
             opposedFaceIter.previous();
@@ -349,8 +349,8 @@ public class RefiningCompacter extends AbstractAlgorithm implements ICompacter {
             }
             faceIter.add(new KSlimFace.BorderEntry(refinementEdge.targetEdge, true));
             faceIter.add(new KSlimFace.BorderEntry(newEdge, false));
-            newEdge.leftFace = face;
-            newEdge.rightFace = face;
+            newEdge.setLeftFace(face);
+            newEdge.setRightFace(face);
             frameConnected = true;
             return null;
         } else {
@@ -364,24 +364,24 @@ public class RefiningCompacter extends AbstractAlgorithm implements ICompacter {
             int nextIndex = faceIter.nextIndex();
             while (nextIndex != targetIndex) {
                 if (!faceIter.hasNext()) {
-                    faceIter = face.borders.get(0).listIterator();
+                    faceIter = face.getBorders().get(0).listIterator();
                     nextIndex = 0;
                 }
                 KSlimFace.BorderEntry nextEntry = faceIter.next();
                 newBorder.add(new KSlimFace.BorderEntry(nextEntry));
                 faceIter.remove();
-                if (nextEntry.forward) {
-                    nextEntry.edge.rightFace = newFace;
+                if (nextEntry.isForward()) {
+                    nextEntry.getEdge().setRightFace(newFace);
                 } else {
-                    nextEntry.edge.leftFace = newFace;
+                    nextEntry.getEdge().setLeftFace(newFace);
                 }
                 nextIndex++;
             }
             faceIter.add(new KSlimFace.BorderEntry(newEdge, true));
             newBorder.add(new KSlimFace.BorderEntry(newEdge, false));
-            newEdge.leftFace = newFace;
-            newEdge.rightFace = face;
-            newFace.borders.add(newBorder);
+            newEdge.setLeftFace(newFace);
+            newEdge.setRightFace(face);
+            newFace.getBorders().add(newBorder);
             return newFace;
         }
     }
@@ -398,13 +398,13 @@ public class RefiningCompacter extends AbstractAlgorithm implements ICompacter {
      */
     private ListIterator<KSlimFace.BorderEntry> getIteratorFor(final KSlimFace face,
             final KSlimNode node, final KSlimNode.Side side) {
-        for (List<KSlimFace.BorderEntry> border : face.borders) {
+        for (List<KSlimFace.BorderEntry> border : face.getBorders()) {
             ListIterator<KSlimFace.BorderEntry> entryIter = border.listIterator();
             while (entryIter.hasNext()) {
                 KSlimFace.BorderEntry nextEntry = entryIter.next();
-                if (nextEntry.forward && nextEntry.edge.target.id == node.id
-                        && nextEntry.edge.targetSide == side || !nextEntry.forward
-                        && nextEntry.edge.source.id == node.id && nextEntry.edge.sourceSide == side) {
+                if (nextEntry.isForward() && nextEntry.getEdge().getTarget().getId() == node.getId()
+                        && nextEntry.getEdge().getTargetSide() == side || !nextEntry.isForward()
+                        && nextEntry.getEdge().getSource().getId() == node.getId() && nextEntry.getEdge().getSourceSide() == side) {
                     return entryIter;
                 }
             }
@@ -422,10 +422,10 @@ public class RefiningCompacter extends AbstractAlgorithm implements ICompacter {
      * @return true if the corresponding face contains the node
      */
     private boolean containsNode(final KSlimEdge edge, final boolean forward, final KSlimNode node) {
-        KSlimFace face = forward ? edge.rightFace : edge.leftFace;
-        for (List<KSlimFace.BorderEntry> border : face.borders) {
+        KSlimFace face = forward ? edge.getRightFace() : edge.getLeftFace();
+        for (List<KSlimFace.BorderEntry> border : face.getBorders()) {
             for (KSlimFace.BorderEntry borderEntry : border) {
-                if (borderEntry.edge.source.id == node.id || borderEntry.edge.target.id == node.id) {
+                if (borderEntry.getEdge().getSource().getId() == node.getId() || borderEntry.getEdge().getTarget().getId() == node.getId()) {
                     return true;
                 }
             }
@@ -440,40 +440,40 @@ public class RefiningCompacter extends AbstractAlgorithm implements ICompacter {
      * @return the old external face of the graph
      */
     private KSlimFace buildExternalFrame(final KSlimGraph graph) {
-        KSlimFace oldExternal = graph.externalFace;
+        KSlimFace oldExternal = graph.getExternalFace();
         KSlimFace newExternal = new KSlimFace(graph, false);
         List<KSlimFace.BorderEntry> newBorder = new LinkedList<KSlimFace.BorderEntry>();
-        newExternal.borders.add(newBorder);
-        graph.externalFace = newExternal;
-        graph.faces.add(oldExternal);
+        newExternal.getBorders().add(newBorder);
+        graph.setExternalFace(newExternal);
+        graph.getFaces().add(oldExternal);
         KSlimNode neNode = new TSMNode(graph, TSMNode.Type.REFINEMENT);
         KSlimNode seNode = new TSMNode(graph, TSMNode.Type.REFINEMENT);
         KSlimNode swNode = new TSMNode(graph, TSMNode.Type.REFINEMENT);
         KSlimNode nwNode = new TSMNode(graph, TSMNode.Type.REFINEMENT);
         northFrame = new TSMEdge(graph, nwNode, neNode);
         northFrame.connectNodes();
-        northFrame.leftFace = newExternal;
-        northFrame.rightFace = oldExternal;
-        northFrame.sourceSide = KSlimNode.Side.EAST;
-        northFrame.targetSide = KSlimNode.Side.WEST;
+        northFrame.setLeftFace(newExternal);
+        northFrame.setRightFace(oldExternal);
+        northFrame.setSourceSide(KSlimNode.Side.EAST);
+        northFrame.setTargetSide(KSlimNode.Side.WEST);
         eastFrame = new TSMEdge(graph, neNode, seNode);
         eastFrame.connectNodes();
-        eastFrame.leftFace = newExternal;
-        eastFrame.rightFace = oldExternal;
-        eastFrame.sourceSide = KSlimNode.Side.SOUTH;
-        eastFrame.targetSide = KSlimNode.Side.NORTH;
+        eastFrame.setLeftFace(newExternal);
+        eastFrame.setRightFace(oldExternal);
+        eastFrame.setSourceSide(KSlimNode.Side.SOUTH);
+        eastFrame.setTargetSide(KSlimNode.Side.NORTH);
         southFrame = new TSMEdge(graph, seNode, swNode);
         southFrame.connectNodes();
-        southFrame.leftFace = newExternal;
-        southFrame.rightFace = oldExternal;
-        southFrame.sourceSide = KSlimNode.Side.WEST;
-        southFrame.targetSide = KSlimNode.Side.EAST;
+        southFrame.setLeftFace(newExternal);
+        southFrame.setRightFace(oldExternal);
+        southFrame.setSourceSide(KSlimNode.Side.WEST);
+        southFrame.setTargetSide(KSlimNode.Side.EAST);
         westFrame = new TSMEdge(graph, swNode, nwNode);
         westFrame.connectNodes();
-        westFrame.leftFace = newExternal;
-        westFrame.rightFace = oldExternal;
-        westFrame.sourceSide = KSlimNode.Side.NORTH;
-        westFrame.targetSide = KSlimNode.Side.SOUTH;
+        westFrame.setLeftFace(newExternal);
+        westFrame.setRightFace(oldExternal);
+        westFrame.setSourceSide(KSlimNode.Side.NORTH);
+        westFrame.setTargetSide(KSlimNode.Side.SOUTH);
         newBorder.add(new KSlimFace.BorderEntry(westFrame, false));
         newBorder.add(new KSlimFace.BorderEntry(southFrame, false));
         newBorder.add(new KSlimFace.BorderEntry(eastFrame, false));

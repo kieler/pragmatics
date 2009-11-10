@@ -60,16 +60,16 @@ public class BiconnectedComponents extends AbstractAlgorithm {
      */
     public List<KGraphSection> findComponents(final KSlimGraph graph) {
         // initialize DFS variables
-        int graphSize = graph.nodes.size();
+        int graphSize = graph.getNodes().size();
         lowpt = new int[graphSize];
         parent = new KSlimNode[graphSize];
-        for (KSlimNode node : graph.nodes) {
-            node.rank = -1;
+        for (KSlimNode node : graph.getNodes()) {
+            node.setRank(-1);
         }
 
         // perform DFS on all nodes of the graph
-        for (KSlimNode node : graph.nodes) {
-            if (node.rank < 0) {
+        for (KSlimNode node : graph.getNodes()) {
+            if (node.getRank() < 0) {
                 dfsVisit(node);
             }
         }
@@ -83,27 +83,27 @@ public class BiconnectedComponents extends AbstractAlgorithm {
      * @param node node to visit
      */
     private void dfsVisit(final KSlimNode node) {
-        node.rank = nextDfsnum++;
-        lowpt[node.id] = node.rank;
+        node.setRank(nextDfsnum++);
+        lowpt[node.getId()] = node.getRank();
         unfinished.push(node);
-        for (KSlimNode.IncEntry edgeEntry : node.incidence) {
+        for (KSlimNode.IncEntry edgeEntry : node.getIncidence()) {
             KSlimNode endpoint = edgeEntry.endpoint();
-            if (endpoint.rank < 0) {
-                parent[endpoint.id] = node;
+            if (endpoint.getRank() < 0) {
+                parent[endpoint.getId()] = node;
                 dfsVisit(endpoint);
-                lowpt[node.id] = Math.min(lowpt[node.id], lowpt[endpoint.id]);
+                lowpt[node.getId()] = Math.min(lowpt[node.getId()], lowpt[endpoint.getId()]);
             } else {
-                lowpt[node.id] = Math.min(lowpt[node.id], endpoint.rank);
+                lowpt[node.getId()] = Math.min(lowpt[node.getId()], endpoint.getRank());
             }
         }
-        if (node.rank >= 2 && lowpt[node.id] == parent[node.id].rank) {
+        if (node.getRank() >= 2 && lowpt[node.getId()] == parent[node.getId()].getRank()) {
             KGraphSection graphSection = new KGraphSection();
             KSlimNode sectionNode;
             do {
                 sectionNode = unfinished.pop();
-                graphSection.nodes.add(sectionNode);
+                graphSection.getNodes().add(sectionNode);
             } while (sectionNode != node);
-            graphSection.nodes.add(parent[node.id]);
+            graphSection.getNodes().add(parent[node.getId()]);
             graphSection.sortNodes();
             components.add(graphSection);
         }

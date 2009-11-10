@@ -39,16 +39,15 @@ public class KSlimEdge extends KSlimGraphElement {
         }
 
         /** the type of edge bend. */
-        public Type type;
+        private final Type type;
         /** the x coordinate position. */
-        public float xpos;
+        private float xpos;
         /** the y coordinate position. */
-        public float ypos;
+        private float ypos;
         /** the index of this bend. */
-        public int index;
-
+        private final int index;
         /** the edge associated with this bend. */
-        private KSlimEdge edge;
+        private final KSlimEdge edge;
 
         /**
          * Creates an edge bend of given type.
@@ -59,7 +58,59 @@ public class KSlimEdge extends KSlimGraphElement {
         public Bend(final KSlimEdge theedge, final Type thetype) {
             this.edge = theedge;
             this.type = thetype;
-            index = theedge.bends.size();
+            this.index = theedge.getBends().size();
+        }
+
+        /**
+         * Returns the bend type.
+         * 
+         * @return the type
+         */
+        public Type getType() {
+            return type;
+        }
+
+        /**
+         * Sets the x position.
+         * 
+         * @param thexpos the x position to set
+         */
+        public void setXpos(final float thexpos) {
+            this.xpos = thexpos;
+        }
+
+        /**
+         * Returns the x position.
+         * 
+         * @return the x position
+         */
+        public float getXpos() {
+            return xpos;
+        }
+
+        /**
+         * @param theypos the ypos to set
+         */
+        public void setYpos(final float theypos) {
+            this.ypos = theypos;
+        }
+
+        /**
+         * Returns the y position.
+         * 
+         * @return the y position
+         */
+        public float getYpos() {
+            return ypos;
+        }
+
+        /**
+         * Returns the index.
+         * 
+         * @return the index
+         */
+        public int getIndex() {
+            return index;
         }
 
         /**
@@ -76,24 +127,24 @@ public class KSlimEdge extends KSlimGraphElement {
          */
         @Override
         public String toString() {
-            return type.toString();
+            return getType().toString();
         }
     }
 
     /** source node. */
-    public KSlimNode source;
+    private KSlimNode source;
     /** target node. */
-    public KSlimNode target;
+    private KSlimNode target;
     /** left face. */
-    public KSlimFace leftFace;
+    private KSlimFace leftFace;
     /** right face. */
-    public KSlimFace rightFace;
+    private KSlimFace rightFace;
     /** the bends of this edge. */
-    public final List<Bend> bends = new LinkedList<Bend>();
+    private final List<Bend> bends = new LinkedList<Bend>();
     /** the side on which the edge leaves the source. */
-    public KSlimNode.Side sourceSide = KSlimNode.Side.UNDEFINED;
+    private KSlimNode.Side sourceSide = KSlimNode.Side.UNDEFINED;
     /** the side on which the edge reaches the target. */
-    public KSlimNode.Side targetSide = KSlimNode.Side.UNDEFINED;
+    private KSlimNode.Side targetSide = KSlimNode.Side.UNDEFINED;
 
     /**
      * Creates an edge connecting two existing nodes.
@@ -104,8 +155,8 @@ public class KSlimEdge extends KSlimGraphElement {
      */
     public KSlimEdge(final KSlimGraph graph, final KSlimNode thesource,
             final KSlimNode thetarget) {
-        graph.edges.add(this);
-        this.id = graph.nextEdgeId++;
+        graph.getEdges().add(this);
+        this.setId(graph.nextEdgeId());
         this.source = thesource;
         this.target = thetarget;
     }
@@ -122,7 +173,7 @@ public class KSlimEdge extends KSlimGraphElement {
     public KSlimEdge(final KSlimGraph graph, final KSlimNode thesource,
             final KSlimNode thetarget, final Object theobj) {
         this(graph, thesource, thetarget);
-        this.object = theobj;
+        this.setObject(theobj);
     }
 
     /**
@@ -130,8 +181,8 @@ public class KSlimEdge extends KSlimGraphElement {
      * created for the incidence lists of the source and the target.
      */
     public void connectNodes() {
-        source.incidence.add(new KSlimNode.IncEntry(this, KSlimNode.IncEntry.Type.OUT));
-        target.incidence.add(new KSlimNode.IncEntry(this, KSlimNode.IncEntry.Type.IN));
+        getSource().getIncidence().add(new KSlimNode.IncEntry(this, KSlimNode.IncEntry.Type.OUT));
+        getTarget().getIncidence().add(new KSlimNode.IncEntry(this, KSlimNode.IncEntry.Type.IN));
     }
 
     /**
@@ -147,12 +198,15 @@ public class KSlimEdge extends KSlimGraphElement {
     public void connectNodes(final int sourceRank, final int targetRank,
             final boolean forwardSelfLoop) {
         int thetargetRank = targetRank;
-        if (source.id == target.id && (sourceRank < targetRank || (sourceRank == targetRank
+        if (getSource().getId() == getTarget().getId()
+                && (sourceRank < targetRank || (sourceRank == targetRank
                 && forwardSelfLoop))) {
             thetargetRank++;
         }
-        source.incidence.add(sourceRank, new KSlimNode.IncEntry(this, KSlimNode.IncEntry.Type.OUT));
-        target.incidence.add(thetargetRank, new KSlimNode.IncEntry(this, KSlimNode.IncEntry.Type.IN));
+        getSource().getIncidence().add(sourceRank, new KSlimNode.IncEntry(this,
+                KSlimNode.IncEntry.Type.OUT));
+        getTarget().getIncidence().add(thetargetRank, new KSlimNode.IncEntry(this,
+                KSlimNode.IncEntry.Type.IN));
     }
 
     /**
@@ -164,24 +218,24 @@ public class KSlimEdge extends KSlimGraphElement {
      */
     public void connectNodes(final KSlimNode.Side thesourceSide,
             final KSlimNode.Side thetargetSide) {
-        this.sourceSide = thesourceSide;
-        this.targetSide = thetargetSide;
-        ListIterator<KSlimNode.IncEntry> incIter = source.incidence.listIterator();
+        this.setSourceSide(thesourceSide);
+        this.setTargetSide(thetargetSide);
+        ListIterator<KSlimNode.IncEntry> incIter = getSource().getIncidence().listIterator();
         while (incIter.hasNext()) {
             KSlimNode.IncEntry nextEntry = incIter.next();
-            KSlimNode.Side side = (nextEntry.type == KSlimNode.IncEntry.Type.OUT
-                    ? nextEntry.edge.sourceSide : nextEntry.edge.targetSide);
+            KSlimNode.Side side = (nextEntry.getType() == KSlimNode.IncEntry.Type.OUT
+                    ? nextEntry.getEdge().getSourceSide() : nextEntry.getEdge().getTargetSide());
             if (thesourceSide.compareTo(side) <= 0) {
                 incIter.previous();
                 break;
             }
         }
         incIter.add(new KSlimNode.IncEntry(this, KSlimNode.IncEntry.Type.OUT));
-        incIter = target.incidence.listIterator();
+        incIter = getTarget().getIncidence().listIterator();
         while (incIter.hasNext()) {
             KSlimNode.IncEntry nextEntry = incIter.next();
-            KSlimNode.Side side = (nextEntry.type == KSlimNode.IncEntry.Type.OUT
-                    ? nextEntry.edge.sourceSide : nextEntry.edge.targetSide);
+            KSlimNode.Side side = (nextEntry.getType() == KSlimNode.IncEntry.Type.OUT
+                    ? nextEntry.getEdge().getSourceSide() : nextEntry.getEdge().getTargetSide());
             if (thetargetSide.compareTo(side) <= 0) {
                 incIter.previous();
                 break;
@@ -196,11 +250,128 @@ public class KSlimEdge extends KSlimGraphElement {
     @Override
     public String toString() {
         String baseString = super.toString();
-        if (source != null && target != null) {
-            return baseString + " " + source.id + ">" + target.id;
+        if (getSource() != null && getTarget() != null) {
+            return baseString + " " + getSource().getId() + ">" + getTarget().getId();
         } else {
             return baseString;
         }
+    }
+
+    /**
+     * Sets the source.
+     *
+     * @param thesource the source to set
+     */
+    public void setSource(final KSlimNode thesource) {
+        this.source = thesource;
+    }
+
+    /**
+     * Returns the source.
+     *
+     * @return the source
+     */
+    public KSlimNode getSource() {
+        return source;
+    }
+
+    /**
+     * Sets the target.
+     *
+     * @param thetarget the target to set
+     */
+    public void setTarget(final KSlimNode thetarget) {
+        this.target = thetarget;
+    }
+
+    /**
+     * Returns the target.
+     *
+     * @return the target
+     */
+    public KSlimNode getTarget() {
+        return target;
+    }
+
+    /**
+     * Sets the leftFace.
+     *
+     * @param theleftFace the leftFace to set
+     */
+    public void setLeftFace(final KSlimFace theleftFace) {
+        this.leftFace = theleftFace;
+    }
+
+    /**
+     * Returns the left face.
+     *
+     * @return the left face
+     */
+    public KSlimFace getLeftFace() {
+        return leftFace;
+    }
+
+    /**
+     * Sets the right face.
+     *
+     * @param therightFace the right face to set
+     */
+    public void setRightFace(final KSlimFace therightFace) {
+        this.rightFace = therightFace;
+    }
+
+    /**
+     * Returns the rightFace.
+     *
+     * @return the rightFace
+     */
+    public KSlimFace getRightFace() {
+        return rightFace;
+    }
+
+    /**
+     * Returns the bends.
+     *
+     * @return the bends
+     */
+    public List<Bend> getBends() {
+        return bends;
+    }
+
+    /**
+     * Sets the source side.
+     *
+     * @param thesourceSide the source side to set
+     */
+    public void setSourceSide(final KSlimNode.Side thesourceSide) {
+        this.sourceSide = thesourceSide;
+    }
+
+    /**
+     * Returns the source side.
+     *
+     * @return the source side
+     */
+    public KSlimNode.Side getSourceSide() {
+        return sourceSide;
+    }
+
+    /**
+     * Sets the target side.
+     *
+     * @param thetargetSide the target side to set
+     */
+    public void setTargetSide(final KSlimNode.Side thetargetSide) {
+        this.targetSide = thetargetSide;
+    }
+
+    /**
+     * Returns the target side.
+     *
+     * @return the target side
+     */
+    public KSlimNode.Side getTargetSide() {
+        return targetSide;
     }
 
 }

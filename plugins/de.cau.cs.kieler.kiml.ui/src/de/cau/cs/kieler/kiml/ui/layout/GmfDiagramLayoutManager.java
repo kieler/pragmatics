@@ -147,7 +147,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      */
     protected KNode buildLayoutGraph(final IEditorPart editorPart, final EditPart editPart,
             final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Build layout graph", 10);
+        progressMonitor.begin("Build layout graph", 1);
         node2EditPartMap.clear();
         edge2EditPartMap.clear();
         port2EditPartMap.clear();
@@ -201,7 +201,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      * {@inheritDoc}
      */
     protected void applyLayout(final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Apply layout to the diagram", 10);
+        progressMonitor.begin("Apply layout to the diagram", 2);
 
         // get a command stack to execute the command
         CommandStack commandStack = null;
@@ -233,7 +233,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         // retrieve a command for the request; the command is created by
         // GmfLayoutEditPolicy
         Command applyLayoutCommand = diagramEditPart.getCommand(applyLayoutRequest);
-        progressMonitor.worked(4);
+        progressMonitor.worked(1);
         // execute the command
         commandStack.execute(applyLayoutCommand);
 
@@ -447,11 +447,11 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 }
                 if (text != null) {
                     KNode parent = editPart2NodeMap.get(graphicalEditPart.getParent());
-                    KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(parent);
                     KLabel label = parent.getLabel();
                     label.setText(text);
-                    Rectangle labelBounds = labelFigure.getBounds();
                     KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
+//                  KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(parent);
+//                  Rectangle labelBounds = labelFigure.getBounds();
 //                    int xpos = labelBounds.x, ypos = labelBounds.y;
 //                    if (!KimlUiUtil.isRelative(parentFigure, labelFigure)) {
 //                        xpos -= parentLayout.getXpos();

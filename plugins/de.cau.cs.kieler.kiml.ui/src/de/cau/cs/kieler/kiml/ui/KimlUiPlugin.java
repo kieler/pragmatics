@@ -37,17 +37,17 @@ public class KimlUiPlugin extends AbstractUIPlugin {
     public static class Images {
 
         /** image for choice property. */
-        public Image propChoice;
+        private final Image propChoice;
         /** image for false boolean property. */
-        public Image propFalse;
+        private final Image propFalse;
         /** image for float property. */
-        public Image propFloat;
+        private final Image propFloat;
         /** image for integer property. */
-        public Image propInt;
+        private final Image propInt;
         /** image for text property. */
-        public Image propText;
+        private final Image propText;
         /** image for true boolean property. */
-        public Image propTrue;
+        private final Image propTrue;
 
         /**
          * Loads all images for the KIML UI plugin.
@@ -65,12 +65,66 @@ public class KimlUiPlugin extends AbstractUIPlugin {
          * Frees all resources used by loaded images.
          */
         void dispose() {
-            propChoice.dispose();
-            propFalse.dispose();
-            propFloat.dispose();
-            propInt.dispose();
-            propText.dispose();
-            propTrue.dispose();
+            getPropChoice().dispose();
+            getPropFalse().dispose();
+            getPropFloat().dispose();
+            getPropInt().dispose();
+            getPropText().dispose();
+            getPropTrue().dispose();
+        }
+
+        /**
+         * Returns the image for choice properties.
+         *
+         * @return the propChoice
+         */
+        public Image getPropChoice() {
+            return propChoice;
+        }
+
+        /**
+         * Returns the image for false boolean properties.
+         *
+         * @return the propFalse
+         */
+        public Image getPropFalse() {
+            return propFalse;
+        }
+
+        /**
+         * Returns the image for float properties.
+         *
+         * @return the propFloat
+         */
+        public Image getPropFloat() {
+            return propFloat;
+        }
+
+        /**
+         * Returns the image for integer properties.
+         *
+         * @return the propInt
+         */
+        public Image getPropInt() {
+            return propInt;
+        }
+
+        /**
+         * Returns the image for text properties.
+         *
+         * @return the propText
+         */
+        public Image getPropText() {
+            return propText;
+        }
+
+        /**
+         * Returns the image for true boolean properties.
+         *
+         * @return the propTrue
+         */
+        public Image getPropTrue() {
+            return propTrue;
         }
 
     }

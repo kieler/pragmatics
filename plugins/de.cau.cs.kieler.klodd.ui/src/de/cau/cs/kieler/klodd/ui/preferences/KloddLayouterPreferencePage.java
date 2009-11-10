@@ -39,6 +39,11 @@ import de.cau.cs.kieler.klodd.ui.Messages;
 public class KloddLayouterPreferencePage extends FieldEditorPreferencePage implements
         IWorkbenchPreferencePage {
 
+    /** maximal number of crossing reduction iterations. */
+    private static final int MAX_CROSSRED = 999;
+    /** maximal number of characters in the crossing reduction iterations text. */
+    private static final int MAX_CROSSRED_CHAR = 3;
+    
     /**
      * Creates the preference page.
      */
@@ -95,8 +100,9 @@ public class KloddLayouterPreferencePage extends FieldEditorPreferencePage imple
         Composite crossRedPassesParent = new Composite(hieraGroup, SWT.NONE);
         IntegerFieldEditor crossRedPassesEditor = new IntegerFieldEditor(
                 HierarchicalDataflowLayoutProvider.PREF_CROSSRED_PASSES, Messages
-                        .getString("klodd.ui.11"), crossRedPassesParent, 3); //$NON-NLS-1$
-        crossRedPassesEditor.setValidRange(1, 999);
+                        .getString("klodd.ui.11"), crossRedPassesParent, //$NON-NLS-1$
+                        MAX_CROSSRED_CHAR);
+        crossRedPassesEditor.setValidRange(1, MAX_CROSSRED);
         crossRedPassesParent.setLayout(new GridLayout(2, false));
         crossRedPassesParent.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
         addField(crossRedPassesEditor);
