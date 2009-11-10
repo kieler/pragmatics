@@ -58,10 +58,10 @@ public class LustreGenerator extends AbstractHandler implements IHandler {
     private  URI uri = null;
     
     
-    private String part2Location(final IEditorPart editor) {
+    private String part2Location(final IEditorPart ed) {
         String out = null;
 
-        FileEditorInput u = (FileEditorInput) editor.getEditorInput();
+        FileEditorInput u = (FileEditorInput) ed.getEditorInput();
         String outName = u.getName();
         out = u.getURI().getRawPath().replace(outName, "");
 
@@ -86,8 +86,9 @@ public class LustreGenerator extends AbstractHandler implements IHandler {
 
     }
     
-    
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public Object execute(final ExecutionEvent event) throws ExecutionException {
       
         initialize();
