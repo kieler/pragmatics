@@ -632,9 +632,9 @@ public class GraphvizLayouter {
                     try {
                         StringTokenizer tokenizer = new StringTokenizer(labelPos, ATTRIBUTE_DELIM);
                         float xpos = Float.parseFloat(tokenizer.nextToken()) - combinedWidth / 2
-                                + offset;
+                                + edgeOffsetx;
                         float ypos = Float.parseFloat(tokenizer.nextToken()) - combinedHeight / 2
-                                + offset;
+                                + edgeOffsety;
                         for (KLabel label : kedge.getLabels()) {
                             KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
                             labelLayout.setXpos(xpos);
