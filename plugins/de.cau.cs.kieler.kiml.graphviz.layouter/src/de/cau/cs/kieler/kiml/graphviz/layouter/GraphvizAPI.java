@@ -160,11 +160,9 @@ public final class GraphvizAPI {
     /**
      * Starts a new Graphviz process with the given command.
      * 
-     * @param command
-     *            the graphviz command to use
+     * @param command the graphviz command to use
      * @return an instance of the graphviz process
-     * @throws KielerException
-     *             if creating the process fails
+     * @throws KielerException if creating the process fails
      */
     public static Process startProcess(final String command) throws KielerException {
         IPreferenceStore preferenceStore = GraphvizLayouterPlugin.getDefault().getPreferenceStore();
@@ -182,15 +180,13 @@ public final class GraphvizAPI {
                 PreferenceDialog preferenceDialog = PreferencesUtil.createPreferenceDialogOn(null,
                         GraphvizPreferencePage.ID, null, null);
                 preferenceDialog.open();
-                // fetch the executable string again after the user has entered
-                // a new path
+                // fetch the executable string again after the user has entered a new path
                 dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
             }
         }
 
         try {
-            Process process = Runtime.getRuntime()
-                    .exec(
+            Process process = Runtime.getRuntime().exec(
                             new String[] {dotExecutable, ARG_NOWARNINGS, ARG_INVERTYAXIS,
                                     ARG_COMMAND + command});
             return process;
@@ -248,7 +244,11 @@ public final class GraphvizAPI {
                 // read the error stream anyway - if error stream is not empty,
                 // process may not terminate
                 while (errorStream.available() > 0) {
-                    errorStream.read();
+                    if (GraphvizLayouter.ENABLE_DEBUG) {
+                        System.err.print(errorStream.read());
+                    } else {
+                        errorStream.read();
+                    }
                 }
             }
         } catch (IOException exception) {

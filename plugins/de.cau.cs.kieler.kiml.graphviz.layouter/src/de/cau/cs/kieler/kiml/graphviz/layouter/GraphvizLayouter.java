@@ -99,9 +99,9 @@ public class GraphvizLayouter {
     public static final String CIRCO_COMMAND = "circo";
     /** default value for minimal spacing. */
     public static final float DEF_MIN_SPACING = 16.0f;
-
     /** if true, debug output is enabled, which writes dot files to the home folder. */
-    private static final boolean ENABLE_DEBUG = false;
+    public static final boolean ENABLE_DEBUG = false;
+    
     /** dots per inch specification, needed by Graphviz for some values. */
     private static final float DPI = 72.0f;
     /** set of delimiters used to parse attribute values. */
@@ -543,6 +543,7 @@ public class GraphvizLayouter {
     private void retrieveLayoutResult(final KNode parentNode, final GraphvizModel graphvizModel) {
         Graph graph = graphvizModel.getGraphs().get(0);
         Point boundingBox = null;
+        float edgeOffsetx = offset, edgeOffsety = offset;
         for (Statement statement : graph.getStatements()) {
 
             if (statement instanceof NodeStatement) {
@@ -585,9 +586,12 @@ public class GraphvizLayouter {
                 String posString = attributeMap.get(GraphvizAPI.ATTR_POS);
                 ArrayList<Float> posList = new ArrayList<Float>();
                 StringTokenizer posTokenizer = new StringTokenizer(posString, ATTRIBUTE_DELIM);
+                boolean isXcoord = true;
                 while (posTokenizer.hasMoreTokens()) {
                     try {
-                        float pos = Float.parseFloat(posTokenizer.nextToken()) + offset;
+                        float pos = Float.parseFloat(posTokenizer.nextToken())
+                                + (isXcoord ? edgeOffsetx : edgeOffsety);
+                        isXcoord = !isXcoord;
                         posList.add(Float.valueOf(pos));
                     } catch (NumberFormatException exception) {
                     }
@@ -657,6 +661,10 @@ public class GraphvizLayouter {
                                 float rightx = Float.parseFloat(tokenizer.nextToken());
                                 float topy = Float.parseFloat(tokenizer.nextToken());
                                 boundingBox = new Point(rightx - leftx, bottomy - topy);
+                                // on some platforms the edges have an offset, but the nodes don't
+                                //  -- maybe a Graphviz bug?
+                                edgeOffsetx -= leftx;
+                                edgeOffsety -= topy;
                             } catch (NumberFormatException exception) {
                                 // ignore exception
                             }
