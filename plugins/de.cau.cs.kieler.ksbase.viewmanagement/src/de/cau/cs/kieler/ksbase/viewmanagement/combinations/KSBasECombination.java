@@ -54,6 +54,8 @@ public class KSBasECombination extends ACombination {
      * Creates a new KSBasECombination.
      */
     public KSBasECombination() {
+        setActive(true);
+        initialize();
     }
 
     /**
@@ -80,7 +82,9 @@ public class KSBasECombination extends ACombination {
 
         for (int prio : KSBasECombination.effects.keySet()) {
             for (String effectName : KSBasECombination.effects.get(prio)) {
-                AEffect effect = RunLogic.getInstance().getEffect(effectName.toLowerCase(Locale.getDefault()));
+                AEffect effect =
+                        RunLogic.getInstance().getEffect(
+                                effectName.toLowerCase(Locale.getDefault()));
                 if (effect != null) { // Set effect target and parameter
                     effect.setTarget(getEditPart(affectedObject));
                     effect.setParameters(parameter); // Execute effect
@@ -225,12 +229,14 @@ public class KSBasECombination extends ACombination {
             // two defaults: layout & zoom:
             LinkedList<String> list = new LinkedList<String>();
             AEffect layoutEffect =
-                    RunLogic.getInstance().getEffect("de.cau.cs.kieler.viewmanagement.effects.layouteffect");
+                    RunLogic.getInstance().getEffect(
+                            "de.cau.cs.kieler.viewmanagement.effects.layouteffect");
             if (layoutEffect != null) {
                 list.add(layoutEffect.getClass().getCanonicalName());
             }
             AEffect zoomEffect =
-                    RunLogic.getInstance().getEffect("de.cau.cs.kieler.viewmanagement.effects.zoomeffect");
+                    RunLogic.getInstance().getEffect(
+                            "de.cau.cs.kieler.viewmanagement.effects.zoomeffect");
             if (zoomEffect != null) {
                 list.add(zoomEffect.getClass().getCanonicalName());
             }
