@@ -82,11 +82,11 @@ public class PostTransformationPreferencePage extends PreferencePage
         container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         // Check if VM is initialized
-        if (!RunLogic.getInstance().getRunlogicState()) {
+        if (!RunLogic.getInstance().getState()) {
 
             RunLogic.getInstance().registerListeners();
         }
-        for (String effect : RunLogic.getEffects()) {
+        for (String effect : RunLogic.getEffectsAsText()) {
             boolean active = false;
             int effectPrio = 0;
             HashMap<Integer, LinkedList<String>> effects = KSBasECombination.getEffects();
