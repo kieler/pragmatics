@@ -86,7 +86,7 @@ public class PostTransformationPreferencePage extends PreferencePage
 
             RunLogic.getInstance().registerListeners();
         }
-        for (String effect : RunLogic.getEffectsAsText()) {
+        for (String effect : RunLogic.getInstance().getEffectsAsText()) {
             boolean active = false;
             int effectPrio = 0;
             HashMap<Integer, LinkedList<String>> effects = KSBasECombination.getEffects();
