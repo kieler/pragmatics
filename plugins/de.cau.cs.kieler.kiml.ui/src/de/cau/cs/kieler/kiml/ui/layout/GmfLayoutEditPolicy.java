@@ -31,6 +31,7 @@ import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editpolicies.AbstractEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.commands.ICommandProxy;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramRootEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
@@ -235,6 +236,14 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      */
     private void addEdgeLabelLayout(final GmfLayoutCommand command, final KLabel klabel,
             final LabelEditPart labelEditPart) {
+        // get zoom level for offset compensation
+        double zoomLevel = 1.0;
+        if (labelEditPart.getRoot() instanceof DiagramRootEditPart) {
+            zoomLevel = ((DiagramRootEditPart)labelEditPart.getRoot())
+                    .getZoomManager().getZoom();
+        }
+
+        // calculate direct new location of the label
         KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(klabel);
         ConnectionEditPart connectionEditPart = (ConnectionEditPart)labelEditPart.getParent();
         IFigure sourceFigure = ((GraphicalEditPart)connectionEditPart.getSource())
@@ -242,6 +251,10 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         Point newLocation = new Point(labelLayout.getXpos(),
                 labelLayout.getYpos());
         sourceFigure.translateToAbsolute(newLocation);
+        newLocation.scale(1 / zoomLevel);
+        Rectangle targetBounds = labelEditPart.getFigure().getBounds();
+        targetBounds.x = newLocation.x;
+        targetBounds.y = newLocation.y;
 
         // get new bend points for the parent edge
         KEdge kedge = (KEdge)klabel.getParent();
@@ -251,9 +264,11 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         for (int i = 0; i < bendPoints.size(); i++) {
             Point point = bendPoints.getPoint(i);
             sourceFigure.translateToAbsolute(point);
+            point.scale(1 / zoomLevel);
             absoluteBendPoints.addPoint(point);
         }
-        // get the referencePoint for the label in the future
+        
+        // get the referencePoint for the label
         int fromEnd;
         switch (labelEditPart.getKeyPoint()) {
         case ConnectionLocator.SOURCE:
@@ -268,17 +283,14 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         }
         Point refPoint = PointListUtilities.calculatePointRelativeToLine(
                 absoluteBendPoints, 0, fromEnd, true);
-        IFigure labelFigure = labelEditPart.getFigure();
-        // get the future bounds of the label
-        Rectangle targetBounds = labelFigure.getBounds();
-        targetBounds.x = newLocation.x;
-        targetBounds.y = newLocation.y;
+        
         // get the new relative location
-        Point normalPoint = offsetFromRelativeCoordinate(labelFigure,
-                        targetBounds, absoluteBendPoints, refPoint);
-        command.addShapeLayout((View)labelEditPart.getModel(),
-                normalPoint, null);
-        labelFigure.invalidate();
+        Point normalPoint = offsetFromRelativeCoordinate(targetBounds,
+                absoluteBendPoints, refPoint);
+        command.addShapeLayout((View)labelEditPart.getModel(), normalPoint, null);
+        
+        // invalidate the figure to be sure that it is redrawn
+        labelEditPart.getFigure().invalidate();
     }
     
     /**
@@ -310,7 +322,6 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      * Calculates the label offset from the reference point given the label bounds
      * and a points list.  
      * 
-     * @param label the {@code IFigure} to calculate the offset for
      * @param bounds the {@code Rectangle} that is the bounding box of the label
      * @param points the {@code PointList} that contains that the label offset is relative to
      * @param refPoint the {@code Point} that is the reference point that the offset
@@ -318,7 +329,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      * @return a {@code Point} which represents a value offset from the {@code refPoint}
      *     point oriented based on the nearest line segment
      */
-    public static Point offsetFromRelativeCoordinate(final IFigure label, final Rectangle bounds,
+    public static Point offsetFromRelativeCoordinate(final Rectangle bounds,
             final PointList points, final Point refPoint) {
         Rectangle rect = new Rectangle(bounds);
         // compensate for the fact that we are using the figure center
