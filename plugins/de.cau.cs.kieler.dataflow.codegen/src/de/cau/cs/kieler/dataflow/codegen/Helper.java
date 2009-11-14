@@ -22,7 +22,6 @@ import de.cau.cs.kieler.dataflow.Box;
 import de.cau.cs.kieler.dataflow.Connection;
 import de.cau.cs.kieler.dataflow.Port;
 
-
 /**
  * Helper functions for type and io inference of dataflow models.
  * 
@@ -51,10 +50,19 @@ public final class Helper {
     // String>();
     private static HashMap<Port, Connection> port2Con = new HashMap<Port, Connection>();
 
+    public static void reset() {
+        inputs.clear();
+        outputs.clear();
+        locals.clear();
+        inputNames.clear();
+        sources.clear();
+        targets.clear();
+        port2Con.clear();
+    }
+
     /**
-     * Generate unique name for all connections by mapping target or source name
-     * to it. For inter-level transitions, the outermost port wins, otherwise
-     * the source-port.
+     * Generate unique name for all connections by mapping target or source name to it. For
+     * inter-level transitions, the outermost port wins, otherwise the source-port.
      * 
      * @param box
      *            unnamed box
@@ -108,16 +116,21 @@ public final class Helper {
     }
 
     /**
-     * Determine unconnected input and output ports, these are handled as
-     * external io.
+     * Determine unconnected input and output ports, these are handled as external io.
      * 
      * @param box
      *            outermost box that represents the complete model
      */
     public static void initIO(final Box box) {
+        
         for (Connection c : box.getConnections()) {
             sources.add(c.getSourcePort());
             targets.add(c.getTargetPort());
+            if (inputNames.contains(c.getTargetPort().getName())) {
+                inputNames.remove(c.getTargetPort().getName());
+                inputs.remove(c.getTargetPort());
+                locals.add(c.getTargetPort());
+            }
         }
 
         for (Port p : box.getInputs()) {
@@ -144,8 +157,7 @@ public final class Helper {
     }
 
     /**
-     * Returns all global input ports. This function should only be called after
-     * initIO.
+     * Returns all global input ports. This function should only be called after initIO.
      * 
      * @return global inputs
      */
@@ -154,8 +166,7 @@ public final class Helper {
     }
 
     /**
-     * Returns all global output ports. This function should only be called
-     * after initIO.
+     * Returns all global output ports. This function should only be called after initIO.
      * 
      * @return global outputs
      */

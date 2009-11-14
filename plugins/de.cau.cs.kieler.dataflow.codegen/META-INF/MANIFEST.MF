@@ -26,3 +26,4 @@ Import-Package: de.cau.cs.kieler.dataflow,
  org.eclipse.ui.part
 Bundle-Vendor: Christian-Albrechts-University of Kiel
 Bundle-ClassPath: .
+Export-Package: de.cau.cs.kieler.dataflow.codegen

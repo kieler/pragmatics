@@ -28,6 +28,10 @@ import de.cau.cs.kieler.dataflow.Box;
 public class SignalMap {
     private HashMap<Box, HashSet<String>> signals = new HashMap<Box, HashSet<String>>();
 
+    public  void clear(){
+        signals.clear();
+    }
+    
     /**
      * @param box
      *            box for which the signals are retrieved

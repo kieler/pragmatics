@@ -50,14 +50,12 @@ import org.eclipse.gmf.runtime.notation.View;
  */
 public class LustreGenerator extends AbstractHandler implements IHandler {
 
-    
     private EObject myModel = null;
     private String outPath = null;
     private String uriString = null;
     private IEditorPart editor = null;
-    private  URI uri = null;
-    
-    
+    private URI uri = null;
+
     private String part2Location(final IEditorPart ed) {
         String out = null;
 
@@ -67,9 +65,10 @@ public class LustreGenerator extends AbstractHandler implements IHandler {
 
         return out;
     }
-    
-    
+
     private void initialize() {
+        TypeHelper.reset();
+        Helper.reset();
         IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
                 .getActivePage();
 
@@ -85,12 +84,17 @@ public class LustreGenerator extends AbstractHandler implements IHandler {
         }
 
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public Object execute(final ExecutionEvent event) throws ExecutionException {
-      
+        generateLus();
+        return null;
+    }
+
+    public String generateLus() {
+
         initialize();
         // EMF reader
         Reader emfReader = new Reader();
@@ -100,7 +104,6 @@ public class LustreGenerator extends AbstractHandler implements IHandler {
         // Meta model
         EmfMetaModel metaModel = new EmfMetaModel(DataflowPackage.eINSTANCE);
 
-        
         // Outlet
         Outlet outlet = new Outlet();
         outlet.setPath(outPath);
@@ -110,79 +113,34 @@ public class LustreGenerator extends AbstractHandler implements IHandler {
         generator.addMetaModel(metaModel);
         generator.addOutlet(outlet);
 
-        
-       /* IEditorPart ed = HandlerUtil.getActiveEditor(event);
+        generator.setExpand("template::Lustre::main FOR model");
 
-        IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                .getActivePage();
+        WorkflowContext wfx = new WorkflowContextDefaultImpl();
+        Issues issues = new org.eclipse.emf.mwe.core.issues.IssuesImpl();
+        NullProgressMonitor monitor = new NullProgressMonitor();
 
-        IEditorPart editor = activePage.getActiveEditor();
-        if (editor instanceof DataflowDiagramEditor) {
-            DataflowDiagramEditor diagramEditor = (DataflowDiagramEditor) editor;
+        Workflow workflow = new Workflow();
+        workflow.addComponent(emfReader);
+        workflow.addComponent(generator);
+        workflow.invoke(wfx, monitor, issues);
 
-            View notationElement = ((View) diagramEditor.getDiagramEditPart().getModel());
-            EObject myModel = (EObject) notationElement.getElement();
-            uri = myModel.eResource().getURI();
+        StringBuffer issue = new StringBuffer(generator.getLogMessage() + "\n");
+        for (MWEDiagnostic s : issues.getIssues()) {
+            issue.append(s + "\n");
+        }
+        for (MWEDiagnostic s : issues.getErrors()) {
+            issue.append(s + "\n");
+        }
+        for (MWEDiagnostic s : issues.getWarnings()) {
+            issue.append(s + "\n");
+        }
+        for (MWEDiagnostic s : issues.getInfos()) {
+            issue.append(s + "\n");
+        }
+        StatusManager.getManager().handle(
+                new Status(IStatus.WARNING, Activator.PLUGIN_ID, issue.toString(), null),
+                StatusManager.LOG);
 
-            
-            FileEditorInput uri = (FileEditorInput) ed.getEditorInput();
-            String model = "file:" + uri.getURI().getRawPath();
-            if (model.endsWith("_diagram")) {
-                model = model.substring(0, model.length() - "_diagram".length());
-            }
-            Map<String, String> properties = new HashMap<String, String>();
-
-            properties.put("model", model);
-            properties.put("src-gen", ".");
-
-            // Workflow
-            Workflow workflow = new Workflow();
-
-            // EMF reader
-            Reader emfReader = new Reader();
-            emfReader.setUri(model);
-            emfReader.setModelSlot("model");
-
-            // Meta model
-            EmfMetaModel metaModel = new EmfMetaModel(DataflowPackage.eINSTANCE);
-
-            // Outlet
-            Outlet outlet = new Outlet();
-            outlet.setPath(".");
-
-            // Generator
-            Generator generator = new Generator();
-            generator.addMetaModel(metaModel);
-            generator.addOutlet(outlet);*/
-
-            generator.setExpand("template::Lustre::main FOR model");
-
-            WorkflowContext wfx = new WorkflowContextDefaultImpl();
-            Issues issues = new org.eclipse.emf.mwe.core.issues.IssuesImpl();
-            NullProgressMonitor monitor = new NullProgressMonitor();
-
-            Workflow workflow = new Workflow();
-            workflow.addComponent(emfReader);
-            workflow.addComponent(generator);
-            workflow.invoke(wfx, monitor, issues);
-
-            StringBuffer issue = new StringBuffer(generator.getLogMessage() + "\n");
-            for (MWEDiagnostic s : issues.getIssues()) {
-                issue.append(s + "\n");
-            }
-            for (MWEDiagnostic s : issues.getErrors()) {
-                issue.append(s + "\n");
-            }
-            for (MWEDiagnostic s : issues.getWarnings()) {
-                issue.append(s + "\n");
-            }
-            for (MWEDiagnostic s : issues.getInfos()) {
-                issue.append(s + "\n");
-            }
-            StatusManager.getManager().handle(
-                    new Status(IStatus.WARNING, Activator.PLUGIN_ID, issue.toString(), null),
-                    StatusManager.LOG);
-        
-        return null;
+        return outPath;
     }
 }

@@ -8,7 +8,7 @@
 «FOREACH boxes AS box-»«box.init()-»«ENDFOREACH-»	
 «FOREACH boxes AS box-»«box.initIO()-»«ENDFOREACH-»	
 «FOREACH boxes AS box-»«box.inferTypes()-»«ENDFOREACH-»
-node «name» (
+node MAIN (
 «FOREACH getInputs() AS input-»
   «input.getName()»: «getType(input)»; 
 «ENDFOREACH-»
@@ -17,7 +17,7 @@ node «name» (
   «output.getName()»: «getType(output)»; 
 «ENDFOREACH-»
 );
-«IF this.boxes.first().hasLocals()-»
+«IF getLocals().size>0-»
 var
 «FOREACH getLocals() AS local-»
   «local.getName()»: «getType(local)»;  
