@@ -136,6 +136,13 @@
             name="Randomization Seed"
             type="int">
       </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            description="Optimize the layout for user interaction by considering previous layout"
+            id="de.cau.cs.kieler.layout.options.interactive"
+            name="Interactive"
+            type="boolean">
+      </layoutOption>
    </extension>
    <extension
          point="de.cau.cs.kieler.kiml.layout.layoutInfo">

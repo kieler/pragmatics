@@ -59,7 +59,7 @@
             parameter="neato"
             type="de.cau.cs.kieler.layout.types.force">
          <supportedDiagram
-               priority="9"
+               priority="7"
                type="de.cau.cs.kieler.layout.diagrams.general">
          </supportedDiagram>
          <supportedDiagram
@@ -77,6 +77,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.layout.options.randomSeed">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.interactive">
          </knownOption>
       </layoutProvider>
       <layoutProvider
@@ -106,6 +109,9 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.randomSeed">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.interactive">
+         </knownOption>
       </layoutProvider>
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.graphviz"
@@ -115,7 +121,7 @@
             parameter="twopi"
             type="de.cau.cs.kieler.layout.types.radial">
          <supportedDiagram
-               priority="8"
+               priority="6"
                type="de.cau.cs.kieler.layout.diagrams.general">
          </supportedDiagram>
          <knownOption
@@ -136,7 +142,7 @@
             parameter="circo"
             type="de.cau.cs.kieler.layout.types.circle">
          <supportedDiagram
-               priority="7"
+               priority="6"
                type="de.cau.cs.kieler.layout.diagrams.general">
          </supportedDiagram>
          <knownOption

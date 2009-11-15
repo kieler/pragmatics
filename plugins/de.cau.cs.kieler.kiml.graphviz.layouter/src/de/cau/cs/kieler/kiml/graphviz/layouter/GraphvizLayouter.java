@@ -50,7 +50,6 @@ import de.cau.cs.kieler.kiml.graphviz.dot.NodeStatement;
 import de.cau.cs.kieler.kiml.graphviz.dot.Statement;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KInsets;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
@@ -199,7 +198,7 @@ public class GraphvizLayouter {
         AttributeStatement graphAttrStatement = DotFactory.eINSTANCE.createAttributeStatement();
         graphAttrStatement.setType(AttributeType.GRAPH);
         AttributeList graphAttrs = DotFactory.eINSTANCE.createAttributeList();
-        KLayoutData parentLayout = KimlLayoutUtil.getShapeLayout(parent);
+        KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(parent);
         // set minimal spacing
         float minSpacing = LayoutOptions.getMinSpacing(parentLayout);
         if (Float.isNaN(minSpacing)) {
@@ -255,6 +254,8 @@ public class GraphvizLayouter {
         }
         graphAttrStatement.setAttributes(graphAttrs);
         graph.getStatements().add(graphAttrStatement);
+        // get interactive layout option
+        boolean interactive = LayoutOptions.isInteractive(parentLayout);
 
         // create nodes
         for (KNode childNode : parent.getChildren()) {
@@ -280,6 +281,13 @@ public class GraphvizLayouter {
             attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_WIDTH, width));
             attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_HEIGHT, height));
             attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_FIXEDSIZE, "true"));
+            // add node position if interactive layout is chosen
+            if (interactive) {
+                float xpos = (shapeLayout.getXpos() - offset) / DPI;
+                float ypos = (parentLayout.getHeight() - shapeLayout.getYpos() - offset) / DPI;
+                String posString = "\"" + Float.toString(xpos) + "," + Float.toString(ypos) + "\"";
+                attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_POS, posString));
+            }
             // set node shape
             // TODO customize the node shape
             attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_SHAPE, "box"));

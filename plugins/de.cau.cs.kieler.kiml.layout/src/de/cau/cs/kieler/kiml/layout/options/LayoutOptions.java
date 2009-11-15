@@ -708,4 +708,40 @@ public final class LayoutOptions {
         }
     }
     
+    /** layout option key: optimize layout for user interaction. */
+    public static final String INTERACTIVE = "de.cau.cs.kieler.layout.options.interactive";
+
+    /**
+     * Returns whether the interactive layout option is active for the given layout
+     * data instance.
+     * 
+     * @param layoutData layout data for a parent node
+     * @return true if the interactive layout option is active
+     */
+    public static boolean isInteractive(final KLayoutData layoutData) {
+        KBooleanOption interactiveOption = (KBooleanOption) layoutData.getOption(INTERACTIVE);
+        if (interactiveOption == null) {
+            return false;
+        } else {
+            return interactiveOption.isValue();
+        }
+    }
+
+    /**
+     * Activates or deactivates the interactive layout option for the given layout
+     * data instance.
+     * 
+     * @param layoutData layout data for a parent node
+     * @param interactive true if interactive layout shall be performed
+     */
+    public static void setInteractive(final KLayoutData layoutData, final boolean interactive) {
+        KBooleanOption interactiveOption = (KBooleanOption) layoutData.getOption(INTERACTIVE);
+        if (interactiveOption == null) {
+            interactiveOption = KLayoutDataFactory.eINSTANCE.createKBooleanOption();
+            interactiveOption.setKey(INTERACTIVE);
+            layoutData.getOptions().add(interactiveOption);
+        }
+        interactiveOption.setValue(interactive);
+    }
+    
 }
