@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -63,6 +64,8 @@ import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.ForkedOutputStream;
 import de.cau.cs.kieler.core.util.ForwardingInputStream;
+import de.cau.cs.kieler.core.util.KielerMath;
+import de.cau.cs.kieler.core.util.KielerMath.Point;;
 
 /**
  * Layouter that calls Graphviz through a child process to perform layout. The
@@ -76,16 +79,6 @@ import de.cau.cs.kieler.core.util.ForwardingInputStream;
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class GraphvizLayouter {
-
-    /** Internal class for storage of points and dimensions. */
-    private static final class Point {
-        private float x, y;
-
-        private Point(final float thex, final float they) {
-            this.x = thex;
-            this.y = they;
-        }
-    }
 
     /** command for Dot layout. */
     public static final String DOT_COMMAND = "dot";
@@ -584,40 +577,90 @@ public class GraphvizLayouter {
                 KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
                 edgeLayout.getBendPoints().clear();
                 String posString = attributeMap.get(GraphvizAPI.ATTR_POS);
-                ArrayList<Float> posList = new ArrayList<Float>();
-                StringTokenizer posTokenizer = new StringTokenizer(posString, ATTRIBUTE_DELIM);
-                boolean isXcoord = true;
-                while (posTokenizer.hasMoreTokens()) {
-                    try {
-                        float pos = Float.parseFloat(posTokenizer.nextToken())
-                                + (isXcoord ? edgeOffsetx : edgeOffsety);
-                        isXcoord = !isXcoord;
-                        posList.add(Float.valueOf(pos));
-                    } catch (NumberFormatException exception) {
+                
+                // parse the list of spline control coordinates
+                KPoint sourcePoint = null, targetPoint = null;
+                List<List<Point>> splines = new LinkedList<List<Point>>();
+                StringTokenizer splinesTokenizer = new StringTokenizer(posString, ";");
+                while (splinesTokenizer.hasMoreTokens()) {
+                    ArrayList<Point> pointList = new ArrayList<Point>(SPLINE_POINTS);
+                    StringTokenizer posTokenizer = new StringTokenizer(
+                            splinesTokenizer.nextToken(), ATTRIBUTE_DELIM);
+                    boolean isXcoord = true, isStartp = false, isEndp = false;
+                    Point point = null;
+                    while (posTokenizer.hasMoreTokens()) {
+                        String token = posTokenizer.nextToken();
+                        if (token.startsWith("s")) {
+                            if (sourcePoint != null && posTokenizer.countTokens() >= 2) {
+                                posTokenizer.nextToken();
+                                posTokenizer.nextToken();
+                                continue;
+                            }
+                            sourcePoint = KLayoutDataFactory.eINSTANCE.createKPoint();
+                            isStartp = true;
+                        } else if (token.startsWith("e")) {
+                            if (targetPoint != null && posTokenizer.countTokens() >= 2) {
+                                posTokenizer.nextToken();
+                                posTokenizer.nextToken();
+                                continue;
+                            }
+                            targetPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
+                            isEndp = true;
+                        } else {
+                            try {
+                                float pos = Float.parseFloat(token)
+                                        + (isXcoord ? edgeOffsetx : edgeOffsety);
+                                if (isStartp) {
+                                    if (isXcoord) {
+                                        sourcePoint.setX(pos);
+                                    } else {
+                                        sourcePoint.setY(pos);
+                                        isStartp = false;
+                                    }
+                                } else if (isEndp) {
+                                    if (isXcoord) {
+                                        targetPoint.setX(pos);
+                                    } else {
+                                        targetPoint.setY(pos);
+                                        isEndp = false;
+                                    }
+                                } else {
+                                    if (isXcoord) {
+                                        point = new Point(pos, 0);
+                                    } else {
+                                        point.y = pos;
+                                        pointList.add(point);
+                                    }
+                                }
+                                isXcoord = !isXcoord;
+                            } catch (NumberFormatException exception) {
+                                // ignore exception
+                            }
+                        }
                     }
+                    splines.add(pointList);
                 }
 
-                // first two points in list denote the start point
-                KPoint sourcePoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-                sourcePoint.setX(posList.get(0));
-                sourcePoint.setY(posList.get(1));
+                // the first point in the list is the start point, if no arrowhead is given
+                if (sourcePoint == null) {
+                    sourcePoint = KLayoutDataFactory.eINSTANCE.createKPoint();
+                    Point firstPoint = splines.get(0).get(0);
+                    sourcePoint.setX((float)firstPoint.x);
+                    sourcePoint.setY((float)firstPoint.y);
+                }
                 edgeLayout.setSourcePoint(sourcePoint);
 
-                for (int i = 0; i < posList.size() - 7; i += 6) {
-                    // convert the bezier representation to a polyline
-                    bezierToPolyline(edgeLayout, new Point(posList.get(i + 0), posList.get(i + 1)),
-                            new Point(posList.get(i + 2), posList.get(i + 3)), new Point(posList
-                                    .get(i + 4), posList.get(i + 5)), new Point(posList.get(i + 6),
-                                    posList.get(i + 7)));
-                }
-                // need to remove the last grid point, as this is the same as
-                // the target point below
-                edgeLayout.getBendPoints().remove(edgeLayout.getBendPoints().size() - 1);
+                // convert the B-spline representation to a polyline
+                splineToPolyline(edgeLayout, splines);
 
-                // last two points in the GraphViz list denote the end point
-                KPoint targetPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-                targetPoint.setX(posList.get(posList.size() - 2));
-                targetPoint.setY(posList.get(posList.size() - 1));
+                // the last point in the list is the end point, if no arrowhead is given
+                if (targetPoint == null) {
+                    targetPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
+                    List<Point> points = splines.get(splines.size() - 1);
+                    Point lastPoint = points.get(points.size() - 1);
+                    targetPoint.setX((float)lastPoint.x);
+                    targetPoint.setY((float)lastPoint.y);
+                }
                 edgeLayout.setTargetPoint(targetPoint);
 
                 // process the edge labels
@@ -678,8 +721,10 @@ public class GraphvizLayouter {
         KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(parentNode);
         if (boundingBox != null) {
             KInsets insets = LayoutOptions.getInsets(parentLayout);
-            parentLayout.setWidth(boundingBox.x + insets.getLeft() + insets.getRight() + 2 * offset);
-            parentLayout.setHeight(boundingBox.y + insets.getTop() + insets.getBottom() + 2 * offset);
+            parentLayout.setWidth((float)boundingBox.x + insets.getLeft()
+                    + insets.getRight() + 2 * offset);
+            parentLayout.setHeight((float)boundingBox.y + insets.getTop()
+                    + insets.getBottom() + 2 * offset);
         }
     }
 
@@ -698,51 +743,26 @@ public class GraphvizLayouter {
         return attributeMap;
     }
 
+    /** fixed number of spline points. TODO add support for arbitrary number of spline points */
+    private static final int SPLINE_POINTS = 4;
+    
     /**
-     * Transforms a Graphviz Bezier curve to a set of bend points.
+     * Transforms a Graphviz B-spline curve to a set of bend points.
      * 
-     * @param layout layout to which the bend points are added
-     * @param p0 first Bezier point
-     * @param p1 second Bezier point
-     * @param p2 third Bezier point
-     * @param p3 fourth Bezier point
+     * @param edgeLayout layout to which the bend points are added
+     * @param splines list of splines, where each spline is a list of control points
      */
-    private void bezierToPolyline(final KEdgeLayout layout, final Point p0,
-            final Point p1, final Point p2, final Point p3) {
-        List<KPoint> bendPoints = layout.getBendPoints();
-        /*
-         * as the start point is not added below, that means the number of
-         * points added to the polyline are the integer below -1
-         */
-        int numberOfPoints = 4;
-        float dt;
-        int i;
-
-        dt = (float) (1.0 / (numberOfPoints - 1));
-        float ax, bx, cx;
-        float ay, by, cy;
-        float tSquared, tCubed;
-
-        cx = (float) (3.0 * (p1.x - p0.x));
-        bx = (float) (3.0 * (p2.x - p1.x) - cx);
-        ax = p3.x - p0.x - cx - bx;
-
-        cy = (float) (3.0 * (p1.y - p0.y));
-        by = (float) (3.0 * (p2.y - p1.y) - cy);
-        ay = p3.y - p0.y - cy - by;
-
-        for (i = 1; i < numberOfPoints; i++) {
-            float t = i * dt;
-
-            tSquared = t * t;
-            tCubed = tSquared * t;
-            int x = (int) (((ax * tCubed) + (bx * tSquared) + (cx * t)) + p0.x);
-            int y = (int) (((ay * tCubed) + (by * tSquared) + (cy * t)) + p0.y);
-            KPoint bendPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-            bendPoint.setX(x);
-            bendPoint.setY(y);
-            bendPoints.add(bendPoint);
-        }
+    private void splineToPolyline(final KEdgeLayout edgeLayout, final List<List<Point>> splines) {
+        List<KPoint> bendPoints = edgeLayout.getBendPoints();
+        for (List<Point> points : splines) {
+            Point[] bezierPoints = KielerMath.calcBezierPoints(points, points.size() - 1);
+            for (int i = 0; i < bezierPoints.length; i++) {
+                KPoint kpoint = KLayoutDataFactory.eINSTANCE.createKPoint();
+                kpoint.setX((float)bezierPoints[i].x);
+                kpoint.setY((float)bezierPoints[i].y);
+                bendPoints.add(kpoint);
+            }
+        }      
     }
 
 }

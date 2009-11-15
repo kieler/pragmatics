@@ -48,6 +48,9 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage implements
         setDescription("Preferences for the Graphviz layouter.");
     }
 
+    private static final int NUM_COLUMNS = 3;
+    private static final int LABEL_WIDTH = 450;
+    
     /**
      * {@inheritDoc}
      */
@@ -59,9 +62,11 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage implements
         processGroup.setText("Graphviz Process");
 
         Label label = new Label(processGroup, SWT.WRAP);
-        label.setText("The Graphviz layout tool is available at http://www.graphviz.org/. If the 'dot' executable cannot be found in default locations, its path must be entered here.");
-        GridData labelLayoutData = new GridData(SWT.LEFT, SWT.FILL, false, false, 3, 1);
-        labelLayoutData.widthHint = 450;
+        label.setText("The Graphviz layout tool is available at http://www.graphviz.org/. If the"
+                + "'dot' executable cannot be found in default locations, its path must be entered"
+                + "here.");
+        GridData labelLayoutData = new GridData(SWT.LEFT, SWT.FILL, false, false, NUM_COLUMNS, 1);
+        labelLayoutData.widthHint = LABEL_WIDTH;
         label.setLayoutData(labelLayoutData);
         FileFieldEditor executableEditor = new FileFieldEditor(GraphvizAPI.PREF_GRAPHVIZ_EXECUTABLE,
                 "Set path to the 'dot' executable:", processGroup);
@@ -73,7 +78,7 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage implements
         timeoutEditor.setValidRange(GraphvizAPI.PROCESS_MIN_TIMEOUT, Integer.MAX_VALUE);
         addField(timeoutEditor);
 
-        processGroup.setLayout(new GridLayout(3, false));
+        processGroup.setLayout(new GridLayout(NUM_COLUMNS, false));
         parent.setLayout(new FillLayout());
     }
 

@@ -8,7 +8,7 @@
             category="de.cau.cs.kieler.kiml.ui.preferences.layout"
             class="de.cau.cs.kieler.kiml.graphviz.layouter.preferences.GraphvizPreferencePage"
             id="de.cau.cs.kieler.kiml.graphviz.preferences"
-            name="GraphViz">
+            name="Graphviz">
       </page>
    </extension>
    <extension
