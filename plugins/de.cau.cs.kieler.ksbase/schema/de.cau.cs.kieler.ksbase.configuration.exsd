@@ -1,0 +1,407 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="de.cau.cs.kieler.ksbase" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="de.cau.cs.kieler.ksbase" id="configuration" name="Structure based editing feature"/>
+      </appinfo>
+      <documentation>
+         Extension point for configuring KIELER structure based editing features for an editor.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
+      <complexType>
+         <choice>
+            <element ref="configuration"/>
+         </choice>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="configuration">
+      <annotation>
+         <documentation>
+            Configures structure based editing features for an editor
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="menus"/>
+            <element ref="transformations"/>
+         </sequence>
+         <attribute name="editorId" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.editors/editor/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="XtendFile" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The Xtend file that contains the transformations which are executed
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="packageName" type="string">
+            <annotation>
+               <documentation>
+                  The name of the main package that represents the underlying meta model. 
+This class has to extend &apos;emf.ecore.EPackage&apos;
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.emf.ecore.EPackage:"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="contextId" type="string">
+            <annotation>
+               <documentation>
+                  The contextID which is used to assign keyboard shortcuts. If this property is empty, the default context is used.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.contexts/context/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="defautlIcon" type="string">
+            <annotation>
+               <documentation>
+                  If you want to add Toolbar contributions, you can select an icon which will be used by default for all items
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="transformation">
+      <annotation>
+         <documentation>
+            The transformation properties.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="transformationId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id of this transformation
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The name of the transformation which is used in the menus
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="transformation" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The name of the Xtend transformation method (without parameters). This method has to exist in the Xtend file else it will be ignored
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="keyboardShortcut" type="string">
+            <annotation>
+               <documentation>
+                  The keyboard shortcut for this transformation
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  Select an ico or png file, if you want to use an icon for the toolbar
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="menuContribution">
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="transformationCommand" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="menu" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="locationURI" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The locationURI of this contribution
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="transformationCommand">
+      <annotation>
+         <documentation>
+            Used to add a transformation command to a menu
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="transformationId" type="string">
+            <annotation>
+               <documentation>
+                  The id of the referenced transformation
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.ksbase.configuration/configuration/transformations/transformation/@transformationId"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="menu">
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="transformationCommand" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id of this menu
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="menus">
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="menuContribution" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+      </complexType>
+   </element>
+
+   <element name="transformations">
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="transformation"/>
+         </sequence>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         KSBASE 0.1
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         Example configuration for the KIELER Synccharts editor :
+&lt;plugin&gt; 
+ &lt;extension
+       point=&quot;de.cau.cs.kieler.ksbase.configuration&quot;&gt;
+       
+       		&lt;configuration
+               XtendFile=&quot;src/transformations/feature.ext&quot;
+               contextId=&quot;de.cau.cs.kieler.synccharts.diagram.ui.diagramContext&quot;
+               defautlIcon=&quot;icons/obj16/State.gif&quot;
+               editorId=&quot;de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditorID&quot;
+               packageName=&quot;de.cau.cs.kieler.synccharts.SyncchartsPackage&quot;&gt;
+			&lt;transformations&gt;
+				&lt;transformation keyboardShortcut=&quot;M1+K S&quot;
+					name=&quot;Add Successor State&quot; transformation=&quot;addSuccessorState&quot;
+					transformationId=&quot;de.cau.cs.kieler.sbase.addSuc&quot;&gt;
+				&lt;/transformation&gt;
+				&lt;transformation keyboardShortcut=&quot;M1+K P&quot;
+					name=&quot;Add Predecessor State&quot; transformation=&quot;addPredecessorState&quot;
+					transformationId=&quot;de.cau.cs.kieler.sbase.addPred&quot;&gt;
+				&lt;/transformation&gt;
+				&lt;transformation keyboardShortcut=&quot;M1+K C&quot; name=&quot;Add Choice&quot;
+					transformation=&quot;addChoice&quot;
+					transformationId=&quot;de.cau.cs.kieler.sbase.addChoice&quot;&gt;
+				&lt;/transformation&gt;
+				&lt;transformation icon=&quot;icons/obj16/Transition.gif&quot;
+					keyboardShortcut=&quot;M1+K F&quot; name=&quot;Flip Transition&quot; 
+					transformation=&quot;flipTransition&quot; transformationId=&quot;de.cau.cs.kieler.sbase.flip&quot;&gt;
+				&lt;/transformation&gt;
+				&lt;transformation icon=&quot;icons/obj16/Action.gif&quot;
+					keyboardShortcut=&quot;M1+K W&quot; name=&quot;Connect States&quot; 
+					transformation=&quot;connectStates&quot; transformationId=&quot;de.cau.cs.kieler.sbase.connect&quot;&gt;
+				&lt;/transformation&gt;
+				&lt;transformation icon=&quot;icons/obj16/Region.gif&quot; name=&quot;Add ABRO&quot;
+					transformation=&quot;addABRO&quot; transformationId=&quot;de.cau.cs.kieler.sbase.addABRO&quot;&gt;
+				&lt;/transformation&gt;
+				&lt;transformation icon=&quot;icons/obj16/Signal.gif&quot; name=&quot;Create Default&quot;
+					transformation=&quot;createDefault&quot; transformationId=&quot;de.cau.cs.kieler.sbase.empty&quot;&gt;
+				&lt;/transformation&gt;
+    &lt;transformation
+          keyboardShortcut=&quot;M1+K Q&quot;
+          name=&quot;Set Transition Target&quot;
+          transformation=&quot;rerouteTransitionTarget&quot;
+          transformationId=&quot;de.cau.cs.kieler.sbase.rerouteTarget&quot;&gt;
+       &lt;/transformation&gt;
+       &lt;transformation
+             keyboardShortcut=&quot;M1+K J&quot;
+             name=&quot;Set Transition Source&quot;
+             transformation=&quot;rerouteTransitionSource&quot;
+             transformationId=&quot;de.cau.cs.kieler.sbase.rerouteSource&quot;&gt;
+    	&lt;/transformation&gt;
+       &lt;transformation
+             icon=&quot;icons/obj16/Region.gif&quot;
+             keyboardShortcut=&quot;M1+K R&quot;
+             name=&quot;Add Region&quot;
+             transformation=&quot;addParallelRegion&quot;
+             transformationId=&quot;de.cau.cs.kieler.sbase.addRegion&quot;&gt;
+       &lt;/transformation&gt;
+			&lt;/transformations&gt;
+			&lt;menus&gt;
+				&lt;menuContribution locationURI=&quot;menu:de.cau.cs.kieler&quot;&gt;
+					&lt;menu label=&quot;Templates&quot; id=&quot;de.cau.cs.kieler.synccharts.sbase.templates&quot;&gt;
+						&lt;transformationCommand transformationId=&quot;de.cau.cs.kieler.sbase.addABRO&quot;&gt;&lt;/transformationCommand&gt;
+						&lt;transformationCommand transformationId=&quot;de.cau.cs.kieler.sbase.empty&quot;&gt;
+						&lt;/transformationCommand&gt;
+					&lt;/menu&gt;
+					&lt;menu label=&quot;Transitions&quot; id=&quot;de.cau.cs.kieler.synccharts.sbase.trans&quot;&gt;
+        &lt;transformationCommand
+              transformationId=&quot;de.cau.cs.kieler.sbase.connect&quot;&gt;
+        &lt;/transformationCommand&gt;
+						&lt;transformationCommand transformationId=&quot;de.cau.cs.kieler.sbase.flip&quot;&gt;&lt;/transformationCommand&gt;
+      &lt;transformationCommand
+            transformationId=&quot;de.cau.cs.kieler.sbase.rerouteTarget&quot;&gt;
+      &lt;/transformationCommand&gt;
+      &lt;transformationCommand
+            transformationId=&quot;de.cau.cs.kieler.sbase.rerouteSource&quot;&gt;
+      &lt;/transformationCommand&gt;
+					&lt;/menu&gt;
+					&lt;transformationCommand transformationId=&quot;de.cau.cs.kieler.sbase.addPred&quot;&gt;&lt;/transformationCommand&gt;
+					&lt;transformationCommand transformationId=&quot;de.cau.cs.kieler.sbase.addChoice&quot;&gt;
+					&lt;/transformationCommand&gt;
+					&lt;transformationCommand transformationId=&quot;de.cau.cs.kieler.sbase.addSuc&quot;&gt;&lt;/transformationCommand&gt;
+     &lt;transformationCommand
+           transformationId=&quot;de.cau.cs.kieler.sbase.addRegion&quot;&gt;
+     &lt;/transformationCommand&gt;
+				&lt;/menuContribution&gt;
+				&lt;menuContribution locationURI=&quot;toolbar:de.cau.cs.kieler&quot;&gt;
+       &lt;transformationCommand
+             transformationId=&quot;de.cau.cs.kieler.sbase.addSuc&quot;&gt;
+       &lt;/transformationCommand&gt;
+					&lt;transformationCommand transformationId=&quot;de.cau.cs.kieler.sbase.addRegion&quot;&gt;
+					&lt;/transformationCommand&gt;
+					&lt;transformationCommand transformationId=&quot;de.cau.cs.kieler.sbase.flip&quot;&gt;&lt;/transformationCommand&gt;
+				&lt;/menuContribution&gt;
+    &lt;menuContribution
+          locationURI=&quot;popup:de.cau.cs.kieler&quot;&gt;
+       &lt;transformationCommand
+             transformationId=&quot;de.cau.cs.kieler.sbase.addSuc&quot;&gt;
+       &lt;/transformationCommand&gt;
+       &lt;transformationCommand
+             transformationId=&quot;de.cau.cs.kieler.sbase.addPred&quot;&gt;
+       &lt;/transformationCommand&gt;
+       &lt;transformationCommand
+             transformationId=&quot;de.cau.cs.kieler.sbase.addRegion&quot;&gt;
+       &lt;/transformationCommand&gt;
+       &lt;transformationCommand
+             transformationId=&quot;de.cau.cs.kieler.sbase.addChoice&quot;&gt;
+       &lt;/transformationCommand&gt;
+       &lt;transformationCommand
+             transformationId=&quot;de.cau.cs.kieler.sbase.connect&quot;&gt;
+       &lt;/transformationCommand&gt;
+          &lt;transformationCommand transformationId=&quot;de.cau.cs.kieler.sbase.flip&quot;&gt;&lt;/transformationCommand&gt;
+          &lt;transformationCommand
+                transformationId=&quot;de.cau.cs.kieler.sbase.rerouteTarget&quot;&gt;
+          &lt;/transformationCommand&gt;
+          &lt;transformationCommand
+                transformationId=&quot;de.cau.cs.kieler.sbase.rerouteSource&quot;&gt;
+          &lt;/transformationCommand&gt;
+    &lt;/menuContribution&gt;
+
+			&lt;/menus&gt;
+		&lt;/configuration&gt;
+ &lt;/extension&gt;
+ 
+&lt;/plugin&gt;
+
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="apiinfo"/>
+      </appinfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="implementation"/>
+      </appinfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="copyright"/>
+      </appinfo>
+      <documentation>
+         Copyright 2009 by Real-Time and Embedded Systems Group, Department
+of Computer Science, Christian-Albrechts-University of Kiel
+      </documentation>
+   </annotation>
+
+</schema>

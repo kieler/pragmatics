@@ -34,8 +34,8 @@ public class EditorTransformationSettings implements Serializable {
     private String modelPackageClass;
     /** Default icon for menu entries. **/
     private String defaultIcon;
-    /** Editor to which this setting is assigned. **/
-    private String editor;
+    /** Editor ID to which this setting is assigned. **/
+    private String editorId;
     /** Xtend file in which the transformations are defined. **/
     private String extFile;
     /** The context for the diagram editor, required for key bindings. **/
@@ -58,7 +58,7 @@ public class EditorTransformationSettings implements Serializable {
      *            The fqn of the diagram editor
      */
     public EditorTransformationSettings(final String editorClass) {
-        this.editor = editorClass;
+        this.editorId = editorClass;
         this.modelPackageClass = ""; //$NON-NLS-1$
         this.defaultIcon = "";
         this.extFile = ""; //$NON-NLS-1$
@@ -71,22 +71,22 @@ public class EditorTransformationSettings implements Serializable {
     /**
      * Sets the editor class.
      * 
-     * @param editorClass
-     *            The fqn of the diagram editor
+     * @param editorid
+     *            The id of the diagram editor
      */
-    public final void setEditor(final String editorClass) {
-        if (editorClass != null && editorClass.length() > 0) {
-            this.editor = editorClass;
+    public final void setEditor(final String editorid) {
+        if (editorid != null && editorid.length() > 0) {
+            this.editorId = editorid;
         }
     }
 
     /**
      * Gets the assigned editor.
      * 
-     * @return The fully qualified editor name
+     * @return The ID of the editor
      */
     public final String getEditor() {
-        return editor;
+        return editorId;
     }
 
     /**
@@ -385,7 +385,7 @@ public class EditorTransformationSettings implements Serializable {
                     } else if (createTransformations) {
                         t = new Transformation(name, name);
                         t.setParameter(parameters);
-                        t.setTransformationId(editor + "." + name);
+                        t.setTransformationId(editorId + "." + name);
                         cachedTransformations.add(t);
                     }
                 } catch (NullPointerException exp) {
@@ -416,7 +416,7 @@ public class EditorTransformationSettings implements Serializable {
             // we are using the '==' operator for the contributor
             // because it may be possible that the contributor is 'null'
             // and the equals method will throw an exception
-            return (o.getEditor().equals(editor) && o.getContributor() == contributor);
+            return (o.getEditor().equals(editorId) && o.getContributor() == contributor);
         }
         return false;
     }
@@ -429,7 +429,7 @@ public class EditorTransformationSettings implements Serializable {
      */
     @Override
     public int hashCode() {
-        int hash = editor.hashCode();
+        int hash = editorId.hashCode();
         if (contributor != null) {
             hash += contributor.hashCode();
         }

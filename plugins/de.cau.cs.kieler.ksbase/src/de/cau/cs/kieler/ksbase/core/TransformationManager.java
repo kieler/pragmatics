@@ -27,15 +27,18 @@ import java.net.URL;
 import java.util.LinkedList;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 
 /**
- * The main storage and management class. Contains a list of currently
- * registered editors. Handles import, export and Xtend file parsing.
+ * The main storage and management class. Contains a list of currently registered editors. Handles
+ * import, export and Xtend file parsing.
  * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
@@ -45,17 +48,20 @@ public final class TransformationManager {
     /** The currently registered editors. **/
     private LinkedList<EditorTransformationSettings> registeredEditors;
     /**
-     * Manage state, set to true when
-     * {@link TransformationManager.initializeTransformations} has been called.
+     * Manage state, set to true when {@link TransformationManager.initializeTransformations} has
+     * been called.
      **/
     private boolean isInitialized;
+
+    /** Logging interface. **/
+    private static final ILog LOG = KSBasEPlugin.getDefault().getLog();
 
     /** Transformation-Manager instance. **/
     public static final TransformationManager INSTANCE = new TransformationManager();
 
     /**
-     * FileNameFilter to check a file for a valid extension. The extension has
-     * to be '.sbase' to be valid.
+     * FileNameFilter to check a file for a valid extension. The extension has to be '.sbase' to be
+     * valid.
      * 
      * @author Michael Matzen - mim AT informatik.uni-kiel.de
      * 
@@ -97,14 +103,13 @@ public final class TransformationManager {
     }
 
     /**
-     * Gets the list of user defined editors. This is done by checking if the
-     * contributor is 'null' and is used by the preference page.
+     * Gets the list of user defined editors. This is done by checking if the contributor is 'null'
+     * and is used by the preference page.
      * 
      * @return A list of EditorTransformationSettings
      */
     public LinkedList<EditorTransformationSettings> getUserDefinedEditors() {
-        LinkedList<EditorTransformationSettings> userSettings =
-                new LinkedList<EditorTransformationSettings>();
+        LinkedList<EditorTransformationSettings> userSettings = new LinkedList<EditorTransformationSettings>();
         for (EditorTransformationSettings ed : registeredEditors) {
             if (ed.getContributor() == null) {
                 userSettings.add(ed);
@@ -118,10 +123,9 @@ public final class TransformationManager {
      * 
      * @param editor
      *            The editor's name.
-     * @return The first editor in the list of registered editors which has the
-     *         given name
+     * @return The first editor in the list of registered editors which has the given name
      */
-    public EditorTransformationSettings getEditorByName(final String editor) {
+    public EditorTransformationSettings getEditorById(final String editor) {
         if (editor != null && editor.length() > 0) {
             for (EditorTransformationSettings settings : registeredEditors) {
                 if (settings.getEditor().equals(editor)) {
@@ -133,14 +137,12 @@ public final class TransformationManager {
     }
 
     /**
-     * Tries to find an user defined editor with it's name. Only returns an
-     * editor if the name matches and the editor has no contributor. Called by
-     * the preference pages.
+     * Tries to find an user defined editor with it's name. Only returns an editor if the name
+     * matches and the editor has no contributor. Called by the preference pages.
      * 
      * @param editor
      *            The editor's name.
-     * @return The first editor in the list of registered editors which has the
-     *         given name
+     * @return The first editor in the list of registered editors which has the given name
      */
     public EditorTransformationSettings getUserDefinedEditorByName(final String editor) {
         if (editor != null && editor.length() > 0) {
@@ -172,7 +174,8 @@ public final class TransformationManager {
                 registeredEditors = new LinkedList<EditorTransformationSettings>();
             }
             if (registeredEditors.contains(editor)) {
-                System.out.println("editor exists");
+                LOG.log(new Status(IStatus.INFO, KSBasEPlugin.PLUGIN_ID,
+                        "Unable to add the same editor twice."));
 
             } else {
                 registeredEditors.add(editor);
@@ -181,8 +184,8 @@ public final class TransformationManager {
     }
 
     /**
-     * Adds a new editor to the list of registered editors. This class creates
-     * an empty EditorTransformationSetting with the given editorName.
+     * Adds a new editor to the list of registered editors. This class creates an empty
+     * EditorTransformationSetting with the given editorName.
      * 
      * @param editorName
      *            The name of the new editor
@@ -194,12 +197,9 @@ public final class TransformationManager {
                 EditorTransformationSettings editor = new EditorTransformationSettings(editorName);
                 registeredEditors.add(editor);
                 return editor;
-            } else {
-                return null;
             }
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
@@ -224,9 +224,11 @@ public final class TransformationManager {
                             }
                         }
                     } catch (IllegalStateException e) {
-                        e.printStackTrace();
+                        LOG.log(new Status(IStatus.WARNING, KSBasEPlugin.PLUGIN_ID,
+                                "Error while deleting settings: file could not be found."));
                     } catch (SecurityException e) {
-                        System.out.println(e.getMessage());
+                        LOG.log(new Status(IStatus.WARNING, KSBasEPlugin.PLUGIN_ID,
+                                "Error while parsing settings: not allowed to delete file."));
                     }
                 }
             }
@@ -244,22 +246,23 @@ public final class TransformationManager {
             for (EditorTransformationSettings editor : userEditors) {
                 ObjectOutputStream oos = null;
                 try {
-                    oos =
-                            new ObjectOutputStream(new FileOutputStream(metaPath.append(
-                                    editor.getEditor() + ".sbase").toFile()));
+                    oos = new ObjectOutputStream(new FileOutputStream(metaPath.append(
+                            editor.getEditor() + ".sbase").toFile()));
                     oos.writeObject(editor);
 
                 } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+                    LOG.log(new Status(IStatus.WARNING, KSBasEPlugin.PLUGIN_ID,
+                            "Error while storing settings: file not found."));
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LOG.log(new Status(IStatus.WARNING, KSBasEPlugin.PLUGIN_ID,
+                            "Error while parsing settings: file could not be read."));
                 } finally {
                     if (oos != null) {
                         try {
                             oos.flush();
                             oos.close();
                         } catch (IOException e) {
-                            e.printStackTrace();
+                          //ignoring nested exception
                         }
                     }
                 }
@@ -269,29 +272,30 @@ public final class TransformationManager {
     }
 
     /**
-     * Loads the editor settings either from the extension point settings or the
-     * preference store.
+     * Loads the editor settings either from the extension point settings or the preference store.
      */
     public void initializeTransformations() {
         registeredEditors = new LinkedList<EditorTransformationSettings>();
 
         // From extension points first:
-        IConfigurationElement[] configurations =
-                Platform.getExtensionRegistry().getConfigurationElementsFor(
-                        "de.cau.cs.kieler.ksbase.configuration");
+        IConfigurationElement[] configurations = Platform.getExtensionRegistry()
+                .getConfigurationElementsFor("de.cau.cs.kieler.ksbase.configuration");
         if (configurations == null) {
+            LOG.log(new Status(IStatus.WARNING, KSBasEPlugin.PLUGIN_ID,
+                    "Invalid KSBasE extension point found."));
             return;
         }
         for (IConfigurationElement settings : configurations) {
             // Check for valid Configuration:
-            if (settings.getAttribute("editor") == null
-                    || settings.getAttribute("contextId") == null
+            if (settings.getAttribute("editorId") == null
                     || settings.getAttribute("packageName") == null) {
+                LOG.log(new Status(IStatus.WARNING, KSBasEPlugin.PLUGIN_ID,
+                        "Invalid KSBasE extension point found."));
                 continue;
             }
 
-            EditorTransformationSettings editor =
-                    new EditorTransformationSettings(settings.getAttribute("editor"));
+            EditorTransformationSettings editor = new EditorTransformationSettings(settings
+                    .getAttribute("editorId"));
             editor.setContributor(settings.getContributor());
             editor.setContext(settings.getAttribute("contextId"));
             editor.setDefaultIcon(settings.getAttribute("defautlIcon"));
@@ -303,15 +307,15 @@ public final class TransformationManager {
                 // are using it w/o iteration
                 for (IConfigurationElement t : transformations[0].getChildren("transformation")) {
                     // Check for valid Configuration:
-                    if (t == null
-                            || t.getAttribute("name") == null
+                    if (t == null || t.getAttribute("name") == null
                             || t.getAttribute("transformation") == null
                             || t.getAttribute("transformationId") == null) {
-                        continue;
+                        LOG.log(new Status(IStatus.WARNING, KSBasEPlugin.PLUGIN_ID,
+                                "Invalid KSBasE configuration found. Please check "
+                                        + "transformations defined for " + editor.getEditor()));
                     }
-                    Transformation transformation =
-                            new Transformation(t.getAttribute("name"), t
-                                    .getAttribute("transformation"));
+                    Transformation transformation = new Transformation(t.getAttribute("name"), t
+                            .getAttribute("transformation"));
                     transformation.setKeyboardShortcut(t.getAttribute("keyboardShortcut"));
                     transformation.setTransformationId(t.getAttribute("transformationId"));
                     transformation.setIcon(t.getAttribute("icon"));
@@ -325,11 +329,11 @@ public final class TransformationManager {
                 // since we only allowed one single <menuContribution> child, we
                 // are using it w/o iteration
                 for (IConfigurationElement c : menus[0].getChildren("menuContribution")) {
-                    KSBasEMenuContribution contrib =
-                            new KSBasEMenuContribution(c.getAttribute("locationURI"));
+                    KSBasEMenuContribution contrib = new KSBasEMenuContribution(c
+                            .getAttribute("locationURI"));
                     for (IConfigurationElement m : c.getChildren("menu")) {
-                        KSBasEMenuContribution menu =
-                                new KSBasEMenuContribution(m.getAttribute("id"));
+                        KSBasEMenuContribution menu = new KSBasEMenuContribution(m
+                                .getAttribute("id"));
                         menu.setLabel(m.getAttribute("label"));
                         for (IConfigurationElement com : m.getChildren()) {
                             menu.addCommand(com.getAttribute("transformationId"));
@@ -364,7 +368,8 @@ public final class TransformationManager {
                     }
                 }
             } catch (IOException e) {
-                System.err.println("KSBasE configuration exception: Can't read Xtend file");
+                LOG.log(new Status(IStatus.WARNING, KSBasEPlugin.PLUGIN_ID,
+                        "KSBasE configuration exception: Can't read Xtend file."));
             }
 
             registeredEditors.add(editor);
@@ -385,18 +390,20 @@ public final class TransformationManager {
                             registeredEditors.add((EditorTransformationSettings) content);
                         }
                     } catch (FileNotFoundException e) {
-                        System.out.println("Error while parsing settings: file not found");
+                        LOG.log(new Status(IStatus.WARNING, KSBasEPlugin.PLUGIN_ID,
+                                "Error while parsing settings: file not found."));
                     } catch (IOException e) {
-                        System.out.println("Error while parsing settings: file could not be read");
+                        LOG.log(new Status(IStatus.WARNING, KSBasEPlugin.PLUGIN_ID,
+                                "Error while parsing settings: file not found."));
                     } catch (ClassNotFoundException e) {
-                        System.out
-                                .println("Error while parsing settings: file could not be parsed");
+                        LOG.log(new Status(IStatus.WARNING, KSBasEPlugin.PLUGIN_ID,
+                                "Error while parsing settings."));
                     } finally {
                         if (ois != null) {
                             try {
                                 ois.close();
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                //ignoring nested exception
                             }
                         }
                     }
