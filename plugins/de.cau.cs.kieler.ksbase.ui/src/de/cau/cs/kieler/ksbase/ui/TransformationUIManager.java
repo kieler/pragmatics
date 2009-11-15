@@ -25,6 +25,8 @@ import java.util.List;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.commands.Command;
@@ -127,7 +129,9 @@ public final class TransformationUIManager {
                 out = new FileOutputStream(file);
                 if (!file.exists()) {
                     if (!file.createNewFile()) {
-                        // FIXME: We were unable to create the file !
+                        KSBasEUIPlugin.getDefault().getLog().log(
+                                new Status(IStatus.ERROR, KSBasEUIPlugin.PLUGIN_ID,
+                                        "Xtend could not be stored."));
                         return;
                     }
                 }
@@ -157,15 +161,21 @@ public final class TransformationUIManager {
                 }
                 commandStack.execute(transformationCommand);
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                KSBasEUIPlugin.getDefault().getLog().log(
+                        new Status(IStatus.ERROR, KSBasEUIPlugin.PLUGIN_ID,
+                                "Xtend file not found."));
             } catch (IOException e) {
-                e.printStackTrace();
+                KSBasEUIPlugin.getDefault().getLog().log(
+                        new Status(IStatus.ERROR, KSBasEUIPlugin.PLUGIN_ID,
+                                "Xtend file could not be read."));
             } finally {
 
                 // Remove temporary Xtend file
                 if (file != null) {
                     if (!file.delete()) {
-                        System.out.println("Warning: Unable to delete temporary xtend file");
+                        KSBasEUIPlugin.getDefault().getLog().log(
+                                new Status(IStatus.WARNING, KSBasEUIPlugin.PLUGIN_ID,
+                                        "Could not remove temporary file."));
                     }
                 }
                 // Close stream
@@ -173,7 +183,7 @@ public final class TransformationUIManager {
                     try {
                         out.close();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        //ignoring nested exception
                     }
                 }
 

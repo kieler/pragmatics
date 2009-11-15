@@ -63,7 +63,7 @@ public class TransformationCommandHandler extends AbstractHandler {
             TransformationManager.INSTANCE.initializeTransformations();
         }
         EditorTransformationSettings editor = TransformationManager.INSTANCE
-                .getEditorByName(event.getParameter(EDITOR_PARAM));
+                .getEditorById(event.getParameter(EDITOR_PARAM));
         if (editor != null) {
             TransformationUIManager.INSTANCE
                     .createAndExecuteTransformationCommand(event, editor,

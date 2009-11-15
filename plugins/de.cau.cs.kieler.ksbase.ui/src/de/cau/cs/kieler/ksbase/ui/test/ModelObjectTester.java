@@ -62,7 +62,7 @@ public class ModelObjectTester extends PropertyTester {
         assert (args[0] instanceof String);
         assert (args[1] instanceof String);
 
-        Transformation t = TransformationManager.INSTANCE.getEditorByName(
+        Transformation t = TransformationManager.INSTANCE.getEditorById(
                 (String) args[0]).getTransformationById((String) args[1]);
         if (t != null) {
             List<String> match = t.getParameterList();

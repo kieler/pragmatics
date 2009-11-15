@@ -21,6 +21,8 @@ import java.util.Locale;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ControlEditor;
@@ -51,6 +53,7 @@ import org.eclipse.ui.dialogs.ResourceSelectionDialog;
 
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.Transformation;
+import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 
 /**
  * The post-transformation preference page.
@@ -373,11 +376,13 @@ public class TransformationPreferencePage extends PreferencePage
                                         activeEditor.setExtFile(contentBuffer.toString(), true);
                                     }
                                 } catch (IOException exce) {
-                                    System.err.println("KSBasE configuration exception:"
-                                            + " Can't read Xtend file");
+                                    KSBasEUIPlugin.getDefault().getLog().log(
+                                            new Status(IStatus.ERROR, KSBasEUIPlugin.PLUGIN_ID,
+                                                    "Can't read Xtend file."));
                                 } catch (CoreException exce) {
-                                    System.err.println("Invalid file.");
-                                    exce.printStackTrace();
+                                    KSBasEUIPlugin.getDefault().getLog().log(
+                                            new Status(IStatus.ERROR, KSBasEUIPlugin.PLUGIN_ID,
+                                                    "Can't read Xtend file."));
                                 }
                                 // TODO: readEditors();
                             }

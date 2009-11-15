@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.ContributorFactoryOSGi;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchPart;
@@ -33,6 +35,7 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.packageadmin.PackageAdmin;
 
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
+import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 
 /**
  * The dynamic bundle loader class. This class contains lists of bundles which
@@ -111,7 +114,7 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
                 String editorDiagramName = bundle.getSymbolicName() + ".generated";
                 
                 try {
-                    // To avoid %20 exceptions in paths
+                    // To avoid %20 exceptions in paths:
                     String val = entry.getValue().toString().replace("%20", " ");
                     
                     URL url = new URL("reference:" + val);
@@ -134,7 +137,9 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
                                 System.out.println("resolving");
                                 boolean res = admin.resolveBundles(new Bundle[] {b });
                                 if (!res) {
-                                    System.out.println("Error while resolving bundle " + b);
+                                    KSBasEUIPlugin.getDefault().getLog().log(
+                                            new Status(IStatus.ERROR, KSBasEUIPlugin.PLUGIN_ID,
+                                                    "Bundle could not be resolved."));
                                 }
                             }
                             if (b.getState() == Bundle.RESOLVED) {
@@ -148,11 +153,17 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
                     }
 
                 } catch (MalformedURLException e) {
-                    e.printStackTrace();
+                    KSBasEUIPlugin.getDefault().getLog().log(
+                            new Status(IStatus.ERROR, KSBasEUIPlugin.PLUGIN_ID,
+                                    "Bundle could not be loaded: Invalid URI."));
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    KSBasEUIPlugin.getDefault().getLog().log(
+                            new Status(IStatus.ERROR, KSBasEUIPlugin.PLUGIN_ID,
+                                    "Bundle could not be loaded: Error while reading."));
                 } catch (BundleException e) {
-                    e.printStackTrace();
+                    KSBasEUIPlugin.getDefault().getLog().log(
+                            new Status(IStatus.ERROR, KSBasEUIPlugin.PLUGIN_ID,
+                                    "Bundle could not be loaded: Invalid bundle."));
                 }
             }
 
