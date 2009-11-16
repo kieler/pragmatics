@@ -291,7 +291,7 @@ public final class TransformationManager {
         // From extension points first:
         IConfigurationElement[] configurations =
                 Platform.getExtensionRegistry().getConfigurationElementsFor(
-                        "de.cau.cs.kieler.ksbase.configuration");
+                        "de.cau.cs.kieler.ksbase.configurations");
         if (configurations == null) {
             LOG.log(new Status(
                     IStatus.WARNING, KSBasEPlugin.PLUGIN_ID,
@@ -434,3 +434,14 @@ public final class TransformationManager {
         isInitialized = true;
     }
 }
+
+/* Maybe this can be used to parse the xtend file: 
+ *  * final Object o = resourceManager.loadResource(extension,
+ * XtendFile.FILE_EXTENSION); final XtendFile extFile = (XtendFile) o; if
+ * (extFile == null) throw new
+ * RuntimeException("Unable to load extension file : " + extension); ctx =
+ * cloneWithResource(extFile); final List<Extension> extensionList =
+ * extFile.getPublicExtensions(resourceManager, ctx); for (final Extension
+ * element : extensionList) { element.init(ctx);
+ * allExtensions.add(advise(element)); }
+ */

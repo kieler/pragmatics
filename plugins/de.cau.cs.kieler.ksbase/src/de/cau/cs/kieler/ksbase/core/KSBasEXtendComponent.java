@@ -113,7 +113,11 @@ public class KSBasEXtendComponent {
                             "Workflow has not been initialized!"));
             return;
         }
-        xtendComponent.invoke(context, xtendMonitor, issues);
+        try {
+            xtendComponent.invoke(context, xtendMonitor, issues);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
         // Logging errors and warnings:
         if (issues.hasWarnings()) {
             ILog log = KSBasEPlugin.getDefault().getLog();
@@ -126,10 +130,16 @@ public class KSBasEXtendComponent {
         }
         if (issues.hasErrors()) {
             ILog log = KSBasEPlugin.getDefault().getLog();
-            for (MWEDiagnostic warning : issues.getErrors()) {
+            for (MWEDiagnostic error : issues.getErrors()) {
+                String msg;
+                if (error.getMessage() == null) {
+                    msg = "The transformation seems to be invalid, please check the Xtend file";
+                } else {
+                    msg = error.getMessage();
+                }
                 log.log(new Status(
                         IStatus.ERROR, KSBasEPlugin.PLUGIN_ID,
-                        "Error while executing transformation: " + warning.getMessage()));
+                        "Error while executing transformation: " + msg));
             }
 
         }

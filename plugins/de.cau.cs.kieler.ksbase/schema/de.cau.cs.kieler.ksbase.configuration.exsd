@@ -253,39 +253,39 @@ This class has to extend &apos;emf.ecore.EPackage&apos;
  &lt;extension
        point=&quot;de.cau.cs.kieler.ksbase.configuration&quot;&gt;
        
-       		&lt;configuration
+         &lt;configuration
                XtendFile=&quot;src/transformations/feature.ext&quot;
                contextId=&quot;de.cau.cs.kieler.synccharts.diagram.ui.diagramContext&quot;
                defautlIcon=&quot;icons/obj16/State.gif&quot;
                editorId=&quot;de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditorID&quot;
                packageName=&quot;de.cau.cs.kieler.synccharts.SyncchartsPackage&quot;&gt;
-			&lt;transformations&gt;
-				&lt;transformation keyboardShortcut=&quot;M1+K S&quot;
-					name=&quot;Add Successor State&quot; transformation=&quot;addSuccessorState&quot;
-					transformationId=&quot;de.cau.cs.kieler.sbase.addSuc&quot;&gt;
-				&lt;/transformation&gt;
-				&lt;transformation keyboardShortcut=&quot;M1+K P&quot;
-					name=&quot;Add Predecessor State&quot; transformation=&quot;addPredecessorState&quot;
-					transformationId=&quot;de.cau.cs.kieler.sbase.addPred&quot;&gt;
-				&lt;/transformation&gt;
-				&lt;transformation keyboardShortcut=&quot;M1+K C&quot; name=&quot;Add Choice&quot;
-					transformation=&quot;addChoice&quot;
-					transformationId=&quot;de.cau.cs.kieler.sbase.addChoice&quot;&gt;
-				&lt;/transformation&gt;
-				&lt;transformation icon=&quot;icons/obj16/Transition.gif&quot;
-					keyboardShortcut=&quot;M1+K F&quot; name=&quot;Flip Transition&quot; 
-					transformation=&quot;flipTransition&quot; transformationId=&quot;de.cau.cs.kieler.sbase.flip&quot;&gt;
-				&lt;/transformation&gt;
-				&lt;transformation icon=&quot;icons/obj16/Action.gif&quot;
-					keyboardShortcut=&quot;M1+K W&quot; name=&quot;Connect States&quot; 
-					transformation=&quot;connectStates&quot; transformationId=&quot;de.cau.cs.kieler.sbase.connect&quot;&gt;
-				&lt;/transformation&gt;
-				&lt;transformation icon=&quot;icons/obj16/Region.gif&quot; name=&quot;Add ABRO&quot;
-					transformation=&quot;addABRO&quot; transformationId=&quot;de.cau.cs.kieler.sbase.addABRO&quot;&gt;
-				&lt;/transformation&gt;
-				&lt;transformation icon=&quot;icons/obj16/Signal.gif&quot; name=&quot;Create Default&quot;
-					transformation=&quot;createDefault&quot; transformationId=&quot;de.cau.cs.kieler.sbase.empty&quot;&gt;
-				&lt;/transformation&gt;
+   &lt;transformations&gt;
+    &lt;transformation keyboardShortcut=&quot;M1+K S&quot;
+     name=&quot;Add Successor State&quot; transformation=&quot;addSuccessorState&quot;
+     transformationId=&quot;de.cau.cs.kieler.sbase.addSuc&quot;&gt;
+    &lt;/transformation&gt;
+    &lt;transformation keyboardShortcut=&quot;M1+K P&quot;
+     name=&quot;Add Predecessor State&quot; transformation=&quot;addPredecessorState&quot;
+     transformationId=&quot;de.cau.cs.kieler.sbase.addPred&quot;&gt;
+    &lt;/transformation&gt;
+    &lt;transformation keyboardShortcut=&quot;M1+K C&quot; name=&quot;Add Choice&quot;
+     transformation=&quot;addChoice&quot;
+     transformationId=&quot;de.cau.cs.kieler.sbase.addChoice&quot;&gt;
+    &lt;/transformation&gt;
+    &lt;transformation icon=&quot;icons/obj16/Transition.gif&quot;
+     keyboardShortcut=&quot;M1+K F&quot; name=&quot;Flip Transition&quot; 
+     transformation=&quot;flipTransition&quot; transformationId=&quot;de.cau.cs.kieler.sbase.flip&quot;&gt;
+    &lt;/transformation&gt;
+    &lt;transformation icon=&quot;icons/obj16/Action.gif&quot;
+     keyboardShortcut=&quot;M1+K W&quot; name=&quot;Connect States&quot; 
+     transformation=&quot;connectStates&quot; transformationId=&quot;de.cau.cs.kieler.sbase.connect&quot;&gt;
+    &lt;/transformation&gt;
+    &lt;transformation icon=&quot;icons/obj16/Region.gif&quot; name=&quot;Add ABRO&quot;
+     transformation=&quot;addABRO&quot; transformationId=&quot;de.cau.cs.kieler.sbase.addABRO&quot;&gt;
+    &lt;/transformation&gt;
+    &lt;transformation icon=&quot;icons/obj16/Signal.gif&quot; name=&quot;Create Default&quot;
+     transformation=&quot;createDefault&quot; transformationId=&quot;de.cau.cs.kieler.sbase.empty&quot;&gt;
+    &lt;/transformation&gt;
     &lt;transformation
           keyboardShortcut=&quot;M1+K Q&quot;
           name=&quot;Set Transition Target&quot;
@@ -297,7 +297,7 @@ This class has to extend &apos;emf.ecore.EPackage&apos;
              name=&quot;Set Transition Source&quot;
              transformation=&quot;rerouteTransitionSource&quot;
              transformationId=&quot;de.cau.cs.kieler.sbase.rerouteSource&quot;&gt;
-    	&lt;/transformation&gt;
+     &lt;/transformation&gt;
        &lt;transformation
              icon=&quot;icons/obj16/Region.gif&quot;
              keyboardShortcut=&quot;M1+K R&quot;
@@ -305,42 +305,42 @@ This class has to extend &apos;emf.ecore.EPackage&apos;
              transformation=&quot;addParallelRegion&quot;
              transformationId=&quot;de.cau.cs.kieler.sbase.addRegion&quot;&gt;
        &lt;/transformation&gt;
-			&lt;/transformations&gt;
-			&lt;menus&gt;
-				&lt;menuContribution locationURI=&quot;menu:de.cau.cs.kieler&quot;&gt;
-					&lt;menu label=&quot;Templates&quot; id=&quot;de.cau.cs.kieler.synccharts.sbase.templates&quot;&gt;
-						&lt;transformationCommand transformationId=&quot;de.cau.cs.kieler.sbase.addABRO&quot;&gt;&lt;/transformationCommand&gt;
-						&lt;transformationCommand transformationId=&quot;de.cau.cs.kieler.sbase.empty&quot;&gt;
-						&lt;/transformationCommand&gt;
-					&lt;/menu&gt;
-					&lt;menu label=&quot;Transitions&quot; id=&quot;de.cau.cs.kieler.synccharts.sbase.trans&quot;&gt;
+   &lt;/transformations&gt;
+   &lt;menus&gt;
+    &lt;menuContribution locationURI=&quot;menu:de.cau.cs.kieler&quot;&gt;
+     &lt;menu label=&quot;Templates&quot; id=&quot;de.cau.cs.kieler.synccharts.sbase.templates&quot;&gt;
+      &lt;transformationCommand transformationId=&quot;de.cau.cs.kieler.sbase.addABRO&quot;&gt;&lt;/transformationCommand&gt;
+      &lt;transformationCommand transformationId=&quot;de.cau.cs.kieler.sbase.empty&quot;&gt;
+      &lt;/transformationCommand&gt;
+     &lt;/menu&gt;
+     &lt;menu label=&quot;Transitions&quot; id=&quot;de.cau.cs.kieler.synccharts.sbase.trans&quot;&gt;
         &lt;transformationCommand
               transformationId=&quot;de.cau.cs.kieler.sbase.connect&quot;&gt;
         &lt;/transformationCommand&gt;
-						&lt;transformationCommand transformationId=&quot;de.cau.cs.kieler.sbase.flip&quot;&gt;&lt;/transformationCommand&gt;
+      &lt;transformationCommand transformationId=&quot;de.cau.cs.kieler.sbase.flip&quot;&gt;&lt;/transformationCommand&gt;
       &lt;transformationCommand
             transformationId=&quot;de.cau.cs.kieler.sbase.rerouteTarget&quot;&gt;
       &lt;/transformationCommand&gt;
       &lt;transformationCommand
             transformationId=&quot;de.cau.cs.kieler.sbase.rerouteSource&quot;&gt;
       &lt;/transformationCommand&gt;
-					&lt;/menu&gt;
-					&lt;transformationCommand transformationId=&quot;de.cau.cs.kieler.sbase.addPred&quot;&gt;&lt;/transformationCommand&gt;
-					&lt;transformationCommand transformationId=&quot;de.cau.cs.kieler.sbase.addChoice&quot;&gt;
-					&lt;/transformationCommand&gt;
-					&lt;transformationCommand transformationId=&quot;de.cau.cs.kieler.sbase.addSuc&quot;&gt;&lt;/transformationCommand&gt;
+     &lt;/menu&gt;
+     &lt;transformationCommand transformationId=&quot;de.cau.cs.kieler.sbase.addPred&quot;&gt;&lt;/transformationCommand&gt;
+     &lt;transformationCommand transformationId=&quot;de.cau.cs.kieler.sbase.addChoice&quot;&gt;
+     &lt;/transformationCommand&gt;
+     &lt;transformationCommand transformationId=&quot;de.cau.cs.kieler.sbase.addSuc&quot;&gt;&lt;/transformationCommand&gt;
      &lt;transformationCommand
            transformationId=&quot;de.cau.cs.kieler.sbase.addRegion&quot;&gt;
      &lt;/transformationCommand&gt;
-				&lt;/menuContribution&gt;
-				&lt;menuContribution locationURI=&quot;toolbar:de.cau.cs.kieler&quot;&gt;
+    &lt;/menuContribution&gt;
+    &lt;menuContribution locationURI=&quot;toolbar:de.cau.cs.kieler&quot;&gt;
        &lt;transformationCommand
              transformationId=&quot;de.cau.cs.kieler.sbase.addSuc&quot;&gt;
        &lt;/transformationCommand&gt;
-					&lt;transformationCommand transformationId=&quot;de.cau.cs.kieler.sbase.addRegion&quot;&gt;
-					&lt;/transformationCommand&gt;
-					&lt;transformationCommand transformationId=&quot;de.cau.cs.kieler.sbase.flip&quot;&gt;&lt;/transformationCommand&gt;
-				&lt;/menuContribution&gt;
+     &lt;transformationCommand transformationId=&quot;de.cau.cs.kieler.sbase.addRegion&quot;&gt;
+     &lt;/transformationCommand&gt;
+     &lt;transformationCommand transformationId=&quot;de.cau.cs.kieler.sbase.flip&quot;&gt;&lt;/transformationCommand&gt;
+    &lt;/menuContribution&gt;
     &lt;menuContribution
           locationURI=&quot;popup:de.cau.cs.kieler&quot;&gt;
        &lt;transformationCommand
@@ -367,12 +367,11 @@ This class has to extend &apos;emf.ecore.EPackage&apos;
           &lt;/transformationCommand&gt;
     &lt;/menuContribution&gt;
 
-			&lt;/menus&gt;
-		&lt;/configuration&gt;
+   &lt;/menus&gt;
+  &lt;/configuration&gt;
  &lt;/extension&gt;
  
 &lt;/plugin&gt;
-
       </documentation>
    </annotation>
 
