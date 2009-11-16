@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -49,6 +50,7 @@ import de.cau.cs.kieler.kiml.graphviz.dot.Node;
 import de.cau.cs.kieler.kiml.graphviz.dot.NodeStatement;
 import de.cau.cs.kieler.kiml.graphviz.dot.Statement;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KFloatOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KPoint;
@@ -79,6 +81,8 @@ import de.cau.cs.kieler.core.util.KielerMath.Point;;
  */
 public class GraphvizLayouter {
 
+    /** layout option identifier for spline points factor. */
+    public static final String OPT_SPLINE_POINTS = "de.cau.cs.kieler.kiml.graphviz.options.splinePoints";
     /** command for Dot layout. */
     public static final String DOT_COMMAND = "dot";
     /** command for Neato layout. */
@@ -762,9 +766,20 @@ public class GraphvizLayouter {
      */
     private void splineToPolyline(final KEdgeLayout edgeLayout, final List<List<Point>> splines) {
         List<KPoint> bendPoints = edgeLayout.getBendPoints();
-        for (List<Point> points : splines) {
-            Point[] bezierPoints = KielerMath.calcBezierPoints(points, points.size() - 1);
-            for (int i = 0; i < bezierPoints.length; i++) {
+        // get layout option for spline points factor
+        float splinePointsFact = 1.0f;
+        KFloatOption splinePointsOption = (KFloatOption) edgeLayout.getOption(OPT_SPLINE_POINTS);
+        if (splinePointsOption != null) {
+            splinePointsFact = splinePointsOption.getValue();
+        }
+        ListIterator<List<Point>> splinesIter = splines.listIterator();
+        while (splinesIter.hasNext()) {
+            List<Point> points = splinesIter.next();
+            Point[] bezierPoints = KielerMath.calcBezierPoints(points,
+                    Math.round(splinePointsFact * (points.size() - 1)));
+            int pointsToAdd = (splinesIter.nextIndex() == splines.size()
+                    ? bezierPoints.length - 1 : bezierPoints.length);
+            for (int i = 0; i < pointsToAdd; i++) {
                 KPoint kpoint = KLayoutDataFactory.eINSTANCE.createKPoint();
                 kpoint.setX((float)bezierPoints[i].x);
                 kpoint.setY((float)bezierPoints[i].y);

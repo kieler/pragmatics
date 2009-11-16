@@ -50,6 +50,9 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.borderSpacing">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.graphviz.options.splinePoints">
+         </knownOption>
       </layoutProvider>
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.graphviz"
@@ -80,6 +83,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.layout.options.interactive">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.graphviz.options.splinePoints">
          </knownOption>
       </layoutProvider>
       <layoutProvider
@@ -112,6 +118,9 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.interactive">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.graphviz.options.splinePoints">
+         </knownOption>
       </layoutProvider>
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.graphviz"
@@ -132,6 +141,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.layout.options.borderSpacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.graphviz.options.splinePoints">
          </knownOption>
       </layoutProvider>
       <layoutProvider
@@ -154,7 +166,17 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.borderSpacing">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.graphviz.options.splinePoints">
+         </knownOption>
       </layoutProvider>
+      <layoutOption
+            appliesTo="edges"
+            description="Factor for number of spline points on the edge"
+            id="de.cau.cs.kieler.kiml.graphviz.options.splinePoints"
+            name="Spline Points Factor"
+            type="float">
+      </layoutOption>
    </extension>
 
 </plugin>

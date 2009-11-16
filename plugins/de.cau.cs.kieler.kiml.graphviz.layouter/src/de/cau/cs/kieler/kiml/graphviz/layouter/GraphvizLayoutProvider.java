@@ -74,6 +74,8 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
             return false;
         } else if (LayoutOptions.RANDOM_SEED.equals(optionId)) {
             return 1;
+        } else if (GraphvizLayouter.OPT_SPLINE_POINTS.equals(optionId)) {
+            return 1.0f;
         } else {
             return null;
         }
