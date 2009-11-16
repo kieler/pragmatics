@@ -161,10 +161,13 @@ public final class GraphvizAPI {
      * Starts a new Graphviz process with the given command.
      * 
      * @param command the graphviz command to use
+     * @param monitor progress monitor
      * @return an instance of the graphviz process
      * @throws KielerException if creating the process fails
      */
-    public static Process startProcess(final String command) throws KielerException {
+    public static Process startProcess(final String command,
+            final IKielerProgressMonitor monitor) throws KielerException {
+        monitor.begin("Create Graphviz process", 1);
         IPreferenceStore preferenceStore = GraphvizLayouterPlugin.getDefault().getPreferenceStore();
         String dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
         if (!new File(dotExecutable).exists()) {
@@ -192,20 +195,18 @@ public final class GraphvizAPI {
             return process;
         } catch (IOException exception) {
             throw new KielerException("Failed to start Graphviz process.", exception);
+        } finally {
+            monitor.done();
         }
     }
 
     /**
      * Waits until there is some input from the given input stream, with a customizable timeout.
      * 
-     * @param inputStream
-     *            input stream from which input is expected
-     * @param errorStream
-     *            error stream that is queried if there is no input
-     * @param monitor
-     *            monitor to which progress is reported
-     * @throws KielerException
-     *             if the timeout is exceeded while waiting
+     * @param inputStream input stream from which input is expected
+     * @param errorStream error stream that is queried if there is no input
+     * @param monitor monitor to which progress is reported
+     * @throws KielerException if the timeout is exceeded while waiting
      */
     public static void waitForInput(final InputStream inputStream, final InputStream errorStream,
             final IKielerProgressMonitor monitor) throws KielerException {
@@ -253,8 +254,9 @@ public final class GraphvizAPI {
             }
         } catch (IOException exception) {
             throw new KielerException("Unable to read Graphviz output.", exception);
+        } finally {
+            monitor.done();
         }
-        monitor.done();
     }
 
 }

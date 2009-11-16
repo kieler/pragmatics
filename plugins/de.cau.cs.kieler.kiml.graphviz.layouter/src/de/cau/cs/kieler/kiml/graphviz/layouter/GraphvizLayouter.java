@@ -157,13 +157,13 @@ public class GraphvizLayouter {
         }
 
         // start the graphviz process
-        Process graphvizProcess = GraphvizAPI.startProcess(command);
-        progressMonitor.worked(SMALL_TASK);
+        Process graphvizProcess = GraphvizAPI.startProcess(command,
+                progressMonitor.subTask(SMALL_TASK));
 
         try {
             // translate the KGraph to Graphviz and write to the process
-            GraphvizModel graphvizInput = createDotGraph(parentNode, command);
-            progressMonitor.worked(SMALL_TASK);
+            GraphvizModel graphvizInput = createDotGraph(parentNode, command,
+                    progressMonitor.subTask(SMALL_TASK));
             writeDotGraph(graphvizInput, new BufferedOutputStream(
                     graphvizProcess.getOutputStream()), progressMonitor.subTask(LARGE_TASK));
 
@@ -172,15 +172,15 @@ public class GraphvizLayouter {
                     graphvizProcess.getErrorStream(), progressMonitor.subTask(LARGE_TASK));
 
             // read graphviz output and apply layout information to the KGraph
-            GraphvizModel graphvizOutput = readDotGraph(new BufferedInputStream(graphvizProcess
-                    .getInputStream()), progressMonitor.subTask(LARGE_TASK));
-            retrieveLayoutResult(parentNode, graphvizOutput);
+            GraphvizModel graphvizOutput = readDotGraph(new BufferedInputStream(
+                    graphvizProcess.getInputStream()), progressMonitor.subTask(LARGE_TASK));
+            retrieveLayoutResult(parentNode, graphvizOutput,
+                    progressMonitor.subTask(SMALL_TASK));
         } finally {
             // destroy the process to release resources
             graphvizProcess.destroy();
+            progressMonitor.done();
         }
-
-        progressMonitor.done();
     }
 
     /**
@@ -189,10 +189,13 @@ public class GraphvizLayouter {
      * 
      * @param parent a {@code KNode} with the graph to layout
      * @param command the command string identifying the layout method
+     * @param monitor progress monitor
      * @return an instance of a graphviz model that corresponds to the input
      *         graph
      */
-    private GraphvizModel createDotGraph(final KNode parent, final String command) {
+    private GraphvizModel createDotGraph(final KNode parent, final String command,
+            final IKielerProgressMonitor monitor) {
+        monitor.begin("Create Dot model", 1);
         GraphvizModel graphvizModel = DotFactory.eINSTANCE.createGraphvizModel();
         Graph graph = DotFactory.eINSTANCE.createGraph();
         graph.setType(GraphType.DIGRAPH);
@@ -358,6 +361,7 @@ public class GraphvizLayouter {
             }
         }
 
+        monitor.done();
         return graphvizModel;
     }
 
@@ -544,8 +548,11 @@ public class GraphvizLayouter {
      * 
      * @param parentNode parent node of the original graph
      * @param graphvizModel graphviz model with layout information
+     * @param monitor progress monitor
      */
-    private void retrieveLayoutResult(final KNode parentNode, final GraphvizModel graphvizModel) {
+    private void retrieveLayoutResult(final KNode parentNode, final GraphvizModel graphvizModel,
+            final IKielerProgressMonitor monitor) {
+        monitor.begin("Transfer layout result", 1);
         Graph graph = graphvizModel.getGraphs().get(0);
         Point boundingBox = null;
         float edgeOffsetx = offset, edgeOffsety = offset;
@@ -738,6 +745,7 @@ public class GraphvizLayouter {
             parentLayout.setHeight((float)boundingBox.y + insets.getTop()
                     + insets.getBottom() + 2 * offset);
         }
+        monitor.done();
     }
 
     /**
