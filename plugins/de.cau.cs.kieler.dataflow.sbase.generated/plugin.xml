@@ -61,8 +61,8 @@
 					value="connectBoxes" />
 				<visibleWhen checkEnabled="false">
 					<iterate ifEmpty="false" operator="or">
-						<with variable="activeEditor">
-							<instanceof
+						<with variable="activeEditorId">
+							<equals
 								value="de.cau.cs.kieler.dataflow.diagram.part.DataflowDiagramEditorID" />
 						</with>
 					</iterate>
@@ -77,8 +77,8 @@
 					value="connectPorts" />
 				<visibleWhen checkEnabled="false">
 					<iterate ifEmpty="false" operator="or">
-						<with variable="activeEditor">
-							<instanceof
+						<with variable="activeEditorId">
+							<equals
 								value="de.cau.cs.kieler.dataflow.diagram.part.DataflowDiagramEditorID" />
 						</with>
 					</iterate>
@@ -93,8 +93,8 @@
 					value="createSuccessor" />
 				<visibleWhen checkEnabled="false">
 					<iterate ifEmpty="false" operator="or">
-						<with variable="activeEditor">
-							<instanceof
+						<with variable="activeEditorId">
+							<equals
 								value="de.cau.cs.kieler.dataflow.diagram.part.DataflowDiagramEditorID" />
 						</with>
 					</iterate>
@@ -109,8 +109,8 @@
 					value="createPredecessor" />
 				<visibleWhen checkEnabled="false">
 					<iterate ifEmpty="false" operator="or">
-						<with variable="activeEditor">
-							<instanceof
+						<with variable="activeEditorId">
+							<equals
 								value="de.cau.cs.kieler.dataflow.diagram.part.DataflowDiagramEditorID" />
 						</with>
 					</iterate>
@@ -125,8 +125,8 @@
 					value="connectAllBoxPorts" />
 				<visibleWhen checkEnabled="false">
 					<iterate ifEmpty="false" operator="or">
-						<with variable="activeEditor">
-							<instanceof
+						<with variable="activeEditorId">
+							<equals
 								value="de.cau.cs.kieler.dataflow.diagram.part.DataflowDiagramEditorID" />
 						</with>
 					</iterate>
@@ -141,8 +141,8 @@
 					value="insertBoxInConnection" />
 				<visibleWhen checkEnabled="false">
 					<iterate ifEmpty="false" operator="or">
-						<with variable="activeEditor">
-							<instanceof
+						<with variable="activeEditorId">
+							<equals
 								value="de.cau.cs.kieler.dataflow.diagram.part.DataflowDiagramEditorID" />
 						</with>
 					</iterate>
