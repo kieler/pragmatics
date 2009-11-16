@@ -47,10 +47,9 @@ import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
 public class LayeredGraph {
 
     /** crosswise dimension of this layered graph. */
-    public float crosswiseDim = 0.0f;
+    private float crosswiseDim = 0.0f;
     /** lengthwise dimension of this layered graph. */
-    public float lengthwiseDim = 0.0f;
-
+    private float lengthwiseDim = 0.0f;
     /** list of layers in this layered graph. */
     private List<Layer> layers = new LinkedList<Layer>();
     /** parent layout node associated with this layered graph. */
@@ -112,14 +111,14 @@ public class LayeredGraph {
         ListIterator<Layer> layerIter = layers.listIterator();
         while (layerIter.hasNext()) {
             Layer layer = layerIter.next();
-            if (layer.rank < 0 || layer.rank > rank) {
+            if (layer.getRank() < 0 || layer.getRank() > rank) {
                 // insert a new layer into the list
                 Layer newLayer = new Layer(rank, Layer.UNDEF_HEIGHT, this);
                 doPut(obj, newLayer, kNode);
                 layerIter.previous();
                 layerIter.add(newLayer);
                 return;
-            } else if (layer.rank == rank) {
+            } else if (layer.getRank() == rank) {
                 // the right layer was found
                 doPut(obj, layer, kNode);
                 return;
@@ -144,14 +143,14 @@ public class LayeredGraph {
         ListIterator<Layer> layerIter = layers.listIterator(layers.size());
         while (layerIter.hasPrevious()) {
             Layer layer = layerIter.previous();
-            if (layer.height < 0 || layer.height > height) {
+            if (layer.getHeight() < 0 || layer.getHeight() > height) {
                 // insert a new layer into the list
                 Layer newLayer = new Layer(Layer.UNDEF_RANK, height, this);
                 doPut(obj, newLayer, kNode);
                 layerIter.next();
                 layerIter.add(newLayer);
                 return;
-            } else if (layer.height == height) {
+            } else if (layer.getHeight() == height) {
                 // the right layer was found
                 doPut(obj, layer, kNode);
                 return;
@@ -203,7 +202,7 @@ public class LayeredGraph {
         for (Layer layer : layers) {
             List<LayerElement> elements = layer.getElements();
             for (LayerElement element : elements) {
-                if (element.linearSegment == null) {
+                if (element.getLinearSegment() == null) {
                     // create new linear segment
                     createLinearSegment(element);
                 }
@@ -324,6 +323,42 @@ public class LayeredGraph {
     public KPoint getPosition() {
         return position;
     }
+    
+    /**
+     * Sets the crosswiseDim.
+     *
+     * @param thecrosswiseDim the crosswiseDim to set
+     */
+    public void setCrosswiseDim(final float thecrosswiseDim) {
+        this.crosswiseDim = thecrosswiseDim;
+    }
+
+    /**
+     * Returns the crosswiseDim.
+     *
+     * @return the crosswiseDim
+     */
+    public float getCrosswiseDim() {
+        return crosswiseDim;
+    }
+
+    /**
+     * Sets the lengthwiseDim.
+     *
+     * @param thelengthwiseDim the lengthwiseDim to set
+     */
+    public void setLengthwiseDim(final float thelengthwiseDim) {
+        this.lengthwiseDim = thelengthwiseDim;
+    }
+
+    /**
+     * Returns the lengthwiseDim.
+     *
+     * @return the lengthwiseDim
+     */
+    public float getLengthwiseDim() {
+        return lengthwiseDim;
+    }
 
     /**
      * Puts an object into a given layer.
@@ -351,36 +386,38 @@ public class LayeredGraph {
             final KEdge edge, final KPort sourcePort, final KPort targetPort) {
         Layer sourceLayer = source.getLayer();
         Layer targetLayer = target.getLayer();
-        if (targetLayer.rank - sourceLayer.rank == 1) {
+        if (targetLayer.getRank() - sourceLayer.getRank() == 1) {
             source.addOutgoing(edge, target, sourcePort, targetPort);
         } else {
             LayerElement currentElement = null;
             // process existing long edges for the source or target port
             LinearSegment linearSegment = longEdgesMap.get(sourcePort);
             if (linearSegment == null
-                    || linearSegment.elements.get(0).getLayer().rank < sourceLayer.rank) {
+                    || linearSegment.getElements().get(0).getLayer().getRank() < sourceLayer.getRank()) {
                 linearSegment = longEdgesMap.get(targetPort);
             }
             if (linearSegment != null) {
-                ListIterator<LayerElement> elemIter = linearSegment.elements.listIterator();
+                ListIterator<LayerElement> elemIter = linearSegment.getElements().listIterator();
                 currentElement = elemIter.next();
-                while (elemIter.hasNext() && currentElement.getLayer().rank <= sourceLayer.rank) {
+                while (elemIter.hasNext() && currentElement.getLayer().getRank()
+                        <= sourceLayer.getRank()) {
                     currentElement = elemIter.next();
                 }
                 source.addOutgoing(edge, currentElement, sourcePort, null);
-                while (elemIter.hasNext() && currentElement.getLayer().rank < targetLayer.rank - 1) {
+                while (elemIter.hasNext() && currentElement.getLayer().getRank()
+                        < targetLayer.getRank() - 1) {
                     currentElement = elemIter.next();
                 }
             } else {
-                currentElement = sourceLayer.next.put(edge, null);
+                currentElement = sourceLayer.getNext().put(edge, null);
                 linearSegment = createLinearSegment(currentElement);
                 source.addOutgoing(edge, currentElement, sourcePort, null);
             }
             // add new layer elements to the linear segment if needed
-            while (currentElement.getLayer().rank < targetLayer.rank - 1) {
-                LayerElement newElement = currentElement.getLayer().next.put(edge, null);
-                linearSegment.elements.add(newElement);
-                newElement.linearSegment = linearSegment;
+            while (currentElement.getLayer().getRank() < targetLayer.getRank() - 1) {
+                LayerElement newElement = currentElement.getLayer().getNext().put(edge, null);
+                linearSegment.getElements().add(newElement);
+                newElement.setLinearSegment(linearSegment);
                 currentElement.addOutgoing(edge, newElement);
                 currentElement = newElement;
             }
@@ -397,16 +434,20 @@ public class LayeredGraph {
      */
     private LinearSegment createLinearSegment(final LayerElement element) {
         LinearSegment linearSegment = new LinearSegment();
-        linearSegment.elements.add(element);
-        element.linearSegment = linearSegment;
+        linearSegment.getElements().add(element);
+        element.setLinearSegment(linearSegment);
         linearSegments.add(linearSegment);
         return linearSegment;
     }
 
+    /** spacing for edge labels. */
+    private static final int LABEL_SPACING = 3;
+    
     /**
+     * Performs a rudimentary layout of edge labels. Does not avoid overlappings of labels
+     * with other labels, nodes, or edges.
      * 
-     * 
-     * @param edge
+     * @param edge the edge for which the labels shall be layouted
      */
     private void layoutEdgeLabels(final KEdge edge) {
         List<KLabel> tailLabels = new LinkedList<KLabel>();
@@ -433,34 +474,34 @@ public class LayeredGraph {
         }
 
         // layout tail labels
-        float xpos = edgeLayout.getSourcePoint().getX() + 3;
-        float ypos = edgeLayout.getSourcePoint().getY() + 3;
+        float xpos = edgeLayout.getSourcePoint().getX() + LABEL_SPACING;
+        float ypos = edgeLayout.getSourcePoint().getY() + LABEL_SPACING;
         for (KLabel edgeLabel : tailLabels) {
             KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(edgeLabel);
             labelLayout.setXpos(xpos);
             labelLayout.setYpos(ypos);
-            ypos += labelLayout.getHeight() + 3;
+            ypos += labelLayout.getHeight() + LABEL_SPACING;
         }
 
         // layout center labels
         if (!centerLabels.isEmpty()) {
             KPoint point = edgeLayout.getBendPoints().get(midBendPoint);
-            xpos = point.getX() + 3;
-            ypos = point.getY() + 3;
+            xpos = point.getX() + LABEL_SPACING;
+            ypos = point.getY() + LABEL_SPACING;
             for (KLabel edgeLabel : centerLabels) {
                 KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(edgeLabel);
                 labelLayout.setXpos(xpos);
                 labelLayout.setYpos(ypos);
-                ypos += labelLayout.getHeight() + 3;
+                ypos += labelLayout.getHeight() + LABEL_SPACING;
             }
         }
 
         // layout tail labels
-        xpos = edgeLayout.getTargetPoint().getX() - 3;
+        xpos = edgeLayout.getTargetPoint().getX() - LABEL_SPACING;
         ypos = edgeLayout.getTargetPoint().getY();
         for (KLabel edgeLabel : headLabels) {
             KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(edgeLabel);
-            ypos -= labelLayout.getHeight() - 3;
+            ypos -= labelLayout.getHeight() - LABEL_SPACING;
             labelLayout.setXpos(xpos - labelLayout.getWidth());
             labelLayout.setYpos(ypos);
         }

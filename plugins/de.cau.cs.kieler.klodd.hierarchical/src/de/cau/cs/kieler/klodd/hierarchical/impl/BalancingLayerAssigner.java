@@ -43,6 +43,9 @@ public class BalancingLayerAssigner extends AbstractAlgorithm implements ILayerA
         this.basicLayerAssigner = thebasicLayerAssigner;
     }
 
+    /** minimal number of layers for balancing of the layering. */
+    private static final int MIN_LAYERS = 3;
+    
     /**
      * {@inheritDoc}
      */
@@ -53,11 +56,11 @@ public class BalancingLayerAssigner extends AbstractAlgorithm implements ILayerA
         LayeredGraph layeredGraph = basicLayerAssigner.assignLayers(graph, parentNode, balanceOverSize);
 
         // balance layer assignment of each element in the layering
-        if (layeredGraph.getLayers().size() >= 3) {
+        if (layeredGraph.getLayers().size() >= MIN_LAYERS) {
             ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator(2);
             while (layerIter.hasNext()) {
                 Layer layer = layerIter.next();
-                if (layer.height > 0) {
+                if (layer.getHeight() > 0) {
                     ListIterator<LayerElement> elemIter = layer.getElements().listIterator();
                     while (elemIter.hasNext()) {
                         balanceElement(layeredGraph, elemIter, balanceOverSize);
@@ -90,14 +93,15 @@ public class BalancingLayerAssigner extends AbstractAlgorithm implements ILayerA
                 outgoing++;
             } else {
                 incoming++;
-                int shiftRank = layeredGraph.getLayerElement(edgeEntry.endpoint().getObject()).getLayer().rank + 1;
+                int shiftRank = layeredGraph.getLayerElement(edgeEntry.endpoint()
+                        .getObject()).getLayer().getRank() + 1;
                 minShiftRank = Math.max(minShiftRank, shiftRank);
             }
         }
         if (minShiftRank > 0 && incoming >= outgoing) {
-            int layerOffset = layeredGraph.getLayers().get(0).rank;
+            int layerOffset = layeredGraph.getLayers().get(0).getRank();
             if (balanceOverSize) {
-                if (minShiftRank < currentLayer.rank) {
+                if (minShiftRank < currentLayer.getRank()) {
                     elemIter.remove();
                     element.setLayer(layeredGraph.getLayers().get(minShiftRank - layerOffset));
                 }
@@ -105,7 +109,7 @@ public class BalancingLayerAssigner extends AbstractAlgorithm implements ILayerA
                 ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator(
                         minShiftRank - layerOffset);
                 int currentSize = currentLayer.getElements().size();
-                while (layerIter.nextIndex() < currentLayer.rank - layerOffset) {
+                while (layerIter.nextIndex() < currentLayer.getRank() - layerOffset) {
                     Layer layer = layerIter.next();
                     if (layer.getElements().size() <= currentSize) {
                         // move the current element to the new layer

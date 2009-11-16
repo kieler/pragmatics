@@ -41,24 +41,30 @@ import de.cau.cs.kieler.klodd.hierarchical.structures.RoutingSlot;
  */
 public class ToponumLayerwiseEdgePlacer extends AbstractAlgorithm implements ILayerwiseEdgePlacer {
 
+    /** value returned by comparator if the 'greater than' relation is strong. */
+    private static final int STRONGLY_GREATER = 2;
+    /** value returned by comparator if the 'less than' relation is strong. */
+    private static final int STRONGLY_LESS = -2;
+    
     /**
      * Routing slot used for sorting.
      */
     private class TopoRoutingSlot extends RoutingSlot implements Comparable<TopoRoutingSlot> {
 
         /** positions of line segments going to the preceding layer. */
-        List<Float> sourcePosis = new LinkedList<Float>();
+        private List<Float> sourcePosis = new LinkedList<Float>();
         /** positions of line segments going to the next layer. */
-        List<Float> targetPosis = new LinkedList<Float>();
+        private List<Float> targetPosis = new LinkedList<Float>();
         /**
          * list of outgoing links in the slot ordering graph; the second entry
          * indicates whether this is a strong link.
          */
-        List<Pair<TopoRoutingSlot, Boolean>> outgoing = new LinkedList<Pair<TopoRoutingSlot, Boolean>>();
+        private List<Pair<TopoRoutingSlot, Boolean>> outgoing
+                = new LinkedList<Pair<TopoRoutingSlot, Boolean>>();
         /** number of incoming links in the slot ordering graph. */
-        int incomingCount = 0;
+        private int incomingCount = 0;
         /** visit marker for cycle breaking. */
-        int visit = -1;
+        private int visit = -1;
 
         /**
          * Compares two routing slots. Returns a number greater than zero if
@@ -75,15 +81,15 @@ public class ToponumLayerwiseEdgePlacer extends AbstractAlgorithm implements ILa
             int conflicts1 = countConflicts(this.targetPosis, other.sourcePosis);
             int conflicts2 = countConflicts(other.targetPosis, this.sourcePosis);
             if (conflicts1 > conflicts2) {
-                return 2;
+                return STRONGLY_GREATER;
             } else if (conflicts1 < conflicts2) {
-                return -2;
+                return STRONGLY_LESS;
             } else {
                 // compare number of crossings for both variants
-                int crossings1 = countCrossings(this.targetPosis, other.start, other.end)
-                        + countCrossings(other.sourcePosis, this.start, this.end);
-                int crossings2 = countCrossings(other.targetPosis, this.start, this.end)
-                        + countCrossings(this.sourcePosis, other.start, other.end);
+                int crossings1 = countCrossings(this.targetPosis, other.getStart(), other.getEnd())
+                        + countCrossings(other.sourcePosis, this.getStart(), this.getEnd());
+                int crossings2 = countCrossings(other.targetPosis, this.getStart(), this.getEnd())
+                        + countCrossings(this.sourcePosis, other.getStart(), other.getEnd());
                 return crossings1 > crossings2 ? 1 : (crossings1 < crossings2 ? -1 : 0);
             }
         }
@@ -105,8 +111,8 @@ public class ToponumLayerwiseEdgePlacer extends AbstractAlgorithm implements ILa
          */
         @Override
         public int hashCode() {
-            return sourcePosis.hashCode() ^ targetPosis.hashCode() ^ Float.valueOf(start).hashCode()
-                    ^ Float.valueOf(end).hashCode();
+            return sourcePosis.hashCode() ^ targetPosis.hashCode() ^ Float.valueOf(getStart()).hashCode()
+                    ^ Float.valueOf(getEnd()).hashCode();
         }
     }
 
@@ -133,7 +139,7 @@ public class ToponumLayerwiseEdgePlacer extends AbstractAlgorithm implements ILa
      * {@inheritDoc}
      */
     public int placeEdges(final Layer layer, final float minDist) {
-        getMonitor().begin("Edge routing (layer " + layer.rank + ")", 1);
+        getMonitor().begin("Edge routing (layer " + layer.getRank() + ")", 1);
         LayoutDirection layoutDirection = layer.getLayeredGraph().getLayoutDirection();
         this.edgeSpacing = minDist * EDGE_DIST_FACT;
 
@@ -174,44 +180,44 @@ public class ToponumLayerwiseEdgePlacer extends AbstractAlgorithm implements ILa
                 // determine source and target positions
                 float sourcePos = connection.calcSourcePos(minDist);
                 float targetPos = connection.calcTargetPos(minDist);
-                if (layer.rank == 0) {
+                if (layer.getRank() == 0) {
                     PortSide placement = LayoutOptions.getPortSide(KimlLayoutUtil
                             .getShapeLayout(connection.getSourcePort()));
                     if (layoutDirection == LayoutDirection.DOWN) {
                         if (placement == PortSide.WEST) {
                             sourcePos = 0.0f;
                         } else if (placement == PortSide.EAST) {
-                            sourcePos = layer.crosswiseDim;
+                            sourcePos = layer.getCrosswiseDim();
                         } else if (placement == PortSide.SOUTH) {
-                            sourcePos = layer.crosswiseDim;
+                            sourcePos = layer.getCrosswiseDim();
                         }
                     } else {
                         if (placement == PortSide.NORTH) {
                             sourcePos = 0.0f;
                         } else if (placement == PortSide.SOUTH) {
-                            sourcePos = layer.crosswiseDim;
+                            sourcePos = layer.getCrosswiseDim();
                         } else if (placement == PortSide.EAST) {
-                            sourcePos = layer.crosswiseDim;
+                            sourcePos = layer.getCrosswiseDim();
                         }
                     }
-                } else if (layer.height == 1) {
+                } else if (layer.getHeight() == 1) {
                     PortSide placement = LayoutOptions.getPortSide(KimlLayoutUtil
                             .getShapeLayout(connection.getTargetPort()));
                     if (layoutDirection == LayoutDirection.DOWN) {
                         if (placement == PortSide.WEST) {
                             targetPos = 0.0f;
                         } else if (placement == PortSide.EAST) {
-                            targetPos = layer.crosswiseDim;
+                            targetPos = layer.getCrosswiseDim();
                         } else if (placement == PortSide.NORTH) {
-                            targetPos = layer.crosswiseDim;
+                            targetPos = layer.getCrosswiseDim();
                         }
                     } else {
                         if (placement == PortSide.NORTH) {
                             targetPos = 0.0f;
                         } else if (placement == PortSide.SOUTH) {
-                            targetPos = layer.crosswiseDim;
+                            targetPos = layer.getCrosswiseDim();
                         } else if (placement == PortSide.WEST) {
-                            targetPos = layer.crosswiseDim;
+                            targetPos = layer.getCrosswiseDim();
                         }
                     }
                 }
@@ -222,14 +228,14 @@ public class ToponumLayerwiseEdgePlacer extends AbstractAlgorithm implements ILa
                 TopoRoutingSlot slot = (TopoRoutingSlot) slotMap.get(key);
                 if (slot == null) {
                     slot = new TopoRoutingSlot();
-                    slot.start = startPos;
-                    slot.end = endPos;
+                    slot.setStart(startPos);
+                    slot.setEnd(endPos);
                     slot.sourcePosis.add(Float.valueOf(sourcePos));
                     slot.targetPosis.add(Float.valueOf(targetPos));
                     slotMap.put(key, slot);
                 } else {
-                    slot.start = Math.min(slot.start, startPos);
-                    slot.end = Math.max(slot.end, endPos);
+                    slot.setStart(Math.min(slot.getStart(), startPos));
+                    slot.setEnd(Math.max(slot.getEnd(), endPos));
                     insertSorted(slot.sourcePosis, sourcePos);
                     insertSorted(slot.targetPosis, targetPos);
                 }
@@ -247,11 +253,11 @@ public class ToponumLayerwiseEdgePlacer extends AbstractAlgorithm implements ILa
                 int rel = slot1.compareTo(slot2);
                 if (rel < 0) {
                     slot1.outgoing.add(new Pair<TopoRoutingSlot, Boolean>(slot2, Boolean
-                            .valueOf(rel == -2)));
+                            .valueOf(rel == STRONGLY_LESS)));
                     slot2.incomingCount++;
                 } else if (rel > 0) {
                     slot2.outgoing.add(new Pair<TopoRoutingSlot, Boolean>(slot1, Boolean
-                            .valueOf(rel == 2)));
+                            .valueOf(rel == STRONGLY_GREATER)));
                     slot1.incomingCount++;
                 }
             }
@@ -282,8 +288,8 @@ public class ToponumLayerwiseEdgePlacer extends AbstractAlgorithm implements ILa
                 List<TopoRoutingSlot> routingLayer = routingLayerIter.previous();
                 boolean feasible = true;
                 for (RoutingSlot layerSlot : routingLayer) {
-                    if (source.start < layerSlot.end + edgeSpacing
-                            && source.end > layerSlot.start - edgeSpacing) {
+                    if (source.getStart() < layerSlot.getEnd() + edgeSpacing
+                            && source.getEnd() > layerSlot.getStart() - edgeSpacing) {
                         feasible = false;
                         break;
                     }
@@ -295,10 +301,10 @@ public class ToponumLayerwiseEdgePlacer extends AbstractAlgorithm implements ILa
                 rank--;
             }
             if (lastLayer != null) {
-                source.rank = rank;
+                source.setRank(rank);
                 lastLayer.add(source);
             } else {
-                source.rank = routingLayers.size();
+                source.setRank(routingLayers.size());
                 List<TopoRoutingSlot> routingLayer = new LinkedList<TopoRoutingSlot>();
                 routingLayer.add(source);
                 routingLayers.add(routingLayer);
@@ -437,9 +443,9 @@ public class ToponumLayerwiseEdgePlacer extends AbstractAlgorithm implements ILa
             }
             slot.visit = 0;
             // temporarily store the result in the slot rank field
-            slot.rank = result;
+            slot.setRank(result);
         } else {
-            result = slot.rank;
+            result = slot.getRank();
         }
         return result;
     }

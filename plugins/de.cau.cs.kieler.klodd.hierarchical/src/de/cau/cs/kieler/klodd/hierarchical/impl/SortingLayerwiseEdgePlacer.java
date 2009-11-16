@@ -45,7 +45,7 @@ public class SortingLayerwiseEdgePlacer extends AbstractAlgorithm implements ILa
      * Routing slots used for sorting.
      */
     private static class SortableRoutingSlot extends RoutingSlot {
-        public boolean outgoingAtStart = false, outgoingAtEnd = false;
+        private boolean outgoingAtStart = false, outgoingAtEnd = false;
     }
 
     /** minimal distance of two edges to make them feasible in the same routing layer. */
@@ -67,7 +67,7 @@ public class SortingLayerwiseEdgePlacer extends AbstractAlgorithm implements ILa
      * {@inheritDoc}
      */
     public int placeEdges(final Layer layer, final float minDist) {
-        getMonitor().begin("Edge routing (layer " + layer.rank + ")", 1);
+        getMonitor().begin("Edge routing (layer " + layer.getRank() + ")", 1);
         LayoutDirection layoutDirection = layer.getLayeredGraph().getLayoutDirection();
 
         // determine number of outgoing connections for each port
@@ -107,44 +107,44 @@ public class SortingLayerwiseEdgePlacer extends AbstractAlgorithm implements ILa
                 // determine source and target positions
                 float sourcePos = connection.calcSourcePos(minDist);
                 float targetPos = connection.calcTargetPos(minDist);
-                if (layer.rank == 0) {
+                if (layer.getRank() == 0) {
                     PortSide placement = LayoutOptions.getPortSide(KimlLayoutUtil
                             .getShapeLayout(connection.getSourcePort()));
                     if (layoutDirection == LayoutDirection.DOWN) {
                         if (placement == PortSide.WEST) {
                             sourcePos = 0.0f;
                         } else if (placement == PortSide.EAST) {
-                            sourcePos = layer.crosswiseDim;
+                            sourcePos = layer.getCrosswiseDim();
                         } else if (placement == PortSide.SOUTH) {
-                            sourcePos = layer.crosswiseDim;
+                            sourcePos = layer.getCrosswiseDim();
                         }
                     } else {
                         if (placement == PortSide.NORTH) {
                             sourcePos = 0.0f;
                         } else if (placement == PortSide.SOUTH) {
-                            sourcePos = layer.crosswiseDim;
+                            sourcePos = layer.getCrosswiseDim();
                         } else if (placement == PortSide.EAST) {
-                            sourcePos = layer.crosswiseDim;
+                            sourcePos = layer.getCrosswiseDim();
                         }
                     }
-                } else if (layer.height == 1) {
+                } else if (layer.getHeight() == 1) {
                     PortSide placement = LayoutOptions.getPortSide(KimlLayoutUtil
                             .getShapeLayout(connection.getTargetPort()));
                     if (layoutDirection == LayoutDirection.DOWN) {
                         if (placement == PortSide.WEST) {
                             targetPos = 0.0f;
                         } else if (placement == PortSide.EAST) {
-                            targetPos = layer.crosswiseDim;
+                            targetPos = layer.getCrosswiseDim();
                         } else if (placement == PortSide.NORTH) {
-                            targetPos = layer.crosswiseDim;
+                            targetPos = layer.getCrosswiseDim();
                         }
                     } else {
                         if (placement == PortSide.NORTH) {
                             targetPos = 0.0f;
                         } else if (placement == PortSide.SOUTH) {
-                            targetPos = layer.crosswiseDim;
+                            targetPos = layer.getCrosswiseDim();
                         } else if (placement == PortSide.WEST) {
-                            targetPos = layer.crosswiseDim;
+                            targetPos = layer.getCrosswiseDim();
                         }
                     }
                 }
@@ -161,26 +161,26 @@ public class SortingLayerwiseEdgePlacer extends AbstractAlgorithm implements ILa
                     if (targetPos >= sourcePos) {
                         slot.outgoingAtEnd = true;
                     }
-                    slot.start = startPos;
-                    slot.end = endPos;
+                    slot.setStart(startPos);
+                    slot.setEnd(endPos);
                     slotMap.put(key, slot);
                 } else {
-                    if (startPos < slot.start) {
+                    if (startPos < slot.getStart()) {
                         if (targetPos <= sourcePos) {
                             slot.outgoingAtStart = true;
                         } else {
                             slot.outgoingAtStart = false;
                         }
                     }
-                    if (endPos > slot.end) {
+                    if (endPos > slot.getEnd()) {
                         if (targetPos >= sourcePos) {
                             slot.outgoingAtEnd = true;
                         } else {
                             slot.outgoingAtEnd = false;
                         }
                     }
-                    slot.start = Math.min(slot.start, startPos);
-                    slot.end = Math.max(slot.end, endPos);
+                    slot.setStart(Math.min(slot.getStart(), startPos));
+                    slot.setEnd(Math.max(slot.getEnd(), endPos));
                 }
             }
         }
@@ -193,30 +193,33 @@ public class SortingLayerwiseEdgePlacer extends AbstractAlgorithm implements ILa
                 assert s1 instanceof SortableRoutingSlot && s2 instanceof SortableRoutingSlot;
                 SortableRoutingSlot slot1 = (SortableRoutingSlot) s1;
                 SortableRoutingSlot slot2 = (SortableRoutingSlot) s2;
-                if (slot1.outgoingAtStart && !slot2.outgoingAtStart && slot1.start == slot2.start) {
+                if (slot1.outgoingAtStart && !slot2.outgoingAtStart
+                        && slot1.getStart() == slot2.getStart()) {
                     return 1;
                 } else if (slot2.outgoingAtStart && !slot1.outgoingAtStart
-                        && slot1.start == slot2.start) {
+                        && slot1.getStart() == slot2.getStart()) {
                     return -1;
-                } else if (slot1.outgoingAtEnd && !slot2.outgoingAtEnd && slot1.end == slot2.end) {
+                } else if (slot1.outgoingAtEnd && !slot2.outgoingAtEnd
+                        && slot1.getEnd() == slot2.getEnd()) {
                     return 1;
-                } else if (slot2.outgoingAtEnd && !slot1.outgoingAtEnd && slot1.end == slot2.end) {
+                } else if (slot2.outgoingAtEnd && !slot1.outgoingAtEnd
+                        && slot1.getEnd() == slot2.getEnd()) {
                     return -1;
-                } else if (slot1.outgoingAtStart && slot1.start > slot2.start) {
+                } else if (slot1.outgoingAtStart && slot1.getStart() > slot2.getStart()) {
                     return 1;
-                } else if (slot2.outgoingAtStart && slot2.start > slot1.start) {
+                } else if (slot2.outgoingAtStart && slot2.getStart() > slot1.getStart()) {
                     return -1;
-                } else if (slot1.outgoingAtEnd && slot1.end < slot2.end) {
+                } else if (slot1.outgoingAtEnd && slot1.getEnd() < slot2.getEnd()) {
                     return 1;
-                } else if (slot2.outgoingAtEnd && slot2.end < slot1.end) {
+                } else if (slot2.outgoingAtEnd && slot2.getEnd() < slot1.getEnd()) {
                     return -1;
-                } else if (!slot1.outgoingAtStart && slot1.start > slot2.start) {
+                } else if (!slot1.outgoingAtStart && slot1.getStart() > slot2.getStart()) {
                     return -1;
-                } else if (!slot2.outgoingAtStart && slot2.start > slot1.start) {
+                } else if (!slot2.outgoingAtStart && slot2.getStart() > slot1.getStart()) {
                     return 1;
-                } else if (!slot1.outgoingAtEnd && slot1.end < slot2.end) {
+                } else if (!slot1.outgoingAtEnd && slot1.getEnd() < slot2.getEnd()) {
                     return -1;
-                } else if (!slot2.outgoingAtEnd && slot2.end < slot1.end) {
+                } else if (!slot2.outgoingAtEnd && slot2.getEnd() < slot1.getEnd()) {
                     return 1;
                 } else {
                     return 0;
@@ -234,7 +237,7 @@ public class SortingLayerwiseEdgePlacer extends AbstractAlgorithm implements ILa
                 List<RoutingSlot> routingLayer = routingLayerIter.previous();
                 boolean feasible = true;
                 for (RoutingSlot layerSlot : routingLayer) {
-                    if (slot.start < layerSlot.end && slot.end > layerSlot.start) {
+                    if (slot.getStart() < layerSlot.getEnd() && slot.getEnd() > layerSlot.getStart()) {
                         feasible = false;
                         break;
                     }
@@ -246,10 +249,10 @@ public class SortingLayerwiseEdgePlacer extends AbstractAlgorithm implements ILa
                 rank--;
             }
             if (lastLayer != null) {
-                slot.rank = rank;
+                slot.setRank(rank);
                 lastLayer.add(slot);
             } else {
-                slot.rank = routingLayers.size();
+                slot.setRank(routingLayers.size());
                 List<RoutingSlot> routingLayer = new LinkedList<RoutingSlot>();
                 routingLayer.add(slot);
                 routingLayers.add(routingLayer);

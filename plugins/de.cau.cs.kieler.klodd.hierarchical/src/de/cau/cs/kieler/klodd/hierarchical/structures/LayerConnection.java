@@ -38,20 +38,19 @@ import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
 public class LayerConnection {
 
     /** side routing position at the source of this connection. */
-    public int sourceSidePos = 0;
+    private int sourceSidePos = 0;
     /** side routing position at the target of this connection. */
-    public int targetSidePos = 0;
+    private int targetSidePos = 0;
     /** back routing position at the source of this connection. */
-    public int sourceBackPos = 0;
+    private int sourceBackPos = 0;
     /** front routing position at the target of this connection. */
-    public int targetFrontPos = 0;
+    private int targetFrontPos = 0;
     /** crosswise position of the connection anchor at source. */
-    public float sourceAnchorPos = 0.0f;
+    private float sourceAnchorPos = 0.0f;
     /** crosswise position of the connection anchor at target. */
-    public float targetAnchorPos = 0.0f;
+    private float targetAnchorPos = 0.0f;
     /** list of bend points of this connection. */
-    public List<KPoint> bendPoints = new LinkedList<KPoint>();
-
+    private List<KPoint> bendPoints = new LinkedList<KPoint>();
     /** the contained edge object. */
     private KEdge edge;
     /** the source element. */
@@ -319,7 +318,7 @@ public class LayerConnection {
         LayoutDirection layoutDirection = layeredGraph.getLayoutDirection();
         targetAnchorPos = layoutDirection == LayoutDirection.DOWN ? targetElement.getPosition()
                 .getX() : targetElement.getPosition().getY();
-        if (targetSidePos == 0) {
+        if (getTargetSidePos() == 0) {
             if (targetPort == null) {
                 // there is no source port, find appropriate anchor
                 targetAnchorPos += layoutDirection == LayoutDirection.DOWN ? targetElement
@@ -335,12 +334,12 @@ public class LayerConnection {
                             + targetElement.getPosOffset().getY();
                 }
             }
-        } else if (targetSidePos > 0) {
+        } else if (getTargetSidePos() > 0) {
             targetAnchorPos += (layoutDirection == LayoutDirection.DOWN ? targetElement
                     .getRealWidth() : targetElement.getRealHeight())
-                    + targetSidePos * minDist;
-        } else if (targetSidePos < 0) {
-            targetAnchorPos += targetSidePos * minDist;
+                    + getTargetSidePos() * minDist;
+        } else if (getTargetSidePos() < 0) {
+            targetAnchorPos += getTargetSidePos() * minDist;
         }
         return targetAnchorPos;
     }
@@ -390,6 +389,105 @@ public class LayerConnection {
         } else if (next.getY() < endpoint.getY()) {
             endpoint.setY(endpoint.getY() - height / 2);
         }
+    }
+
+    /**
+     * Sets the source side position.
+     *
+     * @param thesourceSidePos the source side position to set
+     */
+    public void setSourceSidePos(final int thesourceSidePos) {
+        this.sourceSidePos = thesourceSidePos;
+    }
+
+    /**
+     * Returns the source side position.
+     *
+     * @return the source side position
+     */
+    public int getSourceSidePos() {
+        return sourceSidePos;
+    }
+
+    /**
+     * Sets the target side position.
+     *
+     * @param thetargetSidePos the target side position to set
+     */
+    public void setTargetSidePos(final int thetargetSidePos) {
+        this.targetSidePos = thetargetSidePos;
+    }
+
+    /**
+     * Returns the target side position.
+     *
+     * @return the target side position
+     */
+    public int getTargetSidePos() {
+        return targetSidePos;
+    }
+
+    /**
+     * Sets the source back position.
+     *
+     * @param thesourceBackPos the source back position to set
+     */
+    public void setSourceBackPos(final int thesourceBackPos) {
+        this.sourceBackPos = thesourceBackPos;
+    }
+
+    /**
+     * Returns the source back position.
+     *
+     * @return the source back position
+     */
+    public int getSourceBackPos() {
+        return sourceBackPos;
+    }
+
+    /**
+     * Sets the target front position.
+     *
+     * @param thetargetFrontPos the target front position to set
+     */
+    public void setTargetFrontPos(final int thetargetFrontPos) {
+        this.targetFrontPos = thetargetFrontPos;
+    }
+
+    /**
+     * Returns the target front position.
+     *
+     * @return the target front position
+     */
+    public int getTargetFrontPos() {
+        return targetFrontPos;
+    }
+
+    /**
+     * Returns the source anchor position.
+     *
+     * @return the source anchor position
+     */
+    public float getSourceAnchorPos() {
+        return sourceAnchorPos;
+    }
+
+    /**
+     * Returns the target anchor position.
+     *
+     * @return the target anchor position
+     */
+    public float getTargetAnchorPos() {
+        return targetAnchorPos;
+    }
+
+    /**
+     * Returns the bend points.
+     *
+     * @return the bend points
+     */
+    public List<KPoint> getBendPoints() {
+        return bendPoints;
     }
 
 }

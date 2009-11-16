@@ -22,6 +22,7 @@ import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.layout.options.PortSide;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
 
 /**
@@ -32,16 +33,15 @@ import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
 public class ElementLoop {
 
     /** routing position at north side. */
-    public int northRoutePos = 0;
+    private int northRoutePos = 0;
     /** routing position at east side. */
-    public int eastRoutePos = 0;
+    private int eastRoutePos = 0;
     /** routing position at south side. */
-    public int southRoutePos = 0;
+    private int southRoutePos = 0;
     /** routing position at west side. */
-    public int westRoutePos = 0;
+    private int westRoutePos = 0;
     /** list of bend points of this connection. */
-    public List<KPoint> bendPoints = new LinkedList<KPoint>();
-
+    private List<KPoint> bendPoints = new LinkedList<KPoint>();
     /** the contained edge object. */
     private KEdge edge;
     /** the layer element. */
@@ -155,6 +155,58 @@ public class ElementLoop {
         } else if (next.getY() < endpoint.getY()) {
             endpoint.setY(endpoint.getY() - height / 2);
         }
+    }
+
+    /**
+     * Returns the bendPoints.
+     *
+     * @return the bendPoints
+     */
+    public List<KPoint> getBendPoints() {
+        return bendPoints;
+    }
+    
+    /**
+     * Sets the route position for a specific side.
+     * 
+     * @param routePos the route position to set
+     * @param side the side for the route position
+     */
+    public void setRoutePos(final int routePos, final PortSide side) {
+        switch (side) {
+        case NORTH:
+            this.northRoutePos = routePos;
+            break;
+        case EAST:
+            this.eastRoutePos = routePos;
+            break;
+        case SOUTH:
+            this.southRoutePos = routePos;
+            break;
+        case WEST:
+            this.westRoutePos = routePos;
+            break;
+        }
+    }
+    
+    /**
+     * Gets the route position for a specific side.
+     * 
+     * @param side the side for the route position
+     * @return the route position for the given side
+     */
+    public int getRoutePos(final PortSide side) {
+        switch (side) {
+        case NORTH:
+            return northRoutePos;
+        case EAST:
+            return eastRoutePos;
+        case SOUTH:
+            return southRoutePos;
+        case WEST:
+            return westRoutePos;
+        }
+        return 0;
     }
 
 }

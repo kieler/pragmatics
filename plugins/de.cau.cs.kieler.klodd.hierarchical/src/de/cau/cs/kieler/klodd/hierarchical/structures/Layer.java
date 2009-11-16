@@ -38,18 +38,17 @@ public class Layer {
     public static final int UNDEF_HEIGHT = -1;
 
     /** the rank of this layer. */
-    public int rank;
+    private int rank;
     /** the height of this layer. */
-    public int height;
+    private int height;
     /** lengthwise position of this layer. */
-    public float lengthwisePos = 0.0f;
+    private float lengthwisePos = 0.0f;
     /** crosswise dimension of this layer. */
-    public float crosswiseDim = 0.0f;
+    private float crosswiseDim = 0.0f;
     /** lengthwise dimension of this layer. */
-    public float lengthwiseDim = 0.0f;
+    private float lengthwiseDim = 0.0f;
     /** next layer in the layered graph. */
-    public Layer next;
-
+    private Layer next;
     /** the containing layered graph. */
     private LayeredGraph layeredGraph;
     /** list of elements in this layer. */
@@ -216,9 +215,117 @@ public class Layer {
     public void calcElemRanks() {
         int elemrank = 0;
         for (LayerElement element : elements) {
-            element.rank = elemrank;
+            element.setRank(elemrank);
             elemrank += element.getRankWidth();
         }
+    }
+
+    /**
+     * Sets the rank.
+     *
+     * @param therank the rank to set
+     */
+    public void setRank(final int therank) {
+        this.rank = therank;
+    }
+
+    /**
+     * Returns the rank.
+     *
+     * @return the rank
+     */
+    public int getRank() {
+        return rank;
+    }
+
+    /**
+     * Sets the height.
+     *
+     * @param theheight the height to set
+     */
+    public void setHeight(final int theheight) {
+        this.height = theheight;
+    }
+
+    /**
+     * Returns the height.
+     *
+     * @return the height
+     */
+    public int getHeight() {
+        return height;
+    }
+
+    /**
+     * Sets the lengthwisePos.
+     *
+     * @param thelengthwisePos the lengthwisePos to set
+     */
+    public void setLengthwisePos(final float thelengthwisePos) {
+        this.lengthwisePos = thelengthwisePos;
+    }
+
+    /**
+     * Returns the lengthwisePos.
+     *
+     * @return the lengthwisePos
+     */
+    public float getLengthwisePos() {
+        return lengthwisePos;
+    }
+
+    /**
+     * Sets the crosswiseDim.
+     *
+     * @param thecrosswiseDim the crosswiseDim to set
+     */
+    public void setCrosswiseDim(final float thecrosswiseDim) {
+        this.crosswiseDim = thecrosswiseDim;
+    }
+
+    /**
+     * Returns the crosswiseDim.
+     *
+     * @return the crosswiseDim
+     */
+    public float getCrosswiseDim() {
+        return crosswiseDim;
+    }
+
+    /**
+     * Sets the lengthwiseDim.
+     *
+     * @param thelengthwiseDim the lengthwiseDim to set
+     */
+    public void setLengthwiseDim(final float thelengthwiseDim) {
+        this.lengthwiseDim = thelengthwiseDim;
+    }
+
+    /**
+     * Returns the lengthwiseDim.
+     *
+     * @return the lengthwiseDim
+     */
+    public float getLengthwiseDim() {
+        return lengthwiseDim;
+    }
+
+    /**
+     * Sets the next.
+     *
+     * @param thenext the next to set
+     */
+    public void setNext(final Layer thenext) {
+        this.next = thenext;
+    }
+
+    /**
+     * Returns the next.
+     *
+     * @return the next
+     */
+    public Layer getNext() {
+        return next;
     }
 
 }

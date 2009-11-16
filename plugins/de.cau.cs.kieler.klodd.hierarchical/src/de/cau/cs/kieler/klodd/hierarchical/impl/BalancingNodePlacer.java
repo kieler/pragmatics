@@ -19,6 +19,7 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.layout.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.layout.options.PortConstraints;
+import de.cau.cs.kieler.kiml.layout.options.PortSide;
 import de.cau.cs.kieler.klodd.hierarchical.modules.INodePlacer;
 import de.cau.cs.kieler.klodd.hierarchical.structures.Layer;
 import de.cau.cs.kieler.klodd.hierarchical.structures.LayerConnection;
@@ -45,7 +46,7 @@ public class BalancingNodePlacer extends AbstractAlgorithm implements INodePlace
     /** indicates whether node balancing has priority over diagram size. */
     private boolean balanceOverSize;
     /** array of move requests for the linear segments. */
-    float[] moveRequests;
+    private float[] moveRequests;
 
     /**
      * Creates a balancing node placer using a basic node placer. The basic node
@@ -84,16 +85,16 @@ public class BalancingNodePlacer extends AbstractAlgorithm implements INodePlace
         maxWidth = 0.0f;
         int referenceRank = 0;
         for (Layer layer : layeredGraph.getLayers()) {
-            if (isMovable(layer) && layer.crosswiseDim > maxWidth) {
-                maxWidth = layer.crosswiseDim;
-                referenceRank = layer.rank;
+            if (isMovable(layer) && layer.getCrosswiseDim() > maxWidth) {
+                maxWidth = layer.getCrosswiseDim();
+                referenceRank = layer.getRank();
             }
         }
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
         Layer layer;
         do {
             layer = layerIter.hasNext() ? layerIter.next() : null;
-        } while (layer != null && layer.rank <= referenceRank);
+        } while (layer != null && layer.getRank() <= referenceRank);
 
         // create move requests below the reference layer
         while (layer != null) {
@@ -105,7 +106,11 @@ public class BalancingNodePlacer extends AbstractAlgorithm implements INodePlace
         }
 
         // revalidate all requests below the reference layer
-        while (layerIter.hasPrevious() && (layer = layerIter.previous()).rank > referenceRank) {
+        while (layerIter.hasPrevious()) {
+            layer = layerIter.previous();
+            if (layer.getRank() <= referenceRank) {
+                break;
+            }
             if (isMovable(layer)) {
                 validateRequests(layer);
             }
@@ -121,7 +126,11 @@ public class BalancingNodePlacer extends AbstractAlgorithm implements INodePlace
         } while (layer != null);
 
         // revalidate all requests above the reference layer
-        while (layerIter.hasNext() && (layer = layerIter.next()).rank <= referenceRank) {
+        while (layerIter.hasNext()) {
+            layer = layerIter.next();
+            if (layer.getRank() > referenceRank) {
+                break;
+            }
             if (isMovable(layer)) {
                 validateRequests(layer);
             }
@@ -129,9 +138,9 @@ public class BalancingNodePlacer extends AbstractAlgorithm implements INodePlace
 
         // apply all move requests
         for (LinearSegment linearSegment : basicNodePlacer.getMovableSegments()) {
-            float moveDelta = moveRequests[linearSegment.rank];
+            float moveDelta = moveRequests[linearSegment.getRank()];
             if (!Float.isNaN(moveDelta)) {
-                for (LayerElement element : linearSegment.elements) {
+                for (LayerElement element : linearSegment.getElements()) {
                     KPoint pos = element.getPosition();
                     if (layoutDirection == LayoutDirection.DOWN) {
                         pos.setX(pos.getX() + moveDelta);
@@ -145,13 +154,14 @@ public class BalancingNodePlacer extends AbstractAlgorithm implements INodePlace
         // update crosswise dimension for the whole graph
         for (Layer layer2 : layeredGraph.getLayers()) {
             LayerElement lastElem = layer2.getElements().get(layer2.getElements().size() - 1);
-            layer2.crosswiseDim = (layoutDirection == LayoutDirection.DOWN
+            layer2.setCrosswiseDim((layoutDirection == LayoutDirection.DOWN
                     ? lastElem.getPosition().getX()
-                            + lastElem.getRealWidth() + lastElem.eastRanks * theobjSpacing
+                            + lastElem.getRealWidth() + lastElem.getRanks(PortSide.EAST) * theobjSpacing
                     : lastElem.getPosition().getY()
-                        + lastElem.getRealHeight() + lastElem.southRanks * theobjSpacing)
-                    + borderSpacing;
-            layeredGraph.crosswiseDim = Math.max(layeredGraph.crosswiseDim, layer2.crosswiseDim);
+                        + lastElem.getRealHeight() + lastElem.getRanks(PortSide.SOUTH) * theobjSpacing)
+                    + borderSpacing);
+            layeredGraph.setCrosswiseDim(Math.max(layeredGraph.getCrosswiseDim(),
+                    layer2.getCrosswiseDim()));
         }
 
         getMonitor().done();
@@ -167,7 +177,7 @@ public class BalancingNodePlacer extends AbstractAlgorithm implements INodePlace
     private void createRequests(final Layer layer, final boolean forward) {
         float lastRequest = 0.0f;
         for (LayerElement element : layer.getElements()) {
-            if (Float.isNaN(moveRequests[element.linearSegment.rank])) {
+            if (Float.isNaN(moveRequests[element.getLinearSegment().getRank()])) {
                 // calculate preferred centered position as barycenter
                 float sum = 0.0f;
                 int edgeCount = 0;
@@ -177,10 +187,10 @@ public class BalancingNodePlacer extends AbstractAlgorithm implements INodePlace
                     edgeCount++;
                 }
                 if (edgeCount == 0) {
-                    moveRequests[element.linearSegment.rank] = lastRequest;
+                    moveRequests[element.getLinearSegment().getRank()] = lastRequest;
                 } else {
                     float moveRequest = sum / edgeCount;
-                    moveRequests[element.linearSegment.rank] = moveRequest;
+                    moveRequests[element.getLinearSegment().getRank()] = moveRequest;
                     lastRequest = moveRequest;
                 }
             }
@@ -197,11 +207,11 @@ public class BalancingNodePlacer extends AbstractAlgorithm implements INodePlace
                 layer.getElements().size());
         float maxMove = Float.MAX_VALUE;
         if (!balanceOverSize) {
-            maxMove = maxWidth - layer.crosswiseDim;
+            maxMove = maxWidth - layer.getCrosswiseDim();
         }
         while (elemIter.hasPrevious()) {
             LayerElement element = elemIter.previous();
-            float elemRequest = moveRequests[element.linearSegment.rank];
+            float elemRequest = moveRequests[element.getLinearSegment().getRank()];
             elemRequest = elemRequest < 0.0f ? 0.0f : elemRequest;
             Float spacing = basicNodePlacer.getElementSpacing().get(element);
             if (spacing == null) {
@@ -209,7 +219,7 @@ public class BalancingNodePlacer extends AbstractAlgorithm implements INodePlace
             } else {
                 maxMove = Math.min(elemRequest, maxMove + spacing.floatValue());
             }
-            moveRequests[element.linearSegment.rank] = maxMove;
+            moveRequests[element.getLinearSegment().getRank()] = maxMove;
         }
     }
 
@@ -228,14 +238,16 @@ public class BalancingNodePlacer extends AbstractAlgorithm implements INodePlace
 
         // determine position delta, considering previous move requests
         if (forward) {
-            float sourceRequest = moveRequests[connection.getSourceElement().linearSegment.rank];
+            float sourceRequest = moveRequests[connection.getSourceElement()
+                                               .getLinearSegment().getRank()];
             if (Float.isNaN(sourceRequest)) {
                 return sourcePos - targetPos;
             } else {
                 return sourcePos + sourceRequest - targetPos;
             }
         } else {
-            float targetRequest = moveRequests[connection.getTargetElement().linearSegment.rank];
+            float targetRequest = moveRequests[connection.getTargetElement()
+                                               .getLinearSegment().getRank()];
             if (Float.isNaN(targetRequest)) {
                 return targetPos - sourcePos;
             } else {
@@ -252,7 +264,7 @@ public class BalancingNodePlacer extends AbstractAlgorithm implements INodePlace
      */
     private boolean isMovable(final Layer layer) {
         return !(layer.getLayeredGraph().getExternalPortConstraints()
-                == PortConstraints.FIXED_POS && (layer.rank == 0 || layer.height == 0));
+                == PortConstraints.FIXED_POS && (layer.getRank() == 0 || layer.getHeight() == 0));
     }
 
 }

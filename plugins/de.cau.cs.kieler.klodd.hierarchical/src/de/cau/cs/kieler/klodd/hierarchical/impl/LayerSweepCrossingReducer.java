@@ -70,14 +70,14 @@ public class LayerSweepCrossingReducer extends AbstractAlgorithm implements ICro
         Layer lastLayer = layeredGraph.getLayers().get(lastLayerIx);
         if (externalConstraints != PortConstraints.FREE_PORTS) {
             // sort input and output ports by their relative position
-            if (firstLayer.rank == 0) {
+            if (firstLayer.getRank() == 0) {
                 firstLayer.sortByPorts(false);
                 if (externalConstraints != PortConstraints.FIXED_SIDE) {
                     firstLayerIx += 2;
                 }
             }
 
-            if (lastLayer.height == 0) {
+            if (lastLayer.getHeight() == 0) {
                 lastLayer.sortByPorts(false);
                 if (externalConstraints != PortConstraints.FIXED_SIDE) {
                     lastLayerIx -= 2;
@@ -99,7 +99,7 @@ public class LayerSweepCrossingReducer extends AbstractAlgorithm implements ICro
                 layerReducer.reset(getMonitor().subTask(1));
                 layerReducer.reduceCrossings(layerIter.next());
             } else {
-                if (externalConstraints == PortConstraints.FIXED_SIDE && lastLayer.height == 0) {
+                if (externalConstraints == PortConstraints.FIXED_SIDE && lastLayer.getHeight() == 0) {
                     lastLayer.sortByPorts(true);
                 }
                 layerIter.previous();
@@ -124,7 +124,7 @@ public class LayerSweepCrossingReducer extends AbstractAlgorithm implements ICro
                 layerReducer.reset(getMonitor().subTask(1));
                 layerReducer.reduceCrossings(layerIter.previous());
             } else {
-                if (externalConstraints == PortConstraints.FIXED_SIDE && firstLayer.rank == 0) {
+                if (externalConstraints == PortConstraints.FIXED_SIDE && firstLayer.getRank() == 0) {
                     firstLayer.sortByPorts(true);
                 }
                 layerIter.next();

@@ -63,15 +63,15 @@ public class LongestPathLayerAssigner extends AbstractAlgorithm implements ILaye
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
         if (layerIter.hasNext()) {
             Layer currentLayer = layerIter.next();
-            int rank = currentLayer.rank;
+            int rank = currentLayer.getRank();
             if (rank == Layer.UNDEF_RANK) {
                 rank = 1;
-                currentLayer.rank = rank;
+                currentLayer.setRank(rank);
             }
             while (layerIter.hasNext()) {
                 Layer nextLayer = layerIter.next();
-                nextLayer.rank = ++rank;
-                currentLayer.next = nextLayer;
+                nextLayer.setRank(++rank);
+                currentLayer.setNext(nextLayer);
                 currentLayer = nextLayer;
             }
         }
@@ -90,7 +90,7 @@ public class LongestPathLayerAssigner extends AbstractAlgorithm implements ILaye
         LayerElement layerElement = layeredGraph.getLayerElement(node.getObject());
         if (layerElement != null) {
             // the node was already visited
-            return layerElement.getLayer().height;
+            return layerElement.getLayer().getHeight();
         } else if (node.getObject() instanceof KPort) {
             KPort port = (KPort) node.getObject();
             if (KimlLayoutUtil.calcFlow(port) < 0) {

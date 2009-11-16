@@ -120,13 +120,20 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
     /** indicates whether node balance has priority over diagram size. */
     private boolean balanceOverSize;
 
+    /** amount of work for a small task. */
+    private static final int SMALL_TASK = 5;
+    /** amount of work for a large task. */
+    private static final int LARGE_TASK = 15;
+    
     /**
      * {@inheritDoc}
      */
     @Override
     public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor)
             throws KielerException {
-        progressMonitor.begin("Hierarchical layout", 75);
+        progressMonitor.begin("Hierarchical layout",
+                SMALL_TASK + SMALL_TASK + SMALL_TASK + LARGE_TASK + LARGE_TASK
+                + LARGE_TASK + LARGE_TASK);
         // get the currently configured modules
         updateModules();
         KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
@@ -144,27 +151,27 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
         // perform some pre-processing
         preProcess(layoutNode);
         // create a slim graph for cycle removal
-        graphConverter.reset(progressMonitor.subTask(5));
+        graphConverter.reset(progressMonitor.subTask(SMALL_TASK));
         KSlimGraph slimGraph = graphConverter.convertGraph(layoutNode, true);
         // remove cycles in the input graph
-        cycleRemover.reset(progressMonitor.subTask(5));
+        cycleRemover.reset(progressMonitor.subTask(SMALL_TASK));
         cycleRemover.removeCycles(slimGraph);
         // put each node into a layer and get a layered graph
-        layerAssigner.reset(progressMonitor.subTask(10));
+        layerAssigner.reset(progressMonitor.subTask(LARGE_TASK));
         LayeredGraph layeredGraph = layerAssigner.assignLayers(slimGraph, layoutNode, balanceOverSize);
         if (!layeredGraph.getLayers().isEmpty()) {
             layeredGraph.createConnections(slimGraph);
             // optimize the order of nodes in each layer
-            crossingReducer.reset(progressMonitor.subTask(15));
+            crossingReducer.reset(progressMonitor.subTask(LARGE_TASK));
             crossingReducer.reduceCrossings(layeredGraph);
             // determine a placement for all edge endpoints
-            nodewiseEdgePlacer.reset(progressMonitor.subTask(10));
+            nodewiseEdgePlacer.reset(progressMonitor.subTask(LARGE_TASK));
             nodewiseEdgePlacer.placeEdges(layeredGraph);
             // determine a crosswise placement for each node
-            nodePlacer.reset(progressMonitor.subTask(10));
+            nodePlacer.reset(progressMonitor.subTask(LARGE_TASK));
             nodePlacer.placeNodes(layeredGraph, objSpacing, borderSpacing, balanceOverSize);
             // route edges between nodes
-            edgeRouter.reset(progressMonitor.subTask(10));
+            edgeRouter.reset(progressMonitor.subTask(LARGE_TASK));
             edgeRouter.routeEdges(layeredGraph, objSpacing, borderSpacing);
         }
         layeredGraph.applyLayout();

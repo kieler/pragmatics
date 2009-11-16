@@ -46,8 +46,8 @@ public class BarycenterCrossingReducer extends AbstractAlgorithm implements ISin
      * {@inheritDoc}
      */
     public void reduceCrossings(final Layer layer, final boolean forward) {
-        getMonitor().begin(
-                "Barycenter method (layer " + layer.rank + (forward ? ", forward)" : ", backwards)"), 1);
+        getMonitor().begin("Barycenter method (layer " + layer.getRank()
+                + (forward ? ", forward)" : ", backwards)"), 1);
 
         double[] abstractRanks = new double[layer.getElements().size()];
         int elemIndex = 0;
@@ -221,13 +221,13 @@ public class BarycenterCrossingReducer extends AbstractAlgorithm implements ISin
                 filteredRanks[index] = arank;
                 lastRank = arank;
             }
-            element.rank = index++;
+            element.setRank(index++);
         }
 
         // sort all elements by the filtered ranks
         Collections.sort(elements, new Comparator<LayerElement>() {
             public int compare(final LayerElement elem1, final LayerElement elem2) {
-                return Double.compare(filteredRanks[elem1.rank], filteredRanks[elem2.rank]);
+                return Double.compare(filteredRanks[elem1.getRank()], filteredRanks[elem2.getRank()]);
             }
         });
 

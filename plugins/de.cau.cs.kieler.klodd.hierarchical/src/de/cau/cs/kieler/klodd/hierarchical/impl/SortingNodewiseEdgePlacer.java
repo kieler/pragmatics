@@ -47,9 +47,9 @@ public class SortingNodewiseEdgePlacer extends AbstractAlgorithm implements INod
      * Routing slot used to route edges around node elements.
      */
     private static class RoutingSlot implements Comparable<RoutingSlot> {
-        float start = -Float.MAX_VALUE, end = Float.MAX_VALUE;
-        int rank;
-        List<KPort> ports = new LinkedList<KPort>();
+        private float start = -Float.MAX_VALUE, end = Float.MAX_VALUE;
+        private int rank;
+        private List<KPort> ports = new LinkedList<KPort>();
 
         /**
          * {@inheritDoc}
@@ -81,7 +81,7 @@ public class SortingNodewiseEdgePlacer extends AbstractAlgorithm implements INod
          */
         @Override
         public int hashCode() {
-            return ((int) start << 16) + (int) end;
+            return ((int) start << (Integer.SIZE / 2)) + (int) end;
         }
     }
 
@@ -347,10 +347,10 @@ public class SortingNodewiseEdgePlacer extends AbstractAlgorithm implements INod
         }
 
         // assign ranks to all routing slots
-        element.northRanks = assignRanks(northSlots);
-        element.eastRanks = assignRanks(eastSlots);
-        element.southRanks = assignRanks(southSlots);
-        element.westRanks = assignRanks(westSlots);
+        element.setRanks(assignRanks(northSlots), PortSide.NORTH);
+        element.setRanks(assignRanks(eastSlots), PortSide.EAST);
+        element.setRanks(assignRanks(southSlots), PortSide.SOUTH);
+        element.setRanks(assignRanks(westSlots), PortSide.WEST);
 
         // calculate edge routing for all incoming or outgoing connections
         if (layoutDirection == LayoutDirection.DOWN) {
@@ -358,18 +358,18 @@ public class SortingNodewiseEdgePlacer extends AbstractAlgorithm implements INod
                 KPort port = connection.getTargetPort();
                 switch (LayoutOptions.getPortSide(KimlLayoutUtil.getShapeLayout(port))) {
                 case EAST:
-                    int rank = getRankFor(port, eastSlots, element.eastRanks);
-                    connection.targetSidePos = rank;
+                    int rank = getRankFor(port, eastSlots, element.getRanks(PortSide.EAST));
+                    connection.setTargetSidePos(rank);
                     break;
                 case SOUTH:
-                    rank = getRankFor(port, eastSlots, element.eastRanks);
-                    connection.targetSidePos = rank;
-                    rank = getRankFor(port, southSlots, element.southRanks);
-                    connection.targetFrontPos = rank;
+                    rank = getRankFor(port, eastSlots, element.getRanks(PortSide.EAST));
+                    connection.setTargetSidePos(rank);
+                    rank = getRankFor(port, southSlots, element.getRanks(PortSide.SOUTH));
+                    connection.setTargetFrontPos(rank);
                     break;
                 case WEST:
-                    rank = getRankFor(port, westSlots, element.westRanks);
-                    connection.targetSidePos = -rank;
+                    rank = getRankFor(port, westSlots, element.getRanks(PortSide.WEST));
+                    connection.setTargetSidePos(-rank);
                     break;
                 }
             }
@@ -377,18 +377,18 @@ public class SortingNodewiseEdgePlacer extends AbstractAlgorithm implements INod
                 KPort port = connection.getSourcePort();
                 switch (LayoutOptions.getPortSide(KimlLayoutUtil.getShapeLayout(port))) {
                 case NORTH:
-                    int rank = getRankFor(port, eastSlots, element.eastRanks);
-                    connection.sourceSidePos = rank;
-                    rank = getRankFor(port, northSlots, element.northRanks);
-                    connection.sourceBackPos = rank;
+                    int rank = getRankFor(port, eastSlots, element.getRanks(PortSide.EAST));
+                    connection.setSourceSidePos(rank);
+                    rank = getRankFor(port, northSlots, element.getRanks(PortSide.NORTH));
+                    connection.setSourceBackPos(rank);
                     break;
                 case EAST:
-                    rank = getRankFor(port, eastSlots, element.eastRanks);
-                    connection.sourceSidePos = rank;
+                    rank = getRankFor(port, eastSlots, element.getRanks(PortSide.EAST));
+                    connection.setSourceSidePos(rank);
                     break;
                 case WEST:
-                    rank = getRankFor(port, westSlots, element.westRanks);
-                    connection.sourceSidePos = -rank;
+                    rank = getRankFor(port, westSlots, element.getRanks(PortSide.WEST));
+                    connection.setSourceSidePos(-rank);
                     break;
                 }
             }
@@ -397,18 +397,18 @@ public class SortingNodewiseEdgePlacer extends AbstractAlgorithm implements INod
                 KPort port = connection.getTargetPort();
                 switch (LayoutOptions.getPortSide(KimlLayoutUtil.getShapeLayout(port))) {
                 case SOUTH:
-                    int rank = getRankFor(port, southSlots, element.southRanks);
-                    connection.targetSidePos = rank;
+                    int rank = getRankFor(port, southSlots, element.getRanks(PortSide.SOUTH));
+                    connection.setTargetSidePos(rank);
                     break;
                 case EAST:
-                    rank = getRankFor(port, southSlots, element.southRanks);
-                    connection.targetSidePos = rank;
-                    rank = getRankFor(port, eastSlots, element.eastRanks);
-                    connection.targetFrontPos = rank;
+                    rank = getRankFor(port, southSlots, element.getRanks(PortSide.SOUTH));
+                    connection.setTargetSidePos(rank);
+                    rank = getRankFor(port, eastSlots, element.getRanks(PortSide.EAST));
+                    connection.setTargetFrontPos(rank);
                     break;
                 case NORTH:
-                    rank = getRankFor(port, northSlots, element.northRanks);
-                    connection.targetSidePos = -rank;
+                    rank = getRankFor(port, northSlots, element.getRanks(PortSide.NORTH));
+                    connection.setTargetSidePos(-rank);
                     break;
                 }
             }
@@ -416,18 +416,18 @@ public class SortingNodewiseEdgePlacer extends AbstractAlgorithm implements INod
                 KPort port = connection.getSourcePort();
                 switch (LayoutOptions.getPortSide(KimlLayoutUtil.getShapeLayout(port))) {
                 case WEST:
-                    int rank = getRankFor(port, southSlots, element.southRanks);
-                    connection.sourceSidePos = rank;
-                    rank = getRankFor(port, westSlots, element.westRanks);
-                    connection.sourceBackPos = rank;
+                    int rank = getRankFor(port, southSlots, element.getRanks(PortSide.SOUTH));
+                    connection.setSourceSidePos(rank);
+                    rank = getRankFor(port, westSlots, element.getRanks(PortSide.WEST));
+                    connection.setSourceBackPos(rank);
                     break;
                 case SOUTH:
-                    rank = getRankFor(port, southSlots, element.southRanks);
-                    connection.sourceSidePos = rank;
+                    rank = getRankFor(port, southSlots, element.getRanks(PortSide.SOUTH));
+                    connection.setSourceSidePos(rank);
                     break;
                 case NORTH:
-                    rank = getRankFor(port, northSlots, element.northRanks);
-                    connection.sourceSidePos = -rank;
+                    rank = getRankFor(port, northSlots, element.getRanks(PortSide.NORTH));
+                    connection.setSourceSidePos(-rank);
                     break;
                 }
             }
@@ -440,24 +440,26 @@ public class SortingNodewiseEdgePlacer extends AbstractAlgorithm implements INod
             PortSide placement2 = LayoutOptions.getPortSide(KimlLayoutUtil.getShapeLayout(loop
                     .getTargetPort()));
             if (placement1 == PortSide.NORTH || placement2 == PortSide.NORTH) {
-                int rank = getRankFor(loop.getSourcePort(), northSlots, element.northRanks);
-                loop.northRoutePos = rank;
+                int rank = getRankFor(loop.getSourcePort(), northSlots,
+                        element.getRanks(PortSide.NORTH));
+                loop.setRoutePos(rank, PortSide.NORTH);
             }
             if (placement1 == PortSide.EAST || placement2 == PortSide.EAST
                     || placement1 == PortSide.NORTH && placement2 == PortSide.SOUTH
                     || placement1 == PortSide.SOUTH && placement2 == PortSide.NORTH) {
-                int rank = getRankFor(loop.getSourcePort(), eastSlots, element.eastRanks);
-                loop.eastRoutePos = rank;
+                int rank = getRankFor(loop.getSourcePort(), eastSlots, element.getRanks(PortSide.EAST));
+                loop.setRoutePos(rank, PortSide.EAST);
             }
             if (placement1 == PortSide.SOUTH || placement2 == PortSide.SOUTH
                     || placement1 == PortSide.EAST && placement2 == PortSide.WEST
                     || placement1 == PortSide.WEST && placement2 == PortSide.EAST) {
-                int rank = getRankFor(loop.getSourcePort(), southSlots, element.southRanks);
-                loop.southRoutePos = rank;
+                int rank = getRankFor(loop.getSourcePort(), southSlots,
+                        element.getRanks(PortSide.SOUTH));
+                loop.setRoutePos(rank, PortSide.SOUTH);
             }
             if (placement1 == PortSide.WEST || placement2 == PortSide.WEST) {
-                int rank = getRankFor(loop.getSourcePort(), westSlots, element.westRanks);
-                loop.westRoutePos = rank;
+                int rank = getRankFor(loop.getSourcePort(), westSlots, element.getRanks(PortSide.WEST));
+                loop.setRoutePos(rank, PortSide.WEST);
             }
         }
     }

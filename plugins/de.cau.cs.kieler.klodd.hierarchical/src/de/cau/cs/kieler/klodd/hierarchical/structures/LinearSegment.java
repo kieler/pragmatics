@@ -25,9 +25,9 @@ import java.util.List;
 public class LinearSegment implements Comparable<LinearSegment> {
 
     /** list of layer elements contained in this linear segment. */
-    public List<LayerElement> elements = new LinkedList<LayerElement>();
+    private List<LayerElement> elements = new LinkedList<LayerElement>();
     /** current rank of the linear segment. */
-    public int rank = -1;
+    private int rank = -1;
 
     /**
      * Determines whether the given element has preceding elements in this
@@ -79,6 +79,33 @@ public class LinearSegment implements Comparable<LinearSegment> {
      */
     @Override
     public int hashCode() {
+        return rank;
+    }
+
+    /**
+     * Returns the elements.
+     *
+     * @return the elements
+     */
+    public List<LayerElement> getElements() {
+        return elements;
+    }
+
+    /**
+     * Sets the rank.
+     *
+     * @param therank the rank to set
+     */
+    public void setRank(final int therank) {
+        this.rank = therank;
+    }
+
+    /**
+     * Returns the rank.
+     *
+     * @return the rank
+     */
+    public int getRank() {
         return rank;
     }
 

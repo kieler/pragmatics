@@ -49,18 +49,17 @@ public class LayerElement {
     public static final int UNDEF_RANK = -1;
 
     /** rank of this element inside the containing layer. */
-    public int rank = UNDEF_RANK;
+    private int rank = UNDEF_RANK;
     /** linear segment containing this layer element. */
-    public LinearSegment linearSegment = null;
+    private LinearSegment linearSegment = null;
     /** the number of routing slot ranks on north side. */
-    public int northRanks = 0;
+    private int northRanks = 0;
     /** the number of routing slot ranks on east side. */
-    public int eastRanks = 0;
+    private int eastRanks = 0;
     /** the number of routing slot ranks on south side. */
-    public int southRanks = 0;
+    private int southRanks = 0;
     /** the number of routing slot ranks on west side. */
-    public int westRanks = 0;
-
+    private int westRanks = 0;
     /** the element object. */
     private KGraphElement elemObj;
     /** the containing layer. */
@@ -249,7 +248,8 @@ public class LayerElement {
             for (KSlimNode.IncEntry edgeEntry : kNode.getIncidence()) {
                 // ignore loops over a single node
                 if (edgeEntry.getType() == KSlimNode.IncEntry.Type.OUT
-                        && edgeEntry.getEdge().getSource().getId() != edgeEntry.getEdge().getTarget().getId()) {
+                        && edgeEntry.getEdge().getSource().getId()
+                        != edgeEntry.getEdge().getTarget().getId()) {
                     nonLoopEdges.add(edgeEntry.getEdge());
                 }
             }
@@ -877,6 +877,85 @@ public class LayerElement {
             portLayout.setXpos(vertical ? startX - (subPortDim ? portLayout.getWidth() : 0) : pos);
             portLayout.setYpos(vertical ? pos : startY - (subPortDim ? portLayout.getHeight() : 0));
         }
+    }
+
+    /**
+     * Sets the rank.
+     *
+     * @param therank the rank to set
+     */
+    public void setRank(final int therank) {
+        this.rank = therank;
+    }
+
+    /**
+     * Returns the rank.
+     *
+     * @return the rank
+     */
+    public int getRank() {
+        return rank;
+    }
+
+    /**
+     * Sets the linear segment.
+     *
+     * @param thelinearSegment the linear segment to set
+     */
+    public void setLinearSegment(final LinearSegment thelinearSegment) {
+        this.linearSegment = thelinearSegment;
+    }
+
+    /**
+     * Returns the linear segment.
+     *
+     * @return the linear segment
+     */
+    public LinearSegment getLinearSegment() {
+        return linearSegment;
+    }
+
+    /**
+     * Sets the ranks for a specific side.
+     *
+     * @param ranks the ranks to set
+     * @param side the side for which the ranks are set
+     */
+    public void setRanks(final int ranks, final PortSide side) {
+        switch (side) {
+        case NORTH:
+            this.northRanks = ranks;
+            break;
+        case EAST:
+            this.eastRanks = ranks;
+            break;
+        case SOUTH:
+            this.southRanks = ranks;
+            break;
+        case WEST:
+            this.westRanks = ranks;
+            break;
+        }
+    }
+
+    /**
+     * Returns the ranks for a specific side.
+     *
+     * @param side the side for which ranks are returned
+     * @return the ranks for the given side
+     */
+    public int getRanks(final PortSide side) {
+        switch (side) {
+        case NORTH:
+            return northRanks;
+        case EAST:
+            return eastRanks;
+        case SOUTH:
+            return southRanks;
+        case WEST:
+            return westRanks;
+        }
+        return 0;
     }
 
 }

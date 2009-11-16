@@ -80,7 +80,7 @@ public class BasicNodePlacer extends AbstractAlgorithm implements INodePlacer {
         this.borderSpacing = theborderSpacing;
         this.layoutDirection = layeredGraph.getLayoutDirection();
         this.lastElements = new LayerElement[layeredGraph.getLayers().size()
-                + layeredGraph.getLayers().get(0).rank];
+                + layeredGraph.getLayers().get(0).getRank()];
 
         // sort the linear segments of the layered graph
         sortedSegments = sortLinearSegments(layeredGraph);
@@ -89,18 +89,19 @@ public class BasicNodePlacer extends AbstractAlgorithm implements INodePlacer {
 
         // process external ports
         Layer externalLayer = layeredGraph.getLayers().get(0);
-        if (externalLayer.rank == 0) {
+        if (externalLayer.getRank() == 0) {
             processExternalLayer(externalLayer);
         }
         externalLayer = layeredGraph.getLayers().get(layeredGraph.getLayers().size() - 1);
-        if (externalLayer.height == 0) {
+        if (externalLayer.getHeight() == 0) {
             processExternalLayer(externalLayer);
         }
 
         // set the proper crosswise dimension for the whole graph
         for (Layer layer : layeredGraph.getLayers()) {
-            layer.crosswiseDim += theborderSpacing;
-            layeredGraph.crosswiseDim = Math.max(layeredGraph.crosswiseDim, layer.crosswiseDim);
+            layer.setCrosswiseDim(layer.getCrosswiseDim() + theborderSpacing);
+            layeredGraph.setCrosswiseDim(Math.max(layeredGraph.getCrosswiseDim(),
+                    layer.getCrosswiseDim()));
         }
 
         getMonitor().done();
@@ -140,9 +141,9 @@ public class BasicNodePlacer extends AbstractAlgorithm implements INodePlacer {
         if (layeredGraph.getExternalPortConstraints() == PortConstraints.FIXED_POS) {
             List<LinearSegment> filteredSegments = new LinkedList<LinearSegment>();
             for (LinearSegment segment : layeredGraph.getLinearSegments()) {
-                if (segment.elements.size() == 1) {
-                    Layer layer = segment.elements.get(0).getLayer();
-                    if (layer.rank != 0 && layer.height != 0) {
+                if (segment.getElements().size() == 1) {
+                    Layer layer = segment.getElements().get(0).getLayer();
+                    if (layer.getRank() != 0 && layer.getHeight() != 0) {
                         filteredSegments.add(segment);
                     }
                 } else {
@@ -157,7 +158,7 @@ public class BasicNodePlacer extends AbstractAlgorithm implements INodePlacer {
         int[] incomingCount = new int[linearSegments.length];
         int[] newRanks = new int[linearSegments.length];
         for (int i = 0; i < linearSegments.length; i++) {
-            linearSegments[i].rank = i;
+            linearSegments[i].setRank(i);
             outgoing[i] = new LinkedList<LinearSegment>();
             incomingCount[i] = 0;
         }
@@ -165,13 +166,13 @@ public class BasicNodePlacer extends AbstractAlgorithm implements INodePlacer {
         // create edges in the segment ordering graph
         for (Layer layer : layeredGraph.getLayers()) {
             if (!(layeredGraph.getExternalPortConstraints() == PortConstraints.FIXED_POS
-                    && (layer.rank == 0 || layer.height == 0))) {
+                    && (layer.getRank() == 0 || layer.getHeight() == 0))) {
                 Iterator<LayerElement> elemIter = layer.getElements().iterator();
                 LayerElement elem1 = elemIter.next();
                 while (elemIter.hasNext()) {
                     LayerElement elem2 = elemIter.next();
-                    outgoing[elem1.linearSegment.rank].add(elem2.linearSegment);
-                    incomingCount[elem2.linearSegment.rank]++;
+                    outgoing[elem1.getLinearSegment().getRank()].add(elem2.getLinearSegment());
+                    incomingCount[elem2.getLinearSegment().getRank()]++;
                     elem1 = elem2;
                 }
             }
@@ -187,11 +188,11 @@ public class BasicNodePlacer extends AbstractAlgorithm implements INodePlacer {
         }
         while (!noIncoming.isEmpty()) {
             LinearSegment segment = noIncoming.remove(0);
-            newRanks[segment.rank] = nextRank++;
-            while (!outgoing[segment.rank].isEmpty()) {
-                LinearSegment target = outgoing[segment.rank].remove(0);
-                incomingCount[target.rank]--;
-                if (incomingCount[target.rank] == 0) {
+            newRanks[segment.getRank()] = nextRank++;
+            while (!outgoing[segment.getRank()].isEmpty()) {
+                LinearSegment target = outgoing[segment.getRank()].remove(0);
+                incomingCount[target.getRank()]--;
+                if (incomingCount[target.getRank()] == 0) {
                     noIncoming.add(target);
                 }
             }
@@ -200,7 +201,7 @@ public class BasicNodePlacer extends AbstractAlgorithm implements INodePlacer {
         // apply the new ordering to the array of linear segments
         for (int i = 0; i < linearSegments.length; i++) {
             assert outgoing[i].isEmpty();
-            linearSegments[i].rank = newRanks[i];
+            linearSegments[i].setRank(newRanks[i]);
         }
         Arrays.sort(linearSegments);
         return linearSegments;
@@ -216,25 +217,25 @@ public class BasicNodePlacer extends AbstractAlgorithm implements INodePlacer {
             // determine the leftmost / uppermost placement for the linear
             // segment
             float leftmostPlace = 0.0f;
-            for (LayerElement element : segment.elements) {
-                leftmostPlace = Math.max(leftmostPlace, element.getLayer().crosswiseDim);
+            for (LayerElement element : segment.getElements()) {
+                leftmostPlace = Math.max(leftmostPlace, element.getLayer().getCrosswiseDim());
             }
             // apply the leftmost / uppermost placement to all elements
             float newPos = leftmostPlace < borderSpacing ? borderSpacing
                     : leftmostPlace + DIST_FACTOR * objSpacing;
-            for (LayerElement element : segment.elements) {
+            for (LayerElement element : segment.getElements()) {
                 Layer layer = element.getLayer();
-                if (lastElements[layer.rank] != null) {
-                    spacingMap.put(lastElements[layer.rank], Float.valueOf(leftmostPlace
-                            - layer.crosswiseDim));
+                if (lastElements[layer.getRank()] != null) {
+                    spacingMap.put(lastElements[layer.getRank()], Float.valueOf(leftmostPlace
+                            - layer.getCrosswiseDim()));
                 }
                 element.setCrosswisePos(newPos, objSpacing);
                 float totalCrosswiseDim = element.getTotalCrosswiseDim(objSpacing);
-                layer.crosswiseDim = newPos + totalCrosswiseDim;
-                layer.lengthwiseDim = Math.max(layer.lengthwiseDim,
+                layer.setCrosswiseDim(newPos + totalCrosswiseDim);
+                layer.setLengthwiseDim(Math.max(layer.getLengthwiseDim(),
                         layoutDirection == LayoutDirection.DOWN ? element.getRealHeight() : element
-                                .getRealWidth());
-                lastElements[layer.rank] = element;
+                                .getRealWidth()));
+                lastElements[layer.getRank()] = element;
             }
         }
     }
@@ -256,24 +257,24 @@ public class BasicNodePlacer extends AbstractAlgorithm implements INodePlacer {
                 position.setX(portLayout.getXpos());
                 position.setY(portLayout.getYpos());
                 if (layoutDirection == LayoutDirection.DOWN) {
-                    layer.lengthwiseDim = Math.max(layer.lengthwiseDim, element.getRealHeight());
+                    layer.setLengthwiseDim(Math.max(layer.getLengthwiseDim(), element.getRealHeight()));
                     if (placement != PortSide.EAST && placement != PortSide.WEST) {
-                        layer.crosswiseDim = Math.max(layer.crosswiseDim,
-                                position.getX() + element.getRealWidth());
+                        layer.setCrosswiseDim(Math.max(layer.getCrosswiseDim(),
+                                position.getX() + element.getRealWidth()));
                     }
                     if (placement != PortSide.NORTH && placement != PortSide.SOUTH) {
-                        layeredGraph.lengthwiseDim = Math.max(layeredGraph.lengthwiseDim,
-                                position.getY());
+                        layeredGraph.setLengthwiseDim(Math.max(layeredGraph.getLengthwiseDim(),
+                                position.getY()));
                     }
                 } else {
-                    layer.lengthwiseDim = Math.max(layer.lengthwiseDim, element.getRealWidth());
+                    layer.setLengthwiseDim(Math.max(layer.getLengthwiseDim(), element.getRealWidth()));
                     if (placement != PortSide.NORTH && placement != PortSide.SOUTH) {
-                        layer.crosswiseDim = Math.max(layer.crosswiseDim,
-                                position.getY() + element.getRealHeight());
+                        layer.setCrosswiseDim(Math.max(layer.getCrosswiseDim(),
+                                position.getY() + element.getRealHeight()));
                     }
                     if (placement != PortSide.EAST && placement != PortSide.WEST) {
-                        layeredGraph.lengthwiseDim = Math.max(layeredGraph.lengthwiseDim,
-                                position.getX());
+                        layeredGraph.setLengthwiseDim(Math.max(layeredGraph.getLengthwiseDim(),
+                                position.getX()));
                     }
                 }
             }
