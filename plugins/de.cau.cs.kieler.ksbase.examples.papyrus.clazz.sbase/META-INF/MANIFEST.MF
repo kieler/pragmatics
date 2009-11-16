@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Sbase
+Bundle-SymbolicName: de.cau.cs.kieler.ksbase.examples.papyrus.clazz.sbase;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.eclipse.papyrus.diagram.clazz.sbase.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ de.cau.cs.kieler.ksbase;bundle-version="0.1.4",
+ org.eclipse.papyrus.diagram.clazz;bundle-version="0.7.0",
+ de.cau.cs.kieler.ksbase.ui
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

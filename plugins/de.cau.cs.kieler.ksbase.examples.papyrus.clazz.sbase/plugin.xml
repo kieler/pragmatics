@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.ksbase.configurations">
+      <configuration
+            XtendFile="src/transformations/features.ext"
+            contextId="org.eclipse.papyrus.diagram.clazz.ui.diagramContext"
+            editorId="org.eclipse.papyrus.diagram.clazz.part.UMLDiagramEditorID"
+            packageName="org.eclipse.uml2.uml.UMLPackage">
+         <transformations>
+            <transformation
+                  keyboardShortcut="M1+K I"
+                  name="Add Implementation"
+                  transformation="addInterfaceImplementation"
+                  transformationId="org.eclipse.papyrus.diagram.clazz.sbase.AddImplementation">
+            </transformation>
+         </transformations>
+         <menus>
+            <menuContribution
+                  locationURI="menu:de.cau.cs.kieler">
+               <transformationCommand
+                     transformationId="org.eclipse.papyrus.diagram.clazz.sbase.AddImplementation">
+               </transformationCommand>
+            </menuContribution>
+         </menus>
+      </configuration>
+   </extension>
+
+</plugin>
