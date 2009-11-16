@@ -27,8 +27,8 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.common.core.command.CommandResult;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.CanonicalEditPolicy;
-import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramGraphicalViewer;
+import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramWorkbenchPart;
 import org.eclipse.gmf.runtime.emf.commands.core.command.AbstractTransactionalCommand;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.viewers.ISelection;
@@ -98,9 +98,9 @@ public class XtendTransformationCommand extends AbstractTransactionalCommand {
                 PlatformUI
                         .getWorkbench().getActiveWorkbenchWindow().getActivePage()
                         .getActiveEditor();
-        if (activeEditor instanceof DiagramEditor) {
+        if (activeEditor instanceof IDiagramWorkbenchPart) {
             EObject obj =
-                    ((View) ((DiagramEditor) activeEditor).getDiagramEditPart().getModel())
+                    ((View) ((IDiagramWorkbenchPart) activeEditor).getDiagramEditPart().getModel())
                             .getElement();
 
             List<?> editPolicies = CanonicalEditPolicy.getRegisteredEditPolicies(obj);
@@ -112,7 +112,7 @@ public class XtendTransformationCommand extends AbstractTransactionalCommand {
             }
 
             IDiagramGraphicalViewer graphViewer =
-                    ((DiagramEditor) activeEditor).getDiagramGraphicalViewer();
+                    ((IDiagramWorkbenchPart) activeEditor).getDiagramGraphicalViewer();
             graphViewer.flush();
         }
         return CommandResult.newOKCommandResult();

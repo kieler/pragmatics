@@ -35,6 +35,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editpolicies.CanonicalEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramCommandStack;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramGraphicalViewer;
+import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramWorkbenchPart;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -190,10 +191,10 @@ public final class TransformationUIManager {
                 // update edit policies, so GMF will generate diagram elements
                 // for model elements which have been generated during the
                 // transformation but
-
-                if (activeEditor instanceof DiagramEditor) {
+               
+                if (activeEditor instanceof IDiagramWorkbenchPart) {
                     EObject obj =
-                            ((View) ((DiagramEditor) activeEditor).getDiagramEditPart().getModel())
+                            ((View) ((IDiagramWorkbenchPart) activeEditor).getDiagramEditPart().getModel())
                                     .getElement();
 
                     List<?> editPolicies = CanonicalEditPolicy.getRegisteredEditPolicies(obj);
@@ -205,7 +206,7 @@ public final class TransformationUIManager {
                     }
 
                     IDiagramGraphicalViewer graphViewer =
-                            ((DiagramEditor) activeEditor).getDiagramGraphicalViewer();
+                            ((IDiagramWorkbenchPart) activeEditor).getDiagramGraphicalViewer();
                     graphViewer.flush();
                  
                     // Notify event listeners:
