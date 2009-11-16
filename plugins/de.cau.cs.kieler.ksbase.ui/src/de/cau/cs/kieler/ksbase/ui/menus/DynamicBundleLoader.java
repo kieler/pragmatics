@@ -75,7 +75,7 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
      *            The URI to the bundle path
      */
     public void addBundle(final EditorTransformationSettings editor, final URI bundlePath) {
-        // System.out.println("adding " + editor.getEditor() + " to queue");
+        //System.out.println("adding " + editor.getEditor() + " to queue");
         waitingBundles.put(editor, bundlePath);
     }
 

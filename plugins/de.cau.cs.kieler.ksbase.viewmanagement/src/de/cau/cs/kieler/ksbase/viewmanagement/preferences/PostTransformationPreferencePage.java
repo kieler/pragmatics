@@ -80,8 +80,10 @@ public class PostTransformationPreferencePage extends PreferencePage
 
         container.setLayout(layout);
         container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        //Trying to initialize the RunLogic if it's not already done:
         if (!RunLogic.getInstance().getState()) {
             RunLogic.getInstance().init();
+            RunLogic.getInstance().registerListeners();
         }
         for (String effect : RunLogic.getInstance().getEffectsAsText()) {
             boolean active = false;

@@ -208,10 +208,13 @@ public final class DynamicMenuContributions {
                     Element menuContribution = extension.createElement("menuContribution");
                     menuContribution.setAttribute("locationURI", contrib.getData());
                     for (String tid : contrib.getCommands()) {
-                        // Create commands for root menu
-                        Node menuCommand = createElementForMenu(tid, extension, editor);
-                        menuCommand.appendChild(menuVisible.cloneNode(true));
-                        menuContribution.appendChild(menuCommand);
+                        // only create contents for valid transformationIDs
+                        if (editor.getTransformationById(tid) != null) {
+                            // Create commands for root menu
+                            Node menuCommand = createElementForMenu(tid, extension, editor);
+                            menuCommand.appendChild(menuVisible.cloneNode(true));
+                            menuContribution.appendChild(menuCommand);
+                        }
                     }
                     // create sub menus
                     for (KSBasEMenuContribution m : contrib.getMenus()) {
@@ -219,15 +222,21 @@ public final class DynamicMenuContributions {
                         menu.setAttribute("id", m.getData());
                         menu.setAttribute("label", m.getLabel());
                         for (String tid : m.getCommands()) {
-                            Node menuCommand;
-                            if (cachedTransformationCommands.containsKey(tid)) {
-                                menuCommand = cachedTransformationCommands.get(tid).cloneNode(true);
-                            } else {
-                                menuCommand = createElementForMenu(tid, extension, editor);
-                                menuCommand.appendChild(menuVisible.cloneNode(true));
-                                cachedTransformationCommands.put(tid, menuCommand.cloneNode(true));
+                            // only create contents for valid transformationIDs
+                            if (editor.getTransformationById(tid) != null) {
+
+                                Node menuCommand;
+                                if (cachedTransformationCommands.containsKey(tid)) {
+                                    menuCommand =
+                                            cachedTransformationCommands.get(tid).cloneNode(true);
+                                } else {
+                                    menuCommand = createElementForMenu(tid, extension, editor);
+                                    menuCommand.appendChild(menuVisible.cloneNode(true));
+                                    cachedTransformationCommands.put(tid, menuCommand
+                                            .cloneNode(true));
+                                }
+                                menu.appendChild(menuCommand);
                             }
-                            menu.appendChild(menuCommand);
                         }
                         menu.appendChild(menuVisible.cloneNode(true));
                         menuContribution.appendChild(menu);
@@ -257,7 +266,6 @@ public final class DynamicMenuContributions {
                         .toFile();
                 StringBuffer sbuf = new StringBuffer();
                 // Now we are importing the dependencies from the contributing plug-in:
-
                 Dictionary<?, ?> dict = contributorBundle.getHeaders();
                 Object dependencies = dict.get("Require-Bundle");
                 // And set the rest of the manifest attributes
@@ -273,7 +281,7 @@ public final class DynamicMenuContributions {
                 // Create manifest file
                 Manifest manifest = new Manifest(new ByteArrayInputStream(sbuf.toString().getBytes(
                         "UTF-8")));
-                // And use is to create a new jar archive
+                
                 JarOutputStream jos = new JarOutputStream(new FileOutputStream(jarFile), manifest);
                 JarEntry entry = new JarEntry("plugin.xml");
                 jos.putNextEntry(entry);
@@ -415,6 +423,7 @@ public final class DynamicMenuContributions {
 
         // create menu command
         Transformation t = editor.getTransformationById(tid);
+
         // Menu commands
         Element menuCommand = extension.createElement("command");
         menuCommand.setAttribute("commandId", commandIds.get(t));

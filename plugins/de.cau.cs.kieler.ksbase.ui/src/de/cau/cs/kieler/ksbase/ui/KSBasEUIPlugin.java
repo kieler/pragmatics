@@ -12,7 +12,6 @@
  * See the file epl-v10.html for the license text.
  * 
  *****************************************************************************/
-
 package de.cau.cs.kieler.ksbase.ui;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -41,6 +40,7 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
     public KSBasEUIPlugin() {
     }
 
+    
     /**
      * Starts the plug-in.
      * 
@@ -58,6 +58,7 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
         DynamicMenuContributions.INSTANCE.createAllMenuContributions();
         // Temporary fix for "not loading features"-bug
         DynamicBundleLoader.INSTANCE.activateAllEditors();
+        
         /*
          * // Adding a part listener to check when to activate a bundle
          * System.out.println("activated");
@@ -69,6 +70,7 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
          * System.out.println("active: " +
          * PlatformUI.getWorkbench().getActiveWorkbenchWindow
          * ().getClass().getCanonicalName());
+         * 
          * 
          * 
          * PlatformUI.getWorkbench().addWindowListener(DynamicBundleLoader.INSTANCE

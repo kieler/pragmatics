@@ -14,8 +14,6 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.ui.handler;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,12 +23,6 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.mwe.core.WorkflowContext;
-import org.eclipse.emf.mwe.core.WorkflowContextDefaultImpl;
-import org.eclipse.emf.mwe.core.issues.Issues;
-import org.eclipse.emf.mwe.core.issues.IssuesImpl;
-import org.eclipse.emf.mwe.core.issues.MWEDiagnostic;
-import org.eclipse.emf.mwe.core.monitor.NullProgressMonitor;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.common.core.command.CommandResult;
@@ -44,7 +36,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 
-import de.cau.cs.kieler.ksbase.core.KielerWorkflow;
+import de.cau.cs.kieler.ksbase.core.KSBasEXtendComponent;
 
 /**
  * The command to execute an Xtend transformation. Handles MWE initialization
@@ -55,20 +47,8 @@ import de.cau.cs.kieler.ksbase.core.KielerWorkflow;
  */
 public class XtendTransformationCommand extends AbstractTransactionalCommand {
 
-    /** The workflow that handles execution of Xtend. **/
-    private KielerWorkflow workflow;
-    /** The worklfow context for the workflow. **/
-    private WorkflowContext context;
-    /**
-     * The issues container which is used during the execution of a
-     * transformation.
-     **/
-    private Issues issues;
-    /**
-     * The monitor which is used by Xtend. This is a null monitor because we
-     * don't want any process feedback.
-     **/
-    private NullProgressMonitor xtendMonitor;
+    /** The component that handles execution of Xtend. **/
+    private KSBasEXtendComponent component;
 
     /**
      * Creates a command to execute a transformation.
@@ -83,9 +63,7 @@ public class XtendTransformationCommand extends AbstractTransactionalCommand {
     public XtendTransformationCommand(
             final TransactionalEditingDomain domain, final String label, final IAdaptable adapter) {
         super(domain, label, null);
-        context = new WorkflowContextDefaultImpl();
-        issues = new IssuesImpl();
-        xtendMonitor = new NullProgressMonitor();
+        component = new KSBasEXtendComponent();
     }
 
     /**
@@ -108,35 +86,14 @@ public class XtendTransformationCommand extends AbstractTransactionalCommand {
     @Override
     protected CommandResult doExecuteWithResult(
             final IProgressMonitor monitor, final IAdaptable info) throws ExecutionException {
-        // This is a very ugly way to suppress messages from xtend
-        PrintStream syse = System.err;
-        PrintStream syso = System.out;
 
-        if (workflow == null) {
+        if (component == null || !component.isInitalized()) {
             return CommandResult
                     .newErrorCommandResult(Messages.transformationCommandWorkflowInitializationError);
         }
 
-        System.setErr(new PrintStream(new ByteArrayOutputStream()));
-        System.setOut(new PrintStream(new ByteArrayOutputStream()));
-        workflow.invoke(this.context, this.xtendMonitor, this.issues);
-        System.setErr(syse);
-        System.setOut(syso);
-        if (issues.hasWarnings()) {
-            for (MWEDiagnostic warnings : issues.getWarnings()) {
-                System.err.println("Warning: " + warnings.getMessage());
-            } // TODO: Check how to write multiple warnings, or write directly
-            // to the log
-            return CommandResult.newWarningCommandResult("Transformation completed with warnings. "
-                    + issues.getWarnings()[0], null);
-        } else if (issues.hasErrors()) {
-            for (MWEDiagnostic errors : issues.getErrors()) {
-                System.err.println("Error: " + errors.getMessage());
-            } // TODO: Check how to write multiple errors, or write directly to
-            // the log
-            return CommandResult.newErrorCommandResult("Transformation failed. "
-                    + issues.getErrors()[0]);
-        }
+        component.invoke();
+
         IEditorPart activeEditor =
                 PlatformUI
                         .getWorkbench().getActiveWorkbenchWindow().getActivePage()
@@ -189,9 +146,6 @@ public class XtendTransformationCommand extends AbstractTransactionalCommand {
             return false;
         }
 
-        if (s.size() != parameter.length) {
-            return false;
-        }
         String file = fileName;
         if (file.contains(".")) { // Remove .ext from fileName //$NON-NLS-1$
             file = fileName.substring(0, fileName.lastIndexOf(".")); //$NON-NLS-1$
@@ -199,38 +153,81 @@ public class XtendTransformationCommand extends AbstractTransactionalCommand {
 
         StringBuffer modelSelection = new StringBuffer();
 
-        // We are now going to order the selected diagram elements by
+        // We need a modifiable list of the selection:
         LinkedList<Object> slist = new LinkedList<Object>();
         slist.addAll((List<?>) s.toList());
 
-        int paramCount = 0;
-        for (String param : parameter) {
-            if (modelSelection.length() > 0) {
-                modelSelection.append(",");
+        // We have multiple options here:
+        // 1. simply map the selected elements to the parameters
+        // 2. the parameter is a collection or list type, so we are creating the
+        // list
+        // (Currently the only supported type is a single list of arbitrary
+        // type)
+
+        // Check if the first parameter is a list:
+        if (parameter.length == 1 && parameter[0].contains("list")) {
+            /* DEACTIVATED, List parameter bug
+            String listType = parameter[0];
+            int bStart = listType.indexOf('[');
+            int bEnd = listType.indexOf(']');
+            if (bStart == -1 || bEnd == -1) {
+                return false;
             }
+            listType = listType.substring(bStart + 1, bEnd);
+            // This wont work:
+            // Exception : List is not responsible for java type
+            // de.cau.cs.kieler.synccharts.State
+            BasicEList<EObject> contents = new BasicEList<EObject>();
+
             for (int i = 0; i < slist.size(); ++i) {
                 Object next = slist.get(i);
                 if (next instanceof EditPart) {
                     Object model = ((EditPart) next).getModel();
                     if (model instanceof View) {
-                        if (((View) model).getElement().eClass().getName().toLowerCase(
-                                Locale.getDefault()).equals(param)) {
-                            String modelName = "model" + String.valueOf(paramCount++);
-                            modelSelection.append(modelName);
-                            context.set(modelName, ((View) model).getElement());
-                            slist.remove(i);
-                            break;
+                        EObject selectedEObject = ((View) model).getElement();
+                        if (selectedEObject
+                                .eClass().getName().toLowerCase(Locale.getDefault()).equals(
+                                        listType)) {
+                            contents.add(selectedEObject);
                         }
                     }
                 }
             }
-        }
-        // check if all parameters have been set
-        if (paramCount != parameter.length) {
-            return false;
-        }
+            modelSelection.append("model0");
+            component.setContextData("model0", contents);
+            */
+        } else {
+            // Mapping parameters:
+            int paramCount = 0;
+            for (String param : parameter) {
+                if (modelSelection.length() > 0) {
+                    modelSelection.append(",");
+                }
+                for (int i = 0; i < slist.size(); ++i) {
+                    Object next = slist.get(i);
+                    if (next instanceof EditPart) {
+                        Object model = ((EditPart) next).getModel();
+                        if (model instanceof View) {
+                            if (((View) model).getElement().eClass().getName().toLowerCase(
+                                    Locale.getDefault()).equals(param)) {
+                                String modelName = "model" + String.valueOf(paramCount++);
+                                modelSelection.append(modelName);
+                                component.setContextData(modelName, ((View) model).getElement());
+                                slist.remove(i);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            // check if all parameters have been set
+            if (paramCount != parameter.length) {
+                return false;
+            }
 
-        workflow = new KielerWorkflow(command, file, basePackage, modelSelection.toString());
+        }
+        component.createComponent(command, file, basePackage, modelSelection.toString());
+        component.setInitialized(true);
         return true;
     }
 
