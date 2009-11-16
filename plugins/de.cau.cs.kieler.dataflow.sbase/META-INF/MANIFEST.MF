@@ -1,13 +1,15 @@
 Manifest-Version: 1.0
-Require-Bundle: org.eclipse.ui,org.eclipse.core.runtime,de.cau.cs.kiel
- er.dataflow,de.cau.cs.kieler.dataflow.diagram,de.cau.cs.kieler.ksbase
- .ui,de.cau.cs.kieler.ksbase
-Bundle-ActivationPolicy: lazy
-Bundle-Version: 0.1.0.vqualifier
-Bundle-Name: KSBasE Menu Contributions for de.cau.cs.kieler.dataflow.d
- iagram.part.DataflowDiagramEditorID
 Bundle-ManifestVersion: 2
-Bundle-SymbolicName: de.cau.cs.kieler.dataflow.sbase.generated;singlet
- on:=true
+Bundle-Name: KSBasE Dataflow
+Bundle-SymbolicName: de.cau.cs.kieler.dataflow.sbase;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.cau.cs.kieler.dataflow.sbase.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ de.cau.cs.kieler.dataflow,
+ de.cau.cs.kieler.dataflow.diagram,
+ de.cau.cs.kieler.ksbase.ui,
+ de.cau.cs.kieler.ksbase
+Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 
