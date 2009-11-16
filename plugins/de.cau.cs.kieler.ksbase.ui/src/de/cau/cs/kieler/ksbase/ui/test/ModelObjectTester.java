@@ -56,40 +56,84 @@ public class ModelObjectTester extends PropertyTester {
      * @return True if all selected objects are matching to the current
      *         selection.
      */
-    public boolean test(final Object receiver, final String property,
-            final Object[] args, final Object expectedValue) {
+    public boolean test(
+            final Object receiver, final String property, final Object[] args,
+            final Object expectedValue) {
         assert (args.length == 2);
         assert (args[0] instanceof String);
         assert (args[1] instanceof String);
+        if (TransformationManager.INSTANCE.getEditorById((String) args[0]) != null) {
+            Transformation t =
+                    TransformationManager.INSTANCE
+                            .getEditorById((String) args[0])
+                            .getTransformationById((String) args[1]);
+            if (t != null) {
+                List<String> match = t.getParameterList();
+                if (match != null) {
+                    ISelection sel =
+                            PlatformUI
+                                    .getWorkbench().getActiveWorkbenchWindow()
+                                    .getSelectionService().getSelection();
+                    if (sel instanceof StructuredSelection) {
+                        Iterator<?> it = ((StructuredSelection) sel).iterator();
 
-        Transformation t = TransformationManager.INSTANCE.getEditorById(
-                (String) args[0]).getTransformationById((String) args[1]);
-        if (t != null) {
-            List<String> match = t.getParameterList();
-            if (match != null) {
-                ISelection sel = PlatformUI.getWorkbench()
-                        .getActiveWorkbenchWindow().getSelectionService()
-                        .getSelection();
-                if (sel instanceof StructuredSelection) {
-                    Iterator<?> it = ((StructuredSelection) sel).iterator();
-                    while (it.hasNext()) {
-                        Object testingObject = it.next();
-                        if (testingObject instanceof EditPart) {
-                            Object model = ((EditPart) testingObject)
-                                    .getModel();
-                            if (model instanceof View) {
-                                View vep = (View) model;
-                                int idx = match.indexOf(vep.getElement()
-                                        .eClass().getName().toLowerCase(
-                                                Locale.getDefault()));
-                                if (idx > -1) {
-                                    match.remove(idx);
+                        // Ok we wan't to have to possible options here:
+                        // 1. having exactly one list parameter, list<State>
+                        // 2. having parameters like State,State,Region
+
+                        // TODO: What about collections and sets?
+                        // Maybe we could support multiple lists with different
+                        // types too.
+
+                        if (match.size() == 1 && match.get(0).contains("list")) {
+                            String listType = match.get(0);
+                            int bStart = listType.indexOf('[');
+                            int bEnd = listType.indexOf(']');
+                            if (bStart == -1 || bEnd == -1) {
+                                return false;
+                            }
+                            listType = listType.substring(bStart + 1, bEnd);
+                            // Ok now we need to check if all selected elements
+                            // are
+                            // of the given type.
+                            while (it.hasNext()) {
+                                Object testingObejct = it.next();
+                                if (testingObejct instanceof EditPart) {
+                                    Object model = ((EditPart) testingObejct).getModel();
+                                    if (model instanceof View) {
+                                        if (!((View) model)
+                                                .getElement().eClass().getName().toLowerCase(
+                                                        Locale.getDefault()).equals(listType)) {
+                                            return false;
+                                        }
+                                    }
+                                }
+                            }
+                            // When we reached this part, all selected objects
+                            // are
+                            // of the given type, so we will return 'true' here
+                            return true;
+                        }
+
+                        while (it.hasNext()) {
+                            Object testingObject = it.next();
+                            if (testingObject instanceof EditPart) {
+                                Object model = ((EditPart) testingObject).getModel();
+                                if (model instanceof View) {
+                                    View vep = (View) model;
+                                    int idx =
+                                            match.indexOf(vep
+                                                    .getElement().eClass().getName().toLowerCase(
+                                                            Locale.getDefault()));
+                                    if (idx > -1) {
+                                        match.remove(idx);
+                                    }
                                 }
                             }
                         }
                     }
+                    return match.isEmpty();
                 }
-                return match.isEmpty();
             }
         }
         return false;
