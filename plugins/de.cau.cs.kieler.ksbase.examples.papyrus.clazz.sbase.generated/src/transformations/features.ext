@@ -1,0 +1,9 @@
+import uml;
+
+Void addInterfaceImplemenation(Interface source):
+let clazz = new Class:
+let reali = new Realization:
+reali.source.add(source)->
+reali.target.add(clazz) ->
+source.package.member.add(clazz)
+;
