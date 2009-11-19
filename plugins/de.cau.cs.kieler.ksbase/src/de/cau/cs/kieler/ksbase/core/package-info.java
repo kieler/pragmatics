@@ -14,8 +14,12 @@
  *****************************************************************************/
 /**
  * Core package of the KSBasE plug-in.
- * Contains a custom MWE workflow implementation and storage 
- * classes for editors and transformations.  
+ * Contains a Xtend wapper and implementation and storage 
+ * classes for editors and transformations.
+ *  
+ * @author Michael Matzen - mim AT informatik.uni-kiel.de
+ * 
+ * @kieler.rating 2009-11-19 proposed yellow 
  */
 package de.cau.cs.kieler.ksbase.core;
 

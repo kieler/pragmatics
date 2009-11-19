@@ -31,14 +31,16 @@ import org.eclipse.xtend.typesystem.emf.EmfMetaModel;
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 
 /**
- * A utility class which contains a MWE Xtend component.
+ * A wrapper class for an {@link XtendComponent}. Used to initialize the
+ * component, set the invocation target and it's meta-model
  * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
+ * @kieler.rating 2009-11-19 proposed yellow
  */
 public class KSBasEXtendComponent {
 
-    /** The MWE Xtend component. **/
+    /** The Xtend component. **/
     private XtendComponent xtendComponent;
     /** The component status. **/
     private boolean initalized;
@@ -84,7 +86,7 @@ public class KSBasEXtendComponent {
 
         xtendComponent = new XtendComponent();
 
-        // with an EMFMetaMetaModel,
+        // The EMFMetaMetaModel,
         EmfMetaModel emfmodel;
 
         // Load the EPackage class by using EcoreUtils

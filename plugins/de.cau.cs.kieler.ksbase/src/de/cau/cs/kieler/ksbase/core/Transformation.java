@@ -27,11 +27,17 @@ import org.eclipse.core.runtime.Status;
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 
 /**
- * The connection between Xtend functions and the KSBasE plug-In. Stores additional information
- * about how the transformation can be executed by the user/workbench. This class is serializable.
+ * The connection between Xtend functions and the KSBasE plug-In. Stores
+ * additional information about how the transformation can be executed by the
+ * user/workbench. This class is instantiated by the
+ * {@link EditorTransformationSettings} class to configure the transformations
+ * for one editor.
+ * 
+ * This class may be serialized.
  * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
+ * @kieler.rating 2009-11-19 proposed yellow
  */
 public class Transformation implements Serializable, Cloneable {
 
@@ -54,7 +60,8 @@ public class Transformation implements Serializable, Cloneable {
      * Creates a new Transformation.
      * 
      * @param tName
-     *            The name of this transformation which is displayed in the menu.
+     *            The name of this transformation which is displayed in the
+     *            menu.
      * @param tXtendName
      *            The name of the Xtend transformation to execute.
      */
@@ -71,7 +78,7 @@ public class Transformation implements Serializable, Cloneable {
      * Copy constructor.
      * 
      * @param t
-     *            Transformation which shall be copied
+     *            Transformation which should be copied
      */
     public Transformation(final Transformation t) {
         this.name = t.name;
@@ -92,7 +99,10 @@ public class Transformation implements Serializable, Cloneable {
         try {
             super.clone();
         } catch (CloneNotSupportedException e) {
-            System.out.println("KSBASE: Error while cloning a transformation.");
+            KSBasEPlugin.getDefault().getLog().log(
+                    new Status(
+                            IStatus.ERROR, KSBasEPlugin.PLUGIN_ID,
+                            "KSBASE: Error while cloning a transformation."));
         }
         Transformation t = new Transformation(this);
         return t;
@@ -111,8 +121,8 @@ public class Transformation implements Serializable, Cloneable {
     }
 
     /**
-     * Sets the name of the transformation to be executed. The value is unchecked so giving an
-     * invalid name here will result in an Xtend error.
+     * Sets the name of the transformation to be executed. The value is
+     * unchecked so giving an invalid name here will result in an Xtend error.
      * 
      * @param value
      *            The name of the Xtend transformation to execute
@@ -207,8 +217,8 @@ public class Transformation implements Serializable, Cloneable {
     }
 
     /**
-     * Returns the Id for this transformation. This is used for menu contributions only, so it does
-     * not need to be set.
+     * Returns the Id for this transformation. This is used for menu
+     * contributions only, so it does not need to be set.
      * 
      * @return The transformationId
      */
@@ -264,14 +274,15 @@ public class Transformation implements Serializable, Cloneable {
             writer.writeObject(this.icon);
         } catch (IOException e) {
             KSBasEPlugin.getDefault().getLog().log(
-                    new Status(IStatus.ERROR, KSBasEPlugin.PLUGIN_ID,
+                    new Status(
+                            IStatus.ERROR, KSBasEPlugin.PLUGIN_ID,
                             "Transformation settings could not be saved."));
         }
     }
 
     /**
-     * Simple hashCode calculations, uses the hash code of the transformation name and adds the
-     * number of selections.
+     * Simple hashCode calculations, uses the hash code of the transformation
+     * name and adds the number of selections.
      * 
      * @return The hashCode value
      */
@@ -281,13 +292,13 @@ public class Transformation implements Serializable, Cloneable {
     }
 
     /**
-     * Two transformations are equal, when they have the same transformation name and the same
-     * number of parameters.
+     * Two transformations are equal, when they have the same transformation
+     * name and the same number of parameters.
      * 
      * @param obj
      *            The object to compare with
-     * @return True if the given object is a transformation and has the same name and number of
-     *         parameters
+     * @return True if the given object is a transformation and has the same
+     *         name and number of parameters
      */
     @Override
     public final boolean equals(final Object obj) {

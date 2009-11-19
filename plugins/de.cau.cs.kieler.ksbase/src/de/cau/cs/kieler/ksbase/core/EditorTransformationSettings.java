@@ -36,10 +36,18 @@ import org.eclipse.xtend.XtendResourceParser;
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 
 /**
- * Stores the KSBasE settings for one specific editor.
+ * Stores the KSBasE settings for one specific editor. This class is used by the
+ * {@link TransformationManager} to store settings that have been defined using
+ * the KSBasE extension point or the KSBasE preference pages.
+ * 
+ * This class is capable of parsing an Xtend file and reading all in-place
+ * extensions and parameters.
+ * 
+ * This class may be serialized.
  * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
+ * @kieler.rating 2009-11-19 proposed yellow
  */
 public class EditorTransformationSettings implements Serializable {
 
@@ -62,6 +70,7 @@ public class EditorTransformationSettings implements Serializable {
     /**
      * The contributor which contains the extension points. When the settings
      * have been defined using the preference pages this will be null.
+     * This attribute will not be serialized.
      **/
     private transient IContributor contributor;
 
@@ -100,7 +109,7 @@ public class EditorTransformationSettings implements Serializable {
      * 
      * @return The ID of the editor
      */
-    public final String getEditor() {
+    public final String getEditorId() {
         return editorId;
     }
 
@@ -237,7 +246,7 @@ public class EditorTransformationSettings implements Serializable {
     /**
      * Returns the text representation of the Xtend file.
      * 
-     * @return A .ext file in plain text
+     * @return An Xtend file in plain text
      */
     public final String getExtFile() {
         return extFile;
@@ -247,7 +256,7 @@ public class EditorTransformationSettings implements Serializable {
      * Sets the content of the Xtend file.
      * 
      * @param file
-     *            a .ext file in plain text
+     *            An Xtend file in plain text
      */
     public final void setExtFile(final String file) {
         this.extFile = file;
@@ -301,7 +310,7 @@ public class EditorTransformationSettings implements Serializable {
      *            parsing. If not, the parameters of the existing
      *            transformations are matched with the file.
      * @param fileName
-     *            a valid URL to a Xtend file.
+     *            a valid URL to an Xtend file.
      */
     public final void parseTransformations(final boolean createTransformations, final URL fileName) {
         if (fileName != null) {
@@ -390,7 +399,7 @@ public class EditorTransformationSettings implements Serializable {
             // we are using the '==' operator for the contributor
             // because it may be possible that the contributor is 'null'
             // and the equals method will throw an exception
-            return (o.getEditor().equals(editorId) && o.getContributor() == contributor);
+            return (o.getEditorId().equals(editorId) && o.getContributor() == contributor);
         }
         return false;
     }

@@ -44,6 +44,8 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
  * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
+ * @kieler.rating 2009-11-19 proposed yellow
+ * 
  */
 public final class TransformationManager {
 
@@ -161,13 +163,13 @@ public final class TransformationManager {
     public void addEditor(final EditorTransformationSettings editor) {
         if (editor != null) {
 
-            if (activeUserEditors.containsKey(editor.getEditor())) {
+            if (activeUserEditors.containsKey(editor.getEditorId())) {
                 LOG.log(new Status(
                         IStatus.INFO, KSBasEPlugin.PLUGIN_ID,
                         "Unable to add the same editor twice."));
 
             } else {
-                activeUserEditors.put(editor.getEditor(), editor);
+                activeUserEditors.put(editor.getEditorId(), editor);
             }
         }
     }
@@ -234,7 +236,7 @@ public final class TransformationManager {
                 try {
                     oos =
                             new ObjectOutputStream(new FileOutputStream(metaPath.append(
-                                    editor.getEditor() + ".sbase").toFile()));
+                                    editor.getEditorId() + ".sbase").toFile()));
                     oos.writeObject(editor);
 
                 } catch (FileNotFoundException e) {
@@ -307,7 +309,7 @@ public final class TransformationManager {
                         LOG.log(new Status(
                                 IStatus.WARNING, KSBasEPlugin.PLUGIN_ID,
                                 "Invalid KSBasE configuration found. Please check "
-                                        + "transformations defined for " + editor.getEditor()));
+                                        + "transformations defined for " + editor.getEditorId()));
                     }
                     Transformation transformation =
                             new Transformation(t.getAttribute("name"), t
@@ -372,7 +374,7 @@ public final class TransformationManager {
                         "KSBasE configuration exception: Can't read Xtend file."));
             }
 
-            activeEditors.put(editor.getEditor(), editor);
+            activeEditors.put(editor.getEditorId(), editor);
         }
         // Now let's load the settings from the state location:
         activeUserEditors = new HashMap<String, EditorTransformationSettings>();
@@ -389,7 +391,7 @@ public final class TransformationManager {
                         Object content = ois.readObject();
                         if (content instanceof EditorTransformationSettings) {
                             activeUserEditors.put(((EditorTransformationSettings) content)
-                                    .getEditor(), ((EditorTransformationSettings) content));
+                                    .getEditorId(), ((EditorTransformationSettings) content));
                         }
                     } catch (FileNotFoundException e) {
                         LOG.log(new Status(
