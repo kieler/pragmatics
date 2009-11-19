@@ -372,6 +372,8 @@ public final class TransformationManager {
                     Bundle bundle = Platform.getBundle(settings.getContributor().getName());
                     if (bundle != null) {
                         URL urlPath = bundle.getEntry("/" + settings.getAttribute("XtendFile"));
+                        //Parse xtend file to read transformations and parameters now:
+                        editor.parseTransformations(false, urlPath);   
                         if (urlPath != null) {
                             path = urlPath.openStream();
                             while (path.available() > 0) {
@@ -381,7 +383,7 @@ public final class TransformationManager {
                         }
                     }
                     if (contentBuffer != null) {
-                        editor.setExtFile(contentBuffer.toString(), false);
+                        editor.setExtFile(contentBuffer.toString());
                     }
                 }
             } catch (IOException e) {
@@ -434,14 +436,3 @@ public final class TransformationManager {
         isInitialized = true;
     }
 }
-
-/* Maybe this can be used to parse the xtend file: 
- *  * final Object o = resourceManager.loadResource(extension,
- * XtendFile.FILE_EXTENSION); final XtendFile extFile = (XtendFile) o; if
- * (extFile == null) throw new
- * RuntimeException("Unable to load extension file : " + extension); ctx =
- * cloneWithResource(extFile); final List<Extension> extensionList =
- * extFile.getPublicExtensions(resourceManager, ctx); for (final Extension
- * element : extensionList) { element.init(ctx);
- * allExtensions.add(advise(element)); }
- */

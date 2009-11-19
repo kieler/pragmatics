@@ -14,11 +14,23 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.core;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.Serializable;
+import java.net.URL;
 import java.util.LinkedList;
 import java.util.Locale;
 
 import org.eclipse.core.runtime.IContributor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.internal.xtend.expression.ast.DeclaredParameter;
+import org.eclipse.internal.xtend.xtend.XtendFile;
+import org.eclipse.internal.xtend.xtend.ast.Extension;
+import org.eclipse.xtend.XtendResourceParser;
+
+import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 
 /**
  * Stores the KSBasE settings for one specific editor.
@@ -282,13 +294,9 @@ public class EditorTransformationSettings implements Serializable {
      * 
      * @param file
      *            a .ext file in plain text
-     * @param createTransformations
-     *            indicates if the editor transformations should be created
-     *            while parsing the file.
      */
-    public final void setExtFile(final String file, final boolean createTransformations) {
+    public final void setExtFile(final String file) {
         this.extFile = file;
-        parseTransformations(createTransformations);
     }
 
     /**
@@ -338,63 +346,72 @@ public class EditorTransformationSettings implements Serializable {
      *            If this flag is set the transformations are created while
      *            parsing. If not, the parameters of the existing
      *            transformations are matched with the file.
+     * @param fileName
+     *            a valid URL to a Xtend file.
      */
-    public final void parseTransformations(final boolean createTransformations) {
-        if (extFile != null && extFile.length() > 0) {
-            // To check if we have any invalid transformations, i.e.
-            // if it has no transformation match in the xtend file,
-            // we want to remove it now.
-            LinkedList<Transformation> cachedTransformations = new LinkedList<Transformation>();
+    public final void parseTransformations(final boolean createTransformations, final URL fileName) {
+        if (fileName != null) {
+            try {
+                // Using the XtendResourceParser to read transformations
+                XtendResourceParser parser = new XtendResourceParser();
+                Reader reader = new InputStreamReader(fileName.openStream());
+                Object o = parser.parse(reader, "features.ext");
+                if (o != null) {
+                    // If we have any invalid transformations, i.e.
+                    // the transformation defined here has no transformation
+                    // match in the xtend file, we want to remove them.
+                    LinkedList<Transformation> cachedTransformations =
+                            new LinkedList<Transformation>();
 
-            // Let's find all in-place m2m transformations, defined in this file
-            // They are defined by :
-            // Starting with 'void '
-            // End with ':'
-            String[] methods = extFile.split(";");
-            for (String m : methods) {
-                try {
-                    m = m.trim().replaceAll("//.*\n", "");
-                    String method = m.toLowerCase(Locale.getDefault()); // just
-                    // to be
-                    // sure
-                    if (!method.contains("void")) { // we only want void methods
-                        continue;
-                    }
-                    // We have to eliminate random occurrences of the 'void'
-                    // keyword, e.g. in comments
-                    String[] voidMethod = method.split(" ");
-                    if (voidMethod.length == 0 || !voidMethod[0].trim().equals("void")) {
-                        continue;
-                    }
+                    XtendFile xtFile = (XtendFile) o;
+                    for (Extension ext : xtFile.getExtensions()) {
+                        // Only read in-place methods
+                        if (!ext.getReturnTypeIdentifier().getValue().equals("Void")) {
+                            continue;
+                        }
 
-                    // method = method.replaceAll("/\\*.*\\", "");
-                    String[] tokens = method.split("void ");
-                    String[] head = tokens[1].split(":");
-                    String[] parts = head[0].split("\\(");
-                    String name = parts[0];
-                    String param = parts[1].replace(")", "");
-                    String[] parameterAndNames = param.split(",");
-                    String[] parameters = new String[parameterAndNames.length];
-                    for (int i = 0; i < parameterAndNames.length; ++i) {
-                        parameters[i] = parameterAndNames[i].trim().split(" ")[0];
+                        Transformation transformation = getTransformationByName(ext.getName());
+                        // Read parameters:
+                        LinkedList<String> parameters = new LinkedList<String>();
+                        for (DeclaredParameter param : ext.getFormalParameters()) {
+                            parameters.add(param.getType().getValue());
+                        }
+
+                        if (transformation != null) {
+                            // set parameters
+                            transformation.setParameter(parameters.toArray(new String[parameters
+                                    .size()]));
+                            // Clone it, so we don't remove the transformation when
+                            // clearing the transformations list
+                            cachedTransformations.add(transformation.clone());
+                        } else if (createTransformations) {
+                            // Create new transformation
+                            transformation = new Transformation(ext.getName(), ext.getName());
+                            // set parameters
+                            transformation.setParameter(parameters.toArray(new String[parameters
+                                    .size()]));
+                            //Create a default transformation id
+                            transformation.setTransformationId(editorId + "." + ext.getName());
+                            cachedTransformations.add(transformation);
+                        }
                     }
-                    Transformation t = getTransformationByName(name);
-                    if (t != null) {
-                        t.setParameter(parameters);
-                        cachedTransformations.add(t.clone());
-                    } else if (createTransformations) {
-                        t = new Transformation(name, name);
-                        t.setParameter(parameters);
-                        t.setTransformationId(editorId + "." + name);
-                        cachedTransformations.add(t);
-                    }
-                } catch (NullPointerException exp) {
-                    System.err.println("invalid xtend file");
+                    // Adding all transformations. By clearing the
+                    // transformations first, we ensure that no illegal
+                    // transformations are included.
+                    transformations.clear();
+                    transformations.addAll(cachedTransformations);
                 }
+            } catch (SecurityException sec) {
+                KSBasEPlugin.getDefault().getLog().log(
+                        new Status(
+                                IStatus.ERROR, KSBasEPlugin.PLUGIN_ID,
+                                "Unable to parse Xtend file: Not allowed to open file."));
+            } catch (IOException e) {
+                KSBasEPlugin.getDefault().getLog().log(
+                        new Status(
+                                IStatus.ERROR, KSBasEPlugin.PLUGIN_ID,
+                                "Unable to parse Xtend file: Error while reading file."));
             }
-
-            transformations.clear();
-            transformations.addAll(cachedTransformations);
         }
     }
 

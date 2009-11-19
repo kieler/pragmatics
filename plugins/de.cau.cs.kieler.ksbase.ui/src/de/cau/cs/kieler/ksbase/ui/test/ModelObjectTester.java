@@ -16,7 +16,6 @@ package de.cau.cs.kieler.ksbase.ui.test;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.gef.EditPart;
@@ -102,8 +101,7 @@ public class ModelObjectTester extends PropertyTester {
                                     Object model = ((EditPart) testingObejct).getModel();
                                     if (model instanceof View) {
                                         if (!((View) model)
-                                                .getElement().eClass().getName().toLowerCase(
-                                                        Locale.getDefault()).equals(listType)) {
+                                                .getElement().eClass().getName().equals(listType)) {
                                             return false;
                                         }
                                     }
@@ -123,8 +121,7 @@ public class ModelObjectTester extends PropertyTester {
                                     View vep = (View) model;
                                     int idx =
                                             match.indexOf(vep
-                                                    .getElement().eClass().getName().toLowerCase(
-                                                            Locale.getDefault()));
+                                                    .getElement().eClass().getName());
                                     if (idx > -1) {
                                         match.remove(idx);
                                     }

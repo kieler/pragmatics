@@ -17,7 +17,6 @@ package de.cau.cs.kieler.ksbase.ui.handler;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -166,7 +165,7 @@ public class XtendTransformationCommand extends AbstractTransactionalCommand {
 
         // Check if the first parameter is a list:
         if (parameter.length == 1 && parameter[0].contains("list")) {
-            /* DEACTIVATED, List parameter bug
+            /* DEACTIVATED: List to List parameter bug
             String listType = parameter[0];
             int bStart = listType.indexOf('[');
             int bEnd = listType.indexOf(']');
@@ -208,8 +207,7 @@ public class XtendTransformationCommand extends AbstractTransactionalCommand {
                     if (next instanceof EditPart) {
                         Object model = ((EditPart) next).getModel();
                         if (model instanceof View) {
-                            if (((View) model).getElement().eClass().getName().toLowerCase(
-                                    Locale.getDefault()).equals(param)) {
+                            if (((View) model).getElement().eClass().getName().equals(param)) {
                                 String modelName = "model" + String.valueOf(paramCount++);
                                 modelSelection.append(modelName);
                                 component.setContextData(modelName, ((View) model).getElement());

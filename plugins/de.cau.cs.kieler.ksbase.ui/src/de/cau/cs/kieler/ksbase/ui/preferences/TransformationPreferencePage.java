@@ -373,7 +373,9 @@ public class TransformationPreferencePage extends PreferencePage
 
                                     }
                                     if (contentBuffer != null) {
-                                        activeEditor.setExtFile(contentBuffer.toString(), true);
+                                        activeEditor.setExtFile(contentBuffer.toString());
+                                        //TODO: Enable parsing:
+                                        activeEditor.parseTransformations(true,null);
                                     }
                                 } catch (IOException exce) {
                                     KSBasEUIPlugin.getDefault().getLog().log(
