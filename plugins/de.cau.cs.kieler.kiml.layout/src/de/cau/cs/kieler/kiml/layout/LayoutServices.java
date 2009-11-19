@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.layout.services;
+package de.cau.cs.kieler.kiml.layout;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -70,7 +70,7 @@ public class LayoutServices {
     /** mapping of diagram type identifiers to their names. */
     private Map<String, String> diagramTypeMap = new LinkedHashMap<String, String>();
     /** mapping of graphical edit parts to associated binding identifiers. */
-    private Map<Class<?>, String> editPartBindingMap = new LinkedHashMap<Class<?>, String>();
+    private Map<String, String> editPartBindingMap = new LinkedHashMap<String, String>();
     /** mapping of binding identifiers to associated configured options. */
     private Map<String, Map<String, Object>> optionSetupMap = new HashMap<String, Map<String, Object>>();
 
@@ -198,10 +198,10 @@ public class LayoutServices {
         /**
          * Registers the given edit part with the binding identifier.
          * 
-         * @param editPartType class of edit parts to register
+         * @param editPartType class name of edit parts to register
          * @param bindingId identifier of the category of edit parts
          */
-        public void addEditPartBinding(final Class<?> editPartType, final String bindingId) {
+        public void addEditPartBinding(final String editPartType, final String bindingId) {
             editPartBindingMap.put(editPartType, bindingId);
             if (!optionSetupMap.containsKey(bindingId)) {
                 optionSetupMap.put(bindingId, new LinkedHashMap<String, Object>());
@@ -423,7 +423,7 @@ public class LayoutServices {
      * @param layoutData layout data for which the layout options shall be added
      */
     public final void setLayoutOptions(final Class<?> editPartType, final KLayoutData layoutData) {
-        String bindingId = editPartBindingMap.get(editPartType);
+        String bindingId = editPartBindingMap.get(editPartType.getName());
         if (bindingId != null) {
             Map<String, Object> options = optionSetupMap.get(bindingId);
             for (Entry<String, Object> entry : options.entrySet()) {
@@ -443,7 +443,7 @@ public class LayoutServices {
      *         option is not set for the given edit part
      */
     public final Object getOption(final Class<?> editPartType, final String optionId) {
-        String bindingId = editPartBindingMap.get(editPartType);
+        String bindingId = editPartBindingMap.get(editPartType.getName());
         if (bindingId != null) {
             Map<String, Object> options = optionSetupMap.get(bindingId);
             return options.get(optionId);

@@ -22,7 +22,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.TableItem;
 
-import de.cau.cs.kieler.kiml.layout.services.LayoutProviderData;
+import de.cau.cs.kieler.kiml.layout.LayoutProviderData;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 
 /**

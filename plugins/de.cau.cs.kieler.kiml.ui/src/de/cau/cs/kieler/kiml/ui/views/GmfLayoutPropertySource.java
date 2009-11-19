@@ -34,13 +34,13 @@ import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
+import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
+import de.cau.cs.kieler.kiml.layout.LayoutProviderData;
+import de.cau.cs.kieler.kiml.layout.LayoutServices;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KStringOption;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.options.PortConstraints;
-import de.cau.cs.kieler.kiml.layout.services.LayoutOptionData;
-import de.cau.cs.kieler.kiml.layout.services.LayoutProviderData;
-import de.cau.cs.kieler.kiml.layout.services.LayoutServices;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.layout.KimlUiUtil;
 import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyle;

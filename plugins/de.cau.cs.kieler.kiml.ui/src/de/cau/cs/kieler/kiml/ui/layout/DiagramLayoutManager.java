@@ -31,8 +31,8 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Maybe;
-import de.cau.cs.kieler.kiml.layout.services.LayoutServices;
-import de.cau.cs.kieler.kiml.layout.services.RecursiveLayouterEngine;
+import de.cau.cs.kieler.kiml.layout.LayoutServices;
+import de.cau.cs.kieler.kiml.layout.RecursiveLayouterEngine;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 
 /**

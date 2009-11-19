@@ -22,7 +22,7 @@ import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.layout.services.ILayoutListener;
+import de.cau.cs.kieler.kiml.layout.ILayoutListener;
 import de.cau.cs.kieler.kiml.viewer.views.ExecutionView;
 import de.cau.cs.kieler.kiml.viewer.views.LayoutGraphView;
 

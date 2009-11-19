@@ -25,11 +25,11 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import de.cau.cs.kieler.kiml.layout.services.ILayoutListener;
-import de.cau.cs.kieler.kiml.layout.services.AbstractLayoutProvider;
-import de.cau.cs.kieler.kiml.layout.services.LayoutOptionData;
-import de.cau.cs.kieler.kiml.layout.services.LayoutProviderData;
-import de.cau.cs.kieler.kiml.layout.services.LayoutServices;
+import de.cau.cs.kieler.kiml.layout.AbstractLayoutProvider;
+import de.cau.cs.kieler.kiml.layout.ILayoutListener;
+import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
+import de.cau.cs.kieler.kiml.layout.LayoutProviderData;
+import de.cau.cs.kieler.kiml.layout.LayoutServices;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.preferences.LayoutPreferencePage;
 
@@ -330,18 +330,14 @@ public class EclipseLayoutServices extends LayoutServices {
                 }
             } else if (ELEMENT_BINDING.equals(element.getName())) {
                 // register a binding from the extension
-                try {
-                    String typeName = element.getAttribute(ATTRIBUTE_CLASS);
-                    Class<?> editPartType = Platform.getBundle(element.getContributor().getName())
-                            .loadClass(typeName);
-                    String id = element.getAttribute(ATTRIBUTE_ID);
-                    if (id == null || id.length() == 0) {
-                        reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_ID, null);
-                    } else {
-                        getRegistry().addEditPartBinding(editPartType, id);
-                    }
-                } catch (Exception exception) {
-                    reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_CLASS, exception);
+                String typeName = element.getAttribute(ATTRIBUTE_CLASS);
+                String id = element.getAttribute(ATTRIBUTE_ID);
+                if (typeName == null || typeName.length() == 0) {
+                    reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_CLASS, null);
+                } else if (id == null || id.length() == 0) {
+                    reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_ID, null);
+                } else {
+                    getRegistry().addEditPartBinding(typeName, id);
                 }
             } else if (ELEMENT_OPTION.equals(element.getName())) {
                 // register a layout option from the extension

@@ -183,7 +183,7 @@
          <meta.section type="apiinfo"/>
       </appInfo>
       <documentation>
-         All data that is contributed to this extension point is gathered in the singleton class &lt;code&gt;de.cau.cs.kieler.kiml.layout.services.LayoutServices&lt;/code&gt;. This is the point where registered data can be read at runtime.
+         All data that is contributed to this extension point is gathered in the singleton class &lt;code&gt;de.cau.cs.kieler.kiml.layout.LayoutServices&lt;/code&gt;. This is the point where registered data can be read at runtime.
 &lt;p&gt;
 &lt;b&gt;NOTE:&lt;/b&gt; The extension point is read out by the &lt;code&gt;de.cau.cs.kieler.kiml.ui&lt;/code&gt; plug-in, &lt;em&gt;not&lt;/em&gt; by &lt;code&gt;de.cau.cs.kieler.kiml.layout&lt;/code&gt;.
       </documentation>

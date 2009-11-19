@@ -21,7 +21,7 @@ import org.eclipse.zest.layouts.algorithms.SpringLayoutAlgorithm;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.layout.services.AbstractLayoutProvider;
+import de.cau.cs.kieler.kiml.layout.AbstractLayoutProvider;
 
 /**
  * Layout provider that uses the Zest grid layout algorithm.

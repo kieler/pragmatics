@@ -24,8 +24,8 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
-import de.cau.cs.kieler.kiml.layout.services.LayoutServices;
-import de.cau.cs.kieler.kiml.layout.services.RecursiveLayouterEngine;
+import de.cau.cs.kieler.kiml.layout.LayoutServices;
+import de.cau.cs.kieler.kiml.layout.RecursiveLayouterEngine;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 import de.cau.cs.kieler.kiml.viewer.KimlViewerPlugin;
 import de.cau.cs.kieler.kiml.viewer.Messages;

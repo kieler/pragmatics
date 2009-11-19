@@ -24,15 +24,15 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.notation.View;
 
 import de.cau.cs.kieler.core.util.Maybe;
+import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
+import de.cau.cs.kieler.kiml.layout.LayoutProviderData;
+import de.cau.cs.kieler.kiml.layout.LayoutServices;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KBooleanOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KFloatOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KIntOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KStringOption;
-import de.cau.cs.kieler.kiml.layout.services.LayoutOptionData;
-import de.cau.cs.kieler.kiml.layout.services.LayoutProviderData;
-import de.cau.cs.kieler.kiml.layout.services.LayoutServices;
 import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyle;
 import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsFactory;
 import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsPackage;

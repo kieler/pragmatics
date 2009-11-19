@@ -16,9 +16,9 @@ package de.cau.cs.kieler.kiml.graphviz.layouter;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.layout.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.layout.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.layout.services.AbstractLayoutProvider;
 
 /**
  * Layout provider for the Graphviz layout tool. The actual interface to

@@ -32,8 +32,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import de.cau.cs.kieler.kiml.layout.services.LayoutProviderData;
-import de.cau.cs.kieler.kiml.layout.services.LayoutServices;
+import de.cau.cs.kieler.kiml.layout.LayoutProviderData;
+import de.cau.cs.kieler.kiml.layout.LayoutServices;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
