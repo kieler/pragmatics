@@ -100,8 +100,8 @@ public class ModelObjectTester extends PropertyTester {
                                 if (testingObejct instanceof EditPart) {
                                     Object model = ((EditPart) testingObejct).getModel();
                                     if (model instanceof View) {
-                                        if (!((View) model)
-                                                .getElement().eClass().getName().equals(listType)) {
+                                        if (!((View) model).getElement().eClass().getName().equals(
+                                                listType)) {
                                             return false;
                                         }
                                     }
@@ -119,11 +119,13 @@ public class ModelObjectTester extends PropertyTester {
                                 Object model = ((EditPart) testingObject).getModel();
                                 if (model instanceof View) {
                                     View vep = (View) model;
-                                    int idx =
-                                            match.indexOf(vep
-                                                    .getElement().eClass().getName());
-                                    if (idx > -1) {
-                                        match.remove(idx);
+                                    if (vep.getElement() != null
+                                            && vep.getElement().eClass() != null) {
+                                        int idx =
+                                                match.indexOf(vep.getElement().eClass().getName());
+                                        if (idx > -1) {
+                                            match.remove(idx);
+                                        }
                                     }
                                 }
                             }
