@@ -36,6 +36,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.NoteEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeCompartmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.figures.ResizableCompartmentFigure;
@@ -382,52 +383,55 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             // process nodes, which may be parents of compartments
             } else if (obj instanceof ShapeNodeEditPart) {
                 ShapeNodeEditPart childNodeEditPart = (ShapeNodeEditPart) obj;
-                IFigure nodeFigure = childNodeEditPart.getFigure();
-                KNode childLayoutNode = KimlLayoutUtil.createInitializedNode();
-                Rectangle childBounds = nodeFigure.getBounds();
-                KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(childLayoutNode);
-
-                // store all the connections to process them later
-                for (Object conn : childNodeEditPart.getTargetConnections()) {
-                    if (conn instanceof ConnectionEditPart) {
-                        connections.add((ConnectionEditPart) conn);
+                if (!(childNodeEditPart instanceof NoteEditPart)) {
+                    IFigure nodeFigure = childNodeEditPart.getFigure();
+                    KNode childLayoutNode = KimlLayoutUtil.createInitializedNode();
+                    Rectangle childBounds = nodeFigure.getBounds();
+                    KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(childLayoutNode);
+    
+                    // store all the connections to process them later
+                    for (Object conn : childNodeEditPart.getTargetConnections()) {
+                        if (conn instanceof ConnectionEditPart) {
+                            connections.add((ConnectionEditPart) conn);
+                        }
                     }
+    
+                    // set location and size
+                    if (KimlUiUtil.isRelative(parentFigure, nodeFigure)) {
+                        nodeLayout.setXpos(childBounds.x);
+                        nodeLayout.setYpos(childBounds.y);
+                    } else {
+                        Rectangle parentBounds = parentFigure.getBounds();
+                        nodeLayout.setXpos(childBounds.x - parentBounds.x);
+                        nodeLayout.setYpos(childBounds.y - parentBounds.y);
+                    }
+                    nodeLayout.setHeight(childBounds.height);
+                    nodeLayout.setWidth(childBounds.width);
+                    Dimension minSize = nodeFigure.getMinimumSize();
+                    LayoutOptions.setMinWidth(nodeLayout, minSize.width);
+                    LayoutOptions.setMinHeight(nodeLayout, minSize.height);
+                    
+                    // set insets if not yet defined
+                    if (insets == null) {
+                        insets = KimlUiUtil.calcInsets(parentFigure, nodeFigure);
+                    }
+    
+                    parentLayoutNode.getChildren().add(childLayoutNode);
+                    editPart2NodeMap.put(childNodeEditPart, childLayoutNode);
+                    node2EditPartMap.put(childLayoutNode, childNodeEditPart);
+                    hasChildNodes = true;
+                    if (!layoutServices.isNolayout(childLayoutNode.getClass())) {
+                        // process the child as new current edit part, as it may
+                        // contain other elements
+                        buildLayoutGraphRecursively(childNodeEditPart, childLayoutNode,
+                                childNodeEditPart);
+                    }
+    
+                    // set preconfigured layout options for the node
+                    layoutServices.setLayoutOptions(childNodeEditPart.getClass(), nodeLayout);
+                    // set user defined layout options for the node
+                    setNotationLayoutOptions(childNodeEditPart, nodeLayout);
                 }
-
-                // set location and size
-                if (KimlUiUtil.isRelative(parentFigure, nodeFigure)) {
-                    nodeLayout.setXpos(childBounds.x);
-                    nodeLayout.setYpos(childBounds.y);
-                } else {
-                    Rectangle parentBounds = parentFigure.getBounds();
-                    nodeLayout.setXpos(childBounds.x - parentBounds.x);
-                    nodeLayout.setYpos(childBounds.y - parentBounds.y);
-                }
-                nodeLayout.setHeight(childBounds.height);
-                nodeLayout.setWidth(childBounds.width);
-                Dimension minSize = nodeFigure.getMinimumSize();
-                LayoutOptions.setMinWidth(nodeLayout, minSize.width);
-                LayoutOptions.setMinHeight(nodeLayout, minSize.height);
-                
-                // set insets if not yet defined
-                if (insets == null) {
-                    insets = KimlUiUtil.calcInsets(parentFigure, nodeFigure);
-                }
-
-                parentLayoutNode.getChildren().add(childLayoutNode);
-                editPart2NodeMap.put(childNodeEditPart, childLayoutNode);
-                node2EditPartMap.put(childLayoutNode, childNodeEditPart);
-                hasChildNodes = true;
-                if (!layoutServices.isNolayout(childLayoutNode.getClass())) {
-                    // process the child as new current edit part, as it may
-                    // contain other elements
-                    buildLayoutGraphRecursively(childNodeEditPart, childLayoutNode, childNodeEditPart);
-                }
-
-                // set preconfigured layout options for the node
-                layoutServices.setLayoutOptions(childNodeEditPart.getClass(), nodeLayout);
-                // set user defined layout options for the node
-                setNotationLayoutOptions(childNodeEditPart, nodeLayout);
 
             // process labels of nodes
             } else if (obj instanceof GraphicalEditPart) {
