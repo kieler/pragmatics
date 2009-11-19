@@ -125,13 +125,13 @@ public final class DynamicMenuContributions {
                 Element visWith = extension.createElement("with");
                 visWith.setAttribute("variable", "activeEditorId");
                 Element visInstance = extension.createElement("equals");
-                visInstance.setAttribute("value", editor.getEditor());
+                visInstance.setAttribute("value", editor.getEditorId());
                 visWith.appendChild(visInstance);
                 visIterate.appendChild(visWith);
                 menuVisible.appendChild(visIterate);
                 // Create command extensions for all transformations:
                 for (Transformation t : editor.getTransformations().values()) {
-                    String commandID = "de.cau.cs.kieler.ksbase." + editor.getEditor() + "."
+                    String commandID = "de.cau.cs.kieler.ksbase." + editor.getEditorId() + "."
                             + t.getName().replace(' ', '_');
                     // store id
                     commandIds.put(t, commandID);
@@ -166,7 +166,7 @@ public final class DynamicMenuContributions {
                         // Set key parameters
                         Element keyParam = extension.createElement("parameter");
                         keyParam.setAttribute("id", "de.cau.cs.kieler.ksbase.editorParameter");
-                        keyParam.setAttribute("value", editor.getEditor());
+                        keyParam.setAttribute("value", editor.getEditorId());
                         key.appendChild(keyParam);
                         keyParam = extension.createElement("parameter");
                         keyParam.setAttribute("id",
@@ -191,7 +191,7 @@ public final class DynamicMenuContributions {
                     handlerIt.setAttribute("ifEmpty", "false");
                     handlerIt.setAttribute("operator", "and");
                     Element handlerTest = extension.createElement("test");
-                    handlerTest.setAttribute("args", editor.getEditor() + ","
+                    handlerTest.setAttribute("args", editor.getEditorId() + ","
                             + t.getTransformationId());
                     handlerTest.setAttribute("forcePluginActivation", "true");
                     handlerTest.setAttribute("property",
@@ -260,7 +260,7 @@ public final class DynamicMenuContributions {
                 // Create jar bundle
                 Bundle contributorBundle = ContributorFactoryOSGi.resolve(editor.getContributor());
 
-                String pluginBundle = editor.getEditor() + ".jar";
+                String pluginBundle = editor.getEditorId() + ".jar";
                 String editorDiagramName = contributorBundle.getSymbolicName() + ".generated";
 
                 File jarFile = KSBasEUIPlugin.getDefault().getStateLocation().append(pluginBundle)
@@ -276,7 +276,7 @@ public final class DynamicMenuContributions {
                 sbuf.append("Bundle-Version: 0.1.0.vqualifier\n");
                 sbuf.append("Manifest-Version: 1.0\n");
                 sbuf.append("Bundle-SymbolicName: " + editorDiagramName + ";singleton:=true\n");
-                sbuf.append("Bundle-Name: KSBasE Menu Contributions for " + editor.getEditor()
+                sbuf.append("Bundle-Name: KSBasE Menu Contributions for " + editor.getEditorId()
                         + "\n");
                 sbuf.append("Bundle-ManifestVersion: 2\n");
                 // Create manifest file
@@ -438,7 +438,7 @@ public final class DynamicMenuContributions {
         // Set command parameters
         Element handlerParam = extension.createElement("parameter");
         handlerParam.setAttribute("name", "de.cau.cs.kieler.ksbase.editorParameter");
-        handlerParam.setAttribute("value", editor.getEditor());
+        handlerParam.setAttribute("value", editor.getEditorId());
         menuCommand.appendChild(handlerParam);
         handlerParam = extension.createElement("parameter");
         handlerParam.setAttribute("name", "de.cau.cs.kieler.ksbase.transformationParameter");

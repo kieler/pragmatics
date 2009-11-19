@@ -87,7 +87,7 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
     public void activateAllEditors() {
         for (EditorTransformationSettings editor : waitingBundles.keySet().toArray(
                 new EditorTransformationSettings[waitingBundles.keySet().size()])) {
-            checkForWaitingEditor(editor.getEditor());
+            checkForWaitingEditor(editor.getEditorId());
         }
     }
 
@@ -107,7 +107,7 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
 
         for (Entry<EditorTransformationSettings, URI> entry : waitingBundles.entrySet()) {
             EditorTransformationSettings editor = entry.getKey();
-            if (editor.getEditor().equals(activeEditor)) {
+            if (editor.getEditorId().equals(activeEditor)) {
                 // Create bundle with jar archive
                 Bundle bundle = ContributorFactoryOSGi.resolve(editor.getContributor());
                 // System.out.println("activating ksbase for" + activeEditor);

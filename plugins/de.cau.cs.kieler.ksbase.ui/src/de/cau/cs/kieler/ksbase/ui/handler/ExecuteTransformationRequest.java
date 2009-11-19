@@ -113,7 +113,7 @@ public class ExecuteTransformationRequest extends Request {
     /**
      * Gets the transformation command.
      * 
-     * @return A Xtend method name
+     * @return An Xtend method name
      */
     public final String getCommand() {
         return this.command;
@@ -131,7 +131,7 @@ public class ExecuteTransformationRequest extends Request {
     /**
      * Gets the filename.
      * 
-     * @return A Xtend file name
+     * @return An Xtend file name
      */
     public final String getFileName() {
         return this.fileName;

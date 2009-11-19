@@ -385,7 +385,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
         btEditorDel.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(final SelectionEvent arg0) {
-                manager.removeEditor(activeEditor.getEditor());
+                manager.removeEditor(activeEditor.getEditorId());
                 readEditors();
             }
 
@@ -556,7 +556,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
     private void readEditors() {
         if (manager.getEditors() != null) {
             for (EditorTransformationSettings s : manager.getUserDefinedEditors().values()) {
-                cbEditors.add(s.getEditor());
+                cbEditors.add(s.getEditorId());
             }
             if (cbEditors.getItemCount() > 0) {
                 cbEditors.select(0);
