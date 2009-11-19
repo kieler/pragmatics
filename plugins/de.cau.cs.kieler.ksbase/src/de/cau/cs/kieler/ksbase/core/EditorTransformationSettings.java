@@ -19,8 +19,11 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Serializable;
 import java.net.URL;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Locale;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IStatus;
@@ -52,8 +55,8 @@ public class EditorTransformationSettings implements Serializable {
     private String extFile;
     /** The context for the diagram editor, required for key bindings. **/
     private String context;
-    /** The current List of Transformations. **/
-    private LinkedList<Transformation> transformations;
+    /** The map of transformations, ordered by their transformation Id. **/
+    private HashMap<String, Transformation> transformations;
     /** List of menu contributions. **/
     private LinkedList<KSBasEMenuContribution> menuContributions;
     /**
@@ -75,7 +78,7 @@ public class EditorTransformationSettings implements Serializable {
         this.defaultIcon = "";
         this.extFile = ""; //$NON-NLS-1$
         this.context = "";
-        this.transformations = new LinkedList<Transformation>();
+        this.transformations = new HashMap<String, Transformation>();
         this.menuContributions = new LinkedList<KSBasEMenuContribution>();
         this.contributor = null;
     }
@@ -184,8 +187,8 @@ public class EditorTransformationSettings implements Serializable {
      * 
      * @return A LinkedList containing all transformations
      */
-    public final LinkedList<Transformation> getTransformations() {
-        return transformations;
+    public final Map<String, Transformation> getTransformations() {
+        return Collections.unmodifiableMap(transformations);
     }
 
     /**
@@ -197,7 +200,7 @@ public class EditorTransformationSettings implements Serializable {
      */
     public final Transformation getTransformationByName(final String transformation) {
         if (transformation != null) {
-            for (Transformation t : transformations) {
+            for (Transformation t : transformations.values()) {
                 if (t.getTransformationName().toLowerCase(Locale.getDefault()).equals(
                         transformation.toLowerCase(Locale.getDefault()))) {
                     return t;
@@ -216,27 +219,7 @@ public class EditorTransformationSettings implements Serializable {
      *         transformation has been found
      */
     public final Transformation getTransformationById(final String tid) {
-        if (tid != null) {
-            for (Transformation t : transformations) {
-                if (t.getTransformationId().equals(tid)) {
-                    return t;
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Sets the transformation list.
-     * 
-     * @param transformationList
-     *            A LinkedList containing the transformations
-     */
-    public final void setTransformations(final LinkedList<Transformation> transformationList) {
-        if (transformationList != null) {
-            this.transformations.clear();
-            this.transformations.addAll(transformationList);
-        }
+        return transformations.get(tid);
     }
 
     /**
@@ -247,36 +230,7 @@ public class EditorTransformationSettings implements Serializable {
      */
     public final void addTransformation(final Transformation t) {
         if (t != null) {
-            this.transformations.add(t);
-        }
-    }
-
-    /**
-     * Removes a transformation.
-     * 
-     * @param index
-     *            the index of the element to remove
-     */
-    public final void removeTransformation(final int index) {
-        if (index > -1 && index < transformations.size()) {
-            this.transformations.remove(index);
-        }
-    }
-
-    /**
-     * Replaces a transformation with a new one.
-     * 
-     * @param oldVal
-     *            The transformation to replace
-     * @param newVal
-     *            The transformation to insert
-     */
-    public final void modifyTransformation(final Transformation oldVal, final Transformation newVal) {
-        if (this.transformations.contains(oldVal)) {
-            transformations.remove(oldVal);
-        }
-        if (newVal != null) {
-            transformations.add(newVal);
+            transformations.put(t.getTransformationId(), t);
         }
     }
 
@@ -381,7 +335,8 @@ public class EditorTransformationSettings implements Serializable {
                             // set parameters
                             transformation.setParameter(parameters.toArray(new String[parameters
                                     .size()]));
-                            // Clone it, so we don't remove the transformation when
+                            // Clone it, so we don't remove the transformation
+                            // when
                             // clearing the transformations list
                             cachedTransformations.add(transformation.clone());
                         } else if (createTransformations) {
@@ -390,7 +345,7 @@ public class EditorTransformationSettings implements Serializable {
                             // set parameters
                             transformation.setParameter(parameters.toArray(new String[parameters
                                     .size()]));
-                            //Create a default transformation id
+                            // Create a default transformation id
                             transformation.setTransformationId(editorId + "." + ext.getName());
                             cachedTransformations.add(transformation);
                         }
@@ -399,7 +354,9 @@ public class EditorTransformationSettings implements Serializable {
                     // transformations first, we ensure that no illegal
                     // transformations are included.
                     transformations.clear();
-                    transformations.addAll(cachedTransformations);
+                    for (Transformation t : cachedTransformations) {
+                        transformations.put(t.getTransformationId(), t);
+                    }
                 }
             } catch (SecurityException sec) {
                 KSBasEPlugin.getDefault().getLog().log(

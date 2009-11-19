@@ -24,7 +24,9 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.URL;
-import java.util.LinkedList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ILog;
@@ -45,8 +47,14 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
  */
 public final class TransformationManager {
 
-    /** The currently registered editors. **/
-    private LinkedList<EditorTransformationSettings> registeredEditors;
+    /**
+     * The currently active editors that have been registered by using the
+     * extension point.
+     **/
+    private HashMap<String, EditorTransformationSettings> activeEditors;
+    /** The editors that have been added by the user using the preference pages. **/
+    private HashMap<String, EditorTransformationSettings> activeUserEditors;
+
     /**
      * Manage state, set to true when
      * {@link TransformationManager.initializeTransformations} has been called.
@@ -60,13 +68,13 @@ public final class TransformationManager {
     public static final TransformationManager INSTANCE = new TransformationManager();
 
     /**
-     * FileNameFilter to check a file for a valid extension. The extension has
-     * to be '.sbase' to be valid.
+     * FileNameFilter to check a file for a valid settings file. The extension
+     * has to be '.sbase' to be valid.
      * 
      * @author Michael Matzen - mim AT informatik.uni-kiel.de
      * 
      */
-    private static class XtendFileNameFilter implements FilenameFilter {
+    private static class KSBasEFileNameFilter implements FilenameFilter {
         /**
          * Checks if the given input is valid.
          * 
@@ -90,7 +98,8 @@ public final class TransformationManager {
      */
     private TransformationManager() {
         isInitialized = false;
-        registeredEditors = new LinkedList<EditorTransformationSettings>();
+        activeEditors = new HashMap<String, EditorTransformationSettings>();
+        activeUserEditors = new HashMap<String, EditorTransformationSettings>();
     }
 
     /**
@@ -98,8 +107,8 @@ public final class TransformationManager {
      * 
      * @return A list of EditorTransformationSettings
      */
-    public LinkedList<EditorTransformationSettings> getEditors() {
-        return registeredEditors;
+    public Map<String, EditorTransformationSettings> getEditors() {
+        return Collections.unmodifiableMap(activeEditors);
     }
 
     /**
@@ -108,55 +117,32 @@ public final class TransformationManager {
      * 
      * @return A list of EditorTransformationSettings
      */
-    public LinkedList<EditorTransformationSettings> getUserDefinedEditors() {
-        LinkedList<EditorTransformationSettings> userSettings =
-                new LinkedList<EditorTransformationSettings>();
-        for (EditorTransformationSettings ed : registeredEditors) {
-            if (ed.getContributor() == null) {
-                userSettings.add(ed);
-            }
-        }
-        return userSettings;
+    public Map<String, EditorTransformationSettings> getUserDefinedEditors() {
+        return Collections.unmodifiableMap(activeUserEditors);
     }
 
     /**
-     * Tries to find an editor with it's name.
+     * Tries to find an editor with it's id.
      * 
-     * @param editor
-     *            The editor's name.
+     * @param editorId
+     *            The editor's id.
      * @return The first editor in the list of registered editors which has the
      *         given name
      */
-    public EditorTransformationSettings getEditorById(final String editor) {
-        if (editor != null && editor.length() > 0) {
-            for (EditorTransformationSettings settings : registeredEditors) {
-                if (settings.getEditor().equals(editor)) {
-                    return settings;
-                }
-            }
-        }
-        return null;
+    public EditorTransformationSettings getEditorById(final String editorId) {
+        return activeEditors.get(editorId);
     }
 
     /**
-     * Tries to find an user defined editor with it's name. Only returns an
-     * editor if the name matches and the editor has no contributor. Called by
-     * the preference pages.
+     * Tries to find an user defined editor with it's id.
      * 
-     * @param editor
-     *            The editor's name.
+     * @param editorId
+     *            The editor's id.
      * @return The first editor in the list of registered editors which has the
      *         given name
      */
-    public EditorTransformationSettings getUserDefinedEditorByName(final String editor) {
-        if (editor != null && editor.length() > 0) {
-            for (EditorTransformationSettings settings : registeredEditors) {
-                if (settings.getContributor() == null && settings.getEditor().equals(editor)) {
-                    return settings;
-                }
-            }
-        }
-        return null;
+    public EditorTransformationSettings getUserDefinedEditorByName(final String editorId) {
+        return activeUserEditors.get(editorId);
     }
 
     /**
@@ -167,76 +153,70 @@ public final class TransformationManager {
     }
 
     /**
-     * Adds a new editor to the list of registered editors.
+     * Adds a new editor to the list of user defined editors.
      * 
      * @param editor
      *            The EditorTransformationSetting that describes the editor
      */
     public void addEditor(final EditorTransformationSettings editor) {
         if (editor != null) {
-            if (registeredEditors == null) {
-                registeredEditors = new LinkedList<EditorTransformationSettings>();
-            }
-            if (registeredEditors.contains(editor)) {
+
+            if (activeUserEditors.containsKey(editor.getEditor())) {
                 LOG.log(new Status(
                         IStatus.INFO, KSBasEPlugin.PLUGIN_ID,
                         "Unable to add the same editor twice."));
 
             } else {
-                registeredEditors.add(editor);
+                activeUserEditors.put(editor.getEditor(), editor);
             }
         }
     }
 
     /**
-     * Adds a new editor to the list of registered editors. This class creates
-     * an empty EditorTransformationSetting with the given editorName.
+     * Adds a new editor to the list of user defined editors. This class creates
+     * an empty EditorTransformationSetting with the given editorId.
      * 
-     * @param editorName
+     * @param editorId
      *            The name of the new editor
      * @return The newly created EditorTransformationSettings
      */
-    public EditorTransformationSettings addEditor(final String editorName) {
-        if (editorName != null && editorName.length() > 0) {
-            if (editorName.length() > 0) {
-                EditorTransformationSettings editor = new EditorTransformationSettings(editorName);
-                registeredEditors.add(editor);
-                return editor;
-            }
+    public EditorTransformationSettings addEditor(final String editorId) {
+        if (editorId != null && editorId.length() > 0 && !activeEditors.containsKey(editorId)) {
+            EditorTransformationSettings editor = new EditorTransformationSettings(editorId);
+            activeUserEditors.put(editorId, editor);
+            return editor;
         }
         return null;
     }
 
     /**
-     * Removes an editor from the list of registered user defined editors.
+     * Removes an editor from the list of user defined editors.
      * 
-     * @param editor
-     *            The fqn class name of the editor
+     * @param editorId
+     *            The id of the editor
      */
-    public void removeEditor(final String editor) {
-        if (editor != null && editor.length() > 0) {
-            for (int i = 0; i < registeredEditors.size(); ++i) {
-                if (registeredEditors.get(i).getEditor().equals(editor)
-                        && registeredEditors.get(i).getContributor() == null) {
-                    registeredEditors.remove(i);
-                    // Remove exsiting .sbase file settings for editor:
-                    try {
-                        IPath metaPath = KSBasEPlugin.getDefault().getStateLocation();
-                        File storedSettings = metaPath.append(editor + ".sbase").toFile();
-                        if (storedSettings.exists()) {
-                            if (!storedSettings.delete()) {
-                                throw new SecurityException("Unable to delete stored settings!");
-                            }
+    public void removeEditor(final String editorId) {
+        if (editorId != null && editorId.length() > 0) {
+            EditorTransformationSettings editor = activeUserEditors.get(editorId);
+            if (editor != null) {
+                activeUserEditors.remove(editorId);
+                // Remove exsiting .sbase file settings for editor:
+                try {
+                    IPath metaPath = KSBasEPlugin.getDefault().getStateLocation();
+                    File storedSettings = metaPath.append(editorId + ".sbase").toFile();
+                    if (storedSettings.exists()) {
+                        if (!storedSettings.delete()) {
+                            throw new SecurityException("Unable to delete stored settings!");
                         }
-                    } catch (IllegalStateException e) {
-                        LOG.log(new Status(
-                                IStatus.WARNING, KSBasEPlugin.PLUGIN_ID,
-                                "Error while deleting settings: file could not be found."));
-                    } catch (SecurityException e) {
-                        LOG.log(new Status(
-                                IStatus.WARNING, KSBasEPlugin.PLUGIN_ID,
-                                "Error while parsing settings: not allowed to delete file."));
                     }
+                } catch (IllegalStateException e) {
+                    LOG.log(new Status(
+                            IStatus.WARNING, KSBasEPlugin.PLUGIN_ID,
+                            "Error while deleting settings: file could not be found."));
+                } catch (SecurityException e) {
+                    LOG.log(new Status(
+                            IStatus.WARNING, KSBasEPlugin.PLUGIN_ID,
+                            "Error while parsing settings: not allowed to delete file."));
                 }
             }
         }
@@ -247,10 +227,9 @@ public final class TransformationManager {
      */
     public void storeUserDefinedTransformations() {
 
-        LinkedList<EditorTransformationSettings> userEditors = getUserDefinedEditors();
-        if (userEditors != null && userEditors.size() > 0) {
+        if (activeEditors.size() > 0) {
             IPath metaPath = KSBasEPlugin.getDefault().getStateLocation();
-            for (EditorTransformationSettings editor : userEditors) {
+            for (EditorTransformationSettings editor : activeUserEditors.values()) {
                 ObjectOutputStream oos = null;
                 try {
                     oos =
@@ -286,7 +265,7 @@ public final class TransformationManager {
      * preference store.
      */
     public void initializeTransformations() {
-        registeredEditors = new LinkedList<EditorTransformationSettings>();
+        activeEditors = new HashMap<String, EditorTransformationSettings>();
 
         // From extension points first:
         IConfigurationElement[] configurations =
@@ -372,8 +351,9 @@ public final class TransformationManager {
                     Bundle bundle = Platform.getBundle(settings.getContributor().getName());
                     if (bundle != null) {
                         URL urlPath = bundle.getEntry("/" + settings.getAttribute("XtendFile"));
-                        //Parse xtend file to read transformations and parameters now:
-                        editor.parseTransformations(false, urlPath);   
+                        // Parse xtend file to read transformations and
+                        // parameters now:
+                        editor.parseTransformations(false, urlPath);
                         if (urlPath != null) {
                             path = urlPath.openStream();
                             while (path.available() > 0) {
@@ -392,13 +372,14 @@ public final class TransformationManager {
                         "KSBasE configuration exception: Can't read Xtend file."));
             }
 
-            registeredEditors.add(editor);
+            activeEditors.put(editor.getEditor(), editor);
         }
         // Now let's load the settings from the state location:
+        activeUserEditors = new HashMap<String, EditorTransformationSettings>();
         File metaPath = KSBasEPlugin.getDefault().getStateLocation().toFile();
         if (metaPath != null && metaPath.isDirectory()) {
 
-            File[] files = metaPath.listFiles(new XtendFileNameFilter());
+            File[] files = metaPath.listFiles(new KSBasEFileNameFilter());
 
             if (files != null && files.length > 0) {
                 for (File file : files) {
@@ -407,7 +388,8 @@ public final class TransformationManager {
                         ois = new ObjectInputStream(new FileInputStream(file));
                         Object content = ois.readObject();
                         if (content instanceof EditorTransformationSettings) {
-                            registeredEditors.add((EditorTransformationSettings) content);
+                            activeUserEditors.put(((EditorTransformationSettings) content)
+                                    .getEditor(), ((EditorTransformationSettings) content));
                         }
                     } catch (FileNotFoundException e) {
                         LOG.log(new Status(

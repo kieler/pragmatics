@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -129,7 +130,7 @@ public final class DynamicMenuContributions {
                 visIterate.appendChild(visWith);
                 menuVisible.appendChild(visIterate);
                 // Create command extensions for all transformations:
-                for (Transformation t : editor.getTransformations()) {
+                for (Transformation t : editor.getTransformations().values()) {
                     String commandID = "de.cau.cs.kieler.ksbase." + editor.getEditor() + "."
                             + t.getName().replace(' ', '_');
                     // store id
@@ -291,7 +292,7 @@ public final class DynamicMenuContributions {
                     copyResourceToJarBundle(jos, editor.getDefaultIcon(), editor.getContributor());
                 }
                 LinkedList<String> resources = new LinkedList<String>();
-                for (Transformation t : editor.getTransformations()) {
+                for (Transformation t : editor.getTransformations().values()) {
                     if (t.getIcon() != null && t.getIcon().length() > 0
                             && !resources.contains(t.getIcon())) {
                         resources.add(t.getIcon());
@@ -384,21 +385,20 @@ public final class DynamicMenuContributions {
      * Creates all menu contributions for all existing editors.
      */
     public void createAllMenuContributions() {
-        LinkedList<EditorTransformationSettings> editors = TransformationManager.INSTANCE
-                .getEditors();
-        createMenuForEditors(editors);
+        createMenuForEditors(TransformationManager.INSTANCE
+                .getEditors().values());
     }
 
     /**
      * Creates a valid plug-in project for each editor and injects it to the eclipse run-time.
      * 
-     * @param editors
+     * @param collection
      *            The list of editors to create the menu for
      */
-    public void createMenuForEditors(final LinkedList<EditorTransformationSettings> editors) {
-        if (editors != null) {
+    public void createMenuForEditors(final Collection<EditorTransformationSettings> collection) {
+        if (collection != null) {
             // Iterate through editors and create extension point contents
-            for (EditorTransformationSettings editor : editors) {
+            for (EditorTransformationSettings editor : collection) {
                 createMenuForEditor(editor);
             }
         }

@@ -46,12 +46,10 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
-import org.eclipse.ui.internal.contexts.ContextService;
 
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasEMenuContribution;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
-import de.cau.cs.kieler.ksbase.ui.menus.DynamicMenuContributions;
 
 /**
  * The KSBasE transformation preference page.
@@ -63,7 +61,6 @@ import de.cau.cs.kieler.ksbase.ui.menus.DynamicMenuContributions;
  * 
  * @author Michael Matzen
  */
-@SuppressWarnings("restriction")
 public class EditorsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
     private static final int GRIDSIZE_MENU_BUTTONS = 3;
@@ -251,8 +248,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
             new String[] {"org.eclipse.gmf.runtime."
                     + "diagram.ui.resources.editor.parts.DiagramDocumentEditor" }; //$NON-NLS-1$
     /** The list of classes that provide ecore packages. **/
-    static final String[] DIAGRAM_PACKAGES =
-            new String[] {"org.eclipse.emf." + "ecore.EPackage" }; //$NON-NLS-1$
+    static final String[] DIAGRAM_PACKAGES = new String[] {"org.eclipse.emf." + "ecore.EPackage" }; //$NON-NLS-1$
     /** Text boxes. **/
     private Text sfMetaModel, sfContext;
     /** Combo boxes. **/
@@ -282,15 +278,16 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
         manager = TransformationManager.INSTANCE;
     }
 
-
     /**
      * Creates the editor setting part of the page.
-     * @param parent The parent composite object
+     * 
+     * @param parent
+     *            The parent composite object
      */
     private void createEditorContent(final Composite parent) {
         Composite container = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(2, false);
-        
+
         Label editorLabel = new Label(container, SWT.NONE);
         editorLabel.setText(Messages.kSBasEPreferencePageEditorSelectionTitle);
         cbEditors = new Combo(container, SWT.DROP_DOWN | SWT.READ_ONLY);
@@ -465,7 +462,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
             public void widgetSelected(final SelectionEvent e) {
                 assert (activeEditor != null);
                 Collection<?> definedContexts =
-                        ((ContextService) PlatformUI.getWorkbench().getService(
+                        ((IContextService) PlatformUI.getWorkbench().getService(
                                 IContextService.class)).getDefinedContextIds();
                 ElementListSelectionDialog dlg =
                         new ElementListSelectionDialog(getShell(), new LabelProvider());
@@ -504,6 +501,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
         container.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, false, false));
 
     }
+
     /**
      * Creates the contents of the preference page.
      * 
@@ -518,7 +516,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
         new Label(parent, SWT.NONE).setText(Messages.kSBasETPreferencePageTitle);
 
         createEditorContent(parent);
-        
+
         Group menuContributionGroup =
                 new Group(parent, SWT.SHADOW_ETCHED_IN | SWT.SHADOW_ETCHED_OUT);
         menuContributionGroup.setText("Menu Contributions");
@@ -557,7 +555,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
      */
     private void readEditors() {
         if (manager.getEditors() != null) {
-            for (EditorTransformationSettings s : manager.getUserDefinedEditors()) {
+            for (EditorTransformationSettings s : manager.getUserDefinedEditors().values()) {
                 cbEditors.add(s.getEditor());
             }
             if (cbEditors.getItemCount() > 0) {
@@ -597,8 +595,10 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
     @Override
     public boolean performOk() {
         manager.storeUserDefinedTransformations();
-        DynamicMenuContributions.INSTANCE.createMenuForEditors(manager.getUserDefinedEditors());
-
+        /* TODO: Change to create user defined menus
+        DynamicMenuContributions.INSTANCE.createMenuForEditors(manager
+                .getUserDefinedEditors().values());
+         */
         return super.performOk();
     }
 

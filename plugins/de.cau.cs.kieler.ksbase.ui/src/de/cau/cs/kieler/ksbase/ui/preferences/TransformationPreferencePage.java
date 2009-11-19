@@ -145,7 +145,7 @@ public class TransformationPreferencePage extends PreferencePage
         // Fill table with transformations
         table.removeAll();
         if (activeEditor.getTransformations() != null) {
-            for (Transformation t : activeEditor.getTransformations()) {
+            for (Transformation t : activeEditor.getTransformations().values()) {
                 TableItem tItem = new TableItem(table, SWT.NONE);
 
                 tItem.setText(new String[] {
