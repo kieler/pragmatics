@@ -263,10 +263,60 @@ public final class TransformationManager {
     }
 
     /**
-     * Loads the editor settings either from the extension point settings or the
-     * preference store.
+     * Reads settings from KSBasE storage files and initializes user defined
+     * editors and transformations.
      */
-    public void initializeTransformations() {
+    private void initalizeUserSettings() {
+
+        // Now let's load the settings from the state location:
+        activeUserEditors = new HashMap<String, EditorTransformationSettings>();
+        File metaPath = KSBasEPlugin.getDefault().getStateLocation().toFile();
+        if (metaPath != null && metaPath.isDirectory()) {
+
+            File[] files = metaPath.listFiles(new KSBasEFileNameFilter());
+
+            if (files != null && files.length > 0) {
+                for (File file : files) {
+                    ObjectInputStream ois = null;
+                    try {
+                        ois = new ObjectInputStream(new FileInputStream(file));
+                        Object content = ois.readObject();
+                        if (content instanceof EditorTransformationSettings) {
+                            activeUserEditors.put(((EditorTransformationSettings) content)
+                                    .getEditorId(), ((EditorTransformationSettings) content));
+                        }
+                    } catch (FileNotFoundException e) {
+                        LOG.log(new Status(
+                                IStatus.WARNING, KSBasEPlugin.PLUGIN_ID,
+                                "Error while parsing settings: file not found."));
+                    } catch (IOException e) {
+                        LOG.log(new Status(
+                                IStatus.WARNING, KSBasEPlugin.PLUGIN_ID,
+                                "Error while parsing settings: file not found."));
+                    } catch (ClassNotFoundException e) {
+                        LOG.log(new Status(
+                                IStatus.WARNING, KSBasEPlugin.PLUGIN_ID,
+                                "Error while parsing settings."));
+                    } finally {
+                        if (ois != null) {
+                            try {
+                                ois.close();
+                            } catch (IOException e) {
+                                // ignoring nested exception
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        isInitialized = true;
+    }
+
+    /**
+     * Reads all existing extensions of the KSBasE extension point and
+     * initializes the editors and transformations.
+     */
+    private void initializeExtensionPoints() {
         activeEditors = new HashMap<String, EditorTransformationSettings>();
 
         // From extension points first:
@@ -376,47 +426,14 @@ public final class TransformationManager {
 
             activeEditors.put(editor.getEditorId(), editor);
         }
-        // Now let's load the settings from the state location:
-        activeUserEditors = new HashMap<String, EditorTransformationSettings>();
-        File metaPath = KSBasEPlugin.getDefault().getStateLocation().toFile();
-        if (metaPath != null && metaPath.isDirectory()) {
+    }
 
-            File[] files = metaPath.listFiles(new KSBasEFileNameFilter());
-
-            if (files != null && files.length > 0) {
-                for (File file : files) {
-                    ObjectInputStream ois = null;
-                    try {
-                        ois = new ObjectInputStream(new FileInputStream(file));
-                        Object content = ois.readObject();
-                        if (content instanceof EditorTransformationSettings) {
-                            activeUserEditors.put(((EditorTransformationSettings) content)
-                                    .getEditorId(), ((EditorTransformationSettings) content));
-                        }
-                    } catch (FileNotFoundException e) {
-                        LOG.log(new Status(
-                                IStatus.WARNING, KSBasEPlugin.PLUGIN_ID,
-                                "Error while parsing settings: file not found."));
-                    } catch (IOException e) {
-                        LOG.log(new Status(
-                                IStatus.WARNING, KSBasEPlugin.PLUGIN_ID,
-                                "Error while parsing settings: file not found."));
-                    } catch (ClassNotFoundException e) {
-                        LOG.log(new Status(
-                                IStatus.WARNING, KSBasEPlugin.PLUGIN_ID,
-                                "Error while parsing settings."));
-                    } finally {
-                        if (ois != null) {
-                            try {
-                                ois.close();
-                            } catch (IOException e) {
-                                // ignoring nested exception
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        isInitialized = true;
+    /**
+     * Loads the editor settings either from the extension point settings and
+     * the preference store.
+     */
+    public void initializeTransformations() {
+        initializeExtensionPoints();
+        initalizeUserSettings();
     }
 }
