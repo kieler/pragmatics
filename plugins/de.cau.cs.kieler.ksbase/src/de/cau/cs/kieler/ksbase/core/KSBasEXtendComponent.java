@@ -14,7 +14,6 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.core;
 
-import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EPackage;
@@ -118,20 +117,23 @@ public class KSBasEXtendComponent {
         try {
             xtendComponent.invoke(context, xtendMonitor, issues);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            KSBasEPlugin.getDefault().getLog().log(
+                    new Status(
+                            IStatus.ERROR, KSBasEPlugin.PLUGIN_ID,
+                            "Error while executing transformation: The transformation "
+                                    + "seems to be invalid, please check the Xtend file"));
         }
         // Logging errors and warnings:
         if (issues.hasWarnings()) {
-            ILog log = KSBasEPlugin.getDefault().getLog();
             for (MWEDiagnostic warning : issues.getWarnings()) {
-                log.log(new Status(
-                        IStatus.WARNING, KSBasEPlugin.PLUGIN_ID,
-                        "Warning while executing transformation: " + warning.getMessage()));
+                KSBasEPlugin.getDefault().getLog().log(
+                        new Status(
+                                IStatus.WARNING, KSBasEPlugin.PLUGIN_ID,
+                                "Warning while executing transformation: " + warning.getMessage()));
             }
 
         }
         if (issues.hasErrors()) {
-            ILog log = KSBasEPlugin.getDefault().getLog();
             for (MWEDiagnostic error : issues.getErrors()) {
                 String msg;
                 if (error.getMessage() == null) {
@@ -139,9 +141,10 @@ public class KSBasEXtendComponent {
                 } else {
                     msg = error.getMessage();
                 }
-                log.log(new Status(
-                        IStatus.ERROR, KSBasEPlugin.PLUGIN_ID,
-                        "Error while executing transformation: " + msg));
+                KSBasEPlugin.getDefault().getLog().log(
+                        new Status(
+                                IStatus.ERROR, KSBasEPlugin.PLUGIN_ID,
+                                "Error while executing transformation: " + msg));
             }
 
         }
