@@ -1,4 +1,4 @@
-/**
+/*
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
@@ -51,7 +51,7 @@ public class KSBasEPlugin extends AbstractUIPlugin {
      */
     public void start(final BundleContext context) throws Exception {
         super.start(context);
-        KSBasEPlugin.setPlugin(this);
+        plugin = this;
         Assert.isNotNull(TransformationManager.INSTANCE != null);
         TransformationManager.INSTANCE.initializeTransformations();
     }
@@ -64,7 +64,7 @@ public class KSBasEPlugin extends AbstractUIPlugin {
      *             When stopping this plug-in failes
      */
     public void stop(final BundleContext context) throws Exception {
-        KSBasEPlugin.setPlugin(null);
+        plugin = null;
         super.stop(context);
     }
 
@@ -86,15 +86,5 @@ public class KSBasEPlugin extends AbstractUIPlugin {
      */
     public static ImageDescriptor getImageDescriptor(final String path) {
         return imageDescriptorFromPlugin(PLUGIN_ID, path);
-    }
-
-    /**
-     * Used to set the plug-in instance.
-     * 
-     * @param pluginValue
-     *            The value to set.
-     */
-    public static void setPlugin(final KSBasEPlugin pluginValue) {
-        plugin = pluginValue;
     }
 }
