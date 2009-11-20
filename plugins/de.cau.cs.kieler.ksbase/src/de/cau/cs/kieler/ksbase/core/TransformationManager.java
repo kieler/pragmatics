@@ -44,7 +44,7 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
  * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
- * @kieler.rating 2009-11-19 proposed yellow
+ * @kieler.rating 2009-11-20 proposed yellow -review by msp,skn: class ok
  * 
  */
 public final class TransformationManager {
@@ -136,7 +136,7 @@ public final class TransformationManager {
     }
 
     /**
-     * Tries to find an user defined editor with it's id.
+     * Tries to find an user defined editor with its id.
      * 
      * @param editorId
      *            The editor's id.
@@ -218,7 +218,7 @@ public final class TransformationManager {
                 } catch (SecurityException e) {
                     LOG.log(new Status(
                             IStatus.WARNING, KSBasEPlugin.PLUGIN_ID,
-                            "Error while parsing settings: not allowed to delete file."));
+                            "Error while deleting settings: not allowed to delete file."));
                 }
             }
         }

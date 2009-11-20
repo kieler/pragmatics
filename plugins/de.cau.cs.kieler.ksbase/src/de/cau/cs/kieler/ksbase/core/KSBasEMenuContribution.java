@@ -23,7 +23,7 @@ import java.util.LinkedList;
  * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
- * @kieler.rating 2009-11-19 proposed yellow
+ * @kieler.rating 2009-11-19 proposed yellow -review by msp,skn: class ok
  * 
  */
 public class KSBasEMenuContribution implements Serializable {

@@ -31,11 +31,11 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 
 /**
  * A wrapper class for an {@link XtendComponent}. Used to initialize the
- * component, set the invocation target and it's meta-model
+ * component, set the invocation target and its meta-model
  * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
- * @kieler.rating 2009-11-19 proposed yellow
+ * @kieler.rating 2009-11-20 proposed yellow -review by msp,skn: move to ui
  */
 public class KSBasEXtendComponent {
 
