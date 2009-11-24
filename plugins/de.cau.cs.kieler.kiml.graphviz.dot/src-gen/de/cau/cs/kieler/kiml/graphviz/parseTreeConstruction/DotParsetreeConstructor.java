@@ -12,6 +12,7 @@ import de.cau.cs.kieler.kiml.graphviz.services.DotGrammarAccess;
 
 import com.google.inject.Inject;
 
+/** @generated */
 public class DotParsetreeConstructor extends AbstractParseTreeConstructor {
 		
 	@Inject

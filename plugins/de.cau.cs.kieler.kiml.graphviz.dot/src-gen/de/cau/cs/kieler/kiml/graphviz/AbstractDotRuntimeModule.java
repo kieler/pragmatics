@@ -12,6 +12,7 @@ import com.google.inject.name.Names;
 
 /**
  * Manual modifications go to {de.cau.cs.kieler.kiml.graphviz.DotRuntimeModule}
+ * @generated
  */
 public abstract class AbstractDotRuntimeModule extends DefaultRuntimeModule {
 	

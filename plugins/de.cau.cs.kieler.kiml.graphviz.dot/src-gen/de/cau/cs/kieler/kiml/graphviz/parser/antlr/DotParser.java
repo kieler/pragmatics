@@ -13,6 +13,7 @@ import com.google.inject.Inject;
 
 import de.cau.cs.kieler.kiml.graphviz.services.DotGrammarAccess;
 
+/** @generated */
 public class DotParser extends org.eclipse.xtext.parser.antlr.AbstractAntlrParser {
 	
 	@Inject 

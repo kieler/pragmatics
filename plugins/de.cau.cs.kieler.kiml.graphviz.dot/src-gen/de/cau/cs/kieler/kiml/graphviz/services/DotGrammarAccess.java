@@ -13,6 +13,7 @@ import org.eclipse.xtext.service.GrammarProvider;
 
 import org.eclipse.xtext.common.services.TerminalsGrammarAccess;
 
+/** @generated */
 @Singleton
 public class DotGrammarAccess implements IGrammarAccess {
 	
