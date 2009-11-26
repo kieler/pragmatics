@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Sbase
-Bundle-SymbolicName: de.cau.cs.kieler.ksbase.examples.papyrus.clazz.sbase;singleton:=true
+Bundle-SymbolicName: de.cau.cs.kieler.ksbase.examples.papyrus.clazz.ksbase;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.papyrus.diagram.clazz.sbase.Activator
 Require-Bundle: org.eclipse.ui,
