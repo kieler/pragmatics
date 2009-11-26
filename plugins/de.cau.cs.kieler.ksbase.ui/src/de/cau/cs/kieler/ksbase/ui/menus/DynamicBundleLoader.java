@@ -111,7 +111,7 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
                 // Create bundle with jar archive
                 Bundle bundle = ContributorFactoryOSGi.resolve(editor.getContributor());
                 // System.out.println("activating ksbase for" + activeEditor);
-                String editorDiagramName = bundle.getSymbolicName() + ".generated";
+                String editorDiagramName = bundle.getSymbolicName();
                 
                 try {
                     // To avoid %20 exceptions in paths:
