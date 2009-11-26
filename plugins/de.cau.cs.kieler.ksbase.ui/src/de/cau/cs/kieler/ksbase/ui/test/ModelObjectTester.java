@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.PlatformUI;
 
+import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.Transformation;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
 
@@ -61,11 +62,9 @@ public class ModelObjectTester extends PropertyTester {
         assert (args.length == 2);
         assert (args[0] instanceof String);
         assert (args[1] instanceof String);
-        if (TransformationManager.INSTANCE.getEditorById((String) args[0]) != null) {
-            Transformation t =
-                    TransformationManager.INSTANCE
-                            .getEditorById((String) args[0])
-                            .getTransformationById((String) args[1]);
+        EditorTransformationSettings editor = TransformationManager.INSTANCE.getEditorById((String) args[0]); 
+        if ( editor != null) {
+            Transformation t = editor.getTransformationById((String) args[1]);
             if (t != null) {
                 List<String> match = t.getParameterList();
                 if (match != null) {

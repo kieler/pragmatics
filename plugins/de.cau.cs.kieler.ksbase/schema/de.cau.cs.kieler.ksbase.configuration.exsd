@@ -189,7 +189,7 @@ This class has to extend &apos;emf.ecore.EPackage&apos;
                   The id of the referenced transformation
                </documentation>
                <appinfo>
-                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.ksbase.configuration/configuration/transformations/transformation/@transformationId"/>
+                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.ksbase.configurations/configuration/transformations/transformation/@transformationId"/>
                </appinfo>
             </annotation>
          </attribute>
