@@ -14,15 +14,17 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.viewmanagement.combinations;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map.Entry;
+import java.util.Vector;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.preference.IPreferenceStore;
 
+import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 import de.cau.cs.kieler.ksbase.viewmanagement.triggers.KSBasETrigger;
 import de.cau.cs.kieler.viewmanagement.ACombination;
 import de.cau.cs.kieler.viewmanagement.AEffect;
@@ -39,9 +41,12 @@ import de.cau.cs.kieler.viewmanagement.TriggerEventObject;
  */
 public class KSBasECombination extends ACombination {
 
-    /** List of effect names to execute. **/
-    private static HashMap<Integer, LinkedList<String>> effects =
-            new HashMap<Integer, LinkedList<String>>();
+    /**
+     * Vector of effects. The effects will be executed in the order of
+     * appearance in this vector.
+     **/
+    private static Vector<String> effects = new Vector<String>();
+
     /** Trigger object. **/
     private KSBasETrigger trigger;
 
@@ -49,6 +54,9 @@ public class KSBasECombination extends ACombination {
     private EObject affectedObject;
     /** Additional parameter. **/
     private Object parameter;
+
+    /** Separation character for storage of effect names. **/
+    private static final String SEPARATOR = "\u00AB";
 
     /**
      * Creates a new KSBasECombination.
@@ -79,17 +87,13 @@ public class KSBasECombination extends ACombination {
      */
     @Override
     public void execute() {
-
-        for (int prio : KSBasECombination.effects.keySet()) {
-            for (String effectName : KSBasECombination.effects.get(prio)) {
-                AEffect effect =
-                        RunLogic.getInstance().getEffect(
-                                effectName.toLowerCase(Locale.getDefault()));
-                if (effect != null) { // Set effect target and parameter
-                    effect.setTarget(getEditPart(affectedObject));
-                    effect.setParameters(parameter); // Execute effect
-                    effect.execute();
-                }
+        for (String effectName : effects) {
+            AEffect effect =
+                    RunLogic.getInstance().getEffect(effectName.toLowerCase(Locale.getDefault()));
+            if (effect != null) { // Set effect target and parameter
+                effect.setTarget(getEditPart(affectedObject));
+                effect.setParameters(parameter); // Execute effect
+                effect.execute();
             }
         }
 
@@ -115,20 +119,16 @@ public class KSBasECombination extends ACombination {
      * 
      * @param effectName
      *            Name of the effect
-     * @param priority
-     *            Priority of the effect
+     * @param index
+     *            Index of the effect
      */
-    public static final void addEffect(final String effectName, final int priority) {
-
-        LinkedList<String> list;
-        if (!KSBasECombination.effects.containsKey(priority)) {
-            list = new LinkedList<String>();
-        } else {
-            list = KSBasECombination.effects.get(priority);
+    public static final void addEffect(final String effectName, final int index) {
+        if (KSBasECombination.effects != null) {
+            if (KSBasECombination.effects.contains(effectName)) {
+                KSBasECombination.effects.removeElement(effectName);
+            }
+            KSBasECombination.effects.insertElementAt(effectName, index);
         }
-        list.add(effectName);
-        KSBasECombination.effects.put(priority, list);
-
     }
 
     /**
@@ -136,34 +136,29 @@ public class KSBasECombination extends ACombination {
      * 
      * @param effectName
      *            Effect to remove
-     * @param priority
-     *            Priority of the effect
      */
-    public static final void removeEffect(final String effectName, final int priority) {
-
+    public static final void removeEffect(final String effectName) {
         if (KSBasECombination.effects != null) {
-            KSBasECombination.effects.get(priority).remove(effectName);
-            if (KSBasECombination.effects.get(priority).isEmpty()) {
-                KSBasECombination.effects.remove(priority);
+            if (KSBasECombination.effects.contains(effectName)) {
+                KSBasECombination.effects.remove(effectName);
             }
         }
 
     }
 
     /**
-     * Changes the priority of an effect.
+     * Changes the index of an effect.
      * 
      * @param effectName
      *            Name of the effect
-     * @param oldPrio
-     *            Old priority
-     * @param newPrio
-     *            New priority
+     * @param newIndex
+     *            New index
      */
-    public static final void changePriority(
-            final String effectName, final int oldPrio, final int newPrio) {
-        KSBasECombination.removeEffect(effectName, oldPrio);
-        KSBasECombination.addEffect(effectName, newPrio);
+    public static final void changeIndex(final String effectName, final int newIndex) {
+        if (KSBasECombination.effects != null) {
+            removeEffect(effectName);
+            addEffect(effectName, newIndex);
+        }
     }
 
     /**
@@ -175,25 +170,25 @@ public class KSBasECombination extends ACombination {
     public static final void storeEffects(final IPreferenceStore prefStore) {
         StringBuffer effectString = new StringBuffer();
         if (KSBasECombination.effects != null && KSBasECombination.effects.size() > 0) {
-            for (Entry<Integer, LinkedList<String>> entries : KSBasECombination.effects.entrySet()) {
-                for (String effect : entries.getValue()) {
-                    if (effect.contains(";")) {
-                        // FIXME: ignore, because we are using ; as a separator,
-                        // is
-                        // there a 'non valid' name char ?
-                        continue;
-                    }
-                    effectString.append(effect + ";");
-                    prefStore.setValue(effect, entries.getKey());
+            for (String effect : KSBasECombination.effects) {
+                if (effect.contains(KSBasECombination.SEPARATOR)) {
+                    KSBasEUIPlugin.getDefault().getLog().log(
+                            new Status(
+                                    IStatus.WARNING, KSBasEUIPlugin.PLUGIN_ID,
+                                    "Could not store effect ("
+                                            + effect + "). Name contains invalid character:"
+                                            + KSBasECombination.SEPARATOR));
+                    continue;
                 }
+                effectString.append(effect + KSBasECombination.SEPARATOR);
             }
-        }
-        // removing last ';' when storing effects
-        if (effectString.length() > 1) {
-            prefStore.setValue("storedEffects", effectString
-                    .substring(0, effectString.length() - 1));
-        } else {
-            prefStore.setValue("storedEffects", "");
+            // removing last separator when storing effects
+            if (effectString.length() > 1) {
+                prefStore.setValue("storedEffects", effectString.substring(
+                        0, effectString.length() - 1));
+            } else {
+                prefStore.setValue("storedEffects", "");
+            }
         }
     }
 
@@ -206,54 +201,42 @@ public class KSBasECombination extends ACombination {
      *            The preference store that contains the stored objects
      */
     public static final void initalizeEffects(final IPreferenceStore prefStore) {
-        HashMap<Integer, LinkedList<String>> effectList =
-                new HashMap<Integer, LinkedList<String>>();
+        Vector<String> effectList = new Vector<String>();
         // First: read all stored effects
         String storedEffects = prefStore.getString("storedEffects");
-        if (storedEffects != null) {
+        if (storedEffects.length() > 0) {
             // The effects are separated by ';'
-            for (String effect : storedEffects.split(";")) {
-                int prio = prefStore.getInt(effect);
-                LinkedList<String> list;
-                if (effectList.containsKey(prio)) {
-                    list = effectList.get(prio);
-                } else {
-                    list = new LinkedList<String>();
+            for (String effect : storedEffects.split(KSBasECombination.SEPARATOR)) {
+                if (effect.length() > 0) {
+                    effectList.add(effect);
                 }
-                list.add(effect);
-                effectList.put(prio, list);
             }
-            KSBasECombination.effects = effectList;
         } else {
             // No effects have been stored, so we are trying to add
             // two defaults: layout & zoom:
-            LinkedList<String> list = new LinkedList<String>();
-            AEffect layoutEffect =
-                    RunLogic.getInstance().getEffect(
-                            "de.cau.cs.kieler.viewmanagement.effects.layouteffect");
-            if (layoutEffect != null) {
-                list.add(layoutEffect.getClass().getCanonicalName());
+
+            List<String> availableEffects = RunLogic.getInstance().getEffectsAsText();
+            if (availableEffects.contains("de.cau.cs.kieler.viewmanagement.effects.zoomeffect")) {
+                effectList.add("de.cau.cs.kieler.viewmanagement.effects.zoomeffect");
             }
-            AEffect zoomEffect =
-                    RunLogic.getInstance().getEffect(
-                            "de.cau.cs.kieler.viewmanagement.effects.zoomeffect");
-            if (zoomEffect != null) {
-                list.add(zoomEffect.getClass().getCanonicalName());
+            if (availableEffects.contains("de.cau.cs.kieler.viewmanagement.effects.layouteffect")) {
+                effectList.add("de.cau.cs.kieler.viewmanagement.effects.layouteffect");
             }
-            if (list.size() > 0) {
-                effectList.put(0, list);
-                KSBasECombination.effects = effectList;
-            }
+
         }
+        KSBasECombination.effects = effectList;
     }
 
     /**
      * Gets the registered effects.
      * 
-     * @return A hash map containing the transformations ordered by their
-     *         priority
+     * @return A vector containing the transformations ordered by their priority
      */
-    public static HashMap<Integer, LinkedList<String>> getEffects() {
-        return effects;
+    public static Vector<String> getEffects() {
+        // We are cloning the vector, so the inner data structures will not be
+        // changed
+        Vector<String> result = new Vector<String>();
+        result.addAll(KSBasECombination.effects);
+        return result;
     }
 }
