@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.kiml.layout.layoutInfo">
+      <binding
+            class="org.eclipse.papyrus.diagram.activity.edit.parts.ActivitySubverticesEditPart"
+            id="de.cau.cs.kieler.papyrus.activity">
+      </binding>
+      <binding
+            class="org.eclipse.papyrus.diagram.activity.edit.parts.PackageEditPart"
+            id="de.cau.cs.kieler.papyrus.activity.package">
+      </binding>
+      <option
+            object="de.cau.cs.kieler.papyrus.activity.package"
+            option="de.cau.cs.kieler.layout.options.diagramType"
+            value="de.cau.cs.kieler.layout.diagrams.boxes">
+      </option>
+      <option
+            object="de.cau.cs.kieler.papyrus.activity"
+            option="de.cau.cs.kieler.layout.options.diagramType"
+            value="de.cau.cs.kieler.layout.diagrams.stateMachine">
+      </option>
+      <option
+            object="de.cau.cs.kieler.papyrus.activity"
+            option="de.cau.cs.kieler.layout.options.layoutDirection"
+            value="DOWN">
+      </option>
+      <option
+            object="de.cau.cs.kieler.papyrus.activity"
+            option="de.cau.cs.kieler.layout.options.borderSpacing"
+            value="15.0">
+      </option>
+      <option
+            object="de.cau.cs.kieler.papyrus.activity"
+            option="de.cau.cs.kieler.layout.options.minSpacing"
+            value="20.0">
+      </option>
+      <binding
+            class="org.eclipse.papyrus.diagram.usecase.edit.parts.UseCaseDiagramEditPart"
+            id="de.cau.cs.kieler.papyrus.usecase">
+      </binding>
+      <option
+            object="de.cau.cs.kieler.papyrus.usecase"
+            option="de.cau.cs.kieler.layout.options.diagramType"
+            value="de.cau.cs.kieler.layout.diagrams.usecaseDiagram">
+      </option>
+      <option
+            object="de.cau.cs.kieler.papyrus.usecase"
+            option="de.cau.cs.kieler.layout.options.minSpacing"
+            value="25.0">
+      </option>
+   </extension>
+
+</plugin>
