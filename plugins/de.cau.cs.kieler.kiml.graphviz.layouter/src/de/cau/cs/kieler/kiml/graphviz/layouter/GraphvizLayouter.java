@@ -66,6 +66,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.ForkedOutputStream;
 import de.cau.cs.kieler.core.util.ForwardingInputStream;
 import de.cau.cs.kieler.core.util.KielerMath;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.core.util.KielerMath.Point;;
 
 /**
@@ -101,7 +102,7 @@ public class GraphvizLayouter {
     /** dots per inch specification, needed by Graphviz for some values. */
     private static final float DPI = 72.0f;
     /** set of delimiters used to parse attribute values. */
-    private static final String ATTRIBUTE_DELIM = "\", \t\n\r\\";
+    private static final String ATTRIBUTE_DELIM = "\", \t\n\r";
     /** multiplier for font sizes. */
     private static final double FONT_MULTIPLIER = 1.4;
 
@@ -598,69 +599,12 @@ public class GraphvizLayouter {
                 String posString = attributeMap.get(GraphvizAPI.ATTR_POS);
                 
                 // parse the list of spline control coordinates
-                KPoint sourcePoint = null, targetPoint = null;
                 List<List<Point>> splines = new LinkedList<List<Point>>();
-                StringTokenizer splinesTokenizer = new StringTokenizer(posString, ";");
-                while (splinesTokenizer.hasMoreTokens()) {
-                    ArrayList<Point> pointList = new ArrayList<Point>(SPLINE_POINTS);
-                    StringTokenizer posTokenizer = new StringTokenizer(
-                            splinesTokenizer.nextToken(), ATTRIBUTE_DELIM);
-                    boolean isXcoord = true, isStartp = false, isEndp = false;
-                    Point point = null;
-                    while (posTokenizer.hasMoreTokens()) {
-                        String token = posTokenizer.nextToken();
-                        if (token.startsWith("s")) {
-                            if (sourcePoint != null && posTokenizer.countTokens() >= 2) {
-                                posTokenizer.nextToken();
-                                posTokenizer.nextToken();
-                                continue;
-                            }
-                            sourcePoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-                            isStartp = true;
-                        } else if (token.startsWith("e")) {
-                            if (targetPoint != null && posTokenizer.countTokens() >= 2) {
-                                posTokenizer.nextToken();
-                                posTokenizer.nextToken();
-                                continue;
-                            }
-                            targetPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-                            isEndp = true;
-                        } else {
-                            try {
-                                float pos = Float.parseFloat(token)
-                                        + (isXcoord ? edgeOffsetx : edgeOffsety);
-                                if (isStartp) {
-                                    if (isXcoord) {
-                                        sourcePoint.setX(pos);
-                                    } else {
-                                        sourcePoint.setY(pos);
-                                        isStartp = false;
-                                    }
-                                } else if (isEndp) {
-                                    if (isXcoord) {
-                                        targetPoint.setX(pos);
-                                    } else {
-                                        targetPoint.setY(pos);
-                                        isEndp = false;
-                                    }
-                                } else {
-                                    if (isXcoord) {
-                                        point = new Point(pos, 0);
-                                    } else {
-                                        point.y = pos;
-                                        pointList.add(point);
-                                    }
-                                }
-                                isXcoord = !isXcoord;
-                            } catch (NumberFormatException exception) {
-                                // ignore exception
-                            }
-                        }
-                    }
-                    splines.add(pointList);
-                }
+                Pair<KPoint, KPoint> endpoints = parseSplinePoints(posString, splines,
+                        edgeOffsetx, edgeOffsety);
 
                 // the first point in the list is the start point, if no arrowhead is given
+                KPoint sourcePoint = endpoints.getFirst();
                 if (sourcePoint == null) {
                     sourcePoint = KLayoutDataFactory.eINSTANCE.createKPoint();
                     Point firstPoint = splines.get(0).get(0);
@@ -673,6 +617,7 @@ public class GraphvizLayouter {
                 splineToPolyline(edgeLayout, splines);
 
                 // the last point in the list is the end point, if no arrowhead is given
+                KPoint targetPoint = endpoints.getSecond();
                 if (targetPoint == null) {
                     targetPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
                     List<Point> points = splines.get(splines.size() - 1);
@@ -762,6 +707,84 @@ public class GraphvizLayouter {
         }
         return attributeMap;
     }
+    
+    /**
+     * Puts the points of a position string into a list of splines.
+     * 
+     * @param posString string with spline points
+     * @param splines list of splines
+     * @param offsetx offset in x coordinate
+     * @param offsety offset in y coordinate
+     * @return the source and the target point, if specified by the position string
+     */
+    private static Pair<KPoint, KPoint> parseSplinePoints(final String posString,
+            final List<List<Point>> splines, final float offsetx, final float offsety) {
+        KPoint sourcePoint = null, targetPoint = null;
+        StringTokenizer splinesTokenizer = new StringTokenizer(posString, ";");
+        while (splinesTokenizer.hasMoreTokens()) {
+            ArrayList<Point> pointList = new ArrayList<Point>(SPLINE_POINTS);
+            StringTokenizer posTokenizer = new StringTokenizer(
+                    splinesTokenizer.nextToken(), ATTRIBUTE_DELIM);
+            boolean isXcoord = true, isStartp = false, isEndp = false;
+            Point point = null;
+            while (posTokenizer.hasMoreTokens()) {
+                String token = posTokenizer.nextToken();
+                if (token.startsWith("s")) {
+                    if (sourcePoint != null && posTokenizer.countTokens() >= 2) {
+                        posTokenizer.nextToken();
+                        posTokenizer.nextToken();
+                        continue;
+                    }
+                    sourcePoint = KLayoutDataFactory.eINSTANCE.createKPoint();
+                    isStartp = true;
+                } else if (token.startsWith("e")) {
+                    if (targetPoint != null && posTokenizer.countTokens() >= 2) {
+                        posTokenizer.nextToken();
+                        posTokenizer.nextToken();
+                        continue;
+                    }
+                    targetPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
+                    isEndp = true;
+                } else {
+                    try {
+                        int backslashIndex = token.indexOf('\\');
+                        if (backslashIndex >= 0) {
+                            token = token.substring(0, backslashIndex) + posTokenizer.nextToken();
+                        }
+                        float pos = Float.parseFloat(token)
+                                + (isXcoord ? offsetx : offsety);
+                        if (isStartp) {
+                            if (isXcoord) {
+                                sourcePoint.setX(pos);
+                            } else {
+                                sourcePoint.setY(pos);
+                                isStartp = false;
+                            }
+                        } else if (isEndp) {
+                            if (isXcoord) {
+                                targetPoint.setX(pos);
+                            } else {
+                                targetPoint.setY(pos);
+                                isEndp = false;
+                            }
+                        } else {
+                            if (isXcoord) {
+                                point = new Point(pos, 0);
+                            } else {
+                                point.y = pos;
+                                pointList.add(point);
+                            }
+                        }
+                        isXcoord = !isXcoord;
+                    } catch (NumberFormatException exception) {
+                        // ignore exception
+                    }
+                }
+            }
+            splines.add(pointList);
+        }
+        return new Pair<KPoint, KPoint>(sourcePoint, targetPoint);
+    }
 
     /** fixed number of spline points. TODO add support for arbitrary number of spline points */
     private static final int SPLINE_POINTS = 4;
@@ -793,7 +816,7 @@ public class GraphvizLayouter {
                 kpoint.setY((float)bezierPoints[i].y);
                 bendPoints.add(kpoint);
             }
-        }      
+        }
     }
 
 }

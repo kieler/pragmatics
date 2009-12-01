@@ -29,12 +29,13 @@ public final class KielerMath {
     }
     
     /** Data class to store two coordinate values. */
-    // CHECKSTYLEOFF VisibilityModifier
     public static class Point {
+        // CHECKSTYLEOFF VisibilityModifier
         /** x coordinate. */
         public double x;
         /** y coordinate. */
         public double y;
+        // CHECKSTYLEON VisibilityModifier
 
         /**
          * Creates a point given two coordinates.
@@ -46,8 +47,33 @@ public final class KielerMath {
             this.x = thex;
             this.y = they;
         }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public String toString() {
+            return "(" + x + "," + y + ")";
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public boolean equals(final Object obj) {
+            if (obj instanceof Point) {
+                Point other = (Point) obj;
+                return this.x == other.x && this.y == other.y;
+            } else {
+                return false;
+            }
+        }
+    
+        /**
+         * {@inheritDoc}
+         */
+        public int hashCode() {
+            return Double.valueOf(x).hashCode() + Double.valueOf(y).hashCode();
+        }
     }
-    // CHECKSTYLEON VisibilityModifier
     
     /** table of precomputed factorial values. */
     private static final long[] FACT_TABLE = {
