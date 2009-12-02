@@ -96,6 +96,8 @@ public class GraphvizLayouter {
     public static final String CIRCO_COMMAND = "circo";
     /** default value for minimal spacing. */
     public static final float DEF_MIN_SPACING = 16.0f;
+    /** default multiplier for font sizes. */
+    public static final double DEF_LABEL_SPACING = 1.5;
     /** if true, debug output is enabled, which writes dot files to the home folder. */
     public static final boolean ENABLE_DEBUG = false;
     
@@ -103,8 +105,6 @@ public class GraphvizLayouter {
     private static final float DPI = 72.0f;
     /** set of delimiters used to parse attribute values. */
     private static final String ATTRIBUTE_DELIM = "\", \t\n\r";
-    /** multiplier for font sizes. */
-    private static final double FONT_MULTIPLIER = 1.4;
 
     /** maps each identifier of a graph element to the instance of the element. */
     private HashMap<String, KGraphElement> graphElementMap = new HashMap<String, KGraphElement>();
@@ -322,34 +322,8 @@ public class GraphvizLayouter {
                     AttributeList attributes = DotFactory.eINSTANCE.createAttributeList();
                     // disable drawing arrows for the edges
                     attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_EDGEDIR, "none"));
-                    // as Graphviz only supports positioning of a single label, all labels
-                    // are stacked to one big label as workaround
-                    StringBuffer unifiedLabel = new StringBuffer();
-                    for (KLabel label : outgoingEdge.getLabels()) {
-                        if (unifiedLabel.length() > 0) {
-                            unifiedLabel.append("\\n");
-                        }
-                        unifiedLabel.append(label.getText());
-                    }
-                    if (unifiedLabel.length() > 0) {
-                        attributes.getEntries().add(
-                                createAttribute(GraphvizAPI.ATTR_LABEL, createString(unifiedLabel
-                                        .toString())));
-                        KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(outgoingEdge
-                                .getLabels().get(0));
-                        String fontName = LayoutOptions.getFontName(labelLayout);
-                        if (fontName != null) {
-                            attributes.getEntries().add(
-                                    createAttribute(GraphvizAPI.ATTR_FONTNAME, createString(fontName)));
-                            // increase the font size to let Graphviz prepare
-                            // more room for the label
-                            int fontSize = (int) (LayoutOptions.getFontSize(labelLayout)
-                                    * FONT_MULTIPLIER);
-                            attributes.getEntries().add(
-                                    createAttribute(GraphvizAPI.ATTR_FONTSIZE, Integer
-                                            .toString(fontSize)));
-                        }
-                    }
+                    // add edge labels at head, tail, and middle position
+                    setEdgeLabels(outgoingEdge, attributes);
                     // add comment with edge identifier
                     String edgeID = getEdgeID(outgoingEdge);
                     attributes.getEntries().add(
@@ -379,6 +353,54 @@ public class GraphvizLayouter {
         attribute.setValue(value);
         return attribute;
     }
+    
+    /**
+     * Set edge labels for the given edge.
+     * 
+     * @param kedge edge whose labels shall be set
+     * @param attributes edge attribute list to which the labels are added
+     */
+    private static void setEdgeLabels(final KEdge kedge, final AttributeList attributes) {
+        KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
+        float labelSpacing = LayoutOptions.getLabelSpacing(edgeLayout);
+        if (Float.isNaN(labelSpacing)) {
+            labelSpacing = (float)DEF_LABEL_SPACING;
+        }
+        // as Graphviz only supports positioning of one label, all labels
+        // are stacked to one big label as workaround
+        StringBuffer midLabel = new StringBuffer();
+        String fontName = null;
+        int fontSize = 0;
+        for (KLabel label : kedge.getLabels()) {
+            KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
+            if (midLabel.length() > 0) {
+                midLabel.append("\n");
+            }
+            midLabel.append(label.getText());
+            if (fontName == null) {
+                fontName = LayoutOptions.getFontName(labelLayout);
+            }
+            if (fontSize <= 0) {
+                // increase the font size to let Graphviz prepare more room for the label
+                fontSize = (int) (LayoutOptions.getFontSize(labelLayout) * labelSpacing);
+            }
+        }
+        // set mid label
+        if (midLabel.length() > 0) {
+            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_LABEL,
+                    createString(midLabel.toString())));
+        }
+        // set font name
+        if (fontName != null) {
+            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_FONTNAME,
+                    createString(fontName)));
+        }
+        // set font size
+        if (fontSize >= 0) {
+            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_FONTSIZE,
+                    Integer.toString(fontSize)));
+        }
+    }
 
     /** first character that is not replaced by underscore. */
     private static final char MIN_OUT_CHAR = 32;
@@ -394,8 +416,7 @@ public class GraphvizLayouter {
      */
     private static String createString(final String label) {
         StringBuffer escapeBuffer = new StringBuffer(label.length() + 2);
-        // prefix the label with an underscore to prevent it from being equal to
-        // a keyword
+        // prefix the label with an underscore to prevent it from being equal to a keyword
         escapeBuffer.append("\"_");
         for (int i = 0; i < label.length(); i++) {
             char c = label.charAt(i);
@@ -638,13 +659,14 @@ public class GraphvizLayouter {
                     }
                     try {
                         StringTokenizer tokenizer = new StringTokenizer(labelPos, ATTRIBUTE_DELIM);
-                        float xpos = Float.parseFloat(tokenizer.nextToken()) - combinedWidth / 2
-                                + edgeOffsetx;
-                        float ypos = Float.parseFloat(tokenizer.nextToken()) - combinedHeight / 2
-                                + edgeOffsety;
+                        float xpos = Float.parseFloat(tokenizer.nextToken())
+                                - combinedWidth / 2 + edgeOffsetx;
+                        float ypos = Float.parseFloat(tokenizer.nextToken())
+                                - combinedHeight / 2 + edgeOffsety;
                         for (KLabel label : kedge.getLabels()) {
                             KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
-                            labelLayout.setXpos(xpos);
+                            float xoffset = (combinedWidth - labelLayout.getWidth()) / 2;
+                            labelLayout.setXpos(xpos + xoffset);
                             labelLayout.setYpos(ypos);
                             ypos += labelLayout.getHeight();
                         }

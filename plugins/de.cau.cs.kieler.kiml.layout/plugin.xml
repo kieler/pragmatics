@@ -116,6 +116,13 @@
             type="float">
       </layoutOption>
       <layoutOption
+            appliesTo="edges"
+            description="Factor for spacing of edge labels to the respective edges"
+            id="de.cau.cs.kieler.layout.options.labelSpacing"
+            name="Label Spacing"
+            type="float">
+      </layoutOption>
+      <layoutOption
             appliesTo="nodes,edges"
             description="Defines the priority of an object; its meaning depends on the specific layout algorithm"
             id="de.cau.cs.kieler.layout.options.priority"

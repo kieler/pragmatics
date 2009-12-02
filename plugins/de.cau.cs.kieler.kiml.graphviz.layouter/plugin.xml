@@ -53,6 +53,9 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.graphviz.options.splinePoints">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.labelSpacing">
+         </knownOption>
       </layoutProvider>
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.graphviz"
@@ -86,6 +89,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.graphviz.options.splinePoints">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.labelSpacing">
          </knownOption>
       </layoutProvider>
       <layoutProvider
@@ -121,6 +127,9 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.graphviz.options.splinePoints">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.labelSpacing">
+         </knownOption>
       </layoutProvider>
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.graphviz"
@@ -145,6 +154,9 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.graphviz.options.splinePoints">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.labelSpacing">
+         </knownOption>
       </layoutProvider>
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.graphviz"
@@ -168,6 +180,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.graphviz.options.splinePoints">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.labelSpacing">
          </knownOption>
       </layoutProvider>
       <layoutOption

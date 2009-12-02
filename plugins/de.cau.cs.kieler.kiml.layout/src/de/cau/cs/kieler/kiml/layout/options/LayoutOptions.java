@@ -744,4 +744,39 @@ public final class LayoutOptions {
         interactiveOption.setValue(interactive);
     }
     
+    /** layout option key: spacing of edge labels to edges. */
+    public static final String LABEL_SPACING = "de.cau.cs.kieler.layout.options.labelSpacing";
+
+    /**
+     * Returns the label spacing for a given layout data instance.
+     * 
+     * @param layoutData layout data for an edge
+     * @return the label spacing for the given layout data, or {@code NaN} if
+     *         there is no such option
+     */
+    public static float getLabelSpacing(final KLayoutData layoutData) {
+        KFloatOption spacingOption = (KFloatOption) layoutData.getOption(LABEL_SPACING);
+        if (spacingOption == null) {
+            return Float.NaN;
+        } else {
+            return spacingOption.getValue();
+        }
+    }
+
+    /**
+     * Sets the label spacing for the given layout data instance.
+     * 
+     * @param layoutData layout data for an edge
+     * @param spacing label spacing to set
+     */
+    public static void setLabelSpacing(final KLayoutData layoutData, final float spacing) {
+        KFloatOption spacingOption = (KFloatOption) layoutData.getOption(LABEL_SPACING);
+        if (spacingOption == null) {
+            spacingOption = KLayoutDataFactory.eINSTANCE.createKFloatOption();
+            spacingOption.setKey(LABEL_SPACING);
+            layoutData.getOptions().add(spacingOption);
+        }
+        spacingOption.setValue(spacing);
+    }
+    
 }
