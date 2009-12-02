@@ -121,9 +121,14 @@ point="org.eclipse.ui.menus">
          style="push">
       <visibleWhen
             checkEnabled="false">
-         <reference
-               definitionId="de.cau.cs.kieler.expression.diagramSelected">
-         </reference>
+         <and>
+            <reference
+                  definitionId="de.cau.cs.kieler.expression.gmfDiagram">
+            </reference>
+            <reference
+                  definitionId="de.cau.cs.kieler.expression.diagramSelected">
+            </reference>
+         </and>
       </visibleWhen>
       <parameter
             name="de.cau.cs.kieler.kiml.ui.layoutScope"
