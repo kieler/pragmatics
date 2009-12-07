@@ -14,11 +14,16 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.ui;
 
+import org.eclipse.core.internal.runtime.RuntimeLog;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import de.cau.cs.kieler.ksbase.ui.menus.DynamicBundleLoader;
 import de.cau.cs.kieler.ksbase.ui.menus.DynamicMenuContributions;
+import de.cau.cs.kieler.viewmanagement.RunLogic;
 
 /**
  * The activator class controls the plug-in life cycle.
@@ -58,7 +63,20 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
         DynamicMenuContributions.INSTANCE.createAllMenuContributions();
         // Temporary fix for "not loading features"-bug
         DynamicBundleLoader.INSTANCE.activateAllEditors();
-        
+        if (!RunLogic.getInstance().getState()) {
+            RunLogic.getInstance().registerListeners();
+        }
+        //Dirty hack, activating view management bundle:
+        /*
+        IConfigurationElement[] configurations =
+            Platform.getExtensionRegistry().getConfigurationElementsFor(
+                    "de.cau.cs.kieler.ksbase.ui.classLoader");
+        for (IConfigurationElement loader : configurations) {
+            Object o = loader.createExecutableExtension("class");
+            System.out.println(o);
+        }
+        */
+        //
         /*
          * // Adding a part listener to check when to activate a bundle
          * System.out.println("activated");

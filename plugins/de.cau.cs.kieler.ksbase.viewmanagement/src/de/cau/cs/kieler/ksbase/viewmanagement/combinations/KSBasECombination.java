@@ -202,23 +202,23 @@ public class KSBasECombination extends ACombination {
      */
     public static final void initalizeEffects(final IPreferenceStore prefStore) {
         Vector<String> effectList = new Vector<String>();
+        if (!RunLogic.getInstance().getState()) {
+            RunLogic.getInstance().registerListeners();
+        }
+        List<String> availableEffects = RunLogic.getInstance().getEffectsAsText();
         // First: read all stored effects
         String storedEffects = prefStore.getString("storedEffects");
         if (storedEffects.length() > 0) {
             // The effects are separated by ';'
             for (String effect : storedEffects.split(KSBasECombination.SEPARATOR)) {
-                if (effect.length() > 0) {
+                if (effect.length() > 0 && availableEffects.contains(effect)) {
                     effectList.add(effect);
                 }
             }
         } else {
             // No effects have been stored, so we are trying to add
-            // two defaults: layout & zoom:
-
-            List<String> availableEffects = RunLogic.getInstance().getEffectsAsText();
-            if (availableEffects.contains("de.cau.cs.kieler.viewmanagement.effects.zoomeffect")) {
-                effectList.add("de.cau.cs.kieler.viewmanagement.effects.zoomeffect");
-            }
+            // layout as the default
+            
             if (availableEffects.contains("de.cau.cs.kieler.viewmanagement.effects.layouteffect")) {
                 effectList.add("de.cau.cs.kieler.viewmanagement.effects.layouteffect");
             }
