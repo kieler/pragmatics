@@ -157,46 +157,65 @@ public final class GraphvizAPI {
     private GraphvizAPI() {
     }
 
+    /** the process instance that is used for multiple layout runs. */
+    private static Process graphvizProcess = null;
+    
     /**
-     * Starts a new Graphviz process with the given command.
+     * Starts a new Graphviz process with the given command. If a process instance was already
+     * created, that instance is returned.
      * 
      * @param command the graphviz command to use
-     * @param monitor progress monitor
      * @return an instance of the graphviz process
      * @throws KielerException if creating the process fails
      */
-    public static Process startProcess(final String command,
-            final IKielerProgressMonitor monitor) throws KielerException {
-        monitor.begin("Create Graphviz process", 1);
-        IPreferenceStore preferenceStore = GraphvizLayouterPlugin.getDefault().getPreferenceStore();
-        String dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
-        if (!new File(dotExecutable).exists()) {
-            boolean foundExec = false;
-            for (String location : DEFAULT_LOCS) {
-                dotExecutable = location + "dot";
-                if (new File(dotExecutable).exists()) {
-                    foundExec = true;
-                    break;
+    public static synchronized Process startProcess(final String command) throws KielerException {
+        if (graphvizProcess == null) {
+            IPreferenceStore preferenceStore = GraphvizLayouterPlugin.getDefault().getPreferenceStore();
+            String dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
+            if (!new File(dotExecutable).exists()) {
+                boolean foundExec = false;
+                for (String location : DEFAULT_LOCS) {
+                    dotExecutable = location + "dot";
+                    if (new File(dotExecutable).exists()) {
+                        foundExec = true;
+                        break;
+                    }
+                }
+                if (!foundExec) {
+                    PreferenceDialog preferenceDialog = PreferencesUtil.createPreferenceDialogOn(null,
+                            GraphvizPreferencePage.ID, null, null);
+                    preferenceDialog.open();
+                    // fetch the executable string again after the user has entered a new path
+                    dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
                 }
             }
-            if (!foundExec) {
-                PreferenceDialog preferenceDialog = PreferencesUtil.createPreferenceDialogOn(null,
-                        GraphvizPreferencePage.ID, null, null);
-                preferenceDialog.open();
-                // fetch the executable string again after the user has entered a new path
-                dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
+    
+            try {
+                graphvizProcess = Runtime.getRuntime().exec(
+                                new String[] {dotExecutable, ARG_NOWARNINGS, ARG_INVERTYAXIS,
+                                        ARG_COMMAND + command});
+            } catch (IOException exception) {
+                throw new KielerException("Failed to start Graphviz process."
+                        + " Please check your Graphviz installation.", exception);
             }
         }
-
-        try {
-            Process process = Runtime.getRuntime().exec(
-                            new String[] {dotExecutable, ARG_NOWARNINGS, ARG_INVERTYAXIS,
-                                    ARG_COMMAND + command});
-            return process;
-        } catch (IOException exception) {
-            throw new KielerException("Failed to start Graphviz process.", exception);
-        } finally {
-            monitor.done();
+        return graphvizProcess;
+    }
+    
+    /**
+     * Closes the currently cached process instance so a new one is created for the next
+     * layout run.
+     */
+    public static void endProcess() {
+        if (graphvizProcess != null) {
+            try {
+                graphvizProcess.getOutputStream().close();
+                graphvizProcess.getInputStream().close();
+            } catch (IOException exception) {
+                // ignore exception
+            }
+            graphvizProcess.destroy();
+            graphvizProcess = null;
         }
     }
 
@@ -216,8 +235,6 @@ public final class GraphvizAPI {
         if (timeout < PROCESS_MIN_TIMEOUT) {
             timeout = PROCESS_DEF_TIMEOUT;
         }
-        // pause this thread so Graphviz can start working
-        Thread.yield();
         try {
             // wait until there is input from Graphviz
             long startTime = System.currentTimeMillis();
@@ -229,13 +246,13 @@ public final class GraphvizAPI {
             } catch (InterruptedException exception) {
                 // ignore exception
             }
-            // read and check error stream if there is still no input from
-            // Graphviz
+            // read and check error stream if there is still no input from Graphviz
             if (inputStream.available() == 0) {
                 StringBuffer error = new StringBuffer();
                 while (error.length() < MAX_ERROR_OUTPUT && errorStream.available() > 0) {
                     error.append((char) errorStream.read());
                 }
+                endProcess();
                 if (error.length() > 0) {
                     throw new KielerException("Graphviz error: " + error.toString());
                 } else {
@@ -253,6 +270,7 @@ public final class GraphvizAPI {
                 }
             }
         } catch (IOException exception) {
+            endProcess();
             throw new KielerException("Unable to read Graphviz output.", exception);
         } finally {
             monitor.done();

@@ -141,7 +141,7 @@ public class GraphvizLayouter {
         }
 
         progressMonitor.begin("Graphviz layout (" + command + ")",
-                SMALL_TASK + SMALL_TASK + LARGE_TASK + LARGE_TASK + LARGE_TASK + SMALL_TASK);
+                SMALL_TASK + LARGE_TASK + LARGE_TASK + LARGE_TASK + SMALL_TASK);
         graphElementMap.clear();
         if (ENABLE_DEBUG) {
             debugFileName = Integer.toString(parentNode.hashCode());
@@ -157,31 +157,26 @@ public class GraphvizLayouter {
             injector = new DotStandaloneSetup().createInjectorAndDoEMFRegistration();
         }
 
-        // start the graphviz process
-        Process graphvizProcess = GraphvizAPI.startProcess(command,
+        // start the graphviz process, or retrieve the previously used process
+        Process graphvizProcess = GraphvizAPI.startProcess(command);
+
+        // translate the KGraph to Graphviz and write to the process
+        GraphvizModel graphvizInput = createDotGraph(parentNode, command,
                 progressMonitor.subTask(SMALL_TASK));
+        writeDotGraph(graphvizInput, new BufferedOutputStream(
+                graphvizProcess.getOutputStream()), progressMonitor.subTask(LARGE_TASK));
 
-        try {
-            // translate the KGraph to Graphviz and write to the process
-            GraphvizModel graphvizInput = createDotGraph(parentNode, command,
-                    progressMonitor.subTask(SMALL_TASK));
-            writeDotGraph(graphvizInput, new BufferedOutputStream(
-                    graphvizProcess.getOutputStream()), progressMonitor.subTask(LARGE_TASK));
+        // wait for Graphviz to give some output
+        GraphvizAPI.waitForInput(graphvizProcess.getInputStream(),
+                graphvizProcess.getErrorStream(), progressMonitor.subTask(LARGE_TASK));
 
-            // wait for Graphviz to give some output
-            GraphvizAPI.waitForInput(graphvizProcess.getInputStream(),
-                    graphvizProcess.getErrorStream(), progressMonitor.subTask(LARGE_TASK));
-
-            // read graphviz output and apply layout information to the KGraph
-            GraphvizModel graphvizOutput = readDotGraph(new BufferedInputStream(
-                    graphvizProcess.getInputStream()), progressMonitor.subTask(LARGE_TASK));
-            retrieveLayoutResult(parentNode, graphvizOutput,
-                    progressMonitor.subTask(SMALL_TASK));
-        } finally {
-            // destroy the process to release resources
-            graphvizProcess.destroy();
-            progressMonitor.done();
-        }
+        // read graphviz output and apply layout information to the KGraph
+        GraphvizModel graphvizOutput = readDotGraph(new BufferedInputStream(
+                graphvizProcess.getInputStream()), progressMonitor.subTask(LARGE_TASK));
+        retrieveLayoutResult(parentNode, graphvizOutput,
+                progressMonitor.subTask(SMALL_TASK));
+        
+        progressMonitor.done();
     }
 
     /**
@@ -434,7 +429,7 @@ public class GraphvizLayouter {
 
     /**
      * Writes a serialized version of the Graphviz model to the given output
-     * stream. The output stream is closed after writing.
+     * stream.
      * 
      * @param graphvizModel Graphviz model to serialize
      * @param processStream output stream to which the model is written
@@ -467,14 +462,18 @@ public class GraphvizLayouter {
         SerializerUtil serializerUtil = injector.getInstance(SerializerUtil.class);
         try {
             serializerUtil.serialize(graphvizModel, outputStream, null, false);
+            outputStream.write('\n');
             outputStream.flush();
         } catch (IOException exception) {
+            GraphvizAPI.endProcess();
             throw new KielerException("Failed to serialize the Dot graph.", exception);
         } finally {
-            try {
-                outputStream.close();
-            } catch (IOException exception) {
-                // ignore exception
+            if (debugStream != null) {
+                try {
+                    debugStream.close();
+                } catch (IOException exception) {
+                    // ignore exception
+                }
             }
         }
         monitor.done();
@@ -513,7 +512,7 @@ public class GraphvizLayouter {
             final IKielerProgressMonitor monitor)
             throws KielerException {
         monitor.begin("Parse output", 1);
-        InputStream inputStream = processStream;
+        InputStream inputStream = new NonBlockingInputStream(processStream);
         // enable debug output if needed
         FileOutputStream debugStream = null;
         if (ENABLE_DEBUG) {
@@ -526,7 +525,7 @@ public class GraphvizLayouter {
                 }
                 debugStream = new FileOutputStream(new File(path + File.separator + debugFileName
                         + "-out.dot"));
-                inputStream = new ForwardingInputStream(processStream, debugStream);
+                inputStream = new ForwardingInputStream(inputStream, debugStream);
             } catch (Exception exception) {
                 System.out.println("GraphvizLayouter: Could not initialize debug output: "
                         + exception.getMessage());
@@ -549,10 +548,12 @@ public class GraphvizLayouter {
                 errorString.append("\n" + syntaxError.getNode().getLine() + ": "
                         + syntaxError.getMessage());
             }
+            GraphvizAPI.endProcess();
             throw new KielerException(errorString.toString());
         }
         GraphvizModel graphvizModel = (GraphvizModel) parseResult.getRootASTElement();
         if (graphvizModel.getGraphs().isEmpty()) {
+            GraphvizAPI.endProcess();
             throw new KielerException("No output from the Graphviz process.");
         }
 
