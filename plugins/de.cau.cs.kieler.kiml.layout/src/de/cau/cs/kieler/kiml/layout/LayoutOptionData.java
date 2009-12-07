@@ -376,7 +376,7 @@ public class LayoutOptionData {
         if (bitCount == 0) {
             return null;
         }
-        StringBuffer descriptionBuf = new StringBuffer();
+        StringBuilder descriptionBuf = new StringBuilder();
         int highest = Integer.SIZE - Integer.numberOfLeadingZeros(targets);
         int bitsRead = 0;
         for (int i = 0; i < highest; i++) {

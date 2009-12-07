@@ -235,7 +235,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
                 if (model instanceof View) {
                     model = ((View)model).getElement();
                 }
-                StringBuffer textBuffer = new StringBuffer();
+                StringBuilder textBuffer = new StringBuilder();
                 if (model instanceof EObject) {
                     textBuffer.append(((EObject)model).eClass().getName());
                 } else {

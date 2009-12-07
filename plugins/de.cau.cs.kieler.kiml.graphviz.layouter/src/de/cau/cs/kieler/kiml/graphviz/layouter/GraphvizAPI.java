@@ -57,6 +57,8 @@ public final class GraphvizAPI {
     public static final String ATTR_FONTSIZE = "fontsize";
     /** Text label to be placed near head of edge. */
     public static final String ATTR_HEADLABEL = "headlabel";
+    /** Head label position, in points. */
+    public static final String ATTR_HEADLP = "head_lp";
     /** Height of node, in inches. */
     public static final String ATTR_HEIGHT = "height";
     /** Text label attached to objects. */
@@ -116,6 +118,8 @@ public final class GraphvizAPI {
     public static final String ATTR_START = "start";
     /** Text label to be placed near tail of edge. */
     public static final String ATTR_TAILLABEL = "taillabel";
+    /** Tail label position, in points. */
+    public static final String ATTR_TAILLP = "tail_lp";
     /** Weight of edge. */
     public static final String ATTR_WEIGHT = "weight";
     /** Width of node, in inches. */
@@ -248,7 +252,7 @@ public final class GraphvizAPI {
             }
             // read and check error stream if there is still no input from Graphviz
             if (inputStream.available() == 0) {
-                StringBuffer error = new StringBuffer();
+                StringBuilder error = new StringBuilder();
                 while (error.length() < MAX_ERROR_OUTPUT && errorStream.available() > 0) {
                     error.append((char) errorStream.read());
                 }

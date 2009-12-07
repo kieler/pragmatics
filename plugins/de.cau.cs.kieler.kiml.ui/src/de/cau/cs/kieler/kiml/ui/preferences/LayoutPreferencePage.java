@@ -159,7 +159,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         if (diagramType.length() <= MAX_DIAGTYPE_LENGTH) {
             return diagramType;
         } else {
-            StringBuffer abbrev = new StringBuffer();
+            StringBuilder abbrev = new StringBuilder();
             StringTokenizer tokenizer = new StringTokenizer(diagramType);
             while (tokenizer.hasMoreTokens()) {
                 abbrev.append(tokenizer.nextToken().charAt(0));

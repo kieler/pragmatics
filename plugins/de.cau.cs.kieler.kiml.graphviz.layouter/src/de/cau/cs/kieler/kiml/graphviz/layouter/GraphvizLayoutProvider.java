@@ -78,6 +78,8 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
             return GraphvizLayouter.DEF_LABEL_SPACING;
         } else if (GraphvizLayouter.OPT_SPLINE_POINTS.equals(optionId)) {
             return 1.0f;
+        } else if (GraphvizLayouter.OPT_LABEL_DISTANCE.equals(optionId)) {
+            return 1.0f;
         } else {
             return null;
         }

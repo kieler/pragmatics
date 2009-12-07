@@ -55,6 +55,7 @@ import de.cau.cs.kieler.kiml.layout.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.layout.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
 import de.cau.cs.kieler.core.KielerException;
@@ -76,7 +77,7 @@ import de.cau.cs.kieler.core.util.KielerMath.Point;;
  * language specification</a>. Serialization and parsing of this textual format
  * is done using <a href="http://www.eclipse.org/modeling/tmf/">Xtext</a>.
  * 
- * @author <a href="mailto:ars@informatik.uni-kiel.de">Arne Schipper</a>
+ * @author Arne Schipper
  * @author <a href="mailto:haf@informatik.uni-kiel.de">Hauke Fuhrmann</a>
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
@@ -84,6 +85,8 @@ public class GraphvizLayouter {
 
     /** layout option identifier for spline points factor. */
     public static final String OPT_SPLINE_POINTS = "de.cau.cs.kieler.kiml.graphviz.options.splinePoints";
+    /** layout option identifier for label distance. */
+    public static final String OPT_LABEL_DISTANCE = "de.cau.cs.kieler.kiml.graphviz.options.labelDistance";
     /** command for Dot layout. */
     public static final String DOT_COMMAND = "dot";
     /** command for Neato layout. */
@@ -361,17 +364,29 @@ public class GraphvizLayouter {
         if (Float.isNaN(labelSpacing)) {
             labelSpacing = (float)DEF_LABEL_SPACING;
         }
-        // as Graphviz only supports positioning of one label, all labels
+        KFloatOption distanceOption = (KFloatOption)edgeLayout.getOption(OPT_LABEL_DISTANCE);
+        // as Graphviz only supports positioning of one label per label placement, all labels
         // are stacked to one big label as workaround
-        StringBuffer midLabel = new StringBuffer();
+        StringBuilder midLabel = new StringBuilder(), headLabel = new StringBuilder(),
+                tailLabel = new StringBuilder();
         String fontName = null;
         int fontSize = 0;
         for (KLabel label : kedge.getLabels()) {
+            StringBuilder buffer = midLabel;
             KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
-            if (midLabel.length() > 0) {
-                midLabel.append("\n");
+            EdgeLabelPlacement placement = LayoutOptions.getEdgeLabelPlacement(labelLayout);
+            switch (placement) {
+            case HEAD:
+                buffer = headLabel;
+                break;
+            case TAIL:
+                buffer = tailLabel;
+                break;
             }
-            midLabel.append(label.getText());
+            if (buffer.length() > 0) {
+                buffer.append("\n");
+            }
+            buffer.append(label.getText());
             if (fontName == null) {
                 fontName = LayoutOptions.getFontName(labelLayout);
             }
@@ -380,20 +395,39 @@ public class GraphvizLayouter {
                 fontSize = (int) (LayoutOptions.getFontSize(labelLayout) * labelSpacing);
             }
         }
+        boolean hasLabel = false;
         // set mid label
         if (midLabel.length() > 0) {
             attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_LABEL,
                     createString(midLabel.toString())));
+            hasLabel = true;
+        }
+        // set head label
+        if (headLabel.length() > 0) {
+            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_HEADLABEL,
+                    createString(headLabel.toString())));
+            hasLabel = true;
+        }
+        // set tail label
+        if (tailLabel.length() > 0) {
+            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_TAILLABEL,
+                    createString(tailLabel.toString())));
+            hasLabel = true;
         }
         // set font name
-        if (fontName != null) {
+        if (hasLabel && fontName != null) {
             attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_FONTNAME,
                     createString(fontName)));
         }
         // set font size
-        if (fontSize >= 0) {
+        if (hasLabel && fontSize >= 0) {
             attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_FONTSIZE,
                     Integer.toString(fontSize)));
+        }
+        // set label distance
+        if (distanceOption != null) {
+            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_LABELDISTANCE,
+                    Float.toString(distanceOption.getValue())));
         }
     }
 
@@ -410,7 +444,7 @@ public class GraphvizLayouter {
      * @return string to be used in the Graphviz model
      */
     private static String createString(final String label) {
-        StringBuffer escapeBuffer = new StringBuffer(label.length() + 2);
+        StringBuilder escapeBuffer = new StringBuilder(label.length() + 2);
         // prefix the label with an underscore to prevent it from being equal to a keyword
         escapeBuffer.append("\"_");
         for (int i = 0; i < label.length(); i++) {
@@ -543,7 +577,7 @@ public class GraphvizLayouter {
             }
         }
         if (!parseResult.getParseErrors().isEmpty()) {
-            StringBuffer errorString = new StringBuffer("Errors in Graphviz output:");
+            StringBuilder errorString = new StringBuilder("Errors in Graphviz output:");
             for (SyntaxError syntaxError : parseResult.getParseErrors()) {
                 errorString.append("\n" + syntaxError.getNode().getLine() + ": "
                         + syntaxError.getMessage());
@@ -591,10 +625,9 @@ public class GraphvizLayouter {
                 for (Attribute attribute : attributes.getEntries()) {
                     try {
                         if (attribute.getName().equals(GraphvizAPI.ATTR_POS)) {
-                            StringTokenizer tokenizer = new StringTokenizer(attribute.getValue(),
-                                    ATTRIBUTE_DELIM);
-                            xpos = Float.parseFloat(tokenizer.nextToken()) + offset;
-                            ypos = Float.parseFloat(tokenizer.nextToken()) + offset;
+                            Point pos = parsePoint(attribute.getValue());
+                            xpos = (float)pos.x + offset;
+                            ypos = (float)pos.y + offset;
                         } else if (attribute.getName().equals(GraphvizAPI.ATTR_WIDTH)) {
                             StringTokenizer tokenizer = new StringTokenizer(attribute.getValue(),
                                     ATTRIBUTE_DELIM);
@@ -652,28 +685,18 @@ public class GraphvizLayouter {
                 // process the edge labels
                 String labelPos = attributeMap.get(GraphvizAPI.ATTR_LABELPOS);
                 if (labelPos != null) {
-                    float combinedWidth = 0.0f, combinedHeight = 0.0f;
-                    for (KLabel label : kedge.getLabels()) {
-                        KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
-                        combinedWidth = Math.max(combinedWidth, labelLayout.getWidth());
-                        combinedHeight += labelLayout.getHeight();
-                    }
-                    try {
-                        StringTokenizer tokenizer = new StringTokenizer(labelPos, ATTRIBUTE_DELIM);
-                        float xpos = Float.parseFloat(tokenizer.nextToken())
-                                - combinedWidth / 2 + edgeOffsetx;
-                        float ypos = Float.parseFloat(tokenizer.nextToken())
-                                - combinedHeight / 2 + edgeOffsety;
-                        for (KLabel label : kedge.getLabels()) {
-                            KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
-                            float xoffset = (combinedWidth - labelLayout.getWidth()) / 2;
-                            labelLayout.setXpos(xpos + xoffset);
-                            labelLayout.setYpos(ypos);
-                            ypos += labelLayout.getHeight();
-                        }
-                    } catch (NumberFormatException exception) {
-                        // ignore exception
-                    }
+                    applyEdgeLabelPos(kedge, labelPos, EdgeLabelPlacement.CENTER,
+                            edgeOffsetx, edgeOffsety);
+                }
+                labelPos = attributeMap.get(GraphvizAPI.ATTR_HEADLP);
+                if (labelPos != null) {
+                    applyEdgeLabelPos(kedge, labelPos, EdgeLabelPlacement.HEAD,
+                            edgeOffsetx, edgeOffsety);
+                }
+                labelPos = attributeMap.get(GraphvizAPI.ATTR_TAILLP);
+                if (labelPos != null) {
+                    applyEdgeLabelPos(kedge, labelPos, EdgeLabelPlacement.TAIL,
+                            edgeOffsetx, edgeOffsety);
                 }
                 
             } else if (statement instanceof AttributeStatement) {
@@ -715,6 +738,40 @@ public class GraphvizLayouter {
         }
         monitor.done();
     }
+    
+    /**
+     * Applies the edge label positions for the given edge.
+     * 
+     * @param kedge edge for which labels are processed
+     * @param posString string with label position
+     * @param placement label placement to choose
+     * @param offsetx x offset added to positions
+     * @param offsety y offset added to positions
+     */
+    private void applyEdgeLabelPos(final KEdge kedge, final String posString,
+            final EdgeLabelPlacement placement, final float offsetx, final float offsety) {
+        float combinedWidth = 0.0f, combinedHeight = 0.0f;
+        for (KLabel label : kedge.getLabels()) {
+            if (LayoutOptions.getEdgeLabelPlacement(
+                    KimlLayoutUtil.getShapeLayout(label)) == placement) {
+                KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
+                combinedWidth = Math.max(combinedWidth, labelLayout.getWidth());
+                combinedHeight += labelLayout.getHeight();
+            }
+        }
+        Point pos = parsePoint(posString);
+        float xpos = (float) pos.x - combinedWidth / 2 + offsetx;
+        float ypos = (float) pos.y - combinedHeight / 2 + offsety;
+        for (KLabel label : kedge.getLabels()) {
+            KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
+            if (LayoutOptions.getEdgeLabelPlacement(labelLayout) == placement) {
+                float xoffset = (combinedWidth - labelLayout.getWidth()) / 2;
+                labelLayout.setXpos(xpos + xoffset);
+                labelLayout.setYpos(ypos);
+                ypos += labelLayout.getHeight();
+            }
+        }
+    }
 
     /**
      * Converts a list of attributes to a map of attribute names to their
@@ -743,82 +800,90 @@ public class GraphvizLayouter {
     private static Pair<KPoint, KPoint> parseSplinePoints(final String posString,
             final List<List<Point>> splines, final float offsetx, final float offsety) {
         KPoint sourcePoint = null, targetPoint = null;
-        StringTokenizer splinesTokenizer = new StringTokenizer(posString, ";");
+        StringTokenizer splinesTokenizer = new StringTokenizer(posString, "\";");
         while (splinesTokenizer.hasMoreTokens()) {
-            ArrayList<Point> pointList = new ArrayList<Point>(SPLINE_POINTS);
-            StringTokenizer posTokenizer = new StringTokenizer(
-                    splinesTokenizer.nextToken(), ATTRIBUTE_DELIM);
-            boolean isXcoord = true, isStartp = false, isEndp = false;
-            Point point = null;
+            ArrayList<Point> pointList = new ArrayList<Point>();
+            StringTokenizer posTokenizer = new StringTokenizer(splinesTokenizer.nextToken(), " ");
             while (posTokenizer.hasMoreTokens()) {
                 String token = posTokenizer.nextToken();
                 if (token.startsWith("s")) {
-                    if (sourcePoint != null && posTokenizer.countTokens() >= 2) {
-                        posTokenizer.nextToken();
-                        posTokenizer.nextToken();
-                        continue;
+                    if (sourcePoint == null) {
+                        sourcePoint = KLayoutDataFactory.eINSTANCE.createKPoint();
+                        int commaIndex = token.indexOf(',');
+                        Point point = parsePoint(token.substring(commaIndex + 1));
+                        sourcePoint.setX((float) point.x + offsetx);
+                        sourcePoint.setY((float) point.y + offsety);
                     }
-                    sourcePoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-                    isStartp = true;
                 } else if (token.startsWith("e")) {
-                    if (targetPoint != null && posTokenizer.countTokens() >= 2) {
-                        posTokenizer.nextToken();
-                        posTokenizer.nextToken();
-                        continue;
+                    if (targetPoint == null) {
+                        targetPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
+                        int commaIndex = token.indexOf(',');
+                        Point point = parsePoint(token.substring(commaIndex + 1));
+                        targetPoint.setX((float) point.x + offsetx);
+                        targetPoint.setY((float) point.y + offsety);
                     }
-                    targetPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-                    isEndp = true;
                 } else {
-                    try {
-                        int backslashIndex = token.indexOf('\\');
-                        if (backslashIndex >= 0) {
-                            token = token.substring(0, backslashIndex) + posTokenizer.nextToken();
-                        }
-                        float pos = Float.parseFloat(token)
-                                + (isXcoord ? offsetx : offsety);
-                        if (isStartp) {
-                            if (isXcoord) {
-                                sourcePoint.setX(pos);
-                            } else {
-                                sourcePoint.setY(pos);
-                                isStartp = false;
-                            }
-                        } else if (isEndp) {
-                            if (isXcoord) {
-                                targetPoint.setX(pos);
-                            } else {
-                                targetPoint.setY(pos);
-                                isEndp = false;
-                            }
-                        } else {
-                            if (isXcoord) {
-                                point = new Point(pos, 0);
-                            } else {
-                                point.y = pos;
-                                pointList.add(point);
-                            }
-                        }
-                        isXcoord = !isXcoord;
-                    } catch (NumberFormatException exception) {
-                        // ignore exception
-                    }
+                    Point point = parsePoint(token);
+                    point.x += offsetx;
+                    point.y += offsety;
+                    pointList.add(point);
                 }
             }
             splines.add(pointList);
         }
         return new Pair<KPoint, KPoint>(sourcePoint, targetPoint);
     }
-
-    /** fixed number of spline points. TODO add support for arbitrary number of spline points */
-    private static final int SPLINE_POINTS = 4;
     
+    /** default number of characters in new string builders. */
+    private static final int DEF_BUILDER_SIZE = 8;
+    
+    /**
+     * Parses a point from a Graphviz string.
+     * 
+     * @param string string from which the point is parsed
+     * @return a point with x and y coordinates
+     */
+    private static Point parsePoint(final String string) {
+        double x = 0.0f, y = 0.0f;
+        StringBuilder xbuilder = null, ybuilder = null;
+        boolean commaRead = false;
+        for (int i = 0; i < string.length(); i++) {
+            char c = string.charAt(i);
+            if (c >= '0' && c <= '9' || c == '.' || c == '-') {
+                if (commaRead) {
+                    if (ybuilder == null) {
+                        ybuilder = new StringBuilder(DEF_BUILDER_SIZE);
+                    }
+                    ybuilder.append(c);
+                } else {
+                    if (xbuilder == null) {
+                        xbuilder = new StringBuilder(DEF_BUILDER_SIZE);
+                    }
+                    xbuilder.append(c);
+                }
+            } else if (c == ',') {
+                if (commaRead) {
+                    break;
+                }
+                commaRead = true;
+            }
+        }
+        if (xbuilder != null) {
+            x = Double.valueOf(xbuilder.toString());
+        }
+        if (ybuilder != null) {
+            y = Double.valueOf(ybuilder.toString());
+        }
+        return new Point(x, y);
+    }
+
     /**
      * Transforms a Graphviz B-spline curve to a set of bend points.
      * 
      * @param edgeLayout layout to which the bend points are added
      * @param splines list of splines, where each spline is a list of control points
      */
-    private void splineToPolyline(final KEdgeLayout edgeLayout, final List<List<Point>> splines) {
+    private static void splineToPolyline(final KEdgeLayout edgeLayout, final List<List<Point>> splines) {
         List<KPoint> bendPoints = edgeLayout.getBendPoints();
         // get layout option for spline points factor
         float splinePointsFact = 1.0f;

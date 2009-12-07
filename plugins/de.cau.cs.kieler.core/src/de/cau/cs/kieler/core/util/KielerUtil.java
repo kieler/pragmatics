@@ -36,19 +36,19 @@ public final class KielerUtil {
      * @return a string representation of the map
      */
     public static String toString(final Map<?, ?> map) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder builder = new StringBuilder();
 
         for (Entry<?, ?> entry : map.entrySet()) {
             Object key = entry.getKey();
             if (key == null) {
-                buffer.append("null ");
+                builder.append("null ");
             } else {
-                buffer.append(key + " (" + key.hashCode() + ") ");
+                builder.append(key + " (" + key.hashCode() + ") ");
             }
-            buffer.append(" = " + entry.getValue() + "\n");
+            builder.append(" = " + entry.getValue() + "\n");
         }
 
-        return buffer.toString();
+        return builder.toString();
     }
 
 }

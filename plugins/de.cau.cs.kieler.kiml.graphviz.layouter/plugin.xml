@@ -56,6 +56,9 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.labelSpacing">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.graphviz.options.labelDistance">
+         </knownOption>
       </layoutProvider>
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.graphviz"
@@ -92,6 +95,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.layout.options.labelSpacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.graphviz.options.labelDistance">
          </knownOption>
       </layoutProvider>
       <layoutProvider
@@ -130,6 +136,9 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.labelSpacing">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.graphviz.options.labelDistance">
+         </knownOption>
       </layoutProvider>
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.graphviz"
@@ -156,6 +165,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.layout.options.labelSpacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.graphviz.options.labelDistance">
          </knownOption>
       </layoutProvider>
       <layoutProvider
@@ -184,12 +196,22 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.labelSpacing">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.graphviz.options.labelDistance">
+         </knownOption>
       </layoutProvider>
       <layoutOption
             appliesTo="edges"
             description="Factor for number of spline points on the edge"
             id="de.cau.cs.kieler.kiml.graphviz.options.splinePoints"
             name="Spline Points Factor"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            appliesTo="edges"
+            description="Distance of edge labels to the source or target node"
+            id="de.cau.cs.kieler.kiml.graphviz.options.labelDistance"
+            name="Label Distance"
             type="float">
       </layoutOption>
    </extension>
