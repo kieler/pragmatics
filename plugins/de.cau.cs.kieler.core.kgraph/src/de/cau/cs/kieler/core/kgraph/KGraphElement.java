@@ -22,11 +22,14 @@ import org.eclipse.emf.ecore.EModelElement;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Graph Element</b></em>'. This
- * is the superclass of all elements of a graph such as nodes, edges, ports,
+ * A representation of the model object '<em><b>Graph Element</b></em>'.
+ * <!-- end-user-doc -->
+ *
+ * <!-- begin-model-doc -->
+ * This is the superclass of all elements of a graph such as nodes, edges, ports,
  * and labels. A graph element may contain an arbitrary number of additional
  * data instances.
- * <!-- end-user-doc -->
+ * <!-- end-model-doc -->
  *
  * <p>
  * The following features are supported:
@@ -44,10 +47,10 @@ public interface KGraphElement extends EModelElement {
      * Returns the value of the '<em><b>Data</b></em>' containment reference list.
      * The list contents are of type {@link de.cau.cs.kieler.core.kgraph.KGraphData}.
      * <!-- begin-user-doc -->
-     * <p>
-     * Each element of this list may contain additional data for the model element.
-     * </p>
      * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * Each element of this list may contain additional data for the model element.
+     * <!-- end-model-doc -->
      * @return the value of the '<em>Data</em>' containment reference list.
      * @see de.cau.cs.kieler.core.kgraph.KGraphPackage#getKGraphElement_Data()
      * @model containment="true"
@@ -57,11 +60,13 @@ public interface KGraphElement extends EModelElement {
 
     /**
      * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
      * Returns the first data instance that matches the given class. Classes
      * can be obtained using the static package methods of the corresponding
      * EMF model.
-     * @return graph data for the given type, or null if there is none
-     * <!-- end-user-doc -->
+     * @return graph data for the given type, or {@code null} if there is none
+     * <!-- end-model-doc -->
      * @model
      * @generated
      */

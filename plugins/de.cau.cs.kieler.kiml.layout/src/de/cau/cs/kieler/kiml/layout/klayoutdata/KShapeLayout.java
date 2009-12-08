@@ -18,14 +18,18 @@ package de.cau.cs.kieler.kiml.layout.klayoutdata;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Shape Layout</b></em>'. This
- * layout data contains information for graph elements for which rectangular
+ * A representation of the model object '<em><b>Shape Layout</b></em>'.  
+ * <!-- end-user-doc -->
+ *
+ * <!-- begin-model-doc -->
+ * This layout data contains information for graph elements for which rectangular
  * shape is assumed for layout, such as nodes, ports, and labels.
  * <p>
  * Layout coordinates for nodes, ports, and node labels are relative to the
  * position of the parent node. For edge labels the rules defined in
- * {@link KEdgeLayout} apply. Port labels are relative to their ports.  
- * <!-- end-user-doc -->
+ * {@link KEdgeLayout} apply. Port labels are relative to their ports.
+ * </p>
+ * <!-- end-model-doc -->
  *
  * <p>
  * The following features are supported:
@@ -46,8 +50,6 @@ public interface KShapeLayout extends KLayoutData {
      * Returns the value of the '<em><b>Xpos</b></em>' attribute.
      * The default value is <code>"0.0f"</code>.
      * <!-- begin-user-doc -->
-     * <p>
-     * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Xpos</em>' attribute.
      * @see #setXpos(float)
@@ -71,8 +73,6 @@ public interface KShapeLayout extends KLayoutData {
      * Returns the value of the '<em><b>Ypos</b></em>' attribute.
      * The default value is <code>"0.0f"</code>.
      * <!-- begin-user-doc -->
-     * <p>
-     * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Ypos</em>' attribute.
      * @see #setYpos(float)
@@ -96,8 +96,6 @@ public interface KShapeLayout extends KLayoutData {
      * Returns the value of the '<em><b>Width</b></em>' attribute.
      * The default value is <code>"0.0f"</code>.
      * <!-- begin-user-doc -->
-     * <p>
-     * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Width</em>' attribute.
      * @see #setWidth(float)
@@ -121,8 +119,6 @@ public interface KShapeLayout extends KLayoutData {
      * Returns the value of the '<em><b>Height</b></em>' attribute.
      * The default value is <code>"0.0f"</code>.
      * <!-- begin-user-doc -->
-     * <p>
-     * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Height</em>' attribute.
      * @see #setHeight(float)

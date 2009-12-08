@@ -19,10 +19,13 @@ import org.eclipse.emf.common.util.EList;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Edge</b></em>'. An edge must
- * be assigned a source and a target node, but the source and target ports
- * are optional.
+ * A representation of the model object '<em><b>Edge</b></em>'.
  * <!-- end-user-doc -->
+ *
+ * <!-- begin-model-doc -->
+ * An edge must be assigned a source and a target node, but the source and target ports
+ * are optional.
+ * <!-- end-model-doc -->
  *
  * <p>
  * The following features are supported:
@@ -44,13 +47,13 @@ public interface KEdge extends KGraphElement {
      * Returns the value of the '<em><b>Source</b></em>' container reference.
      * It is bidirectional and its opposite is '{@link de.cau.cs.kieler.core.kgraph.KNode#getOutgoingEdges <em>Outgoing Edges</em>}'.
      * <!-- begin-user-doc -->
-     * <p>
+     * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
      * The source node is expected to be set for each edge. This is especially
      * important because the source node is defined to be the container of the
      * edge, which is relevant for many EMF features such as XML storage or
      * copying.
-     * </p>
-     * <!-- end-user-doc -->
+     * <!-- end-model-doc -->
      * @return the value of the '<em>Source</em>' container reference.
      * @see #setSource(KNode)
      * @see de.cau.cs.kieler.core.kgraph.KGraphPackage#getKEdge_Source()
@@ -76,10 +79,10 @@ public interface KEdge extends KGraphElement {
      * Returns the value of the '<em><b>Target</b></em>' reference.
      * It is bidirectional and its opposite is '{@link de.cau.cs.kieler.core.kgraph.KNode#getIncomingEdges <em>Incoming Edges</em>}'.
      * <!-- begin-user-doc -->
-     * <p>
-     * The target node is expected to be set for each edge.
-     * </p>
      * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * The target node is expected to be set for each edge.
+     * <!-- end-model-doc -->
      * @return the value of the '<em>Target</em>' reference.
      * @see #setTarget(KNode)
      * @see de.cau.cs.kieler.core.kgraph.KGraphPackage#getKEdge_Target()
@@ -104,10 +107,10 @@ public interface KEdge extends KGraphElement {
     /**
      * Returns the value of the '<em><b>Source Port</b></em>' reference.
      * <!-- begin-user-doc -->
-     * <p>
-     * This reference is optional, as a node may have no ports.
-     * </p>
      * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * This reference is optional, as a node may have no ports.
+     * <!-- end-model-doc -->
      * @return the value of the '<em>Source Port</em>' reference.
      * @see #setSourcePort(KPort)
      * @see de.cau.cs.kieler.core.kgraph.KGraphPackage#getKEdge_SourcePort()
@@ -125,6 +128,7 @@ public interface KEdge extends KGraphElement {
      * <p>
      * The node related to the source port must be equal to the source node
      * of this edge.
+     * </p>
      * <!-- end-user-doc -->
      * @param value the new value of the '<em>Source Port</em>' reference.
      * @see #getSourcePort()
@@ -135,10 +139,10 @@ public interface KEdge extends KGraphElement {
     /**
      * Returns the value of the '<em><b>Target Port</b></em>' reference.
      * <!-- begin-user-doc -->
-     * <p>
-     * This reference is optional, as a node may have no ports.
-     * </p>
      * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * This reference is optional, as a node may have no ports.
+     * <!-- end-model-doc -->
      * @return the value of the '<em>Target Port</em>' reference.
      * @see #setTargetPort(KPort)
      * @see de.cau.cs.kieler.core.kgraph.KGraphPackage#getKEdge_TargetPort()
@@ -156,6 +160,7 @@ public interface KEdge extends KGraphElement {
      * <p>
      * The node related to the target port must be equal to the target node
      * of this edge.
+     * </p>
      * <!-- end-user-doc -->
      * @param value the new value of the '<em>Target Port</em>' reference.
      * @see #getTargetPort()
@@ -167,10 +172,10 @@ public interface KEdge extends KGraphElement {
      * Returns the value of the '<em><b>Labels</b></em>' containment reference list.
      * The list contents are of type {@link de.cau.cs.kieler.core.kgraph.KLabel}.
      * <!-- begin-user-doc -->
-     * <p>
-     * An edge may have multiple labels.
-     * </p>
      * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * An edge may have multiple labels.
+     * <!-- end-model-doc -->
      * @return the value of the '<em>Labels</em>' containment reference list.
      * @see de.cau.cs.kieler.core.kgraph.KGraphPackage#getKEdge_Labels()
      * @model containment="true"

@@ -18,9 +18,12 @@ package de.cau.cs.kieler.core.kgraph;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Label</b></em>'. Each label
- * must be assigned a parent graph element and a text string.
+ * A representation of the model object '<em><b>Label</b></em>'.
  * <!-- end-user-doc -->
+ *
+ * <!-- begin-model-doc -->
+ * Each label must be assigned a parent graph element and a text string.
+ * <!-- end-model-doc -->
  *
  * <p>
  * The following features are supported:
@@ -38,8 +41,6 @@ public interface KLabel extends KGraphElement {
     /**
      * Returns the value of the '<em><b>Text</b></em>' attribute.
      * <!-- begin-user-doc -->
-     * <p>
-     * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Text</em>' attribute.
      * @see #setText(String)
@@ -62,11 +63,11 @@ public interface KLabel extends KGraphElement {
     /**
      * Returns the value of the '<em><b>Parent</b></em>' reference.
      * <!-- begin-user-doc -->
-     * <p>
+     * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
      * Each label is related to a specific graph element, such as a node,
      * an edge, or a port.
-     * </p>
-     * <!-- end-user-doc -->
+     * <!-- end-model-doc -->
      * @return the value of the '<em>Parent</em>' reference.
      * @see #setParent(KGraphElement)
      * @see de.cau.cs.kieler.core.kgraph.KGraphPackage#getKLabel_Parent()

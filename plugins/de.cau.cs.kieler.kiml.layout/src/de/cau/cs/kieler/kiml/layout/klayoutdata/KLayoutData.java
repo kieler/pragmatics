@@ -21,11 +21,14 @@ import org.eclipse.emf.common.util.EList;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Layout Data</b></em>'. Layout
- * data can be attached to any
+ * A representation of the model object '<em><b>Layout Data</b></em>'.
+ * <!-- end-user-doc -->
+ *
+ * <!-- begin-model-doc -->
+ * Layout data can be attached to any
  * {@linkplain de.cau.cs.kieler.core.kgraph.KGraphElement graph element} and may
  * contain layout options to customize the behavior of layout algorithms.
- * <!-- end-user-doc -->
+ * <!-- end-model-doc -->
  *
  * <p>
  * The following features are supported:
@@ -43,15 +46,15 @@ public interface KLayoutData extends KGraphData {
      * Returns the value of the '<em><b>Options</b></em>' containment reference list.
      * The list contents are of type {@link de.cau.cs.kieler.kiml.layout.klayoutdata.KOption}.
      * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
      * <p>
      * Layout options specify how a layout algorithm shall handle the related
      * graph element or its children. Options are defined in
      * {@link de.cau.cs.kieler.kiml.layout.options.LayoutOptions LayoutOptions}
-     * and consist either of a key-value pair for valued options or of an
-     * unvalued {@code KOption} for boolean options, in which case the default
-     * is implicitly 'false'.
+     * and consist of a key-value pair of specific type.
      * </p>
-     * <!-- end-user-doc -->
+     * <!-- end-model-doc -->
      * @return the value of the '<em>Options</em>' containment reference list.
      * @see de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataPackage#getKLayoutData_Options()
      * @model containment="true"
@@ -61,9 +64,11 @@ public interface KLayoutData extends KGraphData {
 
     /**
      * <!-- begin-user-doc -->
-     * Retrieves the first option of given key in the list of layout options.
-     * @return layout option for the given key, or null if there is none 
      * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * Retrieves the first option of given key in the list of layout options.
+     * @return layout option for the given key, or {@code null} if there is none
+     * <!-- end-model-doc -->
      * @model
      * @generated
      */

@@ -19,10 +19,13 @@ import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Graph Data</b></em>'. This
- * class can be extended to hold arbitrary additional data for each
- * graph element.
+ * A representation of the model object '<em><b>Graph Data</b></em>'.
  * <!-- end-user-doc -->
+ *
+ * <!-- begin-model-doc -->
+ * This class can be extended to hold arbitrary additional data for each
+ * graph element.
+ * <!-- end-model-doc -->
  *
  *
  * @see de.cau.cs.kieler.core.kgraph.KGraphPackage#getKGraphData()

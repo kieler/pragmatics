@@ -19,14 +19,16 @@ import org.eclipse.emf.common.util.EList;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Node</b></em>'. All nodes
- * except exactly one node must have an assigned parent node. The node without
- * parent is the top node of the graph and represents the graph itself. Each
- * node must be assigned a label.
- * <p>
- * The parent-child relationship of nodes can be used to describe hierarchy in
- * nested graphs.
+ * A representation of the model object '<em><b>Node</b></em>'.
  * <!-- end-user-doc -->
+ *
+ * <!-- begin-model-doc -->
+ * All nodes except exactly one node must have an assigned parent node. The node
+ * without parent is the top node of the graph and represents the graph itself. Each
+ * node must be assigned a label.
+ * <p>The parent-child relationship of nodes can be used to describe hierarchy in
+ * nested graphs.</p>
+ * <!-- end-model-doc -->
  *
  * <p>
  * The following features are supported:
@@ -50,11 +52,11 @@ public interface KNode extends KGraphElement {
      * The list contents are of type {@link de.cau.cs.kieler.core.kgraph.KNode}.
      * It is bidirectional and its opposite is '{@link de.cau.cs.kieler.core.kgraph.KNode#getParent <em>Parent</em>}'.
      * <!-- begin-user-doc -->
-     * <p>
+     * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
      * The children together with their edges form a sub-graph that is contained
      * in this parent node.
-     * </p>
-     * <!-- end-user-doc -->
+     * <!-- end-model-doc -->
      * @return the value of the '<em>Children</em>' containment reference list.
      * @see de.cau.cs.kieler.core.kgraph.KGraphPackage#getKNode_Children()
      * @see de.cau.cs.kieler.core.kgraph.KNode#getParent
@@ -67,11 +69,11 @@ public interface KNode extends KGraphElement {
      * Returns the value of the '<em><b>Parent</b></em>' container reference.
      * It is bidirectional and its opposite is '{@link de.cau.cs.kieler.core.kgraph.KNode#getChildren <em>Children</em>}'.
      * <!-- begin-user-doc -->
-     * <p>
+     * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
      * The parent node must be {@code null} if and only if this is the top node of
      * the graph structure.
-     * </p>
-     * <!-- end-user-doc -->
+     * <!-- end-model-doc -->
      * @return the value of the '<em>Parent</em>' container reference.
      * @see #setParent(KNode)
      * @see de.cau.cs.kieler.core.kgraph.KGraphPackage#getKNode_Parent()
@@ -97,11 +99,11 @@ public interface KNode extends KGraphElement {
      * The list contents are of type {@link de.cau.cs.kieler.core.kgraph.KPort}.
      * It is bidirectional and its opposite is '{@link de.cau.cs.kieler.core.kgraph.KPort#getNode <em>Node</em>}'.
      * <!-- begin-user-doc -->
-     * <p>
+     * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
      * Each node may have an arbitrary number of ports. Edges may or may not be
      * connected to ports.
-     * </p>
-     * <!-- end-user-doc -->
+     * <!-- end-model-doc -->
      * @return the value of the '<em>Ports</em>' containment reference list.
      * @see de.cau.cs.kieler.core.kgraph.KGraphPackage#getKNode_Ports()
      * @see de.cau.cs.kieler.core.kgraph.KPort#getNode
@@ -115,8 +117,6 @@ public interface KNode extends KGraphElement {
      * The list contents are of type {@link de.cau.cs.kieler.core.kgraph.KEdge}.
      * It is bidirectional and its opposite is '{@link de.cau.cs.kieler.core.kgraph.KEdge#getSource <em>Source</em>}'.
      * <!-- begin-user-doc -->
-     * <p>
-     * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Outgoing Edges</em>' containment reference list.
      * @see de.cau.cs.kieler.core.kgraph.KGraphPackage#getKNode_OutgoingEdges()
@@ -131,8 +131,6 @@ public interface KNode extends KGraphElement {
      * The list contents are of type {@link de.cau.cs.kieler.core.kgraph.KEdge}.
      * It is bidirectional and its opposite is '{@link de.cau.cs.kieler.core.kgraph.KEdge#getTarget <em>Target</em>}'.
      * <!-- begin-user-doc -->
-     * <p>
-     * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Incoming Edges</em>' reference list.
      * @see de.cau.cs.kieler.core.kgraph.KGraphPackage#getKNode_IncomingEdges()
@@ -145,14 +143,14 @@ public interface KNode extends KGraphElement {
     /**
      * Returns the value of the '<em><b>Label</b></em>' containment reference.
      * <!-- begin-user-doc -->
-     * <p>
-     * Each node must be assigned a label.
-     * </p>
      * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * Each node must be assigned a label.
+     * <!-- end-model-doc -->
      * @return the value of the '<em>Label</em>' containment reference.
      * @see #setLabel(KLabel)
      * @see de.cau.cs.kieler.core.kgraph.KGraphPackage#getKNode_Label()
-     * @model containment="true"
+     * @model containment="true" required="true"
      * @generated
      */
     KLabel getLabel();

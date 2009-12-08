@@ -19,10 +19,13 @@ import org.eclipse.emf.common.util.EList;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>KPort</b></em>'. Each port must
- * be assigned a containing node. A port may contain incoming edges as well
- * as outgoing edges, independently of its type.
+ * A representation of the model object '<em><b>KPort</b></em>'.
  * <!-- end-user-doc -->
+ *
+ * <!-- begin-model-doc -->
+ * Each port must be assigned a containing node. A port may contain incoming
+ * edges as well as outgoing edges, independently of its type.
+ * <!-- end-model-doc -->
  *
  * <p>
  * The following features are supported:
@@ -42,13 +45,13 @@ public interface KPort extends KGraphElement {
      * Returns the value of the '<em><b>Node</b></em>' container reference.
      * It is bidirectional and its opposite is '{@link de.cau.cs.kieler.core.kgraph.KNode#getPorts <em>Ports</em>}'.
      * <!-- begin-user-doc -->
-     * <p>
+     * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
      * Each port must be assigned a containing node. This is especially
      * important because the node is defined to be the container of the
      * port, which is relevant for many EMF features such as XML storage or
      * copying.
-     * </p>
-     * <!-- end-user-doc -->
+     * <!-- end-model-doc -->
      * @return the value of the '<em>Node</em>' container reference.
      * @see #setNode(KNode)
      * @see de.cau.cs.kieler.core.kgraph.KGraphPackage#getKPort_Node()
@@ -72,11 +75,11 @@ public interface KPort extends KGraphElement {
      * Returns the value of the '<em><b>Edges</b></em>' reference list.
      * The list contents are of type {@link de.cau.cs.kieler.core.kgraph.KEdge}.
      * <!-- begin-user-doc -->
-     * <p>
+     * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
      * Edges in this list may be incoming as well as outgoing with respect
      * to the containing node.
-     * </p>
-     * <!-- end-user-doc -->
+     * <!-- end-model-doc -->
      * @return the value of the '<em>Edges</em>' reference list.
      * @see de.cau.cs.kieler.core.kgraph.KGraphPackage#getKPort_Edges()
      * @model
@@ -87,10 +90,10 @@ public interface KPort extends KGraphElement {
     /**
      * Returns the value of the '<em><b>Label</b></em>' containment reference.
      * <!-- begin-user-doc -->
-     * <p>
-     * The label of a port is optional.
-     * </p>
      * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * The label of a port is optional.
+     * <!-- end-model-doc -->
      * @return the value of the '<em>Label</em>' containment reference.
      * @see #setLabel(KLabel)
      * @see de.cau.cs.kieler.core.kgraph.KGraphPackage#getKPort_Label()

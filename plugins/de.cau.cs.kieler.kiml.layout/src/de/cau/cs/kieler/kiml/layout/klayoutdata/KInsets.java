@@ -19,10 +19,14 @@ import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Insets</b></em>'. Insets describe
- * the minimal amount of space that is required between the children of a node
- * and the node's boundary.
+ * A representation of the model object '<em><b>Insets</b></em>'.
  * <!-- end-user-doc -->
+ *
+ * <!-- begin-model-doc -->
+ * Insets describe the minimal amount of space that is required between the
+ * children of a node and the node's boundary. Usually the inset values must
+ * be added to the bounding box of the contained subgraph.
+ * <!-- end-model-doc -->
  *
  * <p>
  * The following features are supported:
@@ -42,10 +46,10 @@ public interface KInsets extends EObject {
     /**
      * Returns the value of the '<em><b>Top</b></em>' attribute.
      * <!-- begin-user-doc -->
-     * <p>
-     * This is the minimal distance to the top side of a parent node.
-     * </p>
      * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * This is the minimal distance to the top side of a parent node.
+     * <!-- end-model-doc -->
      * @return the value of the '<em>Top</em>' attribute.
      * @see #setTop(float)
      * @see de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataPackage#getKInsets_Top()
@@ -67,10 +71,10 @@ public interface KInsets extends EObject {
     /**
      * Returns the value of the '<em><b>Bottom</b></em>' attribute.
      * <!-- begin-user-doc -->
-     * <p>
-     * This is the minimal distance to the bottom side of a parent node.
-     * </p>
      * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * This is the minimal distance to the bottom side of a parent node.
+     * <!-- end-model-doc -->
      * @return the value of the '<em>Bottom</em>' attribute.
      * @see #setBottom(float)
      * @see de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataPackage#getKInsets_Bottom()
@@ -92,10 +96,10 @@ public interface KInsets extends EObject {
     /**
      * Returns the value of the '<em><b>Left</b></em>' attribute.
      * <!-- begin-user-doc -->
-     * <p>
-     * This is the minimal distance to the left side of a parent node.
-     * </p>
      * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * This is the minimal distance to the left side of a parent node.
+     * <!-- end-model-doc -->
      * @return the value of the '<em>Left</em>' attribute.
      * @see #setLeft(float)
      * @see de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataPackage#getKInsets_Left()
@@ -117,9 +121,6 @@ public interface KInsets extends EObject {
     /**
      * Returns the value of the '<em><b>Right</b></em>' attribute.
      * <!-- begin-user-doc -->
-     * <p>
-     * This is the minimal distance to the right side of a parent node.
-     * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Right</em>' attribute.
      * @see #setRight(float)
