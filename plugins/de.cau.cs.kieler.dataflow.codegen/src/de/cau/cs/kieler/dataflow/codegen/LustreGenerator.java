@@ -93,48 +93,57 @@ public class LustreGenerator extends AbstractHandler implements IHandler {
         return null;
     }
 
+    /**
+     * Transforms the Dataflow model into a Lustre description. Each box that contains sub boxes is
+     * becomes one node. Types are inferred by assuming that standard Lustre identifiers like + are
+     * the corresponding basic nodes in the dataflow diagram. On the highest level, each unconnected
+     * port is considered to be a global input or output.
+     * 
+     * @return a Lustre drescription of the dataflow model.
+     * 
+     */
     public String generateLus() {
 
         initialize();
         // EMF reader
-        Reader emfReader = new Reader();
+        final Reader emfReader = new Reader();
         emfReader.setUri(uriString);
         emfReader.setModelSlot("model");
 
         // Meta model
-        EmfMetaModel metaModel = new EmfMetaModel(DataflowPackage.eINSTANCE);
+        final EmfMetaModel metaModel = new EmfMetaModel(DataflowPackage.eINSTANCE);
 
         // Outlet
-        Outlet outlet = new Outlet();
+        final Outlet outlet = new Outlet();
         outlet.setPath(outPath);
 
         // Generator
-        Generator generator = new Generator();
+        final Generator generator = new Generator();
         generator.addMetaModel(metaModel);
         generator.addOutlet(outlet);
 
         generator.setExpand("template::Lustre::main FOR model");
 
-        WorkflowContext wfx = new WorkflowContextDefaultImpl();
-        Issues issues = new org.eclipse.emf.mwe.core.issues.IssuesImpl();
-        NullProgressMonitor monitor = new NullProgressMonitor();
+        final WorkflowContext wfx = new WorkflowContextDefaultImpl();
+        final Issues issues = new org.eclipse.emf.mwe.core.issues.IssuesImpl();
+        final NullProgressMonitor monitor = new NullProgressMonitor();
 
-        Workflow workflow = new Workflow();
+        final Workflow workflow = new Workflow();
         workflow.addComponent(emfReader);
         workflow.addComponent(generator);
         workflow.invoke(wfx, monitor, issues);
 
-        StringBuffer issue = new StringBuffer(generator.getLogMessage() + "\n");
-        for (MWEDiagnostic s : issues.getIssues()) {
+        final StringBuffer issue = new StringBuffer(generator.getLogMessage() + "\n");
+        for (final MWEDiagnostic s : issues.getIssues()) {
             issue.append(s + "\n");
         }
-        for (MWEDiagnostic s : issues.getErrors()) {
+        for (final MWEDiagnostic s : issues.getErrors()) {
             issue.append(s + "\n");
         }
-        for (MWEDiagnostic s : issues.getWarnings()) {
+        for (final MWEDiagnostic s : issues.getWarnings()) {
             issue.append(s + "\n");
         }
-        for (MWEDiagnostic s : issues.getInfos()) {
+        for (final MWEDiagnostic s : issues.getInfos()) {
             issue.append(s + "\n");
         }
         StatusManager.getManager().handle(

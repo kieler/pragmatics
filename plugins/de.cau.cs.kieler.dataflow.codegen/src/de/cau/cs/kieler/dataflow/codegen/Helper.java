@@ -46,10 +46,14 @@ public final class Helper {
     // sample all ports that are sources
     private static HashSet<Port> targets = new HashSet<Port>();
 
-    // private static HashMap<Port, String> port2Name = new HashMap<Port,
-    // String>();
+
     private static HashMap<Port, Connection> port2Con = new HashMap<Port, Connection>();
 
+   
+    
+    /**
+     * reset all internal variables. 
+     */
     public static void reset() {
         inputs.clear();
         outputs.clear();
