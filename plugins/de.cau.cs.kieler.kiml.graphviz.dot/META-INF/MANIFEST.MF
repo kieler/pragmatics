@@ -6,7 +6,7 @@ Bundle-Version: 0.1.0.qualifier
 Bundle-SymbolicName: de.cau.cs.kieler.kiml.graphviz.dot; singleton:=true
 Eclipse-RegisterBuddy: org.eclipse.xtext.log4j
 Bundle-ActivationPolicy: lazy
-Require-Bundle: org.eclipse.xtext,
+Require-Bundle: org.eclipse.xtext;bundle-version="0.8.0",
  org.eclipse.xtext.generator;resolution:=optional,
  org.eclipse.emf.codegen.ecore;resolution:=optional,
  org.eclipse.xtext.log4j;resolution:=optional,
@@ -14,7 +14,7 @@ Require-Bundle: org.eclipse.xtext,
  org.eclipse.emf.mwe.core;resolution:=optional,
  org.eclipse.xtext.xtend;resolution:=optional,
  org.apache.commons.logging;resolution:=optional,
- de.itemis.xtext.antlr;resolution:=optional,
+ de.itemis.xtext.antlr;bundle-version="0.8.0";resolution:=optional,
  com.ibm.icu;bundle-version="4.0.0";resolution:=optional,
  org.eclipse.xtext.util,
  org.eclipse.emf.ecore;bundle-version="2.5.0",
@@ -29,4 +29,6 @@ Export-Package: de.cau.cs.kieler.kiml.graphviz,
  de.cau.cs.kieler.kiml.graphviz.parseTreeConstruction,
  de.cau.cs.kieler.kiml.graphviz.parser.antlr,
  de.cau.cs.kieler.kiml.graphviz.services,
- de.cau.cs.kieler.kiml.graphviz.validation
+ de.cau.cs.kieler.kiml.graphviz.validation,
+ de.cau.cs.kieler.kiml.graphviz.parser.antlr.internal
+Import-Package: org.apache.log4j

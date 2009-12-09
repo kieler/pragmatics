@@ -181,8 +181,11 @@
         <tokens xsi:type="xtext:Assignment" feature="name" operator="=">
           <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.12"/>
         </tokens>
-        <tokens xsi:type="xtext:Assignment" cardinality="?" feature="port" operator="=">
-          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.11"/>
+        <tokens xsi:type="xtext:Group" cardinality="?">
+          <tokens xsi:type="xtext:Keyword" value=":"/>
+          <tokens xsi:type="xtext:Assignment" feature="port" operator="=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.11"/>
+          </tokens>
         </tokens>
       </alternatives>
     </rules>
@@ -192,7 +195,6 @@
       </type>
       <alternatives xsi:type="xtext:Alternatives">
         <groups xsi:type="xtext:Group">
-          <tokens xsi:type="xtext:Keyword" value=":"/>
           <tokens xsi:type="xtext:Assignment" feature="name" operator="=">
             <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.12"/>
           </tokens>
@@ -203,11 +205,8 @@
             </tokens>
           </tokens>
         </groups>
-        <groups xsi:type="xtext:Group">
-          <tokens xsi:type="xtext:Keyword" value=":"/>
-          <tokens xsi:type="xtext:Assignment" feature="compass_pt" operator="=">
-            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.16"/>
-          </tokens>
+        <groups xsi:type="xtext:Assignment" feature="compass_pt" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.16"/>
         </groups>
       </alternatives>
     </rules>

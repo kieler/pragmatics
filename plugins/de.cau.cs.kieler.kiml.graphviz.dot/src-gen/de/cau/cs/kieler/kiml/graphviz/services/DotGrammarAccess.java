@@ -8,17 +8,16 @@ import com.google.inject.Singleton;
 import com.google.inject.Inject;
 
 import org.eclipse.xtext.*;
-
 import org.eclipse.xtext.service.GrammarProvider;
+import org.eclipse.xtext.service.AbstractElementFinder.*;
 
 import org.eclipse.xtext.common.services.TerminalsGrammarAccess;
 
-/** @generated */
 @Singleton
-public class DotGrammarAccess implements IGrammarAccess {
+public class DotGrammarAccess extends AbstractGrammarElementFinder {
 	
 	
-	public class GraphvizModelElements implements IParserRuleAccess {
+	public class GraphvizModelElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "GraphvizModel");
 		private final Assignment cGraphsAssignment = (Assignment)rule.eContents().get(1);
 		private final RuleCall cGraphsGraphParserRuleCall_0 = (RuleCall)cGraphsAssignment.eContents().get(0);
@@ -34,7 +33,7 @@ public class DotGrammarAccess implements IGrammarAccess {
 		public RuleCall getGraphsGraphParserRuleCall_0() { return cGraphsGraphParserRuleCall_0; }
 	}
 
-	public class GraphElements implements IParserRuleAccess {
+	public class GraphElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Graph");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Assignment cStrictAssignment_0 = (Assignment)cGroup.eContents().get(0);
@@ -86,7 +85,7 @@ public class DotGrammarAccess implements IGrammarAccess {
 		public Keyword getRightCurlyBracketKeyword_5() { return cRightCurlyBracketKeyword_5; }
 	}
 
-	public class StatementElements implements IParserRuleAccess {
+	public class StatementElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Statement");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Alternatives cAlternatives_0 = (Alternatives)cGroup.eContents().get(0);
@@ -148,7 +147,7 @@ public class DotGrammarAccess implements IGrammarAccess {
 		public Keyword getSemicolonKeyword_1() { return cSemicolonKeyword_1; }
 	}
 
-	public class EdgeStatementElements implements IParserRuleAccess {
+	public class EdgeStatementElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "EdgeStatement");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Alternatives cAlternatives_0 = (Alternatives)cGroup.eContents().get(0);
@@ -198,7 +197,7 @@ public class DotGrammarAccess implements IGrammarAccess {
 		public RuleCall getAttributesAttributeListParserRuleCall_2_0() { return cAttributesAttributeListParserRuleCall_2_0; }
 	}
 
-	public class EdgeTargetElements implements IParserRuleAccess {
+	public class EdgeTargetElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "EdgeTarget");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Assignment cOperatorAssignment_0 = (Assignment)cGroup.eContents().get(0);
@@ -238,7 +237,7 @@ public class DotGrammarAccess implements IGrammarAccess {
 		public RuleCall getTargetnodeNodeParserRuleCall_1_1_0() { return cTargetnodeNodeParserRuleCall_1_1_0; }
 	}
 
-	public class NodeStatementElements implements IParserRuleAccess {
+	public class NodeStatementElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "NodeStatement");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Assignment cNodeAssignment_0 = (Assignment)cGroup.eContents().get(0);
@@ -266,7 +265,7 @@ public class DotGrammarAccess implements IGrammarAccess {
 		public RuleCall getAttributesAttributeListParserRuleCall_1_0() { return cAttributesAttributeListParserRuleCall_1_0; }
 	}
 
-	public class AttributeStatementElements implements IParserRuleAccess {
+	public class AttributeStatementElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "AttributeStatement");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Assignment cTypeAssignment_0 = (Assignment)cGroup.eContents().get(0);
@@ -294,7 +293,7 @@ public class DotGrammarAccess implements IGrammarAccess {
 		public RuleCall getAttributesAttributeListParserRuleCall_1_0() { return cAttributesAttributeListParserRuleCall_1_0; }
 	}
 
-	public class SubgraphElements implements IParserRuleAccess {
+	public class SubgraphElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Subgraph");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Group cGroup_0 = (Group)cGroup.eContents().get(0);
@@ -338,7 +337,7 @@ public class DotGrammarAccess implements IGrammarAccess {
 		public Keyword getRightCurlyBracketKeyword_3() { return cRightCurlyBracketKeyword_3; }
 	}
 
-	public class AttributeListElements implements IParserRuleAccess {
+	public class AttributeListElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "AttributeList");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Keyword cLeftSquareBracketKeyword_0 = (Keyword)cGroup.eContents().get(0);
@@ -382,7 +381,7 @@ public class DotGrammarAccess implements IGrammarAccess {
 		public Keyword getRightSquareBracketKeyword_3() { return cRightSquareBracketKeyword_3; }
 	}
 
-	public class AttributeElements implements IParserRuleAccess {
+	public class AttributeElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Attribute");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Assignment cNameAssignment_0 = (Assignment)cGroup.eContents().get(0);
@@ -418,19 +417,21 @@ public class DotGrammarAccess implements IGrammarAccess {
 		public RuleCall getValueDotIDParserRuleCall_1_1_0() { return cValueDotIDParserRuleCall_1_1_0; }
 	}
 
-	public class NodeElements implements IParserRuleAccess {
+	public class NodeElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Node");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Assignment cNameAssignment_0 = (Assignment)cGroup.eContents().get(0);
 		private final RuleCall cNameDotIDParserRuleCall_0_0 = (RuleCall)cNameAssignment_0.eContents().get(0);
-		private final Assignment cPortAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cPortPortParserRuleCall_1_0 = (RuleCall)cPortAssignment_1.eContents().get(0);
+		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
+		private final Keyword cColonKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
+		private final Assignment cPortAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
+		private final RuleCall cPortPortParserRuleCall_1_1_0 = (RuleCall)cPortAssignment_1_1.eContents().get(0);
 		
 		//Node:
-		//  name=DotID port=Port?;
+		//  name=DotID (":" port=Port)?;
 		public ParserRule getRule() { return rule; }
 
-		//name=DotID port=Port?
+		//name=DotID (":" port=Port)?
 		public Group getGroup() { return cGroup; }
 
 		//name=DotID
@@ -439,74 +440,68 @@ public class DotGrammarAccess implements IGrammarAccess {
 		//DotID
 		public RuleCall getNameDotIDParserRuleCall_0_0() { return cNameDotIDParserRuleCall_0_0; }
 
-		//port=Port?
-		public Assignment getPortAssignment_1() { return cPortAssignment_1; }
-
-		//Port
-		public RuleCall getPortPortParserRuleCall_1_0() { return cPortPortParserRuleCall_1_0; }
-	}
-
-	public class PortElements implements IParserRuleAccess {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Port");
-		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
-		private final Keyword cColonKeyword_0_0 = (Keyword)cGroup_0.eContents().get(0);
-		private final Assignment cNameAssignment_0_1 = (Assignment)cGroup_0.eContents().get(1);
-		private final RuleCall cNameDotIDParserRuleCall_0_1_0 = (RuleCall)cNameAssignment_0_1.eContents().get(0);
-		private final Group cGroup_0_2 = (Group)cGroup_0.eContents().get(2);
-		private final Keyword cColonKeyword_0_2_0 = (Keyword)cGroup_0_2.eContents().get(0);
-		private final Assignment cCompass_ptAssignment_0_2_1 = (Assignment)cGroup_0_2.eContents().get(1);
-		private final RuleCall cCompass_ptCompassPointEnumRuleCall_0_2_1_0 = (RuleCall)cCompass_ptAssignment_0_2_1.eContents().get(0);
-		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
-		private final Keyword cColonKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
-		private final Assignment cCompass_ptAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
-		private final RuleCall cCompass_ptCompassPointEnumRuleCall_1_1_0 = (RuleCall)cCompass_ptAssignment_1_1.eContents().get(0);
-		
-		//Port:
-		//  ":" name=DotID (":" compass_pt=CompassPoint)?|":" compass_pt=CompassPoint;
-		public ParserRule getRule() { return rule; }
-
-		//":" name=DotID (":" compass_pt=CompassPoint)?|":" compass_pt=CompassPoint
-		public Alternatives getAlternatives() { return cAlternatives; }
-
-		//":" name=DotID (":" compass_pt=CompassPoint)?
-		public Group getGroup_0() { return cGroup_0; }
-
-		//":"
-		public Keyword getColonKeyword_0_0() { return cColonKeyword_0_0; }
-
-		//name=DotID
-		public Assignment getNameAssignment_0_1() { return cNameAssignment_0_1; }
-
-		//DotID
-		public RuleCall getNameDotIDParserRuleCall_0_1_0() { return cNameDotIDParserRuleCall_0_1_0; }
-
-		//(":" compass_pt=CompassPoint)?
-		public Group getGroup_0_2() { return cGroup_0_2; }
-
-		//":"
-		public Keyword getColonKeyword_0_2_0() { return cColonKeyword_0_2_0; }
-
-		//compass_pt=CompassPoint
-		public Assignment getCompass_ptAssignment_0_2_1() { return cCompass_ptAssignment_0_2_1; }
-
-		//CompassPoint
-		public RuleCall getCompass_ptCompassPointEnumRuleCall_0_2_1_0() { return cCompass_ptCompassPointEnumRuleCall_0_2_1_0; }
-
-		//":" compass_pt=CompassPoint
+		//(":" port=Port)?
 		public Group getGroup_1() { return cGroup_1; }
 
 		//":"
 		public Keyword getColonKeyword_1_0() { return cColonKeyword_1_0; }
 
-		//compass_pt=CompassPoint
-		public Assignment getCompass_ptAssignment_1_1() { return cCompass_ptAssignment_1_1; }
+		//port=Port
+		public Assignment getPortAssignment_1_1() { return cPortAssignment_1_1; }
 
-		//CompassPoint
-		public RuleCall getCompass_ptCompassPointEnumRuleCall_1_1_0() { return cCompass_ptCompassPointEnumRuleCall_1_1_0; }
+		//Port
+		public RuleCall getPortPortParserRuleCall_1_1_0() { return cPortPortParserRuleCall_1_1_0; }
 	}
 
-	public class DotIDElements implements IParserRuleAccess {
+	public class PortElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Port");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
+		private final Assignment cNameAssignment_0_0 = (Assignment)cGroup_0.eContents().get(0);
+		private final RuleCall cNameDotIDParserRuleCall_0_0_0 = (RuleCall)cNameAssignment_0_0.eContents().get(0);
+		private final Group cGroup_0_1 = (Group)cGroup_0.eContents().get(1);
+		private final Keyword cColonKeyword_0_1_0 = (Keyword)cGroup_0_1.eContents().get(0);
+		private final Assignment cCompass_ptAssignment_0_1_1 = (Assignment)cGroup_0_1.eContents().get(1);
+		private final RuleCall cCompass_ptCompassPointEnumRuleCall_0_1_1_0 = (RuleCall)cCompass_ptAssignment_0_1_1.eContents().get(0);
+		private final Assignment cCompass_ptAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
+		private final RuleCall cCompass_ptCompassPointEnumRuleCall_1_0 = (RuleCall)cCompass_ptAssignment_1.eContents().get(0);
+		
+		//Port:
+		//  name=DotID (":" compass_pt=CompassPoint)?|compass_pt=CompassPoint;
+		public ParserRule getRule() { return rule; }
+
+		//name=DotID (":" compass_pt=CompassPoint)?|compass_pt=CompassPoint
+		public Alternatives getAlternatives() { return cAlternatives; }
+
+		//name=DotID (":" compass_pt=CompassPoint)?
+		public Group getGroup_0() { return cGroup_0; }
+
+		//name=DotID
+		public Assignment getNameAssignment_0_0() { return cNameAssignment_0_0; }
+
+		//DotID
+		public RuleCall getNameDotIDParserRuleCall_0_0_0() { return cNameDotIDParserRuleCall_0_0_0; }
+
+		//(":" compass_pt=CompassPoint)?
+		public Group getGroup_0_1() { return cGroup_0_1; }
+
+		//":"
+		public Keyword getColonKeyword_0_1_0() { return cColonKeyword_0_1_0; }
+
+		//compass_pt=CompassPoint
+		public Assignment getCompass_ptAssignment_0_1_1() { return cCompass_ptAssignment_0_1_1; }
+
+		//CompassPoint
+		public RuleCall getCompass_ptCompassPointEnumRuleCall_0_1_1_0() { return cCompass_ptCompassPointEnumRuleCall_0_1_1_0; }
+
+		//compass_pt=CompassPoint
+		public Assignment getCompass_ptAssignment_1() { return cCompass_ptAssignment_1; }
+
+		//CompassPoint
+		public RuleCall getCompass_ptCompassPointEnumRuleCall_1_0() { return cCompass_ptCompassPointEnumRuleCall_1_0; }
+	}
+
+	public class DotIDElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "DotID");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final RuleCall cIDTerminalRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
@@ -531,7 +526,7 @@ public class DotGrammarAccess implements IGrammarAccess {
 	}
 	
 	
-	public class EdgeOperatorElements implements IEnumRuleAccess {
+	public class EdgeOperatorElements extends AbstractEnumRuleElementFinder {
 		private final EnumRule rule = (EnumRule) GrammarUtil.findRuleForName(getGrammar(), "EdgeOperator");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final EnumLiteralDeclaration cDirectedEnumLiteralDeclaration_0 = (EnumLiteralDeclaration)cAlternatives.eContents().get(0);
@@ -559,7 +554,7 @@ public class DotGrammarAccess implements IGrammarAccess {
 		public Keyword getUndirectedHyphenMinusHyphenMinusKeyword_1_0() { return cUndirectedHyphenMinusHyphenMinusKeyword_1_0; }
 	}
 
-	public class GraphTypeElements implements IEnumRuleAccess {
+	public class GraphTypeElements extends AbstractEnumRuleElementFinder {
 		private final EnumRule rule = (EnumRule) GrammarUtil.findRuleForName(getGrammar(), "GraphType");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final EnumLiteralDeclaration cGraphEnumLiteralDeclaration_0 = (EnumLiteralDeclaration)cAlternatives.eContents().get(0);
@@ -587,7 +582,7 @@ public class DotGrammarAccess implements IGrammarAccess {
 		public Keyword getDigraphDigraphKeyword_1_0() { return cDigraphDigraphKeyword_1_0; }
 	}
 
-	public class AttributeTypeElements implements IEnumRuleAccess {
+	public class AttributeTypeElements extends AbstractEnumRuleElementFinder {
 		private final EnumRule rule = (EnumRule) GrammarUtil.findRuleForName(getGrammar(), "AttributeType");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final EnumLiteralDeclaration cGraphEnumLiteralDeclaration_0 = (EnumLiteralDeclaration)cAlternatives.eContents().get(0);
@@ -623,7 +618,7 @@ public class DotGrammarAccess implements IGrammarAccess {
 		public Keyword getEdgeEdgeKeyword_2_0() { return cEdgeEdgeKeyword_2_0; }
 	}
 
-	public class CompassPointElements implements IEnumRuleAccess {
+	public class CompassPointElements extends AbstractEnumRuleElementFinder {
 		private final EnumRule rule = (EnumRule) GrammarUtil.findRuleForName(getGrammar(), "CompassPoint");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final EnumLiteralDeclaration cNorthEnumLiteralDeclaration_0 = (EnumLiteralDeclaration)cAlternatives.eContents().get(0);
@@ -847,7 +842,7 @@ public class DotGrammarAccess implements IGrammarAccess {
 	}
 
 	//Node:
-	//  name=DotID port=Port?;
+	//  name=DotID (":" port=Port)?;
 	public NodeElements getNodeAccess() {
 		return (pNode != null) ? pNode : (pNode = new NodeElements());
 	}
@@ -857,7 +852,7 @@ public class DotGrammarAccess implements IGrammarAccess {
 	}
 
 	//Port:
-	//  ":" name=DotID (":" compass_pt=CompassPoint)?|":" compass_pt=CompassPoint;
+	//  name=DotID (":" compass_pt=CompassPoint)?|compass_pt=CompassPoint;
 	public PortElements getPortAccess() {
 		return (pPort != null) ? pPort : (pPort = new PortElements());
 	}
