@@ -111,7 +111,7 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
                 // Create bundle with jar archive
                 Bundle bundle = ContributorFactoryOSGi.resolve(editor.getContributor());
                 // System.out.println("activating ksbase for" + activeEditor);
-                String editorDiagramName = bundle.getSymbolicName();
+                String editorDiagramName = bundle.getSymbolicName() + ".generated";
                 
                 try {
                     // To avoid %20 exceptions in paths:
@@ -131,10 +131,10 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
                         Bundle b = bundle.getBundleContext().installBundle(editorDiagramName, in);
                         // b.start();
                         // Activating bundle with package admin service
-                        System.out.println("Bundle state : " + b.getState());
+                        //System.out.println("Bundle state : " + b.getState());
                         if (b.getState() != Bundle.STARTING) {
                             if (b.getState() == Bundle.INSTALLED) {
-                                System.out.println("resolving");
+                                //System.out.println("resolving");
                                 boolean res = admin.resolveBundles(new Bundle[] {b });
                                 if (!res) {
                                     KSBasEUIPlugin.getDefault().getLog().log(
@@ -143,7 +143,7 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
                                 }
                             }
                             if (b.getState() == Bundle.RESOLVED) {
-                                System.out.println("starting");
+                                //System.out.println("starting");
                                 b.start();
                             }
                         }

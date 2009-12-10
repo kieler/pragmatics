@@ -30,8 +30,8 @@ import org.eclipse.xtend.typesystem.emf.EmfMetaModel;
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 
 /**
- * A wrapper class for an {@link XtendComponent}. Used to initialize the
- * component, set the invocation target and its meta-model
+ * A wrapper class for an {@link XtendComponent}. Used to initialize the component, set the
+ * invocation target and its meta-model
  * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
@@ -46,13 +46,12 @@ public class KSBasEXtendComponent {
     /** The workflow context. **/
     private WorkflowContext context;
     /**
-     * The issues container which is used during the execution of a
-     * transformation.
+     * The issues container which is used during the execution of a transformation.
      **/
     private Issues issues;
     /**
-     * The monitor which is used by Xtend. This is a null monitor because we
-     * don't want any process feedback.
+     * The monitor which is used by Xtend. This is a null monitor because we don't want any process
+     * feedback.
      **/
     private NullProgressMonitor xtendMonitor;
 
@@ -79,9 +78,8 @@ public class KSBasEXtendComponent {
      * @param modelSelection
      *            selected model elements
      */
-    public void createComponent(
-            final String operation, final String fileName, final String basePackage,
-            final String modelSelection) {
+    public void createComponent(final String operation, final String fileName,
+            final String basePackage, final String modelSelection) {
 
         xtendComponent = new XtendComponent();
 
@@ -109,8 +107,7 @@ public class KSBasEXtendComponent {
     public void invoke() {
         if (!initalized || xtendComponent == null) {
             KSBasEPlugin.getDefault().getLog().log(
-                    new Status(
-                            IStatus.ERROR, KSBasEPlugin.PLUGIN_ID,
+                    new Status(IStatus.ERROR, KSBasEPlugin.PLUGIN_ID,
                             "Workflow has not been initialized!"));
             return;
         }
@@ -118,8 +115,7 @@ public class KSBasEXtendComponent {
             xtendComponent.invoke(context, xtendMonitor, issues);
         } catch (Exception e) {
             KSBasEPlugin.getDefault().getLog().log(
-                    new Status(
-                            IStatus.ERROR, KSBasEPlugin.PLUGIN_ID,
+                    new Status(IStatus.ERROR, KSBasEPlugin.PLUGIN_ID,
                             "Error while executing transformation: The transformation "
                                     + "seems to be invalid, please check the Xtend file"));
         }
@@ -127,8 +123,7 @@ public class KSBasEXtendComponent {
         if (issues.hasWarnings()) {
             for (MWEDiagnostic warning : issues.getWarnings()) {
                 KSBasEPlugin.getDefault().getLog().log(
-                        new Status(
-                                IStatus.WARNING, KSBasEPlugin.PLUGIN_ID,
+                        new Status(IStatus.WARNING, KSBasEPlugin.PLUGIN_ID,
                                 "Warning while executing transformation: " + warning.getMessage()));
             }
 
@@ -142,8 +137,7 @@ public class KSBasEXtendComponent {
                     msg = error.getMessage();
                 }
                 KSBasEPlugin.getDefault().getLog().log(
-                        new Status(
-                                IStatus.ERROR, KSBasEPlugin.PLUGIN_ID,
+                        new Status(IStatus.ERROR, KSBasEPlugin.PLUGIN_ID,
                                 "Error while executing transformation: " + msg));
             }
 
@@ -178,9 +172,8 @@ public class KSBasEXtendComponent {
     }
 
     /**
-     * Sets the initialized state to the given value. This has to be public
-     * available to allow the command to set the status when all parameters have
-     * been set.
+     * Sets the initialized state to the given value. This has to be public available to allow the
+     * command to set the status when all parameters have been set.
      * 
      * @param status
      *            The new status

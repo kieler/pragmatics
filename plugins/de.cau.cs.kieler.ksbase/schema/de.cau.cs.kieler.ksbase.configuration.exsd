@@ -164,7 +164,6 @@ This class has to extend &apos;emf.ecore.EPackage&apos;
       <complexType>
          <sequence minOccurs="1" maxOccurs="unbounded">
             <element ref="transformationCommand" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="menu" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="locationURI" type="string" use="required">
             <annotation>
