@@ -19,15 +19,14 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Serializable;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import org.eclipse.core.runtime.IContributor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.internal.xtend.expression.ast.DeclaredParameter;
 import org.eclipse.internal.xtend.xtend.XtendFile;
 import org.eclipse.internal.xtend.xtend.ast.Extension;
@@ -37,11 +36,11 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 
 /**
  * Stores the KSBasE settings for one specific editor. This class is used by the
- * {@link TransformationManager} to store settings that have been defined using
- * the KSBasE extension point or the KSBasE preference pages.
+ * {@link TransformationManager} to store settings that have been defined using the KSBasE extension
+ * point or the KSBasE preference pages.
  * 
- * This class is capable of parsing an Xtend file and reading all in-place
- * extensions and parameters.
+ * This class is capable of parsing an Xtend file and reading all in-place extensions and
+ * parameters.
  * 
  * This class may be serialized.
  * 
@@ -68,15 +67,13 @@ public class EditorTransformationSettings implements Serializable {
     /** List of menu contributions. **/
     private LinkedList<KSBasEMenuContribution> menuContributions;
     /**
-     * The contributor which contains the extension points. When the settings
-     * have been defined using the preference pages this will be null.
-     * This attribute will not be serialized.
+     * The contributor which contains the extension points. When the settings have been defined
+     * using the preference pages this will be null. This attribute will not be serialized.
      **/
     private transient IContributor contributor;
 
     /**
-     * Creates a new transformation setting with the given fully qualified
-     * editor name.
+     * Creates a new transformation setting with the given fully qualified editor name.
      * 
      * @param editorClass
      *            The fqn of the diagram editor
@@ -84,9 +81,9 @@ public class EditorTransformationSettings implements Serializable {
     public EditorTransformationSettings(final String editorClass) {
         this.editorId = editorClass;
         this.modelPackageClass = ""; //$NON-NLS-1$
-        this.defaultIcon = "";
+        this.defaultIcon = ""; //$NON-NLS-1$
         this.extFile = ""; //$NON-NLS-1$
-        this.context = "";
+        this.context = ""; //$NON-NLS-1$
         this.transformations = new HashMap<String, Transformation>();
         this.menuContributions = new LinkedList<KSBasEMenuContribution>();
         this.contributor = null;
@@ -105,7 +102,7 @@ public class EditorTransformationSettings implements Serializable {
     }
 
     /**
-     * Gets the assigned editor.
+     * Gets the ID of the assigned editor.
      * 
      * @return The ID of the editor
      */
@@ -147,13 +144,12 @@ public class EditorTransformationSettings implements Serializable {
     }
 
     /**
-     * Sets the menu contributions for this editor and removes any existing
-     * contributions.
+     * Sets the menu contributions for this editor and removes any existing contributions.
      * 
      * @param contributionList
      *            The list of menu contributions to use
      */
-    public final void setMenuContributions(final LinkedList<KSBasEMenuContribution> contributionList) {
+    public final void setMenuContributions(final List<KSBasEMenuContribution> contributionList) {
         if (contributionList != null && contributionList.size() > 0) {
             this.menuContributions.clear();
             this.menuContributions.addAll(contributionList);
@@ -196,8 +192,8 @@ public class EditorTransformationSettings implements Serializable {
      * 
      * @return A LinkedList containing all transformations
      */
-    public final Map<String, Transformation> getTransformations() {
-        return Collections.unmodifiableMap(transformations);
+    public final Collection<Transformation> getTransformations() {
+        return Collections.unmodifiableCollection(transformations.values());
     }
 
     /**
@@ -210,7 +206,7 @@ public class EditorTransformationSettings implements Serializable {
     public final Transformation getTransformationByName(final String transformation) {
         if (transformation != null) {
             for (Transformation t : transformations.values()) {
-                if (t.getTransformationName().toLowerCase(Locale.getDefault()).equals(
+                if (t.getExtension().toLowerCase(Locale.getDefault()).equals(
                         transformation.toLowerCase(Locale.getDefault()))) {
                     return t;
                 }
@@ -224,8 +220,8 @@ public class EditorTransformationSettings implements Serializable {
      * 
      * @param tid
      *            The id to find
-     * @return The first transformation with the given id or null if no
-     *         transformation has been found
+     * @return The first transformation with the given id or null if no transformation has been
+     *         found
      */
     public final Transformation getTransformationById(final String tid) {
         return transformations.get(tid);
@@ -263,8 +259,7 @@ public class EditorTransformationSettings implements Serializable {
     }
 
     /**
-     * Gets the contributor. May return null if the editor has been added via
-     * the preference pages.
+     * Gets the contributor. May return null if the editor has been added via the preference pages.
      * 
      * @return The editors contributor project.
      */
@@ -276,8 +271,8 @@ public class EditorTransformationSettings implements Serializable {
      * Sets the editors contributor project.
      * 
      * @param contrib
-     *            The contribution that is assigned with this editor. May be
-     *            null if the editor has been defined by the user.
+     *            The contribution that is assigned with this editor. May be null if the editor has
+     *            been defined by the user.
      */
     public final void setContributor(final IContributor contrib) {
         this.contributor = contrib;
@@ -306,9 +301,8 @@ public class EditorTransformationSettings implements Serializable {
      * Parses the Xtend file to read transformations and parameters.
      * 
      * @param createTransformations
-     *            If this flag is set the transformations are created while
-     *            parsing. If not, the parameters of the existing
-     *            transformations are matched with the file.
+     *            If this flag is set the transformations are created while parsing. If not, the
+     *            parameters of the existing transformations are matched with the file.
      * @param fileName
      *            a valid URL to an Xtend file.
      */
@@ -318,18 +312,17 @@ public class EditorTransformationSettings implements Serializable {
                 // Using the XtendResourceParser to read transformations
                 XtendResourceParser parser = new XtendResourceParser();
                 Reader reader = new InputStreamReader(fileName.openStream());
-                Object o = parser.parse(reader, "features.ext");
+                Object o = parser.parse(reader, "features.ext"); //$NON-NLS-1$
                 if (o != null) {
                     // If we have any invalid transformations, i.e.
                     // the transformation defined here has no transformation
                     // match in the xtend file, we want to remove them.
-                    LinkedList<Transformation> cachedTransformations =
-                            new LinkedList<Transformation>();
+                    LinkedList<Transformation> cachedTransformations = new LinkedList<Transformation>();
 
                     XtendFile xtFile = (XtendFile) o;
                     for (Extension ext : xtFile.getExtensions()) {
                         // Only read in-place methods
-                        if (!ext.getReturnTypeIdentifier().getValue().equals("Void")) {
+                        if (!ext.getReturnTypeIdentifier().getValue().equals("Void")) { //$NON-NLS-1$
                             continue;
                         }
 
@@ -342,7 +335,7 @@ public class EditorTransformationSettings implements Serializable {
 
                         if (transformation != null) {
                             // set parameters
-                            transformation.setParameter(parameters.toArray(new String[parameters
+                            transformation.setParameters(parameters.toArray(new String[parameters
                                     .size()]));
                             // Clone it, so we don't remove the transformation
                             // when
@@ -352,7 +345,7 @@ public class EditorTransformationSettings implements Serializable {
                             // Create new transformation
                             transformation = new Transformation(ext.getName(), ext.getName());
                             // set parameters
-                            transformation.setParameter(parameters.toArray(new String[parameters
+                            transformation.setParameters(parameters.toArray(new String[parameters
                                     .size()]));
                             // Create a default transformation id
                             transformation.setTransformationId(editorId + "." + ext.getName());
@@ -368,29 +361,24 @@ public class EditorTransformationSettings implements Serializable {
                     }
                 }
             } catch (SecurityException sec) {
-                KSBasEPlugin.getDefault().getLog().log(
-                        new Status(
-                                IStatus.ERROR, KSBasEPlugin.PLUGIN_ID,
-                                "Unable to parse Xtend file: Not allowed to open file."));
+                KSBasEPlugin.getDefault().logError(
+                        "Unable to parse Xtend file: Not allowed to open file."); //$NON-NLS-1$
             } catch (IOException e) {
-                KSBasEPlugin.getDefault().getLog().log(
-                        new Status(
-                                IStatus.ERROR, KSBasEPlugin.PLUGIN_ID,
-                                "Unable to parse Xtend file: Error while reading file."));
+                KSBasEPlugin.getDefault().logError(
+                        "Unable to parse Xtend file: Error while reading file."); //$NON-NLS-1$
             }
         }
     }
 
     /**
-     * Two editor settings are the same if they have the same target editor and
-     * the same source contributor. So we will have an implicit distinction
-     * between extension point and user defined settings, because user defined
-     * settings will have 'null' as contributor.
+     * Two editor settings are the same if they have the same target editor and the same source
+     * contributor. So we will have an implicit distinction between extension point and user defined
+     * settings, because user defined settings will have 'null' as contributor.
      * 
      * @param obj
      *            The Object to compare
-     * @return True if the given Object is an EditorTransformationSetting and
-     *         has the same contributor
+     * @return True if the given Object is an EditorTransformationSetting and has the same
+     *         contributor
      */
     @Override
     public boolean equals(final Object obj) {
@@ -405,8 +393,8 @@ public class EditorTransformationSettings implements Serializable {
     }
 
     /**
-     * The hashcode is calculated from the editors hash and the hashCode of the
-     * contributor, if existing.
+     * The hashcode is calculated from the editors hash and the hashCode of the contributor, if
+     * existing.
      * 
      * @return The hashCode
      */

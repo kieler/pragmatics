@@ -14,10 +14,9 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.ui;
 
-import org.eclipse.core.internal.runtime.RuntimeLog;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -39,12 +38,39 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
     /** The shared instance. **/
     private static KSBasEUIPlugin plugin;
 
+    /** Logging instance. **/
+    private ILog logger;
+    
+    
     /**
      * The constructor.
      */
     public KSBasEUIPlugin() {
     }
 
+    /**
+     * Creates a warning message for the KSBasE-UI plug-in
+     * @param message The warning to log
+     */
+    public void logWarning(String message) {
+        logger.log(new Status(IStatus.WARNING, KSBasEUIPlugin.PLUGIN_ID, message));
+    }
+    
+    /**
+     * Creates an error message for the KSBasE-UI plug-in
+     * @param message The error message
+     */
+    public void logError(String message) {
+        logger.log(new Status(IStatus.ERROR, KSBasEUIPlugin.PLUGIN_ID, message));
+    }
+    
+    /**
+     * Creates an info message for the KSBasE-UI plug-in
+     * @param message The error message
+     */
+    public void logInfo(String message) {
+        logger.log(new Status(IStatus.INFO, KSBasEUIPlugin.PLUGIN_ID, message));
+    }
     
     /**
      * Starts the plug-in.
@@ -58,7 +84,9 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
      */
     public void start(final BundleContext context) throws Exception {
         super.start(context);
-        KSBasEUIPlugin.setPlugin(this);
+        KSBasEUIPlugin.plugin = this;
+        logger = KSBasEUIPlugin.plugin.getLog();
+        
         // Creating bundles
         DynamicMenuContributions.INSTANCE.createAllMenuContributions();
         // Temporary fix for "not loading features"-bug
@@ -106,7 +134,8 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
      *             When stopping this plug-in fails.
      */
     public void stop(final BundleContext context) throws Exception {
-        KSBasEUIPlugin.setPlugin(null);
+        KSBasEUIPlugin.plugin = null;
+        logger = null;
         super.stop(context);
     }
 
@@ -117,16 +146,6 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
      */
     public static KSBasEUIPlugin getDefault() {
         return plugin;
-    }
-
-    /**
-     * Used to set the plug-in instance.
-     * 
-     * @param pluginValue
-     *            The value to set.
-     */
-    public static void setPlugin(final KSBasEUIPlugin pluginValue) {
-        plugin = pluginValue;
     }
 
 }

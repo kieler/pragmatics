@@ -301,7 +301,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
              */
             public void widgetSelected(final SelectionEvent e) {
                 EditorTransformationSettings editor =
-                        manager.getUserDefinedEditorByName(((Combo) e.getSource()).getText());
+                        manager.getUserDefinedEditorById(((Combo) e.getSource()).getText());
                 EditorsPreferencePage.setActiveEditor(editor);
                 if (activeEditor != null) { // Load editor settings
                     sfMetaModel.setText(editor.getModelPackageClass());
@@ -443,7 +443,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 
                     String modelPackage = ((String) dlg.getFirstResult()).split("@")[0];
                     // only add a diagram once !
-                    if (manager.getUserDefinedEditorByName(modelPackage) == null) {
+                    if (manager.getUserDefinedEditorById(modelPackage) == null) {
                         activeEditor.setModelPackageClass(modelPackage);
                         cbEditors.notifyListeners(SWT.Selection, null);
                     }
@@ -555,7 +555,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
      */
     private void readEditors() {
         if (manager.getEditors() != null) {
-            for (EditorTransformationSettings s : manager.getUserDefinedEditors().values()) {
+            for (EditorTransformationSettings s : manager.getUserDefinedEditors()) {
                 cbEditors.add(s.getEditorId());
             }
             if (cbEditors.getItemCount() > 0) {

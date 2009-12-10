@@ -14,9 +14,8 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.core;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.mwe.core.ConfigurationException;
 import org.eclipse.emf.mwe.core.WorkflowContext;
 import org.eclipse.emf.mwe.core.WorkflowContextDefaultImpl;
 import org.eclipse.emf.mwe.core.issues.Issues;
@@ -82,17 +81,21 @@ public class KSBasEXtendComponent {
             final String basePackage, final String modelSelection) {
 
         xtendComponent = new XtendComponent();
+        try {
+            // The EMFMetaMetaModel,
+            EmfMetaModel emfmodel;
 
-        // The EMFMetaMetaModel,
-        EmfMetaModel emfmodel;
+            // Load the EPackage class by using EcoreUtils
+            EPackage pack = EcoreUtil2.getEPackageByClassName(basePackage);
+            // create EMFMetaModel with the given EPackage
+            emfmodel = new EmfMetaModel(pack);
 
-        // Load the EPackage class by using EcoreUtils
-        EPackage pack = EcoreUtil2.getEPackageByClassName(basePackage);
-        // create EMFMetaModel with the given EPackage
-        emfmodel = new EmfMetaModel(pack);
-
-        // Set metaModel-Slot
-        xtendComponent.addMetaModel(emfmodel);
+            // Set metaModel-Slot
+            xtendComponent.addMetaModel(emfmodel);
+        } catch (ConfigurationException ex) {
+            KSBasEPlugin.getDefault().logError(
+                    "Could not find EPackage for package name " + basePackage);
+        }
         // Create transformation value
         String value = fileName + "::" + operation + "(" + modelSelection + ")";
 
@@ -106,25 +109,21 @@ public class KSBasEXtendComponent {
      */
     public void invoke() {
         if (!initalized || xtendComponent == null) {
-            KSBasEPlugin.getDefault().getLog().log(
-                    new Status(IStatus.ERROR, KSBasEPlugin.PLUGIN_ID,
-                            "Workflow has not been initialized!"));
+            KSBasEPlugin.getDefault().logError("Workflow has not been initialized!");
             return;
         }
         try {
             xtendComponent.invoke(context, xtendMonitor, issues);
         } catch (Exception e) {
-            KSBasEPlugin.getDefault().getLog().log(
-                    new Status(IStatus.ERROR, KSBasEPlugin.PLUGIN_ID,
-                            "Error while executing transformation: The transformation "
-                                    + "seems to be invalid, please check the Xtend file"));
+            KSBasEPlugin.getDefault().logError(
+                    "Error while executing transformation: The transformation "
+                            + "seems to be invalid, please check the Xtend file");
         }
         // Logging errors and warnings:
         if (issues.hasWarnings()) {
             for (MWEDiagnostic warning : issues.getWarnings()) {
-                KSBasEPlugin.getDefault().getLog().log(
-                        new Status(IStatus.WARNING, KSBasEPlugin.PLUGIN_ID,
-                                "Warning while executing transformation: " + warning.getMessage()));
+                KSBasEPlugin.getDefault().logWarning(
+                        "Warning while executing transformation: " + warning.getMessage());
             }
 
         }
@@ -136,9 +135,7 @@ public class KSBasEXtendComponent {
                 } else {
                     msg = error.getMessage();
                 }
-                KSBasEPlugin.getDefault().getLog().log(
-                        new Status(IStatus.ERROR, KSBasEPlugin.PLUGIN_ID,
-                                "Error while executing transformation: " + msg));
+                KSBasEPlugin.getDefault().logError("Error while executing transformation: " + msg);
             }
 
         }

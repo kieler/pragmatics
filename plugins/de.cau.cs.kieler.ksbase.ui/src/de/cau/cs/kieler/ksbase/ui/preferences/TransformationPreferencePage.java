@@ -16,13 +16,12 @@ package de.cau.cs.kieler.ksbase.ui.preferences;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Locale;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ControlEditor;
@@ -145,11 +144,11 @@ public class TransformationPreferencePage extends PreferencePage
         // Fill table with transformations
         table.removeAll();
         if (activeEditor.getTransformations() != null) {
-            for (Transformation t : activeEditor.getTransformations().values()) {
+            for (Transformation t : activeEditor.getTransformations()) {
                 TableItem tItem = new TableItem(table, SWT.NONE);
 
                 tItem.setText(new String[] {
-                        t.getTransformationId(), t.getName(), t.getTransformationName(),
+                        t.getTransformationId(), t.getName(), t.getExtension(),
                         t.getIcon(), t.getKeyboardShortcut() });
 
             }
@@ -204,8 +203,9 @@ public class TransformationPreferencePage extends PreferencePage
                 assert (activeEditor != null);
                 TableItem row = cursor.getRow();
                 int col = cursor.getColumn();
+                Collection<Transformation> transformations = activeEditor.getTransformations();
                 final Transformation transformation =
-                        activeEditor.getTransformations().get(table.indexOf(row));
+                        activeEditor.getTransformations().toArray(new Transformation[transformations.size()])[table.indexOf(row)];
                 if (col == TABLE_COL_ID || col == TABLE_COL_NAME) {
                     // Name and Id can be edited directly
                     final Text text = new Text(cursor, SWT.NONE);
@@ -378,13 +378,9 @@ public class TransformationPreferencePage extends PreferencePage
                                         activeEditor.parseTransformations(true,null);
                                     }
                                 } catch (IOException exce) {
-                                    KSBasEUIPlugin.getDefault().getLog().log(
-                                            new Status(IStatus.ERROR, KSBasEUIPlugin.PLUGIN_ID,
-                                                    "Can't read Xtend file."));
+                                    KSBasEUIPlugin.getDefault().logError("Can't read Xtend file.");
                                 } catch (CoreException exce) {
-                                    KSBasEUIPlugin.getDefault().getLog().log(
-                                            new Status(IStatus.ERROR, KSBasEUIPlugin.PLUGIN_ID,
-                                                    "Can't read Xtend file."));
+                                    KSBasEUIPlugin.getDefault().logError("Can't read Xtend file.");
                                 }
                                 // TODO: readEditors();
                             }

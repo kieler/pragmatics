@@ -15,6 +15,9 @@
 package de.cau.cs.kieler.ksbase;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -36,12 +39,38 @@ public class KSBasEPlugin extends AbstractUIPlugin {
     /** The shared instance. **/
     private static KSBasEPlugin plugin;
 
+    /** Logging instance. **/
+    private ILog logger;
+
     /**
      * The constructor.
      */
     public KSBasEPlugin() {
     }
 
+    /**
+     * Creates a warning message for the KSBasE plug-in.
+     * @param message The warning to log
+     */
+    public void logWarning(final String message) {
+        logger.log(new Status(IStatus.WARNING, KSBasEPlugin.PLUGIN_ID, message));
+    }
+    
+    /**
+     * Creates an error message for the KSBasE plug-in.
+     * @param message The error message
+     */
+    public void logError(final String message) {
+        logger.log(new Status(IStatus.ERROR, KSBasEPlugin.PLUGIN_ID, message));
+    }
+    
+    /**
+     * Creates an info message for the KSBasE plug-in.
+     * @param message The info message
+     */
+    public void logInfo(final String message) {
+        logger.log(new Status(IStatus.INFO, KSBasEPlugin.PLUGIN_ID, message));
+    }
     /**
      * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
      * @param context

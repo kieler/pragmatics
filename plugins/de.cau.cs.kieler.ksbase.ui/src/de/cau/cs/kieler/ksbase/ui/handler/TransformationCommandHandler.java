@@ -20,6 +20,7 @@ import org.eclipse.core.commands.ExecutionException;
 
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
+import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 import de.cau.cs.kieler.ksbase.ui.TransformationUIManager;
 
 /**
@@ -59,9 +60,6 @@ public class TransformationCommandHandler extends AbstractHandler {
      */
     public Object execute(final ExecutionEvent event) throws ExecutionException {
 
-        if (!TransformationManager.INSTANCE.isInitialized()) {
-            TransformationManager.INSTANCE.initializeTransformations();
-        }
         EditorTransformationSettings editor = TransformationManager.INSTANCE
                 .getEditorById(event.getParameter(EDITOR_PARAM));
         if (editor != null) {
@@ -70,7 +68,7 @@ public class TransformationCommandHandler extends AbstractHandler {
                             editor.getTransformationByName(event
                                     .getParameter(TRANSFORMATION_PARAM)));
         } else {
-            System.err.println("error no transformation defined!");
+            KSBasEUIPlugin.getDefault().logError("Could not find "+EDITOR_PARAM + ". Please check transformation settings for " + TRANSFORMATION_PARAM );
         }
         return null;
     }

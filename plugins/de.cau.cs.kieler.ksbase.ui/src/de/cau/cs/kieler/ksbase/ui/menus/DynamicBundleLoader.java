@@ -23,8 +23,6 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.ContributorFactoryOSGi;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchPart;
@@ -137,9 +135,7 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
                                 //System.out.println("resolving");
                                 boolean res = admin.resolveBundles(new Bundle[] {b });
                                 if (!res) {
-                                    KSBasEUIPlugin.getDefault().getLog().log(
-                                            new Status(IStatus.ERROR, KSBasEUIPlugin.PLUGIN_ID,
-                                                    "Bundle could not be resolved."));
+                                    KSBasEUIPlugin.getDefault().logError("Bundle "+b.getBundleId()+" could not be resolved.");
                                 }
                             }
                             if (b.getState() == Bundle.RESOLVED) {
@@ -153,17 +149,11 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
                     }
 
                 } catch (MalformedURLException e) {
-                    KSBasEUIPlugin.getDefault().getLog().log(
-                            new Status(IStatus.ERROR, KSBasEUIPlugin.PLUGIN_ID,
-                                    "Bundle could not be loaded: Invalid URI."));
+                    KSBasEUIPlugin.getDefault().logError("Bundle could not be loaded: Invalid URI.");
                 } catch (IOException e) {
-                    KSBasEUIPlugin.getDefault().getLog().log(
-                            new Status(IStatus.ERROR, KSBasEUIPlugin.PLUGIN_ID,
-                                    "Bundle could not be loaded: Error while reading."));
+                    KSBasEUIPlugin.getDefault().logError("Bundle could not be loaded: Error while reading.");
                 } catch (BundleException e) {
-                    KSBasEUIPlugin.getDefault().getLog().log(
-                            new Status(IStatus.ERROR, KSBasEUIPlugin.PLUGIN_ID,
-                                    "Bundle could not be loaded: Invalid bundle."));
+                    KSBasEUIPlugin.getDefault().logError("Bundle could not be loaded: Invalid bundle.");
                 }
             }
 

@@ -21,17 +21,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 
 /**
- * The connection between Xtend functions and the KSBasE plug-In. Stores
- * additional information about how the transformation can be executed by the
- * user/workbench. This class is instantiated by the
- * {@link EditorTransformationSettings} class to configure the transformations
- * for one editor.
+ * The connection between Xtend functions and the KSBasE plug-In. Stores additional information
+ * about how the transformation can be executed by the user/workbench. This class is instantiated by
+ * the {@link EditorTransformationSettings} class to configure the transformations for one editor.
  * 
  * This class may be serialized.
  * 
@@ -45,8 +41,8 @@ public class Transformation implements Serializable, Cloneable {
     private static final long serialVersionUID = 513784171695543063L;
     /** Menu entry name. **/
     private String name;
-    /** Xtend method name. **/
-    private String transformationName;
+    /** Xtend extension name. **/
+    private String extension;
     /** URI to icon. **/
     private String icon;
     /** Assigned keyboard shortcut. **/
@@ -60,14 +56,13 @@ public class Transformation implements Serializable, Cloneable {
      * Creates a new Transformation.
      * 
      * @param tName
-     *            The name of this transformation which is displayed in the
-     *            menu.
+     *            The name of this transformation which is displayed in the menu.
      * @param tXtendName
      *            The name of the Xtend transformation to execute.
      */
     public Transformation(final String tName, final String tXtendName) {
         this.name = tName;
-        this.transformationName = tXtendName;
+        this.extension = tXtendName;
         icon = "";
         keyboardShortcut = "";
         transformationId = "";
@@ -82,7 +77,7 @@ public class Transformation implements Serializable, Cloneable {
      */
     public Transformation(final Transformation t) {
         this.name = t.name;
-        this.transformationName = t.transformationName;
+        this.extension = t.extension;
         this.icon = t.icon;
         this.transformationId = t.transformationId;
         this.keyboardShortcut = t.keyboardShortcut;
@@ -99,10 +94,7 @@ public class Transformation implements Serializable, Cloneable {
         try {
             super.clone();
         } catch (CloneNotSupportedException e) {
-            KSBasEPlugin.getDefault().getLog().log(
-                    new Status(
-                            IStatus.ERROR, KSBasEPlugin.PLUGIN_ID,
-                            "KSBASE: Error while cloning a transformation."));
+            KSBasEPlugin.getDefault().logError("Error while cloning a transformation.");
         }
         Transformation t = new Transformation(this);
         return t;
@@ -121,20 +113,20 @@ public class Transformation implements Serializable, Cloneable {
     }
 
     /**
-     * Sets the name of the transformation to be executed. The value is
-     * unchecked so giving an invalid name here will result in an Xtend error.
+     * Sets the name of the transformation to be executed. The value is unchecked so giving an
+     * invalid name here will result in an Xtend error.
      * 
      * @param value
      *            The name of the Xtend transformation to execute
      */
-    public final void setTransformationName(final String value) {
+    public final void setExtension(final String value) {
         if (value != null) {
-            this.transformationName = value;
+            this.extension = value;
         }
     }
 
     /**
-     * Sets the iconURI used by the toolbar and the balloon menus.
+     * Sets the iconURI used by the menu contributions.
      * 
      * @param iconUri
      *            The URI to the icon to use for this transformation.
@@ -155,12 +147,12 @@ public class Transformation implements Serializable, Cloneable {
     }
 
     /**
-     * Returns the Xtend transformation method name.
+     * Returns the Xtend extension name.
      * 
      * @return The name of this transformation
      */
-    public final String getTransformationName() {
-        return this.transformationName;
+    public final String getExtension() {
+        return this.extension;
     }
 
     /**
@@ -194,11 +186,11 @@ public class Transformation implements Serializable, Cloneable {
     }
 
     /**
-     * Gets the list of parameters as an array, may be null if not initialized.
+     * Gets the list of parameters as an array.
      * 
      * @return An array of parameters.
      */
-    public final String[] getParameter() {
+    public final String[] getParameters() {
         Assert.isNotNull(this.parameter);
         return parameter.toArray(new String[parameter.size()]);
     }
@@ -207,7 +199,7 @@ public class Transformation implements Serializable, Cloneable {
      * @param param
      *            The parameters for this transformation.
      */
-    public final void setParameter(final String[] param) {
+    public final void setParameters(final String[] param) {
         if (param != null && param.length > 0) {
             this.parameter.clear();
             for (String para : param) {
@@ -217,8 +209,7 @@ public class Transformation implements Serializable, Cloneable {
     }
 
     /**
-     * Returns the Id for this transformation. This is used for menu
-     * contributions only, so it does not need to be set.
+     * Returns the Id for this transformation.
      * 
      * @return The transformationId
      */
@@ -239,7 +230,8 @@ public class Transformation implements Serializable, Cloneable {
     }
 
     /**
-     * This is only a string, it's not validated or checked for conflicts.
+     * Returns the keyboard shortcut. This is only a string, it's not validated or checked for
+     * conflicts.
      * 
      * @return The keyboard shortcut
      */
@@ -269,42 +261,39 @@ public class Transformation implements Serializable, Cloneable {
         try {
             Assert.isNotNull(writer);
             writer.writeObject(this.name);
-            writer.writeObject(this.transformationName);
+            writer.writeObject(this.extension);
             writer.writeObject(this.parameter);
             writer.writeObject(this.icon);
         } catch (IOException e) {
-            KSBasEPlugin.getDefault().getLog().log(
-                    new Status(
-                            IStatus.ERROR, KSBasEPlugin.PLUGIN_ID,
-                            "Transformation settings could not be saved."));
+            KSBasEPlugin.getDefault().logError("Transformation settings could not be saved.");
         }
     }
 
     /**
-     * Simple hashCode calculations, uses the hash code of the transformation
-     * name and adds the number of selections.
+     * Simple hashCode calculations, uses the hash code of the transformation name and adds the
+     * number of selections.
      * 
      * @return The hashCode value
      */
     @Override
     public final int hashCode() {
-        return transformationName.hashCode();
+        return extension.hashCode();
     }
 
     /**
-     * Two transformations are equal, when they have the same transformation
-     * name and the same number of parameters.
+     * Two transformations are equal, when they have the same transformation name and the same
+     * number of parameters.
      * 
      * @param obj
      *            The object to compare with
-     * @return True if the given object is a transformation and has the same
-     *         name and number of parameters
+     * @return True if the given object is a transformation and has the same name and number of
+     *         parameters
      */
     @Override
     public final boolean equals(final Object obj) {
         if (obj != null && obj instanceof Transformation) {
             return (getNumSelections() == ((Transformation) obj).getNumSelections())
-                    && (transformationName.equals(((Transformation) obj).getTransformationName()));
+                    && (extension.equals(((Transformation) obj).getExtension()));
         }
         return false;
     }

@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.preference.IPreferenceStore;
 
@@ -172,12 +170,9 @@ public class KSBasECombination extends ACombination {
         if (KSBasECombination.effects != null && KSBasECombination.effects.size() > 0) {
             for (String effect : KSBasECombination.effects) {
                 if (effect.contains(KSBasECombination.SEPARATOR)) {
-                    KSBasEUIPlugin.getDefault().getLog().log(
-                            new Status(
-                                    IStatus.WARNING, KSBasEUIPlugin.PLUGIN_ID,
-                                    "Could not store effect ("
+                    KSBasEUIPlugin.getDefault().logWarning("Could not store effect ("
                                             + effect + "). Name contains invalid character:"
-                                            + KSBasECombination.SEPARATOR));
+                                            + KSBasECombination.SEPARATOR);
                     continue;
                 }
                 effectString.append(effect + KSBasECombination.SEPARATOR);
