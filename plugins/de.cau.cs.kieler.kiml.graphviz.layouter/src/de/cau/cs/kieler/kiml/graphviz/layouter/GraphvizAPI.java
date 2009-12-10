@@ -16,6 +16,8 @@ package de.cau.cs.kieler.kiml.graphviz.layouter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -44,6 +46,8 @@ public final class GraphvizAPI {
     public static final String ATTR_COMMENT = "comment";
     /** Set edge type for drawing arrowheads. */
     public static final String ATTR_EDGEDIR = "dir";
+    /** Preferred edge length, in inches (fdp, neato only). */
+    public static final String ATTR_EDGELEN = "len";
     /** This specifies the expected number of pixels per inch on a display device. */
     public static final String ATTR_DPI = "dpi";
     /**
@@ -81,8 +85,6 @@ public final class GraphvizAPI {
     public static final String ATTR_LABELJUST = "labeljust";
     /** Top/bottom placement of graph and cluster labels. */
     public static final String ATTR_LABELLOC = "labelloc";
-    /** Preferred edge length, in inches (fdp, neato only). */
-    public static final String ATTR_EDGELEN = "len";
     /** Label position, in points. */
     public static final String ATTR_LABELPOS = "lp";
     /** Determines if and how node overlaps should be removed (not dot). */
@@ -146,13 +148,9 @@ public final class GraphvizAPI {
             "/usr/local/bin/",
             "/usr/bin/",
             "/bin/" };
-    /**
-     * number of milliseconds to wait if no input is available from the Graphviz process.
-     */
+    /** number of milliseconds to wait if no input is available from the Graphviz process. */
     private static final int PROCESS_INPUT_WAIT = 20;
-    /**
-     * maximal number of characters that is read from the Graphviz error output.
-     */
+    /** maximal number of characters that is read from the Graphviz error output. */
     private static final int MAX_ERROR_OUTPUT = 512;
 
     /**
@@ -162,7 +160,7 @@ public final class GraphvizAPI {
     }
 
     /** the process instance that is used for multiple layout runs. */
-    private static Process graphvizProcess = null;
+    private static Map<String, Process> processMap = new HashMap<String, Process>();
     
     /**
      * Starts a new Graphviz process with the given command. If a process instance was already
@@ -173,6 +171,7 @@ public final class GraphvizAPI {
      * @throws KielerException if creating the process fails
      */
     public static synchronized Process startProcess(final String command) throws KielerException {
+        Process graphvizProcess = processMap.get(command);
         if (graphvizProcess == null) {
             IPreferenceStore preferenceStore = GraphvizLayouterPlugin.getDefault().getPreferenceStore();
             String dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
@@ -198,6 +197,7 @@ public final class GraphvizAPI {
                 graphvizProcess = Runtime.getRuntime().exec(
                                 new String[] {dotExecutable, ARG_NOWARNINGS, ARG_INVERTYAXIS,
                                         ARG_COMMAND + command});
+                processMap.put(command, graphvizProcess);
             } catch (IOException exception) {
                 throw new KielerException("Failed to start Graphviz process."
                         + " Please check your Graphviz installation.", exception);
@@ -207,11 +207,11 @@ public final class GraphvizAPI {
     }
     
     /**
-     * Closes the currently cached process instance so a new one is created for the next
+     * Closes the currently cached process instances so a new one is created for the next
      * layout run.
      */
     public static void endProcess() {
-        if (graphvizProcess != null) {
+        for (Process graphvizProcess : processMap.values()) {
             try {
                 graphvizProcess.getOutputStream().close();
                 graphvizProcess.getInputStream().close();
@@ -219,8 +219,8 @@ public final class GraphvizAPI {
                 // ignore exception
             }
             graphvizProcess.destroy();
-            graphvizProcess = null;
         }
+        processMap.clear();
     }
 
     /**
