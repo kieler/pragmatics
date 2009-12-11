@@ -26,6 +26,7 @@ import de.cau.cs.kieler.core.util.Pair;
 /**
  * Request for automatic layout on a set of edit parts of a diagram.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class ApplyLayoutRequest extends Request {

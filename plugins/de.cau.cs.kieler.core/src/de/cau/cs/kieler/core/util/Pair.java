@@ -19,6 +19,7 @@ import java.util.Comparator;
 /**
  * A simple pair implementation.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @param <F> type of first contained object
  * @param <S> type of second contained object
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>

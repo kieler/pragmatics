@@ -37,6 +37,7 @@ import de.cau.cs.kieler.klodd.hierarchical.structures.RoutingSlot;
  * Layerwise edge placer implementation that orders routing slots using
  * topological numbering.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class ToponumLayerwiseEdgePlacer extends AbstractAlgorithm implements ILayerwiseEdgePlacer {

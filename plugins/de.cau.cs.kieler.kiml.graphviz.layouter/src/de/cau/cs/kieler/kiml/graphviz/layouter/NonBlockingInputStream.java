@@ -17,7 +17,10 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
+ * An input stream wrapper that does not block when reading, but returns the EOF code
+ * if no character is available.
  *
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
  */
 public class NonBlockingInputStream extends InputStream {

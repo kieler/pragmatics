@@ -25,6 +25,7 @@ import de.cau.cs.kieler.core.slimgraph.KSlimNode;
  * Abstract superclass that can be used for implementations of cycle remover
  * algorithms which operate by reversing edges.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public abstract class AbstractCycleRemover extends AbstractAlgorithm implements ICycleRemover {

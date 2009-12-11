@@ -20,6 +20,7 @@ import de.cau.cs.kieler.klodd.hierarchical.structures.LayeredGraph;
  * Interface for algorithms that calculate routing slots for connections
  * starting and ending at regular nodes.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public interface INodewiseEdgePlacer extends IAlgorithm {

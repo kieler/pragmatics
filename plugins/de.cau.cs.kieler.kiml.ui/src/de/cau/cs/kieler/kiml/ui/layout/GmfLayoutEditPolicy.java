@@ -59,6 +59,7 @@ import de.cau.cs.kieler.kiml.ui.Messages;
  * {@link GmfLayoutCommand} to directly manipulate layout data in the
  * GMF notation model.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  * @see org.eclipse.gmf.runtime.diagram.ui.editpolicies.XYLayoutEditPolicy
  * @see org.eclipse.gmf.runtime.diagram.ui.editpolicies.ConnectionBendpointEditPolicy

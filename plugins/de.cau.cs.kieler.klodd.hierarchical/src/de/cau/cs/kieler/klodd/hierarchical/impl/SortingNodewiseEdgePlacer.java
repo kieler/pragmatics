@@ -39,6 +39,7 @@ import de.cau.cs.kieler.klodd.hierarchical.structures.LayeredGraph;
  * Nodewise edge placer implementation that sorts the edges and gives them slot
  * ranks according to the result.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class SortingNodewiseEdgePlacer extends AbstractAlgorithm implements INodewiseEdgePlacer {

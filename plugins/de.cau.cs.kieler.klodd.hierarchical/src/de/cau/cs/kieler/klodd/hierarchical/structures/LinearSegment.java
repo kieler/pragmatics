@@ -20,6 +20,7 @@ import java.util.List;
  * A linear segment of layer elements that represents a long edge in a layered
  * graph.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class LinearSegment implements Comparable<LinearSegment> {

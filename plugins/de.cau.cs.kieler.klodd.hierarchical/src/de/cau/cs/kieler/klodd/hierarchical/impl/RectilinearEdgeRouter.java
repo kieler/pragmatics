@@ -41,6 +41,7 @@ import de.cau.cs.kieler.klodd.hierarchical.structures.RoutingSlot;
 /**
  * Edge routing algorithm that makes rectilinear edges.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class RectilinearEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {

@@ -39,6 +39,7 @@ import de.cau.cs.kieler.klodd.hierarchical.structures.LinearSegment;
  * Node placing algorithm that orders all linear segments and creates an
  * unbalanced placement.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class BasicNodePlacer extends AbstractAlgorithm implements INodePlacer {

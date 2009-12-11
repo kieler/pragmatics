@@ -19,6 +19,7 @@ import de.cau.cs.kieler.klodd.hierarchical.structures.LayeredGraph;
 /**
  * Interface for algorithms that reduce crossings in a layered graph.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public interface ICrossingReducer extends IAlgorithm {

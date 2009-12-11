@@ -18,6 +18,7 @@ import org.eclipse.zest.layouts.exampleStructures.SimpleNode;
 /**
  * Implementation of the LayoutEntity interface in the Zest layout package.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class AdvancedEntity extends SimpleNode {

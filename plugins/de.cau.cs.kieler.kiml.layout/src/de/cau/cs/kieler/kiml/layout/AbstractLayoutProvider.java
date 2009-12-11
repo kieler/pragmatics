@@ -26,6 +26,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
  * this way are collected in the {@link LayoutServices} singleton, provided the
  * UI plugin is loaded.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author <a href="mailto:ars@informatik.uni-kiel.de">Arne Schipper</a>
  */
 public abstract class AbstractLayoutProvider {

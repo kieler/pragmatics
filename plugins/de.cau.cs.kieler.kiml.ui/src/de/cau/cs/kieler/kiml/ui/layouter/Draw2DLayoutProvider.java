@@ -47,6 +47,7 @@ import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
  * 
  * TODO implement compound graph layout using CompoundDirectedGraphLayout
  *
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class Draw2DLayoutProvider extends AbstractLayoutProvider {

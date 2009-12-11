@@ -24,6 +24,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
  * layout algorithm. For example, a layout listener could store the layout graph
  * structure into an XMI file to enable easy browsing of the structure.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public interface ILayoutListener {

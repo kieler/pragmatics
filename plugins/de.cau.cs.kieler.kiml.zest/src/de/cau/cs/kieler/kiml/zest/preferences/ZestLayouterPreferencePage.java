@@ -23,11 +23,12 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import de.cau.cs.kieler.core.ui.util.FloatFieldEditor;
-import de.cau.cs.kieler.kiml.zest.Activator;
+import de.cau.cs.kieler.kiml.zest.ZestLayouterPlugin;
 
 /**
  * Preference page for the Zest layouters plugin.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class ZestLayouterPreferencePage extends FieldEditorPreferencePage implements
@@ -66,7 +67,7 @@ public class ZestLayouterPreferencePage extends FieldEditorPreferencePage implem
      * {@inheritDoc}
      */
     public void init(final IWorkbench workbench) {
-        setPreferenceStore(Activator.getDefault().getPreferenceStore());
+        setPreferenceStore(ZestLayouterPlugin.getDefault().getPreferenceStore());
     }
 
 }

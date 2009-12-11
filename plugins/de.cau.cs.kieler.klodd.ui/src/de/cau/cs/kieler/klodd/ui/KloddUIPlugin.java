@@ -24,6 +24,7 @@ import de.cau.cs.kieler.klodd.hierarchical.HierarchicalDataflowLayoutProvider;
 /**
  * The activator class controls the plug-in life cycle.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author <a href="msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class KloddUIPlugin extends AbstractUIPlugin {

@@ -38,6 +38,7 @@ import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
  * {@link createLayoutServices()}. The subclass is then responsible to add
  * appropriate data to the nested registry instance.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class LayoutServices {

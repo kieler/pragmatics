@@ -28,6 +28,7 @@ import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
  * passed in the {@link #initialize(String)} method. If no parameter is passed,
  * the Dot layouter is applied as default.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class GraphvizLayoutProvider extends AbstractLayoutProvider {

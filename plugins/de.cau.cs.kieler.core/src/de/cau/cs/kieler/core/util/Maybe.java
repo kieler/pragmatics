@@ -16,6 +16,7 @@ package de.cau.cs.kieler.core.util;
 /**
  * Object that may contain another object, inspired by the Haskell type <i>Maybe</i>.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @param <T> type of contained object
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */

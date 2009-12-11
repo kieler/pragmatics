@@ -23,6 +23,7 @@ import java.util.List;
  * However, the direction of each edge can be obtained by a respective entry in
  * the incidence list of the respective node.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class KSlimGraph {

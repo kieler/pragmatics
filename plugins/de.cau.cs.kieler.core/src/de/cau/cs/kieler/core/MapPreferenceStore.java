@@ -23,6 +23,7 @@ import java.util.Map;
  * and default values. This can be used to write these keys together with
  * their values to a file for permanent storage.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class MapPreferenceStore implements IKielerPreferenceStore {

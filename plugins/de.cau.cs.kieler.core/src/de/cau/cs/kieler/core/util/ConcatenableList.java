@@ -21,6 +21,7 @@ import java.util.NoSuchElementException;
 /**
  * Implementation of doubly linked list that permits concatenation of two lists.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @param <E> type of contained objects
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */

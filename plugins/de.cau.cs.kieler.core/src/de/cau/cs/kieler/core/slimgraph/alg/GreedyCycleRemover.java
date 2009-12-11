@@ -22,6 +22,7 @@ import de.cau.cs.kieler.core.slimgraph.KSlimNode;
 /**
  * Cycle remover implementation that uses a greedy algorithm.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class GreedyCycleRemover extends AbstractCycleRemover {

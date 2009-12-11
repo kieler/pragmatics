@@ -20,6 +20,7 @@ import de.cau.cs.kieler.klodd.hierarchical.structures.LayeredGraph;
  * Interface for algorithms that determine a placement for each node in a
  * layered graph.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public interface INodePlacer extends IAlgorithm {

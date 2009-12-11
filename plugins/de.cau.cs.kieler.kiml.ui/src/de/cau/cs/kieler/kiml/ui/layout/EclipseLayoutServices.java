@@ -37,6 +37,7 @@ import de.cau.cs.kieler.kiml.ui.preferences.LayoutPreferencePage;
  * This class is responsible for reading all extension point elements for layout
  * services.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class EclipseLayoutServices extends LayoutServices {

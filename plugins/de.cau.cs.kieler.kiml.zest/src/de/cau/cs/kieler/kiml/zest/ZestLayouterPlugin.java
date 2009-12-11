@@ -20,20 +20,21 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
-public class Activator extends AbstractUIPlugin {
+public class ZestLayouterPlugin extends AbstractUIPlugin {
 
     /** the plug-in ID. */
     public static final String PLUGIN_ID = "de.cau.cs.kieler.kiml.zest";
 
     /** the shared instance. */
-    private static Activator plugin;
+    private static ZestLayouterPlugin plugin;
 
     /**
      * The constructor.
      */
-    public Activator() {
+    public ZestLayouterPlugin() {
     }
 
     /**
@@ -59,7 +60,7 @@ public class Activator extends AbstractUIPlugin {
      * 
      * @return the shared instance
      */
-    public static Activator getDefault() {
+    public static ZestLayouterPlugin getDefault() {
         return plugin;
     }
 

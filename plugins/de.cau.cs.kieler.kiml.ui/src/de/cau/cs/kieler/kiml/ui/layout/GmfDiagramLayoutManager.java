@@ -72,6 +72,7 @@ import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsPackage;
  * directly manipulate data in the GMF notation model, where layout information
  * is stored persistently.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author <a href="mailto:ars@informatik.uni-kiel.de">Arne Schipper</a>
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */

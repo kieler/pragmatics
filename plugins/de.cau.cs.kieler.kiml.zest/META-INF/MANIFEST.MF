@@ -9,6 +9,6 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.4.0",
  de.cau.cs.kieler.core,
  de.cau.cs.kieler.core.ui,
  de.cau.cs.kieler.kiml.layout
-Bundle-Activator: de.cau.cs.kieler.kiml.zest.Activator
+Bundle-Activator: de.cau.cs.kieler.kiml.zest.ZestLayouterPlugin
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel

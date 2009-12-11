@@ -19,6 +19,7 @@ import java.util.ResourceBundle;
 /**
  * Class for access to internationalized strings.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public final class Messages {

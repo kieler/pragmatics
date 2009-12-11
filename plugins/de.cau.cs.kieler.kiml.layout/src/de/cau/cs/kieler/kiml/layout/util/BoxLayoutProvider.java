@@ -28,6 +28,7 @@ import de.cau.cs.kieler.kiml.layout.util.alg.BoxSorter;
  * A layout algorithm that does not take edges into account, but treats all
  * nodes as isolated boxes.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class BoxLayoutProvider extends AbstractLayoutProvider {

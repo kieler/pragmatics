@@ -17,6 +17,7 @@ package de.cau.cs.kieler.core.alg;
  * Superclass for algorithms used in the KIELER project. This class stores a
  * reference to the currently used progress monitor.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @see IKielerProgressMonitor
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */

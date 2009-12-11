@@ -40,6 +40,7 @@ import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
  * to layout a specific diagram, and manages selection of an appropriate
  * subclass to translate the diagram into the internal {@code KGraph} structure.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public abstract class DiagramLayoutManager {

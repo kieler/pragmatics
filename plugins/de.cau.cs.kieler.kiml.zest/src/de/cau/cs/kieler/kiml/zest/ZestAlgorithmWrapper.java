@@ -43,6 +43,7 @@ import de.cau.cs.kieler.kiml.zest.preferences.ZestLayouterPreferencePage;
  * Wrapper class that translates KIML layout graphs into the Zest graph
  * structure.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class ZestAlgorithmWrapper {
@@ -90,7 +91,7 @@ public class ZestAlgorithmWrapper {
         progressMonitor.worked(SMALL_TASK);
 
         // compute preferred height and width of the graph
-        float scaleBase = Activator.getDefault().getPreferenceStore().getFloat(
+        float scaleBase = ZestLayouterPlugin.getDefault().getPreferenceStore().getFloat(
                 ZestLayouterPreferencePage.PREF_SCALE_BASE);
         float width = (float) Math.sqrt(totalWidth / entities.length) * scaleBase;
         float height = (float) Math.sqrt(totalHeight / entities.length) * scaleBase;

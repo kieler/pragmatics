@@ -20,6 +20,7 @@ import java.util.ListIterator;
 /**
  * Data type used to store information for a layout provider.
  * 
+ * @kieler.rating 2009-12-11 proposed yellow msp
  * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
  */
 public class LayoutProviderData {
