@@ -40,38 +40,50 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
 
     /** Logging instance. **/
     private ILog logger;
-    
-    
+
     /**
      * The constructor.
      */
     public KSBasEUIPlugin() {
+        logger = null;
     }
 
     /**
      * Creates a warning message for the KSBasE-UI plug-in
-     * @param message The warning to log
+     * 
+     * @param message
+     *            The warning to log
      */
     public void logWarning(String message) {
-        logger.log(new Status(IStatus.WARNING, KSBasEUIPlugin.PLUGIN_ID, message));
+        if (logger != null) {
+            logger.log(new Status(IStatus.WARNING, KSBasEUIPlugin.PLUGIN_ID, message));
+        }
     }
-    
+
     /**
      * Creates an error message for the KSBasE-UI plug-in
-     * @param message The error message
+     * 
+     * @param message
+     *            The error message
      */
     public void logError(String message) {
-        logger.log(new Status(IStatus.ERROR, KSBasEUIPlugin.PLUGIN_ID, message));
+        if (logger != null) {
+            logger.log(new Status(IStatus.ERROR, KSBasEUIPlugin.PLUGIN_ID, message));
+        }
     }
-    
+
     /**
      * Creates an info message for the KSBasE-UI plug-in
-     * @param message The error message
+     * 
+     * @param message
+     *            The error message
      */
     public void logInfo(String message) {
-        logger.log(new Status(IStatus.INFO, KSBasEUIPlugin.PLUGIN_ID, message));
+        if (logger != null) {
+            logger.log(new Status(IStatus.INFO, KSBasEUIPlugin.PLUGIN_ID, message));
+        }
     }
-    
+
     /**
      * Starts the plug-in.
      * 
@@ -86,7 +98,7 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
         super.start(context);
         KSBasEUIPlugin.plugin = this;
         logger = KSBasEUIPlugin.plugin.getLog();
-        
+
         // Creating bundles
         DynamicMenuContributions.INSTANCE.createAllMenuContributions();
         // Temporary fix for "not loading features"-bug
@@ -94,33 +106,27 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
         if (!RunLogic.getInstance().getState()) {
             RunLogic.getInstance().registerListeners();
         }
-        //Dirty hack, activating view management bundle:
+        // Dirty hack, activating view management bundle:
         /*
-        IConfigurationElement[] configurations =
-            Platform.getExtensionRegistry().getConfigurationElementsFor(
-                    "de.cau.cs.kieler.ksbase.ui.classLoader");
-        for (IConfigurationElement loader : configurations) {
-            Object o = loader.createExecutableExtension("class");
-            System.out.println(o);
-        }
-        */
+         * IConfigurationElement[] configurations =
+         * Platform.getExtensionRegistry().getConfigurationElementsFor(
+         * "de.cau.cs.kieler.ksbase.ui.classLoader"); for (IConfigurationElement loader :
+         * configurations) { Object o = loader.createExecutableExtension("class");
+         * System.out.println(o); }
+         */
         //
         /*
          * // Adding a part listener to check when to activate a bundle
          * System.out.println("activated");
          * 
-         * if (PlatformUI.getWorkbench() != null) {
-         * System.out.println("workbench found");
+         * if (PlatformUI.getWorkbench() != null) { System.out.println("workbench found");
          * System.out.println("work windows: " +
-         * PlatformUI.getWorkbench().getWorkbenchWindows().length);
-         * System.out.println("active: " +
-         * PlatformUI.getWorkbench().getActiveWorkbenchWindow
-         * ().getClass().getCanonicalName());
+         * PlatformUI.getWorkbench().getWorkbenchWindows().length); System.out.println("active: " +
+         * PlatformUI.getWorkbench().getActiveWorkbenchWindow ().getClass().getCanonicalName());
          * 
          * 
          * 
-         * PlatformUI.getWorkbench().addWindowListener(DynamicBundleLoader.INSTANCE
-         * ); }#
+         * PlatformUI.getWorkbench().addWindowListener(DynamicBundleLoader.INSTANCE ); }#
          */
     }
 
