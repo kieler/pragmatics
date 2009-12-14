@@ -49,36 +49,36 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
     }
 
     /**
-     * Creates a warning message for the KSBasE-UI plug-in
+     * Creates a warning message for the KSBasE-UI plug-in.
      * 
      * @param message
      *            The warning to log
      */
-    public void logWarning(String message) {
+    public void logWarning(final String message) {
         if (logger != null) {
             logger.log(new Status(IStatus.WARNING, KSBasEUIPlugin.PLUGIN_ID, message));
         }
     }
 
     /**
-     * Creates an error message for the KSBasE-UI plug-in
+     * Creates an error message for the KSBasE-UI plug-in.
      * 
      * @param message
      *            The error message
      */
-    public void logError(String message) {
+    public void logError(final String message) {
         if (logger != null) {
             logger.log(new Status(IStatus.ERROR, KSBasEUIPlugin.PLUGIN_ID, message));
         }
     }
 
     /**
-     * Creates an info message for the KSBasE-UI plug-in
+     * Creates an info message for the KSBasE-UI plug-in.
      * 
      * @param message
      *            The error message
      */
-    public void logInfo(String message) {
+    public void logInfo(final String message) {
         if (logger != null) {
             logger.log(new Status(IStatus.INFO, KSBasEUIPlugin.PLUGIN_ID, message));
         }
