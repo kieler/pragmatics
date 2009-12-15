@@ -267,8 +267,14 @@ public final class DynamicMenuContributions {
                 // Now we are importing the dependencies from the contributing plug-in:
                 Dictionary<?, ?> dict = contributorBundle.getHeaders();
                 Object dependencies = dict.get("Require-Bundle");
+                //This is important! We have do split the dependencies
+                //to new lines because the string line is limited!
+                String depString = dependencies.toString();
+                depString=depString.replace(",", ",\n ");
+                
                 // And set the rest of the manifest attributes
-                sbuf.append("Require-Bundle: " + dependencies.toString() + "\n");
+                
+                sbuf.append("Require-Bundle: " + depString + "\n");
                 sbuf.append("Bundle-RequiredExecutionEnvironment: J2SE-1.5\n");
                 sbuf.append("Bundle-ActivationPolicy: lazy\n");
                 sbuf.append("Bundle-Version: 0.1.0.vqualifier\n");
@@ -323,7 +329,7 @@ public final class DynamicMenuContributions {
                         "Bundle could not be created: Unsupported encoding.");
 
             } catch (IOException e) {
-                KSBasEUIPlugin.getDefault().logError("Bundle could not be created.");
+                KSBasEUIPlugin.getDefault().logError("Bundle could not be created: IOException");
             } catch (IllegalStateException e) {
                 KSBasEUIPlugin.getDefault().logError("Bundle could not be created: Invalid state.");
             }
