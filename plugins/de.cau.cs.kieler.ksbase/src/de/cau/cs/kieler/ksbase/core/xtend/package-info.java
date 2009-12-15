@@ -18,8 +18,6 @@
  * for the Xtend framework
  *  
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
- * 
- * @kieler.rating 2009-12-15 proposed yellow 
  */
 package de.cau.cs.kieler.ksbase.core.xtend;
 

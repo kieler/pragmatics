@@ -17,8 +17,6 @@
  * Base package of the KSBasE core plug-in.
  * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
- * 
- * @kieler.rating 2009-11-19 proposed yellow
  */
 package de.cau.cs.kieler.ksbase;
 
