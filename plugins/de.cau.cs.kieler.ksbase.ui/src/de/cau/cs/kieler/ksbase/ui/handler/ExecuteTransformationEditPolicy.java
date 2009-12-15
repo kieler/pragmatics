@@ -26,9 +26,10 @@ import de.cau.cs.kieler.ksbase.core.Messages;
 
 /**
  * Edit policy used to execute a specific transformation. This edit policy
- * creates a {@link XtendTransformationCommand} to execute the transformation.
+ * creates a {@link TransformationCommand} to execute the transformation.
  * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
+ * @kieler.rating 2009-12-15 proposed yellow
  */
 public class ExecuteTransformationEditPolicy extends AbstractEditPolicy {
 
@@ -62,7 +63,7 @@ public class ExecuteTransformationEditPolicy extends AbstractEditPolicy {
             if (req instanceof ExecuteTransformationRequest) {
                 ExecuteTransformationRequest transformationRequest = (ExecuteTransformationRequest) req;
                 IGraphicalEditPart hostEPart = (IGraphicalEditPart) getHost();
-                XtendTransformationCommand command = new XtendTransformationCommand(
+                TransformationCommand command = new TransformationCommand(
                         hostEPart.getEditingDomain(),
                         Messages.executeTransformationEditPolicyTransformationCommandName,
                         new EObjectAdapter((View) hostEPart.getModel()));

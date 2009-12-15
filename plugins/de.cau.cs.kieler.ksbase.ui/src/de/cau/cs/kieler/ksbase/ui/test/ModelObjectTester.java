@@ -33,7 +33,7 @@ import de.cau.cs.kieler.ksbase.core.TransformationManager;
  * model element.
  * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
- * 
+ * @kieler.rating 2009-12-15 proposed yellow
  */
 public class ModelObjectTester extends PropertyTester {
 

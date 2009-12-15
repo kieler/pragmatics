@@ -12,22 +12,14 @@
  * See the file epl-v10.html for the license text.
  * 
  *****************************************************************************/
-package de.cau.cs.kieler.ksbase.ui.listener;
-
 /**
- * Interface for a transformation listener. This listener has to be registered
- * in the {@link de.cau.cs.kieler.ksbase.ui.TransformationUIManager} and is
- * notified after each transformation.
- * 
+ * Xtend package of the KSBasE plug-in.
+ * Contains an implementation of an {@link de.cau.cs.kieler.ksbase.core.ITransformationFramework} 
+ * for the Xtend framework
+ *  
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
- * @kieler.rating 2009-12-15 proposed yellow
+ * 
+ * @kieler.rating 2009-12-15 proposed yellow 
  */
-public interface ITransformationEventListener {
+package de.cau.cs.kieler.ksbase.core.xtend;
 
-    /**
-     * Notifies the listener that a transformation has
-     * been executed.
-     * @param args List of parameters for the listener.
-     */
-    void transformationExecuted(Object[] args);
-}

@@ -41,7 +41,7 @@ import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
  * by the {@link DynamicMenuContributions} class.
  * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
- * 
+ * @kieler.rating 2009-12-15 proposed yellow
  */
 public final class DynamicBundleLoader implements IWindowListener, IPartListener {
 

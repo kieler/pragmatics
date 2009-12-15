@@ -59,7 +59,7 @@ import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
  * starting an eclipse instance.
  * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
- * 
+ * @kieler.rating 2009-12-15 proposed yellow
  */
 public final class DynamicMenuContributions {
 

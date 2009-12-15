@@ -51,6 +51,7 @@ import de.cau.cs.kieler.ksbase.ui.listener.ITransformationEventListener;
  * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
+ * @kieler.rating 2009-12-15 proposed yellow
  */
 public final class TransformationUIManager {
 

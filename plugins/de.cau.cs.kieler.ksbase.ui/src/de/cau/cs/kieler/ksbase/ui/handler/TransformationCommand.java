@@ -35,19 +35,19 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 
-import de.cau.cs.kieler.ksbase.core.KSBasEXtendComponent;
+import de.cau.cs.kieler.ksbase.core.ITransformationFramework;
+import de.cau.cs.kieler.ksbase.core.TransformationFrameworkFactory;
 
 /**
- * The command to execute an Xtend transformation. Handles MWE initialization
- * too.
+ * The command to execute a transformation. 
  * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
- * 
+ * @kieler.rating 2009-12-15 proposed yellow
  */
-public class XtendTransformationCommand extends AbstractTransactionalCommand {
+public class TransformationCommand extends AbstractTransactionalCommand {
 
-    /** The component that handles execution of Xtend. **/
-    private KSBasEXtendComponent component;
+    /** The component that handles execution of a transformation. **/
+    private ITransformationFramework component;
 
     /**
      * Creates a command to execute a transformation.
@@ -59,10 +59,11 @@ public class XtendTransformationCommand extends AbstractTransactionalCommand {
      * @param adapter
      *            an adapter to the {@code View} of the base diagram
      */
-    public XtendTransformationCommand(
+    public TransformationCommand(
             final TransactionalEditingDomain domain, final String label, final IAdaptable adapter) {
         super(domain, label, null);
-        component = new KSBasEXtendComponent();
+        //Get the default transformation framework
+        component = TransformationFrameworkFactory.getDefaultTransformationFramework();
     }
 
     /**
@@ -86,12 +87,7 @@ public class XtendTransformationCommand extends AbstractTransactionalCommand {
     protected CommandResult doExecuteWithResult(
             final IProgressMonitor monitor, final IAdaptable info) throws ExecutionException {
 
-        if (component == null || !component.isInitalized()) {
-            return CommandResult
-                    .newErrorCommandResult(Messages.transformationCommandWorkflowInitializationError);
-        }
-
-        component.invoke();
+        component.executeTransformation();
 
         IEditorPart activeEditor =
                 PlatformUI
@@ -149,13 +145,13 @@ public class XtendTransformationCommand extends AbstractTransactionalCommand {
         if (file.contains(".")) { // Remove .ext from fileName //$NON-NLS-1$
             file = fileName.substring(0, fileName.lastIndexOf(".")); //$NON-NLS-1$
         }
-
         StringBuffer modelSelection = new StringBuffer();
 
         // We need a modifiable list of the selection:
         LinkedList<Object> slist = new LinkedList<Object>();
         slist.addAll((List<?>) s.toList());
-
+        Object[] parameters = new Object[slist.size()];
+        
         // We have multiple options here:
         // 1. simply map the selected elements to the parameters
         // 2. the parameter is a collection or list type, so we are creating the
@@ -208,9 +204,7 @@ public class XtendTransformationCommand extends AbstractTransactionalCommand {
                         Object model = ((EditPart) next).getModel();
                         if (model instanceof View) {
                             if (((View) model).getElement().eClass().getName().equals(param)) {
-                                String modelName = "model" + String.valueOf(paramCount++);
-                                modelSelection.append(modelName);
-                                component.setContextData(modelName, ((View) model).getElement());
+                                parameters[paramCount++] = ((View)model).getElement();
                                 slist.remove(i);
                                 break;
                             }
@@ -224,9 +218,10 @@ public class XtendTransformationCommand extends AbstractTransactionalCommand {
             }
 
         }
-        component.createComponent(command, file, basePackage, modelSelection.toString());
-        component.setInitialized(true);
+        component.initializeTransformation(file, command, basePackage, parameters);
+        
         return true;
     }
+
 
 }

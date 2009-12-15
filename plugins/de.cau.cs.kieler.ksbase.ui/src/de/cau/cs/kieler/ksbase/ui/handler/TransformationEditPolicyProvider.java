@@ -24,7 +24,7 @@ import org.eclipse.gmf.runtime.diagram.ui.services.editpolicy.IEditPolicyProvide
  * Provides an edit policy the create and execute KSBasE commands.
  * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
- * 
+ * @kieler.rating 2009-12-15 proposed yellow
  */
 public class TransformationEditPolicyProvider extends AbstractProvider
         implements IEditPolicyProvider {

@@ -28,6 +28,7 @@ import de.cau.cs.kieler.viewmanagement.RunLogic;
  * The activator class controls the plug-in life cycle.
  * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
+ * @kieler.rating 2009-12-15 proposed yellow 
  */
 
 public class KSBasEUIPlugin extends AbstractUIPlugin {

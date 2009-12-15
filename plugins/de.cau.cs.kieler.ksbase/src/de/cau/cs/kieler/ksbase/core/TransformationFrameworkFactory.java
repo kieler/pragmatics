@@ -1,4 +1,4 @@
-/*
+/**
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
@@ -12,22 +12,28 @@
  * See the file epl-v10.html for the license text.
  * 
  *****************************************************************************/
-package de.cau.cs.kieler.ksbase.ui.listener;
+package de.cau.cs.kieler.ksbase.core;
+
+import de.cau.cs.kieler.ksbase.core.xtend.XtendTransformationFramework;
 
 /**
- * Interface for a transformation listener. This listener has to be registered
- * in the {@link de.cau.cs.kieler.ksbase.ui.TransformationUIManager} and is
- * notified after each transformation.
- * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
- * @kieler.rating 2009-12-15 proposed yellow
+ * 
+ * @kieler.rating 2009-12-15 proposed yellow 
  */
-public interface ITransformationEventListener {
+public final class TransformationFrameworkFactory {
+
+    private TransformationFrameworkFactory() {
+
+    }
 
     /**
-     * Notifies the listener that a transformation has
-     * been executed.
-     * @param args List of parameters for the listener.
+     * Returns the current default {@link ITransformationFramework}.
+     * 
+     * 
+     * @return An {@link XtendTransformationFramework}
      */
-    void transformationExecuted(Object[] args);
+    public static ITransformationFramework getDefaultTransformationFramework() {
+        return new XtendTransformationFramework();
+    }
 }
