@@ -64,7 +64,6 @@ public class XtendTransformationFramework implements ITransformationFramework {
      *            The parameters
      * @return False if an error occoured.
      */
-    @Override
     public boolean initializeTransformation(final String fileName, final String operation,
             final String basePackage, final Object... parameter) {
         try {
@@ -95,7 +94,9 @@ public class XtendTransformationFramework implements ITransformationFramework {
         return true;
     }
 
-    @Override
+    /**
+     * Executes a transformation.
+     */
     public void executeTransformation() {
         if (initalized) {
             xtendFacade.call(extension, parameters);
