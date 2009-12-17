@@ -19,7 +19,7 @@ import de.cau.cs.kieler.core.slimgraph.KSlimGraph;
 /**
  * Interface for algorithms that perform orthogonalization of a graph.
  * 
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public interface IOrthogonalizer extends IAlgorithm {
 

@@ -45,7 +45,7 @@ import de.cau.cs.kieler.dataflow.DataflowModel;
  * as a template) is registered for the same extension, it will
  * be able to open it.
  * 
- * @author <a href="mailto:haf@informatik.uni-kiel.de">Hauke Fuhrmann</a>
+ * @author haf
  */
 
 public class CreateRandomModelWizard extends Wizard implements INewWizard {

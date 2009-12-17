@@ -47,7 +47,7 @@ import de.cau.cs.kieler.kiml.viewer.actions.PerformLayoutAction;
 /**
  * A viewer for layout graphs.
  * 
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public class LayoutGraphView extends ViewPart {
 

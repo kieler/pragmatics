@@ -73,8 +73,8 @@ import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsPackage;
  * is stored persistently.
  * 
  * @kieler.rating 2009-12-11 proposed yellow msp
- * @author <a href="mailto:ars@informatik.uni-kiel.de">Arne Schipper</a>
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author ars
+ * @author msp
  */
 public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 

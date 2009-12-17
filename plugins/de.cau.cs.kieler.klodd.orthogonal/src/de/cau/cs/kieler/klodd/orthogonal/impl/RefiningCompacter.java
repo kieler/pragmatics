@@ -32,7 +32,7 @@ import de.cau.cs.kieler.klodd.orthogonal.structures.TSMNode;
  * compacter for refined orthogonal representations. This compacter expects a
  * normalized orthogonal representation as input.
  * 
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public class RefiningCompacter extends AbstractAlgorithm implements ICompacter {
 

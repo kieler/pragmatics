@@ -27,7 +27,7 @@ import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
  * the levels above.
  * 
  * @kieler.rating 2009-12-11 proposed yellow msp
- * @author <a href="mailto:ars@informatik.uni-kiel.de">Arne Schipper</a>
+ * @author ars
  */
 public class RecursiveLayouterEngine {
 

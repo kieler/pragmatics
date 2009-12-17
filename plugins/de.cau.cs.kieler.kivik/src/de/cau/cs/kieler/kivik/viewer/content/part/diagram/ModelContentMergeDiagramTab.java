@@ -102,7 +102,7 @@ import de.cau.cs.kieler.kivik.viewer.structure.ModelStructureMergeViewer;
  * No means to merge diagrams yet, but should be possible as the diagrams are
  * GMF diagrams and EMF can merge those models.
  * 
- * @author <a href="mailto:ars@informatik.uni-kiel.de">Arne Schipper</a>
+ * @author ars
  * @see ModelStructureMergeViewer
  */
 public class ModelContentMergeDiagramTab extends DiagramGraphicalViewer

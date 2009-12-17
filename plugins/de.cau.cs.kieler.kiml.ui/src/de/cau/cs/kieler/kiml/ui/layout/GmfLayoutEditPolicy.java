@@ -60,7 +60,7 @@ import de.cau.cs.kieler.kiml.ui.Messages;
  * GMF notation model.
  * 
  * @kieler.rating 2009-12-11 proposed yellow msp
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  * @see org.eclipse.gmf.runtime.diagram.ui.editpolicies.XYLayoutEditPolicy
  * @see org.eclipse.gmf.runtime.diagram.ui.editpolicies.ConnectionBendpointEditPolicy
  * @see org.eclipse.gmf.runtime.diagram.ui.editpolicies.GraphicalNodeEditPolicy

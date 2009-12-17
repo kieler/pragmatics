@@ -75,7 +75,7 @@ import de.cau.cs.kieler.kivik.viewer.content.part.diagram.ModelContentMergeDiagr
  * @see ModelContentMergeDiagramTab
  * 
  * @author <a href="mailto:laurent.goubet@obeo.fr">Laurent Goubet</a>
- * @author <a href="mailto:ars@informatik.uni-kiel.de">Arne Schipper</a>
+ * @author ars
  */
 public class ModelContentMergeDiffTab extends TreeViewer implements
 		IModelContentMergeViewerTab {

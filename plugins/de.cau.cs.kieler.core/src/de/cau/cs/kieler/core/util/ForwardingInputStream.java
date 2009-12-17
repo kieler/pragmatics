@@ -21,7 +21,7 @@ import java.io.OutputStream;
  * An input stream that forwards all read data to an output stream.
  * 
  * @kieler.rating 2009-12-11 proposed yellow msp
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public class ForwardingInputStream extends InputStream {
 

@@ -37,7 +37,7 @@ import de.cau.cs.kieler.klodd.orthogonal.structures.TSMNode;
  * Planarizer implementation that uses an EC planarizer to handle port
  * constraints.
  * 
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public class PortConstraintsPlanarizer extends AbstractAlgorithm implements IPlanarizer {
 

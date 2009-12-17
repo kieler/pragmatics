@@ -43,7 +43,7 @@ import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
  * Preference page for general KIML preferences.
  * 
  * @kieler.rating 2009-12-11 proposed yellow msp
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 

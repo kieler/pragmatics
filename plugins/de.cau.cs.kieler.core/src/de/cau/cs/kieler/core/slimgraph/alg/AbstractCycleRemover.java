@@ -26,7 +26,7 @@ import de.cau.cs.kieler.core.slimgraph.KSlimNode;
  * algorithms which operate by reversing edges.
  * 
  * @kieler.rating 2009-12-11 proposed yellow msp
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public abstract class AbstractCycleRemover extends AbstractAlgorithm implements ICycleRemover {
 

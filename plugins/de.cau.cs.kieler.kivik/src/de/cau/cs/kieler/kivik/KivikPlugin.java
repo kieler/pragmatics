@@ -19,7 +19,7 @@ import org.osgi.framework.BundleContext;
 
 /**
  * The activator class controls the KiViK plug-in life cycle
- * @author <a href="mailto:ars@informatik.uni-kiel.de">Arne Schipper</a>
+ * @author ars
  */
 public class KivikPlugin extends AbstractUIPlugin {
 

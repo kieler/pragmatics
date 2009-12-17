@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Embedding constraint used by the EC embedding planarizer.
  * 
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public class EmbeddingConstraint {
 

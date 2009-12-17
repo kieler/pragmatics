@@ -28,7 +28,7 @@ import de.cau.cs.kieler.dataflow.ui.Activator;
  * as the file name. The page will only accept file name without the extension
  * OR with the extension that matches the expected one (dataflow).
  * 
- * @author <a href="mailto:haf@informatik.uni-kiel.de">Hauke Fuhrmann</a>
+ * @author haf
  */
 public class CreateRandomModelWizardPage extends WizardPage {
 

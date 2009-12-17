@@ -79,8 +79,8 @@ import de.cau.cs.kieler.core.util.KielerMath.Point;;
  * 
  * @kieler.rating 2009-12-11 proposed yellow msp
  * @author Arne Schipper
- * @author <a href="mailto:haf@informatik.uni-kiel.de">Hauke Fuhrmann</a>
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author haf
+ * @author msp
  */
 public class GraphvizLayouter {
 

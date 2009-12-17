@@ -73,7 +73,7 @@ import de.cau.cs.kieler.kivik.viewer.content.part.property.ModelContentMergeProp
  * Compare, a third panel which displays a diagram.
  * 
  * @author <a href="mailto:laurent.goubet@obeo.fr">Laurent Goubet</a>
- * @author <a href="mailto:ars@informatik.uni-kiel.de">Arne Schipper</a>
+ * @author ars
  */
 public class ModelContentMergeTabFolder {
 	/** This keeps track of the parent viewer of this tab folder. */

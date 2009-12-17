@@ -19,7 +19,7 @@ import java.util.Map.Entry;
 /**
  * Static class with utility methods.
  * 
- * @author <a href="mailto:haf@informatik.uni-kiel.de">Hauke Fuhrmann</a>
+ * @author haf
  */
 public final class KielerUtil {
 

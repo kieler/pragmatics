@@ -16,7 +16,7 @@ package de.cau.cs.kieler.kivik;
 /**
  * Constants used in the KiViK plug-in.
  * 
- * @author <a href="mailto:ars@informatik.uni-kiel.de">Arne Schipper</a>
+ * @author ars
  */
 public interface Constants {
 	public final static String PLUGIN_NAME = "KiViK"; //$NON-NLS-1$

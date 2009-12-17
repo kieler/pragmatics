@@ -19,7 +19,7 @@ import java.util.ResourceBundle;
 /**
  * Class for access to localized strings.
  * 
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public final class Messages {
 

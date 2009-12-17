@@ -17,7 +17,7 @@ package de.cau.cs.kieler.core.slimgraph;
  * An element of a slim graph, which can be a node, an edge or a face.
  * 
  * @kieler.rating 2009-12-11 proposed yellow msp
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public abstract class KSlimGraphElement implements Comparable<KSlimGraphElement> {
 

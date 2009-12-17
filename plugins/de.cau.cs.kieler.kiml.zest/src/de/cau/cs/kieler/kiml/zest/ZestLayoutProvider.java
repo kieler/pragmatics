@@ -27,7 +27,7 @@ import de.cau.cs.kieler.kiml.layout.AbstractLayoutProvider;
  * Layout provider that uses the Zest grid layout algorithm.
  * 
  * @kieler.rating 2009-12-11 proposed yellow msp
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public class ZestLayoutProvider extends AbstractLayoutProvider {
 

@@ -41,7 +41,7 @@ import de.cau.cs.kieler.klodd.orthogonal.structures.TSMGraph;
 /**
  * Layout provider for the KLoDD orthogonal dataflow diagram layouter.
  * 
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public class OrthogonalDataflowLayoutProvider extends AbstractLayoutProvider {
 

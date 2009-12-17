@@ -24,7 +24,7 @@ import de.cau.cs.kieler.kiml.viewer.views.LayoutGraphView;
  * Action to trigger the debug view to overlay the GMF Editor canvas with a view
  * of the actually layouted graph elements.
  * 
- * @author <a href="mailto:haf@informatik.uni-kiel.de">Hauke Fuhrmann</a>
+ * @author haf
  */
 public class GmfDebugGraphicsAction extends Action {
 

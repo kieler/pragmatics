@@ -27,7 +27,7 @@ import de.cau.cs.kieler.klodd.orthogonal.structures.TSMNode;
  * representations using topological numbering. This compacter determines only
  * abstract positions instead of concrete positions.
  * 
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public class LayeringCompacter extends AbstractAlgorithm implements ICompacter {
 

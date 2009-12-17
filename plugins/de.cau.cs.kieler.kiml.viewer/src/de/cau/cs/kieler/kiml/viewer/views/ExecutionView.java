@@ -26,7 +26,7 @@ import de.cau.cs.kieler.kiml.viewer.actions.ClearExecutionsAction;
 /**
  * View that can be used to display execution results of an algorithm.
  * 
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public class ExecutionView extends ViewPart {
 

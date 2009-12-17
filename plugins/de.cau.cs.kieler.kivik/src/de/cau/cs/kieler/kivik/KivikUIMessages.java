@@ -20,7 +20,7 @@ import java.util.ResourceBundle;
  * 
  * Fetches the translated strings to display according to the selected language.
  * 
- * @author <a href="mailto:ars@informatik.uni-kiel.de">Arne Schipper</a>
+ * @author ars
  * 
  */
 public class KivikUIMessages {

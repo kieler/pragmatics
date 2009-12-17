@@ -23,7 +23,7 @@ import java.util.NoSuchElementException;
  * 
  * @kieler.rating 2009-12-11 proposed yellow msp
  * @param <E> type of contained objects
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public class ConcatenableList<E> extends AbstractSequentialList<E> {
 

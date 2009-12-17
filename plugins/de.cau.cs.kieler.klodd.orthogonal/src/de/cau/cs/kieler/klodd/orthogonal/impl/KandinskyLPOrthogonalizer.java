@@ -39,7 +39,7 @@ import de.cau.cs.kieler.klodd.orthogonal.structures.TSMNode;
  * Orthogonalizer implementation that uses LP methods to solve the Kandinsky
  * approach.
  * 
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public class KandinskyLPOrthogonalizer extends AbstractAlgorithm implements IOrthogonalizer {
 

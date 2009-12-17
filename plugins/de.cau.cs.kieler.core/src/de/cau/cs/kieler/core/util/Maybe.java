@@ -18,7 +18,7 @@ package de.cau.cs.kieler.core.util;
  * 
  * @kieler.rating 2009-12-11 proposed yellow msp
  * @param <T> type of contained object
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public class Maybe<T> {
 

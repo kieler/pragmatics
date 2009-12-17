@@ -21,7 +21,7 @@ import de.cau.cs.kieler.klodd.orthogonal.modules.IPlanarizer;
  * Planarizer implementation that handles embedding constraints by performing EC
  * expansion and EC planarity test.
  * 
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public class ExpansionECPlanarizer extends AbstractAlgorithm implements IPlanarizer {
 

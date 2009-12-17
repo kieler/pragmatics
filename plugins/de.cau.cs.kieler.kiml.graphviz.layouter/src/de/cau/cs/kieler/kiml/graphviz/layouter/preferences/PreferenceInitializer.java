@@ -23,7 +23,7 @@ import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayouterPlugin;
  * Class used to initialize default preference values for the GraphViz layouter
  * plug-in.
  * 
- * @author <a href="mailto:ars@informatik.uni-kiel.de">Arne Schipper</a>
+ * @author ars
  */
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 

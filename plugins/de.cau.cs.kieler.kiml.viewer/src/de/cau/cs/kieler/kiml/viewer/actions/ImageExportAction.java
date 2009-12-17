@@ -37,7 +37,7 @@ import de.cau.cs.kieler.kiml.viewer.views.LayoutGraphView;
 /**
  * Action that exports the currently displayed layout graph into an image file.
  * 
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public class ImageExportAction extends Action {
 

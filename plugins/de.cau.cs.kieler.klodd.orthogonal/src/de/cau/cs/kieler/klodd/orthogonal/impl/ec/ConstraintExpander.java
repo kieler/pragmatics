@@ -28,7 +28,7 @@ import de.cau.cs.kieler.klodd.orthogonal.structures.TSMNode;
 /**
  * Algorithm for the expansion of embedding constraints.
  * 
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public class ConstraintExpander extends AbstractAlgorithm {
 

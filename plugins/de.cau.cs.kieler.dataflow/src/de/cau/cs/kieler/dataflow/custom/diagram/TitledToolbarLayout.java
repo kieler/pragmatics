@@ -26,7 +26,7 @@ import org.eclipse.gmf.runtime.draw2d.ui.figures.ConstrainedToolbarLayout;
 /**
  * A titled toolbar layout for dataflow diagrams.
  *
- * @author <a href="mailto:haf@informatik.uni-kiel.de">Hauke Fuhrmann</a>
+ * @author haf
  */
 public class TitledToolbarLayout extends ConstrainedToolbarLayout {
 	/**

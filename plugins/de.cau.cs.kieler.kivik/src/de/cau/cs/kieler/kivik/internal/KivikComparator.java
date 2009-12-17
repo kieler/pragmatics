@@ -46,7 +46,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * 
- * @author <a href="mailto:ars@informatik.uni-kiel.de">Arne Schipper</a>
+ * @author ars
  */
 public final class KivikComparator {
 

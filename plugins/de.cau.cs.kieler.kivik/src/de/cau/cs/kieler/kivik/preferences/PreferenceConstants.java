@@ -16,7 +16,7 @@ package de.cau.cs.kieler.kivik.preferences;
 /**
  * Preference constant definitions for the KiViK plug-in.
  * 
- * @author <a href="mailto:ars@informatik.uni-kiel.de">Arne Schipper</a>
+ * @author ars
  */
 public class PreferenceConstants {
 

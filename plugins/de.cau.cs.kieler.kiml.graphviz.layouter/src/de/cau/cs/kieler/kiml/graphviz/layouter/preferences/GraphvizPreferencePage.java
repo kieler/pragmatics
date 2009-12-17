@@ -32,7 +32,7 @@ import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizAPI;
 /**
  * The Graphviz preference page.
  * 
- * @author <a href="mailto:ars@informatik.uni-kiel.de">Arne Schipper</a>
+ * @author ars
  */
 public class GraphvizPreferencePage extends FieldEditorPreferencePage implements
         IWorkbenchPreferencePage {

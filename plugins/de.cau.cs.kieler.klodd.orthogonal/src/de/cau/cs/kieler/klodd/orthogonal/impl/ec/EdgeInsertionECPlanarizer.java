@@ -24,7 +24,7 @@ import de.cau.cs.kieler.klodd.orthogonal.structures.TSMNode;
  * Planarizer implementation that handles embedding constraints by inserting all
  * edges with an EC edge inserter.
  * 
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public class EdgeInsertionECPlanarizer extends AbstractAlgorithm implements IPlanarizer {
 

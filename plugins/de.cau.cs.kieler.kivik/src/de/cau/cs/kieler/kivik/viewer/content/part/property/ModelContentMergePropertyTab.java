@@ -67,7 +67,7 @@ import org.eclipse.swt.widgets.Widget;
  * @see ModelContentMergeDiagramTab
  * 
  * @author <a href="mailto:laurent.goubet@obeo.fr">Laurent Goubet</a>
- * @author <a href="mailto:ars@informatik.uni-kiel.de">Arne Schipper</a>
+ * @author ars
  */
 public final class ModelContentMergePropertyTab extends TableViewer implements
 		IModelContentMergeViewerTab {

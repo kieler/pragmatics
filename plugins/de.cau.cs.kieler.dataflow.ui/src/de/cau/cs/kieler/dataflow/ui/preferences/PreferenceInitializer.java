@@ -22,7 +22,7 @@ import de.cau.cs.kieler.dataflow.ui.wizards.CreateRandomModelWizardPage;
 /**
  * Preference initializer for the Dataflow UI plugin.
  *
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 

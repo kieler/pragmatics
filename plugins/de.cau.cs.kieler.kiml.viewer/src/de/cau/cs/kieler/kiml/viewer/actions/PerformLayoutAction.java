@@ -34,7 +34,7 @@ import de.cau.cs.kieler.kiml.viewer.views.LayoutGraphView;
 /**
  * Action that performs layout on the currently loaded XMI resource.
  * 
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public class PerformLayoutAction extends Action {
 

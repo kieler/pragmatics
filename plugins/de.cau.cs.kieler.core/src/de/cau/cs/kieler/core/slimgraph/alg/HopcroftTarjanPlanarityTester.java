@@ -31,7 +31,7 @@ import de.cau.cs.kieler.core.util.ConcatenableList;
  * <p>
  * <b>WARNING:</b> This implementation was not tested yet.
  * 
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public class HopcroftTarjanPlanarityTester extends AbstractAlgorithm
         implements IPlanarityTester {

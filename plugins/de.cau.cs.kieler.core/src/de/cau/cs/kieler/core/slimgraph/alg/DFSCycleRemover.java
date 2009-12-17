@@ -24,7 +24,7 @@ import de.cau.cs.kieler.core.slimgraph.KSlimNode;
  * Cycle remover that uses a depth first search to remove cycles.
  * 
  * @kieler.rating 2009-12-11 proposed yellow msp
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public class DFSCycleRemover extends AbstractCycleRemover {
 

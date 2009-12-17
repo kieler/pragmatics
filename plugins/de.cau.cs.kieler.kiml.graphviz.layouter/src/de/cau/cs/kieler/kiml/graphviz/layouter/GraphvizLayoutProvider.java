@@ -29,7 +29,7 @@ import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
  * the Dot layouter is applied as default.
  * 
  * @kieler.rating 2009-12-11 proposed yellow msp
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public class GraphvizLayoutProvider extends AbstractLayoutProvider {
 

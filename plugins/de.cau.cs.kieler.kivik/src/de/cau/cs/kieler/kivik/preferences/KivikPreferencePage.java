@@ -36,7 +36,7 @@ import de.cau.cs.kieler.kivik.KivikPlugin;
  * <i>EMF Compare</i> where some global settings can and have to be done. There
  * are furthermore options concerning the initial zoom and other UI settings.
  * 
- * @author <a href="mailto:ars@informatik.uni-kiel.de">Arne Schipper</a>
+ * @author ars
  */
 public class KivikPreferencePage extends FieldEditorPreferencePage implements
 		IWorkbenchPreferencePage {

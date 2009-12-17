@@ -38,7 +38,7 @@ import org.eclipse.ui.PlatformUI;
  * This implements Runnable. However, it's only allowed to have access to the UI from
  * one thread. So the run method needs to be called from the one and only UI thread.
  * 
- * @author <a href="mailto:haf@informatik.uni-kiel.de">Hauke Fuhrmann</a>
+ * @author haf
  */
 public class TransparentShell implements Runnable{
     

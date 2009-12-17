@@ -24,7 +24,7 @@ import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
  * The activator class controls the plug-in life cycle.
  * 
  * @kieler.rating 2009-12-11 proposed yellow msp
- * @author <a href="mailto:haf@informatik.uni-kiel.de">Hauke Fuhrmann</a>
+ * @author haf
  */
 public class KimlUiPlugin extends AbstractUIPlugin {
 

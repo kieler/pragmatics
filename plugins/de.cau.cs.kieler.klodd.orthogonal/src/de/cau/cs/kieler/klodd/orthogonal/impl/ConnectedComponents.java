@@ -31,7 +31,7 @@ import de.cau.cs.kieler.klodd.orthogonal.structures.TSMNode;
  * Algorithm that finds the connected components for a layout graph and outputs
  * them as separate TSM graphs.
  * 
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public class ConnectedComponents extends AbstractAlgorithm {
 

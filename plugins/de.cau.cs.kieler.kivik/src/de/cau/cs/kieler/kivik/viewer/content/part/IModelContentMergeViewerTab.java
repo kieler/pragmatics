@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Control;
  * Goubet</a>, small adjustments to handle any kind of objects by Arne Schipper.
  * 
  * @author <a href="mailto:laurent.goubet@obeo.fr">Laurent Goubet</a>
- * @author <a href="mailto:ars@informatik.uni-kiel.de">Arne Schipper</a>
+ * @author ars
  */
 public interface IModelContentMergeViewerTab {
 	/**

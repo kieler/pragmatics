@@ -23,7 +23,7 @@ import java.util.List;
  * <p>
  * TODO: Change the whole concept of subgraphs! This approach here is not good.
  * 
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public class KGraphSection {
 

@@ -33,7 +33,7 @@ import de.cau.cs.kieler.kiml.graphviz.layouter.preferences.GraphvizPreferencePag
  * 
  * @kieler.rating 2009-12-11 proposed yellow msp
  * @author <a href="mailto:tkl@informatik.uni-kiel.de">Tobias Kloss</a>
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public final class GraphvizAPI {
 

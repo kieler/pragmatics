@@ -19,7 +19,7 @@ package de.cau.cs.kieler.core.alg;
  * 
  * @kieler.rating 2009-12-11 proposed yellow msp
  * @see IKielerProgressMonitor
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public interface IAlgorithm {
 

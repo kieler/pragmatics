@@ -35,7 +35,7 @@ import org.eclipse.ui.PlatformUI;
  * overlaying it over the GMF Editor.
  * 
  * @see TransparentShell
- * @author <a href="mailto:haf@informatik.uni-kiel.de">Hauke Fuhrmann</a>
+ * @author haf
  */
 public class GmfDebugCanvas extends LayoutGraphCanvas {
 

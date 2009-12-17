@@ -10,7 +10,7 @@ import de.cau.cs.kieler.dataflow.OutputPort;
 /**
  * Creator for dataflow models.
  *
- * @author @author <a href="mailto:haf@informatik.uni-kiel.de">Hauke Fuhrmann</a>
+ * @author @author haf
  */
 public class RandomDataflowCreator {
 

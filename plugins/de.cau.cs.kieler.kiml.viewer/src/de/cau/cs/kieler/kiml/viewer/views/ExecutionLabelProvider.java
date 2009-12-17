@@ -23,7 +23,7 @@ import de.cau.cs.kieler.kiml.viewer.KimlViewerPlugin;
  * Label provider for execution times retrieved from KIELER progress
  * monitors.
  * 
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public class ExecutionLabelProvider extends LabelProvider {
 

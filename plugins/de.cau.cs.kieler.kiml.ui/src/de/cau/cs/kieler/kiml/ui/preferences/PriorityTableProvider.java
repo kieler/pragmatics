@@ -30,7 +30,7 @@ import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
  * label provider, and a cell modifier.
  * 
  * @kieler.rating 2009-12-11 proposed yellow msp
- * @author <a href="mailto:msp@informatik.uni-kiel.de">Miro Sp&ouml;nemann</a>
+ * @author msp
  */
 public class PriorityTableProvider extends LabelProvider
         implements IStructuredContentProvider, ITableLabelProvider, ICellModifier {
