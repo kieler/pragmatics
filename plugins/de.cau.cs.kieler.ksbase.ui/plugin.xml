@@ -29,7 +29,7 @@
             type="org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart">
       </propertyTester>
    </extension>
-   <!--
+  
   <extension
          point="org.eclipse.ui.preferencePages">
       <page
@@ -44,12 +44,13 @@
             id="de.cau.cs.kieler.ksbase.EditorPreferencePage"
             name="Editors">
       </page>
+      <!--
       <page
             category="de.cau.cs.kieler.ksbase.EditorPreferencePage"
             class="de.cau.cs.kieler.ksbase.ui.preferences.TransformationPreferencePage"
             id="de.cau.cs.kieler.ksbase.ui.TransformationPrefPage"
             name="Transformations">
       </page>
-      </extension>
       -->
+      </extension>
 </plugin>
