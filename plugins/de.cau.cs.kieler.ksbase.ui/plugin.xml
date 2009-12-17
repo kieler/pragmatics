@@ -18,6 +18,20 @@
             id="de.cau.cs.kieler.ksbase.ui.ksbaseCategory"
             name="KSBasE">
       </category>
+      <command
+            id="de.cau.cs.kieler.ksbase.ui.customTransformationCommand"
+            name="Custom Transformation">
+         <commandParameter
+               id="de.cau.cs.kieler.ksbase.editorParameter"
+               name="editor"
+               optional="true">
+         </commandParameter>
+         <commandParameter
+               id="de.cau.cs.kieler.ksbase.transformationParameter"
+               name="transformation"
+               optional="true">
+         </commandParameter>
+      </command>
    </extension>
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
@@ -53,4 +67,31 @@
       </page>
       -->
       </extension>
+  <extension
+        point="org.eclipse.ui.menus">
+     <menuContribution
+           locationURI="de.cau.cs.kieler">
+        <menu
+              label="Custom KSBasE Operations">
+           <dynamic
+                 class="de.cau.cs.kieler.ksbase.ui.menus.DynamicMenu"
+                 id="de.cau.cs.kieler.ksbase.ui.customDynamic">
+           </dynamic>
+        </menu>
+     </menuContribution>
+  </extension>
+  <!--
+  <extension
+        point="org.eclipse.ui.handlers">
+     <handler
+           commandId="de.cau.cs.kieler.ksbase.ui.customTransformationCommand">
+        <activeWhen>
+           <test
+                 property="de.cau.cs.kieler.ksbase.ui.test1">
+           </test>
+        </activeWhen>
+        <enabledWhen></enabledWhen>
+     </handler>
+  </extension>
+  -->
 </plugin>
