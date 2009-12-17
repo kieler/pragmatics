@@ -160,9 +160,10 @@ public class TransformationCommand extends AbstractTransactionalCommand {
         // type)
 
         // Check if the first parameter is a list:
+        /* DEACTIVATED: List to List parameter bug
         if (parameter.length == 1 && parameter[0].contains("list")) {
-            /* DEACTIVATED: List to List parameter bug
-            String listType = parameter[0];
+
+            
             int bStart = listType.indexOf('[');
             int bEnd = listType.indexOf(']');
             if (bStart == -1 || bEnd == -1) {
@@ -190,8 +191,9 @@ public class TransformationCommand extends AbstractTransactionalCommand {
             }
             modelSelection.append("model0");
             component.setContextData("model0", contents);
-            */
+            
         } else {
+        */
             // Mapping parameters:
             int paramCount = 0;
             for (String param : parameter) {
@@ -217,7 +219,7 @@ public class TransformationCommand extends AbstractTransactionalCommand {
                 return false;
             }
 
-        }
+        //}
         component.initializeTransformation(file, command, basePackage, parameters);
         
         return true;

@@ -152,7 +152,7 @@ public final class DynamicMenuContributions {
                     if (t.getKeyboardShortcut() != null && t.getKeyboardShortcut().length() > 0
                             && editor.getContext() != null && editor.getContext().length() > 0) {
 
-                        keybindings.put(commandID, new String[] { editor.getContext(),
+                        keybindings.put(commandID, new String[] {editor.getContext(),
                                 t.getKeyboardShortcut(), t.getExtension() });
 
                         Element key = extension.createElement("key");
@@ -211,7 +211,29 @@ public final class DynamicMenuContributions {
                         if (editor.getTransformationById(tid) != null) {
                             // Create commands for root menu
                             Node menuCommand = createElementForMenu(tid, extension, editor);
-                            menuCommand.appendChild(menuVisible.cloneNode(true));
+                            Node menuCommandVisible = menuVisible.cloneNode(true);
+                            // Add visibility for popup
+                            if (contrib.getData().contains("popup:")) {
+                                Element handlerAnd = extension.createElement("and");
+                                // Create visibility flags for menus
+                                Element handlerWith = extension.createElement("with");
+                                handlerWith.setAttribute("variable", "selection");
+                                Element handlerIt = extension.createElement("iterate");
+                                handlerIt.setAttribute("ifEmpty", "false");
+                                handlerIt.setAttribute("operator", "and");
+                                Element handlerTest = extension.createElement("test");
+                                handlerTest.setAttribute("args", editor.getEditorId() + "," + tid);
+                                handlerTest.setAttribute("forcePluginActivation", "true");
+                                handlerTest.setAttribute("property",
+                                        "de.cau.cs.kieler.ksbase.ui.modelTesting.isModelInstance");
+                                handlerIt.appendChild(handlerTest);
+                                handlerWith.appendChild(handlerIt);
+
+                                handlerAnd.appendChild(menuCommandVisible.getFirstChild());
+                                handlerAnd.appendChild(handlerWith);
+                                menuCommandVisible.appendChild(handlerAnd);
+                            }
+                            menuCommand.appendChild(menuCommandVisible.cloneNode(true));
                             menuContribution.appendChild(menuCommand);
                         }
                     }
@@ -267,13 +289,13 @@ public final class DynamicMenuContributions {
                 // Now we are importing the dependencies from the contributing plug-in:
                 Dictionary<?, ?> dict = contributorBundle.getHeaders();
                 Object dependencies = dict.get("Require-Bundle");
-                //This is important! We have do split the dependencies
-                //to new lines because the string line is limited!
+                // This is important! We have do split the dependencies
+                // to new lines because the string line is limited!
                 String depString = dependencies.toString();
-                depString=depString.replace(",", ",\n ");
-                
+                depString = depString.replace(",", ",\n ");
+
                 // And set the rest of the manifest attributes
-                
+
                 sbuf.append("Require-Bundle: " + depString + "\n");
                 sbuf.append("Bundle-RequiredExecutionEnvironment: J2SE-1.5\n");
                 sbuf.append("Bundle-ActivationPolicy: lazy\n");
@@ -368,8 +390,9 @@ public final class DynamicMenuContributions {
                 }
             }
         } catch (IOException e) {
-            KSBasEUIPlugin.getDefault().logError("Bundle could not be created: Error while storing resource ("
-                                    + resourcePath + ").");
+            KSBasEUIPlugin.getDefault().logError(
+                    "Bundle could not be created: Error while storing resource (" + resourcePath
+                            + ").");
         }
     }
 

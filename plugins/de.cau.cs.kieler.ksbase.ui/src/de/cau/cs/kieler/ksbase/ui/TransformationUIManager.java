@@ -140,9 +140,8 @@ public final class TransformationUIManager {
 
                 // Create request
                 ExecuteTransformationRequest request = new ExecuteTransformationRequest(
-                        activeEditor, transformation.getExtension(), file
-                                .getAbsolutePath(), selection, editor.getModelPackageClass(),
-                        transformation.getParameters());
+                        activeEditor, transformation.getExtension(), file.getAbsolutePath(),
+                        selection, editor.getModelPackageClass(), transformation.getParameters());
 
                 Command transformationCommand = selectedElement.getCommand(request);
 
@@ -200,7 +199,7 @@ public final class TransformationUIManager {
 
                     // Notify event listeners:
                     for (ITransformationEventListener te : postTransformationEventListeners) {
-                        te.transformationExecuted(new Object[] { obj, activeEditor });
+                        te.transformationExecuted(new Object[] {obj, activeEditor });
                     }
 
                 }

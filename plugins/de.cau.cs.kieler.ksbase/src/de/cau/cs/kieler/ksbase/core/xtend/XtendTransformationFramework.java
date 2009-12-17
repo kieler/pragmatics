@@ -24,8 +24,8 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 import de.cau.cs.kieler.ksbase.core.ITransformationFramework;
 
 /**
- * A wrapper class for an {@link XtendComponent}. Used to initialize the component, set the
- * invocation target and its meta-model
+ * An implementation of the ITransformationFramework interface 
+ * for the use with the Xtend framework.
  * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 

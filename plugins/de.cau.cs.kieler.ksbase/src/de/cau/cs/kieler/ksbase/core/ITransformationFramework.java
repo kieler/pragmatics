@@ -23,14 +23,13 @@ package de.cau.cs.kieler.ksbase.core;
  * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
- * @kieler.rating 2009-12-15 proposed yellow 
+ * @kieler.rating 2009-12-15 proposed yellow
  * 
  */
 public interface ITransformationFramework {
 
     /**
-     * Executes a transformation with the parameters set with the {@link
-     * #<initializeTransformation(String, String, String, Object...)> [initializeTransformation]} method.
+     * Executes a transformation with the parameters set with the initalizeTransformation method.
      */
     void executeTransformation();
 

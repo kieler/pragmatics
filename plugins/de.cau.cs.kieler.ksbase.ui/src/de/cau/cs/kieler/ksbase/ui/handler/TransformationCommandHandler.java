@@ -32,13 +32,11 @@ import de.cau.cs.kieler.ksbase.ui.TransformationUIManager;
 public class TransformationCommandHandler extends AbstractHandler {
 
     /**
-     * The list of classes an editor has to implement/extend to be valid for
-     * this framework.
+     * The list of classes an editor has to implement/extend to be valid for this framework.
      **/
     public static final String EDITOR_PARAM = "de.cau.cs.kieler.ksbase.editorParameter";
     /**
-     * The list of classes a diagram element has to implement/extend to be valid
-     * for this framework.
+     * The list of classes a diagram element has to implement/extend to be valid for this framework.
      **/
     public static final String TRANSFORMATION_PARAM = "de.cau.cs.kieler.ksbase.transformationParameter";
 
@@ -49,26 +47,26 @@ public class TransformationCommandHandler extends AbstractHandler {
     }
 
     /**
-     * Executes a transformation. The editor and transformation settings are
-     * given by the extension point parameters Uses the TransformationUI manager
-     * to create and execute the transformation.
+     * Executes a transformation. The editor and transformation settings are given by the extension
+     * point parameters Uses the TransformationUI manager to create and execute the transformation.
      * 
      * @param event
      *            The source event
-     * @throws ExecutionException If the execution failed.
+     * @throws ExecutionException
+     *             If the execution failed.
      * @return Nothing
      */
     public Object execute(final ExecutionEvent event) throws ExecutionException {
 
-        EditorTransformationSettings editor = TransformationManager.INSTANCE
-                .getEditorById(event.getParameter(EDITOR_PARAM));
+        EditorTransformationSettings editor = TransformationManager.INSTANCE.getEditorById(event
+                .getParameter(EDITOR_PARAM));
         if (editor != null) {
-            TransformationUIManager.INSTANCE
-                    .createAndExecuteTransformationCommand(event, editor,
-                            editor.getTransformationByName(event
-                                    .getParameter(TRANSFORMATION_PARAM)));
+            TransformationUIManager.INSTANCE.createAndExecuteTransformationCommand(event, editor,
+                    editor.getTransformationByName(event.getParameter(TRANSFORMATION_PARAM)));
         } else {
-            KSBasEUIPlugin.getDefault().logError("Could not find "+EDITOR_PARAM + ". Please check transformation settings for " + TRANSFORMATION_PARAM );
+            KSBasEUIPlugin.getDefault().logError(
+                    "Could not find " + EDITOR_PARAM
+                            + ". Please check transformation settings for " + TRANSFORMATION_PARAM);
         }
         return null;
     }

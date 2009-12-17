@@ -22,23 +22,17 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
@@ -48,214 +42,34 @@ import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
-import de.cau.cs.kieler.ksbase.core.KSBasEMenuContribution;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
 
 /**
  * The KSBasE transformation preference page.
  * 
- * The preference page is used to modify existing extensions only! Due to
- * technical restrictions, it is not possible to add new settings here. If you'd
- * like to create features for a new editor please use the
- * 'ksbase.configuration' extension point provided by this project
+ * The preference page is used to modify existing extensions only! Due to technical restrictions, it
+ * is not possible to add new settings here. If you'd like to create features for a new editor
+ * please use the 'ksbase.configuration' extension point provided by this project
  * 
  * @author Michael Matzen
  */
 public class EditorsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-    private static final int GRIDSIZE_MENU_BUTTONS = 3;
     private static final int GRIDSIZE_BROWSER_CONTAINER = 3;
 
     /**
-     * A content provider for the MenuTreeView used in this page.
-     * 
-     * @author Michael Matzen
-     * 
-     */
-    private static final class MenuTreeViewContentProvider implements ITreeContentProvider {
-
-        /**
-         * Returns all the children elements for the given object.
-         * 
-         * @param parentElement
-         *            The object to evaluate
-         */
-        public Object[] getChildren(final Object parentElement) {
-            if (parentElement instanceof KSBasEMenuContribution) {
-                KSBasEMenuContribution parent = (KSBasEMenuContribution) parentElement;
-                Object[] children =
-                        new Object[parent.getCommands().size() + parent.getMenus().size()];
-                System.arraycopy(
-                        parent.getMenus().toArray(new Object[parent.getMenus().size()]), 0,
-                        children, 0, parent.getMenus().size());
-                System.arraycopy(parent.getCommands().toArray(
-                        new Object[parent.getCommands().size()]), 0, children, parent
-                        .getMenus().size(), parent.getCommands().size());
-                return children;
-            }
-            return new Object[0];
-        }
-
-        /**
-         * Returns the parent of the given object.
-         * 
-         * @param element
-         *            The object to evaluate
-         */
-        public Object getParent(final Object element) {
-            // do we need this ? hope not :P
-            return null;
-        }
-
-        /**
-         * Returns true if the given element has children. Thats only the case
-         * if it is a {@link KSBasEMenuContribution}
-         * 
-         * @param parentElement
-         *            The object to evaluate
-         */
-        public boolean hasChildren(final Object element) {
-            if (element instanceof KSBasEMenuContribution) {
-                return true;
-            }
-            return false;
-        }
-
-        /**
-         * Returns all elements of the given input element.
-         * 
-         * @param inputElement
-         *            The object to evaluate
-         */
-        public Object[] getElements(final Object inputElement) {
-            if (inputElement instanceof String) {
-                return new Object[0];
-            } else if (inputElement instanceof KSBasEMenuContribution) {
-                return getChildren(inputElement);
-            } else if (inputElement instanceof LinkedList<?>) {
-                LinkedList<?> elementList = (LinkedList<?>) inputElement;
-
-                return elementList.toArray(new Object[elementList.size()]);
-            }
-            return new Object[0];
-        }
-
-        /**
-         * Diposes the content provider.
-         */
-        public void dispose() {
-        }
-
-        /**
-         * Called when the input changed.
-         */
-        public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
-            /*
-             * if (oldInput != null) {
-             * 
-             * } if (newInput != null) {
-             * 
-             * }
-             */
-        }
-
-    }
-
-    /**
-     * A label provider for the MenuTreeView used in this page.
-     * 
-     * @author Michael Matzen
-     * 
-     */
-    private static final class MenuTreeViewLabelProvider implements ILabelProvider {
-
-        /**
-         * Returns the image of the given element. Since we dont want images,
-         * returns 'null'.
-         * 
-         * @param element
-         *            The object to evaluate
-         */
-        public Image getImage(final Object element) {
-            return null;
-        }
-
-        /**
-         * Returns the text of the given element.
-         * 
-         * @param element
-         *            The object to evaluate
-         */
-        public String getText(final Object element) {
-            if (element instanceof KSBasEMenuContribution) {
-                return ((KSBasEMenuContribution) element).getData();
-            } else if (element instanceof String) {
-                return (String) element;
-            }
-            return null;
-        }
-
-        /**
-         * Adds a label provider listener.
-         * 
-         * @param element
-         *            The object to evaluate
-         */
-        public void addListener(final ILabelProviderListener listener) {
-
-        }
-
-        /**
-         * Disposes the label provider.
-         */
-        public void dispose() {
-
-        }
-
-        /**
-         * Checks if the given property is a property which is used to display
-         * the label of the given element.
-         * 
-         * @param element
-         *            The object to evaluate
-         * @param property
-         *            The property to check
-         */
-        public boolean isLabelProperty(final Object element, final String property) {
-            if (element instanceof KSBasEMenuContribution
-                    && property.equals("data") || element instanceof String) {
-                return true;
-            }
-            return false;
-        }
-
-        /**
-         * Removes a listener from the queue.
-         * 
-         * @param listener
-         *            the listener to remove
-         */
-        public void removeListener(final ILabelProviderListener listener) {
-        }
-
-    }
-
-    /**
-     * The classes which have to be implemented/extended by a class to be used
-     * as an editor.
+     * The classes which have to be implemented/extended by a class to be used as an editor.
      **/
-    static final String[] DIAGRAM_EDITORS =
-            new String[] {"org.eclipse.gmf.runtime."
-                    + "diagram.ui.resources.editor.parts.DiagramDocumentEditor" }; //$NON-NLS-1$
+    static final String[] DIAGRAM_EDITORS = new String[] {"org.eclipse.gmf.runtime."
+            + "diagram.ui.resources.editor.parts.DiagramDocumentEditor" }; //$NON-NLS-1$
     /** The list of classes that provide ecore packages. **/
-    static final String[] DIAGRAM_PACKAGES = new String[] {"org.eclipse.emf." + "ecore.EPackage" }; //$NON-NLS-1$
+    static final String[] DIAGRAM_PACKAGES = new String[] {"org.eclipse.emf.ecore.EPackage" };
     /** Text boxes. **/
     private Text sfMetaModel, sfContext;
     /** Combo boxes. **/
     private Combo cbEditors;
     /** Buttons. **/
-    private Button btContext, btModelPackage, btEditorAdd, btEditorDel, btContribution, btMenu,
-            btCommand;
+    private Button btContext, btModelPackage, btEditorAdd, btEditorDel;
     /** The file editor used to select an icon from the project folder. **/
     private FileFieldEditor dfDefaultIcon;
     /** The currently selected editor. **/
@@ -265,8 +79,8 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
     /** Composites used to layout the preference page. **/
     private Composite browserContainer;
     /**
-     * The transformation manager instance used in this class so we don't have
-     * to get the instance every time.
+     * The transformation manager instance used in this class so we don't have to get the instance
+     * every time.
      **/
     private TransformationManager manager;
 
@@ -300,8 +114,8 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
              * Handles the selection of an editor from the combo box.
              */
             public void widgetSelected(final SelectionEvent e) {
-                EditorTransformationSettings editor =
-                        manager.getUserDefinedEditorById(((Combo) e.getSource()).getText());
+                EditorTransformationSettings editor = manager.getUserDefinedEditorById(((Combo) e
+                        .getSource()).getText());
                 EditorsPreferencePage.setActiveEditor(editor);
                 if (activeEditor != null) { // Load editor settings
                     sfMetaModel.setText(editor.getModelPackageClass());
@@ -309,8 +123,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
                     dfDefaultIcon.setStringValue(editor.getDefaultIcon());
 
                     // Fill menu tree viewer
-                    if (menuTreeViewer != null
-                            && menuTreeViewer.getContentProvider() != null
+                    if (menuTreeViewer != null && menuTreeViewer.getContentProvider() != null
                             && activeEditor.getMenuContributions() != null
                             && activeEditor.getMenuContributions().size() > 0) {
                         menuTreeViewer.setInput(activeEditor.getMenuContributions());
@@ -349,16 +162,15 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
         btEditorAdd.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(final SelectionEvent arg0) {
-                IConfigurationElement[] elements =
-                        Platform.getExtensionRegistry().getConfigurationElementsFor(
-                                "org.eclipse.ui.editors");
+                IConfigurationElement[] elements = Platform.getExtensionRegistry()
+                        .getConfigurationElementsFor("org.eclipse.ui.editors");
 
                 LinkedList<String> gmfEditors = new LinkedList<String>();
                 for (IConfigurationElement element : elements) {
                     gmfEditors.add(element.getAttribute("class"));
                 }
-                ElementListSelectionDialog dlg =
-                        new ElementListSelectionDialog(getShell(), new LabelProvider());
+                ElementListSelectionDialog dlg = new ElementListSelectionDialog(getShell(),
+                        new LabelProvider());
                 dlg.setTitle("Select editor");
                 dlg.setMessage("Select a diagram editor");
                 dlg.setElements(gmfEditors.toArray());
@@ -368,8 +180,8 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
                 dlg.setEmptyListMessage("No editor found, please check your workspace settings.");
 
                 if (dlg.open() == ElementListSelectionDialog.OK) {
-                    EditorTransformationSettings editor =
-                            new EditorTransformationSettings(dlg.getFirstResult().toString());
+                    EditorTransformationSettings editor = new EditorTransformationSettings(dlg
+                            .getFirstResult().toString());
                     manager.addEditor(editor);
                     readEditors();
                 }
@@ -412,14 +224,13 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
             }
 
             /**
-             * Handles the 'browse model package' event. Shows a simple
-             * FileDialog in which a file can be selected
+             * Handles the 'browse model package' event. Shows a simple FileDialog in which a file
+             * can be selected
              */
             public void widgetSelected(final SelectionEvent e) {
                 assert (activeEditor != null);
-                IConfigurationElement[] elements =
-                        Platform.getExtensionRegistry().getConfigurationElementsFor(
-                                "org.eclipse.emf.ecore.generated_package");
+                IConfigurationElement[] elements = Platform.getExtensionRegistry()
+                        .getConfigurationElementsFor("org.eclipse.emf.ecore.generated_package");
                 ArrayList<String> editors = new ArrayList<String>();
 
                 for (int i = 0; i < elements.length; ++i) {
@@ -429,8 +240,8 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
                     }
                 }
 
-                ElementListSelectionDialog dlg =
-                        new ElementListSelectionDialog(getShell(), new LabelProvider());
+                ElementListSelectionDialog dlg = new ElementListSelectionDialog(getShell(),
+                        new LabelProvider());
                 dlg.setTitle("Select Package");
                 dlg.setMessage("Select a Package");
                 dlg.setElements(editors.toArray());
@@ -461,11 +272,10 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 
             public void widgetSelected(final SelectionEvent e) {
                 assert (activeEditor != null);
-                Collection<?> definedContexts =
-                        ((IContextService) PlatformUI.getWorkbench().getService(
-                                IContextService.class)).getDefinedContextIds();
-                ElementListSelectionDialog dlg =
-                        new ElementListSelectionDialog(getShell(), new LabelProvider());
+                Collection<?> definedContexts = ((IContextService) PlatformUI.getWorkbench()
+                        .getService(IContextService.class)).getDefinedContextIds();
+                ElementListSelectionDialog dlg = new ElementListSelectionDialog(getShell(),
+                        new LabelProvider());
                 dlg.setTitle("Select diagram context");
                 dlg.setMessage("Select a context");
                 dlg.setElements(definedContexts.toArray());
@@ -486,10 +296,8 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
         });
         sfContext.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 
-        dfDefaultIcon =
-                new FileFieldEditor(
-                        Messages.kSBasEPreferencePageDefaultIconName,
-                        Messages.kSBasEPreferencePageDefaultIcon, browserContainer);
+        dfDefaultIcon = new FileFieldEditor(Messages.kSBasEPreferencePageDefaultIconName,
+                Messages.kSBasEPreferencePageDefaultIcon, browserContainer);
         dfDefaultIcon.setFileExtensions(new String[] {
                 Messages.kSBasEPreferencePageIconExtensionPNG,
                 Messages.kSBasEPreferencePageIconExtensionICO });
@@ -503,6 +311,14 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
     }
 
     /**
+     * Creates the transformation part.
+     */
+    private void createTransformationContent(final Composite parent) {
+        //List transformations = new List(parent, SWT.SINGLE);
+
+    }
+
+    /**
      * Creates the contents of the preference page.
      * 
      * @param parent
@@ -511,47 +327,18 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
      */
     @Override
     protected Control createContents(final Composite parent) {
-        // Since the title wont be display for setTitle oder super() we are
+        // Since the title wont be display for setTitle or super(text) we are
         // simply inserting a label
         new Label(parent, SWT.NONE).setText(Messages.kSBasETPreferencePageTitle);
 
         createEditorContent(parent);
-
-        Group menuContributionGroup =
-                new Group(parent, SWT.SHADOW_ETCHED_IN | SWT.SHADOW_ETCHED_OUT);
-        menuContributionGroup.setText("Menu Contributions");
-        menuContributionGroup.setLayout(new GridLayout(2, true));
-
-        Composite menuComposite = new Composite(menuContributionGroup, SWT.NONE);
-        menuComposite.setLayout(new GridLayout(2, true));
-        // Treeview used for display the menu structure
-        menuTreeViewer = new TreeViewer(menuComposite);
-        menuTreeViewer.setContentProvider(new MenuTreeViewContentProvider());
-        menuTreeViewer.setLabelProvider(new MenuTreeViewLabelProvider());
-        menuTreeViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        Composite menuEditingComposite = new Composite(menuContributionGroup, SWT.NONE);
-        menuEditingComposite.setLayout(new GridLayout(1, true));
-
-        menuComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
-        Composite menuButtonComposite = new Composite(menuContributionGroup, SWT.NONE);
-        menuButtonComposite.setLayout(new GridLayout(GRIDSIZE_MENU_BUTTONS, true));
-        btContribution = new Button(menuButtonComposite, SWT.PUSH);
-        btContribution.setText("Add Contribution");
-        btMenu = new Button(menuButtonComposite, SWT.PUSH);
-        btMenu.setText("Add Menu");
-        btCommand = new Button(menuButtonComposite, SWT.PUSH);
-        btCommand.setText("Add Command");
-        btCommand.setLayoutData(new GridData(SWT.LEFT, SWT.BOTTOM, false, false));
-        menuButtonComposite.setLayoutData(new GridData(SWT.LEFT, SWT.BOTTOM, false, false));
-        menuContributionGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        createTransformationContent(parent);
         readEditors();
         return null;
     }
 
     /**
-     * Reads the existing editors from the manager and inserts them to the
-     * editor list.
+     * Reads the existing editors from the manager and inserts them to the editor list.
      */
     private void readEditors() {
         if (manager.getEditors() != null) {
@@ -587,35 +374,33 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
     }
 
     /**
-     * Performs an 'OK' command. i.e. stores the settings for the currently
-     * selected editor.
+     * Performs an 'OK' command. i.e. stores the settings for the currently selected editor.
      * 
      * @return False if an error occurred while storing the settings.
      */
     @Override
     public boolean performOk() {
         manager.storeUserDefinedTransformations();
-        /* TODO: Change to create user defined menus
-        DynamicMenuContributions.INSTANCE.createMenuForEditors(manager
-                .getUserDefinedEditors().values());
+        /*
+         * TODO: Change to create user defined menus
+         * DynamicMenuContributions.INSTANCE.createMenuForEditors(manager
+         * .getUserDefinedEditors().values());
          */
         return super.performOk();
     }
 
     /**
-     * Gets the active editor. Called by the
-     * {@link TransformationPreferencePage}
+     * Gets the active editor. Called by the {@link TransformationPreferencePage}
      * 
-     * @return The active editor, may return null if no editor available or
-     *         selected
+     * @return The active editor, may return null if no editor available or selected
      */
     protected static EditorTransformationSettings getActiveEditor() {
         return activeEditor;
     }
 
     /**
-     * Sets the new active editor. The new editor ''may be null'' this is used
-     * for some checks, so the missing null-check is intended.
+     * Sets the new active editor. The new editor ''may be null'' this is used for some checks, so
+     * the missing null-check is intended.
      * 
      * @param editor
      *            The new editor
