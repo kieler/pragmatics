@@ -84,10 +84,12 @@ import de.cau.cs.kieler.core.util.KielerMath.Point;;
  */
 public class GraphvizLayouter {
 
+    // CHECKSTYLEOFF LineLength
     /** layout option identifier for spline points factor. */
     public static final String OPT_SPLINE_POINTS = "de.cau.cs.kieler.kiml.graphviz.options.splinePoints";
     /** layout option identifier for label distance. */
     public static final String OPT_LABEL_DISTANCE = "de.cau.cs.kieler.kiml.graphviz.options.labelDistance";
+    // CHECKSTYLEON LineLength
     /** command for Dot layout. */
     public static final String DOT_COMMAND = "dot";
     /** command for Neato layout. */
@@ -481,10 +483,11 @@ public class GraphvizLayouter {
             try {
                 String path = System.getProperty("user.home");
                 if (path.endsWith(File.separator)) {
-                    path += "tmp";
+                    path += "tmp" + File.separator + "graphviz";
                 } else {
-                    path += File.separator + "tmp";
+                    path += File.separator + "tmp" + File.separator + "graphviz";
                 }
+                new File(path).mkdirs();
                 debugStream = new FileOutputStream(new File(path + File.separator + debugFileName
                         + "-in.dot"));
                 outputStream = new ForkedOutputStream(processStream, debugStream);
@@ -554,10 +557,11 @@ public class GraphvizLayouter {
             try {
                 String path = System.getProperty("user.home");
                 if (path.endsWith(File.separator)) {
-                    path += "tmp";
+                    path += "tmp" + File.separator + "graphviz";
                 } else {
-                    path += File.separator + "tmp";
+                    path += File.separator + "tmp" + File.separator + "graphviz";
                 }
+                new File(path).mkdirs();
                 debugStream = new FileOutputStream(new File(path + File.separator + debugFileName
                         + "-out.dot"));
                 inputStream = new ForwardingInputStream(inputStream, debugStream);
