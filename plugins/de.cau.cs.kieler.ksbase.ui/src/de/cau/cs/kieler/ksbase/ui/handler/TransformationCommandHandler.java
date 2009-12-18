@@ -65,8 +65,9 @@ public class TransformationCommandHandler extends AbstractHandler {
                     editor.getTransformationByName(event.getParameter(TRANSFORMATION_PARAM)));
         } else {
             KSBasEUIPlugin.getDefault().logError(
-                    "Could not find " + EDITOR_PARAM
-                            + ". Please check transformation settings for " + TRANSFORMATION_PARAM);
+                    "Could not find " + event.getParameter(EDITOR_PARAM)
+                            + ". Please check transformation settings for "
+                            + event.getParameter(TRANSFORMATION_PARAM));
         }
         return null;
     }

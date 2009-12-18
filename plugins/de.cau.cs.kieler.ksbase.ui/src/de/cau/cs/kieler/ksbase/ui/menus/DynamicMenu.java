@@ -19,6 +19,9 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.IParameter;
+import org.eclipse.core.commands.IParameterValues;
+import org.eclipse.core.commands.ParameterValuesException;
 import org.eclipse.core.internal.expressions.EqualsExpression;
 import org.eclipse.core.internal.expressions.IterateExpression;
 import org.eclipse.core.internal.expressions.TestExpression;
@@ -31,7 +34,6 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.expressions.AndExpression;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
-import org.eclipse.ui.menus.IContributionRoot;
 
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.Transformation;
@@ -66,46 +68,97 @@ public class DynamicMenu extends CompoundContributionItem {
     }
 
     @Override
+    public boolean isDynamic() {
+        return true;
+    }
+
+    @Override
     protected IContributionItem[] getContributionItems() {
+        // System.out.println("get items");
         LinkedList<IContributionItem> items = new LinkedList<IContributionItem>();
+
         /*
-        IHandlerService hserv = (IHandlerService) PlatformUI.getWorkbench().getService(
-                IHandlerService.class);
-        */
+         * IHandlerService hserv = (IHandlerService) PlatformUI.getWorkbench().getService(
+         * IHandlerService.class);
+         */
         ICommandService ics = (ICommandService) PlatformUI.getWorkbench().getService(
                 ICommandService.class);
         for (EditorTransformationSettings editor : TransformationManager.INSTANCE
                 .getUserDefinedEditors()) {
             for (Transformation transf : editor.getTransformations()) {
+                if (!transf.isVisible()) {
+                    continue;
+                }
                 String paramId = editor.getEditorId() + "." + transf.getExtension();
                 String cmdId = paramId + ".command";
                 Command command = ics.getCommand(cmdId);
-                if (!command.isDefined()) {
-                    /*
-                     * Parameterization[] param = new Parameterization[2]; param[0] = new
-                     * Parameterization(command
-                     * .getParameter("de.cau.cs.kieler.ksbase.editorParameter"), editor
-                     * .getEditorId()); param[1] = new Parameterization(command
-                     * .getParameter("de.cau.cs.kieler.ksbase.editorParameter"), transf
-                     * .getExtension()); ParameterizedCommand pcmd = new
-                     * ParameterizedCommand(command, param);
-                     */
-                    command.define(transf.getName(), "Structure based editing command", ics
-                            .getCategory("de.cau.cs.kieler.ksbase.ui.ksbaseCategory"));
-                    command.setHandler(new TransformationCommandHandler());
-                }
+                //if (!command.isDefined()) {
+                    IParameter[] cmdParam = new IParameter[2];
+                    cmdParam[0] = new IParameter() {
 
+                        public boolean isOptional() {
+                            return false;
+                        }
+
+                        public IParameterValues getValues() throws ParameterValuesException {
+                            return new IParameterValues() {
+
+                                public Map<Object,Object> getParameterValues() {
+                                    return new HashMap<Object, Object>();
+                                }
+                            };
+                        }
+
+                        public String getName() {
+                            return "editor";
+                        }
+
+                        public String getId() {
+                            return "de.cau.cs.kieler.ksbase.editorParameter";
+                        }
+                    };
+                    cmdParam[1] = new IParameter() {
+
+                        public boolean isOptional() {
+                            return false;
+                        }
+
+                        public IParameterValues getValues() throws ParameterValuesException {
+                            return new IParameterValues() {
+
+                                public Map<Object,Object> getParameterValues() {
+                                    return new HashMap<Object, Object>();
+                                }
+                            };
+                        }
+
+                        public String getName() {
+                            return "transformation";
+                        }
+
+                        public String getId() {
+                            return "de.cau.cs.kieler.ksbase.transformationParameter";
+                        }
+                    };
+                    command.define(transf.getName(), "Structure based editing command", ics
+                            .getCategory("de.cau.cs.kieler.ksbase.ui.ksbaseCategory"), cmdParam);
+                    command.setHandler(new TransformationCommandHandler());
+                //}
+
+                
                 CommandContributionItemParameter param = new CommandContributionItemParameter(
                         PlatformUI.getWorkbench().getActiveWorkbenchWindow(), paramId, cmdId,
                         CommandContributionItem.STYLE_PUSH);
                 param.label = transf.getName();
-                param.visibleEnabled = true;
+                param.visibleEnabled = false;
+                param.commandId = cmdId;
                 Map<String, String> parameters = new HashMap<String, String>();
                 parameters.put("de.cau.cs.kieler.ksbase.editorParameter", editor.getEditorId());
                 parameters.put("de.cau.cs.kieler.ksbase.transformationParameter", transf
                         .getExtension());
                 param.parameters = parameters;
                 IContributionItem ci = new CommandContributionItem(param);
+                ci.setVisible(true);
                 try {
 
                     AndExpression andExp = new AndExpression();
@@ -127,7 +180,7 @@ public class DynamicMenu extends CompoundContributionItem {
                     itEdExp.add(withEditorExp);
                     andExp.add(itEdExp);
 
-                    ((IContributionRoot) getParent()).registerVisibilityForChild(ci, andExp);
+                    // ((IContributionRoot) getParent()).registerVisibilityForChild(ci, andExp);
                 } catch (CoreException ce) {
                     KSBasEUIPlugin.getDefault().logWarning(
                             "visibility expression could not be created");
@@ -139,4 +192,10 @@ public class DynamicMenu extends CompoundContributionItem {
         }
         return items.toArray(new IContributionItem[items.size()]);
     }
+
+    @Override
+    public boolean isVisible() {
+        return true;
+    }
+
 }

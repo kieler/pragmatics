@@ -177,13 +177,14 @@ public class KSBasECombination extends ACombination {
                 }
                 effectString.append(effect + KSBasECombination.SEPARATOR);
             }
-            // removing last separator when storing effects
-            if (effectString.length() > 1) {
-                prefStore.setValue("storedEffects", effectString.substring(
-                        0, effectString.length() - 1));
-            } else {
-                prefStore.setValue("storedEffects", "");
-            }
+        }
+
+        // removing last separator when storing effects
+        if (effectString.length() > 1) {
+            prefStore.setValue("storedEffects", effectString.substring(
+                    0, effectString.length() - 1));
+        } else {
+            prefStore.setValue("storedEffects", ";");
         }
     }
 

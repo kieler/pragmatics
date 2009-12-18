@@ -70,9 +70,9 @@
   <extension
         point="org.eclipse.ui.menus">
      <menuContribution
-           locationURI="de.cau.cs.kieler">
+           locationURI="menu:de.cau.cs.kieler">
         <menu
-              label="Custom KSBasE Operations">
+              label="Custom">
            <dynamic
                  class="de.cau.cs.kieler.ksbase.ui.menus.DynamicMenu"
                  id="de.cau.cs.kieler.ksbase.ui.customDynamic">

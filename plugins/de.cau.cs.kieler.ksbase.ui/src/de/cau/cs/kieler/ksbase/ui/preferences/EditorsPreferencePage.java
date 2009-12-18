@@ -14,17 +14,29 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.ui.preferences;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ControlEditor;
+import org.eclipse.swt.custom.TableCursor;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -34,15 +46,23 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+import org.eclipse.ui.dialogs.ResourceSelectionDialog;
+import org.eclipse.ui.model.BaseWorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
+import de.cau.cs.kieler.ksbase.core.Transformation;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
+import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 
 /**
  * The KSBasE transformation preference page.
@@ -65,19 +85,19 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
     /** The list of classes that provide ecore packages. **/
     static final String[] DIAGRAM_PACKAGES = new String[] {"org.eclipse.emf.ecore.EPackage" };
     /** Text boxes. **/
-    private Text sfMetaModel, sfContext;
+    private Text sfMetaModel;
     /** Combo boxes. **/
     private Combo cbEditors;
     /** Buttons. **/
-    private Button btContext, btModelPackage, btEditorAdd, btEditorDel;
-    /** The file editor used to select an icon from the project folder. **/
-    private FileFieldEditor dfDefaultIcon;
+    private Button btModelPackage, btEditorAdd, btEditorDel, btLoadXtend;
     /** The currently selected editor. **/
     private static EditorTransformationSettings activeEditor;
     /** The treeViewer used to display the menus. **/
     private TreeViewer menuTreeViewer;
     /** Composites used to layout the preference page. **/
     private Composite browserContainer;
+    /** List of transformations for this editor. **/
+    private Table transformationTable;
     /**
      * The transformation manager instance used in this class so we don't have to get the instance
      * every time.
@@ -88,7 +108,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
      * Default constructor. Sets the preference page title.
      */
     public EditorsPreferencePage() {
-        setTitle(Messages.kSBasETPreferencePageTitle);
+        setTitle(Messages.kSBasEEPreferencePageTitle);
         manager = TransformationManager.INSTANCE;
     }
 
@@ -119,36 +139,41 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
                 EditorsPreferencePage.setActiveEditor(editor);
                 if (activeEditor != null) { // Load editor settings
                     sfMetaModel.setText(editor.getModelPackageClass());
-                    sfContext.setText(editor.getContext());
-                    dfDefaultIcon.setStringValue(editor.getDefaultIcon());
-
                     // Fill menu tree viewer
                     if (menuTreeViewer != null && menuTreeViewer.getContentProvider() != null
                             && activeEditor.getMenuContributions() != null
                             && activeEditor.getMenuContributions().size() > 0) {
                         menuTreeViewer.setInput(activeEditor.getMenuContributions());
                     }
+                    transformationTable.removeAll();
+                    for (Transformation t : activeEditor.getTransformations()) {
+                        TableItem item = new TableItem(transformationTable, SWT.NONE);
+                        item.setText(new String[] {"", t.getName(), t.getExtension() });
+                        item.setChecked(t.isVisible());
+                    }
+                    transformationTable.redraw();
+                    for (TableColumn col : transformationTable.getColumns()) {
+                        col.pack();
+                    }
 
                     // enable controls
                     sfMetaModel.setEnabled(true);
                     browserContainer.setEnabled(true);
-                    btContext.setEnabled(true);
                     btEditorDel.setEnabled(true);
                     cbEditors.setEnabled(true);
+                    btLoadXtend.setEnabled(true);
                 } else {
                     // clear texts
                     cbEditors.setText("");
                     cbEditors.clearSelection();
                     cbEditors.removeAll();
                     sfMetaModel.setText("");
-                    sfContext.setText("");
-                    dfDefaultIcon.setStringValue("");
 
                     // Disable controls
                     sfMetaModel.setEnabled(false);
                     browserContainer.setEnabled(false);
-                    btContext.setEnabled(false);
                     btEditorDel.setEnabled(false);
+                    btLoadXtend.setEnabled(false);
                 }
             }
 
@@ -209,11 +234,9 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 
         GridData gData = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
         cbEditors.setLayoutData(gData);
-
         browserContainer = new Composite(parent, SWT.NONE);
-        browserContainer.setLayout(new GridLayout(GRIDSIZE_BROWSER_CONTAINER, true));
-
-        new Label(browserContainer, SWT.NONE).setText(Messages.kSBasEPreferencePageModelPackage);
+        browserContainer.setLayout(new GridLayout(GRIDSIZE_BROWSER_CONTAINER, false));
+        new Label(container, SWT.NONE).setText(Messages.kSBasEPreferencePageModelPackage);
         sfMetaModel = new Text(browserContainer, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
         sfMetaModel.setEnabled(false);
         btModelPackage = new Button(browserContainer, SWT.NONE);
@@ -264,44 +287,6 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
         });
         sfMetaModel.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 
-        new Label(browserContainer, SWT.NONE).setText("Diagram Context:");
-        sfContext = new Text(browserContainer, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
-        btContext = new Button(browserContainer, SWT.NONE);
-        btContext.setText(Messages.kSBasEPreferencePageButtonBrowse);
-        btContext.addSelectionListener(new SelectionListener() {
-
-            public void widgetSelected(final SelectionEvent e) {
-                assert (activeEditor != null);
-                Collection<?> definedContexts = ((IContextService) PlatformUI.getWorkbench()
-                        .getService(IContextService.class)).getDefinedContextIds();
-                ElementListSelectionDialog dlg = new ElementListSelectionDialog(getShell(),
-                        new LabelProvider());
-                dlg.setTitle("Select diagram context");
-                dlg.setMessage("Select a context");
-                dlg.setElements(definedContexts.toArray());
-                dlg.setAllowDuplicates(false);
-                dlg.setMatchEmptyString(true);
-                dlg.setMultipleSelection(false);
-                dlg.setEmptyListMessage("No context found, please check your workspace settings");
-
-                if (dlg.open() == ElementListSelectionDialog.OK) {
-                    activeEditor.setContext((String) dlg.getFirstResult());
-                    cbEditors.notifyListeners(SWT.Selection, null);
-                }
-            }
-
-            public void widgetDefaultSelected(final SelectionEvent e) {
-            }
-
-        });
-        sfContext.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
-
-        dfDefaultIcon = new FileFieldEditor(Messages.kSBasEPreferencePageDefaultIconName,
-                Messages.kSBasEPreferencePageDefaultIcon, browserContainer);
-        dfDefaultIcon.setFileExtensions(new String[] {
-                Messages.kSBasEPreferencePageIconExtensionPNG,
-                Messages.kSBasEPreferencePageIconExtensionICO });
-
         browserContainer.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
         browserContainer.setEnabled(false);
 
@@ -314,8 +299,162 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
      * Creates the transformation part.
      */
     private void createTransformationContent(final Composite parent) {
-        //List transformations = new List(parent, SWT.SINGLE);
+        Composite tContainer = new Composite(parent, SWT.NONE);
+        tContainer.setLayout(new GridLayout(1, true));
+        new Label(tContainer, SWT.NONE);
+        new Label(tContainer, SWT.NONE)
+                .setText("Add operations to the editor by loading an Xtend file");
 
+        transformationTable = new Table(tContainer, SWT.SINGLE | SWT.CHECK | SWT.BORDER);
+        transformationTable.setLinesVisible(true);
+        transformationTable.setHeaderVisible(true);
+
+        TableColumn isVis = new TableColumn(transformationTable, SWT.CHECK);
+        isVis.setText("Show");
+        TableColumn tName = new TableColumn(transformationTable, SWT.NONE);
+        tName.setText("Name");
+        TableColumn tExt = new TableColumn(transformationTable, SWT.NONE);
+        tExt.setText("Extension");
+
+        // Cursor to edit Table cells
+        final TableCursor cursor = new TableCursor(transformationTable, SWT.NONE);
+        final ControlEditor editor = new ControlEditor(cursor);
+        editor.grabHorizontal = true;
+        editor.grabVertical = true;
+        transformationTable.addSelectionListener(new SelectionListener() {
+
+            public void widgetSelected(final SelectionEvent e) {
+                if (e.item instanceof TableItem) {
+                    TableItem item = (TableItem) e.item;
+                    Transformation t = activeEditor.getTransformationByName(item.getText(2));
+                    t.setVisible(item.getChecked());
+                }
+            }
+
+            public void widgetDefaultSelected(final SelectionEvent e) {
+                // TODO Auto-generated method stub
+
+            }
+        });
+
+        cursor.addSelectionListener(new SelectionListener() {
+
+            public void widgetSelected(final SelectionEvent e) {
+                TableItem item = cursor.getRow();
+                int col = cursor.getColumn();
+                final Transformation t = activeEditor.getTransformationByName(item.getText(2));
+                if (col == 0) {
+                    // Check
+                    Boolean stat = item.getChecked();
+                    if (stat != null) {
+                        t.setVisible(stat);
+                    }
+                } else if (col == 1) {
+                    // Name
+
+                    final Text text = new Text(cursor, SWT.NONE);
+                    text.addKeyListener(new KeyAdapter() {
+
+                        public void keyPressed(final KeyEvent e) {
+                            if (e.character == SWT.CR) {
+                                if (text.getText().length() > 0) {
+                                    t.setName(text.getText());
+                                }
+                                text.dispose();
+                                cbEditors.notifyListeners(SWT.Selection, null);
+                            }
+
+                        }
+                    });
+
+                    text.addFocusListener(new FocusAdapter() {
+                        public void focusLost(final FocusEvent e) {
+                            if (text.getText().length() > 0) {
+                                t.setName(text.getText());
+                            }
+                            text.dispose();
+                            cbEditors.notifyListeners(SWT.Selection, null);
+                        }
+                    });
+
+                    text.setText(item.getText(col));
+                    editor.setEditor(text);
+                    text.setFocus();
+                }
+            }
+
+            public void widgetDefaultSelected(final SelectionEvent e) {
+                System.out.println("default sel");
+            }
+        });
+
+        btLoadXtend = new Button(parent, SWT.PUSH);
+        btLoadXtend.setText("Load Xtend file");
+        btLoadXtend.addSelectionListener(new SelectionListener() {
+
+            public void widgetSelected(final SelectionEvent e) {
+                MessageBox box = new MessageBox(getShell(), SWT.YES | SWT.NO);
+                box.setMessage("Loading an xtend file may reset the "
+                        + "existing transformations.\r\n Do you want continue?");
+                box.setText(Messages.kSBasEPreferencePageEditTransformationsTitle);
+                if (box.open() == SWT.YES) {
+                    ElementTreeSelectionDialog rsd = new ElementTreeSelectionDialog(getShell(),
+                            new WorkbenchLabelProvider(), new BaseWorkbenchContentProvider());
+
+                    rsd.setTitle("Xtend Selection");
+                    rsd.setBlockOnOpen(true);
+                    rsd.setInput(ResourcesPlugin.getWorkspace().getRoot());
+                    rsd.addFilter(new ViewerFilter() {
+
+                        @Override
+                        public boolean select(final Viewer viewer, final Object parentElement,
+                                final Object element) {
+                            return (element instanceof IFile) ? ((IFile) element)
+                                    .getFileExtension().equals("ext") : true;
+                        }
+                    });
+
+                    int result = rsd.open();
+                    if (result != ResourceSelectionDialog.CANCEL
+                            && rsd.getFirstResult() instanceof IFile) {
+
+                        IFile file = (IFile) rsd.getFirstResult();
+
+                        if (file == null) {
+                            box = new MessageBox(getShell(), SWT.OK);
+                            box.setMessage(Messages.kSBasEPreferencePageXtendFileInvalidFile);
+                            box.open();
+                            return;
+                        } else {
+                            try {
+
+                                BufferedInputStream bis = new BufferedInputStream(file
+                                        .getContents());
+                                StringBuffer sbuf = new StringBuffer();
+                                while (bis.available() > 0) {
+                                    sbuf.append((char) bis.read());
+                                }
+                                activeEditor.setExtFile(sbuf.toString());
+                                activeEditor.parseTransformations(true, file.getLocationURI()
+                                        .toURL());
+                            } catch (MalformedURLException e1) {
+                                KSBasEUIPlugin.getDefault().logError(
+                                        "Could not find the Xtend file: Malformed URL");
+                            } catch (CoreException e1) {
+                                KSBasEUIPlugin.getDefault().logError("Could not read XtendFile");
+                            } catch (IOException e1) {
+                                KSBasEUIPlugin.getDefault().logError("Could not read XtendFile");
+                            }
+                            cbEditors.notifyListeners(SWT.Selection, null);
+                        }
+                    }
+                }
+            }
+
+            public void widgetDefaultSelected(final SelectionEvent e) {
+            }
+        });
+        btLoadXtend.setEnabled(false);
     }
 
     /**
@@ -329,7 +468,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
     protected Control createContents(final Composite parent) {
         // Since the title wont be display for setTitle or super(text) we are
         // simply inserting a label
-        new Label(parent, SWT.NONE).setText(Messages.kSBasETPreferencePageTitle);
+        new Label(parent, SWT.NONE).setText(Messages.kSBasEEPreferencePageTitle);
 
         createEditorContent(parent);
         createTransformationContent(parent);
@@ -367,8 +506,6 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
     protected void performApply() {
         if (activeEditor != null) {
             activeEditor.setModelPackageClass(sfMetaModel.getText());
-            activeEditor.setContext(sfContext.getText());
-            activeEditor.setDefaultIcon(dfDefaultIcon.getStringValue());
         }
         super.performApply();
     }
@@ -381,11 +518,6 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
     @Override
     public boolean performOk() {
         manager.storeUserDefinedTransformations();
-        /*
-         * TODO: Change to create user defined menus
-         * DynamicMenuContributions.INSTANCE.createMenuForEditors(manager
-         * .getUserDefinedEditors().values());
-         */
         return super.performOk();
     }
 

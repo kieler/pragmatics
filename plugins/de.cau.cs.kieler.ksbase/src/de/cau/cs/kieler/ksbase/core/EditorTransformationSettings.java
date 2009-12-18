@@ -20,7 +20,6 @@ import java.io.Reader;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -193,7 +192,7 @@ public class EditorTransformationSettings implements Serializable {
      * @return A LinkedList containing all transformations
      */
     public final Collection<Transformation> getTransformations() {
-        return Collections.unmodifiableCollection(transformations.values());
+        return transformations.values();
     }
 
     /**

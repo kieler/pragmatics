@@ -27,59 +27,19 @@ public final class Messages extends NLS {
     private static final String BUNDLE_NAME = 
         "de.cau.cs.kieler.ksbase.ui.preferences.messages"; //$NON-NLS-1$
     /** Name of the localized message in messages.properties. **/
-    public static String kSBasEPreferencePageButtonBrowse;
-    /** Name of the localized message in messages.properties. **/
-    public static String kSBasEPreferencePageButtonEditTransformations;
-    /** Name of the localized message in messages.properties. **/
-    public static String kSBasEPreferencePageDefaultIcon;
-    /** Name of the localized message in messages.properties. **/
-    public static String kSBasEPreferencePageDefaultIconName;
-    /** Name of the localized message in messages.properties. **/
-    public static String kSBasEPreferencePageEditorSelectionTitle;
-    /** Name of the localized message in messages.properties. **/
-    public static String kSBasEPreferencePageEditTransformationsMessage;
-    /** Name of the localized message in messages.properties. **/
-    public static String kSBasEPreferencePageEditTransformationsTitle;
-    /** Name of the localized message in messages.properties. **/
-    public static String kSBasETPreferencePageTitle;
-    /** Name of the localized message in messages.properties. **/
     public static String kSBasEEPreferencePageTitle;
-    /** Name of the localized message in messages.properties. **/
-    public static String kSBasEPreferencePageIconExtensionICO;
-    /** Name of the localized message in messages.properties. **/
-    public static String kSBasEPreferencePageIconExtensionPNG;
-    /** Name of the localized message in messages.properties. **/
-    public static String kSBasEPreferencePageModelPackage;
-    /** Name of the localized message in messages.properties. **/
-    public static String kSBasEPreferencePageShortcutALT;
-    /** Name of the localized message in messages.properties. **/
-    public static String kSBasEPreferencePageShortcutCTRL;
-    /** Name of the localized message in messages.properties. **/
-    public static String kSBasEPreferencePageShortcutSHIFT;
-    /** Name of the localized message in messages.properties. **/
-    public static String kSBasEPreferencePageTableColId;
-    /** Name of the localized message in messages.properties. **/
-    public static String kSBasEPreferencePageTableColIdToolTip;
-    /** Name of the localized message in messages.properties. **/
-    public static String kSBasEPreferencePageTableColIcon;
-    /** Name of the localized message in messages.properties. **/
-    public static String kSBasEPreferencePageTableColName;
-    /** Name of the localized message in messages.properties. **/
-    public static String kSBasEPreferencePageTableColNameToolTip;
-    /** Name of the localized message in messages.properties. **/
-    public static String kSBasEPreferencePageTableColShortcut;
-    /** Name of the localized message in messages.properties. **/
-    public static String kSBasEPreferencePageTableColShortcutToolTip;
-    /** Name of the localized message in messages.properties. **/
-    public static String kSBasEPreferencePageTableColTransformation;
-    /** Name of the localized message in messages.properties. **/
-    public static String kSBasEPreferencePageTableColTransformationToolTip;
-    /** Name of the localized message in messages.properties. **/
-    public static String kSBasEPreferencePageTableTitle;
     /** Name of the localized message in messages.properties. **/
     public static String kSBasEPreferencePageTitle;
     /** Name of the localized message in messages.properties. **/
-    public static String kSBasEPreferencePageXtendFileDefaultName;
+    public static String kSBasEPreferencePageButtonBrowse;
+    /** Name of the localized message in messages.properties. **/
+    public static String kSBasEPreferencePageEditTransformationsTitle;
+    /** Name of the localized message in messages.properties. **/
+    public static String kSBasEPreferencePageEditorSelectionTitle;
+    /** Name of the localized message in messages.properties. **/
+    public static String kSBasEPreferencePageModelPackage;
+    /** Name of the localized message in messages.properties. **/
+    public static String kSBasEPreferencePageTableColName;
     /** Name of the localized message in messages.properties. **/
     public static String kSBasEPreferencePageXtendFileDialogTitle;
     /** Name of the localized message in messages.properties. **/

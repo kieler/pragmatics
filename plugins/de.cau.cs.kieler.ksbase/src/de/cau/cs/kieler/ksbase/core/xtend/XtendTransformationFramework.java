@@ -80,7 +80,7 @@ public class XtendTransformationFramework implements ITransformationFramework {
             if (!xtendFacade.hasExtension(operation, parameter)) {
                 KSBasEPlugin.getDefault().logError(
                         "Could not find transformation " + operation + " with the parameters"
-                                + parameter.toString());
+                                + parameter);
             } else {
                 this.parameters = parameter;
                 this.extension = operation;

@@ -120,7 +120,13 @@ public final class TransformationManager {
      * @return The first editor in the list of registered editors which has the given name
      */
     public EditorTransformationSettings getEditorById(final String editorId) {
-        return activeEditors.get(editorId);
+        if (activeEditors.containsKey(editorId)) {
+            return activeEditors.get(editorId);
+        } else if (activeUserEditors.containsKey(editorId)) {
+            return activeUserEditors.get(editorId);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -204,11 +210,16 @@ public final class TransformationManager {
      */
     public void storeUserDefinedTransformations() {
 
-        if (activeEditors.size() > 0) {
+        if (activeUserEditors.size() > 0) {
             IPath metaPath = KSBasEPlugin.getDefault().getStateLocation();
             for (EditorTransformationSettings editor : activeUserEditors.values()) {
                 ObjectOutputStream oos = null;
                 try {
+                    File f = metaPath.append(
+                            editor.getEditorId() + ".sbase").toFile();
+                    if (f.exists()) {
+                        f.delete();
+                    }
                     oos = new ObjectOutputStream(new FileOutputStream(metaPath.append(
                             editor.getEditorId() + ".sbase").toFile()));
                     oos.writeObject(editor);

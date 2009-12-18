@@ -51,6 +51,8 @@ public class Transformation implements Serializable, Cloneable {
     private LinkedList<String> parameter;
     /** Id for this transformation. **/
     private String transformationId;
+    /** Flag for user defined transformations to control visibility. **/
+    private boolean visible;
 
     /**
      * Creates a new Transformation.
@@ -61,11 +63,12 @@ public class Transformation implements Serializable, Cloneable {
      *            The name of the Xtend transformation to execute.
      */
     public Transformation(final String tName, final String tXtendName) {
-        this.name = tName;
-        this.extension = tXtendName;
+        name = tName;
+        extension = tXtendName;
         icon = "";
         keyboardShortcut = "";
         transformationId = "";
+        visible = true;
         parameter = new LinkedList<String>();
     }
 
@@ -81,6 +84,7 @@ public class Transformation implements Serializable, Cloneable {
         this.icon = t.icon;
         this.transformationId = t.transformationId;
         this.keyboardShortcut = t.keyboardShortcut;
+        this.visible = t.visible;
         this.parameter = new LinkedList<String>(t.parameter);
 
     }
@@ -252,6 +256,24 @@ public class Transformation implements Serializable, Cloneable {
     }
 
     /**
+     * Checks if the transformation should be displayed in the menu.
+     * Only used for user defined editors.
+     * @return True if the transformation should be displayed
+     */
+    public Boolean isVisible() {
+        return visible;
+    }
+
+    /**
+     * Sets the transformation visibility.
+     * Only used for user defined editors.
+     * @param isVisible New visibility status
+     */
+    public void setVisible(final Boolean isVisible) {
+        this.visible = isVisible;
+    }
+
+    /**
      * Serializes this object to the given ObjectOutputStream.
      * 
      * @param writer
@@ -264,6 +286,7 @@ public class Transformation implements Serializable, Cloneable {
             writer.writeObject(this.extension);
             writer.writeObject(this.parameter);
             writer.writeObject(this.icon);
+            writer.writeObject(this.visible);
         } catch (IOException e) {
             KSBasEPlugin.getDefault().logError("Transformation settings could not be saved.");
         }
