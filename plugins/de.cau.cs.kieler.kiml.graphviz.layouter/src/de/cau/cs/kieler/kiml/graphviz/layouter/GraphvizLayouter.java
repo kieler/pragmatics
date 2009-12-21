@@ -78,7 +78,7 @@ import de.cau.cs.kieler.core.util.KielerMath.Point;;
  * is done using <a href="http://www.eclipse.org/modeling/tmf/">Xtext</a>.
  * 
  * @kieler.rating 2009-12-11 proposed yellow msp
- * @author Arne Schipper
+ * @author ars
  * @author haf
  * @author msp
  */
@@ -420,7 +420,7 @@ public class GraphvizLayouter {
         // set font name
         if (hasLabel && fontName != null) {
             attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_FONTNAME,
-                    createString(fontName)));
+                    "\"" +  fontName + "\""));
         }
         // set font size
         if (hasLabel && fontSize >= 0) {
@@ -701,7 +701,7 @@ public class GraphvizLayouter {
                 labelPos = attributeMap.get(GraphvizAPI.ATTR_TAILLP);
                 if (labelPos != null) {
                     applyEdgeLabelPos(kedge, labelPos, EdgeLabelPlacement.TAIL,
-                            edgeOffsetx, edgeOffsety);
+                            offset, offset);
                 }
                 
             } else if (statement instanceof AttributeStatement) {

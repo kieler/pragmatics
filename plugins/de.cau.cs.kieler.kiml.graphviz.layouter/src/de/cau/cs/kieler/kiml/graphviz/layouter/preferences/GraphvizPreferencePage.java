@@ -32,6 +32,7 @@ import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizAPI;
 /**
  * The Graphviz preference page.
  * 
+ * @kieler.rating 2009-12-21 proposed yellow msp
  * @author ars
  */
 public class GraphvizPreferencePage extends FieldEditorPreferencePage implements
