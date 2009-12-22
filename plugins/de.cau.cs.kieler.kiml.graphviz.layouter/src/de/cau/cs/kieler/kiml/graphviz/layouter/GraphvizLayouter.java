@@ -355,6 +355,11 @@ public class GraphvizLayouter {
         return attribute;
     }
     
+    /** default label angle value. */
+    private static final float DEF_LABEL_ANGLE = -25.0f;
+    /** maximal label angle value. */
+    private static final float MAX_LABEL_ANGLE = -45.0f;
+    
     /**
      * Set edge labels for the given edge.
      * 
@@ -428,9 +433,18 @@ public class GraphvizLayouter {
                     Integer.toString(fontSize)));
         }
         // set label distance
-        if (distanceOption != null) {
+        if (distanceOption != null && distanceOption.getValue() >= 0.0f) {
+            float distance = distanceOption.getValue();
             attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_LABELDISTANCE,
-                    Float.toString(distanceOption.getValue())));
+                    Float.toString(distance)));
+            float labelAngle = DEF_LABEL_ANGLE;
+            if (distance >= 1.0f) {
+                labelAngle += (1 - 1 / distance) * (MAX_LABEL_ANGLE - DEF_LABEL_ANGLE);
+            } else {
+                labelAngle = distance * DEF_LABEL_ANGLE;
+            }
+            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_LABELANGLE,
+                    Float.toString(labelAngle)));
         }
     }
 
