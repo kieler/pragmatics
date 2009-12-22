@@ -25,6 +25,9 @@ import java.io.InputStream;
  */
 public class NonBlockingInputStream extends InputStream {
 
+    /** number of milliseconds to wait if no input is available. */
+    private static final int UNAVAIL_WAIT = 5;
+    
     /** the nested input stream. */
     private InputStream inputStream;
     
@@ -45,7 +48,12 @@ public class NonBlockingInputStream extends InputStream {
         if (inputStream.available() > 0) {
             return inputStream.read();
         } else {
-            return -1;
+            try {
+                Thread.sleep(UNAVAIL_WAIT);
+            } catch (InterruptedException exception) {
+                // ignore exception
+            }
+            return inputStream.available() > 0 ? inputStream.read() : -1;
         }
     }
     
@@ -66,7 +74,13 @@ public class NonBlockingInputStream extends InputStream {
         if (avail > 0) {
             return inputStream.read(b, off, len <= avail ? len : avail);
         } else {
-            return -1;
+            try {
+                Thread.sleep(UNAVAIL_WAIT);
+            } catch (InterruptedException exception) {
+                // ignore exception
+            }
+            avail = inputStream.available();
+            return avail > 0 ? inputStream.read(b, off, len <= avail ? len : avail) : -1;
         }
     }
 
