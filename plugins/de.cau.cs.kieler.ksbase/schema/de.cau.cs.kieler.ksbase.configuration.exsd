@@ -109,6 +109,16 @@ This class has to extend &apos;emf.ecore.EPackage&apos;
                </appinfo>
             </annotation>
          </attribute>
+         <attribute name="commandHandler" type="string">
+            <annotation>
+               <documentation>
+                  Sets the command handler that will be called when a KSBasE menu contribution is activated. If this field is not set, the default handler de.cau.cs.kieler.ksbase.ui.handler.TransformationCommandHandler is used. The command handler will receive two parameters representing the active editor and the transformation that has been activated.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.core.commands.AbstractHandler:"/>
+               </appinfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

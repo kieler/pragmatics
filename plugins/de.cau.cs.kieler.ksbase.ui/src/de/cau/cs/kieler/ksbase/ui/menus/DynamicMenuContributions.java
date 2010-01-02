@@ -178,8 +178,13 @@ public final class DynamicMenuContributions {
                     Element handlerCommand = extension.createElement("handler");
                     handlerCommand.setAttribute("commandId", commandIds.get(t));
                     Element classHandler = extension.createElement("class");
-                    classHandler.setAttribute("class", "de.cau.cs.kieler.ksbase.ui.handler"
-                            + ".TransformationCommandHandler");
+                    //Check if the editor has a custom command handler
+                    if (editor.getCommandHandler().length() == 0) {
+                        classHandler.setAttribute("class", "de.cau.cs.kieler.ksbase.ui.handler"
+                                + ".TransformationCommandHandler");
+                    } else {
+                        classHandler.setAttribute("class", editor.getCommandHandler());
+                    }
                     handlerCommand.appendChild(classHandler);
                     // Handler restrictions
                     Element handlerEnabled = extension.createElement("enabledWhen");
@@ -431,9 +436,9 @@ public final class DynamicMenuContributions {
      */
     private Node createElementForMenu(final String tid, final Document extension,
             final EditorTransformationSettings editor) {
-        Assert.isNotNull(tid);
-        Assert.isNotNull(extension);
-        Assert.isNotNull(editor);
+        assert (tid != null);
+        assert (extension != null);
+        assert (editor != null);
 
         // create menu command
         Transformation t = editor.getTransformationById(tid);

@@ -215,8 +215,7 @@ public final class TransformationManager {
             for (EditorTransformationSettings editor : activeUserEditors.values()) {
                 ObjectOutputStream oos = null;
                 try {
-                    File f = metaPath.append(
-                            editor.getEditorId() + ".sbase").toFile();
+                    File f = metaPath.append(editor.getEditorId() + ".sbase").toFile();
                     if (f.exists()) {
                         f.delete();
                     }
@@ -315,7 +314,12 @@ public final class TransformationManager {
             editor.setContext(settings.getAttribute("contextId"));
             editor.setDefaultIcon(settings.getAttribute("defautlIcon"));
             editor.setModelPackageClass(settings.getAttribute("packageName"));
-
+            String handler = settings.getAttribute("commandHandler");
+            if (handler == null) {
+                editor.setCommandHandler("");
+            } else {
+                editor.setCommandHandler(handler);
+            }
             IConfigurationElement[] transformations = settings.getChildren("transformations");
             if (transformations != null && transformations.length > 0) {
                 // since we only allowed one single <transformations> child, we

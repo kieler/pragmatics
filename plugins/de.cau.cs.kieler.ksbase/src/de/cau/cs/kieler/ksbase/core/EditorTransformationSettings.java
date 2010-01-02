@@ -66,6 +66,11 @@ public class EditorTransformationSettings implements Serializable {
     /** List of menu contributions. **/
     private LinkedList<KSBasEMenuContribution> menuContributions;
     /**
+     * Command handler to be used by this editor. If this is empty, the default handler will be
+     * used.
+     **/
+    private String commandHandler;
+    /**
      * The contributor which contains the extension points. When the settings have been defined
      * using the preference pages this will be null. This attribute will not be serialized.
      **/
@@ -83,6 +88,7 @@ public class EditorTransformationSettings implements Serializable {
         this.defaultIcon = ""; //$NON-NLS-1$
         this.extFile = ""; //$NON-NLS-1$
         this.context = ""; //$NON-NLS-1$
+        this.commandHandler = ""; //$NON-NLS-1$
         this.transformations = new HashMap<String, Transformation>();
         this.menuContributions = new LinkedList<KSBasEMenuContribution>();
         this.contributor = null;
@@ -294,6 +300,23 @@ public class EditorTransformationSettings implements Serializable {
      */
     public final void setContext(final String contxt) {
         this.context = contxt;
+    }
+
+    /**
+     * Returns the command handler, may return an empty string but never null.
+     * 
+     * @return The string containing the class name of the command handler.
+     */
+    public String getCommandHandler() {
+        return commandHandler;
+    }
+
+    /**
+     * Sets the command handler for this editor.
+     * @param handlerClass The name of the command handler class
+     */
+    public void setCommandHandler(final String handlerClass) {
+        this.commandHandler = handlerClass;
     }
 
     /**
