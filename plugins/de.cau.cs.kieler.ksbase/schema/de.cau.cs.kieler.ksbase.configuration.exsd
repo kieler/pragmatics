@@ -57,6 +57,7 @@
          <sequence>
             <element ref="menus"/>
             <element ref="transformations"/>
+            <element ref="commandHandler" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="editorId" type="string">
             <annotation>
@@ -106,16 +107,6 @@ This class has to extend &apos;emf.ecore.EPackage&apos;
                </documentation>
                <appinfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="commandHandler" type="string">
-            <annotation>
-               <documentation>
-                  Sets the command handler that will be called when a KSBasE menu contribution is activated. If this field is not set, the default handler de.cau.cs.kieler.ksbase.ui.handler.TransformationCommandHandler is used. The command handler will receive two parameters representing the active editor and the transformation that has been activated.
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.core.commands.AbstractHandler:"/>
                </appinfo>
             </annotation>
          </attribute>
@@ -240,6 +231,26 @@ This class has to extend &apos;emf.ecore.EPackage&apos;
          <sequence minOccurs="1" maxOccurs="unbounded">
             <element ref="transformation"/>
          </sequence>
+      </complexType>
+   </element>
+
+   <element name="commandHandler">
+      <annotation>
+         <documentation>
+            Sets the command handler that will be called when a KSBasE menu contribution is activated. If this field is not set, the default handler de.cau.cs.kieler.ksbase.ui.handler.TransformationCommandHandler is used. The command handler will receive two parameters representing the active editor and the transformation that has been activated.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Sets the command handler that will be called when a KSBasE menu contribution is activated. If this field is not set, the default handler de.cau.cs.kieler.ksbase.ui.handler.TransformationCommandHandler is used. The command handler will receive two parameters representing the active editor and the transformation that has been activated.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.core.commands.AbstractHandler:"/>
+               </appinfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

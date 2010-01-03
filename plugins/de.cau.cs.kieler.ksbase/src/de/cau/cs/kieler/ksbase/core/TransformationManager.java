@@ -36,8 +36,8 @@ import org.osgi.framework.Bundle;
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 
 /**
- * The main storage and management class. Contains a list of currently registered editors. Handles
- * import, export and Xtend file parsing.
+ * The main storage and management class. Contains a list of currently
+ * registered editors. Handles import, export and Xtend file parsing.
  * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
@@ -47,7 +47,8 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 public final class TransformationManager {
 
     /**
-     * The currently active editors that have been registered by using the extension point.
+     * The currently active editors that have been registered by using the
+     * extension point.
      **/
     private HashMap<String, EditorTransformationSettings> activeEditors;
     /** The editors that have been added by the user using the preference pages. **/
@@ -60,8 +61,8 @@ public final class TransformationManager {
     private static final String KSBASE_EXTENSIONPOINT = "de.cau.cs.kieler.ksbase.configurations";
 
     /**
-     * FileNameFilter to check a file for a valid settings file. The extension has to be '.sbase' to
-     * be valid.
+     * FileNameFilter to check a file for a valid settings file. The extension
+     * has to be '.sbase' to be valid.
      * 
      * @author Michael Matzen - mim AT informatik.uni-kiel.de
      * 
@@ -103,8 +104,8 @@ public final class TransformationManager {
     }
 
     /**
-     * Gets the list of user defined editors. This is done by checking if the contributor is 'null'
-     * and is used by the preference page.
+     * Gets the list of user defined editors. This is done by checking if the
+     * contributor is 'null' and is used by the preference page.
      * 
      * @return A list of EditorTransformationSettings
      */
@@ -117,7 +118,8 @@ public final class TransformationManager {
      * 
      * @param editorId
      *            The editor's id.
-     * @return The first editor in the list of registered editors which has the given name
+     * @return The first editor in the list of registered editors which has the
+     *         given name
      */
     public EditorTransformationSettings getEditorById(final String editorId) {
         if (activeEditors.containsKey(editorId)) {
@@ -134,7 +136,8 @@ public final class TransformationManager {
      * 
      * @param editorId
      *            The editor's id.
-     * @return The first editor in the list of registered editors which has the given name
+     * @return The first editor in the list of registered editors which has the
+     *         given name
      */
     public EditorTransformationSettings getUserDefinedEditorById(final String editorId) {
         return activeUserEditors.get(editorId);
@@ -159,8 +162,8 @@ public final class TransformationManager {
     }
 
     /**
-     * Adds a new editor to the list of user defined editors. This class creates an empty
-     * EditorTransformationSetting with the given editorId.
+     * Adds a new editor to the list of user defined editors. This class creates
+     * an empty EditorTransformationSetting with the given editorId.
      * 
      * @param editorId
      *            The name of the new editor
@@ -245,8 +248,8 @@ public final class TransformationManager {
     }
 
     /**
-     * Reads settings from KSBasE storage files and initializes user defined editors and
-     * transformations.
+     * Reads settings from KSBasE storage files and initializes user defined
+     * editors and transformations.
      */
     private void initalizeUserSettings() {
 
@@ -290,8 +293,8 @@ public final class TransformationManager {
     }
 
     /**
-     * Reads all existing extensions of the KSBasE extension point and initializes the editors and
-     * transformations.
+     * Reads all existing extensions of the KSBasE extension point and
+     * initializes the editors and transformations.
      */
     private void initializeExtensionPoints() {
         activeEditors = new HashMap<String, EditorTransformationSettings>();
@@ -314,12 +317,7 @@ public final class TransformationManager {
             editor.setContext(settings.getAttribute("contextId"));
             editor.setDefaultIcon(settings.getAttribute("defautlIcon"));
             editor.setModelPackageClass(settings.getAttribute("packageName"));
-            String handler = settings.getAttribute("commandHandler");
-            if (handler == null) {
-                editor.setCommandHandler("");
-            } else {
-                editor.setCommandHandler(handler);
-            }
+
             IConfigurationElement[] transformations = settings.getChildren("transformations");
             if (transformations != null && transformations.length > 0) {
                 // since we only allowed one single <transformations> child, we
@@ -341,6 +339,16 @@ public final class TransformationManager {
                     editor.addTransformation(transformation);
                 }
             }
+            // read alternate command handler
+            IConfigurationElement[] commandHandler = settings.getChildren("commandHandler");
+            if (commandHandler != null && commandHandler.length == 1
+                    && commandHandler[0].getAttribute("class") != null) {
+                editor.setCommandHandler(settings.getAttribute("class"));
+            } else {
+                //set empty value, so the default handler will be used
+                editor.setCommandHandler("");
+            }
+
             // Read menu contributions
             IConfigurationElement[] menus = settings.getChildren("menus");
 
@@ -400,8 +408,8 @@ public final class TransformationManager {
     }
 
     /**
-     * Initializes the transformation manager by reading the extension points and the user defined
-     * settings.
+     * Initializes the transformation manager by reading the extension points
+     * and the user defined settings.
      */
     public void initializeTransformations() {
         initializeExtensionPoints();
