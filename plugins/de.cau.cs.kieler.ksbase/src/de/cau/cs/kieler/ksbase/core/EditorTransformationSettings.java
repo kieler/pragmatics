@@ -313,9 +313,10 @@ public class EditorTransformationSettings implements Serializable {
 
     /**
      * Sets the command handler for this editor.
-     * @param handlerClass The name of the command handler class
+     * @param handlerClass The name of the command handler class, must not be null
      */
     public void setCommandHandler(final String handlerClass) {
+        assert(handlerClass != null);
         this.commandHandler = handlerClass;
     }
 
