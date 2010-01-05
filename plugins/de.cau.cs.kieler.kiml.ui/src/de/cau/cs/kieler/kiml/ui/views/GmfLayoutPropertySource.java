@@ -42,9 +42,11 @@ import de.cau.cs.kieler.kiml.layout.klayoutdata.KOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KStringOption;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.options.PortConstraints;
+import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.layout.KimlUiUtil;
 import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyle;
+import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsFactory;
 import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsPackage;
 
 /**
@@ -164,7 +166,7 @@ public class GmfLayoutPropertySource implements IPropertySource {
                 }
                 LayoutOptionData optionData = layoutServices.getLayoutOptionData(koption.getKey());
                 koptionMap.put(optionData, koption);
-                Object defaultValue = KimlUiUtil.getValue(koption, optionData);
+                Object defaultValue = KimlLayoutUtil.getValue(koption, optionData);
                 defaultValueMap.put(optionData, defaultValue);
             }
         }
@@ -263,7 +265,7 @@ public class GmfLayoutPropertySource implements IPropertySource {
                 value = defaultValue;
             }
         } else {
-            value = KimlUiUtil.getValue(koption, optionData);
+            value = KimlLayoutUtil.getValue(koption, optionData);
         }
         if (LayoutOptions.LAYOUT_HINT.equals(optionData.getId())) {
             return layoutHintIndexMap.get(value);
@@ -278,29 +280,37 @@ public class GmfLayoutPropertySource implements IPropertySource {
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public void setPropertyValue(final Object id, final Object thevalue) {
-        Object value = thevalue;
-        LayoutOptionData optionData = LayoutServices.getInstance().getLayoutOptionData((String)id);
-        KOption koption = koptionMap.get(optionData);
-        if (koption == null) {
-            if (optionStyle == null) {
-                optionStyle = KimlUiUtil.addLayoutOptionStyle(notationView, editingDomain);
+        Runnable modelChange = new Runnable() {
+            public void run() {
+                Object value = thevalue;
+                LayoutOptionData optionData = LayoutServices.getInstance()
+                        .getLayoutOptionData((String)id);
+                KOption koption = koptionMap.get(optionData);
+                if (koption == null) {
+                    if (optionStyle == null) {
+                        optionStyle = LayoutOptionsFactory.eINSTANCE.createLayoutOptionStyle();
+                        notationView.getStyles().add(optionStyle);
+                    }
+                    koption = KimlUiUtil.addKOption(optionStyle, optionData);
+                    koptionMap.put(optionData, koption);
+                }
+                if (LayoutOptions.LAYOUT_HINT.equals(optionData.getId())) {
+                    KimlLayoutUtil.setValue(koption, optionData,
+                            layoutHintValues[((Integer)value).intValue()]);
+                    // LayoutViewPart.refreshLayoutView();
+                } else {
+                    if (optionData.getType() == LayoutOptionData.Type.INT) {
+                        value = Integer.valueOf((String)value);
+                    } else if (optionData.getType() == LayoutOptionData.Type.FLOAT) {
+                        value = Float.valueOf((String)value);
+                    }
+                    KimlLayoutUtil.setValue(koption, optionData, value);
+                }
             }
-            koption = KimlUiUtil.addKOption(optionStyle, optionData, editingDomain);
-            koptionMap.put(optionData, koption);
-        }
-        if (LayoutOptions.LAYOUT_HINT.equals(optionData.getId())) {
-            KimlUiUtil.setValue(koption, optionData, layoutHintValues[((Integer)value).intValue()],
-                    editingDomain);
-//            LayoutViewPart.refreshLayoutView();
-        } else {
-            if (optionData.getType() == LayoutOptionData.Type.INT) {
-                value = Integer.valueOf((String)value);
-            } else if (optionData.getType() == LayoutOptionData.Type.FLOAT) {
-                value = Float.valueOf((String)value);
-            }
-            KimlUiUtil.setValue(koption, optionData, value, editingDomain);
-        }
+        };
+        KimlUiUtil.runModelChange(modelChange, editingDomain, Messages.getString("kiml.ui.11"));
     }
     
     /**
@@ -316,38 +326,24 @@ public class GmfLayoutPropertySource implements IPropertySource {
     public boolean isPropertySet(final Object id) {
         LayoutOptionData optionData = LayoutServices.getInstance().getLayoutOptionData((String)id);
         KOption koption = koptionMap.get(optionData);
-        if (koption != null) {
-            Object defaultValue = defaultValueMap.get(optionData);
-            if (defaultValue == null) {
-                return true;
-            }
-            return defaultValue.equals(KimlUiUtil.getValue(koption, optionData));
-        }
-        return false;
+        return koption != null;
     }
 
     /**
      * {@inheritDoc}
      */
     public void resetPropertyValue(final Object id) {
-        LayoutServices layoutServices = LayoutServices.getInstance();
-        LayoutOptionData optionData = layoutServices.getLayoutOptionData((String)id);
-        KOption koption = koptionMap.get(optionData);
+        final LayoutOptionData optionData = LayoutServices.getInstance()
+                .getLayoutOptionData((String)id);
+        final KOption koption = koptionMap.get(optionData);
         if (koption != null) {
-            Object defaultValue = defaultValueMap.get(optionData);
-            if (defaultValue == null) {
-                if (optionData.hasTarget(LayoutOptionData.Target.PARENTS)) {
-                    LayoutProviderData partProviderData = layoutServices.getLayoutProviderData(
-                            (String)defaultValueMap.get(layoutServices
-                            .getLayoutOptionData(LayoutOptions.LAYOUT_HINT)));
-                    defaultValue = KimlUiUtil.getDefault(optionData, partProviderData,
-                            childCompartmentEditPart);
-                } else {
-                    defaultValue = KimlUiUtil.getDefault(optionData, containerProviderData,
-                            containerEditPart);
+            Runnable modelChange = new Runnable() {
+                public void run() {
+                    KimlUiUtil.removeKOption(optionStyle, optionData.getId());
                 }
-            }
-            KimlUiUtil.setValue(koption, optionData, defaultValue, editingDomain);
+            };
+            KimlUiUtil.runModelChange(modelChange, editingDomain, Messages.getString("kiml.ui.12"));
+            koptionMap.remove(optionData);
         }
 //        if (LayoutOptions.LAYOUT_HINT.equals(optionData.id))
 //            LayoutViewPart.refreshLayoutView();

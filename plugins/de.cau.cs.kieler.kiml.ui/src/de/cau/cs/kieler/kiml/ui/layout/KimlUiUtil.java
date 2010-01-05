@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.kiml.ui.layout;
 
 import java.util.LinkedHashMap;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -27,21 +28,15 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.gef.RootEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
-import org.eclipse.gmf.runtime.notation.View;
 
-import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
 import de.cau.cs.kieler.kiml.layout.LayoutProviderData;
 import de.cau.cs.kieler.kiml.layout.LayoutServices;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KBooleanOption;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KFloatOption;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KIntOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KOption;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KStringOption;
+import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
 import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyle;
-import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsFactory;
 import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsPackage;
 
 /**
@@ -136,7 +131,7 @@ public final class KimlUiUtil {
         if (diagramEditPart != null) {
             KOption koption = getKOption(diagramEditPart, optionData.getId());
             if (koption != null && koption.isDefault()) {
-                return getValue(koption, optionData);
+                return KimlLayoutUtil.getValue(koption, optionData);
             }
         }
 
@@ -200,7 +195,7 @@ public final class KimlUiUtil {
                     if (option.isDefault()) {
                         LayoutOptionData optionData = LayoutServices.getInstance()
                                 .getLayoutOptionData(option.getKey());
-                        options.put(option.getKey(), KimlUiUtil.getValue(option, optionData));
+                        options.put(option.getKey(), KimlLayoutUtil.getValue(option, optionData));
                     }
                 }
             }
@@ -213,7 +208,7 @@ public final class KimlUiUtil {
             for (KOption option : optionStyle.getOptions()) {
                 LayoutOptionData optionData = LayoutServices.getInstance()
                         .getLayoutOptionData(option.getKey());
-                options.put(option.getKey(), KimlUiUtil.getValue(option, optionData));                
+                options.put(option.getKey(), KimlLayoutUtil.getValue(option, optionData));
             }
         }
         
@@ -246,139 +241,71 @@ public final class KimlUiUtil {
     }
     
     /**
-     * Adds a layout option style to the given notation view or its domain element
-     * by using the command stack.
+     * Performs the model changes specified in the given runnable in a safe context.
      * 
-     * @param notationView notation view of a graphical edit part
-     * @param editingDomain the editing domain of the edit part
-     * @return the new layout option style
+     * @param runnable a runnable that performs model changes
+     * @param editingDomain the editing domain for the changes
+     * @param label a user friendly label shown for the undo action
      */
-    public static LayoutOptionStyle addLayoutOptionStyle(final View notationView,
-            final TransactionalEditingDomain editingDomain) {
-        final Maybe<LayoutOptionStyle> optionStyleWrap = new Maybe<LayoutOptionStyle>();
-        editingDomain.getCommandStack().execute(new RecordingCommand(editingDomain) {
-            @SuppressWarnings("unchecked")
+    public static void runModelChange(final Runnable runnable,
+            final TransactionalEditingDomain editingDomain, final String label) {
+        editingDomain.getCommandStack().execute(new RecordingCommand(editingDomain, label) {
             protected void doExecute() {
-                optionStyleWrap.setObject(LayoutOptionsFactory.eINSTANCE.createLayoutOptionStyle());
-//                EObject domainElement = notationView.getElement();
-//                if (domainElement instanceof EModelElement) {
-//                    optionStyleWrap.object.setSource(LayoutOptionStyle.class.getName());
-//                    ((EModelElement)domainElement).getEAnnotations().add(optionStyleWrap.object);
-//                }
-//                else
-                notationView.getStyles().add(optionStyleWrap.getObject());
+                runnable.run();
             }
         });
-        return optionStyleWrap.getObject();
     }
     
     /**
-     * Adds a {@link KOption} to the given layout option style by using the command stack.
+     * Adds a {@link KOption} to the given layout option style. This operation must be run in
+     * a safe context; use {@link #runModelChange} to achieve this.
      * 
      * @param optionStyle layout option style of a notation view
      * @param optionData the layout option data for which the {@code KOption} shall be created
-     * @param editingDomain the editing domain of the related edit part
      * @return the new {@code KOption}
      */
     public static KOption addKOption(final LayoutOptionStyle optionStyle,
-            final LayoutOptionData optionData, final TransactionalEditingDomain editingDomain) {
-        final Maybe<KOption> koptionWrap = new Maybe<KOption>();
-        editingDomain.getCommandStack().execute(new RecordingCommand(editingDomain) {
-            protected void doExecute() {
-                switch (optionData.getType()) {
-                case STRING:
-                    koptionWrap.setObject(KLayoutDataFactory.eINSTANCE.createKStringOption());
-                    break;
-                case BOOLEAN:
-                    koptionWrap.setObject(KLayoutDataFactory.eINSTANCE.createKBooleanOption());
-                    break;
-                case ENUM:
-                case INT:
-                    koptionWrap.setObject(KLayoutDataFactory.eINSTANCE.createKIntOption());
-                    break;
-                case FLOAT:
-                    koptionWrap.setObject(KLayoutDataFactory.eINSTANCE.createKFloatOption());
-                    break;
-                default:
-                    return;
-                }
-                koptionWrap.getObject().setKey(optionData.getId());
-                optionStyle.getOptions().add(koptionWrap.getObject());
-            }
-        });
-        return koptionWrap.getObject();
-    }
-
-    /**
-     * Returns the value of the given {@link KOption} as an {@code Object}.
-     * 
-     * @param koption the {@code KOption} for which the value shall be retrieved
-     * @param optionData the layout option data related with the option
-     * @return the current value of the option
-     */
-    public static Object getValue(final KOption koption, final LayoutOptionData optionData) {
+            final LayoutOptionData optionData) {
+        KOption koption = null;
         switch (optionData.getType()) {
         case STRING:
-            return ((KStringOption)koption).getValue();
+            koption = KLayoutDataFactory.eINSTANCE.createKStringOption();
+            break;
         case BOOLEAN:
-            return Boolean.valueOf(((KBooleanOption)koption).isValue());
+            koption = KLayoutDataFactory.eINSTANCE.createKBooleanOption();
+            break;
         case ENUM:
         case INT:
-            return Integer.valueOf(((KIntOption)koption).getValue());
+            koption = KLayoutDataFactory.eINSTANCE.createKIntOption();
+            break;
         case FLOAT:
-            return Float.valueOf(((KFloatOption)koption).getValue());
+            koption = KLayoutDataFactory.eINSTANCE.createKFloatOption();
+            break;
         default:
             return null;
         }
+        koption.setKey(optionData.getId());
+        optionStyle.getOptions().add(koption);
+        return koption;
     }
     
     /**
-     * Sets the value of the given {@link KOption} by using the command stack.
+     * Removes the {@link KOption} with given identifier from the notation view. This operation
+     * must be run in a safe context; use {@link #runModelChange} to achieve this.
      * 
-     * @param koption the {@code KOption} for which the value shall be set
-     * @param optionData the layout option data related with the option
-     * @param value the new value of the option
-     * @param editingDomain the editing domain of the related edit part
+     * @param optionStyle layout option style of a notation view
+     * @param optionId the layout option identifier for which the {@code KOption} shall be removed
      */
-    public static void setValue(final KOption koption, final LayoutOptionData optionData,
-            final Object value, final TransactionalEditingDomain editingDomain) {
-        editingDomain.getCommandStack().execute(new RecordingCommand(editingDomain) {
-            protected void doExecute() {
-                switch (optionData.getType()) {
-                case STRING:
-                    ((KStringOption)koption).setValue((String)value);
-                    break;
-                case BOOLEAN:
-                    ((KBooleanOption)koption).setValue(((Boolean)value).booleanValue());
-                    break;
-                case ENUM:
-                case INT:
-                    ((KIntOption)koption).setValue(((Integer)value).intValue());
-                    break;
-                case FLOAT:
-                    ((KFloatOption)koption).setValue(((Float)value).floatValue());
-                    break;
-                }
+    public static void removeKOption(final LayoutOptionStyle optionStyle, final String optionId) {
+        ListIterator<KOption> optionIter = optionStyle.getOptions().listIterator();
+        while (optionIter.hasNext()) {
+            if (optionIter.next().getKey().equals(optionId)) {
+                optionIter.remove();
+                break;
             }
-        });
+        }
     }
-    
-    /**
-     * Sets the default status of the given {@link KOption} by using the command stack.
-     * 
-     * @param koption the {@code KOption} for which the status shall be set
-     * @param isDefault the new default status
-     * @param editingDomain the editing domain of the related edit part
-     */
-    public static void setDefault(final KOption koption, final boolean isDefault,
-            final TransactionalEditingDomain editingDomain) {
-        editingDomain.getCommandStack().execute(new RecordingCommand(editingDomain) {
-           protected void doExecute() {
-               koption.setDefault(isDefault);
-           }
-        });
-    }
-    
+
     /**
      * Finds the diagram edit part of an edit part.
      * 

@@ -24,14 +24,20 @@ import de.cau.cs.kieler.core.kgraph.KGraphFactory;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KBooleanOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KFloatOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KInsets;
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KIntOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataPackage;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KObjectOption;
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KStringOption;
 import de.cau.cs.kieler.kiml.layout.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.options.PortConstraints;
@@ -147,6 +153,60 @@ public final class KimlLayoutUtil {
         }
         return layoutData;
     }
+    
+    /**
+     * Returns the value of the given {@link KOption} as an {@code Object}.
+     * 
+     * @param koption the {@code KOption} for which the value shall be retrieved
+     * @param optionData the layout option data related with the option
+     * @return the current value of the option
+     */
+    public static Object getValue(final KOption koption, final LayoutOptionData optionData) {
+        switch (optionData.getType()) {
+        case STRING:
+            return ((KStringOption)koption).getValue();
+        case BOOLEAN:
+            return Boolean.valueOf(((KBooleanOption)koption).isValue());
+        case ENUM:
+        case INT:
+            return Integer.valueOf(((KIntOption)koption).getValue());
+        case FLOAT:
+            return Float.valueOf(((KFloatOption)koption).getValue());
+        default:
+            return null;
+        }
+    }
+    
+    /**
+     * Sets the value of the given {@link KOption}.
+     * 
+     * @param koption the {@code KOption} for which the value shall be set
+     * @param optionData the layout option data related with the option
+     * @param value the new value of the option
+     */
+    public static void setValue(final KOption koption, final LayoutOptionData optionData,
+            final Object value) {
+        switch (optionData.getType()) {
+        case STRING:
+            ((KStringOption)koption).setValue((String) value);
+            break;
+        case BOOLEAN:
+            ((KBooleanOption)koption).setValue(((Boolean) value).booleanValue());
+            break;
+        case ENUM:
+            if (value instanceof Enum<?>) {
+                ((KIntOption)koption).setValue(((Enum<?>) value).ordinal());
+                break;
+            }
+        case INT:
+            ((KIntOption)koption).setValue(((Integer) value).intValue());
+            break;
+        case FLOAT:
+            ((KFloatOption)koption).setValue(((Float) value).floatValue());
+            break;
+        }
+    }
+
 
     /**
      * Creates a KNode, initializes some attributes, and returns it.

@@ -299,10 +299,8 @@ public class LayoutOptionData {
             KIntOption intOption = (KIntOption) option;
             if (value instanceof Enum<?>) {
                 intOption.setValue(((Enum<?>) value).ordinal());                
-            } else {
-                intOption.setValue(((Integer) value).intValue());    
+                break;
             }
-            break;
         case INT:
             intOption = (KIntOption) option;
             intOption.setValue(((Integer) value).intValue());
