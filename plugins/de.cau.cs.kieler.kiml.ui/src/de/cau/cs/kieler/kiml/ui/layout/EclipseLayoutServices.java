@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.layout.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.layout.ILayoutListener;
 import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
@@ -365,12 +366,13 @@ public class EclipseLayoutServices extends LayoutServices {
     private static void loadPreferences() {
         IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
         Collection<LayoutProviderData> layoutProviderData = getInstance().getLayoutProviderData();
-        Collection<String> diagramTypes = getInstance().getDiagramTypes();
+        List<Pair<String, String>> diagramTypes = getInstance().getDiagramTypes();
         for (LayoutProviderData data : layoutProviderData) {
-            for (String diagramType : diagramTypes) {
-                String preference = LayoutPreferencePage.getPreference(data.getId(), diagramType);
+            for (Pair<String, String> diagramType : diagramTypes) {
+                String diagramTypeName = diagramType.getSecond();
+                String preference = LayoutPreferencePage.getPreference(data.getId(), diagramTypeName);
                 if (preferenceStore.contains(preference)) {
-                    data.setDiagramSupport(diagramType, preferenceStore.getInt(preference));
+                    data.setDiagramSupport(diagramTypeName, preferenceStore.getInt(preference));
                 }
             }
         }

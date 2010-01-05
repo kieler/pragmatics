@@ -23,16 +23,22 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.gmf.runtime.notation.View;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.swt.events.MenuAdapter;
+import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IActionBars;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -49,6 +55,7 @@ import org.eclipse.ui.views.properties.PropertySheetEntry;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
+import de.cau.cs.kieler.kiml.ui.Messages;
 
 /**
  * A view that displays layout options for selected objects.
@@ -140,9 +147,8 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
                 }
             }
         });
-        IActionBars actionBars = getViewSite().getActionBars();
-        page.makeContributions(actionBars.getMenuManager(), actionBars
-                .getToolBarManager(), actionBars.getStatusLineManager());
+        page.setActionBars(getViewSite().getActionBars());
+        addActions(page.getControl().getMenu());
         
         IWorkbenchWindow workbenchWindow = getSite().getWorkbenchWindow();
         IWorkbenchPage activePage = workbenchWindow.getActivePage();
@@ -221,6 +227,31 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
             page.selectionChanged(currentEditor, event.getSelection());
             setPartText(event.getSelection());
         }
+    }
+    
+    /**
+     * Adds the specific view actions to the given menu.
+     * 
+     * @param menu context menu to enrich with actions
+     */
+    private void addActions(final Menu menu) {
+        final String applyOptionString = Messages.getString("kiml.ui.10"); //$NON-NLS-1$
+        final Action applyOptionAction = new ApplyOptionAction(page, applyOptionString);
+        // dirty hack to add actions to an existing menu without having the menu manager
+        menu.addMenuListener(new MenuAdapter() {
+            public void menuShown(final MenuEvent event) {
+                boolean foundApplyOption = false;
+                for (MenuItem item : menu.getItems()) {
+                    if (applyOptionString.equals(item.getText())) {
+                        foundApplyOption = true;
+                    }
+                }
+                if (!foundApplyOption) {
+                    IContributionItem contributionItem = new ActionContributionItem(applyOptionAction);
+                    contributionItem.fill(menu, -1);
+                }
+            }
+        });
     }
     
     /**

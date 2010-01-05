@@ -14,7 +14,11 @@
 package de.cau.cs.kieler.core.util;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * A simple pair implementation.
@@ -38,10 +42,36 @@ public class Pair<F, S> {
      * @param thesecond the second element
      */
     public Pair(final F thefirst, final S thesecond) {
-        this.setFirst(thefirst);
-        this.setSecond(thesecond);
+        this.first = thefirst;
+        this.second = thesecond;
     }
-
+    
+    /**
+     * Constructs a pair from a map entry.
+     * 
+     * @param entry an entry of a map
+     */
+    public Pair(final Entry<F, S> entry) {
+        this.first = entry.getKey();
+        this.second = entry.getValue();
+    }
+    
+    /**
+     * Constructs a list of pairs from the entries of a map.
+     * 
+     * @param <G> type of the map keys
+     * @param <T> type of the map values
+     * @param map a map
+     * @return a list of map entries as pairs
+     */
+    public static <G, T> List<Pair<G, T>> toList(final Map<G, T> map) {
+        List<Pair<G, T>> list = new ArrayList<Pair<G, T>>(map.size());
+        for (Entry<G, T> entry : map.entrySet()) {
+            list.add(new Pair<G, T>(entry));
+        }
+        return list;
+    }
+    
     /**
      * Comparator that uses the first element as base.
      */
@@ -53,7 +83,7 @@ public class Pair<F, S> {
          * {@inheritDoc}
          */
         public int compare(final Pair<F, S> o1, final Pair<F, S> o2) {
-            return o1.getFirst().compareTo(o2.getFirst());
+            return o1.first.compareTo(o2.first);
         }
     }
 
@@ -68,7 +98,7 @@ public class Pair<F, S> {
          * {@inheritDoc}
          */
         public int compare(final Pair<F, S> o1, final Pair<F, S> o2) {
-            return o1.getSecond().compareTo(o2.getSecond());
+            return o1.second.compareTo(o2.second);
         }
     }
 
@@ -79,12 +109,12 @@ public class Pair<F, S> {
     public boolean equals(final Object obj) {
         if (obj instanceof Pair<?, ?>) {
             Pair<?, ?> other = (Pair<?, ?>) obj;
-            return this.getFirst() == null ? other.getFirst() == null
-                    && (this.getSecond() == null ? other.getSecond() == null
-                    : this.getSecond().equals(other.getSecond()))
-                    : this.getFirst().equals(other.getFirst())
-                    && (this.getSecond() == null ? other.getSecond() == null
-                    : this.getSecond().equals(other.getSecond()));
+            return this.first == null ? other.first == null
+                    && (this.second == null ? other.second == null
+                    : this.second.equals(other.second))
+                    : this.first.equals(other.first)
+                    && (this.second == null ? other.second == null
+                    : this.second.equals(other.second));
         } else {
             return false;
         }
@@ -95,14 +125,14 @@ public class Pair<F, S> {
      */
     @Override
     public int hashCode() {
-        if (getFirst() == null && getSecond() == null) {
+        if (first == null && second == null) {
             return 0;
-        } else if (getFirst() == null) {
-            return getSecond().hashCode();
-        } else if (getSecond() == null) {
-            return getFirst().hashCode();
+        } else if (first == null) {
+            return second.hashCode();
+        } else if (second == null) {
+            return first.hashCode();
         } else {
-            return getFirst().hashCode() + getSecond().hashCode();
+            return first.hashCode() + second.hashCode();
         }
     }
 
@@ -111,14 +141,14 @@ public class Pair<F, S> {
      */
     @Override
     public String toString() {
-        if (getFirst() == null && getSecond() == null) {
+        if (first == null && second == null) {
             return "pair(null,null)";
-        } else if (getFirst() == null) {
-            return "pair(null," + getSecond().toString() + ")";
-        } else if (getSecond() == null) {
-            return "pair(" + getFirst().toString() + ",null)";
+        } else if (first == null) {
+            return "pair(null," + second.toString() + ")";
+        } else if (second == null) {
+            return "pair(" + first.toString() + ",null)";
         } else {
-            return "pair(" + getFirst().toString() + "," + getSecond().toString() + ")";
+            return "pair(" + first.toString() + "," + second.toString() + ")";
         }
     }
 

@@ -16,7 +16,6 @@ package de.cau.cs.kieler.kiml.ui.layout;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.draw2d.ConnectionLocator;
@@ -25,7 +24,6 @@ import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Insets;
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CommandStack;
@@ -53,16 +51,12 @@ import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.kiml.layout.LayoutServices;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KInsets;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutData;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.layout.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.options.PortConstraints;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
-import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyle;
-import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsPackage;
 
 /**
  * Diagram layout manager that is able to generically layout diagrams generated
@@ -103,32 +97,6 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     private DiagramEditPart diagramEditPart;
     /** root of the currently layouted selection. */
     private GraphicalEditPart layoutRootPart;
-
-    /**
-     * Sets all layout options that are stored in the notation view of the given
-     * edit part.
-     * 
-     * @param editPart edit part for which the notation view is queried for
-     *            layout options
-     * @param layoutData layout data to which the layout options are added
-     */
-    public static void setNotationLayoutOptions(final IGraphicalEditPart editPart,
-            final KLayoutData layoutData) {
-        LayoutOptionStyle optionStyle = (LayoutOptionStyle) editPart.getNotationView().getStyle(
-                LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
-        if (optionStyle != null) {
-            for (KOption option : optionStyle.getOptions()) {
-                ListIterator<KOption> optionIter = layoutData.getOptions().listIterator();
-                while (optionIter.hasNext()) {
-                    if (optionIter.next().getKey().equals(option.getKey())) {
-                        optionIter.remove();
-                        break;
-                    }
-                }
-                optionIter.add((KOption) EcoreUtil.copy(option));
-            }
-        }
-    }
 
     /**
      * {@inheritDoc}
@@ -188,11 +156,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         }
 
         // find the diagram edit part
-        EditPart ep = layoutRootPart;
-        while (ep != null && !(ep instanceof DiagramEditPart)) {
-            ep = ep.getParent();
-        }
-        diagramEditPart = (DiagramEditPart) ep;
+        diagramEditPart = KimlUiUtil.getDiagramEditPart(layoutRootPart);
 
         KNode topNode = doBuildLayoutGraph();
         progressMonitor.done();
@@ -268,10 +232,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         node2EditPartMap.put(layoutGraph, layoutRootPart);
         // traverse the children of the layout root part
         buildLayoutGraphRecursively(layoutRootPart, layoutGraph, layoutRootPart);
-        // set preconfigured layout options for the diagram
-        LayoutServices.getInstance().setLayoutOptions(layoutRootPart.getClass(), shapeLayout);
         // set user defined layout options for the diagram
-        setNotationLayoutOptions(layoutRootPart, shapeLayout);
+        KimlUiUtil.setLayoutOptions(layoutRootPart, shapeLayout);
         // transform all connections in the selected area
         processConnections();
 
@@ -320,10 +282,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 portLayout.setWidth(portBounds.width);
                 portLayout.setHeight(portBounds.height);
                 hasPorts = true;
-                // set preconfigured layout options for the port
-                layoutServices.setLayoutOptions(borderItem.getClass(), portLayout);
                 // set user defined layout options for the port
-                setNotationLayoutOptions(borderItem, portLayout);
+                KimlUiUtil.setLayoutOptions(borderItem, portLayout);
 
                 // store all the connections to process them later
                 for (Object connectionObj : borderItem.getTargetConnections()) {
@@ -428,10 +388,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                                 childNodeEditPart);
                     }
     
-                    // set preconfigured layout options for the node
-                    layoutServices.setLayoutOptions(childNodeEditPart.getClass(), nodeLayout);
                     // set user defined layout options for the node
-                    setNotationLayoutOptions(childNodeEditPart, nodeLayout);
+                    KimlUiUtil.setLayoutOptions(childNodeEditPart, nodeLayout);
                 }
 
             // process labels of nodes
@@ -567,10 +525,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 targetPoint.setY(targetLayout.getYpos() + targetLayout.getHeight() / 2);
             }
 
-            // set the preconfigured layout options for the edge
-            LayoutServices.getInstance().setLayoutOptions(connection.getClass(), edgeLayout);
-            // set the user defined layout options for the edge
-            setNotationLayoutOptions(connection, edgeLayout);
+            // set user defined layout options for the edge
+            KimlUiUtil.setLayoutOptions(connection, edgeLayout);
 
             /*
              * process the labels

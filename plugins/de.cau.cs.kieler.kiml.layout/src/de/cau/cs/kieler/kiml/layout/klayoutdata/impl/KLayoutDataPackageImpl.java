@@ -337,6 +337,15 @@ public class KLayoutDataPackageImpl extends EPackageImpl implements KLayoutDataP
      * <!-- end-user-doc -->
      * @generated
      */
+    public EAttribute getKOption_Default() {
+        return (EAttribute)kOptionEClass.getEStructuralFeatures().get(1);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public EClass getKStringOption() {
         return kStringOptionEClass;
     }
@@ -515,6 +524,7 @@ public class KLayoutDataPackageImpl extends EPackageImpl implements KLayoutDataP
 
         kOptionEClass = createEClass(KOPTION);
         createEAttribute(kOptionEClass, KOPTION__KEY);
+        createEAttribute(kOptionEClass, KOPTION__DEFAULT);
 
         kStringOptionEClass = createEClass(KSTRING_OPTION);
         createEAttribute(kStringOptionEClass, KSTRING_OPTION__VALUE);
@@ -603,6 +613,7 @@ public class KLayoutDataPackageImpl extends EPackageImpl implements KLayoutDataP
 
         initEClass(kOptionEClass, KOption.class, "KOption", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getKOption_Key(), ecorePackage.getEString(), "key", null, 0, 1, KOption.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getKOption_Default(), ecorePackage.getEBoolean(), "default", null, 0, 1, KOption.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(kStringOptionEClass, KStringOption.class, "KStringOption", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getKStringOption_Value(), ecorePackage.getEString(), "value", "", 0, 1, KStringOption.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

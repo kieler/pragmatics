@@ -32,7 +32,7 @@ public abstract class KSlimGraphElement implements Comparable<KSlimGraphElement>
      * {@inheritDoc}
      */
     public int compareTo(final KSlimGraphElement other) {
-        return this.getId() - other.getId();
+        return this.id - other.id;
     }
 
     /**
@@ -41,7 +41,7 @@ public abstract class KSlimGraphElement implements Comparable<KSlimGraphElement>
     @Override
     public boolean equals(final Object other) {
         return (other instanceof KSlimGraphElement && other.getClass() == this.getClass())
-                && ((KSlimGraphElement) other).getId() == this.getId();
+                && ((KSlimGraphElement) other).id == this.id;
     }
 
     /**
@@ -49,7 +49,7 @@ public abstract class KSlimGraphElement implements Comparable<KSlimGraphElement>
      */
     @Override
     public int hashCode() {
-        return getClass().hashCode() + getId();
+        return getClass().hashCode() + id;
     }
 
     /**
@@ -57,7 +57,7 @@ public abstract class KSlimGraphElement implements Comparable<KSlimGraphElement>
      */
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "(" + getId() + ")";
+        return getClass().getSimpleName() + "(" + id + ")";
     }
 
     /**

@@ -34,6 +34,7 @@ import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
 import de.cau.cs.kieler.kiml.layout.LayoutProviderData;
 import de.cau.cs.kieler.kiml.layout.LayoutServices;
@@ -398,6 +399,30 @@ public class GmfLayoutPropertySource implements IPropertySource {
                 layoutHintChoices[i++] = providerName;
             }
         }
+    }
+    
+    /**
+     * Returns an identifier for a displayed layout hint name.
+     * 
+     * @param displayedName a displayed name of a layout provider or a layout type
+     * @return the corresponding identifier, or the empty string if no match is found
+     */
+    public static String getLayoutHint(final String displayedName) {
+        // look for a matching layout provider
+        for (LayoutProviderData providerData : LayoutServices.getInstance().getLayoutProviderData()) {
+            if (displayedName.startsWith(providerData.getName())) {
+                return providerData.getId();
+            }
+        }
+        // look for a matching layout type
+        for (Pair<String, String> layoutType : LayoutServices.getInstance().getLayoutTypes()) {
+            String typeId = layoutType.getFirst();
+            String typeName = layoutType.getSecond();
+            if (displayedName.startsWith(typeName)) {
+                return typeId;
+            }
+        }
+        return "";
     }
 
 }

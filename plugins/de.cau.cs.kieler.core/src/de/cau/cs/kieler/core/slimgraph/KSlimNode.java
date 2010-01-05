@@ -61,10 +61,10 @@ public class KSlimNode extends KSlimGraphElement {
          *         target of the edge
          */
         public KSlimNode endpoint() {
-            if (getType() == Type.IN) {
-                return getEdge().getSource();
+            if (type == Type.IN) {
+                return edge.getSource();
             } else {
-                return getEdge().getTarget();
+                return edge.getTarget();
             }
         }
 
@@ -76,10 +76,10 @@ public class KSlimNode extends KSlimGraphElement {
          *         the left face of the edge
          */
         public KSlimFace leftFace() {
-            if (getType() == Type.IN) {
-                return getEdge().getRightFace();
+            if (type == Type.IN) {
+                return edge.getRightFace();
             } else {
-                return getEdge().getLeftFace();
+                return edge.getLeftFace();
             }
         }
 
@@ -91,10 +91,10 @@ public class KSlimNode extends KSlimGraphElement {
          *         the source side
          */
         public Side side() {
-            if (getType() == Type.IN) {
-                return getEdge().getTargetSide();
+            if (type == Type.IN) {
+                return edge.getTargetSide();
             } else {
-                return getEdge().getSourceSide();
+                return edge.getSourceSide();
             }
         }
 
@@ -103,7 +103,7 @@ public class KSlimNode extends KSlimGraphElement {
          */
         @Override
         public String toString() {
-            return getType().toString() + getEdge().getId();
+            return type.toString() + edge.getId();
         }
 
         /**
@@ -254,11 +254,11 @@ public class KSlimNode extends KSlimGraphElement {
      */
     public ListIterator<KSlimNode.IncEntry> getIterator(final KSlimEdge edge,
             final boolean outgoing) {
-        ListIterator<IncEntry> edgeIter = getIncidence().listIterator();
+        ListIterator<IncEntry> edgeIter = incidence.listIterator();
         while (edgeIter.hasNext()) {
             IncEntry nextEntry = edgeIter.next();
-            if (nextEntry.getEdge().getId() == edge.getId()
-                    && (nextEntry.getType() == IncEntry.Type.OUT) == outgoing) {
+            if (nextEntry.edge.getId() == edge.getId()
+                    && (nextEntry.type == IncEntry.Type.OUT) == outgoing) {
                 return edgeIter;
             }
         }

@@ -16,7 +16,6 @@ package de.cau.cs.kieler.kiml.ui.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.ui.parts.GraphicalEditor;
 import org.eclipse.jface.viewers.ISelection;
@@ -32,7 +31,7 @@ import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
  * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
  */
-public class LayoutHandler extends AbstractHandler implements IHandler {
+public class LayoutHandler extends AbstractHandler {
 
     /** parameter identifier for the scope of automatic layout. */
     public static final String PARAM_LAYOUT_SCOPE = "de.cau.cs.kieler.kiml.ui.layoutScope";

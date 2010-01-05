@@ -275,13 +275,22 @@ public interface KLayoutDataPackage extends EPackage {
     int KOPTION__KEY = 0;
 
     /**
+     * The feature id for the '<em><b>Default</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KOPTION__DEFAULT = 1;
+
+    /**
      * The number of structural features of the '<em>KOption</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int KOPTION_FEATURE_COUNT = 1;
+    int KOPTION_FEATURE_COUNT = 2;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.kiml.layout.klayoutdata.impl.KStringOptionImpl <em>KString Option</em>}' class.
@@ -301,6 +310,15 @@ public interface KLayoutDataPackage extends EPackage {
      * @ordered
      */
     int KSTRING_OPTION__KEY = KOPTION__KEY;
+
+    /**
+     * The feature id for the '<em><b>Default</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KSTRING_OPTION__DEFAULT = KOPTION__DEFAULT;
 
     /**
      * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -340,6 +358,15 @@ public interface KLayoutDataPackage extends EPackage {
     int KINT_OPTION__KEY = KOPTION__KEY;
 
     /**
+     * The feature id for the '<em><b>Default</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KINT_OPTION__DEFAULT = KOPTION__DEFAULT;
+
+    /**
      * The feature id for the '<em><b>Value</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -375,6 +402,15 @@ public interface KLayoutDataPackage extends EPackage {
      * @ordered
      */
     int KBOOLEAN_OPTION__KEY = KOPTION__KEY;
+
+    /**
+     * The feature id for the '<em><b>Default</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KBOOLEAN_OPTION__DEFAULT = KOPTION__DEFAULT;
 
     /**
      * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -414,6 +450,15 @@ public interface KLayoutDataPackage extends EPackage {
     int KFLOAT_OPTION__KEY = KOPTION__KEY;
 
     /**
+     * The feature id for the '<em><b>Default</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KFLOAT_OPTION__DEFAULT = KOPTION__DEFAULT;
+
+    /**
      * The feature id for the '<em><b>Value</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -449,6 +494,15 @@ public interface KLayoutDataPackage extends EPackage {
      * @ordered
      */
     int KOBJECT_OPTION__KEY = KOPTION__KEY;
+
+    /**
+     * The feature id for the '<em><b>Default</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KOBJECT_OPTION__DEFAULT = KOPTION__DEFAULT;
 
     /**
      * The feature id for the '<em><b>Value</b></em>' containment reference.
@@ -694,6 +748,17 @@ public interface KLayoutDataPackage extends EPackage {
      * @generated
      */
     EAttribute getKOption_Key();
+
+    /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kiml.layout.klayoutdata.KOption#isDefault <em>Default</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Default</em>'.
+     * @see de.cau.cs.kieler.kiml.layout.klayoutdata.KOption#isDefault()
+     * @see #getKOption()
+     * @generated
+     */
+    EAttribute getKOption_Default();
 
     /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.layout.klayoutdata.KStringOption <em>KString Option</em>}'.
@@ -1013,6 +1078,14 @@ public interface KLayoutDataPackage extends EPackage {
          * @generated
          */
         EAttribute KOPTION__KEY = eINSTANCE.getKOption_Key();
+
+        /**
+         * The meta object literal for the '<em><b>Default</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute KOPTION__DEFAULT = eINSTANCE.getKOption_Default();
 
         /**
          * The meta object literal for the '{@link de.cau.cs.kieler.kiml.layout.klayoutdata.impl.KStringOptionImpl <em>KString Option</em>}' class.

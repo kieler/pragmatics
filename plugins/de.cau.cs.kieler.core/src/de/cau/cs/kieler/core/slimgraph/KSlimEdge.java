@@ -128,7 +128,7 @@ public class KSlimEdge extends KSlimGraphElement {
          */
         @Override
         public String toString() {
-            return getType().toString();
+            return type.toString();
         }
     }
 
@@ -182,8 +182,8 @@ public class KSlimEdge extends KSlimGraphElement {
      * created for the incidence lists of the source and the target.
      */
     public void connectNodes() {
-        getSource().getIncidence().add(new KSlimNode.IncEntry(this, KSlimNode.IncEntry.Type.OUT));
-        getTarget().getIncidence().add(new KSlimNode.IncEntry(this, KSlimNode.IncEntry.Type.IN));
+        source.getIncidence().add(new KSlimNode.IncEntry(this, KSlimNode.IncEntry.Type.OUT));
+        target.getIncidence().add(new KSlimNode.IncEntry(this, KSlimNode.IncEntry.Type.IN));
     }
 
     /**
@@ -199,14 +199,14 @@ public class KSlimEdge extends KSlimGraphElement {
     public void connectNodes(final int sourceRank, final int targetRank,
             final boolean forwardSelfLoop) {
         int thetargetRank = targetRank;
-        if (getSource().getId() == getTarget().getId()
+        if (source.getId() == target.getId()
                 && (sourceRank < targetRank || (sourceRank == targetRank
                 && forwardSelfLoop))) {
             thetargetRank++;
         }
-        getSource().getIncidence().add(sourceRank, new KSlimNode.IncEntry(this,
+        source.getIncidence().add(sourceRank, new KSlimNode.IncEntry(this,
                 KSlimNode.IncEntry.Type.OUT));
-        getTarget().getIncidence().add(thetargetRank, new KSlimNode.IncEntry(this,
+        target.getIncidence().add(thetargetRank, new KSlimNode.IncEntry(this,
                 KSlimNode.IncEntry.Type.IN));
     }
 
@@ -219,24 +219,24 @@ public class KSlimEdge extends KSlimGraphElement {
      */
     public void connectNodes(final KSlimNode.Side thesourceSide,
             final KSlimNode.Side thetargetSide) {
-        this.setSourceSide(thesourceSide);
-        this.setTargetSide(thetargetSide);
-        ListIterator<KSlimNode.IncEntry> incIter = getSource().getIncidence().listIterator();
+        this.sourceSide = thesourceSide;
+        this.targetSide = thetargetSide;
+        ListIterator<KSlimNode.IncEntry> incIter = source.getIncidence().listIterator();
         while (incIter.hasNext()) {
             KSlimNode.IncEntry nextEntry = incIter.next();
             KSlimNode.Side side = (nextEntry.getType() == KSlimNode.IncEntry.Type.OUT
-                    ? nextEntry.getEdge().getSourceSide() : nextEntry.getEdge().getTargetSide());
+                    ? nextEntry.getEdge().sourceSide : nextEntry.getEdge().targetSide);
             if (thesourceSide.compareTo(side) <= 0) {
                 incIter.previous();
                 break;
             }
         }
         incIter.add(new KSlimNode.IncEntry(this, KSlimNode.IncEntry.Type.OUT));
-        incIter = getTarget().getIncidence().listIterator();
+        incIter = target.getIncidence().listIterator();
         while (incIter.hasNext()) {
             KSlimNode.IncEntry nextEntry = incIter.next();
             KSlimNode.Side side = (nextEntry.getType() == KSlimNode.IncEntry.Type.OUT
-                    ? nextEntry.getEdge().getSourceSide() : nextEntry.getEdge().getTargetSide());
+                    ? nextEntry.getEdge().sourceSide : nextEntry.getEdge().targetSide);
             if (thetargetSide.compareTo(side) <= 0) {
                 incIter.previous();
                 break;
@@ -251,8 +251,8 @@ public class KSlimEdge extends KSlimGraphElement {
     @Override
     public String toString() {
         String baseString = super.toString();
-        if (getSource() != null && getTarget() != null) {
-            return baseString + " " + getSource().getId() + ">" + getTarget().getId();
+        if (source != null && target != null) {
+            return baseString + " " + source.getId() + ">" + target.getId();
         } else {
             return baseString;
         }

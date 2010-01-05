@@ -15,6 +15,7 @@ package de.cau.cs.kieler.kiml.layout;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -26,6 +27,7 @@ import java.util.Map.Entry;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
@@ -285,12 +287,13 @@ public class LayoutServices {
     }
 
     /**
-     * Returns a data collection for all registered layout providers.
+     * Returns a data collection for all registered layout providers. The collection
+     * is unmodifiable.
      * 
      * @return collection of registered layout providers
      */
     public final Collection<LayoutProviderData> getLayoutProviderData() {
-        return layoutProviderMap.values();
+        return Collections.unmodifiableCollection(layoutProviderMap.values());
     }
 
     /**
@@ -346,12 +349,13 @@ public class LayoutServices {
     }
 
     /**
-     * Returns a data collection for all registered layout options.
+     * Returns a data collection for all registered layout options. The collection is
+     * unmodifiable.
      * 
      * @return collection of registered layout options
      */
     public final Collection<LayoutOptionData> getLayoutOptionData() {
-        return layoutOptionMap.values();
+        return Collections.unmodifiableCollection(layoutOptionMap.values());
     }
 
     /**
@@ -387,6 +391,16 @@ public class LayoutServices {
     public final String getLayoutTypeName(final String id) {
         return layoutTypeMap.get(id);
     }
+    
+    /**
+     * Returns a list of layout type identifiers and names. The first string in each
+     * entry is the identifier, and the second string is the name.
+     * 
+     * @return a list of all layout types
+     */
+    public final List<Pair<String, String>> getLayoutTypes() {
+        return Pair.toList(layoutTypeMap);
+    }
 
     /**
      * Returns the name of the given category.
@@ -413,8 +427,8 @@ public class LayoutServices {
      * 
      * @return the registered diagram types
      */
-    public final Collection<String> getDiagramTypes() {
-        return diagramTypeMap.keySet();
+    public final List<Pair<String, String>> getDiagramTypes() {
+        return Pair.toList(diagramTypeMap);
     }
 
     /**
@@ -431,6 +445,21 @@ public class LayoutServices {
                 LayoutOptionData optionData = layoutOptionMap.get(entry.getKey());
                 optionData.setValue(layoutData, entry.getValue());
             }
+        }
+    }
+    
+    /**
+     * Returns a map that contains all layout options for an edit part type.
+     * 
+     * @param editPartType a type of edit part
+     * @return a map of layout option identifiers to their values
+     */
+    public final Map<String, Object> getOptions(final Class<?> editPartType) {
+        String bindingId = editPartBindingMap.get(editPartType.getName());
+        if (bindingId != null) {
+            return Collections.unmodifiableMap(optionSetupMap.get(bindingId));
+        } else {
+            return Collections.emptyMap();
         }
     }
 

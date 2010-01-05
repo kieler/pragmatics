@@ -29,7 +29,7 @@ public class Maybe<T> {
      * Creates a maybe without an object.
      */
     public Maybe() {
-        this.setObject(null);
+        this.object = null;
     }
     
     /**
@@ -38,7 +38,7 @@ public class Maybe<T> {
      * @param theobject the object to contain
      */
     public Maybe(final T theobject) {
-        this.setObject(theobject);
+        this.object = theobject;
     }
     
     /**
@@ -48,8 +48,8 @@ public class Maybe<T> {
     public boolean equals(final Object obj) {
         if (obj instanceof Maybe<?>) {
             Maybe<?> other = (Maybe<?>)obj;
-            return this.getObject() == null ? other.getObject() == null
-                    : this.getObject().equals(other.getObject());
+            return this.object == null ? other.object == null
+                    : this.object.equals(other.object);
         } else {
             return false;
         }
@@ -60,10 +60,10 @@ public class Maybe<T> {
      */
     @Override
     public int hashCode() {
-        if (getObject() == null) {
+        if (object == null) {
             return 0;
         } else {
-            return getObject().hashCode();
+            return object.hashCode();
         }
     }
     
@@ -72,10 +72,10 @@ public class Maybe<T> {
      */
     @Override
     public String toString() {
-        if (getObject() == null) {
+        if (object == null) {
             return "maybe(null)";
         } else {
-            return "maybe(" + getObject().toString() + ")";
+            return "maybe(" + object.toString() + ")";
         }
     }
 

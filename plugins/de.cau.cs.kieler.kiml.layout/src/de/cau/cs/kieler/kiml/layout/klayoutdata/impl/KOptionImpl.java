@@ -33,6 +33,7 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link de.cau.cs.kieler.kiml.layout.klayoutdata.impl.KOptionImpl#getKey <em>Key</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kiml.layout.klayoutdata.impl.KOptionImpl#isDefault <em>Default</em>}</li>
  * </ul>
  * </p>
  *
@@ -58,6 +59,26 @@ public abstract class KOptionImpl extends EObjectImpl implements KOption {
      * @ordered
      */
     protected String key = KEY_EDEFAULT;
+
+    /**
+     * The default value of the '{@link #isDefault() <em>Default</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #isDefault()
+     * @generated
+     * @ordered
+     */
+    protected static final boolean DEFAULT_EDEFAULT = false;
+
+    /**
+     * The cached value of the '{@link #isDefault() <em>Default</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #isDefault()
+     * @generated
+     * @ordered
+     */
+    protected boolean default_ = DEFAULT_EDEFAULT;
 
     /**
      * <!-- begin-user-doc -->
@@ -104,11 +125,34 @@ public abstract class KOptionImpl extends EObjectImpl implements KOption {
      * <!-- end-user-doc -->
      * @generated
      */
+    public boolean isDefault() {
+        return default_;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void setDefault(boolean newDefault) {
+        boolean oldDefault = default_;
+        default_ = newDefault;
+        if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KOPTION__DEFAULT, oldDefault, default_));
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
             case KLayoutDataPackage.KOPTION__KEY:
                 return getKey();
+            case KLayoutDataPackage.KOPTION__DEFAULT:
+                return isDefault();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -123,6 +167,9 @@ public abstract class KOptionImpl extends EObjectImpl implements KOption {
         switch (featureID) {
             case KLayoutDataPackage.KOPTION__KEY:
                 setKey((String)newValue);
+                return;
+            case KLayoutDataPackage.KOPTION__DEFAULT:
+                setDefault((Boolean)newValue);
                 return;
         }
         super.eSet(featureID, newValue);
@@ -139,6 +186,9 @@ public abstract class KOptionImpl extends EObjectImpl implements KOption {
             case KLayoutDataPackage.KOPTION__KEY:
                 setKey(KEY_EDEFAULT);
                 return;
+            case KLayoutDataPackage.KOPTION__DEFAULT:
+                setDefault(DEFAULT_EDEFAULT);
+                return;
         }
         super.eUnset(featureID);
     }
@@ -153,6 +203,8 @@ public abstract class KOptionImpl extends EObjectImpl implements KOption {
         switch (featureID) {
             case KLayoutDataPackage.KOPTION__KEY:
                 return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
+            case KLayoutDataPackage.KOPTION__DEFAULT:
+                return default_ != DEFAULT_EDEFAULT;
         }
         return super.eIsSet(featureID);
     }
@@ -169,6 +221,8 @@ public abstract class KOptionImpl extends EObjectImpl implements KOption {
         StringBuffer result = new StringBuffer(super.toString());
         result.append(" (key: ");
         result.append(key);
+        result.append(", default: ");
+        result.append(default_);
         result.append(')');
         return result.toString();
     }

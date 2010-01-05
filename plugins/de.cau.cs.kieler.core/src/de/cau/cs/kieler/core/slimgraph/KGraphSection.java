@@ -46,7 +46,7 @@ public class KGraphSection {
      * to any use of <code>contains(TSMNode)</code>.
      */
     public void sortNodes() {
-        Collections.sort(getNodes());
+        Collections.sort(nodes);
     }
 
     /**
@@ -57,10 +57,10 @@ public class KGraphSection {
      * @return true if the given node is contained in <code>nodes</code>
      */
     public boolean contains(final KSlimNode node) {
-        int start = 0, end = getNodes().size(), pos;
+        int start = 0, end = nodes.size(), pos;
         while (start != end) {
             pos = start + (end - start) / 2;
-            int currentNr = getNodes().get(pos).getId();
+            int currentNr = nodes.get(pos).getId();
             if (node.getId() < currentNr) {
                 end = pos;
             } else if (node.getId() > currentNr) {

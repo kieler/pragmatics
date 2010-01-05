@@ -83,7 +83,7 @@ public final class KielerMath {
     };
     
     /**
-     * The factorial of an integer x.
+     * The factorial of an integer x. If x is negative the result is 1.
      * 
      * @param x an integer
      * @return the factorial of x
@@ -100,14 +100,17 @@ public final class KielerMath {
     }
     
     /**
-     * The binomial coefficient of integers n and k.
+     * The binomial coefficient of integers n and k. If n is not positive or k
+     * is not between 0 and n the result is 1.
      * 
      * @param n the upper integer
      * @param k the lower integer
      * @return n choose k
      */
     public static int binomial(final int n, final int k) {
-        if (n < FACT_TABLE.length) {
+        if (n <= 0 || k < 0 || k > n) {
+            return 1;
+        } else if (n < FACT_TABLE.length) {
             long result = fact(n) / (fact(k) * fact(n - k));
             return (int) result;
         } else {

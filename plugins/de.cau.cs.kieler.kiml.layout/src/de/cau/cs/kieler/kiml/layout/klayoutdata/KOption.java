@@ -26,6 +26,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * <ul>
  *   <li>{@link de.cau.cs.kieler.kiml.layout.klayoutdata.KOption#getKey <em>Key</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kiml.layout.klayoutdata.KOption#isDefault <em>Default</em>}</li>
  * </ul>
  * </p>
  *
@@ -55,5 +56,31 @@ public interface KOption extends EObject {
      * @generated
      */
     void setKey(String value);
+
+    /**
+     * Returns the value of the '<em><b>Default</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Default</em>' attribute isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Default</em>' attribute.
+     * @see #setDefault(boolean)
+     * @see de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataPackage#getKOption_Default()
+     * @model
+     * @generated
+     */
+    boolean isDefault();
+
+    /**
+     * Sets the value of the '{@link de.cau.cs.kieler.kiml.layout.klayoutdata.KOption#isDefault <em>Default</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @param value the new value of the '<em>Default</em>' attribute.
+     * @see #isDefault()
+     * @generated
+     */
+    void setDefault(boolean value);
 
 } // KOption
