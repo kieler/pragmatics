@@ -45,6 +45,9 @@ import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
  */
 public abstract class DiagramLayoutManager {
 
+    /** maximal number of recursion levels for which progress is displayed. */
+    public static final int MAX_PROGRESS_LEVELS = 3;
+    
     /** list of registered diagram layout MANAGERS. */
     private static final List<DiagramLayoutManager> MANAGERS
             = new LinkedList<DiagramLayoutManager>();
@@ -57,7 +60,7 @@ public abstract class DiagramLayoutManager {
      * 
      * @param manager an instance of a diagram layout manager
      */
-    public static final void registerManager(final DiagramLayoutManager manager) {
+    public static final synchronized void registerManager(final DiagramLayoutManager manager) {
         MANAGERS.add(manager);
     }
 
@@ -118,11 +121,11 @@ public abstract class DiagramLayoutManager {
                         new IRunnableWithProgress() {
                             public void run(final IProgressMonitor monitor) {
                                 status.setObject(doLayout(editorPart, editPart,
-                                        new KielerProgressMonitor(monitor)));
+                                        new KielerProgressMonitor(monitor, MAX_PROGRESS_LEVELS)));
                             }
                         });
             } else {
-                status.setObject(doLayout(editorPart, editPart, new BasicProgressMonitor()));
+                status.setObject(doLayout(editorPart, editPart, new BasicProgressMonitor(0)));
             }
             if (animate) {
                 Animation.run(calcAnimationTime(status.getObject().getCode()));
