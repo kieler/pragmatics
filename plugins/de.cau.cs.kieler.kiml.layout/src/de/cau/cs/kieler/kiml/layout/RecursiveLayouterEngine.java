@@ -63,13 +63,19 @@ public class RecursiveLayouterEngine {
             final IKielerProgressMonitor progressMonitor)
             throws KielerException {
         if (!layoutNode.getChildren().isEmpty()) {
-            for (KNode child : layoutNode.getChildren()) {
-                layoutRecursively(child, progressMonitor);
+            AbstractLayoutProvider layoutProvider = LayoutServices.getInstance()
+                    .getLayoutProvider(layoutNode);
+            // if the layout provider supports hierarchy, it is expected to layout the children
+            if (!layoutProvider.supportsHierarchy(layoutNode)) {
+                for (KNode child : layoutNode.getChildren()) {
+                    layoutRecursively(child, progressMonitor);
+                }
             }
 
-            lastLayoutProvider = LayoutServices.getInstance().getLayoutProvider(layoutNode);
-            lastLayoutProvider.doLayout(layoutNode, progressMonitor.subTask(layoutNode.getChildren()
-                    .size()));
+            // perform layout on the current hierarchy level
+            lastLayoutProvider = layoutProvider;
+            layoutProvider.doLayout(layoutNode, progressMonitor.subTask(
+                    layoutNode.getChildren().size()));
 
             // check the new size of the parent node
             KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(layoutNode);

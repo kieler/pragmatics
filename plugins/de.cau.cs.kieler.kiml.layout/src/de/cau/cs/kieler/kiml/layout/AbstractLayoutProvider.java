@@ -63,5 +63,17 @@ public abstract class AbstractLayoutProvider {
     public Object getDefault(final String optionId) {
         return null;
     }
+    
+    /**
+     * Determines whether this layout provider supports hierarchy. If it does, it is
+     * expected to layout not only the first hierarchy level of the input graph, but
+     * also all children. The default implementation returns {@code false}.
+     * 
+     * @param layoutNode the parent node for which layout is requested
+     * @return true if the layout provider supports hierarchy
+     */
+    public boolean supportsHierarchy(final KNode layoutNode) {
+        return false;
+    }
 
 }
