@@ -66,20 +66,40 @@ public abstract class DiagramLayoutManager {
 
     /**
      * Performs layout on the given editor by choosing an appropriate layout
-     * manager instance.
+     * manager instance. Animation and a progress bar can be optionally turned on.
      * 
      * @param editorPart the editor for which layout is performed, or {@code
-     *            null} if the diagram is not part of an editor
+     *         null} if the diagram is not part of an editor
      * @param editPart the parent edit part for which layout is performed, or
-     *            {@code null} if the whole diagram shall be layouted
+     *         {@code null} if the whole diagram shall be layouted
      * @param animate if true, Draw2D animation is activated
      * @param progressBar if true, a progress bar is displayed
      */
     public static final void layout(final IEditorPart editorPart, final EditPart editPart,
             final boolean animate, final boolean progressBar) {
+        layout(editorPart, editPart, animate, progressBar, false);
+    }
+
+    /**
+     * Performs layout on the given editor by choosing an appropriate layout
+     * manager instance. Animation, a progress bar, and layout of ancestors can
+     * be optionally turned on.
+     * 
+     * @param editorPart the editor for which layout is performed, or {@code
+     *         null} if the diagram is not part of an editor
+     * @param editPart the parent edit part for which layout is performed, or
+     *         {@code null} if the whole diagram shall be layouted
+     * @param animate if true, Draw2D animation is activated
+     * @param progressBar if true, a progress bar is displayed
+     * @param layoutAncestors if true, layout is not only performed for the selected
+     *         edit part, but also for its ancestors
+     */
+    public static final void layout(final IEditorPart editorPart, final EditPart editPart,
+            final boolean animate, final boolean progressBar, final boolean layoutAncestors) {
         for (DiagramLayoutManager manager : MANAGERS) {
             if (manager.supports(editorPart) || manager.supports(editPart)) {
-                IStatus status = manager.doLayout(editorPart, editPart, animate, progressBar);
+                IStatus status = manager.doLayout(editorPart, editPart, animate,
+                        progressBar, layoutAncestors);
                 int severity = status.getSeverity();
                 if (severity != IStatus.OK && severity != IStatus.CANCEL) {
                     if (severity == IStatus.ERROR) {
@@ -95,7 +115,7 @@ public abstract class DiagramLayoutManager {
         throw new UnsupportedOperationException("No layout manager is available for "
                 + editorPart.getTitle() + ".");
     }
-
+    
     /**
      * Performs layout on the given editor or edit part using this layout
      * manager. A progress bar indicating progress of the layout algorithm is
@@ -107,10 +127,12 @@ public abstract class DiagramLayoutManager {
      *            {@code null} if the whole diagram shall be layouted
      * @param animate if true, Draw2D animation is activated
      * @param progressBar if true, a progress bar is displayed
+     * @param layoutAncestors if true, layout is not only performed for the selected
+     *         edit part, but also for its ancestors
      * @return a status indicating success or failure
      */
     public final IStatus doLayout(final IEditorPart editorPart, final EditPart editPart,
-            final boolean animate, final boolean progressBar) {
+            final boolean animate, final boolean progressBar, final boolean layoutAncestors) {
         final Maybe<IStatus> status = new Maybe<IStatus>();
         try {
             if (animate) {
@@ -121,11 +143,13 @@ public abstract class DiagramLayoutManager {
                         new IRunnableWithProgress() {
                             public void run(final IProgressMonitor monitor) {
                                 status.setObject(doLayout(editorPart, editPart,
-                                        new KielerProgressMonitor(monitor, MAX_PROGRESS_LEVELS)));
+                                        new KielerProgressMonitor(monitor, MAX_PROGRESS_LEVELS),
+                                        layoutAncestors));
                             }
                         });
             } else {
-                status.setObject(doLayout(editorPart, editPart, new BasicProgressMonitor(0)));
+                status.setObject(doLayout(editorPart, editPart, new BasicProgressMonitor(0),
+                        layoutAncestors));
             }
             if (animate) {
                 Animation.run(calcAnimationTime(status.getObject().getCode()));
@@ -152,24 +176,27 @@ public abstract class DiagramLayoutManager {
      *            {@code null} if the whole diagram shall be layouted
      * @param progressMonitor a progress monitor to which progress of the layout
      *            algorithm is reported
+     * @param layoutAncestors if true, layout is not only performed for the selected
+     *         edit part, but also for its ancestors
      * @return a status indicating success or failure; if successful, the status
      *         contains the number of layouted nodes as code value
      */
     public final synchronized IStatus doLayout(final IEditorPart editorPart,
-            final EditPart editPart, final IKielerProgressMonitor progressMonitor) {
+            final EditPart editPart, final IKielerProgressMonitor progressMonitor,
+            final boolean layoutAncestors) {
         try {
             progressMonitor.begin("Diagram layout", SMALL_TASK + MAIN_TASK + SMALL_TASK);
             LayoutServices layoutServices = LayoutServices.getInstance();
 
             // transform the diagram into a KGraph instance
             KNode layoutGraph = buildLayoutGraph(editorPart, editPart,
-                    progressMonitor.subTask(SMALL_TASK));
+                    progressMonitor.subTask(SMALL_TASK), layoutAncestors);
 
             // notify layout listeners about the layout request
             layoutServices.layoutRequested(layoutGraph);
 
             // perform layout on the layout graph
-            layouterEngine.layout(layoutGraph, progressMonitor.subTask(MAIN_TASK));
+            layouterEngine.layout(layoutGraph, progressMonitor.subTask(MAIN_TASK), layoutAncestors);
 
             // apply layout to the model
             applyLayout(progressMonitor.subTask(SMALL_TASK));
@@ -254,10 +281,12 @@ public abstract class DiagramLayoutManager {
      * @param editPart the parent edit part for which layout is performed, or
      *            {@code null} if the whole diagram shall be layouted
      * @param progressMonitor a monitor to keep track of progress
+     * @param layoutAncestors if true, layout is not only performed for the selected
+     *         edit part, but also for its ancestors
      * @return a layout graph instance
      */
     protected abstract KNode buildLayoutGraph(IEditorPart editorPart, EditPart editPart,
-            IKielerProgressMonitor progressMonitor);
+            IKielerProgressMonitor progressMonitor, boolean layoutAncestors);
 
     /**
      * Applies all layout data from the last created KGraph instance to the

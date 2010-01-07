@@ -38,16 +38,32 @@ public class RecursiveLayouterEngine {
      * Performs recursive layout on the given layout graph.
      * 
      * @param layoutGraph instance of a layout graph
-     * @param progressMonitor monitor to which progress of the layout algorithms
-     *            is reported
+     * @param progressMonitor monitor to which progress of the layout algorithms is reported
+     * @param layoutAncestors if true, layout is not only performed for the selected
+     *         node, but also for its ancestors
      * @throws KielerException if a layout algorithm fails
      */
-    public void layout(final KNode layoutGraph, final IKielerProgressMonitor progressMonitor)
+    public void layout(final KNode layoutGraph, final IKielerProgressMonitor progressMonitor,
+            final boolean layoutAncestors)
             throws KielerException {
         lastLayoutProvider = null;
         int nodeCount = countNodes(layoutGraph);
         progressMonitor.begin("Recursive graph layout", nodeCount);
+        
+        // perform recursive layout of the whole substructure of the given node
         layoutRecursively(layoutGraph, progressMonitor);
+        
+        // optionally layout the path of ancestors
+        if (layoutAncestors) {
+            KNode parent = layoutGraph.getParent();
+            while (parent != null) {
+                lastLayoutProvider = LayoutServices.getInstance().getLayoutProvider(parent);
+                lastLayoutProvider.doLayout(parent, progressMonitor.subTask(0));
+                checkLayout(parent);
+                parent = parent.getParent();
+            }
+        }
+        
         progressMonitor.done();
     }
 
@@ -66,7 +82,11 @@ public class RecursiveLayouterEngine {
             AbstractLayoutProvider layoutProvider = LayoutServices.getInstance()
                     .getLayoutProvider(layoutNode);
             // if the layout provider supports hierarchy, it is expected to layout the children
-            if (!layoutProvider.supportsHierarchy(layoutNode)) {
+            int nodeCount;
+            if (layoutProvider.supportsHierarchy(layoutNode)) {
+                nodeCount = countNodes(layoutNode);
+            } else {
+                nodeCount = layoutNode.getChildren().size();
                 for (KNode child : layoutNode.getChildren()) {
                     layoutRecursively(child, progressMonitor);
                 }
@@ -74,21 +94,29 @@ public class RecursiveLayouterEngine {
 
             // perform layout on the current hierarchy level
             lastLayoutProvider = layoutProvider;
-            layoutProvider.doLayout(layoutNode, progressMonitor.subTask(
-                    layoutNode.getChildren().size()));
-
-            // check the new size of the parent node
-            KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
-            float minWidth = LayoutOptions.getMinWidth(parentLayout);
-            if (parentLayout.getWidth() < minWidth) {
-                parentLayout.setWidth(minWidth);
-            }
-            float minHeight = LayoutOptions.getMinHeight(parentLayout);
-            if (parentLayout.getHeight() < minHeight) {
-                parentLayout.setHeight(minHeight);
-            }
-            LayoutOptions.setFixedSize(parentLayout, true);
+            layoutProvider.doLayout(layoutNode, progressMonitor.subTask(nodeCount));
+            checkLayout(layoutNode);
         }
+    }
+    
+    /**
+     * Check and correct the layout result for the given node.
+     * 
+     * @param layoutNode a node for which layout has been performed
+     */
+    private void checkLayout(final KNode layoutNode) {
+        // check the new size of the parent node
+        KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
+        float minWidth = LayoutOptions.getMinWidth(parentLayout);
+        if (parentLayout.getWidth() < minWidth) {
+            parentLayout.setWidth(minWidth);
+        }
+        float minHeight = LayoutOptions.getMinHeight(parentLayout);
+        if (parentLayout.getHeight() < minHeight) {
+            parentLayout.setHeight(minHeight);
+        }
+        LayoutOptions.setFixedSize(parentLayout, true);
+
     }
 
     /**

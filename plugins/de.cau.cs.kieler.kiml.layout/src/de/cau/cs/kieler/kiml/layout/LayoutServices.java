@@ -257,8 +257,13 @@ public class LayoutServices {
      * @param layoutGraph layout graph for which layout is requested
      */
     public final void layoutRequested(final KNode layoutGraph) {
+        // find the root node if the given layout node is not the root
+        KNode rootGraph = layoutGraph;
+        while (rootGraph.getParent() != null) {
+            rootGraph = rootGraph.getParent();
+        }
         for (ILayoutListener listener : listeners) {
-            listener.layoutRequested(layoutGraph);
+            listener.layoutRequested(rootGraph);
         }
     }
 
@@ -270,8 +275,13 @@ public class LayoutServices {
      * @param monitor progress monitor containing execution time results
      */
     public final void layoutPerformed(final KNode layoutGraph, final IKielerProgressMonitor monitor) {
+        // find the root node if the given layout node is not the root
+        KNode rootGraph = layoutGraph;
+        while (rootGraph.getParent() != null) {
+            rootGraph = rootGraph.getParent();
+        }
         for (ILayoutListener listener : listeners) {
-            listener.layoutPerformed(layoutGraph, monitor);
+            listener.layoutPerformed(rootGraph, monitor);
         }
     }
 

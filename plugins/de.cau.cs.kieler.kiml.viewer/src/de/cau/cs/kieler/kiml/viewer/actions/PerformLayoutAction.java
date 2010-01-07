@@ -86,7 +86,7 @@ public class PerformLayoutAction extends Action {
                             public void run(final IProgressMonitor monitor) {
                                 try {
                                     layouterEngine.layout(layoutGraphCopy, new KielerProgressMonitor(
-                                            monitor));
+                                            monitor), false);
                                 } catch (Throwable throwable) {
                                     String message = "Failed to perform layout.";
                                     if (layouterEngine.getLastLayoutProvider() != null) {

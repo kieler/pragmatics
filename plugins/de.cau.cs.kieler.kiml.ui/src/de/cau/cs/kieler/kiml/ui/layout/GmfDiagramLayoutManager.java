@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.draw2d.ConnectionLocator;
 import org.eclipse.draw2d.IFigure;
@@ -31,7 +32,6 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderItemEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.CompartmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.NoteEditPart;
@@ -73,8 +73,8 @@ import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
 public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 
     /** map of nodes in the layout graph to edit parts. */
-    private Map<KNode, GraphicalEditPart> node2EditPartMap
-            = new LinkedHashMap<KNode, GraphicalEditPart>();
+    private Map<KNode, IGraphicalEditPart> node2EditPartMap
+            = new LinkedHashMap<KNode, IGraphicalEditPart>();
     /** map of edges in the layout graph to edit parts. */
     private Map<KEdge, ConnectionEditPart> edge2EditPartMap
             = new LinkedHashMap<KEdge, ConnectionEditPart>();
@@ -85,10 +85,10 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     private Map<KLabel, LabelEditPart> edgeLabel2EditPartMap
             = new LinkedHashMap<KLabel, LabelEditPart>();
     /** map of edit parts to nodes in the layout graph. */
-    private Map<GraphicalEditPart, KNode> editPart2NodeMap
-            = new HashMap<GraphicalEditPart, KNode>();
+    private Map<IGraphicalEditPart, KNode> editPart2NodeMap
+            = new HashMap<IGraphicalEditPart, KNode>();
     /** map of edit parts to ports in the layout graph. */
-    private Map<GraphicalEditPart, KPort> editPart2PortMap = new HashMap<GraphicalEditPart, KPort>();
+    private Map<IGraphicalEditPart, KPort> editPart2PortMap = new HashMap<IGraphicalEditPart, KPort>();
     /** list of connection edit parts that were found in the diagram. */
     private LinkedList<ConnectionEditPart> connections = new LinkedList<ConnectionEditPart>();
     /** editor part of the currently layouted diagram. */
@@ -96,7 +96,11 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     /** diagram edit part of the currently layouted diagram. */
     private DiagramEditPart diagramEditPart;
     /** root of the currently layouted selection. */
-    private GraphicalEditPart layoutRootPart;
+    private IGraphicalEditPart layoutRootPart;
+    /** target edit part that is layouted recursively. */
+    private IGraphicalEditPart ancestryTargetPart;
+    /** target layout node that is layouted recursively. */
+    private KNode ancestryTargetNode;
 
     /**
      * {@inheritDoc}
@@ -116,7 +120,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      * {@inheritDoc}
      */
     protected KNode buildLayoutGraph(final IEditorPart editorPart, final EditPart editPart,
-            final IKielerProgressMonitor progressMonitor) {
+            final IKielerProgressMonitor progressMonitor, final boolean layoutAncestors) {
         progressMonitor.begin("Build layout graph", 1);
         node2EditPartMap.clear();
         edge2EditPartMap.clear();
@@ -135,19 +139,24 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 
         // choose the layout root edit part
         layoutRootPart = null;
-        if (editPart instanceof ShapeNodeEditPart || editPart instanceof DiagramEditPart) {
-            layoutRootPart = (GraphicalEditPart) editPart;
+        ancestryTargetNode = null;
+        if (layoutAncestors && editPart instanceof IGraphicalEditPart) {
+            ancestryTargetPart = (IGraphicalEditPart) editPart;
         } else {
-            if (editPart instanceof IGraphicalEditPart) {
-                layoutRootPart = ((IGraphicalEditPart) editPart).getTopGraphicEditPart();
-            }
-            if (!(layoutRootPart instanceof ShapeNodeEditPart) && diagramEditorPart != null) {
-                EditPart contentEditPart = diagramEditorPart.getDiagramGraphicalViewer().getContents();
-                if (contentEditPart instanceof GraphicalEditPart) {
-                    layoutRootPart = (GraphicalEditPart) contentEditPart;
-                } else {
-                    layoutRootPart = null;
+            ancestryTargetPart = null;
+            if (editPart instanceof ShapeNodeEditPart || editPart instanceof DiagramEditPart) {
+                layoutRootPart = (IGraphicalEditPart) editPart;
+            } else if (editPart instanceof IGraphicalEditPart) {
+                EditPart tgEditPart = ((IGraphicalEditPart) editPart).getTopGraphicEditPart();
+                if (tgEditPart instanceof ShapeNodeEditPart) {
+                    layoutRootPart = (IGraphicalEditPart) tgEditPart;
                 }
+            }
+        }
+        if (layoutRootPart == null && diagramEditorPart != null) {
+            EditPart contentEditPart = diagramEditorPart.getDiagramGraphicalViewer().getContents();
+            if (contentEditPart instanceof IGraphicalEditPart) {
+                layoutRootPart = (IGraphicalEditPart) contentEditPart;
             }
         }
         if (layoutRootPart == null) {
@@ -183,17 +192,17 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 
         // create a new request to change the layout
         ApplyLayoutRequest applyLayoutRequest = new ApplyLayoutRequest();
-        for (KNode knode : node2EditPartMap.keySet()) {
-            applyLayoutRequest.addElement(knode, node2EditPartMap.get(knode));
+        for (Entry<KNode, IGraphicalEditPart> entry : node2EditPartMap.entrySet()) {
+            applyLayoutRequest.addElement(entry.getKey(), entry.getValue());
         }
-        for (KEdge kedge : edge2EditPartMap.keySet()) {
-            applyLayoutRequest.addElement(kedge, edge2EditPartMap.get(kedge));
+        for (Entry<KEdge, ConnectionEditPart> entry : edge2EditPartMap.entrySet()) {
+            applyLayoutRequest.addElement(entry.getKey(), entry.getValue());
         }
-        for (KPort kport : port2EditPartMap.keySet()) {
-            applyLayoutRequest.addElement(kport, port2EditPartMap.get(kport));
+        for (Entry<KPort, ShapeNodeEditPart> entry : port2EditPartMap.entrySet()) {
+            applyLayoutRequest.addElement(entry.getKey(), entry.getValue());
         }
-        for (KLabel klabel : edgeLabel2EditPartMap.keySet()) {
-            applyLayoutRequest.addElement(klabel, edgeLabel2EditPartMap.get(klabel));
+        for (Entry<KLabel, LabelEditPart> entry : edgeLabel2EditPartMap.entrySet()) {
+            applyLayoutRequest.addElement(entry.getKey(), entry.getValue());
         }
 
         // retrieve a command for the request; the command is created by
@@ -237,7 +246,12 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         // transform all connections in the selected area
         processConnections();
 
-        return layoutGraph;
+        if (ancestryTargetNode != null) {
+            cleanupAncestryPath();
+            return ancestryTargetNode;
+        } else {
+            return layoutGraph;
+        }
     }
 
     /**
@@ -248,19 +262,25 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      * @param parentLayoutNode the corresponding KNode
      * @param currentEditPart the currently analyzed edit part
      */
-    private void buildLayoutGraphRecursively(final GraphicalEditPart parentEditPart,
-            final KNode parentLayoutNode, final GraphicalEditPart currentEditPart) {
+    private void buildLayoutGraphRecursively(final IGraphicalEditPart parentEditPart,
+            final KNode parentLayoutNode, final IGraphicalEditPart currentEditPart) {
         boolean hasChildNodes = false, hasChildCompartments = false,
                 hasPorts = false, isCollapsed = false;
         Insets insets = null;
         LayoutServices layoutServices = LayoutServices.getInstance();
         IFigure parentFigure = parentEditPart.getFigure();
+        
+        // set the target of layout ancestry if it was found
+        if (ancestryTargetNode == null && ancestryTargetPart == currentEditPart) {
+            ancestryTargetNode = parentLayoutNode;
+        }
+        
         // iterate through the children of the element
         for (Object obj : currentEditPart.getChildren()) {
 
             // check visibility of the child
-            if (obj instanceof GraphicalEditPart) {
-                IFigure figure = ((GraphicalEditPart) obj).getFigure();
+            if (obj instanceof IGraphicalEditPart) {
+                IFigure figure = ((IGraphicalEditPart) obj).getFigure();
                 if (!figure.isVisible()) {
                     continue;
                 }
@@ -294,8 +314,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 
                 // set the port label
                 for (Object portChildObj : borderItem.getChildren()) {
-                    if (portChildObj instanceof GraphicalEditPart) {
-                        IFigure labelFigure = ((GraphicalEditPart) portChildObj).getFigure();
+                    if (portChildObj instanceof IGraphicalEditPart) {
+                        IFigure labelFigure = ((IGraphicalEditPart) portChildObj).getFigure();
                         String text = null;
                         if (labelFigure instanceof WrappingLabel) {
                             text = ((WrappingLabel) labelFigure).getText();
@@ -381,7 +401,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     editPart2NodeMap.put(childNodeEditPart, childLayoutNode);
                     node2EditPartMap.put(childLayoutNode, childNodeEditPart);
                     hasChildNodes = true;
-                    if (!layoutServices.isNolayout(childLayoutNode.getClass())) {
+                    if (!layoutServices.isNolayout(childNodeEditPart.getClass())) {
                         // process the child as new current edit part, as it may
                         // contain other elements
                         buildLayoutGraphRecursively(childNodeEditPart, childLayoutNode,
@@ -393,9 +413,9 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 }
 
             // process labels of nodes
-            } else if (obj instanceof GraphicalEditPart) {
+            } else if (obj instanceof IGraphicalEditPart) {
 
-                GraphicalEditPart graphicalEditPart = (GraphicalEditPart) obj;
+                IGraphicalEditPart graphicalEditPart = (IGraphicalEditPart) obj;
                 IFigure labelFigure = graphicalEditPart.getFigure();
                 String text = null;
                 Font font = null;
@@ -578,6 +598,46 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     }
                 }
             }
+        }
+    }
+    
+    /**
+     * Cleans the path from the ancestry target node to the root node, including all parallel paths.
+     */
+    private void cleanupAncestryPath() {
+        KNode previousNode = ancestryTargetNode;
+        KNode parent = ancestryTargetNode.getParent();
+        while (parent != null) {
+            for (KNode child : parent.getChildren()) {
+                if (child != previousNode) {
+                    KShapeLayout childLayout = KimlLayoutUtil.getShapeLayout(child);
+                    LayoutOptions.setFixedSize(childLayout, true);
+                    removeFromLayout(child);
+                }
+            }
+            previousNode = parent;
+            parent = parent.getParent();
+        }
+    }
+    
+    /**
+     * Removes the given node and all its children from layout.
+     * 
+     * @param node a layout node
+     */
+    private void removeFromLayout(final KNode node) {
+        for (KNode child : node.getChildren()) {
+            node2EditPartMap.remove(child);
+            for (KPort port : child.getPorts()) {
+                port2EditPartMap.remove(port);
+            }
+            for (KEdge edge : child.getOutgoingEdges()) {
+                edge2EditPartMap.remove(edge);
+                for (KLabel edgeLabel : edge.getLabels()) {
+                    edgeLabel2EditPartMap.remove(edgeLabel);
+                }
+            }
+            removeFromLayout(child);
         }
     }
 
