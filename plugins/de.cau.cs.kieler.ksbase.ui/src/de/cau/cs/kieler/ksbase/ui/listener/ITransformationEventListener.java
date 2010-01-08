@@ -19,7 +19,8 @@ package de.cau.cs.kieler.ksbase.ui.listener;
  * in the {@link de.cau.cs.kieler.ksbase.ui.TransformationUIManager} and is
  * notified after each transformation.
  * 
- * @author Michael Matzen - mim AT informatik.uni-kiel.de
+ * @author mim
+ * 
  * @kieler.rating 2009-12-15 proposed yellow
  */
 public interface ITransformationEventListener {

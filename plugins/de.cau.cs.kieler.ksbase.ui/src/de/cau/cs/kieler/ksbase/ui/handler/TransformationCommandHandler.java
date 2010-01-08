@@ -26,7 +26,8 @@ import de.cau.cs.kieler.ksbase.ui.TransformationUIManager;
 /**
  * The generic transformation handler used for all UI actions.
  * 
- * @author Michael Matzen - mim AT informatik.uni-kiel.de
+ * @author mim
+ * 
  * @kieler.rating 2009-12-15 proposed yellow
  */
 public class TransformationCommandHandler extends AbstractHandler {

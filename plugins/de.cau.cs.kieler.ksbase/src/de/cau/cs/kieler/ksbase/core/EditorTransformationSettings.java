@@ -43,7 +43,7 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
  * 
  * This class may be serialized.
  * 
- * @author Michael Matzen - mim AT informatik.uni-kiel.de
+ * @author mim
  * 
  * @kieler.rating 2009-11-19 proposed yellow -review by msp,skn: class ok
  */

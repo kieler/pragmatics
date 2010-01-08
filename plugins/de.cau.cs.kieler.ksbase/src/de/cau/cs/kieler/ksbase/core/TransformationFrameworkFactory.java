@@ -14,15 +14,21 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.core;
 
-import de.cau.cs.kieler.ksbase.core.xtend.XtendTransformationFramework;
+import de.cau.cs.kieler.core.model.transformation.ITransformationFramework;
+import de.cau.cs.kieler.core.model.transformation.xtend.XtendTransformationFramework;
 
 /**
- * @author Michael Matzen - mim AT informatik.uni-kiel.de
+ * The transformation framework for KSBasE.
+ * 
+ * @author mim
  * 
  * @kieler.rating 2009-12-15 proposed yellow 
  */
 public final class TransformationFrameworkFactory {
 
+    /**
+     * Private constructor.
+     */
     private TransformationFrameworkFactory() {
 
     }

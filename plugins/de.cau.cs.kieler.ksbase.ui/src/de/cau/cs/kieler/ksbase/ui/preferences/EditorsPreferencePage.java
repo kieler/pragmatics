@@ -71,7 +71,8 @@ import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
  * is not possible to add new settings here. If you'd like to create features for a new editor
  * please use the 'ksbase.configuration' extension point provided by this project
  * 
- * @author Michael Matzen
+ * @author mim
+ * 
  */
 public class EditorsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 

@@ -39,7 +39,7 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
  * The main storage and management class. Contains a list of currently
  * registered editors. Handles import, export and Xtend file parsing.
  * 
- * @author Michael Matzen - mim AT informatik.uni-kiel.de
+ * @author mim
  * 
  * @kieler.rating 2009-11-20 proposed yellow -review by msp,skn: class ok
  * 

@@ -58,7 +58,8 @@ import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
  * Creates menus for all registered editor transformation settings and contributes them when
  * starting an eclipse instance.
  * 
- * @author Michael Matzen - mim AT informatik.uni-kiel.de
+ * @author mim
+ * 
  * @kieler.rating 2009-12-15 proposed yellow
  */
 public final class DynamicMenuContributions {

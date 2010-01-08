@@ -45,7 +45,8 @@ import de.cau.cs.kieler.ksbase.ui.handler.TransformationCommandHandler;
  * A class implementing a dynamic menu. Used to add custom transformation commands that have been
  * configured by using the preference page.
  * 
- * @author Michael Matzen - mim AT informatik.uni-kiel.de
+ * @author mim
+ * 
  * 
  */
 @SuppressWarnings("restriction")

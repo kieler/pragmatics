@@ -30,7 +30,7 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
  * The KSBasE preference page, contains the transformation and
  * post-transformation pages.
  * 
- * @author Michael Matzen
+ * @author mim
  * 
  */
 public class KSBasEPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {

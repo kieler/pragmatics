@@ -49,7 +49,7 @@ import de.cau.cs.kieler.ksbase.ui.listener.ITransformationEventListener;
  * Transformation-UI manager. Handles creation and execution of commands and notify of
  * transformationEvent listeners
  * 
- * @author Michael Matzen - mim AT informatik.uni-kiel.de
+ * @author mim
  * 
  * @kieler.rating 2009-12-15 proposed yellow
  */
@@ -189,7 +189,7 @@ public final class TransformationUIManager {
                     for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
 
                         CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it.next();
-
+                        
                         nextEditPolicy.refresh();
                     }
 
