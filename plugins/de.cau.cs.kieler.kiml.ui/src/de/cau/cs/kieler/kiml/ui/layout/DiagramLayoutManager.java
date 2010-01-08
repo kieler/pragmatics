@@ -34,6 +34,7 @@ import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.layout.LayoutServices;
 import de.cau.cs.kieler.kiml.layout.RecursiveLayouterEngine;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
+import de.cau.cs.kieler.kiml.ui.Messages;
 
 /**
  * Abstract superclass for managers of diagram layout. Contains static methods
@@ -99,7 +100,7 @@ public abstract class DiagramLayoutManager {
         for (DiagramLayoutManager manager : MANAGERS) {
             if (manager.supports(editorPart) || manager.supports(editPart)) {
                 IStatus status = manager.doLayout(editorPart, editPart, animate,
-                        progressBar, layoutAncestors);
+                        progressBar, layoutAncestors, false);
                 int severity = status.getSeverity();
                 if (severity != IStatus.OK && severity != IStatus.CANCEL) {
                     if (severity == IStatus.ERROR) {
@@ -110,6 +111,45 @@ public abstract class DiagramLayoutManager {
                     }
                 }
                 return;
+            }
+        }
+        throw new UnsupportedOperationException("No layout manager is available for "
+                + editorPart.getTitle() + ".");
+    }
+    
+    /**
+     * Performs layout on the given editor by choosing an appropriate layout
+     * manager instance and caches the layout result. Animation and a progress bar
+     * can be optionally turned on.
+     * 
+     * @param editorPart the editor for which layout is performed, or {@code
+     *         null} if the diagram is not part of an editor
+     * @param editPart the parent edit part for which layout is performed, or
+     *         {@code null} if the whole diagram shall be layouted
+     * @param animate if true, Draw2D animation is activated
+     * @param progressBar if true, a progress bar is displayed
+     * @return the cached layout result
+     */
+    public static final CachedLayout cacheLayout(final IEditorPart editorPart, final EditPart editPart,
+            final boolean animate, final boolean progressBar) {
+        for (DiagramLayoutManager manager : MANAGERS) {
+            if (manager.supports(editorPart) || manager.supports(editPart)) {
+                IStatus status = manager.doLayout(editorPart, editPart, animate,
+                        progressBar, false, true);
+                
+                int handlingStyle = StatusManager.NONE;
+                switch (status.getSeverity()) {
+                case IStatus.ERROR:
+                    handlingStyle = StatusManager.SHOW | StatusManager.LOG;
+                    break;
+                case IStatus.WARNING:
+                case IStatus.INFO:
+                    handlingStyle = StatusManager.LOG;
+                    break;
+                }
+                StatusManager.getManager().handle(status, handlingStyle);
+                
+                return manager.getCachedLayout();
             }
         }
         throw new UnsupportedOperationException("No layout manager is available for "
@@ -129,10 +169,12 @@ public abstract class DiagramLayoutManager {
      * @param progressBar if true, a progress bar is displayed
      * @param layoutAncestors if true, layout is not only performed for the selected
      *         edit part, but also for its ancestors
+     * @param cacheLayout if true, the layout result is cached for the underlying model
      * @return a status indicating success or failure
      */
     public final IStatus doLayout(final IEditorPart editorPart, final EditPart editPart,
-            final boolean animate, final boolean progressBar, final boolean layoutAncestors) {
+            final boolean animate, final boolean progressBar, final boolean layoutAncestors,
+            final boolean cacheLayout) {
         final Maybe<IStatus> status = new Maybe<IStatus>();
         try {
             if (animate) {
@@ -144,19 +186,19 @@ public abstract class DiagramLayoutManager {
                             public void run(final IProgressMonitor monitor) {
                                 status.setObject(doLayout(editorPart, editPart,
                                         new KielerProgressMonitor(monitor, MAX_PROGRESS_LEVELS),
-                                        layoutAncestors));
+                                        layoutAncestors, cacheLayout));
                             }
                         });
             } else {
                 status.setObject(doLayout(editorPart, editPart, new BasicProgressMonitor(0),
-                        layoutAncestors));
+                        layoutAncestors, cacheLayout));
             }
             if (animate) {
                 Animation.run(calcAnimationTime(status.getObject().getCode()));
             }
         } catch (Exception exception) {
             return new Status(IStatus.ERROR, KimlUiPlugin.PLUGIN_ID,
-                    "Failed to perform diagram layout.", exception);
+                    Messages.getString("kiml.ui.1"), exception);
         }
         return status.getObject();
     }
@@ -178,12 +220,13 @@ public abstract class DiagramLayoutManager {
      *            algorithm is reported
      * @param layoutAncestors if true, layout is not only performed for the selected
      *         edit part, but also for its ancestors
+     * @param cacheLayout if true, the layout result is cached for the underlying model
      * @return a status indicating success or failure; if successful, the status
      *         contains the number of layouted nodes as code value
      */
     public final synchronized IStatus doLayout(final IEditorPart editorPart,
             final EditPart editPart, final IKielerProgressMonitor progressMonitor,
-            final boolean layoutAncestors) {
+            final boolean layoutAncestors, final boolean cacheLayout) {
         try {
             progressMonitor.begin("Diagram layout", SMALL_TASK + MAIN_TASK + SMALL_TASK);
             LayoutServices layoutServices = LayoutServices.getInstance();
@@ -199,7 +242,7 @@ public abstract class DiagramLayoutManager {
             layouterEngine.layout(layoutGraph, progressMonitor.subTask(MAIN_TASK), layoutAncestors);
 
             // apply layout to the model
-            applyLayout(progressMonitor.subTask(SMALL_TASK));
+            applyLayout(progressMonitor.subTask(SMALL_TASK), cacheLayout);
 
             // notify layout listeners about the performed layout
             progressMonitor.done();
@@ -211,7 +254,7 @@ public abstract class DiagramLayoutManager {
 
         } catch (Throwable exception) {
             progressMonitor.done();
-            String message = "Failed to perform diagram layout.";
+            String message = Messages.getString("kiml.ui.1");
             if (layouterEngine != null && layouterEngine.getLastLayoutProvider() != null) {
                 message += " (" + layouterEngine.getLastLayoutProvider().getClass().getSimpleName()
                         + ")";
@@ -248,7 +291,7 @@ public abstract class DiagramLayoutManager {
      * @param graphSize total number of nodes in the graph
      * @return number of milliseconds to animate
      */
-    private int calcAnimationTime(final int graphSize) {
+    public static int calcAnimationTime(final int graphSize) {
         int time = MIN_ANIMATION_TIME + (int) (ANIM_FACT * Math.sqrt(graphSize));
         return time <= MAX_ANIMATION_TIME ? time : MAX_ANIMATION_TIME;
     }
@@ -293,7 +336,15 @@ public abstract class DiagramLayoutManager {
      * original diagram.
      * 
      * @param progressMonitor a monitor to keep track of progress
+     * @param cacheLayout if true, the layout result is cached for the underlying model
      */
-    protected abstract void applyLayout(IKielerProgressMonitor progressMonitor);
+    protected abstract void applyLayout(IKielerProgressMonitor progressMonitor, boolean cacheLayout);
+    
+    /**
+     * Returns the cached layout for the last layout run.
+     * 
+     * @return the last cached layout
+     */
+    protected abstract CachedLayout getCachedLayout();
 
 }
