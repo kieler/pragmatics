@@ -80,6 +80,16 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
      * {@inheritDoc}
      */
     protected Control createContents(final Composite parent) {
+        return createPrioritiesGroup(parent);
+    }
+    
+    /**
+     * Creates the group that holds the priorities table.
+     * 
+     * @param parent the parent control
+     * @return a group with the priorities table
+     */
+    private Group createPrioritiesGroup(final Composite parent) {
         Group prioritiesGroup = new Group(parent, SWT.NONE);
         prioritiesGroup.setText(Messages.getString("kiml.ui.2")); //$NON-NLS-1$
         LayoutServices layoutServices = LayoutServices.getInstance();
@@ -87,6 +97,10 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         Collection<LayoutProviderData> layoutProviderData = layoutServices.getLayoutProviderData();
         int layoutProviderCount = layoutProviderData.size();
         diagramTypes = layoutServices.getDiagramTypes().toArray(new String[0]);
+        if (layoutProviderCount == 0 || diagramTypes.length == 0) {
+            // return an empty group if there is nothing to display
+            return prioritiesGroup;
+        }
         providerIds = new String[layoutProviderCount];
         data = new int[layoutProviderCount][diagramTypes.length];
         PriorityTableProvider.DataEntry[] tableEntries
