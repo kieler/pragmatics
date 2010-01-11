@@ -31,6 +31,7 @@ import org.eclipse.internal.xtend.xtend.XtendFile;
 import org.eclipse.internal.xtend.xtend.ast.Extension;
 import org.eclipse.xtend.XtendResourceParser;
 
+import de.cau.cs.kieler.core.model.transformation.ITransformationFramework;
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 
 /**
@@ -65,6 +66,9 @@ public class EditorTransformationSettings implements Serializable {
     private HashMap<String, Transformation> transformations;
     /** List of menu contributions. **/
     private LinkedList<KSBasEMenuContribution> menuContributions;
+    /** Transformation Framework to use. **/
+    private ITransformationFramework framework;
+    
     /**
      * Command handler to be used by this editor. If this is empty, the default handler will be
      * used.
@@ -320,6 +324,23 @@ public class EditorTransformationSettings implements Serializable {
     public void setCommandHandler(final String handlerClass) {
         assert (handlerClass != null);
         this.commandHandler = handlerClass;
+    }
+
+    /**
+     * Gets the transformation framework for this editor.
+     * 
+     * @return an implementation of ITransformationFramework
+     */
+    public ITransformationFramework getFramework() {
+        return framework;
+    }
+
+    /**
+     * Sets the transformation framework for this editor.
+     * @param theFramework an implementation of ITransformationFramework
+     */
+    public void setFramework(final ITransformationFramework theFramework) {
+        this.framework = theFramework;
     }
 
     /**

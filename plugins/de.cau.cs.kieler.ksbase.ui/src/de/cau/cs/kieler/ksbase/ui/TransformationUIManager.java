@@ -141,7 +141,8 @@ public final class TransformationUIManager {
                 // Create request
                 ExecuteTransformationRequest request = new ExecuteTransformationRequest(
                         activeEditor, transformation.getExtension(), file.getAbsolutePath(),
-                        selection, editor.getModelPackageClass(), transformation.getParameters());
+                        selection, editor.getModelPackageClass(), transformation.getParameters(),
+                        editor.getFramework());
 
                 Command transformationCommand = selectedElement.getCommand(request);
 
@@ -189,7 +190,7 @@ public final class TransformationUIManager {
                     for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
 
                         CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it.next();
-                        
+
                         nextEditPolicy.refresh();
                     }
 

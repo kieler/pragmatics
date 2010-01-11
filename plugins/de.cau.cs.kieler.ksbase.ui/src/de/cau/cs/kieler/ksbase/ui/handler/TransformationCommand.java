@@ -39,7 +39,6 @@ import org.eclipse.xtend.typesystem.emf.EcoreUtil2;
 import org.eclipse.xtend.typesystem.emf.EmfMetaModel;
 
 import de.cau.cs.kieler.core.model.transformation.ITransformationFramework;
-import de.cau.cs.kieler.ksbase.core.TransformationFrameworkFactory;
 
 /**
  * The command to execute a transformation.
@@ -66,8 +65,6 @@ public class TransformationCommand extends AbstractTransactionalCommand {
     public TransformationCommand(final TransactionalEditingDomain domain, final String label,
             final IAdaptable adapter) {
         super(domain, label, null);
-        // Get the default transformation framework
-        component = TransformationFrameworkFactory.getDefaultTransformationFramework();
     }
 
     /**
@@ -127,11 +124,15 @@ public class TransformationCommand extends AbstractTransactionalCommand {
      *            The package of the underlying meta model
      * @param parameter
      *            The parameters of the Xtend method
+     * @param framework
+     *            The transformation framework to use for execution
      * @return False if an error occurred
      */
     public final boolean initalize(final IEditorPart editPart, final ISelection selection,
             final String command, final String fileName, final String basePackage,
-            final String[] parameter) {
+            final String[] parameter, final ITransformationFramework framework) {
+        component = framework;
+
         StructuredSelection s;
 
         if (selection instanceof StructuredSelection) {
@@ -211,7 +212,7 @@ public class TransformationCommand extends AbstractTransactionalCommand {
         EPackage pack = EcoreUtil2.getEPackageByClassName(basePackage);
         // create EMFMetaModel with the given EPackage
         metaModel = new EmfMetaModel(pack);
-        
+
         component.initializeTransformation(file, command, metaModel, parameters);
 
         return true;

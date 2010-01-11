@@ -18,6 +18,8 @@ import org.eclipse.gef.Request;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
 
+import de.cau.cs.kieler.core.model.transformation.ITransformationFramework;
+
 /**
  * Request for the execution of a model transformation.
  * 
@@ -37,6 +39,7 @@ public class ExecuteTransformationRequest extends Request {
     private ISelection selection;
     private String modelPackage;
     private String[] parameter;
+    private ITransformationFramework framework;
 
     /**
      * Creates a transformation request.
@@ -53,24 +56,27 @@ public class ExecuteTransformationRequest extends Request {
      *            The model package for the active editor
      * @param parameters
      *            The parameters of the Xtend transformation
+     * @param fframework
+     *            The ITransformationFramework to use for execution
      */
-    public ExecuteTransformationRequest(final IEditorPart ePart,
-            final String cmd, final String file,
-            final ISelection sel, final String modelPackageClass,
-            final String[] parameters) {
+    public ExecuteTransformationRequest(final IEditorPart ePart, final String cmd,
+            final String file, final ISelection sel, final String modelPackageClass,
+            final String[] parameters, final ITransformationFramework fframework) {
         super(REQ_EXEC_TRANS);
         this.editPart = ePart;
         this.command = cmd;
         this.fileName = file;
         this.modelPackage = modelPackageClass;
         this.selection = sel;
+        this.framework = fframework;
         this.parameter = parameters.clone();
     }
 
     /**
      * Sets the model package.
      * 
-     * @param modelPackageClass The model package class.
+     * @param modelPackageClass
+     *            The model package class.
      */
     public final void setModelPackage(final String modelPackageClass) {
         this.modelPackage = modelPackageClass;
@@ -88,7 +94,8 @@ public class ExecuteTransformationRequest extends Request {
     /**
      * Sets the edit part.
      * 
-     * @param epart The target edit part.
+     * @param epart
+     *            The target edit part.
      */
     public final void setEditPart(final IEditorPart epart) {
         this.editPart = epart;
@@ -106,7 +113,8 @@ public class ExecuteTransformationRequest extends Request {
     /**
      * Sets the transformation command.
      * 
-     * @param cmd The transformation command.
+     * @param cmd
+     *            The transformation command.
      */
     public final void setCommand(final String cmd) {
         this.command = cmd;
@@ -124,7 +132,8 @@ public class ExecuteTransformationRequest extends Request {
     /**
      * Sets the filename.
      * 
-     * @param file Name of the Xtend file.
+     * @param file
+     *            Name of the Xtend file.
      */
     public final void setFileName(final String file) {
         this.fileName = file;
@@ -142,7 +151,8 @@ public class ExecuteTransformationRequest extends Request {
     /**
      * Sets the current selection.
      * 
-     * @param sel The active selection object 
+     * @param sel
+     *            The active selection object
      */
     public final void setSelection(final ISelection sel) {
         this.selection = sel;
@@ -169,9 +179,30 @@ public class ExecuteTransformationRequest extends Request {
     /**
      * Sets the parameters for this transformation request .
      * 
-     * @param parameters The transformation parameters
+     * @param parameters
+     *            The transformation parameters
      */
     public final void setParameter(final String[] parameters) {
         this.parameter = parameters.clone();
     }
+
+    /**
+     * Gets the assigned transformation framework.
+     * 
+     * @return An implementation of ITransformationFramework
+     */
+    public ITransformationFramework getFramework() {
+        return framework;
+    }
+
+    /**
+     * Sets the transformation framework.
+     * 
+     * @param fframework
+     *            An implementation of ITransformationFramework
+     */
+    public void setFramework(final ITransformationFramework fframework) {
+        this.framework = fframework;
+    }
+
 }

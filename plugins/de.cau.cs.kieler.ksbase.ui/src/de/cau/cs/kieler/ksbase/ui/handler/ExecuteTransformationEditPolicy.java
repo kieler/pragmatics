@@ -25,8 +25,8 @@ import org.eclipse.gmf.runtime.notation.View;
 import de.cau.cs.kieler.ksbase.core.Messages;
 
 /**
- * Edit policy used to execute a specific transformation. This edit policy
- * creates a {@link TransformationCommand} to execute the transformation.
+ * Edit policy used to execute a specific transformation. This edit policy creates a
+ * {@link TransformationCommand} to execute the transformation.
  * 
  * @author mim
  * 
@@ -44,8 +44,7 @@ public class ExecuteTransformationEditPolicy extends AbstractEditPolicy {
      */
     @Override
     public boolean understandsRequest(final Request req) {
-        return (ExecuteTransformationRequest.REQ_EXEC_TRANS).equals(req
-                .getType());
+        return (ExecuteTransformationRequest.REQ_EXEC_TRANS).equals(req.getType());
     }
 
     /**
@@ -53,8 +52,8 @@ public class ExecuteTransformationEditPolicy extends AbstractEditPolicy {
      * 
      * @param req
      *            The request to fulfill
-     * @return An @link XtendTransformationCommand if the request parameter is
-     *         an @link ExecuteTransformationRequest.
+     * @return An @link XtendTransformationCommand if the request parameter is an @link
+     *         ExecuteTransformationRequest.
      * 
      * @see org.eclipse.gef.editpolicies.AbstractEditPolicy#getCommand(org.eclipse.gef.Request)
      */
@@ -64,16 +63,14 @@ public class ExecuteTransformationEditPolicy extends AbstractEditPolicy {
             if (req instanceof ExecuteTransformationRequest) {
                 ExecuteTransformationRequest transformationRequest = (ExecuteTransformationRequest) req;
                 IGraphicalEditPart hostEPart = (IGraphicalEditPart) getHost();
-                TransformationCommand command = new TransformationCommand(
-                        hostEPart.getEditingDomain(),
+                TransformationCommand command = new TransformationCommand(hostEPart
+                        .getEditingDomain(),
                         Messages.executeTransformationEditPolicyTransformationCommandName,
                         new EObjectAdapter((View) hostEPart.getModel()));
-                command.initalize(transformationRequest.getEditPart(),
-                        transformationRequest.getSelection(),
-                        transformationRequest.getCommand(),
-                        transformationRequest.getFileName(),
-                        transformationRequest.getModelPackage(),
-                        transformationRequest.getParameter());
+                command.initalize(transformationRequest.getEditPart(), transformationRequest
+                        .getSelection(), transformationRequest.getCommand(), transformationRequest
+                        .getFileName(), transformationRequest.getModelPackage(),
+                        transformationRequest.getParameter(), transformationRequest.getFramework());
                 return new ICommandProxy(command);
             } else {
                 return null;
