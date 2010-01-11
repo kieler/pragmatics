@@ -58,6 +58,7 @@
             <element ref="menus"/>
             <element ref="transformations"/>
             <element ref="commandHandler" minOccurs="0" maxOccurs="1"/>
+            <element ref="transformationFactory" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="editorId" type="string">
             <annotation>
@@ -248,6 +249,21 @@ This class has to extend &apos;emf.ecore.EPackage&apos;
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.core.commands.AbstractHandler:"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="transformationFactory">
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.core.model.transformation.ITransformationFramework"/>
                </appinfo>
             </annotation>
          </attribute>
