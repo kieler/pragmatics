@@ -84,7 +84,7 @@ public class Maybe<T> {
      *
      * @param theobject the object to set
      */
-    public void setObject(final T theobject) {
+    public void set(final T theobject) {
         this.object = theobject;
     }
 
@@ -93,7 +93,7 @@ public class Maybe<T> {
      *
      * @return the contained object
      */
-    public T getObject() {
+    public T get() {
         return object;
     }
     

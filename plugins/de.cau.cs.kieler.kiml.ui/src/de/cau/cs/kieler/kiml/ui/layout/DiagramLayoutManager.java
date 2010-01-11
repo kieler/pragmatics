@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.draw2d.Animation;
 import org.eclipse.gef.EditPart;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -49,9 +50,8 @@ public abstract class DiagramLayoutManager {
     /** maximal number of recursion levels for which progress is displayed. */
     public static final int MAX_PROGRESS_LEVELS = 3;
     
-    /** list of registered diagram layout MANAGERS. */
-    private static final List<DiagramLayoutManager> MANAGERS
-            = new LinkedList<DiagramLayoutManager>();
+    /** list of registered diagram layout managers. */
+    private static final List<DiagramLayoutManager> MANAGERS = new LinkedList<DiagramLayoutManager>();
 
     /** the layouter engine used to layout diagrams. */
     private RecursiveLayouterEngine layouterEngine = new RecursiveLayouterEngine();
@@ -101,15 +101,7 @@ public abstract class DiagramLayoutManager {
             if (manager.supports(editorPart) || manager.supports(editPart)) {
                 IStatus status = manager.doLayout(editorPart, editPart, animate,
                         progressBar, layoutAncestors, false);
-                int severity = status.getSeverity();
-                if (severity != IStatus.OK && severity != IStatus.CANCEL) {
-                    if (severity == IStatus.ERROR) {
-                        StatusManager.getManager()
-                                .handle(status, StatusManager.SHOW | StatusManager.LOG);
-                    } else {
-                        StatusManager.getManager().handle(status, StatusManager.LOG);
-                    }
-                }
+                handle(status);
                 return;
             }
         }
@@ -136,24 +128,33 @@ public abstract class DiagramLayoutManager {
             if (manager.supports(editorPart) || manager.supports(editPart)) {
                 IStatus status = manager.doLayout(editorPart, editPart, animate,
                         progressBar, false, true);
-                
-                int handlingStyle = StatusManager.NONE;
-                switch (status.getSeverity()) {
-                case IStatus.ERROR:
-                    handlingStyle = StatusManager.SHOW | StatusManager.LOG;
-                    break;
-                case IStatus.WARNING:
-                case IStatus.INFO:
-                    handlingStyle = StatusManager.LOG;
-                    break;
-                }
-                StatusManager.getManager().handle(status, handlingStyle);
-                
+                handle(status);
                 return manager.getCachedLayout();
             }
         }
         throw new UnsupportedOperationException("No layout manager is available for "
                 + editorPart.getTitle() + ".");
+    }
+    
+    /**
+     * Handles the given status.
+     * 
+     * @param status a status
+     */
+    private static void handle(final IStatus status) {
+        if (status != null) {
+            int handlingStyle = StatusManager.NONE;
+            switch (status.getSeverity()) {
+            case IStatus.ERROR:
+                handlingStyle = StatusManager.SHOW | StatusManager.LOG;
+                break;
+            case IStatus.WARNING:
+            case IStatus.INFO:
+                handlingStyle = StatusManager.LOG;
+                break;
+            }
+            StatusManager.getManager().handle(status, handlingStyle);
+        }
     }
     
     /**
@@ -177,30 +178,63 @@ public abstract class DiagramLayoutManager {
             final boolean cacheLayout) {
         final Maybe<IStatus> status = new Maybe<IStatus>();
         try {
-            if (animate) {
-                Animation.markBegin();
-            }
             if (progressBar) {
-                PlatformUI.getWorkbench().getProgressService().run(false, false,
-                        new IRunnableWithProgress() {
-                            public void run(final IProgressMonitor monitor) {
-                                status.setObject(doLayout(editorPart, editPart,
-                                        new KielerProgressMonitor(monitor, MAX_PROGRESS_LEVELS),
-                                        layoutAncestors, cacheLayout));
+                // perform automatic layout with a progress bar
+                final IRunnableWithProgress runnable = new IRunnableWithProgress() {
+                    public void run(final IProgressMonitor monitor) {
+                        status.set(doLayout(editorPart, editPart,
+                                new KielerProgressMonitor(monitor, MAX_PROGRESS_LEVELS),
+                                layoutAncestors, cacheLayout));
+                    }
+                };
+                if (Display.getCurrent() != null) {
+                    PlatformUI.getWorkbench().getProgressService().run(false, false, runnable);
+                } else {
+                    final Maybe<Exception> exception = new Maybe<Exception>();
+                    PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+                        public void run() {
+                            try {
+                                PlatformUI.getWorkbench().getProgressService().run(
+                                        false, false, runnable);
+                            } catch (Exception ex) {
+                                exception.set(ex);
                             }
-                        });
+                        }
+                    });
+                    if (exception.get() != null) {
+                        throw exception.get();
+                    }
+                }
             } else {
-                status.setObject(doLayout(editorPart, editPart, new BasicProgressMonitor(0),
+                // perform automatic layout without a progress bar
+                status.set(doLayout(editorPart, editPart, new BasicProgressMonitor(0),
                         layoutAncestors, cacheLayout));
             }
-            if (animate) {
-                Animation.run(calcAnimationTime(status.getObject().getCode()));
+            
+            Runnable runnable = new Runnable() {
+                public void run() {
+                    if (animate) {
+                        // apply the layout with animation
+                        Animation.markBegin();
+                        applyLayout();
+                        int nodeCount = status.get() == null ? 0 : status.get().getCode();
+                        Animation.run(calcAnimationTime(nodeCount));
+                    } else {
+                        // apply the layout without animation
+                        applyLayout();
+                    }
+                }
+            };
+            if (Display.getCurrent() != null) {
+                runnable.run();
+            } else {
+                PlatformUI.getWorkbench().getDisplay().asyncExec(runnable);
             }
         } catch (Exception exception) {
             return new Status(IStatus.ERROR, KimlUiPlugin.PLUGIN_ID,
                     Messages.getString("kiml.ui.1"), exception);
         }
-        return status.getObject();
+        return status.get();
     }
 
     /** amount of work for a small task. */
@@ -241,8 +275,8 @@ public abstract class DiagramLayoutManager {
             // perform layout on the layout graph
             layouterEngine.layout(layoutGraph, progressMonitor.subTask(MAIN_TASK), layoutAncestors);
 
-            // apply layout to the model
-            applyLayout(progressMonitor.subTask(SMALL_TASK), cacheLayout);
+            // transfer layout to the diagram
+            transferLayout(progressMonitor.subTask(SMALL_TASK), cacheLayout);
 
             // notify layout listeners about the performed layout
             progressMonitor.done();
@@ -332,13 +366,20 @@ public abstract class DiagramLayoutManager {
             IKielerProgressMonitor progressMonitor, boolean layoutAncestors);
 
     /**
-     * Applies all layout data from the last created KGraph instance to the
-     * original diagram.
+     * Transfers all layout data from the last created KGraph instance to the
+     * original diagram. The diagram is not modified yet, but all required preparations
+     * are performed.
      * 
      * @param progressMonitor a monitor to keep track of progress
      * @param cacheLayout if true, the layout result is cached for the underlying model
      */
-    protected abstract void applyLayout(IKielerProgressMonitor progressMonitor, boolean cacheLayout);
+    protected abstract void transferLayout(IKielerProgressMonitor progressMonitor, boolean cacheLayout);
+    
+    /**
+     * Applies the transferred layout to the original diagram. This final step is where
+     * the actual change to the diagram is done.
+     */
+    protected abstract void applyLayout();
     
     /**
      * Returns the cached layout for the last layout run.

@@ -93,6 +93,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     private KNode ancestryTargetNode;
     /** the cached layout result. */
     private CachedLayout cachedLayout;
+    /** the command that applies the transferred layout to the diagram. */
+    private Command applyLayoutCommand;
 
     /**
      * {@inheritDoc}
@@ -161,10 +163,35 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     /**
      * {@inheritDoc}
      */
-    protected void applyLayout(final IKielerProgressMonitor progressMonitor,
+    protected void transferLayout(final IKielerProgressMonitor progressMonitor,
             final boolean cacheLayout) {
         progressMonitor.begin("Apply layout to the diagram", 2);
 
+        // create a new request to change the layout
+        ApplyLayoutRequest applyLayoutRequest = new ApplyLayoutRequest();
+        for (Entry<KGraphElement, IGraphicalEditPart> entry : graphElem2EditPartMap.entrySet()) {
+            applyLayoutRequest.addElement(entry.getKey(), entry.getValue());
+        }
+
+        // retrieve a command for the request; the command is created by GmfLayoutEditPolicy
+        applyLayoutCommand = diagramEditPart.getCommand(applyLayoutRequest);
+        progressMonitor.worked(1);
+        
+        // store the layout data into a cache
+        if (cacheLayout) {
+            cachedLayout = new CachedLayout(graphElem2EditPartMap.size());
+            for (Entry<KGraphElement, IGraphicalEditPart> entry : graphElem2EditPartMap.entrySet()) {
+                cachedLayout.addLayout(entry.getValue(), entry.getKey());
+            }
+        }
+
+        progressMonitor.done();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    protected void applyLayout() {
         // get a command stack to execute the command
         CommandStack commandStack = null;
         if (diagramEditorPart != null) {
@@ -176,28 +203,9 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         if (commandStack == null) {
             commandStack = layoutRootPart.getDiagramEditDomain().getDiagramCommandStack();
         }
-
-        // create a new request to change the layout
-        ApplyLayoutRequest applyLayoutRequest = new ApplyLayoutRequest();
-        for (Entry<KGraphElement, IGraphicalEditPart> entry : graphElem2EditPartMap.entrySet()) {
-            applyLayoutRequest.addElement(entry.getKey(), entry.getValue());
-        }
-
-        // retrieve a command for the request; the command is created by GmfLayoutEditPolicy
-        Command applyLayoutCommand = diagramEditPart.getCommand(applyLayoutRequest);
-        progressMonitor.worked(1);
+        
         // execute the command
         commandStack.execute(applyLayoutCommand);
-        
-        // store the layout data into a cache
-        if (cacheLayout) {
-            cachedLayout = new CachedLayout(graphElem2EditPartMap.size());
-            for (Entry<KGraphElement, IGraphicalEditPart> entry : graphElem2EditPartMap.entrySet()) {
-                cachedLayout.addLayout(entry.getValue(), entry.getKey());
-            }
-        }
-
-        progressMonitor.done();
     }
     
     /**

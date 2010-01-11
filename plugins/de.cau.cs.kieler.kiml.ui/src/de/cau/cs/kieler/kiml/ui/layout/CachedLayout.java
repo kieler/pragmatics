@@ -127,24 +127,24 @@ public class CachedLayout {
                 PlatformUI.getWorkbench().getProgressService().run(false, false,
                         new IRunnableWithProgress() {
                             public void run(final IProgressMonitor monitor) {
-                                status.setObject(applyLayout(editorPart,
+                                status.set(applyLayout(editorPart,
                                         new KielerProgressMonitor(monitor)));
                             }
                         });
             } else {
-                status.setObject(applyLayout(editorPart, new BasicProgressMonitor(0)));
+                status.set(applyLayout(editorPart, new BasicProgressMonitor(0)));
             }
             if (animate) {
                 Animation.run(DiagramLayoutManager.calcAnimationTime(
                         layoutCache.size() / ANIMATION_SHORTEN));
             }
         } catch (Exception exception) {
-            status.setObject(new Status(IStatus.ERROR, KimlUiPlugin.PLUGIN_ID,
+            status.set(new Status(IStatus.ERROR, KimlUiPlugin.PLUGIN_ID,
                     Messages.getString("kiml.ui.14"), exception));
         }
         
         int handlingStyle = StatusManager.NONE;
-        switch (status.getObject().getSeverity()) {
+        switch (status.get().getSeverity()) {
         case IStatus.ERROR:
             handlingStyle = StatusManager.SHOW | StatusManager.LOG;
             break;
@@ -153,7 +153,7 @@ public class CachedLayout {
             handlingStyle = StatusManager.LOG;
             break;
         }
-        StatusManager.getManager().handle(status.getObject(), handlingStyle);
+        StatusManager.getManager().handle(status.get(), handlingStyle);
     }
     
     /**

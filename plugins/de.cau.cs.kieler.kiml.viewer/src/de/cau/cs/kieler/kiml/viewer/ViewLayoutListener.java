@@ -42,26 +42,34 @@ public class ViewLayoutListener implements ILayoutListener {
      * {@inheritDoc}
      */
     public void layoutRequested(final KNode layoutGraph) {
-        findViews();
-        if (layoutGraphView != null) {
-            layoutGraphView.setLayoutGraph(cloneLayoutGraph(layoutGraph), LayoutGraphView.PRE);
-            // the last post-layout graph is deleted to avoid inconsistent
-            // graphs
-            layoutGraphView.setLayoutGraph(null, LayoutGraphView.POST);
-        }
+        PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+            public void run() {
+                findViews();
+                if (layoutGraphView != null) {
+                    layoutGraphView.setLayoutGraph(cloneLayoutGraph(layoutGraph), LayoutGraphView.PRE);
+                    // the last post-layout graph is deleted to avoid inconsistent
+                    // graphs
+                    layoutGraphView.setLayoutGraph(null, LayoutGraphView.POST);
+                }
+            }
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     public void layoutPerformed(final KNode layoutGraph, final IKielerProgressMonitor monitor) {
-        findViews();
-        if (layoutGraphView != null) {
-            layoutGraphView.setLayoutGraph(this.cloneLayoutGraph(layoutGraph), LayoutGraphView.POST);
-        }
-        if (executionView != null) {
-            executionView.addExecution(monitor);
-        }
+        PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+            public void run() {
+               findViews();
+                if (layoutGraphView != null) {
+                    layoutGraphView.setLayoutGraph(cloneLayoutGraph(layoutGraph), LayoutGraphView.POST);
+                }
+                if (executionView != null) {
+                    executionView.addExecution(monitor);
+                }
+            }
+        });
     }
 
     /**
