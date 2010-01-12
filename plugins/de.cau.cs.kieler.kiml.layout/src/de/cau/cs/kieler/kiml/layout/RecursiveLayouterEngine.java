@@ -57,6 +57,9 @@ public class RecursiveLayouterEngine {
         if (layoutAncestors) {
             KNode parent = layoutGraph.getParent();
             while (parent != null) {
+                if (progressMonitor.isCanceled()) {
+                    break;
+                }
                 lastLayoutProvider = LayoutServices.getInstance().getLayoutProvider(parent);
                 lastLayoutProvider.doLayout(parent, progressMonitor.subTask(0));
                 checkLayout(parent);
@@ -89,6 +92,9 @@ public class RecursiveLayouterEngine {
                 nodeCount = layoutNode.getChildren().size();
                 for (KNode child : layoutNode.getChildren()) {
                     layoutRecursively(child, progressMonitor);
+                    if (progressMonitor.isCanceled()) {
+                        return;
+                    }
                 }
             }
 

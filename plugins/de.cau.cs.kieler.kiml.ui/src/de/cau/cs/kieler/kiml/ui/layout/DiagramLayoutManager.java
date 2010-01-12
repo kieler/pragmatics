@@ -21,17 +21,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.draw2d.Animation;
 import org.eclipse.gef.EditPart;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
-import de.cau.cs.kieler.core.util.Maybe;
+import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.layout.LayoutServices;
 import de.cau.cs.kieler.kiml.layout.RecursiveLayouterEngine;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
@@ -99,13 +95,11 @@ public abstract class DiagramLayoutManager {
             final boolean animate, final boolean progressBar, final boolean layoutAncestors) {
         for (DiagramLayoutManager manager : MANAGERS) {
             if (manager.supports(editorPart) || manager.supports(editPart)) {
-                IStatus status = manager.doLayout(editorPart, editPart, animate,
-                        progressBar, layoutAncestors, false);
-                handle(status);
+                manager.doLayout(editorPart, editPart, animate, progressBar, layoutAncestors, false);
                 return;
             }
         }
-        throw new UnsupportedOperationException("No layout manager is available for "
+        throw new UnsupportedOperationException(Messages.getString("kiml.ui.15")
                 + editorPart.getTitle() + ".");
     }
     
@@ -126,41 +120,18 @@ public abstract class DiagramLayoutManager {
             final boolean animate, final boolean progressBar) {
         for (DiagramLayoutManager manager : MANAGERS) {
             if (manager.supports(editorPart) || manager.supports(editPart)) {
-                IStatus status = manager.doLayout(editorPart, editPart, animate,
-                        progressBar, false, true);
-                handle(status);
+                manager.doLayout(editorPart, editPart, animate, progressBar, false, true);
                 return manager.getCachedLayout();
             }
         }
-        throw new UnsupportedOperationException("No layout manager is available for "
+        throw new UnsupportedOperationException(Messages.getString("kiml.ui.15")
                 + editorPart.getTitle() + ".");
-    }
-    
-    /**
-     * Handles the given status.
-     * 
-     * @param status a status
-     */
-    private static void handle(final IStatus status) {
-        if (status != null) {
-            int handlingStyle = StatusManager.NONE;
-            switch (status.getSeverity()) {
-            case IStatus.ERROR:
-                handlingStyle = StatusManager.SHOW | StatusManager.LOG;
-                break;
-            case IStatus.WARNING:
-            case IStatus.INFO:
-                handlingStyle = StatusManager.LOG;
-                break;
-            }
-            StatusManager.getManager().handle(status, handlingStyle);
-        }
     }
     
     /**
      * Performs layout on the given editor or edit part using this layout
      * manager. A progress bar indicating progress of the layout algorithm is
-     * shown to the user.
+     * optionally shown to the user.
      * 
      * @param editorPart the editor for which layout is performed, or {@code
      *            null} if the diagram is not part of an editor
@@ -171,72 +142,42 @@ public abstract class DiagramLayoutManager {
      * @param layoutAncestors if true, layout is not only performed for the selected
      *         edit part, but also for its ancestors
      * @param cacheLayout if true, the layout result is cached for the underlying model
-     * @return a status indicating success or failure
      */
-    public final IStatus doLayout(final IEditorPart editorPart, final EditPart editPart,
+    public final void doLayout(final IEditorPart editorPart, final EditPart editPart,
             final boolean animate, final boolean progressBar, final boolean layoutAncestors,
             final boolean cacheLayout) {
-        final Maybe<IStatus> status = new Maybe<IStatus>();
-        try {
-            if (progressBar) {
-                // perform automatic layout with a progress bar
-                final IRunnableWithProgress runnable = new IRunnableWithProgress() {
-                    public void run(final IProgressMonitor monitor) {
-                        status.set(doLayout(editorPart, editPart,
-                                new KielerProgressMonitor(monitor, MAX_PROGRESS_LEVELS),
-                                layoutAncestors, cacheLayout));
-                    }
-                };
-                if (Display.getCurrent() != null) {
-                    PlatformUI.getWorkbench().getProgressService().run(false, false, runnable);
-                } else {
-                    final Maybe<Exception> exception = new Maybe<Exception>();
-                    PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-                        public void run() {
-                            try {
-                                PlatformUI.getWorkbench().getProgressService().run(
-                                        false, false, runnable);
-                            } catch (Exception ex) {
-                                exception.set(ex);
-                            }
-                        }
-                    });
-                    if (exception.get() != null) {
-                        throw exception.get();
-                    }
-                }
-            } else {
-                // perform automatic layout without a progress bar
-                status.set(doLayout(editorPart, editPart, new BasicProgressMonitor(0),
-                        layoutAncestors, cacheLayout));
+        final MonitoredOperation monitoredOperation = new MonitoredOperation() {
+            protected IStatus execute(final IProgressMonitor monitor) {
+                return doLayout(editorPart, editPart,
+                        new KielerProgressMonitor(monitor, MAX_PROGRESS_LEVELS),
+                        layoutAncestors, cacheLayout);
             }
-            
-            Runnable runnable = new Runnable() {
-                public void run() {
-                    if (animate) {
-                        // apply the layout with animation
-                        Animation.markBegin();
-                        applyLayout();
-                        int nodeCount = status.get() == null ? 0 : status.get().getCode();
-                        Animation.run(calcAnimationTime(nodeCount));
-                    } else {
-                        // apply the layout without animation
-                        applyLayout();
-                    }
-                }
-            };
-            if (Display.getCurrent() != null) {
-                runnable.run();
-            } else {
-                PlatformUI.getWorkbench().getDisplay().asyncExec(runnable);
-            }
-        } catch (Exception exception) {
-            return new Status(IStatus.ERROR, KimlUiPlugin.PLUGIN_ID,
-                    Messages.getString("kiml.ui.1"), exception);
+        };
+        
+        final IStatus status;
+        if (progressBar) {
+            monitoredOperation.runMonitored();
+            status = monitoredOperation.getStatus();
+        } else {
+            status = doLayout(editorPart, editPart, new BasicProgressMonitor(0),
+                    layoutAncestors, cacheLayout);
         }
-        return status.get();
+        MonitoredOperation.runInUI(new Runnable() {
+            public void run() {
+                if (animate) {
+                    // apply the layout with animation
+                    Animation.markBegin();
+                    applyLayout();
+                    int nodeCount = status == null ? 0 : status.getCode();
+                    Animation.run(calcAnimationTime(nodeCount));
+                } else {
+                    // apply the layout without animation
+                    applyLayout();
+                }
+            }
+        }, false);
     }
-
+    
     /** amount of work for a small task. */
     private static final int SMALL_TASK = 10;
     /** amount of work for the main task. */
@@ -274,6 +215,9 @@ public abstract class DiagramLayoutManager {
 
             // perform layout on the layout graph
             layouterEngine.layout(layoutGraph, progressMonitor.subTask(MAIN_TASK), layoutAncestors);
+            if (progressMonitor.isCanceled()) {
+                return new Status(IStatus.CANCEL, KimlUiPlugin.PLUGIN_ID, 0, null, null);
+            }
 
             // transfer layout to the diagram
             transferLayout(progressMonitor.subTask(SMALL_TASK), cacheLayout);

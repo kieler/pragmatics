@@ -15,6 +15,42 @@ package de.cau.cs.kieler.core.util;
 
 /**
  * Object that may contain another object, inspired by the Haskell type <i>Maybe</i>.
+ * <p>
+ * This class can be used to wrap objects for anonymous classes:
+ * <pre>
+ * Myclass foo() {
+ *     final Maybe<Myclass> maybe = new Maybe<Myclass>();
+ *     PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+ *         public void run() {
+ *             maybe.set(new Myclass("bar"));
+ *         }
+ *     });
+ *     return maybe.get();
+ * }
+ * </pre>
+ * </p>
+ * <p>
+ * Another use is as a wrapper for synchronization on objects that may be {@code null}:
+ * <pre>
+ * Maybe<Myclass> maybe = new Maybe<Myclass>();
+ * 
+ * void thread1() {
+ *     maybe.set(new Myclass("foo"));
+ *     synchronized (maybe) {
+ *         maybe.notify();
+ *     )
+ * }
+ * 
+ * void thread2() {
+ *     synchronized (maybe) {
+ *         if (maybe.get() == null) {
+ *             maybe.wait();
+ *         }
+ *     }
+ *     maybe.get().bar();
+ * }
+ * </pre>
+ * </p>
  * 
  * @kieler.rating 2009-12-11 proposed yellow msp
  * @param <T> type of contained object
