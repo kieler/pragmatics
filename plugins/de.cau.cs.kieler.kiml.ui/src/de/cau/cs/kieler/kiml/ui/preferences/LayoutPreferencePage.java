@@ -196,8 +196,10 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
     @Override
     protected void performDefaults() {
         super.performDefaults();
-        EclipseLayoutServices.readSupportPriorities(data, providerIds, diagramTypes);
-        tableProvider.refresh();
+        if (data != null) {
+            EclipseLayoutServices.readSupportPriorities(data, providerIds, diagramTypes);
+            tableProvider.refresh();
+        }
     }
 
     /**
@@ -205,20 +207,22 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
      */
     @Override
     public boolean performOk() {
-        for (int i = 0; i < providerIds.length; i++) {
-            LayoutProviderData providerData = LayoutServices.getInstance().getLayoutProviderData(
-                    providerIds[i]);
-            for (int j = 0; j < diagramTypes.length; j++) {
-                int oldPriority = providerData.getSupportedPriority(diagramTypes[j]);
-                int newPriority = data[i][j];
-                if (oldPriority != newPriority) {
-                    providerData.setDiagramSupport(diagramTypes[j], newPriority);
-                    String preference = getPreference(providerData.getId(), diagramTypes[j]);
-                    getPreferenceStore().setValue(preference, newPriority);
+        if (data != null) {
+            for (int i = 0; i < providerIds.length; i++) {
+                LayoutProviderData providerData = LayoutServices.getInstance().getLayoutProviderData(
+                        providerIds[i]);
+                for (int j = 0; j < diagramTypes.length; j++) {
+                    int oldPriority = providerData.getSupportedPriority(diagramTypes[j]);
+                    int newPriority = data[i][j];
+                    if (oldPriority != newPriority) {
+                        providerData.setDiagramSupport(diagramTypes[j], newPriority);
+                        String preference = getPreference(providerData.getId(), diagramTypes[j]);
+                        getPreferenceStore().setValue(preference, newPriority);
+                    }
                 }
             }
+            LayoutViewPart.refreshLayoutView();
         }
-        LayoutViewPart.refreshLayoutView();
         return true;
     }
 
