@@ -43,7 +43,6 @@ import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.IEditorPart;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
@@ -89,6 +88,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     private IGraphicalEditPart layoutRootPart;
     /** target edit part that is layouted recursively. */
     private IGraphicalEditPart ancestryTargetPart;
+    /** the last created layout graph. */
+    private KNode layoutGraph;
     /** target layout node that is layouted recursively. */
     private KNode ancestryTargetNode;
     /** the cached layout result. */
@@ -114,8 +115,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      * {@inheritDoc}
      */
     protected KNode buildLayoutGraph(final IEditorPart editorPart, final EditPart editPart,
-            final IKielerProgressMonitor progressMonitor, final boolean layoutAncestors) {
-        progressMonitor.begin("Build layout graph", 1);
+            final boolean layoutAncestors) {
         graphElem2EditPartMap.clear();
         editPart2GraphElemMap.clear();
         connections.clear();
@@ -155,18 +155,14 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         // find the diagram edit part
         diagramEditPart = KimlUiUtil.getDiagramEditPart(layoutRootPart);
 
-        KNode topNode = doBuildLayoutGraph();
-        progressMonitor.done();
-        return topNode;
+        layoutGraph = doBuildLayoutGraph();
+        return layoutGraph;
     }
 
     /**
      * {@inheritDoc}
      */
-    protected void transferLayout(final IKielerProgressMonitor progressMonitor,
-            final boolean cacheLayout) {
-        progressMonitor.begin("Apply layout to the diagram", 2);
-
+    protected void transferLayout(final boolean cacheLayout) {
         // create a new request to change the layout
         ApplyLayoutRequest applyLayoutRequest = new ApplyLayoutRequest();
         for (Entry<KGraphElement, IGraphicalEditPart> entry : graphElem2EditPartMap.entrySet()) {
@@ -175,7 +171,6 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 
         // retrieve a command for the request; the command is created by GmfLayoutEditPolicy
         applyLayoutCommand = diagramEditPart.getCommand(applyLayoutRequest);
-        progressMonitor.worked(1);
         
         // store the layout data into a cache
         if (cacheLayout) {
@@ -184,8 +179,6 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 cachedLayout.addLayout(entry.getValue(), entry.getKey());
             }
         }
-
-        progressMonitor.done();
     }
     
     /**
@@ -211,6 +204,13 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     /**
      * {@inheritDoc}
      */
+    protected KNode getLayoutGraph() {
+        return layoutGraph;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
     protected CachedLayout getCachedLayout() {
         return cachedLayout;
     }
@@ -222,12 +222,12 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      *         in the root edit part
      */
     private KNode doBuildLayoutGraph() {
-        KNode layoutGraph = KimlLayoutUtil.createInitializedNode();
-        KShapeLayout shapeLayout = KimlLayoutUtil.getShapeLayout(layoutGraph);
+        KNode topNode = KimlLayoutUtil.createInitializedNode();
+        KShapeLayout shapeLayout = KimlLayoutUtil.getShapeLayout(topNode);
         Rectangle rootBounds = layoutRootPart.getFigure().getBounds();
         // start with the whole diagram as root for layout
         if (layoutRootPart instanceof DiagramEditPart) {
-            layoutGraph.getLabel()
+            topNode.getLabel()
                     .setText(((DiagramEditPart) layoutRootPart).getDiagramView().getName());
             // start with a specific node as root for layout
         } else {
@@ -237,10 +237,10 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 
         shapeLayout.setHeight(rootBounds.height);
         shapeLayout.setWidth(rootBounds.width);
-        editPart2GraphElemMap.put(layoutRootPart, layoutGraph);
-        graphElem2EditPartMap.put(layoutGraph, layoutRootPart);
+        editPart2GraphElemMap.put(layoutRootPart, topNode);
+        graphElem2EditPartMap.put(topNode, layoutRootPart);
         // traverse the children of the layout root part
-        buildLayoutGraphRecursively(layoutRootPart, layoutGraph, layoutRootPart);
+        buildLayoutGraphRecursively(layoutRootPart, topNode, layoutRootPart);
         // set user defined layout options for the diagram
         KimlUiUtil.setLayoutOptions(layoutRootPart, shapeLayout);
         // transform all connections in the selected area
@@ -250,7 +250,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             cleanupAncestryPath();
             return ancestryTargetNode;
         } else {
-            return layoutGraph;
+            return topNode;
         }
     }
 

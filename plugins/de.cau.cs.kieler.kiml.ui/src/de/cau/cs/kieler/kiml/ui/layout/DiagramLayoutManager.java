@@ -44,7 +44,7 @@ import de.cau.cs.kieler.kiml.ui.Messages;
 public abstract class DiagramLayoutManager {
 
     /** maximal number of recursion levels for which progress is displayed. */
-    public static final int MAX_PROGRESS_LEVELS = 3;
+    public static final int MAX_PROGRESS_LEVELS = 2;
     
     /** list of registered diagram layout managers. */
     private static final List<DiagramLayoutManager> MANAGERS = new LinkedList<DiagramLayoutManager>();
@@ -143,28 +143,41 @@ public abstract class DiagramLayoutManager {
      *         edit part, but also for its ancestors
      * @param cacheLayout if true, the layout result is cached for the underlying model
      */
-    public final void doLayout(final IEditorPart editorPart, final EditPart editPart,
+    public final synchronized void doLayout(final IEditorPart editorPart, final EditPart editPart,
             final boolean animate, final boolean progressBar, final boolean layoutAncestors,
             final boolean cacheLayout) {
+        // perform layout with a progress bar
         if (progressBar) {
-            // perform layout with a progress bar
             final MonitoredOperation monitoredOperation = new MonitoredOperation() {
+                // first phase: build the layout graph
+                protected void preUIexec() {
+                    buildLayoutGraph(editorPart, editPart, layoutAncestors);
+                }
+                // second phase: execute layout algorithms
                 protected IStatus execute(final IProgressMonitor monitor) {
-                    return doLayout(editorPart, editPart,
-                            new KielerProgressMonitor(monitor, MAX_PROGRESS_LEVELS),
+                    return doLayout(new KielerProgressMonitor(monitor, MAX_PROGRESS_LEVELS),
                             layoutAncestors, cacheLayout);
                 }
+                // third phase: apply layout with animation
                 protected void postUIexec(final IStatus status) {
                     int nodeCount = status == null ? 0 : status.getCode();
                     applyAnimatedLayout(animate, nodeCount);
                 }
             };
             monitoredOperation.runMonitored();
+            
+        // perform layout without a progress bar
         } else {
-            // perform layout without a progress bar
-            final IStatus status = doLayout(editorPart, editPart, new BasicProgressMonitor(0),
-                    layoutAncestors, cacheLayout);
             MonitoredOperation.runInUI(new Runnable() {
+                // first phase: build the layout graph
+                public void run() {
+                    buildLayoutGraph(editorPart, editPart, layoutAncestors);
+                }
+            }, true);
+            // second phase: execute layout algorithms
+            final IStatus status = doLayout(new BasicProgressMonitor(0), layoutAncestors, cacheLayout);
+            MonitoredOperation.runInUI(new Runnable() {
+                // third phase: apply layout with animation
                 public void run() {
                     int nodeCount = status == null ? 0 : status.getCode();
                     applyAnimatedLayout(animate, nodeCount);
@@ -191,52 +204,40 @@ public abstract class DiagramLayoutManager {
         }
     }
     
-    /** amount of work for a small task. */
-    private static final int SMALL_TASK = 10;
-    /** amount of work for the main task. */
-    private static final int MAIN_TASK = 80;
-    
     /**
      * Performs layout on the given editor or edit part using this layout
-     * manager and a specific progress monitor.
+     * manager and a specific progress monitor. The layout graph must be built before
+     * this method is called, and the layout must be applied after this method returns.
      * 
-     * @param editorPart the editor for which layout is performed, or {@code
-     *            null} if the diagram is not part of an editor
-     * @param editPart the parent edit part for which layout is performed, or
-     *            {@code null} if the whole diagram shall be layouted
      * @param progressMonitor a progress monitor to which progress of the layout
-     *            algorithm is reported
+     *         algorithm is reported
      * @param layoutAncestors if true, layout is not only performed for the selected
      *         edit part, but also for its ancestors
      * @param cacheLayout if true, the layout result is cached for the underlying model
      * @return a status indicating success or failure; if successful, the status
      *         contains the number of layouted nodes as code value
      */
-    public final synchronized IStatus doLayout(final IEditorPart editorPart,
-            final EditPart editPart, final IKielerProgressMonitor progressMonitor,
+    private IStatus doLayout(final IKielerProgressMonitor progressMonitor,
             final boolean layoutAncestors, final boolean cacheLayout) {
         try {
-            progressMonitor.begin("Diagram layout", SMALL_TASK + MAIN_TASK + SMALL_TASK);
             LayoutServices layoutServices = LayoutServices.getInstance();
 
-            // transform the diagram into a KGraph instance
-            KNode layoutGraph = buildLayoutGraph(editorPart, editPart,
-                    progressMonitor.subTask(SMALL_TASK), layoutAncestors);
+            // get the layout graph instance
+            KNode layoutGraph = getLayoutGraph();
 
             // notify layout listeners about the layout request
             layoutServices.layoutRequested(layoutGraph);
 
             // perform layout on the layout graph
-            layouterEngine.layout(layoutGraph, progressMonitor.subTask(MAIN_TASK), layoutAncestors);
+            layouterEngine.layout(layoutGraph, progressMonitor, layoutAncestors);
             if (progressMonitor.isCanceled()) {
                 return new Status(IStatus.CANCEL, KimlUiPlugin.PLUGIN_ID, 0, null, null);
             }
 
             // transfer layout to the diagram
-            transferLayout(progressMonitor.subTask(SMALL_TASK), cacheLayout);
+            transferLayout(cacheLayout);
 
             // notify layout listeners about the performed layout
-            progressMonitor.done();
             layoutServices.layoutPerformed(layoutGraph, progressMonitor);
 
             // return a positive status including graph size
@@ -244,7 +245,6 @@ public abstract class DiagramLayoutManager {
             return new Status(IStatus.OK, KimlUiPlugin.PLUGIN_ID, graphSize, null, null);
 
         } catch (Throwable exception) {
-            progressMonitor.done();
             String message = Messages.getString("kiml.ui.1");
             if (layouterEngine != null && layouterEngine.getLastLayoutProvider() != null) {
                 message += " (" + layouterEngine.getLastLayoutProvider().getClass().getSimpleName()
@@ -314,29 +314,34 @@ public abstract class DiagramLayoutManager {
      *            null} if the diagram is not part of an editor
      * @param editPart the parent edit part for which layout is performed, or
      *            {@code null} if the whole diagram shall be layouted
-     * @param progressMonitor a monitor to keep track of progress
      * @param layoutAncestors if true, layout is not only performed for the selected
      *         edit part, but also for its ancestors
      * @return a layout graph instance
      */
     protected abstract KNode buildLayoutGraph(IEditorPart editorPart, EditPart editPart,
-            IKielerProgressMonitor progressMonitor, boolean layoutAncestors);
+            boolean layoutAncestors);
 
     /**
      * Transfers all layout data from the last created KGraph instance to the
      * original diagram. The diagram is not modified yet, but all required preparations
      * are performed.
      * 
-     * @param progressMonitor a monitor to keep track of progress
      * @param cacheLayout if true, the layout result is cached for the underlying model
      */
-    protected abstract void transferLayout(IKielerProgressMonitor progressMonitor, boolean cacheLayout);
+    protected abstract void transferLayout(boolean cacheLayout);
     
     /**
      * Applies the transferred layout to the original diagram. This final step is where
      * the actual change to the diagram is done.
      */
     protected abstract void applyLayout();
+    
+    /**
+     * Returns the last built layout graph.
+     * 
+     * @return the last built layout graph
+     */
+    protected abstract KNode getLayoutGraph();
     
     /**
      * Returns the cached layout for the last layout run.
