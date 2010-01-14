@@ -146,36 +146,49 @@ public abstract class DiagramLayoutManager {
     public final void doLayout(final IEditorPart editorPart, final EditPart editPart,
             final boolean animate, final boolean progressBar, final boolean layoutAncestors,
             final boolean cacheLayout) {
-        final MonitoredOperation monitoredOperation = new MonitoredOperation() {
-            protected IStatus execute(final IProgressMonitor monitor) {
-                return doLayout(editorPart, editPart,
-                        new KielerProgressMonitor(monitor, MAX_PROGRESS_LEVELS),
-                        layoutAncestors, cacheLayout);
-            }
-        };
-        
-        final IStatus status;
         if (progressBar) {
-            monitoredOperation.runMonitored();
-            status = monitoredOperation.getStatus();
-        } else {
-            status = doLayout(editorPart, editPart, new BasicProgressMonitor(0),
-                    layoutAncestors, cacheLayout);
-        }
-        MonitoredOperation.runInUI(new Runnable() {
-            public void run() {
-                if (animate) {
-                    // apply the layout with animation
-                    Animation.markBegin();
-                    applyLayout();
-                    int nodeCount = status == null ? 0 : status.getCode();
-                    Animation.run(calcAnimationTime(nodeCount));
-                } else {
-                    // apply the layout without animation
-                    applyLayout();
+            // perform layout with a progress bar
+            final MonitoredOperation monitoredOperation = new MonitoredOperation() {
+                protected IStatus execute(final IProgressMonitor monitor) {
+                    return doLayout(editorPart, editPart,
+                            new KielerProgressMonitor(monitor, MAX_PROGRESS_LEVELS),
+                            layoutAncestors, cacheLayout);
                 }
-            }
-        }, false);
+                protected void postUIexec(final IStatus status) {
+                    int nodeCount = status == null ? 0 : status.getCode();
+                    applyAnimatedLayout(animate, nodeCount);
+                }
+            };
+            monitoredOperation.runMonitored();
+        } else {
+            // perform layout without a progress bar
+            final IStatus status = doLayout(editorPart, editPart, new BasicProgressMonitor(0),
+                    layoutAncestors, cacheLayout);
+            MonitoredOperation.runInUI(new Runnable() {
+                public void run() {
+                    int nodeCount = status == null ? 0 : status.getCode();
+                    applyAnimatedLayout(animate, nodeCount);
+                }
+            }, false);
+        }
+    }
+    
+    /**
+     * Apply layout with or without animation.
+     * 
+     * @param animate if true, activate Draw2D animation
+     * @param nodeCount the number of nodes in the layouted diagram
+     */
+    private void applyAnimatedLayout(final boolean animate, final int nodeCount) {
+        if (animate) {
+            // apply the layout with animation
+            Animation.markBegin();
+            applyLayout();
+            Animation.run(calcAnimationTime(nodeCount));
+        } else {
+            // apply the layout without animation
+            applyLayout();
+        }
     }
     
     /** amount of work for a small task. */

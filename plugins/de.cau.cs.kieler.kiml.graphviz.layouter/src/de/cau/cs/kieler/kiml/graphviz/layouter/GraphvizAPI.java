@@ -133,7 +133,7 @@ public final class GraphvizAPI {
     /** preference constant for timeout. */
     public static final String PREF_TIMEOUT = "graphviz.timeout";
     /** default timeout for waiting for Graphviz to give some output. */
-    public static final int PROCESS_DEF_TIMEOUT = 10000;
+    public static final int PROCESS_DEF_TIMEOUT = 7000;
     /** minimal timeout for waiting for Graphviz to give some output. */
     public static final int PROCESS_MIN_TIMEOUT = 200;
 
