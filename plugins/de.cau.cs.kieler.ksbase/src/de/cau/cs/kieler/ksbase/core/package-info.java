@@ -14,10 +14,9 @@
  *****************************************************************************/
 /**
  * Core package of the KSBasE plug-in.
- * Contains a Xtend wapper and implementation and storage 
- * classes for editors and transformations.
+ * Contains storage classes for editors and transformations.
  *  
- * @author Michael Matzen - mim AT informatik.uni-kiel.de
+ * @author mim
  */
 package de.cau.cs.kieler.ksbase.core;
 

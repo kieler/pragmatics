@@ -60,7 +60,7 @@ import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
-import de.cau.cs.kieler.ksbase.core.Transformation;
+import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
 import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 
@@ -90,7 +90,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
     /** Combo boxes. **/
     private Combo cbEditors;
     /** Buttons. **/
-    private Button btModelPackage, btEditorAdd, btEditorDel, btLoadXtend;
+    private Button btModelPackage, btEditorAdd, btEditorDel, btLoadFile;
     /** The currently selected editor. **/
     private static EditorTransformationSettings activeEditor;
     /** The treeViewer used to display the menus. **/
@@ -147,9 +147,9 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
                         menuTreeViewer.setInput(activeEditor.getMenuContributions());
                     }
                     transformationTable.removeAll();
-                    for (Transformation t : activeEditor.getTransformations()) {
+                    for (KSBasETransformation t : activeEditor.getTransformations()) {
                         TableItem item = new TableItem(transformationTable, SWT.NONE);
-                        item.setText(new String[] {"", t.getName(), t.getExtension() });
+                        item.setText(new String[] {"", t.getName(), t.getTransformation() });
                         item.setChecked(t.isVisible());
                     }
                     transformationTable.redraw();
@@ -162,7 +162,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
                     browserContainer.setEnabled(true);
                     btEditorDel.setEnabled(true);
                     cbEditors.setEnabled(true);
-                    btLoadXtend.setEnabled(true);
+                    btLoadFile.setEnabled(true);
                 } else {
                     // clear texts
                     cbEditors.setText("");
@@ -174,7 +174,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
                     sfMetaModel.setEnabled(false);
                     browserContainer.setEnabled(false);
                     btEditorDel.setEnabled(false);
-                    btLoadXtend.setEnabled(false);
+                    btLoadFile.setEnabled(false);
                 }
             }
 
@@ -304,7 +304,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
         tContainer.setLayout(new GridLayout(1, true));
         new Label(tContainer, SWT.NONE);
         new Label(tContainer, SWT.NONE)
-                .setText("Add operations to the editor by loading an Xtend file");
+                .setText("Add operations to the editor by loading a transformation file");
 
         transformationTable = new Table(tContainer, SWT.SINGLE | SWT.CHECK | SWT.BORDER);
         transformationTable.setLinesVisible(true);
@@ -327,7 +327,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
             public void widgetSelected(final SelectionEvent e) {
                 if (e.item instanceof TableItem) {
                     TableItem item = (TableItem) e.item;
-                    Transformation t = activeEditor.getTransformationByName(item.getText(2));
+                    KSBasETransformation t = activeEditor.getTransformationByName(item.getText(2));
                     t.setVisible(item.getChecked());
                 }
             }
@@ -343,7 +343,8 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
             public void widgetSelected(final SelectionEvent e) {
                 TableItem item = cursor.getRow();
                 int col = cursor.getColumn();
-                final Transformation t = activeEditor.getTransformationByName(item.getText(2));
+                final KSBasETransformation t = activeEditor
+                        .getTransformationByName(item.getText(2));
                 if (col == 0) {
                     // Check
                     Boolean stat = item.getChecked();
@@ -389,20 +390,20 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
             }
         });
 
-        btLoadXtend = new Button(parent, SWT.PUSH);
-        btLoadXtend.setText("Load Xtend file");
-        btLoadXtend.addSelectionListener(new SelectionListener() {
+        btLoadFile = new Button(parent, SWT.PUSH);
+        btLoadFile.setText("Load transformations");
+        btLoadFile.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(final SelectionEvent e) {
                 MessageBox box = new MessageBox(getShell(), SWT.YES | SWT.NO);
-                box.setMessage("Loading an xtend file may reset the "
+                box.setMessage("Loading a transformation file may reset the "
                         + "existing transformations.\r\n Do you want continue?");
                 box.setText(Messages.kSBasEPreferencePageEditTransformationsTitle);
                 if (box.open() == SWT.YES) {
                     ElementTreeSelectionDialog rsd = new ElementTreeSelectionDialog(getShell(),
                             new WorkbenchLabelProvider(), new BaseWorkbenchContentProvider());
 
-                    rsd.setTitle("Xtend Selection");
+                    rsd.setTitle("File Selection");
                     rsd.setBlockOnOpen(true);
                     rsd.setInput(ResourcesPlugin.getWorkspace().getRoot());
                     rsd.addFilter(new ViewerFilter() {
@@ -411,7 +412,8 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
                         public boolean select(final Viewer viewer, final Object parentElement,
                                 final Object element) {
                             return (element instanceof IFile) ? ((IFile) element)
-                                    .getFileExtension().equals("ext") : true;
+                                    .getFileExtension().equals(
+                                            activeEditor.getFramework().getFileExtension()) : true;
                         }
                     });
 
@@ -423,7 +425,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 
                         if (file == null) {
                             box = new MessageBox(getShell(), SWT.OK);
-                            box.setMessage(Messages.kSBasEPreferencePageXtendFileInvalidFile);
+                            box.setMessage(Messages.kSBasEPreferencePageFileInvalidFile);
                             box.open();
                             return;
                         } else {
@@ -435,16 +437,16 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
                                 while (bis.available() > 0) {
                                     sbuf.append((char) bis.read());
                                 }
-                                activeEditor.setExtFile(sbuf.toString());
+                                activeEditor.setTransformationFile(sbuf.toString());
                                 activeEditor.parseTransformations(true, file.getLocationURI()
                                         .toURL());
                             } catch (MalformedURLException e1) {
                                 KSBasEUIPlugin.getDefault().logError(
-                                        "Could not find the Xtend file: Malformed URL");
+                                        "Could not find the file: Malformed URL");
                             } catch (CoreException e1) {
-                                KSBasEUIPlugin.getDefault().logError("Could not read XtendFile");
+                                KSBasEUIPlugin.getDefault().logError("Could not read file");
                             } catch (IOException e1) {
-                                KSBasEUIPlugin.getDefault().logError("Could not read XtendFile");
+                                KSBasEUIPlugin.getDefault().logError("Could not read file");
                             }
                             cbEditors.notifyListeners(SWT.Selection, null);
                         }
@@ -455,7 +457,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
             public void widgetDefaultSelected(final SelectionEvent e) {
             }
         });
-        btLoadXtend.setEnabled(false);
+        btLoadFile.setEnabled(false);
     }
 
     /**

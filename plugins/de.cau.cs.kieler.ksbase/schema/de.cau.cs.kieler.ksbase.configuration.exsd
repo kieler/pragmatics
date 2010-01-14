@@ -70,10 +70,10 @@
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="XtendFile" type="string" use="required">
+         <attribute name="TransformationFile" type="string">
             <annotation>
                <documentation>
-                  The Xtend file that contains the transformations which are executed
+                  The transformation file.
                </documentation>
                <appinfo>
                   <meta.attribute kind="resource"/>
@@ -111,6 +111,17 @@ This class has to extend &apos;emf.ecore.EPackage&apos;
                </appinfo>
             </annotation>
          </attribute>
+         <attribute name="XtendFile" type="string">
+            <annotation>
+               <documentation>
+                  Please use the &apos;TransformationFile&apos; Attribute.
+The Attribute &apos;XtendFile&apos; will be removed in future versions.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource" deprecated="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -138,7 +149,7 @@ This class has to extend &apos;emf.ecore.EPackage&apos;
          <attribute name="transformation" type="string" use="required">
             <annotation>
                <documentation>
-                  The name of the Xtend transformation method (without parameters). This method has to exist in the Xtend file else it will be ignored
+                  The name of the transformation method (without parameters). This method has to exist in the transformation file else it will be ignored
                </documentation>
             </annotation>
          </attribute>
@@ -299,7 +310,7 @@ The &lt;code&gt;plugin.xml&lt;/code&gt; file in the &lt;code&gt;de.cau.cs.kieler
 By using this extension point, the &lt;code&gt;de.cau.cs.kieler.ksbase&lt;/code&gt; and &lt;code&gt;de.cau.cs.kieler.ksbase.ui&lt;/code&gt; will use this configuration to create &lt;code&gt;org.eclipse.ui.menus&lt;/code&gt; extensions for each menu transformation command. Furthermore, a set of visibility and enablement expressions will be added to ensure the menus are visible in the given editor only.
 &lt;/p&gt;
 &lt;p&gt;
-In the current version of the &lt;code&gt;de.cau.cs.kieler.ksbase&lt;/code&gt; plug-ins the transformations are executed with the MWE Xtend components. The mapping of parameters to diagram objects is done automatically.
+In the current version of the &lt;code&gt;de.cau.cs.kieler.ksbase&lt;/code&gt; plug-ins the transformations are executed with the Xtend facade by default. The mapping of parameters to diagram objects is done automatically.
 &lt;/p&gt;
       </documentation>
    </annotation>

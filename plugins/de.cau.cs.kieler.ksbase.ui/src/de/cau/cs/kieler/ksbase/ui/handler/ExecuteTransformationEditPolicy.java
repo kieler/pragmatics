@@ -52,7 +52,7 @@ public class ExecuteTransformationEditPolicy extends AbstractEditPolicy {
      * 
      * @param req
      *            The request to fulfill
-     * @return An @link XtendTransformationCommand if the request parameter is an @link
+     * @return An @link TransformationCommand if the request parameter is an @link
      *         ExecuteTransformationRequest.
      * 
      * @see org.eclipse.gef.editpolicies.AbstractEditPolicy#getCommand(org.eclipse.gef.Request)

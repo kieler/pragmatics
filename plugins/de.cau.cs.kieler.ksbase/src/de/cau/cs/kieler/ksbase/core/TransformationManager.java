@@ -35,12 +35,11 @@ import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.core.model.transformation.ITransformationFramework;
-import de.cau.cs.kieler.core.model.transformation.xtend.XtendTransformationFramework;
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 
 /**
  * The main storage and management class. Contains a list of currently registered editors. Handles
- * import, export and Xtend file parsing.
+ * import and export.
  * 
  * @author mim
  * 
@@ -156,6 +155,8 @@ public final class TransformationManager {
                 KSBasEPlugin.getDefault().logInfo("Unable to add the same editor twice.");
 
             } else {
+                //We are using the default framework here
+                editor.setFramework(TransformationFrameworkFactory.getDefaultTransformationFramework());
                 activeUserEditors.put(editor.getEditorId(), editor);
             }
         }
@@ -331,8 +332,8 @@ public final class TransformationManager {
                                 "Invalid KSBasE configuration found. Please check "
                                         + "transformations defined for " + editor.getEditorId());
                     }
-                    Transformation transformation = new Transformation(t.getAttribute("name"), t
-                            .getAttribute("transformation"));
+                    KSBasETransformation transformation = new KSBasETransformation(t
+                            .getAttribute("name"), t.getAttribute("transformation"));
                     transformation.setKeyboardShortcut(t.getAttribute("keyboardShortcut"));
                     transformation.setTransformationId(t.getAttribute("transformationId"));
                     transformation.setIcon(t.getAttribute("icon"));
@@ -361,8 +362,8 @@ public final class TransformationManager {
                                     + tFactory[0].getAttribute("class"));
                 }
             } else {
-                //If no framework has been set, use the default Xtend framework
-                editor.setFramework(new XtendTransformationFramework());
+                // If no framework has been set, use the default framework
+                editor.setFramework(TransformationFrameworkFactory.getDefaultTransformationFramework());
             }
             // Read menu contributions
             IConfigurationElement[] menus = settings.getChildren("menus");
@@ -389,15 +390,32 @@ public final class TransformationManager {
                 }
             }
 
-            // Read Xtend file from extension point configuration
+            // Read file from extension point configuration
             InputStream path;
             StringBuffer contentBuffer = new StringBuffer();
             try {
-                if (settings.getContributor() != null && settings.getAttribute("XtendFile") != null) {
+                if (settings.getContributor() != null) {
+                    String transformationFile = null;
+                    if (settings.getAttribute("TransformationFile") != null) {
+                        transformationFile = settings.getAttribute("TransformationFile");
+                    } else if (settings.getAttribute("XtendFile") != null) {
+                        transformationFile = settings.getAttribute("XtendFile");
+                        KSBasEPlugin.getDefault().logWarning(
+                                "The KSBasE configuration for the editor : " + editor.getEditorId()
+                                        + " uses the deprecated configuration attribute"
+                                        + " 'XtendFile' please use the new "
+                                        + "'TransformationFile' attribute ");
+                    }
+                    if (transformationFile == null) {
+                        KSBasEPlugin.getDefault().logError(
+                                "Missing attribute 'TransformationFile' the extension point"
+                                        + " configuration for " + editor.getEditorId());
+                        continue;
+                    }
                     Bundle bundle = Platform.getBundle(settings.getContributor().getName());
                     if (bundle != null) {
-                        URL urlPath = bundle.getEntry("/" + settings.getAttribute("XtendFile"));
-                        // Parse xtend file to read transformations and
+                        URL urlPath = bundle.getEntry("/" + transformationFile);
+                        // Parse transformation file to read transformations and
                         // parameters now:
                         editor.parseTransformations(false, urlPath);
                         if (urlPath != null) {
@@ -409,12 +427,12 @@ public final class TransformationManager {
                         }
                     }
                     if (contentBuffer != null) {
-                        editor.setExtFile(contentBuffer.toString());
+                        editor.setTransformationFile(contentBuffer.toString());
                     }
                 }
             } catch (IOException e) {
                 KSBasEPlugin.getDefault().logWarning(
-                        "KSBasE configuration exception: Can't read Xtend file for editor :"
+                        "KSBasE configuration exception: Can't read transformation file for editor :"
                                 + editor.getEditorId());
             }
 

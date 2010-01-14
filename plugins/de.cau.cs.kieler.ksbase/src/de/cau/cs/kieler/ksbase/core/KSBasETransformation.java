@@ -22,10 +22,11 @@ import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 
+import de.cau.cs.kieler.core.model.transformation.AbstractTransformation;
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 
 /**
- * The connection between Xtend functions and the KSBasE plug-In. Stores additional information
+ * The connection between the transformations and the KSBasE plug-In. Stores additional information
  * about how the transformation can be executed by the user/workbench. This class is instantiated by
  * the {@link EditorTransformationSettings} class to configure the transformations for one editor.
  * 
@@ -35,20 +36,20 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
  * 
  * @kieler.rating 2009-11-20 proposed yellow -review by msp,skn: class ok
  */
-public class Transformation implements Serializable, Cloneable {
+public class KSBasETransformation extends AbstractTransformation implements Serializable, Cloneable {
 
     /** Serialization Id. **/
     private static final long serialVersionUID = 513784171695543063L;
     /** Menu entry name. **/
     private String name;
-    /** Xtend extension name. **/
-    private String extension;
+    /** Transformation name. **/
+    private String transformation;
     /** URI to icon. **/
     private String icon;
     /** Assigned keyboard shortcut. **/
     private String keyboardShortcut;
     /** Ordered parameters. **/
-    private LinkedList<String> parameter;
+    private LinkedList<String> parameters;
     /** Id for this transformation. **/
     private String transformationId;
     /** Flag for user defined transformations to control visibility. **/
@@ -59,17 +60,17 @@ public class Transformation implements Serializable, Cloneable {
      * 
      * @param tName
      *            The name of this transformation which is displayed in the menu.
-     * @param tXtendName
-     *            The name of the Xtend transformation to execute.
+     * @param tTransName
+     *            The name of the transformation to execute.
      */
-    public Transformation(final String tName, final String tXtendName) {
+    public KSBasETransformation(final String tName, final String tTransName) {
         name = tName;
-        extension = tXtendName;
+        transformation = tTransName;
         icon = "";
         keyboardShortcut = "";
         transformationId = "";
         visible = true;
-        parameter = new LinkedList<String>();
+        parameters = new LinkedList<String>();
     }
 
     /**
@@ -78,14 +79,14 @@ public class Transformation implements Serializable, Cloneable {
      * @param t
      *            Transformation which should be copied
      */
-    public Transformation(final Transformation t) {
+    public KSBasETransformation(final KSBasETransformation t) {
         this.name = t.name;
-        this.extension = t.extension;
+        this.transformation = t.transformation;
         this.icon = t.icon;
         this.transformationId = t.transformationId;
         this.keyboardShortcut = t.keyboardShortcut;
         this.visible = t.visible;
-        this.parameter = new LinkedList<String>(t.parameter);
+        this.parameters = new LinkedList<String>(t.parameters);
 
     }
 
@@ -94,13 +95,13 @@ public class Transformation implements Serializable, Cloneable {
      * 
      * @return A cloned transformation
      */
-    public final Transformation clone() {
+    public final KSBasETransformation clone() {
         try {
             super.clone();
         } catch (CloneNotSupportedException e) {
             KSBasEPlugin.getDefault().logError("Error while cloning a transformation.");
         }
-        Transformation t = new Transformation(this);
+        KSBasETransformation t = new KSBasETransformation(this);
         return t;
     }
 
@@ -118,14 +119,15 @@ public class Transformation implements Serializable, Cloneable {
 
     /**
      * Sets the name of the transformation to be executed. The value is unchecked so giving an
-     * invalid name here will result in an Xtend error.
+     * invalid name here may result in an error when executing the transfomation.
      * 
      * @param value
-     *            The name of the Xtend transformation to execute
+     *            The name of the transformation to execute
      */
-    public final void setExtension(final String value) {
+    @Override
+    public void setTransformation(final String value) {
         if (value != null) {
-            this.extension = value;
+            this.transformation = value;
         }
     }
 
@@ -151,12 +153,12 @@ public class Transformation implements Serializable, Cloneable {
     }
 
     /**
-     * Returns the Xtend extension name.
+     * Returns the transformation name.
      * 
      * @return The name of this transformation
      */
-    public final String getExtension() {
-        return this.extension;
+    public final String getTransformation() {
+        return this.transformation;
     }
 
     /**
@@ -165,8 +167,8 @@ public class Transformation implements Serializable, Cloneable {
      * @return The number of selections
      */
     public final int getNumSelections() {
-        Assert.isNotNull(parameter);
-        return this.parameter.size();
+        Assert.isNotNull(parameters);
+        return this.parameters.size();
     }
 
     /**
@@ -184,9 +186,9 @@ public class Transformation implements Serializable, Cloneable {
      * @return A list of parameters.
      */
     public final List<String> getParameterList() {
-        Assert.isNotNull(this.parameter);
+        Assert.isNotNull(this.parameters);
         // never return the references!
-        return new LinkedList<String>(parameter);
+        return new LinkedList<String>(parameters);
     }
 
     /**
@@ -195,8 +197,8 @@ public class Transformation implements Serializable, Cloneable {
      * @return An array of parameters.
      */
     public final String[] getParameters() {
-        Assert.isNotNull(this.parameter);
-        return parameter.toArray(new String[parameter.size()]);
+        Assert.isNotNull(this.parameters);
+        return parameters.toArray(new String[parameters.size()]);
     }
 
     /**
@@ -205,10 +207,22 @@ public class Transformation implements Serializable, Cloneable {
      */
     public final void setParameters(final String[] param) {
         if (param != null && param.length > 0) {
-            this.parameter.clear();
+            this.parameters.clear();
             for (String para : param) {
-                this.parameter.add(para);
+                this.parameters.add(para);
             }
+        }
+    }
+
+    /**
+     * Sets the parameters for this transformation.
+     * 
+     * @param params
+     *            a List of parameters
+     */
+    public final void setParameters(final List<String> params) {
+        if (params != null) {
+            this.parameters = new LinkedList<String>(params);
         }
     }
 
@@ -256,8 +270,9 @@ public class Transformation implements Serializable, Cloneable {
     }
 
     /**
-     * Checks if the transformation should be displayed in the menu.
-     * Only used for user defined editors.
+     * Checks if the transformation should be displayed in the menu. Only used for user defined
+     * editors.
+     * 
      * @return True if the transformation should be displayed
      */
     public Boolean isVisible() {
@@ -265,9 +280,10 @@ public class Transformation implements Serializable, Cloneable {
     }
 
     /**
-     * Sets the transformation visibility.
-     * Only used for user defined editors.
-     * @param isVisible New visibility status
+     * Sets the transformation visibility. Only used for user defined editors.
+     * 
+     * @param isVisible
+     *            New visibility status
      */
     public void setVisible(final Boolean isVisible) {
         this.visible = isVisible;
@@ -283,8 +299,8 @@ public class Transformation implements Serializable, Cloneable {
         try {
             Assert.isNotNull(writer);
             writer.writeObject(this.name);
-            writer.writeObject(this.extension);
-            writer.writeObject(this.parameter);
+            writer.writeObject(this.transformation);
+            writer.writeObject(this.parameters);
             writer.writeObject(this.icon);
             writer.writeObject(this.visible);
         } catch (IOException e) {
@@ -300,7 +316,7 @@ public class Transformation implements Serializable, Cloneable {
      */
     @Override
     public final int hashCode() {
-        return extension.hashCode();
+        return transformation.hashCode();
     }
 
     /**
@@ -314,9 +330,9 @@ public class Transformation implements Serializable, Cloneable {
      */
     @Override
     public final boolean equals(final Object obj) {
-        if (obj != null && obj instanceof Transformation) {
-            return (getNumSelections() == ((Transformation) obj).getNumSelections())
-                    && (extension.equals(((Transformation) obj).getExtension()));
+        if (obj != null && obj instanceof KSBasETransformation) {
+            return (getNumSelections() == ((KSBasETransformation) obj).getNumSelections())
+                    && (transformation.equals(((KSBasETransformation) obj).getTransformation()));
         }
         return false;
     }

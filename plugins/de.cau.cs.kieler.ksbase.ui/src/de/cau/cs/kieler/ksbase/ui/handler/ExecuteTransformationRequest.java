@@ -49,13 +49,13 @@ public class ExecuteTransformationRequest extends Request {
      * @param cmd
      *            The transformation command
      * @param file
-     *            Name of the Xtend transformation file
+     *            Name of the transformation file
      * @param sel
      *            The active selection
      * @param modelPackageClass
      *            The model package for the active editor
      * @param parameters
-     *            The parameters of the Xtend transformation
+     *            The parameters of the transformation
      * @param fframework
      *            The ITransformationFramework to use for execution
      */
@@ -123,7 +123,7 @@ public class ExecuteTransformationRequest extends Request {
     /**
      * Gets the transformation command.
      * 
-     * @return An Xtend method name
+     * @return An method name
      */
     public final String getCommand() {
         return this.command;
@@ -133,7 +133,7 @@ public class ExecuteTransformationRequest extends Request {
      * Sets the filename.
      * 
      * @param file
-     *            Name of the Xtend file.
+     *            Name of the file.
      */
     public final void setFileName(final String file) {
         this.fileName = file;
@@ -142,7 +142,7 @@ public class ExecuteTransformationRequest extends Request {
     /**
      * Gets the filename.
      * 
-     * @return An Xtend file name
+     * @return A file name
      */
     public final String getFileName() {
         return this.fileName;

@@ -36,7 +36,7 @@ import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
 
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
-import de.cau.cs.kieler.ksbase.core.Transformation;
+import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
 import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 import de.cau.cs.kieler.ksbase.ui.handler.TransformationCommandHandler;
@@ -86,67 +86,66 @@ public class DynamicMenu extends CompoundContributionItem {
                 ICommandService.class);
         for (EditorTransformationSettings editor : TransformationManager.INSTANCE
                 .getUserDefinedEditors()) {
-            for (Transformation transf : editor.getTransformations()) {
+            for (KSBasETransformation transf : editor.getTransformations()) {
                 if (!transf.isVisible()) {
                     continue;
                 }
-                String paramId = editor.getEditorId() + "." + transf.getExtension();
+                String paramId = editor.getEditorId() + "." + transf.getTransformation();
                 String cmdId = paramId + ".command";
                 Command command = ics.getCommand(cmdId);
-                //if (!command.isDefined()) {
-                    IParameter[] cmdParam = new IParameter[2];
-                    cmdParam[0] = new IParameter() {
+                // if (!command.isDefined()) {
+                IParameter[] cmdParam = new IParameter[2];
+                cmdParam[0] = new IParameter() {
 
-                        public boolean isOptional() {
-                            return false;
-                        }
+                    public boolean isOptional() {
+                        return false;
+                    }
 
-                        public IParameterValues getValues() throws ParameterValuesException {
-                            return new IParameterValues() {
+                    public IParameterValues getValues() throws ParameterValuesException {
+                        return new IParameterValues() {
 
-                                public Map<Object,Object> getParameterValues() {
-                                    return new HashMap<Object, Object>();
-                                }
-                            };
-                        }
+                            public Map<Object, Object> getParameterValues() {
+                                return new HashMap<Object, Object>();
+                            }
+                        };
+                    }
 
-                        public String getName() {
-                            return "editor";
-                        }
+                    public String getName() {
+                        return "editor";
+                    }
 
-                        public String getId() {
-                            return "de.cau.cs.kieler.ksbase.editorParameter";
-                        }
-                    };
-                    cmdParam[1] = new IParameter() {
+                    public String getId() {
+                        return "de.cau.cs.kieler.ksbase.editorParameter";
+                    }
+                };
+                cmdParam[1] = new IParameter() {
 
-                        public boolean isOptional() {
-                            return false;
-                        }
+                    public boolean isOptional() {
+                        return false;
+                    }
 
-                        public IParameterValues getValues() throws ParameterValuesException {
-                            return new IParameterValues() {
+                    public IParameterValues getValues() throws ParameterValuesException {
+                        return new IParameterValues() {
 
-                                public Map<Object,Object> getParameterValues() {
-                                    return new HashMap<Object, Object>();
-                                }
-                            };
-                        }
+                            public Map<Object, Object> getParameterValues() {
+                                return new HashMap<Object, Object>();
+                            }
+                        };
+                    }
 
-                        public String getName() {
-                            return "transformation";
-                        }
+                    public String getName() {
+                        return "transformation";
+                    }
 
-                        public String getId() {
-                            return "de.cau.cs.kieler.ksbase.transformationParameter";
-                        }
-                    };
-                    command.define(transf.getName(), "Structure based editing command", ics
-                            .getCategory("de.cau.cs.kieler.ksbase.ui.ksbaseCategory"), cmdParam);
-                    command.setHandler(new TransformationCommandHandler());
-                //}
+                    public String getId() {
+                        return "de.cau.cs.kieler.ksbase.transformationParameter";
+                    }
+                };
+                command.define(transf.getName(), "Structure based editing command", ics
+                        .getCategory("de.cau.cs.kieler.ksbase.ui.ksbaseCategory"), cmdParam);
+                command.setHandler(new TransformationCommandHandler());
+                // }
 
-                
                 CommandContributionItemParameter param = new CommandContributionItemParameter(
                         PlatformUI.getWorkbench().getActiveWorkbenchWindow(), paramId, cmdId,
                         CommandContributionItem.STYLE_PUSH);
@@ -156,7 +155,7 @@ public class DynamicMenu extends CompoundContributionItem {
                 Map<String, String> parameters = new HashMap<String, String>();
                 parameters.put("de.cau.cs.kieler.ksbase.editorParameter", editor.getEditorId());
                 parameters.put("de.cau.cs.kieler.ksbase.transformationParameter", transf
-                        .getExtension());
+                        .getTransformation());
                 param.parameters = parameters;
                 IContributionItem ci = new CommandContributionItem(param);
                 ci.setVisible(true);
@@ -166,7 +165,7 @@ public class DynamicMenu extends CompoundContributionItem {
                     // Object selection
                     WithExpression withExp = new WithExpression("selection");
                     IterateExpression itExp = new IterateExpression("and", "false");
-                    String val = editor.getEditorId() + "," + transf.getExtension();
+                    String val = editor.getEditorId() + "," + transf.getTransformation();
                     TestExpression testExp = new TestExpression("",
                             "de.cau.cs.kieler.ksbase.ui.modelTesting.isModelInstance",
                             new Object[] {val }, true, true);

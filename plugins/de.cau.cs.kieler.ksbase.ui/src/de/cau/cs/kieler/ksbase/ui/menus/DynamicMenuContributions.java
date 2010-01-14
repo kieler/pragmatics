@@ -50,7 +50,7 @@ import org.w3c.dom.Node;
 
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasEMenuContribution;
-import de.cau.cs.kieler.ksbase.core.Transformation;
+import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
 import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 
@@ -72,7 +72,7 @@ public final class DynamicMenuContributions {
      **/
     private HashMap<String, Node> cachedTransformationCommands;
     /** The list of command-Ids. **/
-    private HashMap<Transformation, String> commandIds;
+    private HashMap<KSBasETransformation, String> commandIds;
     /**
      * Storing the key bindings for creating them AFTER the plug-in has been installed and the
      * commands Id's are registered.
@@ -84,7 +84,7 @@ public final class DynamicMenuContributions {
      */
     private DynamicMenuContributions() {
         cachedTransformationCommands = new HashMap<String, Node>();
-        commandIds = new HashMap<Transformation, String>();
+        commandIds = new HashMap<KSBasETransformation, String>();
         keybindings = new HashMap<String, String[]>();
     }
 
@@ -129,7 +129,7 @@ public final class DynamicMenuContributions {
                 visIterate.appendChild(visWith);
                 menuVisible.appendChild(visIterate);
                 // Create command extensions for all transformations:
-                for (Transformation t : editor.getTransformations()) {
+                for (KSBasETransformation t : editor.getTransformations()) {
                     String commandID = "de.cau.cs.kieler.ksbase." + editor.getEditorId() + "."
                             + t.getName().replace(' ', '_');
                     // store id
@@ -154,11 +154,11 @@ public final class DynamicMenuContributions {
                             && editor.getContext() != null && editor.getContext().length() > 0) {
 
                         keybindings.put(commandID, new String[] {editor.getContext(),
-                                t.getKeyboardShortcut(), t.getExtension() });
+                                t.getKeyboardShortcut(), t.getTransformation() });
 
                         Element key = extension.createElement("key");
                         key.setAttribute("commandId", commandID);
-                        key.setAttribute("contextId", editor.getContext());// editorContext);
+                        key.setAttribute("contextId", editor.getContext());
                         key.setAttribute("schemeId",
                                 "org.eclipse.ui.defaultAcceleratorConfiguration");
                         key.setAttribute("sequence", t.getKeyboardShortcut());
@@ -170,7 +170,7 @@ public final class DynamicMenuContributions {
                         keyParam = extension.createElement("parameter");
                         keyParam.setAttribute("id",
                                 "de.cau.cs.kieler.ksbase.transformationParameter");
-                        keyParam.setAttribute("value", t.getExtension());
+                        keyParam.setAttribute("value", t.getTransformation());
                         key.appendChild(keyParam);
                         bindingExtension.appendChild(key);
                     }
@@ -179,7 +179,7 @@ public final class DynamicMenuContributions {
                     Element handlerCommand = extension.createElement("handler");
                     handlerCommand.setAttribute("commandId", commandIds.get(t));
                     Element classHandler = extension.createElement("class");
-                    //Check if the editor has a custom command handler
+                    // Check if the editor has a custom command handler
                     if (editor.getCommandHandler().length() == 0) {
                         classHandler.setAttribute("class", "de.cau.cs.kieler.ksbase.ui.handler"
                                 + ".TransformationCommandHandler");
@@ -324,7 +324,7 @@ public final class DynamicMenuContributions {
                     copyResourceToJarBundle(jos, editor.getDefaultIcon(), editor.getContributor());
                 }
                 LinkedList<String> resources = new LinkedList<String>();
-                for (Transformation t : editor.getTransformations()) {
+                for (KSBasETransformation t : editor.getTransformations()) {
                     if (t.getIcon() != null && t.getIcon().length() > 0
                             && !resources.contains(t.getIcon())) {
                         resources.add(t.getIcon());
@@ -334,9 +334,10 @@ public final class DynamicMenuContributions {
                     copyResourceToJarBundle(jos, resource, editor.getContributor());
                 }
                 // don't forget the transformation file !
-                JarEntry xtendFile = new JarEntry("src/transformations/features.ext");
-                jos.putNextEntry(xtendFile);
-                jos.write(editor.getExtFile().getBytes("UTF-8"));
+                JarEntry transformationFile = new JarEntry("src/transformations/features."
+                        + editor.getFramework().getFileExtension());
+                jos.putNextEntry(transformationFile);
+                jos.write(editor.getTransformationFile().getBytes("UTF-8"));
 
                 jos.flush();
                 jos.close();
@@ -442,7 +443,7 @@ public final class DynamicMenuContributions {
         assert (editor != null);
 
         // create menu command
-        Transformation t = editor.getTransformationById(tid);
+        KSBasETransformation t = editor.getTransformationById(tid);
 
         // Menu commands
         Element menuCommand = extension.createElement("command");
@@ -462,7 +463,7 @@ public final class DynamicMenuContributions {
         menuCommand.appendChild(handlerParam);
         handlerParam = extension.createElement("parameter");
         handlerParam.setAttribute("name", "de.cau.cs.kieler.ksbase.transformationParameter");
-        handlerParam.setAttribute("value", t.getExtension());
+        handlerParam.setAttribute("value", t.getTransformation());
         menuCommand.appendChild(handlerParam);
 
         return menuCommand;

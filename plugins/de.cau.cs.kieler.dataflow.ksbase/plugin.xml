@@ -8,29 +8,6 @@
             contextId="de.cau.cs.kieler.dataflow.diagram.ui.diagramContext"
             editorId="de.cau.cs.kieler.dataflow.diagram.part.DataflowDiagramEditorID"
             packageName="de.cau.cs.kieler.dataflow.DataflowPackage">
-         <menus>
-            <menuContribution
-                  locationURI="menu:de.cau.cs.kieler">
-               <transformationCommand
-                     transformationId="de.cau.cs.kieler.dataflow.ksbase.connectBoxes">
-               </transformationCommand>
-               <transformationCommand
-                     transformationId="de.cau.cs.kieler.dataflow.ksbase.connectPorts">
-               </transformationCommand>
-               <transformationCommand
-                     transformationId="de.cau.cs.kieler.dataflow.ksbase.Suc">
-               </transformationCommand>
-               <transformationCommand
-                     transformationId="de.cau.cs.kieler.dataflow.ksbase.Predec">
-               </transformationCommand>
-               <transformationCommand
-                     transformationId="de.cau.cs.kieler.dataflow.ksbase.connectAll">
-               </transformationCommand>
-               <transformationCommand
-                     transformationId="de.cau.cs.kieler.dataflow.ksbase.insertBox">
-               </transformationCommand>
-            </menuContribution>
-         </menus>
          <transformations>
             <transformation
                   keyboardShortcut="M1+K O"
@@ -69,6 +46,29 @@
                   transformationId="de.cau.cs.kieler.dataflow.ksbase.insertBox">
             </transformation>
          </transformations>
+         <menus>
+            <menuContribution
+                  locationURI="menu:de.cau.cs.kieler">
+               <transformationCommand
+                     transformationId="de.cau.cs.kieler.dataflow.ksbase.connectBoxes">
+               </transformationCommand>
+               <transformationCommand
+                     transformationId="de.cau.cs.kieler.dataflow.ksbase.connectPorts">
+               </transformationCommand>
+               <transformationCommand
+                     transformationId="de.cau.cs.kieler.dataflow.ksbase.Suc">
+               </transformationCommand>
+               <transformationCommand
+                     transformationId="de.cau.cs.kieler.dataflow.ksbase.Predec">
+               </transformationCommand>
+               <transformationCommand
+                     transformationId="de.cau.cs.kieler.dataflow.ksbase.connectAll">
+               </transformationCommand>
+               <transformationCommand
+                     transformationId="de.cau.cs.kieler.dataflow.ksbase.insertBox">
+               </transformationCommand>
+            </menuContribution>
+         </menus>
       </configuration>
    </extension>
 </plugin>

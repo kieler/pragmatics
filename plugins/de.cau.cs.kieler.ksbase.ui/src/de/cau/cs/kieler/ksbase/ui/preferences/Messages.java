@@ -41,11 +41,9 @@ public final class Messages extends NLS {
     /** Name of the localized message in messages.properties. **/
     public static String kSBasEPreferencePageTableColName;
     /** Name of the localized message in messages.properties. **/
-    public static String kSBasEPreferencePageXtendFileDialogTitle;
+    public static String kSBasEPreferencePageFileDialogTitle;
     /** Name of the localized message in messages.properties. **/
-    public static String kSBasEPreferencePageXtendFileExtension;
-    /** Name of the localized message in messages.properties. **/
-    public static String kSBasEPreferencePageXtendFileInvalidFile;
+    public static String kSBasEPreferencePageFileInvalidFile;
     /** Name of the localized message in messages.properties. **/
     static {
         // initialize resource bundle

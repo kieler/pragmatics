@@ -22,7 +22,6 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.common.core.command.CommandResult;
@@ -35,8 +34,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.xtend.typesystem.emf.EcoreUtil2;
-import org.eclipse.xtend.typesystem.emf.EmfMetaModel;
 
 import de.cau.cs.kieler.core.model.transformation.ITransformationFramework;
 
@@ -123,7 +120,7 @@ public class TransformationCommand extends AbstractTransactionalCommand {
      * @param basePackage
      *            The package of the underlying meta model
      * @param parameter
-     *            The parameters of the Xtend method
+     *            The parameters of the transformation method
      * @param framework
      *            The transformation framework to use for execution
      * @return False if an error occurred
@@ -142,7 +139,7 @@ public class TransformationCommand extends AbstractTransactionalCommand {
         }
 
         String file = fileName;
-        if (file.contains(".")) { // Remove .ext from fileName //$NON-NLS-1$
+        if (file.contains(".")) { // Remove the extension from fileName //$NON-NLS-1$
             file = fileName.substring(0, fileName.lastIndexOf(".")); //$NON-NLS-1$
         }
         StringBuffer modelSelection = new StringBuffer();
@@ -205,15 +202,8 @@ public class TransformationCommand extends AbstractTransactionalCommand {
             return false;
         }
 
-        // The EMFMetaMetaModel,
-        EmfMetaModel metaModel;
 
-        // Load the EPackage class by using EcoreUtils
-        EPackage pack = EcoreUtil2.getEPackageByClassName(basePackage);
-        // create EMFMetaModel with the given EPackage
-        metaModel = new EmfMetaModel(pack);
-
-        component.initializeTransformation(file, command, metaModel, parameters);
+        component.initializeTransformation(file, command, basePackage, parameters);
 
         return true;
     }

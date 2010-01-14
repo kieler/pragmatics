@@ -14,9 +14,6 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.core;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.Collection;
@@ -26,11 +23,8 @@ import java.util.List;
 import java.util.Locale;
 
 import org.eclipse.core.runtime.IContributor;
-import org.eclipse.internal.xtend.expression.ast.DeclaredParameter;
-import org.eclipse.internal.xtend.xtend.XtendFile;
-import org.eclipse.internal.xtend.xtend.ast.Extension;
-import org.eclipse.xtend.XtendResourceParser;
 
+import de.cau.cs.kieler.core.model.transformation.AbstractTransformation;
 import de.cau.cs.kieler.core.model.transformation.ITransformationFramework;
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 
@@ -39,8 +33,6 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
  * {@link TransformationManager} to store settings that have been defined using the KSBasE extension
  * point or the KSBasE preference pages.
  * 
- * This class is capable of parsing an Xtend file and reading all in-place extensions and
- * parameters.
  * 
  * This class may be serialized.
  * 
@@ -58,17 +50,17 @@ public class EditorTransformationSettings implements Serializable {
     private String defaultIcon;
     /** Editor ID to which this setting is assigned. **/
     private String editorId;
-    /** Xtend file in which the transformations are defined. **/
-    private String extFile;
+    /** Transformatiopn file in which the transformations are defined. **/
+    private String transformationFile;
     /** The context for the diagram editor, required for key bindings. **/
     private String context;
     /** The map of transformations, ordered by their transformation Id. **/
-    private HashMap<String, Transformation> transformations;
+    private HashMap<String, KSBasETransformation> transformations;
     /** List of menu contributions. **/
     private LinkedList<KSBasEMenuContribution> menuContributions;
     /** Transformation Framework to use. **/
     private ITransformationFramework framework;
-    
+
     /**
      * Command handler to be used by this editor. If this is empty, the default handler will be
      * used.
@@ -90,10 +82,10 @@ public class EditorTransformationSettings implements Serializable {
         this.editorId = editorClass;
         this.modelPackageClass = ""; //$NON-NLS-1$
         this.defaultIcon = ""; //$NON-NLS-1$
-        this.extFile = ""; //$NON-NLS-1$
+        this.transformationFile = ""; //$NON-NLS-1$
         this.context = ""; //$NON-NLS-1$
         this.commandHandler = ""; //$NON-NLS-1$
-        this.transformations = new HashMap<String, Transformation>();
+        this.transformations = new HashMap<String, KSBasETransformation>();
         this.menuContributions = new LinkedList<KSBasEMenuContribution>();
         this.contributor = null;
     }
@@ -201,7 +193,7 @@ public class EditorTransformationSettings implements Serializable {
      * 
      * @return A LinkedList containing all transformations
      */
-    public final Collection<Transformation> getTransformations() {
+    public final Collection<KSBasETransformation> getTransformations() {
         return transformations.values();
     }
 
@@ -212,10 +204,10 @@ public class EditorTransformationSettings implements Serializable {
      *            The name to find
      * @return The first transformation found or null
      */
-    public final Transformation getTransformationByName(final String transformation) {
+    public final KSBasETransformation getTransformationByName(final String transformation) {
         if (transformation != null) {
-            for (Transformation t : transformations.values()) {
-                if (t.getExtension().toLowerCase(Locale.getDefault()).equals(
+            for (KSBasETransformation t : transformations.values()) {
+                if (t.getTransformation().toLowerCase(Locale.getDefault()).equals(
                         transformation.toLowerCase(Locale.getDefault()))) {
                     return t;
                 }
@@ -232,7 +224,7 @@ public class EditorTransformationSettings implements Serializable {
      * @return The first transformation with the given id or null if no transformation has been
      *         found
      */
-    public final Transformation getTransformationById(final String tid) {
+    public final KSBasETransformation getTransformationById(final String tid) {
         return transformations.get(tid);
     }
 
@@ -242,29 +234,29 @@ public class EditorTransformationSettings implements Serializable {
      * @param t
      *            a transformation definition
      */
-    public final void addTransformation(final Transformation t) {
+    public final void addTransformation(final KSBasETransformation t) {
         if (t != null) {
             transformations.put(t.getTransformationId(), t);
         }
     }
 
     /**
-     * Returns the text representation of the Xtend file.
+     * Returns the text representation of the transformation file.
      * 
-     * @return An Xtend file in plain text
+     * @return An transformation file in plain text
      */
-    public final String getExtFile() {
-        return extFile;
+    public final String getTransformationFile() {
+        return transformationFile;
     }
 
     /**
-     * Sets the content of the Xtend file.
+     * Sets the content of the transformation file.
      * 
      * @param file
-     *            An Xtend file in plain text
+     *            An transformation file in plain text
      */
-    public final void setExtFile(final String file) {
-        this.extFile = file;
+    public final void setTransformationFile(final String file) {
+        this.transformationFile = file;
     }
 
     /**
@@ -337,82 +329,66 @@ public class EditorTransformationSettings implements Serializable {
 
     /**
      * Sets the transformation framework for this editor.
-     * @param theFramework an implementation of ITransformationFramework
+     * 
+     * @param theFramework
+     *            an implementation of ITransformationFramework
      */
     public void setFramework(final ITransformationFramework theFramework) {
         this.framework = theFramework;
     }
 
     /**
-     * Parses the Xtend file to read transformations and parameters.
+     * Parses the transformation file to read transformations and parameters.
      * 
      * @param createTransformations
      *            If this flag is set the transformations are created while parsing. If not, the
      *            parameters of the existing transformations are matched with the file.
      * @param fileName
-     *            a valid URL to an Xtend file.
+     *            a valid URL to an transformation file.
      */
     public final void parseTransformations(final boolean createTransformations, final URL fileName) {
-        if (fileName != null) {
-            try {
-                // Using the XtendResourceParser to read transformations
-                XtendResourceParser parser = new XtendResourceParser();
-                Reader reader = new InputStreamReader(fileName.openStream());
-                Object o = parser.parse(reader, "features.ext"); //$NON-NLS-1$
-                if (o != null) {
-                    // If we have any invalid transformations, i.e.
-                    // the transformation defined here has no transformation
-                    // match in the xtend file, we want to remove them.
-                    LinkedList<Transformation> cachedTransformations = new LinkedList<Transformation>();
+        if (framework != null) {
+            // Parse transformations with the framework
+            List<AbstractTransformation> parseTransformations = framework
+                    .parseInPlaceTransformations(fileName);
+            // If we have any invalid transformations, i.e.
+            // the transformation defined here has no transformation
+            // match in the transformation file, we want to remove them.
+            LinkedList<KSBasETransformation> cachedTransformations = 
+                    new LinkedList<KSBasETransformation>();
 
-                    XtendFile xtFile = (XtendFile) o;
-                    for (Extension ext : xtFile.getExtensions()) {
-                        // Only read in-place methods
-                        if (!ext.getReturnTypeIdentifier().getValue().equals("Void")) { //$NON-NLS-1$
-                            continue;
-                        }
-
-                        Transformation transformation = getTransformationByName(ext.getName());
-                        // Read parameters:
-                        LinkedList<String> parameters = new LinkedList<String>();
-                        for (DeclaredParameter param : ext.getFormalParameters()) {
-                            parameters.add(param.getType().getValue());
-                        }
-
-                        if (transformation != null) {
-                            // set parameters
-                            transformation.setParameters(parameters.toArray(new String[parameters
-                                    .size()]));
-                            // Clone it, so we don't remove the transformation
-                            // when
-                            // clearing the transformations list
-                            cachedTransformations.add(transformation.clone());
-                        } else if (createTransformations) {
-                            // Create new transformation
-                            transformation = new Transformation(ext.getName(), ext.getName());
-                            // set parameters
-                            transformation.setParameters(parameters.toArray(new String[parameters
-                                    .size()]));
-                            // Create a default transformation id
-                            transformation.setTransformationId(editorId + "." + ext.getName());
-                            cachedTransformations.add(transformation);
-                        }
-                    }
-                    // Adding all transformations. By clearing the
-                    // transformations first, we ensure that no illegal
-                    // transformations are included.
-                    transformations.clear();
-                    for (Transformation t : cachedTransformations) {
-                        transformations.put(t.getTransformationId(), t);
-                    }
+            for (AbstractTransformation t : parseTransformations) {
+                KSBasETransformation transformation = getTransformationByName(t.getTransformation());
+                if (transformation != null) {
+                    // Clone it, so we don't remove the transformation
+                    // when
+                    // clearing the transformations list
+                    transformation.setParameters(t.getParameterList());
+                    cachedTransformations.add(transformation.clone());
+                } else if (createTransformations) {
+                    // Create new transformation
+                    transformation = new KSBasETransformation(t.getTransformation(), t
+                            .getTransformation());
+                    // set parameters
+                    transformation.setParameters(t.getParameterList());
+                    // Create a default transformation id
+                    transformation.setTransformationId(editorId + "." + t.getTransformation());
+                    cachedTransformations.add(transformation);
                 }
-            } catch (SecurityException sec) {
-                KSBasEPlugin.getDefault().logError(
-                        "Unable to parse Xtend file: Not allowed to open file."); //$NON-NLS-1$
-            } catch (IOException e) {
-                KSBasEPlugin.getDefault().logError(
-                        "Unable to parse Xtend file: Error while reading file."); //$NON-NLS-1$
             }
+
+            // Adding all transformations. By clearing the
+            // transformations first, we ensure that no illegal
+            // transformations are included.
+            transformations.clear();
+            for (KSBasETransformation t : cachedTransformations) {
+                transformations.put(t.getTransformationId(), t);
+            }
+
+        } else {
+            KSBasEPlugin.getDefault().logError(
+                    "Unable to parse transformation file: "
+                            + "No TransformationFramework has been set."); //$NON-NLS-1$
         }
     }
 
