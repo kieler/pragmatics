@@ -165,6 +165,10 @@ point="org.eclipse.ui.menus">
              priority="1"
              type="de.cau.cs.kieler.layout.diagrams.general">
        </supportedDiagram>
+       <supportedDiagram
+             priority="1"
+             type="de.cau.cs.kieler.layout.diagrams.stateMachine">
+       </supportedDiagram>
        <knownOption
              option="de.cau.cs.kieler.layout.options.minSpacing">
        </knownOption>

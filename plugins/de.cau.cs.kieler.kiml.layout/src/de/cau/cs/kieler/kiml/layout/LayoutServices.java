@@ -416,7 +416,8 @@ public class LayoutServices {
      * Returns the name of the given category.
      * 
      * @param id identifier of the category
-     * @return user friendly name of the category
+     * @return user friendly name of the category, or {@code null} if there
+     *         is no category with the given identifier
      */
     public final String getCategoryName(final String id) {
         return categoryMap.get(id);
@@ -426,14 +427,17 @@ public class LayoutServices {
      * Returns the name of the given diagram type.
      * 
      * @param id identifier of the diagram type
-     * @return user friendly name of the diagram type
+     * @return user friendly name of the diagram type, or {@code null} if there
+     *         is no diagram type with the given identifier
      */
     public final String getDiagramTypeName(final String id) {
         return diagramTypeMap.get(id);
     }
 
     /**
-     * Returns a collection of registered diagram types.
+     * Returns a collection of registered diagram types. The first element of each
+     * returned entry is a diagram type identifier, the second element is the
+     * corresponding name.
      * 
      * @return the registered diagram types
      */

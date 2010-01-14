@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.kiml.ui.preferences;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.jface.preference.PreferencePage;
@@ -32,6 +33,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.layout.LayoutProviderData;
 import de.cau.cs.kieler.kiml.layout.LayoutServices;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
@@ -96,7 +98,12 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
 
         Collection<LayoutProviderData> layoutProviderData = layoutServices.getLayoutProviderData();
         int layoutProviderCount = layoutProviderData.size();
-        diagramTypes = layoutServices.getDiagramTypes().toArray(new String[0]);
+        List<Pair<String, String>> diagramTypeMapping = layoutServices.getDiagramTypes();
+        diagramTypes = new String[diagramTypeMapping.size()];
+        int i = 0;
+        for (Pair<String, String> entry : diagramTypeMapping) {
+            diagramTypes[i++] = entry.getFirst();
+        }
         if (layoutProviderCount == 0 || diagramTypes.length == 0) {
             // return an empty group if there is nothing to display
             return prioritiesGroup;
@@ -106,7 +113,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         PriorityTableProvider.DataEntry[] tableEntries
                 = new PriorityTableProvider.DataEntry[layoutProviderCount];
         String[] layouterNames = new String[layoutProviderCount];
-        int i = 0;
+        i = 0;
         for (LayoutProviderData providerData : layoutProviderData) {
             providerIds[i] = providerData.getId();
             tableEntries[i] = new PriorityTableProvider.DataEntry();
@@ -129,8 +136,11 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         columns[0] = new TableColumn(prioritiesTable, SWT.NONE);
         columns[0].setText(Messages.getString("kiml.ui.4")); //$NON-NLS-1$
         for (int j = 0; j < diagramTypes.length; j++) {
-            columns[j + 1] = new TableColumn(prioritiesTable, SWT.NONE);
             String diagramTypeName = layoutServices.getDiagramTypeName(diagramTypes[j]);
+            if (diagramTypeName == null) {
+                diagramTypeName = diagramTypes[j];
+            }
+            columns[j + 1] = new TableColumn(prioritiesTable, SWT.NONE);
             columns[j + 1].setText(getAbbrev(diagramTypeName));
             columns[j + 1].setToolTipText(diagramTypeName);
         }
@@ -174,12 +184,18 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         if (diagramType.length() <= MAX_DIAGTYPE_LENGTH) {
             return diagramType;
         } else {
-            StringBuilder abbrev = new StringBuilder();
             StringTokenizer tokenizer = new StringTokenizer(diagramType);
-            while (tokenizer.hasMoreTokens()) {
-                abbrev.append(tokenizer.nextToken().charAt(0));
+            int lastDotIndex = diagramType.lastIndexOf('.');
+            if (tokenizer.countTokens() == 1 && lastDotIndex >= 0
+                    && lastDotIndex < diagramType.length() - 1) {
+                return diagramType.substring(lastDotIndex + 1);
+            } else {
+                StringBuilder abbrev = new StringBuilder();
+                while (tokenizer.hasMoreTokens()) {
+                    abbrev.append(tokenizer.nextToken().charAt(0));
+                }
+                return abbrev.toString();
             }
-            return abbrev.toString();
         }
     }
 
