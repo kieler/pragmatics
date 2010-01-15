@@ -15,9 +15,9 @@
 package de.cau.cs.kieler.ksbase.ui.listener;
 
 /**
- * Interface for a transformation listener. This listener has to be registered
- * in the {@link de.cau.cs.kieler.ksbase.ui.TransformationUIManager} and is
- * notified after each transformation.
+ * Interface for a transformation listener. This listener has to be registered in the
+ * {@link de.cau.cs.kieler.ksbase.ui.TransformationUIManager} and is notified after each
+ * transformation.
  * 
  * @author mim
  * 
@@ -26,9 +26,18 @@ package de.cau.cs.kieler.ksbase.ui.listener;
 public interface ITransformationEventListener {
 
     /**
-     * Notifies the listener that a transformation has
-     * been executed.
-     * @param args List of parameters for the listener.
+     * Notifies the listener that a transformation has been executed.
+     * 
+     * @param args
+     *            List of parameters for the listener.
      */
     void transformationExecuted(Object[] args);
+
+    /**
+     * Notifies the listener that a transformation is about to be executed.
+     * 
+     * @param args
+     *            List of parameters for the listener
+     */
+    void transformationAboutToExecute(Object[] args);
 }

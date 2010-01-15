@@ -1,4 +1,4 @@
-/**
+/*
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
@@ -44,6 +44,7 @@ import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
 import de.cau.cs.kieler.ksbase.ui.handler.ExecuteTransformationRequest;
 import de.cau.cs.kieler.ksbase.ui.listener.ITransformationEventListener;
+import de.cau.cs.kieler.viewmanagement.RunLogic;
 
 /**
  * Transformation-UI manager. Handles creation and execution of commands and notify of
@@ -57,36 +58,37 @@ public final class TransformationUIManager {
 
     /** Transformation-UI instance. **/
     public static final TransformationUIManager INSTANCE = new TransformationUIManager();
+
     /**
-     * The list of listeners to notify after a transformation has been executed.
+     * The list of listeners to notify before and after transformation has been executed.
      **/
-    private LinkedList<ITransformationEventListener> postTransformationEventListeners;
+    private LinkedList<ITransformationEventListener> transformationEventListeners;
 
     /**
      * The default constructor.
      */
     private TransformationUIManager() {
-        postTransformationEventListeners = new LinkedList<ITransformationEventListener>();
+        transformationEventListeners = new LinkedList<ITransformationEventListener>();
     }
 
     /**
-     * Adds a listener to the transformation listener queue.
+     * Adds a listener to the post-transformation transformation listener queue.
      * 
      * @param listener
      *            The listener to add
      */
-    public void addPostTransformationListener(final ITransformationEventListener listener) {
-        postTransformationEventListeners.add(listener);
+    public void addTransformationListener(final ITransformationEventListener listener) {
+        transformationEventListeners.add(listener);
     }
 
     /**
-     * Removes a listener from the listener queue.
+     * Removes a listener from the post-transformation listener queue.
      * 
      * @param listener
      *            The listener to remove.
      */
-    public void removePostTransformationListener(final ITransformationEventListener listener) {
-        postTransformationEventListeners.remove(listener);
+    public void removeTransformationListener(final ITransformationEventListener listener) {
+        transformationEventListeners.remove(listener);
     }
 
     /**
@@ -102,7 +104,16 @@ public final class TransformationUIManager {
      */
     public void createAndExecuteTransformationCommand(final ExecutionEvent event,
             final EditorTransformationSettings editor, final KSBasETransformation transformation) {
-
+        //We need the view management
+        if (!RunLogic.getInstance().getState()) {
+            RunLogic.getInstance().registerListeners();
+        }
+        
+        
+     // Notify event listeners:
+        for (ITransformationEventListener te : transformationEventListeners) {
+            te.transformationAboutToExecute(new Object[] {});
+        }
         IEditorPart activeEditor = HandlerUtil.getActiveEditor(event);
         // System.out.println("Diag childs (pre): " +
         // ((DiagramEditor)activeEditor).getDiagram().getVisibleChildren().size());
@@ -194,7 +205,7 @@ public final class TransformationUIManager {
                     graphViewer.flush();
 
                     // Notify event listeners:
-                    for (ITransformationEventListener te : postTransformationEventListeners) {
+                    for (ITransformationEventListener te : transformationEventListeners) {
                         te.transformationExecuted(new Object[] {obj, activeEditor });
                     }
 

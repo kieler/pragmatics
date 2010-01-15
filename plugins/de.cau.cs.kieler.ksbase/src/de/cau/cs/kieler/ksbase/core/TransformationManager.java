@@ -28,11 +28,16 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 
+import org.eclipse.core.runtime.ContributorFactoryOSGi;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleException;
+import org.osgi.service.packageadmin.PackageAdmin;
 
 import de.cau.cs.kieler.core.model.transformation.ITransformationFramework;
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
@@ -155,8 +160,9 @@ public final class TransformationManager {
                 KSBasEPlugin.getDefault().logInfo("Unable to add the same editor twice.");
 
             } else {
-                //We are using the default framework here
-                editor.setFramework(TransformationFrameworkFactory.getDefaultTransformationFramework());
+                // We are using the default framework here
+                editor.setFramework(TransformationFrameworkFactory
+                        .getDefaultTransformationFramework());
                 activeUserEditors.put(editor.getEditorId(), editor);
             }
         }
@@ -304,6 +310,7 @@ public final class TransformationManager {
         IConfigurationElement[] configurations = Platform.getExtensionRegistry()
                 .getConfigurationElementsFor(KSBASE_EXTENSIONPOINT);
         for (IConfigurationElement settings : configurations) {
+           
             // Check for valid Configuration:
             if (!settings.getName().equals("configuration")
                     || settings.getAttribute("editorId") == null
@@ -363,7 +370,8 @@ public final class TransformationManager {
                 }
             } else {
                 // If no framework has been set, use the default framework
-                editor.setFramework(TransformationFrameworkFactory.getDefaultTransformationFramework());
+                editor.setFramework(TransformationFrameworkFactory
+                        .getDefaultTransformationFramework());
             }
             // Read menu contributions
             IConfigurationElement[] menus = settings.getChildren("menus");

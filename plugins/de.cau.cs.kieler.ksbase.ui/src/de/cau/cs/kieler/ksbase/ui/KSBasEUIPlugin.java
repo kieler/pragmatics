@@ -1,4 +1,4 @@
-/**
+/*
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
@@ -105,9 +105,6 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
         DynamicMenuContributions.INSTANCE.createAllMenuContributions();
         // Temporary fix for "not loading features"-bug
         DynamicBundleLoader.INSTANCE.activateAllEditors();
-        if (!RunLogic.getInstance().getState()) {
-            RunLogic.getInstance().registerListeners();
-        }
         // Dirty hack, activating view management bundle:
         /*
          * IConfigurationElement[] configurations =

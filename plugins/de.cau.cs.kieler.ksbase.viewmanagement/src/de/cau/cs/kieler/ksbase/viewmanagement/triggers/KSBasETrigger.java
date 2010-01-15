@@ -22,8 +22,7 @@ import de.cau.cs.kieler.viewmanagement.ATrigger;
 import de.cau.cs.kieler.viewmanagement.TriggerEventObject;
 
 /**
- * A viewmanagement trigger which is called when a transformation command has
- * been executed.
+ * A viewmanagement trigger which is called when a transformation command has been executed.
  * 
  * @author Michael Matzen - mim AT informatik.uni-kiel.de
  * 
@@ -34,12 +33,12 @@ public class KSBasETrigger extends ATrigger implements ITransformationEventListe
     private TriggerEventObject triggerObject;
 
     /**
-     * Creates a new KSbasETrigger and adds itself to the list of
-     * postTransformationListeners in the TransformationUIManager.
+     * Creates a new KSbasETrigger and adds itself to the list of postTransformationListeners in the
+     * TransformationUIManager.
      */
     public KSBasETrigger() {
         // Add to post transformation queue
-        TransformationUIManager.INSTANCE.addPostTransformationListener(this);
+        TransformationUIManager.INSTANCE.addTransformationListener(this);
     }
 
     /**
@@ -49,15 +48,14 @@ public class KSBasETrigger extends ATrigger implements ITransformationEventListe
     public void finalize() {
         super.finalize();
         // Remove from post transformation queue
-        TransformationUIManager.INSTANCE.removePostTransformationListener(this);
+        TransformationUIManager.INSTANCE.removeTransformationListener(this);
     }
 
     /**
      * Called when a transformation is executed.
      * 
      * @param args
-     *            The arguments for this event. Needs be the Array :
-     *            [EObject,EditorPart]
+     *            The arguments for this event. Needs be the Array : [EObject,EditorPart]
      */
     public void transformationExecuted(final Object[] args) {
         if (args.length == 2 && args[0] instanceof EObject) {
@@ -67,6 +65,16 @@ public class KSBasETrigger extends ATrigger implements ITransformationEventListe
             triggerObject.setTriggerActive(true);
             notifyTrigger(triggerObject);
         }
+    }
+
+    /**
+     * The pre-transformation event will be ignore here.
+     * 
+     * @param args
+     *            Parameters.
+     */
+    public void transformationAboutToExecute(final Object[] args) {
+
     }
 
 }
