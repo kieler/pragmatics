@@ -13,6 +13,9 @@
  */
 package de.cau.cs.kieler.kiml.ui.views;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
@@ -20,6 +23,7 @@ import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -33,6 +37,8 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -42,11 +48,14 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.views.properties.IPropertySheetEntry;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.IPropertySourceProvider;
 import org.eclipse.ui.views.properties.PropertySheetEntry;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 
+import de.cau.cs.kieler.kiml.layout.LayoutServices;
+import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.Messages;
 
 /**
@@ -68,12 +77,13 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
     private IPartListener partListener;
     /** the currently tracked diagram editor. */
     private DiagramEditor currentEditor;
+    /** the current selection. */
+    private IStructuredSelection currentSelection;
     
     /**
      * Finds an active layout view and refreshes it.
      */
     public static void refreshLayoutView() {
-//        try {
         final IWorkbench workbench = PlatformUI.getWorkbench();
         workbench.getDisplay().asyncExec(new Runnable() {
             public void run() {
@@ -90,11 +100,6 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
                 }
             }
         });
-//        } catch (Exception exception) {
-//            IStatus status = new Status(IStatus.WARNING, KimlUiPlugin.PLUGIN_ID,
-//                    0, "Could not refresh the layout view.", exception);
-//            StatusManager.getManager().handle(status, StatusManager.LOG);
-//        }
     }
     
     /** margin width for the form layout. */
@@ -207,8 +212,11 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
             ISelection selection = currentEditor.getDiagramGraphicalViewer().getSelection();
             page.selectionChanged(currentEditor, selection);
             setPartText(selection);
+            if (selection instanceof IStructuredSelection) {
+                currentSelection = (IStructuredSelection) selection;
+            }
             currentEditor.getDiagramGraphicalViewer().addSelectionChangedListener(this);
-        }        
+        }
     }
 
     /**
@@ -216,9 +224,38 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
      */
     public void selectionChanged(final SelectionChangedEvent event) {
         if (currentEditor != null) {
-            page.selectionChanged(currentEditor, event.getSelection());
-            setPartText(event.getSelection());
+            ISelection selection = event.getSelection();
+            page.selectionChanged(currentEditor, selection);
+            setPartText(selection);
+            if (selection instanceof IStructuredSelection) {
+                currentSelection = (IStructuredSelection) selection;
+            }
         }
+    }
+    
+    /**
+     * Returns the current selection of the layout view.
+     * 
+     * @return the selected property sheet entries
+     */
+    public List<IPropertySheetEntry> getSelection() {
+        List<IPropertySheetEntry> entries = new LinkedList<IPropertySheetEntry>();
+        TreeItem[] treeItems = ((Tree) page.getControl()).getSelection();
+        for (TreeItem item : treeItems) {
+            Object data = item.getData();
+            if (data instanceof IPropertySheetEntry) {
+                entries.add((IPropertySheetEntry) data);
+            } else {
+                // a category was selected, apply options for all children
+                for (TreeItem childItem : item.getItems()) {
+                    data = childItem.getData();
+                    if (data instanceof IPropertySheetEntry) {
+                        entries.add((IPropertySheetEntry) data);
+                    }
+                }
+            }
+        }
+        return entries;
     }
     
     /**
@@ -228,22 +265,75 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
      */
     private void addActions(final Menu menu) {
         final String applyOptionString = Messages.getString("kiml.ui.10"); //$NON-NLS-1$
-        final Action applyOptionAction = new ApplyOptionAction(page, applyOptionString);
+        final Action applyOptionAction = new ApplyOptionAction(this, applyOptionString);
+        final String setDefaultString = Messages.getString("kiml.ui.16"); //$NON-NLS-1$
+        final Action diagramTypeDefaultAction = new DiagramTypeDefaultAction(this, setDefaultString);
         // dirty hack to add actions to an existing menu without having the menu manager
         menu.addMenuListener(new MenuAdapter() {
             public void menuShown(final MenuEvent event) {
-                boolean foundApplyOption = false;
+                MenuItem applyOptionItem = null, diagramTypeDefaultItem = null;
                 for (MenuItem item : menu.getItems()) {
-                    if (applyOptionString.equals(item.getText())) {
-                        foundApplyOption = true;
+                    if (item.getData() instanceof IContributionItem) {
+                        String itemId = ((IContributionItem) item.getData()).getId();
+                        if (ApplyOptionAction.ACTION_ID.equals(itemId)) {
+                            applyOptionItem = item;
+                        } else if (DiagramTypeDefaultAction.ACTION_ID.equals(itemId)) {
+                            diagramTypeDefaultItem = item;
+                        }
                     }
                 }
-                if (!foundApplyOption) {
-                    IContributionItem contributionItem = new ActionContributionItem(applyOptionAction);
+                // add the "apply to whole diagram" action
+                if (applyOptionItem == null) {
+                    ContributionItem contributionItem = new ActionContributionItem(
+                            applyOptionAction);
+                    contributionItem.setId(ApplyOptionAction.ACTION_ID);
                     contributionItem.fill(menu, -1);
+                }
+                // add the "set as default for diagram type" action
+                LayoutServices layoutServices = LayoutServices.getInstance();
+                String diagramType = getSelectedDiagramType();
+                if (diagramType == null) {
+                    if (diagramTypeDefaultItem != null) {
+                        diagramTypeDefaultItem.setEnabled(false);
+                    }
+                } else {
+                    String diagramTypeName = layoutServices.getDiagramTypeName(diagramType);
+                    if (diagramTypeName != null) {
+                        if (!diagramTypeName.endsWith("s")) {
+                            diagramTypeName += "s";
+                        }
+                        if (diagramTypeDefaultItem == null) {
+                            diagramTypeDefaultAction.setText(setDefaultString + " " + diagramTypeName);
+                            ContributionItem contributionItem = new ActionContributionItem(
+                                    diagramTypeDefaultAction);
+                            contributionItem.setId(DiagramTypeDefaultAction.ACTION_ID);
+                            contributionItem.fill(menu, -1);
+                        } else {
+                            diagramTypeDefaultItem.setEnabled(true);
+                            diagramTypeDefaultItem.setText(setDefaultString + " " + diagramTypeName);
+                        }
+                    }
                 }
             }
         });
+    }
+    
+    /**
+     * Returns the diagram type identifier for the current selection.
+     * 
+     * @return the identifier of the diagram type for the currently selected object,
+     *     or {@code null} if there is no such diagram type
+     */
+    public String getSelectedDiagramType() {
+        if (currentSelection != null) {
+            Object object = currentSelection.getFirstElement();
+            if (object != null) {
+                String diagramType = (String) LayoutServices.getInstance().getOption(
+                        object.getClass(), LayoutOptions.DIAGRAM_TYPE);
+                return diagramType;
+            }
+        }
+        return null;
     }
     
     /**

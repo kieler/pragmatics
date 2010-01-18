@@ -242,7 +242,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         // traverse the children of the layout root part
         buildLayoutGraphRecursively(layoutRootPart, topNode, layoutRootPart);
         // set user defined layout options for the diagram
-        KimlUiUtil.setLayoutOptions(layoutRootPart, shapeLayout);
+        KimlUiUtil.setLayoutOptions(layoutRootPart, shapeLayout, true);
         // transform all connections in the selected area
         processConnections();
 
@@ -303,7 +303,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 portLayout.setHeight(portBounds.height);
                 hasPorts = true;
                 // set user defined layout options for the port
-                KimlUiUtil.setLayoutOptions(borderItem, portLayout);
+                KimlUiUtil.setLayoutOptions(borderItem, portLayout, true);
 
                 // store all the connections to process them later
                 for (Object connectionObj : borderItem.getTargetConnections()) {
@@ -357,8 +357,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     buildLayoutGraphRecursively(parentEditPart, parentLayoutNode, compartment);
 
                     // set preconfigured layout options for the compartment
-                    layoutServices.setLayoutOptions(compartment.getClass(),
-                            KimlLayoutUtil.getShapeLayout(parentLayoutNode));
+                    KimlUiUtil.setLayoutOptions(compartment,
+                            KimlLayoutUtil.getShapeLayout(parentLayoutNode), false);
                 }
 
             // process nodes, which may be parents of compartments
@@ -409,7 +409,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     }
     
                     // set user defined layout options for the node
-                    KimlUiUtil.setLayoutOptions(childNodeEditPart, nodeLayout);
+                    KimlUiUtil.setLayoutOptions(childNodeEditPart, nodeLayout, true);
                 }
 
             // process labels of nodes
@@ -546,7 +546,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             }
 
             // set user defined layout options for the edge
-            KimlUiUtil.setLayoutOptions(connection, edgeLayout);
+            KimlUiUtil.setLayoutOptions(connection, edgeLayout, true);
 
             /*
              * process the labels

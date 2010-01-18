@@ -32,7 +32,6 @@ import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
 import de.cau.cs.kieler.kiml.layout.LayoutProviderData;
 import de.cau.cs.kieler.kiml.layout.LayoutServices;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
-import de.cau.cs.kieler.kiml.ui.preferences.LayoutPreferencePage;
 
 /**
  * This class is responsible for reading all extension point elements for layout
@@ -109,11 +108,22 @@ public class EclipseLayoutServices extends LayoutServices {
         loadLayoutProviderExtensions();
         loadLayoutListenerExtensions();
         loadLayoutInfoExtensions();
-        getRegistry().initialize();
+        getRegistry().processOptions();
         // load preferences for KIML
         loadPreferences();
         // register an instance of the GMF diagram layout manager
         DiagramLayoutManager.registerManager(new GmfDiagramLayoutManager());
+    }
+
+    /**
+     * Returns the preference name associated with the two identifiers.
+     * 
+     * @param id1 first identifier
+     * @param id2 second identifier
+     * @return a preference name for the combination of both identifiers
+     */
+    public static String getPreferenceName(final String id1, final String id2) {
+        return id1 + "-" + id2; //$NON-NLS-1$
     }
 
     /**
@@ -157,9 +167,26 @@ public class EclipseLayoutServices extends LayoutServices {
             }
         }
     }
+    
+    /**
+     * Stores the layout option with given value for the diagram type.
+     * 
+     * @param diagramType a diagram type identifier
+     * @param optionData a layout option data
+     * @param valueString the value to store for the diagram type and option
+     */
+    public static void storeOption(final String diagramType, final LayoutOptionData optionData,
+            final String valueString) {
+        Object value = optionData.parseValue(valueString);
+        if (value != null) {
+            getRegistry().addOption(diagramType, optionData.getId(), value);
+            IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
+            preferenceStore.setValue(getPreferenceName(diagramType, optionData.getId()), valueString);
+        }
+    }
 
     /**
-     * Reports an error that occured while reading extensions.
+     * Reports an error that occurred while reading extensions.
      * 
      * @param extensionPoint the identifier of the extension point
      * @param element the configuration element
@@ -365,14 +392,29 @@ public class EclipseLayoutServices extends LayoutServices {
      */
     private static void loadPreferences() {
         IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
+        
+        // load priorities of layout providers
         Collection<LayoutProviderData> layoutProviderData = getInstance().getLayoutProviderData();
         List<Pair<String, String>> diagramTypes = getInstance().getDiagramTypes();
         for (LayoutProviderData data : layoutProviderData) {
             for (Pair<String, String> diagramType : diagramTypes) {
-                String diagramTypeName = diagramType.getSecond();
-                String preference = LayoutPreferencePage.getPreference(data.getId(), diagramTypeName);
+                String preference = getPreferenceName(data.getId(), diagramType.getFirst());
                 if (preferenceStore.contains(preference)) {
-                    data.setDiagramSupport(diagramTypeName, preferenceStore.getInt(preference));
+                    data.setDiagramSupport(diagramType.getFirst(), preferenceStore.getInt(preference));
+                }
+            }
+        }
+        
+        // load default options for diagram types
+        Collection<LayoutOptionData> layoutOptionData = getInstance().getLayoutOptionData();
+        for (Pair<String, String> diagramType : diagramTypes) {
+            for (LayoutOptionData data : layoutOptionData) {
+                String preference = getPreferenceName(diagramType.getFirst(), data.getId());
+                if (preferenceStore.contains(preference)) {
+                    Object value = data.parseValue(preferenceStore.getString(preference));
+                    if (value != null) {
+                        getRegistry().addOption(diagramType.getFirst(), data.getId(), value);
+                    }
                 }
             }
         }

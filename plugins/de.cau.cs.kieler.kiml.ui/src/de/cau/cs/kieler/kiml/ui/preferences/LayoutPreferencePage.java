@@ -67,18 +67,6 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
     }
 
     /**
-     * Builds the preference name associated with the supported priority value
-     * of the given layout provider for the given diagram type.
-     * 
-     * @param layoutProvider identifier of layout provider
-     * @param diagramType identifier of diagram type
-     * @return a preference name for the supported priority value
-     */
-    public static String getPreference(final String layoutProvider, final String diagramType) {
-        return layoutProvider + "-" + diagramType; //$NON-NLS-1$
-    }
-
-    /**
      * {@inheritDoc}
      */
     protected Control createContents(final Composite parent) {
@@ -232,7 +220,8 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
                     int newPriority = data[i][j];
                     if (oldPriority != newPriority) {
                         providerData.setDiagramSupport(diagramTypes[j], newPriority);
-                        String preference = getPreference(providerData.getId(), diagramTypes[j]);
+                        String preference = EclipseLayoutServices.getPreferenceName(
+                                providerData.getId(), diagramTypes[j]);
                         getPreferenceStore().setValue(preference, newPriority);
                     }
                 }

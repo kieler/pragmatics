@@ -18,12 +18,9 @@ import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.properties.IPropertySheetEntry;
-import org.eclipse.ui.views.properties.PropertySheetPage;
 
 import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
 import de.cau.cs.kieler.kiml.layout.LayoutServices;
@@ -44,40 +41,37 @@ import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsPackage;
  */
 public class ApplyOptionAction extends Action {
     
-    /** the property sheet page. */
-    private PropertySheetPage page;
+    /** an identifier for the action. */
+    public static final String ACTION_ID = "kieler.apply.option";
+    
     /** the icon used for this action. */
     private static ImageDescriptor icon = KimlUiPlugin.getImageDescriptor(
             "icons/menu16/apply2diagram.gif");
-    
+
+    /** the layout view that created this action. */
+    private LayoutViewPart layoutView;
+
     /**
      * Creates an apply option action.
      * 
-     * @param thepage property sheet page for which the action is created
+     * @param thelayoutView the layout view that created this action
      * @param text user friendly text
      */
-    public ApplyOptionAction(final PropertySheetPage thepage, final String text) {
+    public ApplyOptionAction(final LayoutViewPart thelayoutView, final String text) {
         super(text, icon);
-        this.page = thepage;
+        this.layoutView = thelayoutView;
     }
     
     /**
      * {@inheritDoc}
      */
     public void run() {
-        TreeItem[] treeItems = ((Tree) page.getControl()).getSelection();
-        for (TreeItem item : treeItems) {
-            Object data = item.getData();
-            if (data instanceof IPropertySheetEntry) {
-                applyOption((IPropertySheetEntry) data);
-            } else {
-                // a category was selected, apply options for all children
-                for (TreeItem childItem : item.getItems()) {
-                    data = childItem.getData();
-                    if (data instanceof IPropertySheetEntry) {
-                        applyOption((IPropertySheetEntry) data);
-                    }
-                }
+        IEditorPart editorPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                .getActivePage().getActiveEditor();
+        if (editorPart instanceof DiagramEditor) {
+            DiagramEditor diagramEditor = (DiagramEditor) editorPart;
+            for (IPropertySheetEntry entry : layoutView.getSelection()) {
+                applyOption(diagramEditor, entry);
             }
         }
     }
@@ -86,9 +80,10 @@ public class ApplyOptionAction extends Action {
      * Sets the layout option of the given property sheet entry as default for the whole
      * diagram.
      * 
+     * @param diagramEditor the currently active diagram editor
      * @param entry a property sheet entry
      */
-    private void applyOption(final IPropertySheetEntry entry) {
+    private void applyOption(final DiagramEditor diagramEditor, final IPropertySheetEntry entry) {
         LayoutOptionData theOptionData = null;
         for (LayoutOptionData data : LayoutServices.getInstance().getLayoutOptionData()) {
             if (data.getName().equals(entry.getDisplayName())) {
@@ -96,11 +91,9 @@ public class ApplyOptionAction extends Action {
                 break;
             }
         }
-        // get the diagram edit part of the active editor
-        IEditorPart editorPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                .getActivePage().getActiveEditor();
-        if (theOptionData != null && editorPart instanceof DiagramEditor) {
-            final IGraphicalEditPart diagramEditPart = (IGraphicalEditPart) ((DiagramEditor) editorPart)
+        final Object value = theOptionData.parseValue(entry.getValueAsString());
+        if (theOptionData != null && value != null) {
+            final IGraphicalEditPart diagramEditPart = (IGraphicalEditPart) diagramEditor
                     .getDiagramGraphicalViewer().getContents();
             final LayoutOptionData optionData = theOptionData;
             Runnable modelChange = new Runnable() {
@@ -129,11 +122,12 @@ public class ApplyOptionAction extends Action {
                     }
                     
                     // set the new option value
-                    Object value = optionData.parseValue(entry.getValueAsString());
                     if (LayoutOptions.LAYOUT_HINT.equals(optionData.getId())) {
-                        value = GmfLayoutPropertySource.getLayoutHint((String) value);
+                        KimlLayoutUtil.setValue(koption, optionData,
+                                GmfLayoutPropertySource.getLayoutHint((String) value));
+                    } else {
+                        KimlLayoutUtil.setValue(koption, optionData, value);
                     }
-                    KimlLayoutUtil.setValue(koption, optionData, value);
                     koption.setDefault(true);
                     
                     // remove the option from all children

@@ -22,13 +22,11 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
@@ -75,7 +73,11 @@ public class LayoutServices {
     /** mapping of graphical edit parts to associated binding identifiers. */
     private Map<String, String> editPartBindingMap = new LinkedHashMap<String, String>();
     /** mapping of binding identifiers to associated configured options. */
-    private Map<String, Map<String, Object>> optionSetupMap = new HashMap<String, Map<String, Object>>();
+    private Map<String, Map<String, Object>> bindingOptionsMap
+            = new HashMap<String, Map<String, Object>>();
+    /** mapping of diagram type identifiers to associated options. */
+    private Map<String, Map<String, Object>> diagramTypeOptionsMap
+            = new HashMap<String, Map<String, Object>>();
 
     /**
      * The default constructor is hidden to prevent others from instantiating
@@ -126,10 +128,10 @@ public class LayoutServices {
         private List<String[]> unprocessedOptions = new LinkedList<String[]>();
 
         /**
-         * Initializes the layout services <em>after</em> all contributions have
-         * been registered from the extension points.
+         * Process all options that have been set up using
+         * {@link #setupOption(String, String, String) setupOption}.
          */
-        public void initialize() {
+        public void processOptions() {
             // process all layout option configurations
             for (String[] option : unprocessedOptions) {
                 String optionId = option[1];
@@ -139,7 +141,7 @@ public class LayoutServices {
                     Object valueObj = optionData.parseValue(valueString);
                     if (valueObj != null) {
                         String bindingId = option[0];
-                        Map<String, Object> optionsMap = optionSetupMap.get(bindingId);
+                        Map<String, Object> optionsMap = bindingOptionsMap.get(bindingId);
                         if (optionsMap != null) {
                             optionsMap.put(optionId, valueObj);
                         }
@@ -206,8 +208,8 @@ public class LayoutServices {
          */
         public void addEditPartBinding(final String editPartType, final String bindingId) {
             editPartBindingMap.put(editPartType, bindingId);
-            if (!optionSetupMap.containsKey(bindingId)) {
-                optionSetupMap.put(bindingId, new LinkedHashMap<String, Object>());
+            if (!bindingOptionsMap.containsKey(bindingId)) {
+                bindingOptionsMap.put(bindingId, new LinkedHashMap<String, Object>());
             }
         }
 
@@ -238,14 +240,33 @@ public class LayoutServices {
 
         /**
          * Registers a layout option configuration for the given diagram setup.
+         * The {@link #processOptions()} method must be called after all options have
+         * been set up.
          * 
          * @param bindingId identifier of the category of edit parts
          * @param optionId identifier of a layout option
-         * @param value value for the layout option
+         * @param value serialized value for the layout option
          */
         public void setupOption(final String bindingId, final String optionId,
                 final String value) {
             unprocessedOptions.add(new String[] {bindingId, optionId, value});
+        }
+        
+        /**
+         * Adds the given option as default for a diagram type.
+         * 
+         * @param diagramType identifier of the diagram type
+         * @param optionId identifier of a layout option
+         * @param value value for the layout option
+         */
+        public void addOption(final String diagramType, final String optionId,
+                final Object value) {
+            Map<String, Object> optionsMap = diagramTypeOptionsMap.get(diagramType);
+            if (optionsMap == null) {
+                optionsMap = new LinkedHashMap<String, Object>();
+                diagramTypeOptionsMap.put(diagramType, optionsMap);
+            }
+            optionsMap.put(optionId, value);
         }
 
     }
@@ -444,23 +465,6 @@ public class LayoutServices {
     public final List<Pair<String, String>> getDiagramTypes() {
         return Pair.toList(diagramTypeMap);
     }
-
-    /**
-     * Sets all preconfigured layout options for the given layout data.
-     * 
-     * @param editPartType class of edit part
-     * @param layoutData layout data for which the layout options shall be added
-     */
-    public final void setLayoutOptions(final Class<?> editPartType, final KLayoutData layoutData) {
-        String bindingId = editPartBindingMap.get(editPartType.getName());
-        if (bindingId != null) {
-            Map<String, Object> options = optionSetupMap.get(bindingId);
-            for (Entry<String, Object> entry : options.entrySet()) {
-                LayoutOptionData optionData = layoutOptionMap.get(entry.getKey());
-                optionData.setValue(layoutData, entry.getValue());
-            }
-        }
-    }
     
     /**
      * Returns a map that contains all layout options for an edit part type.
@@ -470,8 +474,9 @@ public class LayoutServices {
      */
     public final Map<String, Object> getOptions(final Class<?> editPartType) {
         String bindingId = editPartBindingMap.get(editPartType.getName());
-        if (bindingId != null) {
-            return Collections.unmodifiableMap(optionSetupMap.get(bindingId));
+        Map<String, Object> optionsMap = bindingOptionsMap.get(bindingId);
+        if (optionsMap != null) {
+            return Collections.unmodifiableMap(optionsMap);
         } else {
             return Collections.emptyMap();
         }
@@ -488,9 +493,41 @@ public class LayoutServices {
      */
     public final Object getOption(final Class<?> editPartType, final String optionId) {
         String bindingId = editPartBindingMap.get(editPartType.getName());
-        if (bindingId != null) {
-            Map<String, Object> options = optionSetupMap.get(bindingId);
-            return options.get(optionId);
+        Map<String, Object> optionsMap = bindingOptionsMap.get(bindingId);
+        if (optionsMap != null) {
+            return optionsMap.get(optionId);
+        } else {
+            return null;
+        }
+    }
+    
+    /**
+     * Returns a map that contains all layout options for a diagram type.
+     * 
+     * @param diagramType a diagram type identifier
+     * @return a map of layout option identifiers to their values
+     */
+    public final Map<String, Object> getOptions(final String diagramType) {
+        Map<String, Object> optionsMap = diagramTypeOptionsMap.get(diagramType);
+        if (optionsMap != null) {
+            return Collections.unmodifiableMap(optionsMap);
+        } else {
+            return Collections.emptyMap();
+        }
+    }
+
+    /**
+     * Retrieves the layout option with given identifier for a diagram type.
+     * 
+     * @param diagramType a diagram type identifier
+     * @param optionId the layout option identifier
+     * @return the preconfigured value of the option, or {@code null} if the
+     *         option is not set for the given diagram type
+     */
+    public final Object getOption(final String diagramType, final String optionId) {
+        Map<String, Object> optionsMap = diagramTypeOptionsMap.get(diagramType);
+        if (optionsMap != null) {
+            return optionsMap.get(optionId);
         } else {
             return null;
         }

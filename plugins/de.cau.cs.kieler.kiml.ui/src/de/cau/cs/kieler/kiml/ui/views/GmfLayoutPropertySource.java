@@ -142,6 +142,7 @@ public class GmfLayoutPropertySource implements IPropertySource {
             } else if (editPart instanceof DiagramEditPart) {
                 partTarget = LayoutOptionData.Target.PARENTS;
                 containerEditPart = editPart;
+                childCompartmentEditPart = editPart;
                 break;
             }
             parent = editPart.getParent();
@@ -210,7 +211,8 @@ public class GmfLayoutPropertySource implements IPropertySource {
                     && !defaultValueMap.containsKey(layoutHintData)) {
                 defaultValueMap.put(layoutHintData, containerProviderData.getId());
             }
-            if (childCompartmentEditPart != null) {
+            if (partTarget != LayoutOptionData.Target.PARENTS
+                    && childCompartmentEditPart != null) {
                 String childCompartmentDiagramType = (String) layoutServices.getOption(
                         childCompartmentEditPart.getClass(), LayoutOptions.DIAGRAM_TYPE);
                 LayoutProviderData partProviderData = layoutServices.getLayoutProviderData(

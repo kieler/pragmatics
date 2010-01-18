@@ -35,6 +35,7 @@ import de.cau.cs.kieler.kiml.layout.LayoutServices;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KOption;
+import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
 import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyle;
 import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsPackage;
@@ -125,6 +126,7 @@ public final class KimlUiUtil {
      */
     public static Object getDefault(final LayoutOptionData optionData,
             final LayoutProviderData providerData, final EditPart editPart) {
+        LayoutServices layoutServices = LayoutServices.getInstance();
         Object result = null;
         // check default option of diagram edit part
         DiagramEditPart diagramEditPart = getDiagramEditPart(editPart);
@@ -134,9 +136,21 @@ public final class KimlUiUtil {
                 return KimlLayoutUtil.getValue(koption, optionData);
             }
         }
+        
+        // check default option of the diagram type
+        String diagramType = (String) layoutServices.getOption(editPart.getClass(),
+                LayoutOptions.DIAGRAM_TYPE);
+        result = layoutServices.getOption(diagramType, optionData.getId());
+        if (result != null) {
+            if (result instanceof Enum<?>) {
+                return ((Enum<?>) result).ordinal();
+            } else {
+                return result;
+            }
+        }
 
         // check default value set for the edit part
-        result = editPart != null ? LayoutServices.getInstance().getOption(
+        result = editPart != null ? layoutServices.getOption(
                 editPart.getClass(), optionData.getId()) : null;
         if (result != null) {
             if (result instanceof Enum<?>) {
@@ -178,44 +192,54 @@ public final class KimlUiUtil {
      * 
      * @param editPart edit part for which options are set
      * @param layoutData layout data where options are written
+     * @param setUserOptions if true, the user defined options are also set
      */
     public static void setLayoutOptions(final IGraphicalEditPart editPart,
-            final KLayoutData layoutData) {
+            final KLayoutData layoutData, final boolean setUserOptions) {
+        LayoutServices layoutServices = LayoutServices.getInstance();
         // get preconfigured layout options
         Map<String, Object> options = new LinkedHashMap<String, Object>(
-                LayoutServices.getInstance().getOptions(editPart.getClass()));
+                layoutServices.getOptions(editPart.getClass()));
         
-        // get global layout options
-        DiagramEditPart diagramEditPart = getDiagramEditPart(editPart);
-        if (diagramEditPart != editPart && diagramEditPart != null) {
-            LayoutOptionStyle optionStyle = (LayoutOptionStyle) diagramEditPart.getNotationView()
-                    .getStyle(LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
-            if (optionStyle != null) {
-                for (KOption option : optionStyle.getOptions()) {
-                    if (option.isDefault()) {
-                        LayoutOptionData optionData = LayoutServices.getInstance()
-                                .getLayoutOptionData(option.getKey());
-                        options.put(option.getKey(), KimlLayoutUtil.getValue(option, optionData));
+        // get default layout options for the diagram type
+        String diagramType = (String) layoutServices.getOption(editPart.getClass(),
+                LayoutOptions.DIAGRAM_TYPE);
+        Map<String, Object> diagramTypeOptions = layoutServices.getOptions(diagramType);
+        for (Entry<String, Object> entry : diagramTypeOptions.entrySet()) {
+            options.put(entry.getKey(), entry.getValue());
+        }
+        
+        if (setUserOptions) {
+            // get user defined global layout options
+            DiagramEditPart diagramEditPart = getDiagramEditPart(editPart);
+            if (diagramEditPart != editPart && diagramEditPart != null) {
+                LayoutOptionStyle optionStyle = (LayoutOptionStyle) diagramEditPart.getNotationView()
+                        .getStyle(LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
+                if (optionStyle != null) {
+                    for (KOption option : optionStyle.getOptions()) {
+                        if (option.isDefault()) {
+                            LayoutOptionData optionData = layoutServices.getLayoutOptionData(
+                                    option.getKey());
+                            options.put(option.getKey(), KimlLayoutUtil.getValue(option, optionData));
+                        }
                     }
                 }
             }
-        }
-        
-        // get user defined layout options
-        LayoutOptionStyle optionStyle = (LayoutOptionStyle) editPart.getNotationView().getStyle(
-                LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
-        if (optionStyle != null) {
-            for (KOption option : optionStyle.getOptions()) {
-                LayoutOptionData optionData = LayoutServices.getInstance()
-                        .getLayoutOptionData(option.getKey());
-                options.put(option.getKey(), KimlLayoutUtil.getValue(option, optionData));
+            
+            // get user defined local layout options
+            LayoutOptionStyle optionStyle = (LayoutOptionStyle) editPart.getNotationView().getStyle(
+                    LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
+            if (optionStyle != null) {
+                for (KOption option : optionStyle.getOptions()) {
+                    LayoutOptionData optionData = layoutServices.getLayoutOptionData(option.getKey());
+                    options.put(option.getKey(), KimlLayoutUtil.getValue(option, optionData));
+                }
             }
         }
         
         // add all options to the layout data instance
         for (Entry<String, Object> option : options.entrySet()) {
-            LayoutOptionData optionData = LayoutServices.getInstance()
-                    .getLayoutOptionData(option.getKey());
+            LayoutOptionData optionData = layoutServices.getLayoutOptionData(option.getKey());
             optionData.setValue(layoutData, option.getValue());
         }
     }
