@@ -299,7 +299,9 @@ public final class DynamicMenuContributions {
                 // to new lines because the string line is limited!
                 String depString = dependencies.toString();
                 depString = depString.replace(",", ",\n ");
-
+                if (!depString.contains("de.cau.cs.kieler.ksbase.ui")) {
+                    depString += ",\n de.cau.cs.kieler.ksbase.ui";
+                }
                 // And set the rest of the manifest attributes
 
                 sbuf.append("Require-Bundle: " + depString + "\n");
