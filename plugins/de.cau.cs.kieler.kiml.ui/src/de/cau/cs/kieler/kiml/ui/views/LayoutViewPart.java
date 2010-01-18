@@ -13,11 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.ui.views;
 
-import java.lang.reflect.InvocationTargetException;
-
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
@@ -26,7 +21,6 @@ import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -40,6 +34,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -47,14 +42,11 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.progress.IProgressService;
-import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.IPropertySourceProvider;
 import org.eclipse.ui.views.properties.PropertySheetEntry;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 
-import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 
 /**
@@ -81,28 +73,28 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
      * Finds an active layout view and refreshes it.
      */
     public static void refreshLayoutView() {
-        try {
-            IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
-            progressService.runInUI(progressService, new IRunnableWithProgress() {
-                public void run(final IProgressMonitor monitor) throws InvocationTargetException,
-                        InterruptedException {
-                    IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-                    if (activeWindow != null) {
-                        IWorkbenchPage activePage = activeWindow.getActivePage();
-                        if (activePage != null) {
-                            LayoutViewPart layoutViewPart = (LayoutViewPart)activePage.findView(VIEW_ID);
-                            if (layoutViewPart != null) {
-                                layoutViewPart.page.refresh();
-                            }
+//        try {
+        final IWorkbench workbench = PlatformUI.getWorkbench();
+        workbench.getDisplay().asyncExec(new Runnable() {
+            public void run() {
+                IWorkbenchWindow activeWindow = workbench.getActiveWorkbenchWindow();
+                if (activeWindow != null) {
+                    IWorkbenchPage activePage = activeWindow.getActivePage();
+                    if (activePage != null) {
+                        LayoutViewPart layoutViewPart = (LayoutViewPart)
+                                activePage.findView(VIEW_ID);
+                        if (layoutViewPart != null) {
+                            layoutViewPart.page.refresh();
                         }
                     }
                 }
-            }, null);
-        } catch (Exception exception) {
-            IStatus status = new Status(IStatus.WARNING, KimlUiPlugin.PLUGIN_ID,
-                    0, "Could not refresh the layout view.", exception);
-            StatusManager.getManager().handle(status, StatusManager.LOG);
-        }
+            }
+        });
+//        } catch (Exception exception) {
+//            IStatus status = new Status(IStatus.WARNING, KimlUiPlugin.PLUGIN_ID,
+//                    0, "Could not refresh the layout view.", exception);
+//            StatusManager.getManager().handle(status, StatusManager.LOG);
+//        }
     }
     
     /** margin width for the form layout. */
@@ -141,7 +133,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
         page.setPropertySourceProvider(new IPropertySourceProvider() {
             public IPropertySource getPropertySource(final Object object) {
                 if (object instanceof IGraphicalEditPart) {
-                    return new GmfLayoutPropertySource((IGraphicalEditPart)object);
+                    return new GmfLayoutPropertySource((IGraphicalEditPart) object);
                 } else {
                     return null;
                 }
@@ -211,7 +203,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
             if (currentEditor != null) {
                 currentEditor.getDiagramGraphicalViewer().removeSelectionChangedListener(this);
             }
-            currentEditor = (DiagramEditor)part;
+            currentEditor = (DiagramEditor) part;
             ISelection selection = currentEditor.getDiagramGraphicalViewer().getSelection();
             page.selectionChanged(currentEditor, selection);
             setPartText(selection);
@@ -261,15 +253,15 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
      */
     private void setPartText(final ISelection selection) {
         if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
-            Object firstElement = ((IStructuredSelection)selection).getFirstElement();
+            Object firstElement = ((IStructuredSelection) selection).getFirstElement();
             if (firstElement instanceof EditPart) {
-                Object model = ((EditPart)firstElement).getModel();
+                Object model = ((EditPart) firstElement).getModel();
                 if (model instanceof View) {
-                    model = ((View)model).getElement();
+                    model = ((View) model).getElement();
                 }
                 StringBuilder textBuffer = new StringBuilder();
                 if (model instanceof EObject) {
-                    textBuffer.append(((EObject)model).eClass().getName());
+                    textBuffer.append(((EObject) model).eClass().getName());
                 } else {
                     textBuffer.append(model.getClass().getSimpleName());
                 }
@@ -299,7 +291,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
      */
     private static String getProperty(final Object object, final String property) {
         try {
-            return (String)object.getClass().getMethod("get" + property).invoke(object);
+            return (String) object.getClass().getMethod("get" + property).invoke(object);
         } catch (Exception exception) {
             return null;
         }

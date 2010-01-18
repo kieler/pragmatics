@@ -65,7 +65,7 @@ public class ApplyOptionAction extends Action {
      * {@inheritDoc}
      */
     public void run() {
-        TreeItem[] treeItems = ((Tree)page.getControl()).getSelection();
+        TreeItem[] treeItems = ((Tree) page.getControl()).getSelection();
         for (TreeItem item : treeItems) {
             Object data = item.getData();
             if (data instanceof IPropertySheetEntry) {
@@ -109,7 +109,7 @@ public class ApplyOptionAction extends Action {
                     View notationView = diagramEditPart.getNotationView();
                     
                     // get the layout option style
-                    LayoutOptionStyle optionStyle = (LayoutOptionStyle)notationView
+                    LayoutOptionStyle optionStyle = (LayoutOptionStyle) notationView
                             .getStyle(LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
                     if (optionStyle == null) {
                         optionStyle = LayoutOptionsFactory.eINSTANCE.createLayoutOptionStyle();
@@ -154,15 +154,15 @@ public class ApplyOptionAction extends Action {
     private void removeChildOptions(final View notationView, final String optionId) {
         for (Object child : notationView.getPersistedChildren()) {
             View node = (View) child;
-            LayoutOptionStyle optionStyle = (LayoutOptionStyle)node
-                    .getStyle(LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
+            LayoutOptionStyle optionStyle = (LayoutOptionStyle) node.getStyle(
+                    LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
             if (optionStyle != null) {
                 KimlUiUtil.removeKOption(optionStyle, optionId);
             }
             for (Object edgeObj : node.getTargetEdges()) {
                 View edge = (View) edgeObj;
-                optionStyle = (LayoutOptionStyle)edge
-                        .getStyle(LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
+                optionStyle = (LayoutOptionStyle) edge.getStyle(
+                        LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
                 if (optionStyle != null) {
                     KimlUiUtil.removeKOption(optionStyle, optionId);
                 }

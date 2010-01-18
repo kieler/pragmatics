@@ -140,7 +140,7 @@ public final class KimlUiUtil {
                 editPart.getClass(), optionData.getId()) : null;
         if (result != null) {
             if (result instanceof Enum<?>) {
-                return ((Enum<?>)result).ordinal();
+                return ((Enum<?>) result).ordinal();
             } else {
                 return result;
             }
@@ -151,7 +151,7 @@ public final class KimlUiUtil {
                 optionData.getId()) : null;
         if (result != null) {
             if (result instanceof Enum<?>) {
-                return ((Enum<?>)result).ordinal();
+                return ((Enum<?>) result).ordinal();
             } else {
                 return result;
             }
@@ -228,7 +228,7 @@ public final class KimlUiUtil {
      * @return the corresponding option, or {@code null} if there is no such option
      */
     public static KOption getKOption(final IGraphicalEditPart editPart, final String optionId) {
-        LayoutOptionStyle optionStyle = (LayoutOptionStyle)editPart.getNotationView()
+        LayoutOptionStyle optionStyle = (LayoutOptionStyle) editPart.getNotationView()
                 .getStyle(LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
         if (optionStyle != null) {
             for (KOption koption : optionStyle.getOptions()) {
