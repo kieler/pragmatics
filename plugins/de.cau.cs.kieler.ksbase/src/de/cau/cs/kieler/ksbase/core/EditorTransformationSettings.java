@@ -351,12 +351,16 @@ public class EditorTransformationSettings implements Serializable {
             // Parse transformations with the framework
             List<AbstractTransformation> parseTransformations = framework
                     .parseInPlaceTransformations(fileName);
+            if (parseTransformations == null) {
+                KSBasEPlugin.getDefault().logError("Could not parse extensions for editor " + editorId);
+                return;
+            }
             // If we have any invalid transformations, i.e.
             // the transformation defined here has no transformation
             // match in the transformation file, we want to remove them.
             LinkedList<KSBasETransformation> cachedTransformations = 
                     new LinkedList<KSBasETransformation>();
-
+            
             for (AbstractTransformation t : parseTransformations) {
                 KSBasETransformation transformation = getTransformationByName(t.getTransformation());
                 if (transformation != null) {
