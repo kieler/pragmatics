@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.ui.views;
 
+import org.eclipse.gef.EditPart;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.views.properties.IPropertySheetEntry;
@@ -23,30 +24,30 @@ import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 
 /**
- * An action that sets the selected layout option as default for all instances of a
- * diagram type.
+ * An action that sets the selected layout option as default for all
+ * instances of an edit part.
  *
  * @author msp
  */
-public class DiagramTypeDefaultAction extends Action {
+public class EditPartDefaultAction extends Action {
 
     /** an identifier for the action. */
-    public static final String ACTION_ID = "kieler.diagram.type.default";
+    public static final String ACTION_ID = "kieler.edit.part.default";
 
     /** the icon used for this action. */
     private static ImageDescriptor icon = KimlUiPlugin.getImageDescriptor(
-            "icons/menu16/apply2diagramType.gif");
+            "icons/menu16/apply2editPart.gif");
 
     /** the layout view that created this action. */
     private LayoutViewPart layoutView;
     
     /**
-     * Creates a diagram type default action.
+     * Creates an edit part default action.
      * 
      * @param thelayoutView the layout view that created this action
      * @param text user friendly text
      */
-    public DiagramTypeDefaultAction(final LayoutViewPart thelayoutView, final String text) {
+    public EditPartDefaultAction(final LayoutViewPart thelayoutView, final String text) {
         super(text, icon);
         this.layoutView = thelayoutView;
     }
@@ -56,22 +57,22 @@ public class DiagramTypeDefaultAction extends Action {
      */
     @Override
     public void run() {
-        String diagramType = layoutView.getSelectedDiagramType();
-        if (diagramType != null) {
+        EditPart editPart = layoutView.getSelectedEditPart();
+        if (editPart != null) {
             for (IPropertySheetEntry entry : layoutView.getSelection()) {
-                setDefault(diagramType, entry);
+                setDefault(editPart, entry);
             }
         }
     }
     
     /**
      * Sets the layout option of the given property sheet entry as default for
-     * the given diagram type.
+     * the given edit part.
      * 
-     * @param diagramType a diagram type identifier
+     * @param editPart an edit part
      * @param entry a property sheet entry
      */
-    private void setDefault(final String diagramType, final IPropertySheetEntry entry) {
+    private void setDefault(final EditPart editPart, final IPropertySheetEntry entry) {
         LayoutOptionData optionData = null;
         for (LayoutOptionData data : LayoutServices.getInstance().getLayoutOptionData()) {
             if (data.getName().equals(entry.getDisplayName())) {
@@ -80,7 +81,7 @@ public class DiagramTypeDefaultAction extends Action {
             }
         }
         if (optionData != null) {
-            EclipseLayoutServices.getInstance().storeOption(diagramType,
+            EclipseLayoutServices.getInstance().storeOption(editPart,
                     optionData, entry.getValueAsString());
         }
     }

@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.kiml.ui.views;
 
 import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.CheckboxCellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -53,7 +52,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
             case STRING:
                 return images.getPropText();
             case BOOLEAN:
-                if (((Boolean)element).booleanValue()) {
+                if ((Integer) element == 0) {
                     return images.getPropTrue();
                 } else {
                     return images.getPropFalse();
@@ -78,7 +77,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
             case STRING:
                 LayoutServices layoutServices = LayoutServices.getInstance();
                 if (LayoutOptions.LAYOUT_HINT.equals(optionData.getId())) {
-                    String layoutHint = layoutHintValues[((Integer)element).intValue()];
+                    String layoutHint = layoutHintValues[(Integer) element];
                     String layoutType = layoutServices.getLayoutTypeName(layoutHint);
                     if (layoutType != null) {
                         return layoutType + " " + Messages.getString("kiml.ui.9");
@@ -94,16 +93,21 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
                     }
                     return layoutHint;
                 } else {
-                    return (String)element;
+                    return (String) element;
                 }
+            case BOOLEAN:
+                return BOOLEAN_CHOICES[(Integer) element];
             case ENUM:
-                return optionData.getEnumValue(((Integer)element).intValue()).toString();
+                return optionData.getChoices()[(Integer) element];
             default:
                 return element.toString();
             }
         }
         
     }
+    
+    /** choices for boolean cell editors. */
+    private static final String[] BOOLEAN_CHOICES = { "true", "false" };
     
     /** the layout option data associated with this property descriptor. */
     private LayoutOptionData optionData;
@@ -140,13 +144,13 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
                 return new TextCellEditor(parent);
             }
         case BOOLEAN:
-            return new CheckboxCellEditor(parent);
+            return new ComboBoxCellEditor(parent, BOOLEAN_CHOICES, SWT.READ_ONLY);
         case INT:
             CellEditor intEditor = new TextCellEditor(parent);
             intEditor.setValidator(new ICellEditorValidator() {
                 public String isValid(final Object value) {
                     try {
-                        Integer.parseInt((String)value);
+                        Integer.parseInt((String) value);
                         return null;
                     } catch (NumberFormatException exception) {
                         return Messages.getString("kiml.ui.6");
@@ -159,7 +163,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
             floatEditor.setValidator(new ICellEditorValidator() {
                 public String isValid(final Object value) {
                     try {
-                        Float.parseFloat((String)value);
+                        Float.parseFloat((String) value);
                         return null;
                     } catch (NumberFormatException exception) {
                         return Messages.getString("kiml.ui.7");

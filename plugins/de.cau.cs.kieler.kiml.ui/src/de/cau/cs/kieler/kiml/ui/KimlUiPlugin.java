@@ -51,7 +51,7 @@ public class KimlUiPlugin extends AbstractUIPlugin {
         private final Image propTrue;
 
         /**
-         * Loads all images for the KIML UI plugin.
+         * Loads property images for the KIML UI plugin.
          */
         Images() {
             propChoice = getImageDescriptor("icons/obj16/prop_choice.gif").createImage();
@@ -164,6 +164,10 @@ public class KimlUiPlugin extends AbstractUIPlugin {
      */
     @Override
     public void stop(final BundleContext context) throws Exception {
+        EclipseLayoutServices layoutServices = EclipseLayoutServices.getInstance();
+        if (layoutServices != null) {
+            layoutServices.storePreferences();
+        }
         plugin = null;
         if (images != null) {
             images.dispose();

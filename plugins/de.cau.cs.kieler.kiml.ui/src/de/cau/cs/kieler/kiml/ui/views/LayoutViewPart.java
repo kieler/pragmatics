@@ -20,10 +20,9 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
-import org.eclipse.gmf.runtime.notation.View;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -211,9 +210,9 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
             currentEditor = (DiagramEditor) part;
             ISelection selection = currentEditor.getDiagramGraphicalViewer().getSelection();
             page.selectionChanged(currentEditor, selection);
-            setPartText(selection);
             if (selection instanceof IStructuredSelection) {
                 currentSelection = (IStructuredSelection) selection;
+                setPartText(currentSelection);
             }
             currentEditor.getDiagramGraphicalViewer().addSelectionChangedListener(this);
         }
@@ -226,9 +225,9 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
         if (currentEditor != null) {
             ISelection selection = event.getSelection();
             page.selectionChanged(currentEditor, selection);
-            setPartText(selection);
             if (selection instanceof IStructuredSelection) {
                 currentSelection = (IStructuredSelection) selection;
+                setPartText(currentSelection);
             }
         }
     }
@@ -265,13 +264,15 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
      */
     private void addActions(final Menu menu) {
         final String applyOptionString = Messages.getString("kiml.ui.10"); //$NON-NLS-1$
-        final Action applyOptionAction = new ApplyOptionAction(this, applyOptionString);
+        final IAction applyOptionAction = new ApplyOptionAction(this, applyOptionString);
         final String setDefaultString = Messages.getString("kiml.ui.16"); //$NON-NLS-1$
-        final Action diagramTypeDefaultAction = new DiagramTypeDefaultAction(this, setDefaultString);
+        final IAction diagramTypeDefaultAction = new DiagramTypeDefaultAction(this, setDefaultString);
+        final IAction editPartDefaultAction = new EditPartDefaultAction(this, setDefaultString);
         // dirty hack to add actions to an existing menu without having the menu manager
         menu.addMenuListener(new MenuAdapter() {
             public void menuShown(final MenuEvent event) {
-                MenuItem applyOptionItem = null, diagramTypeDefaultItem = null;
+                MenuItem applyOptionItem = null, diagramTypeDefaultItem = null,
+                        editPartDefaultItem = null;
                 for (MenuItem item : menu.getItems()) {
                     if (item.getData() instanceof IContributionItem) {
                         String itemId = ((IContributionItem) item.getData()).getId();
@@ -279,6 +280,8 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
                             applyOptionItem = item;
                         } else if (DiagramTypeDefaultAction.ACTION_ID.equals(itemId)) {
                             diagramTypeDefaultItem = item;
+                        } else if (EditPartDefaultAction.ACTION_ID.equals(itemId)) {
+                            editPartDefaultItem = item;
                         }
                     }
                 }
@@ -314,8 +317,64 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
                         }
                     }
                 }
+                // add the "set as default for edit part" action
+                EditPart editPart = getSelectedEditPart();
+                if (editPart == null) {
+                    if (editPartDefaultItem != null) {
+                        editPartDefaultItem.setEnabled(false);
+                    }
+                } else {
+                    String editPartName = getReadableName(editPart, true);
+                    if (editPartDefaultItem == null) {
+                        editPartDefaultAction.setText(setDefaultString + " " + editPartName);
+                        ContributionItem contributionItem = new ActionContributionItem(
+                                editPartDefaultAction);
+                        contributionItem.setId(EditPartDefaultAction.ACTION_ID);
+                        contributionItem.fill(menu, -1);
+                    } else {
+                        editPartDefaultItem.setEnabled(true);
+                        editPartDefaultItem.setText(setDefaultString + " " + editPartName);
+                    }
+                }
             }
         });
+    }
+    
+    /** suffix of edit part class names. */
+    private static final String EDIT_PART_SUFFIX = "EditPart";
+    
+    /**
+     * Builds a readable name for the given edit part.
+     * 
+     * @param editPart an edit part
+     * @param plural if true, the plural form is created
+     * @return a readable name for the edit part
+     */
+    private String getReadableName(final EditPart editPart, final boolean plural) {
+        String className = null;
+        if (editPart instanceof IGraphicalEditPart) {
+            EObject model = ((IGraphicalEditPart) editPart).getNotationView().getElement();
+            className = model.eClass().getName();
+        } else {
+            className = editPart.getClass().getSimpleName();
+            if (className.endsWith(EDIT_PART_SUFFIX)) {
+                className = className.substring(0, className.length() - EDIT_PART_SUFFIX.length());
+            }
+        }
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < className.length(); i++) {
+            char c = className.charAt(i);
+            if (Character.isUpperCase(c) && i > 0) {
+                stringBuilder.append(' ');
+            }
+            if (!Character.isDigit(c)) {
+                stringBuilder.append(c);
+            }
+        }
+        if (plural && !className.endsWith("s")) {
+            stringBuilder.append('s');
+        }
+        return stringBuilder.toString();
     }
     
     /**
@@ -335,26 +394,36 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
         }
         return null;
     }
+
+    /**
+     * Returns the first edit part in the current selection for which options are shown.
+     * 
+     * @return the selected edit part, or {@code null} if there is none
+     */
+    public EditPart getSelectedEditPart() {
+        if (currentSelection != null) {
+            Object object = currentSelection.getFirstElement();
+            if (object instanceof IGraphicalEditPart) {
+                return GmfLayoutPropertySource.getShownEditPart((IGraphicalEditPart) object);
+            }
+        }
+        return null;
+    }
     
     /**
      * Sets a text line for the view part.
      * 
      * @param selection the current selection
      */
-    private void setPartText(final ISelection selection) {
-        if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
-            Object firstElement = ((IStructuredSelection) selection).getFirstElement();
-            if (firstElement instanceof EditPart) {
-                Object model = ((EditPart) firstElement).getModel();
-                if (model instanceof View) {
-                    model = ((View) model).getElement();
-                }
+    private void setPartText(final IStructuredSelection selection) {
+        Object firstElement = selection.getFirstElement();
+        if (firstElement instanceof IGraphicalEditPart) {
+            IGraphicalEditPart editPart = GmfLayoutPropertySource.getShownEditPart(
+                    (IGraphicalEditPart) firstElement);
+            if (editPart != null) {
                 StringBuilder textBuffer = new StringBuilder();
-                if (model instanceof EObject) {
-                    textBuffer.append(((EObject) model).eClass().getName());
-                } else {
-                    textBuffer.append(model.getClass().getSimpleName());
-                }
+                textBuffer.append(getReadableName(editPart, false));
+                Object model = editPart.getNotationView().getElement();
                 String name = getProperty(model, "Name");
                 if (name == null) {
                     name = getProperty(model, "Label");
@@ -366,6 +435,8 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
                     textBuffer.append(" '" + name + "'");
                 }
                 form.setText(textBuffer.toString());
+            } else {
+                form.setText("");
             }
         } else {
             form.setText("");

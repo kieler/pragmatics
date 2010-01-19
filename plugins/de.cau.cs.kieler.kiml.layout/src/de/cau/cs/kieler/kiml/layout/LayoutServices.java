@@ -53,9 +53,9 @@ public class LayoutServices {
 
     /** the singleton instance of the layout service. */
     private static LayoutServices instance = null;
-    /** the singleton instance of the registry class. */
-    private static Registry registry = null;
 
+    /** the instance of the registry class. */
+    private Registry registry = null;
     /** the list of layout listeners that have been loaded at startup. */
     private List<ILayoutListener> listeners = new LinkedList<ILayoutListener>();
     /** mapping of layout provider identifiers to their data instances. */
@@ -88,12 +88,22 @@ public class LayoutServices {
 
     /**
      * Creates an instance of the layout services and assigns the singleton
-     * instance of the registry. Subclasses that extend this method must call
-     * the superclass method first.
+     * instance of the registry.
      */
     public static void createLayoutServices() {
         instance = new LayoutServices();
-        registry = instance.new Registry();
+        instance.registry = instance.new Registry();
+    }
+    
+    /**
+     * Sets a layout services instance created by a specific subclass and assigns
+     * the singleton instance of the registry.
+     * 
+     * @param subclassInstance an instance created by a subclass
+     */
+    protected static void createLayoutServices(final LayoutServices subclassInstance) {
+        instance = subclassInstance;
+        instance.registry = instance.new Registry();
     }
 
     /**
@@ -101,7 +111,7 @@ public class LayoutServices {
      * 
      * @return the singleton instance
      */
-    public static final LayoutServices getInstance() {
+    public static LayoutServices getInstance() {
         return instance;
     }
 
@@ -111,6 +121,15 @@ public class LayoutServices {
      * @return the singleton registry
      */
     public static final Registry getRegistry() {
+        return instance.registry;
+    }
+
+    /**
+     * Returns the associated instance of the registry class.
+     * 
+     * @return the associated registry
+     */
+    protected final Registry registry() {
         return registry;
     }
 
@@ -253,13 +272,35 @@ public class LayoutServices {
         }
         
         /**
+         * Adds the given option as default for an edit part type.
+         * 
+         * @param editPartType class name of an edit part
+         * @param optionId identifier of a layout option
+         * @param value value for the layout option
+         */
+        public void addEditPartOption(final String editPartType, final String optionId,
+                final Object value) {
+            String bindingId = editPartBindingMap.get(editPartType);
+            if (bindingId == null) {
+                bindingId = editPartType + ".binding";
+                editPartBindingMap.put(editPartType, bindingId);
+            }
+            Map<String, Object> optionsMap = bindingOptionsMap.get(bindingId);
+            if (optionsMap == null) {
+                optionsMap = new LinkedHashMap<String, Object>();
+                bindingOptionsMap.put(bindingId, optionsMap);
+            }
+            optionsMap.put(optionId, value);
+        }
+        
+        /**
          * Adds the given option as default for a diagram type.
          * 
          * @param diagramType identifier of the diagram type
          * @param optionId identifier of a layout option
          * @param value value for the layout option
          */
-        public void addOption(final String diagramType, final String optionId,
+        public void addDiagramTypeOption(final String diagramType, final String optionId,
                 final Object value) {
             Map<String, Object> optionsMap = diagramTypeOptionsMap.get(diagramType);
             if (optionsMap == null) {

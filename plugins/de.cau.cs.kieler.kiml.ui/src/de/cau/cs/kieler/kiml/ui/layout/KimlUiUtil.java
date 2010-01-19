@@ -36,6 +36,7 @@ import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KOption;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.layout.options.PortConstraints;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
 import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyle;
 import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsPackage;
@@ -122,14 +123,19 @@ public final class KimlUiUtil {
      * @param optionData a layout option data
      * @param providerData the active layout provider data
      * @param editPart the current edit part
+     * @param containerEditPart the edit part that contains the objects for
+     *     which options are set
+     * @param hasChildren indicates whether the given edit part has children
+     *     in the layout graph
      * @return an object with the default value
      */
     public static Object getDefault(final LayoutOptionData optionData,
-            final LayoutProviderData providerData, final EditPart editPart) {
+            final LayoutProviderData providerData, final EditPart editPart,
+            final EditPart containerEditPart, final boolean hasChildren) {
         LayoutServices layoutServices = LayoutServices.getInstance();
         Object result = null;
         // check default option of diagram edit part
-        DiagramEditPart diagramEditPart = getDiagramEditPart(editPart);
+        DiagramEditPart diagramEditPart = getDiagramEditPart(containerEditPart);
         if (diagramEditPart != null) {
             KOption koption = getKOption(diagramEditPart, optionData.getId());
             if (koption != null && koption.isDefault()) {
@@ -137,38 +143,44 @@ public final class KimlUiUtil {
             }
         }
         
-        // check default option of the diagram type
-        String diagramType = (String) layoutServices.getOption(editPart.getClass(),
-                LayoutOptions.DIAGRAM_TYPE);
-        result = layoutServices.getOption(diagramType, optionData.getId());
-        if (result != null) {
-            if (result instanceof Enum<?>) {
-                return ((Enum<?>) result).ordinal();
-            } else {
-                return result;
-            }
-        }
-
-        // check default value set for the edit part
+        // check default value set for the actual edit part
         result = editPart != null ? layoutServices.getOption(
                 editPart.getClass(), optionData.getId()) : null;
         if (result != null) {
-            if (result instanceof Enum<?>) {
-                return ((Enum<?>) result).ordinal();
+            return result;
+        }
+        
+        // check default option of the diagram type
+        String diagramType = (String) layoutServices.getOption(containerEditPart.getClass(),
+                LayoutOptions.DIAGRAM_TYPE);
+        result = layoutServices.getOption(diagramType, optionData.getId());
+        if (result != null) {
+            return result;
+        }
+
+        // check default value for the container edit part
+        result = containerEditPart != null ? layoutServices.getOption(
+                containerEditPart.getClass(), optionData.getId()) : null;
+        if (result != null) {
+            return result;
+        }
+        
+        // fall back to default value of specific options
+        if (LayoutOptions.FIXED_SIZE.equals(optionData.getId())) {
+            return Boolean.valueOf(!hasChildren);
+        } else if (LayoutOptions.PORT_CONSTRAINTS.equals(optionData.getId())) {
+            if (hasChildren) {
+                return PortConstraints.FREE_PORTS.ordinal();
             } else {
-                return result;
+                return PortConstraints.FIXED_POS.ordinal();
             }
         }
 
-        // check default value of layout provider
+        // fall back to default value of layout provider
         result = providerData != null ? providerData.getInstance().getDefault(
                 optionData.getId()) : null;
         if (result != null) {
-            if (result instanceof Enum<?>) {
-                return ((Enum<?>) result).ordinal();
-            } else {
-                return result;
-            }
+            return result;
         }
         
         // fall back to default-default value
@@ -204,10 +216,7 @@ public final class KimlUiUtil {
         // get default layout options for the diagram type
         String diagramType = (String) layoutServices.getOption(editPart.getClass(),
                 LayoutOptions.DIAGRAM_TYPE);
-        Map<String, Object> diagramTypeOptions = layoutServices.getOptions(diagramType);
-        for (Entry<String, Object> entry : diagramTypeOptions.entrySet()) {
-            options.put(entry.getKey(), entry.getValue());
-        }
+        options.putAll(layoutServices.getOptions(diagramType));
         
         if (setUserOptions) {
             // get user defined global layout options
