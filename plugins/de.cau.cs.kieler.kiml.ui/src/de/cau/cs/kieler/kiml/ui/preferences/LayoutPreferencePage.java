@@ -14,16 +14,22 @@
 package de.cau.cs.kieler.kiml.ui.preferences;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
@@ -33,7 +39,9 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
 import de.cau.cs.kieler.kiml.layout.LayoutProviderData;
 import de.cau.cs.kieler.kiml.layout.LayoutServices;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
@@ -53,10 +61,12 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
     private String[] providerIds;
     /** array of diagram type identifiers. */
     private String[] diagramTypes;
-    /** data matrix: rows represent layout providers, columns represent diagram types. */
-    private int[][] data;
+    /** priority data matrix: rows represent layout providers, columns represent diagram types. */
+    private int[][] priorityData;
     /** the provider class that manages content of the priority table. */
-    private PriorityTableProvider tableProvider;
+    private PriorityTableProvider priorityTableProvider;
+    /** list of diagram type option entries. */
+    private List<OptionsTableProvider.DataEntry> diagramTypeEntries;
 
     /**
      * Creates the layout preference page.
@@ -70,8 +80,15 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
      * {@inheritDoc}
      */
     protected Control createContents(final Composite parent) {
-        return createPrioritiesGroup(parent);
+        Composite composite = new Composite(parent, SWT.NONE);
+        createPrioritiesGroup(composite);
+        createDiagramTypeGroup(composite);
+        composite.setLayout(new FillLayout(SWT.VERTICAL));
+        return composite;
     }
+    
+    /** fixed height of the priorities table. */
+    private static final int PRIORITIES_TABLE_HEIGHT = 180;
     
     /**
      * Creates the group that holds the priorities table.
@@ -97,7 +114,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
             return prioritiesGroup;
         }
         providerIds = new String[layoutProviderCount];
-        data = new int[layoutProviderCount][diagramTypes.length];
+        priorityData = new int[layoutProviderCount][diagramTypes.length];
         PriorityTableProvider.DataEntry[] tableEntries
                 = new PriorityTableProvider.DataEntry[layoutProviderCount];
         String[] layouterNames = new String[layoutProviderCount];
@@ -106,10 +123,10 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
             providerIds[i] = providerData.getId();
             tableEntries[i] = new PriorityTableProvider.DataEntry();
             tableEntries[i].setLayouterIndex(i);
-            tableEntries[i].setPriorities(data[i]);
+            tableEntries[i].setPriorities(priorityData[i]);
             layouterNames[i] = providerData.getName();
             for (int j = 0; j < diagramTypes.length; j++) {
-                data[i][j] = providerData.getSupportedPriority(diagramTypes[j]);
+                priorityData[i][j] = providerData.getSupportedPriority(diagramTypes[j]);
             }
             i++;
         }
@@ -117,7 +134,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         // construct the priorities table
         Label tableHeaderLabel = new Label(prioritiesGroup, SWT.WRAP);
         tableHeaderLabel.setText(Messages.getString("kiml.ui.3")); //$NON-NLS-1$
-        GridData labelLayoutData = new GridData(SWT.LEFT, SWT.FILL, false, false);
+        GridData labelLayoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
         tableHeaderLabel.setLayoutData(labelLayoutData);
         Table prioritiesTable = new Table(prioritiesGroup, SWT.BORDER);
         TableColumn[] columns = new TableColumn[diagramTypes.length + 1];
@@ -142,21 +159,118 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
             cellEditors[j + 1] = new TextCellEditor(prioritiesTable);
         }
         priorityTableViewer.setColumnProperties(columnProperties);
-        tableProvider = new PriorityTableProvider(priorityTableViewer, data, layouterNames);
-        priorityTableViewer.setContentProvider(tableProvider);
-        priorityTableViewer.setLabelProvider(tableProvider);
+        priorityTableProvider = new PriorityTableProvider(priorityTableViewer,
+                priorityData, layouterNames);
+        priorityTableViewer.setContentProvider(priorityTableProvider);
+        priorityTableViewer.setLabelProvider(priorityTableProvider);
         priorityTableViewer.setCellEditors(cellEditors);
-        priorityTableViewer.setCellModifier(tableProvider);
+        priorityTableViewer.setCellModifier(priorityTableProvider);
         priorityTableViewer.setInput(tableEntries);
         for (TableColumn column : columns) {
             column.pack();
         }
-        prioritiesTable.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
+        GridData tableLayoutData = new GridData(SWT.FILL, SWT.TOP, true, false);
+        prioritiesTable.setLayoutData(tableLayoutData);
         prioritiesTable.pack();
         labelLayoutData.widthHint = prioritiesTable.getSize().x;
+        tableLayoutData.heightHint = PRIORITIES_TABLE_HEIGHT;
 
         prioritiesGroup.setLayout(new GridLayout(1, false));
         return prioritiesGroup;
+    }
+    
+    /** fixed height of the options tables. */
+    private static final int OPTIONS_TABLE_HEIGHT = 120;
+    
+    /**
+     * Creates the group that holds the diagram type options table.
+     * 
+     * @param parent the parent control
+     * @return a group with the diagram type options table
+     */
+    private Group createDiagramTypeGroup(final Composite parent) {
+        Group diagramTypeGroup = new Group(parent, SWT.NONE);
+        diagramTypeGroup.setText(Messages.getString("kiml.ui.17")); //$NON-NLS-1$
+        IPreferenceStore preferenceStore = getPreferenceStore();
+        LayoutServices layoutServices = LayoutServices.getInstance();
+
+        List<Pair<String, String>> diagramTypeList = layoutServices.getDiagramTypes();
+        Collection<LayoutOptionData> layoutOptionData = layoutServices.getLayoutOptionData();
+        diagramTypeEntries = new LinkedList<OptionsTableProvider.DataEntry>();
+        for (Pair<String, String> diagramType : diagramTypeList) {
+            for (LayoutOptionData data : layoutOptionData) {
+                String preference = EclipseLayoutServices.getPreferenceName(
+                        diagramType.getFirst(), data.getId());
+                if (preferenceStore.contains(preference)) {
+                    Object value = data.parseValue(preferenceStore.getString(preference));
+                    if (value != null) {
+                        diagramTypeEntries.add(new OptionsTableProvider.DataEntry(
+                                diagramType.getSecond(), data, value));
+                    }
+                }
+            }
+        }
+        
+        // construct the diagram type options table
+        Table diagramTypeTable = new Table(diagramTypeGroup, SWT.BORDER);
+        TableColumn column1 = new TableColumn(diagramTypeTable, SWT.NONE);
+        column1.setText(Messages.getString("kiml.ui.18")); //$NON-NLS-1$
+        TableColumn column2 = new TableColumn(diagramTypeTable, SWT.NONE);
+        column2.setText(Messages.getString("kiml.ui.19")); //$NON-NLS-1$
+        TableColumn column3 = new TableColumn(diagramTypeTable, SWT.NONE);
+        column3.setText(Messages.getString("kiml.ui.20")); //$NON-NLS-1$
+        diagramTypeTable.setHeaderVisible(true);
+        final TableViewer diagramTypeTableViewer = new TableViewer(diagramTypeTable);
+        OptionsTableProvider optionsTableProvider = new OptionsTableProvider();
+        diagramTypeTableViewer.setContentProvider(optionsTableProvider);
+        diagramTypeTableViewer.setLabelProvider(optionsTableProvider);
+        diagramTypeTableViewer.setInput(diagramTypeEntries);
+        column1.pack();
+        column2.pack();
+        column3.pack();
+        GridData tableLayoutData = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
+        diagramTypeTable.setLayoutData(tableLayoutData);
+        diagramTypeTable.pack();
+        tableLayoutData.heightHint = OPTIONS_TABLE_HEIGHT;
+        
+        // add buttons to edit the diagram type options
+        final Maybe<Integer> selectionIndex = new Maybe<Integer>();
+        Composite composite = new Composite(diagramTypeGroup, SWT.NONE);
+        final Button editButton = new Button(composite, SWT.PUSH | SWT.CENTER);
+        editButton.setText(Messages.getString("kiml.ui.21")); //$NON-NLS-1$
+        editButton.setEnabled(false);
+        editButton.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(final SelectionEvent e) {
+                showEditDialog(selectionIndex.get());
+                diagramTypeTableViewer.refresh();
+            }
+        });
+        final Button removeButton = new Button(composite, SWT.PUSH | SWT.CENTER);
+        removeButton.setText(Messages.getString("kiml.ui.22")); //$NON-NLS-1$
+        removeButton.setEnabled(false);
+        removeButton.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(final SelectionEvent e) {
+                diagramTypeEntries.remove(selectionIndex.get());
+                diagramTypeTableViewer.setInput(diagramTypeEntries);
+                if (diagramTypeEntries.size() == 0) {
+                    editButton.setEnabled(false);
+                    removeButton.setEnabled(false);
+                }
+            }
+        });
+        diagramTypeTable.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(final SelectionEvent e) {
+                selectionIndex.set(Integer.valueOf(e.detail));
+                editButton.setEnabled(true);
+                removeButton.setEnabled(true);
+            }
+        });
+        composite.setLayout(new FillLayout(SWT.VERTICAL));
+        GridData compositeLayoutData = new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1);
+        composite.setLayoutData(compositeLayoutData);
+
+        diagramTypeGroup.setLayout(new GridLayout(2, false));
+        return diagramTypeGroup;
     }
 
     /** maximal length of displayed diagram type names. */
@@ -186,6 +300,10 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
             }
         }
     }
+    
+    private void showEditDialog(final int selectionIndex) {
+        System.out.println("hu");
+    }
 
     /**
      * {@inheritDoc}
@@ -200,9 +318,9 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
     @Override
     protected void performDefaults() {
         super.performDefaults();
-        if (data != null) {
-            EclipseLayoutServices.readSupportPriorities(data, providerIds, diagramTypes);
-            tableProvider.refresh();
+        if (priorityData != null) {
+            EclipseLayoutServices.readSupportPriorities(priorityData, providerIds, diagramTypes);
+            priorityTableProvider.refresh();
         }
     }
 
@@ -211,13 +329,13 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
      */
     @Override
     public boolean performOk() {
-        if (data != null) {
+        if (priorityData != null) {
             for (int i = 0; i < providerIds.length; i++) {
                 LayoutProviderData providerData = LayoutServices.getInstance().getLayoutProviderData(
                         providerIds[i]);
                 for (int j = 0; j < diagramTypes.length; j++) {
                     int oldPriority = providerData.getSupportedPriority(diagramTypes[j]);
-                    int newPriority = data[i][j];
+                    int newPriority = priorityData[i][j];
                     if (oldPriority != newPriority) {
                         providerData.setDiagramSupport(diagramTypes[j], newPriority);
                         String preference = EclipseLayoutServices.getPreferenceName(

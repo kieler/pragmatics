@@ -155,7 +155,7 @@ public class PriorityTableProvider extends LabelProvider
      */
     public Object[] getElements(final Object inputElement) {
         if (inputElement instanceof DataEntry[]) {
-            return (DataEntry[])inputElement;
+            return (DataEntry[]) inputElement;
         } else {
             return null;
         }
@@ -172,8 +172,8 @@ public class PriorityTableProvider extends LabelProvider
      */
     public Image getColumnImage(final Object element, final int columnIndex) {
         if (element instanceof DataEntry) {
-            DataEntry entry = (DataEntry)element;
-            if (columnIndex > 0 && maxIndices[columnIndex - 1] == entry.getLayouterIndex()) {
+            DataEntry entry = (DataEntry) element;
+            if (columnIndex > 0 && maxIndices[columnIndex - 1] == entry.layouterIndex) {
                 return activeImage;
             }
         }
@@ -185,11 +185,11 @@ public class PriorityTableProvider extends LabelProvider
      */
     public String getColumnText(final Object element, final int columnIndex) {
         if (element instanceof DataEntry) {
-            DataEntry entry = (DataEntry)element;
+            DataEntry entry = (DataEntry) element;
             if (columnIndex == 0) {
-                return layouterNames[entry.getLayouterIndex()];
+                return layouterNames[entry.layouterIndex];
             }
-            int prio = entry.getPriorities()[columnIndex - 1];
+            int prio = entry.priorities[columnIndex - 1];
             return prio <= LayoutProviderData.MIN_PRIORITY
                     ? null : Integer.toString(prio);
         } else {
@@ -208,10 +208,10 @@ public class PriorityTableProvider extends LabelProvider
      * {@inheritDoc}
      */
     public Object getValue(final Object element, final String property) {
-        DataEntry entry = (DataEntry)element;
+        DataEntry entry = (DataEntry) element;
         try {
             int typeIndex = Integer.parseInt(property);
-            int prio = entry.getPriorities()[typeIndex];
+            int prio = entry.priorities[typeIndex];
             return prio <= LayoutProviderData.MIN_PRIORITY
                     ? "0" : Integer.toString(prio);
         } catch (NumberFormatException exception) {
@@ -223,12 +223,12 @@ public class PriorityTableProvider extends LabelProvider
      * {@inheritDoc}
      */
     public void modify(final Object element, final String property, final Object value) {
-        DataEntry entry = (DataEntry)((TableItem)element).getData();
+        DataEntry entry = (DataEntry) ((TableItem) element).getData();
         int typeIndex = Integer.parseInt(property);
         try {
-            entry.getPriorities()[typeIndex] = Integer.parseInt((String)value);
+            entry.priorities[typeIndex] = Integer.parseInt((String) value);
         } catch (NumberFormatException exception) {
-            entry.getPriorities()[typeIndex] = LayoutProviderData.MIN_PRIORITY;
+            entry.priorities[typeIndex] = LayoutProviderData.MIN_PRIORITY;
         }
         calcMaxIndex(typeIndex);
         priorityTableViewer.refresh();

@@ -21,6 +21,8 @@ import java.util.Map;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
 import de.cau.cs.kieler.core.KielerException;
@@ -186,9 +188,7 @@ public final class GraphvizAPI {
                     }
                 }
                 if (!foundExec) {
-                    PreferenceDialog preferenceDialog = PreferencesUtil.createPreferenceDialogOn(null,
-                            GraphvizPreferencePage.ID, null, null);
-                    preferenceDialog.open();
+                    handleExecPath();
                     // fetch the executable string again after the user has entered a new path
                     dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
                 }
@@ -205,6 +205,22 @@ public final class GraphvizAPI {
             }
         }
         return graphvizProcess;
+    }
+    
+    /**
+     * Handle missing path to the dot executable. The Graphviz preference page is opened
+     * so the user can enter the correct path. The method returns after the preference
+     * page has been closed.
+     */
+    private static void handleExecPath() {
+        final Display display = PlatformUI.getWorkbench().getDisplay();
+        display.syncExec(new Runnable() {
+            public void run() {
+                PreferenceDialog preferenceDialog = PreferencesUtil.createPreferenceDialogOn(
+                        display.getActiveShell(), GraphvizPreferencePage.ID, new String[] {}, null);
+                preferenceDialog.open();
+            }
+        });
     }
     
     /**
