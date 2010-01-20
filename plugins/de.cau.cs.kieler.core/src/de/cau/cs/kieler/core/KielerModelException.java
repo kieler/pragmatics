@@ -21,7 +21,7 @@ package de.cau.cs.kieler.core;
  * part.
  * @author haf
  *
- * @kieler.rating 2010-01-19 [proposed] yellow proposed by haf
+ * @kieler.rating 2010-01-19 proposed yellow proposed by haf
  */
 public class KielerModelException extends KielerException {
 
