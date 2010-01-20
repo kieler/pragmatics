@@ -35,7 +35,9 @@ public class OptionsTableProvider extends LabelProvider implements ITableLabelPr
     /** data type for row entries in the table. */
     public static class DataEntry {
         /** name of the associated diagram type or element type. */
-        private String associatedType;
+        private String associatedTypeName;
+        /** identifier of the associated diagram type or element type. */
+        private String associatedTypeId;
         /** layout option data. */
         private LayoutOptionData optionData;
         /** the current value. */
@@ -44,30 +46,41 @@ public class OptionsTableProvider extends LabelProvider implements ITableLabelPr
         /**
          * Creates a data entry.
          * 
-         * @param thetype name of the associated diagram type or element type
+         * @param thetypeName name of the associated diagram type or element type
+         * @param thetypeId identifier of the associated diagram type or element type
          * @param theoptionData layout option data
          * @param thevalue the current value
          */
-        public DataEntry(final String thetype, final LayoutOptionData theoptionData,
-                final Object thevalue) {
-            this.associatedType = thetype;
+        public DataEntry(final String thetypeName, final String thetypeId,
+                final LayoutOptionData theoptionData, final Object thevalue) {
+            this.associatedTypeName = thetypeName;
+            this.associatedTypeId = thetypeId;
             this.optionData = theoptionData;
             this.value = thevalue;
         }
 
         /**
-         * Returns the associatedType.
+         * Returns the associated type name.
          *
-         * @return the associatedType
+         * @return the associated type name
          */
-        public String getAssociatedType() {
-            return associatedType;
+        public String getAssociatedTypeName() {
+            return associatedTypeName;
+        }
+        
+        /**
+         * Returns the associated type identifier.
+         * 
+         * @return the associated type identifier
+         */
+        public String getAssociatedTypeId() {
+            return associatedTypeId;
         }
 
         /**
-         * Returns the optionData.
+         * Returns the option data.
          *
-         * @return the optionData
+         * @return the option data
          */
         public LayoutOptionData getOptionData() {
             return optionData;
@@ -80,6 +93,15 @@ public class OptionsTableProvider extends LabelProvider implements ITableLabelPr
          */
         public Object getValue() {
             return value;
+        }
+        
+        /**
+         * Sets the value.
+         * 
+         * @param thevalue the new value
+         */
+        public void setValue(final Object thevalue) {
+            this.value = thevalue;
         }
     }
     
@@ -118,7 +140,7 @@ public class OptionsTableProvider extends LabelProvider implements ITableLabelPr
             DataEntry entry = (DataEntry) element;
             switch (columnIndex) {
             case 0:
-                return entry.associatedType;
+                return entry.associatedTypeName;
             case 1:
                 return entry.optionData.getName();
             case 2:

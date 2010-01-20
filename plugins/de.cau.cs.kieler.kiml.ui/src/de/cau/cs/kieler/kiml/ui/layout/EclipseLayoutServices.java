@@ -498,4 +498,13 @@ public class EclipseLayoutServices extends LayoutServices {
         preferenceStore.setValue(PREF_REG_EDIT_PARTS, editPartsString.toString());
     }
 
+    /**
+     * Returns the set of registered edit parts.
+     * 
+     * @return the set of registered edit parts
+     */
+    public Set<String> getRegisteredEditParts() {
+        return registeredEditParts;
+    }
+
 }

@@ -16,8 +16,10 @@ package de.cau.cs.kieler.kiml.ui.preferences;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.CellEditor;
@@ -34,6 +36,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IWorkbench;
@@ -45,6 +48,7 @@ import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
 import de.cau.cs.kieler.kiml.layout.LayoutProviderData;
 import de.cau.cs.kieler.kiml.layout.LayoutServices;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
+import de.cau.cs.kieler.kiml.ui.LayoutOptionValidator;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
@@ -67,6 +71,8 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
     private PriorityTableProvider priorityTableProvider;
     /** list of diagram type option entries. */
     private List<OptionsTableProvider.DataEntry> diagramTypeEntries;
+    /** list of edit part option entries. */
+    private List<OptionsTableProvider.DataEntry> editPartEntries;
 
     /**
      * Creates the layout preference page.
@@ -81,9 +87,14 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
      */
     protected Control createContents(final Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
-        createPrioritiesGroup(composite);
-        createDiagramTypeGroup(composite);
-        composite.setLayout(new FillLayout(SWT.VERTICAL));
+        Group prioGroup = createPrioritiesGroup(composite);
+        prioGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+        Group diagTypeGroup = createDiagramTypeGroup(composite);
+        diagTypeGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+        Group editPartGroup = createEditPartGroup(composite);
+        editPartGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+        GridLayout compositeLayout = new GridLayout(1, false);
+        composite.setLayout(compositeLayout);
         return composite;
     }
     
@@ -205,7 +216,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
                     Object value = data.parseValue(preferenceStore.getString(preference));
                     if (value != null) {
                         diagramTypeEntries.add(new OptionsTableProvider.DataEntry(
-                                diagramType.getSecond(), data, value));
+                                diagramType.getSecond(), diagramType.getFirst(), data, value));
                     }
                 }
             }
@@ -234,15 +245,98 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         tableLayoutData.heightHint = OPTIONS_TABLE_HEIGHT;
         
         // add buttons to edit the diagram type options
+        addOptionActions(diagramTypeGroup, diagramTypeTable, diagramTypeTableViewer,
+                diagramTypeEntries);
+
+        diagramTypeGroup.setLayout(new GridLayout(2, false));
+        return diagramTypeGroup;
+    }
+    
+    /**
+     * Creates the group that holds the edit part options table.
+     * 
+     * @param parent the parent control
+     * @return a group with the edit part options table
+     */
+    private Group createEditPartGroup(final Composite parent) {
+        Group editPartGroup = new Group(parent, SWT.NONE);
+        editPartGroup.setText(Messages.getString("kiml.ui.28")); //$NON-NLS-1$
+        IPreferenceStore preferenceStore = getPreferenceStore();
+        LayoutServices layoutServices = LayoutServices.getInstance();
+
+        Set<String> editParts = EclipseLayoutServices.getInstance().getRegisteredEditParts();
+        Collection<LayoutOptionData> layoutOptionData = layoutServices.getLayoutOptionData();
+        editPartEntries = new LinkedList<OptionsTableProvider.DataEntry>();
+        for (String editPart : editParts) {
+            for (LayoutOptionData data : layoutOptionData) {
+                String preference = EclipseLayoutServices.getPreferenceName(editPart, data.getId());
+                if (preferenceStore.contains(preference)) {
+                    Object value = data.parseValue(preferenceStore.getString(preference));
+                    if (value != null) {
+                        int dotIndex = editPart.lastIndexOf('.');
+                        String partName = editPart.substring(dotIndex + 1);
+                        if (partName.endsWith("EditPart")) {
+                            partName = partName.substring(0, partName.length() - "EditPart".length());
+                        }
+                        editPartEntries.add(new OptionsTableProvider.DataEntry(
+                                partName, editPart, data, value));
+                    }
+                }
+            }
+        }
+        
+        // construct the diagram type options table
+        Table editPartTable = new Table(editPartGroup, SWT.BORDER);
+        TableColumn column1 = new TableColumn(editPartTable, SWT.NONE);
+        column1.setText(Messages.getString("kiml.ui.29")); //$NON-NLS-1$
+        TableColumn column2 = new TableColumn(editPartTable, SWT.NONE);
+        column2.setText(Messages.getString("kiml.ui.19")); //$NON-NLS-1$
+        TableColumn column3 = new TableColumn(editPartTable, SWT.NONE);
+        column3.setText(Messages.getString("kiml.ui.20")); //$NON-NLS-1$
+        editPartTable.setHeaderVisible(true);
+        final TableViewer editPartTableViewer = new TableViewer(editPartTable);
+        OptionsTableProvider optionsTableProvider = new OptionsTableProvider();
+        editPartTableViewer.setContentProvider(optionsTableProvider);
+        editPartTableViewer.setLabelProvider(optionsTableProvider);
+        editPartTableViewer.setInput(editPartEntries);
+        column1.pack();
+        column2.pack();
+        column3.pack();
+        GridData tableLayoutData = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
+        editPartTable.setLayoutData(tableLayoutData);
+        editPartTable.pack();
+        tableLayoutData.heightHint = OPTIONS_TABLE_HEIGHT;
+        
+        // add buttons to edit the diagram type options
+        addOptionActions(editPartGroup, editPartTable, editPartTableViewer,
+                editPartEntries);
+
+        editPartGroup.setLayout(new GridLayout(2, false));
+        return editPartGroup;
+    }
+    
+    /**
+     * Adds buttons to edit the shown diagram types.
+     * 
+     * @param parent the parent to which buttons are added
+     * @param table the table
+     * @param tableViewer the table viewer
+     * @param entries the list of table entries
+     */
+    private void addOptionActions(final Composite parent, final Table table,
+            final TableViewer tableViewer, final List<OptionsTableProvider.DataEntry> entries) {
         final Maybe<Integer> selectionIndex = new Maybe<Integer>();
-        Composite composite = new Composite(diagramTypeGroup, SWT.NONE);
+        Composite composite = new Composite(parent, SWT.NONE);
         final Button editButton = new Button(composite, SWT.PUSH | SWT.CENTER);
         editButton.setText(Messages.getString("kiml.ui.21")); //$NON-NLS-1$
         editButton.setEnabled(false);
         editButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent e) {
-                showEditDialog(selectionIndex.get());
-                diagramTypeTableViewer.refresh();
+                int index = selectionIndex.get() == null ? -1 : selectionIndex.get();
+                if (index >= 0 && index < entries.size()) {
+                    showEditDialog(parent.getShell(), entries.get(index));
+                    tableViewer.refresh();
+                }
             }
         });
         final Button removeButton = new Button(composite, SWT.PUSH | SWT.CENTER);
@@ -250,27 +344,25 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         removeButton.setEnabled(false);
         removeButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent e) {
-                diagramTypeEntries.remove(selectionIndex.get());
-                diagramTypeTableViewer.setInput(diagramTypeEntries);
-                if (diagramTypeEntries.size() == 0) {
+                entries.remove(selectionIndex.get().intValue());
+                tableViewer.setInput(entries);
+            }
+        });
+        table.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(final SelectionEvent e) {
+                if (!entries.isEmpty() && e.item != null) {
+                    selectionIndex.set(Integer.valueOf(e.detail));
+                    editButton.setEnabled(true);
+                    removeButton.setEnabled(true);
+                } else {
                     editButton.setEnabled(false);
                     removeButton.setEnabled(false);
                 }
             }
         });
-        diagramTypeTable.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(final SelectionEvent e) {
-                selectionIndex.set(Integer.valueOf(e.detail));
-                editButton.setEnabled(true);
-                removeButton.setEnabled(true);
-            }
-        });
         composite.setLayout(new FillLayout(SWT.VERTICAL));
         GridData compositeLayoutData = new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1);
         composite.setLayoutData(compositeLayoutData);
-
-        diagramTypeGroup.setLayout(new GridLayout(2, false));
-        return diagramTypeGroup;
     }
 
     /** maximal length of displayed diagram type names. */
@@ -301,8 +393,27 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         }
     }
     
-    private void showEditDialog(final int selectionIndex) {
-        System.out.println("hu");
+    /**
+     * Shows an input dialog to edit the given option table entry.
+     * 
+     * @param shell the current shell
+     * @param entry an option table entry
+     */
+    private void showEditDialog(final Shell shell, final OptionsTableProvider.DataEntry entry) {
+        LayoutOptionData optionData = entry.getOptionData();
+        String value = entry.getValue().toString();
+        InputDialog dialog = new InputDialog(shell, Messages.getString("kiml.ui.23"),
+                Messages.getString("kiml.ui.24"), value, new LayoutOptionValidator(optionData));
+        if (dialog.open() == InputDialog.OK) {
+            String result = dialog.getValue().trim();
+            switch (optionData.getType()) {
+            case ENUM:
+                entry.setValue(optionData.parseValue(result.toUpperCase()));
+                break;
+            default:
+                entry.setValue(optionData.parseValue(result));
+            }
+        }
     }
 
     /**
@@ -329,6 +440,9 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
      */
     @Override
     public boolean performOk() {
+        LayoutServices layoutServices = LayoutServices.getInstance();
+        
+        // store data for the priorities table
         if (priorityData != null) {
             for (int i = 0; i < providerIds.length; i++) {
                 LayoutProviderData providerData = LayoutServices.getInstance().getLayoutProviderData(
@@ -344,8 +458,48 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
                     }
                 }
             }
-            LayoutViewPart.refreshLayoutView();
         }
+        
+        // store data for the diagram type options
+//        List<Pair<String, String>> diagramTypeList = layoutServices.getDiagramTypes();
+//        Collection<LayoutOptionData> layoutOptionData = layoutServices.getLayoutOptionData();
+//        for (Pair<String, String> diagramType : diagramTypeList) {
+//            for (LayoutOptionData data : layoutOptionData) {
+//                String preference = EclipseLayoutServices.getPreferenceName(
+//                        diagramType.getFirst(), data.getId());
+//                if (preferenceStore.contains(preference)) {
+//                    Object value = data.parseValue(preferenceStore.getString(preference));
+//                    if (value != null) {
+//                        diagramTypeEntries.add(new OptionsTableProvider.DataEntry(
+//                                diagramType.getSecond(), diagramType.getFirst(), data, value));
+//                    }
+//                }
+//            }
+//        }
+//        
+//        // store data for the edit part options
+//        Set<String> editParts = EclipseLayoutServices.getInstance().getRegisteredEditParts();
+//        Collection<LayoutOptionData> layoutOptionData = layoutServices.getLayoutOptionData();
+//        editPartEntries = new LinkedList<OptionsTableProvider.DataEntry>();
+//        for (String editPart : editParts) {
+//            for (LayoutOptionData data : layoutOptionData) {
+//                String preference = EclipseLayoutServices.getPreferenceName(editPart, data.getId());
+//                if (preferenceStore.contains(preference)) {
+//                    Object value = data.parseValue(preferenceStore.getString(preference));
+//                    if (value != null) {
+//                        int dotIndex = editPart.lastIndexOf('.');
+//                        String partName = editPart.substring(dotIndex + 1);
+//                        if (partName.endsWith("EditPart")) {
+//                            partName = partName.substring(0, partName.length() - "EditPart".length());
+//                        }
+//                        editPartEntries.add(new OptionsTableProvider.DataEntry(
+//                                partName, editPart, data, value));
+//                    }
+//                }
+//            }
+//        }
+
+        LayoutViewPart.refreshLayoutView();
         return true;
     }
 

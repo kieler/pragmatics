@@ -218,6 +218,9 @@ public class LayoutOptionData {
             throw new IllegalStateException("Invalid type set for this layout option.");
         }
     }
+    
+    /** choices for boolean type options. */
+    public static final String[] BOOLEAN_CHOICES = { "true", "false" };
 
     /**
      * Creates an array of choices that can be selected by the user to set a
@@ -236,6 +239,9 @@ public class LayoutOptionData {
                 for (int i = 0; i < enums.length; i++) {
                     choices[i] = enums[i].toString();
                 }
+                break;
+            case BOOLEAN:
+                choices = BOOLEAN_CHOICES;
                 break;
             default:
                 choices = new String[0];

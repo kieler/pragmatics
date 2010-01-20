@@ -96,7 +96,6 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
                     return (String) element;
                 }
             case BOOLEAN:
-                return BOOLEAN_CHOICES[(Integer) element];
             case ENUM:
                 return optionData.getChoices()[(Integer) element];
             default:
@@ -105,9 +104,6 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
         }
         
     }
-    
-    /** choices for boolean cell editors. */
-    private static final String[] BOOLEAN_CHOICES = { "true", "false" };
     
     /** the layout option data associated with this property descriptor. */
     private LayoutOptionData optionData;
@@ -143,8 +139,6 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
             } else {
                 return new TextCellEditor(parent);
             }
-        case BOOLEAN:
-            return new ComboBoxCellEditor(parent, BOOLEAN_CHOICES, SWT.READ_ONLY);
         case INT:
             CellEditor intEditor = new TextCellEditor(parent);
             intEditor.setValidator(new ICellEditorValidator() {
@@ -171,6 +165,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
                 }
             });
             return floatEditor;
+        case BOOLEAN:
         case ENUM:
             return new ComboBoxCellEditor(parent, optionData.getChoices(), SWT.READ_ONLY);
         default:
