@@ -50,7 +50,10 @@ public class EditorTransformationSettings implements Serializable {
     private String defaultIcon;
     /** Editor ID to which this setting is assigned. **/
     private String editorId;
-    /** Transformatiopn file in which the transformations are defined. **/
+    /**
+     * Transformatiopn file in which the transformations are defined. This is a String representing
+     * an absolute path.
+     **/
     private String transformationFile;
     /** The context for the diagram editor, required for key bindings. **/
     private String context;
@@ -241,22 +244,22 @@ public class EditorTransformationSettings implements Serializable {
     }
 
     /**
-     * Returns the text representation of the transformation file.
+     * Returns the absolute path to the transformation file.
      * 
-     * @return An transformation file in plain text
+     * @return An abolute path.
      */
     public final String getTransformationFile() {
         return transformationFile;
     }
 
     /**
-     * Sets the content of the transformation file.
+     * Sets the path to the transformation file.
      * 
-     * @param file
-     *            An transformation file in plain text
+     * @param absolutePath
+     *            An absolute path
      */
-    public final void setTransformationFile(final String file) {
-        this.transformationFile = file;
+    public final void setTransformationFile(final String absolutePath) {
+        this.transformationFile = absolutePath;
     }
 
     /**
@@ -343,14 +346,14 @@ public class EditorTransformationSettings implements Serializable {
      * @param createTransformations
      *            If this flag is set the transformations are created while parsing. If not, the
      *            parameters of the existing transformations are matched with the file.
-     * @param fileName
+     * @param fileURL
      *            a valid URL to an transformation file.
      */
-    public final void parseTransformations(final boolean createTransformations, final URL fileName) {
+    public final void parseTransformations(final boolean createTransformations, final URL fileURL) {
         if (framework != null) {
             // Parse transformations with the framework
             List<AbstractTransformation> parseTransformations = framework
-                    .parseInPlaceTransformations(fileName);
+                    .parseInPlaceTransformations(fileURL);
             if (parseTransformations == null) {
                 KSBasEPlugin.getDefault().logError("Could not parse extensions for editor " + editorId);
                 return;
@@ -359,7 +362,7 @@ public class EditorTransformationSettings implements Serializable {
             // the transformation defined here has no transformation
             // match in the transformation file, we want to remove them.
             LinkedList<KSBasETransformation> cachedTransformations = 
-                    new LinkedList<KSBasETransformation>();
+                new LinkedList<KSBasETransformation>();
             
             for (AbstractTransformation t : parseTransformations) {
                 KSBasETransformation transformation = getTransformationByName(t.getTransformation());

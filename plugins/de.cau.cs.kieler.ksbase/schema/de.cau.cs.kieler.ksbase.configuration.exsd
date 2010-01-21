@@ -170,6 +170,14 @@ The Attribute &apos;XtendFile&apos; will be removed in future versions.
                </appinfo>
             </annotation>
          </attribute>
+         <attribute name="validation" type="string">
+            <annotation>
+               <documentation>
+                  An optional transformation that may be used to add additional validations for menu visibility and enablement.
+Make sure that the transformation is short and fast, it is not recommended to call Java code for validation!
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

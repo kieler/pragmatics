@@ -28,16 +28,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 
-import org.eclipse.core.runtime.ContributorFactoryOSGi;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleException;
-import org.osgi.service.packageadmin.PackageAdmin;
 
 import de.cau.cs.kieler.core.model.transformation.ITransformationFramework;
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
@@ -65,6 +61,8 @@ public final class TransformationManager {
 
     /** Id of the KSBasE configuration extension point. **/
     private static final String KSBASE_EXTENSIONPOINT = "de.cau.cs.kieler.ksbase.configurations";
+    /** Id of the KSBasE configuration extension point. **/
+    private static final String KSBASE_LOADER_EXTENSIONPOINT = "de.cau.cs.kieler.ksbase.activator";
 
     /**
      * FileNameFilter to check a file for a valid settings file. The extension has to be '.sbase' to
@@ -279,10 +277,11 @@ public final class TransformationManager {
                         }
                     } catch (FileNotFoundException e) {
                         KSBasEPlugin.getDefault().logError(
-                                "Error while parsing settings: file not found.");
+                                "Error while parsing user defined settings file not found.");
                     } catch (IOException e) {
                         KSBasEPlugin.getDefault().logError(
-                                "Error while parsing settings: file not found.");
+                                "Error while parsing user defined settings, file "
+                                        + file.getAbsolutePath() + " seems to be corrupted.");
                     } catch (ClassNotFoundException e) {
                         KSBasEPlugin.getDefault().logError("Error while parsing settings.");
                     } finally {
@@ -310,7 +309,7 @@ public final class TransformationManager {
         IConfigurationElement[] configurations = Platform.getExtensionRegistry()
                 .getConfigurationElementsFor(KSBASE_EXTENSIONPOINT);
         for (IConfigurationElement settings : configurations) {
-           
+
             // Check for valid Configuration:
             if (!settings.getName().equals("configuration")
                     || settings.getAttribute("editorId") == null
@@ -344,6 +343,7 @@ public final class TransformationManager {
                     transformation.setKeyboardShortcut(t.getAttribute("keyboardShortcut"));
                     transformation.setTransformationId(t.getAttribute("transformationId"));
                     transformation.setIcon(t.getAttribute("icon"));
+                    transformation.setValidation(t.getAttribute("validation"));
                     editor.addTransformation(transformation);
                 }
             }
@@ -399,7 +399,7 @@ public final class TransformationManager {
             }
 
             // Read file from extension point configuration
-            InputStream path;
+            InputStream inStream;
             StringBuffer contentBuffer = new StringBuffer();
             try {
                 if (settings.getContributor() != null) {
@@ -427,15 +427,40 @@ public final class TransformationManager {
                         // parameters now:
                         editor.parseTransformations(false, urlPath);
                         if (urlPath != null) {
-                            path = urlPath.openStream();
-                            while (path.available() > 0) {
-                                contentBuffer.append((char) path.read());
+                            inStream = urlPath.openStream();
+                            while (inStream.available() > 0) {
+                                contentBuffer.append((char) inStream.read());
 
                             }
                         }
                     }
-                    if (contentBuffer != null) {
-                        editor.setTransformationFile(contentBuffer.toString());
+                    // Write transformation file to .metadata
+                    IPath path = ResourcesPlugin.getPlugin().getStateLocation();
+                    // Transformation file name:
+                    path = path.append(editor.getEditorId());
+                    // Add extension:
+                    path = path.addFileExtension(editor.getFramework().getFileExtension());
+
+                    File file = new File(path.toOSString());
+                    if (file != null) {
+                        FileOutputStream out = new FileOutputStream(file);
+                        if (out != null) {
+                            if (!file.exists()) {
+                                if (!file.createNewFile()) {
+                                    KSBasEPlugin.getDefault().logError(
+                                            "Error while storing transformation file for editor: "
+                                                    + editor.getEditorId());
+                                }
+                            }
+
+                            out.write(contentBuffer.toString().getBytes());
+                            out.flush();
+                            out.close();
+                        }
+                        // Set delete on exit flag, so the files will be cleaned when exiting
+                        // eclipse
+                        file.deleteOnExit();
+                        editor.setTransformationFile(file.getAbsolutePath());
                     }
                 }
             } catch (IOException e) {
@@ -449,11 +474,34 @@ public final class TransformationManager {
     }
 
     /**
+     * Activates all projects that are using the project loader extension point.
+     */
+    private void activateProjects() {
+        // From extension points first:
+        IConfigurationElement[] configurations = Platform.getExtensionRegistry()
+                .getConfigurationElementsFor(KSBASE_LOADER_EXTENSIONPOINT);
+        if (configurations != null) {
+            for (IConfigurationElement config : configurations) {
+                if (config != null && config.getAttribute("class") != null) {
+                    try {
+                        config.createExecutableExtension("class");
+                    } catch (CoreException e) {
+                        //There are maybe some dependency tree related exceptions here, but the
+                        //actual project was activated so we do not care.
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Initializes the transformation manager by reading the extension points and the user defined
      * settings.
      */
     public void initializeTransformations() {
         initializeExtensionPoints();
         initalizeUserSettings();
+        activateProjects();
     }
+
 }

@@ -116,7 +116,7 @@ public class TransformationCommand extends AbstractTransactionalCommand {
      * @param command
      *            The command to execute
      * @param fileName
-     *            Name of the .ext transformation file
+     *            Name of the transformation file
      * @param basePackage
      *            The package of the underlying meta model
      * @param parameter
@@ -138,10 +138,6 @@ public class TransformationCommand extends AbstractTransactionalCommand {
             return false;
         }
 
-        String file = fileName;
-        if (file.contains(".")) { // Remove the extension from fileName //$NON-NLS-1$
-            file = fileName.substring(0, fileName.lastIndexOf(".")); //$NON-NLS-1$
-        }
         StringBuffer modelSelection = new StringBuffer();
 
         // We need a modifiable list of the selection:
@@ -203,7 +199,7 @@ public class TransformationCommand extends AbstractTransactionalCommand {
         }
 
 
-        component.initializeTransformation(file, command, basePackage, parameters);
+        component.initializeTransformation(fileName, command, basePackage, parameters);
 
         return true;
     }

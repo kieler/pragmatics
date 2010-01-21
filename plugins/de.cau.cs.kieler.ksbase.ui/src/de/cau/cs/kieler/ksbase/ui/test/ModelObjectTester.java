@@ -15,15 +15,18 @@
 package de.cau.cs.kieler.ksbase.ui.test;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.expressions.PropertyTester;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.PlatformUI;
 
+import de.cau.cs.kieler.core.model.transformation.ITransformationFramework;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
@@ -63,13 +66,26 @@ public class ModelObjectTester extends PropertyTester {
         if (editor != null) {
             KSBasETransformation t = editor.getTransformationById((String) args[1]);
             if (t != null) {
+                // Convert selection to model elements:
+                List<EObject> modelElements = getModelElementsFromSelection();
+                // First we will evaluate the validation transformation
+                // This is a fast operation, test took less than 30ms, so it can be assumed as 'fast
+                // enough'.
+                // But the actual time depends on the transformation to be executed here, so better
+                // use simple & fast ones :)
+                String validation = t.getValidation();
+                if (validation != null && validation.length() > 0 && modelElements.size() > 0) {
+                    if (!evaluateValidation(editor, t, modelElements
+                            .toArray(new Object[modelElements.size()]))) {
+                        return false;
+                    }
+                }
                 List<String> match = t.getParameterList();
-                if (match != null) {
+                if (match != null && modelElements.size() > 0) {
                     ISelection sel = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
                             .getSelectionService().getSelection();
                     if (sel instanceof StructuredSelection) {
                         Iterator<?> it = ((StructuredSelection) sel).iterator();
-
                         // Ok we wan't to have to possible options here:
                         // 1. having exactly one list parameter, list<State>
                         // 2. having parameters like State,State,Region
@@ -132,4 +148,47 @@ public class ModelObjectTester extends PropertyTester {
         return false;
     }
 
+    private boolean evaluateValidation(final EditorTransformationSettings editor,
+            final KSBasETransformation t, final Object... param) {
+        Boolean result = false;
+
+        ITransformationFramework framework = editor.getFramework();
+        if (!framework.initializeTransformation(editor.getTransformationFile(), t.getValidation(),
+                editor.getModelPackageClass(), param)) {
+            return false;
+        }
+        Object res = framework.executeTransformation();
+        if (result instanceof Boolean) {
+            result = (Boolean) res;
+        } else {
+            result = false;
+        }
+
+        return result;
+    }
+
+    private LinkedList<EObject> getModelElementsFromSelection() {
+        if (PlatformUI.getWorkbench() != null
+                && PlatformUI.getWorkbench().getActiveWorkbenchWindow() != null
+                && PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService() != null) {
+            ISelection sel = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                    .getSelectionService().getSelection();
+            LinkedList<EObject> eo = new LinkedList<EObject>();
+            if (sel instanceof StructuredSelection) {
+                Iterator<?> it = ((StructuredSelection) sel).iterator();
+                while (it.hasNext()) {
+                    Object next = it.next();
+                    if (next instanceof EditPart) {
+                        Object model = ((EditPart) next).getModel();
+                        if (model instanceof View) {
+                            eo.add(((View) model).getElement());
+                        }
+                    }
+                }
+            }
+            return eo;
+        } else {
+            return null;
+        }
+    }
 }

@@ -54,6 +54,8 @@ public class KSBasETransformation extends AbstractTransformation implements Seri
     private String transformationId;
     /** Flag for user defined transformations to control visibility. **/
     private boolean visible;
+    /** Additional validation transformation. **/
+    private String validation;
 
     /**
      * Creates a new Transformation.
@@ -70,6 +72,7 @@ public class KSBasETransformation extends AbstractTransformation implements Seri
         keyboardShortcut = "";
         transformationId = "";
         visible = true;
+        validation = "";
         parameters = new LinkedList<String>();
     }
 
@@ -86,6 +89,7 @@ public class KSBasETransformation extends AbstractTransformation implements Seri
         this.transformationId = t.transformationId;
         this.keyboardShortcut = t.keyboardShortcut;
         this.visible = t.visible;
+        this.validation = t.validation;
         this.parameters = new LinkedList<String>(t.parameters);
 
     }
@@ -270,6 +274,25 @@ public class KSBasETransformation extends AbstractTransformation implements Seri
     }
 
     /**
+     * Gets the transformation that is used to validate a selection.
+     * 
+     * @return A transformation name
+     */
+    public String getValidation() {
+        return validation;
+    }
+
+    /**
+     * Sets the transformation that is used for validation.
+     * 
+     * @param transformationName
+     *            A transformation name
+     */
+    public void setValidation(final String transformationName) {
+        this.validation = transformationName;
+    }
+
+    /**
      * Checks if the transformation should be displayed in the menu. Only used for user defined
      * editors.
      * 
@@ -303,6 +326,7 @@ public class KSBasETransformation extends AbstractTransformation implements Seri
             writer.writeObject(this.parameters);
             writer.writeObject(this.icon);
             writer.writeObject(this.visible);
+            writer.writeObject(this.validation);
         } catch (IOException e) {
             KSBasEPlugin.getDefault().logError("Transformation settings could not be saved.");
         }

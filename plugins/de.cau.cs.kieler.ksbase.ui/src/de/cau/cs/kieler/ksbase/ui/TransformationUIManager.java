@@ -14,17 +14,11 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.ui;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.commands.Command;
@@ -104,13 +98,12 @@ public final class TransformationUIManager {
      */
     public void createAndExecuteTransformationCommand(final ExecutionEvent event,
             final EditorTransformationSettings editor, final KSBasETransformation transformation) {
-        //We need the view management
+        // We need the view management
         if (!RunLogic.getInstance().getState()) {
             RunLogic.getInstance().registerListeners();
         }
-        
-        
-     // Notify event listeners:
+
+        // Notify event listeners:
         for (ITransformationEventListener te : transformationEventListeners) {
             te.transformationAboutToExecute(new Object[] {});
         }
@@ -125,90 +118,49 @@ public final class TransformationUIManager {
             EditPart selectedElement = (EditPart) ((StructuredSelection) selection)
                     .getFirstElement();
 
-            File file = null;
-            FileOutputStream out = null;
-            try {
-                IPath path = ResourcesPlugin.getPlugin().getStateLocation();
-                file = File.createTempFile("extension", "."
-                        + editor.getFramework().getFileExtension(), new File(path.toOSString()));
-                out = new FileOutputStream(file);
-                if (!file.exists()) {
-                    if (!file.createNewFile()) {
-                        KSBasEUIPlugin.getDefault().logError(
-                                "Transformation file could not be stored in temporary folder.");
-                        return;
-                    }
+            // Create request
+            ExecuteTransformationRequest request = new ExecuteTransformationRequest(activeEditor,
+                    transformation.getTransformation(), editor.getTransformationFile(), selection,
+                    editor.getModelPackageClass(), transformation.getParameters(), editor
+                            .getFramework());
+
+            Command transformationCommand = selectedElement.getCommand(request);
+
+            // gets a command stack to execute the command
+            DiagramCommandStack commandStack = null;
+            Object adapter = activeEditor.getAdapter(CommandStack.class);
+            if (adapter instanceof DiagramCommandStack) {
+                commandStack = (DiagramCommandStack) adapter;
+            }
+            if (commandStack == null) {
+                commandStack = new DiagramCommandStack(((DiagramEditor) activeEditor)
+                        .getDiagramEditDomain());
+            }
+            commandStack.execute(transformationCommand);
+
+            // update edit policies, so GMF will generate diagram elements
+            // for model elements which have been generated during the
+            // transformation but
+
+            if (activeEditor instanceof IDiagramWorkbenchPart) {
+                EObject obj = ((View) ((IDiagramWorkbenchPart) activeEditor).getDiagramEditPart()
+                        .getModel()).getElement();
+
+                List<?> editPolicies = CanonicalEditPolicy.getRegisteredEditPolicies(obj);
+                for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
+
+                    CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it.next();
+
+                    nextEditPolicy.refresh();
                 }
 
-                out.write(editor.getTransformationFile().getBytes());
-                out.flush();
-                out.close();
+                IDiagramGraphicalViewer graphViewer = ((IDiagramWorkbenchPart) activeEditor)
+                        .getDiagramGraphicalViewer();
+                graphViewer.flush();
 
-                // Create request
-                ExecuteTransformationRequest request = new ExecuteTransformationRequest(
-                        activeEditor, transformation.getTransformation(), file.getAbsolutePath(),
-                        selection, editor.getModelPackageClass(), transformation.getParameters(),
-                        editor.getFramework());
-
-                Command transformationCommand = selectedElement.getCommand(request);
-
-                // gets a command stack to execute the command
-                DiagramCommandStack commandStack = null;
-                Object adapter = activeEditor.getAdapter(CommandStack.class);
-                if (adapter instanceof DiagramCommandStack) {
-                    commandStack = (DiagramCommandStack) adapter;
-                }
-                if (commandStack == null) {
-                    commandStack = new DiagramCommandStack(((DiagramEditor) activeEditor)
-                            .getDiagramEditDomain());
-                }
-                commandStack.execute(transformationCommand);
-            } catch (FileNotFoundException e) {
-                KSBasEUIPlugin.getDefault().logError("File not found.");
-            } catch (IOException e) {
-                KSBasEUIPlugin.getDefault().logError("File could not be read.");
-            } finally {
-
-                // Remove temporary file
-                if (file != null) {
-                    if (!file.delete()) {
-                        KSBasEUIPlugin.getDefault().logWarning("Could not remove temporary file.");
-                    }
-                }
-                // Close stream
-                if (out != null) {
-                    try {
-                        out.close();
-                    } catch (IOException e) {
-                        // ignoring nested exception
-                    }
-                }
-
-                // update edit policies, so GMF will generate diagram elements
-                // for model elements which have been generated during the
-                // transformation but
-
-                if (activeEditor instanceof IDiagramWorkbenchPart) {
-                    EObject obj = ((View) ((IDiagramWorkbenchPart) activeEditor)
-                            .getDiagramEditPart().getModel()).getElement();
-
-                    List<?> editPolicies = CanonicalEditPolicy.getRegisteredEditPolicies(obj);
-                    for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
-
-                        CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it.next();
-
-                        nextEditPolicy.refresh();
-                    }
-
-                    IDiagramGraphicalViewer graphViewer = ((IDiagramWorkbenchPart) activeEditor)
-                            .getDiagramGraphicalViewer();
-                    graphViewer.flush();
-
-                    // Notify event listeners:
-                    for (ITransformationEventListener te : transformationEventListeners) {
-                        te.transformationExecuted(new Object[] {obj, activeEditor });
-                    }
-
+                // Notify event listeners:
+                for (ITransformationEventListener te : transformationEventListeners) {
+                    te.transformationExecuted(new Object[] {obj, activeEditor });
                 }
 
             }

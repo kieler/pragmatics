@@ -7,7 +7,8 @@ Bundle-Activator: de.cau.cs.kieler.ksbase.KSBasEPlugin
 Bundle-Vendor: Christian-Albrechts-Unversität zu Kiel
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.5.0",
  org.eclipse.ui;bundle-version="3.5.0",
- de.cau.cs.kieler.core.model;bundle-version="1.0.0"
+ de.cau.cs.kieler.core.model;bundle-version="1.0.0",
+ org.eclipse.core.resources;bundle-version="3.5.1"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Export-Package: de.cau.cs.kieler.ksbase,

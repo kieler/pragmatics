@@ -22,7 +22,6 @@ import org.osgi.framework.BundleContext;
 
 import de.cau.cs.kieler.ksbase.ui.menus.DynamicBundleLoader;
 import de.cau.cs.kieler.ksbase.ui.menus.DynamicMenuContributions;
-import de.cau.cs.kieler.viewmanagement.RunLogic;
 
 /**
  * The activator class controls the plug-in life cycle.
