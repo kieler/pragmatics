@@ -205,7 +205,7 @@ public class EclipseLayoutServices extends LayoutServices {
             final String valueString) {
         Object value = optionData.parseValue(valueString);
         if (value != null) {
-            registry().addDiagramTypeOption(diagramType, optionData.getId(), value);
+            registry().addOption(diagramType, optionData.getId(), value);
             IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
             preferenceStore.setValue(getPreferenceName(diagramType, optionData.getId()), valueString);
         }
@@ -223,7 +223,7 @@ public class EclipseLayoutServices extends LayoutServices {
         Object value = optionData.parseValue(valueString);
         if (value != null) {
             String className = editPart.getClass().getName();
-            registry().addEditPartOption(className, optionData.getId(), value);
+            registry().addBindingOption(className, optionData.getId(), value);
             registeredEditParts.add(className);
             IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
             preferenceStore.setValue(getPreferenceName(editPart.getClass().getName(),
@@ -412,7 +412,7 @@ public class EclipseLayoutServices extends LayoutServices {
                 } else if (id == null || id.length() == 0) {
                     reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_ID, null);
                 } else {
-                    registry().addEditPartBinding(typeName, id);
+                    registry().addElementBinding(typeName, id);
                 }
             } else if (ELEMENT_OPTION.equals(element.getName())) {
                 // register a layout option from the extension
@@ -459,7 +459,7 @@ public class EclipseLayoutServices extends LayoutServices {
                 if (preferenceStore.contains(preference)) {
                     Object value = data.parseValue(preferenceStore.getString(preference));
                     if (value != null) {
-                        registry().addDiagramTypeOption(diagramType.getFirst(), data.getId(), value);
+                        registry().addOption(diagramType.getFirst(), data.getId(), value);
                     }
                 }
             }
@@ -477,7 +477,7 @@ public class EclipseLayoutServices extends LayoutServices {
                 if (preferenceStore.contains(preference)) {
                     Object value = data.parseValue(preferenceStore.getString(preference));
                     if (value != null) {
-                        registry().addEditPartOption(editPartName, data.getId(), value);
+                        registry().addBindingOption(editPartName, data.getId(), value);
                     }
                 }
             }

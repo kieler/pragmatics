@@ -91,8 +91,9 @@ public class GmfLayoutPropertySource implements IPropertySource {
             return (IGraphicalEditPart) sourceEditPart.getParent();
         }
         if (sourceEditPart instanceof ShapeNodeEditPart) {
-            if (LayoutServices.getInstance().isNolayout(sourceEditPart.getClass())
-                    || LayoutServices.getInstance().isNolayout(sourceEditPart.getParent().getClass())) {
+            if (LayoutServices.getInstance().isNolayout(sourceEditPart.getClass().getName())
+                    || LayoutServices.getInstance().isNolayout(
+                    sourceEditPart.getParent().getClass().getName())) {
                 return null;
             }
         }
@@ -175,13 +176,13 @@ public class GmfLayoutPropertySource implements IPropertySource {
         for (Object child : editPart.getChildren()) {
             if (child instanceof ShapeNodeEditPart
                     && !(child instanceof AbstractBorderItemEditPart)
-                    && !layoutServices.isNolayout(child.getClass())) {
+                    && !layoutServices.isNolayout(child.getClass().getName())) {
                 return editPart;
             } else if (child instanceof CompartmentEditPart
-                    && !layoutServices.isNolayout(child.getClass())) {
+                    && !layoutServices.isNolayout(child.getClass().getName())) {
                 for (Object grandChild : ((CompartmentEditPart) child).getChildren()) {
                     if (grandChild instanceof ShapeNodeEditPart
-                            && !layoutServices.isNolayout(grandChild.getClass())) {
+                            && !layoutServices.isNolayout(grandChild.getClass().getName())) {
                         return (IGraphicalEditPart) child;
                     }
                 }
@@ -225,8 +226,8 @@ public class GmfLayoutPropertySource implements IPropertySource {
                 LayoutOptions.LAYOUT_HINT);
         String containerLayoutHint = containerLayoutHintOption instanceof KStringOption
                 ? ((KStringOption) containerLayoutHintOption).getValue() : null;
-        String containerDiagramType = (String) layoutServices.getOption(containerEditPart.getClass(),
-                LayoutOptions.DIAGRAM_TYPE);
+        String containerDiagramType = (String) layoutServices.getBindingOption(
+                containerEditPart.getClass().getName(), LayoutOptions.DIAGRAM_TYPE);
         containerProviderData = layoutServices.getLayoutProviderData(
                 containerLayoutHint, containerDiagramType);
         if (containerProviderData == null) {
@@ -236,8 +237,8 @@ public class GmfLayoutPropertySource implements IPropertySource {
             if (partTarget == LayoutOptionData.Target.PARENTS) {
                 partProviderData = containerProviderData;
             } else if (childCompartmentEditPart != null) {
-                String childCompartmentDiagramType = (String) layoutServices.getOption(
-                        childCompartmentEditPart.getClass(), LayoutOptions.DIAGRAM_TYPE);
+                String childCompartmentDiagramType = (String) layoutServices.getBindingOption(
+                        childCompartmentEditPart.getClass().getName(), LayoutOptions.DIAGRAM_TYPE);
                 partProviderData = layoutServices.getLayoutProviderData(
                         partLayoutHint, childCompartmentDiagramType);
                 optionDataList.addAll(layoutServices.getLayoutOptions(partProviderData,

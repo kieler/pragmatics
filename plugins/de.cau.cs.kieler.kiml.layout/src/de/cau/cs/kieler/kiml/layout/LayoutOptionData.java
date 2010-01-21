@@ -186,7 +186,7 @@ public class LayoutOptionData {
      */
     @SuppressWarnings("unchecked")
     public Object parseValue(final String valueString) {
-        if (valueString == null) {
+        if (valueString == null || valueString.equals("null")) {
             return null;
         }
 
@@ -225,7 +225,7 @@ public class LayoutOptionData {
     /**
      * Creates an array of choices that can be selected by the user to set a
      * value for this option. This makes only sense for enumeration type
-     * options.
+     * or boolean type options.
      * 
      * @return an array of values to be displayed for the user
      */

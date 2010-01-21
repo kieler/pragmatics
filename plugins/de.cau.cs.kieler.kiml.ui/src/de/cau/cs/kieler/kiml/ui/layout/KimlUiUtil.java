@@ -144,23 +144,23 @@ public final class KimlUiUtil {
         }
         
         // check default value set for the actual edit part
-        result = editPart != null ? layoutServices.getOption(
-                editPart.getClass(), optionData.getId()) : null;
+        result = editPart != null ? layoutServices.getBindingOption(
+                editPart.getClass().getName(), optionData.getId()) : null;
         if (result != null) {
             return result;
         }
         
         // check default option of the diagram type
-        String diagramType = (String) layoutServices.getOption(containerEditPart.getClass(),
-                LayoutOptions.DIAGRAM_TYPE);
+        String diagramType = (String) layoutServices.getBindingOption(
+                containerEditPart.getClass().getName(), LayoutOptions.DIAGRAM_TYPE);
         result = layoutServices.getOption(diagramType, optionData.getId());
         if (result != null) {
             return result;
         }
 
         // check default value for the container edit part
-        result = containerEditPart != null ? layoutServices.getOption(
-                containerEditPart.getClass(), optionData.getId()) : null;
+        result = containerEditPart != null ? layoutServices.getBindingOption(
+                containerEditPart.getClass().getName(), optionData.getId()) : null;
         if (result != null) {
             return result;
         }
@@ -211,12 +211,16 @@ public final class KimlUiUtil {
         LayoutServices layoutServices = LayoutServices.getInstance();
         // get preconfigured layout options
         Map<String, Object> options = new LinkedHashMap<String, Object>(
-                layoutServices.getOptions(editPart.getClass()));
+                layoutServices.getBindingOptions(editPart.getClass().getName()));
         
         // get default layout options for the diagram type
-        String diagramType = (String) layoutServices.getOption(editPart.getClass(),
-                LayoutOptions.DIAGRAM_TYPE);
-        options.putAll(layoutServices.getOptions(diagramType));
+        String diagramType = (String) layoutServices.getBindingOption(
+                editPart.getClass().getName(), LayoutOptions.DIAGRAM_TYPE);
+        for (Entry<String, Object> entry : layoutServices.getOptions(diagramType).entrySet()) {
+            if (entry.getValue() != null) {
+                options.put(entry.getKey(), entry.getValue());
+            }
+        }
         
         if (setUserOptions) {
             // get user defined global layout options
@@ -229,7 +233,10 @@ public final class KimlUiUtil {
                         if (option.isDefault()) {
                             LayoutOptionData optionData = layoutServices.getLayoutOptionData(
                                     option.getKey());
-                            options.put(option.getKey(), KimlLayoutUtil.getValue(option, optionData));
+                            Object value = KimlLayoutUtil.getValue(option, optionData);
+                            if (value != null) {
+                                options.put(option.getKey(), value);
+                            }
                         }
                     }
                 }
@@ -241,7 +248,10 @@ public final class KimlUiUtil {
             if (optionStyle != null) {
                 for (KOption option : optionStyle.getOptions()) {
                     LayoutOptionData optionData = layoutServices.getLayoutOptionData(option.getKey());
-                    options.put(option.getKey(), KimlLayoutUtil.getValue(option, optionData));
+                    Object value = KimlLayoutUtil.getValue(option, optionData);
+                    if (value != null) {
+                        options.put(option.getKey(), value);
+                    }
                 }
             }
         }
@@ -249,7 +259,9 @@ public final class KimlUiUtil {
         // add all options to the layout data instance
         for (Entry<String, Object> option : options.entrySet()) {
             LayoutOptionData optionData = layoutServices.getLayoutOptionData(option.getKey());
-            optionData.setValue(layoutData, option.getValue());
+            if (option.getValue() != null) {
+                optionData.setValue(layoutData, option.getValue());
+            }
         }
     }
     

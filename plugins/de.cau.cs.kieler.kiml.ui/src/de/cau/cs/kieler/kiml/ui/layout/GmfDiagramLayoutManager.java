@@ -341,7 +341,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             } else if (obj instanceof ShapeCompartmentEditPart
                     && ((CompartmentEditPart) obj).getChildren().size() > 0) {
                 CompartmentEditPart compartment = (CompartmentEditPart) obj;
-                if (!layoutServices.isNolayout(compartment.getClass())) {
+                if (!layoutServices.isNolayout(compartment.getClass().getName())) {
                     IFigure compartmentFigure = compartment.getFigure();
                     if (compartmentFigure instanceof ResizableCompartmentFigure) {
                         ResizableCompartmentFigure resizableCompartmentFigure
@@ -401,7 +401,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     editPart2GraphElemMap.put(childNodeEditPart, childLayoutNode);
                     graphElem2EditPartMap.put(childLayoutNode, childNodeEditPart);
                     hasChildNodes = true;
-                    if (!layoutServices.isNolayout(childNodeEditPart.getClass())) {
+                    if (!layoutServices.isNolayout(childNodeEditPart.getClass().getName())) {
                         // process the child as new current edit part, as it may
                         // contain other elements
                         buildLayoutGraphRecursively(childNodeEditPart, childLayoutNode,

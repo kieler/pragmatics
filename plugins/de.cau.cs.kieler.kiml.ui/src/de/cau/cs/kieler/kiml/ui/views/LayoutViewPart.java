@@ -387,8 +387,8 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
         if (currentSelection != null) {
             Object object = currentSelection.getFirstElement();
             if (object != null) {
-                String diagramType = (String) LayoutServices.getInstance().getOption(
-                        object.getClass(), LayoutOptions.DIAGRAM_TYPE);
+                String diagramType = (String) LayoutServices.getInstance().getBindingOption(
+                        object.getClass().getName(), LayoutOptions.DIAGRAM_TYPE);
                 return diagramType;
             }
         }

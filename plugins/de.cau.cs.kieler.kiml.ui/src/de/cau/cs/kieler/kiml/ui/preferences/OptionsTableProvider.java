@@ -13,7 +13,9 @@
  */
 package de.cau.cs.kieler.kiml.ui.preferences;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -160,7 +162,16 @@ public class OptionsTableProvider extends LabelProvider implements ITableLabelPr
      */
     public Object[] getElements(final Object inputElement) {
         if (inputElement instanceof List<?>) {
-            return ((List<?>) inputElement).toArray();
+            @SuppressWarnings("unchecked")
+            List<DataEntry> list = new ArrayList<DataEntry>((List<DataEntry>) inputElement);
+            ListIterator<DataEntry> listIter = list.listIterator();
+            while (listIter.hasNext()) {
+                DataEntry next = listIter.next();
+                if (next.value == null) {
+                    listIter.remove();
+                }
+            }
+            return list.toArray();
         } else if (inputElement instanceof Object[]) {
             return (Object[]) inputElement;
         } else {
