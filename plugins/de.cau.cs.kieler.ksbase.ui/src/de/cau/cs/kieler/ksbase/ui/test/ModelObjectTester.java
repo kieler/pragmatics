@@ -14,19 +14,13 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.ui.test;
 
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.gef.EditPart;
-import org.eclipse.gmf.runtime.notation.View;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.model.transformation.ITransformationFramework;
+import de.cau.cs.kieler.core.model.util.ModelingUtil;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
@@ -67,128 +61,73 @@ public class ModelObjectTester extends PropertyTester {
             KSBasETransformation t = editor.getTransformationById((String) args[1]);
             if (t != null) {
                 // Convert selection to model elements:
-                List<EObject> modelElements = getModelElementsFromSelection();
+                List<EObject> modelElements = ModelingUtil.getModelElementsFromSelection();
                 // First we will evaluate the validation transformation
-                // This is a fast operation, test took less than 30ms, so it can be assumed as 'fast
-                // enough'.
+                // This is a fast operation, test took between 0ms and 30ms (on context switch) , so
+                // it can be assumed as 'fast enough'.
                 // But the actual time depends on the transformation to be executed here, so better
                 // use simple & fast ones :)
                 String validation = t.getValidation();
-                if (validation != null && validation.length() > 0 && modelElements.size() > 0) {
-                    if (!evaluateValidation(editor, t, modelElements
-                            .toArray(new Object[modelElements.size()]))) {
+                if (validation != null && validation.length() > 0) {
+                    if (!evaluateTransformation(editor, validation, modelElements
+                            .toArray(new Object[modelElements.size()]), true)) {
                         return false;
                     }
                 }
-                List<String> match = t.getParameterList();
-                if (match != null && modelElements.size() > 0) {
-                    ISelection sel = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                            .getSelectionService().getSelection();
-                    if (sel instanceof StructuredSelection) {
-                        Iterator<?> it = ((StructuredSelection) sel).iterator();
-                        // Ok we wan't to have to possible options here:
-                        // 1. having exactly one list parameter, list<State>
-                        // 2. having parameters like State,State,Region
-
-                        // TODO: What about collections and sets?
-                        // Maybe we could support multiple lists with different
-                        // types too.
-
-                        if (match.size() == 1 && match.get(0).contains("list")) {
-                            String listType = match.get(0);
-                            int bStart = listType.indexOf('[');
-                            int bEnd = listType.indexOf(']');
-                            if (bStart == -1 || bEnd == -1) {
-                                return false;
-                            }
-                            listType = listType.substring(bStart + 1, bEnd);
-                            // Ok now we need to check if all selected elements
-                            // are
-                            // of the given type.
-                            while (it.hasNext()) {
-                                Object testingObejct = it.next();
-                                if (testingObejct instanceof EditPart) {
-                                    Object model = ((EditPart) testingObejct).getModel();
-                                    if (model instanceof View) {
-                                        if (!((View) model).getElement().eClass().getName().equals(
-                                                listType)) {
-                                            return false;
-                                        }
-                                    }
-                                }
-                            }
-                            // When we reached this part, all selected objects
-                            // are
-                            // of the given type, so we will return 'true' here
-                            return true;
-                        }
-
-                        while (it.hasNext()) {
-                            Object testingObject = it.next();
-                            if (testingObject instanceof EditPart) {
-                                Object model = ((EditPart) testingObject).getModel();
-                                if (model instanceof View) {
-                                    View vep = (View) model;
-                                    if (vep.getElement() != null
-                                            && vep.getElement().eClass() != null) {
-                                        int idx = match
-                                                .indexOf(vep.getElement().eClass().getName());
-                                        if (idx > -1) {
-                                            match.remove(idx);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    return match.isEmpty();
+                if (!evaluateTransformation(editor, t.getTransformation(), t.getParameters(), false)) {
+                    // Could the transformation be executed?
+                    return false;
                 }
+
+                return true;
             }
         }
         return false;
     }
 
-    private boolean evaluateValidation(final EditorTransformationSettings editor,
-            final KSBasETransformation t, final Object... param) {
+    /**
+     * Evaluates the given transformation.
+     * 
+     * @param editor
+     *            The editor to use
+     * @param transformation
+     *            The transformation to validate
+     * @param execute
+     *            Should the transformation actually be executed?
+     * @return True If the transformation could be initialized and, if allowed, the transformation
+     *         returned true.
+     */
+    private boolean evaluateTransformation(final EditorTransformationSettings editor,
+            final String transformation, final Object parameter, final boolean execute) {
         Boolean result = false;
 
         ITransformationFramework framework = editor.getFramework();
-        if (!framework.initializeTransformation(editor.getTransformationFile(), t.getValidation(),
-                editor.getModelPackageClass(), param)) {
+        if (parameter instanceof String[]) {
+            if (!framework.setParameters((String[]) parameter)) {
+                //Parameters could not be matched, so instantly return false
+                return false;
+            }
+        } else if (parameter instanceof Object[]) {
+            framework.setParameters((Object[]) parameter);
+        }
+        if (!framework.initializeTransformation(editor.getTransformationFile(), transformation,
+                editor.getModelPackageClass())) {
             return false;
         }
-        Object res = framework.executeTransformation();
-        if (result instanceof Boolean) {
-            result = (Boolean) res;
+        if (execute) {
+            Object res = framework.executeTransformation();
+            if (result instanceof Boolean) {
+                result = (Boolean) res;
+            } else {
+                result = false;
+            }
         } else {
-            result = false;
+            // we do not want to actually execute the transformation, so successfully initialized
+            // the
+            // transformation and we will return true here
+            return true;
         }
-
         return result;
     }
 
-    private LinkedList<EObject> getModelElementsFromSelection() {
-        if (PlatformUI.getWorkbench() != null
-                && PlatformUI.getWorkbench().getActiveWorkbenchWindow() != null
-                && PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService() != null) {
-            ISelection sel = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                    .getSelectionService().getSelection();
-            LinkedList<EObject> eo = new LinkedList<EObject>();
-            if (sel instanceof StructuredSelection) {
-                Iterator<?> it = ((StructuredSelection) sel).iterator();
-                while (it.hasNext()) {
-                    Object next = it.next();
-                    if (next instanceof EditPart) {
-                        Object model = ((EditPart) next).getModel();
-                        if (model instanceof View) {
-                            eo.add(((View) model).getElement());
-                        }
-                    }
-                }
-            }
-            return eo;
-        } else {
-            return null;
-        }
-    }
 }

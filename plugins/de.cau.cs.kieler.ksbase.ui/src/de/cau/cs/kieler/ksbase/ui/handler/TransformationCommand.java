@@ -15,7 +15,6 @@
 package de.cau.cs.kieler.ksbase.ui.handler;
 
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
@@ -23,7 +22,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.common.core.command.CommandResult;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.CanonicalEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramGraphicalViewer;
@@ -31,7 +29,6 @@ import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramWorkbenchPart;
 import org.eclipse.gmf.runtime.emf.commands.core.command.AbstractTransactionalCommand;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 
@@ -130,78 +127,8 @@ public class TransformationCommand extends AbstractTransactionalCommand {
             final String[] parameter, final ITransformationFramework framework) {
         component = framework;
 
-        StructuredSelection s;
-
-        if (selection instanceof StructuredSelection) {
-            s = (StructuredSelection) selection;
-        } else {
-            return false;
-        }
-
-        StringBuffer modelSelection = new StringBuffer();
-
-        // We need a modifiable list of the selection:
-        LinkedList<Object> slist = new LinkedList<Object>();
-        slist.addAll((List<?>) s.toList());
-        Object[] parameters = new Object[slist.size()];
-
-        // We have multiple options here:
-        // 1. simply map the selected elements to the parameters
-        // 2. the parameter is a collection or list type, so we are creating the
-        // list
-        // (Currently the only supported type is a single list of arbitrary
-        // type)
-
-        // Check if the first parameter is a list:
-        /*
-         * DEACTIVATED: List to List parameter bug if (parameter.length == 1 &&
-         * parameter[0].contains("list")) {
-         * 
-         * 
-         * int bStart = listType.indexOf('['); int bEnd = listType.indexOf(']'); if (bStart == -1 ||
-         * bEnd == -1) { return false; } listType = listType.substring(bStart + 1, bEnd); // This
-         * wont work: // Exception : List is not responsible for java type //
-         * de.cau.cs.kieler.synccharts.State BasicEList<EObject> contents = new
-         * BasicEList<EObject>();
-         * 
-         * for (int i = 0; i < slist.size(); ++i) { Object next = slist.get(i); if (next instanceof
-         * EditPart) { Object model = ((EditPart) next).getModel(); if (model instanceof View) {
-         * EObject selectedEObject = ((View) model).getElement(); if (selectedEObject
-         * .eClass().getName().toLowerCase(Locale.getDefault()).equals( listType)) {
-         * contents.add(selectedEObject); } } } } modelSelection.append("model0");
-         * component.setContextData("model0", contents);
-         * 
-         * } else {
-         */
-        // Mapping parameters:
-        int paramCount = 0;
-        for (String param : parameter) {
-            if (modelSelection.length() > 0) {
-                modelSelection.append(",");
-            }
-            for (int i = 0; i < slist.size(); ++i) {
-                Object next = slist.get(i);
-                if (next instanceof EditPart) {
-                    Object model = ((EditPart) next).getModel();
-                    if (model instanceof View) {
-                        if (((View) model).getElement().eClass().getName().equals(param)) {
-                            parameters[paramCount++] = ((View) model).getElement();
-                            slist.remove(i);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        // check if all parameters have been set
-        if (paramCount != parameter.length) {
-            return false;
-        }
-
-
-        component.initializeTransformation(fileName, command, basePackage, parameters);
-
-        return true;
+        component.setParameters(parameter);
+        return component.initializeTransformation(fileName, command, basePackage);
     }
 
 }
