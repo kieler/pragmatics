@@ -89,5 +89,14 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage implements
     public void init(final IWorkbench workbench) {
         setPreferenceStore(GraphvizLayouterPlugin.getDefault().getPreferenceStore());
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean performOk() {
+        GraphvizAPI.endProcess();
+        return super.performOk();
+    }
 
 }
