@@ -39,6 +39,9 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.expandNodes">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.fixedSize">
+         </knownOption>
       </layoutProvider>
       <layoutType
             id="de.cau.cs.kieler.layout.types.layered"

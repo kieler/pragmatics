@@ -142,7 +142,7 @@ point="org.eclipse.ui.menus">
       <key
             commandId="de.cau.cs.kieler.kiml.ui.command.layout"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+K L">
+            sequence="M1+R L">
       </key>
    </extension>
  <extension
