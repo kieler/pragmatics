@@ -253,7 +253,7 @@ public class BasicNodePlacer extends AbstractAlgorithm implements INodePlacer {
             for (LayerElement element : layer.getElements()) {
                 KPort port = (KPort) element.getElemObj();
                 KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(port);
-                PortSide placement = LayoutOptions.getPortSide(portLayout);
+                PortSide placement = LayoutOptions.getEnum(portLayout, PortSide.class);
                 KPoint position = element.getPosition();
                 position.setX(portLayout.getXpos());
                 position.setY(portLayout.getYpos());

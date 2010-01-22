@@ -28,7 +28,12 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.layout.options.EdgeLabelPlacement;
+import de.cau.cs.kieler.kiml.layout.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.layout.options.PortConstraints;
+import de.cau.cs.kieler.kiml.layout.options.PortSide;
+import de.cau.cs.kieler.kiml.layout.options.Shape;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
 
 /**
@@ -81,6 +86,11 @@ public class LayoutServices {
      * this singleton class.
      */
     protected LayoutServices() {
+        LayoutOptions.registerEnum(LayoutOptions.LAYOUT_DIRECTION, LayoutDirection.class);
+        LayoutOptions.registerEnum(LayoutOptions.EDGE_LABEL_PLACEMENT, EdgeLabelPlacement.class);
+        LayoutOptions.registerEnum(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.class);
+        LayoutOptions.registerEnum(LayoutOptions.PORT_SIDE, PortSide.class);
+        LayoutOptions.registerEnum(LayoutOptions.SHAPE, Shape.class);
     }
 
     /**
@@ -393,8 +403,8 @@ public class LayoutServices {
     public final AbstractLayoutProvider getLayoutProvider(final KNode layoutNode)
             throws KielerException {
         KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
-        String layoutHint = LayoutOptions.getLayoutHint(nodeLayout);
-        String diagramType = LayoutOptions.getDiagramType(nodeLayout);
+        String layoutHint = LayoutOptions.getString(nodeLayout, LayoutOptions.LAYOUT_HINT);
+        String diagramType = LayoutOptions.getString(nodeLayout, LayoutOptions.DIAGRAM_TYPE);
         LayoutProviderData providerData = getLayoutProviderData(layoutHint, diagramType);
         if (providerData != null) {
             return providerData.getInstance();

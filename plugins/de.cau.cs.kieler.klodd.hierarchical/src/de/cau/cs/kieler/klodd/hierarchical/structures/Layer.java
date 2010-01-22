@@ -182,7 +182,8 @@ public class Layer {
             int portrank = 0;
             for (LayerElement element : elements) {
                 KPort port = (KPort) element.getElemObj();
-                LayoutOptions.setPortRank(KimlLayoutUtil.getShapeLayout(port), portrank++);
+                LayoutOptions.setInt(KimlLayoutUtil.getShapeLayout(port), LayoutOptions.PORT_RANK,
+                        portrank++);
             }
         }
         // sort elements according to port sides and ranks
@@ -200,7 +201,8 @@ public class Layer {
             int portrank = 0;
             for (LayerElement element : elements) {
                 KPort port = (KPort) element.getElemObj();
-                LayoutOptions.setPortRank(KimlLayoutUtil.getShapeLayout(port), portrank++);
+                LayoutOptions.setInt(KimlLayoutUtil.getShapeLayout(port), LayoutOptions.PORT_RANK,
+                        portrank++);
             }
         }
 

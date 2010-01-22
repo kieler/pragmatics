@@ -389,8 +389,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     nodeLayout.setHeight(childBounds.height);
                     nodeLayout.setWidth(childBounds.width);
                     Dimension minSize = nodeFigure.getMinimumSize();
-                    LayoutOptions.setMinWidth(nodeLayout, minSize.width);
-                    LayoutOptions.setMinHeight(nodeLayout, minSize.height);
+                    LayoutOptions.setFloat(nodeLayout, LayoutOptions.MIN_WIDTH, minSize.width);
+                    LayoutOptions.setFloat(nodeLayout, LayoutOptions.MIN_HEIGHT, minSize.height);
                     
                     // set insets if not yet defined
                     if (insets == null) {
@@ -444,8 +444,10 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 //                    labelLayout.setYpos(ypos);
                     labelLayout.setWidth(labelFigure.getPreferredSize().width);
                     labelLayout.setHeight(labelFigure.getPreferredSize().height);
-                    LayoutOptions.setFontName(labelLayout, font.getFontData()[0].getName());
-                    LayoutOptions.setFontSize(labelLayout, font.getFontData()[0].getHeight());
+                    LayoutOptions.setString(labelLayout, LayoutOptions.FONT_NAME,
+                            font.getFontData()[0].getName());
+                    LayoutOptions.setInt(labelLayout, LayoutOptions.FONT_SIZE,
+                            font.getFontData()[0].getHeight());
                 }
             }
         }
@@ -453,11 +455,11 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(parentLayoutNode);
         // set default fixed size option
         if (!hasChildNodes && !hasChildCompartments && !isCollapsed) {
-            LayoutOptions.setFixedSize(nodeLayout, true);
+            LayoutOptions.setBoolean(nodeLayout, LayoutOptions.FIXED_SIZE, true);
         }
         // set default insets option
         if ((hasChildNodes || isCollapsed) && insets != null) {
-            KInsets kinsets = LayoutOptions.getInsets(nodeLayout);
+            KInsets kinsets = LayoutOptions.getObject(nodeLayout, KInsets.class);
             kinsets.setTop(insets.top);
             kinsets.setLeft(insets.left);
             kinsets.setRight(insets.right);
@@ -466,9 +468,9 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         // set default port constraints option
         if (hasPorts) {
             if (hasChildNodes || hasChildCompartments) {
-                LayoutOptions.setPortConstraints(nodeLayout, PortConstraints.FREE_PORTS);
+                LayoutOptions.setEnum(nodeLayout, PortConstraints.FREE_PORTS);
             } else {
-                LayoutOptions.setPortConstraints(nodeLayout, PortConstraints.FIXED_POS);
+                LayoutOptions.setEnum(nodeLayout, PortConstraints.FIXED_POS);
             }
         }
     }
@@ -577,17 +579,19 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                         KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
                         switch (labelEditPart.getKeyPoint()) {
                         case ConnectionLocator.SOURCE:
-                            LayoutOptions.setEdgeLabelPlacement(labelLayout, EdgeLabelPlacement.HEAD);
+                            LayoutOptions.setEnum(labelLayout, EdgeLabelPlacement.HEAD);
                             break;
                         case ConnectionLocator.MIDDLE:
-                            LayoutOptions.setEdgeLabelPlacement(labelLayout, EdgeLabelPlacement.CENTER);
+                            LayoutOptions.setEnum(labelLayout, EdgeLabelPlacement.CENTER);
                             break;
                         case ConnectionLocator.TARGET:
-                            LayoutOptions.setEdgeLabelPlacement(labelLayout, EdgeLabelPlacement.TAIL);
+                            LayoutOptions.setEnum(labelLayout, EdgeLabelPlacement.TAIL);
                             break;
                         }
-                        LayoutOptions.setFontName(labelLayout, font.getFontData()[0].getName());
-                        LayoutOptions.setFontSize(labelLayout, font.getFontData()[0].getHeight());
+                        LayoutOptions.setString(labelLayout, LayoutOptions.FONT_NAME,
+                                font.getFontData()[0].getName());
+                        LayoutOptions.setInt(labelLayout, LayoutOptions.FONT_SIZE,
+                                font.getFontData()[0].getHeight());
                         labelLayout.setXpos(labelBounds.x);
                         labelLayout.setYpos(labelBounds.y);
                         labelLayout.setWidth(labelBounds.width);
@@ -611,7 +615,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             for (KNode child : parent.getChildren()) {
                 if (child != previousNode) {
                     KShapeLayout childLayout = KimlLayoutUtil.getShapeLayout(child);
-                    LayoutOptions.setFixedSize(childLayout, true);
+                    LayoutOptions.setBoolean(childLayout, LayoutOptions.FIXED_SIZE, true);
                     removeFromLayout(child);
                 }
             }

@@ -76,7 +76,8 @@ public class OrthogonalDataflowLayoutProvider extends AbstractLayoutProvider {
         // get the currently configured modules
         updateModules();
         // set option for minimal distance
-        float minDist = LayoutOptions.getMinSpacing(KimlLayoutUtil.getShapeLayout(layoutNode));
+        float minDist = LayoutOptions.getFloat(KimlLayoutUtil.getShapeLayout(layoutNode),
+                LayoutOptions.MIN_SPACING);
         if (Float.isNaN(minDist)) {
             minDist = DEF_MIN_DIST;
         }
@@ -126,7 +127,7 @@ public class OrthogonalDataflowLayoutProvider extends AbstractLayoutProvider {
      */
     private void applyLayout(final List<TSMGraph> components, final KNode parentNode) {
         KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(parentNode);
-        KInsets insets = LayoutOptions.getInsets(parentLayout);
+        KInsets insets = LayoutOptions.getObject(parentLayout, KInsets.class);
         float currentYpos = 0.0f, maxWidth = 0.0f;
         for (TSMGraph component : components) {
             component.applyLayout(0.0f, currentYpos);
@@ -139,7 +140,7 @@ public class OrthogonalDataflowLayoutProvider extends AbstractLayoutProvider {
         parentLayout.setHeight(insets.getTop() + currentYpos + insets.getBottom());
 
         // update layout options of the parent layout node
-        LayoutOptions.setPortConstraints(parentLayout, PortConstraints.FIXED_POS);
+        LayoutOptions.setEnum(parentLayout, PortConstraints.FIXED_POS);
     }
 
 }

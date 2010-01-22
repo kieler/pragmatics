@@ -27,6 +27,7 @@ import de.cau.cs.kieler.core.slimgraph.KSlimNode;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.options.PortConstraints;
+import de.cau.cs.kieler.kiml.layout.options.PortSide;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
 import de.cau.cs.kieler.klodd.orthogonal.impl.ec.EmbeddingConstraint;
 import de.cau.cs.kieler.klodd.orthogonal.modules.IPlanarizer;
@@ -77,7 +78,7 @@ public class PortConstraintsPlanarizer extends AbstractAlgorithm implements IPla
         for (KSlimNode node : graph.getNodes()) {
             KNode layoutNode = (KNode) node.getObject();
             KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
-            PortConstraints portConstraints = LayoutOptions.getPortConstraints(nodeLayout);
+            PortConstraints portConstraints = LayoutOptions.getEnum(nodeLayout, PortConstraints.class);
             TSMNode tsmNode = (TSMNode) node;
             if (!layoutNode.getPorts().isEmpty()) {
                 if (portConstraints == PortConstraints.FIXED_POS
@@ -88,8 +89,8 @@ public class PortConstraintsPlanarizer extends AbstractAlgorithm implements IPla
                         public int compare(final KPort port1, final KPort port2) {
                             KShapeLayout layout1 = KimlLayoutUtil.getShapeLayout(port1);
                             KShapeLayout layout2 = KimlLayoutUtil.getShapeLayout(port2);
-                            int rank1 = LayoutOptions.getPortRank(layout1);
-                            int rank2 = LayoutOptions.getPortRank(layout2);
+                            int rank1 = LayoutOptions.getInt(layout1, LayoutOptions.PORT_RANK);
+                            int rank2 = LayoutOptions.getInt(layout2, LayoutOptions.PORT_RANK);
                             return rank1 - rank2;
                         }
                     });
@@ -114,7 +115,8 @@ public class PortConstraintsPlanarizer extends AbstractAlgorithm implements IPla
                     for (KPort port : layoutNode.getPorts()) {
                         EmbeddingConstraint constraint = createConstraintFor(port, null, tsmNode);
                         if (constraint != null) {
-                            switch (LayoutOptions.getPortSide(KimlLayoutUtil.getShapeLayout(port))) {
+                            switch (LayoutOptions.getEnum(KimlLayoutUtil.getShapeLayout(port),
+                                    PortSide.class)) {
                             case NORTH:
                                 if (northConstraint == null) {
                                     northConstraint = new EmbeddingConstraint(

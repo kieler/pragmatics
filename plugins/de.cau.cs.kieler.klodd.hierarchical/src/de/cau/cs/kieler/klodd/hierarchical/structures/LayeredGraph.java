@@ -34,6 +34,7 @@ import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.layout.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.layout.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.options.PortConstraints;
@@ -81,11 +82,11 @@ public class LayeredGraph {
         // get layout options from the parent group
         this.parentNode = theparentNode;
         KLayoutData layoutData = KimlLayoutUtil.getShapeLayout(theparentNode);
-        layoutDirection = LayoutOptions.getLayoutDirection(layoutData);
+        layoutDirection = LayoutOptions.getEnum(layoutData, LayoutDirection.class);
         if (layoutDirection == LayoutDirection.UNDEFINED) {
             layoutDirection = LayoutDirection.RIGHT;
         }
-        externalPortConstraints = LayoutOptions.getPortConstraints(layoutData);
+        externalPortConstraints = LayoutOptions.getEnum(layoutData, PortConstraints.class);
     }
 
     /**
@@ -243,7 +244,7 @@ public class LayeredGraph {
      */
     public void applyLayout() {
         KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(parentNode);
-        KInsets insets = LayoutOptions.getInsets(parentLayout);
+        KInsets insets = LayoutOptions.getObject(parentLayout, KInsets.class);
         // apply the new layout to the contained elements
         for (Layer layer : layers) {
             for (LayerElement element : layer.getElements()) {
@@ -284,7 +285,7 @@ public class LayeredGraph {
         parentLayout.setHeight(height);
 
         // update layout options of the parent layout node
-        LayoutOptions.setPortConstraints(parentLayout, PortConstraints.FIXED_POS);
+        LayoutOptions.setEnum(parentLayout, PortConstraints.FIXED_POS);
         KimlLayoutUtil.calcPortRanks(parentNode);
     }
 
@@ -457,7 +458,8 @@ public class LayeredGraph {
         KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(edge);
         int midBendPoint = edgeLayout.getBendPoints().size() / 2;
         for (KLabel edgeLabel : edge.getLabels()) {
-            switch (LayoutOptions.getEdgeLabelPlacement(KimlLayoutUtil.getShapeLayout(edgeLabel))) {
+            switch (LayoutOptions.getEnum(KimlLayoutUtil.getShapeLayout(edgeLabel),
+                    EdgeLabelPlacement.class)) {
             case CENTER:
                 if (midBendPoint > 0) {
                     centerLabels.add(edgeLabel);

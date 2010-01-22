@@ -110,7 +110,7 @@ public class LayerConnection {
                 subTargetXInset = false, subTargetYInset = false;
         if (layeredGraph.getExternalPortConstraints() == PortConstraints.FIXED_POS) {
             if (sourcePort != null && sourcePort.getNode() == layeredGraph.getParentNode()) {
-                PortSide sourceSide = LayoutOptions.getPortSide(sourcePortLayout);
+                PortSide sourceSide = LayoutOptions.getEnum(sourcePortLayout, PortSide.class);
                 if (sourceSide == PortSide.NORTH || sourceSide == PortSide.SOUTH) {
                     subSourceXInset = true;
                 } else {
@@ -118,7 +118,7 @@ public class LayerConnection {
                 }
             }
             if (targetPort != null && targetPort.getNode() == layeredGraph.getParentNode()) {
-                PortSide targetSide = LayoutOptions.getPortSide(targetPortLayout);
+                PortSide targetSide = LayoutOptions.getEnum(targetPortLayout, PortSide.class);
                 if (targetSide == PortSide.NORTH || targetSide == PortSide.SOUTH) {
                     subTargetXInset = true;
                 } else {
@@ -154,7 +154,8 @@ public class LayerConnection {
                         bendPoint.setY(bendPoint.getY() - insets.getTop());
                     }
                 }
-                toExternalEndpoint(sourcePoint, LayoutOptions.getPortSide(sourcePortLayout), insets);
+                toExternalEndpoint(sourcePoint, LayoutOptions.getEnum(sourcePortLayout,
+                        PortSide.class), insets);
             } else {
                 sourcePoint.setX(sourcePortLayout.getXpos() + sourcePortLayout.getWidth() / 2
                         + sourceElement.getPosition().getX() + sourceElement.getPosOffset().getX());
@@ -195,7 +196,8 @@ public class LayerConnection {
                         bendPoint.setY(bendPoint.getY() - insets.getTop());
                     }
                 }
-                toExternalEndpoint(targetPoint, LayoutOptions.getPortSide(targetPortLayout), insets);
+                toExternalEndpoint(targetPoint, LayoutOptions.getEnum(targetPortLayout,
+                        PortSide.class), insets);
             } else {
                 targetPoint.setX(targetPortLayout.getXpos() + targetPortLayout.getWidth() / 2
                         + targetElement.getPosition().getX() + targetElement.getPosOffset().getX());

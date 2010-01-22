@@ -116,7 +116,7 @@ public class LayoutOptionData {
      */
     private void checkEnumClass() {
         if (enumClass == null) {
-            enumClass = LayoutOptions.getEnumClass(getId());
+            enumClass = LayoutOptions.getEnumClass(id);
         }
         if (enumClass == null) {
             throw new IllegalStateException("Unknown enumeration type set for this layout option.");
@@ -129,7 +129,7 @@ public class LayoutOptionData {
      @Override
     public boolean equals(final Object obj) {
         if (obj instanceof LayoutOptionData) {
-            return getId().equals((LayoutOptionData) obj);
+            return id.equals((LayoutOptionData) obj);
         } else {
             return false;
         }
@@ -140,7 +140,7 @@ public class LayoutOptionData {
       */
      @Override
     public int hashCode() {
-        return getId().hashCode();
+        return id.hashCode();
     }
 
      /**
@@ -148,10 +148,10 @@ public class LayoutOptionData {
       */
      @Override
     public String toString() {
-        if (getName() != null && getName().length() > 0) {
-            return getName();
+        if (name != null && name.length() > 0) {
+            return name;
         } else {
-            return getId();
+            return id;
         }
     }
 
@@ -190,7 +190,7 @@ public class LayoutOptionData {
             return null;
         }
 
-        switch (getType()) {
+        switch (type) {
         case BOOLEAN:
             return Boolean.valueOf(valueString);
         case INT:
@@ -231,7 +231,7 @@ public class LayoutOptionData {
      */
     public String[] getChoices() {
         if (choices == null) {
-            switch (getType()) {
+            switch (type) {
             case ENUM:
                 checkEnumClass();
                 Enum<?>[] enums = enumClass.getEnumConstants();
@@ -257,7 +257,7 @@ public class LayoutOptionData {
      * @return the corresponding enumeration value
      */
     public Enum<?> getEnumValue(final int intValue) {
-        switch (getType()) {
+        switch (type) {
         case ENUM:
             checkEnumClass();
             Enum<?>[] enums = enumClass.getEnumConstants();
@@ -274,9 +274,9 @@ public class LayoutOptionData {
      * @param value the new value of this option
      */
     public void setValue(final KLayoutData layoutData, final Object value) {
-        KOption option = layoutData.getOption(getId());
+        KOption option = layoutData.getOption(id);
         if (option == null) {
-            switch (getType()) {
+            switch (type) {
             case BOOLEAN:
                 option = KLayoutDataFactory.eINSTANCE.createKBooleanOption();
                 break;
@@ -293,10 +293,10 @@ public class LayoutOptionData {
             default:
                 throw new IllegalStateException("Invalid type set for this layout option.");
             }
-            option.setKey(getId());
+            option.setKey(id);
             layoutData.getOptions().add(option);
         }
-        switch (getType()) {
+        switch (type) {
         case BOOLEAN:
             KBooleanOption booleanOption = (KBooleanOption) option;
             booleanOption.setValue(((Boolean) value).booleanValue());

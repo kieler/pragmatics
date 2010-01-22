@@ -113,15 +113,15 @@ public class RecursiveLayouterEngine {
     private void checkLayout(final KNode layoutNode) {
         // check the new size of the parent node
         KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
-        float minWidth = LayoutOptions.getMinWidth(parentLayout);
+        float minWidth = LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_WIDTH);
         if (parentLayout.getWidth() < minWidth) {
             parentLayout.setWidth(minWidth);
         }
-        float minHeight = LayoutOptions.getMinHeight(parentLayout);
+        float minHeight = LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_HEIGHT);
         if (parentLayout.getHeight() < minHeight) {
             parentLayout.setHeight(minHeight);
         }
-        LayoutOptions.setFixedSize(parentLayout, true);
+        LayoutOptions.setBoolean(parentLayout, LayoutOptions.FIXED_SIZE, true);
 
     }
 

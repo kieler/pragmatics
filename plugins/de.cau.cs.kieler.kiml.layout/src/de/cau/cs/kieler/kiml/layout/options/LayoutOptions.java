@@ -13,6 +13,11 @@
  */
 package de.cau.cs.kieler.kiml.layout.options;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.emf.ecore.EObject;
+
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KBooleanOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KFloatOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KInsets;
@@ -36,748 +41,283 @@ public final class LayoutOptions {
      */
     private LayoutOptions() {
     }
+    
+    /** layout option key: layout hint. */
+    public static final String LAYOUT_HINT = "de.cau.cs.kieler.layout.options.layoutHint";
+    /** layout option key: diagram type. */
+    public static final String DIAGRAM_TYPE = "de.cau.cs.kieler.layout.options.diagramType";
+    /** layout option key: direction of layout. */
+    public static final String LAYOUT_DIRECTION = "de.cau.cs.kieler.layout.options.layoutDirection";
+    /** layout option key: distance of node contents to the boundary. */
+    public static final String INSETS = "de.cau.cs.kieler.layout.options.insets";
+    /** layout option key: side of a port on its node's boundary. */
+    public static final String PORT_SIDE = "de.cau.cs.kieler.layout.options.portSide";
+    /** layout option key: constraints for port positions. */
+    public static final String PORT_CONSTRAINTS = "de.cau.cs.kieler.layout.options.portConstraints";
+    /** layout option key: rank of a port. */
+    public static final String PORT_RANK = "de.cau.cs.kieler.layout.options.portRank";
+    /** layout option key: size constraint for nodes. */
+    public static final String FIXED_SIZE = "de.cau.cs.kieler.layout.options.fixedSize";
+    /** layout option key: placement positions for edge labels. */
+    public static final String EDGE_LABEL_PLACEMENT =
+        "de.cau.cs.kieler.layout.options.edgeLabelPlacement";
+    /** layout option key: minimal distance between elements. */
+    public static final String MIN_SPACING = "de.cau.cs.kieler.layout.options.minSpacing";    
+    /** layout option key: distance to border of the drawing. */
+    public static final String BORDER_SPACING = "de.cau.cs.kieler.layout.options.borderSpacing";
+    /** layout option key: priority of elements. */
+    public static final String PRIORITY = "de.cau.cs.kieler.layout.options.priority";
+    /** layout option key: font name. */
+    public static final String FONT_NAME = "de.cau.cs.kieler.layout.options.fontName";
+    /** layout option key: font size. */
+    public static final String FONT_SIZE = "de.cau.cs.kieler.layout.options.fontSize";
+    /** layout option key: shape of a node. */
+    public static final String SHAPE = "de.cau.cs.kieler.layout.options.shape";
+    /** layout option key: expand nodes to fill their parent. */
+    public static final String EXPAND_NODES = "de.cau.cs.kieler.layout.options.expandNodes";
+    /** layout option key: minimal width. */
+    public static final String MIN_WIDTH = "de.cau.cs.kieler.layout.options.minWidth";
+    /** layout option key: minimal height. */
+    public static final String MIN_HEIGHT = "de.cau.cs.kieler.layout.options.minHeight";    
+    /** layout option key: randomization seed. */
+    public static final String RANDOM_SEED = "de.cau.cs.kieler.layout.options.randomSeed";    
+    /** layout option key: optimize layout for user interaction. */
+    public static final String INTERACTIVE = "de.cau.cs.kieler.layout.options.interactive";    
+    /** layout option key: spacing of edge labels to edges. */
+    public static final String LABEL_SPACING = "de.cau.cs.kieler.layout.options.labelSpacing";
 
+    /** map of option identifiers to enumeration classes. */
+    private static Map<String, Class<? extends Enum<?>>> id2enumMap =
+            new HashMap<String, Class<? extends Enum<?>>>();
+    /** map of enumeration classes to option identifiers. */
+    private static Map<Class<? extends Enum<?>>, String> enum2idMap =
+            new HashMap<Class<? extends Enum<?>>, String>();
+    
+    /**
+     * Register the given enumeration class with an option identifier.
+     * 
+     * @param id identifier of the layout option
+     * @param clazz enumeration class for the layout option
+     */
+    public static synchronized void registerEnum(final String id,
+            final Class<? extends Enum<?>> clazz) {
+        if (id != null && clazz != null) {
+            id2enumMap.put(id, clazz);
+            enum2idMap.put(clazz, id);
+        }
+    }
+    
     /**
      * Resolves the class of an enumeration given by an identifier.
      * 
-     * FIXME this implementation is restricted to internally defined enums,
-     * should be extended for all enums
-     * 
      * @param optionId identifier of a layout option that is represented by an
-     *            enumeration
-     * @return the corresponding enumeration class
+     *         enumeration
+     * @return the corresponding enumeration class, or {@code null} if there
+     *         is no registered enumeration class for that identifier
      */
     public static Class<? extends Enum<?>> getEnumClass(final String optionId) {
-        if (LAYOUT_DIRECTION.equals(optionId)) {
-            return LayoutDirection.class;
-        } else if (PORT_SIDE.equals(optionId)) {
-            return PortSide.class;
-        } else if (PORT_CONSTRAINTS.equals(optionId)) {
-            return PortConstraints.class;
-        } else if (EDGE_LABEL_PLACEMENT.equals(optionId)) {
-            return EdgeLabelPlacement.class;
-        } else if (SHAPE.equals(optionId)) {
-            return Shape.class;
-        } else {
-            return null;
-        }
+        return id2enumMap.get(optionId);
     }
 
-    /** layout option key: layout hint. */
-    public static final String LAYOUT_HINT = "de.cau.cs.kieler.layout.options.layoutHint";
-
     /**
-     * Returns the layout hint for a given layout data instance.
+     * Returns a string valued option for a given layout data instance.
      * 
-     * @param layoutData layout data for a parent node
-     * @return the layout hint for the given layout data, or {@code null} if
+     * @param layoutData layout data for a graph element
+     * @param optionId identifier of a layout option
+     * @return the valued option for the given layout data, or {@code null} if
      *         there is no such option
      */
-    public static String getLayoutHint(final KLayoutData layoutData) {
-        KStringOption hintOption = (KStringOption) layoutData.getOption(LAYOUT_HINT);
-        if (hintOption == null) {
+    public static String getString(final KLayoutData layoutData, final String optionId) {
+        KStringOption stringOption = (KStringOption) layoutData.getOption(optionId);
+        if (stringOption == null) {
             return null;
         } else {
-            return hintOption.getValue();
+            return stringOption.getValue();
         }
     }
 
     /**
-     * Sets the layout hint for the given layout data instance.
+     * Sets a string valued option for the given layout data instance.
      * 
-     * @param layoutData layout data for a parent node
-     * @param layoutHint layout hint to set
+     * @param layoutData layout data for a graph element
+     * @param optionId identifier of a layout option
+     * @param value the option value to set
      */
-    public static void setLayoutHint(final KLayoutData layoutData, final String layoutHint) {
-        KStringOption hintOption = (KStringOption) layoutData.getOption(LAYOUT_HINT);
-        if (hintOption == null) {
-            hintOption = KLayoutDataFactory.eINSTANCE.createKStringOption();
-            hintOption.setKey(LAYOUT_HINT);
-            layoutData.getOptions().add(hintOption);
+    public static void setString(final KLayoutData layoutData, final String optionId,
+            final String value) {
+        KStringOption stringOption = (KStringOption) layoutData.getOption(optionId);
+        if (stringOption == null) {
+            stringOption = KLayoutDataFactory.eINSTANCE.createKStringOption();
+            stringOption.setKey(optionId);
+            layoutData.getOptions().add(stringOption);
         }
-        hintOption.setValue(layoutHint);
+        stringOption.setValue(value);
     }
 
-    /** layout option key: diagram type. */
-    public static final String DIAGRAM_TYPE = "de.cau.cs.kieler.layout.options.diagramType";
-
     /**
-     * Returns the diagram type for a given layout data instance.
+     * Returns an integer valued option for a given layout data instance.
      * 
-     * @param layoutData layout data for a parent node
-     * @return the diagram type for the given layout data, or {@code null} if
+     * @param layoutData layout data for a graph element
+     * @param optionId identifier of a layout option
+     * @return the integer valued option for the given layout data, or {@code MIN_VALUE} if
      *         there is no such option
      */
-    public static String getDiagramType(final KLayoutData layoutData) {
-        KStringOption typeOption = (KStringOption) layoutData.getOption(DIAGRAM_TYPE);
-        if (typeOption == null) {
-            return null;
+    public static int getInt(final KLayoutData layoutData, final String optionId) {
+        KIntOption intOption = (KIntOption) layoutData.getOption(optionId);
+        if (intOption == null) {
+            return Integer.MIN_VALUE;
         } else {
-            return typeOption.getValue();
+            return intOption.getValue();
         }
     }
 
     /**
-     * Sets the diagram type for the given layout data instance.
+     * Sets an integer valued option for the given layout data instance.
      * 
-     * @param layoutData layout data for a parent node
-     * @param diagramType diagram type to set
+     * @param layoutData layout data for a graph element
+     * @param optionId identifier of a layout option
+     * @param value the option value to set
      */
-    public static void setDiagramType(final KLayoutData layoutData, final String diagramType) {
-        KStringOption typeOption = (KStringOption) layoutData.getOption(DIAGRAM_TYPE);
-        if (typeOption == null) {
-            typeOption = KLayoutDataFactory.eINSTANCE.createKStringOption();
-            typeOption.setKey(DIAGRAM_TYPE);
-            layoutData.getOptions().add(typeOption);
+    public static void setInt(final KLayoutData layoutData, final String optionId,
+            final int value) {
+        KIntOption intOption = (KIntOption) layoutData.getOption(optionId);
+        if (intOption == null) {
+            intOption = KLayoutDataFactory.eINSTANCE.createKIntOption();
+            intOption.setKey(optionId);
+            layoutData.getOptions().add(intOption);
         }
-        typeOption.setValue(diagramType);
+        intOption.setValue(value);
     }
-
-    /** layout option key: direction of layout. */
-    public static final String LAYOUT_DIRECTION = "de.cau.cs.kieler.layout.options.layoutDirection";
-
+    
     /**
-     * Returns the layout direction for a given layout data instance.
+     * Returns a float valued option for a given layout data instance.
      * 
-     * @param layoutData layout data for a parent node
-     * @return the layout direction for the given layout data, or {@code
-     *         UNDEFINED} if there is no such option
+     * @param layoutData layout data for a graph element
+     * @param optionId identifier of a layout option
+     * @return the valued option for the given layout data, or {@code NaN} if
+     *         there is no such option
      */
-    public static LayoutDirection getLayoutDirection(final KLayoutData layoutData) {
-        KIntOption directionOption = (KIntOption) layoutData.getOption(LAYOUT_DIRECTION);
-        if (directionOption == null) {
-            return LayoutDirection.UNDEFINED;
+    public static float getFloat(final KLayoutData layoutData, final String optionId) {
+        KFloatOption floatOption = (KFloatOption) layoutData.getOption(optionId);
+        if (floatOption == null) {
+            return Float.NaN;
         } else {
-            return LayoutDirection.valueOf(directionOption.getValue());
+            return floatOption.getValue();
         }
     }
 
     /**
-     * Sets the layout direction for the given layout data instance.
+     * Sets a float valued option for the given layout data instance.
      * 
-     * @param layoutData layout data for a parent node
-     * @param layoutDirection layout direction to set
+     * @param layoutData layout data for a graph element
+     * @param optionId identifier of a layout option
+     * @param value minimal spacing to set
      */
-    public static void setLayoutDirection(final KLayoutData layoutData,
-            final LayoutDirection layoutDirection) {
-        KIntOption directionOption = (KIntOption) layoutData.getOption(LAYOUT_DIRECTION);
-        if (directionOption == null) {
-            directionOption = KLayoutDataFactory.eINSTANCE.createKIntOption();
-            directionOption.setKey(LAYOUT_DIRECTION);
-            layoutData.getOptions().add(directionOption);
+    public static void setFloat(final KLayoutData layoutData, final String optionId,
+            final float value) {
+        KFloatOption floatOption = (KFloatOption) layoutData.getOption(optionId);
+        if (floatOption == null) {
+            floatOption = KLayoutDataFactory.eINSTANCE.createKFloatOption();
+            floatOption.setKey(optionId);
+            layoutData.getOptions().add(floatOption);
         }
-        directionOption.setValue(layoutDirection.ordinal());
+        floatOption.setValue(value);
     }
 
-    /** layout option key: distance of node contents to the boundary. */
-    public static final String INSETS = "de.cau.cs.kieler.layout.options.insets";
+    /**
+     * Returns a boolean valued option for a given layout data instance.
+     * 
+     * @param layoutData layout data for a graph element
+     * @param optionId identifier of a layout option
+     * @return the boolean valued option for the given layout data, or {@code false}
+     *         if there is no such option
+     */
+    public static boolean getBoolean(final KLayoutData layoutData, final String optionId) {
+        KBooleanOption boolOption = (KBooleanOption) layoutData.getOption(optionId);
+        if (boolOption == null) {
+            return false;
+        } else {
+            return boolOption.isValue();
+        }
+    }
+
+    /**
+     * Sets a boolean valued option for a given layout data instance.
+     * 
+     * @param layoutData layout data for a graph element
+     * @param optionId identifier of a layout option
+     * @param value the option value to set
+     */
+    public static void setBoolean(final KLayoutData layoutData, final String optionId,
+            final boolean value) {
+        KBooleanOption boolOption = (KBooleanOption) layoutData.getOption(optionId);
+        if (boolOption == null) {
+            boolOption = KLayoutDataFactory.eINSTANCE.createKBooleanOption();
+            boolOption.setKey(optionId);
+            layoutData.getOptions().add(boolOption);
+        }
+        boolOption.setValue(value);
+    }
+
+    /**
+     * Returns an enumeration valued option for a given layout data instance.
+     * 
+     * @param <T> type of enumeration class
+     * @param layoutData layout data for a graph element
+     * @param enumClass the enumeration class
+     * @return the enumeration valued option for the given layout data, or the first
+     *         enumeration value if there is no such option
+     */
+    public static <T extends Enum<?>> T getEnum(final KLayoutData layoutData,
+            final Class<T> enumClass) {
+        String optionId = enum2idMap.get(enumClass);
+        KIntOption enumOption = (KIntOption) layoutData.getOption(optionId);
+        if (enumOption == null) {
+            return enumClass.getEnumConstants()[0];
+        } else {
+            return enumClass.getEnumConstants()[enumOption.getValue()];
+        }
+    }
+
+    /**
+     * Sets an enumeration valued option for the given layout data instance.
+     * 
+     * @param <T> type of enumeration class
+     * @param layoutData layout data for a graph element
+     * @param value the option value to set
+     */
+    public static <T extends Enum<?>> void setEnum(final KLayoutData layoutData, final T value) {
+        String optionId = enum2idMap.get(value.getClass());
+        KIntOption enumOption = (KIntOption) layoutData.getOption(optionId);
+        if (enumOption == null) {
+            enumOption = KLayoutDataFactory.eINSTANCE.createKIntOption();
+            enumOption.setKey(optionId);
+            layoutData.getOptions().add(enumOption);
+        }
+        enumOption.setValue(value.ordinal());
+    }
 
     /**
      * Returns the insets for a given layout data instance. If no insets option
      * is set, default values are created.
      * 
-     * @param layoutData layout data for a parent node
+     * @param <T> type of object; only insets are supported
+     * @param layoutData layout data for a graph element
+     * @param clazz the object class; must equal {@code KInsets.class}
      * @return the insets for the given layout data
      */
-    public static KInsets getInsets(final KLayoutData layoutData) {
-        KObjectOption insetsOption = (KObjectOption) layoutData.getOption(INSETS);
-        if (insetsOption == null || insetsOption.getValue() == null) {
-            return KLayoutDataFactory.eINSTANCE.createKInsets();
+    public static <T extends EObject> T getObject(final KLayoutData layoutData,
+            final Class<T> clazz) {
+        if (clazz == KInsets.class) {
+            KObjectOption objectOption = (KObjectOption) layoutData.getOption(INSETS);
+            if (objectOption == null || objectOption.getValue() == null) {
+                return clazz.cast(KLayoutDataFactory.eINSTANCE.createKInsets());
+            } else {
+                return clazz.cast(objectOption.getValue());
+            }
         } else {
-            return (KInsets) insetsOption.getValue();
-        }
-    }
-
-    /** layout option key: side of a port on its node's boundary. */
-    public static final String PORT_SIDE = "de.cau.cs.kieler.layout.options.portSide";
-
-    /**
-     * Returns the port side for a given layout data instance.
-     * 
-     * @param layoutData layout data for a port
-     * @return the port side for the given layout data
-     */
-    public static PortSide getPortSide(final KLayoutData layoutData) {
-        KIntOption sideOption = (KIntOption) layoutData.getOption(PORT_SIDE);
-        if (sideOption == null) {
-            return PortSide.UNDEFINED;
-        } else {
-            return PortSide.valueOf(sideOption.getValue());
-        }
-    }
-
-    /**
-     * Sets the port side for the given layout data instance.
-     * 
-     * @param layoutData layout data for a port
-     * @param portSide port side to set
-     */
-    public static void setPortSide(final KLayoutData layoutData, final PortSide portSide) {
-        KIntOption sideOption = (KIntOption) layoutData.getOption(PORT_SIDE);
-        if (sideOption == null) {
-            sideOption = KLayoutDataFactory.eINSTANCE.createKIntOption();
-            sideOption.setKey(PORT_SIDE);
-            layoutData.getOptions().add(sideOption);
-        }
-        sideOption.setValue(portSide.ordinal());
-    }
-
-    /** layout option key: constraints for port positions. */
-    public static final String PORT_CONSTRAINTS = "de.cau.cs.kieler.layout.options.portConstraints";
-
-    /**
-     * Returns the port constraints for a given layout data instance.
-     * 
-     * @param layoutData layout data for a node
-     * @return the port constraints for the given layout data
-     */
-    public static PortConstraints getPortConstraints(final KLayoutData layoutData) {
-        KIntOption constraintsOption = (KIntOption) layoutData.getOption(PORT_CONSTRAINTS);
-        if (constraintsOption == null) {
-            return PortConstraints.UNDEFINED;
-        } else {
-            return PortConstraints.valueOf(constraintsOption.getValue());
-        }
-    }
-
-    /**
-     * Sets the port constraints for the given layout data instance.
-     * 
-     * @param layoutData layout data for a node
-     * @param portConstraints port constraints to set
-     */
-    public static void setPortConstraints(final KLayoutData layoutData,
-            final PortConstraints portConstraints) {
-        KIntOption constraintsOption = (KIntOption) layoutData.getOption(PORT_CONSTRAINTS);
-        if (constraintsOption == null) {
-            constraintsOption = KLayoutDataFactory.eINSTANCE.createKIntOption();
-            constraintsOption.setKey(PORT_CONSTRAINTS);
-            layoutData.getOptions().add(constraintsOption);
-        }
-        constraintsOption.setValue(portConstraints.ordinal());
-    }
-
-    /** layout option key: rank of a port. */
-    public static final String PORT_RANK = "de.cau.cs.kieler.layout.options.portRank";
-
-    /**
-     * Returns the port rank for a given layout data instance.
-     * 
-     * @param layoutData layout data for a port
-     * @return the port rank for the given layout data, or -1 if there is no
-     *         such option
-     */
-    public static int getPortRank(final KLayoutData layoutData) {
-        KIntOption rankOption = (KIntOption) layoutData.getOption(PORT_RANK);
-        if (rankOption == null) {
-            return -1;
-        } else {
-            return rankOption.getValue();
-        }
-    }
-
-    /**
-     * Sets the port rank for the given layout data instance.
-     * 
-     * @param layoutData layout data for a port
-     * @param rank port rank to set
-     */
-    public static void setPortRank(final KLayoutData layoutData, final int rank) {
-        KIntOption rankOption = (KIntOption) layoutData.getOption(PORT_RANK);
-        if (rankOption == null) {
-            rankOption = KLayoutDataFactory.eINSTANCE.createKIntOption();
-            rankOption.setKey(PORT_RANK);
-            layoutData.getOptions().add(rankOption);
-        }
-        rankOption.setValue(rank);
-    }
-
-    /** layout option key: placement positions for edge labels. */
-    public static final String EDGE_LABEL_PLACEMENT
-            = "de.cau.cs.kieler.layout.options.edgeLabelPlacement";
-
-    /**
-     * Returns the edge label placement for a given layout data instance.
-     * 
-     * @param layoutData layout data for an edge label
-     * @return the edge label placement for the given layout data
-     */
-    public static EdgeLabelPlacement getEdgeLabelPlacement(final KLayoutData layoutData) {
-        KIntOption placementOption = (KIntOption) layoutData.getOption(EDGE_LABEL_PLACEMENT);
-        if (placementOption == null) {
-            return EdgeLabelPlacement.UNDEFINED;
-        } else {
-            return EdgeLabelPlacement.valueOf(placementOption.getValue());
-        }
-    }
-
-    /**
-     * Sets the edge label placement for the given layout data instance.
-     * 
-     * @param layoutData layout data for an edge label
-     * @param placement edge label placement to set
-     */
-    public static void setEdgeLabelPlacement(final KLayoutData layoutData,
-            final EdgeLabelPlacement placement) {
-        KIntOption placementOption = (KIntOption) layoutData.getOption(EDGE_LABEL_PLACEMENT);
-        if (placementOption == null) {
-            placementOption = KLayoutDataFactory.eINSTANCE.createKIntOption();
-            placementOption.setKey(EDGE_LABEL_PLACEMENT);
-            layoutData.getOptions().add(placementOption);
-        }
-        placementOption.setValue(placement.ordinal());
-    }
-
-    /** layout option key: size constraint for nodes. */
-    public static final String FIXED_SIZE = "de.cau.cs.kieler.layout.options.fixedSize";
-
-    /**
-     * Returns whether the fixed size option is active for the given layout data
-     * instance.
-     * 
-     * @param layoutData layout data for a node
-     * @return true if the fixed size option is active
-     */
-    public static boolean isFixedSize(final KLayoutData layoutData) {
-        KBooleanOption sizeOption = (KBooleanOption) layoutData.getOption(FIXED_SIZE);
-        if (sizeOption == null) {
-            return false;
-        } else {
-            return sizeOption.isValue();
-        }
-    }
-
-    /**
-     * Activates or deactivates the fixed size option for the given layout data
-     * instance.
-     * 
-     * @param layoutData layout data for a node
-     * @param fixedSize true if the node's size shall be fixed
-     */
-    public static void setFixedSize(final KLayoutData layoutData, final boolean fixedSize) {
-        KBooleanOption sizeOption = (KBooleanOption) layoutData.getOption(FIXED_SIZE);
-        if (sizeOption == null) {
-            sizeOption = KLayoutDataFactory.eINSTANCE.createKBooleanOption();
-            sizeOption.setKey(FIXED_SIZE);
-            layoutData.getOptions().add(sizeOption);
-        }
-        sizeOption.setValue(fixedSize);
-    }
-
-    /** layout option key: minimal distance between elements. */
-    public static final String MIN_SPACING = "de.cau.cs.kieler.layout.options.minSpacing";
-
-    /**
-     * Returns the minimal spacing for a given layout data instance.
-     * 
-     * @param layoutData layout data for a parent node
-     * @return the minimal spacing for the given layout data, or {@code NaN} if
-     *         there is no such option
-     */
-    public static float getMinSpacing(final KLayoutData layoutData) {
-        KFloatOption spacingOption = (KFloatOption) layoutData.getOption(MIN_SPACING);
-        if (spacingOption == null) {
-            return Float.NaN;
-        } else {
-            return spacingOption.getValue();
-        }
-    }
-
-    /**
-     * Sets the minimal spacing for the given layout data instance.
-     * 
-     * @param layoutData layout data for a parent node
-     * @param spacing minimal spacing to set
-     */
-    public static void setMinSpacing(final KLayoutData layoutData, final float spacing) {
-        KFloatOption spacingOption = (KFloatOption) layoutData.getOption(MIN_SPACING);
-        if (spacingOption == null) {
-            spacingOption = KLayoutDataFactory.eINSTANCE.createKFloatOption();
-            spacingOption.setKey(MIN_SPACING);
-            layoutData.getOptions().add(spacingOption);
-        }
-        spacingOption.setValue(spacing);
-    }
-    
-    /** layout option key: distance to border of the drawing. */
-    public static final String BORDER_SPACING = "de.cau.cs.kieler.layout.options.borderSpacing";
-
-    /**
-     * Returns the border spacing for a given layout data instance.
-     * 
-     * @param layoutData layout data for a parent node
-     * @return the border spacing for the given layout data, or {@code NaN} if
-     *         there is no such option
-     */
-    public static float getBorderSpacing(final KLayoutData layoutData) {
-        KFloatOption spacingOption = (KFloatOption) layoutData.getOption(BORDER_SPACING);
-        if (spacingOption == null) {
-            return Float.NaN;
-        } else {
-            return spacingOption.getValue();
-        }
-    }
-
-    /**
-     * Sets the border spacing for the given layout data instance.
-     * 
-     * @param layoutData layout data for a parent node
-     * @param spacing border spacing to set
-     */
-    public static void setBorderSpacing(final KLayoutData layoutData, final float spacing) {
-        KFloatOption spacingOption = (KFloatOption) layoutData.getOption(BORDER_SPACING);
-        if (spacingOption == null) {
-            spacingOption = KLayoutDataFactory.eINSTANCE.createKFloatOption();
-            spacingOption.setKey(BORDER_SPACING);
-            layoutData.getOptions().add(spacingOption);
-        }
-        spacingOption.setValue(spacing);
-    }
-
-    /** layout option key: priority of elements. */
-    public static final String PRIORITY = "de.cau.cs.kieler.layout.options.priority";
-
-    /**
-     * Sets the priority of the given layout data.
-     * 
-     * @param layoutData layout data to process
-     * @param priority priority value for the corresponding graph element
-     */
-    public static void setPriority(final KLayoutData layoutData, final int priority) {
-        KIntOption priorityOption = (KIntOption) layoutData.getOption(PRIORITY);
-        if (priorityOption == null) {
-            priorityOption = KLayoutDataFactory.eINSTANCE.createKIntOption();
-            priorityOption.setKey(PRIORITY);
-            layoutData.getOptions().add(priorityOption);
-        }
-        priorityOption.setValue(priority);
-    }
-
-    /**
-     * Retrieves the assigned priority value for a given layout data.
-     * 
-     * @param layoutData layout data to process
-     * @return the assigned priority, or 0 if no priority is assigned
-     */
-    public static int getPriority(final KLayoutData layoutData) {
-        KIntOption priorityOption = (KIntOption) layoutData.getOption(PRIORITY);
-        if (priorityOption == null) {
-            return 0;
-        } else {
-            return priorityOption.getValue();
-        }
-    }
-
-    /** layout option key: font name. */
-    public static final String FONT_NAME = "de.cau.cs.kieler.layout.options.fontName";
-
-    /**
-     * Returns the font name for a given layout data instance.
-     * 
-     * @param layoutData layout data for a label
-     * @return the font name for the given layout data, or {@code null} if there
-     *         is no such option
-     */
-    public static String getFontName(final KLayoutData layoutData) {
-        KStringOption fontOption = (KStringOption) layoutData.getOption(FONT_NAME);
-        if (fontOption == null) {
             return null;
-        } else {
-            return fontOption.getValue();
         }
-    }
-
-    /**
-     * Sets the font name for the given layout data instance.
-     * 
-     * @param layoutData layout data for a label
-     * @param fontName font name to set
-     */
-    public static void setFontName(final KLayoutData layoutData, final String fontName) {
-        KStringOption fontOption = (KStringOption) layoutData.getOption(FONT_NAME);
-        if (fontOption == null) {
-            fontOption = KLayoutDataFactory.eINSTANCE.createKStringOption();
-            fontOption.setKey(FONT_NAME);
-            layoutData.getOptions().add(fontOption);
-        }
-        fontOption.setValue(fontName);
-    }
-
-    /** layout option key: font size. */
-    public static final String FONT_SIZE = "de.cau.cs.kieler.layout.options.fontSize";
-
-    /**
-     * Sets the font size of the given layout data.
-     * 
-     * @param layoutData layout data to process
-     * @param size font size for the corresponding label
-     */
-    public static void setFontSize(final KLayoutData layoutData, final int size) {
-        KIntOption sizeOption = (KIntOption) layoutData.getOption(FONT_SIZE);
-        if (sizeOption == null) {
-            sizeOption = KLayoutDataFactory.eINSTANCE.createKIntOption();
-            sizeOption.setKey(FONT_SIZE);
-            layoutData.getOptions().add(sizeOption);
-        }
-        sizeOption.setValue(size);
-    }
-
-    /**
-     * Retrieves the font size for a given layout data.
-     * 
-     * @param layoutData layout data to process
-     * @return the font size, or 0 if no font size is assigned
-     */
-    public static int getFontSize(final KLayoutData layoutData) {
-        KIntOption sizeOption = (KIntOption) layoutData.getOption(FONT_SIZE);
-        if (sizeOption == null) {
-            return 0;
-        } else {
-            return sizeOption.getValue();
-        }
-    }
-
-    /** layout option key: shape of a node. */
-    public static final String SHAPE = "de.cau.cs.kieler.layout.options.shape";
-
-    /**
-     * Returns the shape for a given layout data instance.
-     * 
-     * @param layoutData layout data for a node
-     * @return the shape for the given layout data
-     */
-    public static Shape getShape(final KLayoutData layoutData) {
-        KIntOption shapeOption = (KIntOption) layoutData.getOption(SHAPE);
-        if (shapeOption == null) {
-            return Shape.UNDEFINED;
-        } else {
-            return Shape.valueOf(shapeOption.getValue());
-        }
-    }
-
-    /**
-     * Sets the shape for the given layout data instance.
-     * 
-     * @param layoutData layout data for a node
-     * @param shape shape to set
-     */
-    public static void setShape(final KLayoutData layoutData, final Shape shape) {
-        KIntOption shapeOption = (KIntOption) layoutData.getOption(SHAPE);
-        if (shapeOption == null) {
-            shapeOption = KLayoutDataFactory.eINSTANCE.createKIntOption();
-            shapeOption.setKey(SHAPE);
-            layoutData.getOptions().add(shapeOption);
-        }
-        shapeOption.setValue(shape.ordinal());
-    }
-
-    /** layout option key: expand nodes to fill their parent. */
-    public static final String EXPAND_NODES = "de.cau.cs.kieler.layout.options.expandNodes";
-
-    /**
-     * Returns whether the expand nodes option is active for the given layout
-     * data instance.
-     * 
-     * @param layoutData layout data for a parent node
-     * @return true if the expand nodes option is active
-     */
-    public static boolean isExpandNodes(final KLayoutData layoutData) {
-        KBooleanOption expandOption = (KBooleanOption) layoutData.getOption(EXPAND_NODES);
-        if (expandOption == null) {
-            return false;
-        } else {
-            return expandOption.isValue();
-        }
-    }
-
-    /**
-     * Activates or deactivates the expand nodes option for the given layout
-     * data instance.
-     * 
-     * @param layoutData layout data for a parent node
-     * @param expandNodes true if the contained nodes shall be expanded
-     */
-    public static void setExpandNodes(final KLayoutData layoutData, final boolean expandNodes) {
-        KBooleanOption expandOption = (KBooleanOption) layoutData.getOption(EXPAND_NODES);
-        if (expandOption == null) {
-            expandOption = KLayoutDataFactory.eINSTANCE.createKBooleanOption();
-            expandOption.setKey(EXPAND_NODES);
-            layoutData.getOptions().add(expandOption);
-        }
-        expandOption.setValue(expandNodes);
-    }
-
-    /** layout option key: minimal width. */
-    public static final String MIN_WIDTH = "de.cau.cs.kieler.layout.options.minWidth";
-
-    /**
-     * Sets the minimal width of the given layout data.
-     * 
-     * @param layoutData layout data to process
-     * @param width minimal width for the corresponding node
-     */
-    public static void setMinWidth(final KLayoutData layoutData, final int width) {
-        KIntOption sizeOption = (KIntOption) layoutData.getOption(MIN_WIDTH);
-        if (sizeOption == null) {
-            sizeOption = KLayoutDataFactory.eINSTANCE.createKIntOption();
-            sizeOption.setKey(MIN_WIDTH);
-            layoutData.getOptions().add(sizeOption);
-        }
-        sizeOption.setValue(width);
-    }
-
-    /**
-     * Retrieves the minimal width for a given layout data.
-     * 
-     * @param layoutData layout data to process
-     * @return the minimal width, or 0 if no minimal width is assigned
-     */
-    public static int getMinWidth(final KLayoutData layoutData) {
-        KIntOption sizeOption = (KIntOption) layoutData.getOption(MIN_WIDTH);
-        if (sizeOption == null) {
-            return 0;
-        } else {
-            return sizeOption.getValue();
-        }
-    }
-
-    /** layout option key: minimal height. */
-    public static final String MIN_HEIGHT = "de.cau.cs.kieler.layout.options.minHeight";
-
-    /**
-     * Sets the minimal height of the given layout data.
-     * 
-     * @param layoutData layout data to process
-     * @param height minimal height for the corresponding node
-     */
-    public static void setMinHeight(final KLayoutData layoutData, final int height) {
-        KIntOption sizeOption = (KIntOption) layoutData.getOption(MIN_HEIGHT);
-        if (sizeOption == null) {
-            sizeOption = KLayoutDataFactory.eINSTANCE.createKIntOption();
-            sizeOption.setKey(MIN_HEIGHT);
-            layoutData.getOptions().add(sizeOption);
-        }
-        sizeOption.setValue(height);
-    }
-
-    /**
-     * Retrieves the minimal height for a given layout data.
-     * 
-     * @param layoutData layout data to process
-     * @return the minimal height, or 0 if no minimal height is assigned
-     */
-    public static int getMinHeight(final KLayoutData layoutData) {
-        KIntOption sizeOption = (KIntOption) layoutData.getOption(MIN_HEIGHT);
-        if (sizeOption == null) {
-            return 0;
-        } else {
-            return sizeOption.getValue();
-        }
-    }
-    
-    /** layout option key: randomization seed. */
-    public static final String RANDOM_SEED = "de.cau.cs.kieler.layout.options.randomSeed";
-
-    /**
-     * Sets the randomization seed of the given layout data.
-     * 
-     * @param layoutData layout data to process
-     * @param seed randomization seed for the corresponding node
-     */
-    public static void setRandomSeed(final KLayoutData layoutData, final int seed) {
-        KIntOption seedOption = (KIntOption) layoutData.getOption(RANDOM_SEED);
-        if (seedOption == null) {
-            seedOption = KLayoutDataFactory.eINSTANCE.createKIntOption();
-            seedOption.setKey(RANDOM_SEED);
-            layoutData.getOptions().add(seedOption);
-        }
-        seedOption.setValue(seed);
-    }
-
-    /**
-     * Retrieves the randomization seed for a given layout data.
-     * 
-     * @param layoutData layout data to process
-     * @return the randomization seed, or 1 if no seed is assigned
-     */
-    public static int getRandomSeed(final KLayoutData layoutData) {
-        KIntOption seedOption = (KIntOption) layoutData.getOption(RANDOM_SEED);
-        if (seedOption == null) {
-            return 1;
-        } else {
-            return seedOption.getValue();
-        }
-    }
-    
-    /** layout option key: optimize layout for user interaction. */
-    public static final String INTERACTIVE = "de.cau.cs.kieler.layout.options.interactive";
-
-    /**
-     * Returns whether the interactive layout option is active for the given layout
-     * data instance.
-     * 
-     * @param layoutData layout data for a parent node
-     * @return true if the interactive layout option is active
-     */
-    public static boolean isInteractive(final KLayoutData layoutData) {
-        KBooleanOption interactiveOption = (KBooleanOption) layoutData.getOption(INTERACTIVE);
-        if (interactiveOption == null) {
-            return false;
-        } else {
-            return interactiveOption.isValue();
-        }
-    }
-
-    /**
-     * Activates or deactivates the interactive layout option for the given layout
-     * data instance.
-     * 
-     * @param layoutData layout data for a parent node
-     * @param interactive true if interactive layout shall be performed
-     */
-    public static void setInteractive(final KLayoutData layoutData, final boolean interactive) {
-        KBooleanOption interactiveOption = (KBooleanOption) layoutData.getOption(INTERACTIVE);
-        if (interactiveOption == null) {
-            interactiveOption = KLayoutDataFactory.eINSTANCE.createKBooleanOption();
-            interactiveOption.setKey(INTERACTIVE);
-            layoutData.getOptions().add(interactiveOption);
-        }
-        interactiveOption.setValue(interactive);
-    }
-    
-    /** layout option key: spacing of edge labels to edges. */
-    public static final String LABEL_SPACING = "de.cau.cs.kieler.layout.options.labelSpacing";
-
-    /**
-     * Returns the label spacing for a given layout data instance.
-     * 
-     * @param layoutData layout data for an edge
-     * @return the label spacing for the given layout data, or {@code NaN} if
-     *         there is no such option
-     */
-    public static float getLabelSpacing(final KLayoutData layoutData) {
-        KFloatOption spacingOption = (KFloatOption) layoutData.getOption(LABEL_SPACING);
-        if (spacingOption == null) {
-            return Float.NaN;
-        } else {
-            return spacingOption.getValue();
-        }
-    }
-
-    /**
-     * Sets the label spacing for the given layout data instance.
-     * 
-     * @param layoutData layout data for an edge
-     * @param spacing label spacing to set
-     */
-    public static void setLabelSpacing(final KLayoutData layoutData, final float spacing) {
-        KFloatOption spacingOption = (KFloatOption) layoutData.getOption(LABEL_SPACING);
-        if (spacingOption == null) {
-            spacingOption = KLayoutDataFactory.eINSTANCE.createKFloatOption();
-            spacingOption.setKey(LABEL_SPACING);
-            layoutData.getOptions().add(spacingOption);
-        }
-        spacingOption.setValue(spacing);
     }
     
 }

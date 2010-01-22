@@ -468,7 +468,8 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
         }
 
         // add insets to offset value
-        KInsets insets = LayoutOptions.getInsets(KimlLayoutUtil.getShapeLayout(layoutNode));
+        KInsets insets = LayoutOptions.getObject(KimlLayoutUtil.getShapeLayout(layoutNode),
+                KInsets.class);
         KPoint subOffset = KLayoutDataFactory.eINSTANCE.createKPoint();
         subOffset.setX(offset.getX() + insets.getLeft());
         subOffset.setY(offset.getY() + insets.getTop());

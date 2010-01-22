@@ -395,13 +395,15 @@ public class KandinskyLPOrthogonalizer extends AbstractAlgorithm implements IOrt
                     KEdge layoutEdge = (KEdge) tsmEdge.getObject();
                     if (edgeEntry.getType() == KSlimNode.IncEntry.Type.OUT) {
                         if (layoutEdge.getSourcePort() != null) {
-                            addSideConstraint(edgeEntry.getEdge(), LayoutOptions.getPortSide(KimlLayoutUtil
-                                    .getShapeLayout(layoutEdge.getSourcePort())), ilp, false);
+                            addSideConstraint(edgeEntry.getEdge(), LayoutOptions.getEnum(
+                                    KimlLayoutUtil.getShapeLayout(layoutEdge.getSourcePort()),
+                                    PortSide.class), ilp, false);
                         }
                     } else {
                         if (layoutEdge.getTargetPort() != null) {
-                            addSideConstraint(edgeEntry.getEdge(), LayoutOptions.getPortSide(KimlLayoutUtil
-                                    .getShapeLayout(layoutEdge.getTargetPort())), ilp, true);
+                            addSideConstraint(edgeEntry.getEdge(), LayoutOptions.getEnum(
+                                    KimlLayoutUtil.getShapeLayout(layoutEdge.getTargetPort()),
+                                    PortSide.class), ilp, true);
                         }
                     }
                 }

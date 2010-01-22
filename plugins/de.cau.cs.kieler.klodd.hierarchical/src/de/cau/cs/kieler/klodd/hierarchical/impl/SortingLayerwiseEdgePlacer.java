@@ -109,8 +109,8 @@ public class SortingLayerwiseEdgePlacer extends AbstractAlgorithm implements ILa
                 float sourcePos = connection.calcSourcePos(minDist);
                 float targetPos = connection.calcTargetPos(minDist);
                 if (layer.getRank() == 0) {
-                    PortSide placement = LayoutOptions.getPortSide(KimlLayoutUtil
-                            .getShapeLayout(connection.getSourcePort()));
+                    PortSide placement = LayoutOptions.getEnum(KimlLayoutUtil
+                            .getShapeLayout(connection.getSourcePort()), PortSide.class);
                     if (layoutDirection == LayoutDirection.DOWN) {
                         if (placement == PortSide.WEST) {
                             sourcePos = 0.0f;
@@ -129,8 +129,8 @@ public class SortingLayerwiseEdgePlacer extends AbstractAlgorithm implements ILa
                         }
                     }
                 } else if (layer.getHeight() == 1) {
-                    PortSide placement = LayoutOptions.getPortSide(KimlLayoutUtil
-                            .getShapeLayout(connection.getTargetPort()));
+                    PortSide placement = LayoutOptions.getEnum(KimlLayoutUtil
+                            .getShapeLayout(connection.getTargetPort()), PortSide.class);
                     if (layoutDirection == LayoutDirection.DOWN) {
                         if (placement == PortSide.WEST) {
                             targetPos = 0.0f;

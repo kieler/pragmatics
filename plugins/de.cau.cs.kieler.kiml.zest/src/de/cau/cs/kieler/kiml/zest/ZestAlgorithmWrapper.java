@@ -211,7 +211,7 @@ public class ZestAlgorithmWrapper {
 
         // determine size of the parent group
         KShapeLayout shapeLayout = KimlLayoutUtil.getShapeLayout(parentNode);
-        KInsets insets = LayoutOptions.getInsets(shapeLayout);
+        KInsets insets = LayoutOptions.getObject(shapeLayout, KInsets.class);
         shapeLayout.setWidth(maxX + insets.getLeft() + insets.getRight() + SIZE_ADDITION);
         shapeLayout.setHeight(maxY + insets.getTop() + insets.getBottom() + SIZE_ADDITION);
     }

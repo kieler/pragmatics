@@ -52,10 +52,10 @@ public class BoxPlacer extends AbstractAlgorithm {
             final float objSpacing, final float borderSpacing, final boolean expandNodes) {
         getMonitor().begin("Box placement", 1);
         KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(parentNode);
-        KInsets insets = LayoutOptions.getInsets(parentLayout);
-        float minWidth = Math.max(LayoutOptions.getMinWidth(parentLayout)
+        KInsets insets = LayoutOptions.getObject(parentLayout, KInsets.class);
+        float minWidth = Math.max(LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_WIDTH)
                 - insets.getLeft() - insets.getRight(), 0);
-        float minHeight = Math.max(LayoutOptions.getMinHeight(parentLayout)
+        float minHeight = Math.max(LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_HEIGHT)
                 - insets.getTop() - insets.getBottom(), 0);
 
         // do place the boxes
@@ -88,7 +88,7 @@ public class BoxPlacer extends AbstractAlgorithm {
         float totalArea = 0.0f;
         for (KNode box : sortedBoxes) {
             KShapeLayout boxLayout = KimlLayoutUtil.getShapeLayout(box);
-            if (!LayoutOptions.isFixedSize(boxLayout)) {
+            if (!LayoutOptions.getBoolean(boxLayout, LayoutOptions.FIXED_SIZE)) {
                 KimlLayoutUtil.resizeNode(box);
             }
             maxRowWidth = Math.max(maxRowWidth, boxLayout.getWidth());

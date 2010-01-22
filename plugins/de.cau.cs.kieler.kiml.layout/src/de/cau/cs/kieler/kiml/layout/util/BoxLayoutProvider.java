@@ -50,17 +50,17 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         progressMonitor.begin("Box layout", 2);
         KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
         // set option for minimal spacing
-        float objSpacing = LayoutOptions.getMinSpacing(parentLayout);
+        float objSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_SPACING);
         if (Float.isNaN(objSpacing)) {
             objSpacing = DEFAULT_SPACING;
         }
         // set option for border spacing
-        float borderSpacing = LayoutOptions.getBorderSpacing(parentLayout);
+        float borderSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.BORDER_SPACING);
         if (Float.isNaN(borderSpacing)) {
             borderSpacing = DEFAULT_SPACING;
         }
         // set expand nodes option
-        boolean expandNodes = LayoutOptions.isExpandNodes(parentLayout);
+        boolean expandNodes = LayoutOptions.getBoolean(parentLayout, LayoutOptions.EXPAND_NODES);
 
         // sort boxes according to priority and size
         boxSorter.reset(progressMonitor.subTask(1));

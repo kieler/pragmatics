@@ -139,12 +139,12 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
         updateModules();
         KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
         // set option for minimal object spacing
-        float objSpacing = LayoutOptions.getMinSpacing(parentLayout);
+        float objSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_SPACING);
         if (Float.isNaN(objSpacing)) {
             objSpacing = DEF_MIN_DIST;
         }
         // set option for border spacing
-        float borderSpacing = LayoutOptions.getBorderSpacing(parentLayout);
+        float borderSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.BORDER_SPACING);
         if (Float.isNaN(borderSpacing)) {
             borderSpacing = DEF_MIN_DIST;
         }
@@ -277,7 +277,7 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
      */
     private void preProcess(final KNode parentNode) {
         KLayoutData parentLayout = KimlLayoutUtil.getShapeLayout(parentNode);
-        LayoutDirection layoutDirection = LayoutOptions.getLayoutDirection(parentLayout);
+        LayoutDirection layoutDirection = LayoutOptions.getEnum(parentLayout, LayoutDirection.class);
 
         for (KNode node : parentNode.getChildren()) {
             // fill port data for the child node
@@ -285,7 +285,8 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
 
             // set node size if not fixed
             if (node.getChildren().isEmpty()
-                    && !LayoutOptions.isFixedSize(KimlLayoutUtil.getShapeLayout(node))) {
+                    && !LayoutOptions.getBoolean(KimlLayoutUtil.getShapeLayout(node),
+                    LayoutOptions.FIXED_SIZE)) {
                 KimlLayoutUtil.resizeNode(node);
             }
         }

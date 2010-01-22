@@ -116,7 +116,7 @@ public class LayerElement {
             // the layer element is a layout node
             KNode node = (KNode) obj;
             KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(node);
-            portConstraints = LayoutOptions.getPortConstraints(nodeLayout);
+            portConstraints = LayoutOptions.getEnum(nodeLayout, PortConstraints.class);
             rankWidth = Math.max(node.getPorts().size(), 1);
             realWidth = nodeLayout.getWidth();
             realHeight = nodeLayout.getHeight();
@@ -127,7 +127,8 @@ public class LayerElement {
             List<KPort> southPortList = new LinkedList<KPort>();
             List<KPort> westPortList = new LinkedList<KPort>();
             for (KPort port : node.getPorts()) {
-                PortSide portSide = LayoutOptions.getPortSide(KimlLayoutUtil.getShapeLayout(port));
+                PortSide portSide = LayoutOptions.getEnum(KimlLayoutUtil.getShapeLayout(port),
+                        PortSide.class);
                 switch (portSide) {
                 case NORTH:
                     northPortList.add(port);
@@ -153,8 +154,8 @@ public class LayerElement {
                     public int compare(final KPort port1, final KPort port2) {
                         KShapeLayout layout1 = KimlLayoutUtil.getShapeLayout(port1);
                         KShapeLayout layout2 = KimlLayoutUtil.getShapeLayout(port2);
-                        int rank1 = LayoutOptions.getPortRank(layout1);
-                        int rank2 = LayoutOptions.getPortRank(layout2);
+                        int rank1 = LayoutOptions.getInt(layout1, LayoutOptions.PORT_RANK);
+                        int rank2 = LayoutOptions.getInt(layout2, LayoutOptions.PORT_RANK);
                         return rank1 - rank2;
                     }
                 };
@@ -301,7 +302,7 @@ public class LayerElement {
             shapeLayout.setYpos(position.getY() + posOffset.getY());
         } else if (elemObj instanceof KPort) {
             KShapeLayout shapeLayout = KimlLayoutUtil.getShapeLayout(elemObj);
-            switch (LayoutOptions.getPortSide(shapeLayout)) {
+            switch (LayoutOptions.getEnum(shapeLayout, PortSide.class)) {
             case NORTH:
                 if (layer.getLayeredGraph().getExternalPortConstraints() == PortConstraints.FIXED_POS) {
                     shapeLayout.setXpos(position.getX());
@@ -696,8 +697,10 @@ public class LayerElement {
             Double arank1 = abstractPortRanks.get(port1);
             Double arank2 = abstractPortRanks.get(port2);
             if (arank1 == null && arank2 == null) {
-                int rank1 = LayoutOptions.getPortRank(KimlLayoutUtil.getShapeLayout(port1));
-                int rank2 = LayoutOptions.getPortRank(KimlLayoutUtil.getShapeLayout(port2));
+                int rank1 = LayoutOptions.getInt(KimlLayoutUtil.getShapeLayout(port1),
+                        LayoutOptions.PORT_RANK);
+                int rank2 = LayoutOptions.getInt(KimlLayoutUtil.getShapeLayout(port2),
+                        LayoutOptions.PORT_RANK);
                 return rank1 - rank2;
             } else if (arank1 == null) {
                 return definedFirst ? 1 : -1;
@@ -804,16 +807,20 @@ public class LayerElement {
     private void assignPortRanks() {
         int portrank = 0;
         for (KPort port : northPorts) {
-            LayoutOptions.setPortRank(KimlLayoutUtil.getShapeLayout(port), portrank++);
+            LayoutOptions.setInt(KimlLayoutUtil.getShapeLayout(port), LayoutOptions.PORT_RANK,
+                    portrank++);
         }
         for (KPort port : eastPorts) {
-            LayoutOptions.setPortRank(KimlLayoutUtil.getShapeLayout(port), portrank++);
+            LayoutOptions.setInt(KimlLayoutUtil.getShapeLayout(port), LayoutOptions.PORT_RANK,
+                    portrank++);
         }
         for (KPort port : southPorts) {
-            LayoutOptions.setPortRank(KimlLayoutUtil.getShapeLayout(port), portrank++);
+            LayoutOptions.setInt(KimlLayoutUtil.getShapeLayout(port), LayoutOptions.PORT_RANK,
+                    portrank++);
         }
         for (KPort port : westPorts) {
-            LayoutOptions.setPortRank(KimlLayoutUtil.getShapeLayout(port), portrank++);
+            LayoutOptions.setInt(KimlLayoutUtil.getShapeLayout(port), LayoutOptions.PORT_RANK,
+                    portrank++);
         }
     }
 
