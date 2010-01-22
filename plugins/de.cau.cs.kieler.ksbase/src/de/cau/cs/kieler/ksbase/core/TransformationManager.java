@@ -44,8 +44,8 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
  * 
  * @author mim
  * 
- * @kieler.rating 2009-11-20 proposed yellow -review by msp,skn: class ok
- * 
+ * @kieler.rating 2010-01-22 yellow
+ *          review by msp, skn
  */
 public final class TransformationManager {
 
