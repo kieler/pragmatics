@@ -22,6 +22,7 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Insets;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -29,6 +30,7 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.gef.RootEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
+import org.eclipse.gmf.runtime.notation.Style;
 import org.eclipse.gmf.runtime.notation.View;
 
 import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
@@ -212,19 +214,21 @@ public final class KimlUiUtil {
     public static void setLayoutOptions(final IGraphicalEditPart editPart,
             final KLayoutData layoutData, final boolean setUserOptions) {
         LayoutServices layoutServices = LayoutServices.getInstance();
-        // get default layout options for the edit part
+
+        // get default layout options for the diagram type
+        String diagramType = (String) getOption(editPart, LayoutOptions.DIAGRAM_TYPE);
         Map<String, Object> options = new LinkedHashMap<String, Object>(
-                layoutServices.getOptions(getClassName(editPart, true)));
+                layoutServices.getOptions(diagramType));
+        
+        // get default layout options for the edit part and its domain model
         for (Entry<String, Object> entry : layoutServices.getOptions(
-                getClassName(editPart, false)).entrySet()) {
+                getClassName(editPart, true)).entrySet()) {
             if (entry.getValue() != null) {
                 options.put(entry.getKey(), entry.getValue());
             }
         }
-        
-        // get default layout options for the diagram type
-        String diagramType = (String) getOption(editPart, LayoutOptions.DIAGRAM_TYPE);
-        for (Entry<String, Object> entry : layoutServices.getOptions(diagramType).entrySet()) {
+        for (Entry<String, Object> entry : layoutServices.getOptions(
+                getClassName(editPart, false)).entrySet()) {
             if (entry.getValue() != null) {
                 options.put(entry.getKey(), entry.getValue());
             }
@@ -360,6 +364,25 @@ public final class KimlUiUtil {
         while (optionIter.hasNext()) {
             if (optionIter.next().getKey().equals(optionId)) {
                 optionIter.remove();
+                break;
+            }
+        }
+    }
+
+    /**
+     * Removes the {@link LayoutOptionStyle} from the notation view, if it exists. This
+     * operation must be run in a safe context; use {@link #runModelChange} to achieve this.
+     * 
+     * @param view the notation view from which to remove the layout option style
+     */
+    public static void removeOptionStyle(final View view) {
+        EClass optionClass = LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle();
+        @SuppressWarnings("unchecked")
+        ListIterator<Style> styleIter = view.getStyles().listIterator();
+        while (styleIter.hasNext()) {
+            Style style = styleIter.next();
+            if (style.eClass() == optionClass) {
+                styleIter.remove();
                 break;
             }
         }

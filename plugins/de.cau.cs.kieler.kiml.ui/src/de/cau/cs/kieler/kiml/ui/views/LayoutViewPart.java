@@ -23,6 +23,7 @@ import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -144,7 +145,9 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
             }
         });
         page.setActionBars(getViewSite().getActionBars());
-        addActions(page.getControl().getMenu());
+        addPopupActions(page.getControl().getMenu());
+        IMenuManager menuManager = getViewSite().getActionBars().getMenuManager();
+        menuManager.add(new RemoveOptionsAction(this, Messages.getString("kiml.ui.30")));
         
         IWorkbenchWindow workbenchWindow = getSite().getWorkbenchWindow();
         IWorkbenchPage activePage = workbenchWindow.getActivePage();
@@ -160,15 +163,15 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
                 setInput(part);
             }
             public void partDeactivated(final IWorkbenchPart part) {
+            }
+            public void partBroughtToTop(final IWorkbenchPart part) {
+            }
+            public void partClosed(final IWorkbenchPart part) {
                 if (part == currentEditor) {
                     currentEditor.getDiagramGraphicalViewer()
                             .removeSelectionChangedListener(LayoutViewPart.this);
                     currentEditor = null;
                 }
-            }
-            public void partBroughtToTop(final IWorkbenchPart part) {
-            }
-            public void partClosed(final IWorkbenchPart part) {
             }
             public void partOpened(final IWorkbenchPart part) {
             }
@@ -262,13 +265,13 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
      * 
      * @param menu context menu to enrich with actions
      */
-    private void addActions(final Menu menu) {
+    private void addPopupActions(final Menu menu) {
         final String applyOptionString = Messages.getString("kiml.ui.10"); //$NON-NLS-1$
         final IAction applyOptionAction = new ApplyOptionAction(this, applyOptionString);
         final String setDefaultString = Messages.getString("kiml.ui.16"); //$NON-NLS-1$
-        final IAction diagramTypeDefaultAction = new DiagramTypeDefaultAction(this, setDefaultString);
         final IAction editPartDefaultAction = new EditPartDefaultAction(this, setDefaultString, false);
         final IAction modelDefaultAction = new EditPartDefaultAction(this, setDefaultString, true);
+        final IAction diagramTypeDefaultAction = new DiagramTypeDefaultAction(this, setDefaultString);
         // dirty hack to add actions to an existing menu without having the menu manager
         menu.addMenuListener(new MenuAdapter() {
             public void menuShown(final MenuEvent event) {
@@ -279,12 +282,12 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
                         String itemId = ((IContributionItem) item.getData()).getId();
                         if (ApplyOptionAction.ACTION_ID.equals(itemId)) {
                             applyOptionItem = item;
-                        } else if (DiagramTypeDefaultAction.ACTION_ID.equals(itemId)) {
-                            diagramTypeDefaultItem = item;
                         } else if (EditPartDefaultAction.EDIT_PART_ACTION_ID.equals(itemId)) {
                             editPartDefaultItem = item;
                         } else if (EditPartDefaultAction.MODEL_ACTION_ID.equals(itemId)) {
                             modelDefaultItem = item;
+                        } else if (DiagramTypeDefaultAction.ACTION_ID.equals(itemId)) {
+                            diagramTypeDefaultItem = item;
                         }
                     }
                 }
@@ -295,32 +298,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
                     contributionItem.setId(ApplyOptionAction.ACTION_ID);
                     contributionItem.fill(menu, -1);
                 }
-                // add the "set as default for diagram type" action
-                LayoutServices layoutServices = LayoutServices.getInstance();
-                String diagramType = getSelectedDiagramType();
-                if (diagramType == null) {
-                    if (diagramTypeDefaultItem != null) {
-                        diagramTypeDefaultItem.setEnabled(false);
-                    }
-                } else {
-                    String diagramTypeName = layoutServices.getDiagramTypeName(diagramType);
-                    if (diagramTypeName != null) {
-                        if (!diagramTypeName.endsWith("s")) {
-                            diagramTypeName += "s";
-                        }
-                        if (diagramTypeDefaultItem == null) {
-                            diagramTypeDefaultAction.setText(setDefaultString + " " + diagramTypeName);
-                            ContributionItem contributionItem = new ActionContributionItem(
-                                    diagramTypeDefaultAction);
-                            contributionItem.setId(DiagramTypeDefaultAction.ACTION_ID);
-                            contributionItem.fill(menu, -1);
-                        } else {
-                            diagramTypeDefaultItem.setEnabled(true);
-                            diagramTypeDefaultItem.setText(setDefaultString + " " + diagramTypeName);
-                        }
-                    }
-                }
-                EditPart editPart = getSelectedEditPart();
+                EditPart editPart = getCurrentEditPart();
                 if (editPart == null) {
                     if (editPartDefaultItem != null) {
                         editPartDefaultItem.setEnabled(false);
@@ -352,6 +330,31 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
                     } else {
                         modelDefaultItem.setEnabled(true);
                         modelDefaultItem.setText(setDefaultString + " " + modelName);
+                    }
+                }
+                // add the "set as default for diagram type" action
+                LayoutServices layoutServices = LayoutServices.getInstance();
+                String diagramType = getCurrentDiagramType();
+                if (diagramType == null) {
+                    if (diagramTypeDefaultItem != null) {
+                        diagramTypeDefaultItem.setEnabled(false);
+                    }
+                } else {
+                    String diagramTypeName = layoutServices.getDiagramTypeName(diagramType);
+                    if (diagramTypeName != null) {
+                        if (!diagramTypeName.endsWith("s")) {
+                            diagramTypeName += "s";
+                        }
+                        if (diagramTypeDefaultItem == null) {
+                            diagramTypeDefaultAction.setText(setDefaultString + " " + diagramTypeName);
+                            ContributionItem contributionItem = new ActionContributionItem(
+                                    diagramTypeDefaultAction);
+                            contributionItem.setId(DiagramTypeDefaultAction.ACTION_ID);
+                            contributionItem.fill(menu, -1);
+                        } else {
+                            diagramTypeDefaultItem.setEnabled(true);
+                            diagramTypeDefaultItem.setText(setDefaultString + " " + diagramTypeName);
+                        }
                     }
                 }
             }
@@ -398,7 +401,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
      * @return the identifier of the diagram type for the currently selected object,
      *     or {@code null} if there is no such diagram type
      */
-    public String getSelectedDiagramType() {
+    public String getCurrentDiagramType() {
         if (currentSelection != null) {
             Object object = currentSelection.getFirstElement();
             if (object instanceof EditPart) {
@@ -415,7 +418,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
      * 
      * @return the selected edit part, or {@code null} if there is none
      */
-    public EditPart getSelectedEditPart() {
+    public EditPart getCurrentEditPart() {
         if (currentSelection != null) {
             Object object = currentSelection.getFirstElement();
             if (object instanceof IGraphicalEditPart) {
@@ -423,6 +426,15 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
             }
         }
         return null;
+    }
+
+    /**
+     * Returns the currently active editor that is tracked by the layout view.
+     * 
+     * @return the currently tracked editor, or {@code null} if there is none
+     */
+    public DiagramEditor getCurrentEditor() {
+        return currentEditor;
     }
     
     /**

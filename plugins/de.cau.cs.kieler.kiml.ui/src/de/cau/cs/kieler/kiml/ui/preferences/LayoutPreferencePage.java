@@ -42,7 +42,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
 import de.cau.cs.kieler.kiml.layout.LayoutProviderData;
@@ -279,7 +278,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
     private void addOptionTable(final Composite parent, final String entryTitle,
             final List<OptionsTableProvider.DataEntry> entries) {
         // construct the options table
-        Table table = new Table(parent, SWT.BORDER);
+        final Table table = new Table(parent, SWT.BORDER);
         TableColumn column1 = new TableColumn(table, SWT.NONE);
         column1.setText(entryTitle);
         TableColumn column2 = new TableColumn(table, SWT.NONE);
@@ -301,14 +300,13 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         tableLayoutData.heightHint = OPTIONS_TABLE_HEIGHT;
         
         // add buttons to edit the options
-        final Maybe<Integer> selectionIndex = new Maybe<Integer>();
         Composite composite = new Composite(parent, SWT.NONE);
         final Button editButton = new Button(composite, SWT.PUSH | SWT.CENTER);
         editButton.setText(Messages.getString("kiml.ui.21")); //$NON-NLS-1$
         editButton.setEnabled(false);
         editButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent e) {
-                int index = selectionIndex.get() == null ? -1 : selectionIndex.get();
+                int index = table.getSelectionIndex();
                 if (index >= 0 && index < entries.size()) {
                     showEditDialog(parent.getShell(), entries.get(index));
                     tableViewer.refresh();
@@ -320,7 +318,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         removeButton.setEnabled(false);
         removeButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent e) {
-                int index = selectionIndex.get() == null ? -1 : selectionIndex.get();
+                int index = table.getSelectionIndex();
                 if (index >= 0 && index < entries.size()) {
                     entries.get(index).setValue(null);
                     tableViewer.setInput(entries);
@@ -330,7 +328,6 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         table.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent e) {
                 if (!entries.isEmpty() && e.item != null) {
-                    selectionIndex.set(Integer.valueOf(e.detail));
                     editButton.setEnabled(true);
                     removeButton.setEnabled(true);
                 } else {

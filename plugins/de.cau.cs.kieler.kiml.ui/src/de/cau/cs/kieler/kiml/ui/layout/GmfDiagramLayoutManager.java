@@ -355,14 +355,15 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     buildLayoutGraphRecursively(parentEditPart, parentLayoutNode, compartment);
 
                     // set preconfigured layout options for the compartment
-                    KimlUiUtil.setLayoutOptions(compartment,
-                            KimlLayoutUtil.getShapeLayout(parentLayoutNode), false);
+//                    KimlUiUtil.setLayoutOptions(compartment,
+//                            KimlLayoutUtil.getShapeLayout(parentLayoutNode), false);
                 }
 
             // process nodes, which may be parents of compartments
             } else if (obj instanceof ShapeNodeEditPart) {
                 ShapeNodeEditPart childNodeEditPart = (ShapeNodeEditPart) obj;
-                if (!(childNodeEditPart instanceof NoteEditPart)) {
+                if (!(childNodeEditPart instanceof NoteEditPart
+                        || KimlUiUtil.isNoLayout(childNodeEditPart))) {
                     IFigure nodeFigure = childNodeEditPart.getFigure();
                     KNode childLayoutNode = KimlLayoutUtil.createInitializedNode();
                     Rectangle childBounds = nodeFigure.getBounds();
@@ -399,12 +400,9 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     editPart2GraphElemMap.put(childNodeEditPart, childLayoutNode);
                     graphElem2EditPartMap.put(childLayoutNode, childNodeEditPart);
                     hasChildNodes = true;
-                    if (!KimlUiUtil.isNoLayout(childNodeEditPart)) {
-                        // process the child as new current edit part, as it may
-                        // contain other elements
-                        buildLayoutGraphRecursively(childNodeEditPart, childLayoutNode,
-                                childNodeEditPart);
-                    }
+                    // process the child as new current edit part
+                    buildLayoutGraphRecursively(childNodeEditPart, childLayoutNode,
+                            childNodeEditPart);
     
                     // set user defined layout options for the node
                     KimlUiUtil.setLayoutOptions(childNodeEditPart, nodeLayout, true);

@@ -56,7 +56,7 @@ public class DiagramTypeDefaultAction extends Action {
      */
     @Override
     public void run() {
-        String diagramType = layoutView.getSelectedDiagramType();
+        String diagramType = layoutView.getCurrentDiagramType();
         if (diagramType != null) {
             for (IPropertySheetEntry entry : layoutView.getSelection()) {
                 setDefault(diagramType, entry);
