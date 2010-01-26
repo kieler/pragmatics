@@ -18,8 +18,9 @@ import org.eclipse.jface.dialogs.IInputValidator;
 import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
 
 /**
- * A validator for string input by the user.
+ * A validator for string input of layout option values by the user.
  *
+ * @kieler.rating 2010-01-26 proposed yellow msp
  * @author msp
  */
 public class LayoutOptionValidator implements IInputValidator {

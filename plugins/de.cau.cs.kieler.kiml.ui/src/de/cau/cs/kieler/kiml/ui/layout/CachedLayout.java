@@ -46,7 +46,10 @@ import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 
 /**
+ * A cache for results of automatic layout. Can be used to repeatedly apply the
+ * same layout to a diagram.
  *
+ * @kieler.rating 2010-01-26 proposed yellow msp
  * @author msp
  */
 public class CachedLayout {

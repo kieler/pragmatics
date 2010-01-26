@@ -26,6 +26,7 @@ import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
  * An action that sets the selected layout option as default for all instances of a
  * diagram type.
  *
+ * @kieler.rating 2010-01-26 proposed yellow msp
  * @author msp
  */
 public class DiagramTypeDefaultAction extends Action {

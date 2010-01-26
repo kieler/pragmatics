@@ -37,6 +37,7 @@ import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsPackage;
 /**
  * An action that applies the selected layout option as default for the whole diagram.
  *
+ * @kieler.rating 2010-01-26 proposed yellow msp
  * @author msp
  */
 public class ApplyOptionAction extends Action {
