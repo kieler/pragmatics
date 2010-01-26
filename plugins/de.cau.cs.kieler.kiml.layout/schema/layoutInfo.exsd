@@ -6,7 +6,7 @@
          <meta.schema plugin="de.cau.cs.kieler.kiml.layout" id="layoutInfo" name="Layout Info"/>
       </appInfo>
       <documentation>
-         The layout info extension point allows to specify the properties of a specific diagram editor with regard to automatic layout. Specific edit parts can be mapped to categories, for which layout options can be configured.
+         The layout info extension point allows to specify the properties of a specific diagram editor with regard to automatic layout. Layout options can be configured for specific model elements or edit parts.
       </documentation>
    </annotation>
 
@@ -19,7 +19,6 @@
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="diagramType"/>
-            <element ref="binding"/>
             <element ref="option"/>
          </sequence>
          <attribute name="point" type="string" use="required">
@@ -52,7 +51,7 @@
    <element name="diagramType">
       <annotation>
          <documentation>
-            A diagram type, used to classify diagrams with respect to layout. Specific compartments of a graphical editor can be mapped to diagram types using the &lt;code&gt;binding&lt;/code&gt; and the &lt;code&gt;option&lt;/code&gt; elements. Each layout provider may specify which diagram types it supports. There are two special diagram types which are predefined by KIML:
+            A diagram type, used to classify diagrams with respect to layout. Specific edit parts of a graphical editor can be mapped to diagram types using the &lt;code&gt;option&lt;/code&gt; element. Each layout provider may specify which diagram types it supports. There are two special diagram types which are predefined by KIML:
 &lt;ul&gt;&lt;li&gt;&lt;code&gt;de.cau.cs.kieler.layout.info.types.general&lt;/code&gt; applies to &lt;b&gt;all&lt;/b&gt; diagrams
 &lt;li&gt;&lt;code&gt;de.cau.cs.kieler.layout.info.types.nolayout&lt;/code&gt; declares that no automatic layout should be applied to such parts of the diagram&lt;/ul&gt;
          </documentation>
@@ -78,47 +77,20 @@
       </complexType>
    </element>
 
-   <element name="binding">
+   <element name="option">
       <annotation>
          <documentation>
-            A binding of a specific edit part to an identifier. The identifier can be used to configure layout options for the respective edit parts, e.g. to set the diagram type for a compartment class. Multiple edit parts may share the same binding identifier, thus indicating that their classes are of the same category.
+            A layout option configuration for a specific model element or edit part.
          </documentation>
       </annotation>
       <complexType>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  A class that implements a graphical edit part.
+                  Either a domain model class or an edit part class. The option is assigned to all instances of the given class.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.gef.GraphicalEditPart"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="id" type="string">
-            <annotation>
-               <documentation>
-                  An identifier for this category of edit parts. Multiple bindings may contribute the same identifier, indicating that the respective edit parts are of the same category.
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="option">
-      <annotation>
-         <documentation>
-            A layout option configuration for a specific category of edit parts.
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="object" type="string" use="required">
-            <annotation>
-               <documentation>
-                  Identifier of a diagram binding, which can be defined using the &lt;code&gt;binding&lt;/code&gt; element. This option will be applied to all instances of the respective edit parts. Multiple bindings may share the same identifier, thus allowing the same option to be configured for multiple edit part classes.
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.layout.layoutInfo/binding/@id"/>
+                  <meta.attribute kind="java"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -156,7 +128,7 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example for a diagram type, a binding, and an option extension, which together assign the diagram type &quot;State Machine&quot; to a specific compartment edit part:
+         The following is an example for a diagram type and an option extension, which together assign the diagram type &quot;State Machine&quot; to a specific domain model element:
 &lt;pre&gt;
    &lt;extension
          point=&quot;de.cau.cs.kieler.kiml.layout.layoutInfo&quot;&gt;
@@ -164,14 +136,10 @@
             id=&quot;de.cau.cs.kieler.layout.info.types.stateMachine&quot;
             name=&quot;State Machine&quot;&gt;
       &lt;/diagramType&gt;
-      &lt;binding
-            class=&quot;de.cau.cs.kieler.synccharts.diagram.edit.parts.RegionEditPart&quot;
-            id=&quot;de.cau.cs.kieler.synccharts.diagram&quot;&gt;
-      &lt;/binding&gt;
       &lt;option
-            object=&quot;de.cau.cs.kieler.synccharts.diagram&quot;
+            class=&quot;de.cau.cs.kieler.synccharts.Region&quot;
             option=&quot;de.cau.cs.kieler.layout.options.diagramType&quot;
-            value=&quot;de.cau.cs.kieler.layout.diagrams.stateMachine&quot;&gt;
+            value=&quot;de.cau.cs.kieler.layout.info.types.stateMachine&quot;&gt;
       &lt;/option&gt;
    &lt;/extension&gt;
 &lt;/pre&gt;

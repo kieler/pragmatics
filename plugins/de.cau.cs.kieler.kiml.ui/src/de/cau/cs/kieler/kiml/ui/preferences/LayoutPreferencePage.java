@@ -71,8 +71,8 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
     private PriorityTableProvider priorityTableProvider;
     /** list of diagram type option entries. */
     private List<OptionsTableProvider.DataEntry> diagramTypeEntries;
-    /** list of edit part option entries. */
-    private List<OptionsTableProvider.DataEntry> editPartEntries;
+    /** list of diagram element option entries. */
+    private List<OptionsTableProvider.DataEntry> elementEntries;
 
     /**
      * Creates the layout preference page.
@@ -91,8 +91,8 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         prioGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
         Group diagTypeGroup = createDiagramTypeGroup(composite);
         diagTypeGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-        Group editPartGroup = createEditPartGroup(composite);
-        editPartGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+        Group elementGroup = createElementGroup(composite);
+        elementGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
         GridLayout compositeLayout = new GridLayout(1, false);
         composite.setLayout(compositeLayout);
         return composite;
@@ -230,43 +230,43 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
     }
     
     /**
-     * Creates the group that holds the edit part options table.
+     * Creates the group that holds the diagram element options table.
      * 
      * @param parent the parent control
-     * @return a group with the edit part options table
+     * @return a group with the diagram element options table
      */
-    private Group createEditPartGroup(final Composite parent) {
-        Group editPartGroup = new Group(parent, SWT.NONE);
-        editPartGroup.setText(Messages.getString("kiml.ui.28")); //$NON-NLS-1$
+    private Group createElementGroup(final Composite parent) {
+        Group elementGroup = new Group(parent, SWT.NONE);
+        elementGroup.setText(Messages.getString("kiml.ui.28")); //$NON-NLS-1$
         IPreferenceStore preferenceStore = getPreferenceStore();
         LayoutServices layoutServices = LayoutServices.getInstance();
 
-        Set<String> editParts = EclipseLayoutServices.getInstance().getRegisteredEditParts();
+        Set<String> elements = EclipseLayoutServices.getInstance().getRegisteredElements();
         Collection<LayoutOptionData> layoutOptionData = layoutServices.getLayoutOptionData();
-        editPartEntries = new LinkedList<OptionsTableProvider.DataEntry>();
-        for (String editPart : editParts) {
+        elementEntries = new LinkedList<OptionsTableProvider.DataEntry>();
+        for (String element : elements) {
             for (LayoutOptionData data : layoutOptionData) {
-                String preference = EclipseLayoutServices.getPreferenceName(editPart, data.getId());
+                String preference = EclipseLayoutServices.getPreferenceName(element, data.getId());
                 if (preferenceStore.contains(preference)) {
                     Object value = data.parseValue(preferenceStore.getString(preference));
                     if (value != null) {
-                        int dotIndex = editPart.lastIndexOf('.');
-                        String partName = editPart.substring(dotIndex + 1);
-                        if (partName.endsWith("EditPart")) {
-                            partName = partName.substring(0, partName.length() - "EditPart".length());
+                        int dotIndex = element.lastIndexOf('.');
+                        String partName = element.substring(dotIndex + 1);
+                        if (partName.endsWith("Impl")) {
+                            partName = partName.substring(0, partName.length() - "Impl".length());
                         }
-                        editPartEntries.add(new OptionsTableProvider.DataEntry(
-                                partName, editPart, data, value));
+                        elementEntries.add(new OptionsTableProvider.DataEntry(
+                                partName, element, data, value));
                     }
                 }
             }
         }
         
-        addOptionTable(editPartGroup, Messages.getString("kiml.ui.29"), //$NON-NLS-1$
-                editPartEntries);
+        addOptionTable(elementGroup, Messages.getString("kiml.ui.29"), //$NON-NLS-1$
+                elementEntries);
 
-        editPartGroup.setLayout(new GridLayout(2, false));
-        return editPartGroup;
+        elementGroup.setLayout(new GridLayout(2, false));
+        return elementGroup;
     }
     
     /**
@@ -454,13 +454,17 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
             }
         }
         
-        // store data for the edit part options
-        for (OptionsTableProvider.DataEntry entry : editPartEntries) {
-            Object oldValue = layoutServices.getBindingOption(entry.getAssociatedTypeId(),
+        // store data for the diagram element options
+        for (OptionsTableProvider.DataEntry entry : elementEntries) {
+            Object oldValue = layoutServices.getOption(entry.getAssociatedTypeId(),
                     entry.getOptionData().getId());
             Object newValue = entry.getValue();
             if (oldValue == null || !oldValue.equals(newValue)) {
-                LayoutServices.getRegistry().addBindingOption(entry.getAssociatedTypeId(),
+                if (newValue == null) {
+                    newValue = EclipseLayoutServices.getInstance().getDefault(
+                            entry.getAssociatedTypeId(), entry.getOptionData().getId());
+                }
+                LayoutServices.getRegistry().addOption(entry.getAssociatedTypeId(),
                         entry.getOptionData().getId(), newValue);
                 String preference = EclipseLayoutServices.getPreferenceName(
                         entry.getAssociatedTypeId(), entry.getOptionData().getId());
@@ -468,9 +472,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
                         ? "null" : newValue.toString());
             }
         }
-        // reload the extension point options to restore deleted values
-        LayoutServices.getRegistry().processOptions();
-
+        
         LayoutViewPart.refreshLayoutView();
         return true;
     }

@@ -3,25 +3,18 @@
 <plugin>
    <extension
          point="de.cau.cs.kieler.kiml.layout.layoutInfo">
-      <binding
-            class="de.cau.cs.kieler.dataflow.diagram.edit.parts.DataflowModelEditPart"
-            id="de.cau.cs.kieler.dataflow">
-      </binding>
-      <binding
-            class="de.cau.cs.kieler.dataflow.diagram.edit.parts.BoxBoxCompartmentEditPart"
-            id="de.cau.cs.kieler.dataflow">
-      </binding>
-      <binding
-            class="de.cau.cs.kieler.dataflow.diagram.edit.parts.BoxBoxCompartment2EditPart"
-            id="de.cau.cs.kieler.dataflow">
-      </binding>
       <option
-            object="de.cau.cs.kieler.dataflow"
+            class="de.cau.cs.kieler.dataflow.DataflowModel"
             option="de.cau.cs.kieler.layout.options.diagramType"
             value="de.cau.cs.kieler.layout.diagrams.dataFlow">
       </option>
       <option
-            object="de.cau.cs.kieler.dataflow"
+            class="de.cau.cs.kieler.dataflow.Box"
+            option="de.cau.cs.kieler.layout.options.diagramType"
+            value="de.cau.cs.kieler.layout.diagrams.dataFlow">
+      </option>
+      <option
+            class="de.cau.cs.kieler.dataflow.Box"
             option="de.cau.cs.kieler.layout.options.borderSpacing"
             value="10.0">
       </option>

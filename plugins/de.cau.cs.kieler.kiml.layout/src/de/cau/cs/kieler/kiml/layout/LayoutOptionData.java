@@ -220,7 +220,7 @@ public class LayoutOptionData {
     }
     
     /** choices for boolean type options. */
-    public static final String[] BOOLEAN_CHOICES = { "true", "false" };
+    public static final String[] BOOLEAN_CHOICES = { "false", "true" };
 
     /**
      * Creates an array of choices that can be selected by the user to set a

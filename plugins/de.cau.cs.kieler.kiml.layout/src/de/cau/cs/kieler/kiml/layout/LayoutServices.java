@@ -75,8 +75,6 @@ public class LayoutServices {
     private Map<String, String> categoryMap = new HashMap<String, String>();
     /** mapping of diagram type identifiers to their names. */
     private Map<String, String> diagramTypeMap = new LinkedHashMap<String, String>();
-    /** mapping of diagram element types to associated binding identifiers. */
-    private Map<String, String> elementBindingMap = new LinkedHashMap<String, String>();
     /** mapping of object identifiers to associated options. */
     private Map<String, Map<String, Object>> id2OptionsMap
             = new HashMap<String, Map<String, Object>>();
@@ -150,35 +148,6 @@ public class LayoutServices {
         private Registry() {
         }
 
-        /** list of unprocessed layout options. */
-        private List<String[]> unprocessedOptions = new LinkedList<String[]>();
-
-        /**
-         * Process all binding options that have been set up using
-         * {@link #setupOption(String, String, String) setupOption}.
-         */
-        public void processOptions() {
-            // process all layout option configurations
-            for (String[] option : unprocessedOptions) {
-                String optionId = option[1];
-                LayoutOptionData optionData = layoutOptionMap.get(optionId);
-                if (optionData != null) {
-                    String valueString = option[2];
-                    Object valueObj = optionData.parseValue(valueString);
-                    if (valueObj != null) {
-                        String bindingId = option[0];
-                        Map<String, Object> optionsMap = id2OptionsMap.get(bindingId);
-                        if (optionsMap != null) {
-                            Object oldValue = optionsMap.get(optionId);
-                            if (oldValue == null) {
-                                optionsMap.put(optionId, valueObj);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
         /**
          * Adds the given layout listener to the list of registered listeners.
          * 
@@ -229,19 +198,6 @@ public class LayoutServices {
         }
 
         /**
-         * Registers the given diagram element type with the binding identifier.
-         * 
-         * @param elementType class name of diagram element to register
-         * @param bindingId identifier of the category of elements
-         */
-        public void addElementBinding(final String elementType, final String bindingId) {
-            elementBindingMap.put(elementType, bindingId);
-            if (!id2OptionsMap.containsKey(bindingId)) {
-                id2OptionsMap.put(bindingId, new LinkedHashMap<String, Object>());
-            }
-        }
-
-        /**
          * Registers the given category.
          * 
          * @param id identifier of the category
@@ -264,37 +220,6 @@ public class LayoutServices {
             if (!DIAGRAM_TYPE_NOLAYOUT.equals(id)) {
                 diagramTypeMap.put(id, name);
             }
-        }
-
-        /**
-         * Registers a layout option configuration for the given diagram setup.
-         * The {@link #processOptions()} method must be called after all options have
-         * been set up.
-         * 
-         * @param bindingId identifier of the category of diagram elements
-         * @param optionId identifier of a layout option
-         * @param value serialized value for the layout option
-         */
-        public void setupOption(final String bindingId, final String optionId,
-                final String value) {
-            unprocessedOptions.add(new String[] {bindingId, optionId, value});
-        }
-        
-        /**
-         * Adds the given option as default for a diagram element type.
-         * 
-         * @param elementType class name of a diagram element
-         * @param optionId identifier of a layout option
-         * @param value value for the layout option
-         */
-        public void addBindingOption(final String elementType, final String optionId,
-                final Object value) {
-            String bindingId = elementBindingMap.get(elementType);
-            if (bindingId == null) {
-                bindingId = elementType + ".binding";
-                elementBindingMap.put(elementType, bindingId);
-            }
-            addOption(bindingId, optionId, value);
         }
         
         /**
@@ -512,30 +437,6 @@ public class LayoutServices {
     }
     
     /**
-     * Returns a map that contains all layout options for a diagram element type.
-     * 
-     * @param elementType a type of diagram element
-     * @return a map of layout option identifiers to their values
-     */
-    public final Map<String, Object> getBindingOptions(final String elementType) {
-        String bindingId = elementBindingMap.get(elementType);
-        return getOptions(bindingId);
-    }
-
-    /**
-     * Retrieves the layout option with given identifier for a diagram element type.
-     * 
-     * @param elementType a type of diagram element
-     * @param optionId the layout option identifier
-     * @return the preconfigured value of the option, or {@code null} if the
-     *         option is not set for the given diagram element
-     */
-    public final Object getBindingOption(final String elementType, final String optionId) {
-        String bindingId = elementBindingMap.get(elementType);
-        return getOption(bindingId, optionId);
-    }
-    
-    /**
      * Returns a map that contains all layout options for an object identifier.
      * 
      * @param id an object identifier
@@ -553,30 +454,18 @@ public class LayoutServices {
     /**
      * Retrieves the layout option with given identifier for an object identifier.
      * 
-     * @param id an object identifier
+     * @param objectId an object identifier
      * @param optionId the layout option identifier
      * @return the preconfigured value of the option, or {@code null} if the
-     *         option is not set for the given diagram type
+     *         option is not set for the given object
      */
-    public final Object getOption(final String id, final String optionId) {
-        Map<String, Object> optionsMap = id2OptionsMap.get(id);
+    public final Object getOption(final String objectId, final String optionId) {
+        Map<String, Object> optionsMap = id2OptionsMap.get(objectId);
         if (optionsMap != null) {
             return optionsMap.get(optionId);
         } else {
             return null;
         }
-    }
-
-    /**
-     * Checks whether the diagram type configured for the given element is a
-     * "no layout" diagram.
-     * 
-     * @param elementType class of diagram element
-     * @return true if no layout must be performed for the given element
-     */
-    public final boolean isNolayout(final String elementType) {
-        String diagramType = (String) getBindingOption(elementType, LayoutOptions.DIAGRAM_TYPE);
-        return DIAGRAM_TYPE_NOLAYOUT.equals(diagramType);
     }
 
     /**

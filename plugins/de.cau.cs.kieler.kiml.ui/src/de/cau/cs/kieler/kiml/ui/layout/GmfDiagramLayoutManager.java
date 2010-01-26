@@ -48,7 +48,6 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
-import de.cau.cs.kieler.kiml.layout.LayoutServices;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KPoint;
@@ -267,7 +266,6 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         boolean hasChildNodes = false, hasChildCompartments = false,
                 hasPorts = false, isCollapsed = false;
         Insets insets = null;
-        LayoutServices layoutServices = LayoutServices.getInstance();
         IFigure parentFigure = parentEditPart.getFigure();
         
         // set the target of layout ancestry if it was found
@@ -341,7 +339,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             } else if (obj instanceof ShapeCompartmentEditPart
                     && ((CompartmentEditPart) obj).getChildren().size() > 0) {
                 CompartmentEditPart compartment = (CompartmentEditPart) obj;
-                if (!layoutServices.isNolayout(compartment.getClass().getName())) {
+                if (!KimlUiUtil.isNoLayout(compartment)) {
                     IFigure compartmentFigure = compartment.getFigure();
                     if (compartmentFigure instanceof ResizableCompartmentFigure) {
                         ResizableCompartmentFigure resizableCompartmentFigure
@@ -401,7 +399,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     editPart2GraphElemMap.put(childNodeEditPart, childLayoutNode);
                     graphElem2EditPartMap.put(childLayoutNode, childNodeEditPart);
                     hasChildNodes = true;
-                    if (!layoutServices.isNolayout(childNodeEditPart.getClass().getName())) {
+                    if (!KimlUiUtil.isNoLayout(childNodeEditPart)) {
                         // process the child as new current edit part, as it may
                         // contain other elements
                         buildLayoutGraphRecursively(childNodeEditPart, childLayoutNode,

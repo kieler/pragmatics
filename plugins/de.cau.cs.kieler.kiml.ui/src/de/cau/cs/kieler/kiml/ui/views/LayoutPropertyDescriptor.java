@@ -52,7 +52,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
             case STRING:
                 return images.getPropText();
             case BOOLEAN:
-                if ((Integer) element == 0) {
+                if ((Integer) element == 1) {
                     return images.getPropTrue();
                 } else {
                     return images.getPropFalse();

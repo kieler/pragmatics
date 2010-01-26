@@ -22,12 +22,14 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Insets;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.RootEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
+import org.eclipse.gmf.runtime.notation.View;
 
 import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
 import de.cau.cs.kieler.kiml.layout.LayoutProviderData;
@@ -143,26 +145,27 @@ public final class KimlUiUtil {
             }
         }
         
-        // check default value set for the actual edit part
-        result = editPart != null ? layoutServices.getBindingOption(
-                editPart.getClass().getName(), optionData.getId()) : null;
-        if (result != null) {
-            return result;
-        }
-        
-        // check default option of the diagram type
-        String diagramType = (String) layoutServices.getBindingOption(
-                containerEditPart.getClass().getName(), LayoutOptions.DIAGRAM_TYPE);
-        result = layoutServices.getOption(diagramType, optionData.getId());
-        if (result != null) {
-            return result;
+        if (editPart != null) {
+            // check default value set for the actual edit part or its model element
+            result = getOption(editPart, optionData.getId());
+            if (result != null) {
+                return result;
+            }
         }
 
-        // check default value for the container edit part
-        result = containerEditPart != null ? layoutServices.getBindingOption(
-                containerEditPart.getClass().getName(), optionData.getId()) : null;
-        if (result != null) {
-            return result;
+        if (containerEditPart != null) {
+            // check default option of the diagram type
+            String diagramType = (String) getOption(containerEditPart, LayoutOptions.DIAGRAM_TYPE);
+            result = layoutServices.getOption(diagramType, optionData.getId());
+            if (result != null) {
+                return result;
+            }
+    
+            // check default value for the container edit part
+            result = getOption(containerEditPart, optionData.getId());
+            if (result != null) {
+                return result;
+            }
         }
         
         // fall back to default value of specific options
@@ -209,13 +212,18 @@ public final class KimlUiUtil {
     public static void setLayoutOptions(final IGraphicalEditPart editPart,
             final KLayoutData layoutData, final boolean setUserOptions) {
         LayoutServices layoutServices = LayoutServices.getInstance();
-        // get preconfigured layout options
+        // get default layout options for the edit part
         Map<String, Object> options = new LinkedHashMap<String, Object>(
-                layoutServices.getBindingOptions(editPart.getClass().getName()));
+                layoutServices.getOptions(getClassName(editPart, true)));
+        for (Entry<String, Object> entry : layoutServices.getOptions(
+                getClassName(editPart, false)).entrySet()) {
+            if (entry.getValue() != null) {
+                options.put(entry.getKey(), entry.getValue());
+            }
+        }
         
         // get default layout options for the diagram type
-        String diagramType = (String) layoutServices.getBindingOption(
-                editPart.getClass().getName(), LayoutOptions.DIAGRAM_TYPE);
+        String diagramType = (String) getOption(editPart, LayoutOptions.DIAGRAM_TYPE);
         for (Entry<String, Object> entry : layoutServices.getOptions(diagramType).entrySet()) {
             if (entry.getValue() != null) {
                 options.put(entry.getKey(), entry.getValue());
@@ -228,32 +236,13 @@ public final class KimlUiUtil {
             if (diagramEditPart != editPart && diagramEditPart != null) {
                 LayoutOptionStyle optionStyle = (LayoutOptionStyle) diagramEditPart.getNotationView()
                         .getStyle(LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
-                if (optionStyle != null) {
-                    for (KOption option : optionStyle.getOptions()) {
-                        if (option.isDefault()) {
-                            LayoutOptionData optionData = layoutServices.getLayoutOptionData(
-                                    option.getKey());
-                            Object value = KimlLayoutUtil.getValue(option, optionData);
-                            if (value != null) {
-                                options.put(option.getKey(), value);
-                            }
-                        }
-                    }
-                }
+                addOptions(options, optionStyle, true);
             }
             
             // get user defined local layout options
             LayoutOptionStyle optionStyle = (LayoutOptionStyle) editPart.getNotationView().getStyle(
                     LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
-            if (optionStyle != null) {
-                for (KOption option : optionStyle.getOptions()) {
-                    LayoutOptionData optionData = layoutServices.getLayoutOptionData(option.getKey());
-                    Object value = KimlLayoutUtil.getValue(option, optionData);
-                    if (value != null) {
-                        options.put(option.getKey(), value);
-                    }
-                }
-            }
+            addOptions(options, optionStyle, false);
         }
         
         // add all options to the layout data instance
@@ -261,6 +250,31 @@ public final class KimlUiUtil {
             LayoutOptionData optionData = layoutServices.getLayoutOptionData(option.getKey());
             if (option.getValue() != null) {
                 optionData.setValue(layoutData, option.getValue());
+            }
+        }
+    }
+    
+    /**
+     * Adds the layout options of the given layout options style to a map
+     * of layout options.
+     * 
+     * @param options a map of layout options
+     * @param optionStyle a layout options style
+     * @param onlyDefault if true, only default options are taken
+     */
+    private static void addOptions(final Map<String, Object> options,
+            final LayoutOptionStyle optionStyle, final boolean onlyDefault) {
+        LayoutServices layoutServices = LayoutServices.getInstance();
+        if (optionStyle != null) {
+            for (KOption option : optionStyle.getOptions()) {
+                if (!onlyDefault || option.isDefault()) {
+                    LayoutOptionData optionData = layoutServices.getLayoutOptionData(
+                            option.getKey());
+                    Object value = KimlLayoutUtil.getValue(option, optionData);
+                    if (value != null) {
+                        options.put(option.getKey(), value);
+                    }
+                }
             }
         }
     }
@@ -373,6 +387,63 @@ public final class KimlUiUtil {
             }
         }
         return (DiagramEditPart) ep;
+    }
+    
+    /**
+     * Returns the class name for which to store layout options for the given edit part.
+     * 
+     * @param editPart an edit part
+     * @param forDomainModel if true the class of the edit part's domain model is taken,
+     *         else the edit part class itself is taken
+     * @return the class name for layout options
+     */
+    public static String getClassName(final EditPart editPart, final boolean forDomainModel) {
+        if (forDomainModel) {
+            Object model = editPart.getModel();
+            EObject emodel;
+            if (model instanceof View) {
+                emodel = ((View) model).getElement();
+            } else if (model instanceof EObject) {
+                emodel = (EObject) model;
+            } else {
+                return null;
+            }
+            return emodel.eClass().getInstanceTypeName();
+        } else {
+            return editPart.getClass().getName();
+        }
+    }
+    
+    /**
+     * Retrieves a layout option from the given edit part by querying the option
+     * for the edit part's class name and its domain model name.
+     * 
+     * @param editPart an edit part
+     * @param optionId layout option identifier
+     * @return the current value for the given option
+     */
+    public static Object getOption(final EditPart editPart, final String optionId) {
+        LayoutServices layoutServices = LayoutServices.getInstance();
+        Object value = layoutServices.getOption(getClassName(editPart, false), optionId);
+        if (value != null) {
+            return value;
+        } else {
+            return layoutServices.getOption(getClassName(editPart, true), optionId);
+        }
+    }
+    
+    /**
+     * Determines whether the given edit part should not be layouted.
+     * 
+     * @param editPart an edit part
+     * @return true if no layout should be performed for the edit part
+     */
+    public static boolean isNoLayout(final EditPart editPart) {
+        String diagramType = (String) getOption(editPart, LayoutOptions.DIAGRAM_TYPE);
+        if (diagramType != null) {
+            return diagramType.equals(LayoutServices.DIAGRAM_TYPE_NOLAYOUT);
+        }
+        return false;
     }
 
 }

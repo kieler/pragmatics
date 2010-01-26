@@ -16,7 +16,6 @@ package de.cau.cs.kieler.kiml.ui.views;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
@@ -56,6 +55,7 @@ import org.eclipse.ui.views.properties.PropertySheetPage;
 import de.cau.cs.kieler.kiml.layout.LayoutServices;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.Messages;
+import de.cau.cs.kieler.kiml.ui.layout.KimlUiUtil;
 
 /**
  * A view that displays layout options for selected objects.
@@ -267,12 +267,13 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
         final IAction applyOptionAction = new ApplyOptionAction(this, applyOptionString);
         final String setDefaultString = Messages.getString("kiml.ui.16"); //$NON-NLS-1$
         final IAction diagramTypeDefaultAction = new DiagramTypeDefaultAction(this, setDefaultString);
-        final IAction editPartDefaultAction = new EditPartDefaultAction(this, setDefaultString);
+        final IAction editPartDefaultAction = new EditPartDefaultAction(this, setDefaultString, false);
+        final IAction modelDefaultAction = new EditPartDefaultAction(this, setDefaultString, true);
         // dirty hack to add actions to an existing menu without having the menu manager
         menu.addMenuListener(new MenuAdapter() {
             public void menuShown(final MenuEvent event) {
                 MenuItem applyOptionItem = null, diagramTypeDefaultItem = null,
-                        editPartDefaultItem = null;
+                        editPartDefaultItem = null, modelDefaultItem = null;
                 for (MenuItem item : menu.getItems()) {
                     if (item.getData() instanceof IContributionItem) {
                         String itemId = ((IContributionItem) item.getData()).getId();
@@ -280,8 +281,10 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
                             applyOptionItem = item;
                         } else if (DiagramTypeDefaultAction.ACTION_ID.equals(itemId)) {
                             diagramTypeDefaultItem = item;
-                        } else if (EditPartDefaultAction.ACTION_ID.equals(itemId)) {
+                        } else if (EditPartDefaultAction.EDIT_PART_ACTION_ID.equals(itemId)) {
                             editPartDefaultItem = item;
+                        } else if (EditPartDefaultAction.MODEL_ACTION_ID.equals(itemId)) {
+                            modelDefaultItem = item;
                         }
                     }
                 }
@@ -317,52 +320,64 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
                         }
                     }
                 }
-                // add the "set as default for edit part" action
                 EditPart editPart = getSelectedEditPart();
                 if (editPart == null) {
                     if (editPartDefaultItem != null) {
                         editPartDefaultItem.setEnabled(false);
                     }
+                    if (modelDefaultItem != null) {
+                        modelDefaultItem.setEnabled(false);
+                    }
                 } else {
-                    String editPartName = getReadableName(editPart, true);
+                    // add the "set as default for edit part" action
+                    String editPartName = getReadableName(editPart, false, true);
                     if (editPartDefaultItem == null) {
                         editPartDefaultAction.setText(setDefaultString + " " + editPartName);
                         ContributionItem contributionItem = new ActionContributionItem(
                                 editPartDefaultAction);
-                        contributionItem.setId(EditPartDefaultAction.ACTION_ID);
+                        contributionItem.setId(EditPartDefaultAction.EDIT_PART_ACTION_ID);
                         contributionItem.fill(menu, -1);
                     } else {
                         editPartDefaultItem.setEnabled(true);
                         editPartDefaultItem.setText(setDefaultString + " " + editPartName);
+                    }
+                    // add the "set as default for model element" action
+                    String modelName = getReadableName(editPart, true, true);
+                    if (modelDefaultItem == null) {
+                        modelDefaultAction.setText(setDefaultString + " " + modelName);
+                        ContributionItem contributionItem = new ActionContributionItem(
+                                modelDefaultAction);
+                        contributionItem.setId(EditPartDefaultAction.MODEL_ACTION_ID);
+                        contributionItem.fill(menu, -1);
+                    } else {
+                        modelDefaultItem.setEnabled(true);
+                        modelDefaultItem.setText(setDefaultString + " " + modelName);
                     }
                 }
             }
         });
     }
     
-    /** suffix of edit part class names. */
-    private static final String EDIT_PART_SUFFIX = "EditPart";
-    
     /**
      * Builds a readable name for the given edit part.
      * 
-     * @param editPart an edit part
+     * @param editPart edit part
      * @param plural if true, the plural form is created
      * @return a readable name for the edit part
      */
-    private String getReadableName(final EditPart editPart, final boolean plural) {
-        String className = null;
-        if (editPart instanceof IGraphicalEditPart) {
-            EObject model = ((IGraphicalEditPart) editPart).getNotationView().getElement();
-            className = model.eClass().getName();
-        } else {
-            className = editPart.getClass().getSimpleName();
-            if (className.endsWith(EDIT_PART_SUFFIX)) {
-                className = className.substring(0, className.length() - EDIT_PART_SUFFIX.length());
-            }
+    private String getReadableName(final EditPart editPart, final boolean forDomainModel,
+            final boolean plural) {
+        String className = KimlUiUtil.getClassName(editPart, forDomainModel);
+        int lastDotIndex = className.lastIndexOf('.');
+        if (lastDotIndex >= 0) {
+            className = className.substring(lastDotIndex + 1);
         }
         StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < className.length(); i++) {
+        int length = className.length();
+        if (className.endsWith("Impl")) {
+            length -= "Impl".length();
+        }
+        for (int i = 0; i < length; i++) {
             char c = className.charAt(i);
             if (Character.isUpperCase(c) && i > 0) {
                 stringBuilder.append(' ');
@@ -386,9 +401,9 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
     public String getSelectedDiagramType() {
         if (currentSelection != null) {
             Object object = currentSelection.getFirstElement();
-            if (object != null) {
-                String diagramType = (String) LayoutServices.getInstance().getBindingOption(
-                        object.getClass().getName(), LayoutOptions.DIAGRAM_TYPE);
+            if (object instanceof EditPart) {
+                String diagramType = (String) KimlUiUtil.getOption((EditPart) object,
+                        LayoutOptions.DIAGRAM_TYPE);
                 return diagramType;
             }
         }
@@ -422,7 +437,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
                     (IGraphicalEditPart) firstElement);
             if (editPart != null) {
                 StringBuilder textBuffer = new StringBuilder();
-                textBuffer.append(getReadableName(editPart, false));
+                textBuffer.append(getReadableName(editPart, true, false));
                 Object model = editPart.getNotationView().getElement();
                 String name = getProperty(model, "Name");
                 if (name == null) {

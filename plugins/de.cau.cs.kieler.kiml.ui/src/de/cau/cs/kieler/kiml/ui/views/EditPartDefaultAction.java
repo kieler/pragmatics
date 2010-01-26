@@ -31,8 +31,10 @@ import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
  */
 public class EditPartDefaultAction extends Action {
 
-    /** an identifier for the action. */
-    public static final String ACTION_ID = "kieler.edit.part.default";
+    /** an identifier for the action without the domain model option. */
+    public static final String EDIT_PART_ACTION_ID = "kieler.edit.part.default";
+    /** an identifier for the action with the domain model option. */
+    public static final String MODEL_ACTION_ID = "kieler.model.default";
 
     /** the icon used for this action. */
     private static ImageDescriptor icon = KimlUiPlugin.getImageDescriptor(
@@ -40,16 +42,22 @@ public class EditPartDefaultAction extends Action {
 
     /** the layout view that created this action. */
     private LayoutViewPart layoutView;
+    /** indicates whether options are set for the domain element class. */
+    private boolean forDomainModel;
     
     /**
      * Creates an edit part default action.
      * 
      * @param thelayoutView the layout view that created this action
      * @param text user friendly text
+     * @param isforDomainModel if true, the action sets layout options for the domain
+     *     element class, else for the edit part class
      */
-    public EditPartDefaultAction(final LayoutViewPart thelayoutView, final String text) {
+    public EditPartDefaultAction(final LayoutViewPart thelayoutView, final String text,
+            final boolean isforDomainModel) {
         super(text, icon);
         this.layoutView = thelayoutView;
+        this.forDomainModel = isforDomainModel;
     }
     
     /**
@@ -82,7 +90,7 @@ public class EditPartDefaultAction extends Action {
         }
         if (optionData != null) {
             EclipseLayoutServices.getInstance().storeOption(editPart,
-                    optionData, entry.getValueAsString());
+                    optionData, entry.getValueAsString(), forDomainModel);
         }
     }
     

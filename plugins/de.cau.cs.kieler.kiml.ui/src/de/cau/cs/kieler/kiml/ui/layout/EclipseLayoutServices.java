@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kiml.ui.layout;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -84,8 +85,6 @@ public class EclipseLayoutServices extends LayoutServices {
     public static final String ATTRIBUTE_ID = "id";
     /** name of the 'name' attribute in the extension points. */
     public static final String ATTRIBUTE_NAME = "name";
-    /** name of the 'object' attribute in the extension points. */
-    public static final String ATTRIBUTE_OBJECT = "object";
     /** name of the 'option' attribute in the extension points. */
     public static final String ATTRIBUTE_OPTION = "option";
     /** name of the 'parameter' attribute in the extension points. */
@@ -102,11 +101,13 @@ public class EclipseLayoutServices extends LayoutServices {
     /** default name for layout options for which no name is given. */
     public static final String DEFAULT_OPTION_NAME = "<Unnamed Option>";
     
-    /** preference identifier for the list of registered edit parts. */
-    private static final String PREF_REG_EDIT_PARTS = "kiml.reg.edit.parts";
+    /** preference identifier for the list of registered diagram elements. */
+    private static final String PREF_REG_ELEMENTS = "kiml.reg.elements";
     
-    /** set of registered edit parts. */
-    private Set<String> registeredEditParts = new HashSet<String>();
+    /** set of registered diagram elements. */
+    private Set<String> registeredElements = new HashSet<String>();
+    /** list of default options read from the extension point. */
+    private List<String[]> defaultOptions = new LinkedList<String[]>();
 
     /**
      * Builds the layout services for the Eclipse platform.
@@ -119,7 +120,7 @@ public class EclipseLayoutServices extends LayoutServices {
         layoutServices.loadLayoutProviderExtensions();
         layoutServices.loadLayoutListenerExtensions();
         layoutServices.loadLayoutInfoExtensions();
-        layoutServices.registry().processOptions();
+        layoutServices.loadDefaultOptions();
         // load preferences for KIML
         layoutServices.loadPreferences();
         // register an instance of the GMF diagram layout manager
@@ -217,18 +218,58 @@ public class EclipseLayoutServices extends LayoutServices {
      * @param editPart an edit part
      * @param optionData a layout option data
      * @param valueString the value to store for the edit part and option
+     * @param storeDomainModel if true, the option is stored for the domain model element
+     *     associated with the edit part, else for the edit part itself
      */
     public void storeOption(final EditPart editPart, final LayoutOptionData optionData,
-            final String valueString) {
+            final String valueString, final boolean storeDomainModel) {
         Object value = optionData.parseValue(valueString);
         if (value != null) {
-            String className = editPart.getClass().getName();
-            registry().addBindingOption(className, optionData.getId(), value);
-            registeredEditParts.add(className);
+            String className = KimlUiUtil.getClassName(editPart, storeDomainModel);
+            registry().addOption(className, optionData.getId(), value);
+            registeredElements.add(className);
             IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
-            preferenceStore.setValue(getPreferenceName(editPart.getClass().getName(),
-                    optionData.getId()), valueString);
+            preferenceStore.setValue(getPreferenceName(className, optionData.getId()), valueString);
         }
+    }
+    
+    /**
+     * Loads the default layout options from the extension point.
+     */
+    public void loadDefaultOptions() {
+        for (String[] optionArray : defaultOptions) {
+            String className = optionArray[0];
+            String optionId = optionArray[1];
+            LayoutOptionData optionData = getInstance().getLayoutOptionData(optionId);
+            if (optionData != null) {
+                String valueString = optionArray[2];
+                Object value = optionData.parseValue(valueString);
+                if (value != null) {
+                    registry().addOption(className, optionId, value);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Retrieves the default value for the given element class and option
+     * identifier from the extension point.
+     * 
+     * @param className name of a diagram element class
+     * @param optionId layout option identifier
+     * @return the default option value for the element class
+     */
+    public Object getDefault(final String className, final String optionId) {
+        for (String[] optionArray : defaultOptions) {
+            if (optionArray[0].equals(className) && optionArray[1].equals(optionId)) {
+                LayoutOptionData optionData = getInstance().getLayoutOptionData(optionId);
+                if (optionData != null) {
+                    String valueString = optionArray[2];
+                    return optionData.parseValue(valueString);
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -403,31 +444,17 @@ public class EclipseLayoutServices extends LayoutServices {
                 } else {
                     registry().addDiagramType(id, name);
                 }
-            } else if (ELEMENT_BINDING.equals(element.getName())) {
-                // register a binding from the extension
-                String typeName = element.getAttribute(ATTRIBUTE_CLASS);
-                String id = element.getAttribute(ATTRIBUTE_ID);
-                if (typeName == null || typeName.length() == 0) {
-                    reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_CLASS, null);
-                } else if (id == null || id.length() == 0) {
-                    reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_ID, null);
-                } else {
-                    registry().addElementBinding(typeName, id);
-                }
             } else if (ELEMENT_OPTION.equals(element.getName())) {
                 // register a layout option from the extension
-                String object = element.getAttribute(ATTRIBUTE_OBJECT);
+                String clazz = element.getAttribute(ATTRIBUTE_CLASS);
                 String option = element.getAttribute(ATTRIBUTE_OPTION);
                 String value = element.getAttribute(ATTRIBUTE_VALUE);
-                if (object == null || object.length() == 0) {
-                    reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_OBJECT, null);
+                if (clazz == null || clazz.length() == 0) {
+                    reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_CLASS, null);
                 } else if (option == null || option.length() == 0) {
                     reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_OPTION, null);
                 } else {
-                    if (value == null) {
-                        value = "";
-                    }
-                    registry().setupOption(object, option, value);
+                    defaultOptions.add(new String[] {clazz, option, value});
                 }
             }
         }
@@ -467,17 +494,17 @@ public class EclipseLayoutServices extends LayoutServices {
         
         // load default options for edit parts
         StringTokenizer editPartsTokenizer = new StringTokenizer(
-                preferenceStore.getString(PREF_REG_EDIT_PARTS), ";");
+                preferenceStore.getString(PREF_REG_ELEMENTS), ";");
         while (editPartsTokenizer.hasMoreTokens()) {
-            registeredEditParts.add(editPartsTokenizer.nextToken());
+            registeredElements.add(editPartsTokenizer.nextToken());
         }
-        for (String editPartName : registeredEditParts) {
+        for (String editPartName : registeredElements) {
             for (LayoutOptionData data : layoutOptionData) {
                 String preference = getPreferenceName(editPartName, data.getId());
                 if (preferenceStore.contains(preference)) {
                     Object value = data.parseValue(preferenceStore.getString(preference));
                     if (value != null) {
-                        registry().addBindingOption(editPartName, data.getId(), value);
+                        registry().addOption(editPartName, data.getId(), value);
                     }
                 }
             }
@@ -492,19 +519,19 @@ public class EclipseLayoutServices extends LayoutServices {
 
         // store set of registered edit parts
         StringBuilder editPartsString = new StringBuilder();
-        for (String editPartName : registeredEditParts) {
+        for (String editPartName : registeredElements) {
             editPartsString.append(editPartName + ";");
         }
-        preferenceStore.setValue(PREF_REG_EDIT_PARTS, editPartsString.toString());
+        preferenceStore.setValue(PREF_REG_ELEMENTS, editPartsString.toString());
     }
 
     /**
-     * Returns the set of registered edit parts.
+     * Returns the set of registered diagram elements.
      * 
-     * @return the set of registered edit parts
+     * @return the set of registered diagram elements
      */
-    public Set<String> getRegisteredEditParts() {
-        return registeredEditParts;
+    public Set<String> getRegisteredElements() {
+        return registeredElements;
     }
 
 }

@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderItemEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.CompartmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
@@ -91,9 +92,8 @@ public class GmfLayoutPropertySource implements IPropertySource {
             return (IGraphicalEditPart) sourceEditPart.getParent();
         }
         if (sourceEditPart instanceof ShapeNodeEditPart) {
-            if (LayoutServices.getInstance().isNolayout(sourceEditPart.getClass().getName())
-                    || LayoutServices.getInstance().isNolayout(
-                    sourceEditPart.getParent().getClass().getName())) {
+            if (KimlUiUtil.isNoLayout(sourceEditPart)
+                    || KimlUiUtil.isNoLayout(sourceEditPart.getParent())) {
                 return null;
             }
         }
@@ -172,17 +172,16 @@ public class GmfLayoutPropertySource implements IPropertySource {
      *     if there is none
      */
     private IGraphicalEditPart findCompartmentEditPart(final IGraphicalEditPart editPart) {
-        LayoutServices layoutServices = LayoutServices.getInstance();
         for (Object child : editPart.getChildren()) {
             if (child instanceof ShapeNodeEditPart
                     && !(child instanceof AbstractBorderItemEditPart)
-                    && !layoutServices.isNolayout(child.getClass().getName())) {
+                    && !KimlUiUtil.isNoLayout((EditPart) child)) {
                 return editPart;
             } else if (child instanceof CompartmentEditPart
-                    && !layoutServices.isNolayout(child.getClass().getName())) {
+                    && !KimlUiUtil.isNoLayout((EditPart) child)) {
                 for (Object grandChild : ((CompartmentEditPart) child).getChildren()) {
                     if (grandChild instanceof ShapeNodeEditPart
-                            && !layoutServices.isNolayout(grandChild.getClass().getName())) {
+                            && !KimlUiUtil.isNoLayout((EditPart) grandChild)) {
                         return (IGraphicalEditPart) child;
                     }
                 }
@@ -226,8 +225,8 @@ public class GmfLayoutPropertySource implements IPropertySource {
                 LayoutOptions.LAYOUT_HINT);
         String containerLayoutHint = containerLayoutHintOption instanceof KStringOption
                 ? ((KStringOption) containerLayoutHintOption).getValue() : null;
-        String containerDiagramType = (String) layoutServices.getBindingOption(
-                containerEditPart.getClass().getName(), LayoutOptions.DIAGRAM_TYPE);
+        String containerDiagramType = (String) KimlUiUtil.getOption(containerEditPart,
+                LayoutOptions.DIAGRAM_TYPE);
         containerProviderData = layoutServices.getLayoutProviderData(
                 containerLayoutHint, containerDiagramType);
         if (containerProviderData == null) {
@@ -237,8 +236,8 @@ public class GmfLayoutPropertySource implements IPropertySource {
             if (partTarget == LayoutOptionData.Target.PARENTS) {
                 partProviderData = containerProviderData;
             } else if (childCompartmentEditPart != null) {
-                String childCompartmentDiagramType = (String) layoutServices.getBindingOption(
-                        childCompartmentEditPart.getClass().getName(), LayoutOptions.DIAGRAM_TYPE);
+                String childCompartmentDiagramType = (String) KimlUiUtil.getOption(
+                        childCompartmentEditPart, LayoutOptions.DIAGRAM_TYPE);
                 partProviderData = layoutServices.getLayoutProviderData(
                         partLayoutHint, childCompartmentDiagramType);
                 optionDataList.addAll(layoutServices.getLayoutOptions(partProviderData,
@@ -299,7 +298,7 @@ public class GmfLayoutPropertySource implements IPropertySource {
         case FLOAT:
             return value.toString();
         case BOOLEAN:
-            return Integer.valueOf(((Boolean) value) ? 0 : 1);
+            return Integer.valueOf(((Boolean) value) ? 1 : 0);
         case ENUM:
             if (value instanceof Enum<?>) {
                 return ((Enum<?>) value).ordinal();
@@ -343,7 +342,7 @@ public class GmfLayoutPropertySource implements IPropertySource {
                         value = Float.valueOf((String) value);
                         break;
                     case BOOLEAN:
-                        value = Boolean.valueOf((Integer) value == 0);
+                        value = Boolean.valueOf((Integer) value == 1);
                         break;
                     }
                     KimlLayoutUtil.setValue(koption, optionData, value);
