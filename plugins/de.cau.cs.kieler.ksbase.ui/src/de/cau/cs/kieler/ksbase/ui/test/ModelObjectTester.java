@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.model.transformation.ITransformationFramework;
 import de.cau.cs.kieler.core.model.util.ModelingUtil;
@@ -57,6 +58,11 @@ public class ModelObjectTester extends PropertyTester {
         assert (args[1] instanceof String);
         EditorTransformationSettings editor = TransformationManager.INSTANCE
                 .getEditorById((String) args[0]);
+        //First, check the editorID, so we do not execute transformations from other editors.
+        if (!PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor()
+                .getEditorSite().getId().equals(editor.getEditorId())) {
+            return false;
+        }
         if (editor != null) {
             KSBasETransformation t = editor.getTransformationById((String) args[1]);
             if (t != null) {
@@ -69,9 +75,11 @@ public class ModelObjectTester extends PropertyTester {
                 // use simple & fast ones :)
                 String validation = t.getValidation();
                 if (validation != null && validation.length() > 0) {
-                    if (!evaluateTransformation(editor, validation, modelElements
-                            .toArray(new Object[modelElements.size()]), true)) {
-                        return false;
+                    for (String valid : validation.split(",")) {
+                        if (!evaluateTransformation(editor, valid, modelElements
+                                .toArray(new Object[modelElements.size()]), true)) {
+                            return false;
+                        }
                     }
                 }
                 if (!evaluateTransformation(editor, t.getTransformation(), t.getParameters(), false)) {
@@ -100,11 +108,10 @@ public class ModelObjectTester extends PropertyTester {
     private boolean evaluateTransformation(final EditorTransformationSettings editor,
             final String transformation, final Object parameter, final boolean execute) {
         Boolean result = false;
-
         ITransformationFramework framework = editor.getFramework();
         if (parameter instanceof String[]) {
             if (!framework.setParameters((String[]) parameter)) {
-                //Parameters could not be matched, so instantly return false
+                // Parameters could not be matched, so instantly return false
                 return false;
             }
         } else if (parameter instanceof Object[]) {

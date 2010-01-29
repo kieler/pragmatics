@@ -38,6 +38,7 @@ import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
 import de.cau.cs.kieler.ksbase.ui.handler.ExecuteTransformationRequest;
 import de.cau.cs.kieler.ksbase.ui.listener.ITransformationEventListener;
+import de.cau.cs.kieler.ksbase.ui.utils.TransformationUtils;
 import de.cau.cs.kieler.viewmanagement.RunLogic;
 
 /**
@@ -58,11 +59,15 @@ public final class TransformationUIManager {
      **/
     private LinkedList<ITransformationEventListener> transformationEventListeners;
 
+    private TransformationUtils transformationUtils;
+    
     /**
      * The default constructor.
      */
     private TransformationUIManager() {
         transformationEventListeners = new LinkedList<ITransformationEventListener>();
+        transformationUtils = new TransformationUtils();
+        transformationEventListeners.add(transformationUtils);
     }
 
     /**

@@ -361,4 +361,9 @@ public class KSBasETransformation extends AbstractTransformation implements Seri
         }
         return false;
     }
+    
+    @Override
+    public String toString() {
+        return transformation + " " + "@" + transformationId + "\n";
+    }
 }
