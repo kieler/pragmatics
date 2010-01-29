@@ -123,7 +123,7 @@ public class ModelObjectTester extends PropertyTester {
         }
         if (execute) {
             Object res = framework.executeTransformation();
-            if (result instanceof Boolean) {
+            if (result instanceof Boolean) {                
                 result = (Boolean) res;
             } else {
                 result = false;
