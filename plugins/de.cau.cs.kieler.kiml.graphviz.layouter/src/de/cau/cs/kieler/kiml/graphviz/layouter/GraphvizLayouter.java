@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -50,12 +49,13 @@ import de.cau.cs.kieler.kiml.graphviz.dot.Node;
 import de.cau.cs.kieler.kiml.graphviz.dot.NodeStatement;
 import de.cau.cs.kieler.kiml.graphviz.dot.Statement;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KFloatOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KInsets;
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.layout.options.EdgeLabelPlacement;
+import de.cau.cs.kieler.kiml.layout.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.layout.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
@@ -67,7 +67,6 @@ import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.ForkedOutputStream;
 import de.cau.cs.kieler.core.util.ForwardingInputStream;
-import de.cau.cs.kieler.core.util.KielerMath;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.core.util.KielerMath.Point;;
 
@@ -86,8 +85,6 @@ import de.cau.cs.kieler.core.util.KielerMath.Point;;
 public class GraphvizLayouter {
 
     // CHECKSTYLEOFF LineLength
-    /** layout option identifier for spline points factor. */
-    public static final String OPT_SPLINE_POINTS = "de.cau.cs.kieler.kiml.graphviz.options.splinePoints";
     /** layout option identifier for label distance. */
     public static final String OPT_LABEL_DISTANCE = "de.cau.cs.kieler.kiml.graphviz.options.labelDistance";
     // CHECKSTYLEON LineLength
@@ -104,7 +101,7 @@ public class GraphvizLayouter {
     /** default value for minimal spacing. */
     public static final float DEF_MIN_SPACING = 16.0f;
     /** default multiplier for font sizes. */
-    public static final double DEF_LABEL_SPACING = 1.5;
+    public static final double FONT_SIZE_MULT = 1.4;
     /** if true, debug output is enabled, which writes dot files to the home folder. */
     public static final boolean ENABLE_DEBUG = false;
     
@@ -121,6 +118,8 @@ public class GraphvizLayouter {
     private float offset;
     /** base file name for debug output. */
     private String debugFileName;
+    /** indicates whether splines are used. */
+    private boolean useSplines;
 
     /** amount of work for small tasks. */
     private static final int SMALL_TASK = 5;
@@ -205,65 +204,9 @@ public class GraphvizLayouter {
         graphvizModel.getGraphs().add(graph);
 
         // set attributes for the whole graph
-        AttributeStatement graphAttrStatement = DotFactory.eINSTANCE.createAttributeStatement();
-        graphAttrStatement.setType(AttributeType.GRAPH);
-        AttributeList graphAttrs = DotFactory.eINSTANCE.createAttributeList();
         KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(parent);
-        // set minimal spacing
-        float minSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_SPACING);
-        if (Float.isNaN(minSpacing)) {
-            minSpacing = DEF_MIN_SPACING;
-        }
-        String spacingVal = Float.toString(minSpacing / DPI);
-        if (command.equals(DOT_COMMAND) || command.equals(TWOPI_COMMAND)) {
-            graphAttrs.getEntries().add(
-                    createAttribute(GraphvizAPI.ATTR_RANKSEP, Float.toString(2 * minSpacing / DPI)));
-        }
-        if (command.equals(CIRCO_COMMAND)) {
-            graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_MINDIST, spacingVal));
-        } else if (command.equals(NEATO_COMMAND) || command.equals(FDP_COMMAND)) {
-            AttributeStatement edgeAttrStatement = DotFactory.eINSTANCE.createAttributeStatement();
-            edgeAttrStatement.setType(AttributeType.EDGE);
-            AttributeList edgeAttrs = DotFactory.eINSTANCE.createAttributeList();
-            edgeAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_EDGELEN, spacingVal));
-            edgeAttrStatement.setAttributes(edgeAttrs);
-            graph.getStatements().add(edgeAttrStatement);
-        }
-        // set offset to border
-        offset = LayoutOptions.getFloat(parentLayout, LayoutOptions.BORDER_SPACING);
-        if (Float.isNaN(offset)) {
-            offset = DEF_MIN_SPACING / 2;
-        }
-        // set layout direction
-        if (command.equals(DOT_COMMAND)) {
-            switch (LayoutOptions.getEnum(parentLayout, LayoutDirection.class)) {
-            case DOWN:
-                graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_RANKDIR, "TB"));
-                break;
-            case UP:
-                graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_RANKDIR, "BT"));
-                break;
-            case LEFT:
-                graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_RANKDIR, "RL"));
-                break;
-            default:
-                graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_RANKDIR, "LR"));
-                break;
-            }
-        }
-        // enable node overlap avoidance
-        if (!command.equals(DOT_COMMAND)) {
-            graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_OVERLAP, "false"));
-        }
-        // enable drawing of splines
-        graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_SPLINES, "true"));
-        // configure initial placement of nodes
-        if (command.equals(NEATO_COMMAND) || command.equals(FDP_COMMAND)) {
-            int seed = LayoutOptions.getInt(parentLayout, LayoutOptions.RANDOM_SEED);
-            graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_START, "random" + seed));
-        }
-        graphAttrStatement.setAttributes(graphAttrs);
-        graph.getStatements().add(graphAttrStatement);
+        setGraphAttributes(graph, command, parentLayout);
+        
         // get interactive layout option
         boolean interactive = LayoutOptions.getBoolean(parentLayout, LayoutOptions.INTERACTIVE);
 
@@ -341,6 +284,78 @@ public class GraphvizLayouter {
         monitor.done();
         return graphvizModel;
     }
+    
+    /**
+     * Sets attributes for the whole graph.
+     * 
+     * @param graph a graph for serialization to Graphviz
+     * @param command a layouter command
+     * @param parentLayout the layout data for the parent node
+     */
+    private void setGraphAttributes(final Graph graph, final String command,
+            final KLayoutData parentLayout) {
+        AttributeStatement graphAttrStatement = DotFactory.eINSTANCE.createAttributeStatement();
+        graphAttrStatement.setType(AttributeType.GRAPH);
+        AttributeList graphAttrs = DotFactory.eINSTANCE.createAttributeList();
+        // set minimal spacing
+        float minSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_SPACING);
+        if (Float.isNaN(minSpacing)) {
+            minSpacing = DEF_MIN_SPACING;
+        }
+        String spacingVal = Float.toString(minSpacing / DPI);
+        if (command.equals(DOT_COMMAND) || command.equals(TWOPI_COMMAND)) {
+            graphAttrs.getEntries().add(
+                    createAttribute(GraphvizAPI.ATTR_RANKSEP, Float.toString(2 * minSpacing / DPI)));
+        }
+        if (command.equals(CIRCO_COMMAND)) {
+            graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_MINDIST, spacingVal));
+        } else if (command.equals(NEATO_COMMAND) || command.equals(FDP_COMMAND)) {
+            AttributeStatement edgeAttrStatement = DotFactory.eINSTANCE.createAttributeStatement();
+            edgeAttrStatement.setType(AttributeType.EDGE);
+            AttributeList edgeAttrs = DotFactory.eINSTANCE.createAttributeList();
+            edgeAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_EDGELEN, spacingVal));
+            edgeAttrStatement.setAttributes(edgeAttrs);
+            graph.getStatements().add(edgeAttrStatement);
+        }
+        // set offset to border
+        offset = LayoutOptions.getFloat(parentLayout, LayoutOptions.BORDER_SPACING);
+        if (Float.isNaN(offset)) {
+            offset = DEF_MIN_SPACING / 2;
+        }
+        // set layout direction
+        if (command.equals(DOT_COMMAND)) {
+            switch (LayoutOptions.getEnum(parentLayout, LayoutDirection.class)) {
+            case DOWN:
+                graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_RANKDIR, "TB"));
+                break;
+            case UP:
+                graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_RANKDIR, "BT"));
+                break;
+            case LEFT:
+                graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_RANKDIR, "RL"));
+                break;
+            default:
+                graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_RANKDIR, "LR"));
+                break;
+            }
+        }
+        // enable node overlap avoidance
+        if (!command.equals(DOT_COMMAND)) {
+            graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_OVERLAP, "false"));
+        }
+        // enable or disable drawing of splines
+        EdgeRouting edgeRouting = LayoutOptions.getEnum(parentLayout, EdgeRouting.class);
+        useSplines = (edgeRouting != EdgeRouting.POLYLINE && edgeRouting != EdgeRouting.ORTHOGONAL);
+        graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_SPLINES,
+                Boolean.toString(useSplines)));
+        // configure initial placement of nodes
+        if (command.equals(NEATO_COMMAND) || command.equals(FDP_COMMAND)) {
+            int seed = LayoutOptions.getInt(parentLayout, LayoutOptions.RANDOM_SEED);
+            graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_START, "random" + seed));
+        }
+        graphAttrStatement.setAttributes(graphAttrs);
+        graph.getStatements().add(graphAttrStatement);
+    }
 
     /**
      * Creates an attribute with given name and value for the Dot graph.
@@ -358,8 +373,6 @@ public class GraphvizLayouter {
     
     /** default label angle value. */
     private static final float DEF_LABEL_ANGLE = -25.0f;
-    /** maximal label angle value. */
-    private static final float MAX_LABEL_ANGLE = -45.0f;
     
     /**
      * Set edge labels for the given edge.
@@ -369,26 +382,33 @@ public class GraphvizLayouter {
      */
     private static void setEdgeLabels(final KEdge kedge, final AttributeList attributes) {
         KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
-        float labelSpacing = LayoutOptions.getFloat(edgeLayout, LayoutOptions.LABEL_SPACING);
-        if (Float.isNaN(labelSpacing)) {
-            labelSpacing = (float) DEF_LABEL_SPACING;
-        }
-        KFloatOption distanceOption = (KFloatOption) edgeLayout.getOption(OPT_LABEL_DISTANCE);
         // as Graphviz only supports positioning of one label per label placement, all labels
         // are stacked to one big label as workaround
-        StringBuilder midLabel = new StringBuilder(), headLabel = new StringBuilder(),
-                tailLabel = new StringBuilder();
+        StringBuilder midLabel = new StringBuilder(),
+                headLabel = new StringBuilder(), tailLabel = new StringBuilder();
         String fontName = null;
         int fontSize = 0;
+        boolean isCenterFontName = false, isCenterFontSize = false;
         for (KLabel label : kedge.getLabels()) {
             StringBuilder buffer = midLabel;
             KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
             EdgeLabelPlacement placement = LayoutOptions.getEnum(labelLayout, EdgeLabelPlacement.class);
+            boolean takeFontName = false, takeFontSize = false;
             switch (placement) {
+            case CENTER:
+                takeFontName = fontName == null || !isCenterFontName;
+                isCenterFontName = true;
+                takeFontSize = fontSize <= 0 || !isCenterFontSize;
+                isCenterFontSize = true;
+                break;
             case HEAD:
+                takeFontName = fontName == null;
+                takeFontSize = fontSize <= 0;
                 buffer = headLabel;
                 break;
             case TAIL:
+                takeFontName = fontName == null;
+                takeFontSize = fontSize <= 0;
                 buffer = tailLabel;
                 break;
             }
@@ -396,57 +416,61 @@ public class GraphvizLayouter {
                 buffer.append("\n");
             }
             buffer.append(label.getText());
-            if (fontName == null) {
+            if (takeFontName) {
                 fontName = LayoutOptions.getString(labelLayout, LayoutOptions.FONT_NAME);
             }
-            if (fontSize <= 0) {
+            if (takeFontSize) {
+                fontSize = LayoutOptions.getInt(labelLayout, LayoutOptions.FONT_SIZE);
                 // increase the font size to let Graphviz prepare more room for the label
-                fontSize = (int) (LayoutOptions.getInt(labelLayout, LayoutOptions.FONT_SIZE)
-                        * labelSpacing);
+                if (fontSize > 0) {
+                    fontSize *= FONT_SIZE_MULT;
+                }
             }
         }
-        boolean hasLabel = false;
-        // set mid label
-        if (midLabel.length() > 0) {
-            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_LABEL,
-                    createString(midLabel.toString())));
-            hasLabel = true;
+        
+        // set mid label: if empty, it is filled with a dummy string to avoid edge overlapping
+        if (midLabel.length() == 0) {
+            midLabel.append(' ');
+        } else {
+            float labelSpacing = LayoutOptions.getFloat(edgeLayout, LayoutOptions.LABEL_SPACING);
+            int charsToAdd = ((Float.isNaN(labelSpacing) || labelSpacing < 1)
+                    ? 1 : (int) labelSpacing) - 1;
+            for (int i = 0; i < charsToAdd; i++) {
+                midLabel.append("\n_");
+            }
         }
+        attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_LABEL,
+                createString(midLabel.toString())));
         // set head label
         if (headLabel.length() > 0) {
             attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_HEADLABEL,
                     createString(headLabel.toString())));
-            hasLabel = true;
         }
         // set tail label
         if (tailLabel.length() > 0) {
             attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_TAILLABEL,
                     createString(tailLabel.toString())));
-            hasLabel = true;
         }
         // set font name
-        if (hasLabel && fontName != null) {
+        if (fontName != null && fontName.length() > 0) {
             attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_FONTNAME,
                     "\"" +  fontName + "\""));
         }
         // set font size
-        if (hasLabel && fontSize >= 0) {
+        if (fontSize > 0) {
             attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_FONTSIZE,
                     Integer.toString(fontSize)));
         }
         // set label distance
-        if (distanceOption != null && distanceOption.getValue() >= 0.0f) {
-            float distance = distanceOption.getValue();
+        float distance = LayoutOptions.getFloat(edgeLayout, OPT_LABEL_DISTANCE);
+        if (!Float.isNaN(distance) && distance >= 0.0f) {
             attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_LABELDISTANCE,
                     Float.toString(distance)));
-            float labelAngle = DEF_LABEL_ANGLE;
-            if (distance >= 1.0f) {
-                labelAngle += (1 - 1 / distance) * (MAX_LABEL_ANGLE - DEF_LABEL_ANGLE);
-            } else {
-                labelAngle = distance * DEF_LABEL_ANGLE;
+            if (distance > 1.0f) {
+                float labelAngle = DEF_LABEL_ANGLE / distance;
+                attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_LABELANGLE,
+                        Float.toString(labelAngle)));
             }
-            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_LABELANGLE,
-                    Float.toString(labelAngle)));
         }
     }
 
@@ -671,7 +695,8 @@ public class GraphvizLayouter {
                 Map<String, String> attributeMap = createAttributeMap(edgeStatement.getAttributes());
                 KEdge kedge = (KEdge) graphElementMap.get(attributeMap.get(GraphvizAPI.ATTR_COMMENT));
                 KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
-                edgeLayout.getBendPoints().clear();
+                List<KPoint> edgePoints = edgeLayout.getBendPoints();
+                edgePoints.clear();
                 String posString = attributeMap.get(GraphvizAPI.ATTR_POS);
                 
                 // parse the list of spline control coordinates
@@ -679,29 +704,40 @@ public class GraphvizLayouter {
                 Pair<KPoint, KPoint> endpoints = parseSplinePoints(posString, splines,
                         edgeOffsetx, edgeOffsety);
 
-                // the first point in the list is the start point, if no arrowhead is given
                 KPoint sourcePoint = endpoints.getFirst();
-                if (sourcePoint == null) {
-                    sourcePoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-                    Point firstPoint = splines.get(0).get(0);
-                    sourcePoint.setX((float) firstPoint.x);
-                    sourcePoint.setY((float) firstPoint.y);
+                KPoint targetPoint = endpoints.getSecond();
+                if (!splines.isEmpty()) {
+                    KLayoutDataFactory layoutDataFactory = KLayoutDataFactory.eINSTANCE;
+                    // the first point in the list is the start point, if no arrowhead is given
+                    if (sourcePoint == null) {
+                        sourcePoint = layoutDataFactory.createKPoint();
+                        Point firstPoint = splines.get(0).remove(0);
+                        sourcePoint.setX((float) firstPoint.x);
+                        sourcePoint.setY((float) firstPoint.y);
+                    }
+                    // the last point in the list is the end point, if no arrowhead is given
+                    if (targetPoint == null) {
+                        targetPoint = layoutDataFactory.createKPoint();
+                        List<Point> points = splines.get(splines.size() - 1);
+                        Point lastPoint = points.remove(points.size() - 1);
+                        targetPoint.setX((float) lastPoint.x);
+                        targetPoint.setY((float) lastPoint.y);
+                    }
+                    // add all other control points to the edge
+                    for (List<Point> points : splines) {
+                        for (Point point : points) {
+                            KPoint controlPoint = layoutDataFactory.createKPoint();
+                            controlPoint.setX((float) point.x);
+                            controlPoint.setY((float) point.y);
+                            edgePoints.add(controlPoint);
+                        }
+                    }
                 }
                 edgeLayout.setSourcePoint(sourcePoint);
-
-                // convert the B-spline representation to a polyline
-                splineToPolyline(edgeLayout, splines);
-
-                // the last point in the list is the end point, if no arrowhead is given
-                KPoint targetPoint = endpoints.getSecond();
-                if (targetPoint == null) {
-                    targetPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-                    List<Point> points = splines.get(splines.size() - 1);
-                    Point lastPoint = points.get(points.size() - 1);
-                    targetPoint.setX((float) lastPoint.x);
-                    targetPoint.setY((float) lastPoint.y);
-                }
                 edgeLayout.setTargetPoint(targetPoint);
+                if (useSplines) {
+                    LayoutOptions.setEnum(edgeLayout, EdgeRouting.SPLINES);
+                }
 
                 // process the edge labels
                 String labelPos = attributeMap.get(GraphvizAPI.ATTR_LABELPOS);
@@ -896,36 +932,6 @@ public class GraphvizLayouter {
             y = Double.valueOf(ybuilder.toString());
         }
         return new Point(x, y);
-    }
-
-    /**
-     * Transforms a Graphviz B-spline curve to a set of bend points.
-     * 
-     * @param edgeLayout layout to which the bend points are added
-     * @param splines list of splines, where each spline is a list of control points
-     */
-    private static void splineToPolyline(final KEdgeLayout edgeLayout, final List<List<Point>> splines) {
-        List<KPoint> bendPoints = edgeLayout.getBendPoints();
-        // get layout option for spline points factor
-        float splinePointsFact = 1.0f;
-        KFloatOption splinePointsOption = (KFloatOption) edgeLayout.getOption(OPT_SPLINE_POINTS);
-        if (splinePointsOption != null) {
-            splinePointsFact = splinePointsOption.getValue();
-        }
-        ListIterator<List<Point>> splinesIter = splines.listIterator();
-        while (splinesIter.hasNext()) {
-            List<Point> points = splinesIter.next();
-            Point[] bezierPoints = KielerMath.calcBezierPoints(points,
-                    Math.round(splinePointsFact * (points.size() - 1)));
-            int pointsToAdd = (splinesIter.nextIndex() == splines.size()
-                    ? bezierPoints.length - 1 : bezierPoints.length);
-            for (int i = 0; i < pointsToAdd; i++) {
-                KPoint kpoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-                kpoint.setX((float) bezierPoints[i].x);
-                kpoint.setY((float) bezierPoints[i].y);
-                bendPoints.add(kpoint);
-            }
-        }
     }
 
 }

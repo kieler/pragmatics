@@ -17,6 +17,7 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.layout.AbstractLayoutProvider;
+import de.cau.cs.kieler.kiml.layout.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.layout.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 
@@ -76,9 +77,9 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
         } else if (LayoutOptions.RANDOM_SEED.equals(optionId)) {
             return 1;
         } else if (LayoutOptions.LABEL_SPACING.equals(optionId)) {
-            return GraphvizLayouter.DEF_LABEL_SPACING;
-        } else if (GraphvizLayouter.OPT_SPLINE_POINTS.equals(optionId)) {
             return 1.0f;
+        } else if (LayoutOptions.EDGE_ROUTING.equals(optionId)) {
+            return EdgeRouting.SPLINES;
         } else if (GraphvizLayouter.OPT_LABEL_DISTANCE.equals(optionId)) {
             return 1.0f;
         } else {
