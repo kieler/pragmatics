@@ -429,9 +429,10 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
                             box.open();
                             return;
                         } else {
+                            BufferedInputStream bis = null;
                             try {
 
-                                BufferedInputStream bis = new BufferedInputStream(file
+                               bis = new BufferedInputStream(file
                                         .getContents());
                                 StringBuffer sbuf = new StringBuffer();
                                 while (bis.available() > 0) {
@@ -447,6 +448,16 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
                                 KSBasEUIPlugin.getDefault().logError("Could not read file");
                             } catch (IOException e1) {
                                 KSBasEUIPlugin.getDefault().logError("Could not read file");
+                            }
+                            finally {
+                                if (bis != null) {
+                                    try {
+                                        bis.close();
+                                    } catch (IOException e1) {
+                                        // TODO Auto-generated catch block
+                                        e1.printStackTrace();
+                                    }
+                                }
                             }
                             cbEditors.notifyListeners(SWT.Selection, null);
                         }

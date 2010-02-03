@@ -63,7 +63,7 @@ public class EditorTransformationSettings implements Serializable {
     /** List of menu contributions. **/
     private LinkedList<KSBasEMenuContribution> menuContributions;
     /** Transformation Framework to use. **/
-    private ITransformationFramework framework;
+    private transient ITransformationFramework framework;
 
     /**
      * Command handler to be used by this editor. If this is empty, the default handler will be

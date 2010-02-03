@@ -44,8 +44,7 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
  * 
  * @author mim
  * 
- * @kieler.rating 2010-01-22 yellow
- *          review by msp, skn
+ * @kieler.rating 2010-01-22 yellow review by msp, skn
  */
 public final class TransformationManager {
 
@@ -443,19 +442,32 @@ public final class TransformationManager {
 
                     File file = new File(path.toOSString());
                     if (file != null) {
-                        FileOutputStream out = new FileOutputStream(file);
-                        if (out != null) {
-                            if (!file.exists()) {
-                                if (!file.createNewFile()) {
-                                    KSBasEPlugin.getDefault().logError(
-                                            "Error while storing transformation file for editor: "
-                                                    + editor.getEditorId());
+                        FileOutputStream out = null;
+                        try {
+                            out = new FileOutputStream(file);
+                            if (out != null) {
+                                if (!file.exists()) {
+                                    if (!file.createNewFile()) {
+                                        KSBasEPlugin.getDefault().logError(
+                                                "Error while storing transformation file for editor: "
+                                                        + editor.getEditorId());
+                                    }
                                 }
-                            }
 
-                            out.write(contentBuffer.toString().getBytes());
-                            out.flush();
-                            out.close();
+                                out.write(contentBuffer.toString().getBytes());
+                                out.flush();
+                                out.close();
+                            }
+                        } catch (FileNotFoundException fne) {
+                            KSBasEPlugin.getDefault().logError(
+                                    "Could not find transformation file:" + path.toOSString());
+                        } catch (SecurityException sece) {
+                            KSBasEPlugin.getDefault().logError(
+                                    "Not allowed to open transformation file:" + path.toOSString());
+                        } finally {
+                            if (out != null) {
+                                out.close();
+                            }
                         }
                         // Set delete on exit flag, so the files will be cleaned when exiting
                         // eclipse
@@ -486,8 +498,8 @@ public final class TransformationManager {
                     try {
                         config.createExecutableExtension("class");
                     } catch (CoreException e) {
-                        //There are maybe some dependency tree related exceptions here, but the
-                        //actual project was activated so we do not care.
+                        // There are maybe some dependency tree related exceptions here, but the
+                        // actual project was activated so we do not care.
                     }
                 }
             }

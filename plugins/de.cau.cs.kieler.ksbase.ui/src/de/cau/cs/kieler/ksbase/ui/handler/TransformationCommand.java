@@ -33,6 +33,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.model.transformation.ITransformationFramework;
+import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 
 /**
  * The command to execute a transformation.
@@ -59,6 +60,7 @@ public class TransformationCommand extends AbstractTransactionalCommand {
     public TransformationCommand(final TransactionalEditingDomain domain, final String label,
             final IAdaptable adapter) {
         super(domain, label, null);
+        component = null;
     }
 
     /**
@@ -79,28 +81,38 @@ public class TransformationCommand extends AbstractTransactionalCommand {
     @Override
     protected CommandResult doExecuteWithResult(final IProgressMonitor monitor,
             final IAdaptable info) throws ExecutionException {
+        if (component != null) {
+            component.executeTransformation();
+            // TODO: file = model file
+            // Maybe this fixes the 'dangling transition' bug?
+            // file.getParent().refreshLocal(IProject.DEPTH_INFINITE, null);
 
-        component.executeTransformation();
+            IEditorPart activeEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                    .getActivePage().getActiveEditor();
 
-        IEditorPart activeEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                .getActivePage().getActiveEditor();
-        if (activeEditor instanceof IDiagramWorkbenchPart) {
-            EObject obj = ((View) ((IDiagramWorkbenchPart) activeEditor).getDiagramEditPart()
-                    .getModel()).getElement();
+            if (activeEditor instanceof IDiagramWorkbenchPart) {
+                EObject obj = ((View) ((IDiagramWorkbenchPart) activeEditor).getDiagramEditPart()
+                        .getModel()).getElement();
 
-            List<?> editPolicies = CanonicalEditPolicy.getRegisteredEditPolicies(obj);
-            for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
+                List<?> editPolicies = CanonicalEditPolicy.getRegisteredEditPolicies(obj);
+                for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
 
-                CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it.next();
+                    CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it.next();
 
-                nextEditPolicy.refresh();
+                    nextEditPolicy.refresh();
+                }
+
+                IDiagramGraphicalViewer graphViewer = ((IDiagramWorkbenchPart) activeEditor)
+                        .getDiagramGraphicalViewer();
+                graphViewer.flush();
             }
-
-            IDiagramGraphicalViewer graphViewer = ((IDiagramWorkbenchPart) activeEditor)
-                    .getDiagramGraphicalViewer();
-            graphViewer.flush();
+            return CommandResult.newOKCommandResult();
+        } else {
+            KSBasEUIPlugin.getDefault().logError(
+                    "Failed to execute transformation, "
+                            + "it seems like the framework is not correctly initalized!");
+            return null;
         }
-        return CommandResult.newOKCommandResult();
     }
 
     /**

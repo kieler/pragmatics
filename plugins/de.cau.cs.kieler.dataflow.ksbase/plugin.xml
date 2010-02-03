@@ -11,37 +11,37 @@
             packageName="de.cau.cs.kieler.dataflow.DataflowPackage">
          <transformations>
             <transformation
-                  keyboardShortcut="M1+K O"
+                  keyboardShortcut="M1+R O"
                   name="Connect Ports"
                   transformation="connectPorts"
                   transformationId="de.cau.cs.kieler.dataflow.ksbase.connectPorts">
             </transformation>
             <transformation
-                  keyboardShortcut="M1+K B"
+                  keyboardShortcut="M1+R B"
                   name="Connect Boxes"
                   transformation="connectBoxes"
                   transformationId="de.cau.cs.kieler.dataflow.ksbase.connectBoxes">
             </transformation>
             <transformation
-                  keyboardShortcut="M1+K S"
+                  keyboardShortcut="M1+R S"
                   name="Create Successor"
                   transformation="createSuccessor"
                   transformationId="de.cau.cs.kieler.dataflow.ksbase.Suc">
             </transformation>
             <transformation
-                  keyboardShortcut="M1+K P"
+                  keyboardShortcut="M1+R P"
                   name="Create Predecessor"
                   transformation="createPredecessor"
                   transformationId="de.cau.cs.kieler.dataflow.ksbase.Predec">
             </transformation>
             <transformation
-                  keyboardShortcut="M1+K A"
+                  keyboardShortcut="M1+R A"
                   name="Connect All Open Ports"
                   transformation="connectAllBoxPorts"
                   transformationId="de.cau.cs.kieler.dataflow.ksbase.connectAll">
             </transformation>
             <transformation
-                  keyboardShortcut="M1+K I"
+                  keyboardShortcut="M1+R I"
                   name="Insert Box"
                   transformation="insertBoxInConnection"
                   transformationId="de.cau.cs.kieler.dataflow.ksbase.insertBox">

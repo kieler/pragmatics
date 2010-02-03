@@ -58,12 +58,13 @@ public class ModelObjectTester extends PropertyTester {
         assert (args[1] instanceof String);
         EditorTransformationSettings editor = TransformationManager.INSTANCE
                 .getEditorById((String) args[0]);
-        //First, check the editorID, so we do not execute transformations from other editors.
-        if (!PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor()
-                .getEditorSite().getId().equals(editor.getEditorId())) {
-            return false;
-        }
+
         if (editor != null) {
+            // First, check the editorID, so we do not execute transformations from other editors.
+            if (!PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+                    .getActiveEditor().getEditorSite().getId().equals(editor.getEditorId())) {
+                return false;
+            }
             KSBasETransformation t = editor.getTransformationById((String) args[1]);
             if (t != null) {
                 // Convert selection to model elements:
@@ -123,7 +124,7 @@ public class ModelObjectTester extends PropertyTester {
         }
         if (execute) {
             Object res = framework.executeTransformation();
-            if (result instanceof Boolean) {                
+            if (res instanceof Boolean) {
                 result = (Boolean) res;
             } else {
                 result = false;

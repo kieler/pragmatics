@@ -30,7 +30,7 @@ import de.cau.cs.kieler.ksbase.ui.listener.ITransformationEventListener;
  */
 public class TransformationUtils implements ITransformationEventListener {
     /** The object to select after the transformation has been executed. **/
-    private static EObject selection = null;;
+    private static volatile EObject selection = null;;
 
     /**
      * Sets the object that should be selected after the transformation has been executed.
