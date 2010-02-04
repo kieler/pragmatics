@@ -174,5 +174,101 @@ public final class KielerMath {
         }
         return result;
     }
+    
+    /**
+     * Determines the maximum for an arbitrary number of integers.
+     * 
+     * @param values integer values
+     * @return the maximum of the given values, or {@code MIN_VALUE} if no values are given
+     */
+    public static int maxi(final int ... values) {
+        int max = Integer.MIN_VALUE;
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] > max) {
+                max = values[i];
+            }
+        }
+        return max;
+    }
+    
+    /**
+     * Determines the minimum for an arbitrary number of integers.
+     * 
+     * @param values integer values
+     * @return the minimum of the given values, or {@code MAX_VALUE} if no values are given
+     */
+    public static int mini(final int ... values) {
+        int min = Integer.MAX_VALUE;
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] < min) {
+                min = values[i];
+            }
+        }
+        return min;
+    }
+    
+    /**
+     * Determines the maximum for an arbitrary number of floats.
+     * 
+     * @param values float values
+     * @return the maximum of the given values, or {@code -MAX_VALUE} if no values are given
+     */
+    public static float maxf(final float ... values) {
+        float max = -Float.MAX_VALUE;
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] > max) {
+                max = values[i];
+            }
+        }
+        return max;
+    }
+    
+    /**
+     * Determines the minimum for an arbitrary number of floats.
+     * 
+     * @param values float values
+     * @return the minimum of the given values, or {@code MAX_VALUE} if no values are given
+     */
+    public static float minf(final float ... values) {
+        float min = Float.MAX_VALUE;
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] < min) {
+                min = values[i];
+            }
+        }
+        return min;
+    }
+    
+    /**
+     * Determines the maximum for an arbitrary number of doubles.
+     * 
+     * @param values double values
+     * @return the maximum of the given values, or {@code -MAX_VALUE} if no values are given
+     */
+    public static double maxd(final double ... values) {
+        double max = -Double.MAX_VALUE;
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] > max) {
+                max = values[i];
+            }
+        }
+        return max;
+    }
+    
+    /**
+     * Determines the minimum for an arbitrary number of doubles.
+     * 
+     * @param values double values
+     * @return the minimum of the given values, or {@code MAX_VALUE} if no values are given
+     */
+    public static double mind(final double ... values) {
+        double min = Double.MAX_VALUE;
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] < min) {
+                min = values[i];
+            }
+        }
+        return min;
+    }
 
 }

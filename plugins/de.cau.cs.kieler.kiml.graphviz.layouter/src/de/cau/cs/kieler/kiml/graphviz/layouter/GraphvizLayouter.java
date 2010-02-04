@@ -73,7 +73,7 @@ import de.cau.cs.kieler.core.util.KielerMath.Point;;
 /**
  * Layouter that calls Graphviz through a child process to perform layout. The
  * graph structure and layout information is passed through a textual format
- * called Dot, see the <a href="http://www.graphviz.org/doc/info/lang.html"> Dot
+ * called Dot, see the <a href="http://www.graphviz.org/doc/info/lang.html">Dot
  * language specification</a>. Serialization and parsing of this textual format
  * is done using <a href="http://www.eclipse.org/modeling/tmf/">Xtext</a>.
  * 
@@ -250,6 +250,9 @@ public class GraphvizLayouter {
         }
 
         // create edges
+        LayoutDirection layoutDirection = LayoutOptions.getEnum(parentLayout, LayoutDirection.class);
+        boolean vertical = layoutDirection == LayoutDirection.DOWN
+                || layoutDirection == LayoutDirection.UP;
         for (KNode childNode : parent.getChildren()) {
             for (KEdge outgoingEdge : childNode.getOutgoingEdges()) {
                 // consider only edges on the same hierarchy level
@@ -268,7 +271,7 @@ public class GraphvizLayouter {
                     // disable drawing arrows for the edges
                     attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_EDGEDIR, "none"));
                     // add edge labels at head, tail, and middle position
-                    setEdgeLabels(outgoingEdge, attributes);
+                    setEdgeLabels(outgoingEdge, attributes, vertical);
                     // add comment with edge identifier
                     String edgeID = getEdgeID(outgoingEdge);
                     attributes.getEntries().add(
@@ -379,8 +382,10 @@ public class GraphvizLayouter {
      * 
      * @param kedge edge whose labels shall be set
      * @param attributes edge attribute list to which the labels are added
+     * @param isVertical indicates whether vertical layout direction is active
      */
-    private static void setEdgeLabels(final KEdge kedge, final AttributeList attributes) {
+    private static void setEdgeLabels(final KEdge kedge, final AttributeList attributes,
+            final boolean isVertical) {
         KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
         // as Graphviz only supports positioning of one label per label placement, all labels
         // are stacked to one big label as workaround
@@ -436,7 +441,7 @@ public class GraphvizLayouter {
             int charsToAdd = ((Float.isNaN(labelSpacing) || labelSpacing < 1)
                     ? 1 : (int) labelSpacing) - 1;
             for (int i = 0; i < charsToAdd; i++) {
-                midLabel.append("\n_");
+                midLabel.append(isVertical ? "O" : "\nO");
             }
         }
         attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_LABEL,

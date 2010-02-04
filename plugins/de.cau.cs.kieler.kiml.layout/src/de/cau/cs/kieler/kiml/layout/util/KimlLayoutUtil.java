@@ -24,6 +24,7 @@ import de.cau.cs.kieler.core.kgraph.KGraphFactory;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.util.KielerMath;
 import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KBooleanOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;
@@ -526,53 +527,55 @@ public final class KimlLayoutUtil {
     /** minimal size of a node. */
     private static final float MIN_NODE_SIZE = 7.0f;
     /** minimal distance of two ports on each side of a node. */
-    private static final float MIN_PORT_DISTANCE = 7.0f;
+    private static final float MIN_PORT_DISTANCE = 4.0f;
     /** maximal aspect ratio of node sizes. */
-    private static final float MAX_SIZE_RATIO = 2.0f;
+    private static final float MAX_SIZE_RATIO = 3.0f;
 
     /**
-     * Sets the size of a given node, depending on the number of ports on each
-     * side, the insets and the label.
+     * Sets the size of a given node, depending on the minimal size, the number of ports
+     * on each side, the insets, and the label.
      * 
      * @param node the node that shall be resized
      */
     public static void resizeNode(final KNode node) {
-        float newWidth = MIN_NODE_SIZE;
-        float newHeight = MIN_NODE_SIZE;
-        KShapeLayout labelLayout = getShapeLayout(node.getLabel());
-        newWidth += labelLayout.getWidth();
-        newHeight += labelLayout.getHeight();
         KShapeLayout nodeLayout = getShapeLayout(node);
-        newWidth = Math.max(newWidth, LayoutOptions.getFloat(nodeLayout, LayoutOptions.MIN_WIDTH));
-        newHeight = Math.max(newHeight, LayoutOptions.getFloat(nodeLayout, LayoutOptions.MIN_HEIGHT));
-
-        float minNorth = MIN_PORT_DISTANCE, minEast = MIN_PORT_DISTANCE,
-                minSouth = MIN_PORT_DISTANCE, minWest = MIN_PORT_DISTANCE;
-        for (KPort port : node.getPorts()) {
-            switch (LayoutOptions.getEnum(getShapeLayout(port), PortSide.class)) {
-            case NORTH:
-                minNorth += MIN_PORT_DISTANCE;
-                break;
-            case EAST:
-                minEast += MIN_PORT_DISTANCE;
-                break;
-            case SOUTH:
-                minSouth += MIN_PORT_DISTANCE;
-                break;
-            case WEST:
-                minWest += MIN_PORT_DISTANCE;
-                break;
-            }
-        }
-
         float oldWidth = nodeLayout.getWidth();
         float oldHeight = nodeLayout.getHeight();
-        newWidth = Math.max(newWidth, Math.max(minNorth, minSouth));
-        newHeight = Math.max(newHeight, Math.max(minEast, minWest));
-        if (newHeight < newWidth / MAX_SIZE_RATIO) {
-            newHeight = newWidth / MAX_SIZE_RATIO;
-        } else if (newWidth < newHeight / MAX_SIZE_RATIO) {
-            newWidth = newHeight / MAX_SIZE_RATIO;
+        float newWidth = LayoutOptions.getFloat(nodeLayout, LayoutOptions.MIN_WIDTH);
+        float newHeight = LayoutOptions.getFloat(nodeLayout, LayoutOptions.MIN_HEIGHT);
+        if (newWidth < MIN_NODE_SIZE || newHeight < MIN_NODE_SIZE) {
+            newWidth = newWidth < MIN_NODE_SIZE ? MIN_NODE_SIZE : newWidth;
+            newHeight = newHeight < MIN_NODE_SIZE ? MIN_NODE_SIZE : newHeight;
+            KShapeLayout labelLayout = getShapeLayout(node.getLabel());
+            newWidth = Math.max(newWidth, labelLayout.getWidth());
+            newHeight = Math.max(newHeight, labelLayout.getHeight());
+    
+            float minNorth = MIN_PORT_DISTANCE, minEast = MIN_PORT_DISTANCE,
+                    minSouth = MIN_PORT_DISTANCE, minWest = MIN_PORT_DISTANCE;
+            for (KPort port : node.getPorts()) {
+                switch (LayoutOptions.getEnum(getShapeLayout(port), PortSide.class)) {
+                case NORTH:
+                    minNorth += MIN_PORT_DISTANCE;
+                    break;
+                case EAST:
+                    minEast += MIN_PORT_DISTANCE;
+                    break;
+                case SOUTH:
+                    minSouth += MIN_PORT_DISTANCE;
+                    break;
+                case WEST:
+                    minWest += MIN_PORT_DISTANCE;
+                    break;
+                }
+            }
+    
+            newWidth = KielerMath.maxf(newWidth, minNorth, minSouth);
+            newHeight = KielerMath.maxf(newHeight, minEast, minWest);
+            if (newHeight < newWidth / MAX_SIZE_RATIO) {
+                newHeight = newWidth / MAX_SIZE_RATIO;
+            } else if (newWidth < newHeight / MAX_SIZE_RATIO) {
+                newWidth = newHeight / MAX_SIZE_RATIO;
+            }
         }
         nodeLayout.setWidth(newWidth);
         nodeLayout.setHeight(newHeight);
