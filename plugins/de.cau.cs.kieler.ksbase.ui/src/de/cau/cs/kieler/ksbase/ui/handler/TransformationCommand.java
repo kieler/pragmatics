@@ -83,9 +83,6 @@ public class TransformationCommand extends AbstractTransactionalCommand {
             final IAdaptable info) throws ExecutionException {
         if (component != null) {
             component.executeTransformation();
-            // TODO: file = model file
-            // Maybe this fixes the 'dangling transition' bug?
-            // file.getParent().refreshLocal(IProject.DEPTH_INFINITE, null);
 
             IEditorPart activeEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
                     .getActivePage().getActiveEditor();
