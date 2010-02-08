@@ -362,8 +362,9 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             // process nodes, which may be parents of compartments
             } else if (obj instanceof ShapeNodeEditPart) {
                 ShapeNodeEditPart childNodeEditPart = (ShapeNodeEditPart) obj;
-                if (!(childNodeEditPart instanceof NoteEditPart
-                        || KimlUiUtil.isNoLayout(childNodeEditPart))) {
+                //if (childNodeEditPart instanceof NoteEditPart) {
+                //    System.out.print(".");
+                if (!KimlUiUtil.isNoLayout(childNodeEditPart)) {
                     IFigure nodeFigure = childNodeEditPart.getFigure();
                     KNode childLayoutNode = KimlLayoutUtil.createInitializedNode();
                     Rectangle childBounds = nodeFigure.getBounds();

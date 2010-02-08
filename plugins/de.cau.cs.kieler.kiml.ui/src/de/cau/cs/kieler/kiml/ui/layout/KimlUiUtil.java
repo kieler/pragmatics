@@ -418,20 +418,22 @@ public final class KimlUiUtil {
      * @param editPart an edit part
      * @param forDomainModel if true the class of the edit part's domain model is taken,
      *         else the edit part class itself is taken
-     * @return the class name for layout options
+     * @return the class name for layout options, or {@code null} if there is no such class name
      */
     public static String getClassName(final EditPart editPart, final boolean forDomainModel) {
         if (forDomainModel) {
             Object model = editPart.getModel();
-            EObject emodel;
+            EObject emodel = null;
             if (model instanceof View) {
                 emodel = ((View) model).getElement();
             } else if (model instanceof EObject) {
                 emodel = (EObject) model;
+            }
+            if (emodel != null) {
+                return emodel.eClass().getInstanceTypeName();
             } else {
                 return null;
             }
-            return emodel.eClass().getInstanceTypeName();
         } else {
             return editPart.getClass().getName();
         }

@@ -72,6 +72,8 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
     private List<OptionsTableProvider.DataEntry> diagramTypeEntries;
     /** list of diagram element option entries. */
     private List<OptionsTableProvider.DataEntry> elementEntries;
+    /** table viewers to refresh after changes to the option table data. */
+    private List<TableViewer> optionTableViewers = new LinkedList<TableViewer>();
 
     /**
      * Creates the layout preference page.
@@ -291,6 +293,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         tableViewer.setContentProvider(optionsTableProvider);
         tableViewer.setLabelProvider(optionsTableProvider);
         tableViewer.setInput(entries);
+        optionTableViewers.add(tableViewer);
         column1.pack();
         column2.pack();
         column3.pack();
@@ -377,17 +380,19 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
      */
     private void showEditDialog(final Shell shell, final OptionsTableProvider.DataEntry entry) {
         LayoutOptionData optionData = entry.getOptionData();
-        String value = entry.getValue().toString();
-        InputDialog dialog = new InputDialog(shell, Messages.getString("kiml.ui.23"),
-                Messages.getString("kiml.ui.24"), value, new LayoutOptionValidator(optionData));
-        if (dialog.open() == InputDialog.OK) {
-            String result = dialog.getValue().trim();
-            switch (optionData.getType()) {
-            case ENUM:
-                entry.setValue(optionData.parseValue(result.toUpperCase()));
-                break;
-            default:
-                entry.setValue(optionData.parseValue(result));
+        if (entry.getValue() != null) {
+            String value = entry.getValue().toString();
+            InputDialog dialog = new InputDialog(shell, Messages.getString("kiml.ui.23"),
+                    Messages.getString("kiml.ui.24"), value, new LayoutOptionValidator(optionData));
+            if (dialog.open() == InputDialog.OK) {
+                String result = dialog.getValue().trim();
+                switch (optionData.getType()) {
+                case ENUM:
+                    entry.setValue(optionData.parseValue(result.toUpperCase()));
+                    break;
+                default:
+                    entry.setValue(optionData.parseValue(result));
+                }
             }
         }
     }
@@ -405,9 +410,22 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
     @Override
     protected void performDefaults() {
         super.performDefaults();
+        
+        // read priority values from the extension point
         if (priorityData != null) {
             EclipseLayoutServices.readSupportPriorities(priorityData, providerIds, diagramTypes);
             priorityTableProvider.refresh();
+        }
+        
+        // clear the layout options tables
+        for (OptionsTableProvider.DataEntry entry : diagramTypeEntries) {
+            entry.setValue(null);
+        }
+        for (OptionsTableProvider.DataEntry entry : elementEntries) {
+            entry.setValue(null);
+        }
+        for (TableViewer viewer : optionTableViewers) {
+            viewer.refresh();
         }
     }
 

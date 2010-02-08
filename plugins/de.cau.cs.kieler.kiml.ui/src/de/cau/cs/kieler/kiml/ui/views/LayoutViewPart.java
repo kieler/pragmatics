@@ -269,9 +269,10 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
         final String applyOptionString = Messages.getString("kiml.ui.10"); //$NON-NLS-1$
         final IAction applyOptionAction = new ApplyOptionAction(this, applyOptionString);
         final String setDefaultString = Messages.getString("kiml.ui.16"); //$NON-NLS-1$
+        final String setAllDefaultString = Messages.getString("kiml.ui.34"); //$NON-NLS-1$
         final IAction editPartDefaultAction = new EditPartDefaultAction(this, setDefaultString, false);
-        final IAction modelDefaultAction = new EditPartDefaultAction(this, setDefaultString, true);
-        final IAction diagramTypeDefaultAction = new DiagramTypeDefaultAction(this, setDefaultString);
+        final IAction modelDefaultAction = new EditPartDefaultAction(this, setAllDefaultString, true);
+        final IAction diagramTypeDefaultAction = new DiagramTypeDefaultAction(this, setAllDefaultString);
         // dirty hack to add actions to an existing menu without having the menu manager
         menu.addMenuListener(new MenuAdapter() {
             public void menuShown(final MenuEvent event) {
@@ -309,27 +310,29 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
                 } else {
                     // add the "set as default for edit part" action
                     String editPartName = getReadableName(editPart, false, true);
-                    if (editPartDefaultItem == null) {
-                        editPartDefaultAction.setText(setDefaultString + " " + editPartName);
-                        ContributionItem contributionItem = new ActionContributionItem(
-                                editPartDefaultAction);
-                        contributionItem.setId(EditPartDefaultAction.EDIT_PART_ACTION_ID);
-                        contributionItem.fill(menu, -1);
-                    } else {
-                        editPartDefaultItem.setEnabled(true);
-                        editPartDefaultItem.setText(setDefaultString + " " + editPartName);
-                    }
-                    // add the "set as default for model element" action
-                    String modelName = getReadableName(editPart, true, true);
-                    if (modelDefaultItem == null) {
-                        modelDefaultAction.setText(setDefaultString + " " + modelName);
-                        ContributionItem contributionItem = new ActionContributionItem(
-                                modelDefaultAction);
-                        contributionItem.setId(EditPartDefaultAction.MODEL_ACTION_ID);
-                        contributionItem.fill(menu, -1);
-                    } else {
-                        modelDefaultItem.setEnabled(true);
-                        modelDefaultItem.setText(setDefaultString + " " + modelName);
+                    if (editPartName != null) {
+                        if (editPartDefaultItem == null) {
+                            editPartDefaultAction.setText(setDefaultString + " " + editPartName);
+                            ContributionItem contributionItem = new ActionContributionItem(
+                                    editPartDefaultAction);
+                            contributionItem.setId(EditPartDefaultAction.EDIT_PART_ACTION_ID);
+                            contributionItem.fill(menu, -1);
+                        } else {
+                            editPartDefaultItem.setEnabled(true);
+                            editPartDefaultItem.setText(setDefaultString + " " + editPartName);
+                        }
+                        // add the "set as default for model element" action
+                        String modelName = getReadableName(editPart, true, true);
+                        if (modelDefaultItem == null) {
+                            modelDefaultAction.setText(setAllDefaultString + " " + modelName);
+                            ContributionItem contributionItem = new ActionContributionItem(
+                                    modelDefaultAction);
+                            contributionItem.setId(EditPartDefaultAction.MODEL_ACTION_ID);
+                            contributionItem.fill(menu, -1);
+                        } else {
+                            modelDefaultItem.setEnabled(true);
+                            modelDefaultItem.setText(setAllDefaultString + " " + modelName);
+                        }
                     }
                 }
                 // add the "set as default for diagram type" action
@@ -346,14 +349,15 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
                             diagramTypeName += "s";
                         }
                         if (diagramTypeDefaultItem == null) {
-                            diagramTypeDefaultAction.setText(setDefaultString + " " + diagramTypeName);
+                            diagramTypeDefaultAction.setText(setAllDefaultString
+                                    + " " + diagramTypeName);
                             ContributionItem contributionItem = new ActionContributionItem(
                                     diagramTypeDefaultAction);
                             contributionItem.setId(DiagramTypeDefaultAction.ACTION_ID);
                             contributionItem.fill(menu, -1);
                         } else {
                             diagramTypeDefaultItem.setEnabled(true);
-                            diagramTypeDefaultItem.setText(setDefaultString + " " + diagramTypeName);
+                            diagramTypeDefaultItem.setText(setAllDefaultString + " " + diagramTypeName);
                         }
                     }
                 }
@@ -366,11 +370,21 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
      * 
      * @param editPart edit part
      * @param plural if true, the plural form is created
-     * @return a readable name for the edit part
+     * @return a readable name for the edit part, or {@code null} if the edit part
+     *     cannot be handled in this context
      */
     private String getReadableName(final EditPart editPart, final boolean forDomainModel,
             final boolean plural) {
-        String className = KimlUiUtil.getClassName(editPart, forDomainModel);
+        String className = KimlUiUtil.getClassName(editPart, true);
+        if (className == null) {
+            if (plural) {
+                return null;
+            }
+            className = KimlUiUtil.getClassName(editPart, false);
+            if (className.endsWith("EditPart")) {
+                className = className.substring(0, className.length() - "EditPart".length());
+            }
+        }
         int lastDotIndex = className.lastIndexOf('.');
         if (lastDotIndex >= 0) {
             className = className.substring(lastDotIndex + 1);
@@ -391,6 +405,9 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
         }
         if (plural && !className.endsWith("s")) {
             stringBuilder.append('s');
+        }
+        if (!forDomainModel) {
+            stringBuilder.append(" " + Messages.getString("kiml.ui.33"));
         }
         return stringBuilder.toString();
     }

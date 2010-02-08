@@ -226,10 +226,12 @@ public class EclipseLayoutServices extends LayoutServices {
         Object value = optionData.parseValue(valueString);
         if (value != null) {
             String className = KimlUiUtil.getClassName(editPart, storeDomainModel);
-            registry().addOption(className, optionData.getId(), value);
-            registeredElements.add(className);
-            IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
-            preferenceStore.setValue(getPreferenceName(className, optionData.getId()), valueString);
+            if (className != null) {
+                registry().addOption(className, optionData.getId(), value);
+                registeredElements.add(className);
+                IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
+                preferenceStore.setValue(getPreferenceName(className, optionData.getId()), valueString);
+            }
         }
     }
     
