@@ -11,9 +11,63 @@
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
             id="de.cau.cs.kieler.kiml.ogdf.sugiyama"
-            name="OGDF Sugiyama"
+            name="Sugiyama"
             parameter="SUGIYAMA"
             type="de.cau.cs.kieler.layout.types.layered">
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.minSpacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.layerDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.fails">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.runs">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.transpose">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.borderSpacing">
+         </knownOption>
+      </layoutProvider>
+      <layoutOption
+            appliesTo="parents"
+            description="The distance between two layers."
+            id="de.cau.cs.kieler.kiml.ogdf.option.layerDistance"
+            name="Layer Distance"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            description="How many times may the total number of crossings after a complete top down or bottom up traversal not decrease before one repetition is stopped."
+            id="de.cau.cs.kieler.kiml.ogdf.option.fails"
+            name="Fails"
+            type="int">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            description="How many times is the crossing minimization repeated. Each repetition (except for the first) starts with randomly permuted nodes on each layer. Deterministic behaviour can be achieved by setting runs to 1."
+            id="de.cau.cs.kieler.kiml.ogdf.option.runs"
+            name="Runs"
+            type="int">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            description="If this option is set to true an additional fine tuning step is performed after each traversal, which tries to reduce the total number of crossings by switching adjacent vertices on the same layer."
+            id="de.cau.cs.kieler.kiml.ogdf.option.transpose"
+            name="Transpose"
+            type="boolean">
+      </layoutOption>
+      <layoutProvider
+            category="de.cau.cs.kieler.kiml.categories.ogdf"
+            class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
+            id="de.cau.cs.kieler.kiml.ogdf.planarizationUML"
+            name="Mixed-Upward Planarization"
+            parameter="UMLPLANARIZATION"
+            type="de.cau.cs.kieler.layout.types.orthogonal">
       </layoutProvider>
    </extension>
 

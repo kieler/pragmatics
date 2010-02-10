@@ -8,39 +8,40 @@
 
 package net.ogdf.lib;
 
-public enum Orientation {
-  topToBottom,
-  bottomToTop,
-  leftToRight,
-  rightToLeft;
+public enum eLabelTyp {
+  elEnd1,
+  elMult1,
+  elName,
+  elEnd2,
+  elMult2;
 
   public final int swigValue() {
     return swigValue;
   }
 
-  public static Orientation swigToEnum(int swigValue) {
-    Orientation[] swigValues = Orientation.class.getEnumConstants();
+  public static eLabelTyp swigToEnum(int swigValue) {
+    eLabelTyp[] swigValues = eLabelTyp.class.getEnumConstants();
     if (swigValue < swigValues.length && swigValue >= 0 && swigValues[swigValue].swigValue == swigValue)
       return swigValues[swigValue];
-    for (Orientation swigEnum : swigValues)
+    for (eLabelTyp swigEnum : swigValues)
       if (swigEnum.swigValue == swigValue)
         return swigEnum;
-    throw new IllegalArgumentException("No enum " + Orientation.class + " with value " + swigValue);
+    throw new IllegalArgumentException("No enum " + eLabelTyp.class + " with value " + swigValue);
   }
 
   @SuppressWarnings("unused")
-  private Orientation() {
+  private eLabelTyp() {
     this.swigValue = SwigNext.next++;
   }
 
   @SuppressWarnings("unused")
-  private Orientation(int swigValue) {
+  private eLabelTyp(int swigValue) {
     this.swigValue = swigValue;
     SwigNext.next = swigValue+1;
   }
 
   @SuppressWarnings("unused")
-  private Orientation(Orientation swigEnum) {
+  private eLabelTyp(eLabelTyp swigEnum) {
     this.swigValue = swigEnum.swigValue;
     SwigNext.next = this.swigValue+1;
   }

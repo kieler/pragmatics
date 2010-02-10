@@ -8,16 +8,15 @@
 
 package net.ogdf.lib;
 
-public class LayoutModule {
+public class PlanarizationLayout extends UMLLayoutModule {
   private long swigCPtr;
-  protected boolean swigCMemOwn;
 
-  protected LayoutModule(long cPtr, boolean cMemoryOwn) {
-    swigCMemOwn = cMemoryOwn;
+  protected PlanarizationLayout(long cPtr, boolean cMemoryOwn) {
+    super(OgdfJNI.SWIGPlanarizationLayoutUpcast(cPtr), cMemoryOwn);
     swigCPtr = cPtr;
   }
 
-  protected static long getCPtr(LayoutModule obj) {
+  protected static long getCPtr(PlanarizationLayout obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 
@@ -28,13 +27,22 @@ public class LayoutModule {
   public synchronized void delete() {
     if(swigCPtr != 0 && swigCMemOwn) {
       swigCMemOwn = false;
-      OgdfJNI.delete_LayoutModule(swigCPtr);
+      OgdfJNI.delete_PlanarizationLayout(swigCPtr);
     }
     swigCPtr = 0;
+    super.delete();
+  }
+
+  public PlanarizationLayout() {
+    this(OgdfJNI.new_PlanarizationLayout(), true);
   }
 
   public void call(GraphAttributes arg0) {
-    OgdfJNI.LayoutModule_call(swigCPtr, this, GraphAttributes.getCPtr(arg0), arg0);
+    OgdfJNI.PlanarizationLayout_call__SWIG_0(swigCPtr, this, GraphAttributes.getCPtr(arg0), arg0);
+  }
+
+  public void call(UMLGraph arg0) {
+    OgdfJNI.PlanarizationLayout_call__SWIG_1(swigCPtr, this, UMLGraph.getCPtr(arg0), arg0);
   }
 
 }

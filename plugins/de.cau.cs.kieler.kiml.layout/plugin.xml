@@ -160,6 +160,13 @@
             name="Interactive"
             type="boolean">
       </layoutOption>
+      <layoutOption
+            appliesTo="edges"
+            description="The type of the edge."
+            id="de.cau.cs.kieler.layout.options.edgeType"
+            name="Edge Type"
+            type="enum">
+      </layoutOption>
    </extension>
    <extension
          point="de.cau.cs.kieler.kiml.layout.layoutInfo">

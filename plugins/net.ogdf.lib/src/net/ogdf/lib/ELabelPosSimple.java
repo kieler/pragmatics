@@ -8,16 +8,16 @@
 
 package net.ogdf.lib;
 
-public class LayoutModule {
+public class ELabelPosSimple {
   private long swigCPtr;
   protected boolean swigCMemOwn;
 
-  protected LayoutModule(long cPtr, boolean cMemoryOwn) {
+  protected ELabelPosSimple(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
   }
 
-  protected static long getCPtr(LayoutModule obj) {
+  protected static long getCPtr(ELabelPosSimple obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 
@@ -28,13 +28,17 @@ public class LayoutModule {
   public synchronized void delete() {
     if(swigCPtr != 0 && swigCMemOwn) {
       swigCMemOwn = false;
-      OgdfJNI.delete_LayoutModule(swigCPtr);
+      OgdfJNI.delete_ELabelPosSimple(swigCPtr);
     }
     swigCPtr = 0;
   }
 
-  public void call(GraphAttributes arg0) {
-    OgdfJNI.LayoutModule_call(swigCPtr, this, GraphAttributes.getCPtr(arg0), arg0);
+  public ELabelPosSimple() {
+    this(OgdfJNI.new_ELabelPosSimple(), true);
+  }
+
+  public void call(GraphAttributes ug, ELabelInterfaceDouble arg1) {
+    OgdfJNI.ELabelPosSimple_call(swigCPtr, this, GraphAttributes.getCPtr(ug), ug, ELabelInterfaceDouble.getCPtr(arg1), arg1);
   }
 
 }

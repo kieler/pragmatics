@@ -8,16 +8,16 @@
 
 package net.ogdf.lib;
 
-public class LayoutModule {
+public class ELabelInterfaceDouble {
   private long swigCPtr;
   protected boolean swigCMemOwn;
 
-  protected LayoutModule(long cPtr, boolean cMemoryOwn) {
+  protected ELabelInterfaceDouble(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
   }
 
-  protected static long getCPtr(LayoutModule obj) {
+  protected static long getCPtr(ELabelInterfaceDouble obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 
@@ -28,13 +28,21 @@ public class LayoutModule {
   public synchronized void delete() {
     if(swigCPtr != 0 && swigCMemOwn) {
       swigCMemOwn = false;
-      OgdfJNI.delete_LayoutModule(swigCPtr);
+      OgdfJNI.delete_ELabelInterfaceDouble(swigCPtr);
     }
     swigCPtr = 0;
   }
 
-  public void call(GraphAttributes arg0) {
-    OgdfJNI.LayoutModule_call(swigCPtr, this, GraphAttributes.getCPtr(arg0), arg0);
+  public ELabelInterfaceDouble(GraphAttributes arg0) {
+    this(OgdfJNI.new_ELabelInterfaceDouble(GraphAttributes.getCPtr(arg0), arg0), true);
+  }
+
+  public void setLabel(EdgeElement arg0, EdgeLabelDouble arg1) {
+    OgdfJNI.ELabelInterfaceDouble_setLabel(swigCPtr, this, EdgeElement.getCPtr(arg0), arg0, EdgeLabelDouble.getCPtr(arg1), arg1);
+  }
+
+  public EdgeLabelDouble getLabel(EdgeElement arg0) {
+    return new EdgeLabelDouble(OgdfJNI.ELabelInterfaceDouble_getLabel(swigCPtr, this, EdgeElement.getCPtr(arg0), arg0), false);
   }
 
 }

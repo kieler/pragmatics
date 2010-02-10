@@ -30,6 +30,7 @@ import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.layout.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.layout.options.EdgeRouting;
+import de.cau.cs.kieler.kiml.layout.options.EdgeType;
 import de.cau.cs.kieler.kiml.layout.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.options.PortConstraints;
@@ -88,6 +89,7 @@ public class LayoutServices {
         LayoutOptions.registerEnum(LayoutOptions.LAYOUT_DIRECTION, LayoutDirection.class);
         LayoutOptions.registerEnum(LayoutOptions.EDGE_LABEL_PLACEMENT, EdgeLabelPlacement.class);
         LayoutOptions.registerEnum(LayoutOptions.EDGE_ROUTING, EdgeRouting.class);
+        LayoutOptions.registerEnum(LayoutOptions.EDGE_TYPE, EdgeType.class);
         LayoutOptions.registerEnum(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.class);
         LayoutOptions.registerEnum(LayoutOptions.PORT_SIDE, PortSide.class);
         LayoutOptions.registerEnum(LayoutOptions.SHAPE, Shape.class);

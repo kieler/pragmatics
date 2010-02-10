@@ -8,16 +8,16 @@
 
 package net.ogdf.lib;
 
-public class LayoutModule {
+public class EdgeElementList {
   private long swigCPtr;
   protected boolean swigCMemOwn;
 
-  protected LayoutModule(long cPtr, boolean cMemoryOwn) {
+  protected EdgeElementList(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
   }
 
-  protected static long getCPtr(LayoutModule obj) {
+  protected static long getCPtr(EdgeElementList obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 
@@ -28,13 +28,25 @@ public class LayoutModule {
   public synchronized void delete() {
     if(swigCPtr != 0 && swigCMemOwn) {
       swigCMemOwn = false;
-      OgdfJNI.delete_LayoutModule(swigCPtr);
+      OgdfJNI.delete_EdgeElementList(swigCPtr);
     }
     swigCPtr = 0;
   }
 
-  public void call(GraphAttributes arg0) {
-    OgdfJNI.LayoutModule_call(swigCPtr, this, GraphAttributes.getCPtr(arg0), arg0);
+  public EdgeElementList() {
+    this(OgdfJNI.new_EdgeElementList(), true);
+  }
+
+  public boolean empty() {
+    return OgdfJNI.EdgeElementList_empty(swigCPtr, this);
+  }
+
+  public int size() {
+    return OgdfJNI.EdgeElementList_size(swigCPtr, this);
+  }
+
+  public EdgeElementListConstIterator iterator() {
+    return new EdgeElementListConstIterator(OgdfJNI.EdgeElementList_iterator(swigCPtr, this), true);
   }
 
 }

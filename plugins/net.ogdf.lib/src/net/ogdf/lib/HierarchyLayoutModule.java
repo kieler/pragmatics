@@ -8,16 +8,16 @@
 
 package net.ogdf.lib;
 
-public class LayoutModule {
+public class HierarchyLayoutModule {
   private long swigCPtr;
   protected boolean swigCMemOwn;
 
-  protected LayoutModule(long cPtr, boolean cMemoryOwn) {
+  protected HierarchyLayoutModule(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
   }
 
-  protected static long getCPtr(LayoutModule obj) {
+  protected static long getCPtr(HierarchyLayoutModule obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 
@@ -28,13 +28,13 @@ public class LayoutModule {
   public synchronized void delete() {
     if(swigCPtr != 0 && swigCMemOwn) {
       swigCMemOwn = false;
-      OgdfJNI.delete_LayoutModule(swigCPtr);
+      OgdfJNI.delete_HierarchyLayoutModule(swigCPtr);
     }
     swigCPtr = 0;
   }
 
-  public void call(GraphAttributes arg0) {
-    OgdfJNI.LayoutModule_call(swigCPtr, this, GraphAttributes.getCPtr(arg0), arg0);
+  void setMemOwn(boolean memOwn) {
+    swigCMemOwn = memOwn;
   }
 
 }

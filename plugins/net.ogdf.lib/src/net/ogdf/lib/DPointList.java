@@ -8,16 +8,16 @@
 
 package net.ogdf.lib;
 
-public class LayoutModule {
+public class DPointList implements  Iterable<DPoint>  {
   private long swigCPtr;
   protected boolean swigCMemOwn;
 
-  protected LayoutModule(long cPtr, boolean cMemoryOwn) {
+  protected DPointList(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
   }
 
-  protected static long getCPtr(LayoutModule obj) {
+  protected static long getCPtr(DPointList obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 
@@ -28,13 +28,25 @@ public class LayoutModule {
   public synchronized void delete() {
     if(swigCPtr != 0 && swigCMemOwn) {
       swigCMemOwn = false;
-      OgdfJNI.delete_LayoutModule(swigCPtr);
+      OgdfJNI.delete_DPointList(swigCPtr);
     }
     swigCPtr = 0;
   }
 
-  public void call(GraphAttributes arg0) {
-    OgdfJNI.LayoutModule_call(swigCPtr, this, GraphAttributes.getCPtr(arg0), arg0);
+  public DPointList() {
+    this(OgdfJNI.new_DPointList(), true);
+  }
+
+  public boolean empty() {
+    return OgdfJNI.DPointList_empty(swigCPtr, this);
+  }
+
+  public int size() {
+    return OgdfJNI.DPointList_size(swigCPtr, this);
+  }
+
+  public DPointListConstIterator iterator() {
+    return new DPointListConstIterator(OgdfJNI.DPointList_iterator(swigCPtr, this), true);
   }
 
 }

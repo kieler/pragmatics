@@ -63,6 +63,8 @@ public final class LayoutOptions {
         "de.cau.cs.kieler.layout.options.edgeLabelPlacement";
     /** layout option key: edge routing style. */
     public static final String EDGE_ROUTING = "de.cau.cs.kieler.layout.options.edgeRouting";
+    /** layout option key: edge type. */
+    public static final String EDGE_TYPE = "de.cau.cs.kieler.layout.options.edgeType";
     /** layout option key: minimal distance between elements. */
     public static final String MIN_SPACING = "de.cau.cs.kieler.layout.options.minSpacing";    
     /** layout option key: distance to border of the drawing. */

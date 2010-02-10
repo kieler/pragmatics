@@ -8,16 +8,16 @@
 
 package net.ogdf.lib;
 
-public class LayoutModule {
+public class EdgeElementListConstIterator {
   private long swigCPtr;
   protected boolean swigCMemOwn;
 
-  protected LayoutModule(long cPtr, boolean cMemoryOwn) {
+  protected EdgeElementListConstIterator(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
   }
 
-  protected static long getCPtr(LayoutModule obj) {
+  protected static long getCPtr(EdgeElementListConstIterator obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 
@@ -28,13 +28,26 @@ public class LayoutModule {
   public synchronized void delete() {
     if(swigCPtr != 0 && swigCMemOwn) {
       swigCMemOwn = false;
-      OgdfJNI.delete_LayoutModule(swigCPtr);
+      OgdfJNI.delete_EdgeElementListConstIterator(swigCPtr);
     }
     swigCPtr = 0;
   }
 
-  public void call(GraphAttributes arg0) {
-    OgdfJNI.LayoutModule_call(swigCPtr, this, GraphAttributes.getCPtr(arg0), arg0);
+  public EdgeElementListConstIterator() {
+    this(OgdfJNI.new_EdgeElementListConstIterator(), true);
+  }
+
+  public boolean hasNext() {
+    return OgdfJNI.EdgeElementListConstIterator_hasNext(swigCPtr, this);
+  }
+
+  public EdgeElement next() {
+    long cPtr = OgdfJNI.EdgeElementListConstIterator_next(swigCPtr, this);
+    return (cPtr == 0) ? null : new EdgeElement(cPtr, false);
+  }
+
+  public void remove() {
+    OgdfJNI.EdgeElementListConstIterator_remove(swigCPtr, this);
   }
 
 }

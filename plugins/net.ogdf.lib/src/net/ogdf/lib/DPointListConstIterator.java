@@ -7,17 +7,17 @@
  * ----------------------------------------------------------------------------- */
 
 package net.ogdf.lib;
-
-public class LayoutModule {
+ import java.util.Iterator; 
+public class DPointListConstIterator implements  Iterator<DPoint>  {
   private long swigCPtr;
   protected boolean swigCMemOwn;
 
-  protected LayoutModule(long cPtr, boolean cMemoryOwn) {
+  protected DPointListConstIterator(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = cPtr;
   }
 
-  protected static long getCPtr(LayoutModule obj) {
+  protected static long getCPtr(DPointListConstIterator obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 
@@ -28,13 +28,25 @@ public class LayoutModule {
   public synchronized void delete() {
     if(swigCPtr != 0 && swigCMemOwn) {
       swigCMemOwn = false;
-      OgdfJNI.delete_LayoutModule(swigCPtr);
+      OgdfJNI.delete_DPointListConstIterator(swigCPtr);
     }
     swigCPtr = 0;
   }
 
-  public void call(GraphAttributes arg0) {
-    OgdfJNI.LayoutModule_call(swigCPtr, this, GraphAttributes.getCPtr(arg0), arg0);
+  public DPointListConstIterator() {
+    this(OgdfJNI.new_DPointListConstIterator(), true);
+  }
+
+  public boolean hasNext() {
+    return OgdfJNI.DPointListConstIterator_hasNext(swigCPtr, this);
+  }
+
+  public DPoint next() {
+    return new DPoint(OgdfJNI.DPointListConstIterator_next(swigCPtr, this), true);
+  }
+
+  public void remove() {
+    OgdfJNI.DPointListConstIterator_remove(swigCPtr, this);
   }
 
 }

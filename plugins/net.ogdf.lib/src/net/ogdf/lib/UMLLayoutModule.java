@@ -8,16 +8,15 @@
 
 package net.ogdf.lib;
 
-public class LayoutModule {
+public class UMLLayoutModule extends LayoutModule {
   private long swigCPtr;
-  protected boolean swigCMemOwn;
 
-  protected LayoutModule(long cPtr, boolean cMemoryOwn) {
-    swigCMemOwn = cMemoryOwn;
+  protected UMLLayoutModule(long cPtr, boolean cMemoryOwn) {
+    super(OgdfJNI.SWIGUMLLayoutModuleUpcast(cPtr), cMemoryOwn);
     swigCPtr = cPtr;
   }
 
-  protected static long getCPtr(LayoutModule obj) {
+  protected static long getCPtr(UMLLayoutModule obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 
@@ -28,13 +27,14 @@ public class LayoutModule {
   public synchronized void delete() {
     if(swigCPtr != 0 && swigCMemOwn) {
       swigCMemOwn = false;
-      OgdfJNI.delete_LayoutModule(swigCPtr);
+      OgdfJNI.delete_UMLLayoutModule(swigCPtr);
     }
     swigCPtr = 0;
+    super.delete();
   }
 
-  public void call(GraphAttributes arg0) {
-    OgdfJNI.LayoutModule_call(swigCPtr, this, GraphAttributes.getCPtr(arg0), arg0);
+  public void call(UMLGraph arg0) {
+    OgdfJNI.UMLLayoutModule_call(swigCPtr, this, UMLGraph.getCPtr(arg0), arg0);
   }
 
 }
