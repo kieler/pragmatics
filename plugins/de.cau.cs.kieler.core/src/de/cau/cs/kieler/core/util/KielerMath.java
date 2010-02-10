@@ -108,7 +108,7 @@ public final class KielerMath {
      * @return n choose k
      */
     public static int binomial(final int n, final int k) {
-        if (n <= 0 || k < 0 || k > n) {
+        if (n <= 0 || k <= 0 || k >= n) {
             return 1;
         } else if (n < FACT_TABLE.length) {
             long result = fact(n) / (fact(k) * fact(n - k));

@@ -29,12 +29,10 @@ import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KBooleanOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KFloatOption;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KIntOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataPackage;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KObjectOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
@@ -219,11 +217,6 @@ public final class KimlLayoutUtil {
         KLabel nodeLabel = createInitializedLabel(layoutNode);
         layoutNode.setLabel(nodeLabel);
         KShapeLayout layout = KLayoutDataFactory.eINSTANCE.createKShapeLayout();
-        KInsets insets = KLayoutDataFactory.eINSTANCE.createKInsets();
-        KObjectOption insetsOption = KLayoutDataFactory.eINSTANCE.createKObjectOption();
-        insetsOption.setKey(LayoutOptions.INSETS);
-        insetsOption.setValue(insets);
-        layout.getOptions().add(insetsOption);
         layoutNode.getData().add(layout);
         return layoutNode;
     }
@@ -281,8 +274,6 @@ public final class KimlLayoutUtil {
     public static PortSide calcPortSide(final KPort port) {
         KShapeLayout nodeLayout = getShapeLayout(port.getNode());
         KShapeLayout portLayout = getShapeLayout(port);
-        LayoutDirection layoutDirection = LayoutOptions.getEnum(getShapeLayout(port.getNode()
-                .getParent()), LayoutDirection.class);
         // determine port placement from port position
         float nodeWidth = nodeLayout.getWidth();
         float nodeHeight = nodeLayout.getHeight();
@@ -314,6 +305,8 @@ public final class KimlLayoutUtil {
         }
 
         // determine port placement from the incident edges
+        LayoutDirection layoutDirection = LayoutOptions.getEnum(getShapeLayout(
+                port.getNode().getParent()), LayoutDirection.class);
         int flow = calcFlow(port);
         switch (layoutDirection) {
         case DOWN:

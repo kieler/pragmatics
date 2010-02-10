@@ -13,12 +13,16 @@
  */
 package de.cau.cs.kieler.kiml.viewer.views;
 
+import java.io.IOException;
 import java.util.Collections;
 
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.edit.ui.util.EditUIUtil;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
@@ -94,7 +98,9 @@ public class LayoutGraphView extends ViewPart {
         IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
         toolBarManager.add(new ImageExportAction(this));
         toolBarManager.add(new GmfDebugGraphicsAction(this));
-        toolBarManager.add(new PerformLayoutAction(this));
+        final IAction performLayoutAction = new PerformLayoutAction(this);
+        performLayoutAction.setEnabled(false);
+        toolBarManager.add(performLayoutAction);
 
         // create tab folder for layout graphs
         tabFolder = new TabFolder(parent, SWT.BOTTOM);
@@ -137,25 +143,25 @@ public class LayoutGraphView extends ViewPart {
                 public void partActivated(final IWorkbenchPart part) {
                     if (part instanceof IEditorPart) {
                         IEditorInput editorInput = ((IEditorPart) part).getEditorInput();
-                        if (editorInput instanceof IFileEditorInput) {
-                            String path = ((IFileEditorInput) editorInput).getFile().getLocation()
-                                    .toString();
-                            try {
-                                // activate the needed Ecore packages
-                                @SuppressWarnings("unused")
-                                KGraphPackage graphPackage = KGraphPackage.eINSTANCE;
-                                @SuppressWarnings("unused")
-                                KLayoutDataPackage layoutPackage = KLayoutDataPackage.eINSTANCE;
-                                // try to load an Ecore object from the editor
-                                // input
-                                ResourceSet resourceSet = new ResourceSetImpl();
-                                Resource resource = resourceSet.getResource(URI.createFileURI(path),
-                                        true);
-                                resource.load(Collections.EMPTY_MAP);
-                                KNode layoutGraph = (KNode) resource.getContents().get(0);
-                                xmiCanvas.setLayoutGraph(layoutGraph);
-                            } catch (Exception e) {
+                        URI uri = EditUIUtil.getURI(editorInput);
+                        // activate the needed Ecore packages
+                        @SuppressWarnings("unused")
+                        KGraphPackage graphPackage = KGraphPackage.eINSTANCE;
+                        @SuppressWarnings("unused")
+                        KLayoutDataPackage layoutPackage = KLayoutDataPackage.eINSTANCE;
+                        // try to load an Ecore object from the editor input
+                        ResourceSet resourceSet = new ResourceSetImpl();
+                        try {
+                            Resource resource = resourceSet.getResource(uri, true);
+                            resource.load(Collections.EMPTY_MAP);
+                            EObject model = resource.getContents().get(0);
+                            if (model instanceof KNode) {
+                                xmiCanvas.setLayoutGraph((KNode) model);
+                                performLayoutAction.setEnabled(true);
                             }
+                        } catch (IOException exception) {
+                            // TODO Auto-generated catch block
+                            exception.printStackTrace();
                         }
                     }
                 }

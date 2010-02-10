@@ -284,11 +284,10 @@ public final class LayoutOptions {
     /**
      * Sets an enumeration valued option for the given layout data instance.
      * 
-     * @param <T> type of enumeration class
      * @param layoutData layout data for a graph element
      * @param value the option value to set
      */
-    public static <T extends Enum<?>> void setEnum(final KLayoutData layoutData, final T value) {
+    public static void setEnum(final KLayoutData layoutData, final Enum<?> value) {
         String optionId = enum2idMap.get(value.getClass());
         KIntOption enumOption = (KIntOption) layoutData.getOption(optionId);
         if (enumOption == null) {
@@ -312,11 +311,15 @@ public final class LayoutOptions {
             final Class<T> clazz) {
         if (clazz == KInsets.class) {
             KObjectOption objectOption = (KObjectOption) layoutData.getOption(INSETS);
-            if (objectOption == null || objectOption.getValue() == null) {
-                return clazz.cast(KLayoutDataFactory.eINSTANCE.createKInsets());
-            } else {
-                return clazz.cast(objectOption.getValue());
+            if (objectOption == null) {
+                objectOption = KLayoutDataFactory.eINSTANCE.createKObjectOption();
+                objectOption.setKey(INSETS);
+                layoutData.getOptions().add(objectOption);
             }
+            if (objectOption.getValue() == null) {
+                objectOption.setValue(KLayoutDataFactory.eINSTANCE.createKInsets());
+            }
+            return clazz.cast(objectOption.getValue());
         } else {
             return null;
         }
