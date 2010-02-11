@@ -68,6 +68,10 @@
             name="Mixed-Upward Planarization"
             parameter="UMLPLANARIZATION"
             type="de.cau.cs.kieler.layout.types.orthogonal">
+         <supportedDiagram
+               priority="10"
+               type="de.cau.cs.kieler.layout.diagrams.classDiagram">
+         </supportedDiagram>
       </layoutProvider>
    </extension>
 

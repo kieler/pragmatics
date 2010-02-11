@@ -49,6 +49,7 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.ui.figures.SplineConnection;
 import de.cau.cs.kieler.core.util.KielerMath;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;
@@ -164,7 +165,8 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
     private void addEdgeLayout(final GmfLayoutCommand command, final KEdge kedge,
             final ConnectionEditPart connectionEditPart) {
         KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
-        PointList bendPoints = getBendPoints(edgeLayout);
+        PointList bendPoints = getBendPoints(edgeLayout,
+                connectionEditPart.getFigure() instanceof SplineConnection);
         Rectangle sourceExt, targetExt;
 
         KShapeLayout sourceLayout = KimlLayoutUtil.getShapeLayout(kedge.getSource());
@@ -266,7 +268,8 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         // get new bend points for the parent edge
         KEdge kedge = (KEdge) klabel.getParent();
         KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
-        PointList bendPoints = getBendPoints(edgeLayout);
+        PointList bendPoints = getBendPoints(edgeLayout,
+                connectionEditPart.getFigure() instanceof SplineConnection);
         PointList absoluteBendPoints = new PointList();
         for (int i = 0; i < bendPoints.size(); i++) {
             Point point = bendPoints.getPoint(i);
@@ -307,9 +310,10 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      * list.
      * 
      * @param edgeLayout the edge layout
+     * @param isSplineEdge indicates whether the connection supports splines
      * @return point list with the bend points of the edge layout
      */
-    private PointList getBendPoints(final KEdgeLayout edgeLayout) {
+    private PointList getBendPoints(final KEdgeLayout edgeLayout, final boolean isSplineEdge) {
         PointList pointList = pointListMap.get(edgeLayout);
         if (pointList == null) {
             pointList = new PointList();
@@ -319,7 +323,8 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
             pointList.addPoint((int) sourcePoint.getX(), (int) sourcePoint.getY());
             
             EdgeRouting edgeRouting = LayoutOptions.getEnum(edgeLayout, EdgeRouting.class);
-            if (edgeRouting == EdgeRouting.SPLINES && bendPoints.size() >= 1) {
+            // for connections that support splines the control points are passed without change
+            if (edgeRouting == EdgeRouting.SPLINES && bendPoints.size() >= 1 && !isSplineEdge) {
                 // treat the edge points as control points for splines
                 List<KielerMath.Point> controlPoints = new ArrayList<KielerMath.Point>(
                         bendPoints.size() + 2);

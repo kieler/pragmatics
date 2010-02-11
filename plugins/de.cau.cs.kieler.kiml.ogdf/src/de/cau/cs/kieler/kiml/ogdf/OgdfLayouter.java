@@ -313,6 +313,11 @@ public abstract class OgdfLayouter {
             for (KEdge kedge : knode1.getOutgoingEdges()) {
                 KNode knode2 = kedge.getTarget();
                 if (knode2.getParent() == knode1.getParent()) {
+                    // no self loops allowed in ogdf uml layouts
+                    // TODO find a better way to solve this problem
+                    if (knode2 == knode1) {
+                        continue;
+                    }
                     NodeElement ogdfNode1 = knode2ogdfNodeMap.get(knode1);
                     NodeElement ogdfNode2 = knode2ogdfNodeMap.get(knode2);
                     EdgeElement ogdfEdge = graph.newEdge(ogdfNode1, ogdfNode2);

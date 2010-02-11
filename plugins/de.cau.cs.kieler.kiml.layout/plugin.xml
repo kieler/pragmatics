@@ -198,6 +198,26 @@
             id="de.cau.cs.kieler.layout.diagrams.boxes"
             name="Unconnected Boxes">
       </diagramType>
+      <option
+            class="org.eclipse.emf.ecore.EPackage"
+            option="de.cau.cs.kieler.layout.options.diagramType"
+            value="de.cau.cs.kieler.layout.diagrams.classDiagram">
+      </option>
+      <option
+            class="org.eclipse.emf.ecore.EReference"
+            option="de.cau.cs.kieler.layout.options.edgeType"
+            value="ASSOCIATION">
+      </option>
+      <option
+            class="org.eclipse.emf.ecoretools.diagram.edit.parts.EClassESuperTypesEditPart"
+            option="de.cau.cs.kieler.layout.options.edgeType"
+            value="GENERALIZATION">
+      </option>
+      <option
+            class="org.eclipse.gmf.ecore.edit.parts.EClassESuperTypesEditPart"
+            option="de.cau.cs.kieler.layout.options.edgeType"
+            value="GENERALIZATION">
+      </option>
    </extension>
 
 </plugin>

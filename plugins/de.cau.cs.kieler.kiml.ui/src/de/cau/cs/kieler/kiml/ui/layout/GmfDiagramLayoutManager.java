@@ -14,9 +14,11 @@
 package de.cau.cs.kieler.kiml.ui.layout;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import org.eclipse.draw2d.ConnectionLocator;
@@ -25,6 +27,8 @@ import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Insets;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CommandStack;
@@ -34,7 +38,6 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.NoteEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeCompartmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.figures.ResizableCompartmentFigure;
@@ -477,7 +480,17 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      * identified in the {@code buildLayoutGraphRecursively} method.
      */
     private void processConnections() {
+        Set<EReference> referenceSet = new HashSet<EReference>();
         for (ConnectionEditPart connection : connections) {
+            EObject modelObject = connection.getNotationView().getElement();
+            if (modelObject instanceof EReference) {
+                EReference reference = (EReference) modelObject;
+                if (referenceSet.contains(reference.getEOpposite())) {
+                    continue;
+                }
+                referenceSet.add(reference);
+            }
+            
             KEdge edge = KimlLayoutUtil.createInitializedEdge();
             KNode sourceNode, targetNode;
             KPort sourcePort = null, targetPort = null;
