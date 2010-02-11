@@ -165,8 +165,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
     private void addEdgeLayout(final GmfLayoutCommand command, final KEdge kedge,
             final ConnectionEditPart connectionEditPart) {
         KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
-        PointList bendPoints = getBendPoints(edgeLayout,
-                connectionEditPart.getFigure() instanceof SplineConnection);
+        PointList bendPoints = getBendPoints(edgeLayout, connectionEditPart.getFigure());
         Rectangle sourceExt, targetExt;
 
         KShapeLayout sourceLayout = KimlLayoutUtil.getShapeLayout(kedge.getSource());
@@ -268,8 +267,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         // get new bend points for the parent edge
         KEdge kedge = (KEdge) klabel.getParent();
         KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
-        PointList bendPoints = getBendPoints(edgeLayout,
-                connectionEditPart.getFigure() instanceof SplineConnection);
+        PointList bendPoints = getBendPoints(edgeLayout, connectionEditPart.getFigure());
         PointList absoluteBendPoints = new PointList();
         for (int i = 0; i < bendPoints.size(); i++) {
             Point point = bendPoints.getPoint(i);
@@ -313,7 +311,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      * @param isSplineEdge indicates whether the connection supports splines
      * @return point list with the bend points of the edge layout
      */
-    private PointList getBendPoints(final KEdgeLayout edgeLayout, final boolean isSplineEdge) {
+    private PointList getBendPoints(final KEdgeLayout edgeLayout, final IFigure edgeFigure) {
         PointList pointList = pointListMap.get(edgeLayout);
         if (pointList == null) {
             pointList = new PointList();
@@ -323,8 +321,15 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
             pointList.addPoint((int) sourcePoint.getX(), (int) sourcePoint.getY());
             
             EdgeRouting edgeRouting = LayoutOptions.getEnum(edgeLayout, EdgeRouting.class);
+            boolean splineActive = false;
+            if (edgeFigure instanceof SplineConnection) {
+                if (((SplineConnection) edgeFigure).getSplineMode() != SplineConnection.SPLINE_OFF) {
+                    splineActive = true;
+                }
+            }
             // for connections that support splines the control points are passed without change
-            if (edgeRouting == EdgeRouting.SPLINES && bendPoints.size() >= 1 && !isSplineEdge) {
+            if (edgeRouting == EdgeRouting.SPLINES && bendPoints.size() >= 1
+                    && !splineActive) {
                 // treat the edge points as control points for splines
                 List<KielerMath.Point> controlPoints = new ArrayList<KielerMath.Point>(
                         bendPoints.size() + 2);
