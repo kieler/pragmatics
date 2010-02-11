@@ -17,7 +17,7 @@ import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.emf.compare.EMFCompareException;
 import org.eclipse.emf.compare.diff.metamodel.DiffModel;
-import org.eclipse.emf.compare.diff.metamodel.ModelInputSnapshot;
+import org.eclipse.emf.compare.diff.metamodel.ComparisonResourceSnapshot;
 import org.eclipse.emf.compare.diff.metamodel.util.DiffAdapterFactory;
 import org.eclipse.emf.compare.ui.EMFCompareUIMessages;
 import org.eclipse.emf.ecore.EObject;
@@ -32,7 +32,7 @@ import de.cau.cs.kieler.kivik.internal.KivikComparator;
  */
 public class ModelStructureContentProvider implements ITreeContentProvider {
 	/** Keeps track of the comparison result. */
-	/* package */ModelInputSnapshot snapshot;
+	/* package */ComparisonResourceSnapshot snapshot;
 
 	/**
 	 * {@link CompareConfiguration} controls various aspect of the GUI elements. This will keep track of the
@@ -140,8 +140,8 @@ public class ModelStructureContentProvider implements ITreeContentProvider {
 		((TreeViewer)viewer).getTree().clearAll(true);
 		final KivikComparator kivikComparator = KivikComparator
 		.getKivikComparator(configuration);
-		if (newInput instanceof ModelInputSnapshot) {
-			snapshot = (ModelInputSnapshot)newInput;
+		if (newInput instanceof ComparisonResourceSnapshot) {
+			snapshot = (ComparisonResourceSnapshot)newInput;
 		} else if (kivikComparator.getDomainComparisonResult() != null) {
 			snapshot = kivikComparator.getDomainComparisonResult();
 		} else if (oldInput != newInput && newInput instanceof ICompareInput) {

@@ -19,15 +19,17 @@ import java.util.List;
 
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.compare.diff.metamodel.AttributeChange;
+import org.eclipse.emf.compare.diff.metamodel.ComparisonResourceSnapshot;
+import org.eclipse.emf.compare.diff.metamodel.ComparisonSnapshot;
 import org.eclipse.emf.compare.diff.metamodel.ConflictingDiffElement;
 import org.eclipse.emf.compare.diff.metamodel.DiffElement;
 import org.eclipse.emf.compare.diff.metamodel.DiffGroup;
 import org.eclipse.emf.compare.diff.metamodel.DiffModel;
 import org.eclipse.emf.compare.diff.metamodel.ReferenceChange;
 import org.eclipse.emf.compare.match.metamodel.Match2Elements;
-import org.eclipse.emf.compare.match.metamodel.Match3Element;
+import org.eclipse.emf.compare.match.metamodel.Match3Elements;
 import org.eclipse.emf.compare.match.metamodel.MatchModel;
-import org.eclipse.emf.compare.match.metamodel.UnMatchElement;
+import org.eclipse.emf.compare.match.metamodel.UnmatchElement;
 import org.eclipse.emf.compare.ui.EMFCompareUIPlugin;
 import org.eclipse.emf.compare.ui.ICompareEditorPartListener;
 import org.eclipse.emf.compare.ui.ModelCompareInput;
@@ -182,7 +184,7 @@ public class ModelContentMergeTabFolder {
 	}
 
 	public DiffModel getDiffModel() {
-		return ((ModelCompareInput) parentViewer.getInput()).getDiff();
+		return ((ComparisonResourceSnapshot) parentViewer.getInput()).getDiff();
 	}
 
 	/**
@@ -483,15 +485,15 @@ public class ModelContentMergeTabFolder {
 	 */
 	public EObject findMatchFromElement(EObject element) {
 		EObject theElement = null;
-		final MatchModel match = ((ModelCompareInput) parentViewer.getInput())
+		final MatchModel match = ((ComparisonResourceSnapshot) parentViewer.getInput())
 				.getMatch();
 
 		final TreeIterator<EObject> iterator = match.eAllContents();
 		while (iterator.hasNext()) {
 			final Object object = iterator.next();
 
-			if (object instanceof Match3Element) {
-				final Match3Element matchElement = (Match3Element) object;
+			if (object instanceof Match3Elements) {
+				final Match3Elements matchElement = (Match3Elements) object;
 				if (element.equals(matchElement.getLeftElement())
 						|| element.equals(matchElement.getRightElement())
 						|| element.equals(matchElement.getOriginElement())) {
@@ -503,8 +505,8 @@ public class ModelContentMergeTabFolder {
 						|| matchElement.getRightElement().equals(element)) {
 					theElement = matchElement;
 				}
-			} else if (object instanceof UnMatchElement) {
-				final UnMatchElement unMatchElement = (UnMatchElement) object;
+			} else if (object instanceof UnmatchElement) {
+				final UnmatchElement unMatchElement = (UnmatchElement) object;
 				if (unMatchElement.getElement().equals(element)) {
 					theElement = unMatchElement;
 				}

@@ -23,7 +23,7 @@ import org.eclipse.emf.compare.diff.metamodel.AttributeChange;
 import org.eclipse.emf.compare.diff.metamodel.DiffElement;
 import org.eclipse.emf.compare.diff.metamodel.ReferenceChange;
 import org.eclipse.emf.compare.match.metamodel.Match2Elements;
-import org.eclipse.emf.compare.match.metamodel.UnMatchElement;
+import org.eclipse.emf.compare.match.metamodel.UnmatchElement;
 import org.eclipse.emf.compare.ui.EMFCompareUIMessages;
 import org.eclipse.emf.compare.ui.util.EMFCompareConstants;
 import org.eclipse.emf.compare.ui.util.EMFCompareEObjectUtils;
@@ -210,8 +210,8 @@ public final class ModelContentMergePropertyTab extends TableViewer implements
 		if (getInput() == null)
 			return null;
 		final EObject element;
-		if (getInput() instanceof UnMatchElement)
-			element = ((UnMatchElement) getInput()).getElement();
+		if (getInput() instanceof UnmatchElement)
+			element = ((UnmatchElement) getInput()).getElement();
 		else if (partSide == EMFCompareConstants.LEFT)
 			element = ((Match2Elements) getInput()).getLeftElement();
 		else
@@ -253,8 +253,8 @@ public final class ModelContentMergePropertyTab extends TableViewer implements
 		final List<ModelContentMergeTabObject> result = new ArrayList<ModelContentMergeTabObject>();
 		for (String data : dataToItem.keySet()) {
 			final EObject element;
-			if (getInput() instanceof UnMatchElement)
-				element = ((UnMatchElement) getInput()).getElement();
+			if (getInput() instanceof UnmatchElement)
+				element = ((UnmatchElement) getInput()).getElement();
 			else if (partSide == EMFCompareConstants.LEFT)
 				element = ((Match2Elements) getInput()).getLeftElement();
 			else

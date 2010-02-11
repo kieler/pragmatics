@@ -19,7 +19,7 @@ import org.eclipse.compare.CompareViewerPane;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.compare.diff.metamodel.AbstractDiffExtension;
 import org.eclipse.emf.compare.diff.metamodel.DiffElement;
-import org.eclipse.emf.compare.diff.metamodel.ModelInputSnapshot;
+import org.eclipse.emf.compare.diff.metamodel.ComparisonResourceSnapshot;
 import org.eclipse.emf.compare.ui.EMFCompareUIMessages;
 import org.eclipse.emf.compare.ui.util.EMFCompareConstants;
 import org.eclipse.emf.compare.util.AdapterUtils;
@@ -160,7 +160,7 @@ public class ModelStructureMergeViewer extends TreeViewer {
 		final TreePath[] expandedPaths = getExpandedTreePaths();
 
 		super.inputChanged(input, oldInput);
-		if (!(input instanceof ModelInputSnapshot) && input != oldInput) {
+		if (!(input instanceof ComparisonResourceSnapshot) && input != oldInput) {
 			setInput(KivikComparator.getKivikComparator(configuration)
 					.compareDomainModel());
 		}

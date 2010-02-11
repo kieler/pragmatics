@@ -6,7 +6,6 @@ Bundle-Version: 1.0.0
 Bundle-Activator: de.cau.cs.kieler.kivik.KivikPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.emf.compare;bundle-version="0.8.0",
  org.eclipse.emf.compare.diff;bundle-version="0.8.0",
  org.eclipse.emf.compare.diff.edit;bundle-version="0.8.1",
  org.eclipse.emf.compare.match;bundle-version="0.8.0",
@@ -22,6 +21,7 @@ Require-Bundle: org.eclipse.ui,
  de.cau.cs.kieler.kiml.ui,
  org.eclipse.gmf.runtime.diagram.ui.resources.editor;bundle-version="1.1.1",
  org.eclipse.gmf.runtime.diagram.ui.resources.editor.ide;bundle-version="1.1.0",
- org.eclipse.gmf.runtime.diagram.ui.render
+ org.eclipse.gmf.runtime.diagram.ui.render,
+ org.eclipse.emf.compare;bundle-version="1.0.1";visibility:=reexport
 Bundle-ActivationPolicy: lazy
 Export-Package: de.cau.cs.kieler.kivik

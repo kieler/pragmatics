@@ -28,7 +28,7 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.emf.compare.EMFComparePlugin;
 import org.eclipse.emf.compare.diff.metamodel.DiffElement;
 import org.eclipse.emf.compare.diff.metamodel.DiffGroup;
-import org.eclipse.emf.compare.diff.metamodel.ModelInputSnapshot;
+import org.eclipse.emf.compare.diff.metamodel.ComparisonResourceSnapshot;
 import org.eclipse.emf.compare.diff.metamodel.util.DiffAdapterFactory;
 import org.eclipse.emf.compare.ui.EMFCompareUIMessages;
 import org.eclipse.emf.compare.ui.EMFCompareUIPlugin;
@@ -284,19 +284,19 @@ public class ModelContentMergeViewer extends ContentMergeViewer {
 		final KivikComparator kivikComparator = KivikComparator
 				.getKivikComparator(configuration);
 		if (kivikComparator.getDomainComparisonResult() != null && !changed) {
-			final ModelInputSnapshot snapshot = kivikComparator
+			final ComparisonResourceSnapshot snapshot = kivikComparator
 					.getDomainComparisonResult();
 			super.setInput(new ModelCompareInput(snapshot.getMatch(), snapshot
 					.getDiff(), kivikComparator.getComparator()));
 
-		} else if (input instanceof ModelInputSnapshot) {
-			final ModelInputSnapshot snapshot = (ModelInputSnapshot) input;
+		} else if (input instanceof ComparisonResourceSnapshot) {
+			final ComparisonResourceSnapshot snapshot = (ComparisonResourceSnapshot) input;
 			super.setInput(new ModelCompareInput(snapshot.getMatch(), snapshot
 					.getDiff(), kivikComparator.getComparator()));
 
 		} else if (input instanceof ICompareInput) {
 			kivikComparator.loadResources((ICompareInput) input);
-			final ModelInputSnapshot snapshot = kivikComparator
+			final ComparisonResourceSnapshot snapshot = kivikComparator
 					.compareDomainModel();
 			super.setInput(new ModelCompareInput(snapshot.getMatch(), snapshot
 					.getDiff(), kivikComparator.getComparator()));
