@@ -101,14 +101,15 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
      */
     public synchronized void checkForWaitingEditor(final String activeEditor) {
         // System.out.println("Checking for " + activeEditor);
-        HashMap<EditorTransformationSettings, Bundle> installedBundles = 
-            new HashMap<EditorTransformationSettings, Bundle>();
+        HashMap<EditorTransformationSettings, Bundle> installedBundles = new HashMap<EditorTransformationSettings, Bundle>();
 
         for (Entry<EditorTransformationSettings, URI> entry : waitingBundles.entrySet()) {
             EditorTransformationSettings editor = entry.getKey();
             if (editor.getEditorId().equals(activeEditor)) {
+
                 // Create bundle with jar archive
                 Bundle bundle = ContributorFactoryOSGi.resolve(editor.getContributor());
+
                 // System.out.println("activating ksbase for" + activeEditor);
                 String editorDiagramName = bundle.getSymbolicName() + ".generated";
 
@@ -126,7 +127,8 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
                     Bundle[] existing = admin.getBundles(editorDiagramName, null);
                     // If yes, never,ever try to load it !
                     if (existing == null || existing.length == 0) {
-                        Bundle b = bundle.getBundleContext().installBundle(editorDiagramName, in);
+                        Bundle b = KSBasEUIPlugin.getDefault().getBundle().getBundleContext()
+                                .installBundle(editorDiagramName, in);
                         // b.start();
                         // Activating bundle with package admin service
                         // System.out.println("Bundle state : " + b.getState());

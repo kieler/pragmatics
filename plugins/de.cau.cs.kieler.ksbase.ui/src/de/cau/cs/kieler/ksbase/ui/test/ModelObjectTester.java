@@ -37,10 +37,11 @@ public class ModelObjectTester extends PropertyTester {
 
     /**
      * Test method called by the eclipse menu framework when checking for menu visibility. This is
-     * kind of a hack, because we are ignoring the given items and using the PlatformUI class to get
-     * the current selection object. This results in multiple calls for all selected object but is
-     * the only good way to do this.
-     * 
+     * kind of hacky, because we are ignoring the given items and using the PlatformUI class to get
+     * the current selection object. This results in multiple calls for all selected objects but it is
+     * working fast enough.
+     * Maybe this can be improved somehow.
+     *
      * @param receiver
      *            The receiver object
      * @param property

@@ -64,7 +64,7 @@ public class TransformationCommand extends AbstractTransactionalCommand {
     }
 
     /**
-     * Executes the command.
+     * Executes the transformation. This will only work, if a component has been set before.
      * 
      * @see org.eclipse.gmf.runtime.emf.commands.core.command. AbstractTransactionalCommand
      *      #doExecuteWithResult(org.eclipse.core.runtime.IProgressMonitor,
@@ -74,9 +74,9 @@ public class TransformationCommand extends AbstractTransactionalCommand {
      *            Progress monitor for the execution
      * @param info
      *            Additional informations for the command
-     * @return Either an Error/Warning command result if the execution failed, or OK else
+     * @return Either an Error/Warning command result if the execution failed, or else OK
      * @throws ExecutionException
-     *             if the Execution faild due to a critical error.
+     *             if the Execution failed due to a critical error.
      */
     @Override
     protected CommandResult doExecuteWithResult(final IProgressMonitor monitor,
@@ -103,6 +103,9 @@ public class TransformationCommand extends AbstractTransactionalCommand {
                         .getDiagramGraphicalViewer();
                 graphViewer.flush();
             }
+            // Clear the component, so a missing call to'initalize' won't execute the same command
+            // twice.
+            component = null;
             return CommandResult.newOKCommandResult();
         } else {
             KSBasEUIPlugin.getDefault().logError(
