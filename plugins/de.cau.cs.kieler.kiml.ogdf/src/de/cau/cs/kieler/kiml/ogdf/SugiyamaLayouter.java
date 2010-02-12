@@ -41,11 +41,20 @@ public class SugiyamaLayouter extends OgdfLayouter {
     /** layout option identifier for the number of transpose. */
     public static final String OPT_TRANSPOSE = "de.cau.cs.kieler.kiml.ogdf.option.transpose";
 
+    /** default value for border spacing. */
+    public static final float DEF_BORDER_SPACING = 8;
+    
     /** default value for minimum spacing. */
     public static final float DEF_MIN_SPACING = 16.0f;
 
     /** default value for layer distance. */
     public static final float DEF_LAYER_DISTANCE = 16.0f;
+
+    /** default value for label edge distance. */
+    public static final float DEF_LABEL_EDGE_DISTANCE = 15.0f;
+    
+    /** default value for label margin distance. */
+    public static final float DEF_LABEL_MARGIN_DISTANCE = 15.0f;
 
     /** default value for layer distance. */
     public static final int DEF_FAILS = 4;
@@ -55,9 +64,6 @@ public class SugiyamaLayouter extends OgdfLayouter {
 
     /** default value for layer distance. */
     public static final boolean DEF_TRANSPOSE = true;
-
-    /** default value for border spacing. */
-    public static final float DEF_BORDER_SPACING = 8;
 
     /**
      * {@inheritDoc}
@@ -111,18 +117,22 @@ public class SugiyamaLayouter extends OgdfLayouter {
      * {@inheritDoc}
      */
     public Object getDefault(final String optionId) {
-        if (optionId.equals(OPT_LAYER_DISTANCE)) {
-            return DEF_LAYER_DISTANCE;
-        } else if (optionId.equals(LayoutOptions.MIN_SPACING)) {
+        if (optionId.equals(LayoutOptions.MIN_SPACING)) {
             return DEF_MIN_SPACING;
+        } else if (optionId.equals(LayoutOptions.BORDER_SPACING)) {
+            return DEF_BORDER_SPACING;
+        } else if (optionId.equals(OPT_LABEL_EDGE_DISTANCE)) {
+            return DEF_LABEL_EDGE_DISTANCE;
+        } else if (optionId.equals(OPT_LABEL_MARGIN_DISTANCE)) {
+            return DEF_LABEL_MARGIN_DISTANCE;
+        } else if (optionId.equals(OPT_LAYER_DISTANCE)) {
+            return DEF_LAYER_DISTANCE;
         } else if (optionId.equals(OPT_FAILS)) {
             return DEF_FAILS;
         } else if (optionId.equals(OPT_RUNS)) {
             return DEF_RUNS;
         } else if (optionId.equals(OPT_TRANSPOSE)) {
             return DEF_TRANSPOSE;
-        } else if (optionId.equals(LayoutOptions.BORDER_SPACING)) {
-            return DEF_BORDER_SPACING;
         } else {
             return null;
         }

@@ -37,8 +37,40 @@ public class ELabelPosSimple {
     this(OgdfJNI.new_ELabelPosSimple(), true);
   }
 
-  public void call(GraphAttributes ug, ELabelInterfaceDouble arg1) {
-    OgdfJNI.ELabelPosSimple_call(swigCPtr, this, GraphAttributes.getCPtr(ug), ug, ELabelInterfaceDouble.getCPtr(arg1), arg1);
+  public void call(GraphAttributes arg0, ELabelInterfaceDouble arg1) {
+    OgdfJNI.ELabelPosSimple_call(swigCPtr, this, GraphAttributes.getCPtr(arg0), arg0, ELabelInterfaceDouble.getCPtr(arg1), arg1);
+  }
+
+  public boolean getAbsolute() {
+    return OgdfJNI.ELabelPosSimple_getAbsolute(swigCPtr, this);
+  }
+
+  public double getMarginDistance() {
+    return OgdfJNI.ELabelPosSimple_getMarginDistance(swigCPtr, this);
+  }
+
+  public double getEdgeDistance() {
+    return OgdfJNI.ELabelPosSimple_getEdgeDistance(swigCPtr, this);
+  }
+
+  public boolean getMidOnEdge() {
+    return OgdfJNI.ELabelPosSimple_getMidOnEdge(swigCPtr, this);
+  }
+
+  public void setAbsolute(boolean absolute) {
+    OgdfJNI.ELabelPosSimple_setAbsolute(swigCPtr, this, absolute);
+  }
+
+  public void setMarginDistance(double distance) {
+    OgdfJNI.ELabelPosSimple_setMarginDistance(swigCPtr, this, distance);
+  }
+
+  public void setEdgeDistance(double distance) {
+    OgdfJNI.ELabelPosSimple_setEdgeDistance(swigCPtr, this, distance);
+  }
+
+  public void setMidOnEdge(boolean midOnEdge) {
+    OgdfJNI.ELabelPosSimple_setMidOnEdge(swigCPtr, this, midOnEdge);
   }
 
 }

@@ -53,6 +53,14 @@ import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
  */
 public abstract class OgdfLayouter {
 
+    /** layout option identifier for label edge distance. */
+    public static final String OPT_LABEL_EDGE_DISTANCE =
+        "de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance";
+    
+    /** layout option identifier for label margin distance. */
+    public static final String OPT_LABEL_MARGIN_DISTANCE =
+        "de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance";
+    
     /**
      * Sets the layout specific options and modules depending on the options
      * defined in the node.
@@ -269,7 +277,6 @@ public abstract class OgdfLayouter {
                                             .getHeight());
                             break;
                         case UNDEFINED:
-                            // TODO handle this case
                             break;
                         }
                     }
@@ -341,7 +348,6 @@ public abstract class OgdfLayouter {
                     }
                     // remember the edge mapping
                     kedge2ogdfEdgeMap.put(kedge, ogdfEdge);
-
                     // create an ogdf label and attach it to the edge
                     EdgeLabelDouble edgeLabel = new EdgeLabelDouble();
                     edgeLabel.setEdge(ogdfEdge);
@@ -375,7 +381,6 @@ public abstract class OgdfLayouter {
                                             .getHeight());
                             break;
                         case UNDEFINED:
-                            // TODO handle this case
                             break;
                         }
                     }
@@ -418,6 +423,7 @@ public abstract class OgdfLayouter {
         // calculate offsets
         float offsetX = (float) -boundingBox.p1().getX() + borderSpacing;
         float offsetY = (float) -boundingBox.p1().getY() + borderSpacing;
+
         // apply node layout
         for (KNode knode : knode2ogdfNodeMap.keySet()) {
             NodeElement ogdfNode = knode2ogdfNodeMap.get(knode);
@@ -430,8 +436,36 @@ public abstract class OgdfLayouter {
         }
 
         // calculate new label positions and assign them to the mapped labels
-        // TODO use the customizable label layouter instead of this simple one
+        // TODO as soon as ogdf provides a better label layouter this should be
+        // reworked
         ELabelPosSimple labelLayouter = new ELabelPosSimple();
+        labelLayouter.setMidOnEdge(false);
+        // get the edge distance
+        float edgeDistance = LayoutOptions.getFloat(parentNodeLayout,
+                OPT_LABEL_EDGE_DISTANCE);
+        if (Float.isNaN(edgeDistance)) {
+            Object edgeDistanceObj = getDefault(OPT_LABEL_EDGE_DISTANCE);
+            if (edgeDistanceObj instanceof Float) {
+                edgeDistance = (Float) edgeDistanceObj;
+            } else {
+                edgeDistance = 0;
+            }
+        }
+        // set the edge distance
+        labelLayouter.setEdgeDistance(edgeDistance);
+        // get the margin distance
+        float marginDistance = LayoutOptions.getFloat(parentNodeLayout,
+                OPT_LABEL_MARGIN_DISTANCE);
+        if (Float.isNaN(marginDistance)) {
+            Object marginDistanceObj = getDefault(OPT_LABEL_MARGIN_DISTANCE);
+            if (marginDistanceObj instanceof Float) {
+                marginDistance = (Float) marginDistanceObj;
+            } else {
+                marginDistance = 0;
+            }
+        }
+        // set the margin distance
+        labelLayouter.setMarginDistance(marginDistance);
         labelLayouter.call(graphAttributes, labelInterface);
 
         // apply edge layout
@@ -502,7 +536,6 @@ public abstract class OgdfLayouter {
                             edgeLabel.getHeight(eLabelTyp.elEnd2));
                     break;
                 case UNDEFINED:
-                    // TODO handle this case
                     break;
                 }
             }

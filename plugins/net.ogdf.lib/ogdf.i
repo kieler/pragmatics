@@ -284,12 +284,41 @@ public:
 
 /*
  * File: ogdf/labeling/ELabelPosSimple.h
+ * Note: As soon as the not-simple LabelPos class is functional it should be used
+ *       instead of this one.
  */
 class ELabelPosSimple {
 public:
 	ELabelPosSimple();
 	
-	void call(GraphAttributes& ug, ELabelInterface<double>&);
+	void call(GraphAttributes&, ELabelInterface<double>&);
+};
+// these getter and setter replace the public member functions of the class
+%extend ELabelPosSimple {
+	bool getAbsolute() const {
+		return $self->m_absolut;
+	}
+	double getMarginDistance() const {
+		return $self->m_marginDistance;
+	}
+	double getEdgeDistance() const {
+		return $self->m_edgeDistance;
+	}
+	bool getMidOnEdge() const {
+		return $self->m_midOnEdge;
+	}
+	void setAbsolute(bool absolute) {
+		$self->m_absolut = absolute;
+	}
+	void setMarginDistance(double distance) {
+		$self->m_marginDistance = distance;
+	}
+	void setEdgeDistance(double distance) {
+		$self->m_edgeDistance = distance;
+	}
+	void setMidOnEdge(bool midOnEdge) {
+		$self->m_midOnEdge = midOnEdge;
+	}
 };
 
 /*

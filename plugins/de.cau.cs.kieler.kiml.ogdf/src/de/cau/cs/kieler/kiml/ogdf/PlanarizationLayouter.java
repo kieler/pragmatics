@@ -17,6 +17,7 @@ import net.ogdf.lib.PlanarizationLayout;
 import net.ogdf.lib.UMLLayoutModule;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 
 /**
  * The Mixed-Upward Planarization layouter from the OGDF library.
@@ -25,6 +26,15 @@ import de.cau.cs.kieler.core.kgraph.KNode;
  */
 public class PlanarizationLayouter extends OgdfUMLLayouter {
 
+    /** default value for border spacing. */
+    public static final float DEF_BORDER_SPACING = 8;
+    
+    /** default value for label edge distance. */
+    public static final float DEF_LABEL_EDGE_DISTANCE = 15.0f;
+    
+    /** default value for label margin distance. */
+    public static final float DEF_LABEL_MARGIN_DISTANCE = 15.0f;
+    
     /**
      * {@inheritDoc}
      */
@@ -43,6 +53,14 @@ public class PlanarizationLayouter extends OgdfUMLLayouter {
      * {@inheritDoc}
      */
     public Object getDefault(final String optionId) {
-        return null;
+        if (optionId.equals(LayoutOptions.BORDER_SPACING)) {
+            return DEF_BORDER_SPACING;
+        } else if (optionId.equals(OPT_LABEL_EDGE_DISTANCE)) {
+            return DEF_LABEL_EDGE_DISTANCE;
+        } else if (optionId.equals(OPT_LABEL_MARGIN_DISTANCE)) {
+            return DEF_LABEL_MARGIN_DISTANCE;
+        } else {
+            return null;
+        }
     }
 }

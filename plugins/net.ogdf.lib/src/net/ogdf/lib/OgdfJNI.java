@@ -99,6 +99,14 @@ class OgdfJNI {
   public final static native void delete_ELabelInterfaceDouble(long jarg1);
   public final static native long new_ELabelPosSimple();
   public final static native void ELabelPosSimple_call(long jarg1, ELabelPosSimple jarg1_, long jarg2, GraphAttributes jarg2_, long jarg3, ELabelInterfaceDouble jarg3_);
+  public final static native boolean ELabelPosSimple_getAbsolute(long jarg1, ELabelPosSimple jarg1_);
+  public final static native double ELabelPosSimple_getMarginDistance(long jarg1, ELabelPosSimple jarg1_);
+  public final static native double ELabelPosSimple_getEdgeDistance(long jarg1, ELabelPosSimple jarg1_);
+  public final static native boolean ELabelPosSimple_getMidOnEdge(long jarg1, ELabelPosSimple jarg1_);
+  public final static native void ELabelPosSimple_setAbsolute(long jarg1, ELabelPosSimple jarg1_, boolean jarg2);
+  public final static native void ELabelPosSimple_setMarginDistance(long jarg1, ELabelPosSimple jarg1_, double jarg2);
+  public final static native void ELabelPosSimple_setEdgeDistance(long jarg1, ELabelPosSimple jarg1_, double jarg2);
+  public final static native void ELabelPosSimple_setMidOnEdge(long jarg1, ELabelPosSimple jarg1_, boolean jarg2);
   public final static native void delete_ELabelPosSimple(long jarg1);
   public final static native void delete_HierarchyLayoutModule(long jarg1);
   public final static native long new_FastHierarchyLayout();

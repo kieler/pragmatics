@@ -32,6 +32,12 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.borderSpacing">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
       </layoutProvider>
       <layoutOption
             appliesTo="parents"
@@ -72,7 +78,30 @@
                priority="10"
                type="de.cau.cs.kieler.layout.diagrams.classDiagram">
          </supportedDiagram>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.borderSpacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
       </layoutProvider>
+      <layoutOption
+            appliesTo="parents"
+            description="The distance of the labels to the edges."
+            id="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance"
+            name="Label Edge Distance"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            description="The distance of the labels to the nodes."
+            id="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance"
+            name="Label Margin Distance"
+            type="float">
+      </layoutOption>
    </extension>
 
 </plugin>
