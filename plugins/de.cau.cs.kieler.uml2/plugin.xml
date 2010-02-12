@@ -9,22 +9,22 @@
             value="de.cau.cs.kieler.layout.diagrams.boxes">
       </option>
       <option
-            class="org.eclipse.uml2.diagram.activity.edit.parts.ActivityEditPart"
+            class="org.eclipse.uml2.uml.Activity"
             option="de.cau.cs.kieler.layout.options.diagramType"
             value="de.cau.cs.kieler.layout.diagrams.stateMachine">
       </option>
       <option
-            class="org.eclipse.uml2.diagram.activity.edit.parts.ActivityEditPart"
+            class="org.eclipse.uml2.uml.Activity"
             option="de.cau.cs.kieler.layout.options.layoutDirection"
             value="DOWN">
       </option>
       <option
-            class="org.eclipse.uml2.diagram.activity.edit.parts.ActivityEditPart"
+            class="org.eclipse.uml2.uml.Activity"
             option="de.cau.cs.kieler.layout.options.borderSpacing"
             value="20.0">
       </option>
       <option
-            class="org.eclipse.uml2.diagram.activity.edit.parts.ActivityEditPart"
+            class="org.eclipse.uml2.uml.Activity"
             option="de.cau.cs.kieler.layout.options.minSpacing"
             value="25.0">
       </option>

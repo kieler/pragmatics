@@ -14,11 +14,9 @@
 package de.cau.cs.kieler.kiml.ui.layout;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
 
 import org.eclipse.draw2d.ConnectionLocator;
@@ -480,18 +478,23 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      * identified in the {@code buildLayoutGraphRecursively} method.
      */
     private void processConnections() {
-        Set<EReference> referenceSet = new HashSet<EReference>();
+        Map<EReference, KEdge> reference2EdgeMap = new HashMap<EReference, KEdge>();
         for (ConnectionEditPart connection : connections) {
+            KEdge edge;
             EObject modelObject = connection.getNotationView().getElement();
             if (modelObject instanceof EReference) {
                 EReference reference = (EReference) modelObject;
-                if (referenceSet.contains(reference.getEOpposite())) {
+                edge = reference2EdgeMap.get(reference);
+                if (edge != null) {
+                    processLabels(connection, edge);
                     continue;
                 }
-                referenceSet.add(reference);
+                edge = KimlLayoutUtil.createInitializedEdge();
+                reference2EdgeMap.put(reference, edge);
+            } else {
+                edge = KimlLayoutUtil.createInitializedEdge();
             }
             
-            KEdge edge = KimlLayoutUtil.createInitializedEdge();
             KNode sourceNode, targetNode;
             KPort sourcePort = null, targetPort = null;
 
@@ -530,6 +533,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             edge.setSource(sourceNode);
             edge.setTarget(targetNode);
             graphElem2EditPartMap.put(edge, connection);
+            editPart2GraphElemMap.put(connection, edge);
 
             KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(edge);
             KPoint sourcePoint = edgeLayout.getSourcePoint();
@@ -560,56 +564,64 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             // set user defined layout options for the edge
             KimlUiUtil.setLayoutOptions(connection, edgeLayout, true);
 
-            /*
-             * process the labels
-             * 
-             * ars: source and target is exchanged when defining it in the
-             * gmfgen file. So if Emma sets a label to be placed as target on a
-             * connection, then the label will show up next to the source node
-             * in the diagram editor. So correct it here, very ugly.
-             */
-            for (Object obj : connection.getChildren()) {
-                if (obj instanceof LabelEditPart) {
-                    LabelEditPart labelEditPart = (LabelEditPart) obj;
-                    IFigure labelFigure = labelEditPart.getFigure();
-                    Rectangle labelBounds = labelFigure.getBounds();
-                    String labelText = null;
-                    Font font = null;
-                    if (labelFigure instanceof WrappingLabel) {
-                        WrappingLabel wrappingLabel = (WrappingLabel) labelFigure;
-                        labelText = wrappingLabel.getText();
-                        font = wrappingLabel.getFont();
-                    } else if (labelFigure instanceof Label) {
-                        Label label = (Label) labelFigure;
-                        labelText = label.getText();
-                        font = label.getFont();
+            // process edge labels
+            processLabels(connection, edge);
+        }
+    }
+    
+    /**
+     * Process the labels of an edge.
+     * 
+     * @param connection the connection edit part
+     * @param edge the layout edge
+     */
+    private void processLabels(final ConnectionEditPart connection, final KEdge edge) {
+        /* ars: source and target is exchanged when defining it in the
+         * gmfgen file. So if Emma sets a label to be placed as target on a
+         * connection, then the label will show up next to the source node
+         * in the diagram editor. So correct it here, very ugly.
+         */
+        for (Object obj : connection.getChildren()) {
+            if (obj instanceof LabelEditPart) {
+                LabelEditPart labelEditPart = (LabelEditPart) obj;
+                IFigure labelFigure = labelEditPart.getFigure();
+                Rectangle labelBounds = labelFigure.getBounds();
+                String labelText = null;
+                Font font = null;
+                if (labelFigure instanceof WrappingLabel) {
+                    WrappingLabel wrappingLabel = (WrappingLabel) labelFigure;
+                    labelText = wrappingLabel.getText();
+                    font = wrappingLabel.getFont();
+                } else if (labelFigure instanceof Label) {
+                    Label label = (Label) labelFigure;
+                    labelText = label.getText();
+                    font = label.getFont();
+                }
+                if (labelText != null && labelText.length() > 0) {
+                    KLabel label = KimlLayoutUtil.createInitializedLabel(edge);
+                    KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
+                    switch (labelEditPart.getKeyPoint()) {
+                    case ConnectionLocator.SOURCE:
+                        LayoutOptions.setEnum(labelLayout, EdgeLabelPlacement.HEAD);
+                        break;
+                    case ConnectionLocator.MIDDLE:
+                        LayoutOptions.setEnum(labelLayout, EdgeLabelPlacement.CENTER);
+                        break;
+                    case ConnectionLocator.TARGET:
+                        LayoutOptions.setEnum(labelLayout, EdgeLabelPlacement.TAIL);
+                        break;
                     }
-                    if (labelText != null && labelText.length() > 0) {
-                        KLabel label = KimlLayoutUtil.createInitializedLabel(edge);
-                        KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
-                        switch (labelEditPart.getKeyPoint()) {
-                        case ConnectionLocator.SOURCE:
-                            LayoutOptions.setEnum(labelLayout, EdgeLabelPlacement.HEAD);
-                            break;
-                        case ConnectionLocator.MIDDLE:
-                            LayoutOptions.setEnum(labelLayout, EdgeLabelPlacement.CENTER);
-                            break;
-                        case ConnectionLocator.TARGET:
-                            LayoutOptions.setEnum(labelLayout, EdgeLabelPlacement.TAIL);
-                            break;
-                        }
-                        LayoutOptions.setString(labelLayout, LayoutOptions.FONT_NAME,
-                                font.getFontData()[0].getName());
-                        LayoutOptions.setInt(labelLayout, LayoutOptions.FONT_SIZE,
-                                font.getFontData()[0].getHeight());
-                        labelLayout.setXpos(labelBounds.x);
-                        labelLayout.setYpos(labelBounds.y);
-                        labelLayout.setWidth(labelBounds.width);
-                        labelLayout.setHeight(labelBounds.height);
-                        label.setText(labelText);
-                        edge.getLabels().add(label);
-                        graphElem2EditPartMap.put(label, labelEditPart);
-                    }
+                    LayoutOptions.setString(labelLayout, LayoutOptions.FONT_NAME,
+                            font.getFontData()[0].getName());
+                    LayoutOptions.setInt(labelLayout, LayoutOptions.FONT_SIZE,
+                            font.getFontData()[0].getHeight());
+                    labelLayout.setXpos(labelBounds.x);
+                    labelLayout.setYpos(labelBounds.y);
+                    labelLayout.setWidth(labelBounds.width);
+                    labelLayout.setHeight(labelBounds.height);
+                    label.setText(labelText);
+                    edge.getLabels().add(label);
+                    graphElem2EditPartMap.put(label, labelEditPart);
                 }
             }
         }
