@@ -16,6 +16,8 @@ package de.cau.cs.kieler.kiml.viewer.views;
 import java.io.IOException;
 import java.util.Collections;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -38,6 +40,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -159,9 +162,10 @@ public class LayoutGraphView extends ViewPart {
                                 xmiCanvas.setLayoutGraph((KNode) model);
                                 performLayoutAction.setEnabled(true);
                             }
-                        } catch (IOException exception) {
-                            // TODO Auto-generated catch block
-                            exception.printStackTrace();
+                        } catch (Exception exception) {
+                            Status status = new Status(IStatus.ERROR, KimlViewerPlugin.PLUGIN_ID,
+                                    0, "Could not load XMI resource.", exception);
+                            StatusManager.getManager().handle(status, StatusManager.LOG);
                         }
                     }
                 }
