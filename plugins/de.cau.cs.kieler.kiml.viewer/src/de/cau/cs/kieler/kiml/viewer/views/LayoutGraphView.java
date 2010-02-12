@@ -163,9 +163,7 @@ public class LayoutGraphView extends ViewPart {
                                 performLayoutAction.setEnabled(true);
                             }
                         } catch (Exception exception) {
-                            Status status = new Status(IStatus.ERROR, KimlViewerPlugin.PLUGIN_ID,
-                                    0, "Could not load XMI resource.", exception);
-                            StatusManager.getManager().handle(status, StatusManager.LOG);
+                            // ignore exception, as it could occur when any non-xmi editor is opened
                         }
                     }
                 }
