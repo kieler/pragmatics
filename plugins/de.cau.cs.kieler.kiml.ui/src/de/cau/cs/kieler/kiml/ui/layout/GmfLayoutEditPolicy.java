@@ -27,6 +27,8 @@ import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.draw2d.geometry.PrecisionPoint;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.commands.Command;
@@ -55,6 +57,7 @@ import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.layout.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.layout.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
@@ -268,12 +271,25 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         KEdge kedge = (KEdge) klabel.getParent();
         KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
         PointList bendPoints = getBendPoints(edgeLayout, connectionEditPart.getFigure());
+        EObject modelElement = connectionEditPart.getNotationView().getElement();
+        EdgeLabelPlacement labelPlacement = LayoutOptions.getEnum(labelLayout,
+                EdgeLabelPlacement.class);
         PointList absoluteBendPoints = new PointList();
-        for (int i = 0; i < bendPoints.size(); i++) {
-            Point point = bendPoints.getPoint(i);
-            sourceFigure.translateToAbsolute(point);
-            point.scale(1 / zoomLevel);
-            absoluteBendPoints.addPoint(point);
+        // for labels of the opposite reference of an ecore reference,
+        // the list of bend points must be reversed
+        if (modelElement instanceof EReference
+                && labelPlacement == EdgeLabelPlacement.TAIL) {
+            for (int i = bendPoints.size() - 1; i >= 0; i--) {
+                Point point = bendPoints.getPoint(i);
+                sourceFigure.translateToAbsolute(point);
+                absoluteBendPoints.addPoint(point.scale(1 / zoomLevel));
+            }
+        } else {
+            for (int i = 0; i < bendPoints.size(); i++) {
+                Point point = bendPoints.getPoint(i);
+                sourceFigure.translateToAbsolute(point);
+                absoluteBendPoints.addPoint(point.scale(1 / zoomLevel));
+            }
         }
         
         // get the referencePoint for the label

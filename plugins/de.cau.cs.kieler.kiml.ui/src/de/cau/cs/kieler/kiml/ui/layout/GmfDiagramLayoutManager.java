@@ -484,9 +484,9 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             EObject modelObject = connection.getNotationView().getElement();
             if (modelObject instanceof EReference) {
                 EReference reference = (EReference) modelObject;
-                edge = reference2EdgeMap.get(reference);
+                edge = reference2EdgeMap.get(reference.getEOpposite());
                 if (edge != null) {
-                    processLabels(connection, edge);
+                    processLabels(connection, edge, EdgeLabelPlacement.TAIL);
                     continue;
                 }
                 edge = KimlLayoutUtil.createInitializedEdge();
@@ -565,7 +565,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             KimlUiUtil.setLayoutOptions(connection, edgeLayout, true);
 
             // process edge labels
-            processLabels(connection, edge);
+            processLabels(connection, edge, EdgeLabelPlacement.UNDEFINED);
         }
     }
     
@@ -574,8 +574,11 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      * 
      * @param connection the connection edit part
      * @param edge the layout edge
+     * @param placement predefined placement for all labels, or {@code UNDEFINED}
+     *     if the placement shall be derived from the edit part
      */
-    private void processLabels(final ConnectionEditPart connection, final KEdge edge) {
+    private void processLabels(final ConnectionEditPart connection, final KEdge edge,
+            final EdgeLabelPlacement placement) {
         /* ars: source and target is exchanged when defining it in the
          * gmfgen file. So if Emma sets a label to be placed as target on a
          * connection, then the label will show up next to the source node
@@ -600,16 +603,20 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 if (labelText != null && labelText.length() > 0) {
                     KLabel label = KimlLayoutUtil.createInitializedLabel(edge);
                     KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
-                    switch (labelEditPart.getKeyPoint()) {
-                    case ConnectionLocator.SOURCE:
-                        LayoutOptions.setEnum(labelLayout, EdgeLabelPlacement.HEAD);
-                        break;
-                    case ConnectionLocator.MIDDLE:
-                        LayoutOptions.setEnum(labelLayout, EdgeLabelPlacement.CENTER);
-                        break;
-                    case ConnectionLocator.TARGET:
-                        LayoutOptions.setEnum(labelLayout, EdgeLabelPlacement.TAIL);
-                        break;
+                    if (placement == EdgeLabelPlacement.UNDEFINED) {
+                        switch (labelEditPart.getKeyPoint()) {
+                        case ConnectionLocator.SOURCE:
+                            LayoutOptions.setEnum(labelLayout, EdgeLabelPlacement.HEAD);
+                            break;
+                        case ConnectionLocator.MIDDLE:
+                            LayoutOptions.setEnum(labelLayout, EdgeLabelPlacement.CENTER);
+                            break;
+                        case ConnectionLocator.TARGET:
+                            LayoutOptions.setEnum(labelLayout, EdgeLabelPlacement.TAIL);
+                            break;
+                        }
+                    } else {
+                        LayoutOptions.setEnum(labelLayout, placement);
                     }
                     LayoutOptions.setString(labelLayout, LayoutOptions.FONT_NAME,
                             font.getFontData()[0].getName());
