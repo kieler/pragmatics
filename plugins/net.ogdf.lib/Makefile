@@ -6,14 +6,9 @@
 # Initial version: 9/27/09 Miro Spoenemann (msp@informatik.uni-kiel.de)
 #
 
-# path to the OGDF library, release version must be compiled
-OGDF = /home/cvx/ogdf/OGDF
-# path to the Java header files
-JAVAH = /usr/lib/jvm/java-6-sun/include -I /usr/lib/jvm/java-6-sun/include/linux
-
 OS = $(shell uname -s)
 OSTYPE = $(shell echo $$OSTYPE)
-CC = g++
+CC = g++ -m32
 SWIG = swig
 SWIGFLAGS = -c++ -java -I$(OGDF) -ignoremissing
 
@@ -29,11 +24,19 @@ ifeq ($(JAVAH),null)
 endif
 
 ifeq ($(OS),Darwin)
-  LIB = libogdf.dylib
-  LINKFLAGS = -dynamiclib
+  LIB = libogdf.jnilib
+  LINKFLAGS = -dynamiclib -mmacosx-version-min=10.5
+  # path to the Java header files
+  JAVAH = /System/Library/Frameworks/JavaVM.framework/Headers
+  # path to the OGDF library, release version must be compiled
+  OGDF = /Users/chandler/ogdf-lib
 else ifeq ($(OS),Linux)
   LIB = libogdf.so
   LINKFLAGS = -shared
+  # path to the Java header files
+  JAVAH = /usr/lib/jvm/java-6-sun/include -I /usr/lib/jvm/java-6-sun/include/linux
+  # path to the OGDF library, release version must be compiled
+  OGDF = /home/cvx/ogdf/OGDF
 else ifeq ($(OS),SunOS)
   LIB = libogdf.so
   LINKFLAGS = -shared

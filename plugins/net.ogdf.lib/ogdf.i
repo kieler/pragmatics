@@ -9,6 +9,11 @@
 #include <ogdf/labeling/ELabelPosSimple.h>
 #include <ogdf/module/HierarchyLayoutModule.h>
 #include <ogdf/layered/FastHierarchyLayout.h>
+#include <ogdf/module/PlanarSubgraphModule.h>
+#include <ogdf/planarity/FastPlanarSubgraph.h>
+#include <ogdf/module/LayoutPlanRepModule.h>
+#include <ogdf/orthogonal/OrthoRep.h>
+#include <ogdf/orthogonal/OrthoLayout.h>
 #include <ogdf/module/LayoutModule.h>
 #include <ogdf/module/UMLLayoutModule.h>
 #include <ogdf/layered/SugiyamaLayout.h>
@@ -327,7 +332,7 @@ public:
  */
 // Because of SWIG's limited knowledge of the libraries internal code this method
 // has to be called with parameter 'false' before an instance of this class or
-// its children is set as hierarchy layout for a layouter or it will be freed 
+// its children is set as module for a layouter or it will be freed 
 // first on the destruction of the layouter and second by java's garbage collector
 // causing at least a segmentation fault.
 // This method will be automatically invoked by: SugiyamaLayout::setLayout()
@@ -338,7 +343,8 @@ public:
 %}
 class HierarchyLayoutModule {
 	// this method declaration is needed so SWIG knows this class is abstract
-	virtual void doCall(const Hierarchy &, GraphCopyAttributes &) = 0;
+	//virtual void doCall(const Hierarchy &, GraphCopyAttributes &) = 0;
+	virtual void dummy() = 0;
 public:
 	virtual ~HierarchyLayoutModule();
 };
@@ -348,7 +354,7 @@ public:
  */
 class FastHierarchyLayout : public HierarchyLayoutModule {
 	// this method declaration is needed so SWIG knows this class is not abstract
-	virtual void doCall(const Hierarchy &, GraphCopyAttributes &);
+	virtual void dummy();
 public:
 	FastHierarchyLayout();
 	virtual ~FastHierarchyLayout();
@@ -359,6 +365,95 @@ public:
 	void layerDistance(double);
 	bool fixedLayerDistance() const;
 	void fixedLayerDistance(bool);
+};
+
+/*
+ * File: ogdf/module/PlanarSubgraphModule.h
+ */
+// Because of SWIG's limited knowledge of the libraries internal code this method
+// has to be called with parameter 'false' before an instance of this class or
+// its children is set as module for a layouter or it will be freed 
+// first on the destruction of the layouter and second by java's garbage collector
+// causing at least a segmentation fault.
+// This method will be automatically invoked by: PlanarizationLayout::setSubgraph()
+%typemap(javacode) PlanarSubgraphModule %{
+  void setMemOwn(boolean memOwn) {
+    swigCMemOwn = memOwn;
+  }
+%}
+class PlanarSubgraphModule {
+	// this method declaration is needed so SWIG knows this class is abstract
+	virtual void dummy() = 0;
+public:
+	PlanarSubgraphModule();
+};
+
+/*
+ * File: ogdf/planarity/FastPlanarSubgraph.h
+ */
+class FastPlanarSubgraph : public PlanarSubgraphModule {
+	// this method declaration is needed so SWIG knows this class is not abstract
+	virtual void dummy();
+public:
+	FastPlanarSubgraph();
+	
+	int runs() const;
+	void runs(int runs);
+};
+
+/*
+ * File: ogdf/module/LayoutPlanRepModule.h
+ */
+// Because of SWIG's limited knowledge of the libraries internal code this method
+// has to be called with parameter 'false' before an instance of this class or
+// its children is set as module for a layouter or it will be freed 
+// first on the destruction of the layouter and second by java's garbage collector
+// causing at least a segmentation fault.
+// This method will be automatically invoked by: PlanarizationLayout::setPlanarLayouter()
+%typemap(javacode) LayoutPlanRepModule %{
+  void setMemOwn(boolean memOwn) {
+    swigCMemOwn = memOwn;
+  }
+%}
+class LayoutPlanRepModule {
+	// this method declaration is needed so SWIG knows this class is abstract
+	virtual void dummy() = 0;
+public:
+	LayoutPlanRepModule();
+};
+
+/*
+ * File: ogdf/orthogonal/OrthoRep.h
+ */
+enum OrthoDir {
+	odNorth     = 0,
+	odEast      = 1,
+	odSouth     = 2,
+	odWest      = 3,
+	odUndefined = 4
+};
+
+/*
+ * File: ogdf/orthogonal/OrthoLayout.h
+ */
+class OrthoLayout : public LayoutPlanRepModule {
+	// this method declaration is needed so SWIG knows this class is not abstract
+	virtual void dummy();
+public:
+	OrthoLayout();
+	
+	double separation() const;
+	void separation(double);
+	double cOverhang() const;
+	void cOverhang(double);
+	double margin() const;
+	void margin(double);
+	OrthoDir preferedDir() const;
+	void preferedDir(OrthoDir);
+	int costAssoc() const;
+	void costAssoc(int);
+	int costGen() const;
+	void costGen(int);
 };
 
 /*
@@ -422,6 +517,16 @@ public:
 /*
  * File: ogdf/planarity/PlanarizationLayout.h
  */
+%typemap(javacode) PlanarizationLayout %{
+  public void setSubgraph(PlanarSubgraphModule psm) {
+    psm.setMemOwn(false);
+    setSubgraph_(psm);
+  }
+  public void setPlanarLayouter(LayoutPlanRepModule lprm) {
+	lprm.setMemOwn(false);
+	setPlanarLayouter_(lprm);
+  }
+%}
 class PlanarizationLayout : public UMLLayoutModule {
 public:
 	PlanarizationLayout();
@@ -429,4 +534,19 @@ public:
 	//TODO this requires the graph to have no self loops! what to do about that?
 	void call(GraphAttributes&);
 	void call(UMLGraph&);
+	
+	double pageRatio() const;
+	void pageRatio(double);
+	bool preprocessCliques() const;
+	void preprocessCliques(bool);
+	int minCliqueSize() const;
+	void minCliqueSize(int);
+};
+%extend PlanarizationLayout {
+	void setSubgraph_(PlanarSubgraphModule* psm) {
+		$self->setSubgraph(psm);
+	}
+	void setPlanarLayouter_(LayoutPlanRepModule* lprm) {
+		$self->setPlanarLayouter(lprm);
+	}
 };

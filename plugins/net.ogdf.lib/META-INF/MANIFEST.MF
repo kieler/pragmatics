@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OGDF Library
 Bundle-SymbolicName: net.ogdf.lib
-Bundle-Version: 1.0.0
+Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: ogdf.net
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: net.ogdf.lib

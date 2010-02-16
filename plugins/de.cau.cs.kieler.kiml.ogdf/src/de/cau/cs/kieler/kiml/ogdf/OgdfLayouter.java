@@ -264,14 +264,14 @@ public abstract class OgdfLayouter {
                             break;
                         case HEAD:
                             assignKGeometryToOgdfEdgeLabel(graphAttributes,
-                                    edgeLabel, eLabelTyp.elEnd1, labelLayout
+                                    edgeLabel, eLabelTyp.elEnd2, labelLayout
                                             .getXpos(), labelLayout.getYpos(),
                                     labelLayout.getWidth(), labelLayout
                                             .getHeight());
                             break;
                         case TAIL:
                             assignKGeometryToOgdfEdgeLabel(graphAttributes,
-                                    edgeLabel, eLabelTyp.elEnd2, labelLayout
+                                    edgeLabel, eLabelTyp.elEnd1, labelLayout
                                             .getXpos(), labelLayout.getYpos(),
                                     labelLayout.getWidth(), labelLayout
                                             .getHeight());
@@ -297,12 +297,16 @@ public abstract class OgdfLayouter {
      * @return an OGDF UMLGraph with attached layout attributes
      */
     protected UMLGraph transformUMLGraph(final KNode layoutNode) {
+        // reset the mapping
         knode2ogdfNodeMap.clear();
         kedge2ogdfEdgeMap.clear();
+        
+        // create the graph
         Graph graph = new Graph();
         UMLGraph graphAttributes = new UMLGraph(graph,
                 GraphAttributes.nodeGraphics | GraphAttributes.edgeGraphics
                         | GraphAttributes.edgeLabel | GraphAttributes.edgeType);
+        
         // process nodes
         for (KNode knode : layoutNode.getChildren()) {
             NodeElement ogdfNode = graph.newNode();
@@ -313,8 +317,10 @@ public abstract class OgdfLayouter {
             // remember the node mapping
             knode2ogdfNodeMap.put(knode, ogdfNode);
         }
+        
         // create an interface for label layout
         labelInterface = new ELabelInterfaceDouble(graphAttributes);
+        
         // process edges
         for (KNode knode1 : layoutNode.getChildren()) {
             for (KEdge kedge : knode1.getOutgoingEdges()) {
@@ -368,14 +374,14 @@ public abstract class OgdfLayouter {
                             break;
                         case HEAD:
                             assignKGeometryToOgdfEdgeLabel(graphAttributes,
-                                    edgeLabel, eLabelTyp.elEnd1, labelLayout
+                                    edgeLabel, eLabelTyp.elEnd2, labelLayout
                                             .getXpos(), labelLayout.getYpos(),
                                     labelLayout.getWidth(), labelLayout
                                             .getHeight());
                             break;
                         case TAIL:
                             assignKGeometryToOgdfEdgeLabel(graphAttributes,
-                                    edgeLabel, eLabelTyp.elEnd2, labelLayout
+                                    edgeLabel, eLabelTyp.elEnd1, labelLayout
                                             .getXpos(), labelLayout.getYpos(),
                                     labelLayout.getWidth(), labelLayout
                                             .getHeight());
@@ -494,6 +500,7 @@ public abstract class OgdfLayouter {
                     }
                 }
             }
+            
             // set the edge labels
             EdgeLabelDouble edgeLabel = labelInterface.getLabel(ogdfEdge);
             EList<KLabel> labels = kedge.getLabels();
@@ -515,17 +522,6 @@ public abstract class OgdfLayouter {
                     break;
                 case HEAD:
                     // should never happen
-                    if (!edgeLabel.usedLabel(eLabelTyp.elEnd1)) {
-                        continue;
-                    }
-                    assignOgdfGeometryToKShape(labelLayout, edgeLabel
-                            .getX(eLabelTyp.elEnd1)
-                            + offsetX, edgeLabel.getY(eLabelTyp.elEnd1)
-                            + offsetY, edgeLabel.getWidth(eLabelTyp.elEnd1),
-                            edgeLabel.getHeight(eLabelTyp.elEnd1));
-                    break;
-                case TAIL:
-                    // should never happen
                     if (!edgeLabel.usedLabel(eLabelTyp.elEnd2)) {
                         continue;
                     }
@@ -535,11 +531,23 @@ public abstract class OgdfLayouter {
                             + offsetY, edgeLabel.getWidth(eLabelTyp.elEnd2),
                             edgeLabel.getHeight(eLabelTyp.elEnd2));
                     break;
+                case TAIL:
+                    // should never happen
+                    if (!edgeLabel.usedLabel(eLabelTyp.elEnd1)) {
+                        continue;
+                    }
+                    assignOgdfGeometryToKShape(labelLayout, edgeLabel
+                            .getX(eLabelTyp.elEnd1)
+                            + offsetX, edgeLabel.getY(eLabelTyp.elEnd1)
+                            + offsetY, edgeLabel.getWidth(eLabelTyp.elEnd1),
+                            edgeLabel.getHeight(eLabelTyp.elEnd1));
+                    break;
                 case UNDEFINED:
                     break;
                 }
             }
         }
+        
         // get the insets
         KInsets insets = LayoutOptions.getObject(parentNodeLayout,
                 KInsets.class);

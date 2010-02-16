@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: X86_64
+Bundle-SymbolicName: net.ogdf.lib.macosx.x86_64
+Bundle-Version: 0.1.0.qualifier
+Bundle-Vendor: CAU
+Fragment-Host: net.ogdf.lib;bundle-version="0.1.0"
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Eclipse-PlatformFilter: (& (osgi.os=macosx) (osgi.arch=x86_64))
+Bundle-NativeCode: /lib/libogdf.jnilib; osname=macosx; processor=x86_64
