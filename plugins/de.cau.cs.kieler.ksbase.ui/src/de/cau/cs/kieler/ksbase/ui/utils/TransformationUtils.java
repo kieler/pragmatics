@@ -23,7 +23,7 @@ import de.cau.cs.kieler.core.model.util.ModelingUtil;
 import de.cau.cs.kieler.ksbase.ui.listener.ITransformationEventListener;
 
 /**
- * Utilities that may be used from transformations.
+ * Utilities that may be called from Xtend.
  * 
  * @author mim
  * 

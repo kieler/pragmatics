@@ -285,7 +285,6 @@ public final class DynamicMenuContributions {
 
                 // Create jar bundle
                 Bundle contributorBundle = ContributorFactoryOSGi.resolve(editor.getContributor());
-
                 String pluginBundle = editor.getEditorId() + ".jar";
                 String editorDiagramName = contributorBundle.getSymbolicName() + ".generated";
 

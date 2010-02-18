@@ -59,7 +59,6 @@ public class ModelObjectTester extends PropertyTester {
         assert (args[1] instanceof String);
         EditorTransformationSettings editor = TransformationManager.INSTANCE
                 .getEditorById((String) args[0]);
-
         if (editor != null) {
             // First, check the editorID, so we do not execute transformations from other editors.
             if (!PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
