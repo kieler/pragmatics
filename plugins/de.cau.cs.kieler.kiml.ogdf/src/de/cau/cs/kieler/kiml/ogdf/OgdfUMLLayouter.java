@@ -29,13 +29,13 @@ public abstract class OgdfUMLLayouter extends OgdfLayouter {
      * Sets the layout specific options and modules depending on the options
      * defined in the node.
      * 
-     * @param node
+     * @param layoutNode
      *            the node
      * @param progressMonitor
      *            the progress monitor
      * @return the uml layout module
      */
-    protected UMLLayoutModule prepareLayouter(final KNode node,
+    protected UMLLayoutModule prepareLayouter(final KNode layoutNode,
             final IKielerProgressMonitor progressMonitor) {
         return null;
     }
@@ -52,14 +52,11 @@ public abstract class OgdfUMLLayouter extends OgdfLayouter {
             final IKielerProgressMonitor progressMonitor) {
         // transform the graph
         UMLGraph graphAttributes = transformUMLGraph(layoutNode);
-
         // prepares the algorithm for use
         UMLLayoutModule layout = prepareLayouter(layoutNode, progressMonitor);
-
         if (layout != null) {
             // call the algorithm
             layout.call(graphAttributes);
-
             // apply the layout back to the original graph
             applyLayout(layoutNode, graphAttributes);
         }

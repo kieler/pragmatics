@@ -87,6 +87,36 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.pageRatio">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.preCliques">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.minCliqueSize">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.runs">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.separation">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.cOverhang">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.margin">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.layoutDirection">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.costAssoc">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.costGen">
+         </knownOption>
       </layoutProvider>
       <layoutOption
             appliesTo="parents"
@@ -101,6 +131,58 @@
             id="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance"
             name="Label Margin Distance"
             type="float">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            description="Specifies the width/height ratio of connected components."
+            id="de.cau.cs.kieler.kiml.ogdf.option.pageRatio"
+            name="Page Ratio"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            description="If enabled a preprocessing for cliques will be performed and cliques will be laid out in a special form (straight-line instead of orthogonal)."
+            id="de.cau.cs.kieler.kiml.ogdf.option.preCliques"
+            name="Preprocess Cliques"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            description="If &apos;Preprocess Cliques&apos; is enabled this option determines the minimal size of cliques to search for."
+            id="de.cau.cs.kieler.kiml.ogdf.option.minCliqueSize"
+            name="Minimum Clique Size"
+            type="int">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            description="The minimal allowed distance between edges and vertices."
+            id="de.cau.cs.kieler.kiml.ogdf.option.separation"
+            name="Separation"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            id="de.cau.cs.kieler.kiml.ogdf.option.cOverhang"
+            name="Overhang"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            id="de.cau.cs.kieler.kiml.ogdf.option.margin"
+            name="Margin"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            id="de.cau.cs.kieler.kiml.ogdf.option.costAssoc"
+            name="Cost Assoc"
+            type="int">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            id="de.cau.cs.kieler.kiml.ogdf.option.costGen"
+            name="Cost Gen"
+            type="int">
       </layoutOption>
    </extension>
 

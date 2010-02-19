@@ -217,8 +217,11 @@ public abstract class OgdfLayouter {
      * @return an OGDF graph with attached layout attributes
      */
     protected GraphAttributes transformGraph(final KNode layoutNode) {
+        // reset the mapping
         knode2ogdfNodeMap.clear();
         kedge2ogdfEdgeMap.clear();
+        
+        // create the graph
         Graph graph = new Graph();
         GraphAttributes graphAttributes = new GraphAttributes(graph,
                 GraphAttributes.nodeGraphics | GraphAttributes.edgeGraphics
@@ -232,8 +235,10 @@ public abstract class OgdfLayouter {
                     shapeLayout.getHeight());
             knode2ogdfNodeMap.put(knode, ogdfNode);
         }
+        
         // create an interface for label layout
         labelInterface = new ELabelInterfaceDouble(graphAttributes);
+        
         // process edges
         for (KNode knode1 : layoutNode.getChildren()) {
             for (KEdge kedge : knode1.getOutgoingEdges()) {
@@ -306,7 +311,7 @@ public abstract class OgdfLayouter {
         UMLGraph graphAttributes = new UMLGraph(graph,
                 GraphAttributes.nodeGraphics | GraphAttributes.edgeGraphics
                         | GraphAttributes.edgeLabel | GraphAttributes.edgeType);
-        
+
         // process nodes
         for (KNode knode : layoutNode.getChildren()) {
             NodeElement ogdfNode = graph.newNode();
@@ -331,14 +336,17 @@ public abstract class OgdfLayouter {
                     if (knode2 == knode1) {
                         continue;
                     }
+                    
                     NodeElement ogdfNode1 = knode2ogdfNodeMap.get(knode1);
                     NodeElement ogdfNode2 = knode2ogdfNodeMap.get(knode2);
                     EdgeElement ogdfEdge = graph.newEdge(ogdfNode1, ogdfNode2);
+                    
                     // set the hierarchy type of the edge
                     KEdgeLayout edgeLayout = KimlLayoutUtil
                             .getEdgeLayout(kedge);
                     EdgeType edgeType = LayoutOptions.getEnum(edgeLayout,
                             EdgeType.class);
+                    
                     switch (edgeType) {
                     case ASSOCIATION:
                         graphAttributes.setEdgeType(ogdfEdge,
@@ -352,6 +360,7 @@ public abstract class OgdfLayouter {
                     case NONE:
                     default:
                     }
+                    
                     // remember the edge mapping
                     kedge2ogdfEdgeMap.put(kedge, ogdfEdge);
                     // create an ogdf label and attach it to the edge
@@ -390,12 +399,12 @@ public abstract class OgdfLayouter {
                             break;
                         }
                     }
+                    
                     // add the edge label to the ogdf label interface
                     labelInterface.setLabel(ogdfEdge, edgeLabel);
                 }
             }
         }
-
         return graphAttributes;
     }
 

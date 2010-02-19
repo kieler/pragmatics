@@ -8,7 +8,7 @@
 
 OS = $(shell uname -s)
 OSTYPE = $(shell echo $$OSTYPE)
-CC = g++ -m32
+CC = g++
 SWIG = swig
 SWIGFLAGS = -c++ -java -I$(OGDF) -ignoremissing
 
