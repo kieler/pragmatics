@@ -24,7 +24,7 @@ public abstract class AbstractDotRuntimeModule extends DefaultRuntimeModule {
 	}
 	
 	protected void bindProperties(Binder binder) {
-		bindProperties(binder, "/de/cau/cs/kieler/kiml/graphviz/Dot.properties");
+		bindProperties(binder, "de/cau/cs/kieler/kiml/graphviz/Dot.properties");
 	}
 	
 	
