@@ -1,0 +1,7 @@
+# Tracing options for the de.cau.cs.rtprak.graphs.diagram plug-in
+
+# Common issues
+de.cau.cs.rtprak.graphs.diagram/debug=false
+
+# Visual IDs
+de.cau.cs.rtprak.graphs.diagram/debug/visualID=false
