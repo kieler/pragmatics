@@ -34,5 +34,21 @@
             project="false">
       </wizard>
    </extension>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.eclipse.ui.ide.workbench"
+            name="Graphs">
+         <property
+               name="appName"
+               value="Graphs">
+         </property>
+         <property
+               name="windowImages"
+               value="icons/product/graphs16.png,icons/product/graphs32.png,icons/product/graphs48.png,icons/product/graphs64.png,icons/product/graphs128.png">
+         </property>
+      </product>
+   </extension>
 
 </plugin>
