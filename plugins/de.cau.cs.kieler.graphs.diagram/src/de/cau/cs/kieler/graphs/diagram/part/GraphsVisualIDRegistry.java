@@ -42,11 +42,12 @@ public class GraphsVisualIDRegistry {
     /**
      * @generated
      */
-    private static GraphsAbstractExpression Node_2001_Constraint;
+    private static GraphsAbstractExpression Node_2003_Constraint;
+
     /**
      * @generated
      */
-    private static GraphsAbstractExpression Node_3001_Constraint;
+    private static GraphsAbstractExpression Node_3003_Constraint;
 
     /**
      * @generated
@@ -139,7 +140,7 @@ public class GraphsVisualIDRegistry {
         switch (containerVisualID) {
         case CompoundNodeNodeCompartmentEditPart.VISUAL_ID:
             if (GraphsPackage.eINSTANCE.getNode().isSuperTypeOf(domainElement.eClass())
-                    && isNode_3001((Node) domainElement)) {
+                    && isNode_3003((Node) domainElement)) {
                 return Node2EditPart.VISUAL_ID;
             }
             if (GraphsPackage.eINSTANCE.getCompoundNode().isSuperTypeOf(domainElement.eClass())) {
@@ -148,7 +149,7 @@ public class GraphsVisualIDRegistry {
             break;
         case CompoundNodeNodeCompartment2EditPart.VISUAL_ID:
             if (GraphsPackage.eINSTANCE.getNode().isSuperTypeOf(domainElement.eClass())
-                    && isNode_3001((Node) domainElement)) {
+                    && isNode_3003((Node) domainElement)) {
                 return Node2EditPart.VISUAL_ID;
             }
             if (GraphsPackage.eINSTANCE.getCompoundNode().isSuperTypeOf(domainElement.eClass())) {
@@ -157,7 +158,7 @@ public class GraphsVisualIDRegistry {
             break;
         case GraphEditPart.VISUAL_ID:
             if (GraphsPackage.eINSTANCE.getNode().isSuperTypeOf(domainElement.eClass())
-                    && isNode_2001((Node) domainElement)) {
+                    && isNode_2003((Node) domainElement)) {
                 return NodeEditPart.VISUAL_ID;
             }
             if (GraphsPackage.eINSTANCE.getCompoundNode().isSuperTypeOf(domainElement.eClass())) {
@@ -274,24 +275,24 @@ public class GraphsVisualIDRegistry {
     /**
      * @generated
      */
-    private static boolean isNode_2001(Node domainElement) {
-        if (Node_2001_Constraint == null) { // lazy initialization
-            Node_2001_Constraint = GraphsOCLFactory.getExpression(
+    private static boolean isNode_2003(Node domainElement) {
+        if (Node_2003_Constraint == null) { // lazy initialization
+            Node_2003_Constraint = GraphsOCLFactory.getExpression(
                     "not self.oclIsTypeOf(graphs::CompoundNode)", GraphsPackage.eINSTANCE.getNode()); //$NON-NLS-1$
         }
-        Object result = Node_2001_Constraint.evaluate(domainElement);
+        Object result = Node_2003_Constraint.evaluate(domainElement);
         return result instanceof Boolean && ((Boolean) result).booleanValue();
     }
 
     /**
      * @generated
      */
-    private static boolean isNode_3001(Node domainElement) {
-        if (Node_3001_Constraint == null) { // lazy initialization
-            Node_3001_Constraint = GraphsOCLFactory.getExpression(
+    private static boolean isNode_3003(Node domainElement) {
+        if (Node_3003_Constraint == null) { // lazy initialization
+            Node_3003_Constraint = GraphsOCLFactory.getExpression(
                     "not self.oclIsTypeOf(graphs::CompoundNode)", GraphsPackage.eINSTANCE.getNode()); //$NON-NLS-1$
         }
-        Object result = Node_3001_Constraint.evaluate(domainElement);
+        Object result = Node_3003_Constraint.evaluate(domainElement);
         return result instanceof Boolean && ((Boolean) result).booleanValue();
     }
 

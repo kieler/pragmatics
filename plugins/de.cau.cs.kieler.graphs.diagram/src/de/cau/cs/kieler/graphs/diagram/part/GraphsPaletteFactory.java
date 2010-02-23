@@ -43,11 +43,11 @@ public class GraphsPaletteFactory {
      */
     private ToolEntry createNode1CreationTool() {
         List/*<IElementType>*/types = new ArrayList/*<IElementType>*/(2);
-        types.add(GraphsElementTypes.Node_2001);
-        types.add(GraphsElementTypes.Node_3001);
+        types.add(GraphsElementTypes.Node_2003);
+        types.add(GraphsElementTypes.Node_3003);
         NodeToolEntry entry = new NodeToolEntry(Messages.Node1CreationTool_title, null, types);
         entry.setId("createNode1CreationTool"); //$NON-NLS-1$
-        entry.setSmallIcon(GraphsElementTypes.getImageDescriptor(GraphsElementTypes.Node_2001));
+        entry.setSmallIcon(GraphsElementTypes.getImageDescriptor(GraphsElementTypes.Node_2003));
         entry.setLargeIcon(entry.getSmallIcon());
         return entry;
     }
@@ -57,11 +57,11 @@ public class GraphsPaletteFactory {
      */
     private ToolEntry createCompoundNode2CreationTool() {
         List/*<IElementType>*/types = new ArrayList/*<IElementType>*/(2);
-        types.add(GraphsElementTypes.CompoundNode_2002);
-        types.add(GraphsElementTypes.CompoundNode_3002);
+        types.add(GraphsElementTypes.CompoundNode_2004);
+        types.add(GraphsElementTypes.CompoundNode_3004);
         NodeToolEntry entry = new NodeToolEntry(Messages.CompoundNode2CreationTool_title, null, types);
         entry.setId("createCompoundNode2CreationTool"); //$NON-NLS-1$
-        entry.setSmallIcon(GraphsElementTypes.getImageDescriptor(GraphsElementTypes.CompoundNode_2002));
+        entry.setSmallIcon(GraphsElementTypes.getImageDescriptor(GraphsElementTypes.CompoundNode_2004));
         entry.setLargeIcon(entry.getSmallIcon());
         return entry;
     }
@@ -71,10 +71,10 @@ public class GraphsPaletteFactory {
      */
     private ToolEntry createEdge3CreationTool() {
         List/*<IElementType>*/types = new ArrayList/*<IElementType>*/(1);
-        types.add(GraphsElementTypes.Edge_4001);
+        types.add(GraphsElementTypes.Edge_4002);
         LinkToolEntry entry = new LinkToolEntry(Messages.Edge3CreationTool_title, null, types);
         entry.setId("createEdge3CreationTool"); //$NON-NLS-1$
-        entry.setSmallIcon(GraphsElementTypes.getImageDescriptor(GraphsElementTypes.Edge_4001));
+        entry.setSmallIcon(GraphsElementTypes.getImageDescriptor(GraphsElementTypes.Edge_4002));
         entry.setLargeIcon(entry.getSmallIcon());
         return entry;
     }

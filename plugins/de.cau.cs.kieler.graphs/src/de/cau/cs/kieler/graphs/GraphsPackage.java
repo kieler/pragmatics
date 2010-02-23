@@ -41,7 +41,7 @@ public interface GraphsPackage extends EPackage {
 	 * <!-- end-user-doc -->
      * @generated
      */
-	String eNS_URI = "http://cs.cau.de/Graphs";
+	String eNS_URI = "http://kieler.cs.cau.de/Graphs";
 
 	/**
      * The package namespace name.

@@ -22,10 +22,9 @@
     <domainDiagramElement
         href="graphs.genmodel#//graphs/Graph"/>
     <childNodes
-        visualID="3001"
+        visualID="3003"
         editPartClassName="Node2EditPart"
         itemSemanticEditPolicyClassName="Node2ItemSemanticEditPolicy"
-        notationViewFactoryClassName="NodeViewFactory"
         canonicalEditPolicyClassName="Node2CanonicalEditPolicy"
         graphicalNodeEditPolicyClassName="Node2GraphicalNodeEditPolicy"
         createCommandClassName="Node2CreateCommand"
@@ -58,10 +57,9 @@
             href="graphs.genmodel#//graphs/Graph/nodes"/>
       </modelFacet>
       <labels
-          visualID="5002"
+          visualID="5006"
           editPartClassName="NodeLabel2EditPart"
-          itemSemanticEditPolicyClassName="NodeLabel2ItemSemanticEditPolicy"
-          notationViewFactoryClassName="NodeLabelViewFactory">
+          itemSemanticEditPolicyClassName="NodeLabel2ItemSemanticEditPolicy">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -77,10 +75,9 @@
       </labels>
     </childNodes>
     <childNodes
-        visualID="3002"
+        visualID="3004"
         editPartClassName="CompoundNode2EditPart"
         itemSemanticEditPolicyClassName="CompoundNode2ItemSemanticEditPolicy"
-        notationViewFactoryClassName="CompoundNodeViewFactory"
         canonicalEditPolicyClassName="CompoundNode2CanonicalEditPolicy"
         compartments="//@diagram/@compartments.1"
         graphicalNodeEditPolicyClassName="CompoundNode2GraphicalNodeEditPolicy"
@@ -109,10 +106,9 @@
             href="graphs.genmodel#//graphs/Graph/nodes"/>
       </modelFacet>
       <labels
-          visualID="5004"
+          visualID="5007"
           editPartClassName="CompoundNodeLabel2EditPart"
-          itemSemanticEditPolicyClassName="CompoundNodeLabel2ItemSemanticEditPolicy"
-          notationViewFactoryClassName="CompoundNodeLabelViewFactory">
+          itemSemanticEditPolicyClassName="CompoundNodeLabel2ItemSemanticEditPolicy">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -128,10 +124,9 @@
       </labels>
     </childNodes>
     <topLevelNodes
-        visualID="2001"
+        visualID="2003"
         editPartClassName="NodeEditPart"
         itemSemanticEditPolicyClassName="NodeItemSemanticEditPolicy"
-        notationViewFactoryClassName="NodeViewFactory"
         canonicalEditPolicyClassName="NodeCanonicalEditPolicy"
         graphicalNodeEditPolicyClassName="NodeGraphicalNodeEditPolicy"
         createCommandClassName="NodeCreateCommand">
@@ -163,10 +158,9 @@
             href="graphs.genmodel#//graphs/Graph/nodes"/>
       </modelFacet>
       <labels
-          visualID="5001"
+          visualID="5005"
           editPartClassName="NodeLabelEditPart"
-          itemSemanticEditPolicyClassName="NodeLabelItemSemanticEditPolicy"
-          notationViewFactoryClassName="NodeLabelViewFactory">
+          itemSemanticEditPolicyClassName="NodeLabelItemSemanticEditPolicy">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -182,10 +176,9 @@
       </labels>
     </topLevelNodes>
     <topLevelNodes
-        visualID="2002"
+        visualID="2004"
         editPartClassName="CompoundNodeEditPart"
         itemSemanticEditPolicyClassName="CompoundNodeItemSemanticEditPolicy"
-        notationViewFactoryClassName="CompoundNodeViewFactory"
         canonicalEditPolicyClassName="CompoundNodeCanonicalEditPolicy"
         compartments="//@diagram/@compartments.0"
         graphicalNodeEditPolicyClassName="CompoundNodeGraphicalNodeEditPolicy"
@@ -213,10 +206,9 @@
             href="graphs.genmodel#//graphs/Graph/nodes"/>
       </modelFacet>
       <labels
-          visualID="5003"
+          visualID="5008"
           editPartClassName="CompoundNodeLabelEditPart"
-          itemSemanticEditPolicyClassName="CompoundNodeLabelItemSemanticEditPolicy"
-          notationViewFactoryClassName="CompoundNodeLabelViewFactory">
+          itemSemanticEditPolicyClassName="CompoundNodeLabelItemSemanticEditPolicy">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -232,10 +224,9 @@
       </labels>
     </topLevelNodes>
     <links
-        visualID="4001"
+        visualID="4002"
         editPartClassName="EdgeEditPart"
         itemSemanticEditPolicyClassName="EdgeItemSemanticEditPolicy"
-        notationViewFactoryClassName="EdgeViewFactory"
         createCommandClassName="EdgeCreateCommand"
         reorientCommandClassName="EdgeReorientCommand">
       <diagramRunTimeClass
@@ -265,10 +256,9 @@
             href="graphs.genmodel#//graphs/Edge/target"/>
       </modelFacet>
       <labels
-          visualID="6001"
+          visualID="6002"
           editPartClassName="EdgeLabelEditPart"
-          itemSemanticEditPolicyClassName="EdgeLabelItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeLabelViewFactory">
+          itemSemanticEditPolicyClassName="EdgeLabelItemSemanticEditPolicy">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -288,10 +278,9 @@
       </labels>
     </links>
     <compartments
-        visualID="7001"
+        visualID="7003"
         editPartClassName="CompoundNodeNodeCompartmentEditPart"
         itemSemanticEditPolicyClassName="CompoundNodeNodeCompartmentItemSemanticEditPolicy"
-        notationViewFactoryClassName="CompoundNodeNodeCompartmentViewFactory"
         canonicalEditPolicyClassName="CompoundNodeNodeCompartmentCanonicalEditPolicy"
         childNodes="//@diagram/@childNodes.0 //@diagram/@childNodes.1"
         title="NodeCompartment"
@@ -311,10 +300,9 @@
       </viewmap>
     </compartments>
     <compartments
-        visualID="7002"
+        visualID="7004"
         editPartClassName="CompoundNodeNodeCompartment2EditPart"
         itemSemanticEditPolicyClassName="CompoundNodeNodeCompartment2ItemSemanticEditPolicy"
-        notationViewFactoryClassName="CompoundNodeNodeCompartmentViewFactory"
         canonicalEditPolicyClassName="CompoundNodeNodeCompartment2CanonicalEditPolicy"
         childNodes="//@diagram/@childNodes.0 //@diagram/@childNodes.1"
         title="NodeCompartment"

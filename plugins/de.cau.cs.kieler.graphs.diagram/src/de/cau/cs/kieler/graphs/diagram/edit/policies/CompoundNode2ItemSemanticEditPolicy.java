@@ -33,7 +33,7 @@ public class CompoundNode2ItemSemanticEditPolicy extends GraphsBaseItemSemanticE
      * @generated
      */
     public CompoundNode2ItemSemanticEditPolicy() {
-        super(GraphsElementTypes.CompoundNode_3002);
+        super(GraphsElementTypes.CompoundNode_3004);
     }
 
     /**
@@ -158,7 +158,7 @@ public class CompoundNode2ItemSemanticEditPolicy extends GraphsBaseItemSemanticE
      * @generated
      */
     protected Command getStartCreateRelationshipCommand(CreateRelationshipRequest req) {
-        if (GraphsElementTypes.Edge_4001 == req.getElementType()) {
+        if (GraphsElementTypes.Edge_4002 == req.getElementType()) {
             return getGEFWrapper(new EdgeCreateCommand(req, req.getSource(), req.getTarget()));
         }
         return null;
@@ -168,7 +168,7 @@ public class CompoundNode2ItemSemanticEditPolicy extends GraphsBaseItemSemanticE
      * @generated
      */
     protected Command getCompleteCreateRelationshipCommand(CreateRelationshipRequest req) {
-        if (GraphsElementTypes.Edge_4001 == req.getElementType()) {
+        if (GraphsElementTypes.Edge_4002 == req.getElementType()) {
             return getGEFWrapper(new EdgeCreateCommand(req, req.getSource(), req.getTarget()));
         }
         return null;

@@ -58,7 +58,7 @@ public class CompoundNodeLabelEditPart extends CompartmentEditPart implements IT
     /**
      * @generated
      */
-    public static final int VISUAL_ID = 5003;
+    public static final int VISUAL_ID = 5008;
 
     /**
      * @generated
@@ -300,7 +300,7 @@ public class CompoundNodeLabelEditPart extends CompartmentEditPart implements IT
         if (parser == null) {
             parser = GraphsParserProvider
                     .getParser(
-                            GraphsElementTypes.CompoundNode_2002,
+                            GraphsElementTypes.CompoundNode_2004,
                             getParserElement(),
                             GraphsVisualIDRegistry
                                     .getType(de.cau.cs.kieler.graphs.diagram.edit.parts.CompoundNodeLabelEditPart.VISUAL_ID));

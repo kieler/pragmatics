@@ -43,20 +43,20 @@ public class GraphsModelingAssistantProvider extends ModelingAssistantProvider {
         IGraphicalEditPart editPart = (IGraphicalEditPart) host.getAdapter(IGraphicalEditPart.class);
         if (editPart instanceof CompoundNodeNodeCompartmentEditPart) {
             ArrayList types = new ArrayList(2);
-            types.add(GraphsElementTypes.Node_3001);
-            types.add(GraphsElementTypes.CompoundNode_3002);
+            types.add(GraphsElementTypes.Node_3003);
+            types.add(GraphsElementTypes.CompoundNode_3004);
             return types;
         }
         if (editPart instanceof CompoundNodeNodeCompartment2EditPart) {
             ArrayList types = new ArrayList(2);
-            types.add(GraphsElementTypes.Node_3001);
-            types.add(GraphsElementTypes.CompoundNode_3002);
+            types.add(GraphsElementTypes.Node_3003);
+            types.add(GraphsElementTypes.CompoundNode_3004);
             return types;
         }
         if (editPart instanceof GraphEditPart) {
             ArrayList types = new ArrayList(2);
-            types.add(GraphsElementTypes.Node_2001);
-            types.add(GraphsElementTypes.CompoundNode_2002);
+            types.add(GraphsElementTypes.Node_2003);
+            types.add(GraphsElementTypes.CompoundNode_2004);
             return types;
         }
         return Collections.EMPTY_LIST;

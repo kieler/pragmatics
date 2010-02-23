@@ -44,7 +44,7 @@ public class CompoundNodeEditPart extends ShapeNodeEditPart {
     /**
      * @generated
      */
-    public static final int VISUAL_ID = 2002;
+    public static final int VISUAL_ID = 2004;
 
     /**
      * @generated
@@ -262,7 +262,7 @@ public class CompoundNodeEditPart extends ShapeNodeEditPart {
      */
     public List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/getMARelTypesOnSource() {
         List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
-        types.add(GraphsElementTypes.Edge_4001);
+        types.add(GraphsElementTypes.Edge_4002);
         return types;
     }
 
@@ -273,16 +273,16 @@ public class CompoundNodeEditPart extends ShapeNodeEditPart {
             IGraphicalEditPart targetEditPart) {
         List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
         if (targetEditPart instanceof NodeEditPart) {
-            types.add(GraphsElementTypes.Edge_4001);
+            types.add(GraphsElementTypes.Edge_4002);
         }
         if (targetEditPart instanceof de.cau.cs.kieler.graphs.diagram.edit.parts.CompoundNodeEditPart) {
-            types.add(GraphsElementTypes.Edge_4001);
+            types.add(GraphsElementTypes.Edge_4002);
         }
         if (targetEditPart instanceof Node2EditPart) {
-            types.add(GraphsElementTypes.Edge_4001);
+            types.add(GraphsElementTypes.Edge_4002);
         }
         if (targetEditPart instanceof CompoundNode2EditPart) {
-            types.add(GraphsElementTypes.Edge_4001);
+            types.add(GraphsElementTypes.Edge_4002);
         }
         return types;
     }
@@ -293,17 +293,17 @@ public class CompoundNodeEditPart extends ShapeNodeEditPart {
     public List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/getMATypesForTarget(
             IElementType relationshipType) {
         List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
-        if (relationshipType == GraphsElementTypes.Edge_4001) {
-            types.add(GraphsElementTypes.Node_2001);
+        if (relationshipType == GraphsElementTypes.Edge_4002) {
+            types.add(GraphsElementTypes.Node_2003);
         }
-        if (relationshipType == GraphsElementTypes.Edge_4001) {
-            types.add(GraphsElementTypes.CompoundNode_2002);
+        if (relationshipType == GraphsElementTypes.Edge_4002) {
+            types.add(GraphsElementTypes.CompoundNode_2004);
         }
-        if (relationshipType == GraphsElementTypes.Edge_4001) {
-            types.add(GraphsElementTypes.Node_3001);
+        if (relationshipType == GraphsElementTypes.Edge_4002) {
+            types.add(GraphsElementTypes.Node_3003);
         }
-        if (relationshipType == GraphsElementTypes.Edge_4001) {
-            types.add(GraphsElementTypes.CompoundNode_3002);
+        if (relationshipType == GraphsElementTypes.Edge_4002) {
+            types.add(GraphsElementTypes.CompoundNode_3004);
         }
         return types;
     }
@@ -313,7 +313,7 @@ public class CompoundNodeEditPart extends ShapeNodeEditPart {
      */
     public List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/getMARelTypesOnTarget() {
         List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
-        types.add(GraphsElementTypes.Edge_4001);
+        types.add(GraphsElementTypes.Edge_4002);
         return types;
     }
 
@@ -323,17 +323,17 @@ public class CompoundNodeEditPart extends ShapeNodeEditPart {
     public List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/getMATypesForSource(
             IElementType relationshipType) {
         List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
-        if (relationshipType == GraphsElementTypes.Edge_4001) {
-            types.add(GraphsElementTypes.Node_2001);
+        if (relationshipType == GraphsElementTypes.Edge_4002) {
+            types.add(GraphsElementTypes.Node_2003);
         }
-        if (relationshipType == GraphsElementTypes.Edge_4001) {
-            types.add(GraphsElementTypes.CompoundNode_2002);
+        if (relationshipType == GraphsElementTypes.Edge_4002) {
+            types.add(GraphsElementTypes.CompoundNode_2004);
         }
-        if (relationshipType == GraphsElementTypes.Edge_4001) {
-            types.add(GraphsElementTypes.Node_3001);
+        if (relationshipType == GraphsElementTypes.Edge_4002) {
+            types.add(GraphsElementTypes.Node_3003);
         }
-        if (relationshipType == GraphsElementTypes.Edge_4001) {
-            types.add(GraphsElementTypes.CompoundNode_3002);
+        if (relationshipType == GraphsElementTypes.Edge_4002) {
+            types.add(GraphsElementTypes.CompoundNode_3004);
         }
         return types;
     }

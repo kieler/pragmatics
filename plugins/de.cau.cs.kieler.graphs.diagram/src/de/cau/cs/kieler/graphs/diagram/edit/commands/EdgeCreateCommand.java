@@ -68,7 +68,7 @@ public class EdgeCreateCommand extends EditElementCommand {
         if (getContainer() == null) {
             return false;
         }
-        return GraphsBaseItemSemanticEditPolicy.LinkConstraints.canCreateEdge_4001(getContainer(),
+        return GraphsBaseItemSemanticEditPolicy.LinkConstraints.canCreateEdge_4002(getContainer(),
                 getSource(), getTarget());
     }
 

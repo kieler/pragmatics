@@ -16,17 +16,17 @@ public class CompoundNodeNodeCompartmentItemSemanticEditPolicy extends GraphsBas
      * @generated
      */
     public CompoundNodeNodeCompartmentItemSemanticEditPolicy() {
-        super(GraphsElementTypes.CompoundNode_2002);
+        super(GraphsElementTypes.CompoundNode_2004);
     }
 
     /**
      * @generated
      */
     protected Command getCreateCommand(CreateElementRequest req) {
-        if (GraphsElementTypes.Node_3001 == req.getElementType()) {
+        if (GraphsElementTypes.Node_3003 == req.getElementType()) {
             return getGEFWrapper(new Node2CreateCommand(req));
         }
-        if (GraphsElementTypes.CompoundNode_3002 == req.getElementType()) {
+        if (GraphsElementTypes.CompoundNode_3004 == req.getElementType()) {
             return getGEFWrapper(new CompoundNode2CreateCommand(req));
         }
         return super.getCreateCommand(req);

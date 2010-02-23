@@ -31,7 +31,7 @@ public class GraphsFactoryImpl extends EFactoryImpl implements GraphsFactory {
      */
 	public static GraphsFactory init() {
         try {
-            GraphsFactory theGraphsFactory = (GraphsFactory)EPackage.Registry.INSTANCE.getEFactory("http://cs.cau.de/Graphs"); 
+            GraphsFactory theGraphsFactory = (GraphsFactory)EPackage.Registry.INSTANCE.getEFactory("http://kieler.cs.cau.de/Graphs"); 
             if (theGraphsFactory != null) {
                 return theGraphsFactory;
             }

@@ -33,7 +33,7 @@ public class CompoundNodeNodeCompartmentCanonicalEditPolicy extends CanonicalEdi
     protected List getSemanticChildrenList() {
         View viewObject = (View) getHost().getModel();
         List result = new LinkedList();
-        for (Iterator it = GraphsDiagramUpdater.getCompoundNodeNodeCompartment_7001SemanticChildren(
+        for (Iterator it = GraphsDiagramUpdater.getCompoundNodeNodeCompartment_7003SemanticChildren(
                 viewObject).iterator(); it.hasNext();) {
             result.add(((GraphsNodeDescriptor) it.next()).getModelElement());
         }

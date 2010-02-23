@@ -38,9 +38,9 @@ public class GraphsDiagramUpdater {
     public static List getSemanticChildren(View view) {
         switch (GraphsVisualIDRegistry.getVisualID(view)) {
         case CompoundNodeNodeCompartmentEditPart.VISUAL_ID:
-            return getCompoundNodeNodeCompartment_7001SemanticChildren(view);
+            return getCompoundNodeNodeCompartment_7003SemanticChildren(view);
         case CompoundNodeNodeCompartment2EditPart.VISUAL_ID:
-            return getCompoundNodeNodeCompartment_7002SemanticChildren(view);
+            return getCompoundNodeNodeCompartment_7004SemanticChildren(view);
         case GraphEditPart.VISUAL_ID:
             return getGraph_1000SemanticChildren(view);
         }
@@ -50,7 +50,7 @@ public class GraphsDiagramUpdater {
     /**
      * @generated
      */
-    public static List getCompoundNodeNodeCompartment_7001SemanticChildren(View view) {
+    public static List getCompoundNodeNodeCompartment_7003SemanticChildren(View view) {
         if (false == view.eContainer() instanceof View) {
             return Collections.EMPTY_LIST;
         }
@@ -78,7 +78,7 @@ public class GraphsDiagramUpdater {
     /**
      * @generated
      */
-    public static List getCompoundNodeNodeCompartment_7002SemanticChildren(View view) {
+    public static List getCompoundNodeNodeCompartment_7004SemanticChildren(View view) {
         if (false == view.eContainer() instanceof View) {
             return Collections.EMPTY_LIST;
         }
@@ -135,15 +135,15 @@ public class GraphsDiagramUpdater {
         case GraphEditPart.VISUAL_ID:
             return getGraph_1000ContainedLinks(view);
         case NodeEditPart.VISUAL_ID:
-            return getNode_2001ContainedLinks(view);
+            return getNode_2003ContainedLinks(view);
         case CompoundNodeEditPart.VISUAL_ID:
-            return getCompoundNode_2002ContainedLinks(view);
+            return getCompoundNode_2004ContainedLinks(view);
         case Node2EditPart.VISUAL_ID:
-            return getNode_3001ContainedLinks(view);
+            return getNode_3003ContainedLinks(view);
         case CompoundNode2EditPart.VISUAL_ID:
-            return getCompoundNode_3002ContainedLinks(view);
+            return getCompoundNode_3004ContainedLinks(view);
         case EdgeEditPart.VISUAL_ID:
-            return getEdge_4001ContainedLinks(view);
+            return getEdge_4002ContainedLinks(view);
         }
         return Collections.EMPTY_LIST;
     }
@@ -154,15 +154,15 @@ public class GraphsDiagramUpdater {
     public static List getIncomingLinks(View view) {
         switch (GraphsVisualIDRegistry.getVisualID(view)) {
         case NodeEditPart.VISUAL_ID:
-            return getNode_2001IncomingLinks(view);
+            return getNode_2003IncomingLinks(view);
         case CompoundNodeEditPart.VISUAL_ID:
-            return getCompoundNode_2002IncomingLinks(view);
+            return getCompoundNode_2004IncomingLinks(view);
         case Node2EditPart.VISUAL_ID:
-            return getNode_3001IncomingLinks(view);
+            return getNode_3003IncomingLinks(view);
         case CompoundNode2EditPart.VISUAL_ID:
-            return getCompoundNode_3002IncomingLinks(view);
+            return getCompoundNode_3004IncomingLinks(view);
         case EdgeEditPart.VISUAL_ID:
-            return getEdge_4001IncomingLinks(view);
+            return getEdge_4002IncomingLinks(view);
         }
         return Collections.EMPTY_LIST;
     }
@@ -173,15 +173,15 @@ public class GraphsDiagramUpdater {
     public static List getOutgoingLinks(View view) {
         switch (GraphsVisualIDRegistry.getVisualID(view)) {
         case NodeEditPart.VISUAL_ID:
-            return getNode_2001OutgoingLinks(view);
+            return getNode_2003OutgoingLinks(view);
         case CompoundNodeEditPart.VISUAL_ID:
-            return getCompoundNode_2002OutgoingLinks(view);
+            return getCompoundNode_2004OutgoingLinks(view);
         case Node2EditPart.VISUAL_ID:
-            return getNode_3001OutgoingLinks(view);
+            return getNode_3003OutgoingLinks(view);
         case CompoundNode2EditPart.VISUAL_ID:
-            return getCompoundNode_3002OutgoingLinks(view);
+            return getCompoundNode_3004OutgoingLinks(view);
         case EdgeEditPart.VISUAL_ID:
-            return getEdge_4001OutgoingLinks(view);
+            return getEdge_4002OutgoingLinks(view);
         }
         return Collections.EMPTY_LIST;
     }
@@ -192,157 +192,157 @@ public class GraphsDiagramUpdater {
     public static List getGraph_1000ContainedLinks(View view) {
         Graph modelElement = (Graph) view.getElement();
         List result = new LinkedList();
-        result.addAll(getContainedTypeModelFacetLinks_Edge_4001(modelElement));
+        result.addAll(getContainedTypeModelFacetLinks_Edge_4002(modelElement));
         return result;
     }
 
     /**
      * @generated
      */
-    public static List getNode_2001ContainedLinks(View view) {
+    public static List getNode_2003ContainedLinks(View view) {
         return Collections.EMPTY_LIST;
     }
 
     /**
      * @generated
      */
-    public static List getCompoundNode_2002ContainedLinks(View view) {
+    public static List getCompoundNode_2004ContainedLinks(View view) {
         CompoundNode modelElement = (CompoundNode) view.getElement();
         List result = new LinkedList();
-        result.addAll(getContainedTypeModelFacetLinks_Edge_4001(modelElement));
+        result.addAll(getContainedTypeModelFacetLinks_Edge_4002(modelElement));
         return result;
     }
 
     /**
      * @generated
      */
-    public static List getNode_3001ContainedLinks(View view) {
+    public static List getNode_3003ContainedLinks(View view) {
         return Collections.EMPTY_LIST;
     }
 
     /**
      * @generated
      */
-    public static List getCompoundNode_3002ContainedLinks(View view) {
+    public static List getCompoundNode_3004ContainedLinks(View view) {
         CompoundNode modelElement = (CompoundNode) view.getElement();
         List result = new LinkedList();
-        result.addAll(getContainedTypeModelFacetLinks_Edge_4001(modelElement));
+        result.addAll(getContainedTypeModelFacetLinks_Edge_4002(modelElement));
         return result;
     }
 
     /**
      * @generated
      */
-    public static List getEdge_4001ContainedLinks(View view) {
+    public static List getEdge_4002ContainedLinks(View view) {
         return Collections.EMPTY_LIST;
     }
 
     /**
      * @generated
      */
-    public static List getNode_2001IncomingLinks(View view) {
+    public static List getNode_2003IncomingLinks(View view) {
         Node modelElement = (Node) view.getElement();
         Map crossReferences = EcoreUtil.CrossReferencer.find(view.eResource().getResourceSet()
                 .getResources());
         List result = new LinkedList();
-        result.addAll(getIncomingTypeModelFacetLinks_Edge_4001(modelElement, crossReferences));
+        result.addAll(getIncomingTypeModelFacetLinks_Edge_4002(modelElement, crossReferences));
         return result;
     }
 
     /**
      * @generated
      */
-    public static List getCompoundNode_2002IncomingLinks(View view) {
+    public static List getCompoundNode_2004IncomingLinks(View view) {
         CompoundNode modelElement = (CompoundNode) view.getElement();
         Map crossReferences = EcoreUtil.CrossReferencer.find(view.eResource().getResourceSet()
                 .getResources());
         List result = new LinkedList();
-        result.addAll(getIncomingTypeModelFacetLinks_Edge_4001(modelElement, crossReferences));
+        result.addAll(getIncomingTypeModelFacetLinks_Edge_4002(modelElement, crossReferences));
         return result;
     }
 
     /**
      * @generated
      */
-    public static List getNode_3001IncomingLinks(View view) {
+    public static List getNode_3003IncomingLinks(View view) {
         Node modelElement = (Node) view.getElement();
         Map crossReferences = EcoreUtil.CrossReferencer.find(view.eResource().getResourceSet()
                 .getResources());
         List result = new LinkedList();
-        result.addAll(getIncomingTypeModelFacetLinks_Edge_4001(modelElement, crossReferences));
+        result.addAll(getIncomingTypeModelFacetLinks_Edge_4002(modelElement, crossReferences));
         return result;
     }
 
     /**
      * @generated
      */
-    public static List getCompoundNode_3002IncomingLinks(View view) {
+    public static List getCompoundNode_3004IncomingLinks(View view) {
         CompoundNode modelElement = (CompoundNode) view.getElement();
         Map crossReferences = EcoreUtil.CrossReferencer.find(view.eResource().getResourceSet()
                 .getResources());
         List result = new LinkedList();
-        result.addAll(getIncomingTypeModelFacetLinks_Edge_4001(modelElement, crossReferences));
+        result.addAll(getIncomingTypeModelFacetLinks_Edge_4002(modelElement, crossReferences));
         return result;
     }
 
     /**
      * @generated
      */
-    public static List getEdge_4001IncomingLinks(View view) {
+    public static List getEdge_4002IncomingLinks(View view) {
         return Collections.EMPTY_LIST;
     }
 
     /**
      * @generated
      */
-    public static List getNode_2001OutgoingLinks(View view) {
+    public static List getNode_2003OutgoingLinks(View view) {
         Node modelElement = (Node) view.getElement();
         List result = new LinkedList();
-        result.addAll(getOutgoingTypeModelFacetLinks_Edge_4001(modelElement));
+        result.addAll(getOutgoingTypeModelFacetLinks_Edge_4002(modelElement));
         return result;
     }
 
     /**
      * @generated
      */
-    public static List getCompoundNode_2002OutgoingLinks(View view) {
+    public static List getCompoundNode_2004OutgoingLinks(View view) {
         CompoundNode modelElement = (CompoundNode) view.getElement();
         List result = new LinkedList();
-        result.addAll(getOutgoingTypeModelFacetLinks_Edge_4001(modelElement));
+        result.addAll(getOutgoingTypeModelFacetLinks_Edge_4002(modelElement));
         return result;
     }
 
     /**
      * @generated
      */
-    public static List getNode_3001OutgoingLinks(View view) {
+    public static List getNode_3003OutgoingLinks(View view) {
         Node modelElement = (Node) view.getElement();
         List result = new LinkedList();
-        result.addAll(getOutgoingTypeModelFacetLinks_Edge_4001(modelElement));
+        result.addAll(getOutgoingTypeModelFacetLinks_Edge_4002(modelElement));
         return result;
     }
 
     /**
      * @generated
      */
-    public static List getCompoundNode_3002OutgoingLinks(View view) {
+    public static List getCompoundNode_3004OutgoingLinks(View view) {
         CompoundNode modelElement = (CompoundNode) view.getElement();
         List result = new LinkedList();
-        result.addAll(getOutgoingTypeModelFacetLinks_Edge_4001(modelElement));
+        result.addAll(getOutgoingTypeModelFacetLinks_Edge_4002(modelElement));
         return result;
     }
 
     /**
      * @generated
      */
-    public static List getEdge_4001OutgoingLinks(View view) {
+    public static List getEdge_4002OutgoingLinks(View view) {
         return Collections.EMPTY_LIST;
     }
 
     /**
      * @generated
      */
-    private static Collection getContainedTypeModelFacetLinks_Edge_4001(Graph container) {
+    private static Collection getContainedTypeModelFacetLinks_Edge_4002(Graph container) {
         Collection result = new LinkedList();
         for (Iterator links = container.getEdges().iterator(); links.hasNext();) {
             EObject linkObject = (EObject) links.next();
@@ -355,7 +355,7 @@ public class GraphsDiagramUpdater {
             }
             Node dst = link.getTarget();
             Node src = link.getSource();
-            result.add(new GraphsLinkDescriptor(src, dst, link, GraphsElementTypes.Edge_4001,
+            result.add(new GraphsLinkDescriptor(src, dst, link, GraphsElementTypes.Edge_4002,
                     EdgeEditPart.VISUAL_ID));
         }
         return result;
@@ -364,7 +364,7 @@ public class GraphsDiagramUpdater {
     /**
      * @generated
      */
-    private static Collection getIncomingTypeModelFacetLinks_Edge_4001(Node target, Map crossReferences) {
+    private static Collection getIncomingTypeModelFacetLinks_Edge_4002(Node target, Map crossReferences) {
         Collection result = new LinkedList();
         Collection settings = (Collection) crossReferences.get(target);
         for (Iterator it = settings.iterator(); it.hasNext();) {
@@ -378,7 +378,7 @@ public class GraphsDiagramUpdater {
                 continue;
             }
             Node src = link.getSource();
-            result.add(new GraphsLinkDescriptor(src, target, link, GraphsElementTypes.Edge_4001,
+            result.add(new GraphsLinkDescriptor(src, target, link, GraphsElementTypes.Edge_4002,
                     EdgeEditPart.VISUAL_ID));
         }
         return result;
@@ -387,7 +387,7 @@ public class GraphsDiagramUpdater {
     /**
      * @generated
      */
-    private static Collection getOutgoingTypeModelFacetLinks_Edge_4001(Node source) {
+    private static Collection getOutgoingTypeModelFacetLinks_Edge_4002(Node source) {
         Graph container = null;
         // Find container element for the link.
         // Climb up by containment hierarchy starting from the source
@@ -416,7 +416,7 @@ public class GraphsDiagramUpdater {
             if (src != source) {
                 continue;
             }
-            result.add(new GraphsLinkDescriptor(src, dst, link, GraphsElementTypes.Edge_4001,
+            result.add(new GraphsLinkDescriptor(src, dst, link, GraphsElementTypes.Edge_4002,
                     EdgeEditPart.VISUAL_ID));
         }
         return result;

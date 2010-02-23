@@ -210,14 +210,14 @@ public class GraphsViewProvider extends AbstractProvider implements IViewProvide
         }
         switch (visualID) {
         case NodeEditPart.VISUAL_ID:
-            return createNode_2001(domainElement, containerView, index, persisted, preferencesHint);
+            return createNode_2003(domainElement, containerView, index, persisted, preferencesHint);
         case CompoundNodeEditPart.VISUAL_ID:
-            return createCompoundNode_2002(domainElement, containerView, index, persisted,
+            return createCompoundNode_2004(domainElement, containerView, index, persisted,
                     preferencesHint);
         case Node2EditPart.VISUAL_ID:
-            return createNode_3001(domainElement, containerView, index, persisted, preferencesHint);
+            return createNode_3003(domainElement, containerView, index, persisted, preferencesHint);
         case CompoundNode2EditPart.VISUAL_ID:
-            return createCompoundNode_3002(domainElement, containerView, index, persisted,
+            return createCompoundNode_3004(domainElement, containerView, index, persisted,
                     preferencesHint);
         }
         // can't happen, provided #provides(CreateNodeViewOperation) is correct
@@ -233,7 +233,7 @@ public class GraphsViewProvider extends AbstractProvider implements IViewProvide
         String elementTypeHint = ((IHintedType) elementType).getSemanticHint();
         switch (GraphsVisualIDRegistry.getVisualID(elementTypeHint)) {
         case EdgeEditPart.VISUAL_ID:
-            return createEdge_4001(getSemanticElement(semanticAdapter), containerView, index, persisted,
+            return createEdge_4002(getSemanticElement(semanticAdapter), containerView, index, persisted,
                     preferencesHint);
         }
         // can never happen, provided #provides(CreateEdgeViewOperation) is correct
@@ -243,7 +243,7 @@ public class GraphsViewProvider extends AbstractProvider implements IViewProvide
     /**
      * @generated
      */
-    public Node createNode_2001(EObject domainElement, View containerView, int index, boolean persisted,
+    public Node createNode_2003(EObject domainElement, View containerView, int index, boolean persisted,
             PreferencesHint preferencesHint) {
         Node node = NotationFactory.eINSTANCE.createNode();
         node.getStyles().add(NotationFactory.eINSTANCE.createDescriptionStyle());
@@ -267,14 +267,14 @@ public class GraphsViewProvider extends AbstractProvider implements IViewProvide
                     IPreferenceConstants.PREF_FONT_COLOR);
             nodeFontStyle.setFontColor(FigureUtilities.RGBToInteger(fontRGB).intValue());
         }
-        Node label5001 = createLabel(node, GraphsVisualIDRegistry.getType(NodeLabelEditPart.VISUAL_ID));
+        Node label5005 = createLabel(node, GraphsVisualIDRegistry.getType(NodeLabelEditPart.VISUAL_ID));
         return node;
     }
 
     /**
      * @generated
      */
-    public Node createCompoundNode_2002(EObject domainElement, View containerView, int index,
+    public Node createCompoundNode_2004(EObject domainElement, View containerView, int index,
             boolean persisted, PreferencesHint preferencesHint) {
         Node node = NotationFactory.eINSTANCE.createNode();
         node.getStyles().add(NotationFactory.eINSTANCE.createDescriptionStyle());
@@ -298,7 +298,7 @@ public class GraphsViewProvider extends AbstractProvider implements IViewProvide
                     IPreferenceConstants.PREF_FONT_COLOR);
             nodeFontStyle.setFontColor(FigureUtilities.RGBToInteger(fontRGB).intValue());
         }
-        Node label5003 = createLabel(node, GraphsVisualIDRegistry
+        Node label5008 = createLabel(node, GraphsVisualIDRegistry
                 .getType(CompoundNodeLabelEditPart.VISUAL_ID));
         createCompartment(node, GraphsVisualIDRegistry
                 .getType(CompoundNodeNodeCompartmentEditPart.VISUAL_ID), true, false, false, false);
@@ -308,7 +308,7 @@ public class GraphsViewProvider extends AbstractProvider implements IViewProvide
     /**
      * @generated
      */
-    public Node createNode_3001(EObject domainElement, View containerView, int index, boolean persisted,
+    public Node createNode_3003(EObject domainElement, View containerView, int index, boolean persisted,
             PreferencesHint preferencesHint) {
         Node node = NotationFactory.eINSTANCE.createNode();
         node.getStyles().add(NotationFactory.eINSTANCE.createDescriptionStyle());
@@ -331,14 +331,14 @@ public class GraphsViewProvider extends AbstractProvider implements IViewProvide
                     IPreferenceConstants.PREF_FONT_COLOR);
             nodeFontStyle.setFontColor(FigureUtilities.RGBToInteger(fontRGB).intValue());
         }
-        Node label5002 = createLabel(node, GraphsVisualIDRegistry.getType(NodeLabel2EditPart.VISUAL_ID));
+        Node label5006 = createLabel(node, GraphsVisualIDRegistry.getType(NodeLabel2EditPart.VISUAL_ID));
         return node;
     }
 
     /**
      * @generated
      */
-    public Node createCompoundNode_3002(EObject domainElement, View containerView, int index,
+    public Node createCompoundNode_3004(EObject domainElement, View containerView, int index,
             boolean persisted, PreferencesHint preferencesHint) {
         Node node = NotationFactory.eINSTANCE.createNode();
         node.getStyles().add(NotationFactory.eINSTANCE.createDescriptionStyle());
@@ -361,7 +361,7 @@ public class GraphsViewProvider extends AbstractProvider implements IViewProvide
                     IPreferenceConstants.PREF_FONT_COLOR);
             nodeFontStyle.setFontColor(FigureUtilities.RGBToInteger(fontRGB).intValue());
         }
-        Node label5004 = createLabel(node, GraphsVisualIDRegistry
+        Node label5007 = createLabel(node, GraphsVisualIDRegistry
                 .getType(CompoundNodeLabel2EditPart.VISUAL_ID));
         createCompartment(node, GraphsVisualIDRegistry
                 .getType(CompoundNodeNodeCompartment2EditPart.VISUAL_ID), true, false, false, false);
@@ -371,7 +371,7 @@ public class GraphsViewProvider extends AbstractProvider implements IViewProvide
     /**
      * @generated
      */
-    public Edge createEdge_4001(EObject domainElement, View containerView, int index, boolean persisted,
+    public Edge createEdge_4002(EObject domainElement, View containerView, int index, boolean persisted,
             PreferencesHint preferencesHint) {
         Edge edge = NotationFactory.eINSTANCE.createEdge();
         edge.getStyles().add(NotationFactory.eINSTANCE.createRoutingStyle());
@@ -404,11 +404,11 @@ public class GraphsViewProvider extends AbstractProvider implements IViewProvide
             ViewUtil.setStructuralFeatureValue(edge,
                     NotationPackage.eINSTANCE.getRoutingStyle_Routing(), routing);
         }
-        Node label6001 = createLabel(edge, GraphsVisualIDRegistry.getType(EdgeLabelEditPart.VISUAL_ID));
-        label6001.setLayoutConstraint(NotationFactory.eINSTANCE.createLocation());
-        Location location6001 = (Location) label6001.getLayoutConstraint();
-        location6001.setX(0);
-        location6001.setY(40);
+        Node label6002 = createLabel(edge, GraphsVisualIDRegistry.getType(EdgeLabelEditPart.VISUAL_ID));
+        label6002.setLayoutConstraint(NotationFactory.eINSTANCE.createLocation());
+        Location location6002 = (Location) label6002.getLayoutConstraint();
+        location6002.setX(0);
+        location6002.setY(40);
         return edge;
     }
 

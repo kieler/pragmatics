@@ -296,14 +296,14 @@ public class GraphsBaseItemSemanticEditPolicy extends SemanticEditPolicy {
         /**
          * @generated
          */
-        public static boolean canCreateEdge_4001(Graph container, Node source, Node target) {
-            return canExistEdge_4001(container, source, target);
+        public static boolean canCreateEdge_4002(Graph container, Node source, Node target) {
+            return canExistEdge_4002(container, source, target);
         }
 
         /**
          * @generated
          */
-        public static boolean canExistEdge_4001(Graph container, Node source, Node target) {
+        public static boolean canExistEdge_4002(Graph container, Node source, Node target) {
             return true;
         }
     }

@@ -58,7 +58,7 @@ public class NodeLabel2EditPart extends CompartmentEditPart implements ITextAwar
     /**
      * @generated
      */
-    public static final int VISUAL_ID = 5002;
+    public static final int VISUAL_ID = 5006;
 
     /**
      * @generated
@@ -300,7 +300,7 @@ public class NodeLabel2EditPart extends CompartmentEditPart implements ITextAwar
         if (parser == null) {
             parser = GraphsParserProvider
                     .getParser(
-                            GraphsElementTypes.Node_3001,
+                            GraphsElementTypes.Node_3003,
                             getParserElement(),
                             GraphsVisualIDRegistry
                                     .getType(de.cau.cs.kieler.graphs.diagram.edit.parts.NodeLabel2EditPart.VISUAL_ID));

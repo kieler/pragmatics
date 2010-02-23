@@ -71,7 +71,7 @@ public class EdgeReorientCommand extends EditElementCommand {
             return false;
         }
         Graph container = (Graph) getLink().eContainer();
-        return GraphsBaseItemSemanticEditPolicy.LinkConstraints.canExistEdge_4001(container,
+        return GraphsBaseItemSemanticEditPolicy.LinkConstraints.canExistEdge_4002(container,
                 getNewSource(), target);
     }
 
@@ -87,7 +87,7 @@ public class EdgeReorientCommand extends EditElementCommand {
             return false;
         }
         Graph container = (Graph) getLink().eContainer();
-        return GraphsBaseItemSemanticEditPolicy.LinkConstraints.canExistEdge_4001(container, source,
+        return GraphsBaseItemSemanticEditPolicy.LinkConstraints.canExistEdge_4002(container, source,
                 getNewTarget());
     }
 

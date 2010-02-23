@@ -283,52 +283,52 @@ public class Messages extends NLS {
     /**
      * @generated
      */
-    public static String NavigatorGroupName_Node_2001_incominglinks;
+    public static String NavigatorGroupName_Node_2003_incominglinks;
 
     /**
      * @generated
      */
-    public static String NavigatorGroupName_Node_2001_outgoinglinks;
+    public static String NavigatorGroupName_Node_2003_outgoinglinks;
 
     /**
      * @generated
      */
-    public static String NavigatorGroupName_CompoundNode_2002_incominglinks;
+    public static String NavigatorGroupName_CompoundNode_2004_incominglinks;
 
     /**
      * @generated
      */
-    public static String NavigatorGroupName_CompoundNode_2002_outgoinglinks;
+    public static String NavigatorGroupName_CompoundNode_2004_outgoinglinks;
 
     /**
      * @generated
      */
-    public static String NavigatorGroupName_Node_3001_incominglinks;
+    public static String NavigatorGroupName_Node_3003_incominglinks;
 
     /**
      * @generated
      */
-    public static String NavigatorGroupName_Node_3001_outgoinglinks;
+    public static String NavigatorGroupName_Node_3003_outgoinglinks;
 
     /**
      * @generated
      */
-    public static String NavigatorGroupName_CompoundNode_3002_incominglinks;
+    public static String NavigatorGroupName_CompoundNode_3004_incominglinks;
 
     /**
      * @generated
      */
-    public static String NavigatorGroupName_CompoundNode_3002_outgoinglinks;
+    public static String NavigatorGroupName_CompoundNode_3004_outgoinglinks;
 
     /**
      * @generated
      */
-    public static String NavigatorGroupName_Edge_4001_target;
+    public static String NavigatorGroupName_Edge_4002_target;
 
     /**
      * @generated
      */
-    public static String NavigatorGroupName_Edge_4001_source;
+    public static String NavigatorGroupName_Edge_4002_source;
 
     /**
      * @generated

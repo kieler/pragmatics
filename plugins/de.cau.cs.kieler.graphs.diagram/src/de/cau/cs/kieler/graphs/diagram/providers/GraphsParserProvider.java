@@ -30,86 +30,86 @@ public class GraphsParserProvider extends AbstractProvider implements IParserPro
     /**
      * @generated
      */
-    private IParser nodeLabel_5001Parser;
+    private IParser nodeLabel_5005Parser;
 
     /**
      * @generated
      */
-    private IParser getNodeLabel_5001Parser() {
-        if (nodeLabel_5001Parser == null) {
+    private IParser getNodeLabel_5005Parser() {
+        if (nodeLabel_5005Parser == null) {
             EAttribute[] features = new EAttribute[] {GraphsPackage.eINSTANCE.getNode_Label()};
             MessageFormatParser parser = new MessageFormatParser(features);
-            nodeLabel_5001Parser = parser;
+            nodeLabel_5005Parser = parser;
         }
-        return nodeLabel_5001Parser;
+        return nodeLabel_5005Parser;
     }
 
     /**
      * @generated
      */
-    private IParser compoundNodeLabel_5003Parser;
+    private IParser compoundNodeLabel_5008Parser;
 
     /**
      * @generated
      */
-    private IParser getCompoundNodeLabel_5003Parser() {
-        if (compoundNodeLabel_5003Parser == null) {
+    private IParser getCompoundNodeLabel_5008Parser() {
+        if (compoundNodeLabel_5008Parser == null) {
             EAttribute[] features = new EAttribute[] {GraphsPackage.eINSTANCE.getNode_Label()};
             MessageFormatParser parser = new MessageFormatParser(features);
-            compoundNodeLabel_5003Parser = parser;
+            compoundNodeLabel_5008Parser = parser;
         }
-        return compoundNodeLabel_5003Parser;
+        return compoundNodeLabel_5008Parser;
     }
 
     /**
      * @generated
      */
-    private IParser nodeLabel_5002Parser;
+    private IParser nodeLabel_5006Parser;
 
     /**
      * @generated
      */
-    private IParser getNodeLabel_5002Parser() {
-        if (nodeLabel_5002Parser == null) {
+    private IParser getNodeLabel_5006Parser() {
+        if (nodeLabel_5006Parser == null) {
             EAttribute[] features = new EAttribute[] {GraphsPackage.eINSTANCE.getNode_Label()};
             MessageFormatParser parser = new MessageFormatParser(features);
-            nodeLabel_5002Parser = parser;
+            nodeLabel_5006Parser = parser;
         }
-        return nodeLabel_5002Parser;
+        return nodeLabel_5006Parser;
     }
 
     /**
      * @generated
      */
-    private IParser compoundNodeLabel_5004Parser;
+    private IParser compoundNodeLabel_5007Parser;
 
     /**
      * @generated
      */
-    private IParser getCompoundNodeLabel_5004Parser() {
-        if (compoundNodeLabel_5004Parser == null) {
+    private IParser getCompoundNodeLabel_5007Parser() {
+        if (compoundNodeLabel_5007Parser == null) {
             EAttribute[] features = new EAttribute[] {GraphsPackage.eINSTANCE.getNode_Label()};
             MessageFormatParser parser = new MessageFormatParser(features);
-            compoundNodeLabel_5004Parser = parser;
+            compoundNodeLabel_5007Parser = parser;
         }
-        return compoundNodeLabel_5004Parser;
+        return compoundNodeLabel_5007Parser;
     }
 
     /**
      * @generated
      */
-    private IParser edgeLabel_6001Parser;
+    private IParser edgeLabel_6002Parser;
 
     /**
      * @generated
      */
-    private IParser getEdgeLabel_6001Parser() {
-        if (edgeLabel_6001Parser == null) {
+    private IParser getEdgeLabel_6002Parser() {
+        if (edgeLabel_6002Parser == null) {
             EAttribute[] features = new EAttribute[] {GraphsPackage.eINSTANCE.getEdge_Label()};
             MessageFormatParser parser = new MessageFormatParser(features);
-            edgeLabel_6001Parser = parser;
+            edgeLabel_6002Parser = parser;
         }
-        return edgeLabel_6001Parser;
+        return edgeLabel_6002Parser;
     }
 
     /**
@@ -118,15 +118,15 @@ public class GraphsParserProvider extends AbstractProvider implements IParserPro
     protected IParser getParser(int visualID) {
         switch (visualID) {
         case NodeLabelEditPart.VISUAL_ID:
-            return getNodeLabel_5001Parser();
+            return getNodeLabel_5005Parser();
         case CompoundNodeLabelEditPart.VISUAL_ID:
-            return getCompoundNodeLabel_5003Parser();
+            return getCompoundNodeLabel_5008Parser();
         case NodeLabel2EditPart.VISUAL_ID:
-            return getNodeLabel_5002Parser();
+            return getNodeLabel_5006Parser();
         case CompoundNodeLabel2EditPart.VISUAL_ID:
-            return getCompoundNodeLabel_5004Parser();
+            return getCompoundNodeLabel_5007Parser();
         case EdgeLabelEditPart.VISUAL_ID:
-            return getEdgeLabel_6001Parser();
+            return getEdgeLabel_6002Parser();
         }
         return null;
     }

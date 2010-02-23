@@ -23,7 +23,7 @@ public class CompoundNodeNodeCompartment2EditPart extends ShapeCompartmentEditPa
     /**
      * @generated
      */
-    public static final int VISUAL_ID = 7002;
+    public static final int VISUAL_ID = 7004;
 
     /**
      * @generated

@@ -58,24 +58,27 @@ public class GraphsElementTypes extends ElementInitializers {
     /**
      * @generated
      */
-    public static final IElementType Node_2001 = getElementType("de.cau.cs.kieler.graphs.diagram.Node_2001"); //$NON-NLS-1$
-    /**
-     * @generated
-     */
-    public static final IElementType CompoundNode_2002 = getElementType("de.cau.cs.kieler.graphs.diagram.CompoundNode_2002"); //$NON-NLS-1$
-    /**
-     * @generated
-     */
-    public static final IElementType Node_3001 = getElementType("de.cau.cs.kieler.graphs.diagram.Node_3001"); //$NON-NLS-1$
-    /**
-     * @generated
-     */
-    public static final IElementType CompoundNode_3002 = getElementType("de.cau.cs.kieler.graphs.diagram.CompoundNode_3002"); //$NON-NLS-1$
+    public static final IElementType Node_2003 = getElementType("de.cau.cs.kieler.graphs.diagram.Node_2003"); //$NON-NLS-1$
 
     /**
      * @generated
      */
-    public static final IElementType Edge_4001 = getElementType("de.cau.cs.kieler.graphs.diagram.Edge_4001"); //$NON-NLS-1$
+    public static final IElementType CompoundNode_2004 = getElementType("de.cau.cs.kieler.graphs.diagram.CompoundNode_2004"); //$NON-NLS-1$
+
+    /**
+     * @generated
+     */
+    public static final IElementType Node_3003 = getElementType("de.cau.cs.kieler.graphs.diagram.Node_3003"); //$NON-NLS-1$
+
+    /**
+     * @generated
+     */
+    public static final IElementType CompoundNode_3004 = getElementType("de.cau.cs.kieler.graphs.diagram.CompoundNode_3004"); //$NON-NLS-1$
+
+    /**
+     * @generated
+     */
+    public static final IElementType Edge_4002 = getElementType("de.cau.cs.kieler.graphs.diagram.Edge_4002"); //$NON-NLS-1$
 
     /**
      * @generated
@@ -186,15 +189,15 @@ public class GraphsElementTypes extends ElementInitializers {
 
             elements.put(Graph_1000, GraphsPackage.eINSTANCE.getGraph());
 
-            elements.put(Node_2001, GraphsPackage.eINSTANCE.getNode());
+            elements.put(Node_2003, GraphsPackage.eINSTANCE.getNode());
 
-            elements.put(CompoundNode_2002, GraphsPackage.eINSTANCE.getCompoundNode());
+            elements.put(CompoundNode_2004, GraphsPackage.eINSTANCE.getCompoundNode());
 
-            elements.put(Node_3001, GraphsPackage.eINSTANCE.getNode());
+            elements.put(Node_3003, GraphsPackage.eINSTANCE.getNode());
 
-            elements.put(CompoundNode_3002, GraphsPackage.eINSTANCE.getCompoundNode());
+            elements.put(CompoundNode_3004, GraphsPackage.eINSTANCE.getCompoundNode());
 
-            elements.put(Edge_4001, GraphsPackage.eINSTANCE.getEdge());
+            elements.put(Edge_4002, GraphsPackage.eINSTANCE.getEdge());
         }
         return (ENamedElement) elements.get(type);
     }
@@ -213,11 +216,11 @@ public class GraphsElementTypes extends ElementInitializers {
         if (KNOWN_ELEMENT_TYPES == null) {
             KNOWN_ELEMENT_TYPES = new HashSet();
             KNOWN_ELEMENT_TYPES.add(Graph_1000);
-            KNOWN_ELEMENT_TYPES.add(Node_2001);
-            KNOWN_ELEMENT_TYPES.add(CompoundNode_2002);
-            KNOWN_ELEMENT_TYPES.add(Node_3001);
-            KNOWN_ELEMENT_TYPES.add(CompoundNode_3002);
-            KNOWN_ELEMENT_TYPES.add(Edge_4001);
+            KNOWN_ELEMENT_TYPES.add(Node_2003);
+            KNOWN_ELEMENT_TYPES.add(CompoundNode_2004);
+            KNOWN_ELEMENT_TYPES.add(Node_3003);
+            KNOWN_ELEMENT_TYPES.add(CompoundNode_3004);
+            KNOWN_ELEMENT_TYPES.add(Edge_4002);
         }
         return KNOWN_ELEMENT_TYPES.contains(elementType);
     }
@@ -230,15 +233,15 @@ public class GraphsElementTypes extends ElementInitializers {
         case GraphEditPart.VISUAL_ID:
             return Graph_1000;
         case NodeEditPart.VISUAL_ID:
-            return Node_2001;
+            return Node_2003;
         case CompoundNodeEditPart.VISUAL_ID:
-            return CompoundNode_2002;
+            return CompoundNode_2004;
         case Node2EditPart.VISUAL_ID:
-            return Node_3001;
+            return Node_3003;
         case CompoundNode2EditPart.VISUAL_ID:
-            return CompoundNode_3002;
+            return CompoundNode_3004;
         case EdgeEditPart.VISUAL_ID:
-            return Edge_4001;
+            return Edge_4002;
         }
         return null;
     }

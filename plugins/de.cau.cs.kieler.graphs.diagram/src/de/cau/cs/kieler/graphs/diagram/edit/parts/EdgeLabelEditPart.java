@@ -56,7 +56,7 @@ public class EdgeLabelEditPart extends LabelEditPart implements ITextAwareEditPa
     /**
      * @generated
      */
-    public static final int VISUAL_ID = 6001;
+    public static final int VISUAL_ID = 6002;
 
     /**
      * @generated
@@ -305,7 +305,7 @@ public class EdgeLabelEditPart extends LabelEditPart implements ITextAwareEditPa
         if (parser == null) {
             parser = GraphsParserProvider
                     .getParser(
-                            GraphsElementTypes.Edge_4001,
+                            GraphsElementTypes.Edge_4002,
                             getParserElement(),
                             GraphsVisualIDRegistry
                                     .getType(de.cau.cs.kieler.graphs.diagram.edit.parts.EdgeLabelEditPart.VISUAL_ID));

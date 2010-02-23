@@ -233,10 +233,10 @@ public class GraphsNavigatorContentProvider implements ICommonContentProvider {
         case NodeEditPart.VISUAL_ID: {
             Collection result = new ArrayList();
             GraphsNavigatorGroup incominglinks = new GraphsNavigatorGroup(
-                    Messages.NavigatorGroupName_Node_2001_incominglinks,
+                    Messages.NavigatorGroupName_Node_2003_incominglinks,
                     "icons/incomingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
             GraphsNavigatorGroup outgoinglinks = new GraphsNavigatorGroup(
-                    Messages.NavigatorGroupName_Node_2001_outgoinglinks,
+                    Messages.NavigatorGroupName_Node_2003_outgoinglinks,
                     "icons/outgoingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
             Collection connectedViews = getIncomingLinksByType(Collections.singleton(view),
                     GraphsVisualIDRegistry.getType(EdgeEditPart.VISUAL_ID));
@@ -256,10 +256,10 @@ public class GraphsNavigatorContentProvider implements ICommonContentProvider {
         case CompoundNodeEditPart.VISUAL_ID: {
             Collection result = new ArrayList();
             GraphsNavigatorGroup incominglinks = new GraphsNavigatorGroup(
-                    Messages.NavigatorGroupName_CompoundNode_2002_incominglinks,
+                    Messages.NavigatorGroupName_CompoundNode_2004_incominglinks,
                     "icons/incomingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
             GraphsNavigatorGroup outgoinglinks = new GraphsNavigatorGroup(
-                    Messages.NavigatorGroupName_CompoundNode_2002_outgoinglinks,
+                    Messages.NavigatorGroupName_CompoundNode_2004_outgoinglinks,
                     "icons/outgoingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
             Collection connectedViews = getChildrenByType(Collections.singleton(view),
                     GraphsVisualIDRegistry.getType(CompoundNodeNodeCompartmentEditPart.VISUAL_ID));
@@ -289,10 +289,10 @@ public class GraphsNavigatorContentProvider implements ICommonContentProvider {
         case Node2EditPart.VISUAL_ID: {
             Collection result = new ArrayList();
             GraphsNavigatorGroup incominglinks = new GraphsNavigatorGroup(
-                    Messages.NavigatorGroupName_Node_3001_incominglinks,
+                    Messages.NavigatorGroupName_Node_3003_incominglinks,
                     "icons/incomingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
             GraphsNavigatorGroup outgoinglinks = new GraphsNavigatorGroup(
-                    Messages.NavigatorGroupName_Node_3001_outgoinglinks,
+                    Messages.NavigatorGroupName_Node_3003_outgoinglinks,
                     "icons/outgoingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
             Collection connectedViews = getIncomingLinksByType(Collections.singleton(view),
                     GraphsVisualIDRegistry.getType(EdgeEditPart.VISUAL_ID));
@@ -312,10 +312,10 @@ public class GraphsNavigatorContentProvider implements ICommonContentProvider {
         case CompoundNode2EditPart.VISUAL_ID: {
             Collection result = new ArrayList();
             GraphsNavigatorGroup incominglinks = new GraphsNavigatorGroup(
-                    Messages.NavigatorGroupName_CompoundNode_3002_incominglinks,
+                    Messages.NavigatorGroupName_CompoundNode_3004_incominglinks,
                     "icons/incomingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
             GraphsNavigatorGroup outgoinglinks = new GraphsNavigatorGroup(
-                    Messages.NavigatorGroupName_CompoundNode_3002_outgoinglinks,
+                    Messages.NavigatorGroupName_CompoundNode_3004_outgoinglinks,
                     "icons/outgoingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
             Collection connectedViews = getChildrenByType(Collections.singleton(view),
                     GraphsVisualIDRegistry.getType(CompoundNodeNodeCompartment2EditPart.VISUAL_ID));
@@ -345,10 +345,10 @@ public class GraphsNavigatorContentProvider implements ICommonContentProvider {
         case EdgeEditPart.VISUAL_ID: {
             Collection result = new ArrayList();
             GraphsNavigatorGroup target = new GraphsNavigatorGroup(
-                    Messages.NavigatorGroupName_Edge_4001_target,
+                    Messages.NavigatorGroupName_Edge_4002_target,
                     "icons/linkTargetNavigatorGroup.gif", parentElement); //$NON-NLS-1$
             GraphsNavigatorGroup source = new GraphsNavigatorGroup(
-                    Messages.NavigatorGroupName_Edge_4001_source,
+                    Messages.NavigatorGroupName_Edge_4002_source,
                     "icons/linkSourceNavigatorGroup.gif", parentElement); //$NON-NLS-1$
             Collection connectedViews = getLinksTargetByType(Collections.singleton(view),
                     GraphsVisualIDRegistry.getType(NodeEditPart.VISUAL_ID));

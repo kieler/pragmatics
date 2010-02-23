@@ -15,7 +15,7 @@ public class EdgeItemSemanticEditPolicy extends GraphsBaseItemSemanticEditPolicy
      * @generated
      */
     public EdgeItemSemanticEditPolicy() {
-        super(GraphsElementTypes.Edge_4001);
+        super(GraphsElementTypes.Edge_4002);
     }
 
     /**

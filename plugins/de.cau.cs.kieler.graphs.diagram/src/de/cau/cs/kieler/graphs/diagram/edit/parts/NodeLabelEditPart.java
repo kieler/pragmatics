@@ -58,7 +58,7 @@ public class NodeLabelEditPart extends CompartmentEditPart implements ITextAware
     /**
      * @generated
      */
-    public static final int VISUAL_ID = 5001;
+    public static final int VISUAL_ID = 5005;
 
     /**
      * @generated
@@ -300,7 +300,7 @@ public class NodeLabelEditPart extends CompartmentEditPart implements ITextAware
         if (parser == null) {
             parser = GraphsParserProvider
                     .getParser(
-                            GraphsElementTypes.Node_2001,
+                            GraphsElementTypes.Node_2003,
                             getParserElement(),
                             GraphsVisualIDRegistry
                                     .getType(de.cau.cs.kieler.graphs.diagram.edit.parts.NodeLabelEditPart.VISUAL_ID));

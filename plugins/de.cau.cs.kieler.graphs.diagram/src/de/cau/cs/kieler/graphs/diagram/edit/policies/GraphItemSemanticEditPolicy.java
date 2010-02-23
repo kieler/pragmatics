@@ -27,10 +27,10 @@ public class GraphItemSemanticEditPolicy extends GraphsBaseItemSemanticEditPolic
      * @generated
      */
     protected Command getCreateCommand(CreateElementRequest req) {
-        if (GraphsElementTypes.Node_2001 == req.getElementType()) {
+        if (GraphsElementTypes.Node_2003 == req.getElementType()) {
             return getGEFWrapper(new NodeCreateCommand(req));
         }
-        if (GraphsElementTypes.CompoundNode_2002 == req.getElementType()) {
+        if (GraphsElementTypes.CompoundNode_2004 == req.getElementType()) {
             return getGEFWrapper(new CompoundNodeCreateCommand(req));
         }
         return super.getCreateCommand(req);

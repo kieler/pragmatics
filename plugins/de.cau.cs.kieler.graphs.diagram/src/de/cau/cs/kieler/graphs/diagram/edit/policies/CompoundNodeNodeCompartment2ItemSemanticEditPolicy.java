@@ -16,17 +16,17 @@ public class CompoundNodeNodeCompartment2ItemSemanticEditPolicy extends GraphsBa
      * @generated
      */
     public CompoundNodeNodeCompartment2ItemSemanticEditPolicy() {
-        super(GraphsElementTypes.CompoundNode_3002);
+        super(GraphsElementTypes.CompoundNode_3004);
     }
 
     /**
      * @generated
      */
     protected Command getCreateCommand(CreateElementRequest req) {
-        if (GraphsElementTypes.Node_3001 == req.getElementType()) {
+        if (GraphsElementTypes.Node_3003 == req.getElementType()) {
             return getGEFWrapper(new Node2CreateCommand(req));
         }
-        if (GraphsElementTypes.CompoundNode_3002 == req.getElementType()) {
+        if (GraphsElementTypes.CompoundNode_3004 == req.getElementType()) {
             return getGEFWrapper(new CompoundNode2CreateCommand(req));
         }
         return super.getCreateCommand(req);

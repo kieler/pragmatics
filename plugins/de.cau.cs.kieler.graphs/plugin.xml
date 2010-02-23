@@ -12,7 +12,7 @@
 
    <extension point="org.eclipse.emf.ecore.generated_package">
       <package
-            uri="http://cs.cau.de/Graphs"
+            uri="http://kieler.cs.cau.de/Graphs"
             class="de.cau.cs.kieler.graphs.GraphsPackage"
             genModel="model/graphs.genmodel"/>
    </extension>
