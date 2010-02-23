@@ -10,27 +10,26 @@ import de.cau.cs.kieler.graphs.diagram.providers.GraphsElementTypes;
 /**
  * @generated
  */
-public class CompoundNodeNodeCompartmentItemSemanticEditPolicy extends
-		GraphsBaseItemSemanticEditPolicy {
+public class CompoundNodeNodeCompartmentItemSemanticEditPolicy extends GraphsBaseItemSemanticEditPolicy {
 
-	/**
-	 * @generated
-	 */
-	public CompoundNodeNodeCompartmentItemSemanticEditPolicy() {
-		super(GraphsElementTypes.CompoundNode_2002);
-	}
+    /**
+     * @generated
+     */
+    public CompoundNodeNodeCompartmentItemSemanticEditPolicy() {
+        super(GraphsElementTypes.CompoundNode_2002);
+    }
 
-	/**
-	 * @generated
-	 */
-	protected Command getCreateCommand(CreateElementRequest req) {
-		if (GraphsElementTypes.Node_3001 == req.getElementType()) {
-			return getGEFWrapper(new Node2CreateCommand(req));
-		}
-		if (GraphsElementTypes.CompoundNode_3002 == req.getElementType()) {
-			return getGEFWrapper(new CompoundNode2CreateCommand(req));
-		}
-		return super.getCreateCommand(req);
-	}
+    /**
+     * @generated
+     */
+    protected Command getCreateCommand(CreateElementRequest req) {
+        if (GraphsElementTypes.Node_3001 == req.getElementType()) {
+            return getGEFWrapper(new Node2CreateCommand(req));
+        }
+        if (GraphsElementTypes.CompoundNode_3002 == req.getElementType()) {
+            return getGEFWrapper(new CompoundNode2CreateCommand(req));
+        }
+        return super.getCreateCommand(req);
+    }
 
 }

@@ -24,109 +24,109 @@ import org.eclipse.emf.ecore.plugin.EcorePlugin;
  */
 public class GraphsFactoryImpl extends EFactoryImpl implements GraphsFactory {
 	/**
-	 * Creates the default factory implementation.
-	 * <!-- begin-user-doc -->
+     * Creates the default factory implementation.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public static GraphsFactory init() {
-		try {
-			GraphsFactory theGraphsFactory = (GraphsFactory)EPackage.Registry.INSTANCE.getEFactory("http://cs.cau.de/Graphs"); 
-			if (theGraphsFactory != null) {
-				return theGraphsFactory;
-			}
-		}
-		catch (Exception exception) {
-			EcorePlugin.INSTANCE.log(exception);
-		}
-		return new GraphsFactoryImpl();
-	}
+        try {
+            GraphsFactory theGraphsFactory = (GraphsFactory)EPackage.Registry.INSTANCE.getEFactory("http://cs.cau.de/Graphs"); 
+            if (theGraphsFactory != null) {
+                return theGraphsFactory;
+            }
+        }
+        catch (Exception exception) {
+            EcorePlugin.INSTANCE.log(exception);
+        }
+        return new GraphsFactoryImpl();
+    }
 
 	/**
-	 * Creates an instance of the factory.
-	 * <!-- begin-user-doc -->
+     * Creates an instance of the factory.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public GraphsFactoryImpl() {
-		super();
-	}
+        super();
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	@Override
 	public EObject create(EClass eClass) {
-		switch (eClass.getClassifierID()) {
-			case GraphsPackage.GRAPH: return createGraph();
-			case GraphsPackage.NODE: return createNode();
-			case GraphsPackage.EDGE: return createEdge();
-			case GraphsPackage.COMPOUND_NODE: return createCompoundNode();
-			default:
-				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
-		}
-	}
+        switch (eClass.getClassifierID()) {
+            case GraphsPackage.GRAPH: return createGraph();
+            case GraphsPackage.NODE: return createNode();
+            case GraphsPackage.EDGE: return createEdge();
+            case GraphsPackage.COMPOUND_NODE: return createCompoundNode();
+            default:
+                throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
+        }
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public Graph createGraph() {
-		GraphImpl graph = new GraphImpl();
-		return graph;
-	}
+        GraphImpl graph = new GraphImpl();
+        return graph;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public Node createNode() {
-		NodeImpl node = new NodeImpl();
-		return node;
-	}
+        NodeImpl node = new NodeImpl();
+        return node;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public Edge createEdge() {
-		EdgeImpl edge = new EdgeImpl();
-		return edge;
-	}
+        EdgeImpl edge = new EdgeImpl();
+        return edge;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public CompoundNode createCompoundNode() {
-		CompoundNodeImpl compoundNode = new CompoundNodeImpl();
-		return compoundNode;
-	}
+        CompoundNodeImpl compoundNode = new CompoundNodeImpl();
+        return compoundNode;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public GraphsPackage getGraphsPackage() {
-		return (GraphsPackage)getEPackage();
-	}
+        return (GraphsPackage)getEPackage();
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @deprecated
-	 * @generated
-	 */
+     * @deprecated
+     * @generated
+     */
 	@Deprecated
 	public static GraphsPackage getPackage() {
-		return GraphsPackage.eINSTANCE;
-	}
+        return GraphsPackage.eINSTANCE;
+    }
 
 } //GraphsFactoryImpl

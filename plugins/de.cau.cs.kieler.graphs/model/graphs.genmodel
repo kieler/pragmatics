@@ -6,7 +6,7 @@
     modelPluginID="de.cau.cs.kieler.graphs" modelName="Graphs" importerID="org.eclipse.emf.importer.ecore"
     complianceLevel="5.0" copyrightFields="false" editPluginID="de.cau.cs.kieler.graphs">
   <foreignModel>graphs.ecore</foreignModel>
-  <genPackages prefix="Graphs" basePackage="de.cau.cs.rtprak" disposableProviderFactory="true"
+  <genPackages prefix="Graphs" basePackage="de.cau.cs.kieler" disposableProviderFactory="true"
       fileExtensions="graph" ecorePackage="graphs.ecore#/">
     <genClasses ecoreClass="graphs.ecore#//Graph">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference graphs.ecore#//Graph/nodes"/>

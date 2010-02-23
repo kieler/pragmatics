@@ -1,13 +1,16 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
-Bundle-SymbolicName: de.cau.cs.kieler.graphs.diagram;singleton:=true
+Bundle-SymbolicName: de.cau.cs.kieler.graphs.diagram; singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-ClassPath: .
 Bundle-Activator: de.cau.cs.kieler.graphs.diagram.part.GraphsDiagramEditorPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: de.cau.cs.kieler.graphs.diagram.edit.parts,
+ de.cau.cs.kieler.graphs.diagram.part,
+ de.cau.cs.kieler.graphs.diagram.providers,
+ de.cau.cs.kieler.graphs.diagram.edit.parts,
  de.cau.cs.kieler.graphs.diagram.part,
  de.cau.cs.kieler.graphs.diagram.providers
 Require-Bundle: org.eclipse.core.runtime,

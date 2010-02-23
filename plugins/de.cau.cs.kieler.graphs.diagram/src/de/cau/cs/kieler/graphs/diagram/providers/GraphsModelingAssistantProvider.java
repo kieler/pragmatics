@@ -36,231 +36,204 @@ import de.cau.cs.kieler.graphs.diagram.part.Messages;
  */
 public class GraphsModelingAssistantProvider extends ModelingAssistantProvider {
 
-	/**
-	 * @generated
-	 */
-	public List getTypesForPopupBar(IAdaptable host) {
-		IGraphicalEditPart editPart = (IGraphicalEditPart) host
-				.getAdapter(IGraphicalEditPart.class);
-		if (editPart instanceof CompoundNodeNodeCompartmentEditPart) {
-			ArrayList types = new ArrayList(2);
-			types.add(GraphsElementTypes.Node_3001);
-			types.add(GraphsElementTypes.CompoundNode_3002);
-			return types;
-		}
-		if (editPart instanceof CompoundNodeNodeCompartment2EditPart) {
-			ArrayList types = new ArrayList(2);
-			types.add(GraphsElementTypes.Node_3001);
-			types.add(GraphsElementTypes.CompoundNode_3002);
-			return types;
-		}
-		if (editPart instanceof GraphEditPart) {
-			ArrayList types = new ArrayList(2);
-			types.add(GraphsElementTypes.Node_2001);
-			types.add(GraphsElementTypes.CompoundNode_2002);
-			return types;
-		}
-		return Collections.EMPTY_LIST;
-	}
+    /**
+     * @generated
+     */
+    public List getTypesForPopupBar(IAdaptable host) {
+        IGraphicalEditPart editPart = (IGraphicalEditPart) host.getAdapter(IGraphicalEditPart.class);
+        if (editPart instanceof CompoundNodeNodeCompartmentEditPart) {
+            ArrayList types = new ArrayList(2);
+            types.add(GraphsElementTypes.Node_3001);
+            types.add(GraphsElementTypes.CompoundNode_3002);
+            return types;
+        }
+        if (editPart instanceof CompoundNodeNodeCompartment2EditPart) {
+            ArrayList types = new ArrayList(2);
+            types.add(GraphsElementTypes.Node_3001);
+            types.add(GraphsElementTypes.CompoundNode_3002);
+            return types;
+        }
+        if (editPart instanceof GraphEditPart) {
+            ArrayList types = new ArrayList(2);
+            types.add(GraphsElementTypes.Node_2001);
+            types.add(GraphsElementTypes.CompoundNode_2002);
+            return types;
+        }
+        return Collections.EMPTY_LIST;
+    }
 
-	/**
-	 * @generated
-	 */
-	public List getRelTypesOnSource(IAdaptable source) {
-		IGraphicalEditPart sourceEditPart = (IGraphicalEditPart) source
-				.getAdapter(IGraphicalEditPart.class);
-		if (sourceEditPart instanceof NodeEditPart) {
-			return ((NodeEditPart) sourceEditPart).getMARelTypesOnSource();
-		}
-		if (sourceEditPart instanceof CompoundNodeEditPart) {
-			return ((CompoundNodeEditPart) sourceEditPart)
-					.getMARelTypesOnSource();
-		}
-		if (sourceEditPart instanceof Node2EditPart) {
-			return ((Node2EditPart) sourceEditPart).getMARelTypesOnSource();
-		}
-		if (sourceEditPart instanceof CompoundNode2EditPart) {
-			return ((CompoundNode2EditPart) sourceEditPart)
-					.getMARelTypesOnSource();
-		}
-		return Collections.EMPTY_LIST;
-	}
+    /**
+     * @generated
+     */
+    public List getRelTypesOnSource(IAdaptable source) {
+        IGraphicalEditPart sourceEditPart = (IGraphicalEditPart) source
+                .getAdapter(IGraphicalEditPart.class);
+        if (sourceEditPart instanceof NodeEditPart) {
+            return ((NodeEditPart) sourceEditPart).getMARelTypesOnSource();
+        }
+        if (sourceEditPart instanceof CompoundNodeEditPart) {
+            return ((CompoundNodeEditPart) sourceEditPart).getMARelTypesOnSource();
+        }
+        if (sourceEditPart instanceof Node2EditPart) {
+            return ((Node2EditPart) sourceEditPart).getMARelTypesOnSource();
+        }
+        if (sourceEditPart instanceof CompoundNode2EditPart) {
+            return ((CompoundNode2EditPart) sourceEditPart).getMARelTypesOnSource();
+        }
+        return Collections.EMPTY_LIST;
+    }
 
-	/**
-	 * @generated
-	 */
-	public List getRelTypesOnTarget(IAdaptable target) {
-		IGraphicalEditPart targetEditPart = (IGraphicalEditPart) target
-				.getAdapter(IGraphicalEditPart.class);
-		if (targetEditPart instanceof NodeEditPart) {
-			return ((NodeEditPart) targetEditPart).getMARelTypesOnTarget();
-		}
-		if (targetEditPart instanceof CompoundNodeEditPart) {
-			return ((CompoundNodeEditPart) targetEditPart)
-					.getMARelTypesOnTarget();
-		}
-		if (targetEditPart instanceof Node2EditPart) {
-			return ((Node2EditPart) targetEditPart).getMARelTypesOnTarget();
-		}
-		if (targetEditPart instanceof CompoundNode2EditPart) {
-			return ((CompoundNode2EditPart) targetEditPart)
-					.getMARelTypesOnTarget();
-		}
-		return Collections.EMPTY_LIST;
-	}
+    /**
+     * @generated
+     */
+    public List getRelTypesOnTarget(IAdaptable target) {
+        IGraphicalEditPart targetEditPart = (IGraphicalEditPart) target
+                .getAdapter(IGraphicalEditPart.class);
+        if (targetEditPart instanceof NodeEditPart) {
+            return ((NodeEditPart) targetEditPart).getMARelTypesOnTarget();
+        }
+        if (targetEditPart instanceof CompoundNodeEditPart) {
+            return ((CompoundNodeEditPart) targetEditPart).getMARelTypesOnTarget();
+        }
+        if (targetEditPart instanceof Node2EditPart) {
+            return ((Node2EditPart) targetEditPart).getMARelTypesOnTarget();
+        }
+        if (targetEditPart instanceof CompoundNode2EditPart) {
+            return ((CompoundNode2EditPart) targetEditPart).getMARelTypesOnTarget();
+        }
+        return Collections.EMPTY_LIST;
+    }
 
-	/**
-	 * @generated
-	 */
-	public List getRelTypesOnSourceAndTarget(IAdaptable source,
-			IAdaptable target) {
-		IGraphicalEditPart sourceEditPart = (IGraphicalEditPart) source
-				.getAdapter(IGraphicalEditPart.class);
-		IGraphicalEditPart targetEditPart = (IGraphicalEditPart) target
-				.getAdapter(IGraphicalEditPart.class);
-		if (sourceEditPart instanceof NodeEditPart) {
-			return ((NodeEditPart) sourceEditPart)
-					.getMARelTypesOnSourceAndTarget(targetEditPart);
-		}
-		if (sourceEditPart instanceof CompoundNodeEditPart) {
-			return ((CompoundNodeEditPart) sourceEditPart)
-					.getMARelTypesOnSourceAndTarget(targetEditPart);
-		}
-		if (sourceEditPart instanceof Node2EditPart) {
-			return ((Node2EditPart) sourceEditPart)
-					.getMARelTypesOnSourceAndTarget(targetEditPart);
-		}
-		if (sourceEditPart instanceof CompoundNode2EditPart) {
-			return ((CompoundNode2EditPart) sourceEditPart)
-					.getMARelTypesOnSourceAndTarget(targetEditPart);
-		}
-		return Collections.EMPTY_LIST;
-	}
+    /**
+     * @generated
+     */
+    public List getRelTypesOnSourceAndTarget(IAdaptable source, IAdaptable target) {
+        IGraphicalEditPart sourceEditPart = (IGraphicalEditPart) source
+                .getAdapter(IGraphicalEditPart.class);
+        IGraphicalEditPart targetEditPart = (IGraphicalEditPart) target
+                .getAdapter(IGraphicalEditPart.class);
+        if (sourceEditPart instanceof NodeEditPart) {
+            return ((NodeEditPart) sourceEditPart).getMARelTypesOnSourceAndTarget(targetEditPart);
+        }
+        if (sourceEditPart instanceof CompoundNodeEditPart) {
+            return ((CompoundNodeEditPart) sourceEditPart)
+                    .getMARelTypesOnSourceAndTarget(targetEditPart);
+        }
+        if (sourceEditPart instanceof Node2EditPart) {
+            return ((Node2EditPart) sourceEditPart).getMARelTypesOnSourceAndTarget(targetEditPart);
+        }
+        if (sourceEditPart instanceof CompoundNode2EditPart) {
+            return ((CompoundNode2EditPart) sourceEditPart)
+                    .getMARelTypesOnSourceAndTarget(targetEditPart);
+        }
+        return Collections.EMPTY_LIST;
+    }
 
-	/**
-	 * @generated
-	 */
-	public List getTypesForSource(IAdaptable target,
-			IElementType relationshipType) {
-		IGraphicalEditPart targetEditPart = (IGraphicalEditPart) target
-				.getAdapter(IGraphicalEditPart.class);
-		if (targetEditPart instanceof NodeEditPart) {
-			return ((NodeEditPart) targetEditPart)
-					.getMATypesForSource(relationshipType);
-		}
-		if (targetEditPart instanceof CompoundNodeEditPart) {
-			return ((CompoundNodeEditPart) targetEditPart)
-					.getMATypesForSource(relationshipType);
-		}
-		if (targetEditPart instanceof Node2EditPart) {
-			return ((Node2EditPart) targetEditPart)
-					.getMATypesForSource(relationshipType);
-		}
-		if (targetEditPart instanceof CompoundNode2EditPart) {
-			return ((CompoundNode2EditPart) targetEditPart)
-					.getMATypesForSource(relationshipType);
-		}
-		return Collections.EMPTY_LIST;
-	}
+    /**
+     * @generated
+     */
+    public List getTypesForSource(IAdaptable target, IElementType relationshipType) {
+        IGraphicalEditPart targetEditPart = (IGraphicalEditPart) target
+                .getAdapter(IGraphicalEditPart.class);
+        if (targetEditPart instanceof NodeEditPart) {
+            return ((NodeEditPart) targetEditPart).getMATypesForSource(relationshipType);
+        }
+        if (targetEditPart instanceof CompoundNodeEditPart) {
+            return ((CompoundNodeEditPart) targetEditPart).getMATypesForSource(relationshipType);
+        }
+        if (targetEditPart instanceof Node2EditPart) {
+            return ((Node2EditPart) targetEditPart).getMATypesForSource(relationshipType);
+        }
+        if (targetEditPart instanceof CompoundNode2EditPart) {
+            return ((CompoundNode2EditPart) targetEditPart).getMATypesForSource(relationshipType);
+        }
+        return Collections.EMPTY_LIST;
+    }
 
-	/**
-	 * @generated
-	 */
-	public List getTypesForTarget(IAdaptable source,
-			IElementType relationshipType) {
-		IGraphicalEditPart sourceEditPart = (IGraphicalEditPart) source
-				.getAdapter(IGraphicalEditPart.class);
-		if (sourceEditPart instanceof NodeEditPart) {
-			return ((NodeEditPart) sourceEditPart)
-					.getMATypesForTarget(relationshipType);
-		}
-		if (sourceEditPart instanceof CompoundNodeEditPart) {
-			return ((CompoundNodeEditPart) sourceEditPart)
-					.getMATypesForTarget(relationshipType);
-		}
-		if (sourceEditPart instanceof Node2EditPart) {
-			return ((Node2EditPart) sourceEditPart)
-					.getMATypesForTarget(relationshipType);
-		}
-		if (sourceEditPart instanceof CompoundNode2EditPart) {
-			return ((CompoundNode2EditPart) sourceEditPart)
-					.getMATypesForTarget(relationshipType);
-		}
-		return Collections.EMPTY_LIST;
-	}
+    /**
+     * @generated
+     */
+    public List getTypesForTarget(IAdaptable source, IElementType relationshipType) {
+        IGraphicalEditPart sourceEditPart = (IGraphicalEditPart) source
+                .getAdapter(IGraphicalEditPart.class);
+        if (sourceEditPart instanceof NodeEditPart) {
+            return ((NodeEditPart) sourceEditPart).getMATypesForTarget(relationshipType);
+        }
+        if (sourceEditPart instanceof CompoundNodeEditPart) {
+            return ((CompoundNodeEditPart) sourceEditPart).getMATypesForTarget(relationshipType);
+        }
+        if (sourceEditPart instanceof Node2EditPart) {
+            return ((Node2EditPart) sourceEditPart).getMATypesForTarget(relationshipType);
+        }
+        if (sourceEditPart instanceof CompoundNode2EditPart) {
+            return ((CompoundNode2EditPart) sourceEditPart).getMATypesForTarget(relationshipType);
+        }
+        return Collections.EMPTY_LIST;
+    }
 
-	/**
-	 * @generated
-	 */
-	public EObject selectExistingElementForSource(IAdaptable target,
-			IElementType relationshipType) {
-		return selectExistingElement(target, getTypesForSource(target,
-				relationshipType));
-	}
+    /**
+     * @generated
+     */
+    public EObject selectExistingElementForSource(IAdaptable target, IElementType relationshipType) {
+        return selectExistingElement(target, getTypesForSource(target, relationshipType));
+    }
 
-	/**
-	 * @generated
-	 */
-	public EObject selectExistingElementForTarget(IAdaptable source,
-			IElementType relationshipType) {
-		return selectExistingElement(source, getTypesForTarget(source,
-				relationshipType));
-	}
+    /**
+     * @generated
+     */
+    public EObject selectExistingElementForTarget(IAdaptable source, IElementType relationshipType) {
+        return selectExistingElement(source, getTypesForTarget(source, relationshipType));
+    }
 
-	/**
-	 * @generated
-	 */
-	protected EObject selectExistingElement(IAdaptable host, Collection types) {
-		if (types.isEmpty()) {
-			return null;
-		}
-		IGraphicalEditPart editPart = (IGraphicalEditPart) host
-				.getAdapter(IGraphicalEditPart.class);
-		if (editPart == null) {
-			return null;
-		}
-		Diagram diagram = (Diagram) editPart.getRoot().getContents().getModel();
-		Collection elements = new HashSet();
-		for (Iterator it = diagram.getElement().eAllContents(); it.hasNext();) {
-			EObject element = (EObject) it.next();
-			if (isApplicableElement(element, types)) {
-				elements.add(element);
-			}
-		}
-		if (elements.isEmpty()) {
-			return null;
-		}
-		return selectElement((EObject[]) elements.toArray(new EObject[elements
-				.size()]));
-	}
+    /**
+     * @generated
+     */
+    protected EObject selectExistingElement(IAdaptable host, Collection types) {
+        if (types.isEmpty()) {
+            return null;
+        }
+        IGraphicalEditPart editPart = (IGraphicalEditPart) host.getAdapter(IGraphicalEditPart.class);
+        if (editPart == null) {
+            return null;
+        }
+        Diagram diagram = (Diagram) editPart.getRoot().getContents().getModel();
+        Collection elements = new HashSet();
+        for (Iterator it = diagram.getElement().eAllContents(); it.hasNext();) {
+            EObject element = (EObject) it.next();
+            if (isApplicableElement(element, types)) {
+                elements.add(element);
+            }
+        }
+        if (elements.isEmpty()) {
+            return null;
+        }
+        return selectElement((EObject[]) elements.toArray(new EObject[elements.size()]));
+    }
 
-	/**
-	 * @generated
-	 */
-	protected boolean isApplicableElement(EObject element, Collection types) {
-		IElementType type = ElementTypeRegistry.getInstance().getElementType(
-				element);
-		return types.contains(type);
-	}
+    /**
+     * @generated
+     */
+    protected boolean isApplicableElement(EObject element, Collection types) {
+        IElementType type = ElementTypeRegistry.getInstance().getElementType(element);
+        return types.contains(type);
+    }
 
-	/**
-	 * @generated
-	 */
-	protected EObject selectElement(EObject[] elements) {
-		Shell shell = Display.getCurrent().getActiveShell();
-		ILabelProvider labelProvider = new AdapterFactoryLabelProvider(
-				GraphsDiagramEditorPlugin.getInstance()
-						.getItemProvidersAdapterFactory());
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(
-				shell, labelProvider);
-		dialog.setMessage(Messages.GraphsModelingAssistantProviderMessage);
-		dialog.setTitle(Messages.GraphsModelingAssistantProviderTitle);
-		dialog.setMultipleSelection(false);
-		dialog.setElements(elements);
-		EObject selected = null;
-		if (dialog.open() == Window.OK) {
-			selected = (EObject) dialog.getFirstResult();
-		}
-		return selected;
-	}
+    /**
+     * @generated
+     */
+    protected EObject selectElement(EObject[] elements) {
+        Shell shell = Display.getCurrent().getActiveShell();
+        ILabelProvider labelProvider = new AdapterFactoryLabelProvider(GraphsDiagramEditorPlugin
+                .getInstance().getItemProvidersAdapterFactory());
+        ElementListSelectionDialog dialog = new ElementListSelectionDialog(shell, labelProvider);
+        dialog.setMessage(Messages.GraphsModelingAssistantProviderMessage);
+        dialog.setTitle(Messages.GraphsModelingAssistantProviderTitle);
+        dialog.setMultipleSelection(false);
+        dialog.setElements(elements);
+        EObject selected = null;
+        if (dialog.open() == Window.OK) {
+            selected = (EObject) dialog.getFirstResult();
+        }
+        return selected;
+    }
 }

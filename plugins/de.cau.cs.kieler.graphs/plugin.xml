@@ -29,7 +29,7 @@
             class="de.cau.cs.kieler.graphs.wizards.CreateRandomModelWizard"
             hasPages="true"
             icon="icons/full/obj16/Graph.gif"
-            id="de.cau.cs.rtprak.graphs.wizards.randomGraph"
+            id="de.cau.cs.kieler.graphs.wizards.randomGraph"
             name="Create Random Graph"
             project="false">
       </wizard>

@@ -1,16 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
+<!--
+KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+
+http://www.informatik.uni-kiel.de/rtsys/kieler/
+
+Copyright 2010 by
++ Christian-Albrechts-University of Kiel
+  + Department of Computer Science
+    + Real-Time and Embedded Systems Group
+
+This code is provided under the terms of the Eclipse Public License (EPL).
+See the file epl-v10.html for the license text.
+-->
 <plugin>
 
    <extension point="org.eclipse.team.core.fileTypes" id="repo-ftype">
       <?gmfgen generated="true"?>
-      <fileTypes type="text" extension="graphs_diagram"/>
+      <fileTypes type="text" extension="graph_diagram"/>
    </extension>
 
    <extension point="org.eclipse.emf.ecore.extension_parser" id="resource-factory">
       <?gmfgen generated="true"?>
       <parser
-         type="graphs_diagram"
+         type="graph_diagram"
          class="org.eclipse.gmf.runtime.emf.core.resources.GMFResourceFactory">
       </parser>
    </extension>
@@ -21,7 +34,7 @@
          id="de.cau.cs.kieler.graphs.diagram.part.GraphsDiagramEditorID"
          name="%editorName"
          icon="icons/obj16/GraphsDiagramFile.gif"
-         extensions="graphs_diagram"
+         extensions="graph_diagram"
          default="true"
          class="de.cau.cs.kieler.graphs.diagram.part.GraphsDiagramEditor"
          matchingStrategy="de.cau.cs.kieler.graphs.diagram.part.GraphsMatchingStrategy"
@@ -44,6 +57,7 @@
   	  <wizard
   	     name="%newWizardName"
   	     icon="icons/obj16/GraphsDiagramFile.gif"
+  	     category="org.eclipse.ui.Examples"
   	     class="de.cau.cs.kieler.graphs.diagram.part.GraphsCreationWizard"
   	     id="de.cau.cs.kieler.graphs.diagram.part.GraphsCreationWizardID">
   	  	 <description>%newWizardDesc</description>  
@@ -54,7 +68,7 @@
       <?gmfgen generated="true"?>
       <objectContribution
             id="de.cau.cs.kieler.graphs.diagram.InitDiagram"
-            nameFilter="*.graphs"
+            nameFilter="*.graph"
             objectClass="org.eclipse.core.resources.IFile">
          <action
                label="%initDiagramActionLabel"
@@ -115,30 +129,30 @@
       <?gmfgen generated="true"?>
       <page
             id="de.cau.cs.kieler.graphs.diagram.general"
-            name="%prefpage.de.cau.cs.rtprak.graphs.diagram.general"
+            name="%prefpage.de.cau.cs.kieler.graphs.diagram.general"
             class="de.cau.cs.kieler.graphs.diagram.preferences.DiagramGeneralPreferencePage">
       </page>
       <page
             id="de.cau.cs.kieler.graphs.diagram.appearance"
-            name="%prefpage.de.cau.cs.rtprak.graphs.diagram.appearance"
+            name="%prefpage.de.cau.cs.kieler.graphs.diagram.appearance"
             category="de.cau.cs.kieler.graphs.diagram.general"
             class="de.cau.cs.kieler.graphs.diagram.preferences.DiagramAppearancePreferencePage">
       </page>
       <page
             id="de.cau.cs.kieler.graphs.diagram.connections"
-            name="%prefpage.de.cau.cs.rtprak.graphs.diagram.connections"
+            name="%prefpage.de.cau.cs.kieler.graphs.diagram.connections"
             category="de.cau.cs.kieler.graphs.diagram.general"
             class="de.cau.cs.kieler.graphs.diagram.preferences.DiagramConnectionsPreferencePage">
       </page>
       <page
             id="de.cau.cs.kieler.graphs.diagram.printing"
-            name="%prefpage.de.cau.cs.rtprak.graphs.diagram.printing"
+            name="%prefpage.de.cau.cs.kieler.graphs.diagram.printing"
             category="de.cau.cs.kieler.graphs.diagram.general"
             class="de.cau.cs.kieler.graphs.diagram.preferences.DiagramPrintingPreferencePage">
       </page>
       <page
             id="de.cau.cs.kieler.graphs.diagram.rulersAndGrid"
-            name="%prefpage.de.cau.cs.rtprak.graphs.diagram.rulersAndGrid"
+            name="%prefpage.de.cau.cs.kieler.graphs.diagram.rulersAndGrid"
             category="de.cau.cs.kieler.graphs.diagram.general"
             class="de.cau.cs.kieler.graphs.diagram.preferences.DiagramRulersAndGridPreferencePage">
       </page>
@@ -387,7 +401,7 @@
             <or>
 	           <and>
     	          <instanceof value="org.eclipse.core.resources.IFile"/>
-        	      <test property="org.eclipse.core.resources.extension" value="graphs_diagram"/>
+        	      <test property="org.eclipse.core.resources.extension" value="graph_diagram"/>
                </and>
                <instanceof value="de.cau.cs.kieler.graphs.diagram.navigator.GraphsAbstractNavigatorItem"/>
             </or>
@@ -404,7 +418,7 @@
                <or>
 	              <and>
     	             <instanceof value="org.eclipse.core.resources.IFile"/>
-        	         <test property="org.eclipse.core.resources.extension" value="graphs_diagram"/>
+        	         <test property="org.eclipse.core.resources.extension" value="graph_diagram"/>
                   </and>
                   <instanceof value="de.cau.cs.kieler.graphs.diagram.navigator.GraphsAbstractNavigatorItem"/>
                </or>
@@ -423,7 +437,7 @@
             <or>
 	           <and>
     	          <instanceof value="org.eclipse.core.resources.IFile"/>
-        	      <test property="org.eclipse.core.resources.extension" value="graphs"/>
+        	      <test property="org.eclipse.core.resources.extension" value="graph"/>
                </and>
                <instanceof value="de.cau.cs.kieler.graphs.diagram.navigator.GraphsDomainNavigatorItem"/>
             </or>

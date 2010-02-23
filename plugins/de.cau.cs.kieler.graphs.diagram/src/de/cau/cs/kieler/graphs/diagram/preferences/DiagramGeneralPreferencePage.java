@@ -9,11 +9,10 @@ import de.cau.cs.kieler.graphs.diagram.part.GraphsDiagramEditorPlugin;
  */
 public class DiagramGeneralPreferencePage extends DiagramsPreferencePage {
 
-	/**
-	 * @generated
-	 */
-	public DiagramGeneralPreferencePage() {
-		setPreferenceStore(GraphsDiagramEditorPlugin.getInstance()
-				.getPreferenceStore());
-	}
+    /**
+     * @generated
+     */
+    public DiagramGeneralPreferencePage() {
+        setPreferenceStore(GraphsDiagramEditorPlugin.getInstance().getPreferenceStore());
+    }
 }

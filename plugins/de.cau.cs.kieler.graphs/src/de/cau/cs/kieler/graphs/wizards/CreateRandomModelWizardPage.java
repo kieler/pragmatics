@@ -33,6 +33,9 @@ import de.cau.cs.kieler.graphs.GraphsPlugin;
  */
 public class CreateRandomModelWizardPage extends WizardPage {
 
+    /** extension for graph files. */
+    public static final String FILE_EXT = "graph";
+    
     /** preference name for number of nodes. */
     public static final String PREF_NODES = "nodes";
     /** preference name for minimal number of connections. */
@@ -221,7 +224,7 @@ public class CreateRandomModelWizardPage extends WizardPage {
                 containerText.setText(container.getFullPath().toString());
             }
         }
-        fileText.setText("random.graphs");
+        fileText.setText("random." + FILE_EXT);
     }
 
     /**
@@ -269,8 +272,8 @@ public class CreateRandomModelWizardPage extends WizardPage {
         int dotLoc = fileName.lastIndexOf('.');
         if (dotLoc != -1) {
             String ext = fileName.substring(dotLoc + 1);
-            if (!ext.equalsIgnoreCase("graphs")) {
-                updateStatus("File extension must be \"graphs\"");
+            if (!ext.equalsIgnoreCase(FILE_EXT)) {
+                updateStatus("File extension must be \"" + FILE_EXT + "\"");
                 return;
             }
         }

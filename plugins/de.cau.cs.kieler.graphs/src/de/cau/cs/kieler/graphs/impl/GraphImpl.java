@@ -41,153 +41,153 @@ import org.eclipse.emf.ecore.util.InternalEList;
  */
 public class GraphImpl extends EObjectImpl implements Graph {
 	/**
-	 * The cached value of the '{@link #getNodes() <em>Nodes</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
+     * The cached value of the '{@link #getNodes() <em>Nodes</em>}' containment reference list.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getNodes()
-	 * @generated
-	 * @ordered
-	 */
+     * @see #getNodes()
+     * @generated
+     * @ordered
+     */
 	protected EList<Node> nodes;
 
 	/**
-	 * The cached value of the '{@link #getEdges() <em>Edges</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
+     * The cached value of the '{@link #getEdges() <em>Edges</em>}' containment reference list.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getEdges()
-	 * @generated
-	 * @ordered
-	 */
+     * @see #getEdges()
+     * @generated
+     * @ordered
+     */
 	protected EList<Edge> edges;
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	protected GraphImpl() {
-		super();
-	}
+        super();
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	@Override
 	protected EClass eStaticClass() {
-		return GraphsPackage.Literals.GRAPH;
-	}
+        return GraphsPackage.Literals.GRAPH;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public EList<Node> getNodes() {
-		if (nodes == null) {
-			nodes = new EObjectContainmentEList<Node>(Node.class, this, GraphsPackage.GRAPH__NODES);
-		}
-		return nodes;
-	}
+        if (nodes == null) {
+            nodes = new EObjectContainmentEList<Node>(Node.class, this, GraphsPackage.GRAPH__NODES);
+        }
+        return nodes;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public EList<Edge> getEdges() {
-		if (edges == null) {
-			edges = new EObjectContainmentEList<Edge>(Edge.class, this, GraphsPackage.GRAPH__EDGES);
-		}
-		return edges;
-	}
+        if (edges == null) {
+            edges = new EObjectContainmentEList<Edge>(Edge.class, this, GraphsPackage.GRAPH__EDGES);
+        }
+        return edges;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-			case GraphsPackage.GRAPH__NODES:
-				return ((InternalEList<?>)getNodes()).basicRemove(otherEnd, msgs);
-			case GraphsPackage.GRAPH__EDGES:
-				return ((InternalEList<?>)getEdges()).basicRemove(otherEnd, msgs);
-		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
-	}
+        switch (featureID) {
+            case GraphsPackage.GRAPH__NODES:
+                return ((InternalEList<?>)getNodes()).basicRemove(otherEnd, msgs);
+            case GraphsPackage.GRAPH__EDGES:
+                return ((InternalEList<?>)getEdges()).basicRemove(otherEnd, msgs);
+        }
+        return super.eInverseRemove(otherEnd, featureID, msgs);
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
-		switch (featureID) {
-			case GraphsPackage.GRAPH__NODES:
-				return getNodes();
-			case GraphsPackage.GRAPH__EDGES:
-				return getEdges();
-		}
-		return super.eGet(featureID, resolve, coreType);
-	}
+        switch (featureID) {
+            case GraphsPackage.GRAPH__NODES:
+                return getNodes();
+            case GraphsPackage.GRAPH__EDGES:
+                return getEdges();
+        }
+        return super.eGet(featureID, resolve, coreType);
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
-		switch (featureID) {
-			case GraphsPackage.GRAPH__NODES:
-				getNodes().clear();
-				getNodes().addAll((Collection<? extends Node>)newValue);
-				return;
-			case GraphsPackage.GRAPH__EDGES:
-				getEdges().clear();
-				getEdges().addAll((Collection<? extends Edge>)newValue);
-				return;
-		}
-		super.eSet(featureID, newValue);
-	}
+        switch (featureID) {
+            case GraphsPackage.GRAPH__NODES:
+                getNodes().clear();
+                getNodes().addAll((Collection<? extends Node>)newValue);
+                return;
+            case GraphsPackage.GRAPH__EDGES:
+                getEdges().clear();
+                getEdges().addAll((Collection<? extends Edge>)newValue);
+                return;
+        }
+        super.eSet(featureID, newValue);
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	@Override
 	public void eUnset(int featureID) {
-		switch (featureID) {
-			case GraphsPackage.GRAPH__NODES:
-				getNodes().clear();
-				return;
-			case GraphsPackage.GRAPH__EDGES:
-				getEdges().clear();
-				return;
-		}
-		super.eUnset(featureID);
-	}
+        switch (featureID) {
+            case GraphsPackage.GRAPH__NODES:
+                getNodes().clear();
+                return;
+            case GraphsPackage.GRAPH__EDGES:
+                getEdges().clear();
+                return;
+        }
+        super.eUnset(featureID);
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	@Override
 	public boolean eIsSet(int featureID) {
-		switch (featureID) {
-			case GraphsPackage.GRAPH__NODES:
-				return nodes != null && !nodes.isEmpty();
-			case GraphsPackage.GRAPH__EDGES:
-				return edges != null && !edges.isEmpty();
-		}
-		return super.eIsSet(featureID);
-	}
+        switch (featureID) {
+            case GraphsPackage.GRAPH__NODES:
+                return nodes != null && !nodes.isEmpty();
+            case GraphsPackage.GRAPH__EDGES:
+                return edges != null && !edges.isEmpty();
+        }
+        return super.eIsSet(featureID);
+    }
 
 } //GraphImpl

@@ -18,56 +18,56 @@ import org.eclipse.emf.ecore.EFactory;
  */
 public interface GraphsFactory extends EFactory {
 	/**
-	 * The singleton instance of the factory.
-	 * <!-- begin-user-doc -->
+     * The singleton instance of the factory.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	GraphsFactory eINSTANCE = de.cau.cs.kieler.graphs.impl.GraphsFactoryImpl.init();
 
 	/**
-	 * Returns a new object of class '<em>Graph</em>'.
-	 * <!-- begin-user-doc -->
+     * Returns a new object of class '<em>Graph</em>'.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Graph</em>'.
-	 * @generated
-	 */
+     * @return a new object of class '<em>Graph</em>'.
+     * @generated
+     */
 	Graph createGraph();
 
 	/**
-	 * Returns a new object of class '<em>Node</em>'.
-	 * <!-- begin-user-doc -->
+     * Returns a new object of class '<em>Node</em>'.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Node</em>'.
-	 * @generated
-	 */
+     * @return a new object of class '<em>Node</em>'.
+     * @generated
+     */
 	Node createNode();
 
 	/**
-	 * Returns a new object of class '<em>Edge</em>'.
-	 * <!-- begin-user-doc -->
+     * Returns a new object of class '<em>Edge</em>'.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Edge</em>'.
-	 * @generated
-	 */
+     * @return a new object of class '<em>Edge</em>'.
+     * @generated
+     */
 	Edge createEdge();
 
 	/**
-	 * Returns a new object of class '<em>Compound Node</em>'.
-	 * <!-- begin-user-doc -->
+     * Returns a new object of class '<em>Compound Node</em>'.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Compound Node</em>'.
-	 * @generated
-	 */
+     * @return a new object of class '<em>Compound Node</em>'.
+     * @generated
+     */
 	CompoundNode createCompoundNode();
 
 	/**
-	 * Returns the package supported by this factory.
-	 * <!-- begin-user-doc -->
+     * Returns the package supported by this factory.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the package supported by this factory.
-	 * @generated
-	 */
+     * @return the package supported by this factory.
+     * @generated
+     */
 	GraphsPackage getGraphsPackage();
 
 } //GraphsFactory

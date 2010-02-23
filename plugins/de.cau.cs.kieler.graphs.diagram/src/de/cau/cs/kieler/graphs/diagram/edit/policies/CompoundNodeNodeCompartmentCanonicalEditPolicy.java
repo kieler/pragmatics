@@ -20,60 +20,57 @@ import de.cau.cs.kieler.graphs.diagram.part.GraphsVisualIDRegistry;
 /**
  * @generated
  */
-public class CompoundNodeNodeCompartmentCanonicalEditPolicy extends
-		CanonicalEditPolicy {
+public class CompoundNodeNodeCompartmentCanonicalEditPolicy extends CanonicalEditPolicy {
 
-	/**
-	 * @generated
-	 */
-	Set myFeaturesToSynchronize;
+    /**
+     * @generated
+     */
+    Set myFeaturesToSynchronize;
 
-	/**
-	 * @generated
-	 */
-	protected List getSemanticChildrenList() {
-		View viewObject = (View) getHost().getModel();
-		List result = new LinkedList();
-		for (Iterator it = GraphsDiagramUpdater
-				.getCompoundNodeNodeCompartment_7001SemanticChildren(viewObject)
-				.iterator(); it.hasNext();) {
-			result.add(((GraphsNodeDescriptor) it.next()).getModelElement());
-		}
-		return result;
-	}
+    /**
+     * @generated
+     */
+    protected List getSemanticChildrenList() {
+        View viewObject = (View) getHost().getModel();
+        List result = new LinkedList();
+        for (Iterator it = GraphsDiagramUpdater.getCompoundNodeNodeCompartment_7001SemanticChildren(
+                viewObject).iterator(); it.hasNext();) {
+            result.add(((GraphsNodeDescriptor) it.next()).getModelElement());
+        }
+        return result;
+    }
 
-	/**
-	 * @generated
-	 */
-	protected boolean isOrphaned(Collection semanticChildren, final View view) {
-		int visualID = GraphsVisualIDRegistry.getVisualID(view);
-		switch (visualID) {
-		case Node2EditPart.VISUAL_ID:
-		case CompoundNode2EditPart.VISUAL_ID:
-			if (!semanticChildren.contains(view.getElement())) {
-				return true;
-			}
-		}
-		return false;
-	}
+    /**
+     * @generated
+     */
+    protected boolean isOrphaned(Collection semanticChildren, final View view) {
+        int visualID = GraphsVisualIDRegistry.getVisualID(view);
+        switch (visualID) {
+        case Node2EditPart.VISUAL_ID:
+        case CompoundNode2EditPart.VISUAL_ID:
+            if (!semanticChildren.contains(view.getElement())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	/**
-	 * @generated
-	 */
-	protected String getDefaultFactoryHint() {
-		return null;
-	}
+    /**
+     * @generated
+     */
+    protected String getDefaultFactoryHint() {
+        return null;
+    }
 
-	/**
-	 * @generated
-	 */
-	protected Set getFeaturesToSynchronize() {
-		if (myFeaturesToSynchronize == null) {
-			myFeaturesToSynchronize = new HashSet();
-			myFeaturesToSynchronize.add(GraphsPackage.eINSTANCE
-					.getGraph_Nodes());
-		}
-		return myFeaturesToSynchronize;
-	}
+    /**
+     * @generated
+     */
+    protected Set getFeaturesToSynchronize() {
+        if (myFeaturesToSynchronize == null) {
+            myFeaturesToSynchronize = new HashSet();
+            myFeaturesToSynchronize.add(GraphsPackage.eINSTANCE.getGraph_Nodes());
+        }
+        return myFeaturesToSynchronize;
+    }
 
 }

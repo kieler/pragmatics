@@ -10,8 +10,8 @@
       <actualFigure
           xsi:type="gmfgraph:RoundedRectangle"
           name="NodeFigure"
-          cornerWidth="9"
-          cornerHeight="9">
+          cornerWidth="18"
+          cornerHeight="18">
         <layout
             xsi:type="gmfgraph:CustomLayout"
             qualifiedClassName="de.cau.cs.kieler.graphs.custom.NodeLayout"/>
