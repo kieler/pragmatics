@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OGDF Library for Windows x86
-Bundle-SymbolicName: net.ogdf.lib.win32.x86
+Bundle-SymbolicName: net.ogdf.lib.win32.x86;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: ogdf.net
 Fragment-Host: net.ogdf.lib;bundle-version="0.1.0"
