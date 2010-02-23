@@ -3,7 +3,9 @@
       id="net.ogdf.lib"
       label="OGDF Library"
       version="1.0.0.qualifier"
-      provider-name="Technische Universität Dortmund">
+      provider-name="Technische Universität Dortmund"
+      os="linux,macosx,solaris,win32"
+      arch="sparc,x86,x86_64">
 
    <description url="http://www.ogdf.net/">
       ???
@@ -250,6 +252,8 @@ The GNU General Public License does not permit incorporating your program into p
 
    <plugin
          id="net.ogdf.lib.linux.x86"
+         os="linux"
+         arch="x86"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -257,6 +261,8 @@ The GNU General Public License does not permit incorporating your program into p
 
    <plugin
          id="net.ogdf.lib.linux.x86_64"
+         os="linux"
+         arch="x86_64"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -264,6 +270,8 @@ The GNU General Public License does not permit incorporating your program into p
 
    <plugin
          id="net.ogdf.lib.macosx.x86"
+         os="macosx"
+         arch="x86"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -271,6 +279,8 @@ The GNU General Public License does not permit incorporating your program into p
 
    <plugin
          id="net.ogdf.lib.macosx.x86_64"
+         os="macosx"
+         arch="x86_64"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -278,6 +288,8 @@ The GNU General Public License does not permit incorporating your program into p
 
    <plugin
          id="net.ogdf.lib.solaris.sparc"
+         os="solaris"
+         arch="sparc"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -285,6 +297,8 @@ The GNU General Public License does not permit incorporating your program into p
 
    <plugin
          id="net.ogdf.lib.win32.x86"
+         os="win32"
+         arch="x86"
          download-size="0"
          install-size="0"
          version="0.0.0"
