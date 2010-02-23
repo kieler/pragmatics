@@ -13,20 +13,20 @@
    <extension point="org.eclipse.emf.ecore.generated_package">
       <package
             uri="http://cs.cau.de/Graphs"
-            class="de.cau.cs.rtprak.graphs.GraphsPackage"
+            class="de.cau.cs.kieler.graphs.GraphsPackage"
             genModel="model/graphs.genmodel"/>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
-            class="de.cau.cs.rtprak.graphs.preferences.PreferenceInitializer">
+            class="de.cau.cs.kieler.graphs.preferences.PreferenceInitializer">
       </initializer>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">
       <wizard
             canFinishEarly="false"
-            class="de.cau.cs.rtprak.graphs.wizards.CreateRandomModelWizard"
+            class="de.cau.cs.kieler.graphs.wizards.CreateRandomModelWizard"
             hasPages="true"
             icon="icons/full/obj16/Graph.gif"
             id="de.cau.cs.rtprak.graphs.wizards.randomGraph"
@@ -48,7 +48,20 @@
                name="windowImages"
                value="icons/product/graphs16.png,icons/product/graphs32.png,icons/product/graphs48.png,icons/product/graphs64.png,icons/product/graphs128.png">
          </property>
+         <property
+               name="preferenceCustomization"
+               value="plugin_customization.ini">
+         </property>
       </product>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="de.cau.cs.kieler.graphs.product.GraphsPerspective"
+            icon="icons/product/graphs16.png"
+            id="de.cau.cs.kieler.graphs.perspective"
+            name="Graphs">
+      </perspective>
    </extension>
 
 </plugin>

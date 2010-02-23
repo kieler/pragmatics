@@ -4,12 +4,12 @@ Bundle-Name: %pluginName
 Bundle-SymbolicName: de.cau.cs.kieler.graphs.diagram;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-ClassPath: .
-Bundle-Activator: de.cau.cs.rtprak.graphs.diagram.part.GraphsDiagramEditorPlugin
+Bundle-Activator: de.cau.cs.kieler.graphs.diagram.part.GraphsDiagramEditorPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: de.cau.cs.rtprak.graphs.diagram.edit.parts,
- de.cau.cs.rtprak.graphs.diagram.part,
- de.cau.cs.rtprak.graphs.diagram.providers
+Export-Package: de.cau.cs.kieler.graphs.diagram.edit.parts,
+ de.cau.cs.kieler.graphs.diagram.part,
+ de.cau.cs.kieler.graphs.diagram.providers
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
  org.eclipse.core.expressions,

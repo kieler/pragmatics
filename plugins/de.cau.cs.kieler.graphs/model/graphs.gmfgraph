@@ -8,11 +8,13 @@
     <descriptors
         name="NodeFigure">
       <actualFigure
-          xsi:type="gmfgraph:Rectangle"
-          name="NodeFigure">
+          xsi:type="gmfgraph:RoundedRectangle"
+          name="NodeFigure"
+          cornerWidth="9"
+          cornerHeight="9">
         <layout
             xsi:type="gmfgraph:CustomLayout"
-            qualifiedClassName="de.cau.cs.rtprak.graphs.custom.NodeLayout"/>
+            qualifiedClassName="de.cau.cs.kieler.graphs.custom.NodeLayout"/>
         <foregroundColor
             xsi:type="gmfgraph:RGBColor"
             green="20"/>
@@ -44,7 +46,7 @@
           name="CompoundNodeFigure">
         <layout
             xsi:type="gmfgraph:CustomLayout"
-            qualifiedClassName="de.cau.cs.rtprak.graphs.custom.NodeLayout"/>
+            qualifiedClassName="de.cau.cs.kieler.graphs.custom.NodeLayout"/>
         <foregroundColor
             xsi:type="gmfgraph:RGBColor"
             green="20"/>
