@@ -5,6 +5,5 @@ Bundle-SymbolicName: net.ogdf.lib.solaris.sparc
 Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: ogdf.net
 Fragment-Host: net.ogdf.lib;bundle-version="0.1.0"
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Eclipse-PlatformFilter: (& (osgi.os=solaris) (osgi.arch=sparc))
 Bundle-NativeCode: /lib/libogdf.so; osname=solaris; processor=sparc
