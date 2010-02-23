@@ -16,7 +16,6 @@ public class NodeLayout extends AbstractHintLayout {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void layout(final IFigure container) {
         WrappingLabel label = null;
         ResizableCompartmentFigure compartment = null;

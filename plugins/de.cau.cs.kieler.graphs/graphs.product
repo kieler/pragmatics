@@ -3,7 +3,6 @@
 
 <product name="Graphs" uid="de.cau.cs.kieler.graphs.product" id="de.cau.cs.kieler.graphs.product" application="org.eclipse.ui.ide.workbench" version="0.1.0" useFeatures="true" includeLaunchers="true">
 
-
    <configIni use="default">
    </configIni>
 
@@ -13,14 +12,12 @@
 
    <windowImages i16="/de.cau.cs.kieler.graphs/icons/product/graphs16.png" i32="/de.cau.cs.kieler.graphs/icons/product/graphs32.png" i48="/de.cau.cs.kieler.graphs/icons/product/graphs48.png" i64="/de.cau.cs.kieler.graphs/icons/product/graphs64.png" i128="/de.cau.cs.kieler.graphs/icons/product/graphs128.png"/>
 
-
    <launcher name="graphs">
       <solaris/>
       <win useIco="false">
          <bmp/>
       </win>
    </launcher>
-
 
    <vm>
    </vm>
@@ -125,6 +122,8 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <feature id="de.cau.cs.kieler.core" version="0.1.0.qualifier"/>
       <feature id="de.cau.cs.kieler.graphs" version="0.1.0.qualifier"/>
       <feature id="de.cau.cs.kieler.kiml" version="0.1.0.qualifier"/>
+      <feature id="de.cau.cs.kieler.dependencies" version="0.1.0.qualifier"/>
+      <feature id="net.ogdf.lib" version="1.0.0.qualifier"/>
    </features>
 
 

@@ -83,7 +83,6 @@ public class CreateRandomModelWizardPage extends WizardPage {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void createControl(final Composite parent) {
         IPreferenceStore preferenceStore = GraphsPlugin.getDefault().getPreferenceStore();
         Composite container = new Composite(parent, SWT.NULL);

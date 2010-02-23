@@ -134,7 +134,6 @@ public class CreateRandomModelWizard extends Wizard implements INewWizard {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void init(final IWorkbench workbench, final IStructuredSelection theselection) {
         this.selection = theselection;
     }
