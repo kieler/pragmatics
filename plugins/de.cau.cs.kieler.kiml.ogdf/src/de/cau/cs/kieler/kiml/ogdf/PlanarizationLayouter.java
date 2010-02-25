@@ -13,13 +13,17 @@
  */
 package de.cau.cs.kieler.kiml.ogdf;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import net.ogdf.lib.FastPlanarSubgraph;
+import net.ogdf.lib.LayoutModule;
 import net.ogdf.lib.OrthoDir;
 import net.ogdf.lib.OrthoLayout;
 import net.ogdf.lib.PlanarizationLayout;
-import net.ogdf.lib.UMLLayoutModule;
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.layout.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
@@ -30,79 +34,57 @@ import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
  * 
  * @author mri
  */
-public class PlanarizationLayouter extends OgdfUMLLayouter {
+public class PlanarizationLayouter extends OgdfLayouter {
 
     /** layout option identifier for the page ratio. */
     public static final String OPT_PAGE_RATIO = "de.cau.cs.kieler.kiml.ogdf.option.pageRatio";
-
     /** layout option identifier for clique preprocessing. */
     public static final String OPT_PRE_CLIQUES = "de.cau.cs.kieler.kiml.ogdf.option.preCliques";
-
     /** layout option identifier for the minimum clique size. */
     public static final String OPT_MIN_CLIQUE_SIZE = "de.cau.cs.kieler.kiml.ogdf.option.minCliqueSize";
-
     /** layout option identifier for the number of runs. */
     public static final String OPT_RUNS = "de.cau.cs.kieler.kiml.ogdf.option.runs";
-
     /** layout option identifier for separation distance. */
     public static final String OPT_SEPARATION = "de.cau.cs.kieler.kiml.ogdf.option.separation";
-
     /** layout option identifier for overhang. */
     public static final String OPT_OVERHANG = "de.cau.cs.kieler.kiml.ogdf.option.cOverhang";
-
     /** layout option identifier for margin. */
     public static final String OPT_MARGIN = "de.cau.cs.kieler.kiml.ogdf.option.margin";
-
     /** layout option identifier for cost assoc. */
     public static final String OPT_COST_ASSOC = "de.cau.cs.kieler.kiml.ogdf.option.costAssoc";
-
     /** layout option identifier for cost gen. */
     public static final String OPT_COST_GEN = "de.cau.cs.kieler.kiml.ogdf.option.costGen";
-
     /** default value for page ratio. */
     public static final float DEF_PAGE_RATIO = 1.0f;
-
     /** default value for clique preprocessing. */
     public static final boolean DEF_PRE_CLIQUES = true;
-
     /** default value for minimum clique size. */
     public static final int DEF_MIN_CLIQUE_SIZE = 10;
-
     /** default value for number of runs. */
     public static final int DEF_RUNS = 0;
-
     /** default value for separation distance. */
     public static final float DEF_SEPARATION = 40.0f;
-
     /** default value for overhang. */
     public static final float DEF_OVERHANG = 0.2f;
-
     /** default value for margin. */
     public static final float DEF_MARGIN = 40.0f;
-
     /** default value for direction. */
     public static final LayoutDirection DEF_DIRECTION = LayoutDirection.UP;
-
     /** default value for cost assoc. */
     public static final int DEF_COST_ASSOC = 1;
-
     /** default value for cost gen. */
     public static final int DEF_COST_GEN = 4;
-
     /** default value for border spacing. */
     public static final float DEF_BORDER_SPACING = 8;
-
     /** default value for label edge distance. */
     public static final float DEF_LABEL_EDGE_DISTANCE = 15.0f;
-
     /** default value for label margin distance. */
     public static final float DEF_LABEL_MARGIN_DISTANCE = 15.0f;
 
     /**
      * {@inheritDoc}
      */
-    protected UMLLayoutModule prepareLayouter(final KNode layoutNode,
-            final IKielerProgressMonitor progressMonitor) {
+    protected LayoutModule prepareLayouter(final KNode layoutNode) {
         // create the layouter
         PlanarizationLayout layout = new PlanarizationLayout();
 
@@ -205,8 +187,38 @@ public class PlanarizationLayouter extends OgdfUMLLayouter {
 
         // set the planar layouter
         layout.setPlanarLayouter(ol);
+        
+        // perform pre-processing
+        preProcess(layoutNode);
 
         return layout;
+    }
+
+    private List<Pair<KEdge, KNode>> selfLoops = new LinkedList<Pair<KEdge, KNode>>();
+    
+    /**
+     * Removes all self-loops from the graph, as they are not supported by the planarization
+     * layouter.
+     * 
+     * @param layoutNode the parent node
+     */
+    private void preProcess(final KNode layoutNode) {
+        for (KNode child : layoutNode.getChildren()) {
+            for (KEdge edge : child.getOutgoingEdges()) {
+                if (edge.getTarget() == child) {
+                    edge.setSource(null);
+                    edge.setTarget(null);
+                    selfLoops.add(new Pair<KEdge, KNode>(edge, child));
+                }
+            }
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    protected void postProcess(final KNode layoutNode) {
+       // TODO manually layout the self-loops 
     }
 
     /**
@@ -243,4 +255,5 @@ public class PlanarizationLayouter extends OgdfUMLLayouter {
             return null;
         }
     }
+    
 }

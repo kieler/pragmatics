@@ -19,43 +19,55 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.layout.AbstractLayoutProvider;
 
 /**
- * The OGDF layout provider.
+ * The OGDF layout provider, that is the entry class used by KIML to call individual layout
+ * algorithms.
  * 
  * @author msp
  * @author mri
  */
 public class OgdfLayoutProvider extends AbstractLayoutProvider {
 
-    /** The selected layouter. */
+    /** Definition of available layout algorithms. */
+    public enum LayoutAlgorithm {
+        /** Sugiyama's layout algorithm.  */
+        SUGIYAMA,
+        /** The planarization layout algorithm. */
+        UMLPLANARIZATION
+    }
+    
+    /** the selected layouter. */
     private OgdfLayouter layoutAlgorithm;
-
+    
     /**
      * {@inheritDoc}
      */
+    @Override
     public void initialize(final String parameter) {
-        // let the factory create the selected layouter
-        layoutAlgorithm = OgdfLayouterFactory.getInstance().createLayouter(
-                parameter);
+        switch (LayoutAlgorithm.valueOf(parameter)) {
+        case SUGIYAMA:
+            layoutAlgorithm = new SugiyamaLayouter();
+            break;
+        case UMLPLANARIZATION:
+            layoutAlgorithm = new PlanarizationLayouter();
+            break;
+        default:
+            layoutAlgorithm = null;
+        }
     }
 
     /**
      * {@inheritDoc}
      */
-    public void doLayout(final KNode layoutNode,
-            final IKielerProgressMonitor progressMonitor)
+    @Override
+    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor)
             throws KielerException {
-
-        progressMonitor.begin("OGDF layout", 1);
-
         if (layoutAlgorithm == null) {
-            throw new KielerException(
-                    "No valid OGDF layout algorithm was selected.");
+            throw new KielerException("The OGDF layout algorithm is not configured correctly."
+                    + " Please check the parameter in the extension point");
         }
 
-        // layout the graph
+        // layout the graph with the selected algorithm
         layoutAlgorithm.doLayout(layoutNode, progressMonitor);
-
-        progressMonitor.done();
     }
 
     /**
@@ -64,7 +76,8 @@ public class OgdfLayoutProvider extends AbstractLayoutProvider {
     public Object getDefault(final String optionId) {
         if (layoutAlgorithm == null) {
             return null;
+        } else {
+            return layoutAlgorithm.getDefault(optionId);
         }
-        return layoutAlgorithm.getDefault(optionId);
     }
 }
