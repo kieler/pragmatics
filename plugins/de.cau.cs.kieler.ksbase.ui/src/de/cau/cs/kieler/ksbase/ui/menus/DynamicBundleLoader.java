@@ -19,14 +19,17 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.ContributorFactoryOSGi;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.ServiceReference;
@@ -108,7 +111,7 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
             if (editor.getEditorId().equals(activeEditor)) {
 
                 // Create bundle with jar archive
-                Bundle bundle = ContributorFactoryOSGi.resolve(editor.getContributor()); 
+                Bundle bundle = ContributorFactoryOSGi.resolve(editor.getContributor());
                 // System.out.println("activating ksbase for" + activeEditor);
                 String editorDiagramName = bundle.getSymbolicName() + ".generated";
 
@@ -124,16 +127,17 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
                     PackageAdmin admin = (PackageAdmin) bundle.getBundleContext().getService(ref);
                     // Does the bundle we are about to load is alreay existing ?
                     Bundle[] existing = admin.getBundles(editorDiagramName, null);
+                    
                     // If yes, never,ever try to load it !
                     if (existing == null || existing.length == 0) {
                         Bundle b = KSBasEUIPlugin.getDefault().getBundle().getBundleContext()
                                 .installBundle(editorDiagramName, in);
                         // b.start();
                         // Activating bundle with package admin service
-                        // System.out.println("Bundle state : " + b.getState());
+                        //System.out.println("Bundle state : " + b.getState());
                         if (b.getState() != Bundle.STARTING) {
                             if (b.getState() == Bundle.INSTALLED) {
-                                // System.out.println("resolving");
+                                //System.out.println("resolving");
                                 boolean res = admin.resolveBundles(new Bundle[] {b });
                                 if (!res) {
                                     KSBasEUIPlugin.getDefault()
@@ -143,7 +147,7 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
                                 }
                             }
                             if (b.getState() == Bundle.RESOLVED) {
-                                // System.out.println("starting");
+                                //System.out.println("starting");
                                 b.start();
                             }
                         }

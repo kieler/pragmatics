@@ -62,7 +62,7 @@ public class TransformationCommandHandler extends AbstractHandler {
         EditorTransformationSettings editor = TransformationManager.INSTANCE.getEditorById(event
                 .getParameter(EDITOR_PARAM));
         if (editor != null) {
-            TransformationUIManager.INSTANCE.createAndExecuteTransformationCommand(event, editor,
+            TransformationUIManager.INSTANCE.createAndExecuteTransformationCommand(editor,
                     editor.getTransformationByName(event.getParameter(TRANSFORMATION_PARAM)));
         } else {
             KSBasEUIPlugin.getDefault().logError(

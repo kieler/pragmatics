@@ -32,6 +32,7 @@ import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
@@ -60,7 +61,7 @@ public final class TransformationUIManager {
     private LinkedList<ITransformationEventListener> transformationEventListeners;
 
     private TransformationUtils transformationUtils;
-    
+
     /**
      * The default constructor.
      */
@@ -101,8 +102,8 @@ public final class TransformationUIManager {
      * @param transformation
      *            The transformation that should be executed
      */
-    public void createAndExecuteTransformationCommand(final ExecutionEvent event,
-            final EditorTransformationSettings editor, final KSBasETransformation transformation) {
+    public void createAndExecuteTransformationCommand(final EditorTransformationSettings editor,
+            final KSBasETransformation transformation) {
         // We need the view management
         if (!RunLogic.getInstance().getState()) {
             RunLogic.getInstance().registerListeners();
@@ -112,11 +113,14 @@ public final class TransformationUIManager {
         for (ITransformationEventListener te : transformationEventListeners) {
             te.transformationAboutToExecute(new Object[] {});
         }
-        IEditorPart activeEditor = HandlerUtil.getActiveEditor(event);
+
+        IEditorPart activeEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                .getActivePage().getActiveEditor();
         // System.out.println("Diag childs (pre): " +
         // ((DiagramEditor)activeEditor).getDiagram().getVisibleChildren().size());
-        ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event).getSelectionService()
-                .getSelection();
+
+        ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                .getSelectionService().getSelection();
 
         if (selection instanceof StructuredSelection && !selection.isEmpty()) {
 

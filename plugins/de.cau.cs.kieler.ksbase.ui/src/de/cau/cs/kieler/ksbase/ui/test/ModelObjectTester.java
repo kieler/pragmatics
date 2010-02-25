@@ -69,6 +69,11 @@ public class ModelObjectTester extends PropertyTester {
             if (t != null) {
                 // Convert selection to model elements:
                 List<EObject> modelElements = ModelingUtil.getModelElementsFromSelection();
+
+                if (!evaluateTransformation(editor, t.getTransformation(), t.getParameters(), false)) {
+                    // Could the transformation be executed?
+                    return false;
+                }
                 // First we will evaluate the validation transformation
                 // This is a fast operation, test took between 0ms and 30ms (on context switch) , so
                 // it can be assumed as 'fast enough'.
@@ -82,10 +87,6 @@ public class ModelObjectTester extends PropertyTester {
                             return false;
                         }
                     }
-                }
-                if (!evaluateTransformation(editor, t.getTransformation(), t.getParameters(), false)) {
-                    // Could the transformation be executed?
-                    return false;
                 }
 
                 return true;

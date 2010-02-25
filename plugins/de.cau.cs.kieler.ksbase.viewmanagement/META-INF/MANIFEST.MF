@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: KSBasE Viewmanagement
 Bundle-SymbolicName: de.cau.cs.kieler.ksbase.viewmanagement;singleton:=true
-Bundle-Version: 1.0.1.qualifier
+Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: de.cau.cs.kieler.ksbase.viewmanagement.KSBasEViewManagementPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -18,3 +18,4 @@ Export-Package: de.cau.cs.kieler.ksbase.viewmanagement,
  de.cau.cs.kieler.ksbase.viewmanagement.preferences,
  de.cau.cs.kieler.ksbase.viewmanagement.triggers
 Bundle-ActivationPolicy: lazy
+Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
