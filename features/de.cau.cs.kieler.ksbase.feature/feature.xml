@@ -112,21 +112,6 @@ This Agreement is governed by the laws of the State of New York and the intellec
    </url>
 
    <requires>
-      <import plugin="org.eclipse.xtend" version="0.7.1" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.debug.ui" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.xtend.typesystem.emf"/>
-      <import plugin="org.eclipse.ui.ide" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.emf.mwe.core" version="0.7.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.gmf.runtime.diagram.ui" version="1.2.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.expressions" version="3.4.100" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jdt.core" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jdt.ui" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.gef" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.runtime" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jface" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.antlr.runtime" version="3.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.gmf.runtime.diagram.ui.resources.editor"/>
       <import feature="de.cau.cs.kieler.core" version="0.1.0.qualifier"/>
       <import feature="de.cau.cs.kieler.kiml" version="0.1.0.qualifier"/>
       <import feature="de.cau.cs.kieler.viewmanagement" version="0.1.0.qualifier"/>
