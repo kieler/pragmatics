@@ -86,10 +86,10 @@ public abstract class OgdfLayouter {
         if (labelInterface != null) {
             layoutLabels(layoutNode, graphAttributes, labelInterface);
         }
-        // perform post-processing
-        postProcess(layoutNode);
         // apply the layout back to the original graph
         applyLayout(layoutNode, graphAttributes);
+        // perform post-processing
+        postProcess(layoutNode);
 
         progressMonitor.done();
     }
@@ -390,9 +390,9 @@ public abstract class OgdfLayouter {
         }
 
         // apply edge layout
-        for (KEdge kedge : kedge2ogdfEdgeMap.keySet()) {
-            EdgeElement ogdfEdge = kedge2ogdfEdgeMap.get(kedge);
-            KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
+        for (Map.Entry<KEdge, EdgeElement> entry : kedge2ogdfEdgeMap.entrySet()) {
+            KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(entry.getKey());
+            EdgeElement ogdfEdge = entry.getValue();
             DPolyline bends = graphAttributes.bends(ogdfEdge);
             // are source and target point present?
             if (bends.size() >= 2) {
@@ -419,7 +419,7 @@ public abstract class OgdfLayouter {
                 // set the edge labels
                 EdgeLabelDouble edgeLabel = labelInterface.getLabel(ogdfEdge);
                 boolean makeMult1 = false, makeMult2 = false;
-                for (KLabel label : kedge.getLabels()) {
+                for (KLabel label : entry.getKey().getLabels()) {
                     KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
                     EdgeLabelPlacement placement = LayoutOptions.getEnum(labelLayout,
                             EdgeLabelPlacement.class);
