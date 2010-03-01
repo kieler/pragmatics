@@ -13,13 +13,21 @@
  */
 package de.cau.cs.kieler.ksbase.ui.utils;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramWorkbenchPart;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 
 import de.cau.cs.kieler.core.model.util.ModelingUtil;
+import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
+import de.cau.cs.kieler.ksbase.ui.TransformationUIManager;
 import de.cau.cs.kieler.ksbase.ui.listener.ITransformationEventListener;
 
 /**
@@ -33,7 +41,8 @@ public class TransformationUtils implements ITransformationEventListener {
     private static volatile EObject selection = null;;
 
     /**
-     * Sets the object that should be selected after the transformation has been executed.
+     * Sets the object that should be selected after the transformation has been
+     * executed.
      * 
      * @param e
      *            The object to select
@@ -56,26 +65,72 @@ public class TransformationUtils implements ITransformationEventListener {
      * Sets the diagram editor selection to the selection object.
      * 
      * @param args
-     *            The transformation arguments, see {@link TransformationUIManager}
+     *            The transformation arguments, see
+     *            {@link TransformationUIManager}
      * 
      */
     public void transformationExecuted(final Object[] args) {
         if (selection != null) {
-            if (args != null && args.length == 2 && args[1] instanceof IEditorPart) {
+            if (args != null && args.length == 2
+                    && args[1] instanceof IEditorPart) {
                 IEditorPart activeEditor = (IEditorPart) args[1];
                 if (activeEditor instanceof IDiagramWorkbenchPart) {
                     EditPart p = ModelingUtil.getEditPart(selection,
-                            ((IDiagramWorkbenchPart) activeEditor).getDiagramGraphicalViewer()
+                            ((IDiagramWorkbenchPart) activeEditor)
+                                    .getDiagramGraphicalViewer()
                                     .getRootEditPart());
                     if (p != null) {
-                        ((IEditorPart) args[1]).getEditorSite().getSelectionProvider()
-                                .setSelection(new StructuredSelection(p));
+                        ((IEditorPart) args[1]).getEditorSite()
+                                .getSelectionProvider().setSelection(
+                                        new StructuredSelection(p));
                     }
                 }
             }
-            // Clear selection so we don't automatically select this object again.
+            // Clear selection so we don't automatically select this object
+            // again.
             selection = null;
         }
     }
 
+    /**
+     * Get the file name of the currently active editor.
+     * 
+     * @return the file name.
+     */
+    public String getFileNameOfActiveEditor() {
+        String result = "SyncChart";
+        IEditorPart editor = getActiveEditor();
+        if (editor != null) {
+            IEditorInput iInput = editor.getEditorInput();
+            if (iInput instanceof IFileEditorInput) {
+                IFileEditorInput input = (IFileEditorInput) iInput;
+                IFile file = input.getFile();
+                if (file != null) {
+                    String name = file.getName();
+                    result = name.replace(".kids", "");
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Get the active editor for the page.
+     * 
+     * @return the active editor.
+     */
+    private IEditorPart getActiveEditor() {
+        IEditorPart result = null;
+        IWorkbench workbench = KSBasEUIPlugin.getDefault().getWorkbench();
+        if (workbench != null) {
+            IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+            if (window != null) {
+                IWorkbenchPage page = window.getActivePage();
+                if (page != null) {
+                    result = page.getActiveEditor();
+                }
+            }
+        }
+        return result;
+    }
 }
