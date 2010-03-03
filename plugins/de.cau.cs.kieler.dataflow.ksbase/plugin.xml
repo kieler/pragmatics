@@ -6,6 +6,7 @@
       <configuration
             TransformationFile="src/transformations/feature.ext"
             XtendFile="src/transformations/feature.ext"
+            checkVisibility="true"
             contextId="de.cau.cs.kieler.dataflow.diagram.ui.diagramContext"
             editorId="de.cau.cs.kieler.dataflow.diagram.part.DataflowDiagramEditorID"
             packageName="de.cau.cs.kieler.dataflow.DataflowPackage">

@@ -323,7 +323,12 @@ public final class TransformationManager {
             editor.setContext(settings.getAttribute("contextId"));
             editor.setDefaultIcon(settings.getAttribute("defautlIcon"));
             editor.setModelPackageClass(settings.getAttribute("packageName"));
-
+            String check = settings.getAttribute("checkVisibility");
+            if (check != null && check.equals("false")) {
+                editor.setCheckVisibility(false);
+            } else {
+                editor.setCheckVisibility(true);
+            }
             IConfigurationElement[] transformations = settings.getChildren("transformations");
             if (transformations != null && transformations.length > 0) {
                 // since we only allowed one single <transformations> child, we
@@ -348,9 +353,9 @@ public final class TransformationManager {
             }
             // read alternate command handler
             IConfigurationElement[] commandHandler = settings.getChildren("commandHandler");
-            if (commandHandler != null && commandHandler.length == 1
-                    && commandHandler[0].getAttribute("class") != null) {
-                editor.setCommandHandler(settings.getAttribute("class"));
+            if (commandHandler != null && commandHandler.length == 1) {
+                String commandHandlerClass = commandHandler[0].getAttribute("class");
+                editor.setCommandHandler(commandHandlerClass);
             } else {
                 // set empty value, so the default handler will be used
                 editor.setCommandHandler("");

@@ -64,7 +64,8 @@ public class EditorTransformationSettings implements Serializable {
     private LinkedList<KSBasEMenuContribution> menuContributions;
     /** Transformation Framework to use. **/
     private transient ITransformationFramework framework;
-
+    /** Check visibility expressions? **/
+    private boolean checkVisibility;
     /**
      * Command handler to be used by this editor. If this is empty, the default handler will be
      * used.
@@ -92,6 +93,7 @@ public class EditorTransformationSettings implements Serializable {
         this.transformations = new HashMap<String, KSBasETransformation>();
         this.menuContributions = new LinkedList<KSBasEMenuContribution>();
         this.contributor = null;
+        this.checkVisibility = true;
     }
 
     /**
@@ -339,6 +341,22 @@ public class EditorTransformationSettings implements Serializable {
      */
     public void setFramework(final ITransformationFramework theFramework) {
         this.framework = theFramework;
+    }
+
+    /**
+     * Visibility checks enabled?
+     * @return true if checks are enabled
+     */
+    public boolean isCheckVisibility() {
+        return checkVisibility;
+    }
+
+    /**
+     * Set visibility checks.
+     * @param flag new option
+     */
+    public void setCheckVisibility(final boolean flag) {
+        this.checkVisibility = flag;
     }
 
     /**

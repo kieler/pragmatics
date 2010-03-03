@@ -122,6 +122,13 @@ The Attribute &apos;XtendFile&apos; will be removed in future versions.
                </appinfo>
             </annotation>
          </attribute>
+         <attribute name="checkVisibility" type="boolean">
+            <annotation>
+               <documentation>
+                  Set this option to false, if you want to disable the visbility checks for the menu contributions.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

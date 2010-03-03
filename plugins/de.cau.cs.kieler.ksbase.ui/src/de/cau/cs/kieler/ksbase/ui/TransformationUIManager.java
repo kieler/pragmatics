@@ -149,7 +149,7 @@ public final class TransformationUIManager {
 
             // update edit policies, so GMF will generate diagram elements
             // for model elements which have been generated during the
-            // transformation but
+            // transformation.
 
             if (activeEditor instanceof IDiagramWorkbenchPart) {
                 EObject obj = ((View) ((IDiagramWorkbenchPart) activeEditor).getDiagramEditPart()

@@ -216,7 +216,9 @@ public final class DynamicMenuContributions {
                     handlerIt.appendChild(handlerTest);
                     handlerWith.appendChild(handlerIt);
                     handlerEnabled.appendChild(handlerWith);
-                    handlerCommand.appendChild(handlerEnabled);
+                    if (editor.isCheckVisibility()) {
+                        handlerCommand.appendChild(handlerEnabled);
+                    }
                     handlerExtension.appendChild(handlerCommand);
 
                 }
@@ -274,7 +276,9 @@ public final class DynamicMenuContributions {
                                     handlerAnd.appendChild(handlerWith);
                                     menuCommandVisible.appendChild(handlerAnd);
                                 }
-                                menuCommand.appendChild(menuCommandVisible.cloneNode(true));
+                                if (editor.isCheckVisibility()) {
+                                    menuCommand.appendChild(menuCommandVisible.cloneNode(true));
+                                }
                                 menuContribution.appendChild(menuCommand);
                             }
                         }
@@ -300,7 +304,9 @@ public final class DynamicMenuContributions {
                                     menu.appendChild(menuCommand);
                                 }
                             }
-                            menu.appendChild(menuVisible.cloneNode(true));
+                            if (editor.isCheckVisibility()) {
+                                menu.appendChild(menuVisible.cloneNode(true));
+                            }
                             menuContribution.appendChild(menu);
                         }
 
@@ -346,6 +352,9 @@ public final class DynamicMenuContributions {
                 }
                 if (!depString.contains("org.eclipse.gmf.runtime.diagram.ui")) {
                     depString += ",\n org.eclipse.gmf.runtime.diagram.ui";
+                }
+                if (!depString.contains(editor.getContributor().getName())) {
+                    depString += ",\n " + editor.getContributor().getName();
                 }
                 // And set the rest of the manifest attributes
 
