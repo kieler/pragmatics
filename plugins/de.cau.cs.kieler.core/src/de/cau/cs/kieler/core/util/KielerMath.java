@@ -83,15 +83,17 @@ public final class KielerMath {
     };
     
     /**
-     * The factorial of an integer x. If x is negative the result is 1.
+     * The factorial of an integer x as long value. If x is negative the result is 1.
+     * This method always returns the exact value, but may lead to overflow for
+     * large input values.
      * 
      * @param x an integer
      * @return the factorial of x
      */
-    public static long fact(final int x) { 
+    public static long factl(final int x) { 
         long result = 1;
         for (int i = x; i > 1; i--) {
-            if (i < FACT_TABLE.length && i >= 0) {
+            if (i < FACT_TABLE.length) {
                 return result * FACT_TABLE[i];
             }
             result *= i;
@@ -100,21 +102,58 @@ public final class KielerMath {
     }
     
     /**
-     * The binomial coefficient of integers n and k. If n is not positive or k
-     * is not between 0 and n the result is 1.
+     * The factorial of an integer x as double value. If x is negative the result is 1.
+     * This method returns the exact value for small input values, and uses
+     * Stirling's approximation for large input values.
+     * 
+     * @param x an integer
+     * @return the factorial of x
+     */
+    public static double factd(final int x) {
+        if (x < 0) {
+            return 1;
+        } else if (x < FACT_TABLE.length) {
+            return FACT_TABLE[x];
+        } else {
+            return Math.sqrt(2.0 * Math.PI * x) * (pow(x, x) / pow(Math.E, x));
+        }
+    }
+    
+    /**
+     * The binomial coefficient of integers n and k as long value. If n is not
+     * positive or k is not between 0 and n the result is 1. This method
+     * always returns the exact value, but may take very long for large
+     * input values.
      * 
      * @param n the upper integer
      * @param k the lower integer
      * @return n choose k
      */
-    public static int binomial(final int n, final int k) {
+    public static long binomiall(final int n, final int k) {
         if (n <= 0 || k <= 0 || k >= n) {
             return 1;
         } else if (n < FACT_TABLE.length) {
-            long result = fact(n) / (fact(k) * fact(n - k));
-            return (int) result;
+            return factl(n) / (factl(k) * factl(n - k));
         } else {
-            return binomial(n - 1, k - 1) + binomial(n - 1, k);
+            return binomiall(n - 1, k - 1) + binomiall(n - 1, k);
+        }
+    }
+    
+    /**
+     * The binomial coefficient of integers n and k as double value. If n is not
+     * positive or k is not between 0 and n the result is 1. This method returns
+     * the exact value for small input values, and uses an approximation for
+     * large input values.
+     * 
+     * @param n the upper integer
+     * @param k the lower integer
+     * @return n choose k
+     */
+    public static double binomiald(final int n, final int k) {
+        if (n <= 0 || k <= 0 || k >= n) {
+            return 1;
+        } else {
+            return factd(n) / (factd(k) * factd(n - k));
         }
     }
     
@@ -166,7 +205,7 @@ public final class KielerMath {
             double x = 0, y = 0;
             for (int j = 0; j <= n; j++) {
                 Point p = controlPoints.get(j);
-                double factor = binomial(n, j) * pow(1 - t, n - j) * pow(t, j);
+                double factor = binomiald(n, j) * pow(1 - t, n - j) * pow(t, j);
                 x += p.x * factor;
                 y += p.y * factor;
             }
