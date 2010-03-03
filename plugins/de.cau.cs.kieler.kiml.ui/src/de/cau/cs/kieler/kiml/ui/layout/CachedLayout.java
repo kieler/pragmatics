@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.draw2d.Animation;
@@ -31,19 +30,12 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.gmf.runtime.notation.View;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.statushandlers.StatusManager;
 
-import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
-import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
-import de.cau.cs.kieler.core.util.Maybe;
+import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
-import de.cau.cs.kieler.kiml.ui.Messages;
 
 /**
  * A cache for results of automatic layout. Can be used to repeatedly apply the
@@ -117,59 +109,29 @@ public class CachedLayout {
      * 
      * @param editorPart a diagram editor part
      * @param animate if true, Draw2D animation is activated
-     * @param progressBar if true, a progress bar is displayed
      */
-    public void applyLayout(final IEditorPart editorPart, final boolean animate,
-            final boolean progressBar) {
-        final Maybe<IStatus> status = new Maybe<IStatus>();
-        try {
-            if (animate) {
-                Animation.markBegin();
+    public void applyLayout(final IEditorPart editorPart, final boolean animate) {
+        MonitoredOperation.runInUI(new Runnable() {
+            public void run() {
+                if (animate) {
+                    Animation.markBegin();
+                    applyLayout(editorPart);
+                    Animation.run(DiagramLayoutManager.calcAnimationTime(
+                            layoutCache.size() / ANIMATION_SHORTEN));
+                } else {
+                    applyLayout(editorPart);
+                }
             }
-            if (progressBar) {
-                PlatformUI.getWorkbench().getProgressService().run(false, false,
-                        new IRunnableWithProgress() {
-                            public void run(final IProgressMonitor monitor) {
-                                status.set(applyLayout(editorPart,
-                                        new KielerProgressMonitor(monitor)));
-                            }
-                        });
-            } else {
-                status.set(applyLayout(editorPart, new BasicProgressMonitor(0)));
-            }
-            if (animate) {
-                Animation.run(DiagramLayoutManager.calcAnimationTime(
-                        layoutCache.size() / ANIMATION_SHORTEN));
-            }
-        } catch (Exception exception) {
-            status.set(new Status(IStatus.ERROR, KimlUiPlugin.PLUGIN_ID,
-                    Messages.getString("kiml.ui.14"), exception));
-        }
-        
-        int handlingStyle = StatusManager.NONE;
-        switch (status.get().getSeverity()) {
-        case IStatus.ERROR:
-            handlingStyle = StatusManager.SHOW | StatusManager.LOG;
-            break;
-        case IStatus.WARNING:
-        case IStatus.INFO:
-            handlingStyle = StatusManager.LOG;
-            break;
-        }
-        StatusManager.getManager().handle(status.get(), handlingStyle);
+        }, false);
     }
     
     /**
      * Applies the cached layout to the given editor part with a specified progress monitor.
      * 
      * @param editorPart a diagram editor part
-     * @param progressMonitor a progress monitor
      * @return a status indicating success or failure
      */
-    public IStatus applyLayout(final IEditorPart editorPart,
-            final IKielerProgressMonitor progressMonitor) {
-        progressMonitor.begin("Apply cached layout", 2);
-        
+    public IStatus applyLayout(final IEditorPart editorPart) {
         // get a command stack to execute the command
         CommandStack commandStack = null;
         if (editorPart != null) {
@@ -203,11 +165,9 @@ public class CachedLayout {
         // retrieve a command for the request; the command is created by GmfLayoutEditPolicy
         DiagramEditPart diagramEditPart = diagramEditor.getDiagramEditPart();
         Command applyLayoutCommand = diagramEditPart.getCommand(applyLayoutRequest);
-        progressMonitor.worked(1);
         // execute the command
         commandStack.execute(applyLayoutCommand);
 
-        progressMonitor.done();
         return new Status(IStatus.OK, KimlUiPlugin.PLUGIN_ID, 0, null, null);
     }
     

@@ -37,12 +37,12 @@ import org.eclipse.gmf.runtime.diagram.ui.commands.ICommandProxy;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramRootEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.INodeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
+import org.eclipse.gmf.runtime.draw2d.ui.figures.IAnchorableFigure;
 import org.eclipse.gmf.runtime.draw2d.ui.geometry.LineSeg;
 import org.eclipse.gmf.runtime.draw2d.ui.geometry.PointListUtilities;
 import org.eclipse.gmf.runtime.emf.core.util.EObjectAdapter;
-import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 import org.eclipse.gmf.runtime.notation.Edge;
 import org.eclipse.gmf.runtime.notation.View;
 
@@ -173,7 +173,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
 
         KShapeLayout sourceLayout = KimlLayoutUtil.getShapeLayout(kedge.getSource());
         KPort sourcePort = kedge.getSourcePort();
-        ShapeNodeEditPart sourceEditPart = (ShapeNodeEditPart) connectionEditPart.getSource();
+        INodeEditPart sourceEditPart = (INodeEditPart) connectionEditPart.getSource();
         if (sourcePort != null) {
             KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(sourcePort);
             sourceExt = new Rectangle((int) (portLayout.getXpos()
@@ -190,18 +190,19 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                 - sourceExt.preciseX()) / sourceExt.preciseWidth(),
                 (edgeLayout.getSourcePoint().getY() - sourceExt.preciseY())
                 / sourceExt.preciseHeight());
-        NodeFigure sourceFigure = (NodeFigure) sourceEditPart.getFigure();
+        IFigure sourceFigure = sourceEditPart.getFigure();
         Rectangle sourceBounds = sourceFigure.getBounds();
         Point sourceAnchorReference = new PrecisionPoint(sourceBounds.preciseX()
                 + sourceRatio.preciseX() * sourceBounds.preciseWidth(),
                 sourceBounds.preciseY() + sourceRatio.preciseY() * sourceBounds.preciseHeight());
         sourceFigure.translateToAbsolute(sourceAnchorReference);
-        ConnectionAnchor sourceAnchor = sourceFigure.getSourceConnectionAnchorAt(sourceAnchorReference);
+        ConnectionAnchor sourceAnchor = ((IAnchorableFigure) sourceFigure)
+                .getSourceConnectionAnchorAt(sourceAnchorReference);
         String sourceTerminal = sourceEditPart.mapConnectionAnchorToTerminal(sourceAnchor);
 
         KShapeLayout targetLayout = KimlLayoutUtil.getShapeLayout(kedge.getTarget());
         KPort targetPort = kedge.getTargetPort();
-        ShapeNodeEditPart targetEditPart = (ShapeNodeEditPart) connectionEditPart.getTarget();
+        INodeEditPart targetEditPart = (INodeEditPart) connectionEditPart.getTarget();
         if (targetPort != null) {
             KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(targetPort);
             targetExt = new Rectangle((int) (portLayout.getXpos()
@@ -218,15 +219,23 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                 - targetExt.preciseX()) / targetExt.preciseWidth(),
                 (edgeLayout.getTargetPoint().getY() - targetExt.preciseY())
                 / targetExt.preciseHeight());
-        NodeFigure targetFigure = (NodeFigure) targetEditPart.getFigure();
+        IFigure targetFigure = targetEditPart.getFigure();
         Rectangle targetBounds = targetFigure.getBounds();
         Point targetAnchorReference = new PrecisionPoint(targetBounds.preciseX()
                 + targetRatio.preciseX() * targetBounds.preciseWidth(),
                 targetBounds.preciseY() + targetRatio.preciseY() * targetBounds.preciseHeight());
         targetFigure.translateToAbsolute(targetAnchorReference);
-        ConnectionAnchor targetAnchor = targetFigure.getTargetConnectionAnchorAt(targetAnchorReference);
+        ConnectionAnchor targetAnchor = ((IAnchorableFigure) targetFigure)
+                .getTargetConnectionAnchorAt(targetAnchorReference);
         String targetTerminal = targetEditPart.mapConnectionAnchorToTerminal(targetAnchor);
-        
+
+        // check whether the connection is a note attachment to an edge
+        if (sourceEditPart instanceof ConnectionEditPart
+                || targetEditPart instanceof ConnectionEditPart) {
+            while (bendPoints.size() > 2) {
+                bendPoints.removePoint(1);
+            }
+        }
         command.addEdgeLayout((Edge) connectionEditPart.getModel(),
                 bendPoints, sourceTerminal, targetTerminal);
     }

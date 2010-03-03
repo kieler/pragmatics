@@ -305,11 +305,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 KimlUiUtil.setLayoutOptions(borderItem, portLayout, true);
 
                 // store all the connections to process them later
-                for (Object connectionObj : borderItem.getTargetConnections()) {
-                    if (connectionObj instanceof ConnectionEditPart) {
-                        connections.add((ConnectionEditPart) connectionObj);
-                    }
-                }
+                addConnections(borderItem);
 
                 // set the port label
                 for (Object portChildObj : borderItem.getChildren()) {
@@ -363,8 +359,6 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             // process nodes, which may be parents of compartments
             } else if (obj instanceof ShapeNodeEditPart) {
                 ShapeNodeEditPart childNodeEditPart = (ShapeNodeEditPart) obj;
-                //if (childNodeEditPart instanceof NoteEditPart) {
-                //    System.out.print(".");
                 if (!KimlUiUtil.isNoLayout(childNodeEditPart)) {
                     IFigure nodeFigure = childNodeEditPart.getFigure();
                     KNode childLayoutNode = KimlLayoutUtil.createInitializedNode();
@@ -372,11 +366,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(childLayoutNode);
     
                     // store all the connections to process them later
-                    for (Object conn : childNodeEditPart.getTargetConnections()) {
-                        if (conn instanceof ConnectionEditPart) {
-                            connections.add((ConnectionEditPart) conn);
-                        }
-                    }
+                    addConnections(childNodeEditPart);
     
                     // set location and size
                     if (KimlUiUtil.isRelative(parentFigure, nodeFigure)) {
@@ -472,6 +462,22 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             }
         }
     }
+    
+    /**
+     * Adds all target connections and connected connections to the list of connections
+     * that must be processed later.
+     * 
+     * @param editPart an edit part
+     */
+    private void addConnections(final IGraphicalEditPart editPart) {
+        for (Object targetConn : editPart.getTargetConnections()) {
+            if (targetConn instanceof ConnectionEditPart) {
+                ConnectionEditPart connectionEditPart = (ConnectionEditPart) targetConn;
+                connections.add(connectionEditPart);
+                addConnections(connectionEditPart);
+            }
+        }
+    }
 
     /**
      * Creates new edges and takes care of the labels for each connection
@@ -507,6 +513,17 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 edge.setSourcePort(sourcePort);
                 sourcePort.getEdges().add(edge);
                 sourceNode = sourcePort.getNode();
+            } else if (sourceObj instanceof ConnectionEditPart) {
+                KGraphElement connElem = editPart2GraphElemMap.get(
+                        ((ConnectionEditPart) sourceObj).getSource());
+                if (!(connElem instanceof KNode)) {
+                    connElem = editPart2GraphElemMap.get(
+                            ((ConnectionEditPart) sourceObj).getTarget());
+                }
+                if (!(connElem instanceof KNode)) {
+                    continue;
+                }
+                sourceNode = (KNode) connElem;
             } else {
                 sourceNode = (KNode) editPart2GraphElemMap.get(sourceObj);
                 if (sourceNode == null) {
@@ -523,6 +540,17 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 edge.setTargetPort(targetPort);
                 targetPort.getEdges().add(edge);
                 targetNode = targetPort.getNode();
+            } else if (targetObj instanceof ConnectionEditPart) {
+                KGraphElement connElem = editPart2GraphElemMap.get(
+                        ((ConnectionEditPart) targetObj).getTarget());
+                if (!(connElem instanceof KNode)) {
+                    connElem = editPart2GraphElemMap.get(
+                            ((ConnectionEditPart) targetObj).getSource());
+                }
+                if (!(connElem instanceof KNode)) {
+                    continue;
+                }
+                targetNode = (KNode) connElem;
             } else {
                 targetNode = (KNode) editPart2GraphElemMap.get(targetObj);
                 if (targetNode == null) {
