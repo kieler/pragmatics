@@ -34,8 +34,7 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
  * 
  * @author mim
  * 
- * @kieler.rating 2010-01-22 yellow
- *          review by msp, skn
+ * @kieler.rating 2010-01-22 yellow review by msp, skn
  */
 public class KSBasETransformation extends AbstractTransformation implements Serializable, Cloneable {
 
@@ -50,7 +49,7 @@ public class KSBasETransformation extends AbstractTransformation implements Seri
     /** Assigned keyboard shortcut. **/
     private String keyboardShortcut;
     /** Ordered parameters. **/
-    private LinkedList<String> parameters;
+    private LinkedList<List<String>> parameters;
     /** Id for this transformation. **/
     private String transformationId;
     /** Flag for user defined transformations to control visibility. **/
@@ -74,7 +73,7 @@ public class KSBasETransformation extends AbstractTransformation implements Seri
         transformationId = "";
         visible = true;
         validation = "";
-        parameters = new LinkedList<String>();
+        parameters = new LinkedList<List<String>>();
     }
 
     /**
@@ -91,7 +90,7 @@ public class KSBasETransformation extends AbstractTransformation implements Seri
         this.keyboardShortcut = t.keyboardShortcut;
         this.visible = t.visible;
         this.validation = t.validation;
-        this.parameters = new LinkedList<String>(t.parameters);
+        this.parameters = new LinkedList<List<String>>(t.parameters);
 
     }
 
@@ -190,33 +189,18 @@ public class KSBasETransformation extends AbstractTransformation implements Seri
      * 
      * @return A list of parameters.
      */
-    public final List<String> getParameterList() {
+    public final List<List<String>> getParameterList() {
         Assert.isNotNull(this.parameters);
         // never return the references!
-        return new LinkedList<String>(parameters);
+        return new LinkedList<List<String>>(parameters);
     }
 
     /**
-     * Gets the list of parameters as an array.
-     * 
-     * @return An array of parameters.
+     * Sets parameters list.
+     * @param params the list of list of parameters
      */
-    public final String[] getParameters() {
-        Assert.isNotNull(this.parameters);
-        return parameters.toArray(new String[parameters.size()]);
-    }
-
-    /**
-     * @param param
-     *            The parameters for this transformation.
-     */
-    public final void setParameters(final String[] param) {
-        if (param != null && param.length > 0) {
-            this.parameters.clear();
-            for (String para : param) {
-                this.parameters.add(para);
-            }
-        }
+    public void setParameters(final List<List<String>> params) {
+        this.parameters = new LinkedList<List<String>>(params);
     }
 
     /**
@@ -225,9 +209,9 @@ public class KSBasETransformation extends AbstractTransformation implements Seri
      * @param params
      *            a List of parameters
      */
-    public final void setParameters(final List<String> params) {
+    public final void addParameters(final List<String> params) {
         if (params != null) {
-            this.parameters = new LinkedList<String>(params);
+            this.parameters.add(params);
         }
     }
 
@@ -361,7 +345,7 @@ public class KSBasETransformation extends AbstractTransformation implements Seri
         }
         return false;
     }
-    
+
     @Override
     public String toString() {
         return transformation + " " + "@" + transformationId + "\n";

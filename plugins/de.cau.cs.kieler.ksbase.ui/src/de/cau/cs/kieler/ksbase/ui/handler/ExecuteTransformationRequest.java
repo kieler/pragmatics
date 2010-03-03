@@ -38,7 +38,6 @@ public class ExecuteTransformationRequest extends Request {
     private String fileName;
     private ISelection selection;
     private String modelPackage;
-    private String[] parameter;
     private ITransformationFramework framework;
 
     /**
@@ -54,14 +53,12 @@ public class ExecuteTransformationRequest extends Request {
      *            The active selection
      * @param modelPackageClass
      *            The model package for the active editor
-     * @param parameters
-     *            The parameters of the transformation
      * @param fframework
      *            The ITransformationFramework to use for execution
      */
     public ExecuteTransformationRequest(final IEditorPart ePart, final String cmd,
             final String file, final ISelection sel, final String modelPackageClass,
-            final String[] parameters, final ITransformationFramework fframework) {
+            final ITransformationFramework fframework) {
         super(REQ_EXEC_TRANS);
         this.editPart = ePart;
         this.command = cmd;
@@ -69,7 +66,6 @@ public class ExecuteTransformationRequest extends Request {
         this.modelPackage = modelPackageClass;
         this.selection = sel;
         this.framework = fframework;
-        this.parameter = parameters.clone();
     }
 
     /**
@@ -165,25 +161,6 @@ public class ExecuteTransformationRequest extends Request {
      */
     public final ISelection getSelection() {
         return this.selection;
-    }
-
-    /**
-     * Gets the list of parameters.
-     * 
-     * @return a string array of parameters
-     */
-    public final String[] getParameter() {
-        return parameter.clone();
-    }
-
-    /**
-     * Sets the parameters for this transformation request .
-     * 
-     * @param parameters
-     *            The transformation parameters
-     */
-    public final void setParameter(final String[] parameters) {
-        this.parameter = parameters.clone();
     }
 
     /**

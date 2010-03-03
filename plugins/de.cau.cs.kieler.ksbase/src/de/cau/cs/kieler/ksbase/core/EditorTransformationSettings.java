@@ -38,8 +38,7 @@ import de.cau.cs.kieler.ksbase.KSBasEPlugin;
  * 
  * @author mim
  * 
- * @kieler.rating 2010-01-22 yellow
- *          review by msp, skn
+ * @kieler.rating 2010-01-22 yellow review by msp, skn
  */
 public class EditorTransformationSettings implements Serializable {
 
@@ -345,6 +344,7 @@ public class EditorTransformationSettings implements Serializable {
 
     /**
      * Visibility checks enabled?
+     * 
      * @return true if checks are enabled
      */
     public boolean isCheckVisibility() {
@@ -353,7 +353,9 @@ public class EditorTransformationSettings implements Serializable {
 
     /**
      * Set visibility checks.
-     * @param flag new option
+     * 
+     * @param flag
+     *            new option
      */
     public void setCheckVisibility(final boolean flag) {
         this.checkVisibility = flag;
@@ -374,7 +376,8 @@ public class EditorTransformationSettings implements Serializable {
             List<AbstractTransformation> parseTransformations = framework
                     .parseInPlaceTransformations(fileURL);
             if (parseTransformations == null) {
-                KSBasEPlugin.getDefault().logError("Could not parse extensions for editor " + editorId);
+                KSBasEPlugin.getDefault().logError(
+                        "Could not parse extensions for editor " + editorId);
                 return;
             }
             // If we have any invalid transformations, i.e.
@@ -382,17 +385,19 @@ public class EditorTransformationSettings implements Serializable {
             // match in the transformation file, we want to remove them.
             LinkedList<KSBasETransformation> cachedTransformations = 
                 new LinkedList<KSBasETransformation>();
-            
+
             for (AbstractTransformation t : parseTransformations) {
                 KSBasETransformation transformation = getTransformationByName(t.getTransformation());
                 if (transformation != null) {
                     // Clone it, so we don't remove the transformation
                     // when
                     // clearing the transformations list
-                    transformation.setParameters(t.getParameterList());
+                    for (List<String> p : t.getParameterList()) {
+                        transformation.addParameters(p);
+                    }
                     cachedTransformations.add(transformation.clone());
                 } else if (createTransformations) {
-                    // Create new transformation
+                    // Create new transformation:
                     transformation = new KSBasETransformation(t.getTransformation(), t
                             .getTransformation());
                     // set parameters

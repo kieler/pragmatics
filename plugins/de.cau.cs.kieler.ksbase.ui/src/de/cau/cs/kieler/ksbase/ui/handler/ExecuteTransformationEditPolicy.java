@@ -70,7 +70,7 @@ public class ExecuteTransformationEditPolicy extends AbstractEditPolicy {
                 command.initalize(transformationRequest.getEditPart(), transformationRequest
                         .getSelection(), transformationRequest.getCommand(), transformationRequest
                         .getFileName(), transformationRequest.getModelPackage(),
-                        transformationRequest.getParameter(), transformationRequest.getFramework());
+                        transformationRequest.getFramework());
                 return new ICommandProxy(command);
             } else {
                 return null;

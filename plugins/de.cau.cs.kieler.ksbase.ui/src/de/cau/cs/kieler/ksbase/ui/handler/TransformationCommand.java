@@ -33,6 +33,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.model.transformation.ITransformationFramework;
+import de.cau.cs.kieler.core.model.util.ModelingUtil;
 import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 
 /**
@@ -114,7 +115,7 @@ public class TransformationCommand extends AbstractTransactionalCommand {
             return null;
         }
     }
-
+    
     /**
      * Initializes the transformation.
      * 
@@ -128,18 +129,17 @@ public class TransformationCommand extends AbstractTransactionalCommand {
      *            Name of the transformation file
      * @param basePackage
      *            The package of the underlying meta model
-     * @param parameter
-     *            The parameters of the transformation method
      * @param framework
      *            The transformation framework to use for execution
      * @return False if an error occurred
      */
     public final boolean initalize(final IEditorPart editPart, final ISelection selection,
             final String command, final String fileName, final String basePackage,
-            final String[] parameter, final ITransformationFramework framework) {
+            final ITransformationFramework framework) {
         component = framework;
 
-        component.setParameters(parameter);
+        List<EObject> sel = ModelingUtil.getModelElementsFromSelection();
+        component.setParameters(sel.toArray(new Object[sel.size()]));
         return component.initializeTransformation(fileName, command, basePackage);
     }
 

@@ -20,7 +20,6 @@ import org.eclipse.gmf.runtime.common.core.service.IOperation;
 import org.eclipse.gmf.runtime.diagram.ui.services.editpolicy.CreateEditPoliciesOperation;
 import org.eclipse.gmf.runtime.diagram.ui.services.editpolicy.IEditPolicyProvider;
 
-import de.cau.cs.kieler.core.ui.policies.BalloonPopupEditPolicyProvider;
 
 /**
  * Provides an edit policy to create and execute KSBasE commands.

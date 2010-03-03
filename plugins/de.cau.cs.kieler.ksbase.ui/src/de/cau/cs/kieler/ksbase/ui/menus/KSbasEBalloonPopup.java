@@ -20,13 +20,9 @@ import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.gef.EditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editpolicies.PopupBarEditPolicy;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageLoader;
 import org.osgi.framework.Bundle;
-
-import de.cau.cs.kieler.core.ui.CoreUIPlugin;
 import de.cau.cs.kieler.core.ui.policies.IBalloonContribution;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;

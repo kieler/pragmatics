@@ -38,10 +38,9 @@ public class ModelObjectTester extends PropertyTester {
     /**
      * Test method called by the eclipse menu framework when checking for menu visibility. This is
      * kind of hacky, because we are ignoring the given items and using the PlatformUI class to get
-     * the current selection object. This results in multiple calls for all selected objects but it is
-     * working fast enough.
-     * Maybe this can be improved somehow.
-     *
+     * the current selection object. This results in multiple calls for all selected objects but it
+     * is working fast enough. Maybe this can be improved somehow.
+     * 
      * @param receiver
      *            The receiver object
      * @param property
@@ -69,9 +68,16 @@ public class ModelObjectTester extends PropertyTester {
             if (t != null) {
                 // Convert selection to model elements:
                 List<EObject> modelElements = ModelingUtil.getModelElementsFromSelection();
-
-                if (!evaluateTransformation(editor, t.getTransformation(), t.getParameters(), false)) {
-                    // Could the transformation be executed?
+                boolean executable = false;
+                for (List<String> params : t.getParameterList()) {
+                    if (evaluateTransformation(editor, t.getTransformation(), params
+                            .toArray(new String[params.size()]), false)) {
+                        // Could the transformation be executed?
+                        executable = true;
+                    }
+                }
+                // No parameter set could be mapped, so exit now
+                if (!executable) {
                     return false;
                 }
                 // First we will evaluate the validation transformation

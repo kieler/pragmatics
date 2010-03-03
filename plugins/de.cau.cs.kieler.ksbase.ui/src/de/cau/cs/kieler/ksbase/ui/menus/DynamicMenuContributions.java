@@ -266,9 +266,9 @@ public final class DynamicMenuContributions {
                                     handlerTest.setAttribute("args", editor.getEditorId() + ","
                                             + tid);
                                     handlerTest.setAttribute("forcePluginActivation", "true");
-                                    handlerTest
-                                            .setAttribute("property",
-                                                    "de.cau.cs.kieler.ksbase.ui.modelTesting.isModelInstance");
+                                    handlerTest.setAttribute("property",
+                                            "de.cau.cs.kieler.ksbase.ui."
+                                                    + "modelTesting.isModelInstance");
                                     handlerIt.appendChild(handlerTest);
                                     handlerWith.appendChild(handlerIt);
 

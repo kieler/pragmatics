@@ -19,17 +19,14 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.ContributorFactoryOSGi;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.ServiceReference;
@@ -104,7 +101,8 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
      */
     public synchronized void checkForWaitingEditor(final String activeEditor) {
         // System.out.println("Checking for " + activeEditor);
-        HashMap<EditorTransformationSettings, Bundle> installedBundles = new HashMap<EditorTransformationSettings, Bundle>();
+        HashMap<EditorTransformationSettings, Bundle> installedBundles = 
+            new HashMap<EditorTransformationSettings, Bundle>();
 
         for (Entry<EditorTransformationSettings, URI> entry : waitingBundles.entrySet()) {
             EditorTransformationSettings editor = entry.getKey();

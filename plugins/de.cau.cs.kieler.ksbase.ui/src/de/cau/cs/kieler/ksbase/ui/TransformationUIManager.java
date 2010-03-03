@@ -18,7 +18,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.commands.Command;
@@ -33,7 +32,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
@@ -95,8 +93,6 @@ public final class TransformationUIManager {
      * Creates and executes a transformation command by creating a request and execute the resulting
      * command on the diagram command stack.
      * 
-     * @param event
-     *            Execution event for which this command should be created
      * @param editor
      *            The editor for which this transformation is
      * @param transformation
@@ -128,9 +124,10 @@ public final class TransformationUIManager {
                     .getFirstElement();
 
             // Create request
+            // The transformation may be polymorphic so we need to check which one we are executing
             ExecuteTransformationRequest request = new ExecuteTransformationRequest(activeEditor,
                     transformation.getTransformation(), editor.getTransformationFile(), selection,
-                    editor.getModelPackageClass(), transformation.getParameters(), editor
+                    editor.getModelPackageClass(), editor
                             .getFramework());
 
             Command transformationCommand = selectedElement.getCommand(request);
