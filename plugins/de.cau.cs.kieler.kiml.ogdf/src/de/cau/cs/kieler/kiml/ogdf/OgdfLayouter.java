@@ -30,6 +30,7 @@ import net.ogdf.lib.Graph;
 import net.ogdf.lib.GraphAttributes;
 import net.ogdf.lib.LayoutModule;
 import net.ogdf.lib.NodeElement;
+import net.ogdf.lib.SugiyamaLayout;
 import net.ogdf.lib.UMLGraph;
 import net.ogdf.lib.UMLLayoutModule;
 import net.ogdf.lib.eLabelTyp;
@@ -54,10 +55,6 @@ import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
  */
 public abstract class OgdfLayouter {
 
-    /** layout option identifier for label edge distance. */
-    public static final String OPT_LABEL_EDGE_DISTANCE =
-        "de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance";
-    
     /** layout option identifier for label margin distance. */
     public static final String OPT_LABEL_MARGIN_DISTANCE =
         "de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance";
@@ -79,9 +76,13 @@ public abstract class OgdfLayouter {
         // call the algorithm to determine node and edge positions
         if (layoutModule instanceof UMLLayoutModule && graphAttributes instanceof UMLGraph) {
             ((UMLLayoutModule) layoutModule).call((UMLGraph) graphAttributes);
+//        } else if (layoutModule instanceof SugiyamaLayout && graphAttributes instanceof UMLGraph) {
+//            ((SugiyamaLayout) layoutModule).callUML(graphAttributes);
         } else {
             layoutModule.call(graphAttributes);
         }
+        // include intersections with the nodes bounding boxes in the bends
+        graphAttributes.addNodeCenter2Bends(1);
         // calculate new label positions and assign them to the mapped labels
         if (labelInterface != null) {
             layoutLabels(layoutNode, graphAttributes, labelInterface);
@@ -125,9 +126,9 @@ public abstract class OgdfLayouter {
         ELabelPosSimple labelLayouter = new ELabelPosSimple();
         labelLayouter.setMidOnEdge(false);
         // get the edge distance
-        float edgeDistance = LayoutOptions.getFloat(parentLayout, OPT_LABEL_EDGE_DISTANCE);
+        float edgeDistance = LayoutOptions.getFloat(parentLayout, LayoutOptions.LABEL_SPACING);
         if (Float.isNaN(edgeDistance)) {
-            Object edgeDistanceObj = getDefault(OPT_LABEL_EDGE_DISTANCE);
+            Object edgeDistanceObj = getDefault(LayoutOptions.LABEL_SPACING);
             if (edgeDistanceObj instanceof Float) {
                 edgeDistance = (Float) edgeDistanceObj;
             } else {
@@ -359,8 +360,6 @@ public abstract class OgdfLayouter {
      */
     protected void applyLayout(final KNode parentNode,
             final GraphAttributes graphAttributes) {
-        // include intersections with the nodes bounding boxes in the bends
-        graphAttributes.addNodeCenter2Bends(1);
         // get the parent node layout
         KShapeLayout parentNodeLayout = KimlLayoutUtil.getShapeLayout(parentNode);
         DRect boundingBox = graphAttributes.boundingBox();

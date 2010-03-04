@@ -7,6 +7,13 @@
             id="de.cau.cs.kieler.kiml.categories.ogdf"
             name="OGDF">
       </category>
+      <layoutOption
+            appliesTo="parents"
+            description="Distance of labels to the nodes"
+            id="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance"
+            name="Label Distance"
+            type="float">
+      </layoutOption>
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
@@ -18,55 +25,15 @@
                option="de.cau.cs.kieler.layout.options.minSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.layerDistance">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.fails">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.runs">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.transpose">
-         </knownOption>
-         <knownOption
                option="de.cau.cs.kieler.layout.options.borderSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+               option="de.cau.cs.kieler.kiml.ogdf.option.layerDistance">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
          </knownOption>
       </layoutProvider>
-      <layoutOption
-            appliesTo="parents"
-            description="The distance between two layers."
-            id="de.cau.cs.kieler.kiml.ogdf.option.layerDistance"
-            name="Layer Distance"
-            type="float">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            description="How many times may the total number of crossings after a complete top down or bottom up traversal not decrease before one repetition is stopped."
-            id="de.cau.cs.kieler.kiml.ogdf.option.fails"
-            name="Fails"
-            type="int">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            description="How many times is the crossing minimization repeated. Each repetition (except for the first) starts with randomly permuted nodes on each layer. Deterministic behaviour can be achieved by setting runs to 1."
-            id="de.cau.cs.kieler.kiml.ogdf.option.runs"
-            name="Runs"
-            type="int">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            description="If this option is set to true an additional fine tuning step is performed after each traversal, which tries to reduce the total number of crossings by switching adjacent vertices on the same layer."
-            id="de.cau.cs.kieler.kiml.ogdf.option.transpose"
-            name="Transpose"
-            type="boolean">
-      </layoutOption>
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
@@ -79,10 +46,16 @@
                type="de.cau.cs.kieler.layout.diagrams.classDiagram">
          </supportedDiagram>
          <knownOption
+               option="de.cau.cs.kieler.layout.options.layoutDirection">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.minSpacing">
+         </knownOption>
+         <knownOption
                option="de.cau.cs.kieler.layout.options.borderSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+               option="de.cau.cs.kieler.layout.options.labelSpacing">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
@@ -90,99 +63,13 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.pageRatio">
          </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.preCliques">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.minCliqueSize">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.runs">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.separation">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.cOverhang">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.margin">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.layout.options.layoutDirection">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.costAssoc">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.costGen">
-         </knownOption>
       </layoutProvider>
       <layoutOption
             appliesTo="parents"
-            description="The distance of the labels to the edges."
-            id="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance"
-            name="Label Edge Distance"
-            type="float">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            description="The distance of the labels to the nodes."
-            id="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance"
-            name="Label Margin Distance"
-            type="float">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            description="Specifies the width/height ratio of connected components."
+            description="Width / height ratio of connected components"
             id="de.cau.cs.kieler.kiml.ogdf.option.pageRatio"
             name="Page Ratio"
             type="float">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            description="If enabled a preprocessing for cliques will be performed and cliques will be laid out in a special form (straight-line instead of orthogonal)."
-            id="de.cau.cs.kieler.kiml.ogdf.option.preCliques"
-            name="Preprocess Cliques"
-            type="boolean">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            description="If &apos;Preprocess Cliques&apos; is enabled this option determines the minimal size of cliques to search for."
-            id="de.cau.cs.kieler.kiml.ogdf.option.minCliqueSize"
-            name="Minimum Clique Size"
-            type="int">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            description="The minimal allowed distance between edges and vertices."
-            id="de.cau.cs.kieler.kiml.ogdf.option.separation"
-            name="Separation"
-            type="float">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            id="de.cau.cs.kieler.kiml.ogdf.option.cOverhang"
-            name="Overhang"
-            type="float">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            id="de.cau.cs.kieler.kiml.ogdf.option.margin"
-            name="Margin"
-            type="float">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            id="de.cau.cs.kieler.kiml.ogdf.option.costAssoc"
-            name="Cost Assoc"
-            type="int">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            id="de.cau.cs.kieler.kiml.ogdf.option.costGen"
-            name="Cost Gen"
-            type="int">
       </layoutOption>
    </extension>
 

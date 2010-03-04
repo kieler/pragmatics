@@ -396,7 +396,8 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
         }
         for (int i = 0; i < length; i++) {
             char c = className.charAt(i);
-            if (Character.isUpperCase(c) && i > 0) {
+            if (i > 0 && Character.isUpperCase(c)
+                    && !Character.isUpperCase(className.charAt(i - 1))) {
                 stringBuilder.append(' ');
             }
             if (!Character.isDigit(c)) {
