@@ -21,5 +21,23 @@
             class="de.cau.cs.kieler.dataflow.ui.preferences.PreferenceInitializer">
       </initializer>
    </extension>
+   <extension
+         point="org.eclipse.ui.navigator.navigatorContent">
+      <commonWizard
+            menuGroupId="de.cau.cs.kieler"
+            type="new"
+            wizardId="de.cau.cs.kieler.dataflow.ui.wizards.CreateRandomModelWizard">
+         <enablement>
+            <or>
+               <adapt
+                     type="org.eclipse.core.resources.IProject">
+               </adapt>
+               <adapt
+                     type="org.eclipse.core.resources.IFolder">
+               </adapt>
+            </or>
+         </enablement>
+      </commonWizard>
+   </extension>
 
 </plugin>
