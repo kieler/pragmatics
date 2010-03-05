@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -56,6 +57,9 @@ import org.eclipse.ui.views.properties.PropertySheetPage;
 import de.cau.cs.kieler.kiml.layout.LayoutServices;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.Messages;
+import de.cau.cs.kieler.kiml.ui.editors.IEditorChangeListener;
+import de.cau.cs.kieler.kiml.ui.editors.IDiagramEditorConnector;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 import de.cau.cs.kieler.kiml.ui.layout.KimlUiUtil;
 
 /**
@@ -64,7 +68,8 @@ import de.cau.cs.kieler.kiml.ui.layout.KimlUiUtil;
  * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
  */
-public class LayoutViewPart extends ViewPart implements ISelectionChangedListener {
+public class LayoutViewPart extends ViewPart implements ISelectionChangedListener,
+        IEditorChangeListener {
 
     /** the view identifier. */
     public static final String VIEW_ID = "de.cau.cs.kieler.kiml.views.layout";
@@ -77,6 +82,8 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
     private IPartListener partListener;
     /** the currently tracked diagram editor. */
     private DiagramEditor currentEditor;
+    /** the currently used diagram editor connector. */
+    private IDiagramEditorConnector currentConnector;
     /** the current selection. */
     private IStructuredSelection currentSelection;
     
@@ -168,6 +175,10 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
             }
             public void partClosed(final IWorkbenchPart part) {
                 if (part == currentEditor) {
+                    if (currentConnector != null) {
+                        currentConnector.removeChangeListener(LayoutViewPart.this);
+                        currentConnector = null;
+                    }
                     currentEditor.getDiagramGraphicalViewer()
                             .removeSelectionChangedListener(LayoutViewPart.this);
                     currentEditor = null;
@@ -176,7 +187,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
             public void partOpened(final IWorkbenchPart part) {
             }
         };
-        workbenchWindow.getPartService().addPartListener(partListener);
+        workbenchWindow.getPartService().addPartListener(partListener);  
     }
 
     /**
@@ -195,6 +206,10 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
         super.dispose();
         getSite().getWorkbenchWindow().getPartService().removePartListener(partListener);
         if (currentEditor != null) {
+            if (currentConnector != null) {
+                currentConnector.removeChangeListener(LayoutViewPart.this);
+                currentConnector = null;
+            }
             currentEditor.getDiagramGraphicalViewer().removeSelectionChangedListener(this);
             currentEditor = null;
         }
@@ -206,18 +221,24 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
      * @param part the active workbench part
      */
     private void setInput(final IWorkbenchPart part) {
-        if (part instanceof DiagramEditor) {
-            if (currentEditor != null) {
-                currentEditor.getDiagramGraphicalViewer().removeSelectionChangedListener(this);
+        if (part instanceof IEditorPart) {
+            IEditorPart editorPart = (IEditorPart) part;
+            if (!(editorPart instanceof DiagramEditor)) {
+                // look for a connector class for the given editor
+                for (IDiagramEditorConnector connector : EclipseLayoutServices
+                        .getInstance().getEditorConnectors()) {
+                    if (connector.supports(editorPart)) {
+                        if (currentConnector != null) {
+                            currentConnector.removeChangeListener(this);
+                        }
+                        connector.addChangeListener(editorPart, this);
+                        editorPart = connector.getActiveEditor(editorPart);
+                        currentConnector = connector;
+                        break;
+                    }
+                }
             }
-            currentEditor = (DiagramEditor) part;
-            ISelection selection = currentEditor.getDiagramGraphicalViewer().getSelection();
-            page.selectionChanged(currentEditor, selection);
-            if (selection instanceof IStructuredSelection) {
-                currentSelection = (IStructuredSelection) selection;
-                setPartText(currentSelection);
-            }
-            currentEditor.getDiagramGraphicalViewer().addSelectionChangedListener(this);
+            editorChanged(editorPart);
         }
     }
 
@@ -232,6 +253,25 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
                 currentSelection = (IStructuredSelection) selection;
                 setPartText(currentSelection);
             }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void editorChanged(final IEditorPart activeEditor) {
+        if (activeEditor instanceof DiagramEditor) {
+            if (currentEditor != null) {
+                currentEditor.getDiagramGraphicalViewer().removeSelectionChangedListener(this);
+            }
+            currentEditor = (DiagramEditor) activeEditor;
+            ISelection selection = currentEditor.getDiagramGraphicalViewer().getSelection();
+            page.selectionChanged(currentEditor, selection);
+            if (selection instanceof IStructuredSelection) {
+                currentSelection = (IStructuredSelection) selection;
+                setPartText(currentSelection);
+            }
+            currentEditor.getDiagramGraphicalViewer().addSelectionChangedListener(this);
         }
     }
     

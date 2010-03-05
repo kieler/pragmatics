@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.5"?>
 <plugin>
+   <extension-point id="diagramConnectors" name="DiagramConnectors" schema="schema/diagramConnector.exsd"/>
+ <extension
+       point="org.eclipse.core.expressions.propertyTesters">
+    <propertyTester
+          class="de.cau.cs.kieler.kiml.ui.editors.ActiveEditorSupportedTester"
+          id="de.cau.cs.kieler.kiml.ui.activeEditorSupportedTester"
+          namespace="de.cau.cs.kieler.kiml.ui"
+          properties="activeEditorIsSupported"
+          type="org.eclipse.ui.IEditorPart">
+    </propertyTester>
+ </extension>
  <extension
        point="org.eclipse.emf.ecore.generated_package">
     <package
@@ -48,9 +59,13 @@ point="org.eclipse.ui.menus">
          style="push">
       <visibleWhen
             checkEnabled="false">
-         <reference
-               definitionId="de.cau.cs.kieler.expression.gmfDiagram">
-         </reference>
+         <with
+               variable="activeEditor">
+            <test
+                  forcePluginActivation="false"
+                  property="de.cau.cs.kieler.kiml.ui.activeEditorIsSupported">
+            </test>
+         </with>
       </visibleWhen>
    </command>
 </menuContribution>
@@ -64,9 +79,13 @@ point="org.eclipse.ui.menus">
          tooltip="Layout the current diagram with KIELER">
       <visibleWhen
             checkEnabled="false">
-         <reference
-               definitionId="de.cau.cs.kieler.expression.gmfDiagram">
-         </reference>
+         <with
+               variable="activeEditor">
+            <test
+                  forcePluginActivation="false"
+                  property="de.cau.cs.kieler.kiml.ui.activeEditorIsSupported">
+            </test>
+         </with>
       </visibleWhen>
    </command>
 </menuContribution>
@@ -78,14 +97,15 @@ point="org.eclipse.ui.menus">
          label="%command.label.2"
          mnemonic="%command.mnemonic.0"
          style="push">
+      <parameter
+            name="de.cau.cs.kieler.kiml.ui.layoutScope"
+            value="selection">
+      </parameter>
       <visibleWhen
             checkEnabled="false">
          <and>
             <reference
                   definitionId="de.cau.cs.kieler.expression.editorActive">
-            </reference>
-            <reference
-                  definitionId="de.cau.cs.kieler.expression.gmfDiagram">
             </reference>
             <not>
                <reference
@@ -100,12 +120,15 @@ point="org.eclipse.ui.menus">
             <count
                   value="1">
             </count>
+            <with
+                  variable="activeEditor">
+               <test
+                     forcePluginActivation="false"
+                     property="de.cau.cs.kieler.kiml.ui.activeEditorIsSupported">
+               </test>
+            </with>
          </and>
       </visibleWhen>
-      <parameter
-            name="de.cau.cs.kieler.kiml.ui.layoutScope"
-            value="selection">
-      </parameter>
    </command>
    <command
          commandId="de.cau.cs.kieler.kiml.ui.command.layout"
@@ -113,21 +136,25 @@ point="org.eclipse.ui.menus">
          label="%command.label.1"
          mnemonic="%command.mnemonic.0"
          style="push">
-      <visibleWhen
-            checkEnabled="false">
-         <and>
-            <reference
-                  definitionId="de.cau.cs.kieler.expression.gmfDiagram">
-            </reference>
-            <reference
-                  definitionId="de.cau.cs.kieler.expression.diagramSelected">
-            </reference>
-         </and>
-      </visibleWhen>
       <parameter
             name="de.cau.cs.kieler.kiml.ui.layoutScope"
             value="diagram">
       </parameter>
+      <visibleWhen
+            checkEnabled="false">
+         <and>
+            <reference
+                  definitionId="de.cau.cs.kieler.expression.diagramSelected">
+            </reference>
+            <with
+                  variable="activeEditor">
+               <test
+                     forcePluginActivation="false"
+                     property="de.cau.cs.kieler.kiml.ui.activeEditorIsSupported">
+               </test>
+            </with>
+         </and>
+      </visibleWhen>
    </command>
 </menuContribution>
 </extension>

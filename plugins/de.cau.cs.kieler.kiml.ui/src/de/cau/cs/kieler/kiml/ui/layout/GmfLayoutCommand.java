@@ -173,12 +173,12 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
                             bend.x - targetPoint.x,
                             bend.y - targetPoint.y));
                 }
-                RelativeBendpoints points = (RelativeBendpoints)edgeLayout.edge.getBendpoints();
+                RelativeBendpoints points = (RelativeBendpoints) edgeLayout.edge.getBendpoints();
                 points.setPoints(newBendpoints);
             }
             // set new source anchor point of the edge
             if (edgeLayout.sourceTerminal != null) {
-                IdentityAnchor anchor = (IdentityAnchor)edgeLayout.edge.getSourceAnchor();
+                IdentityAnchor anchor = (IdentityAnchor) edgeLayout.edge.getSourceAnchor();
                 if (anchor == null) {
                     anchor = NotationFactory.eINSTANCE.createIdentityAnchor();
                     edgeLayout.edge.setSourceAnchor(anchor);
@@ -187,7 +187,7 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
             }
             // set new target anchor point of the edge
             if (edgeLayout.targetTerminal != null) {
-                IdentityAnchor anchor = (IdentityAnchor)edgeLayout.edge.getTargetAnchor();
+                IdentityAnchor anchor = (IdentityAnchor) edgeLayout.edge.getTargetAnchor();
                 if (anchor == null) {
                     anchor = NotationFactory.eINSTANCE.createIdentityAnchor();
                     edgeLayout.edge.setTargetAnchor(anchor);
@@ -207,7 +207,7 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
     @Override
     public List<?> getAffectedFiles() {
         if (diagramViewAdapter != null) {
-            View view = (View)diagramViewAdapter.getAdapter(View.class);
+            View view = (View) diagramViewAdapter.getAdapter(View.class);
             if (view != null) {
                 return getWorkspaceFiles(view);
             }

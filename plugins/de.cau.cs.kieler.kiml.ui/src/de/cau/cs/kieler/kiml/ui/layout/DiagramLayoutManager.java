@@ -32,6 +32,7 @@ import de.cau.cs.kieler.kiml.layout.LayoutServices;
 import de.cau.cs.kieler.kiml.layout.RecursiveLayouterEngine;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
+import de.cau.cs.kieler.kiml.ui.editors.IDiagramEditorConnector;
 
 /**
  * Abstract superclass for managers of diagram layout. Contains static methods
@@ -82,7 +83,7 @@ public abstract class DiagramLayoutManager {
      * manager instance. Animation, a progress bar, and layout of ancestors can
      * be optionally turned on.
      * 
-     * @param editorPart the editor for which layout is performed, or {@code
+     * @param theeditorPart the editor for which layout is performed, or {@code
      *         null} if the diagram is not part of an editor
      * @param editPart the parent edit part for which layout is performed, or
      *         {@code null} if the whole diagram shall be layouted
@@ -91,8 +92,16 @@ public abstract class DiagramLayoutManager {
      * @param layoutAncestors if true, layout is not only performed for the selected
      *         edit part, but also for its ancestors
      */
-    public static final void layout(final IEditorPart editorPart, final EditPart editPart,
+    public static final void layout(final IEditorPart theeditorPart, final EditPart editPart,
             final boolean animate, final boolean progressBar, final boolean layoutAncestors) {
+        IEditorPart editorPart = theeditorPart;
+        for (IDiagramEditorConnector connector : EclipseLayoutServices.getInstance()
+                .getEditorConnectors()) {
+            if (connector.supports(editorPart)) {
+                editorPart = connector.getActiveEditor(editorPart);
+                break;
+            }
+        }
         for (DiagramLayoutManager manager : MANAGERS) {
             if (manager.supports(editorPart) || manager.supports(editPart)) {
                 manager.doLayout(editorPart, editPart, animate, progressBar, layoutAncestors, false);
@@ -108,7 +117,7 @@ public abstract class DiagramLayoutManager {
      * manager instance and caches the layout result. Animation and a progress bar
      * can be optionally turned on.
      * 
-     * @param editorPart the editor for which layout is performed, or {@code
+     * @param theeditorPart the editor for which layout is performed, or {@code
      *         null} if the diagram is not part of an editor
      * @param editPart the parent edit part for which layout is performed, or
      *         {@code null} if the whole diagram shall be layouted
@@ -116,8 +125,16 @@ public abstract class DiagramLayoutManager {
      * @param progressBar if true, a progress bar is displayed
      * @return the cached layout result
      */
-    public static final CachedLayout cacheLayout(final IEditorPart editorPart, final EditPart editPart,
-            final boolean animate, final boolean progressBar) {
+    public static final CachedLayout cacheLayout(final IEditorPart theeditorPart,
+            final EditPart editPart, final boolean animate, final boolean progressBar) {
+        IEditorPart editorPart = theeditorPart;
+        for (IDiagramEditorConnector connector : EclipseLayoutServices.getInstance()
+                .getEditorConnectors()) {
+            if (connector.supports(editorPart)) {
+                editorPart = connector.getActiveEditor(editorPart);
+                break;
+            }
+        }
         for (DiagramLayoutManager manager : MANAGERS) {
             if (manager.supports(editorPart) || manager.supports(editPart)) {
                 manager.doLayout(editorPart, editPart, animate, progressBar, false, true);

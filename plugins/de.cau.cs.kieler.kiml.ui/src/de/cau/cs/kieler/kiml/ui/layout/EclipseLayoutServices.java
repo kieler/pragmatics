@@ -37,6 +37,7 @@ import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
 import de.cau.cs.kieler.kiml.layout.LayoutProviderData;
 import de.cau.cs.kieler.kiml.layout.LayoutServices;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
+import de.cau.cs.kieler.kiml.ui.editors.IDiagramEditorConnector;
 
 /**
  * This class is responsible for reading all extension point elements for layout
@@ -53,12 +54,16 @@ public class EclipseLayoutServices extends LayoutServices {
     public static final String EXTP_ID_LAYOUT_LISTENERS = "de.cau.cs.kieler.kiml.layout.layoutListeners";
     /** identifier of the extension point for layout info. */
     public static final String EXTP_ID_LAYOUT_INFO = "de.cau.cs.kieler.kiml.layout.layoutInfo";
+    /** identifier of the extension point for diagram connectors. */
+    public static final String EXTP_ID_DIAGRAM_CONNECTORS = "de.cau.cs.kieler.kiml.ui.diagramConnectors";
     /** name of the 'layoutProvider' element in the 'layout providers' extension point. */
     public static final String ELEMENT_LAYOUT_PROVIDER = "layoutProvider";
     /** name of the 'layoutType' element in the 'layout providers' extension point. */
     public static final String ELEMENT_LAYOUT_TYPE = "layoutType";
     /** name of the 'category' element in the 'layout providers' extension point. */
     public static final String ELEMENT_CATEGORY = "category";
+    /** name of the 'editorConnector' element in the 'diagram connectors' extension point. */
+    public static final String ELEMENT_EDITOR_CONNECTOR = "editorConnector";
     /** name of the 'layoutOption' element in the 'layout providers' extension point. */
     public static final String ELEMENT_LAYOUT_OPTION = "layoutOption";
     /** name of the 'knownOption' element in the 'layout providers' extension point. */
@@ -108,6 +113,8 @@ public class EclipseLayoutServices extends LayoutServices {
     private Set<String> registeredElements = new HashSet<String>();
     /** list of default options read from the extension point. */
     private List<String[]> defaultOptions = new LinkedList<String[]>();
+    /** list of connectors to diagram editors. */
+    private List<IDiagramEditorConnector> editorConnectors = new LinkedList<IDiagramEditorConnector>();
 
     /**
      * Builds the layout services for the Eclipse platform.
@@ -120,6 +127,7 @@ public class EclipseLayoutServices extends LayoutServices {
         layoutServices.loadLayoutProviderExtensions();
         layoutServices.loadLayoutListenerExtensions();
         layoutServices.loadLayoutInfoExtensions();
+        layoutServices.loadDiagramConnectorExtensions();
         layoutServices.loadDefaultOptions();
         // load preferences for KIML
         layoutServices.loadPreferences();
@@ -461,6 +469,28 @@ public class EclipseLayoutServices extends LayoutServices {
             }
         }
     }
+    
+    /**
+     * Loads all diagram editor connectors from the extension point.
+     */
+    private void loadDiagramConnectorExtensions() {
+        IConfigurationElement[] extensions = Platform.getExtensionRegistry()
+                .getConfigurationElementsFor(EXTP_ID_DIAGRAM_CONNECTORS);
+        
+        for (IConfigurationElement element : extensions) {
+            if (ELEMENT_EDITOR_CONNECTOR.equals(element.getName())) {
+                try {
+                    IDiagramEditorConnector connector = (IDiagramEditorConnector)
+                            element.createExecutableExtension(ATTRIBUTE_CLASS);
+                    if (connector != null) {
+                        editorConnectors.add(connector);
+                    }
+                } catch (CoreException exception) {
+                    StatusManager.getManager().handle(exception, KimlUiPlugin.PLUGIN_ID);
+                }
+            }
+        }
+    }
 
     /**
      * Loads preferences for KIML.
@@ -534,6 +564,15 @@ public class EclipseLayoutServices extends LayoutServices {
      */
     public Set<String> getRegisteredElements() {
         return registeredElements;
+    }
+    
+    /**
+     * Returns the list of connector classes to foreign editors.
+     * 
+     * @return list of connector classes
+     */
+    public List<IDiagramEditorConnector> getEditorConnectors() {
+        return editorConnectors;
     }
 
 }

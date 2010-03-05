@@ -6,13 +6,15 @@ Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: de.cau.cs.kieler.kiml.ui.KimlUiPlugin
 Bundle-Vendor: %Bundle-Vendor.0
 Bundle-Localization: plugin
-Export-Package: de.cau.cs.kieler.kiml.ui.layout
+Export-Package: de.cau.cs.kieler.kiml.ui.editors,
+ de.cau.cs.kieler.kiml.ui.layout
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.4.0",
  org.eclipse.ui;bundle-version="3.4.0",
  org.eclipse.gef;bundle-version="3.4.0",
  org.eclipse.gmf.runtime.diagram.ui;bundle-version="1.1.0",
  de.cau.cs.kieler.core,
  de.cau.cs.kieler.core.ui,
- de.cau.cs.kieler.kiml.layout
+ de.cau.cs.kieler.kiml.layout,
+ org.eclipse.core.expressions;bundle-version="3.4.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
