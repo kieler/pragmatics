@@ -6,4 +6,4 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Technische Universität Dortmund
 Fragment-Host: net.ogdf.lib;bundle-version="1.0.0"
 Eclipse-PlatformFilter: (& (osgi.os=solaris) (osgi.arch=sparc))
-Bundle-NativeCode: /lib/libogdf.so; osname=solaris; processor=sparc
+Bundle-NativeCode: /lib/libogdf.so

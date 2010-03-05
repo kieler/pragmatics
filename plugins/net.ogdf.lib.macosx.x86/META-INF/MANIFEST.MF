@@ -6,4 +6,4 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Technische Universität Dortmund
 Fragment-Host: net.ogdf.lib;bundle-version="1.0.0"
 Eclipse-PlatformFilter: (& (osgi.os=macosx) (osgi.arch=x86))
-Bundle-NativeCode: /lib/libogdf.jnilib; osname=macosx; processor=x86
+Bundle-NativeCode: /lib/libogdf.jnilib
