@@ -390,7 +390,8 @@ public abstract class OgdfLayouter {
 
         // apply edge layout
         for (Map.Entry<KEdge, EdgeElement> entry : kedge2ogdfEdgeMap.entrySet()) {
-            KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(entry.getKey());
+            KEdge kedge = entry.getKey();
+            KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
             EdgeElement ogdfEdge = entry.getValue();
             DPolyline bends = graphAttributes.bends(ogdfEdge);
             // are source and target point present?
@@ -400,8 +401,7 @@ public abstract class OgdfLayouter {
                 kbends.clear();
                 // set the source point
                 DPoint first = bendsIter.next();
-                edgeLayout.setSourcePoint(toKPoint(first, offsetX,
-                        offsetY));
+                edgeLayout.setSourcePoint(toKPoint(first, offsetX, offsetY));
                 // set the bend points
                 while (bendsIter.hasNext()) {
                     DPoint point = bendsIter.next();
@@ -418,7 +418,7 @@ public abstract class OgdfLayouter {
                 // set the edge labels
                 EdgeLabelDouble edgeLabel = labelInterface.getLabel(ogdfEdge);
                 boolean makeMult1 = false, makeMult2 = false;
-                for (KLabel label : entry.getKey().getLabels()) {
+                for (KLabel label : kedge.getLabels()) {
                     KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
                     EdgeLabelPlacement placement = LayoutOptions.getEnum(labelLayout,
                             EdgeLabelPlacement.class);

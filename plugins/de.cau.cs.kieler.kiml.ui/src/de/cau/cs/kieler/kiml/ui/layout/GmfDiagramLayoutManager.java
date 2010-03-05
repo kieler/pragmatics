@@ -419,8 +419,9 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 if (text != null) {
                     KNode parent = (KNode) editPart2GraphElemMap.get(graphicalEditPart.getParent());
                     KLabel label = parent.getLabel();
-                    label.setText(text);
-                    KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
+                    if (label.getText() == null || label.getText().length() == 0) {
+                        label.setText(text);
+                        KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
 //                  KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(parent);
 //                  Rectangle labelBounds = labelFigure.getBounds();
 //                    int xpos = labelBounds.x, ypos = labelBounds.y;
@@ -430,12 +431,13 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 //                    }
 //                    labelLayout.setXpos(xpos);
 //                    labelLayout.setYpos(ypos);
-                    labelLayout.setWidth(labelFigure.getPreferredSize().width);
-                    labelLayout.setHeight(labelFigure.getPreferredSize().height);
-                    LayoutOptions.setString(labelLayout, LayoutOptions.FONT_NAME,
-                            font.getFontData()[0].getName());
-                    LayoutOptions.setInt(labelLayout, LayoutOptions.FONT_SIZE,
-                            font.getFontData()[0].getHeight());
+                        labelLayout.setWidth(labelFigure.getPreferredSize().width);
+                        labelLayout.setHeight(labelFigure.getPreferredSize().height);
+                        LayoutOptions.setString(labelLayout, LayoutOptions.FONT_NAME,
+                                font.getFontData()[0].getName());
+                        LayoutOptions.setInt(labelLayout, LayoutOptions.FONT_SIZE,
+                                font.getFontData()[0].getHeight());
+                    }
                 }
             }
         }
