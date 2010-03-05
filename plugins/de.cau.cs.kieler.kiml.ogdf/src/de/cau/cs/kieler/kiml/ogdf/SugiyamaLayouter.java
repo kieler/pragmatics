@@ -43,6 +43,9 @@ public class SugiyamaLayouter extends OgdfLayouter {
     /** default value for layer distance. */
     public static final boolean DEF_TRANSPOSE = true;
 
+    /** the self-loop router algorithm. */
+    private SelfLoopRouter loopRouter = new SelfLoopRouter();
+    
     /**
      * {@inheritDoc}
      */
@@ -64,8 +67,18 @@ public class SugiyamaLayouter extends OgdfLayouter {
 
         // set the hierarchy layout module
         sugiLayout.setLayout(hierarchyLayout);
+        
+        // remove self-loops from the graph
+        loopRouter.preProcess(layoutNode);
 
         return sugiLayout;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    protected void postProcess(final KNode layoutNode) {
+        loopRouter.postProcess();
     }
 
     /**
