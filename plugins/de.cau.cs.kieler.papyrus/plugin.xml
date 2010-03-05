@@ -2,53 +2,109 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
+         point="de.cau.cs.kieler.kiml.ui.diagramConnectors">
+      <ForeignEditorConnector
+            class="de.cau.cs.kieler.papyrus.MultiPartDiagramConnector">
+      </ForeignEditorConnector>
+   </extension>
+   <extension
+         id="de.cau.cs.rtprak.group04.papyrus.layout.DefaultOptionsForUseCaseDiagram"
+         name="DefaultOptionsForUseCaseDiagram"
          point="de.cau.cs.kieler.kiml.layout.layoutInfo">
-      <binding
-            class="org.eclipse.papyrus.diagram.activity.edit.parts.ActivitySubverticesEditPart"
-            id="de.cau.cs.kieler.papyrus.activity">
-      </binding>
-      <binding
-            class="org.eclipse.papyrus.diagram.activity.edit.parts.PackageEditPart"
-            id="de.cau.cs.kieler.papyrus.activity.package">
-      </binding>
       <option
-            object="de.cau.cs.kieler.papyrus.activity.package"
-            option="de.cau.cs.kieler.layout.options.diagramType"
-            value="de.cau.cs.kieler.layout.diagrams.boxes">
-      </option>
-      <option
-            object="de.cau.cs.kieler.papyrus.activity"
-            option="de.cau.cs.kieler.layout.options.diagramType"
-            value="de.cau.cs.kieler.layout.diagrams.stateMachine">
-      </option>
-      <option
-            object="de.cau.cs.kieler.papyrus.activity"
-            option="de.cau.cs.kieler.layout.options.layoutDirection"
-            value="DOWN">
-      </option>
-      <option
-            object="de.cau.cs.kieler.papyrus.activity"
-            option="de.cau.cs.kieler.layout.options.borderSpacing"
-            value="15.0">
-      </option>
-      <option
-            object="de.cau.cs.kieler.papyrus.activity"
-            option="de.cau.cs.kieler.layout.options.minSpacing"
-            value="20.0">
-      </option>
-      <binding
             class="org.eclipse.papyrus.diagram.usecase.edit.parts.UseCaseDiagramEditPart"
-            id="de.cau.cs.kieler.papyrus.usecase">
-      </binding>
+            option="de.cau.cs.kieler.layout.options.borderSpacing"
+            value="15">
+      </option>
       <option
-            object="de.cau.cs.kieler.papyrus.usecase"
+            class="org.eclipse.papyrus.diagram.usecase.edit.parts.UseCaseDiagramEditPart"
+            option="de.cau.cs.kieler.layout.options.layoutHint"
+            value="de.cau.cs.kieler.kiml.graphviz.Neato">
+      </option>
+      <option
+            class="org.eclipse.papyrus.diagram.usecase.edit.parts.UseCaseDiagramEditPart"
+            option="de.cau.cs.kieler.layout.options.minSpacing"
+            value="50">
+      </option>
+      <option
+            class="org.eclipse.papyrus.diagram.usecase.edit.parts.UseCaseDiagramEditPart"
+            option="de.cau.cs.kieler.layout.options.randomSeed"
+            value="2">
+      </option>
+      <option
+            class="org.eclipse.papyrus.diagram.usecase.edit.parts.ComponentEditPart"
+            option="de.cau.cs.kieler.layout.options.borderSpacing"
+            value="30">
+      </option>
+      <option
+            class="org.eclipse.papyrus.diagram.usecase.edit.parts.ComponentEditPart"
+            option="de.cau.cs.kieler.layout.options.minSpacing"
+            value="30">
+      </option>
+      <option
+            class="org.eclipse.papyrus.diagram.usecase.edit.parts.ComponentEditPart"
+            option="de.cau.cs.kieler.layout.options.randomSeed"
+            value="2">
+      </option>
+      <option
+            class="org.eclipse.papyrus.diagram.usecase.edit.parts.UseCaseDiagramEditPart"
             option="de.cau.cs.kieler.layout.options.diagramType"
             value="de.cau.cs.kieler.layout.diagrams.usecaseDiagram">
       </option>
       <option
-            object="de.cau.cs.kieler.papyrus.usecase"
+            class="org.eclipse.papyrus.diagram.usecase.edit.parts.ComponentEditPart"
+            option="de.cau.cs.kieler.layout.options.diagramType"
+            value="de.cau.cs.kieler.layout.diagrams.usecaseDiagram">
+      </option>
+   </extension>
+   <extension
+         id="de.cau.cs.rtprak.group04.papyrus.layout.DefaultOptionsForClassDiagram"
+         name="DefaultOptionsForClassDiagram"
+         point="de.cau.cs.kieler.kiml.layout.layoutInfo">
+      <option
+            class="org.eclipse.papyrus.diagram.clazz.edit.parts.ModelEditPart"
+            option="de.cau.cs.kieler.layout.options.borderSpacing"
+            value="15">
+      </option>
+      <option
+            class="org.eclipse.papyrus.diagram.clazz.edit.parts.ModelEditPart"
+            option="de.cau.cs.kieler.layout.options.diagramType"
+            value="de.cau.cs.kieler.layout.diagrams.classDiagram">
+      </option>
+      <option
+            class="org.eclipse.papyrus.diagram.clazz.edit.parts.ModelEditPart"
             option="de.cau.cs.kieler.layout.options.minSpacing"
-            value="25.0">
+            value="40">
+      </option>
+   </extension>
+   <extension
+         id="de.cau.cs.rtprak.group04.papyrus.layout.DefaultOptionsForActivityDiagram"
+         name="DefaultOptionsForActivityDiagram"
+         point="de.cau.cs.kieler.kiml.layout.layoutInfo">
+      <option
+            class="org.eclipse.papyrus.diagram.activity.edit.parts.ActivityEditPart"
+            option="de.cau.cs.kieler.layout.options.diagramType"
+            value="de.cau.cs.kieler.layout.diagrams.stateMachine">
+      </option>
+      <option
+            class="org.eclipse.papyrus.diagram.activity.edit.parts.ActivityEditPart"
+            option="de.cau.cs.kieler.layout.options.borderSpacing"
+            value="12">
+      </option>
+      <option
+            class="org.eclipse.papyrus.diagram.activity.edit.parts.ActivityEditPart"
+            option="de.cau.cs.kieler.layout.options.edgeRouting"
+            value="POLYLINE">
+      </option>
+      <option
+            class="org.eclipse.papyrus.diagram.activity.edit.parts.ActivityEditPart"
+            option="de.cau.cs.kieler.layout.options.layoutDirection"
+            value="DOWN">
+      </option>
+      <option
+            class="org.eclipse.papyrus.diagram.activity.edit.parts.ActivityEditPart"
+            option="de.cau.cs.kieler.layout.options.minSpacing"
+            value="30">
       </option>
    </extension>
 

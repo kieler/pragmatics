@@ -33,6 +33,14 @@ public interface IDiagramEditorConnector {
     IEditorPart getActiveEditor(IEditorPart editorPart);
 
     /**
+     * Check whether this connector class can be used for the given editor.
+     * 
+     * @param editorPart editor which might be connected with this class
+     * @return {@code true} if this class can handle the editor
+     */
+    boolean supports(IEditorPart editorPart);
+
+    /**
      * Register a listener for change of the active editor.
      * 
      * @param editorPart editor to register to
@@ -41,18 +49,10 @@ public interface IDiagramEditorConnector {
     void addChangeListener(IEditorPart editorPart, IEditorChangeListener listener);
 
     /**
-     * Remove a change listener from the last registered editor.
+     * Remove a change listener from all editors for which it has registered.
      * 
      * @param listener listener to remove
      */
     void removeChangeListener(IEditorChangeListener listener);
-
-    /**
-     * Check whether this connector class can be used for the given editor.
-     * 
-     * @param editorPart editor which might be connected with this class
-     * @return {@code true} if this class can handle the editor
-     */
-    boolean supports(IEditorPart editorPart);
 
 }
