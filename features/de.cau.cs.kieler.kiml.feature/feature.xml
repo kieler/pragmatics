@@ -109,18 +109,21 @@ This Agreement is governed by the laws of the State of New York and the intellec
    </url>
 
    <requires>
-      <import feature="de.cau.cs.kieler.core" version="0.1.0"/>
-      <import plugin="org.eclipse.gef"/>
-      <import plugin="org.eclipse.gmf.runtime.diagram.ui"/>
-      <import plugin="org.eclipse.xtext.util"/>
-      <import plugin="org.antlr.runtime"/>
-      <import plugin="org.eclipse.emf.ecore" version="2.4.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.xtext" version="0.7.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.draw2d"/>
       <import plugin="org.eclipse.core.runtime" version="3.4.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui" version="3.4.1" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.emf.common" version="2.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtext.util"/>
       <import plugin="org.eclipse.zest.layouts" version="1.0.0" match="greaterOrEqual"/>
+      <import feature="de.cau.cs.kieler.core" version="0.1.0"/>
+      <import plugin="de.cau.cs.kieler.core.kgraph"/>
+      <import plugin="org.eclipse.ui" version="3.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.gef" version="3.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.gmf.runtime.diagram.ui" version="1.1.0" match="greaterOrEqual"/>
+      <import plugin="de.cau.cs.kieler.core.ui"/>
+      <import plugin="org.eclipse.xtext" version="0.8.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.ecore" version="2.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.common" version="2.5.0" match="greaterOrEqual"/>
+      <import plugin="org.antlr.runtime" version="3.0.0" match="greaterOrEqual"/>
+      <import plugin="org.apache.log4j"/>
+      <import plugin="net.ogdf.lib"/>
    </requires>
 
    <plugin
@@ -167,6 +170,13 @@ This Agreement is governed by the laws of the State of New York and the intellec
 
    <plugin
          id="de.cau.cs.kieler.kiml.zest"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.kiml.ogdf"
          download-size="0"
          install-size="0"
          version="0.0.0"
