@@ -47,7 +47,7 @@ public class KonsoleExec {
      * 
      * @throw KiemInitializationException if the compilation is not successful
      */
-    public InputStream exec(final String cmd, final InputStream input, final int timeout,
+    public static InputStream exec(final String cmd, final InputStream input, final int timeout,
             final int steptime) throws KielerException {
 
         Process p;
@@ -88,11 +88,13 @@ public class KonsoleExec {
                 stdout.close();
                 stderr.close();
                 // give process some time to terminate
+                
                 try {
                     Thread.sleep(steptime);
                 } catch (InterruptedException e) {
                     // silently ignore
                 }
+               
                 if (p.exitValue() != 0 && err.length() > 0) {
                     throw new KielerException("Parse Error: " + err.toString(), null);
                 }
