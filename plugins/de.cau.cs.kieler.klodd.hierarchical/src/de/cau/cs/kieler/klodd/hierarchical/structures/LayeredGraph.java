@@ -109,6 +109,7 @@ public class LayeredGraph {
      * @param rank rank of the object
      * @param kNode the corresponding node in the acyclic KIELER graph
      */
+    // TODO putFront -> put, putBack->?
     public void putFront(final KGraphElement obj, final int rank, final KSlimNode kNode) {
         ListIterator<Layer> layerIter = layers.listIterator();
         while (layerIter.hasNext()) {
@@ -171,6 +172,7 @@ public class LayeredGraph {
      * @param obj the object
      * @return the corresponding layer element, or null if none exists
      */
+    //TODO common superclass? generics?
     public LayerElement getLayerElement(final Object obj) {
         return obj2LayerElemMap.get(obj);
     }
@@ -200,6 +202,7 @@ public class LayeredGraph {
      * 
      * @param kGraph acyclic version of the graph
      */
+    //TODO List of reversed edges as param
     public void createConnections(final KSlimGraph kGraph) {
         for (Layer layer : layers) {
             List<LayerElement> elements = layer.getElements();
@@ -308,7 +311,7 @@ public class LayeredGraph {
     }
 
     /**
-     * Gets the list of linear segments of this layered graph. Each node is
+     * Gets the list of linear segments of this layered graph. Each real node is
      * assigned a unique linear segment of size 1.
      * 
      * @return list of linear segments
@@ -322,12 +325,14 @@ public class LayeredGraph {
      * 
      * @return the position
      */
+    // TODO offset
     public KPoint getPosition() {
         return position;
     }
     
     /**
      * Sets the crosswiseDim.
+     * TODO explain
      *
      * @param thecrosswiseDim the crosswiseDim to set
      */

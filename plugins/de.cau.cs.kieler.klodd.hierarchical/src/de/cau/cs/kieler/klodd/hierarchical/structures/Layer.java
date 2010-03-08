@@ -57,7 +57,7 @@ public class Layer {
 
     /**
      * Creates a new layer with given rank and height.
-     * 
+     * TODO contract for UNDEFs
      * @param therank the rank, may be UNDEF_RANK
      * @param theheight the height, may be UNDEF_HEIGHT
      * @param thelayeredGraph layered graph in which the layer is created
@@ -83,6 +83,7 @@ public class Layer {
      * @param kNode the corresponding node in the acyclic KIELER graph
      * @return the new layer element
      */
+    // TODO Need SlimNode
     public LayerElement put(final KGraphElement obj, final KSlimNode kNode) {
         LayerElement element = new LayerElement(obj, this, kNode);
         elements.add(element);
@@ -167,6 +168,7 @@ public class Layer {
      * 
      * @param newRanks if true new port ranks are determined for the contained ports
      */
+    // TODO explain, param name?
     public void sortByPorts(final boolean newRanks) {
         boolean forward;
         if (rank == 0) {
