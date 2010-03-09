@@ -3,7 +3,7 @@
 <schema targetNamespace="de.cau.cs.kieler.ksbase" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="de.cau.cs.kieler.ksbase" id="configuration" name="Structure-based editing feature"/>
+         <meta.schema plugin="de.cau.cs.kieler.ksbase" id="configurations" name="KSBasE Configurations"/>
       </appinfo>
       <documentation>
          Extension point for configuring KIELER structure-based editing features for an editor.
