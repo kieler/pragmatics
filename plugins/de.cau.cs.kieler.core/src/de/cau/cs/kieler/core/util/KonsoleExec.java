@@ -35,6 +35,8 @@ public class KonsoleExec {
      *            command that is actually executed
      * @param input
      *            the input that is feed to the executed program (stdin)
+     * @param inittime
+     *            time initialy, the process has this amount of time to produe the initial output.
      * @param timeout
      *            the process is terminated timeout milliseconds after the last output was generated
      * @param steptime
@@ -47,8 +49,8 @@ public class KonsoleExec {
      * 
      * @throw KiemInitializationException if the compilation is not successful
      */
-    public static InputStream exec(final String cmd, final InputStream input, final int timeout,
-            final int steptime) throws KielerException {
+    public static InputStream exec(final String cmd, final InputStream input, final int inittime,
+            final int timeout, final int steptime) throws KielerException {
 
         Process p;
         try {
@@ -65,11 +67,27 @@ public class KonsoleExec {
                 stdin.write(r);
             }
             stdin.close();
-
+            // wait for initial output
             long time = System.currentTimeMillis();
+            while (stdout.available() == 0) {
+                if (System.currentTimeMillis() - time > inittime) {
+                    throw new KielerException("Timeout executing " + cmd);
+                }
+                try {
+                    Thread.sleep(steptime);
+                } catch (InterruptedException e) {
+                    // silently ignore
+                }
+            }
+            // get output
+            time = System.currentTimeMillis();
             while (System.currentTimeMillis() - time < timeout) {
                 if (stdout.available() > 0) {
-                    output.write(stdout.read());
+                    do {
+                        int t = stdout.read();
+                        // System.out.print(Character.toChars(t));
+                        output.write(t);
+                    } while (stdout.available() > 0);
                     time = System.currentTimeMillis();
                 } else {
                     try {
@@ -88,13 +106,13 @@ public class KonsoleExec {
                 stdout.close();
                 stderr.close();
                 // give process some time to terminate
-                
+
                 try {
                     Thread.sleep(steptime);
                 } catch (InterruptedException e) {
                     // silently ignore
                 }
-               
+
                 if (p.exitValue() != 0 && err.length() > 0) {
                     throw new KielerException("Parse Error: " + err.toString(), null);
                 }
