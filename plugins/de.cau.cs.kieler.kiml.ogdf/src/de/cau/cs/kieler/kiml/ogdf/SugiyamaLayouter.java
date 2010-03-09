@@ -89,7 +89,7 @@ public class SugiyamaLayouter extends OgdfLayouter {
             return DEF_MIN_SPACING;
         } else if (optionId.equals(LayoutOptions.BORDER_SPACING)) {
             return DEF_BORDER_SPACING;
-        } else if (optionId.equals(LayoutOptions.LABEL_SPACING)) {
+        } else if (optionId.equals(OPT_LABEL_EDGE_DISTANCE)) {
             return DEF_LABEL_SPACING;
         } else if (optionId.equals(OPT_LABEL_MARGIN_DISTANCE)) {
             return DEF_LABEL_MARGIN_DISTANCE;

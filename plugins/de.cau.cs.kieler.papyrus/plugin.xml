@@ -3,9 +3,9 @@
 <plugin>
    <extension
          point="de.cau.cs.kieler.kiml.ui.diagramConnectors">
-      <ForeignEditorConnector
+      <editorConnector
             class="de.cau.cs.kieler.papyrus.MultiPartDiagramConnector">
-      </ForeignEditorConnector>
+      </editorConnector>
    </extension>
    <extension
          id="de.cau.cs.rtprak.group04.papyrus.layout.DefaultOptionsForUseCaseDiagram"

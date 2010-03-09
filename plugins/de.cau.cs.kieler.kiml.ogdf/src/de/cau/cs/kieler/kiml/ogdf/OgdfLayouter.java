@@ -30,7 +30,6 @@ import net.ogdf.lib.Graph;
 import net.ogdf.lib.GraphAttributes;
 import net.ogdf.lib.LayoutModule;
 import net.ogdf.lib.NodeElement;
-import net.ogdf.lib.SugiyamaLayout;
 import net.ogdf.lib.UMLGraph;
 import net.ogdf.lib.UMLLayoutModule;
 import net.ogdf.lib.eLabelTyp;
@@ -55,6 +54,9 @@ import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
  */
 public abstract class OgdfLayouter {
 
+    /** layout option identifier for label edge distance. */
+    public static final String OPT_LABEL_EDGE_DISTANCE =
+        "de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance";
     /** layout option identifier for label margin distance. */
     public static final String OPT_LABEL_MARGIN_DISTANCE =
         "de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance";
@@ -84,9 +86,7 @@ public abstract class OgdfLayouter {
         // include intersections with the nodes bounding boxes in the bends
         graphAttributes.addNodeCenter2Bends(1);
         // calculate new label positions and assign them to the mapped labels
-        if (labelInterface != null) {
-            layoutLabels(layoutNode, graphAttributes, labelInterface);
-        }
+        layoutLabels(layoutNode, graphAttributes, labelInterface);
         // apply the layout back to the original graph
         applyLayout(layoutNode, graphAttributes);
         // perform post-processing
@@ -126,9 +126,9 @@ public abstract class OgdfLayouter {
         ELabelPosSimple labelLayouter = new ELabelPosSimple();
         labelLayouter.setMidOnEdge(false);
         // get the edge distance
-        float edgeDistance = LayoutOptions.getFloat(parentLayout, LayoutOptions.LABEL_SPACING);
+        float edgeDistance = LayoutOptions.getFloat(parentLayout, OPT_LABEL_EDGE_DISTANCE);
         if (Float.isNaN(edgeDistance)) {
-            Object edgeDistanceObj = getDefault(LayoutOptions.LABEL_SPACING);
+            Object edgeDistanceObj = getDefault(OPT_LABEL_EDGE_DISTANCE);
             if (edgeDistanceObj instanceof Float) {
                 edgeDistance = (Float) edgeDistanceObj;
             } else {
@@ -271,6 +271,7 @@ public abstract class OgdfLayouter {
             graphAttributes = new GraphAttributes(graph, GraphAttributes.nodeGraphics
                     | GraphAttributes.edgeGraphics | GraphAttributes.edgeLabel);
         }
+        
         // process nodes
         for (KNode knode : layoutNode.getChildren()) {
             NodeElement ogdfNode = graph.newNode();
@@ -280,7 +281,6 @@ public abstract class OgdfLayouter {
         }
         
         // process edges
-        labelInterface = null;
         for (KNode knode1 : layoutNode.getChildren()) {
             for (KEdge kedge : knode1.getOutgoingEdges()) {
                 KNode knode2 = kedge.getTarget();
@@ -308,44 +308,41 @@ public abstract class OgdfLayouter {
                             break;
                         }
                     }
-
-                    if (!kedge.getLabels().isEmpty()) {
-                        // create an ogdf label and attach it to the edge
-                        EdgeLabelDouble edgeLabel = new EdgeLabelDouble();
-                        edgeLabel.setEdge(ogdfEdge);
-                        boolean makeMult1 = false, makeMult2 = false;
-                        for (KLabel label : kedge.getLabels()) {
-                            KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
-                            EdgeLabelPlacement placement = LayoutOptions.getEnum(labelLayout,
-                                    EdgeLabelPlacement.class);
-                            eLabelTyp labelTyp = eLabelTyp.elName;
-                            switch (placement) {
-                            case HEAD:
-                                if (makeMult2) {
-                                    labelTyp = eLabelTyp.elMult2;
-                                } else {
-                                    labelTyp = eLabelTyp.elEnd2;
-                                }
-                                makeMult2 = !makeMult2;
-                                break;
-                            case TAIL:
-                                if (makeMult1) {
-                                    labelTyp = eLabelTyp.elMult1;
-                                } else {
-                                    labelTyp = eLabelTyp.elEnd1;
-                                }
-                                makeMult1 = !makeMult1;
-                                break;
-                            }
-                            toOgdfEdgeLabel(edgeLabel, labelTyp, labelLayout);
-                        }
-                        // add the edge label to the ogdf label interface
-                        if (labelInterface == null) {
-                            labelInterface = new ELabelInterfaceDouble(graphAttributes);
-                        }
-                        labelInterface.setLabel(ogdfEdge, edgeLabel);
-                    }
                 }
+            }
+        }
+        
+        // process edge labels
+        labelInterface = new ELabelInterfaceDouble(graphAttributes);
+        for (Map.Entry<KEdge, EdgeElement> entry : kedge2ogdfEdgeMap.entrySet()) {
+            KEdge kedge = entry.getKey();
+            EdgeElement ogdfEdge = entry.getValue();
+            EdgeLabelDouble edgeLabel = labelInterface.getLabel(ogdfEdge);
+            boolean makeMult1 = false, makeMult2 = false;
+            for (KLabel label : kedge.getLabels()) {
+                KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
+                EdgeLabelPlacement placement = LayoutOptions.getEnum(labelLayout,
+                        EdgeLabelPlacement.class);
+                eLabelTyp labelTyp = eLabelTyp.elName;
+                switch (placement) {
+                case HEAD:
+                    if (makeMult2) {
+                        labelTyp = eLabelTyp.elMult2;
+                    } else {
+                        labelTyp = eLabelTyp.elEnd2;
+                    }
+                    makeMult2 = !makeMult2;
+                    break;
+                case TAIL:
+                    if (makeMult1) {
+                        labelTyp = eLabelTyp.elMult1;
+                    } else {
+                        labelTyp = eLabelTyp.elEnd1;
+                    }
+                    makeMult1 = !makeMult1;
+                    break;
+                }
+                toOgdfEdgeLabel(edgeLabel, labelTyp, labelLayout);
             }
         }
 
@@ -414,37 +411,35 @@ public abstract class OgdfLayouter {
                 }
             }
             
-            if (labelInterface != null) {
-                // set the edge labels
-                EdgeLabelDouble edgeLabel = labelInterface.getLabel(ogdfEdge);
-                boolean makeMult1 = false, makeMult2 = false;
-                for (KLabel label : kedge.getLabels()) {
-                    KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
-                    EdgeLabelPlacement placement = LayoutOptions.getEnum(labelLayout,
-                            EdgeLabelPlacement.class);
-                    eLabelTyp labelTyp = eLabelTyp.elName;
-                    switch (placement) {
-                    case HEAD:
-                        if (makeMult2) {
-                            labelTyp = eLabelTyp.elMult2;
-                        } else {
-                            labelTyp = eLabelTyp.elEnd2;
-                        }
-                        makeMult2 = !makeMult2;
-                        break;
-                    case TAIL:
-                        if (makeMult1) {
-                            labelTyp = eLabelTyp.elMult1;
-                        } else {
-                            labelTyp = eLabelTyp.elEnd1;
-                        }
-                        makeMult1 = !makeMult1;
-                        break;
+            // set the edge labels
+            EdgeLabelDouble edgeLabel = labelInterface.getLabel(ogdfEdge);
+            boolean makeMult1 = false, makeMult2 = false;
+            for (KLabel label : kedge.getLabels()) {
+                KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
+                EdgeLabelPlacement placement = LayoutOptions.getEnum(labelLayout,
+                        EdgeLabelPlacement.class);
+                eLabelTyp labelTyp = eLabelTyp.elName;
+                switch (placement) {
+                case HEAD:
+                    if (makeMult2) {
+                        labelTyp = eLabelTyp.elMult2;
+                    } else {
+                        labelTyp = eLabelTyp.elEnd2;
                     }
-                    toKShape(labelLayout, edgeLabel.getX(labelTyp) + offsetX,
-                            edgeLabel.getY(labelTyp) + offsetY,
-                            edgeLabel.getWidth(labelTyp), edgeLabel.getHeight(labelTyp));
+                    makeMult2 = !makeMult2;
+                    break;
+                case TAIL:
+                    if (makeMult1) {
+                        labelTyp = eLabelTyp.elMult1;
+                    } else {
+                        labelTyp = eLabelTyp.elEnd1;
+                    }
+                    makeMult1 = !makeMult1;
+                    break;
                 }
+                toKShape(labelLayout, edgeLabel.getX(labelTyp) + offsetX,
+                        edgeLabel.getY(labelTyp) + offsetY,
+                        edgeLabel.getWidth(labelTyp), edgeLabel.getHeight(labelTyp));
             }
         }
         

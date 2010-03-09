@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kiml.ui.preferences;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -309,9 +310,9 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         editButton.setEnabled(false);
         editButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent e) {
-                int index = table.getSelectionIndex();
-                if (index >= 0 && index < entries.size()) {
-                    showEditDialog(parent.getShell(), entries.get(index));
+                OptionsTableProvider.DataEntry entry = getEntry(entries, table.getSelectionIndex());
+                if (entry != null) {
+                    showEditDialog(parent.getShell(), entry);
                     tableViewer.refresh();
                 }
             }
@@ -321,9 +322,9 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         removeButton.setEnabled(false);
         removeButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent e) {
-                int index = table.getSelectionIndex();
-                if (index >= 0 && index < entries.size()) {
-                    entries.get(index).setValue(null);
+                OptionsTableProvider.DataEntry entry = getEntry(entries, table.getSelectionIndex());
+                if (entry != null) {
+                    entry.setValue(null);
                     tableViewer.setInput(entries);
                 }
             }
@@ -342,6 +343,30 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         composite.setLayout(new FillLayout(SWT.VERTICAL));
         GridData compositeLayoutData = new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1);
         composite.setLayoutData(compositeLayoutData);
+    }
+
+    /**
+     * Fetches the entry with given index of a list of data entry, bypassing elements whose
+     * value was set to {@code null}.
+     * 
+     * @param entries list of data entries 
+     * @param index index of the entry to look up
+     * @return the entry at the given index
+     */
+    private OptionsTableProvider.DataEntry getEntry(final List<OptionsTableProvider.DataEntry> entries,
+            final int index) {
+        ListIterator<OptionsTableProvider.DataEntry> entryIter = entries.listIterator();
+        int i = 0;
+        while (entryIter.hasNext()) {
+            OptionsTableProvider.DataEntry entry = entryIter.next();
+            if (entry.getValue() != null) {
+                if (i == index) {
+                    return entry;
+                }
+                i++;
+            }
+        }
+        return null;
     }
 
     /** maximal length of displayed diagram type names. */
@@ -488,7 +513,10 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
             }
         }
         
-        LayoutViewPart.refreshLayoutView();
+        LayoutViewPart layoutView = LayoutViewPart.findView();
+        if (layoutView != null) {
+            layoutView.refresh();
+        }
         return true;
     }
 

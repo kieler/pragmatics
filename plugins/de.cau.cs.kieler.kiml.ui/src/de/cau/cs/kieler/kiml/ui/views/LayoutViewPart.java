@@ -34,13 +34,13 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -54,6 +54,7 @@ import org.eclipse.ui.views.properties.IPropertySourceProvider;
 import org.eclipse.ui.views.properties.PropertySheetEntry;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 
+import de.cau.cs.kieler.kiml.layout.LayoutProviderData;
 import de.cau.cs.kieler.kiml.layout.LayoutServices;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.Messages;
@@ -86,27 +87,23 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
     private IDiagramEditorConnector currentConnector;
     /** the current selection. */
     private IStructuredSelection currentSelection;
+    /** the layout provider data for the currently displayed options. */
+    private LayoutProviderData[] currentProviderData;
     
     /**
-     * Finds an active layout view and refreshes it.
+     * Finds the active layout view, if it exists.
+     * 
+     * @return the active layout view, or {@code null} if there is none
      */
-    public static void refreshLayoutView() {
-        final IWorkbench workbench = PlatformUI.getWorkbench();
-        workbench.getDisplay().asyncExec(new Runnable() {
-            public void run() {
-                IWorkbenchWindow activeWindow = workbench.getActiveWorkbenchWindow();
-                if (activeWindow != null) {
-                    IWorkbenchPage activePage = activeWindow.getActivePage();
-                    if (activePage != null) {
-                        LayoutViewPart layoutViewPart = (LayoutViewPart)
-                                activePage.findView(VIEW_ID);
-                        if (layoutViewPart != null) {
-                            layoutViewPart.page.refresh();
-                        }
-                    }
-                }
+    public static LayoutViewPart findView() {
+        IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        if (activeWindow != null) {
+            IWorkbenchPage activePage = activeWindow.getActivePage();
+            if (activePage != null) {
+                return (LayoutViewPart) activePage.findView(VIEW_ID);
             }
-        });
+        }
+        return null;
     }
     
     /** margin width for the form layout. */
@@ -216,6 +213,17 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
     }
     
     /**
+     * Refreshes the layout view asynchronously.
+     */
+    public void refresh() {
+        Display.getDefault().asyncExec(new Runnable() {
+            public void run() {
+                page.refresh();
+            }
+        });
+    }
+    
+    /**
      * Sets the input for the property sheet page.
      * 
      * @param part the active workbench part
@@ -223,7 +231,11 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
     private void setInput(final IWorkbenchPart part) {
         if (part instanceof IEditorPart) {
             IEditorPart editorPart = (IEditorPart) part;
-            if (!(editorPart instanceof DiagramEditor)) {
+            if (editorPart instanceof DiagramEditor) {
+                if (currentConnector != null) {
+                    currentConnector.removeChangeListener(this);
+                }
+            } else {
                 // look for a connector class for the given editor
                 for (IDiagramEditorConnector connector : EclipseLayoutServices
                         .getInstance().getEditorConnectors()) {
@@ -495,6 +507,24 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
         return currentEditor;
     }
     
+    /**
+     * Sets the current layout provider data.
+     * 
+     * @param thecurrentProviderData the current layout provider data
+     */
+    public void setCurrentProviderData(final LayoutProviderData[] thecurrentProviderData) {
+        this.currentProviderData = thecurrentProviderData;
+    }
+
+    /**
+     * Returns the current layout provider data.
+     * 
+     * @return the current layout provider data
+     */
+    public LayoutProviderData[] getCurrentProviderData() {
+        return currentProviderData;
+    }
+
     /**
      * Sets a text line for the view part.
      * 

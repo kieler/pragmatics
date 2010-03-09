@@ -9,9 +9,16 @@
       </category>
       <layoutOption
             appliesTo="parents"
-            description="Distance of labels to the nodes"
+            description="Distance of edge labels to the nodes"
             id="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance"
             name="Label Distance"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            description="Spacing of labels to the edges"
+            id="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance"
+            name="Label Spacing"
             type="float">
       </layoutOption>
       <layoutProvider
@@ -21,6 +28,10 @@
             name="Sugiyama"
             parameter="SUGIYAMA"
             type="de.cau.cs.kieler.layout.types.layered">
+         <supportedDiagram
+               priority="9"
+               type="de.cau.cs.kieler.layout.diagrams.general">
+         </supportedDiagram>
          <knownOption
                option="de.cau.cs.kieler.layout.options.minSpacing">
          </knownOption>
@@ -29,6 +40,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.layerDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
@@ -55,7 +69,7 @@
                option="de.cau.cs.kieler.layout.options.borderSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.labelSpacing">
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">

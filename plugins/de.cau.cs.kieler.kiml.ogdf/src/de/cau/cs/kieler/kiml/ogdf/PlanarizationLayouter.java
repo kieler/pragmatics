@@ -116,10 +116,10 @@ public class PlanarizationLayouter extends OgdfLayouter {
             return DEF_MINSPACING;
         } else if (optionId.equals(LayoutOptions.BORDER_SPACING)) {
             return DEF_BORDER_SPACING;
-        } else if (optionId.equals(LayoutOptions.LABEL_SPACING)) {
-            return DEF_LABEL_SPACING;
         } else if (optionId.equals(OPT_PAGE_RATIO)) {
             return DEF_PAGE_RATIO;
+        } else if (optionId.equals(OPT_LABEL_EDGE_DISTANCE)) {
+            return DEF_LABEL_SPACING;
         } else if (optionId.equals(OPT_LABEL_MARGIN_DISTANCE)) {
             return DEF_LABEL_MARGIN_DISTANCE;
         } else {

@@ -229,8 +229,12 @@ public class GmfLayoutPropertySource implements IPropertySource {
                 LayoutOptions.DIAGRAM_TYPE);
         containerProviderData = layoutServices.getLayoutProviderData(
                 containerLayoutHint, containerDiagramType);
+        LayoutViewPart layoutView = LayoutViewPart.findView();
         if (containerProviderData == null) {
             optionDataList = Collections.emptyList();
+            if (layoutView != null) {
+                layoutView.setCurrentProviderData(new LayoutProviderData[0]);
+            }
         } else {
             optionDataList = layoutServices.getLayoutOptions(containerProviderData, partTarget);
             if (partTarget == LayoutOptionData.Target.PARENTS) {
@@ -242,6 +246,15 @@ public class GmfLayoutPropertySource implements IPropertySource {
                         partLayoutHint, childCompartmentDiagramType);
                 optionDataList.addAll(layoutServices.getLayoutOptions(partProviderData,
                         LayoutOptionData.Target.PARENTS));
+            }
+            if (layoutView != null) {
+                if (partProviderData == containerProviderData) {
+                    layoutView.setCurrentProviderData(new LayoutProviderData[]
+                             {containerProviderData});
+                } else {
+                    layoutView.setCurrentProviderData(new LayoutProviderData[]
+                             {containerProviderData, partProviderData});
+                }
             }
         }
     }
@@ -332,7 +345,10 @@ public class GmfLayoutPropertySource implements IPropertySource {
                 if (LayoutOptions.LAYOUT_HINT.equals(optionData.getId())) {
                     KimlLayoutUtil.setValue(koption, optionData,
                             layoutHintValues[((Integer) value).intValue()]);
-                    LayoutViewPart.refreshLayoutView();
+                    LayoutViewPart layoutView = LayoutViewPart.findView();
+                    if (layoutView != null) {
+                        layoutView.refresh();
+                    }
                 } else {
                     switch (optionData.getType()) {
                     case INT:
@@ -389,7 +405,10 @@ public class GmfLayoutPropertySource implements IPropertySource {
         if (LayoutOptions.LAYOUT_HINT.equals(optionData.getId())
                 || optionData.getType() == LayoutOptionData.Type.BOOLEAN
                 || optionData.getType() == LayoutOptionData.Type.ENUM) {
-            LayoutViewPart.refreshLayoutView();
+            LayoutViewPart layoutView = LayoutViewPart.findView();
+            if (layoutView != null) {
+                layoutView.refresh();
+            }
         }
     }
 

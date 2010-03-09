@@ -281,6 +281,24 @@ public class EclipseLayoutServices extends LayoutServices {
         }
         return null;
     }
+    
+    /**
+     * Returns the layout option data that matches the given user-friendly name and is known by the
+     * given layout provider.
+     * 
+     * @param providerData a layout provider data
+     * @param optionName user-friendly name of a layout option
+     * @return the corresponding layout option data
+     */
+    public LayoutOptionData getOptionData(final LayoutProviderData providerData,
+            final String optionName) {
+        for (LayoutOptionData data : getLayoutOptionData()) {
+            if (data.getName().equals(optionName) && providerData.knowsOption(data.getId())) {
+                return data;
+            }
+        }
+        return null;
+    }
 
     /**
      * Reports an error that occurred while reading extensions.
