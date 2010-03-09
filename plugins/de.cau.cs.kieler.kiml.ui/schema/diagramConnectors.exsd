@@ -48,11 +48,16 @@
    </element>
 
    <element name="editorConnector">
+      <annotation>
+         <documentation>
+            Use this element to register a connector class for resolving a wrapped diagram editor. The connector class should be able to unwrap the editor in order to make it available for automatic layout with KIML.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  Qualified name of a diagram editor connector class.
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.kiml.ui.editors.IDiagramEditorConnector"/>

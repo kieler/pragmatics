@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.5"?>
 <plugin>
-   <extension-point id="diagramConnectors" name="DiagramConnectors" schema="schema/diagramConnector.exsd"/>
+   <extension-point id="diagramConnectors" name="DiagramConnectors" schema="schema/diagramConnectors.exsd"/>
  <extension
        point="org.eclipse.core.expressions.propertyTesters">
     <propertyTester

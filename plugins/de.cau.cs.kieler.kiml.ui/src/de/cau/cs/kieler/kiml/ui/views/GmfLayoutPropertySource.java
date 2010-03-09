@@ -77,8 +77,8 @@ public class GmfLayoutPropertySource implements IPropertySource {
     private IGraphicalEditPart shownEditPart;
     /** the edit part that contains the sub-diagram with the shown edit part. */
     private IGraphicalEditPart containerEditPart;
-    /** the edit part that contains children of the shown edit part. */
-    private IGraphicalEditPart childCompartmentEditPart;
+    /** the edit part that specifies options for the children of the shown edit part. */
+    private IGraphicalEditPart containmentEditPart;
     
     /**
      * Returns the edit part for which layout options would be shown by this property
@@ -140,7 +140,9 @@ public class GmfLayoutPropertySource implements IPropertySource {
             // check whether the node is a parent
             partTarget = LayoutOptionData.Target.NODES;
             containerEditPart = (IGraphicalEditPart) editPart.getParent();
-            childCompartmentEditPart = findCompartmentEditPart(editPart);
+            if (findContainingEditPart(editPart) != null) {
+                containmentEditPart = editPart;
+            }
         } else if (editPart instanceof ConnectionEditPart) {
             partTarget = LayoutOptionData.Target.EDGES;
             containerEditPart = (IGraphicalEditPart) ((ConnectionEditPart) editPart)
@@ -159,19 +161,22 @@ public class GmfLayoutPropertySource implements IPropertySource {
         } else if (editPart instanceof DiagramEditPart) {
             partTarget = LayoutOptionData.Target.PARENTS;
             containerEditPart = editPart;
-            childCompartmentEditPart = editPart;
+            containmentEditPart = editPart;
+        }
+        if (containerEditPart instanceof CompartmentEditPart) {
+            containerEditPart = (IGraphicalEditPart) containerEditPart.getParent();
         }
         return partTarget;
     }
     
     /**
-     * Sets the child compartment edit part for the given node edit part.
+     * Finds the edit part that contains layoutable children, if there are any. The returned
+     * edit part is either the parent edit part itself or one of its compartments. 
      * 
      * @param editPart a node edit part
-     * @return the edit part that contains other node edit parts, or {@code null}
-     *     if there is none
+     * @return the edit part that contains other node edit parts, or {@code null} if there is none
      */
-    private IGraphicalEditPart findCompartmentEditPart(final IGraphicalEditPart editPart) {
+    private IGraphicalEditPart findContainingEditPart(final IGraphicalEditPart editPart) {
         for (Object child : editPart.getChildren()) {
             if (child instanceof ShapeNodeEditPart
                     && !(child instanceof AbstractBorderItemEditPart)
@@ -239,9 +244,9 @@ public class GmfLayoutPropertySource implements IPropertySource {
             optionDataList = layoutServices.getLayoutOptions(containerProviderData, partTarget);
             if (partTarget == LayoutOptionData.Target.PARENTS) {
                 partProviderData = containerProviderData;
-            } else if (childCompartmentEditPart != null) {
+            } else if (containmentEditPart != null) {
                 String childCompartmentDiagramType = (String) KimlUiUtil.getOption(
-                        childCompartmentEditPart, LayoutOptions.DIAGRAM_TYPE);
+                        containmentEditPart, LayoutOptions.DIAGRAM_TYPE);
                 partProviderData = layoutServices.getLayoutProviderData(
                         partLayoutHint, childCompartmentDiagramType);
                 optionDataList.addAll(layoutServices.getLayoutOptions(partProviderData,
@@ -288,10 +293,10 @@ public class GmfLayoutPropertySource implements IPropertySource {
             if (LayoutOptions.LAYOUT_HINT.equals(id)) {
                 value = partProviderData.getId();
             } else {
-                boolean hasChildren = childCompartmentEditPart != null;
+                boolean hasChildren = containmentEditPart != null;
                 if (optionData.hasTarget(LayoutOptionData.Target.PARENTS)) {
                     value = KimlUiUtil.getDefault(optionData, partProviderData,
-                            shownEditPart, childCompartmentEditPart, hasChildren);
+                            shownEditPart, containmentEditPart, hasChildren);
                 } else {
                     value = KimlUiUtil.getDefault(optionData, containerProviderData,
                             shownEditPart, containerEditPart, hasChildren);
