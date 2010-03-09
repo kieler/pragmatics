@@ -1,9 +1,0 @@
-import uml;
-
-Void createImplements(Interface interface):
-let r = new InterfaceRealization:
-let c = new Class:
-r.setContract(interface)->
-r.setImplementingClassifier(c) ->
-interface.allOwningPackages().first().packagedElement.add(c)
-;
