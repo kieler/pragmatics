@@ -101,8 +101,8 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
      *            The editor class name to check
      */
     public synchronized void checkForWaitingEditor(final String activeEditor) {
-        System.out.println("Checking for " + activeEditor);
-        HashMap<EditorTransformationSettings, Bundle> installedBundles = new HashMap<EditorTransformationSettings, Bundle>();
+        HashMap<EditorTransformationSettings, Bundle> installedBundles = 
+            new HashMap<EditorTransformationSettings, Bundle>();
 
         for (Entry<EditorTransformationSettings, URI> entry : waitingBundles.entrySet()) {
             EditorTransformationSettings editor = entry.getKey();
@@ -112,13 +112,13 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
                 if (editor.getContributor() != null) {
                     bundle = ContributorFactoryOSGi.resolve(editor.getContributor());
                 } else {
-                    //Ok the contributor is null, so we are using the KSBasE-UI contribution
+                    // Ok the contributor is null, so we are using the KSBasE-UI contribution
                     bundle = KSBasEUIPlugin.getDefault().getBundle();
                 }
                 // System.out.println("activating ksbase for" + activeEditor);
                 String editorID = editor.getEditorId();
                 if (editorID.contains(".")) {
-                    //truncate to last part of fqn
+                    // truncate to last part of fqn
                     editorID = editorID.substring(editorID.lastIndexOf("."), editorID.length());
                 }
                 String editorDiagramName = bundle.getSymbolicName() + editorID + ".generated";
