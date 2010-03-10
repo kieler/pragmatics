@@ -101,7 +101,7 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
      *            The editor class name to check
      */
     public synchronized void checkForWaitingEditor(final String activeEditor) {
-        // System.out.println("Checking for " + activeEditor);
+        System.out.println("Checking for " + activeEditor);
         HashMap<EditorTransformationSettings, Bundle> installedBundles = new HashMap<EditorTransformationSettings, Bundle>();
 
         for (Entry<EditorTransformationSettings, URI> entry : waitingBundles.entrySet()) {
@@ -116,8 +116,12 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
                     bundle = KSBasEUIPlugin.getDefault().getBundle();
                 }
                 // System.out.println("activating ksbase for" + activeEditor);
-                String editorDiagramName = bundle.getSymbolicName() + ".generated";
-
+                String editorID = editor.getEditorId();
+                if (editorID.contains(".")) {
+                    //truncate to last part of fqn
+                    editorID = editorID.substring(editorID.lastIndexOf("."), editorID.length());
+                }
+                String editorDiagramName = bundle.getSymbolicName() + editorID + ".generated";
                 try {
                     // To avoid %20 exceptions in paths:
                     String val = entry.getValue().toString().replace("%20", " ");

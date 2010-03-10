@@ -91,8 +91,7 @@ public class ModelObjectTester extends PropertyTester {
                 String validation = t.getValidation();
                 if (validation != null && validation.length() > 0) {
                     for (String valid : validation.split(",")) {
-                        if (!evaluateTransformation(editor, valid, modelElements
-                                .toArray(new Object[modelElements.size()]), true)) {
+                        if (!evaluateTransformation(editor, valid, modelElements, true)) {
                             return false;
                         }
                     }
@@ -129,6 +128,8 @@ public class ModelObjectTester extends PropertyTester {
             }
         } else if (parameter instanceof Object[]) {
             framework.setParameters((Object[]) parameter);
+        } else if (parameter instanceof List<?>) {
+            framework.setParameters(new Object[] {parameter});
         }
         if (!framework.initializeTransformation(editor.getTransformationFile(), transformation,
                 editor.getModelPackageClass())) {
