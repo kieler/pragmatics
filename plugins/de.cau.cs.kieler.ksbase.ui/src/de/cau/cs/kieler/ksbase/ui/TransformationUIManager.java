@@ -33,6 +33,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 
+import de.cau.cs.kieler.core.model.util.ModelingUtil;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
 import de.cau.cs.kieler.ksbase.ui.handler.ExecuteTransformationRequest;
@@ -41,8 +42,8 @@ import de.cau.cs.kieler.ksbase.ui.utils.TransformationUtils;
 import de.cau.cs.kieler.viewmanagement.RunLogic;
 
 /**
- * Transformation-UI manager. Handles creation and execution of commands and notify of
- * transformationEvent listeners
+ * Transformation-UI manager. Handles creation and execution of commands and
+ * notify of transformationEvent listeners
  * 
  * @author mim
  * 
@@ -54,7 +55,8 @@ public final class TransformationUIManager {
     public static final TransformationUIManager INSTANCE = new TransformationUIManager();
 
     /**
-     * The list of listeners to notify before and after transformation has been executed.
+     * The list of listeners to notify before and after transformation has been
+     * executed.
      **/
     private LinkedList<ITransformationEventListener> transformationEventListeners;
 
@@ -75,7 +77,8 @@ public final class TransformationUIManager {
      * @param listener
      *            The listener to add
      */
-    public void addTransformationListener(final ITransformationEventListener listener) {
+    public void addTransformationListener(
+            final ITransformationEventListener listener) {
         transformationEventListeners.add(listener);
     }
 
@@ -85,21 +88,62 @@ public final class TransformationUIManager {
      * @param listener
      *            The listener to remove.
      */
-    public void removeTransformationListener(final ITransformationEventListener listener) {
+    public void removeTransformationListener(
+            final ITransformationEventListener listener) {
         transformationEventListeners.remove(listener);
     }
 
     /**
-     * Creates and executes a transformation command by creating a request and execute the resulting
-     * command on the diagram command stack.
+     * Creates and executes a transformation command by creating a request and
+     * execute the resulting command on the diagram command stack.
      * 
      * @param editor
      *            The editor for which this transformation is
      * @param transformation
      *            The transformation that should be executed
      */
-    public void createAndExecuteTransformationCommand(final EditorTransformationSettings editor,
+    public void createAndExecuteTransformationCommand(
+            final EditorTransformationSettings editor,
             final KSBasETransformation transformation) {
+
+        // System.out.println("Diag childs (pre): " +
+        // ((DiagramEditor)activeEditor).getDiagram().getVisibleChildren().size());
+
+        ISelection selection = PlatformUI.getWorkbench()
+                .getActiveWorkbenchWindow().getSelectionService()
+                .getSelection();
+
+        if (selection instanceof StructuredSelection && !selection.isEmpty()) {
+            StructuredSelection select = (StructuredSelection) selection;
+
+            List<EObject> sel = new LinkedList<EObject>();
+            Iterator iter = select.iterator();
+            while (iter.hasNext()) {
+                Object o = iter.next();
+                if (o instanceof EditPart) {
+                    sel.add(((View) ((EditPart) o).getModel()).getElement());
+                }
+            }
+
+            createAndExecuteTransformationCommand(editor, transformation, sel);
+        }
+    }
+
+    /**
+     * Creates and executes a transformation command by creating a request and
+     * execute the resulting command on the diagram command stack.
+     * 
+     * @param editor
+     *            The editor for which this transformation is
+     * @param transformation
+     *            The transformation that should be executed
+     * @param selection
+     *            A selection containing the edit parts that should be used
+     */
+    public void createAndExecuteTransformationCommand(
+            final EditorTransformationSettings editor,
+            final KSBasETransformation transformation,
+            final List<EObject> selection) {
         // We need the view management
         if (!RunLogic.getInstance().getState()) {
             RunLogic.getInstance().registerListeners();
@@ -110,66 +154,60 @@ public final class TransformationUIManager {
             te.transformationAboutToExecute(new Object[] {});
         }
 
-        IEditorPart activeEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                .getActivePage().getActiveEditor();
-        // System.out.println("Diag childs (pre): " +
-        // ((DiagramEditor)activeEditor).getDiagram().getVisibleChildren().size());
+        EditPart selectedElement = ModelingUtil.getEditPart(selection.get(0));
 
-        ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                .getSelectionService().getSelection();
+        IEditorPart activeEditor = PlatformUI.getWorkbench()
+                .getActiveWorkbenchWindow().getActivePage().getActiveEditor();
 
-        if (selection instanceof StructuredSelection && !selection.isEmpty()) {
+        // Create request
+        // The transformation may be polymorphic so we need to check which one
+        // we are executing
+        ExecuteTransformationRequest request = new ExecuteTransformationRequest(
+                activeEditor, transformation.getTransformation(), editor
+                        .getTransformationFile(), selection, editor
+                        .getModelPackageClass(), editor.getFramework());
 
-            EditPart selectedElement = (EditPart) ((StructuredSelection) selection)
-                    .getFirstElement();
+        Command transformationCommand = selectedElement.getCommand(request);
 
-            // Create request
-            // The transformation may be polymorphic so we need to check which one we are executing
-            ExecuteTransformationRequest request = new ExecuteTransformationRequest(activeEditor,
-                    transformation.getTransformation(), editor.getTransformationFile(), selection,
-                    editor.getModelPackageClass(), editor
-                            .getFramework());
+        // gets a command stack to execute the command
+        DiagramCommandStack commandStack = null;
+        Object adapter = activeEditor.getAdapter(CommandStack.class);
+        if (adapter instanceof DiagramCommandStack) {
+            commandStack = (DiagramCommandStack) adapter;
+        }
+        if (commandStack == null) {
+            commandStack = new DiagramCommandStack(
+                    ((DiagramEditor) activeEditor).getDiagramEditDomain());
+        }
+        commandStack.execute(transformationCommand);
 
-            Command transformationCommand = selectedElement.getCommand(request);
+        // update edit policies, so GMF will generate diagram elements
+        // for model elements which have been generated during the
+        // transformation.
 
-            // gets a command stack to execute the command
-            DiagramCommandStack commandStack = null;
-            Object adapter = activeEditor.getAdapter(CommandStack.class);
-            if (adapter instanceof DiagramCommandStack) {
-                commandStack = (DiagramCommandStack) adapter;
+        if (activeEditor instanceof IDiagramWorkbenchPart) {
+            EObject obj = ((View) ((IDiagramWorkbenchPart) activeEditor)
+                    .getDiagramEditPart().getModel()).getElement();
+
+            List<?> editPolicies = CanonicalEditPolicy
+                    .getRegisteredEditPolicies(obj);
+            for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
+
+                CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it
+                        .next();
+
+                nextEditPolicy.refresh();
             }
-            if (commandStack == null) {
-                commandStack = new DiagramCommandStack(((DiagramEditor) activeEditor)
-                        .getDiagramEditDomain());
+
+            IDiagramGraphicalViewer graphViewer = ((IDiagramWorkbenchPart) activeEditor)
+                    .getDiagramGraphicalViewer();
+            graphViewer.flush();
+
+            // Notify event listeners:
+            for (ITransformationEventListener te : transformationEventListeners) {
+                te.transformationExecuted(new Object[] { obj, activeEditor });
             }
-            commandStack.execute(transformationCommand);
 
-            // update edit policies, so GMF will generate diagram elements
-            // for model elements which have been generated during the
-            // transformation.
-
-            if (activeEditor instanceof IDiagramWorkbenchPart) {
-                EObject obj = ((View) ((IDiagramWorkbenchPart) activeEditor).getDiagramEditPart()
-                        .getModel()).getElement();
-
-                List<?> editPolicies = CanonicalEditPolicy.getRegisteredEditPolicies(obj);
-                for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
-
-                    CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it.next();
-
-                    nextEditPolicy.refresh();
-                }
-
-                IDiagramGraphicalViewer graphViewer = ((IDiagramWorkbenchPart) activeEditor)
-                        .getDiagramGraphicalViewer();
-                graphViewer.flush();
-
-                // Notify event listeners:
-                for (ITransformationEventListener te : transformationEventListeners) {
-                    te.transformationExecuted(new Object[] {obj, activeEditor });
-                }
-
-            }
         }
     }
 }

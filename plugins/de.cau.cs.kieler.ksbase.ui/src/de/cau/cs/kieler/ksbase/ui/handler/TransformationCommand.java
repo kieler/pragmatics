@@ -28,12 +28,10 @@ import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramGraphicalViewer;
 import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramWorkbenchPart;
 import org.eclipse.gmf.runtime.emf.commands.core.command.AbstractTransactionalCommand;
 import org.eclipse.gmf.runtime.notation.View;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.model.transformation.ITransformationFramework;
-import de.cau.cs.kieler.core.model.util.ModelingUtil;
 import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 
 /**
@@ -58,16 +56,18 @@ public class TransformationCommand extends AbstractTransactionalCommand {
      * @param adapter
      *            an adapter to the {@code View} of the base diagram
      */
-    public TransformationCommand(final TransactionalEditingDomain domain, final String label,
-            final IAdaptable adapter) {
+    public TransformationCommand(final TransactionalEditingDomain domain,
+            final String label, final IAdaptable adapter) {
         super(domain, label, null);
         component = null;
     }
 
     /**
-     * Executes the transformation. This will only work, if a component has been set before.
+     * Executes the transformation. This will only work, if a component has been
+     * set before.
      * 
-     * @see org.eclipse.gmf.runtime.emf.commands.core.command. AbstractTransactionalCommand
+     * @see org.eclipse.gmf.runtime.emf.commands.core.command.
+     *      AbstractTransactionalCommand
      *      #doExecuteWithResult(org.eclipse.core.runtime.IProgressMonitor,
      *      org.eclipse.core.runtime.IAdaptable)
      * 
@@ -75,7 +75,8 @@ public class TransformationCommand extends AbstractTransactionalCommand {
      *            Progress monitor for the execution
      * @param info
      *            Additional informations for the command
-     * @return Either an Error/Warning command result if the execution failed, or else OK
+     * @return Either an Error/Warning command result if the execution failed,
+     *         or else OK
      * @throws ExecutionException
      *             if the Execution failed due to a critical error.
      */
@@ -85,17 +86,20 @@ public class TransformationCommand extends AbstractTransactionalCommand {
         if (component != null) {
             component.executeTransformation();
 
-            IEditorPart activeEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                    .getActivePage().getActiveEditor();
+            IEditorPart activeEditor = PlatformUI.getWorkbench()
+                    .getActiveWorkbenchWindow().getActivePage()
+                    .getActiveEditor();
 
             if (activeEditor instanceof IDiagramWorkbenchPart) {
-                EObject obj = ((View) ((IDiagramWorkbenchPart) activeEditor).getDiagramEditPart()
-                        .getModel()).getElement();
+                EObject obj = ((View) ((IDiagramWorkbenchPart) activeEditor)
+                        .getDiagramEditPart().getModel()).getElement();
 
-                List<?> editPolicies = CanonicalEditPolicy.getRegisteredEditPolicies(obj);
+                List<?> editPolicies = CanonicalEditPolicy
+                        .getRegisteredEditPolicies(obj);
                 for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
 
-                    CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it.next();
+                    CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it
+                            .next();
 
                     nextEditPolicy.refresh();
                 }
@@ -104,18 +108,21 @@ public class TransformationCommand extends AbstractTransactionalCommand {
                         .getDiagramGraphicalViewer();
                 graphViewer.flush();
             }
-            // Clear the component, so a missing call to'initalize' won't execute the same command
+            // Clear the component, so a missing call to'initalize' won't
+            // execute the same command
             // twice.
             component = null;
             return CommandResult.newOKCommandResult();
         } else {
-            KSBasEUIPlugin.getDefault().logError(
-                    "Failed to execute transformation, "
-                            + "it seems like the framework is not correctly initalized!");
+            KSBasEUIPlugin
+                    .getDefault()
+                    .logError(
+                            "Failed to execute transformation, "
+                                    + "it seems like the framework is not correctly initalized!");
             return null;
         }
     }
-    
+
     /**
      * Initializes the transformation.
      * 
@@ -133,14 +140,18 @@ public class TransformationCommand extends AbstractTransactionalCommand {
      *            The transformation framework to use for execution
      * @return False if an error occurred
      */
-    public final boolean initalize(final IEditorPart editPart, final ISelection selection,
-            final String command, final String fileName, final String basePackage,
+    public final boolean initalize(final IEditorPart editPart,
+            final List<EObject> selection, final String command,
+            final String fileName, final String basePackage,
             final ITransformationFramework framework) {
         component = framework;
 
-        List<EObject> sel = ModelingUtil.getModelElementsFromSelection();
-        component.setParameters(sel.toArray(new Object[sel.size()]));
-        return component.initializeTransformation(fileName, command, basePackage);
+        // List<EObject> sel = selection.toList();
+        // List<EObject> sel = ModelingUtil.getModelElementsFromSelection();
+        component
+                .setParameters(selection.toArray(new Object[selection.size()]));
+        return component.initializeTransformation(fileName, command,
+                basePackage);
     }
 
 }
