@@ -329,7 +329,12 @@ public final class DynamicMenuContributions {
                         new DOMSource(extension), new StreamResult(str));
 
                 // Create jar bundle
-                Bundle contributorBundle = ContributorFactoryOSGi.resolve(editor.getContributor());
+                Bundle contributorBundle = null;
+                if (editor.getContributor() != null) {
+                    contributorBundle = ContributorFactoryOSGi.resolve(editor.getContributor());
+                } else {
+                    contributorBundle = KSBasEUIPlugin.getDefault().getBundle();
+                }
                 String pluginBundle = editor.getEditorId() + ".jar";
                 String editorDiagramName = contributorBundle.getSymbolicName() + ".generated";
 
@@ -353,7 +358,8 @@ public final class DynamicMenuContributions {
                 if (!depString.contains("org.eclipse.gmf.runtime.diagram.ui")) {
                     depString += ",\n org.eclipse.gmf.runtime.diagram.ui";
                 }
-                if (!depString.contains(editor.getContributor().getName())) {
+                if (editor.getContributor() != null
+                        && !depString.contains(editor.getContributor().getName())) {
                     depString += ",\n " + editor.getContributor().getName();
                 }
                 // And set the rest of the manifest attributes
@@ -386,8 +392,11 @@ public final class DynamicMenuContributions {
                         resources.add(t.getIcon());
                     }
                 }
-                for (String resource : resources) {
-                    copyResourceToJarBundle(jos, resource, editor.getContributor());
+                // Copy the source resources to the generated bundle if the contributor is valid
+                if (editor.getContributor() != null) {
+                    for (String resource : resources) {
+                        copyResourceToJarBundle(jos, resource, editor.getContributor());
+                    }
                 }
                 // don't forget the transformation file !
                 JarEntry transformationFile = new JarEntry("src/transformations/features."

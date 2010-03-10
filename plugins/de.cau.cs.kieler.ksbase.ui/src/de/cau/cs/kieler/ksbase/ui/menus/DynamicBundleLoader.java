@@ -102,15 +102,19 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
      */
     public synchronized void checkForWaitingEditor(final String activeEditor) {
         // System.out.println("Checking for " + activeEditor);
-        HashMap<EditorTransformationSettings, Bundle> installedBundles = 
-            new HashMap<EditorTransformationSettings, Bundle>();
+        HashMap<EditorTransformationSettings, Bundle> installedBundles = new HashMap<EditorTransformationSettings, Bundle>();
 
         for (Entry<EditorTransformationSettings, URI> entry : waitingBundles.entrySet()) {
             EditorTransformationSettings editor = entry.getKey();
             if (editor.getEditorId().equals(activeEditor)) {
-
                 // Create bundle with jar archive
-                Bundle bundle = ContributorFactoryOSGi.resolve(editor.getContributor());
+                Bundle bundle = null;
+                if (editor.getContributor() != null) {
+                    bundle = ContributorFactoryOSGi.resolve(editor.getContributor());
+                } else {
+                    //Ok the contributor is null, so we are using the KSBasE-UI contribution
+                    bundle = KSBasEUIPlugin.getDefault().getBundle();
+                }
                 // System.out.println("activating ksbase for" + activeEditor);
                 String editorDiagramName = bundle.getSymbolicName() + ".generated";
 
@@ -121,7 +125,7 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
                     URL url = new URL("reference:" + val);
 
                     InputStream in = url.openStream();
-                    String className = PackageAdmin.class.getName(); 
+                    String className = PackageAdmin.class.getName();
                     // FIXME: haf: context might be null after the next line
                     // However, when stepping through this via Debug mode, it is usually not
                     // So this seems to be a severe concurrency issue
@@ -130,17 +134,17 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
                     PackageAdmin admin = (PackageAdmin) bundle.getBundleContext().getService(ref);
                     // Does the bundle we are about to load is alreay existing ?
                     Bundle[] existing = admin.getBundles(editorDiagramName, null);
-                    
+
                     // If yes, never,ever try to load it !
                     if (existing == null || existing.length == 0) {
                         Bundle b = KSBasEUIPlugin.getDefault().getBundle().getBundleContext()
                                 .installBundle(editorDiagramName, in);
                         // b.start();
                         // Activating bundle with package admin service
-                        //System.out.println("Bundle state : " + b.getState());
+                        // System.out.println("Bundle state : " + b.getState());
                         if (b.getState() != Bundle.STARTING) {
                             if (b.getState() == Bundle.INSTALLED) {
-                                //System.out.println("resolving");
+                                // System.out.println("resolving");
                                 boolean res = admin.resolveBundles(new Bundle[] {b });
                                 if (!res) {
                                     KSBasEUIPlugin.getDefault()
@@ -150,7 +154,7 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
                                 }
                             }
                             if (b.getState() == Bundle.RESOLVED) {
-                                //System.out.println("starting");
+                                // System.out.println("starting");
                                 b.start();
                             }
                         }

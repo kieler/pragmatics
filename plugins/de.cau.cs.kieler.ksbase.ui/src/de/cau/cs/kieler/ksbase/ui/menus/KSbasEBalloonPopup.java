@@ -64,14 +64,14 @@ public class KSbasEBalloonPopup implements IBalloonContribution {
      * @return The image, may return null if no images is defined
      */
     public Image getImage() {
-        if (transformation != null && transformation.getIcon().length() > 0) {
+        if (editor.getContributor() != null && transformation != null
+                && transformation.getIcon().length() > 0) {
 
             Bundle b = Platform.getBundle(editor.getContributor().getName());
             if (b != null) {
                 URL imageURL = b.getResource(transformation.getIcon());
                 if (imageURL != null) {
-                    return ImageDescriptor.createFromURL(imageURL)
-                            .createImage();
+                    return ImageDescriptor.createFromURL(imageURL).createImage();
                 }
             }
         }
@@ -95,9 +95,8 @@ public class KSbasEBalloonPopup implements IBalloonContribution {
      */
     public void run() {
         if (editor != null && transformation != null) {
-            TransformationUIManager.INSTANCE
-                    .createAndExecuteTransformationCommand(editor,
-                            transformation, modelElements);
+            TransformationUIManager.INSTANCE.createAndExecuteTransformationCommand(editor,
+                    transformation, modelElements);
         }
 
     }
@@ -141,9 +140,8 @@ public class KSbasEBalloonPopup implements IBalloonContribution {
             // Convert selection to model elements:
             boolean executable = false;
             for (List<String> params : transformation.getParameterList()) {
-                if (ModelObjectTester.evaluateTransformation(editor,
-                        transformation.getTransformation(), params
-                                .toArray(new String[params.size()]), false)) {
+                if (ModelObjectTester.evaluateTransformation(editor, transformation
+                        .getTransformation(), params.toArray(new String[params.size()]), false)) {
                     // Could the transformation be executed?
                     executable = true;
                 }
@@ -162,10 +160,8 @@ public class KSbasEBalloonPopup implements IBalloonContribution {
             String validation = transformation.getValidation();
             if (validation != null && validation.length() > 0) {
                 for (String valid : validation.split(",")) {
-                    if (!ModelObjectTester.evaluateTransformation(editor,
-                            valid, modelElements
-                                    .toArray(new Object[modelElements.size()]),
-                            true)) {
+                    if (!ModelObjectTester.evaluateTransformation(editor, valid, modelElements
+                            .toArray(new Object[modelElements.size()]), true)) {
                         return false;
                     }
                 }

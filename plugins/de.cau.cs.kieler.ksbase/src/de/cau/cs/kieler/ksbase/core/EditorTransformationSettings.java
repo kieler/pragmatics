@@ -278,7 +278,7 @@ public class EditorTransformationSettings implements Serializable {
      * 
      * @param contrib
      *            The contribution that is assigned with this editor. May be null if the editor has
-     *            been defined by the user.
+     *            been defined by the user or the plug-in project does not have a contributor.
      */
     public final void setContributor(final IContributor contrib) {
         this.contributor = contrib;
