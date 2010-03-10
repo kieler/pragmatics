@@ -28,6 +28,7 @@ import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.packageadmin.PackageAdmin;
@@ -120,8 +121,12 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
                     URL url = new URL("reference:" + val);
 
                     InputStream in = url.openStream();
-                    ServiceReference ref = bundle.getBundleContext().getServiceReference(
-                            PackageAdmin.class.getName());
+                    String className = PackageAdmin.class.getName(); 
+                    // FIXME: haf: context might be null after the next line
+                    // However, when stepping through this via Debug mode, it is usually not
+                    // So this seems to be a severe concurrency issue
+                    BundleContext context = bundle.getBundleContext();
+                    ServiceReference ref = context.getServiceReference(className);
                     PackageAdmin admin = (PackageAdmin) bundle.getBundleContext().getService(ref);
                     // Does the bundle we are about to load is alreay existing ?
                     Bundle[] existing = admin.getBundles(editorDiagramName, null);
