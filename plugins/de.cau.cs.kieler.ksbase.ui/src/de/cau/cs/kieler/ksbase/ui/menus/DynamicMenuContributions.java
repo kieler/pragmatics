@@ -336,7 +336,9 @@ public final class DynamicMenuContributions {
                     contributorBundle = KSBasEUIPlugin.getDefault().getBundle();
                 }
                 String pluginBundle = editor.getEditorId() + ".jar";
-                String editorDiagramName = contributorBundle.getSymbolicName() + ".generated";
+
+                String editorDiagramName = contributorBundle.getSymbolicName()
+                        + "." +  editor.getEditorId() + ".generated";
 
                 File jarFile = KSBasEUIPlugin.getDefault().getStateLocation().append(pluginBundle)
                         .toFile();

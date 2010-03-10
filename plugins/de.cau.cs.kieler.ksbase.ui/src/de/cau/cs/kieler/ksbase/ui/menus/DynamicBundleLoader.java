@@ -115,13 +115,9 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
                     // Ok the contributor is null, so we are using the KSBasE-UI contribution
                     bundle = KSBasEUIPlugin.getDefault().getBundle();
                 }
-                // System.out.println("activating ksbase for" + activeEditor);
-                String editorID = editor.getEditorId();
-                if (editorID.contains(".")) {
-                    // truncate to last part of fqn
-                    editorID = editorID.substring(editorID.lastIndexOf("."), editorID.length());
-                }
-                String editorDiagramName = bundle.getSymbolicName() + editorID + ".generated";
+
+                String editorDiagramName = bundle.getSymbolicName() + "." + editor.getEditorId()
+                        + ".generated";
                 try {
                     // To avoid %20 exceptions in paths:
                     String val = entry.getValue().toString().replace("%20", " ");
