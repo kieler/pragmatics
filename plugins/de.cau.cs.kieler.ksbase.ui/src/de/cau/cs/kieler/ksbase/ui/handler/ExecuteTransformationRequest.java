@@ -16,7 +16,6 @@ package de.cau.cs.kieler.ksbase.ui.handler;
 
 import java.util.List;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.Request;
 import org.eclipse.ui.IEditorPart;
 
@@ -31,14 +30,14 @@ import de.cau.cs.kieler.core.model.transformation.ITransformationFramework;
  */
 public class ExecuteTransformationRequest extends Request {
 
-    /** The request, used to initiate a transformation. */
+    /** The request used to initiate a transformation. */
     public static final String REQ_EXEC_TRANS = "execute transformation";
 
     /** Variables used to initialize the command. **/
     private IEditorPart editPart;
     private String command;
     private String fileName;
-    private List<EObject> selection;
+    private List<Object> selection;
     private String modelPackage;
     private ITransformationFramework framework;
 
@@ -59,7 +58,7 @@ public class ExecuteTransformationRequest extends Request {
      *            The ITransformationFramework to use for execution
      */
     public ExecuteTransformationRequest(final IEditorPart ePart,
-            final String cmd, final String file, final List<EObject> sel,
+            final String cmd, final String file, final List<Object> sel,
             final String modelPackageClass,
             final ITransformationFramework fframework) {
         super(REQ_EXEC_TRANS);
@@ -153,7 +152,7 @@ public class ExecuteTransformationRequest extends Request {
      * @param sel
      *            The active selection object
      */
-    public final void setSelection(final List<EObject> sel) {
+    public final void setSelection(final List<Object> sel) {
         this.selection = sel;
     }
 
@@ -162,7 +161,7 @@ public class ExecuteTransformationRequest extends Request {
      * 
      * @return an ISelection object
      */
-    public final List<EObject> getSelection() {
+    public final List<Object> getSelection() {
         return this.selection;
     }
 

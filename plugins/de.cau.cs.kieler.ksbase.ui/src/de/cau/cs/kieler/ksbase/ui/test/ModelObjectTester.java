@@ -114,25 +114,19 @@ public class ModelObjectTester extends PropertyTester {
      *            some parameter
      * @param execute
      *            Should the transformation actually be executed?
-     * @return True If the transformation could be initialized and, if allowed, the transformation
-     *         returned true.
+     * @return True If the transformation could be initialized and if the execute parameter is set,
+     *         the transformation returned true.
      */
     public static boolean evaluateTransformation(final EditorTransformationSettings editor,
             final String transformation, final Object parameter, final boolean execute) {
         Boolean result = false;
         ITransformationFramework framework = editor.getFramework();
         if (parameter instanceof String[]) {
-            if (!framework.setParameters((String[]) parameter)) {
-                // Parameters could not be matched, so instantly return false
-                return false;
-            }
-        } else if (parameter instanceof Object[]) {
-            framework.setParameters((Object[]) parameter);
-        } else if (parameter instanceof List<?>) {
-            framework.setParameters(new Object[] {parameter});
+            framework.setParameters((String[]) parameter);
         }
         if (!framework.initializeTransformation(editor.getTransformationFile(), transformation,
                 editor.getModelPackageClass())) {
+            framework.reset();
             return false;
         }
         if (execute) {
@@ -147,6 +141,7 @@ public class ModelObjectTester extends PropertyTester {
             // successfully initialized
             // the
             // transformation and we will return true here
+            framework.reset();
             return true;
         }
         return result;

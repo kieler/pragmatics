@@ -141,7 +141,7 @@ public class TransformationCommand extends AbstractTransactionalCommand {
      * @return False if an error occurred
      */
     public final boolean initalize(final IEditorPart editPart,
-            final List<EObject> selection, final String command,
+            final List<Object> selection, final String command,
             final String fileName, final String basePackage,
             final ITransformationFramework framework) {
         component = framework;
