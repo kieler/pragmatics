@@ -148,11 +148,15 @@ public final class TransformationUIManager {
                         "The Transformation " + transformation.getTransformation()
                                 + " does not have any parameters");
             } else {
-                List<String> parameters = transformation.getParameterList().get(0);
-                selectionMapping = TransformationFrameworkFactory
-                        .getDefaultTransformationFramework().createParameterMapping(
-                                parameters.toArray(new String[parameters.size()]));
-
+                for (List<String> parameters : transformation.getParameterList()) {
+                    selectionMapping = TransformationFrameworkFactory
+                            .getDefaultTransformationFramework().createParameterMapping(
+                                    parameters.toArray(new String[parameters.size()]));
+                    if (selectionMapping != null) {
+                        break;
+                    }
+                }
+                // FIXME what if selectionMapping is still null?
             }
         } else { // We need to convert the list from EObjects to objects
             selectionMapping = new LinkedList<Object>();
