@@ -72,7 +72,7 @@ public class ModelObjectTester extends PropertyTester {
                 boolean executable = false;
                 for (List<String> params : t.getParameterList()) {
                     if (evaluateTransformation(editor, t.getTransformation(), params
-                            .toArray(new String[params.size()]), false)) {
+                            .toArray(new String[params.size()]), null, false)) {
                         // Could the transformation be executed?
                         executable = true;
                     }
@@ -91,7 +91,7 @@ public class ModelObjectTester extends PropertyTester {
                 String validation = t.getValidation();
                 if (validation != null && validation.length() > 0) {
                     for (String valid : validation.split(",")) {
-                        if (!evaluateTransformation(editor, valid, modelElements, true)) {
+                        if (!evaluateTransformation(editor, valid, null, modelElements, true)) {
                             return false;
                         }
                     }
@@ -110,19 +110,24 @@ public class ModelObjectTester extends PropertyTester {
      *            The editor to use
      * @param transformation
      *            The transformation to validate
+     * @param parameterTypes
+     *            The parameter types
      * @param parameter
-     *            some parameter
+     *            The parameter values
      * @param execute
      *            Should the transformation actually be executed?
      * @return True If the transformation could be initialized and if the execute parameter is set,
      *         the transformation returned true.
      */
     public static boolean evaluateTransformation(final EditorTransformationSettings editor,
-            final String transformation, final Object parameter, final boolean execute) {
+            final String transformation, final String[] parameterTypes,
+            final List<EObject> parameter, final boolean execute) {
         Boolean result = false;
         ITransformationFramework framework = editor.getFramework();
-        if (parameter instanceof String[]) {
-            framework.setParameters((String[]) parameter);
+        if (parameterTypes != null) {
+            framework.setParameters(parameter, parameterTypes);
+        } else {
+            framework.setParameters(parameter);
         }
         if (!framework.initializeTransformation(editor.getTransformationFile(), transformation,
                 editor.getModelPackageClass())) {
@@ -144,6 +149,7 @@ public class ModelObjectTester extends PropertyTester {
             framework.reset();
             return true;
         }
+        framework.reset();
         return result;
     }
 

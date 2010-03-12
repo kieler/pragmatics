@@ -141,7 +141,8 @@ public class KSbasEBalloonPopup implements IBalloonContribution {
             boolean executable = false;
             for (List<String> params : transformation.getParameterList()) {
                 if (ModelObjectTester.evaluateTransformation(editor, transformation
-                        .getTransformation(), params.toArray(new String[params.size()]), false)) {
+                        .getTransformation(), params.toArray(new String[params.size()]), null,
+                        false)) {
                     // Could the transformation be executed?
                     executable = true;
                 }
@@ -160,8 +161,8 @@ public class KSbasEBalloonPopup implements IBalloonContribution {
             String validation = transformation.getValidation();
             if (validation != null && validation.length() > 0) {
                 for (String valid : validation.split(",")) {
-                    if (!ModelObjectTester.evaluateTransformation(editor, valid, modelElements
-                            .toArray(new Object[modelElements.size()]), true)) {
+                    if (!ModelObjectTester.evaluateTransformation(editor, valid, null,
+                            modelElements, true)) {
                         return false;
                     }
                 }

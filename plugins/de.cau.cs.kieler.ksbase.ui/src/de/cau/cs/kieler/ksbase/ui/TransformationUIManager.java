@@ -150,7 +150,7 @@ public final class TransformationUIManager {
             } else {
                 for (List<String> parameters : transformation.getParameterList()) {
                     selectionMapping = TransformationFrameworkFactory
-                            .getDefaultTransformationFramework().createParameterMapping(
+                            .getDefaultTransformationFramework().createParameterMapping(null,
                                     parameters.toArray(new String[parameters.size()]));
                     if (selectionMapping != null) {
                         break;
