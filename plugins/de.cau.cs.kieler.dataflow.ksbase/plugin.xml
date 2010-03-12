@@ -4,7 +4,7 @@
    <extension
          point="de.cau.cs.kieler.ksbase.configurations">
       <configuration
-            TransformationFile="src/transformations/feature.ext"
+            TransformationFile="transformations/feature.ext"
             XtendFile="src/transformations/feature.ext"
             checkVisibility="true"
             contextId="de.cau.cs.kieler.dataflow.diagram.ui.diagramContext"
