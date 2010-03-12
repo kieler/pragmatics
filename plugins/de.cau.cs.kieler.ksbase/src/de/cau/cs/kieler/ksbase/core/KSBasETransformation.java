@@ -48,6 +48,8 @@ public class KSBasETransformation extends AbstractTransformation implements Seri
     private String icon;
     /** Assigned keyboard shortcut. **/
     private String keyboardShortcut;
+    /** ToolTip message of this transformation. **/
+    private String toolTip;
     /** Ordered parameters. **/
     private LinkedList<List<String>> parameters;
     /** Id for this transformation. **/
@@ -73,6 +75,7 @@ public class KSBasETransformation extends AbstractTransformation implements Seri
         transformationId = "";
         visible = true;
         validation = "";
+        toolTip = "";
         parameters = new LinkedList<List<String>>();
     }
 
@@ -89,6 +92,7 @@ public class KSBasETransformation extends AbstractTransformation implements Seri
         this.transformationId = t.transformationId;
         this.keyboardShortcut = t.keyboardShortcut;
         this.visible = t.visible;
+        this.toolTip = t.toolTip;
         this.validation = t.validation;
         this.parameters = new LinkedList<List<String>>(t.parameters);
 
@@ -185,6 +189,25 @@ public class KSBasETransformation extends AbstractTransformation implements Seri
     }
 
     /**
+     * Returns the toolTip message.
+     * 
+     * @return A message string
+     */
+    public String getToolTip() {
+        return toolTip;
+    }
+
+    /**
+     * Sets the toolTip message.
+     * 
+     * @param message
+     *            the message
+     */
+    public void setToolTip(final String message) {
+        this.toolTip = message;
+    }
+
+    /**
      * Gets the list of parameters.
      * 
      * @return A list of parameters.
@@ -197,7 +220,9 @@ public class KSBasETransformation extends AbstractTransformation implements Seri
 
     /**
      * Sets parameters list.
-     * @param params the list of list of parameters
+     * 
+     * @param params
+     *            the list of list of parameters
      */
     public void setParameters(final List<List<String>> params) {
         this.parameters = new LinkedList<List<String>>(params);

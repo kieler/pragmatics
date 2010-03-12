@@ -347,6 +347,12 @@ public final class TransformationManager {
                     transformation.setKeyboardShortcut(t.getAttribute("keyboardShortcut"));
                     transformation.setTransformationId(t.getAttribute("transformationId"));
                     transformation.setIcon(t.getAttribute("icon"));
+                    String s = t.getAttribute("tooltip");
+                    if (s != null) {
+                        transformation.setToolTip(s);
+                    } else {
+                        transformation.setToolTip(transformation.getName());
+                    }
                     transformation.setValidation(t.getAttribute("validation"));
                     editor.addTransformation(transformation);
                 }

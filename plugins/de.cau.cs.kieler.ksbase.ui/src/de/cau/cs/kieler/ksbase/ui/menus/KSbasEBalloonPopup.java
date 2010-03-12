@@ -48,7 +48,7 @@ public class KSbasEBalloonPopup implements IBalloonContribution {
 
     /** An array containing the single edit part for the policy. */
     private LinkedList<EObject> modelElements;
-    private static final ModelObjectTester TESTER = new ModelObjectTester();
+    //private static final ModelObjectTester TESTER = new ModelObjectTester();
 
     /**
      * Creates an empty balloon popup.
@@ -86,7 +86,7 @@ public class KSbasEBalloonPopup implements IBalloonContribution {
      */
     public String getTooltip() {
         if (transformation != null) {
-            return transformation.getTransformation();
+            return transformation.getToolTip();
         }
         return null;
     }

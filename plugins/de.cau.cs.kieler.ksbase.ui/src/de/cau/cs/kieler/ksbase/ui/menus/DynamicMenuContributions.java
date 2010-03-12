@@ -523,6 +523,8 @@ public final class DynamicMenuContributions {
         }
         // Label
         menuCommand.setAttribute("label", t.getName());
+        //ToolTip
+        menuCommand.setAttribute("tooltip", t.getToolTip());
         // Set command parameters
         Element handlerParam = extension.createElement("parameter");
         handlerParam.setAttribute("name", "de.cau.cs.kieler.ksbase.editorParameter");

@@ -185,6 +185,13 @@ Make sure that the transformation is short and fast, it is not recommended to ca
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="tooltip" type="string">
+            <annotation>
+               <documentation>
+                  ToolTip message that is shown for all menu contributions
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
