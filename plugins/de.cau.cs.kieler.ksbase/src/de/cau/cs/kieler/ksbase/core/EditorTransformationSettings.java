@@ -428,8 +428,8 @@ public class EditorTransformationSettings implements Serializable {
     public final void parseTransformations(final boolean createTransformations, final URL fileURL) {
         if (framework != null) {
             // Parse transformations with the framework
-            List<AbstractTransformation> parseTransformations = framework
-                    .parseInPlaceTransformations(fileURL);
+            List<AbstractTransformation> parseTransformations = framework.parseTransformations(
+                    fileURL, true);
             if (parseTransformations == null) {
                 KSBasEPlugin.getDefault().logError(
                         "Could not parse extensions for editor " + editorId);
@@ -474,7 +474,7 @@ public class EditorTransformationSettings implements Serializable {
             // We do not care if they already exist in the list, 'cause
             // they're used for validation only
             outplaceTransformations.clear();
-            List<AbstractTransformation> outplace = framework.parseOutPlaceTransformations(fileURL);
+            List<AbstractTransformation> outplace = framework.parseTransformations(fileURL, false);
             if (outplace != null) {
                 for (AbstractTransformation oT : outplace) {
                     outplaceTransformations.put(oT.getTransformation(), oT);

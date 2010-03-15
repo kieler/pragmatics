@@ -28,6 +28,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.osgi.framework.Bundle;
 
+import de.cau.cs.kieler.core.model.transformation.AbstractTransformation;
 import de.cau.cs.kieler.core.ui.policies.IBalloonContribution;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
@@ -48,7 +49,8 @@ public class KSbasEBalloonPopup implements IBalloonContribution {
 
     /** An array containing the single edit part for the policy. */
     private LinkedList<EObject> modelElements;
-    //private static final ModelObjectTester TESTER = new ModelObjectTester();
+
+    // private static final ModelObjectTester TESTER = new ModelObjectTester();
 
     /**
      * Creates an empty balloon popup.
@@ -71,8 +73,7 @@ public class KSbasEBalloonPopup implements IBalloonContribution {
             if (b != null) {
                 URL imageURL = b.getResource(transformation.getIcon());
                 if (imageURL != null) {
-                    return ImageDescriptor.createFromURL(imageURL)
-                            .createImage();
+                    return ImageDescriptor.createFromURL(imageURL).createImage();
                 }
             }
         }
@@ -96,9 +97,8 @@ public class KSbasEBalloonPopup implements IBalloonContribution {
      */
     public void run() {
         if (editor != null && transformation != null) {
-            TransformationUIManager.INSTANCE
-                    .createAndExecuteTransformationCommand(editor,
-                            transformation, modelElements);
+            TransformationUIManager.INSTANCE.createAndExecuteTransformationCommand(editor,
+                    transformation, modelElements);
         }
 
     }
@@ -143,9 +143,8 @@ public class KSbasEBalloonPopup implements IBalloonContribution {
             boolean executable = false;
             for (List<String> params : transformation.getParameterList()) {
 
-                if (ModelObjectTester.evaluateTransformation(editor,
-                        transformation.getTransformation(), params
-                                .toArray(new String[params.size()]),
+                if (ModelObjectTester.evaluateTransformation(editor, transformation
+                        .getTransformation(), params.toArray(new String[params.size()]),
                         modelElements, false)) {
                     // Could the transformation be executed?
                     executable = true;
@@ -165,15 +164,21 @@ public class KSbasEBalloonPopup implements IBalloonContribution {
             String validation = transformation.getValidation();
             if (validation != null && validation.length() > 0) {
                 for (String valid : validation.split(",")) {
-
-                    if (!ModelObjectTester.evaluateTransformation(editor,
-                            valid, null, modelElements, true)) {
-
-                        return false;
+                    AbstractTransformation at = editor.getOutPlaceTransformationByName(valid);
+                    if (at != null) {
+                        boolean isValid = false;
+                        for (List<String> params : at.getParameterList()) {
+                            if (ModelObjectTester.evaluateTransformation(editor, valid, params
+                                    .toArray(new String[params.size()]), modelElements, true)) {
+                                isValid = true;
+                            }
+                        }
+                        if (!isValid) {
+                            return false;
+                        }
                     }
                 }
             }
-
             return true;
         }
         return false;
