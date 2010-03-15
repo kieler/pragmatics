@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OGDF Library for Windows x86_64
+Bundle-SymbolicName: net.ogdf.lib.win32.x86_64;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Technische Universität Dortmund
+Fragment-Host: net.ogdf.lib;bundle-version="1.0.0"
+Eclipse-PlatformFilter: (& (osgi.os=win32) (osgi.arch=x86_64))
+Bundle-NativeCode: /lib/ogdf.dll

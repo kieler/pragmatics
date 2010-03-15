@@ -676,4 +676,13 @@ instead of this License. But first, please read &lt;http://www.gnu.org/philosoph
          version="0.0.0"
          fragment="true"/>
 
+   <plugin
+         id="net.ogdf.lib.win32.x86_64"
+         os="win32"
+         arch="x86_64"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"/>
+
 </feature>
