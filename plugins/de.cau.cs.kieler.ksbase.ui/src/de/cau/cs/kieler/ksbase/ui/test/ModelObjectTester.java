@@ -20,6 +20,7 @@ import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ui.PlatformUI;
 
+import de.cau.cs.kieler.core.model.transformation.AbstractTransformation;
 import de.cau.cs.kieler.core.model.transformation.ITransformationFramework;
 import de.cau.cs.kieler.core.model.util.ModelingUtil;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
@@ -91,8 +92,18 @@ public class ModelObjectTester extends PropertyTester {
                 String validation = t.getValidation();
                 if (validation != null && validation.length() > 0) {
                     for (String valid : validation.split(",")) {
-                        if (!evaluateTransformation(editor, valid, null, modelElements, true)) {
-                            return false;
+                        AbstractTransformation at = editor.getOutPlaceTransformationByName(valid);
+                        if (at != null) {
+                            boolean isValid = false;
+                            for (List<String> params : at.getParameterList()) {
+                                if (evaluateTransformation(editor, valid, params
+                                        .toArray(new String[params.size()]), modelElements, true)) {
+                                    isValid = true;
+                                }
+                            }
+                            if (!isValid) {
+                                return false;
+                            }
                         }
                     }
                 }
@@ -125,9 +136,13 @@ public class ModelObjectTester extends PropertyTester {
         Boolean result = false;
         ITransformationFramework framework = editor.getFramework();
         if (parameterTypes != null) {
-            framework.setParameters(parameter, parameterTypes);
+            if (!framework.setParameters(parameter, parameterTypes)) {
+                return false;
+            }
         } else {
-            framework.setParameters(parameter);
+            if (!framework.setParameters(parameter)) {
+                return false;
+            }
         }
         if (!framework.initializeTransformation(editor.getTransformationFile(), transformation,
                 editor.getModelPackageClass())) {

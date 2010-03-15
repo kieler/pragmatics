@@ -58,7 +58,9 @@ public class EditorTransformationSettings implements Serializable {
     /** The context for the diagram editor, required for key bindings. **/
     private String context;
     /** The map of transformations, ordered by their transformation Id. **/
-    private HashMap<String, KSBasETransformation> transformations;
+    private HashMap<String, KSBasETransformation> inplaceTransformations;
+    /** The map of out-place transformations, those may only be used for validation. **/
+    private HashMap<String, AbstractTransformation> outplaceTransformations;
     /** List of menu contributions. **/
     private LinkedList<KSBasEMenuContribution> menuContributions;
     /** Transformation Framework to use. **/
@@ -89,7 +91,8 @@ public class EditorTransformationSettings implements Serializable {
         this.transformationFile = ""; //$NON-NLS-1$
         this.context = ""; //$NON-NLS-1$
         this.commandHandler = ""; //$NON-NLS-1$
-        this.transformations = new HashMap<String, KSBasETransformation>();
+        this.inplaceTransformations = new HashMap<String, KSBasETransformation>();
+        this.outplaceTransformations = new HashMap<String, AbstractTransformation>();
         this.menuContributions = new LinkedList<KSBasEMenuContribution>();
         this.contributor = null;
         this.checkVisibility = true;
@@ -199,7 +202,16 @@ public class EditorTransformationSettings implements Serializable {
      * @return A LinkedList containing all transformations
      */
     public final Collection<KSBasETransformation> getTransformations() {
-        return transformations.values();
+        return inplaceTransformations.values();
+    }
+
+    /**
+     * Gets the list of defined out-place transformations.
+     * 
+     * @return A linkedList containing all transformations
+     */
+    public final Collection<AbstractTransformation> getOutPlaceTransformations() {
+        return outplaceTransformations.values();
     }
 
     /**
@@ -211,7 +223,26 @@ public class EditorTransformationSettings implements Serializable {
      */
     public final KSBasETransformation getTransformationByName(final String transformation) {
         if (transformation != null) {
-            for (KSBasETransformation t : transformations.values()) {
+            for (KSBasETransformation t : inplaceTransformations.values()) {
+                if (t.getTransformation().toLowerCase(Locale.getDefault()).equals(
+                        transformation.toLowerCase(Locale.getDefault()))) {
+                    return t;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Tries to find a transformation with a given name.
+     * 
+     * @param transformation
+     *            The name to find
+     * @return The first transformation found or null
+     */
+    public final AbstractTransformation getOutPlaceTransformationByName(final String transformation) {
+        if (transformation != null) {
+            for (AbstractTransformation t : outplaceTransformations.values()) {
                 if (t.getTransformation().toLowerCase(Locale.getDefault()).equals(
                         transformation.toLowerCase(Locale.getDefault()))) {
                     return t;
@@ -230,7 +261,19 @@ public class EditorTransformationSettings implements Serializable {
      *         found
      */
     public final KSBasETransformation getTransformationById(final String tid) {
-        return transformations.get(tid);
+        return inplaceTransformations.get(tid);
+    }
+
+    /**
+     * Tries to find a transformation by its identity string.
+     * 
+     * @param tid
+     *            The id to find
+     * @return The first transformation with the given id or null if no transformation has been
+     *         found
+     */
+    public final AbstractTransformation getOutPlaceTransformationById(final String tid) {
+        return outplaceTransformations.get(tid);
     }
 
     /**
@@ -241,7 +284,19 @@ public class EditorTransformationSettings implements Serializable {
      */
     public final void addTransformation(final KSBasETransformation t) {
         if (t != null) {
-            transformations.put(t.getTransformationId(), t);
+            inplaceTransformations.put(t.getTransformationId(), t);
+        }
+    }
+
+    /**
+     * Adds a single transformation to the transformations list.
+     * 
+     * @param t
+     *            a transformation definition
+     */
+    public final void addOutPlaceTransformation(final KSBasETransformation t) {
+        if (t != null) {
+            outplaceTransformations.put(t.getTransformationId(), t);
         }
     }
 
@@ -390,8 +445,7 @@ public class EditorTransformationSettings implements Serializable {
                 KSBasETransformation transformation = getTransformationByName(t.getTransformation());
                 if (transformation != null) {
                     // Clone it, so we don't remove the transformation
-                    // when
-                    // clearing the transformations list
+                    // when clearing the transformations list
                     for (List<String> p : t.getParameterList()) {
                         transformation.addParameters(p);
                     }
@@ -411,9 +465,21 @@ public class EditorTransformationSettings implements Serializable {
             // Adding all transformations. By clearing the
             // transformations first, we ensure that no illegal
             // transformations are included.
-            transformations.clear();
+            inplaceTransformations.clear();
             for (KSBasETransformation t : cachedTransformations) {
-                transformations.put(t.getTransformationId(), t);
+                inplaceTransformations.put(t.getTransformationId(), t);
+            }
+
+            // Parsing out-place transformations
+            // We do not care if they already exist in the list, 'cause
+            // they're used for validation only
+            outplaceTransformations.clear();
+            List<AbstractTransformation> outplace = framework.parseOutPlaceTransformations(fileURL);
+            if (outplace != null) {
+                for (AbstractTransformation oT : outplace) {
+                    outplaceTransformations.put(oT.getTransformation(), oT);
+                }
+
             }
 
         } else {
