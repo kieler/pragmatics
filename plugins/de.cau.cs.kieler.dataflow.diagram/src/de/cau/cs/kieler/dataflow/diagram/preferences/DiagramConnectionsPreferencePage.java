@@ -26,6 +26,7 @@ public class DiagramConnectionsPreferencePage extends ConnectionsPreferencePage 
      * @generated
      */
     public DiagramConnectionsPreferencePage() {
-        setPreferenceStore(DataflowDiagramEditorPlugin.getInstance().getPreferenceStore());
+        setPreferenceStore(DataflowDiagramEditorPlugin.getInstance()
+                .getPreferenceStore());
     }
 }

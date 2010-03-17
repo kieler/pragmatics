@@ -84,8 +84,8 @@ public class ConnectionReorientCommand extends EditElementCommand {
             return false;
         }
         DataflowModel container = (DataflowModel) getLink().eContainer();
-        return DataflowBaseItemSemanticEditPolicy.LinkConstraints.canExistConnection_4001(
-                container, getNewSource(), target);
+        return DataflowBaseItemSemanticEditPolicy.LinkConstraints
+                .canExistConnection_4001(container, getNewSource(), target);
     }
 
     /**
@@ -100,17 +100,18 @@ public class ConnectionReorientCommand extends EditElementCommand {
             return false;
         }
         DataflowModel container = (DataflowModel) getLink().eContainer();
-        return DataflowBaseItemSemanticEditPolicy.LinkConstraints.canExistConnection_4001(
-                container, source, getNewTarget());
+        return DataflowBaseItemSemanticEditPolicy.LinkConstraints
+                .canExistConnection_4001(container, source, getNewTarget());
     }
 
     /**
      * @generated
      */
-    protected CommandResult doExecuteWithResult(IProgressMonitor monitor, IAdaptable info)
-            throws ExecutionException {
+    protected CommandResult doExecuteWithResult(IProgressMonitor monitor,
+            IAdaptable info) throws ExecutionException {
         if (!canExecute()) {
-            throw new ExecutionException("Invalid arguments in reorient link command"); //$NON-NLS-1$
+            throw new ExecutionException(
+                    "Invalid arguments in reorient link command"); //$NON-NLS-1$
         }
         if (reorientDirection == ReorientRelationshipRequest.REORIENT_SOURCE) {
             return reorientSource();

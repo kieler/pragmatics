@@ -47,8 +47,10 @@ public class DataflowModelEditPart extends DiagramEditPart {
      */
     protected void createDefaultEditPolicies() {
         super.createDefaultEditPolicies();
-        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE, new DataflowModelItemSemanticEditPolicy());
-        installEditPolicy(EditPolicyRoles.CANONICAL_ROLE, new DataflowModelCanonicalEditPolicy());
+        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
+                new DataflowModelItemSemanticEditPolicy());
+        installEditPolicy(EditPolicyRoles.CANONICAL_ROLE,
+                new DataflowModelCanonicalEditPolicy());
         // removeEditPolicy(org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles.POPUPBAR_ROLE);
     }
 

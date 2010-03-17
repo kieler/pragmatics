@@ -59,7 +59,8 @@ import de.cau.cs.kieler.dataflow.diagram.navigator.DataflowNavigatorItem;
 /**
  * @generated
  */
-public class DataflowDiagramEditor extends DiagramDocumentEditor implements IGotoMarker {
+public class DataflowDiagramEditor extends DiagramDocumentEditor implements
+        IGotoMarker {
 
     /**
      * @generated
@@ -126,8 +127,10 @@ public class DataflowDiagramEditor extends DiagramDocumentEditor implements IGot
      * @generated
      */
     protected IDocumentProvider getDocumentProvider(IEditorInput input) {
-        if (input instanceof IFileEditorInput || input instanceof URIEditorInput) {
-            return DataflowDiagramEditorPlugin.getInstance().getDocumentProvider();
+        if (input instanceof IFileEditorInput
+                || input instanceof URIEditorInput) {
+            return DataflowDiagramEditorPlugin.getInstance()
+                    .getDocumentProvider();
         }
         return super.getDocumentProvider(input);
     }
@@ -136,8 +139,8 @@ public class DataflowDiagramEditor extends DiagramDocumentEditor implements IGot
      * @generated
      */
     public TransactionalEditingDomain getEditingDomain() {
-        IDocument document = getEditorInput() != null ? getDocumentProvider().getDocument(
-                getEditorInput()) : null;
+        IDocument document = getEditorInput() != null ? getDocumentProvider()
+                .getDocument(getEditorInput()) : null;
         if (document instanceof IDiagramDocument) {
             return ((IDiagramDocument) document).getEditingDomain();
         }
@@ -148,10 +151,11 @@ public class DataflowDiagramEditor extends DiagramDocumentEditor implements IGot
      * @generated
      */
     protected void setDocumentProvider(IEditorInput input) {
-        if (input instanceof IFileEditorInput || input instanceof URIEditorInput) {
-            setDocumentProvider(DataflowDiagramEditorPlugin.getInstance().getDocumentProvider());
-        }
-        else {
+        if (input instanceof IFileEditorInput
+                || input instanceof URIEditorInput) {
+            setDocumentProvider(DataflowDiagramEditorPlugin.getInstance()
+                    .getDocumentProvider());
+        } else {
             super.setDocumentProvider(input);
         }
     }
@@ -184,7 +188,8 @@ public class DataflowDiagramEditor extends DiagramDocumentEditor implements IGot
         Shell shell = getSite().getShell();
         IEditorInput input = getEditorInput();
         SaveAsDialog dialog = new SaveAsDialog(shell);
-        IFile original = input instanceof IFileEditorInput ? ((IFileEditorInput) input).getFile()
+        IFile original = input instanceof IFileEditorInput ? ((IFileEditorInput) input)
+                .getFile()
                 : null;
         if (original != null) {
             dialog.setOriginalFile(original);
@@ -196,8 +201,9 @@ public class DataflowDiagramEditor extends DiagramDocumentEditor implements IGot
             return;
         }
         if (provider.isDeleted(input) && original != null) {
-            String message = NLS.bind(Messages.DataflowDiagramEditor_SavingDeletedFile, original
-                    .getName());
+            String message = NLS.bind(
+                    Messages.DataflowDiagramEditor_SavingDeletedFile, original
+                            .getName());
             dialog.setErrorMessage(null);
             dialog.setMessage(message, IMessageProvider.WARNING);
         }
@@ -220,11 +226,13 @@ public class DataflowDiagramEditor extends DiagramDocumentEditor implements IGot
         // Check if the editor is already open
         IEditorMatchingStrategy matchingStrategy = getEditorDescriptor()
                 .getEditorMatchingStrategy();
-        IEditorReference[] editorRefs = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                .getActivePage().getEditorReferences();
+        IEditorReference[] editorRefs = PlatformUI.getWorkbench()
+                .getActiveWorkbenchWindow().getActivePage()
+                .getEditorReferences();
         for (int i = 0; i < editorRefs.length; i++) {
             if (matchingStrategy.matches(editorRefs[i], newInput)) {
-                MessageDialog.openWarning(shell, Messages.DataflowDiagramEditor_SaveAsErrorTitle,
+                MessageDialog.openWarning(shell,
+                        Messages.DataflowDiagramEditor_SaveAsErrorTitle,
                         Messages.DataflowDiagramEditor_SaveAsErrorMessage);
                 return;
             }
@@ -232,18 +240,19 @@ public class DataflowDiagramEditor extends DiagramDocumentEditor implements IGot
         boolean success = false;
         try {
             provider.aboutToChange(newInput);
-            getDocumentProvider(newInput).saveDocument(progressMonitor, newInput,
+            getDocumentProvider(newInput).saveDocument(progressMonitor,
+                    newInput,
                     getDocumentProvider().getDocument(getEditorInput()), true);
             success = true;
-        }
-        catch (CoreException x) {
+        } catch (CoreException x) {
             IStatus status = x.getStatus();
             if (status == null || status.getSeverity() != IStatus.CANCEL) {
-                ErrorDialog.openError(shell, Messages.DataflowDiagramEditor_SaveErrorTitle,
-                        Messages.DataflowDiagramEditor_SaveErrorMessage, x.getStatus());
+                ErrorDialog.openError(shell,
+                        Messages.DataflowDiagramEditor_SaveErrorTitle,
+                        Messages.DataflowDiagramEditor_SaveErrorMessage, x
+                                .getStatus());
             }
-        }
-        finally {
+        } finally {
             provider.changed(newInput);
             if (success) {
                 setInput(newInput);
@@ -272,7 +281,8 @@ public class DataflowDiagramEditor extends DiagramDocumentEditor implements IGot
         Diagram diagram = document.getDiagram();
         IFile file = WorkspaceSynchronizer.getFile(diagram.eResource());
         if (file != null) {
-            DataflowNavigatorItem item = new DataflowNavigatorItem(diagram, file, false);
+            DataflowNavigatorItem item = new DataflowNavigatorItem(diagram,
+                    file, false);
             return new StructuredSelection(item);
         }
         return StructuredSelection.EMPTY;
@@ -283,11 +293,11 @@ public class DataflowDiagramEditor extends DiagramDocumentEditor implements IGot
      */
     protected void configureGraphicalViewer() {
         super.configureGraphicalViewer();
-        DiagramEditorContextMenuProvider provider = new DiagramEditorContextMenuProvider(this,
-                getDiagramGraphicalViewer());
+        DiagramEditorContextMenuProvider provider = new DiagramEditorContextMenuProvider(
+                this, getDiagramGraphicalViewer());
         getDiagramGraphicalViewer().setContextMenu(provider);
-        getSite().registerContextMenu(ActionIds.DIAGRAM_EDITOR_CONTEXT_MENU, provider,
-                getDiagramGraphicalViewer());
+        getSite().registerContextMenu(ActionIds.DIAGRAM_EDITOR_CONTEXT_MENU,
+                provider, getDiagramGraphicalViewer());
     }
 
 }

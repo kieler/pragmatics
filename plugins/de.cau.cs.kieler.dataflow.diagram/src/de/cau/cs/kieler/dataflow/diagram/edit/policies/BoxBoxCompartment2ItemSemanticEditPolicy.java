@@ -22,7 +22,8 @@ import de.cau.cs.kieler.dataflow.diagram.providers.DataflowElementTypes;
 /**
  * @generated
  */
-public class BoxBoxCompartment2ItemSemanticEditPolicy extends DataflowBaseItemSemanticEditPolicy {
+public class BoxBoxCompartment2ItemSemanticEditPolicy extends
+        DataflowBaseItemSemanticEditPolicy {
 
     /**
      * @generated

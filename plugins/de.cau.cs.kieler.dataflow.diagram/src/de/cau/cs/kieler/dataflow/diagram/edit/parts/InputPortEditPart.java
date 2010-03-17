@@ -83,8 +83,10 @@ public class InputPortEditPart extends BorderedBorderItemEditPart {
      */
     protected void createDefaultEditPolicies() {
         super.createDefaultEditPolicies();
-        installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE, getPrimaryDragEditPolicy());
-        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE, new InputPortItemSemanticEditPolicy());
+        installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE,
+                getPrimaryDragEditPolicy());
+        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
+                new InputPortItemSemanticEditPolicy());
         installEditPolicy(EditPolicy.LAYOUT_ROLE, createLayoutEditPolicy());
         // XXX need an SCR to runtime to have another abstract superclass that would let children add reasonable editpolicies
         // removeEditPolicy(org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles.CONNECTION_HANDLES_ROLE);
@@ -103,13 +105,15 @@ public class InputPortEditPart extends BorderedBorderItemEditPart {
                     return new BorderItemSelectionEditPolicy() {
 
                         protected List createSelectionHandles() {
-                            MoveHandle mh = new MoveHandle((GraphicalEditPart) getHost());
+                            MoveHandle mh = new MoveHandle(
+                                    (GraphicalEditPart) getHost());
                             mh.setBorder(null);
                             return Collections.singletonList(mh);
                         }
                     };
                 }
-                EditPolicy result = child.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
+                EditPolicy result = child
+                        .getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
                 if (result == null) {
                     result = new NonResizableEditPolicy();
                 }
@@ -145,14 +149,14 @@ public class InputPortEditPart extends BorderedBorderItemEditPart {
     /**
      * @generated
      */
-    protected void addBorderItem(IFigure borderItemContainer, IBorderItemEditPart borderItemEditPart) {
+    protected void addBorderItem(IFigure borderItemContainer,
+            IBorderItemEditPart borderItemEditPart) {
         if (borderItemEditPart instanceof InputPortNameEditPart) {
             BorderItemLocator locator = new BorderItemLocator(getMainFigure(),
                     PositionConstants.SOUTH);
             locator.setBorderItemOffset(new Dimension(-20, -20));
             borderItemContainer.add(borderItemEditPart.getFigure(), locator);
-        }
-        else {
+        } else {
             super.addBorderItem(borderItemContainer, borderItemEditPart);
         }
     }
@@ -341,7 +345,8 @@ public class InputPortEditPart extends BorderedBorderItemEditPart {
             this.setLineWidth(1);
             this.setForegroundColor(ColorConstants.black);
             this.setBackgroundColor(THIS_BACK);
-            this.setPreferredSize(new Dimension(getMapMode().DPtoLP(6), getMapMode().DPtoLP(6)));
+            this.setPreferredSize(new Dimension(getMapMode().DPtoLP(6),
+                    getMapMode().DPtoLP(6)));
         }
 
         /**

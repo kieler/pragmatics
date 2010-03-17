@@ -93,7 +93,8 @@ public class DataflowCreationWizard extends Wizard implements INewWizard {
     /**
      * @generated
      */
-    public void setOpenNewlyCreatedDiagramEditor(boolean openNewlyCreatedDiagramEditor) {
+    public void setOpenNewlyCreatedDiagramEditor(
+            boolean openNewlyCreatedDiagramEditor) {
         this.openNewlyCreatedDiagramEditor = openNewlyCreatedDiagramEditor;
     }
 
@@ -115,7 +116,8 @@ public class DataflowCreationWizard extends Wizard implements INewWizard {
     public void addPages() {
         diagramModelFilePage = new DataflowCreationWizardPage(
                 "DiagramModelFile", getSelection(), "dataflow_diagram"); //$NON-NLS-1$ //$NON-NLS-2$
-        diagramModelFilePage.setTitle(Messages.DataflowCreationWizard_DiagramModelFilePageTitle);
+        diagramModelFilePage
+                .setTitle(Messages.DataflowCreationWizard_DiagramModelFilePageTitle);
         diagramModelFilePage
                 .setDescription(Messages.DataflowCreationWizard_DiagramModelFilePageDescription);
         addPage(diagramModelFilePage);
@@ -128,13 +130,14 @@ public class DataflowCreationWizard extends Wizard implements INewWizard {
                     String fileName = diagramModelFilePage.getFileName();
                     fileName = fileName.substring(0, fileName.length()
                             - ".dataflow_diagram".length()); //$NON-NLS-1$
-                    setFileName(DataflowDiagramEditorUtil.getUniqueFileName(getContainerFullPath(),
-                            fileName, "dataflow")); //$NON-NLS-1$
+                    setFileName(DataflowDiagramEditorUtil.getUniqueFileName(
+                            getContainerFullPath(), fileName, "dataflow")); //$NON-NLS-1$
                 }
                 super.setVisible(visible);
             }
         };
-        domainModelFilePage.setTitle(Messages.DataflowCreationWizard_DomainModelFilePageTitle);
+        domainModelFilePage
+                .setTitle(Messages.DataflowCreationWizard_DomainModelFilePageTitle);
         domainModelFilePage
                 .setDescription(Messages.DataflowCreationWizard_DomainModelFilePageDescription);
         addPage(domainModelFilePage);
@@ -144,38 +147,42 @@ public class DataflowCreationWizard extends Wizard implements INewWizard {
      * @generated
      */
     public boolean performFinish() {
+
+        if (domainModelFilePage.getFileName().matches("default\\d*.\\w*")) {
+            String name = diagramModelFilePage.getFileName();
+            domainModelFilePage.setFileName(name.substring(0, name.length()
+                    - diagramModelFilePage.getExtension().length())
+                    + domainModelFilePage.getExtension());
+        }
+
         IRunnableWithProgress op = new WorkspaceModifyOperation(null) {
 
-            protected void execute(IProgressMonitor monitor) throws CoreException,
-                    InterruptedException {
-                diagram = DataflowDiagramEditorUtil.createDiagram(diagramModelFilePage.getURI(),
-                        domainModelFilePage.getURI(), monitor);
+            protected void execute(IProgressMonitor monitor)
+                    throws CoreException, InterruptedException {
+                diagram = DataflowDiagramEditorUtil.createDiagram(
+                        diagramModelFilePage.getURI(), domainModelFilePage
+                                .getURI(), monitor);
                 if (isOpenNewlyCreatedDiagramEditor() && diagram != null) {
                     try {
                         DataflowDiagramEditorUtil.openDiagram(diagram);
-                    }
-                    catch (PartInitException e) {
-                        ErrorDialog
-                                .openError(getContainer().getShell(),
-                                        Messages.DataflowCreationWizardOpenEditorError, null, e
-                                                .getStatus());
+                    } catch (PartInitException e) {
+                        ErrorDialog.openError(getContainer().getShell(),
+                                Messages.DataflowCreationWizardOpenEditorError,
+                                null, e.getStatus());
                     }
                 }
             }
         };
         try {
             getContainer().run(false, true, op);
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             return false;
-        }
-        catch (InvocationTargetException e) {
+        } catch (InvocationTargetException e) {
             if (e.getTargetException() instanceof CoreException) {
                 ErrorDialog.openError(getContainer().getShell(),
-                        Messages.DataflowCreationWizardCreationError, null, ((CoreException) e
-                                .getTargetException()).getStatus());
-            }
-            else {
+                        Messages.DataflowCreationWizardCreationError, null,
+                        ((CoreException) e.getTargetException()).getStatus());
+            } else {
                 DataflowDiagramEditorPlugin.getInstance().logError(
                         "Error creating diagram", e.getTargetException()); //$NON-NLS-1$
             }

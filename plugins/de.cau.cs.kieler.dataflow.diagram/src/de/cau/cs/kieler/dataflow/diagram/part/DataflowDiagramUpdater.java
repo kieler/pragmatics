@@ -77,7 +77,8 @@ public class DataflowDiagramUpdater {
         List result = new LinkedList();
         for (Iterator it = modelElement.getInputs().iterator(); it.hasNext();) {
             InputPort childElement = (InputPort) it.next();
-            int visualID = DataflowVisualIDRegistry.getNodeVisualID(view, childElement);
+            int visualID = DataflowVisualIDRegistry.getNodeVisualID(view,
+                    childElement);
             if (visualID == InputPortEditPart.VISUAL_ID) {
                 result.add(new DataflowNodeDescriptor(childElement, visualID));
                 continue;
@@ -85,7 +86,8 @@ public class DataflowDiagramUpdater {
         }
         for (Iterator it = modelElement.getOutputs().iterator(); it.hasNext();) {
             OutputPort childElement = (OutputPort) it.next();
-            int visualID = DataflowVisualIDRegistry.getNodeVisualID(view, childElement);
+            int visualID = DataflowVisualIDRegistry.getNodeVisualID(view,
+                    childElement);
             if (visualID == OutputPortEditPart.VISUAL_ID) {
                 result.add(new DataflowNodeDescriptor(childElement, visualID));
                 continue;
@@ -105,7 +107,8 @@ public class DataflowDiagramUpdater {
         List result = new LinkedList();
         for (Iterator it = modelElement.getInputs().iterator(); it.hasNext();) {
             InputPort childElement = (InputPort) it.next();
-            int visualID = DataflowVisualIDRegistry.getNodeVisualID(view, childElement);
+            int visualID = DataflowVisualIDRegistry.getNodeVisualID(view,
+                    childElement);
             if (visualID == InputPortEditPart.VISUAL_ID) {
                 result.add(new DataflowNodeDescriptor(childElement, visualID));
                 continue;
@@ -113,7 +116,8 @@ public class DataflowDiagramUpdater {
         }
         for (Iterator it = modelElement.getOutputs().iterator(); it.hasNext();) {
             OutputPort childElement = (OutputPort) it.next();
-            int visualID = DataflowVisualIDRegistry.getNodeVisualID(view, childElement);
+            int visualID = DataflowVisualIDRegistry.getNodeVisualID(view,
+                    childElement);
             if (visualID == OutputPortEditPart.VISUAL_ID) {
                 result.add(new DataflowNodeDescriptor(childElement, visualID));
                 continue;
@@ -137,7 +141,8 @@ public class DataflowDiagramUpdater {
         List result = new LinkedList();
         for (Iterator it = modelElement.getBoxes().iterator(); it.hasNext();) {
             Box childElement = (Box) it.next();
-            int visualID = DataflowVisualIDRegistry.getNodeVisualID(view, childElement);
+            int visualID = DataflowVisualIDRegistry.getNodeVisualID(view,
+                    childElement);
             if (visualID == Box2EditPart.VISUAL_ID) {
                 result.add(new DataflowNodeDescriptor(childElement, visualID));
                 continue;
@@ -161,7 +166,8 @@ public class DataflowDiagramUpdater {
         List result = new LinkedList();
         for (Iterator it = modelElement.getBoxes().iterator(); it.hasNext();) {
             Box childElement = (Box) it.next();
-            int visualID = DataflowVisualIDRegistry.getNodeVisualID(view, childElement);
+            int visualID = DataflowVisualIDRegistry.getNodeVisualID(view,
+                    childElement);
             if (visualID == Box2EditPart.VISUAL_ID) {
                 result.add(new DataflowNodeDescriptor(childElement, visualID));
                 continue;
@@ -181,7 +187,8 @@ public class DataflowDiagramUpdater {
         List result = new LinkedList();
         for (Iterator it = modelElement.getBoxes().iterator(); it.hasNext();) {
             Box childElement = (Box) it.next();
-            int visualID = DataflowVisualIDRegistry.getNodeVisualID(view, childElement);
+            int visualID = DataflowVisualIDRegistry.getNodeVisualID(view,
+                    childElement);
             if (visualID == BoxEditPart.VISUAL_ID) {
                 result.add(new DataflowNodeDescriptor(childElement, visualID));
                 continue;
@@ -255,7 +262,8 @@ public class DataflowDiagramUpdater {
     public static List getDataflowModel_1000ContainedLinks(View view) {
         DataflowModel modelElement = (DataflowModel) view.getElement();
         List result = new LinkedList();
-        result.addAll(getContainedTypeModelFacetLinks_Connection_4001(modelElement));
+        result
+                .addAll(getContainedTypeModelFacetLinks_Connection_4001(modelElement));
         return result;
     }
 
@@ -265,7 +273,8 @@ public class DataflowDiagramUpdater {
     public static List getBox_2001ContainedLinks(View view) {
         Box modelElement = (Box) view.getElement();
         List result = new LinkedList();
-        result.addAll(getContainedTypeModelFacetLinks_Connection_4001(modelElement));
+        result
+                .addAll(getContainedTypeModelFacetLinks_Connection_4001(modelElement));
         return result;
     }
 
@@ -289,7 +298,8 @@ public class DataflowDiagramUpdater {
     public static List getBox_3003ContainedLinks(View view) {
         Box modelElement = (Box) view.getElement();
         List result = new LinkedList();
-        result.addAll(getContainedTypeModelFacetLinks_Connection_4001(modelElement));
+        result
+                .addAll(getContainedTypeModelFacetLinks_Connection_4001(modelElement));
         return result;
     }
 
@@ -312,12 +322,11 @@ public class DataflowDiagramUpdater {
      */
     public static List getInputPort_3001IncomingLinks(View view) {
         InputPort modelElement = (InputPort) view.getElement();
-        Map crossReferences = EcoreUtil.CrossReferencer.find(view.eResource().getResourceSet()
-                .getResources());
+        Map crossReferences = EcoreUtil.CrossReferencer.find(view.eResource()
+                .getResourceSet().getResources());
         List result = new LinkedList();
-        result
-                .addAll(getIncomingTypeModelFacetLinks_Connection_4001(modelElement,
-                        crossReferences));
+        result.addAll(getIncomingTypeModelFacetLinks_Connection_4001(
+                modelElement, crossReferences));
         return result;
     }
 
@@ -326,12 +335,11 @@ public class DataflowDiagramUpdater {
      */
     public static List getOutputPort_3002IncomingLinks(View view) {
         OutputPort modelElement = (OutputPort) view.getElement();
-        Map crossReferences = EcoreUtil.CrossReferencer.find(view.eResource().getResourceSet()
-                .getResources());
+        Map crossReferences = EcoreUtil.CrossReferencer.find(view.eResource()
+                .getResourceSet().getResources());
         List result = new LinkedList();
-        result
-                .addAll(getIncomingTypeModelFacetLinks_Connection_4001(modelElement,
-                        crossReferences));
+        result.addAll(getIncomingTypeModelFacetLinks_Connection_4001(
+                modelElement, crossReferences));
         return result;
     }
 
@@ -362,7 +370,8 @@ public class DataflowDiagramUpdater {
     public static List getInputPort_3001OutgoingLinks(View view) {
         InputPort modelElement = (InputPort) view.getElement();
         List result = new LinkedList();
-        result.addAll(getOutgoingTypeModelFacetLinks_Connection_4001(modelElement));
+        result
+                .addAll(getOutgoingTypeModelFacetLinks_Connection_4001(modelElement));
         return result;
     }
 
@@ -372,7 +381,8 @@ public class DataflowDiagramUpdater {
     public static List getOutputPort_3002OutgoingLinks(View view) {
         OutputPort modelElement = (OutputPort) view.getElement();
         List result = new LinkedList();
-        result.addAll(getOutgoingTypeModelFacetLinks_Connection_4001(modelElement));
+        result
+                .addAll(getOutgoingTypeModelFacetLinks_Connection_4001(modelElement));
         return result;
     }
 
@@ -396,7 +406,8 @@ public class DataflowDiagramUpdater {
     private static Collection getContainedTypeModelFacetLinks_Connection_4001(
             DataflowModel container) {
         Collection result = new LinkedList();
-        for (Iterator links = container.getConnections().iterator(); links.hasNext();) {
+        for (Iterator links = container.getConnections().iterator(); links
+                .hasNext();) {
             EObject linkObject = (EObject) links.next();
             if (false == linkObject instanceof Connection) {
                 continue;
@@ -409,7 +420,8 @@ public class DataflowDiagramUpdater {
             Port dst = link.getTargetPort();
             Port src = link.getSourcePort();
             result.add(new DataflowLinkDescriptor(src, dst, link,
-                    DataflowElementTypes.Connection_4001, ConnectionEditPart.VISUAL_ID));
+                    DataflowElementTypes.Connection_4001,
+                    ConnectionEditPart.VISUAL_ID));
         }
         return result;
     }
@@ -417,12 +429,13 @@ public class DataflowDiagramUpdater {
     /**
      * @generated
      */
-    private static Collection getIncomingTypeModelFacetLinks_Connection_4001(Port target,
-            Map crossReferences) {
+    private static Collection getIncomingTypeModelFacetLinks_Connection_4001(
+            Port target, Map crossReferences) {
         Collection result = new LinkedList();
         Collection settings = (Collection) crossReferences.get(target);
         for (Iterator it = settings.iterator(); it.hasNext();) {
-            EStructuralFeature.Setting setting = (EStructuralFeature.Setting) it.next();
+            EStructuralFeature.Setting setting = (EStructuralFeature.Setting) it
+                    .next();
             if (setting.getEStructuralFeature() != DataflowPackage.eINSTANCE
                     .getConnection_TargetPort()
                     || false == setting.getEObject() instanceof Connection) {
@@ -435,7 +448,8 @@ public class DataflowDiagramUpdater {
             }
             Port src = link.getSourcePort();
             result.add(new DataflowLinkDescriptor(src, target, link,
-                    DataflowElementTypes.Connection_4001, ConnectionEditPart.VISUAL_ID));
+                    DataflowElementTypes.Connection_4001,
+                    ConnectionEditPart.VISUAL_ID));
         }
         return result;
     }
@@ -443,7 +457,8 @@ public class DataflowDiagramUpdater {
     /**
      * @generated
      */
-    private static Collection getOutgoingTypeModelFacetLinks_Connection_4001(Port source) {
+    private static Collection getOutgoingTypeModelFacetLinks_Connection_4001(
+            Port source) {
         DataflowModel container = null;
         // Find container element for the link.
         // Climb up by containment hierarchy starting from the source
@@ -458,7 +473,8 @@ public class DataflowDiagramUpdater {
             return Collections.EMPTY_LIST;
         }
         Collection result = new LinkedList();
-        for (Iterator links = container.getConnections().iterator(); links.hasNext();) {
+        for (Iterator links = container.getConnections().iterator(); links
+                .hasNext();) {
             EObject linkObject = (EObject) links.next();
             if (false == linkObject instanceof Connection) {
                 continue;
@@ -474,7 +490,8 @@ public class DataflowDiagramUpdater {
                 continue;
             }
             result.add(new DataflowLinkDescriptor(src, dst, link,
-                    DataflowElementTypes.Connection_4001, ConnectionEditPart.VISUAL_ID));
+                    DataflowElementTypes.Connection_4001,
+                    ConnectionEditPart.VISUAL_ID));
         }
         return result;
     }

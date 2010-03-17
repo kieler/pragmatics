@@ -47,7 +47,8 @@ import de.cau.cs.kieler.dataflow.diagram.part.Messages;
 /**
  * @generated
  */
-public class DataflowModelingAssistantProvider extends ModelingAssistantProvider {
+public class DataflowModelingAssistantProvider extends
+        ModelingAssistantProvider {
 
     /**
      * @generated
@@ -95,7 +96,8 @@ public class DataflowModelingAssistantProvider extends ModelingAssistantProvider
             return ((InputPortEditPart) sourceEditPart).getMARelTypesOnSource();
         }
         if (sourceEditPart instanceof OutputPortEditPart) {
-            return ((OutputPortEditPart) sourceEditPart).getMARelTypesOnSource();
+            return ((OutputPortEditPart) sourceEditPart)
+                    .getMARelTypesOnSource();
         }
         return Collections.EMPTY_LIST;
     }
@@ -110,7 +112,8 @@ public class DataflowModelingAssistantProvider extends ModelingAssistantProvider
             return ((InputPortEditPart) targetEditPart).getMARelTypesOnTarget();
         }
         if (targetEditPart instanceof OutputPortEditPart) {
-            return ((OutputPortEditPart) targetEditPart).getMARelTypesOnTarget();
+            return ((OutputPortEditPart) targetEditPart)
+                    .getMARelTypesOnTarget();
         }
         return Collections.EMPTY_LIST;
     }
@@ -118,7 +121,8 @@ public class DataflowModelingAssistantProvider extends ModelingAssistantProvider
     /**
      * @generated
      */
-    public List getRelTypesOnSourceAndTarget(IAdaptable source, IAdaptable target) {
+    public List getRelTypesOnSourceAndTarget(IAdaptable source,
+            IAdaptable target) {
         IGraphicalEditPart sourceEditPart = (IGraphicalEditPart) source
                 .getAdapter(IGraphicalEditPart.class);
         IGraphicalEditPart targetEditPart = (IGraphicalEditPart) target
@@ -137,14 +141,17 @@ public class DataflowModelingAssistantProvider extends ModelingAssistantProvider
     /**
      * @generated
      */
-    public List getTypesForSource(IAdaptable target, IElementType relationshipType) {
+    public List getTypesForSource(IAdaptable target,
+            IElementType relationshipType) {
         IGraphicalEditPart targetEditPart = (IGraphicalEditPart) target
                 .getAdapter(IGraphicalEditPart.class);
         if (targetEditPart instanceof InputPortEditPart) {
-            return ((InputPortEditPart) targetEditPart).getMATypesForSource(relationshipType);
+            return ((InputPortEditPart) targetEditPart)
+                    .getMATypesForSource(relationshipType);
         }
         if (targetEditPart instanceof OutputPortEditPart) {
-            return ((OutputPortEditPart) targetEditPart).getMATypesForSource(relationshipType);
+            return ((OutputPortEditPart) targetEditPart)
+                    .getMATypesForSource(relationshipType);
         }
         return Collections.EMPTY_LIST;
     }
@@ -152,14 +159,17 @@ public class DataflowModelingAssistantProvider extends ModelingAssistantProvider
     /**
      * @generated
      */
-    public List getTypesForTarget(IAdaptable source, IElementType relationshipType) {
+    public List getTypesForTarget(IAdaptable source,
+            IElementType relationshipType) {
         IGraphicalEditPart sourceEditPart = (IGraphicalEditPart) source
                 .getAdapter(IGraphicalEditPart.class);
         if (sourceEditPart instanceof InputPortEditPart) {
-            return ((InputPortEditPart) sourceEditPart).getMATypesForTarget(relationshipType);
+            return ((InputPortEditPart) sourceEditPart)
+                    .getMATypesForTarget(relationshipType);
         }
         if (sourceEditPart instanceof OutputPortEditPart) {
-            return ((OutputPortEditPart) sourceEditPart).getMATypesForTarget(relationshipType);
+            return ((OutputPortEditPart) sourceEditPart)
+                    .getMATypesForTarget(relationshipType);
         }
         return Collections.EMPTY_LIST;
     }
@@ -167,15 +177,19 @@ public class DataflowModelingAssistantProvider extends ModelingAssistantProvider
     /**
      * @generated
      */
-    public EObject selectExistingElementForSource(IAdaptable target, IElementType relationshipType) {
-        return selectExistingElement(target, getTypesForSource(target, relationshipType));
+    public EObject selectExistingElementForSource(IAdaptable target,
+            IElementType relationshipType) {
+        return selectExistingElement(target, getTypesForSource(target,
+                relationshipType));
     }
 
     /**
      * @generated
      */
-    public EObject selectExistingElementForTarget(IAdaptable source, IElementType relationshipType) {
-        return selectExistingElement(source, getTypesForTarget(source, relationshipType));
+    public EObject selectExistingElementForTarget(IAdaptable source,
+            IElementType relationshipType) {
+        return selectExistingElement(source, getTypesForTarget(source,
+                relationshipType));
     }
 
     /**
@@ -201,14 +215,16 @@ public class DataflowModelingAssistantProvider extends ModelingAssistantProvider
         if (elements.isEmpty()) {
             return null;
         }
-        return selectElement((EObject[]) elements.toArray(new EObject[elements.size()]));
+        return selectElement((EObject[]) elements.toArray(new EObject[elements
+                .size()]));
     }
 
     /**
      * @generated
      */
     protected boolean isApplicableElement(EObject element, Collection types) {
-        IElementType type = ElementTypeRegistry.getInstance().getElementType(element);
+        IElementType type = ElementTypeRegistry.getInstance().getElementType(
+                element);
         return types.contains(type);
     }
 
@@ -217,9 +233,11 @@ public class DataflowModelingAssistantProvider extends ModelingAssistantProvider
      */
     protected EObject selectElement(EObject[] elements) {
         Shell shell = Display.getCurrent().getActiveShell();
-        ILabelProvider labelProvider = new AdapterFactoryLabelProvider(DataflowDiagramEditorPlugin
-                .getInstance().getItemProvidersAdapterFactory());
-        ElementListSelectionDialog dialog = new ElementListSelectionDialog(shell, labelProvider);
+        ILabelProvider labelProvider = new AdapterFactoryLabelProvider(
+                DataflowDiagramEditorPlugin.getInstance()
+                        .getItemProvidersAdapterFactory());
+        ElementListSelectionDialog dialog = new ElementListSelectionDialog(
+                shell, labelProvider);
         dialog.setMessage(Messages.DataflowModelingAssistantProviderMessage);
         dialog.setTitle(Messages.DataflowModelingAssistantProviderTitle);
         dialog.setMultipleSelection(false);

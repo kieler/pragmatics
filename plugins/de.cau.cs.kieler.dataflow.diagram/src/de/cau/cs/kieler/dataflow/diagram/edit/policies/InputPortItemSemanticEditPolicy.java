@@ -35,7 +35,8 @@ import de.cau.cs.kieler.dataflow.diagram.providers.DataflowElementTypes;
 /**
  * @generated
  */
-public class InputPortItemSemanticEditPolicy extends DataflowBaseItemSemanticEditPolicy {
+public class InputPortItemSemanticEditPolicy extends
+        DataflowBaseItemSemanticEditPolicy {
 
     /**
      * @generated
@@ -49,14 +50,14 @@ public class InputPortItemSemanticEditPolicy extends DataflowBaseItemSemanticEdi
      */
     protected Command getDestroyElementCommand(DestroyElementRequest req) {
         View view = (View) getHost().getModel();
-        CompositeTransactionalCommand cmd = new CompositeTransactionalCommand(getEditingDomain(),
-                null);
+        CompositeTransactionalCommand cmd = new CompositeTransactionalCommand(
+                getEditingDomain(), null);
         cmd.setTransactionNestingEnabled(false);
         for (Iterator it = view.getTargetEdges().iterator(); it.hasNext();) {
             Edge incomingLink = (Edge) it.next();
             if (DataflowVisualIDRegistry.getVisualID(incomingLink) == ConnectionEditPart.VISUAL_ID) {
-                DestroyElementRequest r = new DestroyElementRequest(incomingLink.getElement(),
-                        false);
+                DestroyElementRequest r = new DestroyElementRequest(
+                        incomingLink.getElement(), false);
                 cmd.add(new DestroyElementCommand(r));
                 cmd.add(new DeleteCommand(getEditingDomain(), incomingLink));
                 continue;
@@ -65,8 +66,8 @@ public class InputPortItemSemanticEditPolicy extends DataflowBaseItemSemanticEdi
         for (Iterator it = view.getSourceEdges().iterator(); it.hasNext();) {
             Edge outgoingLink = (Edge) it.next();
             if (DataflowVisualIDRegistry.getVisualID(outgoingLink) == ConnectionEditPart.VISUAL_ID) {
-                DestroyElementRequest r = new DestroyElementRequest(outgoingLink.getElement(),
-                        false);
+                DestroyElementRequest r = new DestroyElementRequest(
+                        outgoingLink.getElement(), false);
                 cmd.add(new DestroyElementCommand(r));
                 cmd.add(new DeleteCommand(getEditingDomain(), outgoingLink));
                 continue;
@@ -78,8 +79,7 @@ public class InputPortItemSemanticEditPolicy extends DataflowBaseItemSemanticEdi
             addDestroyShortcutsCommand(cmd, view);
             // delete host element
             cmd.add(new DestroyElementCommand(req));
-        }
-        else {
+        } else {
             cmd.add(new DeleteCommand(getEditingDomain(), view));
         }
         return getGEFWrapper(cmd.reduce());
@@ -91,15 +91,18 @@ public class InputPortItemSemanticEditPolicy extends DataflowBaseItemSemanticEdi
     protected Command getCreateRelationshipCommand(CreateRelationshipRequest req) {
         Command command = req.getTarget() == null ? getStartCreateRelationshipCommand(req)
                 : getCompleteCreateRelationshipCommand(req);
-        return command != null ? command : super.getCreateRelationshipCommand(req);
+        return command != null ? command : super
+                .getCreateRelationshipCommand(req);
     }
 
     /**
      * @generated
      */
-    protected Command getStartCreateRelationshipCommand(CreateRelationshipRequest req) {
+    protected Command getStartCreateRelationshipCommand(
+            CreateRelationshipRequest req) {
         if (DataflowElementTypes.Connection_4001 == req.getElementType()) {
-            return getGEFWrapper(new ConnectionCreateCommand(req, req.getSource(), req.getTarget()));
+            return getGEFWrapper(new ConnectionCreateCommand(req, req
+                    .getSource(), req.getTarget()));
         }
         return null;
     }
@@ -107,9 +110,11 @@ public class InputPortItemSemanticEditPolicy extends DataflowBaseItemSemanticEdi
     /**
      * @generated
      */
-    protected Command getCompleteCreateRelationshipCommand(CreateRelationshipRequest req) {
+    protected Command getCompleteCreateRelationshipCommand(
+            CreateRelationshipRequest req) {
         if (DataflowElementTypes.Connection_4001 == req.getElementType()) {
-            return getGEFWrapper(new ConnectionCreateCommand(req, req.getSource(), req.getTarget()));
+            return getGEFWrapper(new ConnectionCreateCommand(req, req
+                    .getSource(), req.getTarget()));
         }
         return null;
     }
@@ -120,7 +125,8 @@ public class InputPortItemSemanticEditPolicy extends DataflowBaseItemSemanticEdi
      * 
      * @generated
      */
-    protected Command getReorientRelationshipCommand(ReorientRelationshipRequest req) {
+    protected Command getReorientRelationshipCommand(
+            ReorientRelationshipRequest req) {
         switch (getVisualID(req)) {
         case ConnectionEditPart.VISUAL_ID:
             return getGEFWrapper(new ConnectionReorientCommand(req));

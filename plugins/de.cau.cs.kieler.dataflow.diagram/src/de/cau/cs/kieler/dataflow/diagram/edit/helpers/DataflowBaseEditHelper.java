@@ -80,7 +80,8 @@ public class DataflowBaseEditHelper extends AbstractEditHelper {
     /**
      * @generated
      */
-    protected ICommand getCreateRelationshipCommand(CreateRelationshipRequest req) {
+    protected ICommand getCreateRelationshipCommand(
+            CreateRelationshipRequest req) {
         return null;
     }
 

@@ -55,13 +55,12 @@ public class DataflowVisualIDRegistry {
         if (view instanceof Diagram) {
             if (DataflowModelEditPart.MODEL_ID.equals(view.getType())) {
                 return DataflowModelEditPart.VISUAL_ID;
-            }
-            else {
+            } else {
                 return -1;
             }
         }
-        return de.cau.cs.kieler.dataflow.diagram.part.DataflowVisualIDRegistry.getVisualID(view
-                .getType());
+        return de.cau.cs.kieler.dataflow.diagram.part.DataflowVisualIDRegistry
+                .getVisualID(view.getType());
     }
 
     /**
@@ -85,11 +84,12 @@ public class DataflowVisualIDRegistry {
     public static int getVisualID(String type) {
         try {
             return Integer.parseInt(type);
-        }
-        catch (NumberFormatException e) {
-            if (Boolean.TRUE.toString().equalsIgnoreCase(Platform.getDebugOption(DEBUG_KEY))) {
+        } catch (NumberFormatException e) {
+            if (Boolean.TRUE.toString().equalsIgnoreCase(
+                    Platform.getDebugOption(DEBUG_KEY))) {
                 DataflowDiagramEditorPlugin.getInstance().logError(
-                        "Unable to parse view type as a visualID number: " + type);
+                        "Unable to parse view type as a visualID number: "
+                                + type);
             }
         }
         return -1;
@@ -109,7 +109,8 @@ public class DataflowVisualIDRegistry {
         if (domainElement == null) {
             return -1;
         }
-        if (DataflowPackage.eINSTANCE.getDataflowModel().isSuperTypeOf(domainElement.eClass())
+        if (DataflowPackage.eINSTANCE.getDataflowModel().isSuperTypeOf(
+                domainElement.eClass())
                 && isDiagram((DataflowModel) domainElement)) {
             return DataflowModelEditPart.VISUAL_ID;
         }
@@ -132,44 +133,49 @@ public class DataflowVisualIDRegistry {
         if (DataflowModelEditPart.MODEL_ID.equals(containerModelID)) {
             containerVisualID = de.cau.cs.kieler.dataflow.diagram.part.DataflowVisualIDRegistry
                     .getVisualID(containerView);
-        }
-        else {
+        } else {
             if (containerView instanceof Diagram) {
                 containerVisualID = DataflowModelEditPart.VISUAL_ID;
-            }
-            else {
+            } else {
                 return -1;
             }
         }
         switch (containerVisualID) {
         case BoxEditPart.VISUAL_ID:
-            if (DataflowPackage.eINSTANCE.getInputPort().isSuperTypeOf(domainElement.eClass())) {
+            if (DataflowPackage.eINSTANCE.getInputPort().isSuperTypeOf(
+                    domainElement.eClass())) {
                 return InputPortEditPart.VISUAL_ID;
             }
-            if (DataflowPackage.eINSTANCE.getOutputPort().isSuperTypeOf(domainElement.eClass())) {
+            if (DataflowPackage.eINSTANCE.getOutputPort().isSuperTypeOf(
+                    domainElement.eClass())) {
                 return OutputPortEditPart.VISUAL_ID;
             }
             break;
         case Box2EditPart.VISUAL_ID:
-            if (DataflowPackage.eINSTANCE.getInputPort().isSuperTypeOf(domainElement.eClass())) {
+            if (DataflowPackage.eINSTANCE.getInputPort().isSuperTypeOf(
+                    domainElement.eClass())) {
                 return InputPortEditPart.VISUAL_ID;
             }
-            if (DataflowPackage.eINSTANCE.getOutputPort().isSuperTypeOf(domainElement.eClass())) {
+            if (DataflowPackage.eINSTANCE.getOutputPort().isSuperTypeOf(
+                    domainElement.eClass())) {
                 return OutputPortEditPart.VISUAL_ID;
             }
             break;
         case BoxBoxCompartmentEditPart.VISUAL_ID:
-            if (DataflowPackage.eINSTANCE.getBox().isSuperTypeOf(domainElement.eClass())) {
+            if (DataflowPackage.eINSTANCE.getBox().isSuperTypeOf(
+                    domainElement.eClass())) {
                 return Box2EditPart.VISUAL_ID;
             }
             break;
         case BoxBoxCompartment2EditPart.VISUAL_ID:
-            if (DataflowPackage.eINSTANCE.getBox().isSuperTypeOf(domainElement.eClass())) {
+            if (DataflowPackage.eINSTANCE.getBox().isSuperTypeOf(
+                    domainElement.eClass())) {
                 return Box2EditPart.VISUAL_ID;
             }
             break;
         case DataflowModelEditPart.VISUAL_ID:
-            if (DataflowPackage.eINSTANCE.getBox().isSuperTypeOf(domainElement.eClass())) {
+            if (DataflowPackage.eINSTANCE.getBox().isSuperTypeOf(
+                    domainElement.eClass())) {
                 return BoxEditPart.VISUAL_ID;
             }
             break;
@@ -190,12 +196,10 @@ public class DataflowVisualIDRegistry {
         if (DataflowModelEditPart.MODEL_ID.equals(containerModelID)) {
             containerVisualID = de.cau.cs.kieler.dataflow.diagram.part.DataflowVisualIDRegistry
                     .getVisualID(containerView);
-        }
-        else {
+        } else {
             if (containerView instanceof Diagram) {
                 containerVisualID = DataflowModelEditPart.VISUAL_ID;
-            }
-            else {
+            } else {
                 return false;
             }
         }
@@ -264,7 +268,8 @@ public class DataflowVisualIDRegistry {
         if (domainElement == null) {
             return -1;
         }
-        if (DataflowPackage.eINSTANCE.getConnection().isSuperTypeOf(domainElement.eClass())) {
+        if (DataflowPackage.eINSTANCE.getConnection().isSuperTypeOf(
+                domainElement.eClass())) {
             return ConnectionEditPart.VISUAL_ID;
         }
         return -1;

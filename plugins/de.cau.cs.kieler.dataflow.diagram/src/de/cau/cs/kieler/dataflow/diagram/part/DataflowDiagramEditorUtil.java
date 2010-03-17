@@ -85,15 +85,16 @@ public class DataflowDiagramEditorUtil {
     /**
      * @generated
      */
-    public static boolean openDiagram(Resource diagram) throws PartInitException {
+    public static boolean openDiagram(Resource diagram)
+            throws PartInitException {
         String path = diagram.getURI().toPlatformString(true);
-        IResource workspaceResource = ResourcesPlugin.getWorkspace().getRoot().findMember(
-                new Path(path));
+        IResource workspaceResource = ResourcesPlugin.getWorkspace().getRoot()
+                .findMember(new Path(path));
         if (workspaceResource instanceof IFile) {
-            IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                    .getActivePage();
-            return null != page.openEditor(new FileEditorInput((IFile) workspaceResource),
-                    DataflowDiagramEditor.ID);
+            IWorkbenchPage page = PlatformUI.getWorkbench()
+                    .getActiveWorkbenchWindow().getActivePage();
+            return null != page.openEditor(new FileEditorInput(
+                    (IFile) workspaceResource), DataflowDiagramEditor.ID);
         }
         return false;
     }
@@ -107,8 +108,7 @@ public class DataflowDiagramEditorUtil {
         }
         try {
             file.setCharset("UTF-8", new NullProgressMonitor()); //$NON-NLS-1$
-        }
-        catch (CoreException e) {
+        } catch (CoreException e) {
             DataflowDiagramEditorPlugin.getInstance().logError(
                     "Unable to set charset for file " + file.getFullPath(), e); //$NON-NLS-1$
         }
@@ -117,8 +117,8 @@ public class DataflowDiagramEditorUtil {
     /**
      * @generated
      */
-    public static String getUniqueFileName(IPath containerFullPath, String fileName,
-            String extension) {
+    public static String getUniqueFileName(IPath containerFullPath,
+            String fileName, String extension) {
         if (containerFullPath == null) {
             containerFullPath = new Path(""); //$NON-NLS-1$
         }
@@ -148,16 +148,19 @@ public class DataflowDiagramEditorUtil {
      * @generated
      */
     public static void runWizard(Shell shell, Wizard wizard, String settingsKey) {
-        IDialogSettings pluginDialogSettings = DataflowDiagramEditorPlugin.getInstance()
-                .getDialogSettings();
-        IDialogSettings wizardDialogSettings = pluginDialogSettings.getSection(settingsKey);
+        IDialogSettings pluginDialogSettings = DataflowDiagramEditorPlugin
+                .getInstance().getDialogSettings();
+        IDialogSettings wizardDialogSettings = pluginDialogSettings
+                .getSection(settingsKey);
         if (wizardDialogSettings == null) {
-            wizardDialogSettings = pluginDialogSettings.addNewSection(settingsKey);
+            wizardDialogSettings = pluginDialogSettings
+                    .addNewSection(settingsKey);
         }
         wizard.setDialogSettings(wizardDialogSettings);
         WizardDialog dialog = new WizardDialog(shell, wizard);
         dialog.create();
-        dialog.getShell().setSize(Math.max(500, dialog.getShell().getSize().x), 500);
+        dialog.getShell().setSize(Math.max(500, dialog.getShell().getSize().x),
+                500);
         dialog.open();
     }
 
@@ -169,19 +172,27 @@ public class DataflowDiagramEditorUtil {
             IProgressMonitor progressMonitor) {
         TransactionalEditingDomain editingDomain = GMFEditingDomainFactory.INSTANCE
                 .createEditingDomain();
-        progressMonitor.beginTask(Messages.DataflowDiagramEditorUtil_CreateDiagramProgressTask, 3);
-        final Resource diagramResource = editingDomain.getResourceSet().createResource(diagramURI);
-        final Resource modelResource = editingDomain.getResourceSet().createResource(modelURI);
+        progressMonitor
+                .beginTask(
+                        Messages.DataflowDiagramEditorUtil_CreateDiagramProgressTask,
+                        3);
+        final Resource diagramResource = editingDomain.getResourceSet()
+                .createResource(diagramURI);
+        final Resource modelResource = editingDomain.getResourceSet()
+                .createResource(modelURI);
         final String diagramName = diagramURI.lastSegment();
-        AbstractTransactionalCommand command = new AbstractTransactionalCommand(editingDomain,
+        AbstractTransactionalCommand command = new AbstractTransactionalCommand(
+                editingDomain,
                 Messages.DataflowDiagramEditorUtil_CreateDiagramCommandLabel,
                 Collections.EMPTY_LIST) {
-            protected CommandResult doExecuteWithResult(IProgressMonitor monitor, IAdaptable info)
+            protected CommandResult doExecuteWithResult(
+                    IProgressMonitor monitor, IAdaptable info)
                     throws ExecutionException {
                 DataflowModel model = createInitialModel();
                 attachModelToResource(model, modelResource);
 
-                Diagram diagram = ViewService.createDiagram(model, DataflowModelEditPart.MODEL_ID,
+                Diagram diagram = ViewService.createDiagram(model,
+                        DataflowModelEditPart.MODEL_ID,
                         DataflowDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT);
                 if (diagram != null) {
                     diagramResource.getContents().add(diagram);
@@ -196,8 +207,7 @@ public class DataflowDiagramEditorUtil {
                     diagramResource
                             .save(de.cau.cs.kieler.dataflow.diagram.part.DataflowDiagramEditorUtil
                                     .getSaveOptions());
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
 
                     DataflowDiagramEditorPlugin.getInstance().logError(
                             "Unable to store model and diagram resources", e); //$NON-NLS-1$
@@ -208,8 +218,7 @@ public class DataflowDiagramEditorUtil {
         try {
             OperationHistoryFactory.getOperationHistory().execute(command,
                     new SubProgressMonitor(progressMonitor, 1), null);
-        }
-        catch (ExecutionException e) {
+        } catch (ExecutionException e) {
             DataflowDiagramEditorPlugin.getInstance().logError(
                     "Unable to create model and diagram", e); //$NON-NLS-1$
         }
@@ -234,15 +243,16 @@ public class DataflowDiagramEditorUtil {
      * <!-- end-user-doc -->
      * @generated
      */
-    private static void attachModelToResource(DataflowModel model, Resource resource) {
+    private static void attachModelToResource(DataflowModel model,
+            Resource resource) {
         resource.getContents().add(model);
     }
 
     /**
      * @generated
      */
-    public static void selectElementsInDiagram(IDiagramWorkbenchPart diagramPart,
-            List/*EditPart*/editParts) {
+    public static void selectElementsInDiagram(
+            IDiagramWorkbenchPart diagramPart, List/*EditPart*/editParts) {
         diagramPart.getDiagramGraphicalViewer().deselectAll();
 
         EditPart firstPrimary = null;
@@ -256,20 +266,23 @@ public class DataflowDiagramEditorUtil {
 
         if (!editParts.isEmpty()) {
             diagramPart.getDiagramGraphicalViewer().reveal(
-                    firstPrimary != null ? firstPrimary : (EditPart) editParts.get(0));
+                    firstPrimary != null ? firstPrimary : (EditPart) editParts
+                            .get(0));
         }
     }
 
     /**
      * @generated
      */
-    private static int findElementsInDiagramByID(DiagramEditPart diagramPart, EObject element,
-            List editPartCollector) {
-        IDiagramGraphicalViewer viewer = (IDiagramGraphicalViewer) diagramPart.getViewer();
+    private static int findElementsInDiagramByID(DiagramEditPart diagramPart,
+            EObject element, List editPartCollector) {
+        IDiagramGraphicalViewer viewer = (IDiagramGraphicalViewer) diagramPart
+                .getViewer();
         final int intialNumOfEditParts = editPartCollector.size();
 
         if (element instanceof View) { // support notation element lookup
-            EditPart editPart = (EditPart) viewer.getEditPartRegistry().get(element);
+            EditPart editPart = (EditPart) viewer.getEditPartRegistry().get(
+                    element);
             if (editPart != null) {
                 editPartCollector.add(editPart);
                 return 1;
@@ -277,9 +290,11 @@ public class DataflowDiagramEditorUtil {
         }
 
         String elementID = EMFCoreUtil.getProxyID(element);
-        List associatedParts = viewer.findEditPartsForElement(elementID, IGraphicalEditPart.class);
+        List associatedParts = viewer.findEditPartsForElement(elementID,
+                IGraphicalEditPart.class);
         // perform the possible hierarchy disjoint -> take the top-most parts only
-        for (Iterator editPartIt = associatedParts.iterator(); editPartIt.hasNext();) {
+        for (Iterator editPartIt = associatedParts.iterator(); editPartIt
+                .hasNext();) {
             EditPart nextPart = (EditPart) editPartIt.next();
             EditPart parentPart = nextPart.getParent();
             while (parentPart != null && !associatedParts.contains(parentPart)) {
@@ -293,11 +308,10 @@ public class DataflowDiagramEditorUtil {
         if (intialNumOfEditParts == editPartCollector.size()) {
             if (!associatedParts.isEmpty()) {
                 editPartCollector.add(associatedParts.iterator().next());
-            }
-            else {
+            } else {
                 if (element.eContainer() != null) {
-                    return findElementsInDiagramByID(diagramPart, element.eContainer(),
-                            editPartCollector);
+                    return findElementsInDiagramByID(diagramPart, element
+                            .eContainer(), editPartCollector);
                 }
             }
         }
@@ -307,22 +321,26 @@ public class DataflowDiagramEditorUtil {
     /**
      * @generated
      */
-    public static View findView(DiagramEditPart diagramEditPart, EObject targetElement,
-            LazyElement2ViewMap lazyElement2ViewMap) {
+    public static View findView(DiagramEditPart diagramEditPart,
+            EObject targetElement, LazyElement2ViewMap lazyElement2ViewMap) {
         boolean hasStructuralURI = false;
         if (targetElement.eResource() instanceof XMLResource) {
-            hasStructuralURI = ((XMLResource) targetElement.eResource()).getID(targetElement) == null;
+            hasStructuralURI = ((XMLResource) targetElement.eResource())
+                    .getID(targetElement) == null;
         }
 
         View view = null;
-        if (hasStructuralURI && !lazyElement2ViewMap.getElement2ViewMap().isEmpty()) {
-            view = (View) lazyElement2ViewMap.getElement2ViewMap().get(targetElement);
-        }
-        else if (findElementsInDiagramByID(diagramEditPart, targetElement,
+        if (hasStructuralURI
+                && !lazyElement2ViewMap.getElement2ViewMap().isEmpty()) {
+            view = (View) lazyElement2ViewMap.getElement2ViewMap().get(
+                    targetElement);
+        } else if (findElementsInDiagramByID(diagramEditPart, targetElement,
                 lazyElement2ViewMap.editPartTmpHolder) > 0) {
-            EditPart editPart = (EditPart) lazyElement2ViewMap.editPartTmpHolder.get(0);
+            EditPart editPart = (EditPart) lazyElement2ViewMap.editPartTmpHolder
+                    .get(0);
             lazyElement2ViewMap.editPartTmpHolder.clear();
-            view = editPart.getModel() instanceof View ? (View) editPart.getModel() : null;
+            view = editPart.getModel() instanceof View ? (View) editPart
+                    .getModel() : null;
         }
 
         return (view == null) ? diagramEditPart.getDiagramView() : view;
@@ -385,29 +403,37 @@ public class DataflowDiagramEditorUtil {
         /**
          * @generated
          */
-        static Map buildElement2ViewMap(View parentView, Map element2ViewMap, Set elements) {
+        static Map buildElement2ViewMap(View parentView, Map element2ViewMap,
+                Set elements) {
             if (elements.size() == element2ViewMap.size())
                 return element2ViewMap;
 
-            if (parentView.isSetElement() && !element2ViewMap.containsKey(parentView.getElement())
+            if (parentView.isSetElement()
+                    && !element2ViewMap.containsKey(parentView.getElement())
                     && elements.contains(parentView.getElement())) {
                 element2ViewMap.put(parentView.getElement(), parentView);
                 if (elements.size() == element2ViewMap.size())
                     return element2ViewMap;
             }
 
-            for (Iterator it = parentView.getChildren().iterator(); it.hasNext();) {
-                buildElement2ViewMap((View) it.next(), element2ViewMap, elements);
+            for (Iterator it = parentView.getChildren().iterator(); it
+                    .hasNext();) {
+                buildElement2ViewMap((View) it.next(), element2ViewMap,
+                        elements);
                 if (elements.size() == element2ViewMap.size())
                     return element2ViewMap;
             }
-            for (Iterator it = parentView.getSourceEdges().iterator(); it.hasNext();) {
-                buildElement2ViewMap((View) it.next(), element2ViewMap, elements);
+            for (Iterator it = parentView.getSourceEdges().iterator(); it
+                    .hasNext();) {
+                buildElement2ViewMap((View) it.next(), element2ViewMap,
+                        elements);
                 if (elements.size() == element2ViewMap.size())
                     return element2ViewMap;
             }
-            for (Iterator it = parentView.getSourceEdges().iterator(); it.hasNext();) {
-                buildElement2ViewMap((View) it.next(), element2ViewMap, elements);
+            for (Iterator it = parentView.getSourceEdges().iterator(); it
+                    .hasNext();) {
+                buildElement2ViewMap((View) it.next(), element2ViewMap,
+                        elements);
                 if (elements.size() == element2ViewMap.size())
                     return element2ViewMap;
             }

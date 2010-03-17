@@ -77,11 +77,15 @@ public class BoxEditPart extends AbstractBorderedShapeEditPart {
      * @generated
      */
     protected void createDefaultEditPolicies() {
-        installEditPolicy(EditPolicyRoles.CREATION_ROLE, new CreationEditPolicy());
+        installEditPolicy(EditPolicyRoles.CREATION_ROLE,
+                new CreationEditPolicy());
         super.createDefaultEditPolicies();
-        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE, new BoxItemSemanticEditPolicy());
-        installEditPolicy(EditPolicyRoles.DRAG_DROP_ROLE, new DragDropEditPolicy());
-        installEditPolicy(EditPolicyRoles.CANONICAL_ROLE, new BoxCanonicalEditPolicy());
+        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
+                new BoxItemSemanticEditPolicy());
+        installEditPolicy(EditPolicyRoles.DRAG_DROP_ROLE,
+                new DragDropEditPolicy());
+        installEditPolicy(EditPolicyRoles.CANONICAL_ROLE,
+                new BoxCanonicalEditPolicy());
         installEditPolicy(EditPolicy.LAYOUT_ROLE, createLayoutEditPolicy());
         // XXX need an SCR to runtime to have another abstract superclass that would let children add reasonable editpolicies
         // removeEditPolicy(org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles.CONNECTION_HANDLES_ROLE);
@@ -100,7 +104,8 @@ public class BoxEditPart extends AbstractBorderedShapeEditPart {
                 case OutputPortEditPart.VISUAL_ID:
                     return new BorderItemSelectionEditPolicy();
                 }
-                EditPolicy result = child.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
+                EditPolicy result = child
+                        .getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
                 if (result == null) {
                     result = new NonResizableEditPolicy();
                 }
@@ -138,7 +143,8 @@ public class BoxEditPart extends AbstractBorderedShapeEditPart {
      */
     protected boolean addFixedChild(EditPart childEditPart) {
         if (childEditPart instanceof BoxNameEditPart) {
-            ((BoxNameEditPart) childEditPart).setLabel(getPrimaryShape().getFigureBoxNameFigure());
+            ((BoxNameEditPart) childEditPart).setLabel(getPrimaryShape()
+                    .getFigureBoxNameFigure());
             return true;
         }
         if (childEditPart instanceof InputPortEditPart) {
@@ -298,7 +304,8 @@ public class BoxEditPart extends AbstractBorderedShapeEditPart {
      * @generated
      */
     public EditPart getPrimaryChildEditPart() {
-        return getChildBySemanticHint(DataflowVisualIDRegistry.getType(BoxNameEditPart.VISUAL_ID));
+        return getChildBySemanticHint(DataflowVisualIDRegistry
+                .getType(BoxNameEditPart.VISUAL_ID));
     }
 
     /**
@@ -323,8 +330,9 @@ public class BoxEditPart extends AbstractBorderedShapeEditPart {
             this.setLineWidth(1);
             this.setForegroundColor(THIS_FORE);
             this.setBackgroundColor(THIS_BACK);
-            this.setBorder(new MarginBorder(getMapMode().DPtoLP(5), getMapMode().DPtoLP(5),
-                    getMapMode().DPtoLP(5), getMapMode().DPtoLP(5)));
+            this.setBorder(new MarginBorder(getMapMode().DPtoLP(5),
+                    getMapMode().DPtoLP(5), getMapMode().DPtoLP(5),
+                    getMapMode().DPtoLP(5)));
             createContents();
         }
 

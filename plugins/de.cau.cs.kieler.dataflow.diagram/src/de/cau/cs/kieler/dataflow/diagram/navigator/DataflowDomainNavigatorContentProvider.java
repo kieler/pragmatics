@@ -37,7 +37,8 @@ import de.cau.cs.kieler.dataflow.diagram.part.DataflowDiagramEditorPlugin;
 /**
  * @generated
  */
-public class DataflowDomainNavigatorContentProvider implements ICommonContentProvider {
+public class DataflowDomainNavigatorContentProvider implements
+        ICommonContentProvider {
 
     /**
      * @generated
@@ -74,7 +75,8 @@ public class DataflowDomainNavigatorContentProvider implements ICommonContentPro
      */
     public DataflowDomainNavigatorContentProvider() {
         myAdapterFctoryContentProvier = new AdapterFactoryContentProvider(
-                DataflowDiagramEditorPlugin.getInstance().getItemProvidersAdapterFactory());
+                DataflowDiagramEditorPlugin.getInstance()
+                        .getItemProvidersAdapterFactory());
         TransactionalEditingDomain editingDomain = GMFEditingDomainFactory.INSTANCE
                 .createEditingDomain();
         myEditingDomain = (AdapterFactoryEditingDomain) editingDomain;
@@ -99,37 +101,41 @@ public class DataflowDomainNavigatorContentProvider implements ICommonContentPro
                     }
 
                     public boolean handleResourceChanged(final Resource resource) {
-                        for (Iterator it = myEditingDomain.getResourceSet().getResources()
-                                .iterator(); it.hasNext();) {
+                        for (Iterator it = myEditingDomain.getResourceSet()
+                                .getResources().iterator(); it.hasNext();) {
                             Resource nextResource = (Resource) it.next();
                             nextResource.unload();
                         }
                         if (myViewer != null) {
-                            myViewer.getControl().getDisplay().asyncExec(myViewerRefreshRunnable);
+                            myViewer.getControl().getDisplay().asyncExec(
+                                    myViewerRefreshRunnable);
                         }
                         return true;
                     }
 
                     public boolean handleResourceDeleted(Resource resource) {
-                        for (Iterator it = myEditingDomain.getResourceSet().getResources()
-                                .iterator(); it.hasNext();) {
+                        for (Iterator it = myEditingDomain.getResourceSet()
+                                .getResources().iterator(); it.hasNext();) {
                             Resource nextResource = (Resource) it.next();
                             nextResource.unload();
                         }
                         if (myViewer != null) {
-                            myViewer.getControl().getDisplay().asyncExec(myViewerRefreshRunnable);
+                            myViewer.getControl().getDisplay().asyncExec(
+                                    myViewerRefreshRunnable);
                         }
                         return true;
                     }
 
-                    public boolean handleResourceMoved(Resource resource, final URI newURI) {
-                        for (Iterator it = myEditingDomain.getResourceSet().getResources()
-                                .iterator(); it.hasNext();) {
+                    public boolean handleResourceMoved(Resource resource,
+                            final URI newURI) {
+                        for (Iterator it = myEditingDomain.getResourceSet()
+                                .getResources().iterator(); it.hasNext();) {
                             Resource nextResource = (Resource) it.next();
                             nextResource.unload();
                         }
                         if (myViewer != null) {
-                            myViewer.getControl().getDisplay().asyncExec(myViewerRefreshRunnable);
+                            myViewer.getControl().getDisplay().asyncExec(
+                                    myViewerRefreshRunnable);
                         }
                         return true;
                     }
@@ -143,7 +149,8 @@ public class DataflowDomainNavigatorContentProvider implements ICommonContentPro
         myWorkspaceSynchronizer.dispose();
         myWorkspaceSynchronizer = null;
         myViewerRefreshRunnable = null;
-        for (Iterator it = myEditingDomain.getResourceSet().getResources().iterator(); it.hasNext();) {
+        for (Iterator it = myEditingDomain.getResourceSet().getResources()
+                .iterator(); it.hasNext();) {
             Resource resource = (Resource) it.next();
             resource.unload();
         }
@@ -189,15 +196,18 @@ public class DataflowDomainNavigatorContentProvider implements ICommonContentPro
     public Object[] getChildren(Object parentElement) {
         if (parentElement instanceof IFile) {
             IFile file = (IFile) parentElement;
-            URI fileURI = URI.createPlatformResourceURI(file.getFullPath().toString(), true);
-            Resource resource = myEditingDomain.getResourceSet().getResource(fileURI, true);
-            return wrapEObjects(myAdapterFctoryContentProvier.getChildren(resource), parentElement);
+            URI fileURI = URI.createPlatformResourceURI(file.getFullPath()
+                    .toString(), true);
+            Resource resource = myEditingDomain.getResourceSet().getResource(
+                    fileURI, true);
+            return wrapEObjects(myAdapterFctoryContentProvier
+                    .getChildren(resource), parentElement);
         }
 
         if (parentElement instanceof DataflowDomainNavigatorItem) {
             return wrapEObjects(myAdapterFctoryContentProvier
-                    .getChildren(((DataflowDomainNavigatorItem) parentElement).getEObject()),
-                    parentElement);
+                    .getChildren(((DataflowDomainNavigatorItem) parentElement)
+                            .getEObject()), parentElement);
         }
         return EMPTY_ARRAY;
     }
@@ -209,7 +219,8 @@ public class DataflowDomainNavigatorContentProvider implements ICommonContentPro
         Collection result = new ArrayList();
         for (int i = 0; i < objects.length; i++) {
             if (objects[i] instanceof EObject) {
-                result.add(new DataflowDomainNavigatorItem((EObject) objects[i], parentElement,
+                result.add(new DataflowDomainNavigatorItem(
+                        (EObject) objects[i], parentElement,
                         myAdapterFctoryContentProvier));
             }
         }

@@ -26,7 +26,8 @@ import de.cau.cs.kieler.dataflow.diagram.providers.DataflowElementTypes;
 /**
  * @generated
  */
-public class DataflowModelItemSemanticEditPolicy extends DataflowBaseItemSemanticEditPolicy {
+public class DataflowModelItemSemanticEditPolicy extends
+        DataflowBaseItemSemanticEditPolicy {
 
     /**
      * @generated
@@ -57,14 +58,17 @@ public class DataflowModelItemSemanticEditPolicy extends DataflowBaseItemSemanti
     /**
      * @generated
      */
-    private static class DuplicateAnythingCommand extends DuplicateEObjectsCommand {
+    private static class DuplicateAnythingCommand extends
+            DuplicateEObjectsCommand {
 
         /**
          * @generated
          */
-        public DuplicateAnythingCommand(TransactionalEditingDomain editingDomain,
+        public DuplicateAnythingCommand(
+                TransactionalEditingDomain editingDomain,
                 DuplicateElementsRequest req) {
-            super(editingDomain, req.getLabel(), req.getElementsToBeDuplicated(), req
+            super(editingDomain, req.getLabel(), req
+                    .getElementsToBeDuplicated(), req
                     .getAllDuplicatedElementsMap());
         }
 

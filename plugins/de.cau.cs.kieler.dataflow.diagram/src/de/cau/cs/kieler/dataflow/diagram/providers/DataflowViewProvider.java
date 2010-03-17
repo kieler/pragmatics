@@ -71,7 +71,8 @@ import de.cau.cs.kieler.dataflow.diagram.part.DataflowVisualIDRegistry;
 /**
  * @generated
  */
-public class DataflowViewProvider extends AbstractProvider implements IViewProvider {
+public class DataflowViewProvider extends AbstractProvider implements
+        IViewProvider {
 
     /**
      * @generated
@@ -83,11 +84,9 @@ public class DataflowViewProvider extends AbstractProvider implements IViewProvi
         assert operation instanceof CreateViewOperation;
         if (operation instanceof CreateDiagramViewOperation) {
             return provides((CreateDiagramViewOperation) operation);
-        }
-        else if (operation instanceof CreateEdgeViewOperation) {
+        } else if (operation instanceof CreateEdgeViewOperation) {
             return provides((CreateEdgeViewOperation) operation);
-        }
-        else if (operation instanceof CreateNodeViewOperation) {
+        } else if (operation instanceof CreateNodeViewOperation) {
             return provides((CreateNodeViewOperation) operation);
         }
         return false;
@@ -111,8 +110,9 @@ public class DataflowViewProvider extends AbstractProvider implements IViewProvi
      */
     protected boolean provides(CreateDiagramViewOperation op) {
         return DataflowModelEditPart.MODEL_ID.equals(op.getSemanticHint())
-                && DataflowVisualIDRegistry.getDiagramVisualID(getSemanticElement(op
-                        .getSemanticAdapter())) != -1;
+                && DataflowVisualIDRegistry
+                        .getDiagramVisualID(getSemanticElement(op
+                                .getSemanticAdapter())) != -1;
     }
 
     /**
@@ -122,7 +122,8 @@ public class DataflowViewProvider extends AbstractProvider implements IViewProvi
         if (op.getContainerView() == null) {
             return false;
         }
-        IElementType elementType = getSemanticElementType(op.getSemanticAdapter());
+        IElementType elementType = getSemanticElementType(op
+                .getSemanticAdapter());
         EObject domainElement = getSemanticElement(op.getSemanticAdapter());
         int visualID;
         if (op.getSemanticHint() == null) {
@@ -132,29 +133,31 @@ public class DataflowViewProvider extends AbstractProvider implements IViewProvi
             if (elementType != null || domainElement == null) {
                 return false;
             }
-            visualID = DataflowVisualIDRegistry.getNodeVisualID(op.getContainerView(),
-                    domainElement);
-        }
-        else {
-            visualID = DataflowVisualIDRegistry.getVisualID(op.getSemanticHint());
+            visualID = DataflowVisualIDRegistry.getNodeVisualID(op
+                    .getContainerView(), domainElement);
+        } else {
+            visualID = DataflowVisualIDRegistry.getVisualID(op
+                    .getSemanticHint());
             if (elementType != null) {
                 if (!DataflowElementTypes.isKnownElementType(elementType)
                         || (!(elementType instanceof IHintedType))) {
                     return false; // foreign element type
                 }
-                String elementTypeHint = ((IHintedType) elementType).getSemanticHint();
+                String elementTypeHint = ((IHintedType) elementType)
+                        .getSemanticHint();
                 if (!op.getSemanticHint().equals(elementTypeHint)) {
                     return false; // if semantic hint is specified it should be the same as in element type
                 }
                 if (domainElement != null
-                        && visualID != DataflowVisualIDRegistry.getNodeVisualID(op
-                                .getContainerView(), domainElement)) {
+                        && visualID != DataflowVisualIDRegistry
+                                .getNodeVisualID(op.getContainerView(),
+                                        domainElement)) {
                     return false; // visual id for node EClass should match visual id from element type
                 }
-            }
-            else {
-                if (!DataflowModelEditPart.MODEL_ID.equals(DataflowVisualIDRegistry.getModelID(op
-                        .getContainerView()))) {
+            } else {
+                if (!DataflowModelEditPart.MODEL_ID
+                        .equals(DataflowVisualIDRegistry.getModelID(op
+                                .getContainerView()))) {
                     return false; // foreign diagram
                 }
                 switch (visualID) {
@@ -163,8 +166,9 @@ public class DataflowViewProvider extends AbstractProvider implements IViewProvi
                 case OutputPortEditPart.VISUAL_ID:
                 case Box2EditPart.VISUAL_ID:
                     if (domainElement == null
-                            || visualID != DataflowVisualIDRegistry.getNodeVisualID(op
-                                    .getContainerView(), domainElement)) {
+                            || visualID != DataflowVisualIDRegistry
+                                    .getNodeVisualID(op.getContainerView(),
+                                            domainElement)) {
                         return false; // visual id in semantic hint should match visual id for domain element
                     }
                     break;
@@ -173,28 +177,33 @@ public class DataflowViewProvider extends AbstractProvider implements IViewProvi
                 }
             }
         }
-        return BoxEditPart.VISUAL_ID == visualID || InputPortEditPart.VISUAL_ID == visualID
-                || OutputPortEditPart.VISUAL_ID == visualID || Box2EditPart.VISUAL_ID == visualID;
+        return BoxEditPart.VISUAL_ID == visualID
+                || InputPortEditPart.VISUAL_ID == visualID
+                || OutputPortEditPart.VISUAL_ID == visualID
+                || Box2EditPart.VISUAL_ID == visualID;
     }
 
     /**
      * @generated
      */
     protected boolean provides(CreateEdgeViewOperation op) {
-        IElementType elementType = getSemanticElementType(op.getSemanticAdapter());
+        IElementType elementType = getSemanticElementType(op
+                .getSemanticAdapter());
         if (!DataflowElementTypes.isKnownElementType(elementType)
                 || (!(elementType instanceof IHintedType))) {
             return false; // foreign element type
         }
         String elementTypeHint = ((IHintedType) elementType).getSemanticHint();
         if (elementTypeHint == null
-                || (op.getSemanticHint() != null && !elementTypeHint.equals(op.getSemanticHint()))) {
+                || (op.getSemanticHint() != null && !elementTypeHint.equals(op
+                        .getSemanticHint()))) {
             return false; // our hint is visual id and must be specified, and it should be the same as in element type
         }
         int visualID = DataflowVisualIDRegistry.getVisualID(elementTypeHint);
         EObject domainElement = getSemanticElement(op.getSemanticAdapter());
         if (domainElement != null
-                && visualID != DataflowVisualIDRegistry.getLinkWithClassVisualID(domainElement)) {
+                && visualID != DataflowVisualIDRegistry
+                        .getLinkWithClassVisualID(domainElement)) {
             return false; // visual id for link EClass should match visual id from element type
         }
         return true;
@@ -203,8 +212,8 @@ public class DataflowViewProvider extends AbstractProvider implements IViewProvi
     /**
      * @generated
      */
-    public Diagram createDiagram(IAdaptable semanticAdapter, String diagramKind,
-            PreferencesHint preferencesHint) {
+    public Diagram createDiagram(IAdaptable semanticAdapter,
+            String diagramKind, PreferencesHint preferencesHint) {
         Diagram diagram = NotationFactory.eINSTANCE.createDiagram();
         diagram.getStyles().add(NotationFactory.eINSTANCE.createDiagramStyle());
         diagram.setType(DataflowModelEditPart.MODEL_ID);
@@ -216,27 +225,30 @@ public class DataflowViewProvider extends AbstractProvider implements IViewProvi
     /**
      * @generated
      */
-    public Node createNode(IAdaptable semanticAdapter, View containerView, String semanticHint,
-            int index, boolean persisted, PreferencesHint preferencesHint) {
+    public Node createNode(IAdaptable semanticAdapter, View containerView,
+            String semanticHint, int index, boolean persisted,
+            PreferencesHint preferencesHint) {
         final EObject domainElement = getSemanticElement(semanticAdapter);
         final int visualID;
         if (semanticHint == null) {
-            visualID = DataflowVisualIDRegistry.getNodeVisualID(containerView, domainElement);
-        }
-        else {
+            visualID = DataflowVisualIDRegistry.getNodeVisualID(containerView,
+                    domainElement);
+        } else {
             visualID = DataflowVisualIDRegistry.getVisualID(semanticHint);
         }
         switch (visualID) {
         case BoxEditPart.VISUAL_ID:
-            return createBox_2001(domainElement, containerView, index, persisted, preferencesHint);
+            return createBox_2001(domainElement, containerView, index,
+                    persisted, preferencesHint);
         case InputPortEditPart.VISUAL_ID:
-            return createInputPort_3001(domainElement, containerView, index, persisted,
-                    preferencesHint);
+            return createInputPort_3001(domainElement, containerView, index,
+                    persisted, preferencesHint);
         case OutputPortEditPart.VISUAL_ID:
-            return createOutputPort_3002(domainElement, containerView, index, persisted,
-                    preferencesHint);
+            return createOutputPort_3002(domainElement, containerView, index,
+                    persisted, preferencesHint);
         case Box2EditPart.VISUAL_ID:
-            return createBox_3003(domainElement, containerView, index, persisted, preferencesHint);
+            return createBox_3003(domainElement, containerView, index,
+                    persisted, preferencesHint);
         }
         // can't happen, provided #provides(CreateNodeViewOperation) is correct
         return null;
@@ -245,14 +257,15 @@ public class DataflowViewProvider extends AbstractProvider implements IViewProvi
     /**
      * @generated
      */
-    public Edge createEdge(IAdaptable semanticAdapter, View containerView, String semanticHint,
-            int index, boolean persisted, PreferencesHint preferencesHint) {
+    public Edge createEdge(IAdaptable semanticAdapter, View containerView,
+            String semanticHint, int index, boolean persisted,
+            PreferencesHint preferencesHint) {
         IElementType elementType = getSemanticElementType(semanticAdapter);
         String elementTypeHint = ((IHintedType) elementType).getSemanticHint();
         switch (DataflowVisualIDRegistry.getVisualID(elementTypeHint)) {
         case ConnectionEditPart.VISUAL_ID:
-            return createConnection_4001(getSemanticElement(semanticAdapter), containerView, index,
-                    persisted, preferencesHint);
+            return createConnection_4001(getSemanticElement(semanticAdapter),
+                    containerView, index, persisted, preferencesHint);
         }
         // can never happen, provided #provides(CreateEdgeViewOperation) is correct
         return null;
@@ -261,10 +274,11 @@ public class DataflowViewProvider extends AbstractProvider implements IViewProvi
     /**
      * @generated
      */
-    public Node createBox_2001(EObject domainElement, View containerView, int index,
-            boolean persisted, PreferencesHint preferencesHint) {
+    public Node createBox_2001(EObject domainElement, View containerView,
+            int index, boolean persisted, PreferencesHint preferencesHint) {
         Node node = NotationFactory.eINSTANCE.createNode();
-        node.getStyles().add(NotationFactory.eINSTANCE.createDescriptionStyle());
+        node.getStyles()
+                .add(NotationFactory.eINSTANCE.createDescriptionStyle());
         node.getStyles().add(NotationFactory.eINSTANCE.createFontStyle());
         node.setLayoutConstraint(NotationFactory.eINSTANCE.createBounds());
         node.setType(DataflowVisualIDRegistry.getType(BoxEditPart.VISUAL_ID));
@@ -272,8 +286,10 @@ public class DataflowViewProvider extends AbstractProvider implements IViewProvi
         node.setElement(domainElement);
         stampShortcut(containerView, node);
         // initializeFromPreferences 
-        final IPreferenceStore prefStore = (IPreferenceStore) preferencesHint.getPreferenceStore();
-        FontStyle nodeFontStyle = (FontStyle) node.getStyle(NotationPackage.Literals.FONT_STYLE);
+        final IPreferenceStore prefStore = (IPreferenceStore) preferencesHint
+                .getPreferenceStore();
+        FontStyle nodeFontStyle = (FontStyle) node
+                .getStyle(NotationPackage.Literals.FONT_STYLE);
         if (nodeFontStyle != null) {
             FontData fontData = PreferenceConverter.getFontData(prefStore,
                     IPreferenceConstants.PREF_DEFAULT_FONT);
@@ -281,32 +297,38 @@ public class DataflowViewProvider extends AbstractProvider implements IViewProvi
             nodeFontStyle.setFontHeight(fontData.getHeight());
             nodeFontStyle.setBold((fontData.getStyle() & SWT.BOLD) != 0);
             nodeFontStyle.setItalic((fontData.getStyle() & SWT.ITALIC) != 0);
-            org.eclipse.swt.graphics.RGB fontRGB = PreferenceConverter.getColor(prefStore,
-                    IPreferenceConstants.PREF_FONT_COLOR);
-            nodeFontStyle.setFontColor(FigureUtilities.RGBToInteger(fontRGB).intValue());
+            org.eclipse.swt.graphics.RGB fontRGB = PreferenceConverter
+                    .getColor(prefStore, IPreferenceConstants.PREF_FONT_COLOR);
+            nodeFontStyle.setFontColor(FigureUtilities.RGBToInteger(fontRGB)
+                    .intValue());
         }
         Node label5004 = createLabel(node, DataflowVisualIDRegistry
                 .getType(BoxNameEditPart.VISUAL_ID));
         createCompartment(node, DataflowVisualIDRegistry
-                .getType(BoxBoxCompartmentEditPart.VISUAL_ID), true, false, false, false);
+                .getType(BoxBoxCompartmentEditPart.VISUAL_ID), true, false,
+                false, false);
         return node;
     }
 
     /**
      * @generated
      */
-    public Node createInputPort_3001(EObject domainElement, View containerView, int index,
-            boolean persisted, PreferencesHint preferencesHint) {
+    public Node createInputPort_3001(EObject domainElement, View containerView,
+            int index, boolean persisted, PreferencesHint preferencesHint) {
         Node node = NotationFactory.eINSTANCE.createNode();
-        node.getStyles().add(NotationFactory.eINSTANCE.createDescriptionStyle());
+        node.getStyles()
+                .add(NotationFactory.eINSTANCE.createDescriptionStyle());
         node.getStyles().add(NotationFactory.eINSTANCE.createFontStyle());
         node.setLayoutConstraint(NotationFactory.eINSTANCE.createBounds());
-        node.setType(DataflowVisualIDRegistry.getType(InputPortEditPart.VISUAL_ID));
+        node.setType(DataflowVisualIDRegistry
+                .getType(InputPortEditPart.VISUAL_ID));
         ViewUtil.insertChildView(containerView, node, index, persisted);
         node.setElement(domainElement);
         // initializeFromPreferences 
-        final IPreferenceStore prefStore = (IPreferenceStore) preferencesHint.getPreferenceStore();
-        FontStyle nodeFontStyle = (FontStyle) node.getStyle(NotationPackage.Literals.FONT_STYLE);
+        final IPreferenceStore prefStore = (IPreferenceStore) preferencesHint
+                .getPreferenceStore();
+        FontStyle nodeFontStyle = (FontStyle) node
+                .getStyle(NotationPackage.Literals.FONT_STYLE);
         if (nodeFontStyle != null) {
             FontData fontData = PreferenceConverter.getFontData(prefStore,
                     IPreferenceConstants.PREF_DEFAULT_FONT);
@@ -314,13 +336,15 @@ public class DataflowViewProvider extends AbstractProvider implements IViewProvi
             nodeFontStyle.setFontHeight(fontData.getHeight());
             nodeFontStyle.setBold((fontData.getStyle() & SWT.BOLD) != 0);
             nodeFontStyle.setItalic((fontData.getStyle() & SWT.ITALIC) != 0);
-            org.eclipse.swt.graphics.RGB fontRGB = PreferenceConverter.getColor(prefStore,
-                    IPreferenceConstants.PREF_FONT_COLOR);
-            nodeFontStyle.setFontColor(FigureUtilities.RGBToInteger(fontRGB).intValue());
+            org.eclipse.swt.graphics.RGB fontRGB = PreferenceConverter
+                    .getColor(prefStore, IPreferenceConstants.PREF_FONT_COLOR);
+            nodeFontStyle.setFontColor(FigureUtilities.RGBToInteger(fontRGB)
+                    .intValue());
         }
         Node label5001 = createLabel(node, DataflowVisualIDRegistry
                 .getType(InputPortNameEditPart.VISUAL_ID));
-        label5001.setLayoutConstraint(NotationFactory.eINSTANCE.createLocation());
+        label5001.setLayoutConstraint(NotationFactory.eINSTANCE
+                .createLocation());
         Location location5001 = (Location) label5001.getLayoutConstraint();
         location5001.setX(0);
         location5001.setY(5);
@@ -330,18 +354,23 @@ public class DataflowViewProvider extends AbstractProvider implements IViewProvi
     /**
      * @generated
      */
-    public Node createOutputPort_3002(EObject domainElement, View containerView, int index,
-            boolean persisted, PreferencesHint preferencesHint) {
+    public Node createOutputPort_3002(EObject domainElement,
+            View containerView, int index, boolean persisted,
+            PreferencesHint preferencesHint) {
         Node node = NotationFactory.eINSTANCE.createNode();
-        node.getStyles().add(NotationFactory.eINSTANCE.createDescriptionStyle());
+        node.getStyles()
+                .add(NotationFactory.eINSTANCE.createDescriptionStyle());
         node.getStyles().add(NotationFactory.eINSTANCE.createFontStyle());
         node.setLayoutConstraint(NotationFactory.eINSTANCE.createBounds());
-        node.setType(DataflowVisualIDRegistry.getType(OutputPortEditPart.VISUAL_ID));
+        node.setType(DataflowVisualIDRegistry
+                .getType(OutputPortEditPart.VISUAL_ID));
         ViewUtil.insertChildView(containerView, node, index, persisted);
         node.setElement(domainElement);
         // initializeFromPreferences 
-        final IPreferenceStore prefStore = (IPreferenceStore) preferencesHint.getPreferenceStore();
-        FontStyle nodeFontStyle = (FontStyle) node.getStyle(NotationPackage.Literals.FONT_STYLE);
+        final IPreferenceStore prefStore = (IPreferenceStore) preferencesHint
+                .getPreferenceStore();
+        FontStyle nodeFontStyle = (FontStyle) node
+                .getStyle(NotationPackage.Literals.FONT_STYLE);
         if (nodeFontStyle != null) {
             FontData fontData = PreferenceConverter.getFontData(prefStore,
                     IPreferenceConstants.PREF_DEFAULT_FONT);
@@ -349,13 +378,15 @@ public class DataflowViewProvider extends AbstractProvider implements IViewProvi
             nodeFontStyle.setFontHeight(fontData.getHeight());
             nodeFontStyle.setBold((fontData.getStyle() & SWT.BOLD) != 0);
             nodeFontStyle.setItalic((fontData.getStyle() & SWT.ITALIC) != 0);
-            org.eclipse.swt.graphics.RGB fontRGB = PreferenceConverter.getColor(prefStore,
-                    IPreferenceConstants.PREF_FONT_COLOR);
-            nodeFontStyle.setFontColor(FigureUtilities.RGBToInteger(fontRGB).intValue());
+            org.eclipse.swt.graphics.RGB fontRGB = PreferenceConverter
+                    .getColor(prefStore, IPreferenceConstants.PREF_FONT_COLOR);
+            nodeFontStyle.setFontColor(FigureUtilities.RGBToInteger(fontRGB)
+                    .intValue());
         }
         Node label5002 = createLabel(node, DataflowVisualIDRegistry
                 .getType(OutputPortNameEditPart.VISUAL_ID));
-        label5002.setLayoutConstraint(NotationFactory.eINSTANCE.createLocation());
+        label5002.setLayoutConstraint(NotationFactory.eINSTANCE
+                .createLocation());
         Location location5002 = (Location) label5002.getLayoutConstraint();
         location5002.setX(0);
         location5002.setY(5);
@@ -365,18 +396,21 @@ public class DataflowViewProvider extends AbstractProvider implements IViewProvi
     /**
      * @generated
      */
-    public Node createBox_3003(EObject domainElement, View containerView, int index,
-            boolean persisted, PreferencesHint preferencesHint) {
+    public Node createBox_3003(EObject domainElement, View containerView,
+            int index, boolean persisted, PreferencesHint preferencesHint) {
         Node node = NotationFactory.eINSTANCE.createNode();
-        node.getStyles().add(NotationFactory.eINSTANCE.createDescriptionStyle());
+        node.getStyles()
+                .add(NotationFactory.eINSTANCE.createDescriptionStyle());
         node.getStyles().add(NotationFactory.eINSTANCE.createFontStyle());
         node.setLayoutConstraint(NotationFactory.eINSTANCE.createBounds());
         node.setType(DataflowVisualIDRegistry.getType(Box2EditPart.VISUAL_ID));
         ViewUtil.insertChildView(containerView, node, index, persisted);
         node.setElement(domainElement);
         // initializeFromPreferences 
-        final IPreferenceStore prefStore = (IPreferenceStore) preferencesHint.getPreferenceStore();
-        FontStyle nodeFontStyle = (FontStyle) node.getStyle(NotationPackage.Literals.FONT_STYLE);
+        final IPreferenceStore prefStore = (IPreferenceStore) preferencesHint
+                .getPreferenceStore();
+        FontStyle nodeFontStyle = (FontStyle) node
+                .getStyle(NotationPackage.Literals.FONT_STYLE);
         if (nodeFontStyle != null) {
             FontData fontData = PreferenceConverter.getFontData(prefStore,
                     IPreferenceConstants.PREF_DEFAULT_FONT);
@@ -384,37 +418,44 @@ public class DataflowViewProvider extends AbstractProvider implements IViewProvi
             nodeFontStyle.setFontHeight(fontData.getHeight());
             nodeFontStyle.setBold((fontData.getStyle() & SWT.BOLD) != 0);
             nodeFontStyle.setItalic((fontData.getStyle() & SWT.ITALIC) != 0);
-            org.eclipse.swt.graphics.RGB fontRGB = PreferenceConverter.getColor(prefStore,
-                    IPreferenceConstants.PREF_FONT_COLOR);
-            nodeFontStyle.setFontColor(FigureUtilities.RGBToInteger(fontRGB).intValue());
+            org.eclipse.swt.graphics.RGB fontRGB = PreferenceConverter
+                    .getColor(prefStore, IPreferenceConstants.PREF_FONT_COLOR);
+            nodeFontStyle.setFontColor(FigureUtilities.RGBToInteger(fontRGB)
+                    .intValue());
         }
         Node label5003 = createLabel(node, DataflowVisualIDRegistry
                 .getType(BoxName2EditPart.VISUAL_ID));
         createCompartment(node, DataflowVisualIDRegistry
-                .getType(BoxBoxCompartment2EditPart.VISUAL_ID), true, false, false, false);
+                .getType(BoxBoxCompartment2EditPart.VISUAL_ID), true, false,
+                false, false);
         return node;
     }
 
     /**
      * @generated
      */
-    public Edge createConnection_4001(EObject domainElement, View containerView, int index,
-            boolean persisted, PreferencesHint preferencesHint) {
+    public Edge createConnection_4001(EObject domainElement,
+            View containerView, int index, boolean persisted,
+            PreferencesHint preferencesHint) {
         Edge edge = NotationFactory.eINSTANCE.createEdge();
         edge.getStyles().add(NotationFactory.eINSTANCE.createRoutingStyle());
         edge.getStyles().add(NotationFactory.eINSTANCE.createFontStyle());
-        RelativeBendpoints bendpoints = NotationFactory.eINSTANCE.createRelativeBendpoints();
+        RelativeBendpoints bendpoints = NotationFactory.eINSTANCE
+                .createRelativeBendpoints();
         ArrayList points = new ArrayList(2);
         points.add(new RelativeBendpoint());
         points.add(new RelativeBendpoint());
         bendpoints.setPoints(points);
         edge.setBendpoints(bendpoints);
         ViewUtil.insertChildView(containerView, edge, index, persisted);
-        edge.setType(DataflowVisualIDRegistry.getType(ConnectionEditPart.VISUAL_ID));
+        edge.setType(DataflowVisualIDRegistry
+                .getType(ConnectionEditPart.VISUAL_ID));
         edge.setElement(domainElement);
         // initializePreferences
-        final IPreferenceStore prefStore = (IPreferenceStore) preferencesHint.getPreferenceStore();
-        FontStyle edgeFontStyle = (FontStyle) edge.getStyle(NotationPackage.Literals.FONT_STYLE);
+        final IPreferenceStore prefStore = (IPreferenceStore) preferencesHint
+                .getPreferenceStore();
+        FontStyle edgeFontStyle = (FontStyle) edge
+                .getStyle(NotationPackage.Literals.FONT_STYLE);
         if (edgeFontStyle != null) {
             FontData fontData = PreferenceConverter.getFontData(prefStore,
                     IPreferenceConstants.PREF_DEFAULT_FONT);
@@ -422,11 +463,13 @@ public class DataflowViewProvider extends AbstractProvider implements IViewProvi
             edgeFontStyle.setFontHeight(fontData.getHeight());
             edgeFontStyle.setBold((fontData.getStyle() & SWT.BOLD) != 0);
             edgeFontStyle.setItalic((fontData.getStyle() & SWT.ITALIC) != 0);
-            org.eclipse.swt.graphics.RGB fontRGB = PreferenceConverter.getColor(prefStore,
-                    IPreferenceConstants.PREF_FONT_COLOR);
-            edgeFontStyle.setFontColor(FigureUtilities.RGBToInteger(fontRGB).intValue());
+            org.eclipse.swt.graphics.RGB fontRGB = PreferenceConverter
+                    .getColor(prefStore, IPreferenceConstants.PREF_FONT_COLOR);
+            edgeFontStyle.setFontColor(FigureUtilities.RGBToInteger(fontRGB)
+                    .intValue());
         }
-        Routing routing = Routing.get(prefStore.getInt(IPreferenceConstants.PREF_LINE_STYLE));
+        Routing routing = Routing.get(prefStore
+                .getInt(IPreferenceConstants.PREF_LINE_STYLE));
         if (routing != null) {
             ViewUtil.setStructuralFeatureValue(edge, NotationPackage.eINSTANCE
                     .getRoutingStyle_Routing(), routing);
@@ -440,9 +483,11 @@ public class DataflowViewProvider extends AbstractProvider implements IViewProvi
     private void stampShortcut(View containerView, Node target) {
         if (!DataflowModelEditPart.MODEL_ID.equals(DataflowVisualIDRegistry
                 .getModelID(containerView))) {
-            EAnnotation shortcutAnnotation = EcoreFactory.eINSTANCE.createEAnnotation();
+            EAnnotation shortcutAnnotation = EcoreFactory.eINSTANCE
+                    .createEAnnotation();
             shortcutAnnotation.setSource("Shortcut"); //$NON-NLS-1$
-            shortcutAnnotation.getDetails().put("modelID", DataflowModelEditPart.MODEL_ID); //$NON-NLS-1$
+            shortcutAnnotation.getDetails().put(
+                    "modelID", DataflowModelEditPart.MODEL_ID); //$NON-NLS-1$
             target.getEAnnotations().add(shortcutAnnotation);
         }
     }
@@ -460,16 +505,16 @@ public class DataflowViewProvider extends AbstractProvider implements IViewProvi
     /**
      * @generated
      */
-    private Node createCompartment(View owner, String hint, boolean canCollapse, boolean hasTitle,
-            boolean canSort, boolean canFilter) {
+    private Node createCompartment(View owner, String hint,
+            boolean canCollapse, boolean hasTitle, boolean canSort,
+            boolean canFilter) {
         //SemanticListCompartment rv = NotationFactory.eINSTANCE.createSemanticListCompartment();
         //rv.setShowTitle(showTitle);
         //rv.setCollapsed(isCollapsed);
         Node rv;
         if (canCollapse) {
             rv = NotationFactory.eINSTANCE.createBasicCompartment();
-        }
-        else {
+        } else {
             rv = NotationFactory.eINSTANCE.createDecorationNode();
         }
         if (hasTitle) {
@@ -481,7 +526,8 @@ public class DataflowViewProvider extends AbstractProvider implements IViewProvi
             rv.getStyles().add(NotationFactory.eINSTANCE.createSortingStyle());
         }
         if (canFilter) {
-            rv.getStyles().add(NotationFactory.eINSTANCE.createFilteringStyle());
+            rv.getStyles()
+                    .add(NotationFactory.eINSTANCE.createFilteringStyle());
         }
         rv.setType(hint);
         ViewUtil.insertChildView(owner, rv, ViewUtil.APPEND, true);
@@ -497,7 +543,8 @@ public class DataflowViewProvider extends AbstractProvider implements IViewProvi
         }
         EObject eObject = (EObject) semanticAdapter.getAdapter(EObject.class);
         if (eObject != null) {
-            return EMFCoreUtil.resolve(TransactionUtil.getEditingDomain(eObject), eObject);
+            return EMFCoreUtil.resolve(TransactionUtil
+                    .getEditingDomain(eObject), eObject);
         }
         return null;
     }

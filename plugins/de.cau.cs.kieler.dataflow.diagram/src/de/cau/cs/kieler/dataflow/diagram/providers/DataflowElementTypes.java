@@ -109,23 +109,26 @@ public class DataflowElementTypes extends ElementInitializers {
     /**
      * @generated
      */
-    private static ImageDescriptor getProvidedImageDescriptor(ENamedElement element) {
+    private static ImageDescriptor getProvidedImageDescriptor(
+            ENamedElement element) {
         if (element instanceof EStructuralFeature) {
             EStructuralFeature feature = ((EStructuralFeature) element);
             EClass eContainingClass = feature.getEContainingClass();
             EClassifier eType = feature.getEType();
             if (eContainingClass != null && !eContainingClass.isAbstract()) {
                 element = eContainingClass;
-            }
-            else if (eType instanceof EClass && !((EClass) eType).isAbstract()) {
+            } else if (eType instanceof EClass
+                    && !((EClass) eType).isAbstract()) {
                 element = eType;
             }
         }
         if (element instanceof EClass) {
             EClass eClass = (EClass) element;
             if (!eClass.isAbstract()) {
-                return DataflowDiagramEditorPlugin.getInstance().getItemImageDescriptor(
-                        eClass.getEPackage().getEFactoryInstance().create(eClass));
+                return DataflowDiagramEditorPlugin.getInstance()
+                        .getItemImageDescriptor(
+                                eClass.getEPackage().getEFactoryInstance()
+                                        .create(eClass));
             }
         }
         // TODO : support structural features
@@ -197,17 +200,21 @@ public class DataflowElementTypes extends ElementInitializers {
         if (elements == null) {
             elements = new IdentityHashMap();
 
-            elements.put(DataflowModel_1000, DataflowPackage.eINSTANCE.getDataflowModel());
+            elements.put(DataflowModel_1000, DataflowPackage.eINSTANCE
+                    .getDataflowModel());
 
             elements.put(Box_2001, DataflowPackage.eINSTANCE.getBox());
 
-            elements.put(InputPort_3001, DataflowPackage.eINSTANCE.getInputPort());
+            elements.put(InputPort_3001, DataflowPackage.eINSTANCE
+                    .getInputPort());
 
-            elements.put(OutputPort_3002, DataflowPackage.eINSTANCE.getOutputPort());
+            elements.put(OutputPort_3002, DataflowPackage.eINSTANCE
+                    .getOutputPort());
 
             elements.put(Box_3003, DataflowPackage.eINSTANCE.getBox());
 
-            elements.put(Connection_4001, DataflowPackage.eINSTANCE.getConnection());
+            elements.put(Connection_4001, DataflowPackage.eINSTANCE
+                    .getConnection());
         }
         return (ENamedElement) elements.get(type);
     }

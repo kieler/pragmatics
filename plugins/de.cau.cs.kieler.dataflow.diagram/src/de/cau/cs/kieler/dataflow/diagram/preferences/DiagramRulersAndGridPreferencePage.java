@@ -26,6 +26,7 @@ public class DiagramRulersAndGridPreferencePage extends RulerGridPreferencePage 
      * @generated
      */
     public DiagramRulersAndGridPreferencePage() {
-        setPreferenceStore(DataflowDiagramEditorPlugin.getInstance().getPreferenceStore());
+        setPreferenceStore(DataflowDiagramEditorPlugin.getInstance()
+                .getPreferenceStore());
     }
 }

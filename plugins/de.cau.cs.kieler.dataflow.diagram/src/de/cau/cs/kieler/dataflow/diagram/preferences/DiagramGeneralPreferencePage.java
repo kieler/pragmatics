@@ -26,6 +26,7 @@ public class DiagramGeneralPreferencePage extends DiagramsPreferencePage {
      * @generated
      */
     public DiagramGeneralPreferencePage() {
-        setPreferenceStore(DataflowDiagramEditorPlugin.getInstance().getPreferenceStore());
+        setPreferenceStore(DataflowDiagramEditorPlugin.getInstance()
+                .getPreferenceStore());
     }
 }

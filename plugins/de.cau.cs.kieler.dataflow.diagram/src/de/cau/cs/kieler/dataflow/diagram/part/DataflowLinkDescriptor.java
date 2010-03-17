@@ -41,8 +41,8 @@ public class DataflowLinkDescriptor extends DataflowNodeDescriptor {
     /**
      * @generated
      */
-    private DataflowLinkDescriptor(EObject source, EObject destination, EObject linkElement,
-            int linkVID) {
+    private DataflowLinkDescriptor(EObject source, EObject destination,
+            EObject linkElement, int linkVID) {
         super(linkElement, linkVID);
         mySource = source;
         myDestination = destination;
@@ -51,8 +51,8 @@ public class DataflowLinkDescriptor extends DataflowNodeDescriptor {
     /**
      * @generated
      */
-    public DataflowLinkDescriptor(EObject source, EObject destination, IElementType elementType,
-            int linkVID) {
+    public DataflowLinkDescriptor(EObject source, EObject destination,
+            IElementType elementType, int linkVID) {
         this(source, destination, (EObject) null, linkVID);
         final IElementType elementTypeCopy = elementType;
         mySemanticAdapter = new IAdaptable() {
@@ -68,8 +68,8 @@ public class DataflowLinkDescriptor extends DataflowNodeDescriptor {
     /**
      * @generated
      */
-    public DataflowLinkDescriptor(EObject source, EObject destination, EObject linkElement,
-            IElementType elementType, int linkVID) {
+    public DataflowLinkDescriptor(EObject source, EObject destination,
+            EObject linkElement, IElementType elementType, int linkVID) {
         this(source, destination, linkElement, linkVID);
         final IElementType elementTypeCopy = elementType;
         mySemanticAdapter = new EObjectAdapter(linkElement) {

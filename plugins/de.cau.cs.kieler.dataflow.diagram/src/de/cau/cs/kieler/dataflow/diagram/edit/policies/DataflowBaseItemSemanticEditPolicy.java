@@ -84,9 +84,11 @@ public class DataflowBaseItemSemanticEditPolicy extends SemanticEditPolicy {
      */
     public Command getCommand(Request request) {
         if (request instanceof ReconnectRequest) {
-            Object view = ((ReconnectRequest) request).getConnectionEditPart().getModel();
+            Object view = ((ReconnectRequest) request).getConnectionEditPart()
+                    .getModel();
             if (view instanceof View) {
-                Integer id = new Integer(DataflowVisualIDRegistry.getVisualID((View) view));
+                Integer id = new Integer(DataflowVisualIDRegistry
+                        .getVisualID((View) view));
                 request.getExtendedData().put(VISUAL_ID_KEY, id);
             }
         }
@@ -108,11 +110,12 @@ public class DataflowBaseItemSemanticEditPolicy extends SemanticEditPolicy {
     protected Command getSemanticCommand(IEditCommandRequest request) {
         IEditCommandRequest completedRequest = completeRequest(request);
         Command semanticCommand = getSemanticCommandSwitch(completedRequest);
-        semanticCommand = getEditHelperCommand(completedRequest, semanticCommand);
+        semanticCommand = getEditHelperCommand(completedRequest,
+                semanticCommand);
         if (completedRequest instanceof DestroyRequest) {
             DestroyRequest destroyRequest = (DestroyRequest) completedRequest;
-            return shouldProceed(destroyRequest) ? addDeleteViewCommand(semanticCommand,
-                    destroyRequest) : null;
+            return shouldProceed(destroyRequest) ? addDeleteViewCommand(
+                    semanticCommand, destroyRequest) : null;
         }
         return semanticCommand;
     }
@@ -120,33 +123,36 @@ public class DataflowBaseItemSemanticEditPolicy extends SemanticEditPolicy {
     /**
      * @generated
      */
-    protected Command addDeleteViewCommand(Command mainCommand, DestroyRequest completedRequest) {
-        Command deleteViewCommand = getGEFWrapper(new DeleteCommand(getEditingDomain(),
-                (View) getHost().getModel()));
-        return mainCommand == null ? deleteViewCommand : mainCommand.chain(deleteViewCommand);
+    protected Command addDeleteViewCommand(Command mainCommand,
+            DestroyRequest completedRequest) {
+        Command deleteViewCommand = getGEFWrapper(new DeleteCommand(
+                getEditingDomain(), (View) getHost().getModel()));
+        return mainCommand == null ? deleteViewCommand : mainCommand
+                .chain(deleteViewCommand);
     }
 
     /**
      * @generated
      */
-    private Command getEditHelperCommand(IEditCommandRequest request, Command editPolicyCommand) {
+    private Command getEditHelperCommand(IEditCommandRequest request,
+            Command editPolicyCommand) {
         if (editPolicyCommand != null) {
             ICommand command = editPolicyCommand instanceof ICommandProxy ? ((ICommandProxy) editPolicyCommand)
                     .getICommand()
                     : new CommandProxy(editPolicyCommand);
-            request.setParameter(DataflowBaseEditHelper.EDIT_POLICY_COMMAND, command);
+            request.setParameter(DataflowBaseEditHelper.EDIT_POLICY_COMMAND,
+                    command);
         }
         IElementType requestContextElementType = getContextElementType(request);
-        request
-                .setParameter(DataflowBaseEditHelper.CONTEXT_ELEMENT_TYPE,
-                        requestContextElementType);
+        request.setParameter(DataflowBaseEditHelper.CONTEXT_ELEMENT_TYPE,
+                requestContextElementType);
         ICommand command = requestContextElementType.getEditCommand(request);
         request.setParameter(DataflowBaseEditHelper.EDIT_POLICY_COMMAND, null);
         request.setParameter(DataflowBaseEditHelper.CONTEXT_ELEMENT_TYPE, null);
         if (command != null) {
             if (!(command instanceof CompositeTransactionalCommand)) {
-                command = new CompositeTransactionalCommand(getEditingDomain(), command.getLabel())
-                        .compose(command);
+                command = new CompositeTransactionalCommand(getEditingDomain(),
+                        command.getLabel()).compose(command);
             }
             return new ICommandProxy(command);
         }
@@ -159,7 +165,8 @@ public class DataflowBaseItemSemanticEditPolicy extends SemanticEditPolicy {
     private IElementType getContextElementType(IEditCommandRequest request) {
         IElementType requestContextElementType = DataflowElementTypes
                 .getElementType(getVisualID(request));
-        return requestContextElementType != null ? requestContextElementType : myElementType;
+        return requestContextElementType != null ? requestContextElementType
+                : myElementType;
     }
 
     /**
@@ -168,35 +175,25 @@ public class DataflowBaseItemSemanticEditPolicy extends SemanticEditPolicy {
     protected Command getSemanticCommandSwitch(IEditCommandRequest req) {
         if (req instanceof CreateRelationshipRequest) {
             return getCreateRelationshipCommand((CreateRelationshipRequest) req);
-        }
-        else if (req instanceof CreateElementRequest) {
+        } else if (req instanceof CreateElementRequest) {
             return getCreateCommand((CreateElementRequest) req);
-        }
-        else if (req instanceof ConfigureRequest) {
+        } else if (req instanceof ConfigureRequest) {
             return getConfigureCommand((ConfigureRequest) req);
-        }
-        else if (req instanceof DestroyElementRequest) {
+        } else if (req instanceof DestroyElementRequest) {
             return getDestroyElementCommand((DestroyElementRequest) req);
-        }
-        else if (req instanceof DestroyReferenceRequest) {
+        } else if (req instanceof DestroyReferenceRequest) {
             return getDestroyReferenceCommand((DestroyReferenceRequest) req);
-        }
-        else if (req instanceof DuplicateElementsRequest) {
+        } else if (req instanceof DuplicateElementsRequest) {
             return getDuplicateCommand((DuplicateElementsRequest) req);
-        }
-        else if (req instanceof GetEditContextRequest) {
+        } else if (req instanceof GetEditContextRequest) {
             return getEditContextCommand((GetEditContextRequest) req);
-        }
-        else if (req instanceof MoveRequest) {
+        } else if (req instanceof MoveRequest) {
             return getMoveCommand((MoveRequest) req);
-        }
-        else if (req instanceof ReorientReferenceRelationshipRequest) {
+        } else if (req instanceof ReorientReferenceRelationshipRequest) {
             return getReorientReferenceRelationshipCommand((ReorientReferenceRelationshipRequest) req);
-        }
-        else if (req instanceof ReorientRelationshipRequest) {
+        } else if (req instanceof ReorientRelationshipRequest) {
             return getReorientRelationshipCommand((ReorientRelationshipRequest) req);
-        }
-        else if (req instanceof SetRequest) {
+        } else if (req instanceof SetRequest) {
             return getSetCommand((SetRequest) req);
         }
         return null;
@@ -276,7 +273,8 @@ public class DataflowBaseItemSemanticEditPolicy extends SemanticEditPolicy {
     /**
      * @generated
      */
-    protected Command getReorientRelationshipCommand(ReorientRelationshipRequest req) {
+    protected Command getReorientRelationshipCommand(
+            ReorientRelationshipRequest req) {
         return UnexecutableCommand.INSTANCE;
     }
 
@@ -301,7 +299,8 @@ public class DataflowBaseItemSemanticEditPolicy extends SemanticEditPolicy {
      */
     protected void addDestroyShortcutsCommand(ICompositeCommand cmd, View view) {
         assert view.getEAnnotation("Shortcut") == null; //$NON-NLS-1$
-        for (Iterator it = view.getDiagram().getChildren().iterator(); it.hasNext();) {
+        for (Iterator it = view.getDiagram().getChildren().iterator(); it
+                .hasNext();) {
             View nextView = (View) it.next();
             if (nextView.getEAnnotation("Shortcut") == null || !nextView.isSetElement() || nextView.getElement() != view.getElement()) { //$NON-NLS-1$
                 continue;
@@ -318,16 +317,16 @@ public class DataflowBaseItemSemanticEditPolicy extends SemanticEditPolicy {
         /**
          * @generated
          */
-        public static boolean canCreateConnection_4001(DataflowModel container, Port source,
-                Port target) {
+        public static boolean canCreateConnection_4001(DataflowModel container,
+                Port source, Port target) {
             return canExistConnection_4001(container, source, target);
         }
 
         /**
          * @generated
          */
-        public static boolean canExistConnection_4001(DataflowModel container, Port source,
-                Port target) {
+        public static boolean canExistConnection_4001(DataflowModel container,
+                Port source, Port target) {
             return true;
         }
     }

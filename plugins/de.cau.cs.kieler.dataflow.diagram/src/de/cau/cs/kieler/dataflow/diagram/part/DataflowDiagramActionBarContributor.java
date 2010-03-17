@@ -22,7 +22,8 @@ import org.eclipse.ui.IWorkbenchPage;
 /**
  * @generated
  */
-public class DataflowDiagramActionBarContributor extends DiagramActionBarContributor {
+public class DataflowDiagramActionBarContributor extends
+        DiagramActionBarContributor {
 
     /**
      * @generated

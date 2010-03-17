@@ -135,7 +135,8 @@ public class DataflowEditPartProvider extends AbstractEditPartProvider {
     public synchronized boolean provides(IOperation operation) {
         if (operation instanceof CreateGraphicEditPartOperation) {
             View view = ((IEditPartOperation) operation).getView();
-            if (!DataflowModelEditPart.MODEL_ID.equals(DataflowVisualIDRegistry.getModelID(view))) {
+            if (!DataflowModelEditPart.MODEL_ID.equals(DataflowVisualIDRegistry
+                    .getModelID(view))) {
                 return false;
             }
             if (isAllowCaching() && getCachedPart(view) != null) {

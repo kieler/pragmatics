@@ -34,8 +34,8 @@ public class DataflowCreationWizardPage extends WizardNewFileCreationPage {
     /**
      * @generated
      */
-    public DataflowCreationWizardPage(String pageName, IStructuredSelection selection,
-            String fileExtension) {
+    public DataflowCreationWizardPage(String pageName,
+            IStructuredSelection selection, String fileExtension) {
         super(pageName, selection);
         this.fileExtension = fileExtension;
     }
@@ -76,8 +76,8 @@ public class DataflowCreationWizardPage extends WizardNewFileCreationPage {
      */
     public void createControl(Composite parent) {
         super.createControl(parent);
-        setFileName(DataflowDiagramEditorUtil.getUniqueFileName(getContainerFullPath(),
-                getFileName(), getExtension()));
+        setFileName(DataflowDiagramEditorUtil.getUniqueFileName(
+                getContainerFullPath(), getFileName(), getExtension()));
         setPageComplete(validatePage());
     }
 
@@ -89,8 +89,11 @@ public class DataflowCreationWizardPage extends WizardNewFileCreationPage {
             return false;
         }
         String extension = getExtension();
-        if (extension != null && !getFilePath().toString().endsWith("." + extension)) {
-            setErrorMessage(NLS.bind(Messages.DataflowCreationWizardPageExtensionError, extension));
+        if (extension != null
+                && !getFilePath().toString().endsWith("." + extension)) {
+            setErrorMessage(NLS.bind(
+                    Messages.DataflowCreationWizardPageExtensionError,
+                    extension));
             return false;
         }
         return true;

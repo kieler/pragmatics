@@ -45,8 +45,9 @@ public class BoxBoxCompartment2CanonicalEditPolicy extends CanonicalEditPolicy {
     protected List getSemanticChildrenList() {
         View viewObject = (View) getHost().getModel();
         List result = new LinkedList();
-        for (Iterator it = DataflowDiagramUpdater.getBoxBoxCompartment_7002SemanticChildren(
-                viewObject).iterator(); it.hasNext();) {
+        for (Iterator it = DataflowDiagramUpdater
+                .getBoxBoxCompartment_7002SemanticChildren(viewObject)
+                .iterator(); it.hasNext();) {
             result.add(((DataflowNodeDescriptor) it.next()).getModelElement());
         }
         return result;
@@ -79,7 +80,8 @@ public class BoxBoxCompartment2CanonicalEditPolicy extends CanonicalEditPolicy {
     protected Set getFeaturesToSynchronize() {
         if (myFeaturesToSynchronize == null) {
             myFeaturesToSynchronize = new HashSet();
-            myFeaturesToSynchronize.add(DataflowPackage.eINSTANCE.getDataflowModel_Boxes());
+            myFeaturesToSynchronize.add(DataflowPackage.eINSTANCE
+                    .getDataflowModel_Boxes());
         }
         return myFeaturesToSynchronize;
     }

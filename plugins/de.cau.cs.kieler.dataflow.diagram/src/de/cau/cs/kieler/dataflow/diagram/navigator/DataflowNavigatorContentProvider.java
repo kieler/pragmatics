@@ -103,37 +103,41 @@ public class DataflowNavigatorContentProvider implements ICommonContentProvider 
                     }
 
                     public boolean handleResourceChanged(final Resource resource) {
-                        for (Iterator it = myEditingDomain.getResourceSet().getResources()
-                                .iterator(); it.hasNext();) {
+                        for (Iterator it = myEditingDomain.getResourceSet()
+                                .getResources().iterator(); it.hasNext();) {
                             Resource nextResource = (Resource) it.next();
                             nextResource.unload();
                         }
                         if (myViewer != null) {
-                            myViewer.getControl().getDisplay().asyncExec(myViewerRefreshRunnable);
+                            myViewer.getControl().getDisplay().asyncExec(
+                                    myViewerRefreshRunnable);
                         }
                         return true;
                     }
 
                     public boolean handleResourceDeleted(Resource resource) {
-                        for (Iterator it = myEditingDomain.getResourceSet().getResources()
-                                .iterator(); it.hasNext();) {
+                        for (Iterator it = myEditingDomain.getResourceSet()
+                                .getResources().iterator(); it.hasNext();) {
                             Resource nextResource = (Resource) it.next();
                             nextResource.unload();
                         }
                         if (myViewer != null) {
-                            myViewer.getControl().getDisplay().asyncExec(myViewerRefreshRunnable);
+                            myViewer.getControl().getDisplay().asyncExec(
+                                    myViewerRefreshRunnable);
                         }
                         return true;
                     }
 
-                    public boolean handleResourceMoved(Resource resource, final URI newURI) {
-                        for (Iterator it = myEditingDomain.getResourceSet().getResources()
-                                .iterator(); it.hasNext();) {
+                    public boolean handleResourceMoved(Resource resource,
+                            final URI newURI) {
+                        for (Iterator it = myEditingDomain.getResourceSet()
+                                .getResources().iterator(); it.hasNext();) {
                             Resource nextResource = (Resource) it.next();
                             nextResource.unload();
                         }
                         if (myViewer != null) {
-                            myViewer.getControl().getDisplay().asyncExec(myViewerRefreshRunnable);
+                            myViewer.getControl().getDisplay().asyncExec(
+                                    myViewerRefreshRunnable);
                         }
                         return true;
                     }
@@ -147,7 +151,8 @@ public class DataflowNavigatorContentProvider implements ICommonContentProvider 
         myWorkspaceSynchronizer.dispose();
         myWorkspaceSynchronizer = null;
         myViewerRefreshRunnable = null;
-        for (Iterator it = myEditingDomain.getResourceSet().getResources().iterator(); it.hasNext();) {
+        for (Iterator it = myEditingDomain.getResourceSet().getResources()
+                .iterator(); it.hasNext();) {
             Resource resource = (Resource) it.next();
             resource.unload();
         }
@@ -193,11 +198,14 @@ public class DataflowNavigatorContentProvider implements ICommonContentProvider 
     public Object[] getChildren(Object parentElement) {
         if (parentElement instanceof IFile) {
             IFile file = (IFile) parentElement;
-            URI fileURI = URI.createPlatformResourceURI(file.getFullPath().toString(), true);
-            Resource resource = myEditingDomain.getResourceSet().getResource(fileURI, true);
+            URI fileURI = URI.createPlatformResourceURI(file.getFullPath()
+                    .toString(), true);
+            Resource resource = myEditingDomain.getResourceSet().getResource(
+                    fileURI, true);
             Collection result = new ArrayList();
-            result.addAll(createNavigatorItems(selectViewsByType(resource.getContents(),
-                    DataflowModelEditPart.MODEL_ID), file, false));
+            result.addAll(createNavigatorItems(selectViewsByType(resource
+                    .getContents(), DataflowModelEditPart.MODEL_ID), file,
+                    false));
             return result.toArray();
         }
 
@@ -228,12 +236,17 @@ public class DataflowNavigatorContentProvider implements ICommonContentProvider 
             DataflowNavigatorGroup links = new DataflowNavigatorGroup(
                     Messages.NavigatorGroupName_DataflowModel_1000_links,
                     "icons/linksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            Collection connectedViews = getChildrenByType(Collections.singleton(view),
-                    DataflowVisualIDRegistry.getType(BoxEditPart.VISUAL_ID));
-            result.addAll(createNavigatorItems(connectedViews, parentElement, false));
+            Collection connectedViews = getChildrenByType(Collections
+                    .singleton(view), DataflowVisualIDRegistry
+                    .getType(BoxEditPart.VISUAL_ID));
+            result.addAll(createNavigatorItems(connectedViews, parentElement,
+                    false));
             connectedViews = getDiagramLinksByType(Collections.singleton(view),
-                    DataflowVisualIDRegistry.getType(ConnectionEditPart.VISUAL_ID));
-            links.addChildren(createNavigatorItems(connectedViews, links, false));
+                    DataflowVisualIDRegistry
+                            .getType(ConnectionEditPart.VISUAL_ID));
+            links
+                    .addChildren(createNavigatorItems(connectedViews, links,
+                            false));
             if (!links.isEmpty()) {
                 result.add(links);
             }
@@ -242,17 +255,23 @@ public class DataflowNavigatorContentProvider implements ICommonContentProvider 
 
         case BoxEditPart.VISUAL_ID: {
             Collection result = new ArrayList();
-            Collection connectedViews = getChildrenByType(Collections.singleton(view),
-                    DataflowVisualIDRegistry.getType(InputPortEditPart.VISUAL_ID));
-            result.addAll(createNavigatorItems(connectedViews, parentElement, false));
+            Collection connectedViews = getChildrenByType(Collections
+                    .singleton(view), DataflowVisualIDRegistry
+                    .getType(InputPortEditPart.VISUAL_ID));
+            result.addAll(createNavigatorItems(connectedViews, parentElement,
+                    false));
             connectedViews = getChildrenByType(Collections.singleton(view),
-                    DataflowVisualIDRegistry.getType(OutputPortEditPart.VISUAL_ID));
-            result.addAll(createNavigatorItems(connectedViews, parentElement, false));
+                    DataflowVisualIDRegistry
+                            .getType(OutputPortEditPart.VISUAL_ID));
+            result.addAll(createNavigatorItems(connectedViews, parentElement,
+                    false));
             connectedViews = getChildrenByType(Collections.singleton(view),
-                    DataflowVisualIDRegistry.getType(BoxBoxCompartmentEditPart.VISUAL_ID));
-            connectedViews = getChildrenByType(connectedViews, DataflowVisualIDRegistry
-                    .getType(Box2EditPart.VISUAL_ID));
-            result.addAll(createNavigatorItems(connectedViews, parentElement, false));
+                    DataflowVisualIDRegistry
+                            .getType(BoxBoxCompartmentEditPart.VISUAL_ID));
+            connectedViews = getChildrenByType(connectedViews,
+                    DataflowVisualIDRegistry.getType(Box2EditPart.VISUAL_ID));
+            result.addAll(createNavigatorItems(connectedViews, parentElement,
+                    false));
             return result.toArray();
         }
 
@@ -264,12 +283,16 @@ public class DataflowNavigatorContentProvider implements ICommonContentProvider 
             DataflowNavigatorGroup outgoinglinks = new DataflowNavigatorGroup(
                     Messages.NavigatorGroupName_InputPort_3001_outgoinglinks,
                     "icons/outgoingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            Collection connectedViews = getIncomingLinksByType(Collections.singleton(view),
-                    DataflowVisualIDRegistry.getType(ConnectionEditPart.VISUAL_ID));
-            incominglinks.addChildren(createNavigatorItems(connectedViews, incominglinks, true));
-            connectedViews = getOutgoingLinksByType(Collections.singleton(view),
-                    DataflowVisualIDRegistry.getType(ConnectionEditPart.VISUAL_ID));
-            outgoinglinks.addChildren(createNavigatorItems(connectedViews, outgoinglinks, true));
+            Collection connectedViews = getIncomingLinksByType(Collections
+                    .singleton(view), DataflowVisualIDRegistry
+                    .getType(ConnectionEditPart.VISUAL_ID));
+            incominglinks.addChildren(createNavigatorItems(connectedViews,
+                    incominglinks, true));
+            connectedViews = getOutgoingLinksByType(
+                    Collections.singleton(view), DataflowVisualIDRegistry
+                            .getType(ConnectionEditPart.VISUAL_ID));
+            outgoinglinks.addChildren(createNavigatorItems(connectedViews,
+                    outgoinglinks, true));
             if (!incominglinks.isEmpty()) {
                 result.add(incominglinks);
             }
@@ -287,12 +310,16 @@ public class DataflowNavigatorContentProvider implements ICommonContentProvider 
             DataflowNavigatorGroup outgoinglinks = new DataflowNavigatorGroup(
                     Messages.NavigatorGroupName_OutputPort_3002_outgoinglinks,
                     "icons/outgoingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            Collection connectedViews = getIncomingLinksByType(Collections.singleton(view),
-                    DataflowVisualIDRegistry.getType(ConnectionEditPart.VISUAL_ID));
-            incominglinks.addChildren(createNavigatorItems(connectedViews, incominglinks, true));
-            connectedViews = getOutgoingLinksByType(Collections.singleton(view),
-                    DataflowVisualIDRegistry.getType(ConnectionEditPart.VISUAL_ID));
-            outgoinglinks.addChildren(createNavigatorItems(connectedViews, outgoinglinks, true));
+            Collection connectedViews = getIncomingLinksByType(Collections
+                    .singleton(view), DataflowVisualIDRegistry
+                    .getType(ConnectionEditPart.VISUAL_ID));
+            incominglinks.addChildren(createNavigatorItems(connectedViews,
+                    incominglinks, true));
+            connectedViews = getOutgoingLinksByType(
+                    Collections.singleton(view), DataflowVisualIDRegistry
+                            .getType(ConnectionEditPart.VISUAL_ID));
+            outgoinglinks.addChildren(createNavigatorItems(connectedViews,
+                    outgoinglinks, true));
             if (!incominglinks.isEmpty()) {
                 result.add(incominglinks);
             }
@@ -304,17 +331,23 @@ public class DataflowNavigatorContentProvider implements ICommonContentProvider 
 
         case Box2EditPart.VISUAL_ID: {
             Collection result = new ArrayList();
-            Collection connectedViews = getChildrenByType(Collections.singleton(view),
-                    DataflowVisualIDRegistry.getType(InputPortEditPart.VISUAL_ID));
-            result.addAll(createNavigatorItems(connectedViews, parentElement, false));
+            Collection connectedViews = getChildrenByType(Collections
+                    .singleton(view), DataflowVisualIDRegistry
+                    .getType(InputPortEditPart.VISUAL_ID));
+            result.addAll(createNavigatorItems(connectedViews, parentElement,
+                    false));
             connectedViews = getChildrenByType(Collections.singleton(view),
-                    DataflowVisualIDRegistry.getType(OutputPortEditPart.VISUAL_ID));
-            result.addAll(createNavigatorItems(connectedViews, parentElement, false));
+                    DataflowVisualIDRegistry
+                            .getType(OutputPortEditPart.VISUAL_ID));
+            result.addAll(createNavigatorItems(connectedViews, parentElement,
+                    false));
             connectedViews = getChildrenByType(Collections.singleton(view),
-                    DataflowVisualIDRegistry.getType(BoxBoxCompartment2EditPart.VISUAL_ID));
-            connectedViews = getChildrenByType(connectedViews, DataflowVisualIDRegistry
-                    .getType(Box2EditPart.VISUAL_ID));
-            result.addAll(createNavigatorItems(connectedViews, parentElement, false));
+                    DataflowVisualIDRegistry
+                            .getType(BoxBoxCompartment2EditPart.VISUAL_ID));
+            connectedViews = getChildrenByType(connectedViews,
+                    DataflowVisualIDRegistry.getType(Box2EditPart.VISUAL_ID));
+            result.addAll(createNavigatorItems(connectedViews, parentElement,
+                    false));
             return result.toArray();
         }
 
@@ -326,18 +359,26 @@ public class DataflowNavigatorContentProvider implements ICommonContentProvider 
             DataflowNavigatorGroup source = new DataflowNavigatorGroup(
                     Messages.NavigatorGroupName_Connection_4001_source,
                     "icons/linkSourceNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            Collection connectedViews = getLinksTargetByType(Collections.singleton(view),
-                    DataflowVisualIDRegistry.getType(InputPortEditPart.VISUAL_ID));
-            target.addChildren(createNavigatorItems(connectedViews, target, true));
+            Collection connectedViews = getLinksTargetByType(Collections
+                    .singleton(view), DataflowVisualIDRegistry
+                    .getType(InputPortEditPart.VISUAL_ID));
+            target.addChildren(createNavigatorItems(connectedViews, target,
+                    true));
             connectedViews = getLinksTargetByType(Collections.singleton(view),
-                    DataflowVisualIDRegistry.getType(OutputPortEditPart.VISUAL_ID));
-            target.addChildren(createNavigatorItems(connectedViews, target, true));
+                    DataflowVisualIDRegistry
+                            .getType(OutputPortEditPart.VISUAL_ID));
+            target.addChildren(createNavigatorItems(connectedViews, target,
+                    true));
             connectedViews = getLinksSourceByType(Collections.singleton(view),
-                    DataflowVisualIDRegistry.getType(InputPortEditPart.VISUAL_ID));
-            source.addChildren(createNavigatorItems(connectedViews, source, true));
+                    DataflowVisualIDRegistry
+                            .getType(InputPortEditPart.VISUAL_ID));
+            source.addChildren(createNavigatorItems(connectedViews, source,
+                    true));
             connectedViews = getLinksSourceByType(Collections.singleton(view),
-                    DataflowVisualIDRegistry.getType(OutputPortEditPart.VISUAL_ID));
-            source.addChildren(createNavigatorItems(connectedViews, source, true));
+                    DataflowVisualIDRegistry
+                            .getType(OutputPortEditPart.VISUAL_ID));
+            source.addChildren(createNavigatorItems(connectedViews, source,
+                    true));
             if (!target.isEmpty()) {
                 result.add(target);
             }
@@ -358,7 +399,8 @@ public class DataflowNavigatorContentProvider implements ICommonContentProvider 
         for (Iterator it = edges.iterator(); it.hasNext();) {
             Edge nextEdge = (Edge) it.next();
             View nextEdgeSource = nextEdge.getSource();
-            if (type.equals(nextEdgeSource.getType()) && isOwnView(nextEdgeSource)) {
+            if (type.equals(nextEdgeSource.getType())
+                    && isOwnView(nextEdgeSource)) {
                 result.add(nextEdgeSource);
             }
         }
@@ -373,7 +415,8 @@ public class DataflowNavigatorContentProvider implements ICommonContentProvider 
         for (Iterator it = edges.iterator(); it.hasNext();) {
             Edge nextEdge = (Edge) it.next();
             View nextEdgeTarget = nextEdge.getTarget();
-            if (type.equals(nextEdgeTarget.getType()) && isOwnView(nextEdgeTarget)) {
+            if (type.equals(nextEdgeTarget.getType())
+                    && isOwnView(nextEdgeTarget)) {
                 result.add(nextEdgeTarget);
             }
         }
@@ -446,16 +489,19 @@ public class DataflowNavigatorContentProvider implements ICommonContentProvider 
      * @generated
      */
     private boolean isOwnView(View view) {
-        return DataflowModelEditPart.MODEL_ID.equals(DataflowVisualIDRegistry.getModelID(view));
+        return DataflowModelEditPart.MODEL_ID.equals(DataflowVisualIDRegistry
+                .getModelID(view));
     }
 
     /**
      * @generated
      */
-    private Collection createNavigatorItems(Collection views, Object parent, boolean isLeafs) {
+    private Collection createNavigatorItems(Collection views, Object parent,
+            boolean isLeafs) {
         Collection result = new ArrayList();
         for (Iterator it = views.iterator(); it.hasNext();) {
-            result.add(new DataflowNavigatorItem((View) it.next(), parent, isLeafs));
+            result.add(new DataflowNavigatorItem((View) it.next(), parent,
+                    isLeafs));
         }
         return result;
     }

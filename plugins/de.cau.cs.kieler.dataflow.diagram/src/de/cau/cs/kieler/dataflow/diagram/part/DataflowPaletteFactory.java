@@ -43,7 +43,8 @@ public class DataflowPaletteFactory {
      * @generated
      */
     private PaletteContainer createDataflow1Group() {
-        PaletteGroup paletteContainer = new PaletteGroup(Messages.Dataflow1Group_title);
+        PaletteGroup paletteContainer = new PaletteGroup(
+                Messages.Dataflow1Group_title);
         paletteContainer.setId("createDataflow1Group"); //$NON-NLS-1$
         paletteContainer.add(createBox1CreationTool());
         paletteContainer.add(createConnection2CreationTool());
@@ -58,10 +59,12 @@ public class DataflowPaletteFactory {
         List/*<IElementType>*/types = new ArrayList/*<IElementType>*/(2);
         types.add(DataflowElementTypes.Box_2001);
         types.add(DataflowElementTypes.Box_3003);
-        NodeToolEntry entry = new NodeToolEntry(Messages.Box1CreationTool_title,
+        NodeToolEntry entry = new NodeToolEntry(
+                Messages.Box1CreationTool_title,
                 Messages.Box1CreationTool_desc, types);
         entry.setId("createBox1CreationTool"); //$NON-NLS-1$
-        entry.setSmallIcon(DataflowElementTypes.getImageDescriptor(DataflowElementTypes.Box_2001));
+        entry.setSmallIcon(DataflowElementTypes
+                .getImageDescriptor(DataflowElementTypes.Box_2001));
         entry.setLargeIcon(entry.getSmallIcon());
         return entry;
     }
@@ -72,7 +75,8 @@ public class DataflowPaletteFactory {
     private ToolEntry createConnection2CreationTool() {
         List/*<IElementType>*/types = new ArrayList/*<IElementType>*/(1);
         types.add(DataflowElementTypes.Connection_4001);
-        LinkToolEntry entry = new LinkToolEntry(Messages.Connection2CreationTool_title,
+        LinkToolEntry entry = new LinkToolEntry(
+                Messages.Connection2CreationTool_title,
                 Messages.Connection2CreationTool_desc, types);
         entry.setId("createConnection2CreationTool"); //$NON-NLS-1$
         entry.setSmallIcon(DataflowElementTypes
@@ -88,7 +92,8 @@ public class DataflowPaletteFactory {
         List/*<IElementType>*/types = new ArrayList/*<IElementType>*/(2);
         types.add(DataflowElementTypes.InputPort_3001);
         types.add(DataflowElementTypes.OutputPort_3002);
-        NodeToolEntry entry = new NodeToolEntry(Messages.Port3CreationTool_title,
+        NodeToolEntry entry = new NodeToolEntry(
+                Messages.Port3CreationTool_title,
                 Messages.Port3CreationTool_desc, types);
         entry.setId("createPort3CreationTool"); //$NON-NLS-1$
         entry.setSmallIcon(DataflowElementTypes
@@ -110,7 +115,8 @@ public class DataflowPaletteFactory {
         /**
          * @generated
          */
-        private NodeToolEntry(String title, String description, List elementTypes) {
+        private NodeToolEntry(String title, String description,
+                List elementTypes) {
             super(title, description, null, null);
             this.elementTypes = elementTypes;
         }
@@ -138,7 +144,8 @@ public class DataflowPaletteFactory {
         /**
          * @generated
          */
-        private LinkToolEntry(String title, String description, List relationshipTypes) {
+        private LinkToolEntry(String title, String description,
+                List relationshipTypes) {
             super(title, description, null, null);
             this.relationshipTypes = relationshipTypes;
         }

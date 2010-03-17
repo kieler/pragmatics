@@ -65,8 +65,7 @@ public class DataflowNavigatorActionProvider extends CommonActionProvider {
         if (aSite.getViewSite() instanceof ICommonViewerWorkbenchSite) {
             myContribute = true;
             makeActions((ICommonViewerWorkbenchSite) aSite.getViewSite());
-        }
-        else {
+        } else {
             myContribute = false;
         }
     }
@@ -85,10 +84,12 @@ public class DataflowNavigatorActionProvider extends CommonActionProvider {
         if (!myContribute) {
             return;
         }
-        IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
+        IStructuredSelection selection = (IStructuredSelection) getContext()
+                .getSelection();
         myOpenDiagramAction.selectionChanged(selection);
         if (myOpenDiagramAction.isEnabled()) {
-            actionBars.setGlobalActionHandler(ICommonActionConstants.OPEN, myOpenDiagramAction);
+            actionBars.setGlobalActionHandler(ICommonActionConstants.OPEN,
+                    myOpenDiagramAction);
         }
     }
 
@@ -129,15 +130,17 @@ public class DataflowNavigatorActionProvider extends CommonActionProvider {
             if (selection.size() == 1) {
                 Object selectedElement = selection.getFirstElement();
                 if (selectedElement instanceof DataflowNavigatorItem) {
-                    selectedElement = ((DataflowNavigatorItem) selectedElement).getView();
-                }
-                else if (selectedElement instanceof IAdaptable) {
-                    selectedElement = ((IAdaptable) selectedElement).getAdapter(View.class);
+                    selectedElement = ((DataflowNavigatorItem) selectedElement)
+                            .getView();
+                } else if (selectedElement instanceof IAdaptable) {
+                    selectedElement = ((IAdaptable) selectedElement)
+                            .getAdapter(View.class);
                 }
                 if (selectedElement instanceof Diagram) {
                     Diagram diagram = (Diagram) selectedElement;
-                    if (DataflowModelEditPart.MODEL_ID.equals(DataflowVisualIDRegistry
-                            .getModelID(diagram))) {
+                    if (DataflowModelEditPart.MODEL_ID
+                            .equals(DataflowVisualIDRegistry
+                                    .getModelID(diagram))) {
                         myDiagram = diagram;
                     }
                 }
@@ -157,8 +160,7 @@ public class DataflowNavigatorActionProvider extends CommonActionProvider {
             IWorkbenchPage page = myViewerSite.getPage();
             try {
                 page.openEditor(editorInput, DataflowDiagramEditor.ID);
-            }
-            catch (PartInitException e) {
+            } catch (PartInitException e) {
                 DataflowDiagramEditorPlugin.getInstance().logError(
                         "Exception while openning diagram", e); //$NON-NLS-1$
             }
@@ -168,10 +170,12 @@ public class DataflowNavigatorActionProvider extends CommonActionProvider {
          * @generated
          */
         private IEditorInput getEditorInput() {
-            for (Iterator it = myDiagram.eResource().getContents().iterator(); it.hasNext();) {
+            for (Iterator it = myDiagram.eResource().getContents().iterator(); it
+                    .hasNext();) {
                 EObject nextEObject = (EObject) it.next();
                 if (nextEObject == myDiagram) {
-                    return new FileEditorInput(WorkspaceSynchronizer.getFile(myDiagram.eResource()));
+                    return new FileEditorInput(WorkspaceSynchronizer
+                            .getFile(myDiagram.eResource()));
                 }
                 if (nextEObject instanceof Diagram) {
                     break;

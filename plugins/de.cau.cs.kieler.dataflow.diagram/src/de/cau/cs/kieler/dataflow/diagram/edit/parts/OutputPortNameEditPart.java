@@ -65,8 +65,8 @@ import de.cau.cs.kieler.dataflow.diagram.providers.DataflowParserProvider;
 /**
  * @generated
  */
-public class OutputPortNameEditPart extends LabelEditPart implements ITextAwareEditPart,
-        IBorderItemEditPart {
+public class OutputPortNameEditPart extends LabelEditPart implements
+        ITextAwareEditPart, IBorderItemEditPart {
 
     /**
      * @generated
@@ -115,8 +115,10 @@ public class OutputPortNameEditPart extends LabelEditPart implements ITextAwareE
      */
     protected void createDefaultEditPolicies() {
         super.createDefaultEditPolicies();
-        installEditPolicy(EditPolicy.DIRECT_EDIT_ROLE, new LabelDirectEditPolicy());
-        installEditPolicy(EditPolicy.SELECTION_FEEDBACK_ROLE, new DataflowTextSelectionEditPolicy());
+        installEditPolicy(EditPolicy.DIRECT_EDIT_ROLE,
+                new LabelDirectEditPolicy());
+        installEditPolicy(EditPolicy.SELECTION_FEEDBACK_ROLE,
+                new DataflowTextSelectionEditPolicy());
     }
 
     /**
@@ -125,7 +127,8 @@ public class OutputPortNameEditPart extends LabelEditPart implements ITextAwareE
     public IBorderItemLocator getBorderItemLocator() {
         IFigure parentFigure = getFigure().getParent();
         if (parentFigure != null && parentFigure.getLayoutManager() != null) {
-            Object constraint = parentFigure.getLayoutManager().getConstraint(getFigure());
+            Object constraint = parentFigure.getLayoutManager().getConstraint(
+                    getFigure());
             return (IBorderItemLocator) constraint;
         }
         return null;
@@ -135,15 +138,16 @@ public class OutputPortNameEditPart extends LabelEditPart implements ITextAwareE
      * @generated
      */
     public void refreshBounds() {
-        int x = ((Integer) getStructuralFeatureValue(NotationPackage.eINSTANCE.getLocation_X()))
-                .intValue();
-        int y = ((Integer) getStructuralFeatureValue(NotationPackage.eINSTANCE.getLocation_Y()))
-                .intValue();
-        int width = ((Integer) getStructuralFeatureValue(NotationPackage.eINSTANCE.getSize_Width()))
-                .intValue();
+        int x = ((Integer) getStructuralFeatureValue(NotationPackage.eINSTANCE
+                .getLocation_X())).intValue();
+        int y = ((Integer) getStructuralFeatureValue(NotationPackage.eINSTANCE
+                .getLocation_Y())).intValue();
+        int width = ((Integer) getStructuralFeatureValue(NotationPackage.eINSTANCE
+                .getSize_Width())).intValue();
         int height = ((Integer) getStructuralFeatureValue(NotationPackage.eINSTANCE
                 .getSize_Height())).intValue();
-        getBorderItemLocator().setConstraint(new Rectangle(x, y, width, height));
+        getBorderItemLocator()
+                .setConstraint(new Rectangle(x, y, width, height));
     }
 
     /**
@@ -152,8 +156,7 @@ public class OutputPortNameEditPart extends LabelEditPart implements ITextAwareE
     protected String getLabelTextHelper(IFigure figure) {
         if (figure instanceof WrappingLabel) {
             return ((WrappingLabel) figure).getText();
-        }
-        else {
+        } else {
             return ((Label) figure).getText();
         }
     }
@@ -164,8 +167,7 @@ public class OutputPortNameEditPart extends LabelEditPart implements ITextAwareE
     protected void setLabelTextHelper(IFigure figure, String text) {
         if (figure instanceof WrappingLabel) {
             ((WrappingLabel) figure).setText(text);
-        }
-        else {
+        } else {
             ((Label) figure).setText(text);
         }
     }
@@ -176,8 +178,7 @@ public class OutputPortNameEditPart extends LabelEditPart implements ITextAwareE
     protected Image getLabelIconHelper(IFigure figure) {
         if (figure instanceof WrappingLabel) {
             return ((WrappingLabel) figure).getIcon();
-        }
-        else {
+        } else {
             return ((Label) figure).getIcon();
         }
     }
@@ -188,8 +189,7 @@ public class OutputPortNameEditPart extends LabelEditPart implements ITextAwareE
     protected void setLabelIconHelper(IFigure figure, Image icon) {
         if (figure instanceof WrappingLabel) {
             ((WrappingLabel) figure).setIcon(icon);
-        }
-        else {
+        } else {
             ((Label) figure).setIcon(icon);
         }
     }
@@ -240,7 +240,8 @@ public class OutputPortNameEditPart extends LabelEditPart implements ITextAwareE
         String text = null;
         EObject parserElement = getParserElement();
         if (parserElement != null && getParser() != null) {
-            text = getParser().getPrintString(new EObjectAdapter(parserElement),
+            text = getParser().getPrintString(
+                    new EObjectAdapter(parserElement),
                     getParserOptions().intValue());
         }
         if (text == null || text.length() == 0) {
@@ -271,7 +272,8 @@ public class OutputPortNameEditPart extends LabelEditPart implements ITextAwareE
         if (getParserElement() == null || getParser() == null) {
             return ""; //$NON-NLS-1$
         }
-        return getParser().getEditString(new EObjectAdapter(getParserElement()),
+        return getParser().getEditString(
+                new EObjectAdapter(getParserElement()),
                 getParserOptions().intValue());
     }
 
@@ -297,14 +299,14 @@ public class OutputPortNameEditPart extends LabelEditPart implements ITextAwareE
                                 .runExclusive(new RunnableWithResult.Impl() {
 
                                     public void run() {
-                                        setResult(parser.isValidEditString(new EObjectAdapter(
-                                                element), (String) value));
+                                        setResult(parser.isValidEditString(
+                                                new EObjectAdapter(element),
+                                                (String) value));
                                     }
                                 });
-                        return valid.getCode() == ParserEditStatus.EDITABLE ? null : valid
-                                .getMessage();
-                    }
-                    catch (InterruptedException ie) {
+                        return valid.getCode() == ParserEditStatus.EDITABLE ? null
+                                : valid.getMessage();
+                    } catch (InterruptedException ie) {
                         ie.printStackTrace();
                     }
                 }
@@ -322,7 +324,8 @@ public class OutputPortNameEditPart extends LabelEditPart implements ITextAwareE
         if (getParserElement() == null || getParser() == null) {
             return null;
         }
-        return getParser().getCompletionProcessor(new EObjectAdapter(getParserElement()));
+        return getParser().getCompletionProcessor(
+                new EObjectAdapter(getParserElement()));
     }
 
     /**
@@ -378,7 +381,8 @@ public class OutputPortNameEditPart extends LabelEditPart implements ITextAwareE
      */
     protected void performDirectEdit(Point eventLocation) {
         if (getManager().getClass() == TextDirectEditManager.class) {
-            ((TextDirectEditManager) getManager()).show(eventLocation.getSWTPoint());
+            ((TextDirectEditManager) getManager()).show(eventLocation
+                    .getSWTPoint());
         }
     }
 
@@ -388,8 +392,7 @@ public class OutputPortNameEditPart extends LabelEditPart implements ITextAwareE
     private void performDirectEdit(char initialCharacter) {
         if (getManager() instanceof TextDirectEditManager) {
             ((TextDirectEditManager) getManager()).show(initialCharacter);
-        }
-        else {
+        } else {
             performDirectEdit();
         }
     }
@@ -404,25 +407,26 @@ public class OutputPortNameEditPart extends LabelEditPart implements ITextAwareE
 
                 public void run() {
                     if (isActive() && isEditable()) {
-                        if (theRequest.getExtendedData().get(
-                                RequestConstants.REQ_DIRECTEDIT_EXTENDEDDATA_INITIAL_CHAR) instanceof Character) {
-                            Character initialChar = (Character) theRequest.getExtendedData().get(
-                                    RequestConstants.REQ_DIRECTEDIT_EXTENDEDDATA_INITIAL_CHAR);
+                        if (theRequest
+                                .getExtendedData()
+                                .get(
+                                        RequestConstants.REQ_DIRECTEDIT_EXTENDEDDATA_INITIAL_CHAR) instanceof Character) {
+                            Character initialChar = (Character) theRequest
+                                    .getExtendedData()
+                                    .get(
+                                            RequestConstants.REQ_DIRECTEDIT_EXTENDEDDATA_INITIAL_CHAR);
                             performDirectEdit(initialChar.charValue());
-                        }
-                        else if ((theRequest instanceof DirectEditRequest)
+                        } else if ((theRequest instanceof DirectEditRequest)
                                 && (getEditText().equals(getLabelText()))) {
                             DirectEditRequest editRequest = (DirectEditRequest) theRequest;
                             performDirectEdit(editRequest.getLocation());
-                        }
-                        else {
+                        } else {
                             performDirectEdit();
                         }
                     }
                 }
             });
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -473,7 +477,8 @@ public class OutputPortNameEditPart extends LabelEditPart implements ITextAwareE
         FontStyle style = (FontStyle) getFontStyleOwnerView().getStyle(
                 NotationPackage.eINSTANCE.getFontStyle());
         if (style != null && getFigure() instanceof WrappingLabel) {
-            ((WrappingLabel) getFigure()).setTextStrikeThrough(style.isStrikeThrough());
+            ((WrappingLabel) getFigure()).setTextStrikeThrough(style
+                    .isStrikeThrough());
         }
     }
 
@@ -484,8 +489,8 @@ public class OutputPortNameEditPart extends LabelEditPart implements ITextAwareE
         FontStyle style = (FontStyle) getFontStyleOwnerView().getStyle(
                 NotationPackage.eINSTANCE.getFontStyle());
         if (style != null) {
-            FontData fontData = new FontData(style.getFontName(), style.getFontHeight(), (style
-                    .isBold() ? SWT.BOLD : SWT.NORMAL)
+            FontData fontData = new FontData(style.getFontName(), style
+                    .getFontHeight(), (style.isBold() ? SWT.BOLD : SWT.NORMAL)
                     | (style.isItalic() ? SWT.ITALIC : SWT.NORMAL));
             setFont(fontData);
         }
@@ -507,10 +512,10 @@ public class OutputPortNameEditPart extends LabelEditPart implements ITextAwareE
             parserElements = ((ISemanticParser) getParser())
                     .getSemanticElementsBeingParsed(element);
             for (int i = 0; i < parserElements.size(); i++) {
-                addListenerFilter("SemanticModel" + i, this, (EObject) parserElements.get(i)); //$NON-NLS-1$
+                addListenerFilter(
+                        "SemanticModel" + i, this, (EObject) parserElements.get(i)); //$NON-NLS-1$
             }
-        }
-        else {
+        } else {
             super.addSemanticListeners();
         }
     }
@@ -523,8 +528,7 @@ public class OutputPortNameEditPart extends LabelEditPart implements ITextAwareE
             for (int i = 0; i < parserElements.size(); i++) {
                 removeListenerFilter("SemanticModel" + i); //$NON-NLS-1$
             }
-        }
-        else {
+        } else {
             super.removeSemanticListeners();
         }
     }
@@ -559,22 +563,25 @@ public class OutputPortNameEditPart extends LabelEditPart implements ITextAwareE
         if (NotationPackage.eINSTANCE.getFontStyle_FontColor().equals(feature)) {
             Integer c = (Integer) event.getNewValue();
             setFontColor(DiagramColorRegistry.getInstance().getColor(c));
-        }
-        else if (NotationPackage.eINSTANCE.getFontStyle_Underline().equals(feature)) {
+        } else if (NotationPackage.eINSTANCE.getFontStyle_Underline().equals(
+                feature)) {
             refreshUnderline();
-        }
-        else if (NotationPackage.eINSTANCE.getFontStyle_StrikeThrough().equals(feature)) {
+        } else if (NotationPackage.eINSTANCE.getFontStyle_StrikeThrough()
+                .equals(feature)) {
             refreshStrikeThrough();
-        }
-        else if (NotationPackage.eINSTANCE.getFontStyle_FontHeight().equals(feature)
-                || NotationPackage.eINSTANCE.getFontStyle_FontName().equals(feature)
-                || NotationPackage.eINSTANCE.getFontStyle_Bold().equals(feature)
-                || NotationPackage.eINSTANCE.getFontStyle_Italic().equals(feature)) {
+        } else if (NotationPackage.eINSTANCE.getFontStyle_FontHeight().equals(
+                feature)
+                || NotationPackage.eINSTANCE.getFontStyle_FontName().equals(
+                        feature)
+                || NotationPackage.eINSTANCE.getFontStyle_Bold()
+                        .equals(feature)
+                || NotationPackage.eINSTANCE.getFontStyle_Italic().equals(
+                        feature)) {
             refreshFont();
-        }
-        else {
+        } else {
             if (getParser() != null
-                    && getParser().isAffectingEvent(event, getParserOptions().intValue())) {
+                    && getParser().isAffectingEvent(event,
+                            getParserOptions().intValue())) {
                 refreshLabel();
             }
             if (getParser() instanceof ISemanticParser) {
@@ -627,6 +634,7 @@ public class OutputPortNameEditPart extends LabelEditPart implements ITextAwareE
     /**
      * @generated
      */
-    static final Font THIS_FONT = new Font(Display.getCurrent(), "Sans", 8, SWT.NORMAL);
+    static final Font THIS_FONT = new Font(Display.getCurrent(), "Sans", 8,
+            SWT.NORMAL);
 
 }

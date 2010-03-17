@@ -28,7 +28,8 @@ import de.cau.cs.kieler.dataflow.diagram.providers.DataflowElementTypes;
 /**
  * @generated
  */
-public class DataflowSheetLabelProvider extends BaseLabelProvider implements ILabelProvider {
+public class DataflowSheetLabelProvider extends BaseLabelProvider implements
+        ILabelProvider {
 
     /**
      * @generated
@@ -84,7 +85,8 @@ public class DataflowSheetLabelProvider extends BaseLabelProvider implements ILa
             if (etype != null) {
                 return etype;
             }
-            view = view.eContainer() instanceof View ? (View) view.eContainer() : null;
+            view = view.eContainer() instanceof View ? (View) view.eContainer()
+                    : null;
         }
         return null;
     }

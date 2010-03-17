@@ -37,7 +37,8 @@ import de.cau.cs.kieler.dataflow.diagram.part.DataflowVisualIDRegistry;
 /**
  * @generated
  */
-public class DataflowParserProvider extends AbstractProvider implements IParserProvider {
+public class DataflowParserProvider extends AbstractProvider implements
+        IParserProvider {
 
     /**
      * @generated
@@ -67,7 +68,8 @@ public class DataflowParserProvider extends AbstractProvider implements IParserP
      */
     private IParser getInputPortName_5001Parser() {
         if (inputPortName_5001Parser == null) {
-            EAttribute[] features = new EAttribute[] { DataflowPackage.eINSTANCE.getPort_Name() };
+            EAttribute[] features = new EAttribute[] { DataflowPackage.eINSTANCE
+                    .getPort_Name() };
             MessageFormatParser parser = new MessageFormatParser(features);
             inputPortName_5001Parser = parser;
         }
@@ -84,7 +86,8 @@ public class DataflowParserProvider extends AbstractProvider implements IParserP
      */
     private IParser getOutputPortName_5002Parser() {
         if (outputPortName_5002Parser == null) {
-            EAttribute[] features = new EAttribute[] { DataflowPackage.eINSTANCE.getPort_Name() };
+            EAttribute[] features = new EAttribute[] { DataflowPackage.eINSTANCE
+                    .getPort_Name() };
             MessageFormatParser parser = new MessageFormatParser(features);
             outputPortName_5002Parser = parser;
         }
@@ -130,8 +133,10 @@ public class DataflowParserProvider extends AbstractProvider implements IParserP
      * Utility method that consults ParserService
      * @generated
      */
-    public static IParser getParser(IElementType type, EObject object, String parserHint) {
-        return ParserService.getInstance().getParser(new HintAdapter(type, object, parserHint));
+    public static IParser getParser(IElementType type, EObject object,
+            String parserHint) {
+        return ParserService.getInstance().getParser(
+                new HintAdapter(type, object, parserHint));
     }
 
     /**

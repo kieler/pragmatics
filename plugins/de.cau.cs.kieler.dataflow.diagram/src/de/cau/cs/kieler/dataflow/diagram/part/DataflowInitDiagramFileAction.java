@@ -61,11 +61,14 @@ public class DataflowInitDiagramFileAction implements IObjectActionDelegate {
     public void selectionChanged(IAction action, ISelection selection) {
         domainModelURI = null;
         action.setEnabled(false);
-        if (selection instanceof IStructuredSelection == false || selection.isEmpty()) {
+        if (selection instanceof IStructuredSelection == false
+                || selection.isEmpty()) {
             return;
         }
-        IFile file = (IFile) ((IStructuredSelection) selection).getFirstElement();
-        domainModelURI = URI.createPlatformResourceURI(file.getFullPath().toString(), true);
+        IFile file = (IFile) ((IStructuredSelection) selection)
+                .getFirstElement();
+        domainModelURI = URI.createPlatformResourceURI(file.getFullPath()
+                .toString(), true);
         action.setEnabled(true);
     }
 
@@ -87,19 +90,21 @@ public class DataflowInitDiagramFileAction implements IObjectActionDelegate {
         try {
             Resource resource = resourceSet.getResource(domainModelURI, true);
             diagramRoot = (EObject) resource.getContents().get(0);
-        }
-        catch (WrappedException ex) {
+        } catch (WrappedException ex) {
             DataflowDiagramEditorPlugin.getInstance().logError(
                     "Unable to load resource: " + domainModelURI, ex); //$NON-NLS-1$
         }
         if (diagramRoot == null) {
-            MessageDialog.openError(getShell(), Messages.InitDiagramFile_ResourceErrorDialogTitle,
+            MessageDialog.openError(getShell(),
+                    Messages.InitDiagramFile_ResourceErrorDialogTitle,
                     Messages.InitDiagramFile_ResourceErrorDialogMessage);
             return;
         }
-        Wizard wizard = new DataflowNewDiagramFileWizard(domainModelURI, diagramRoot, editingDomain);
+        Wizard wizard = new DataflowNewDiagramFileWizard(domainModelURI,
+                diagramRoot, editingDomain);
         wizard.setWindowTitle(NLS.bind(Messages.InitDiagramFile_WizardTitle,
                 DataflowModelEditPart.MODEL_ID));
-        DataflowDiagramEditorUtil.runWizard(getShell(), wizard, "InitDiagramFile"); //$NON-NLS-1$
+        DataflowDiagramEditorUtil.runWizard(getShell(), wizard,
+                "InitDiagramFile"); //$NON-NLS-1$
     }
 }

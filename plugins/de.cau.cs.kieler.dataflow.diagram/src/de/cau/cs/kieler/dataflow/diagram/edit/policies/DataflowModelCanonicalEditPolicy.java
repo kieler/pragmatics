@@ -53,7 +53,8 @@ import de.cau.cs.kieler.dataflow.diagram.part.DataflowVisualIDRegistry;
 /**
  * @generated
  */
-public class DataflowModelCanonicalEditPolicy extends CanonicalConnectionEditPolicy {
+public class DataflowModelCanonicalEditPolicy extends
+        CanonicalConnectionEditPolicy {
 
     /**
      * @generated
@@ -66,8 +67,9 @@ public class DataflowModelCanonicalEditPolicy extends CanonicalConnectionEditPol
     protected List getSemanticChildrenList() {
         View viewObject = (View) getHost().getModel();
         List result = new LinkedList();
-        for (Iterator it = DataflowDiagramUpdater.getDataflowModel_1000SemanticChildren(viewObject)
-                .iterator(); it.hasNext();) {
+        for (Iterator it = DataflowDiagramUpdater
+                .getDataflowModel_1000SemanticChildren(viewObject).iterator(); it
+                .hasNext();) {
             result.add(((DataflowNodeDescriptor) it.next()).getModelElement());
         }
         return result;
@@ -107,7 +109,8 @@ public class DataflowModelCanonicalEditPolicy extends CanonicalConnectionEditPol
     protected Set getFeaturesToSynchronize() {
         if (myFeaturesToSynchronize == null) {
             myFeaturesToSynchronize = new HashSet();
-            myFeaturesToSynchronize.add(DataflowPackage.eINSTANCE.getDataflowModel_Boxes());
+            myFeaturesToSynchronize.add(DataflowPackage.eINSTANCE
+                    .getDataflowModel_Boxes());
         }
         return myFeaturesToSynchronize;
     }
@@ -136,7 +139,8 @@ public class DataflowModelCanonicalEditPolicy extends CanonicalConnectionEditPol
     /**
      * @generated
      */
-    protected boolean shouldIncludeConnection(Edge connector, Collection children) {
+    protected boolean shouldIncludeConnection(Edge connector,
+            Collection children) {
         return false;
     }
 
@@ -152,8 +156,8 @@ public class DataflowModelCanonicalEditPolicy extends CanonicalConnectionEditPol
 
         if (createdViews.size() > 1) {
             // perform a layout of the container
-            DeferredLayoutCommand layoutCmd = new DeferredLayoutCommand(host().getEditingDomain(),
-                    createdViews, host());
+            DeferredLayoutCommand layoutCmd = new DeferredLayoutCommand(host()
+                    .getEditingDomain(), createdViews, host());
             executeCommand(new ICommandProxy(layoutCmd));
         }
 
@@ -173,13 +177,17 @@ public class DataflowModelCanonicalEditPolicy extends CanonicalConnectionEditPol
      */
     private Collection refreshConnections() {
         Map domain2NotationMap = new HashMap();
-        Collection linkDescriptors = collectAllLinks(getDiagram(), domain2NotationMap);
+        Collection linkDescriptors = collectAllLinks(getDiagram(),
+                domain2NotationMap);
         Collection existingLinks = new LinkedList(getDiagram().getEdges());
-        for (Iterator linksIterator = existingLinks.iterator(); linksIterator.hasNext();) {
+        for (Iterator linksIterator = existingLinks.iterator(); linksIterator
+                .hasNext();) {
             Edge nextDiagramLink = (Edge) linksIterator.next();
-            int diagramLinkVisualID = DataflowVisualIDRegistry.getVisualID(nextDiagramLink);
+            int diagramLinkVisualID = DataflowVisualIDRegistry
+                    .getVisualID(nextDiagramLink);
             if (diagramLinkVisualID == -1) {
-                if (nextDiagramLink.getSource() != null && nextDiagramLink.getTarget() != null) {
+                if (nextDiagramLink.getSource() != null
+                        && nextDiagramLink.getTarget() != null) {
                     linksIterator.remove();
                 }
                 continue;
@@ -193,8 +201,10 @@ public class DataflowModelCanonicalEditPolicy extends CanonicalConnectionEditPol
                         .next();
                 if (diagramLinkObject == nextLinkDescriptor.getModelElement()
                         && diagramLinkSrc == nextLinkDescriptor.getSource()
-                        && diagramLinkDst == nextLinkDescriptor.getDestination()
-                        && diagramLinkVisualID == nextLinkDescriptor.getVisualID()) {
+                        && diagramLinkDst == nextLinkDescriptor
+                                .getDestination()
+                        && diagramLinkVisualID == nextLinkDescriptor
+                                .getVisualID()) {
                     linksIterator.remove();
                     linkDescriptorsIterator.remove();
                     break;
@@ -209,14 +219,16 @@ public class DataflowModelCanonicalEditPolicy extends CanonicalConnectionEditPol
      * @generated
      */
     private Collection collectAllLinks(View view, Map domain2NotationMap) {
-        if (!DataflowModelEditPart.MODEL_ID.equals(DataflowVisualIDRegistry.getModelID(view))) {
+        if (!DataflowModelEditPart.MODEL_ID.equals(DataflowVisualIDRegistry
+                .getModelID(view))) {
             return Collections.EMPTY_LIST;
         }
         Collection result = new LinkedList();
         switch (DataflowVisualIDRegistry.getVisualID(view)) {
         case DataflowModelEditPart.VISUAL_ID: {
             if (!domain2NotationMap.containsKey(view.getElement())) {
-                result.addAll(DataflowDiagramUpdater.getDataflowModel_1000ContainedLinks(view));
+                result.addAll(DataflowDiagramUpdater
+                        .getDataflowModel_1000ContainedLinks(view));
             }
             if (!domain2NotationMap.containsKey(view.getElement())
                     || view.getEAnnotation("Shortcut") == null) { //$NON-NLS-1$
@@ -226,7 +238,8 @@ public class DataflowModelCanonicalEditPolicy extends CanonicalConnectionEditPol
         }
         case BoxEditPart.VISUAL_ID: {
             if (!domain2NotationMap.containsKey(view.getElement())) {
-                result.addAll(DataflowDiagramUpdater.getBox_2001ContainedLinks(view));
+                result.addAll(DataflowDiagramUpdater
+                        .getBox_2001ContainedLinks(view));
             }
             if (!domain2NotationMap.containsKey(view.getElement())
                     || view.getEAnnotation("Shortcut") == null) { //$NON-NLS-1$
@@ -236,7 +249,8 @@ public class DataflowModelCanonicalEditPolicy extends CanonicalConnectionEditPol
         }
         case InputPortEditPart.VISUAL_ID: {
             if (!domain2NotationMap.containsKey(view.getElement())) {
-                result.addAll(DataflowDiagramUpdater.getInputPort_3001ContainedLinks(view));
+                result.addAll(DataflowDiagramUpdater
+                        .getInputPort_3001ContainedLinks(view));
             }
             if (!domain2NotationMap.containsKey(view.getElement())
                     || view.getEAnnotation("Shortcut") == null) { //$NON-NLS-1$
@@ -246,7 +260,8 @@ public class DataflowModelCanonicalEditPolicy extends CanonicalConnectionEditPol
         }
         case OutputPortEditPart.VISUAL_ID: {
             if (!domain2NotationMap.containsKey(view.getElement())) {
-                result.addAll(DataflowDiagramUpdater.getOutputPort_3002ContainedLinks(view));
+                result.addAll(DataflowDiagramUpdater
+                        .getOutputPort_3002ContainedLinks(view));
             }
             if (!domain2NotationMap.containsKey(view.getElement())
                     || view.getEAnnotation("Shortcut") == null) { //$NON-NLS-1$
@@ -256,7 +271,8 @@ public class DataflowModelCanonicalEditPolicy extends CanonicalConnectionEditPol
         }
         case Box2EditPart.VISUAL_ID: {
             if (!domain2NotationMap.containsKey(view.getElement())) {
-                result.addAll(DataflowDiagramUpdater.getBox_3003ContainedLinks(view));
+                result.addAll(DataflowDiagramUpdater
+                        .getBox_3003ContainedLinks(view));
             }
             if (!domain2NotationMap.containsKey(view.getElement())
                     || view.getEAnnotation("Shortcut") == null) { //$NON-NLS-1$
@@ -266,7 +282,8 @@ public class DataflowModelCanonicalEditPolicy extends CanonicalConnectionEditPol
         }
         case ConnectionEditPart.VISUAL_ID: {
             if (!domain2NotationMap.containsKey(view.getElement())) {
-                result.addAll(DataflowDiagramUpdater.getConnection_4001ContainedLinks(view));
+                result.addAll(DataflowDiagramUpdater
+                        .getConnection_4001ContainedLinks(view));
             }
             if (!domain2NotationMap.containsKey(view.getElement())
                     || view.getEAnnotation("Shortcut") == null) { //$NON-NLS-1$
@@ -275,11 +292,14 @@ public class DataflowModelCanonicalEditPolicy extends CanonicalConnectionEditPol
             break;
         }
         }
-        for (Iterator children = view.getChildren().iterator(); children.hasNext();) {
-            result.addAll(collectAllLinks((View) children.next(), domain2NotationMap));
+        for (Iterator children = view.getChildren().iterator(); children
+                .hasNext();) {
+            result.addAll(collectAllLinks((View) children.next(),
+                    domain2NotationMap));
         }
         for (Iterator edges = view.getSourceEdges().iterator(); edges.hasNext();) {
-            result.addAll(collectAllLinks((View) edges.next(), domain2NotationMap));
+            result.addAll(collectAllLinks((View) edges.next(),
+                    domain2NotationMap));
         }
         return result;
     }
@@ -287,24 +307,27 @@ public class DataflowModelCanonicalEditPolicy extends CanonicalConnectionEditPol
     /**
      * @generated
      */
-    private Collection createConnections(Collection linkDescriptors, Map domain2NotationMap) {
+    private Collection createConnections(Collection linkDescriptors,
+            Map domain2NotationMap) {
         List adapters = new LinkedList();
         for (Iterator linkDescriptorsIterator = linkDescriptors.iterator(); linkDescriptorsIterator
                 .hasNext();) {
             final DataflowLinkDescriptor nextLinkDescriptor = (DataflowLinkDescriptor) linkDescriptorsIterator
                     .next();
-            EditPart sourceEditPart = getEditPart(nextLinkDescriptor.getSource(),
-                    domain2NotationMap);
-            EditPart targetEditPart = getEditPart(nextLinkDescriptor.getDestination(),
-                    domain2NotationMap);
+            EditPart sourceEditPart = getEditPart(nextLinkDescriptor
+                    .getSource(), domain2NotationMap);
+            EditPart targetEditPart = getEditPart(nextLinkDescriptor
+                    .getDestination(), domain2NotationMap);
             if (sourceEditPart == null || targetEditPart == null) {
                 continue;
             }
             CreateConnectionViewRequest.ConnectionViewDescriptor descriptor = new CreateConnectionViewRequest.ConnectionViewDescriptor(
-                    nextLinkDescriptor.getSemanticAdapter(), String.valueOf(nextLinkDescriptor
-                            .getVisualID()), ViewUtil.APPEND, false,
-                    ((IGraphicalEditPart) getHost()).getDiagramPreferencesHint());
-            CreateConnectionViewRequest ccr = new CreateConnectionViewRequest(descriptor);
+                    nextLinkDescriptor.getSemanticAdapter(), String
+                            .valueOf(nextLinkDescriptor.getVisualID()),
+                    ViewUtil.APPEND, false, ((IGraphicalEditPart) getHost())
+                            .getDiagramPreferencesHint());
+            CreateConnectionViewRequest ccr = new CreateConnectionViewRequest(
+                    descriptor);
             ccr.setType(RequestConstants.REQ_CONNECTION_START);
             ccr.setSourceEditPart(sourceEditPart);
             sourceEditPart.getCommand(ccr);
@@ -325,10 +348,12 @@ public class DataflowModelCanonicalEditPolicy extends CanonicalConnectionEditPol
     /**
      * @generated
      */
-    private EditPart getEditPart(EObject domainModelElement, Map domain2NotationMap) {
+    private EditPart getEditPart(EObject domainModelElement,
+            Map domain2NotationMap) {
         View view = (View) domain2NotationMap.get(domainModelElement);
         if (view != null) {
-            return (EditPart) getHost().getViewer().getEditPartRegistry().get(view);
+            return (EditPart) getHost().getViewer().getEditPartRegistry().get(
+                    view);
         }
         return null;
     }

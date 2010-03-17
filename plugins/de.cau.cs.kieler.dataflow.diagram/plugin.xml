@@ -57,7 +57,7 @@ See the file epl-v10.html for the license text.
   	  <wizard
   	     name="%newWizardName"
   	     icon="icons/obj16/DataflowDiagramFile.gif"
-  	     category="de.cau.cs.kieler"
+  	     category="org.eclipse.ui.Examples"
   	     class="de.cau.cs.kieler.dataflow.diagram.part.DataflowCreationWizard"
   	     id="de.cau.cs.kieler.dataflow.diagram.part.DataflowCreationWizardID">
   	  	 <description>%newWizardDesc</description>  
@@ -128,10 +128,9 @@ See the file epl-v10.html for the license text.
    <extension point="org.eclipse.ui.preferencePages" id="prefpages">
       <?gmfgen generated="true"?>
       <page
-            category="de.cau.cs.kieler"
-            class="de.cau.cs.kieler.dataflow.diagram.preferences.DiagramGeneralPreferencePage"
             id="de.cau.cs.kieler.dataflow.diagram.general"
-            name="%prefpage.de.cau.cs.kieler.dataflow.diagram.general">
+            name="%prefpage.de.cau.cs.kieler.dataflow.diagram.general"
+            class="de.cau.cs.kieler.dataflow.diagram.preferences.DiagramGeneralPreferencePage">
       </page>
       <page
             id="de.cau.cs.kieler.dataflow.diagram.appearance"
@@ -456,20 +455,6 @@ See the file epl-v10.html for the license text.
             </or>
          </enablement>
       </actionProvider>
-      <commonWizard
-            menuGroupId="de.cau.cs.kieler"
-            type="new"
-            wizardId="de.cau.cs.kieler.dataflow.diagram.part.DataflowCreationWizardID">
-         <enablement>
-            <or>
-               <adapt
-                     type="org.eclipse.core.resources.IProject">
-               </adapt>
-               <adapt
-                     type="org.eclipse.core.resources.IFolder">
-               </adapt>
-            </or></enablement>
-      </commonWizard>
    </extension>
    
 	   <extension point="org.eclipse.ui.navigator.linkHelper" id="navigator-linkhelper">

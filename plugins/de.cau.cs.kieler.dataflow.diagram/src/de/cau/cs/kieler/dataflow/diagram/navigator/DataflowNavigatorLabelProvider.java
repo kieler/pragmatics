@@ -48,17 +48,23 @@ import de.cau.cs.kieler.dataflow.diagram.providers.DataflowParserProvider;
 /**
  * @generated
  */
-public class DataflowNavigatorLabelProvider extends LabelProvider implements ICommonLabelProvider,
-        ITreePathLabelProvider {
+public class DataflowNavigatorLabelProvider extends LabelProvider implements
+        ICommonLabelProvider, ITreePathLabelProvider {
 
     /**
      * @generated
      */
     static {
-        DataflowDiagramEditorPlugin.getInstance().getImageRegistry().put(
-                "Navigator?UnknownElement", ImageDescriptor.getMissingImageDescriptor()); //$NON-NLS-1$
-        DataflowDiagramEditorPlugin.getInstance().getImageRegistry().put(
-                "Navigator?ImageNotFound", ImageDescriptor.getMissingImageDescriptor()); //$NON-NLS-1$
+        DataflowDiagramEditorPlugin
+                .getInstance()
+                .getImageRegistry()
+                .put(
+                        "Navigator?UnknownElement", ImageDescriptor.getMissingImageDescriptor()); //$NON-NLS-1$
+        DataflowDiagramEditorPlugin
+                .getInstance()
+                .getImageRegistry()
+                .put(
+                        "Navigator?ImageNotFound", ImageDescriptor.getMissingImageDescriptor()); //$NON-NLS-1$
     }
 
     /**
@@ -80,7 +86,8 @@ public class DataflowNavigatorLabelProvider extends LabelProvider implements ICo
     public Image getImage(Object element) {
         if (element instanceof DataflowNavigatorGroup) {
             DataflowNavigatorGroup group = (DataflowNavigatorGroup) element;
-            return DataflowDiagramEditorPlugin.getInstance().getBundledImage(group.getIcon());
+            return DataflowDiagramEditorPlugin.getInstance().getBundledImage(
+                    group.getIcon());
         }
 
         if (element instanceof DataflowNavigatorItem) {
@@ -125,7 +132,8 @@ public class DataflowNavigatorLabelProvider extends LabelProvider implements ICo
      * @generated
      */
     private Image getImage(String key, IElementType elementType) {
-        ImageRegistry imageRegistry = DataflowDiagramEditorPlugin.getInstance().getImageRegistry();
+        ImageRegistry imageRegistry = DataflowDiagramEditorPlugin.getInstance()
+                .getImageRegistry();
         Image image = imageRegistry.get(key);
         if (image == null && elementType != null
                 && DataflowElementTypes.isKnownElementType(elementType)) {
@@ -191,8 +199,7 @@ public class DataflowNavigatorLabelProvider extends LabelProvider implements ICo
         DataflowModel domainModelElement = (DataflowModel) view.getElement();
         if (domainModelElement != null) {
             return domainModelElement.getName();
-        }
-        else {
+        } else {
             DataflowDiagramEditorPlugin.getInstance().logError(
                     "No domain element for view with visualID = " + 1000); //$NON-NLS-1$
             return ""; //$NON-NLS-1$
@@ -203,14 +210,15 @@ public class DataflowNavigatorLabelProvider extends LabelProvider implements ICo
      * @generated
      */
     private String getBox_2001Text(View view) {
-        IParser parser = DataflowParserProvider.getParser(DataflowElementTypes.Box_2001, view
-                .getElement() != null ? view.getElement() : view, DataflowVisualIDRegistry
-                .getType(BoxNameEditPart.VISUAL_ID));
+        IParser parser = DataflowParserProvider.getParser(
+                DataflowElementTypes.Box_2001, view.getElement() != null ? view
+                        .getElement() : view, DataflowVisualIDRegistry
+                        .getType(BoxNameEditPart.VISUAL_ID));
         if (parser != null) {
-            return parser.getPrintString(new EObjectAdapter(view.getElement() != null ? view
-                    .getElement() : view), ParserOptions.NONE.intValue());
-        }
-        else {
+            return parser.getPrintString(new EObjectAdapter(
+                    view.getElement() != null ? view.getElement() : view),
+                    ParserOptions.NONE.intValue());
+        } else {
             DataflowDiagramEditorPlugin.getInstance().logError(
                     "Parser was not found for label " + 5004); //$NON-NLS-1$
             return ""; //$NON-NLS-1$
@@ -221,14 +229,16 @@ public class DataflowNavigatorLabelProvider extends LabelProvider implements ICo
      * @generated
      */
     private String getInputPort_3001Text(View view) {
-        IParser parser = DataflowParserProvider.getParser(DataflowElementTypes.InputPort_3001, view
-                .getElement() != null ? view.getElement() : view, DataflowVisualIDRegistry
-                .getType(InputPortNameEditPart.VISUAL_ID));
+        IParser parser = DataflowParserProvider.getParser(
+                DataflowElementTypes.InputPort_3001,
+                view.getElement() != null ? view.getElement() : view,
+                DataflowVisualIDRegistry
+                        .getType(InputPortNameEditPart.VISUAL_ID));
         if (parser != null) {
-            return parser.getPrintString(new EObjectAdapter(view.getElement() != null ? view
-                    .getElement() : view), ParserOptions.NONE.intValue());
-        }
-        else {
+            return parser.getPrintString(new EObjectAdapter(
+                    view.getElement() != null ? view.getElement() : view),
+                    ParserOptions.NONE.intValue());
+        } else {
             DataflowDiagramEditorPlugin.getInstance().logError(
                     "Parser was not found for label " + 5001); //$NON-NLS-1$
             return ""; //$NON-NLS-1$
@@ -239,14 +249,16 @@ public class DataflowNavigatorLabelProvider extends LabelProvider implements ICo
      * @generated
      */
     private String getOutputPort_3002Text(View view) {
-        IParser parser = DataflowParserProvider.getParser(DataflowElementTypes.OutputPort_3002,
-                view.getElement() != null ? view.getElement() : view, DataflowVisualIDRegistry
+        IParser parser = DataflowParserProvider.getParser(
+                DataflowElementTypes.OutputPort_3002,
+                view.getElement() != null ? view.getElement() : view,
+                DataflowVisualIDRegistry
                         .getType(OutputPortNameEditPart.VISUAL_ID));
         if (parser != null) {
-            return parser.getPrintString(new EObjectAdapter(view.getElement() != null ? view
-                    .getElement() : view), ParserOptions.NONE.intValue());
-        }
-        else {
+            return parser.getPrintString(new EObjectAdapter(
+                    view.getElement() != null ? view.getElement() : view),
+                    ParserOptions.NONE.intValue());
+        } else {
             DataflowDiagramEditorPlugin.getInstance().logError(
                     "Parser was not found for label " + 5002); //$NON-NLS-1$
             return ""; //$NON-NLS-1$
@@ -257,14 +269,15 @@ public class DataflowNavigatorLabelProvider extends LabelProvider implements ICo
      * @generated
      */
     private String getBox_3003Text(View view) {
-        IParser parser = DataflowParserProvider.getParser(DataflowElementTypes.Box_3003, view
-                .getElement() != null ? view.getElement() : view, DataflowVisualIDRegistry
-                .getType(BoxName2EditPart.VISUAL_ID));
+        IParser parser = DataflowParserProvider.getParser(
+                DataflowElementTypes.Box_3003, view.getElement() != null ? view
+                        .getElement() : view, DataflowVisualIDRegistry
+                        .getType(BoxName2EditPart.VISUAL_ID));
         if (parser != null) {
-            return parser.getPrintString(new EObjectAdapter(view.getElement() != null ? view
-                    .getElement() : view), ParserOptions.NONE.intValue());
-        }
-        else {
+            return parser.getPrintString(new EObjectAdapter(
+                    view.getElement() != null ? view.getElement() : view),
+                    ParserOptions.NONE.intValue());
+        } else {
             DataflowDiagramEditorPlugin.getInstance().logError(
                     "Parser was not found for label " + 5003); //$NON-NLS-1$
             return ""; //$NON-NLS-1$
@@ -321,7 +334,8 @@ public class DataflowNavigatorLabelProvider extends LabelProvider implements ICo
      * @generated
      */
     private boolean isOwnView(View view) {
-        return DataflowModelEditPart.MODEL_ID.equals(DataflowVisualIDRegistry.getModelID(view));
+        return DataflowModelEditPart.MODEL_ID.equals(DataflowVisualIDRegistry
+                .getModelID(view));
     }
 
 }

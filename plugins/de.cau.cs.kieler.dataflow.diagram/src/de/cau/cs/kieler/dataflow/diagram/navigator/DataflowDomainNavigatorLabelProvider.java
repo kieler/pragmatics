@@ -25,13 +25,15 @@ import de.cau.cs.kieler.dataflow.diagram.part.DataflowDiagramEditorPlugin;
 /**
  * @generated
  */
-public class DataflowDomainNavigatorLabelProvider implements ICommonLabelProvider {
+public class DataflowDomainNavigatorLabelProvider implements
+        ICommonLabelProvider {
 
     /**
      * @generated
      */
     private AdapterFactoryLabelProvider myAdapterFactoryLabelProvider = new AdapterFactoryLabelProvider(
-            DataflowDiagramEditorPlugin.getInstance().getItemProvidersAdapterFactory());
+            DataflowDiagramEditorPlugin.getInstance()
+                    .getItemProvidersAdapterFactory());
 
     /**
      * @generated
@@ -44,8 +46,9 @@ public class DataflowDomainNavigatorLabelProvider implements ICommonLabelProvide
      */
     public Image getImage(Object element) {
         if (element instanceof DataflowDomainNavigatorItem) {
-            return myAdapterFactoryLabelProvider.getImage(((DataflowDomainNavigatorItem) element)
-                    .getEObject());
+            return myAdapterFactoryLabelProvider
+                    .getImage(((DataflowDomainNavigatorItem) element)
+                            .getEObject());
         }
         return null;
     }
@@ -55,8 +58,9 @@ public class DataflowDomainNavigatorLabelProvider implements ICommonLabelProvide
      */
     public String getText(Object element) {
         if (element instanceof DataflowDomainNavigatorItem) {
-            return myAdapterFactoryLabelProvider.getText(((DataflowDomainNavigatorItem) element)
-                    .getEObject());
+            return myAdapterFactoryLabelProvider
+                    .getText(((DataflowDomainNavigatorItem) element)
+                            .getEObject());
         }
         return null;
     }

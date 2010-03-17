@@ -28,7 +28,8 @@ import de.cau.cs.kieler.dataflow.diagram.edit.policies.ConnectionItemSemanticEdi
 /**
  * @generated
  */
-public class ConnectionEditPart extends ConnectionNodeEditPart implements ITreeBranchEditPart {
+public class ConnectionEditPart extends ConnectionNodeEditPart implements
+        ITreeBranchEditPart {
 
     /**
      * @generated
@@ -47,7 +48,8 @@ public class ConnectionEditPart extends ConnectionNodeEditPart implements ITreeB
      */
     protected void createDefaultEditPolicies() {
         super.createDefaultEditPolicies();
-        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE, new ConnectionItemSemanticEditPolicy());
+        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
+                new ConnectionItemSemanticEditPolicy());
     }
 
     /**

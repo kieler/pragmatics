@@ -23,7 +23,8 @@ import org.eclipse.swt.graphics.Image;
 /**
  * @generated
  */
-public class DataflowIconProvider extends AbstractProvider implements IIconProvider {
+public class DataflowIconProvider extends AbstractProvider implements
+        IIconProvider {
 
     /**
      * @generated

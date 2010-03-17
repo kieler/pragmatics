@@ -26,7 +26,8 @@ import org.eclipse.gmf.runtime.notation.View;
 /**
  * @generated
  */
-public class DataflowReorientConnectionViewCommand extends AbstractTransactionalCommand {
+public class DataflowReorientConnectionViewCommand extends
+        AbstractTransactionalCommand {
 
     /**
      * @generated
@@ -36,8 +37,8 @@ public class DataflowReorientConnectionViewCommand extends AbstractTransactional
     /**
      * @generated
      */
-    public DataflowReorientConnectionViewCommand(TransactionalEditingDomain editingDomain,
-            String label) {
+    public DataflowReorientConnectionViewCommand(
+            TransactionalEditingDomain editingDomain, String label) {
         super(editingDomain, label, null);
     }
 
@@ -69,7 +70,8 @@ public class DataflowReorientConnectionViewCommand extends AbstractTransactional
     /**
      * @generated
      */
-    protected CommandResult doExecuteWithResult(IProgressMonitor progressMonitor, IAdaptable info) {
+    protected CommandResult doExecuteWithResult(
+            IProgressMonitor progressMonitor, IAdaptable info) {
         assert null != edgeAdaptor : "Null child in DataflowReorientConnectionViewCommand"; //$NON-NLS-1$
         Edge edge = (Edge) getEdgeAdaptor().getAdapter(Edge.class);
         assert null != edge : "Null edge in DataflowReorientConnectionViewCommand"; //$NON-NLS-1$

@@ -26,6 +26,7 @@ public class DiagramAppearancePreferencePage extends AppearancePreferencePage {
      * @generated
      */
     public DiagramAppearancePreferencePage() {
-        setPreferenceStore(DataflowDiagramEditorPlugin.getInstance().getPreferenceStore());
+        setPreferenceStore(DataflowDiagramEditorPlugin.getInstance()
+                .getPreferenceStore());
     }
 }
