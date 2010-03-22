@@ -17,6 +17,8 @@ package de.cau.cs.kieler.ksbase.ui;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -24,11 +26,11 @@ import de.cau.cs.kieler.ksbase.ui.menus.DynamicBundleLoader;
 import de.cau.cs.kieler.ksbase.ui.menus.DynamicMenuContributions;
 
 /**
- * The activator class controls the plug-in life cycle.
- *  * 
+ * The activator class controls the plug-in life cycle. *
+ * 
  * @author mim
  * 
- * @kieler.rating 2009-12-15 proposed yellow 
+ * @kieler.rating 2009-12-15 proposed yellow
  */
 
 public class KSBasEUIPlugin extends AbstractUIPlugin {
@@ -102,30 +104,17 @@ public class KSBasEUIPlugin extends AbstractUIPlugin {
 
         // Creating bundles
         DynamicMenuContributions.INSTANCE.createAllMenuContributions();
-        // Temporary fix for "not loading features"-bug
-        DynamicBundleLoader.INSTANCE.activateAllEditors();
-        // Dirty hack, activating view management bundle:
-        /*
-         * IConfigurationElement[] configurations =
-         * Platform.getExtensionRegistry().getConfigurationElementsFor(
-         * "de.cau.cs.kieler.ksbase.ui.classLoader"); for (IConfigurationElement loader :
-         * configurations) { Object o = loader.createExecutableExtension("class");
-         * System.out.println(o); }
-         */
-        //
-        /*
-         * // Adding a part listener to check when to activate a bundle
-         * System.out.println("activated");
-         * 
-         * if (PlatformUI.getWorkbench() != null) { System.out.println("workbench found");
-         * System.out.println("work windows: " +
-         * PlatformUI.getWorkbench().getWorkbenchWindows().length); System.out.println("active: " +
-         * PlatformUI.getWorkbench().getActiveWorkbenchWindow ().getClass().getCanonicalName());
-         * 
-         * 
-         * 
-         * PlatformUI.getWorkbench().addWindowListener(DynamicBundleLoader.INSTANCE ); }#
-         */
+
+        // Adding a part listener to check when to activate a bundle
+        if (PlatformUI.getWorkbench() != null) {
+            for (IWorkbenchWindow window : PlatformUI.getWorkbench().getWorkbenchWindows()) {
+                if (window.getActivePage() != null) {
+                    window.getActivePage().addPartListener(DynamicBundleLoader.INSTANCE);
+                }
+                window.addPageListener(DynamicBundleLoader.INSTANCE);
+            }
+            PlatformUI.getWorkbench().addWindowListener(DynamicBundleLoader.INSTANCE);
+        }
     }
 
     /**

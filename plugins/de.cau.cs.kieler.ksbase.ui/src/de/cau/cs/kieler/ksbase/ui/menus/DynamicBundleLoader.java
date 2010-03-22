@@ -23,8 +23,10 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.ContributorFactoryOSGi;
+import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWindowListener;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.osgi.framework.Bundle;
@@ -45,7 +47,7 @@ import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
  * 
  * @kieler.rating 2009-12-15 proposed yellow
  */
-public final class DynamicBundleLoader implements IWindowListener, IPartListener {
+public final class DynamicBundleLoader implements IWindowListener, IPageListener, IPartListener {
 
     /** Instance of this class. **/
     public static final DynamicBundleLoader INSTANCE = new DynamicBundleLoader();
@@ -56,14 +58,10 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
     /** List of activated bundles. **/
     private HashMap<EditorTransformationSettings, Bundle> activeBundles;
 
-    /** Is the part listener already registered ? **/
-    private boolean isPartListener;
-
     /** Private constructor. **/
     private DynamicBundleLoader() {
         waitingBundles = new HashMap<EditorTransformationSettings, URI>();
         activeBundles = new HashMap<EditorTransformationSettings, Bundle>();
-        isPartListener = false;
     }
 
     /**
@@ -101,9 +99,12 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
      *            The editor class name to check
      */
     public synchronized void checkForWaitingEditor(final String activeEditor) {
+        //Fast fail when there are not bundles to check
+        if  (waitingBundles.size() == 0) {
+            return;
+        }
         HashMap<EditorTransformationSettings, Bundle> installedBundles = 
             new HashMap<EditorTransformationSettings, Bundle>();
-
         for (Entry<EditorTransformationSettings, URI> entry : waitingBundles.entrySet()) {
             EditorTransformationSettings editor = entry.getKey();
             if (editor.getEditorId().equals(activeEditor)) {
@@ -192,12 +193,115 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
      *            The activated window
      */
     public void windowActivated(final IWorkbenchWindow window) {
-        // System.out.println("window act");
         if (window.getActivePage() != null && window.getActivePage().getActiveEditor() != null) {
             String activeEditor = window.getActivePage().getActiveEditor().getClass()
                     .getCanonicalName();
             checkForWaitingEditor(activeEditor);
         }
+    }
+
+    /**
+     * A window has been opened. If the editor has an active page and editor the bundles are checked
+     * 
+     * @param window
+     *            The opened window
+     */
+    public void windowOpened(final IWorkbenchWindow window) {
+        if (window.getActivePage() != null && window.getActivePage().getActiveEditor() != null) {
+            String activeEditor = window.getActivePage().getActiveEditor().getClass()
+                    .getCanonicalName();
+            checkForWaitingEditor(activeEditor);
+            window.getActivePage().addPartListener(DynamicBundleLoader.INSTANCE);
+            
+        }
+    }
+
+    /**
+     * A page has been activated so we are checking the active editor Id.
+     * 
+     * @param page
+     *            The activated page
+     */
+    public void pageActivated(final IWorkbenchPage page) {
+        if (page.getActiveEditor() != null) {
+            checkForWaitingEditor(page.getActiveEditor().getEditorSite().getId());
+        }
+    }
+
+    /**
+     * A page has been opened so we are checking the active editor Id.
+     * 
+     * @param page
+     *            The opened page
+     */
+    public void pageOpened(final IWorkbenchPage page) {
+        if (page.getActiveEditor() != null) {
+            checkForWaitingEditor(page.getActiveEditor().getEditorSite().getId());
+        }
+    }
+
+    /**
+     * A workbench part has been activated so we are checking the site Id.
+     * 
+     * @param part
+     *            The activated part
+     */
+    public void partActivated(final IWorkbenchPart part) {
+        if (part.getSite().getId() != null) {
+            checkForWaitingEditor(part.getSite().getId());
+        }
+    }
+
+    /**
+     * A part has been opened, so we are checking the site id.
+     * 
+     * @param part
+     *            The opened part
+     */
+    public void partOpened(final IWorkbenchPart part) {
+        if (part.getSite().getId() != null) {
+            checkForWaitingEditor(part.getSite().getId());
+        }
+    }
+
+    /**
+     * A part has been brought to top. We are ignoring this event.
+     * 
+     * @param part
+     *            The top part.
+     */
+    public void partBroughtToTop(final IWorkbenchPart part) {
+        // Ignore
+    }
+
+    /**
+     * A part has been closed. We are ignoring this event.
+     * 
+     * @param part
+     *            The closed part
+     */
+    public void partClosed(final IWorkbenchPart part) {
+        // Ignore
+    }
+
+    /**
+     * A part has been deactivated. We are ignoring this event
+     * 
+     * @param part
+     *            The deactivated part.
+     */
+    public void partDeactivated(final IWorkbenchPart part) {
+        // Ignore
+    }
+
+    /**
+     * A page has been closed. We are ignoring this event.
+     * 
+     * @param page
+     *            The closed page
+     */
+    public void pageClosed(final IWorkbenchPage page) {
+        // Ignored
     }
 
     /**
@@ -218,82 +322,6 @@ public final class DynamicBundleLoader implements IWindowListener, IPartListener
      */
     public void windowDeactivated(final IWorkbenchWindow window) {
         // Nothing
-    }
-
-    /**
-     * A window has been opened. If the editor has an active page and editor the bundles are checked
-     * 
-     * @param window
-     *            The opened window
-     */
-    public void windowOpened(final IWorkbenchWindow window) {
-        // System.out.println("win open");
-        if (window.getActivePage() != null && window.getActivePage().getActiveEditor() != null) {
-            String activeEditor = window.getActivePage().getActiveEditor().getClass()
-                    .getCanonicalName();
-            checkForWaitingEditor(activeEditor);
-            // If the part listener is not activated, do it now:
-            if (!isPartListener) {
-                window.getActivePage().addPartListener(this);
-            }
-        }
-    }
-
-    /**
-     * A workbench part has been activated and needs to be checked against the waiting editors.
-     * 
-     * @param part
-     *            The activated part.
-     */
-    public void partActivated(final IWorkbenchPart part) {
-        // System.out.println("part act");
-        if (part.getClass() != null && part.getClass().getCanonicalName() != null) {
-            checkForWaitingEditor(part.getClass().getCanonicalName());
-        }
-    }
-
-    /**
-     * A workbench part has been brought to top. We are ignoring this event.
-     * 
-     * @param part
-     *            The activated part.
-     */
-    public void partBroughtToTop(final IWorkbenchPart part) {
-        // Nothing
-    }
-
-    /**
-     * A workbench part has been closed. We are ignoring this event.
-     * 
-     * @param part
-     *            The closed part
-     */
-    public void partClosed(final IWorkbenchPart part) {
-        // Nothing
-    }
-
-    /**
-     * A workbench part has been deactivated. We are ignoring this event.
-     * 
-     * @param part
-     *            The deactivated part
-     */
-    public void partDeactivated(final IWorkbenchPart part) {
-        // Nothing
-    }
-
-    /**
-     * A workbench part has been opened. We are checking the opened part against the waiting bundles
-     * 
-     * @param part
-     *            The opened part
-     */
-
-    public void partOpened(final IWorkbenchPart part) {
-        // System.out.println("part open");
-        if (part.getClass() != null && part.getClass().getCanonicalName() != null) {
-            checkForWaitingEditor(part.getClass().getCanonicalName());
-        }
     }
 
 }

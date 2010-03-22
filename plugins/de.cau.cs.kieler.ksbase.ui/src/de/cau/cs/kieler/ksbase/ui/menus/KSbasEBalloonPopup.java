@@ -37,10 +37,11 @@ import de.cau.cs.kieler.ksbase.ui.TransformationUIManager;
 import de.cau.cs.kieler.ksbase.ui.test.ModelObjectTester;
 
 /**
- * Edit policy for the.
+ * Edit policy for the KSBasE popup balloons
  * 
  * @author mim
  * 
+* @kieler.rating 2010-03-22 proposed yellow 
  */
 public class KSbasEBalloonPopup implements IBalloonContribution {
 

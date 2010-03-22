@@ -35,6 +35,7 @@ import de.cau.cs.kieler.ksbase.ui.listener.ITransformationEventListener;
  * 
  * @author mim
  * 
+ * @kieler.rating 2010-03-22 proposed yellow 
  */
 public class TransformationUtils implements ITransformationEventListener {
     /** The object to select after the transformation has been executed. **/

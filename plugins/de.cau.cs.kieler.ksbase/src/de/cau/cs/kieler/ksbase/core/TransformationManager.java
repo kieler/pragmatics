@@ -450,7 +450,7 @@ public final class TransformationManager {
                     path = path.append(editor.getEditorId());
                     // Add extension:
                     path = path.addFileExtension(editor.getFramework().getFileExtension());
-
+                    
                     File file = new File(path.toOSString());
                     if (file != null) {
                         FileOutputStream out = null;
