@@ -43,9 +43,11 @@ import de.cau.cs.kieler.viewmanagement.RunLogic;
 /**
  * Preference page that configures the post-transformation actions.
  * 
- * @author Michael Matzen - mim AT informatik.uni-kiel.de
+ * @author mim
  * 
+ * @kieler.rating 2010-03-22 proposed yellow 
  */
+
 public class PostTransformationPreferencePage extends PreferencePage implements
         IWorkbenchPreferencePage {
 

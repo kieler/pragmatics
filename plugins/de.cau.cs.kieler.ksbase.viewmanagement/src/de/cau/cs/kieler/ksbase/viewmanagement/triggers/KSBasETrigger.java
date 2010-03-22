@@ -24,9 +24,11 @@ import de.cau.cs.kieler.viewmanagement.TriggerEventObject;
 /**
  * A viewmanagement trigger which is called when a transformation command has been executed.
  * 
- * @author Michael Matzen - mim AT informatik.uni-kiel.de
+ * @author mim
  * 
+ * @kieler.rating 2010-03-22 proposed yellow 
  */
+
 public class KSBasETrigger extends ATrigger implements ITransformationEventListener {
 
     /** The trigger event object. **/

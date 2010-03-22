@@ -34,9 +34,11 @@ import de.cau.cs.kieler.viewmanagement.TriggerEventObject;
  * The KSBasE combination used to execute a set of effects, selected by the user
  * via the preference pages.
  * 
- * @author Michael Matzen - mim AT informatik.uni-kiel.de
+ * @author mim
  * 
+ * @kieler.rating 2010-03-22 proposed yellow 
  */
+
 public class KSBasECombination extends ACombination {
 
     /**
