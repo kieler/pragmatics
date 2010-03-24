@@ -152,9 +152,14 @@ public abstract class DiagramLayoutManager {
             @Override
             protected IStatus run(final IProgressMonitor monitor) {
                 if (editor instanceof IDiagramWorkbenchPart) {
-                    // DiagramEditPart dep = ((IDiagramWorkbenchPart) editor)
-                    // .getDiagramEditPart();
-                    Collection<?> editParts = editPart.getViewer()
+                    EditPart part = editPart;
+
+                    if (part == null) {
+                        part = ((IDiagramWorkbenchPart) editor)
+                                .getDiagramEditPart();
+                    }
+
+                    Collection<?> editParts = part.getViewer()
                             .getEditPartRegistry().values();
 
                     for (Object obj : editParts) {
