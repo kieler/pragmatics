@@ -72,12 +72,17 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         @Override
         protected String getFirstRuleName() {
         	return "GraphvizModel";	
-       	} 
+       	}
+       	
+       	@Override
+       	protected DotGrammarAccess getGrammarAccess() {
+       		return grammarAccess;
+       	}
 
 
 
     // $ANTLR start entryRuleGraphvizModel
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:79:1: entryRuleGraphvizModel returns [EObject current=null] : iv_ruleGraphvizModel= ruleGraphvizModel EOF ;
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:84:1: entryRuleGraphvizModel returns [EObject current=null] : iv_ruleGraphvizModel= ruleGraphvizModel EOF ;
     public final EObject entryRuleGraphvizModel() throws RecognitionException {
         EObject current = null;
 
@@ -85,8 +90,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:80:2: (iv_ruleGraphvizModel= ruleGraphvizModel EOF )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:81:2: iv_ruleGraphvizModel= ruleGraphvizModel EOF
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:85:2: (iv_ruleGraphvizModel= ruleGraphvizModel EOF )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:86:2: iv_ruleGraphvizModel= ruleGraphvizModel EOF
             {
             if ( backtracking==0 ) {
                currentNode = createCompositeNode(grammarAccess.getGraphvizModelRule(), currentNode); 
@@ -116,7 +121,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start ruleGraphvizModel
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:88:1: ruleGraphvizModel returns [EObject current=null] : ( (lv_graphs_0_0= ruleGraph ) )* ;
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:93:1: ruleGraphvizModel returns [EObject current=null] : ( (lv_graphs_0_0= ruleGraph ) )* ;
     public final EObject ruleGraphvizModel() throws RecognitionException {
         EObject current = null;
 
@@ -126,10 +131,10 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
          @SuppressWarnings("unused") EObject temp=null; setCurrentLookahead(); resetLookahead(); 
             
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:93:6: ( ( (lv_graphs_0_0= ruleGraph ) )* )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:94:1: ( (lv_graphs_0_0= ruleGraph ) )*
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:98:6: ( ( (lv_graphs_0_0= ruleGraph ) )* )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:99:1: ( (lv_graphs_0_0= ruleGraph ) )*
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:94:1: ( (lv_graphs_0_0= ruleGraph ) )*
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:99:1: ( (lv_graphs_0_0= ruleGraph ) )*
             loop1:
             do {
                 int alt1=2;
@@ -142,10 +147,10 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
                 switch (alt1) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:95:1: (lv_graphs_0_0= ruleGraph )
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:100:1: (lv_graphs_0_0= ruleGraph )
             	    {
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:95:1: (lv_graphs_0_0= ruleGraph )
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:96:3: lv_graphs_0_0= ruleGraph
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:100:1: (lv_graphs_0_0= ruleGraph )
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:101:3: lv_graphs_0_0= ruleGraph
             	    {
             	    if ( backtracking==0 ) {
             	       
@@ -209,7 +214,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start entryRuleGraph
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:126:1: entryRuleGraph returns [EObject current=null] : iv_ruleGraph= ruleGraph EOF ;
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:131:1: entryRuleGraph returns [EObject current=null] : iv_ruleGraph= ruleGraph EOF ;
     public final EObject entryRuleGraph() throws RecognitionException {
         EObject current = null;
 
@@ -217,8 +222,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:127:2: (iv_ruleGraph= ruleGraph EOF )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:128:2: iv_ruleGraph= ruleGraph EOF
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:132:2: (iv_ruleGraph= ruleGraph EOF )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:133:2: iv_ruleGraph= ruleGraph EOF
             {
             if ( backtracking==0 ) {
                currentNode = createCompositeNode(grammarAccess.getGraphRule(), currentNode); 
@@ -248,7 +253,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start ruleGraph
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:135:1: ruleGraph returns [EObject current=null] : ( ( (lv_strict_0_0= 'strict' ) )? ( (lv_type_1_0= ruleGraphType ) ) ( (lv_name_2_0= RULE_ID ) )? '{' ( (lv_statements_4_0= ruleStatement ) )* '}' ) ;
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:140:1: ruleGraph returns [EObject current=null] : ( ( (lv_strict_0_0= 'strict' ) )? ( (lv_type_1_0= ruleGraphType ) ) ( (lv_name_2_0= RULE_ID ) )? '{' ( (lv_statements_4_0= ruleStatement ) )* '}' ) ;
     public final EObject ruleGraph() throws RecognitionException {
         EObject current = null;
 
@@ -262,13 +267,13 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
          @SuppressWarnings("unused") EObject temp=null; setCurrentLookahead(); resetLookahead(); 
             
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:140:6: ( ( ( (lv_strict_0_0= 'strict' ) )? ( (lv_type_1_0= ruleGraphType ) ) ( (lv_name_2_0= RULE_ID ) )? '{' ( (lv_statements_4_0= ruleStatement ) )* '}' ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:141:1: ( ( (lv_strict_0_0= 'strict' ) )? ( (lv_type_1_0= ruleGraphType ) ) ( (lv_name_2_0= RULE_ID ) )? '{' ( (lv_statements_4_0= ruleStatement ) )* '}' )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:145:6: ( ( ( (lv_strict_0_0= 'strict' ) )? ( (lv_type_1_0= ruleGraphType ) ) ( (lv_name_2_0= RULE_ID ) )? '{' ( (lv_statements_4_0= ruleStatement ) )* '}' ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:146:1: ( ( (lv_strict_0_0= 'strict' ) )? ( (lv_type_1_0= ruleGraphType ) ) ( (lv_name_2_0= RULE_ID ) )? '{' ( (lv_statements_4_0= ruleStatement ) )* '}' )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:141:1: ( ( (lv_strict_0_0= 'strict' ) )? ( (lv_type_1_0= ruleGraphType ) ) ( (lv_name_2_0= RULE_ID ) )? '{' ( (lv_statements_4_0= ruleStatement ) )* '}' )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:141:2: ( (lv_strict_0_0= 'strict' ) )? ( (lv_type_1_0= ruleGraphType ) ) ( (lv_name_2_0= RULE_ID ) )? '{' ( (lv_statements_4_0= ruleStatement ) )* '}'
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:146:1: ( ( (lv_strict_0_0= 'strict' ) )? ( (lv_type_1_0= ruleGraphType ) ) ( (lv_name_2_0= RULE_ID ) )? '{' ( (lv_statements_4_0= ruleStatement ) )* '}' )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:146:2: ( (lv_strict_0_0= 'strict' ) )? ( (lv_type_1_0= ruleGraphType ) ) ( (lv_name_2_0= RULE_ID ) )? '{' ( (lv_statements_4_0= ruleStatement ) )* '}'
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:141:2: ( (lv_strict_0_0= 'strict' ) )?
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:146:2: ( (lv_strict_0_0= 'strict' ) )?
             int alt2=2;
             int LA2_0 = input.LA(1);
 
@@ -277,10 +282,10 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
             }
             switch (alt2) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:142:1: (lv_strict_0_0= 'strict' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:147:1: (lv_strict_0_0= 'strict' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:142:1: (lv_strict_0_0= 'strict' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:143:3: lv_strict_0_0= 'strict'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:147:1: (lv_strict_0_0= 'strict' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:148:3: lv_strict_0_0= 'strict'
                     {
                     lv_strict_0_0=(Token)input.LT(1);
                     match(input,13,FOLLOW_13_in_ruleGraph225); if (failed) return current;
@@ -312,11 +317,11 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:162:3: ( (lv_type_1_0= ruleGraphType ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:163:1: (lv_type_1_0= ruleGraphType )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:167:3: ( (lv_type_1_0= ruleGraphType ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:168:1: (lv_type_1_0= ruleGraphType )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:163:1: (lv_type_1_0= ruleGraphType )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:164:3: lv_type_1_0= ruleGraphType
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:168:1: (lv_type_1_0= ruleGraphType )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:169:3: lv_type_1_0= ruleGraphType
             {
             if ( backtracking==0 ) {
                
@@ -352,7 +357,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:186:2: ( (lv_name_2_0= RULE_ID ) )?
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:191:2: ( (lv_name_2_0= RULE_ID ) )?
             int alt3=2;
             int LA3_0 = input.LA(1);
 
@@ -361,10 +366,10 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
             }
             switch (alt3) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:187:1: (lv_name_2_0= RULE_ID )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:192:1: (lv_name_2_0= RULE_ID )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:187:1: (lv_name_2_0= RULE_ID )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:188:3: lv_name_2_0= RULE_ID
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:192:1: (lv_name_2_0= RULE_ID )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:193:3: lv_name_2_0= RULE_ID
                     {
                     lv_name_2_0=(Token)input.LT(1);
                     match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleGraph277); if (failed) return current;
@@ -406,7 +411,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                       createLeafNode(grammarAccess.getGraphAccess().getLeftCurlyBracketKeyword_3(), null); 
                   
             }
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:214:1: ( (lv_statements_4_0= ruleStatement ) )*
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:219:1: ( (lv_statements_4_0= ruleStatement ) )*
             loop4:
             do {
                 int alt4=2;
@@ -419,10 +424,10 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
                 switch (alt4) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:215:1: (lv_statements_4_0= ruleStatement )
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:220:1: (lv_statements_4_0= ruleStatement )
             	    {
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:215:1: (lv_statements_4_0= ruleStatement )
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:216:3: lv_statements_4_0= ruleStatement
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:220:1: (lv_statements_4_0= ruleStatement )
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:221:3: lv_statements_4_0= ruleStatement
             	    {
             	    if ( backtracking==0 ) {
             	       
@@ -495,7 +500,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start entryRuleStatement
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:250:1: entryRuleStatement returns [EObject current=null] : iv_ruleStatement= ruleStatement EOF ;
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:255:1: entryRuleStatement returns [EObject current=null] : iv_ruleStatement= ruleStatement EOF ;
     public final EObject entryRuleStatement() throws RecognitionException {
         EObject current = null;
 
@@ -503,8 +508,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:251:2: (iv_ruleStatement= ruleStatement EOF )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:252:2: iv_ruleStatement= ruleStatement EOF
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:256:2: (iv_ruleStatement= ruleStatement EOF )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:257:2: iv_ruleStatement= ruleStatement EOF
             {
             if ( backtracking==0 ) {
                currentNode = createCompositeNode(grammarAccess.getStatementRule(), currentNode); 
@@ -534,7 +539,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start ruleStatement
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:259:1: ruleStatement returns [EObject current=null] : ( (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_AttributeStatement_2= ruleAttributeStatement | this_Subgraph_3= ruleSubgraph | ( ( (lv_name_4_0= ruleDotID ) ) '=' ( (lv_value_6_0= ruleDotID ) ) ) ) ( ';' )? ) ;
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:264:1: ruleStatement returns [EObject current=null] : ( (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_AttributeStatement_2= ruleAttributeStatement | this_Subgraph_3= ruleSubgraph | ( ( (lv_name_4_0= ruleDotID ) ) '=' ( (lv_value_6_0= ruleDotID ) ) ) ) ( ';' )? ) ;
     public final EObject ruleStatement() throws RecognitionException {
         EObject current = null;
 
@@ -554,13 +559,13 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
          @SuppressWarnings("unused") EObject temp=null; setCurrentLookahead(); resetLookahead(); 
             
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:264:6: ( ( (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_AttributeStatement_2= ruleAttributeStatement | this_Subgraph_3= ruleSubgraph | ( ( (lv_name_4_0= ruleDotID ) ) '=' ( (lv_value_6_0= ruleDotID ) ) ) ) ( ';' )? ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:265:1: ( (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_AttributeStatement_2= ruleAttributeStatement | this_Subgraph_3= ruleSubgraph | ( ( (lv_name_4_0= ruleDotID ) ) '=' ( (lv_value_6_0= ruleDotID ) ) ) ) ( ';' )? )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:269:6: ( ( (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_AttributeStatement_2= ruleAttributeStatement | this_Subgraph_3= ruleSubgraph | ( ( (lv_name_4_0= ruleDotID ) ) '=' ( (lv_value_6_0= ruleDotID ) ) ) ) ( ';' )? ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:270:1: ( (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_AttributeStatement_2= ruleAttributeStatement | this_Subgraph_3= ruleSubgraph | ( ( (lv_name_4_0= ruleDotID ) ) '=' ( (lv_value_6_0= ruleDotID ) ) ) ) ( ';' )? )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:265:1: ( (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_AttributeStatement_2= ruleAttributeStatement | this_Subgraph_3= ruleSubgraph | ( ( (lv_name_4_0= ruleDotID ) ) '=' ( (lv_value_6_0= ruleDotID ) ) ) ) ( ';' )? )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:265:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_AttributeStatement_2= ruleAttributeStatement | this_Subgraph_3= ruleSubgraph | ( ( (lv_name_4_0= ruleDotID ) ) '=' ( (lv_value_6_0= ruleDotID ) ) ) ) ( ';' )?
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:270:1: ( (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_AttributeStatement_2= ruleAttributeStatement | this_Subgraph_3= ruleSubgraph | ( ( (lv_name_4_0= ruleDotID ) ) '=' ( (lv_value_6_0= ruleDotID ) ) ) ) ( ';' )? )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:270:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_AttributeStatement_2= ruleAttributeStatement | this_Subgraph_3= ruleSubgraph | ( ( (lv_name_4_0= ruleDotID ) ) '=' ( (lv_value_6_0= ruleDotID ) ) ) ) ( ';' )?
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:265:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_AttributeStatement_2= ruleAttributeStatement | this_Subgraph_3= ruleSubgraph | ( ( (lv_name_4_0= ruleDotID ) ) '=' ( (lv_value_6_0= ruleDotID ) ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:270:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_AttributeStatement_2= ruleAttributeStatement | this_Subgraph_3= ruleSubgraph | ( ( (lv_name_4_0= ruleDotID ) ) '=' ( (lv_value_6_0= ruleDotID ) ) ) )
             int alt5=5;
             switch ( input.LA(1) ) {
             case 18:
@@ -576,7 +581,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                 else {
                     if (backtracking>0) {failed=true; return current;}
                     NoViableAltException nvae =
-                        new NoViableAltException("265:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_AttributeStatement_2= ruleAttributeStatement | this_Subgraph_3= ruleSubgraph | ( ( (lv_name_4_0= ruleDotID ) ) '=' ( (lv_value_6_0= ruleDotID ) ) ) )", 5, 1, input);
+                        new NoViableAltException("270:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_AttributeStatement_2= ruleAttributeStatement | this_Subgraph_3= ruleSubgraph | ( ( (lv_name_4_0= ruleDotID ) ) '=' ( (lv_value_6_0= ruleDotID ) ) ) )", 5, 1, input);
 
                     throw nvae;
                 }
@@ -595,7 +600,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                 else {
                     if (backtracking>0) {failed=true; return current;}
                     NoViableAltException nvae =
-                        new NoViableAltException("265:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_AttributeStatement_2= ruleAttributeStatement | this_Subgraph_3= ruleSubgraph | ( ( (lv_name_4_0= ruleDotID ) ) '=' ( (lv_value_6_0= ruleDotID ) ) ) )", 5, 2, input);
+                        new NoViableAltException("270:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_AttributeStatement_2= ruleAttributeStatement | this_Subgraph_3= ruleSubgraph | ( ( (lv_name_4_0= ruleDotID ) ) '=' ( (lv_value_6_0= ruleDotID ) ) ) )", 5, 2, input);
 
                     throw nvae;
                 }
@@ -617,7 +622,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                 else {
                     if (backtracking>0) {failed=true; return current;}
                     NoViableAltException nvae =
-                        new NoViableAltException("265:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_AttributeStatement_2= ruleAttributeStatement | this_Subgraph_3= ruleSubgraph | ( ( (lv_name_4_0= ruleDotID ) ) '=' ( (lv_value_6_0= ruleDotID ) ) ) )", 5, 3, input);
+                        new NoViableAltException("270:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_AttributeStatement_2= ruleAttributeStatement | this_Subgraph_3= ruleSubgraph | ( ( (lv_name_4_0= ruleDotID ) ) '=' ( (lv_value_6_0= ruleDotID ) ) ) )", 5, 3, input);
 
                     throw nvae;
                 }
@@ -639,7 +644,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                 else {
                     if (backtracking>0) {failed=true; return current;}
                     NoViableAltException nvae =
-                        new NoViableAltException("265:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_AttributeStatement_2= ruleAttributeStatement | this_Subgraph_3= ruleSubgraph | ( ( (lv_name_4_0= ruleDotID ) ) '=' ( (lv_value_6_0= ruleDotID ) ) ) )", 5, 4, input);
+                        new NoViableAltException("270:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_AttributeStatement_2= ruleAttributeStatement | this_Subgraph_3= ruleSubgraph | ( ( (lv_name_4_0= ruleDotID ) ) '=' ( (lv_value_6_0= ruleDotID ) ) ) )", 5, 4, input);
 
                     throw nvae;
                 }
@@ -661,7 +666,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                 else {
                     if (backtracking>0) {failed=true; return current;}
                     NoViableAltException nvae =
-                        new NoViableAltException("265:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_AttributeStatement_2= ruleAttributeStatement | this_Subgraph_3= ruleSubgraph | ( ( (lv_name_4_0= ruleDotID ) ) '=' ( (lv_value_6_0= ruleDotID ) ) ) )", 5, 5, input);
+                        new NoViableAltException("270:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_AttributeStatement_2= ruleAttributeStatement | this_Subgraph_3= ruleSubgraph | ( ( (lv_name_4_0= ruleDotID ) ) '=' ( (lv_value_6_0= ruleDotID ) ) ) )", 5, 5, input);
 
                     throw nvae;
                 }
@@ -677,14 +682,14 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
             default:
                 if (backtracking>0) {failed=true; return current;}
                 NoViableAltException nvae =
-                    new NoViableAltException("265:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_AttributeStatement_2= ruleAttributeStatement | this_Subgraph_3= ruleSubgraph | ( ( (lv_name_4_0= ruleDotID ) ) '=' ( (lv_value_6_0= ruleDotID ) ) ) )", 5, 0, input);
+                    new NoViableAltException("270:2: (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_AttributeStatement_2= ruleAttributeStatement | this_Subgraph_3= ruleSubgraph | ( ( (lv_name_4_0= ruleDotID ) ) '=' ( (lv_value_6_0= ruleDotID ) ) ) )", 5, 0, input);
 
                 throw nvae;
             }
 
             switch (alt5) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:266:2: this_EdgeStatement_0= ruleEdgeStatement
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:271:2: this_EdgeStatement_0= ruleEdgeStatement
                     {
                     if ( backtracking==0 ) {
                        
@@ -710,7 +715,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:279:2: this_NodeStatement_1= ruleNodeStatement
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:284:2: this_NodeStatement_1= ruleNodeStatement
                     {
                     if ( backtracking==0 ) {
                        
@@ -736,7 +741,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:292:2: this_AttributeStatement_2= ruleAttributeStatement
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:297:2: this_AttributeStatement_2= ruleAttributeStatement
                     {
                     if ( backtracking==0 ) {
                        
@@ -762,7 +767,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 4 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:305:2: this_Subgraph_3= ruleSubgraph
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:310:2: this_Subgraph_3= ruleSubgraph
                     {
                     if ( backtracking==0 ) {
                        
@@ -788,16 +793,16 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 5 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:317:6: ( ( (lv_name_4_0= ruleDotID ) ) '=' ( (lv_value_6_0= ruleDotID ) ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:322:6: ( ( (lv_name_4_0= ruleDotID ) ) '=' ( (lv_value_6_0= ruleDotID ) ) )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:317:6: ( ( (lv_name_4_0= ruleDotID ) ) '=' ( (lv_value_6_0= ruleDotID ) ) )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:317:7: ( (lv_name_4_0= ruleDotID ) ) '=' ( (lv_value_6_0= ruleDotID ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:322:6: ( ( (lv_name_4_0= ruleDotID ) ) '=' ( (lv_value_6_0= ruleDotID ) ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:322:7: ( (lv_name_4_0= ruleDotID ) ) '=' ( (lv_value_6_0= ruleDotID ) )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:317:7: ( (lv_name_4_0= ruleDotID ) )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:318:1: (lv_name_4_0= ruleDotID )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:322:7: ( (lv_name_4_0= ruleDotID ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:323:1: (lv_name_4_0= ruleDotID )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:318:1: (lv_name_4_0= ruleDotID )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:319:3: lv_name_4_0= ruleDotID
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:323:1: (lv_name_4_0= ruleDotID )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:324:3: lv_name_4_0= ruleDotID
                     {
                     if ( backtracking==0 ) {
                        
@@ -839,11 +844,11 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                               createLeafNode(grammarAccess.getStatementAccess().getEqualsSignKeyword_0_4_1(), null); 
                           
                     }
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:345:1: ( (lv_value_6_0= ruleDotID ) )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:346:1: (lv_value_6_0= ruleDotID )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:350:1: ( (lv_value_6_0= ruleDotID ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:351:1: (lv_value_6_0= ruleDotID )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:346:1: (lv_value_6_0= ruleDotID )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:347:3: lv_value_6_0= ruleDotID
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:351:1: (lv_value_6_0= ruleDotID )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:352:3: lv_value_6_0= ruleDotID
                     {
                     if ( backtracking==0 ) {
                        
@@ -888,7 +893,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:369:4: ( ';' )?
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:374:4: ( ';' )?
             int alt6=2;
             int LA6_0 = input.LA(1);
 
@@ -897,7 +902,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
             }
             switch (alt6) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:369:6: ';'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:374:6: ';'
                     {
                     match(input,17,FOLLOW_17_in_ruleStatement583); if (failed) return current;
                     if ( backtracking==0 ) {
@@ -936,7 +941,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start entryRuleEdgeStatement
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:381:1: entryRuleEdgeStatement returns [EObject current=null] : iv_ruleEdgeStatement= ruleEdgeStatement EOF ;
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:386:1: entryRuleEdgeStatement returns [EObject current=null] : iv_ruleEdgeStatement= ruleEdgeStatement EOF ;
     public final EObject entryRuleEdgeStatement() throws RecognitionException {
         EObject current = null;
 
@@ -944,8 +949,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:382:2: (iv_ruleEdgeStatement= ruleEdgeStatement EOF )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:383:2: iv_ruleEdgeStatement= ruleEdgeStatement EOF
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:387:2: (iv_ruleEdgeStatement= ruleEdgeStatement EOF )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:388:2: iv_ruleEdgeStatement= ruleEdgeStatement EOF
             {
             if ( backtracking==0 ) {
                currentNode = createCompositeNode(grammarAccess.getEdgeStatementRule(), currentNode); 
@@ -975,7 +980,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start ruleEdgeStatement
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:390:1: ruleEdgeStatement returns [EObject current=null] : ( ( ( (lv_sourceSubgraph_0_0= ruleSubgraph ) ) | ( (lv_sourceNode_1_0= ruleNode ) ) ) ( (lv_edgeTargets_2_0= ruleEdgeTarget ) )+ ( (lv_attributes_3_0= ruleAttributeList ) )? ) ;
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:395:1: ruleEdgeStatement returns [EObject current=null] : ( ( ( (lv_sourceSubgraph_0_0= ruleSubgraph ) ) | ( (lv_sourceNode_1_0= ruleNode ) ) ) ( (lv_edgeTargets_2_0= ruleEdgeTarget ) )+ ( (lv_attributes_3_0= ruleAttributeList ) )? ) ;
     public final EObject ruleEdgeStatement() throws RecognitionException {
         EObject current = null;
 
@@ -991,13 +996,13 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
          @SuppressWarnings("unused") EObject temp=null; setCurrentLookahead(); resetLookahead(); 
             
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:395:6: ( ( ( ( (lv_sourceSubgraph_0_0= ruleSubgraph ) ) | ( (lv_sourceNode_1_0= ruleNode ) ) ) ( (lv_edgeTargets_2_0= ruleEdgeTarget ) )+ ( (lv_attributes_3_0= ruleAttributeList ) )? ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:396:1: ( ( ( (lv_sourceSubgraph_0_0= ruleSubgraph ) ) | ( (lv_sourceNode_1_0= ruleNode ) ) ) ( (lv_edgeTargets_2_0= ruleEdgeTarget ) )+ ( (lv_attributes_3_0= ruleAttributeList ) )? )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:400:6: ( ( ( ( (lv_sourceSubgraph_0_0= ruleSubgraph ) ) | ( (lv_sourceNode_1_0= ruleNode ) ) ) ( (lv_edgeTargets_2_0= ruleEdgeTarget ) )+ ( (lv_attributes_3_0= ruleAttributeList ) )? ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:401:1: ( ( ( (lv_sourceSubgraph_0_0= ruleSubgraph ) ) | ( (lv_sourceNode_1_0= ruleNode ) ) ) ( (lv_edgeTargets_2_0= ruleEdgeTarget ) )+ ( (lv_attributes_3_0= ruleAttributeList ) )? )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:396:1: ( ( ( (lv_sourceSubgraph_0_0= ruleSubgraph ) ) | ( (lv_sourceNode_1_0= ruleNode ) ) ) ( (lv_edgeTargets_2_0= ruleEdgeTarget ) )+ ( (lv_attributes_3_0= ruleAttributeList ) )? )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:396:2: ( ( (lv_sourceSubgraph_0_0= ruleSubgraph ) ) | ( (lv_sourceNode_1_0= ruleNode ) ) ) ( (lv_edgeTargets_2_0= ruleEdgeTarget ) )+ ( (lv_attributes_3_0= ruleAttributeList ) )?
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:401:1: ( ( ( (lv_sourceSubgraph_0_0= ruleSubgraph ) ) | ( (lv_sourceNode_1_0= ruleNode ) ) ) ( (lv_edgeTargets_2_0= ruleEdgeTarget ) )+ ( (lv_attributes_3_0= ruleAttributeList ) )? )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:401:2: ( ( (lv_sourceSubgraph_0_0= ruleSubgraph ) ) | ( (lv_sourceNode_1_0= ruleNode ) ) ) ( (lv_edgeTargets_2_0= ruleEdgeTarget ) )+ ( (lv_attributes_3_0= ruleAttributeList ) )?
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:396:2: ( ( (lv_sourceSubgraph_0_0= ruleSubgraph ) ) | ( (lv_sourceNode_1_0= ruleNode ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:401:2: ( ( (lv_sourceSubgraph_0_0= ruleSubgraph ) ) | ( (lv_sourceNode_1_0= ruleNode ) ) )
             int alt7=2;
             int LA7_0 = input.LA(1);
 
@@ -1010,19 +1015,19 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
             else {
                 if (backtracking>0) {failed=true; return current;}
                 NoViableAltException nvae =
-                    new NoViableAltException("396:2: ( ( (lv_sourceSubgraph_0_0= ruleSubgraph ) ) | ( (lv_sourceNode_1_0= ruleNode ) ) )", 7, 0, input);
+                    new NoViableAltException("401:2: ( ( (lv_sourceSubgraph_0_0= ruleSubgraph ) ) | ( (lv_sourceNode_1_0= ruleNode ) ) )", 7, 0, input);
 
                 throw nvae;
             }
             switch (alt7) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:396:3: ( (lv_sourceSubgraph_0_0= ruleSubgraph ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:401:3: ( (lv_sourceSubgraph_0_0= ruleSubgraph ) )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:396:3: ( (lv_sourceSubgraph_0_0= ruleSubgraph ) )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:397:1: (lv_sourceSubgraph_0_0= ruleSubgraph )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:401:3: ( (lv_sourceSubgraph_0_0= ruleSubgraph ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:402:1: (lv_sourceSubgraph_0_0= ruleSubgraph )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:397:1: (lv_sourceSubgraph_0_0= ruleSubgraph )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:398:3: lv_sourceSubgraph_0_0= ruleSubgraph
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:402:1: (lv_sourceSubgraph_0_0= ruleSubgraph )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:403:3: lv_sourceSubgraph_0_0= ruleSubgraph
                     {
                     if ( backtracking==0 ) {
                        
@@ -1062,13 +1067,13 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:421:6: ( (lv_sourceNode_1_0= ruleNode ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:426:6: ( (lv_sourceNode_1_0= ruleNode ) )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:421:6: ( (lv_sourceNode_1_0= ruleNode ) )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:422:1: (lv_sourceNode_1_0= ruleNode )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:426:6: ( (lv_sourceNode_1_0= ruleNode ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:427:1: (lv_sourceNode_1_0= ruleNode )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:422:1: (lv_sourceNode_1_0= ruleNode )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:423:3: lv_sourceNode_1_0= ruleNode
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:427:1: (lv_sourceNode_1_0= ruleNode )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:428:3: lv_sourceNode_1_0= ruleNode
                     {
                     if ( backtracking==0 ) {
                        
@@ -1110,7 +1115,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:445:3: ( (lv_edgeTargets_2_0= ruleEdgeTarget ) )+
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:450:3: ( (lv_edgeTargets_2_0= ruleEdgeTarget ) )+
             int cnt8=0;
             loop8:
             do {
@@ -1124,10 +1129,10 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
                 switch (alt8) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:446:1: (lv_edgeTargets_2_0= ruleEdgeTarget )
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:451:1: (lv_edgeTargets_2_0= ruleEdgeTarget )
             	    {
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:446:1: (lv_edgeTargets_2_0= ruleEdgeTarget )
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:447:3: lv_edgeTargets_2_0= ruleEdgeTarget
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:451:1: (lv_edgeTargets_2_0= ruleEdgeTarget )
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:452:3: lv_edgeTargets_2_0= ruleEdgeTarget
             	    {
             	    if ( backtracking==0 ) {
             	       
@@ -1174,7 +1179,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                 cnt8++;
             } while (true);
 
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:469:3: ( (lv_attributes_3_0= ruleAttributeList ) )?
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:474:3: ( (lv_attributes_3_0= ruleAttributeList ) )?
             int alt9=2;
             int LA9_0 = input.LA(1);
 
@@ -1183,10 +1188,10 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
             }
             switch (alt9) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:470:1: (lv_attributes_3_0= ruleAttributeList )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:475:1: (lv_attributes_3_0= ruleAttributeList )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:470:1: (lv_attributes_3_0= ruleAttributeList )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:471:3: lv_attributes_3_0= ruleAttributeList
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:475:1: (lv_attributes_3_0= ruleAttributeList )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:476:3: lv_attributes_3_0= ruleAttributeList
                     {
                     if ( backtracking==0 ) {
                        
@@ -1250,7 +1255,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start entryRuleEdgeTarget
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:501:1: entryRuleEdgeTarget returns [EObject current=null] : iv_ruleEdgeTarget= ruleEdgeTarget EOF ;
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:506:1: entryRuleEdgeTarget returns [EObject current=null] : iv_ruleEdgeTarget= ruleEdgeTarget EOF ;
     public final EObject entryRuleEdgeTarget() throws RecognitionException {
         EObject current = null;
 
@@ -1258,8 +1263,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:502:2: (iv_ruleEdgeTarget= ruleEdgeTarget EOF )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:503:2: iv_ruleEdgeTarget= ruleEdgeTarget EOF
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:507:2: (iv_ruleEdgeTarget= ruleEdgeTarget EOF )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:508:2: iv_ruleEdgeTarget= ruleEdgeTarget EOF
             {
             if ( backtracking==0 ) {
                currentNode = createCompositeNode(grammarAccess.getEdgeTargetRule(), currentNode); 
@@ -1289,7 +1294,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start ruleEdgeTarget
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:510:1: ruleEdgeTarget returns [EObject current=null] : ( ( (lv_operator_0_0= ruleEdgeOperator ) ) ( ( (lv_targetSubgraph_1_0= ruleSubgraph ) ) | ( (lv_targetnode_2_0= ruleNode ) ) ) ) ;
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:515:1: ruleEdgeTarget returns [EObject current=null] : ( ( (lv_operator_0_0= ruleEdgeOperator ) ) ( ( (lv_targetSubgraph_1_0= ruleSubgraph ) ) | ( (lv_targetnode_2_0= ruleNode ) ) ) ) ;
     public final EObject ruleEdgeTarget() throws RecognitionException {
         EObject current = null;
 
@@ -1303,17 +1308,17 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
          @SuppressWarnings("unused") EObject temp=null; setCurrentLookahead(); resetLookahead(); 
             
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:515:6: ( ( ( (lv_operator_0_0= ruleEdgeOperator ) ) ( ( (lv_targetSubgraph_1_0= ruleSubgraph ) ) | ( (lv_targetnode_2_0= ruleNode ) ) ) ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:516:1: ( ( (lv_operator_0_0= ruleEdgeOperator ) ) ( ( (lv_targetSubgraph_1_0= ruleSubgraph ) ) | ( (lv_targetnode_2_0= ruleNode ) ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:520:6: ( ( ( (lv_operator_0_0= ruleEdgeOperator ) ) ( ( (lv_targetSubgraph_1_0= ruleSubgraph ) ) | ( (lv_targetnode_2_0= ruleNode ) ) ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:521:1: ( ( (lv_operator_0_0= ruleEdgeOperator ) ) ( ( (lv_targetSubgraph_1_0= ruleSubgraph ) ) | ( (lv_targetnode_2_0= ruleNode ) ) ) )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:516:1: ( ( (lv_operator_0_0= ruleEdgeOperator ) ) ( ( (lv_targetSubgraph_1_0= ruleSubgraph ) ) | ( (lv_targetnode_2_0= ruleNode ) ) ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:516:2: ( (lv_operator_0_0= ruleEdgeOperator ) ) ( ( (lv_targetSubgraph_1_0= ruleSubgraph ) ) | ( (lv_targetnode_2_0= ruleNode ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:521:1: ( ( (lv_operator_0_0= ruleEdgeOperator ) ) ( ( (lv_targetSubgraph_1_0= ruleSubgraph ) ) | ( (lv_targetnode_2_0= ruleNode ) ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:521:2: ( (lv_operator_0_0= ruleEdgeOperator ) ) ( ( (lv_targetSubgraph_1_0= ruleSubgraph ) ) | ( (lv_targetnode_2_0= ruleNode ) ) )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:516:2: ( (lv_operator_0_0= ruleEdgeOperator ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:517:1: (lv_operator_0_0= ruleEdgeOperator )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:521:2: ( (lv_operator_0_0= ruleEdgeOperator ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:522:1: (lv_operator_0_0= ruleEdgeOperator )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:517:1: (lv_operator_0_0= ruleEdgeOperator )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:518:3: lv_operator_0_0= ruleEdgeOperator
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:522:1: (lv_operator_0_0= ruleEdgeOperator )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:523:3: lv_operator_0_0= ruleEdgeOperator
             {
             if ( backtracking==0 ) {
                
@@ -1349,7 +1354,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:540:2: ( ( (lv_targetSubgraph_1_0= ruleSubgraph ) ) | ( (lv_targetnode_2_0= ruleNode ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:545:2: ( ( (lv_targetSubgraph_1_0= ruleSubgraph ) ) | ( (lv_targetnode_2_0= ruleNode ) ) )
             int alt10=2;
             int LA10_0 = input.LA(1);
 
@@ -1362,19 +1367,19 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
             else {
                 if (backtracking>0) {failed=true; return current;}
                 NoViableAltException nvae =
-                    new NoViableAltException("540:2: ( ( (lv_targetSubgraph_1_0= ruleSubgraph ) ) | ( (lv_targetnode_2_0= ruleNode ) ) )", 10, 0, input);
+                    new NoViableAltException("545:2: ( ( (lv_targetSubgraph_1_0= ruleSubgraph ) ) | ( (lv_targetnode_2_0= ruleNode ) ) )", 10, 0, input);
 
                 throw nvae;
             }
             switch (alt10) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:540:3: ( (lv_targetSubgraph_1_0= ruleSubgraph ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:545:3: ( (lv_targetSubgraph_1_0= ruleSubgraph ) )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:540:3: ( (lv_targetSubgraph_1_0= ruleSubgraph ) )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:541:1: (lv_targetSubgraph_1_0= ruleSubgraph )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:545:3: ( (lv_targetSubgraph_1_0= ruleSubgraph ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:546:1: (lv_targetSubgraph_1_0= ruleSubgraph )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:541:1: (lv_targetSubgraph_1_0= ruleSubgraph )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:542:3: lv_targetSubgraph_1_0= ruleSubgraph
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:546:1: (lv_targetSubgraph_1_0= ruleSubgraph )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:547:3: lv_targetSubgraph_1_0= ruleSubgraph
                     {
                     if ( backtracking==0 ) {
                        
@@ -1414,13 +1419,13 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:565:6: ( (lv_targetnode_2_0= ruleNode ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:570:6: ( (lv_targetnode_2_0= ruleNode ) )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:565:6: ( (lv_targetnode_2_0= ruleNode ) )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:566:1: (lv_targetnode_2_0= ruleNode )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:570:6: ( (lv_targetnode_2_0= ruleNode ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:571:1: (lv_targetnode_2_0= ruleNode )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:566:1: (lv_targetnode_2_0= ruleNode )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:567:3: lv_targetnode_2_0= ruleNode
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:571:1: (lv_targetnode_2_0= ruleNode )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:572:3: lv_targetnode_2_0= ruleNode
                     {
                     if ( backtracking==0 ) {
                        
@@ -1487,7 +1492,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start entryRuleNodeStatement
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:597:1: entryRuleNodeStatement returns [EObject current=null] : iv_ruleNodeStatement= ruleNodeStatement EOF ;
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:602:1: entryRuleNodeStatement returns [EObject current=null] : iv_ruleNodeStatement= ruleNodeStatement EOF ;
     public final EObject entryRuleNodeStatement() throws RecognitionException {
         EObject current = null;
 
@@ -1495,8 +1500,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:598:2: (iv_ruleNodeStatement= ruleNodeStatement EOF )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:599:2: iv_ruleNodeStatement= ruleNodeStatement EOF
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:603:2: (iv_ruleNodeStatement= ruleNodeStatement EOF )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:604:2: iv_ruleNodeStatement= ruleNodeStatement EOF
             {
             if ( backtracking==0 ) {
                currentNode = createCompositeNode(grammarAccess.getNodeStatementRule(), currentNode); 
@@ -1526,7 +1531,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start ruleNodeStatement
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:606:1: ruleNodeStatement returns [EObject current=null] : ( ( (lv_node_0_0= ruleNode ) ) ( (lv_attributes_1_0= ruleAttributeList ) )? ) ;
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:611:1: ruleNodeStatement returns [EObject current=null] : ( ( (lv_node_0_0= ruleNode ) ) ( (lv_attributes_1_0= ruleAttributeList ) )? ) ;
     public final EObject ruleNodeStatement() throws RecognitionException {
         EObject current = null;
 
@@ -1538,17 +1543,17 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
          @SuppressWarnings("unused") EObject temp=null; setCurrentLookahead(); resetLookahead(); 
             
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:611:6: ( ( ( (lv_node_0_0= ruleNode ) ) ( (lv_attributes_1_0= ruleAttributeList ) )? ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:612:1: ( ( (lv_node_0_0= ruleNode ) ) ( (lv_attributes_1_0= ruleAttributeList ) )? )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:616:6: ( ( ( (lv_node_0_0= ruleNode ) ) ( (lv_attributes_1_0= ruleAttributeList ) )? ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:617:1: ( ( (lv_node_0_0= ruleNode ) ) ( (lv_attributes_1_0= ruleAttributeList ) )? )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:612:1: ( ( (lv_node_0_0= ruleNode ) ) ( (lv_attributes_1_0= ruleAttributeList ) )? )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:612:2: ( (lv_node_0_0= ruleNode ) ) ( (lv_attributes_1_0= ruleAttributeList ) )?
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:617:1: ( ( (lv_node_0_0= ruleNode ) ) ( (lv_attributes_1_0= ruleAttributeList ) )? )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:617:2: ( (lv_node_0_0= ruleNode ) ) ( (lv_attributes_1_0= ruleAttributeList ) )?
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:612:2: ( (lv_node_0_0= ruleNode ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:613:1: (lv_node_0_0= ruleNode )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:617:2: ( (lv_node_0_0= ruleNode ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:618:1: (lv_node_0_0= ruleNode )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:613:1: (lv_node_0_0= ruleNode )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:614:3: lv_node_0_0= ruleNode
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:618:1: (lv_node_0_0= ruleNode )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:619:3: lv_node_0_0= ruleNode
             {
             if ( backtracking==0 ) {
                
@@ -1584,7 +1589,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:636:2: ( (lv_attributes_1_0= ruleAttributeList ) )?
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:641:2: ( (lv_attributes_1_0= ruleAttributeList ) )?
             int alt11=2;
             int LA11_0 = input.LA(1);
 
@@ -1593,10 +1598,10 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
             }
             switch (alt11) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:637:1: (lv_attributes_1_0= ruleAttributeList )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:642:1: (lv_attributes_1_0= ruleAttributeList )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:637:1: (lv_attributes_1_0= ruleAttributeList )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:638:3: lv_attributes_1_0= ruleAttributeList
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:642:1: (lv_attributes_1_0= ruleAttributeList )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:643:3: lv_attributes_1_0= ruleAttributeList
                     {
                     if ( backtracking==0 ) {
                        
@@ -1660,7 +1665,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start entryRuleAttributeStatement
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:668:1: entryRuleAttributeStatement returns [EObject current=null] : iv_ruleAttributeStatement= ruleAttributeStatement EOF ;
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:673:1: entryRuleAttributeStatement returns [EObject current=null] : iv_ruleAttributeStatement= ruleAttributeStatement EOF ;
     public final EObject entryRuleAttributeStatement() throws RecognitionException {
         EObject current = null;
 
@@ -1668,8 +1673,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:669:2: (iv_ruleAttributeStatement= ruleAttributeStatement EOF )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:670:2: iv_ruleAttributeStatement= ruleAttributeStatement EOF
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:674:2: (iv_ruleAttributeStatement= ruleAttributeStatement EOF )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:675:2: iv_ruleAttributeStatement= ruleAttributeStatement EOF
             {
             if ( backtracking==0 ) {
                currentNode = createCompositeNode(grammarAccess.getAttributeStatementRule(), currentNode); 
@@ -1699,7 +1704,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start ruleAttributeStatement
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:677:1: ruleAttributeStatement returns [EObject current=null] : ( ( (lv_type_0_0= ruleAttributeType ) ) ( (lv_attributes_1_0= ruleAttributeList ) ) ) ;
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:682:1: ruleAttributeStatement returns [EObject current=null] : ( ( (lv_type_0_0= ruleAttributeType ) ) ( (lv_attributes_1_0= ruleAttributeList ) ) ) ;
     public final EObject ruleAttributeStatement() throws RecognitionException {
         EObject current = null;
 
@@ -1711,17 +1716,17 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
          @SuppressWarnings("unused") EObject temp=null; setCurrentLookahead(); resetLookahead(); 
             
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:682:6: ( ( ( (lv_type_0_0= ruleAttributeType ) ) ( (lv_attributes_1_0= ruleAttributeList ) ) ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:683:1: ( ( (lv_type_0_0= ruleAttributeType ) ) ( (lv_attributes_1_0= ruleAttributeList ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:687:6: ( ( ( (lv_type_0_0= ruleAttributeType ) ) ( (lv_attributes_1_0= ruleAttributeList ) ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:688:1: ( ( (lv_type_0_0= ruleAttributeType ) ) ( (lv_attributes_1_0= ruleAttributeList ) ) )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:683:1: ( ( (lv_type_0_0= ruleAttributeType ) ) ( (lv_attributes_1_0= ruleAttributeList ) ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:683:2: ( (lv_type_0_0= ruleAttributeType ) ) ( (lv_attributes_1_0= ruleAttributeList ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:688:1: ( ( (lv_type_0_0= ruleAttributeType ) ) ( (lv_attributes_1_0= ruleAttributeList ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:688:2: ( (lv_type_0_0= ruleAttributeType ) ) ( (lv_attributes_1_0= ruleAttributeList ) )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:683:2: ( (lv_type_0_0= ruleAttributeType ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:684:1: (lv_type_0_0= ruleAttributeType )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:688:2: ( (lv_type_0_0= ruleAttributeType ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:689:1: (lv_type_0_0= ruleAttributeType )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:684:1: (lv_type_0_0= ruleAttributeType )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:685:3: lv_type_0_0= ruleAttributeType
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:689:1: (lv_type_0_0= ruleAttributeType )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:690:3: lv_type_0_0= ruleAttributeType
             {
             if ( backtracking==0 ) {
                
@@ -1757,11 +1762,11 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:707:2: ( (lv_attributes_1_0= ruleAttributeList ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:708:1: (lv_attributes_1_0= ruleAttributeList )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:712:2: ( (lv_attributes_1_0= ruleAttributeList ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:713:1: (lv_attributes_1_0= ruleAttributeList )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:708:1: (lv_attributes_1_0= ruleAttributeList )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:709:3: lv_attributes_1_0= ruleAttributeList
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:713:1: (lv_attributes_1_0= ruleAttributeList )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:714:3: lv_attributes_1_0= ruleAttributeList
             {
             if ( backtracking==0 ) {
                
@@ -1822,7 +1827,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start entryRuleSubgraph
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:739:1: entryRuleSubgraph returns [EObject current=null] : iv_ruleSubgraph= ruleSubgraph EOF ;
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:744:1: entryRuleSubgraph returns [EObject current=null] : iv_ruleSubgraph= ruleSubgraph EOF ;
     public final EObject entryRuleSubgraph() throws RecognitionException {
         EObject current = null;
 
@@ -1830,8 +1835,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:740:2: (iv_ruleSubgraph= ruleSubgraph EOF )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:741:2: iv_ruleSubgraph= ruleSubgraph EOF
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:745:2: (iv_ruleSubgraph= ruleSubgraph EOF )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:746:2: iv_ruleSubgraph= ruleSubgraph EOF
             {
             if ( backtracking==0 ) {
                currentNode = createCompositeNode(grammarAccess.getSubgraphRule(), currentNode); 
@@ -1861,7 +1866,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start ruleSubgraph
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:748:1: ruleSubgraph returns [EObject current=null] : ( ( 'subgraph' ( (lv_name_1_0= RULE_ID ) )? )? '{' ( (lv_statements_3_0= ruleStatement ) )* '}' ) ;
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:753:1: ruleSubgraph returns [EObject current=null] : ( ( 'subgraph' ( (lv_name_1_0= RULE_ID ) )? )? '{' ( (lv_statements_3_0= ruleStatement ) )* '}' ) ;
     public final EObject ruleSubgraph() throws RecognitionException {
         EObject current = null;
 
@@ -1872,13 +1877,13 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
          @SuppressWarnings("unused") EObject temp=null; setCurrentLookahead(); resetLookahead(); 
             
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:753:6: ( ( ( 'subgraph' ( (lv_name_1_0= RULE_ID ) )? )? '{' ( (lv_statements_3_0= ruleStatement ) )* '}' ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:754:1: ( ( 'subgraph' ( (lv_name_1_0= RULE_ID ) )? )? '{' ( (lv_statements_3_0= ruleStatement ) )* '}' )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:758:6: ( ( ( 'subgraph' ( (lv_name_1_0= RULE_ID ) )? )? '{' ( (lv_statements_3_0= ruleStatement ) )* '}' ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:759:1: ( ( 'subgraph' ( (lv_name_1_0= RULE_ID ) )? )? '{' ( (lv_statements_3_0= ruleStatement ) )* '}' )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:754:1: ( ( 'subgraph' ( (lv_name_1_0= RULE_ID ) )? )? '{' ( (lv_statements_3_0= ruleStatement ) )* '}' )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:754:2: ( 'subgraph' ( (lv_name_1_0= RULE_ID ) )? )? '{' ( (lv_statements_3_0= ruleStatement ) )* '}'
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:759:1: ( ( 'subgraph' ( (lv_name_1_0= RULE_ID ) )? )? '{' ( (lv_statements_3_0= ruleStatement ) )* '}' )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:759:2: ( 'subgraph' ( (lv_name_1_0= RULE_ID ) )? )? '{' ( (lv_statements_3_0= ruleStatement ) )* '}'
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:754:2: ( 'subgraph' ( (lv_name_1_0= RULE_ID ) )? )?
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:759:2: ( 'subgraph' ( (lv_name_1_0= RULE_ID ) )? )?
             int alt13=2;
             int LA13_0 = input.LA(1);
 
@@ -1887,7 +1892,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
             }
             switch (alt13) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:754:4: 'subgraph' ( (lv_name_1_0= RULE_ID ) )?
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:759:4: 'subgraph' ( (lv_name_1_0= RULE_ID ) )?
                     {
                     match(input,18,FOLLOW_18_in_ruleSubgraph1201); if (failed) return current;
                     if ( backtracking==0 ) {
@@ -1895,7 +1900,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                               createLeafNode(grammarAccess.getSubgraphAccess().getSubgraphKeyword_0_0(), null); 
                           
                     }
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:758:1: ( (lv_name_1_0= RULE_ID ) )?
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:763:1: ( (lv_name_1_0= RULE_ID ) )?
                     int alt12=2;
                     int LA12_0 = input.LA(1);
 
@@ -1904,10 +1909,10 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                     }
                     switch (alt12) {
                         case 1 :
-                            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:759:1: (lv_name_1_0= RULE_ID )
+                            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:764:1: (lv_name_1_0= RULE_ID )
                             {
-                            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:759:1: (lv_name_1_0= RULE_ID )
-                            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:760:3: lv_name_1_0= RULE_ID
+                            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:764:1: (lv_name_1_0= RULE_ID )
+                            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:765:3: lv_name_1_0= RULE_ID
                             {
                             lv_name_1_0=(Token)input.LT(1);
                             match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleSubgraph1218); if (failed) return current;
@@ -1955,7 +1960,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                       createLeafNode(grammarAccess.getSubgraphAccess().getLeftCurlyBracketKeyword_1(), null); 
                   
             }
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:786:1: ( (lv_statements_3_0= ruleStatement ) )*
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:791:1: ( (lv_statements_3_0= ruleStatement ) )*
             loop14:
             do {
                 int alt14=2;
@@ -1968,10 +1973,10 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
                 switch (alt14) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:787:1: (lv_statements_3_0= ruleStatement )
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:792:1: (lv_statements_3_0= ruleStatement )
             	    {
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:787:1: (lv_statements_3_0= ruleStatement )
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:788:3: lv_statements_3_0= ruleStatement
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:792:1: (lv_statements_3_0= ruleStatement )
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:793:3: lv_statements_3_0= ruleStatement
             	    {
             	    if ( backtracking==0 ) {
             	       
@@ -2044,7 +2049,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start entryRuleAttributeList
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:822:1: entryRuleAttributeList returns [EObject current=null] : iv_ruleAttributeList= ruleAttributeList EOF ;
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:827:1: entryRuleAttributeList returns [EObject current=null] : iv_ruleAttributeList= ruleAttributeList EOF ;
     public final EObject entryRuleAttributeList() throws RecognitionException {
         EObject current = null;
 
@@ -2052,8 +2057,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:823:2: (iv_ruleAttributeList= ruleAttributeList EOF )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:824:2: iv_ruleAttributeList= ruleAttributeList EOF
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:828:2: (iv_ruleAttributeList= ruleAttributeList EOF )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:829:2: iv_ruleAttributeList= ruleAttributeList EOF
             {
             if ( backtracking==0 ) {
                currentNode = createCompositeNode(grammarAccess.getAttributeListRule(), currentNode); 
@@ -2083,7 +2088,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start ruleAttributeList
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:831:1: ruleAttributeList returns [EObject current=null] : ( '[' ( (lv_entries_1_0= ruleAttribute ) ) ( ',' ( (lv_entries_3_0= ruleAttribute ) ) )* ']' ) ;
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:836:1: ruleAttributeList returns [EObject current=null] : ( '[' ( (lv_entries_1_0= ruleAttribute ) ) ( ',' ( (lv_entries_3_0= ruleAttribute ) ) )* ']' ) ;
     public final EObject ruleAttributeList() throws RecognitionException {
         EObject current = null;
 
@@ -2095,11 +2100,11 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
          @SuppressWarnings("unused") EObject temp=null; setCurrentLookahead(); resetLookahead(); 
             
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:836:6: ( ( '[' ( (lv_entries_1_0= ruleAttribute ) ) ( ',' ( (lv_entries_3_0= ruleAttribute ) ) )* ']' ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:837:1: ( '[' ( (lv_entries_1_0= ruleAttribute ) ) ( ',' ( (lv_entries_3_0= ruleAttribute ) ) )* ']' )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:841:6: ( ( '[' ( (lv_entries_1_0= ruleAttribute ) ) ( ',' ( (lv_entries_3_0= ruleAttribute ) ) )* ']' ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:842:1: ( '[' ( (lv_entries_1_0= ruleAttribute ) ) ( ',' ( (lv_entries_3_0= ruleAttribute ) ) )* ']' )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:837:1: ( '[' ( (lv_entries_1_0= ruleAttribute ) ) ( ',' ( (lv_entries_3_0= ruleAttribute ) ) )* ']' )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:837:3: '[' ( (lv_entries_1_0= ruleAttribute ) ) ( ',' ( (lv_entries_3_0= ruleAttribute ) ) )* ']'
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:842:1: ( '[' ( (lv_entries_1_0= ruleAttribute ) ) ( ',' ( (lv_entries_3_0= ruleAttribute ) ) )* ']' )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:842:3: '[' ( (lv_entries_1_0= ruleAttribute ) ) ( ',' ( (lv_entries_3_0= ruleAttribute ) ) )* ']'
             {
             match(input,19,FOLLOW_19_in_ruleAttributeList1349); if (failed) return current;
             if ( backtracking==0 ) {
@@ -2107,11 +2112,11 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                       createLeafNode(grammarAccess.getAttributeListAccess().getLeftSquareBracketKeyword_0(), null); 
                   
             }
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:841:1: ( (lv_entries_1_0= ruleAttribute ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:842:1: (lv_entries_1_0= ruleAttribute )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:846:1: ( (lv_entries_1_0= ruleAttribute ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:847:1: (lv_entries_1_0= ruleAttribute )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:842:1: (lv_entries_1_0= ruleAttribute )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:843:3: lv_entries_1_0= ruleAttribute
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:847:1: (lv_entries_1_0= ruleAttribute )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:848:3: lv_entries_1_0= ruleAttribute
             {
             if ( backtracking==0 ) {
                
@@ -2147,7 +2152,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:865:2: ( ',' ( (lv_entries_3_0= ruleAttribute ) ) )*
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:870:2: ( ',' ( (lv_entries_3_0= ruleAttribute ) ) )*
             loop15:
             do {
                 int alt15=2;
@@ -2160,7 +2165,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
                 switch (alt15) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:865:4: ',' ( (lv_entries_3_0= ruleAttribute ) )
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:870:4: ',' ( (lv_entries_3_0= ruleAttribute ) )
             	    {
             	    match(input,20,FOLLOW_20_in_ruleAttributeList1381); if (failed) return current;
             	    if ( backtracking==0 ) {
@@ -2168,11 +2173,11 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
             	              createLeafNode(grammarAccess.getAttributeListAccess().getCommaKeyword_2_0(), null); 
             	          
             	    }
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:869:1: ( (lv_entries_3_0= ruleAttribute ) )
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:870:1: (lv_entries_3_0= ruleAttribute )
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:874:1: ( (lv_entries_3_0= ruleAttribute ) )
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:875:1: (lv_entries_3_0= ruleAttribute )
             	    {
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:870:1: (lv_entries_3_0= ruleAttribute )
-            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:871:3: lv_entries_3_0= ruleAttribute
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:875:1: (lv_entries_3_0= ruleAttribute )
+            	    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:876:3: lv_entries_3_0= ruleAttribute
             	    {
             	    if ( backtracking==0 ) {
             	       
@@ -2248,7 +2253,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start entryRuleAttribute
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:905:1: entryRuleAttribute returns [EObject current=null] : iv_ruleAttribute= ruleAttribute EOF ;
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:910:1: entryRuleAttribute returns [EObject current=null] : iv_ruleAttribute= ruleAttribute EOF ;
     public final EObject entryRuleAttribute() throws RecognitionException {
         EObject current = null;
 
@@ -2256,8 +2261,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:906:2: (iv_ruleAttribute= ruleAttribute EOF )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:907:2: iv_ruleAttribute= ruleAttribute EOF
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:911:2: (iv_ruleAttribute= ruleAttribute EOF )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:912:2: iv_ruleAttribute= ruleAttribute EOF
             {
             if ( backtracking==0 ) {
                currentNode = createCompositeNode(grammarAccess.getAttributeRule(), currentNode); 
@@ -2287,7 +2292,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start ruleAttribute
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:914:1: ruleAttribute returns [EObject current=null] : ( ( (lv_name_0_0= ruleDotID ) ) ( '=' ( (lv_value_2_0= ruleDotID ) ) )? ) ;
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:919:1: ruleAttribute returns [EObject current=null] : ( ( (lv_name_0_0= ruleDotID ) ) ( '=' ( (lv_value_2_0= ruleDotID ) ) )? ) ;
     public final EObject ruleAttribute() throws RecognitionException {
         EObject current = null;
 
@@ -2299,17 +2304,17 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
          @SuppressWarnings("unused") EObject temp=null; setCurrentLookahead(); resetLookahead(); 
             
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:919:6: ( ( ( (lv_name_0_0= ruleDotID ) ) ( '=' ( (lv_value_2_0= ruleDotID ) ) )? ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:920:1: ( ( (lv_name_0_0= ruleDotID ) ) ( '=' ( (lv_value_2_0= ruleDotID ) ) )? )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:924:6: ( ( ( (lv_name_0_0= ruleDotID ) ) ( '=' ( (lv_value_2_0= ruleDotID ) ) )? ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:925:1: ( ( (lv_name_0_0= ruleDotID ) ) ( '=' ( (lv_value_2_0= ruleDotID ) ) )? )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:920:1: ( ( (lv_name_0_0= ruleDotID ) ) ( '=' ( (lv_value_2_0= ruleDotID ) ) )? )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:920:2: ( (lv_name_0_0= ruleDotID ) ) ( '=' ( (lv_value_2_0= ruleDotID ) ) )?
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:925:1: ( ( (lv_name_0_0= ruleDotID ) ) ( '=' ( (lv_value_2_0= ruleDotID ) ) )? )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:925:2: ( (lv_name_0_0= ruleDotID ) ) ( '=' ( (lv_value_2_0= ruleDotID ) ) )?
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:920:2: ( (lv_name_0_0= ruleDotID ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:921:1: (lv_name_0_0= ruleDotID )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:925:2: ( (lv_name_0_0= ruleDotID ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:926:1: (lv_name_0_0= ruleDotID )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:921:1: (lv_name_0_0= ruleDotID )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:922:3: lv_name_0_0= ruleDotID
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:926:1: (lv_name_0_0= ruleDotID )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:927:3: lv_name_0_0= ruleDotID
             {
             if ( backtracking==0 ) {
                
@@ -2345,7 +2350,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:944:2: ( '=' ( (lv_value_2_0= ruleDotID ) ) )?
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:949:2: ( '=' ( (lv_value_2_0= ruleDotID ) ) )?
             int alt16=2;
             int LA16_0 = input.LA(1);
 
@@ -2354,7 +2359,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
             }
             switch (alt16) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:944:4: '=' ( (lv_value_2_0= ruleDotID ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:949:4: '=' ( (lv_value_2_0= ruleDotID ) )
                     {
                     match(input,16,FOLLOW_16_in_ruleAttribute1517); if (failed) return current;
                     if ( backtracking==0 ) {
@@ -2362,11 +2367,11 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                               createLeafNode(grammarAccess.getAttributeAccess().getEqualsSignKeyword_1_0(), null); 
                           
                     }
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:948:1: ( (lv_value_2_0= ruleDotID ) )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:949:1: (lv_value_2_0= ruleDotID )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:953:1: ( (lv_value_2_0= ruleDotID ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:954:1: (lv_value_2_0= ruleDotID )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:949:1: (lv_value_2_0= ruleDotID )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:950:3: lv_value_2_0= ruleDotID
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:954:1: (lv_value_2_0= ruleDotID )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:955:3: lv_value_2_0= ruleDotID
                     {
                     if ( backtracking==0 ) {
                        
@@ -2433,7 +2438,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start entryRuleNode
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:980:1: entryRuleNode returns [EObject current=null] : iv_ruleNode= ruleNode EOF ;
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:985:1: entryRuleNode returns [EObject current=null] : iv_ruleNode= ruleNode EOF ;
     public final EObject entryRuleNode() throws RecognitionException {
         EObject current = null;
 
@@ -2441,8 +2446,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:981:2: (iv_ruleNode= ruleNode EOF )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:982:2: iv_ruleNode= ruleNode EOF
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:986:2: (iv_ruleNode= ruleNode EOF )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:987:2: iv_ruleNode= ruleNode EOF
             {
             if ( backtracking==0 ) {
                currentNode = createCompositeNode(grammarAccess.getNodeRule(), currentNode); 
@@ -2472,7 +2477,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start ruleNode
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:989:1: ruleNode returns [EObject current=null] : ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_port_2_0= rulePort ) ) )? ) ;
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:994:1: ruleNode returns [EObject current=null] : ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_port_2_0= rulePort ) ) )? ) ;
     public final EObject ruleNode() throws RecognitionException {
         EObject current = null;
 
@@ -2484,17 +2489,17 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
          @SuppressWarnings("unused") EObject temp=null; setCurrentLookahead(); resetLookahead(); 
             
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:994:6: ( ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_port_2_0= rulePort ) ) )? ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:995:1: ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_port_2_0= rulePort ) ) )? )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:999:6: ( ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_port_2_0= rulePort ) ) )? ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1000:1: ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_port_2_0= rulePort ) ) )? )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:995:1: ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_port_2_0= rulePort ) ) )? )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:995:2: ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_port_2_0= rulePort ) ) )?
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1000:1: ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_port_2_0= rulePort ) ) )? )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1000:2: ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_port_2_0= rulePort ) ) )?
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:995:2: ( (lv_name_0_0= ruleDotID ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:996:1: (lv_name_0_0= ruleDotID )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1000:2: ( (lv_name_0_0= ruleDotID ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1001:1: (lv_name_0_0= ruleDotID )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:996:1: (lv_name_0_0= ruleDotID )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:997:3: lv_name_0_0= ruleDotID
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1001:1: (lv_name_0_0= ruleDotID )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1002:3: lv_name_0_0= ruleDotID
             {
             if ( backtracking==0 ) {
                
@@ -2530,7 +2535,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1019:2: ( ':' ( (lv_port_2_0= rulePort ) ) )?
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1024:2: ( ':' ( (lv_port_2_0= rulePort ) ) )?
             int alt17=2;
             int LA17_0 = input.LA(1);
 
@@ -2539,7 +2544,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
             }
             switch (alt17) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1019:4: ':' ( (lv_port_2_0= rulePort ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1024:4: ':' ( (lv_port_2_0= rulePort ) )
                     {
                     match(input,22,FOLLOW_22_in_ruleNode1643); if (failed) return current;
                     if ( backtracking==0 ) {
@@ -2547,11 +2552,11 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                               createLeafNode(grammarAccess.getNodeAccess().getColonKeyword_1_0(), null); 
                           
                     }
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1023:1: ( (lv_port_2_0= rulePort ) )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1024:1: (lv_port_2_0= rulePort )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1028:1: ( (lv_port_2_0= rulePort ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1029:1: (lv_port_2_0= rulePort )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1024:1: (lv_port_2_0= rulePort )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1025:3: lv_port_2_0= rulePort
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1029:1: (lv_port_2_0= rulePort )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1030:3: lv_port_2_0= rulePort
                     {
                     if ( backtracking==0 ) {
                        
@@ -2618,7 +2623,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start entryRulePort
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1055:1: entryRulePort returns [EObject current=null] : iv_rulePort= rulePort EOF ;
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1060:1: entryRulePort returns [EObject current=null] : iv_rulePort= rulePort EOF ;
     public final EObject entryRulePort() throws RecognitionException {
         EObject current = null;
 
@@ -2626,8 +2631,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1056:2: (iv_rulePort= rulePort EOF )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1057:2: iv_rulePort= rulePort EOF
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1061:2: (iv_rulePort= rulePort EOF )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1062:2: iv_rulePort= rulePort EOF
             {
             if ( backtracking==0 ) {
                currentNode = createCompositeNode(grammarAccess.getPortRule(), currentNode); 
@@ -2657,7 +2662,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start rulePort
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1064:1: rulePort returns [EObject current=null] : ( ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )? ) | ( (lv_compass_pt_3_0= ruleCompassPoint ) ) ) ;
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1069:1: rulePort returns [EObject current=null] : ( ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )? ) | ( (lv_compass_pt_3_0= ruleCompassPoint ) ) ) ;
     public final EObject rulePort() throws RecognitionException {
         EObject current = null;
 
@@ -2671,10 +2676,10 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
          @SuppressWarnings("unused") EObject temp=null; setCurrentLookahead(); resetLookahead(); 
             
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1069:6: ( ( ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )? ) | ( (lv_compass_pt_3_0= ruleCompassPoint ) ) ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1070:1: ( ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )? ) | ( (lv_compass_pt_3_0= ruleCompassPoint ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1074:6: ( ( ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )? ) | ( (lv_compass_pt_3_0= ruleCompassPoint ) ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1075:1: ( ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )? ) | ( (lv_compass_pt_3_0= ruleCompassPoint ) ) )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1070:1: ( ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )? ) | ( (lv_compass_pt_3_0= ruleCompassPoint ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1075:1: ( ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )? ) | ( (lv_compass_pt_3_0= ruleCompassPoint ) ) )
             int alt19=2;
             int LA19_0 = input.LA(1);
 
@@ -2687,22 +2692,22 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
             else {
                 if (backtracking>0) {failed=true; return current;}
                 NoViableAltException nvae =
-                    new NoViableAltException("1070:1: ( ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )? ) | ( (lv_compass_pt_3_0= ruleCompassPoint ) ) )", 19, 0, input);
+                    new NoViableAltException("1075:1: ( ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )? ) | ( (lv_compass_pt_3_0= ruleCompassPoint ) ) )", 19, 0, input);
 
                 throw nvae;
             }
             switch (alt19) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1070:2: ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )? )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1075:2: ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )? )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1070:2: ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )? )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1070:3: ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )?
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1075:2: ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )? )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1075:3: ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )?
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1070:3: ( (lv_name_0_0= ruleDotID ) )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1071:1: (lv_name_0_0= ruleDotID )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1075:3: ( (lv_name_0_0= ruleDotID ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1076:1: (lv_name_0_0= ruleDotID )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1071:1: (lv_name_0_0= ruleDotID )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1072:3: lv_name_0_0= ruleDotID
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1076:1: (lv_name_0_0= ruleDotID )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1077:3: lv_name_0_0= ruleDotID
                     {
                     if ( backtracking==0 ) {
                        
@@ -2738,7 +2743,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1094:2: ( ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )?
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1099:2: ( ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )?
                     int alt18=2;
                     int LA18_0 = input.LA(1);
 
@@ -2747,7 +2752,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                     }
                     switch (alt18) {
                         case 1 :
-                            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1094:4: ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) )
+                            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1099:4: ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) )
                             {
                             match(input,22,FOLLOW_22_in_rulePort1770); if (failed) return current;
                             if ( backtracking==0 ) {
@@ -2755,11 +2760,11 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                                       createLeafNode(grammarAccess.getPortAccess().getColonKeyword_0_1_0(), null); 
                                   
                             }
-                            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1098:1: ( (lv_compass_pt_2_0= ruleCompassPoint ) )
-                            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1099:1: (lv_compass_pt_2_0= ruleCompassPoint )
+                            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1103:1: ( (lv_compass_pt_2_0= ruleCompassPoint ) )
+                            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1104:1: (lv_compass_pt_2_0= ruleCompassPoint )
                             {
-                            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1099:1: (lv_compass_pt_2_0= ruleCompassPoint )
-                            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1100:3: lv_compass_pt_2_0= ruleCompassPoint
+                            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1104:1: (lv_compass_pt_2_0= ruleCompassPoint )
+                            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1105:3: lv_compass_pt_2_0= ruleCompassPoint
                             {
                             if ( backtracking==0 ) {
                                
@@ -2808,13 +2813,13 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1123:6: ( (lv_compass_pt_3_0= ruleCompassPoint ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1128:6: ( (lv_compass_pt_3_0= ruleCompassPoint ) )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1123:6: ( (lv_compass_pt_3_0= ruleCompassPoint ) )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1124:1: (lv_compass_pt_3_0= ruleCompassPoint )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1128:6: ( (lv_compass_pt_3_0= ruleCompassPoint ) )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1129:1: (lv_compass_pt_3_0= ruleCompassPoint )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1124:1: (lv_compass_pt_3_0= ruleCompassPoint )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1125:3: lv_compass_pt_3_0= ruleCompassPoint
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1129:1: (lv_compass_pt_3_0= ruleCompassPoint )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1130:3: lv_compass_pt_3_0= ruleCompassPoint
                     {
                     if ( backtracking==0 ) {
                        
@@ -2878,7 +2883,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start entryRuleDotID
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1155:1: entryRuleDotID returns [String current=null] : iv_ruleDotID= ruleDotID EOF ;
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1160:1: entryRuleDotID returns [String current=null] : iv_ruleDotID= ruleDotID EOF ;
     public final String entryRuleDotID() throws RecognitionException {
         String current = null;
 
@@ -2886,8 +2891,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1156:2: (iv_ruleDotID= ruleDotID EOF )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1157:2: iv_ruleDotID= ruleDotID EOF
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1161:2: (iv_ruleDotID= ruleDotID EOF )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1162:2: iv_ruleDotID= ruleDotID EOF
             {
             if ( backtracking==0 ) {
                currentNode = createCompositeNode(grammarAccess.getDotIDRule(), currentNode); 
@@ -2917,7 +2922,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start ruleDotID
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1164:1: ruleDotID returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID | this_FLOAT_1= RULE_FLOAT | this_STRING_2= RULE_STRING ) ;
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1169:1: ruleDotID returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID | this_FLOAT_1= RULE_FLOAT | this_STRING_2= RULE_STRING ) ;
     public final AntlrDatatypeRuleToken ruleDotID() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -2928,10 +2933,10 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
          setCurrentLookahead(); resetLookahead(); 
             
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1169:6: ( (this_ID_0= RULE_ID | this_FLOAT_1= RULE_FLOAT | this_STRING_2= RULE_STRING ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1170:1: (this_ID_0= RULE_ID | this_FLOAT_1= RULE_FLOAT | this_STRING_2= RULE_STRING )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1174:6: ( (this_ID_0= RULE_ID | this_FLOAT_1= RULE_FLOAT | this_STRING_2= RULE_STRING ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1175:1: (this_ID_0= RULE_ID | this_FLOAT_1= RULE_FLOAT | this_STRING_2= RULE_STRING )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1170:1: (this_ID_0= RULE_ID | this_FLOAT_1= RULE_FLOAT | this_STRING_2= RULE_STRING )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1175:1: (this_ID_0= RULE_ID | this_FLOAT_1= RULE_FLOAT | this_STRING_2= RULE_STRING )
             int alt20=3;
             switch ( input.LA(1) ) {
             case RULE_ID:
@@ -2952,14 +2957,14 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
             default:
                 if (backtracking>0) {failed=true; return current;}
                 NoViableAltException nvae =
-                    new NoViableAltException("1170:1: (this_ID_0= RULE_ID | this_FLOAT_1= RULE_FLOAT | this_STRING_2= RULE_STRING )", 20, 0, input);
+                    new NoViableAltException("1175:1: (this_ID_0= RULE_ID | this_FLOAT_1= RULE_FLOAT | this_STRING_2= RULE_STRING )", 20, 0, input);
 
                 throw nvae;
             }
 
             switch (alt20) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1170:6: this_ID_0= RULE_ID
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1175:6: this_ID_0= RULE_ID
                     {
                     this_ID_0=(Token)input.LT(1);
                     match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleDotID1909); if (failed) return current;
@@ -2977,7 +2982,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1178:10: this_FLOAT_1= RULE_FLOAT
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1183:10: this_FLOAT_1= RULE_FLOAT
                     {
                     this_FLOAT_1=(Token)input.LT(1);
                     match(input,RULE_FLOAT,FOLLOW_RULE_FLOAT_in_ruleDotID1935); if (failed) return current;
@@ -2995,7 +3000,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1186:10: this_STRING_2= RULE_STRING
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1191:10: this_STRING_2= RULE_STRING
                     {
                     this_STRING_2=(Token)input.LT(1);
                     match(input,RULE_STRING,FOLLOW_RULE_STRING_in_ruleDotID1961); if (failed) return current;
@@ -3037,16 +3042,16 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start ruleEdgeOperator
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1201:1: ruleEdgeOperator returns [Enumerator current=null] : ( ( '->' ) | ( '--' ) ) ;
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1206:1: ruleEdgeOperator returns [Enumerator current=null] : ( ( '->' ) | ( '--' ) ) ;
     public final Enumerator ruleEdgeOperator() throws RecognitionException {
         Enumerator current = null;
 
          setCurrentLookahead(); resetLookahead(); 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1205:6: ( ( ( '->' ) | ( '--' ) ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1206:1: ( ( '->' ) | ( '--' ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1210:6: ( ( ( '->' ) | ( '--' ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1211:1: ( ( '->' ) | ( '--' ) )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1206:1: ( ( '->' ) | ( '--' ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1211:1: ( ( '->' ) | ( '--' ) )
             int alt21=2;
             int LA21_0 = input.LA(1);
 
@@ -3059,16 +3064,16 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
             else {
                 if (backtracking>0) {failed=true; return current;}
                 NoViableAltException nvae =
-                    new NoViableAltException("1206:1: ( ( '->' ) | ( '--' ) )", 21, 0, input);
+                    new NoViableAltException("1211:1: ( ( '->' ) | ( '--' ) )", 21, 0, input);
 
                 throw nvae;
             }
             switch (alt21) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1206:2: ( '->' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1211:2: ( '->' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1206:2: ( '->' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1206:4: '->'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1211:2: ( '->' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1211:4: '->'
                     {
                     match(input,23,FOLLOW_23_in_ruleEdgeOperator2018); if (failed) return current;
                     if ( backtracking==0 ) {
@@ -3084,10 +3089,10 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1212:6: ( '--' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1217:6: ( '--' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1212:6: ( '--' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1212:8: '--'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1217:6: ( '--' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1217:8: '--'
                     {
                     match(input,24,FOLLOW_24_in_ruleEdgeOperator2033); if (failed) return current;
                     if ( backtracking==0 ) {
@@ -3127,16 +3132,16 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start ruleGraphType
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1222:1: ruleGraphType returns [Enumerator current=null] : ( ( 'graph' ) | ( 'digraph' ) ) ;
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1227:1: ruleGraphType returns [Enumerator current=null] : ( ( 'graph' ) | ( 'digraph' ) ) ;
     public final Enumerator ruleGraphType() throws RecognitionException {
         Enumerator current = null;
 
          setCurrentLookahead(); resetLookahead(); 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1226:6: ( ( ( 'graph' ) | ( 'digraph' ) ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1227:1: ( ( 'graph' ) | ( 'digraph' ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1231:6: ( ( ( 'graph' ) | ( 'digraph' ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1232:1: ( ( 'graph' ) | ( 'digraph' ) )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1227:1: ( ( 'graph' ) | ( 'digraph' ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1232:1: ( ( 'graph' ) | ( 'digraph' ) )
             int alt22=2;
             int LA22_0 = input.LA(1);
 
@@ -3149,16 +3154,16 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
             else {
                 if (backtracking>0) {failed=true; return current;}
                 NoViableAltException nvae =
-                    new NoViableAltException("1227:1: ( ( 'graph' ) | ( 'digraph' ) )", 22, 0, input);
+                    new NoViableAltException("1232:1: ( ( 'graph' ) | ( 'digraph' ) )", 22, 0, input);
 
                 throw nvae;
             }
             switch (alt22) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1227:2: ( 'graph' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1232:2: ( 'graph' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1227:2: ( 'graph' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1227:4: 'graph'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1232:2: ( 'graph' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1232:4: 'graph'
                     {
                     match(input,25,FOLLOW_25_in_ruleGraphType2076); if (failed) return current;
                     if ( backtracking==0 ) {
@@ -3174,10 +3179,10 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1233:6: ( 'digraph' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1238:6: ( 'digraph' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1233:6: ( 'digraph' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1233:8: 'digraph'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1238:6: ( 'digraph' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1238:8: 'digraph'
                     {
                     match(input,26,FOLLOW_26_in_ruleGraphType2091); if (failed) return current;
                     if ( backtracking==0 ) {
@@ -3217,16 +3222,16 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start ruleAttributeType
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1243:1: ruleAttributeType returns [Enumerator current=null] : ( ( 'graph' ) | ( 'node' ) | ( 'edge' ) ) ;
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1248:1: ruleAttributeType returns [Enumerator current=null] : ( ( 'graph' ) | ( 'node' ) | ( 'edge' ) ) ;
     public final Enumerator ruleAttributeType() throws RecognitionException {
         Enumerator current = null;
 
          setCurrentLookahead(); resetLookahead(); 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1247:6: ( ( ( 'graph' ) | ( 'node' ) | ( 'edge' ) ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1248:1: ( ( 'graph' ) | ( 'node' ) | ( 'edge' ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1252:6: ( ( ( 'graph' ) | ( 'node' ) | ( 'edge' ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1253:1: ( ( 'graph' ) | ( 'node' ) | ( 'edge' ) )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1248:1: ( ( 'graph' ) | ( 'node' ) | ( 'edge' ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1253:1: ( ( 'graph' ) | ( 'node' ) | ( 'edge' ) )
             int alt23=3;
             switch ( input.LA(1) ) {
             case 25:
@@ -3247,17 +3252,17 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
             default:
                 if (backtracking>0) {failed=true; return current;}
                 NoViableAltException nvae =
-                    new NoViableAltException("1248:1: ( ( 'graph' ) | ( 'node' ) | ( 'edge' ) )", 23, 0, input);
+                    new NoViableAltException("1253:1: ( ( 'graph' ) | ( 'node' ) | ( 'edge' ) )", 23, 0, input);
 
                 throw nvae;
             }
 
             switch (alt23) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1248:2: ( 'graph' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1253:2: ( 'graph' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1248:2: ( 'graph' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1248:4: 'graph'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1253:2: ( 'graph' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1253:4: 'graph'
                     {
                     match(input,25,FOLLOW_25_in_ruleAttributeType2134); if (failed) return current;
                     if ( backtracking==0 ) {
@@ -3273,10 +3278,10 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1254:6: ( 'node' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1259:6: ( 'node' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1254:6: ( 'node' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1254:8: 'node'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1259:6: ( 'node' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1259:8: 'node'
                     {
                     match(input,27,FOLLOW_27_in_ruleAttributeType2149); if (failed) return current;
                     if ( backtracking==0 ) {
@@ -3292,10 +3297,10 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1260:6: ( 'edge' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1265:6: ( 'edge' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1260:6: ( 'edge' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1260:8: 'edge'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1265:6: ( 'edge' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1265:8: 'edge'
                     {
                     match(input,28,FOLLOW_28_in_ruleAttributeType2164); if (failed) return current;
                     if ( backtracking==0 ) {
@@ -3335,16 +3340,16 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start ruleCompassPoint
-    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1270:1: ruleCompassPoint returns [Enumerator current=null] : ( ( 'n' ) | ( 'ne' ) | ( 'e' ) | ( 'se' ) | ( 's' ) | ( 'sw' ) | ( 'w' ) | ( 'nw' ) ) ;
+    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1275:1: ruleCompassPoint returns [Enumerator current=null] : ( ( 'n' ) | ( 'ne' ) | ( 'e' ) | ( 'se' ) | ( 's' ) | ( 'sw' ) | ( 'w' ) | ( 'nw' ) ) ;
     public final Enumerator ruleCompassPoint() throws RecognitionException {
         Enumerator current = null;
 
          setCurrentLookahead(); resetLookahead(); 
         try {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1274:6: ( ( ( 'n' ) | ( 'ne' ) | ( 'e' ) | ( 'se' ) | ( 's' ) | ( 'sw' ) | ( 'w' ) | ( 'nw' ) ) )
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1275:1: ( ( 'n' ) | ( 'ne' ) | ( 'e' ) | ( 'se' ) | ( 's' ) | ( 'sw' ) | ( 'w' ) | ( 'nw' ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1279:6: ( ( ( 'n' ) | ( 'ne' ) | ( 'e' ) | ( 'se' ) | ( 's' ) | ( 'sw' ) | ( 'w' ) | ( 'nw' ) ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1280:1: ( ( 'n' ) | ( 'ne' ) | ( 'e' ) | ( 'se' ) | ( 's' ) | ( 'sw' ) | ( 'w' ) | ( 'nw' ) )
             {
-            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1275:1: ( ( 'n' ) | ( 'ne' ) | ( 'e' ) | ( 'se' ) | ( 's' ) | ( 'sw' ) | ( 'w' ) | ( 'nw' ) )
+            // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1280:1: ( ( 'n' ) | ( 'ne' ) | ( 'e' ) | ( 'se' ) | ( 's' ) | ( 'sw' ) | ( 'w' ) | ( 'nw' ) )
             int alt24=8;
             switch ( input.LA(1) ) {
             case 29:
@@ -3390,17 +3395,17 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
             default:
                 if (backtracking>0) {failed=true; return current;}
                 NoViableAltException nvae =
-                    new NoViableAltException("1275:1: ( ( 'n' ) | ( 'ne' ) | ( 'e' ) | ( 'se' ) | ( 's' ) | ( 'sw' ) | ( 'w' ) | ( 'nw' ) )", 24, 0, input);
+                    new NoViableAltException("1280:1: ( ( 'n' ) | ( 'ne' ) | ( 'e' ) | ( 'se' ) | ( 's' ) | ( 'sw' ) | ( 'w' ) | ( 'nw' ) )", 24, 0, input);
 
                 throw nvae;
             }
 
             switch (alt24) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1275:2: ( 'n' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1280:2: ( 'n' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1275:2: ( 'n' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1275:4: 'n'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1280:2: ( 'n' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1280:4: 'n'
                     {
                     match(input,29,FOLLOW_29_in_ruleCompassPoint2207); if (failed) return current;
                     if ( backtracking==0 ) {
@@ -3416,10 +3421,10 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1281:6: ( 'ne' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1286:6: ( 'ne' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1281:6: ( 'ne' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1281:8: 'ne'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1286:6: ( 'ne' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1286:8: 'ne'
                     {
                     match(input,30,FOLLOW_30_in_ruleCompassPoint2222); if (failed) return current;
                     if ( backtracking==0 ) {
@@ -3435,10 +3440,10 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1287:6: ( 'e' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1292:6: ( 'e' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1287:6: ( 'e' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1287:8: 'e'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1292:6: ( 'e' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1292:8: 'e'
                     {
                     match(input,31,FOLLOW_31_in_ruleCompassPoint2237); if (failed) return current;
                     if ( backtracking==0 ) {
@@ -3454,10 +3459,10 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 4 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1293:6: ( 'se' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1298:6: ( 'se' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1293:6: ( 'se' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1293:8: 'se'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1298:6: ( 'se' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1298:8: 'se'
                     {
                     match(input,32,FOLLOW_32_in_ruleCompassPoint2252); if (failed) return current;
                     if ( backtracking==0 ) {
@@ -3473,10 +3478,10 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 5 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1299:6: ( 's' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1304:6: ( 's' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1299:6: ( 's' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1299:8: 's'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1304:6: ( 's' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1304:8: 's'
                     {
                     match(input,33,FOLLOW_33_in_ruleCompassPoint2267); if (failed) return current;
                     if ( backtracking==0 ) {
@@ -3492,10 +3497,10 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 6 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1305:6: ( 'sw' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1310:6: ( 'sw' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1305:6: ( 'sw' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1305:8: 'sw'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1310:6: ( 'sw' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1310:8: 'sw'
                     {
                     match(input,34,FOLLOW_34_in_ruleCompassPoint2282); if (failed) return current;
                     if ( backtracking==0 ) {
@@ -3511,10 +3516,10 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 7 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1311:6: ( 'w' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1316:6: ( 'w' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1311:6: ( 'w' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1311:8: 'w'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1316:6: ( 'w' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1316:8: 'w'
                     {
                     match(input,35,FOLLOW_35_in_ruleCompassPoint2297); if (failed) return current;
                     if ( backtracking==0 ) {
@@ -3530,10 +3535,10 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 8 :
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1317:6: ( 'nw' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1322:6: ( 'nw' )
                     {
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1317:6: ( 'nw' )
-                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1317:8: 'nw'
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1322:6: ( 'nw' )
+                    // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1322:8: 'nw'
                     {
                     match(input,36,FOLLOW_36_in_ruleCompassPoint2312); if (failed) return current;
                     if ( backtracking==0 ) {
@@ -3573,8 +3578,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
     // $ANTLR start synpred5
     public final void synpred5_fragment() throws RecognitionException {   
-        // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:266:2: ( ruleEdgeStatement )
-        // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:266:2: ruleEdgeStatement
+        // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:271:2: ( ruleEdgeStatement )
+        // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:271:2: ruleEdgeStatement
         {
         if ( backtracking==0 ) {
            
@@ -3592,8 +3597,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
     // $ANTLR start synpred6
     public final void synpred6_fragment() throws RecognitionException {   
-        // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:279:2: ( ruleNodeStatement )
-        // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:279:2: ruleNodeStatement
+        // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:284:2: ( ruleNodeStatement )
+        // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:284:2: ruleNodeStatement
         {
         if ( backtracking==0 ) {
            
@@ -3611,8 +3616,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
     // $ANTLR start synpred8
     public final void synpred8_fragment() throws RecognitionException {   
-        // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:305:2: ( ruleSubgraph )
-        // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:305:2: ruleSubgraph
+        // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:310:2: ( ruleSubgraph )
+        // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:310:2: ruleSubgraph
         {
         if ( backtracking==0 ) {
            

@@ -62,7 +62,12 @@ import de.cau.cs.kieler.kiml.graphviz.services.DotGrammarAccess;
     @Override
     protected String getFirstRuleName() {
     	return "GraphvizModel";	
-   	} 
+   	}
+   	
+   	@Override
+   	protected DotGrammarAccess getGrammarAccess() {
+   		return grammarAccess;
+   	}
 }
 
 @rulecatch { 
