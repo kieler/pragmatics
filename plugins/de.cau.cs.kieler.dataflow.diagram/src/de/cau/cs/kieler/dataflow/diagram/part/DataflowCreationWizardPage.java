@@ -67,6 +67,9 @@ public class DataflowCreationWizardPage extends WizardNewFileCreationPage {
         String fileName = getFileName();
         if (fileName != null) {
             path = path.append(fileName);
+            if (path.getFileExtension() == null) {
+                path = path.addFileExtension(fileExtension);
+            }
         }
         return path;
     }
@@ -74,6 +77,7 @@ public class DataflowCreationWizardPage extends WizardNewFileCreationPage {
     /**
      * @generated
      */
+    @Override
     public void createControl(Composite parent) {
         super.createControl(parent);
         setFileName(DataflowDiagramEditorUtil.getUniqueFileName(
@@ -84,6 +88,7 @@ public class DataflowCreationWizardPage extends WizardNewFileCreationPage {
     /**
      * @generated
      */
+    @Override
     protected boolean validatePage() {
         if (!super.validatePage()) {
             return false;
