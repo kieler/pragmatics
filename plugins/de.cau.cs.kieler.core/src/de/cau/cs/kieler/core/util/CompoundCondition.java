@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.core.ui.util;
+package de.cau.cs.kieler.core.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,12 +55,7 @@ public class CompoundCondition implements ICondition {
      */
     public boolean evaluate(final Object object) {
         for (ICondition cond : conditions) {
-            try {
-                if (!cond.evaluate(object)) {
-                    return false;
-                }
-            } catch (NullPointerException e) {
-                // null pointer exception may occur if copy&paste is used
+            if (!cond.evaluate(object)) {
                 return false;
             }
         }
