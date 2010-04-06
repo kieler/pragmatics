@@ -3,7 +3,7 @@
     xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="actors"
     nsURI="http://kieler.cs.cau.de/Actors" nsPrefix="actors">
-  <eClassifiers xsi:type="ecore:EClass" name="Entity" eSuperTypes="platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//ENamedElement">
+  <eClassifiers xsi:type="ecore:EClass" name="Entity" abstract="true" eSuperTypes="platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//ENamedElement #//NamedObject #//Annotatable">
     <eStructuralFeatures xsi:type="ecore:EReference" name="childEntities" upperBound="-1"
         eType="#//Entity" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="links" eType="#//Link"/>
@@ -12,10 +12,10 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="childRelations" upperBound="-1"
         eType="#//Relation" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Port" eSuperTypes="#//Linkable platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//ENamedElement">
+  <eClassifiers xsi:type="ecore:EClass" name="Port" eSuperTypes="#//Linkable platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//ENamedElement #//NamedObject #//Annotatable">
     <eStructuralFeatures xsi:type="ecore:EReference" name="link" eType="#//Link"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Relation" eSuperTypes="#//Linkable platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//ENamedElement">
+  <eClassifiers xsi:type="ecore:EClass" name="Relation" eSuperTypes="#//Linkable platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//ENamedElement #//NamedObject #//Annotatable">
     <eStructuralFeatures xsi:type="ecore:EReference" name="connectedPorts" lowerBound="1"
         upperBound="-1" eType="#//Port"/>
   </eClassifiers>
@@ -24,19 +24,29 @@
         eType="#//Linkable" eOpposite="#//Linkable/outgoingLinks"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="target" lowerBound="1"
         eType="#//Linkable" eOpposite="#//Linkable/incomingLinks"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="linkedEntities" lowerBound="2"
-        upperBound="2" eType="#//Linkable" eOpposite="#//Linkable/links"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Linkable">
+  <eClassifiers xsi:type="ecore:EClass" name="Linkable" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EReference" name="outgoingLinks" upperBound="-1"
         eType="#//Link" eOpposite="#//Link/source"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="incomingLinks" upperBound="-1"
         eType="#//Link" derived="true" eOpposite="#//Link/target"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="links" upperBound="-1"
-        eType="#//Link" eOpposite="#//Link/linkedEntities">
-      <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData"/>
-    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Actor" eSuperTypes="#//Entity"/>
   <eClassifiers xsi:type="ecore:EClass" name="State" eSuperTypes="#//Entity #//Linkable"/>
+  <eClassifiers xsi:type="ecore:EClass" name="NamedObject" abstract="true" eSuperTypes="#//Annotatable">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Annotatable" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="annotationMap" upperBound="-1"
+        eType="#//AnnotationMapEntry" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Annotation" abstract="true" interface="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="AnnotationMapEntry" instanceClassName="java.util.Map$Entry">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="value" lowerBound="1" eType="#//Annotation"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" lowerBound="1" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="StringAnnotation" eSuperTypes="#//Annotation">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="text" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
+  </eClassifiers>
 </ecore:EPackage>
