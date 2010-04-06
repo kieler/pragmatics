@@ -17,9 +17,10 @@ package de.cau.cs.kieler.core.util;
  * Interface for conditions that can be evaluated on a specific object.
  *
  * @kieler.rating 2010-01-26 proposed yellow msp
+ * @param <T> the type for which the condition is used
  * @author msp
  */
-public interface ICondition {
+public interface ICondition<T> {
 
     /**
      * Evaluate this condition on the given object.
@@ -27,6 +28,6 @@ public interface ICondition {
      * @param object a target object
      * @return true if the condition is met for the object
      */
-    boolean evaluate(Object object);
+    boolean evaluate(T object);
     
 }

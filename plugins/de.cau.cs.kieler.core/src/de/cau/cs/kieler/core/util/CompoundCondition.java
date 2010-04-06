@@ -21,11 +21,12 @@ import java.util.List;
  * A condition that is composed of a set of other conditions.
  * 
  * @kieler.rating 2010-01-26 proposed yellow msp
+ * @param <T> the type for which the condition is used
  * @author msp
  */
-public class CompoundCondition implements ICondition {
+public class CompoundCondition<T> implements ICondition<T> {
 
-    private List<ICondition> conditions;
+    private List<ICondition<T>> conditions;
 
     /**
      * Creates a compound condition from a collection of conditions.
@@ -33,8 +34,8 @@ public class CompoundCondition implements ICondition {
      * @param theconditions
      *            the conditions
      */
-    public CompoundCondition(final Collection<ICondition> theconditions) {
-        conditions = new ArrayList<ICondition>(theconditions);
+    public CompoundCondition(final Collection<ICondition<T>> theconditions) {
+        conditions = new ArrayList<ICondition<T>>(theconditions);
     }
 
     /**
@@ -43,9 +44,9 @@ public class CompoundCondition implements ICondition {
      * @param theconditions
      *            the conditions
      */
-    public CompoundCondition(final ICondition[] theconditions) {
-        conditions = new ArrayList<ICondition>(theconditions.length);
-        for (ICondition cond : theconditions) {
+    public CompoundCondition(final ICondition<T>[] theconditions) {
+        conditions = new ArrayList<ICondition<T>>(theconditions.length);
+        for (ICondition<T> cond : theconditions) {
             conditions.add(cond);
         }
     }
@@ -53,9 +54,9 @@ public class CompoundCondition implements ICondition {
     /**
      * {@inheritDoc}
      */
-    public boolean evaluate(final Object object) {
-        for (ICondition cond : conditions) {
-            if (!cond.evaluate(object)) {
+    public boolean evaluate(final T object) {
+        for (ICondition<T> cond : conditions) {
+            if (cond == null || !cond.evaluate(object)) {
                 return false;
             }
         }
