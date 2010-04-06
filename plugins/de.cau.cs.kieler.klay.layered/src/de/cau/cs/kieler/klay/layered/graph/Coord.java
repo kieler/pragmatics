@@ -43,5 +43,17 @@ public class Coord {
         this.x = thex;
         this.y = they;
     }
+ 
+    /**
+     * Adds the values of the given coordinate vector to this vector.
+     * 
+     * @param other a coordinate vector
+     * @return {@code this}
+     */
+    public Coord add(final Coord other) {
+        this.x += other.x;
+        this.y += other.y;
+        return this;
+    }
 
 }
