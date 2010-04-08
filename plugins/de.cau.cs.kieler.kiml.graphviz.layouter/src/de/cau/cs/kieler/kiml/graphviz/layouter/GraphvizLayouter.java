@@ -176,11 +176,13 @@ public class GraphvizLayouter {
         GraphvizAPI.waitForInput(graphvizProcess.getInputStream(),
                 graphvizProcess.getErrorStream(), progressMonitor.subTask(LARGE_TASK));
 
-        // read graphviz output and apply layout information to the KGraph
-        GraphvizModel graphvizOutput = readDotGraph(new BufferedInputStream(
-                graphvizProcess.getInputStream()), progressMonitor.subTask(LARGE_TASK));
-        retrieveLayoutResult(parentNode, graphvizOutput,
-                progressMonitor.subTask(SMALL_TASK));
+        if (!progressMonitor.isCanceled()) {
+            // read graphviz output and apply layout information to the KGraph
+            GraphvizModel graphvizOutput = readDotGraph(new BufferedInputStream(
+                    graphvizProcess.getInputStream()), progressMonitor.subTask(LARGE_TASK));
+            retrieveLayoutResult(parentNode, graphvizOutput,
+                    progressMonitor.subTask(SMALL_TASK));
+        }
         
         progressMonitor.done();
     }
@@ -544,7 +546,8 @@ public class GraphvizLayouter {
 
         SerializerUtil serializerUtil = injector.getInstance(SerializerUtil.class);
         try {
-            serializerUtil.serialize(graphvizModel, outputStream, null, false);
+            serializerUtil.serialize(graphvizModel, outputStream, null,
+                    new SerializerUtil.SerializationOptions(false, false));
             outputStream.write('\n');
             outputStream.flush();
         } catch (IOException exception) {

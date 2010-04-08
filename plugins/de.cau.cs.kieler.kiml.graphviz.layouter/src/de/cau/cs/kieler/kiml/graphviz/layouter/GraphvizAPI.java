@@ -261,14 +261,15 @@ public final class GraphvizAPI {
             long startTime = System.currentTimeMillis();
             try {
                 while (inputStream.available() == 0
-                        && System.currentTimeMillis() - startTime < timeout) {
+                        && System.currentTimeMillis() - startTime < timeout
+                        && !monitor.isCanceled()) {
                     Thread.sleep(PROCESS_INPUT_WAIT);
                 }
             } catch (InterruptedException exception) {
                 // ignore exception
             }
             // read and check error stream if there is still no input from Graphviz
-            if (inputStream.available() == 0) {
+            if (inputStream.available() == 0 && !monitor.isCanceled()) {
                 StringBuilder error = new StringBuilder();
                 while (error.length() < MAX_ERROR_OUTPUT && errorStream.available() > 0) {
                     error.append((char) errorStream.read());
