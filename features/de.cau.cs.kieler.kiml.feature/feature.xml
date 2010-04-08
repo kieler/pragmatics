@@ -105,7 +105,6 @@ This Agreement is governed by the laws of the State of New York and the intellec
 
    <url>
       <update label="KIELER nightly builds Update Site" url="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/"/>
-      <discovery label="Itemis Milestone Update Site" url="http://download.itemis.com/updates/milestones/"/>
    </url>
 
    <requires>
@@ -148,28 +147,7 @@ This Agreement is governed by the laws of the State of New York and the intellec
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.kiml.graphviz.dot"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml.graphviz.layouter"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.cau.cs.kieler.klodd.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml.zest"
          download-size="0"
          install-size="0"
          version="0.0.0"
