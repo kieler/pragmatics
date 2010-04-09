@@ -288,8 +288,9 @@ public class ModelContentMergeViewer extends ContentMergeViewer {
 		if (kivikComparator.getDomainComparisonResult() != null && !changed) {
 			final ComparisonResourceSnapshot snapshot = kivikComparator
 					.getDomainComparisonResult();
-			super.setInput(new ModelCompareInput((MatchModel)snapshot.getMatch(), (DiffModel)snapshot
-					.getDiff(), kivikComparator.getComparator()));
+                        final ModelCompareInput mci = new ModelCompareInput((MatchModel)snapshot.getMatch(), (DiffModel)snapshot
+                                .getDiff(), kivikComparator.getComparator());
+			super.setInput(mci);
 
 		} else if (input instanceof ModelCompareInput) {
 			final ModelCompareInput snapshot = (ModelCompareInput) input;
