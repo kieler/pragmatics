@@ -23,6 +23,7 @@ import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.slimgraph.KSlimEdge;
 import de.cau.cs.kieler.core.slimgraph.KSlimGraph;
 import de.cau.cs.kieler.core.slimgraph.KSlimNode;
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
 
 /**
  * Class that converts a KGraph into a slim graph.
@@ -60,7 +61,10 @@ public class GraphConverter extends AbstractAlgorithm {
 
         // convert nodes
         for (KNode child : parentNode.getChildren()) {
+            KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(child);
             KSlimNode newNode = new KSlimNode(slimGraph, child);
+            newNode.setXpos(nodeLayout.getXpos());
+            newNode.setYpos(nodeLayout.getYpos());
             nodeMap.put(child, newNode);
         }
 

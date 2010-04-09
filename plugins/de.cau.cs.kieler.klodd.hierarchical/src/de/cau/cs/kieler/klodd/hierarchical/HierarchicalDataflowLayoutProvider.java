@@ -26,6 +26,7 @@ import de.cau.cs.kieler.core.slimgraph.KSlimGraph;
 import de.cau.cs.kieler.core.slimgraph.alg.DFSCycleRemover;
 import de.cau.cs.kieler.core.slimgraph.alg.GreedyCycleRemover;
 import de.cau.cs.kieler.core.slimgraph.alg.ICycleRemover;
+import de.cau.cs.kieler.core.slimgraph.alg.InteractiveCycleRemover;
 import de.cau.cs.kieler.kiml.layout.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutData;
@@ -136,8 +137,8 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
                 SMALL_TASK + SMALL_TASK + SMALL_TASK + LARGE_TASK + LARGE_TASK
                 + LARGE_TASK + LARGE_TASK);
         // get the currently configured modules
-        updateModules();
         KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
+        updateModules(parentLayout);
         // set option for minimal object spacing
         float objSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_SPACING);
         if (Float.isNaN(objSpacing)) {
@@ -203,10 +204,19 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
 
     /**
      * Sets the internally used algorithm modules to the current configuration.
+     * 
+     * @param parentLayout layout data of the parent node
      */
-    private void updateModules() {
+    private void updateModules(final KShapeLayout parentLayout) {
         // choose cycle remover module
-        if (preferenceStore != null
+        if (LayoutOptions.getBoolean(parentLayout, LayoutOptions.INTERACTIVE)) {
+            if (!(cycleRemover instanceof InteractiveCycleRemover)) {
+                cycleRemover = new InteractiveCycleRemover();
+            }
+            LayoutDirection layoutDirection = LayoutOptions.getEnum(parentLayout, LayoutDirection.class);
+            ((InteractiveCycleRemover) cycleRemover).setVertical(
+                    layoutDirection == LayoutDirection.DOWN);
+        } else if (preferenceStore != null
                 && preferenceStore.getString(PREF_CYCLE_REM).equals(VAL_DFS_CYCLE_REM)) {
             if (!(cycleRemover instanceof DFSCycleRemover)) {
                 cycleRemover = new DFSCycleRemover();

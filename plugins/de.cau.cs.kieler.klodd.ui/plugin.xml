@@ -28,6 +28,9 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.portConstraints">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.interactive">
+         </knownOption>
       </layoutProvider>
    </extension>
    <extension
