@@ -33,10 +33,12 @@ public interface ILayerAssigner extends IAlgorithm {
      * 
      * @param slimGraph graph structure that contains no directed cycles
      * @param parentNode the parent layout node
+     * @param objSpacing the minimal distance between objects
      * @param balanceOverSize indicates whether node balancing has priority over
      *            diagram size
      * @return a layered graph
      */
-    LayeredGraph assignLayers(KSlimGraph slimGraph, KNode parentNode, boolean balanceOverSize);
+    LayeredGraph assignLayers(KSlimGraph slimGraph, KNode parentNode,
+            float objSpacing, boolean balanceOverSize);
 
 }

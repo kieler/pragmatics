@@ -160,7 +160,8 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
         cycleRemover.removeCycles(slimGraph);
         // put each node into a layer and get a layered graph
         layerAssigner.reset(progressMonitor.subTask(LARGE_TASK));
-        LayeredGraph layeredGraph = layerAssigner.assignLayers(slimGraph, layoutNode, balanceOverSize);
+        LayeredGraph layeredGraph = layerAssigner.assignLayers(slimGraph, layoutNode,
+                objSpacing, balanceOverSize);
         if (!layeredGraph.getLayers().isEmpty()) {
             layeredGraph.createConnections(slimGraph);
             // optimize the order of nodes in each layer

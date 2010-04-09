@@ -51,7 +51,7 @@ public class LongestPathLayerAssigner extends AbstractAlgorithm implements ILaye
      * {@inheritDoc}
      */
     public LayeredGraph assignLayers(final KSlimGraph slimGraph, final KNode parentNode,
-            final boolean balanceOverSize) {
+            final float objSpacing, final boolean balanceOverSize) {
         getMonitor().begin("Longest path layering", 1);
         layeredGraph = new LayeredGraph(parentNode);
 

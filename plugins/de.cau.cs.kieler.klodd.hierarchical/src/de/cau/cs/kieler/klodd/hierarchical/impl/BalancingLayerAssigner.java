@@ -19,6 +19,10 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.slimgraph.KSlimGraph;
 import de.cau.cs.kieler.core.slimgraph.KSlimNode;
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.layout.options.LayoutDirection;
+import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
 import de.cau.cs.kieler.klodd.hierarchical.modules.ILayerAssigner;
 import de.cau.cs.kieler.klodd.hierarchical.structures.Layer;
 import de.cau.cs.kieler.klodd.hierarchical.structures.LayerElement;
@@ -51,10 +55,15 @@ public class BalancingLayerAssigner extends AbstractAlgorithm implements ILayerA
      * {@inheritDoc}
      */
     public LayeredGraph assignLayers(final KSlimGraph graph, final KNode parentNode,
-            final boolean balanceOverSize) {
+            final float objSpacing, final boolean balanceOverSize) {
         getMonitor().begin("Balancing layer assignment", 1);
         basicLayerAssigner.reset(getMonitor().subTask(1));
-        LayeredGraph layeredGraph = basicLayerAssigner.assignLayers(graph, parentNode, balanceOverSize);
+        LayeredGraph layeredGraph = basicLayerAssigner.assignLayers(graph, parentNode,
+                objSpacing, balanceOverSize);
+        KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(parentNode);
+        boolean interactive = LayoutOptions.getBoolean(parentLayout, LayoutOptions.INTERACTIVE);
+        LayoutDirection layoutDirection = LayoutOptions.getEnum(parentLayout, LayoutDirection.class);
+        boolean vertical = layoutDirection == LayoutDirection.DOWN;
 
         // balance layer assignment of each element in the layering
         if (layeredGraph.getLayers().size() >= MIN_LAYERS) {
@@ -64,7 +73,8 @@ public class BalancingLayerAssigner extends AbstractAlgorithm implements ILayerA
                 if (layer.getHeight() > 0) {
                     ListIterator<LayerElement> elemIter = layer.getElements().listIterator();
                     while (elemIter.hasNext()) {
-                        balanceElement(layeredGraph, elemIter, balanceOverSize);
+                        balanceElement(layeredGraph, elemIter, objSpacing,
+                                balanceOverSize, interactive, vertical);
                     }
                 }
             }
@@ -80,11 +90,15 @@ public class BalancingLayerAssigner extends AbstractAlgorithm implements ILayerA
      * 
      * @param layeredGraph layered graph
      * @param elemIter iterator whose next element shall be balanced
+     * @param objSpacing minimal distance between objects
      * @param balanceOverSize indicates whether node balancing has priority over
      *            diagram size
+     * @param interactive if true, initial positioning is considered
+     * @param vertical if true, vertical layout is performed
      */
     private void balanceElement(final LayeredGraph layeredGraph,
-            final ListIterator<LayerElement> elemIter, final boolean balanceOverSize) {
+            final ListIterator<LayerElement> elemIter, final float objSpacing,
+            final boolean balanceOverSize, final boolean interactive, final boolean vertical) {
         LayerElement element = elemIter.next();
         Layer currentLayer = element.getLayer();
         KSlimNode kNode = element.getKNode();
@@ -99,8 +113,35 @@ public class BalancingLayerAssigner extends AbstractAlgorithm implements ILayerA
                 minShiftRank = Math.max(minShiftRank, shiftRank);
             }
         }
-        if (minShiftRank > 0 && incoming >= outgoing) {
-            int layerOffset = layeredGraph.getLayers().get(0).getRank();
+        int layerOffset = layeredGraph.getLayers().get(0).getRank();
+        if (interactive) {
+            if (minShiftRank - layerOffset < 0) {
+                minShiftRank = 1;
+            }
+            ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator(
+                    minShiftRank - layerOffset);
+            Layer layer = layerIter.next();
+            while (layerIter.nextIndex() <= currentLayer.getRank() - layerOffset) {
+                Layer nextLayer = layerIter.next();
+                boolean fits = true;
+                for (LayerElement nextElement : nextLayer.getElements()) {
+                    KSlimNode nextKnode = nextElement.getKNode();
+                    if (!nextKnode.equals(kNode)
+                            && (vertical && kNode.getYpos() > nextKnode.getYpos() - objSpacing / 2
+                            || !vertical && kNode.getXpos() > nextKnode.getXpos() - objSpacing / 2)) {
+                        fits = false;
+                        break;
+                    }
+                }
+                if (fits) {
+                    // move the current element to the new layer
+                    elemIter.remove();
+                    element.setLayer(layer);
+                    break;
+                }
+                layer = nextLayer;
+            }            
+        } else if (minShiftRank > 0 && incoming >= outgoing) {
             if (balanceOverSize) {
                 if (minShiftRank < currentLayer.getRank()) {
                     elemIter.remove();
