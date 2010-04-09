@@ -25,12 +25,16 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.compare.EMFComparePlugin;
+
+//import org.eclipse.emf.compare.diff.metamodel.ComparisonResourceSetSnapshot;
+import org.eclipse.emf.compare.ui.ModelCompareInput;
+
 import org.eclipse.emf.compare.diff.metamodel.ComparisonResourceSetSnapshot;
+import org.eclipse.emf.compare.diff.metamodel.ComparisonSnapshot;
 import org.eclipse.emf.compare.diff.metamodel.DiffFactory;
 import org.eclipse.emf.compare.diff.metamodel.DiffModel;
 import org.eclipse.emf.compare.diff.metamodel.ComparisonResourceSnapshot;
-import org.eclipse.emf.compare.diff.service.DiffService;
-//import org.eclipse.emf.compare.match.api.MatchOptions; OPTION_PROGRESS_MONITOR == "match.progress.monitor"
+import org.eclipse.emf.compare.diff.service.DiffService; //import org.eclipse.emf.compare.match.api.MatchOptions; OPTION_PROGRESS_MONITOR == "match.progress.monitor"
 import org.eclipse.emf.compare.match.metamodel.MatchFactory;
 import org.eclipse.emf.compare.match.metamodel.MatchModel;
 import org.eclipse.emf.compare.match.service.MatchService;
@@ -50,8 +54,6 @@ import org.eclipse.ui.PlatformUI;
 //[297305] MANIFEST.MF (HEAD 1.27 > 1.26)
 //      lgoubet
 //      [297305] upgrades ModelComparator from restricted access to discouraged access. Referencing is still made at the client's own risks
-
-
 
 /**
  * 
@@ -95,7 +97,8 @@ public final class KivikComparator {
     }
 
     public ModelComparator getComparator() {
-        return ModelComparator.getComparator(fCompareConfiguration);
+        ModelComparator mc = ModelComparator.getComparator(fCompareConfiguration, null);
+        return mc;
     }
 
     private EObject getAncestorDomainEObject() {
@@ -137,18 +140,20 @@ public final class KivikComparator {
     }
 
     public ComparisonResourceSetSnapshot getNotationComparisonResult() {
-        return getComparator().getComparisonResult();
+        ComparisonResourceSetSnapshot crs = getComparator().getComparisonResult();
+        return crs;// (new ComparisonResourceSnapshot(crs.getMatchResourceSet(),crs.getDiffResourceSet()));
     }
 
     public ComparisonResourceSnapshot getDomainComparisonResult() {
-        if (fKivikComparisonResult == null || fKivikComparisonResult.getDate() == null)
+        if (fKivikComparisonResult == null) // || fKivikComparisonResult.getDate() == null)
             return null;
         else
             return fKivikComparisonResult;
     }
 
     public ComparisonResourceSetSnapshot compareNotationModel() {
-        return getComparator().compare(fCompareConfiguration);
+        ComparisonResourceSetSnapshot crs = getComparator().compare(fCompareConfiguration);
+        return crs; //(new ModelCompareInput(crs.getMatchResourceSet(),crs.getDiffResourceSet()));
     }
 
     /**
@@ -167,7 +172,7 @@ public final class KivikComparator {
         final EObject right = getRightDomainEObject();
 
         if (left != null && right != null) {
-            if (fKivikComparisonResult == null || fKivikComparisonResult.getDate() == null) {
+            if (fKivikComparisonResult == null) { // || fKivikComparisonResult.getDate() == null) {
 
                 fKivikComparisonResult = DiffFactory.eINSTANCE.createComparisonResourceSnapshot();
                 final Date start = Calendar.getInstance().getTime();
@@ -190,13 +195,16 @@ public final class KivikComparator {
                                     final DiffModel diff = DiffService.doDiff(match,
                                             getAncestorDomainEObject() != null);
 
-                                    fKivikComparisonResult
-                                            .setDate(Calendar.getInstance().getTime());
+                                    //fKivikComparisonResult = new ModelCompareInput(match,diff);
+                                    Date date = Calendar.getInstance().getTime();
+                                    fKivikComparisonResult.setDate(date);
                                     fKivikComparisonResult.setDiff(diff);
                                     fKivikComparisonResult.setMatch(match);
                                 }
                             });
                 } catch (InterruptedException e) {
+//                    fKivikComparisonResult = new ModelCompareInput(MatchFactory.eINSTANCE.createMatchModel(),
+//                                                                   DiffFactory.eINSTANCE.createDiffModel());
                     fKivikComparisonResult.setDate(Calendar.getInstance().getTime());
                     fKivikComparisonResult.setDiff(DiffFactory.eINSTANCE.createDiffModel());
                     fKivikComparisonResult.setMatch(MatchFactory.eINSTANCE.createMatchModel());
@@ -222,7 +230,8 @@ public final class KivikComparator {
 
         } else {
             /* emergency result if one resource was null */
-            ComparisonResourceSnapshot result = DiffFactory.eINSTANCE.createComparisonResourceSnapshot();
+            ComparisonResourceSnapshot result = DiffFactory.eINSTANCE
+                    .createComparisonResourceSnapshot();
             result.setDate(Calendar.getInstance().getTime());
             result.setDiff(DiffFactory.eINSTANCE.createDiffModel());
             result.setMatch(MatchFactory.eINSTANCE.createMatchModel());

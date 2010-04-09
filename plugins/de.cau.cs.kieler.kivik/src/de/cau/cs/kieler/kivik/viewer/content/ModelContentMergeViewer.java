@@ -29,7 +29,9 @@ import org.eclipse.emf.compare.EMFComparePlugin;
 import org.eclipse.emf.compare.diff.metamodel.DiffElement;
 import org.eclipse.emf.compare.diff.metamodel.DiffGroup;
 import org.eclipse.emf.compare.diff.metamodel.ComparisonResourceSnapshot;
+import org.eclipse.emf.compare.diff.metamodel.DiffModel;
 import org.eclipse.emf.compare.diff.metamodel.util.DiffAdapterFactory;
+import org.eclipse.emf.compare.match.metamodel.MatchModel;
 import org.eclipse.emf.compare.ui.EMFCompareUIMessages;
 import org.eclipse.emf.compare.ui.EMFCompareUIPlugin;
 import org.eclipse.emf.compare.ui.ICompareEditorPartListener;
@@ -286,19 +288,19 @@ public class ModelContentMergeViewer extends ContentMergeViewer {
 		if (kivikComparator.getDomainComparisonResult() != null && !changed) {
 			final ComparisonResourceSnapshot snapshot = kivikComparator
 					.getDomainComparisonResult();
-			super.setInput(new ModelCompareInput(snapshot.getMatch(), snapshot
+			super.setInput(new ModelCompareInput((MatchModel)snapshot.getMatch(), (DiffModel)snapshot
 					.getDiff(), kivikComparator.getComparator()));
 
-		} else if (input instanceof ComparisonResourceSnapshot) {
-			final ComparisonResourceSnapshot snapshot = (ComparisonResourceSnapshot) input;
-			super.setInput(new ModelCompareInput(snapshot.getMatch(), snapshot
+		} else if (input instanceof ModelCompareInput) {
+			final ModelCompareInput snapshot = (ModelCompareInput) input;
+			super.setInput(new ModelCompareInput((MatchModel)snapshot.getMatch(), (DiffModel)snapshot
 					.getDiff(), kivikComparator.getComparator()));
 
 		} else if (input instanceof ICompareInput) {
 			kivikComparator.loadResources((ICompareInput) input);
 			final ComparisonResourceSnapshot snapshot = kivikComparator
 					.compareDomainModel();
-			super.setInput(new ModelCompareInput(snapshot.getMatch(), snapshot
+			super.setInput(new ModelCompareInput((MatchModel)snapshot.getMatch(), (DiffModel)snapshot
 					.getDiff(), kivikComparator.getComparator()));
 		}
 	}
