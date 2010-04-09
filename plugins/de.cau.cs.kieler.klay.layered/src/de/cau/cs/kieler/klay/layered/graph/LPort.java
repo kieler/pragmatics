@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered.graph;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -157,12 +158,46 @@ public class LPort {
     public List<LEdge> getEdges() {
         return edges;
     }
+
+    /**
+     * Returns an iterable over all connected ports.
+     * 
+     * @return an iterable over the connected ports
+     */
+    public Iterable<LPort> getConnectedPorts() {
+        return new Iterable<LPort>() {
+            public Iterator<LPort> iterator() {
+                final Iterator<LEdge> edgeIter = edges.iterator();
+                return new Iterator<LPort>() {
+                    public boolean hasNext() {
+                        return edgeIter.hasNext();
+                    }
+                    public LPort next() {
+                        LEdge nextEdge = edgeIter.next();
+                        if (nextEdge.getSource() == LPort.this) {
+                            return nextEdge.getTarget();
+                        } else {
+                            return nextEdge.getSource();
+                        }
+                    }
+                    public void remove() {
+                        edgeIter.remove();
+                    }
+                };
+            }
+            
+        };
+    }
     
     /**
      * @return the index of this port
      */
     public int getIndex() {
-        return owner.getPorts().indexOf(this);
+        if (owner == null) {
+            return -1;
+        } else {
+            return owner.getPorts().indexOf(this);
+        }
     }
     
 }

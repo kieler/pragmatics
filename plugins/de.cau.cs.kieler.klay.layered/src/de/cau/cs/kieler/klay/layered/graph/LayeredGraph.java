@@ -72,53 +72,6 @@ public class LayeredGraph {
     }
 
     /**
-     * Creates an iterable to gather all nodes of the graph.
-     * 
-     * @return an iterable for all nodes
-     */
-    public Iterable<LNode> getNodes() {
-        return new Iterable<LNode>() {
-            public Iterator<LNode> iterator() {
-                return new Iterator<LNode>() {
-                    private Iterator<Layer> layerIter = layers.iterator();
-                    private Iterator<LNode> nodeIter;
-                    
-                    public boolean hasNext() {
-                        if (nodeIter != null && nodeIter.hasNext()) {
-                            return true;
-                        }
-                        while (layerIter.hasNext()) {
-                            nodeIter = layerIter.next().getNodes().iterator();
-                            if (nodeIter.hasNext()) {
-                                return true;
-                            }
-                        }
-                        return false;
-                    }
-
-                    public LNode next() {
-                        if (nodeIter != null && nodeIter.hasNext()) {
-                            return nodeIter.next();
-                        }
-                        while (layerIter.hasNext()) {
-                            nodeIter = layerIter.next().getNodes().iterator();
-                            if (nodeIter.hasNext()) {
-                                return nodeIter.next();
-                            }
-                        }
-                        throw new NoSuchElementException();
-                    }
-
-                    public void remove() {
-                        throw new UnsupportedOperationException();
-                    }
-                    
-                };
-            }
-        };
-    }
-    
-    /**
      * Split the long edges of the layered graph to obtain a proper layering.
      */
     public void splitEdges() {

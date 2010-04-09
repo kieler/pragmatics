@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.core.util;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
@@ -32,6 +34,32 @@ public class FilteredIterator<E> implements ListIterator<E> {
     private E next, previous;
     /** the index of the next element in the filtered list. */
     private int nextIndex;
+    
+    /**
+     * An iterable that creates a filtered iterator as iterator.
+     */
+    public static class Iterable<E> implements java.lang.Iterable<E> {
+        private List<E> wrappedList;
+        private ICondition<E> condition;
+
+        /**
+         * Creates an iterable for a given list and a condition.
+         * 
+         * @param thewrappedList the wrapped list
+         * @param thecondition the condition to evaluate on each element
+         */
+        public Iterable(final List<E> thewrappedList, final ICondition<E> thecondition) {
+            this.wrappedList = thewrappedList;
+            this.condition = thecondition;
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public Iterator<E> iterator() {
+            return new FilteredIterator<E>(wrappedList.listIterator(), condition);
+        }
+    }
     
     /**
      * Creates a filtered iterator for a given list iterator and a condition.
@@ -88,7 +116,9 @@ public class FilteredIterator<E> implements ListIterator<E> {
     public E next() {
         if (hasNext()) {
             nextIndex++;
-            return next;
+            E newNext = next;
+            next = null;
+            return newNext;
         } else {
             throw new NoSuchElementException();
         }
@@ -107,7 +137,9 @@ public class FilteredIterator<E> implements ListIterator<E> {
     public E previous() {
         if (hasPrevious()) {
             nextIndex--;
-            return previous;
+            E newPrevious = previous;
+            previous = null;
+            return newPrevious;
         } else {
             throw new NoSuchElementException();
         }

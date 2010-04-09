@@ -99,30 +99,36 @@ public class LNode {
     }
     
     /**
-     * Returns a list iterator for all ports of given type.
+     * Returns an iterable for all ports of given type.
      * 
      * @param type a port type
-     * @return an iterator for the ports of given type
+     * @return an iterable for the ports of given type
      */
-    public ListIterator<LPort> portsIterator(final PortType type) {
-        return new FilteredIterator<LPort>(ports.listIterator(), new LPort.TypeCondition(type));
+    public Iterable<LPort> getPorts(final PortType type) {
+        return new FilteredIterator.Iterable<LPort>(ports,
+                new LPort.TypeCondition(type));
     }
     
     /**
-     * Returns a list iterator for all ports of given side.
+     * Returns an iterable for all ports of given side.
      * 
      * @param side a port side
-     * @return an iterator for the ports of given side
+     * @return an iterable for the ports of given side
      */
-    public ListIterator<LPort> portsIterator(final PortSide side) {
-        return new FilteredIterator<LPort>(ports.listIterator(), new LPort.SideCondition(side));
+    public Iterable<LPort> getPorts(final PortSide side) {
+        return new FilteredIterator.Iterable<LPort>(ports,
+                new LPort.SideCondition(side));
     }
     
     /**
      * @return the index of this node
      */
     public int getIndex() {
-        return owner.getNodes().indexOf(this);
+        if (owner == null) {
+            return -1;
+        } else {
+            return owner.getNodes().indexOf(this);
+        }
     }
 
 }
