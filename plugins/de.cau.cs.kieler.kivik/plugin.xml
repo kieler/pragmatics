@@ -62,7 +62,7 @@
    <extension
          point="org.eclipse.core.runtime.contentTypes">
       <content-type
-            file-extensions="kids"
+            file-extensions="kids, kixs"
             id="de.cau.cs.kieler.kivik.CompareContentType"
             name="KiViK - KIELER Visual Kompare"
             priority="normal">

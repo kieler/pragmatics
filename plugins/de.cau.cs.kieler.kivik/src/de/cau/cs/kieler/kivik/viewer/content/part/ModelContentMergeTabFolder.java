@@ -184,7 +184,9 @@ public class ModelContentMergeTabFolder {
 	}
 
 	public DiffModel getDiffModel() {
-		return ((ComparisonResourceSnapshot) parentViewer.getInput()).getDiff();
+            Object obj = ((ModelCompareInput) parentViewer.getInput()).getDiff();
+            return  (DiffModel)obj;
+//		return ((ComparisonResourceSnapshot) parentViewer.getInput()).getDiff();
 	}
 
 	/**
