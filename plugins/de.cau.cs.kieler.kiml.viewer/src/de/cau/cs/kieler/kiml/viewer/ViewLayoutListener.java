@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.viewer;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -42,11 +41,12 @@ public class ViewLayoutListener implements ILayoutListener {
      * {@inheritDoc}
      */
     public void layoutRequested(final KNode layoutGraph) {
+        final KNode nodeCopy = (KNode) EcoreUtil.copy(layoutGraph);
         PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
             public void run() {
                 findViews();
                 if (layoutGraphView != null) {
-                    layoutGraphView.setLayoutGraph(cloneLayoutGraph(layoutGraph), LayoutGraphView.PRE);
+                    layoutGraphView.setLayoutGraph(nodeCopy, LayoutGraphView.PRE);
                     // the last post-layout graph is deleted to avoid inconsistent
                     // graphs
                     layoutGraphView.setLayoutGraph(null, LayoutGraphView.POST);
@@ -59,11 +59,12 @@ public class ViewLayoutListener implements ILayoutListener {
      * {@inheritDoc}
      */
     public void layoutPerformed(final KNode layoutGraph, final IKielerProgressMonitor monitor) {
+        final KNode nodeCopy = (KNode) EcoreUtil.copy(layoutGraph);
         PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
             public void run() {
                findViews();
                 if (layoutGraphView != null) {
-                    layoutGraphView.setLayoutGraph(cloneLayoutGraph(layoutGraph), LayoutGraphView.POST);
+                    layoutGraphView.setLayoutGraph(nodeCopy, LayoutGraphView.POST);
                 }
                 if (executionView != null) {
                     executionView.addExecution(monitor);
@@ -97,17 +98,6 @@ public class ViewLayoutListener implements ILayoutListener {
         if (viewPart instanceof ExecutionView) {
             executionView = (ExecutionView) viewPart;
         }
-    }
-
-    /**
-     * Clones an instance of a layout graph.
-     * 
-     * @param input parent node to clone
-     * @return a cloned instance
-     */
-    private KNode cloneLayoutGraph(final KNode input) {
-        EObject result = EcoreUtil.copy(input);
-        return (KNode) result;
     }
 
 }

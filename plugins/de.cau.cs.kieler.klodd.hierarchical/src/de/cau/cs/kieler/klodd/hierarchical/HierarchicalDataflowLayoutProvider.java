@@ -41,6 +41,7 @@ import de.cau.cs.kieler.klodd.hierarchical.impl.BalancingLayerAssigner;
 import de.cau.cs.kieler.klodd.hierarchical.impl.BalancingNodePlacer;
 import de.cau.cs.kieler.klodd.hierarchical.impl.BarycenterCrossingReducer;
 import de.cau.cs.kieler.klodd.hierarchical.impl.BasicNodePlacer;
+import de.cau.cs.kieler.klodd.hierarchical.impl.InteractiveCrossingReducer;
 import de.cau.cs.kieler.klodd.hierarchical.impl.LayerSweepCrossingReducer;
 import de.cau.cs.kieler.klodd.hierarchical.impl.LongestPathLayerAssigner;
 import de.cau.cs.kieler.klodd.hierarchical.impl.RectilinearEdgeRouter;
@@ -209,8 +210,9 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
      * @param parentLayout layout data of the parent node
      */
     private void updateModules(final KShapeLayout parentLayout) {
+        boolean interactive = LayoutOptions.getBoolean(parentLayout, LayoutOptions.INTERACTIVE);
         // choose cycle remover module
-        if (LayoutOptions.getBoolean(parentLayout, LayoutOptions.INTERACTIVE)) {
+        if (interactive) {
             if (!(cycleRemover instanceof InteractiveCycleRemover)) {
                 cycleRemover = new InteractiveCycleRemover();
             }
@@ -240,17 +242,23 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
             }
         }
 
-        if (crossingReducer == null) {
-            crossingReducer = new LayerSweepCrossingReducer(new BarycenterCrossingReducer());
-        }
-        int passes = DEF_CROSSRED_PASSES;
-        if (preferenceStore != null) {
-            int prefPasses = preferenceStore.getInt(PREF_CROSSRED_PASSES);
-            if (prefPasses > 0) {
-                passes = prefPasses;
+        if (interactive) {
+            if (!(crossingReducer instanceof InteractiveCrossingReducer)) {
+                crossingReducer = new InteractiveCrossingReducer();
             }
+        } else {
+            if (!(crossingReducer instanceof LayerSweepCrossingReducer)) {
+                crossingReducer = new LayerSweepCrossingReducer(new BarycenterCrossingReducer());
+            }
+            int passes = DEF_CROSSRED_PASSES;
+            if (preferenceStore != null) {
+                int prefPasses = preferenceStore.getInt(PREF_CROSSRED_PASSES);
+                if (prefPasses > 0) {
+                    passes = prefPasses;
+                }
+            }
+            ((LayerSweepCrossingReducer) crossingReducer).setPasses(passes);
         }
-        ((LayerSweepCrossingReducer) crossingReducer).setPasses(passes);
 
         if (nodewiseEdgePlacer == null) {
             nodewiseEdgePlacer = new SortingNodewiseEdgePlacer();

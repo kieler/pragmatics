@@ -24,6 +24,8 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Insets;
+import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
@@ -51,6 +53,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KInsets;
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.layout.options.EdgeLabelPlacement;
@@ -566,30 +569,22 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             editPart2GraphElemMap.put(connection, edge);
 
             KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(edge);
+            PointList pointList = connection.getConnectionFigure().getPoints();
             KPoint sourcePoint = edgeLayout.getSourcePoint();
-            KShapeLayout sourceLayout = KimlLayoutUtil.getShapeLayout(sourceNode);
-            if (sourcePort != null) {
-                KShapeLayout sourcePortLayout = KimlLayoutUtil.getShapeLayout(sourcePort);
-                sourcePoint.setX(sourcePortLayout.getXpos() + sourcePortLayout.getWidth() / 2
-                        + sourceLayout.getXpos());
-                sourcePoint.setY(sourcePortLayout.getYpos() + sourcePortLayout.getHeight() / 2
-                        + sourceLayout.getYpos());
-            } else {
-                sourcePoint.setX(sourceLayout.getXpos() + sourceLayout.getWidth() / 2);
-                sourcePoint.setY(sourceLayout.getYpos() + sourceLayout.getHeight() / 2);
+            Point firstPoint = pointList.getFirstPoint();
+            sourcePoint.setX(firstPoint.x);
+            sourcePoint.setY(firstPoint.y);
+            for (int i = 1; i < pointList.size() - 1; i++) {
+                Point point = pointList.getPoint(i);
+                KPoint kpoint = KLayoutDataFactory.eINSTANCE.createKPoint();
+                kpoint.setX(point.x);
+                kpoint.setY(point.y);
+                edgeLayout.getBendPoints().add(kpoint);
             }
             KPoint targetPoint = edgeLayout.getTargetPoint();
-            KShapeLayout targetLayout = KimlLayoutUtil.getShapeLayout(targetNode);
-            if (targetPort != null) {
-                KShapeLayout targetPortLayout = KimlLayoutUtil.getShapeLayout(targetPort);
-                targetPoint.setX(targetPortLayout.getXpos() + targetPortLayout.getWidth() / 2
-                        + targetLayout.getXpos());
-                targetPoint.setY(targetPortLayout.getYpos() + targetPortLayout.getHeight() / 2
-                        + targetLayout.getYpos());
-            } else {
-                targetPoint.setX(targetLayout.getXpos() + targetLayout.getWidth() / 2);
-                targetPoint.setY(targetLayout.getYpos() + targetLayout.getHeight() / 2);
-            }
+            Point lastPoint = pointList.getLastPoint();
+            targetPoint.setX(lastPoint.x);
+            targetPoint.setY(lastPoint.y);
 
             // set user defined layout options for the edge
             KimlUiUtil.setLayoutOptions(connection, edgeLayout, true);

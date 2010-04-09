@@ -335,8 +335,7 @@ public abstract class DiagramLayoutManager {
             layoutServices.layoutRequested(layoutGraph);
 
             // perform layout on the layout graph
-            layouterEngine
-                    .layout(layoutGraph, progressMonitor, layoutAncestors);
+            layouterEngine.layout(layoutGraph, progressMonitor, layoutAncestors);
             if (progressMonitor.isCanceled()) {
                 return new Status(IStatus.CANCEL, KimlUiPlugin.PLUGIN_ID, 0,
                         null, null);

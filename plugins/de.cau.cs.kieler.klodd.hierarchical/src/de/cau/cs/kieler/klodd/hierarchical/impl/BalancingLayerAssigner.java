@@ -47,9 +47,6 @@ public class BalancingLayerAssigner extends AbstractAlgorithm implements ILayerA
     public BalancingLayerAssigner(final ILayerAssigner thebasicLayerAssigner) {
         this.basicLayerAssigner = thebasicLayerAssigner;
     }
-
-    /** minimal number of layers for balancing of the layering. */
-    private static final int MIN_LAYERS = 3;
     
     /**
      * {@inheritDoc}
@@ -66,8 +63,8 @@ public class BalancingLayerAssigner extends AbstractAlgorithm implements ILayerA
         boolean vertical = layoutDirection == LayoutDirection.DOWN;
 
         // balance layer assignment of each element in the layering
-        if (layeredGraph.getLayers().size() >= MIN_LAYERS) {
-            ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator(2);
+        if (layeredGraph.getLayers().size() >= 2) {
+            ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator(1);
             while (layerIter.hasNext()) {
                 Layer layer = layerIter.next();
                 if (layer.getHeight() > 0) {
