@@ -1,6 +1,6 @@
 «IMPORT dataflow»
 
-«EXTENSION metamodel::helper»
+«EXTENSION template::helper»
 
 «DEFINE main FOR DataflowModel»
 	«FILE (name==null?"Dummy":name) + ".lus"»
