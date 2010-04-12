@@ -40,6 +40,13 @@ public class LPort {
     private Object origin;
     /** the edges connected to the port. */
     private List<LEdge> edges = new LinkedList<LEdge>();
+    /** name of the port. */
+    private String name;
+    
+    // CHECKSTYLEOFF VisibilityModifier
+    /** Identifier value, may be arbitrarily used by algorithms. */
+    public int id;
+    // CHECKSTYLEON VisibilityModifier
     
     /** A condition that checks the type of ports. */
     public static class TypeCondition implements ICondition<LPort> {
@@ -82,10 +89,23 @@ public class LPort {
     /**
      * Creates a port.
      * 
-     * @param theorigin the original object for the port
+     * @param theorigin the original object for the port, or {@code null}
+     * @param thename name of the port, or {@code null}
      */
-    public LPort(final Object theorigin) {
+    public LPort(final Object theorigin, final String thename) {
         this.origin = theorigin;
+        this.name = thename;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        if (name == null) {
+            return "p_" + id;
+        } else {
+            return "p_" + name;
+        }
     }
 
     /**

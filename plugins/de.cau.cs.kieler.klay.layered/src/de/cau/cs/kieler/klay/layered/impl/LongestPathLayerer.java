@@ -14,9 +14,7 @@
 package de.cau.cs.kieler.klay.layered.impl;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.layout.options.PortType;
@@ -38,18 +36,21 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayerer {
     /** the layered graph to which layers are added. */
     private LayeredGraph layeredGraph;
     /** map of nodes to their height in the layering. */
-    private Map<LNode, Integer> heightMap;
-    
-    /** load factor for hash map. */
-    private static final float HASH_LOAD = 0.9f;
+    private int[] nodeHeights;
     
     /**
      * {@inheritDoc}
      */
     public void layer(final Collection<LNode> nodes, final LayeredGraph thelayeredGraph) {
         getMonitor().begin("Longest path layering", 1);
-        heightMap = new HashMap<LNode, Integer>((int) (nodes.size() / HASH_LOAD) + 1, HASH_LOAD);
         layeredGraph = thelayeredGraph;
+        nodeHeights = new int[nodes.size()];
+        int index = 0;
+        for (LNode node : nodes) {
+            node.id = index;
+            nodeHeights[index] = -1;
+            index++;
+        }
         
         // process all nodes
         for (LNode node : nodes) {
@@ -66,8 +67,8 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayerer {
      * @return height of the given node in the layered graph
      */
     private int visit(final LNode node) {
-        Integer height = heightMap.get(node);
-        if (height != null) {
+        int height = nodeHeights[node.id];
+        if (height >= 0) {
             // the node was already visited
             return height;
         } else {
@@ -96,6 +97,7 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayerer {
             layers.add(0, new Layer(layeredGraph));
         }
         layers.get(layers.size() - height).getNodes().add(node);
+        nodeHeights[node.id] = height;
     }
 
 }

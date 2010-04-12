@@ -37,14 +37,34 @@ public class LNode {
     private Object origin;
     /** the ports of the node. */
     private List<LPort> ports = new LinkedList<LPort>();
+    /** name of the node. */
+    private String name;
     
+    // CHECKSTYLEOFF VisibilityModifier
+    /** Identifier value, may be arbitrarily used by algorithms. */
+    public int id;
+    // CHECKSTYLEON VisibilityModifier
+
     /**
      * Creates a layer node.
      * 
-     * @param theorigin the original object for the node
+     * @param theorigin the original object for the node, or {@code null}
+     * @param thename name of the node, or {@code null}
      */
-    public LNode(final Object theorigin) {
+    public LNode(final Object theorigin, final String thename) {
         this.origin = theorigin;
+        this.name = thename;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        if (name == null) {
+            return "n_" + id;
+        } else {
+            return "n_" + name;
+        }
     }
 
     /**

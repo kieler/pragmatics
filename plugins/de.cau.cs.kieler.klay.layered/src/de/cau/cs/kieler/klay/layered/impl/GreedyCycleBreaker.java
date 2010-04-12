@@ -14,9 +14,7 @@
 package de.cau.cs.kieler.klay.layered.impl;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.layout.options.PortType;
@@ -47,8 +45,6 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ICycleBreak
     private final LinkedList<LNode> sources = new LinkedList<LNode>();
     /** list of sink nodes. */
     private final LinkedList<LNode> sinks = new LinkedList<LNode>();
-    /** map of nodes to their indices for degrees and mark. */
-    private Map<LNode, Integer> indexMap;
 
     /**
      * {@inheritDoc}
@@ -60,9 +56,6 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ICycleBreak
         sinks.clear();
     }
     
-    /** load factor for hash map. */
-    private static final float HASH_LOAD = 0.9f;
-    
     /**
      * {@inheritDoc}
      */
@@ -71,13 +64,12 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ICycleBreak
 
         // initialize values for the algorithm
         int unprocessedNodes = nodes.size();
-        indexMap = new HashMap<LNode, Integer>((int) (unprocessedNodes / HASH_LOAD) + 1, HASH_LOAD);
         indeg = new int[unprocessedNodes];
         outdeg = new int[unprocessedNodes];
         mark = new int[unprocessedNodes];
         int nextRight = -1, nextLeft = 1, index = 0;
         for (LNode node : nodes) {
-            indexMap.put(node, index);
+            node.id = index;
             for (LPort port : node.getPorts()) {
                 if (port.getType() == PortType.OUTPUT) {
                     outdeg[index] += port.getEdges().size();
@@ -97,15 +89,13 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ICycleBreak
         while (unprocessedNodes > 0) {
             while (!sinks.isEmpty()) {
                 LNode sink = sinks.removeFirst();
-                int i = indexMap.get(sink);
-                mark[i] = nextRight--;
+                mark[sink.id] = nextRight--;
                 updateNeighbors(sink);
                 unprocessedNodes--;
             }
             while (!sources.isEmpty()) {
                 LNode source = sources.removeFirst();
-                int i = indexMap.get(source);
-                mark[i] = nextLeft++;
+                mark[source.id] = nextLeft++;
                 updateNeighbors(source);
                 unprocessedNodes--;
             }
@@ -144,7 +134,7 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ICycleBreak
         for (LNode node : nodes) {
             for (LPort port : node.getPorts(PortType.OUTPUT)) {
                 for (LEdge edge : port.getEdges()) {
-                    int targetIx = indexMap.get(edge.getTarget().getOwner());
+                    int targetIx = edge.getTarget().getOwner().id;
                     if (mark[index] > mark[targetIx]) {
                         LPort source = edge.getSource();
                         LPort target = edge.getTarget();
@@ -170,7 +160,7 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ICycleBreak
         for (LPort port : node.getPorts()) {
             for (LPort connectedPort : port.getConnectedPorts()) {
                 LNode endpoint = connectedPort.getOwner();
-                int index = indexMap.get(endpoint);
+                int index = endpoint.id;
                 if (mark[index] == 0) {
                     if (port.getType() == PortType.OUTPUT) {
                         indeg[index]--;

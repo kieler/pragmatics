@@ -38,6 +38,17 @@ public class LEdge {
     public LEdge(final Object theorigin) {
         this.origin = theorigin;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        if (source != null && target != null) {
+            return source.getOwner() + "(" + source + ")->" + target.getOwner() + "(" + target + ")";
+        } else {
+            return "e_" + hashCode();
+        }
+    }
     
     /**
      * @return the source
