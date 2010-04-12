@@ -20,6 +20,7 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.layout.options.PortType;
+import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.modules.ICycleBreaker;
@@ -138,12 +139,22 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ICycleBreak
             }
         }
 
-        // mark edges that point left
-//        for (LEdge edge : graph.getEdges()) {
-//            if (edge.getSource().getRank() > edge.getTarget().getRank()) {
-//                ...
-//            }
-//        }
+        // reverse edges that point left
+        index = 0;
+        for (LNode node : nodes) {
+            for (LPort port : node.getPorts(PortType.OUTPUT)) {
+                for (LEdge edge : port.getEdges()) {
+                    int targetIx = indexMap.get(edge.getTarget().getOwner());
+                    if (mark[index] > mark[targetIx]) {
+                        LPort source = edge.getSource();
+                        LPort target = edge.getTarget();
+                        edge.setSource(target);
+                        edge.setTarget(source);
+                    }
+                }                
+            }
+            index++;
+        }
 
         getMonitor().done();
     }

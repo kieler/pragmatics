@@ -84,7 +84,7 @@ public class LPort {
      * 
      * @param theorigin the original object for the port
      */
-    private LPort(final Object theorigin) {
+    public LPort(final Object theorigin) {
         this.origin = theorigin;
     }
 

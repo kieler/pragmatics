@@ -47,10 +47,18 @@ public class LEdge {
     }
 
     /**
+     * Sets the source port of this edge and adds itself to the port's list
+     * of edges. If the edge previously had another source, it is removed
+     * from the original port's list of edges.
+     * 
      * @param thesource the source to set
      */
     public void setSource(final LPort thesource) {
+        if (source != null) {
+            source.getEdges().remove(this);
+        }
         this.source = thesource;
+        source.getEdges().add(this);
     }
 
     /**
@@ -61,10 +69,18 @@ public class LEdge {
     }
 
     /**
+     * Sets the target port of this edge and adds itself to the port's list
+     * of edges. If the edge previously had another target, it is removed from
+     * the original port's list of edges.
+     * 
      * @param thetarget the target to set
      */
     public void setTarget(final LPort thetarget) {
+        if (target != null) {
+            target.getEdges().remove(this);
+        }
         this.target = thetarget;
+        target.getEdges().add(this);
     }
 
     /**

@@ -15,7 +15,6 @@ package de.cau.cs.kieler.klay.layered.graph;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.util.FilteredIterator;
 import de.cau.cs.kieler.kiml.layout.options.PortSide;
@@ -44,7 +43,7 @@ public class LNode {
      * 
      * @param theorigin the original object for the node
      */
-    private LNode(final Object theorigin) {
+    public LNode(final Object theorigin) {
         this.origin = theorigin;
     }
 

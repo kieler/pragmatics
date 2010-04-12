@@ -17,20 +17,21 @@ import java.util.Collection;
 
 import de.cau.cs.kieler.core.alg.IAlgorithm;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 
 /**
- * Interface for cycle breaker modules.
+ * Interface for layerer modules.
  *
  * @author msp
  */
-public interface ICycleBreaker extends IAlgorithm {
+public interface ILayerer extends IAlgorithm {
 
     /**
-     * Break cycles in the given collection of nodes. For this purpose some
-     * edges may be reversed, and new dummy nodes may be created.
+     * Create a set of layers and assign a layer to each of the given nodes.
      * 
      * @param nodes a collection of nodes
+     * @param layeredGraph an initially empty layered graph which is filled with layers
      */
-    void breakCycles(Collection<LNode> nodes);
+    void layer(Collection<LNode> nodes, LayeredGraph layeredGraph);
     
 }

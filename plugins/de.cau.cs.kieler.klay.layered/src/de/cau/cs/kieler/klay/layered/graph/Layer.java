@@ -25,6 +25,7 @@ public class Layer {
 
     /** the owning layered graph. */
     private LayeredGraph owner;
+
     /** the size of the layer as drawn horizontally. */
     private Coord size = new Coord();
     /** the nodes of the layer. */
@@ -35,7 +36,7 @@ public class Layer {
      * 
      * @param theowner the owning layered graph
      */
-    private Layer(final LayeredGraph theowner) {
+    public Layer(final LayeredGraph theowner) {
         this.owner = theowner;
     }
     
@@ -51,6 +52,13 @@ public class Layer {
      */
     public List<LNode> getNodes() {
         return nodes;
+    }
+    
+    /**
+     * @return the owner
+     */
+    public LayeredGraph getOwner() {
+        return owner;
     }
     
     /**
