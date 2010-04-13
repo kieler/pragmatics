@@ -36,7 +36,7 @@ import de.cau.cs.kieler.viewmanagement.TriggerEventObject;
  * 
  * @author mim
  * 
- * @kieler.rating 2010-03-22 proposed yellow 
+ * @kieler.rating 2010-03-22 proposed yellow
  */
 
 public class KSBasECombination extends ACombination {
@@ -88,8 +88,8 @@ public class KSBasECombination extends ACombination {
     @Override
     public void execute() {
         for (String effectName : effects) {
-            AEffect effect =
-                    RunLogic.getInstance().getEffect(effectName.toLowerCase(Locale.getDefault()));
+            AEffect effect = RunLogic.getInstance().getEffect(
+                    effectName.toLowerCase(Locale.getDefault()));
             if (effect != null) { // Set effect target and parameter
                 effect.setTarget(getEditPart(affectedObject));
                 effect.setParameters(parameter); // Execute effect
@@ -107,7 +107,8 @@ public class KSBasECombination extends ACombination {
     @Override
     public List<ATrigger> getTriggers() {
         // Get trigger
-        this.trigger = (KSBasETrigger) RunLogic.getInstance().getTrigger("KSBasETrigger");
+        this.trigger = (KSBasETrigger) RunLogic.getInstance().getTrigger(
+                "KSBasETrigger");
         // return trigger
         List<ATrigger> triggers = new LinkedList<ATrigger>();
         triggers.add(trigger);
@@ -154,7 +155,8 @@ public class KSBasECombination extends ACombination {
      * @param newIndex
      *            New index
      */
-    public static final void changeIndex(final String effectName, final int newIndex) {
+    public static final void changeIndex(final String effectName,
+            final int newIndex) {
         if (KSBasECombination.effects != null) {
             removeEffect(effectName);
             addEffect(effectName, newIndex);
@@ -169,12 +171,14 @@ public class KSBasECombination extends ACombination {
      */
     public static final void storeEffects(final IPreferenceStore prefStore) {
         StringBuffer effectString = new StringBuffer();
-        if (KSBasECombination.effects != null && KSBasECombination.effects.size() > 0) {
+        if (KSBasECombination.effects != null
+                && KSBasECombination.effects.size() > 0) {
             for (String effect : KSBasECombination.effects) {
                 if (effect.contains(KSBasECombination.SEPARATOR)) {
-                    KSBasEUIPlugin.getDefault().logWarning("Could not store effect ("
-                                            + effect + "). Name contains invalid character:"
-                                            + KSBasECombination.SEPARATOR);
+                    KSBasEUIPlugin.getDefault().logWarning(
+                            "Could not store effect (" + effect
+                                    + "). Name contains invalid character:"
+                                    + KSBasECombination.SEPARATOR);
                     continue;
                 }
                 effectString.append(effect + KSBasECombination.SEPARATOR);
@@ -183,8 +187,8 @@ public class KSBasECombination extends ACombination {
 
         // removing last separator when storing effects
         if (effectString.length() > 1) {
-            prefStore.setValue("storedEffects", effectString.substring(
-                    0, effectString.length() - 1));
+            prefStore.setValue("storedEffects", effectString.substring(0,
+                    effectString.length() - 1));
         } else {
             prefStore.setValue("storedEffects", ";");
         }
@@ -203,12 +207,14 @@ public class KSBasECombination extends ACombination {
         if (!RunLogic.getInstance().getState()) {
             RunLogic.getInstance().registerListeners();
         }
-        List<String> availableEffects = RunLogic.getInstance().getEffectsAsText();
+        List<String> availableEffects = RunLogic.getInstance()
+                .getEffectsAsText();
         // First: read all stored effects
         String storedEffects = prefStore.getString("storedEffects");
         if (storedEffects.length() > 0) {
             // The effects are separated by ';'
-            for (String effect : storedEffects.split(KSBasECombination.SEPARATOR)) {
+            for (String effect : storedEffects
+                    .split(KSBasECombination.SEPARATOR)) {
                 if (effect.length() > 0 && availableEffects.contains(effect)) {
                     effectList.add(effect);
                 }
@@ -216,9 +222,16 @@ public class KSBasECombination extends ACombination {
         } else {
             // No effects have been stored, so we are trying to add
             // layout as the default
-            
-            if (availableEffects.contains("de.cau.cs.kieler.viewmanagement.effects.layouteffect")) {
-                effectList.add("de.cau.cs.kieler.viewmanagement.effects.layouteffect");
+
+            if (availableEffects
+                    .contains("de.cau.cs.kieler.viewmanagement.effects.layouteffect")) {
+                effectList
+                        .add("de.cau.cs.kieler.viewmanagement.effects.layouteffect");
+            }
+            if (availableEffects
+                    .contains("de.cau.cs.kieler.viewmanagement.effects.zoomeffect")) {
+                effectList
+                        .add("de.cau.cs.kieler.viewmanagement.effects.zoomeffect");
             }
 
         }
