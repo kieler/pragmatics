@@ -400,7 +400,7 @@
       <layoutConstraint xmi:type="notation:Location" xmi:id="_K1aT8UFpEd-aOs5spqTUuA" x="-29" y="-27"/>
     </children>
     <children xmi:type="notation:Node" xmi:id="_K1aT8kFpEd-aOs5spqTUuA" type="4012">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="_K1aT80FpEd-aOs5spqTUuA" x="22" y="15"/>
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_K1aT80FpEd-aOs5spqTUuA" x="-1" y="-11"/>
     </children>
     <styles xmi:type="notation:ConnectorStyle" xmi:id="_K1ZF0UFpEd-aOs5spqTUuA" lineColor="4210752"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_K1ZF0kFpEd-aOs5spqTUuA" fontColor="4210752" fontName="Sans" fontHeight="10"/>
