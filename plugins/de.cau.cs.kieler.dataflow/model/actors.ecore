@@ -11,6 +11,8 @@
         eType="#//Link" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="childRelations" upperBound="-1"
         eType="#//Relation" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="childPorts" upperBound="-1"
+        eType="#//Port" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Port" eSuperTypes="#//Linkable platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//ENamedElement #//NamedObject #//Annotatable">
     <eStructuralFeatures xsi:type="ecore:EReference" name="link" eType="#//Link"/>

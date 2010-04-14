@@ -417,4 +417,17 @@
     <element xsi:nil="true"/>
     <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_GtS9I0FrEd-aOs5spqTUuA" points="[2, -20, -6, 68]$[9, -67, 1, 21]"/>
   </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_8iGesUewEd-T9vd3Tse8oA" type="3002" source="_BJxnUD2TEd-_KtY8GxPv3w" target="_BJyOYD2TEd-_KtY8GxPv3w">
+    <children xmi:type="notation:Node" xmi:id="_8iIT4EewEd-T9vd3Tse8oA" type="4011">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_8iIT4UewEd-T9vd3Tse8oA" x="-10" y="-10"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_8iIT4kewEd-T9vd3Tse8oA" type="4012">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_8iIT40ewEd-T9vd3Tse8oA" x="10" y="10"/>
+    </children>
+    <styles xmi:type="notation:ConnectorStyle" xmi:id="_8iGeskewEd-T9vd3Tse8oA" lineColor="4210752"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_8iGes0ewEd-T9vd3Tse8oA" fontColor="4210752" fontName="Sans" fontHeight="10"/>
+    <element xmi:type="ecore:EReference" href="actors.ecore#//Entity/childPorts"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_8iGetEewEd-T9vd3Tse8oA" points="[23, 3, -192, 80]$[99, 13, -116, 90]$[188, -56, -27, 21]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_8iL-QEewEd-T9vd3Tse8oA" id="(0.7745098039215687,0.5116279069767442)"/>
+  </edges>
 </notation:Diagram>
