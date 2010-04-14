@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<notation:Diagram xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:klayoutdata="http://kieler.cs.cau.de/KLayoutData" xmlns:layoutoptions="http://kieler.cs.cau.de/LayoutOptions" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmi:id="_BH4w8D2TEd-_KtY8GxPv3w" type="EcoreTools" measurementUnit="Pixel">
+<notation:Diagram xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmi:id="_BH4w8D2TEd-_KtY8GxPv3w" type="EcoreTools" measurementUnit="Pixel">
   <children xmi:type="notation:Node" xmi:id="_BJxnUD2TEd-_KtY8GxPv3w" type="1001">
     <children xmi:type="notation:Node" xmi:id="_BJxnUz2TEd-_KtY8GxPv3w" type="4001"/>
     <children xmi:type="notation:Node" xmi:id="_BJxnVD2TEd-_KtY8GxPv3w" type="5001">
@@ -207,9 +207,6 @@
     <layoutConstraint xmi:type="notation:Bounds" xmi:id="_ELB0skFrEd-aOs5spqTUuA" x="44" y="100"/>
   </children>
   <styles xmi:type="notation:DiagramStyle" xmi:id="_BH4w8T2TEd-_KtY8GxPv3w"/>
-  <styles xmi:type="layoutoptions:LayoutOptionStyle" xmi:id="_xjeYgEexEd-rJPp9wqFoVg">
-    <options xmi:type="klayoutdata:KFloatOption" xmi:id="_xjeYgUexEd-rJPp9wqFoVg" key="de.cau.cs.kieler.kiml.ogdf.option.pageRatio" value="2.0"/>
-  </styles>
   <element xmi:type="ecore:EPackage" href="actors.ecore#/"/>
   <edges xmi:type="notation:Edge" xmi:id="_BJ_CsD2TEd-_KtY8GxPv3w" type="3002" source="_BJxnUD2TEd-_KtY8GxPv3w" target="_BJxnUD2TEd-_KtY8GxPv3w">
     <children xmi:type="notation:Node" xmi:id="_BJ_pwD2TEd-_KtY8GxPv3w" type="4011">
