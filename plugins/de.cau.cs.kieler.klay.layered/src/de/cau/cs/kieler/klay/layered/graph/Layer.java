@@ -34,10 +34,10 @@ public class Layer {
     /**
      * Creates a layer for the given layered graph.
      * 
-     * @param theowner the owning layered graph
+     * @param graph the owning layered graph
      */
-    public Layer(final LayeredGraph theowner) {
-        this.owner = theowner;
+    public Layer(final LayeredGraph graph) {
+        this.owner = graph;
     }
     
     /**
@@ -57,7 +57,7 @@ public class Layer {
     /**
      * @return the owner
      */
-    public LayeredGraph getOwner() {
+    public LayeredGraph getGraph() {
         return owner;
     }
     

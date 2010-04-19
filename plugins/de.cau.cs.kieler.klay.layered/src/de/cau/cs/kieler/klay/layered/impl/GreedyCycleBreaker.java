@@ -134,7 +134,7 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ICycleBreak
         for (LNode node : nodes) {
             for (LPort port : node.getPorts(PortType.OUTPUT)) {
                 for (LEdge edge : port.getEdges()) {
-                    int targetIx = edge.getTarget().getOwner().id;
+                    int targetIx = edge.getTarget().getNode().id;
                     if (mark[index] > mark[targetIx]) {
                         LPort source = edge.getSource();
                         LPort target = edge.getTarget();
@@ -159,7 +159,7 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ICycleBreak
     private void updateNeighbors(final LNode node) {
         for (LPort port : node.getPorts()) {
             for (LPort connectedPort : port.getConnectedPorts()) {
-                LNode endpoint = connectedPort.getOwner();
+                LNode endpoint = connectedPort.getNode();
                 int index = endpoint.id;
                 if (mark[index] == 0) {
                     if (port.getType() == PortType.OUTPUT) {

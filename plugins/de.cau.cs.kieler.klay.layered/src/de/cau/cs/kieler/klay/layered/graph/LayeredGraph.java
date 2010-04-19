@@ -91,17 +91,17 @@ public class LayeredGraph {
                 for (LPort port : node.getPorts(PortType.OUTPUT)) {
                     for (LEdge edge : port.getEdges()) {
                         LPort targetPort = edge.getTarget();
-                        int targetIndex = targetPort.getOwner().getOwner().getIndex();
+                        int targetIndex = targetPort.getNode().getLayer().getIndex();
                         if (targetIndex != layerIter.nextIndex()) {
                             ListIterator<Layer> dummyIter = layers.listIterator(layerIter.nextIndex());
                             LEdge dummyEdge = edge;
                             while (dummyIter.hasNext() && dummyIter.nextIndex() < targetIndex) {
                                 LNode dummyNode = new LNode(edge, null, LNode.Type.LONG_EDGE);
-                                dummyNode.setOwner(dummyIter.next());
+                                dummyNode.setLayer(dummyIter.next());
                                 LPort dummyInput = new LPort(PortType.INPUT);
-                                dummyInput.setOwner(dummyNode);
+                                dummyInput.setNode(dummyNode);
                                 LPort dummyOutput = new LPort(PortType.OUTPUT);
-                                dummyOutput.setOwner(dummyNode);
+                                dummyOutput.setNode(dummyNode);
                                 dummyEdge.setTarget(dummyInput);
                                 dummyEdge = new LEdge(edge.getOrigin());
                                 dummyEdge.setSource(dummyOutput);

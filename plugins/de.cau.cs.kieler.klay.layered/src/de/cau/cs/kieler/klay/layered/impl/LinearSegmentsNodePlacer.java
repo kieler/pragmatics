@@ -208,7 +208,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
         if (node.getType() == LNode.Type.LONG_EDGE) {
             for (LPort sourcePort : node.getPorts(PortType.OUTPUT)) {
                 for (LPort targetPort : sourcePort.getConnectedPorts()) {
-                    LNode targetNode = targetPort.getOwner();
+                    LNode targetNode = targetPort.getNode();
                     if (targetNode.getType() == LNode.Type.LONG_EDGE) {
                         fillSegment(targetNode, segment);
                     }
@@ -226,12 +226,12 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
             // determine the uppermost placement for the linear segment
             float uppermostPlace = 0.0f;
             for (LNode node : segment.getNodes()) {
-                uppermostPlace = Math.max(uppermostPlace, node.getOwner().getSize().y);
+                uppermostPlace = Math.max(uppermostPlace, node.getLayer().getSize().y);
             }
             // apply the uppermost placement to all elements
             float newPos = uppermostPlace == 0 ? 0.0f : uppermostPlace + objSpacing;
             for (LNode node : segment.getNodes()) {
-                Layer layer = node.getOwner();
+                Layer layer = node.getLayer();
                 node.getPos().y = newPos;
                 float height = node.getSize().y;
                 layer.getSize().y = newPos + height;

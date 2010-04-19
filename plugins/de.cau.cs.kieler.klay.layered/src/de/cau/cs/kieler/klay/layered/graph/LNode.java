@@ -113,17 +113,10 @@ public class LNode implements Comparable<LNode> {
     }
 
     /**
-     * @return the owner
+     * @return the owning layer
      */
-    public Layer getOwner() {
+    public Layer getLayer() {
         return owner;
-    }
-
-    /**
-     * @return the type
-     */
-    public Type getType() {
-        return type;
     }
 
     /**
@@ -131,14 +124,21 @@ public class LNode implements Comparable<LNode> {
      * If the node was previously in another layer, it is removed from
      * that layer's list of nodes.
      * 
-     * @param theowner the owner to set
+     * @param layer the owner to set
      */
-    public void setOwner(final Layer theowner) {
+    public void setLayer(final Layer layer) {
         if (owner != null) {
             owner.getNodes().remove(this);
         }
-        this.owner = theowner;
+        this.owner = layer;
         owner.getNodes().add(this);
+    }
+
+    /**
+     * @return the type
+     */
+    public Type getType() {
+        return type;
     }
 
     /**

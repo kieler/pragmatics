@@ -75,7 +75,7 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayerer {
             int maxHeight = 1;
             for (LPort port : node.getPorts(PortType.OUTPUT)) {
                 for (LEdge edge : port.getEdges()) {
-                    LNode targetNode = edge.getTarget().getOwner();
+                    LNode targetNode = edge.getTarget().getNode();
                     int targetHeight = visit(targetNode) + 1;
                     maxHeight = Math.max(maxHeight, targetHeight);
                 }

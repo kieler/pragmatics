@@ -144,9 +144,9 @@ public class LPort implements Comparable<LPort> {
     }
 
     /**
-     * @return the owner
+     * @return the owning node
      */
-    public LNode getOwner() {
+    public LNode getNode() {
         return owner;
     }
 
@@ -155,13 +155,13 @@ public class LPort implements Comparable<LPort> {
      * If the port was previously in another node, it is removed from that
      * node's list of ports.
      * 
-     * @param theowner the owner to set
+     * @param node the owner to set
      */
-    public void setOwner(final LNode theowner) {
+    public void setNode(final LNode node) {
         if (owner != null) {
             owner.getPorts().remove(this);
         }
-        this.owner = theowner;
+        this.owner = node;
         owner.getPorts().add(this);
     }
 

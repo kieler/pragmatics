@@ -51,7 +51,7 @@ public class LEdge {
      */
     public String toString() {
         if (source != null && target != null) {
-            return source.getOwner() + "(" + source + ")->" + target.getOwner() + "(" + target + ")";
+            return source.getNode() + "(" + source + ")->" + target.getNode() + "(" + target + ")";
         } else {
             return "e_" + hashCode();
         }
