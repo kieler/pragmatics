@@ -26,12 +26,12 @@ import de.cau.cs.kieler.kiml.layout.options.PortType;
  *
  * @author msp
  */
-public class LPort {
+public class LPort implements Comparable<LPort> {
 
     /** the owning node. */
     private LNode owner;
     /** the port condType. */
-    private PortType type = PortType.UNDEFINED;
+    private PortType type;
     /** the port side. */
     private PortSide side = PortSide.UNDEFINED;
     /** the current position of the port. */
@@ -89,12 +89,40 @@ public class LPort {
     /**
      * Creates a port.
      * 
+     * @param thetype the type of port
      * @param theorigin the original object for the port, or {@code null}
      * @param thename name of the port, or {@code null}
      */
-    public LPort(final Object theorigin, final String thename) {
+    public LPort(final PortType thetype, final Object theorigin, final String thename) {
+        this.type = thetype;
         this.origin = theorigin;
         this.name = thename;
+    }
+    
+    /**
+     * Creates a port.
+     * 
+     * @param thetype the type of port
+     * @param theorigin the original object for the port, or {@code null}
+     */
+    public LPort(final PortType thetype, final Object theorigin) {
+        this(thetype, theorigin, null);
+    }
+    
+    /**
+     * Creates a port.
+     * 
+     * @param thetype the type of port
+     */
+    public LPort(final PortType thetype) {
+        this(thetype, null, null);
+    }
+    
+    /**
+     * Creates a port.
+     */
+    public LPort() {
+        this(PortType.UNDEFINED, null, null);
     }
 
     /**
@@ -106,6 +134,13 @@ public class LPort {
         } else {
             return "p_" + name;
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int compareTo(final LPort other) {
+        return other.id - this.id;
     }
 
     /**

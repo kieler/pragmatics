@@ -38,6 +38,13 @@ public class LEdge {
     public LEdge(final Object theorigin) {
         this.origin = theorigin;
     }
+    
+    /**
+     * Creates an edge.
+     */
+    public LEdge() {
+        this(null);
+    }
 
     /**
      * {@inheritDoc}

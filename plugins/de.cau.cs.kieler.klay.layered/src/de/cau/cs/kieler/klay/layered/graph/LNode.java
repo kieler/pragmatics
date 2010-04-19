@@ -25,7 +25,15 @@ import de.cau.cs.kieler.kiml.layout.options.PortType;
  *
  * @author msp
  */
-public class LNode {
+public class LNode implements Comparable<LNode> {
+    
+    /** Definition of node types used in the layered approach. */
+    public enum Type {
+        /** a normal node is created from a node of the original graph. */
+        NORMAL,
+        /** a dummy node created to split a long edge. */
+        LONG_EDGE;
+    }
     
     /** the owning layer. */
     private Layer owner;
@@ -39,6 +47,8 @@ public class LNode {
     private List<LPort> ports = new LinkedList<LPort>();
     /** name of the node. */
     private String name;
+    /** type of the node. */
+    private Type type;
     
     // CHECKSTYLEOFF VisibilityModifier
     /** Identifier value, may be arbitrarily used by algorithms. */
@@ -50,10 +60,38 @@ public class LNode {
      * 
      * @param theorigin the original object for the node, or {@code null}
      * @param thename name of the node, or {@code null}
+     * @param thetype type of the node
      */
-    public LNode(final Object theorigin, final String thename) {
+    public LNode(final Object theorigin, final String thename, final Type thetype) {
         this.origin = theorigin;
         this.name = thename;
+        this.type = thetype;
+    }
+    
+    /**
+     * Creates a layer node.
+     * 
+     * @param theorigin the original object for the node, or {@code null}
+     * @param thename name of the node, or {@code null}
+     */
+    public LNode(final Object theorigin, final String thename) {
+        this(theorigin, thename, Type.NORMAL);
+    }
+    
+    /**
+     * Creates a layer node.
+     * 
+     * @param theorigin the original object for the node, or {@code null}
+     */
+    public LNode(final Object theorigin) {
+        this(theorigin, null, Type.NORMAL);
+    }
+    
+    /**
+     * Creates a layer node.
+     */
+    public LNode() {
+        this(null, null, Type.NORMAL);
     }
 
     /**
@@ -68,10 +106,24 @@ public class LNode {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public int compareTo(final LNode other) {
+        return other.id - this.id;
+    }
+
+    /**
      * @return the owner
      */
     public Layer getOwner() {
         return owner;
+    }
+
+    /**
+     * @return the type
+     */
+    public Type getType() {
+        return type;
     }
 
     /**
@@ -120,12 +172,12 @@ public class LNode {
     /**
      * Returns an iterable for all ports of given type.
      * 
-     * @param type a port type
+     * @param portType a port type
      * @return an iterable for the ports of given type
      */
-    public Iterable<LPort> getPorts(final PortType type) {
+    public Iterable<LPort> getPorts(final PortType portType) {
         return new FilteredIterator.Iterable<LPort>(ports,
-                new LPort.TypeCondition(type));
+                new LPort.TypeCondition(portType));
     }
     
     /**

@@ -15,6 +15,9 @@ package de.cau.cs.kieler.klay.layered.graph;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
+
+import de.cau.cs.kieler.kiml.layout.options.PortType;
 
 /**
  * A layered graph has a set of layers that contain the nodes.
@@ -39,6 +42,13 @@ public class LayeredGraph {
      */
     public LayeredGraph(final Object theorigin) {
         this.origin = theorigin;
+    }
+    
+    /**
+     * Creates a layered graph.
+     */
+    public LayeredGraph() {
+        this(null);
     }
 
     /**
@@ -73,7 +83,35 @@ public class LayeredGraph {
      * Split the long edges of the layered graph to obtain a proper layering.
      */
     public void splitEdges() {
-        // FIXME to implement
+        // TODO create additional dummy nodes for feedback edges
+        ListIterator<Layer> layerIter = layers.listIterator();
+        while (layerIter.hasNext()) {
+            Layer layer = layerIter.next();
+            for (LNode node : layer.getNodes()) {
+                for (LPort port : node.getPorts(PortType.OUTPUT)) {
+                    for (LEdge edge : port.getEdges()) {
+                        LPort targetPort = edge.getTarget();
+                        int targetIndex = targetPort.getOwner().getOwner().getIndex();
+                        if (targetIndex != layerIter.nextIndex()) {
+                            ListIterator<Layer> dummyIter = layers.listIterator(layerIter.nextIndex());
+                            LEdge dummyEdge = edge;
+                            while (dummyIter.hasNext() && dummyIter.nextIndex() < targetIndex) {
+                                LNode dummyNode = new LNode(edge, null, LNode.Type.LONG_EDGE);
+                                dummyNode.setOwner(dummyIter.next());
+                                LPort dummyInput = new LPort(PortType.INPUT);
+                                dummyInput.setOwner(dummyNode);
+                                LPort dummyOutput = new LPort(PortType.OUTPUT);
+                                dummyOutput.setOwner(dummyNode);
+                                dummyEdge.setTarget(dummyInput);
+                                dummyEdge = new LEdge(edge.getOrigin());
+                                dummyEdge.setSource(dummyOutput);
+                            }
+                            dummyEdge.setTarget(targetPort);
+                        }
+                    }
+                }
+            }
+        }
     }
     
 }
