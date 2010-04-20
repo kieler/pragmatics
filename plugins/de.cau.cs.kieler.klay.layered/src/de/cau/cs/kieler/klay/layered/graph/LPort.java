@@ -26,7 +26,7 @@ import de.cau.cs.kieler.kiml.layout.options.PortType;
  *
  * @author msp
  */
-public class LPort implements Comparable<LPort> {
+public class LPort extends LGraphElement {
 
     /** the owning node. */
     private LNode owner;
@@ -42,11 +42,6 @@ public class LPort implements Comparable<LPort> {
     private List<LEdge> edges = new LinkedList<LEdge>();
     /** name of the port. */
     private String name;
-    
-    // CHECKSTYLEOFF VisibilityModifier
-    /** Identifier value, may be arbitrarily used by algorithms. */
-    public int id;
-    // CHECKSTYLEON VisibilityModifier
     
     /** A condition that checks the type of ports. */
     public static class TypeCondition implements ICondition<LPort> {
@@ -134,13 +129,6 @@ public class LPort implements Comparable<LPort> {
         } else {
             return "p_" + name;
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public int compareTo(final LPort other) {
-        return other.id - this.id;
     }
 
     /**

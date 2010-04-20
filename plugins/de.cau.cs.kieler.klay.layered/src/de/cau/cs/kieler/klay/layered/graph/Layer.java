@@ -21,7 +21,7 @@ import java.util.List;
  *
  * @author msp
  */
-public class Layer {
+public class Layer extends LGraphElement {
 
     /** the owning layered graph. */
     private LayeredGraph owner;

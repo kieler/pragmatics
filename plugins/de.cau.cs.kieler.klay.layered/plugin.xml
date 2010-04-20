@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.kiml.layout.layoutProviders">
+      <layoutProvider
+            category="de.cau.cs.kieler.layouter.category"
+            class="de.cau.cs.kieler.klay.layered.LayeredLayoutProvider"
+            id="de.cau.cs.kieler.klay.layered"
+            name="KLay Layered"
+            type="de.cau.cs.kieler.layout.types.layered">
+      </layoutProvider>
+   </extension>
+
+</plugin>

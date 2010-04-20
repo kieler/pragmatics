@@ -21,7 +21,7 @@ import java.util.List;
  *
  * @author msp
  */
-public class LEdge {
+public class LEdge extends LGraphElement {
 
     /** the bend points. */
     private List<Coord> bendPoints = new LinkedList<Coord>();

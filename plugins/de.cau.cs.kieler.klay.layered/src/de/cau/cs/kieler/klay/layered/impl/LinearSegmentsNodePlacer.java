@@ -20,6 +20,7 @@ import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.layout.options.PortType;
+import de.cau.cs.kieler.klay.layered.LayeredLayoutProvider;
 import de.cau.cs.kieler.klay.layered.graph.Coord;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -77,15 +78,15 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
     }
     
     /** minimal spacing between objects. */
-    private float objSpacing;
+    private float spacing = LayeredLayoutProvider.DEF_SPACING;
     /** array of sorted linear segments. */
     private LinearSegment[] linearSegments;
 
     /**
-     * @param theobjSpacing the object spacing to set
+     * {@inheritDoc}
      */
-    public void setObjSpacing(final float theobjSpacing) {
-        this.objSpacing = theobjSpacing;
+    public void setSpacing(final float theSpacing) {
+        this.spacing = theSpacing;
     }
 
     /**
@@ -229,7 +230,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
                 uppermostPlace = Math.max(uppermostPlace, node.getLayer().getSize().y);
             }
             // apply the uppermost placement to all elements
-            float newPos = uppermostPlace == 0 ? 0.0f : uppermostPlace + objSpacing;
+            float newPos = uppermostPlace == 0 ? 0.0f : uppermostPlace + spacing;
             for (LNode node : segment.getNodes()) {
                 Layer layer = node.getLayer();
                 node.getPos().y = newPos;

@@ -17,24 +17,24 @@ import de.cau.cs.kieler.core.alg.IAlgorithm;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 
 /**
- * Interface for node placement modules.
+ * Interface for edge routing modules.
  *
  * @author msp
  */
-public interface INodePlacer extends IAlgorithm {
-    
+public interface IEdgeRouter extends IAlgorithm {
+
     /**
-     * Determine placement and size for all nodes in the given layered graph.
+     * Route the edges of the given layered graph.
      * 
      * @param layeredGraph a layered graph
      */
-    void placeNodes(LayeredGraph layeredGraph);
+    void routeEdges(LayeredGraph layeredGraph);
     
     /**
-     * Set the node spacing for placement.
+     * Set the node and edge spacing for routing.
      * 
      * @param spacing the spacing value
      */
     void setSpacing(float spacing);
-
+    
 }

@@ -25,7 +25,7 @@ import de.cau.cs.kieler.kiml.layout.options.PortType;
  *
  * @author msp
  */
-public class LNode implements Comparable<LNode> {
+public class LNode extends LGraphElement {
     
     /** Definition of node types used in the layered approach. */
     public enum Type {
@@ -49,11 +49,6 @@ public class LNode implements Comparable<LNode> {
     private String name;
     /** type of the node. */
     private Type type;
-    
-    // CHECKSTYLEOFF VisibilityModifier
-    /** Identifier value, may be arbitrarily used by algorithms. */
-    public int id;
-    // CHECKSTYLEON VisibilityModifier
 
     /**
      * Creates a layer node.
@@ -103,13 +98,6 @@ public class LNode implements Comparable<LNode> {
         } else {
             return "n_" + name;
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public int compareTo(final LNode other) {
-        return other.id - this.id;
     }
 
     /**
