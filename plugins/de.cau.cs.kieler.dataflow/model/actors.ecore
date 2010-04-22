@@ -3,7 +3,7 @@
     xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="actors"
     nsURI="http://kieler.cs.cau.de/Actors" nsPrefix="actors">
-  <eClassifiers xsi:type="ecore:EClass" name="Entity" abstract="true" eSuperTypes="platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//ENamedElement #//NamedObject #//Annotatable">
+  <eClassifiers xsi:type="ecore:EClass" name="Entity" abstract="true" eSuperTypes="#//NamedObject">
     <eStructuralFeatures xsi:type="ecore:EReference" name="childEntities" upperBound="-1"
         eType="#//Entity" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="links" eType="#//Link"/>
@@ -14,10 +14,10 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="childPorts" upperBound="-1"
         eType="#//Port" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Port" eSuperTypes="#//Linkable platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//ENamedElement #//NamedObject #//Annotatable">
+  <eClassifiers xsi:type="ecore:EClass" name="Port" eSuperTypes="#//Linkable #//NamedObject">
     <eStructuralFeatures xsi:type="ecore:EReference" name="link" eType="#//Link"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Relation" eSuperTypes="#//Linkable platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//ENamedElement #//NamedObject #//Annotatable">
+  <eClassifiers xsi:type="ecore:EClass" name="Relation" eSuperTypes="#//Linkable #//NamedObject">
     <eStructuralFeatures xsi:type="ecore:EReference" name="connectedPorts" lowerBound="1"
         upperBound="-1" eType="#//Port"/>
   </eClassifiers>
