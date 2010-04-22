@@ -25,6 +25,10 @@ import de.cau.cs.kieler.kiml.layout.AbstractLayoutProvider;
 
 /**
  * Layout provider that uses the Zest grid layout algorithm.
+ * <p>
+ * Note: Zest is going to be subject to a lot of changes, see
+ * <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=283083">Eclipse bug 283083</a>.
+ * </p>
  * 
  * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
