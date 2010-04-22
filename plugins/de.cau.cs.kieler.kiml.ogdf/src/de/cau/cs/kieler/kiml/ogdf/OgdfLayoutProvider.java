@@ -13,9 +13,12 @@
  */
 package de.cau.cs.kieler.kiml.ogdf;
 
+import org.eclipse.swt.widgets.Display;
+
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.ui.util.ExperimentalDialog;
 import de.cau.cs.kieler.kiml.layout.AbstractLayoutProvider;
 
 /**
@@ -64,6 +67,18 @@ public class OgdfLayoutProvider extends AbstractLayoutProvider {
         if (layoutAlgorithm == null) {
             throw new KielerException("The OGDF layout algorithm is not configured correctly."
                     + " Please check the parameter in the extension point");
+        }
+        
+        // display a warning that this feature is experimental
+        if (ExperimentalDialog.needWarning(OgdfPlugin.getDefault())) {
+            final Display display = Display.getDefault();
+            display.syncExec(new Runnable() {
+                public void run() {
+                    ExperimentalDialog experimentalDialog = new ExperimentalDialog(
+                            display.getActiveShell(), "OGDF Layouters", OgdfPlugin.getDefault());
+                    experimentalDialog.open();
+                }
+            });
         }
 
         // layout the graph with the selected algorithm

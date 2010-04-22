@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2009 by
+ * Copyright 2010 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -11,34 +11,29 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.core.ui;
+package de.cau.cs.kieler.kiml.ogdf;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import de.cau.cs.kieler.core.ui.listeners.RefactoringListener;
-
 /**
- * Activator class for the KIELER core UI plugin.
+ * The activator class controls the plug-in life cycle.
  * 
- * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
  */
-public class CoreUIPlugin extends AbstractUIPlugin {
+public class OgdfPlugin extends AbstractUIPlugin {
 
     /** the plug-in ID. */
-    public static final String PLUGIN_ID = "de.cau.cs.kieler.core.ui"; //$NON-NLS-1$
+    public static final String PLUGIN_ID = "de.cau.cs.kieler.kiml.ogdf";
 
     /** the shared instance. */
-    private static CoreUIPlugin plugin;
+    private static OgdfPlugin plugin;
 
     /**
      * The constructor.
      */
-    public CoreUIPlugin() {
-
+    public OgdfPlugin() {
     }
 
     /**
@@ -48,8 +43,6 @@ public class CoreUIPlugin extends AbstractUIPlugin {
     public void start(final BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
-        RefactoringCore.getHistoryService().addHistoryListener(
-                new RefactoringListener());
     }
 
     /**
@@ -66,7 +59,7 @@ public class CoreUIPlugin extends AbstractUIPlugin {
      * 
      * @return the shared instance
      */
-    public static CoreUIPlugin getDefault() {
+    public static OgdfPlugin getDefault() {
         return plugin;
     }
 
@@ -74,8 +67,7 @@ public class CoreUIPlugin extends AbstractUIPlugin {
      * Returns an image descriptor for the image file at the given plug-in
      * relative path.
      * 
-     * @param path
-     *            the path
+     * @param path the path
      * @return the image descriptor
      */
     public static ImageDescriptor getImageDescriptor(final String path) {
