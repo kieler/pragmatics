@@ -389,13 +389,13 @@ public abstract class OgdfLayouter {
         for (Map.Entry<KEdge, EdgeElement> entry : kedge2ogdfEdgeMap.entrySet()) {
             KEdge kedge = entry.getKey();
             KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
+            EList<KPoint> kbends = edgeLayout.getBendPoints();
+            kbends.clear();
             EdgeElement ogdfEdge = entry.getValue();
             DPolyline bends = graphAttributes.bends(ogdfEdge);
             // are source and target point present?
             if (bends.size() >= 2) {
                 DPointListConstIterator bendsIter = bends.iterator();
-                EList<KPoint> kbends = edgeLayout.getBendPoints();
-                kbends.clear();
                 // set the source point
                 DPoint first = bendsIter.next();
                 edgeLayout.setSourcePoint(toKPoint(first, offsetX, offsetY));
