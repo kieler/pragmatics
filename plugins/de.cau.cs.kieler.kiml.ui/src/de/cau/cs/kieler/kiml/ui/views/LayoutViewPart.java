@@ -156,9 +156,13 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
         IWorkbenchWindow workbenchWindow = getSite().getWorkbenchWindow();
         IWorkbenchPage activePage = workbenchWindow.getActivePage();
         if (activePage != null) {
-            IWorkbenchPart activePart = activePage.getActivePart();
+            final IWorkbenchPart activePart = activePage.getActivePart();
             if (activePart != null) {
-                setInput(activePart);
+                workbenchWindow.getWorkbench().getDisplay().asyncExec(new Runnable() {
+                    public void run() {
+                        setInput(activePart);
+                    }
+                });
             }
         }
         
