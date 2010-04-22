@@ -151,7 +151,7 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
             for (KEdge kedge : source.getOutgoingEdges()) {
                 KNode target = kedge.getTarget();
                 Node draw2dTarget = nodeMap.get(target);
-                if (draw2dTarget != null) {
+                if (draw2dTarget != null && draw2dTarget != draw2dSource) {
                     Edge draw2dEdge = new Edge(kedge, draw2dSource, draw2dTarget);
                     graph.edges.add(draw2dEdge);
                 }

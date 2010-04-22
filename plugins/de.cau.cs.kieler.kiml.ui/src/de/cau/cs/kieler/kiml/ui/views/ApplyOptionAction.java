@@ -23,13 +23,11 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.properties.IPropertySheetEntry;
 
 import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
-import de.cau.cs.kieler.kiml.layout.LayoutProviderData;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KOption;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 import de.cau.cs.kieler.kiml.ui.layout.KimlUiUtil;
 import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyle;
 import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsFactory;
@@ -86,16 +84,14 @@ public class ApplyOptionAction extends Action {
      * @param entry a property sheet entry
      */
     private void applyOption(final DiagramEditor diagramEditor, final IPropertySheetEntry entry) {
-        LayoutOptionData theOptionData = null;
-        for (LayoutProviderData providerData : layoutView.getCurrentProviderData()) {
-            theOptionData = EclipseLayoutServices.getInstance().getOptionData(providerData,
-                    entry.getDisplayName());
-            if (theOptionData != null) {
-                break;
-            }
+        LayoutOptionData theOptionData = KimlUiUtil.getOptionData(
+                layoutView.getCurrentProviderData(), entry.getDisplayName());
+        if (theOptionData == null) {
+            return;
         }
+
         final Object value = theOptionData.parseValue(entry.getValueAsString());
-        if (theOptionData != null && value != null) {
+        if (value != null) {
             final IGraphicalEditPart diagramEditPart = (IGraphicalEditPart) diagramEditor
                     .getDiagramGraphicalViewer().getContents();
             final LayoutOptionData optionData = theOptionData;

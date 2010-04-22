@@ -18,9 +18,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.views.properties.IPropertySheetEntry;
 
 import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
-import de.cau.cs.kieler.kiml.layout.LayoutProviderData;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
+import de.cau.cs.kieler.kiml.ui.layout.KimlUiUtil;
 
 /**
  * An action that sets the selected layout option as default for all instances of a
@@ -73,14 +73,9 @@ public class DiagramTypeDefaultAction extends Action {
      * @param entry a property sheet entry
      */
     private void setDefault(final String diagramType, final IPropertySheetEntry entry) {
-        LayoutOptionData optionData = null;
-        for (LayoutProviderData providerData : layoutView.getCurrentProviderData()) {
-            optionData = EclipseLayoutServices.getInstance().getOptionData(providerData,
-                    entry.getDisplayName());
-            if (optionData != null) {
-                break;
-            }
-        }
+        LayoutOptionData optionData = KimlUiUtil.getOptionData(
+                layoutView.getCurrentProviderData(), entry.getDisplayName());
+        
         if (optionData != null) {
             EclipseLayoutServices.getInstance().storeOption(diagramType,
                     optionData, entry.getValueAsString());

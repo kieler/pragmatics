@@ -471,4 +471,25 @@ public final class KimlUiUtil {
         return false;
     }
 
+    /**
+     * Retrieves a suitable layout option data instance that matches the given
+     * user friendly display name.
+     * 
+     * @param providerDataArray array of applicable layout provider data
+     * @param displayName display name of the layout option as seen by the user
+     * @return the most suitable layout option data
+     */
+    public static LayoutOptionData getOptionData(final LayoutProviderData[] providerDataArray,
+            final String displayName) {
+        for (LayoutProviderData providerData : providerDataArray) {
+            LayoutOptionData optionData = EclipseLayoutServices.getInstance().getOptionData(
+                    providerData, displayName);
+            if (optionData != null) {
+                return optionData;
+            }
+        }
+        // the only option data that is added without explicit support by layouters is layout hint
+        return LayoutServices.getInstance().getLayoutOptionData(LayoutOptions.LAYOUT_HINT);
+    }
+
 }

@@ -212,6 +212,16 @@ public class GmfLayoutPropertySource implements IPropertySource {
                 koptionMap.put(optionData, koption);
             }
         }
+        if (partLayoutHint == null) {
+            DiagramEditPart diagramEditPart = KimlUiUtil.getDiagramEditPart(containerEditPart);
+            if (diagramEditPart != null) {
+                KOption koption = KimlUiUtil.getKOption(diagramEditPart,
+                        LayoutOptions.LAYOUT_HINT);
+                if (koption != null && koption.isDefault()) {
+                    partLayoutHint = ((KStringOption) koption).getValue();
+                }
+            }
+        }
         return partLayoutHint;
     }
     
@@ -228,6 +238,16 @@ public class GmfLayoutPropertySource implements IPropertySource {
                 (containerEditPart instanceof CompartmentEditPart
                         ? (IGraphicalEditPart) containerEditPart.getParent() : containerEditPart),
                 LayoutOptions.LAYOUT_HINT);
+        if (containerLayoutHintOption == null) {
+            DiagramEditPart diagramEditPart = KimlUiUtil.getDiagramEditPart(containerEditPart);
+            if (diagramEditPart != null) {
+                KOption koption = KimlUiUtil.getKOption(diagramEditPart,
+                        LayoutOptions.LAYOUT_HINT);
+                if (koption != null && koption.isDefault()) {
+                    containerLayoutHintOption = koption;
+                }
+            }
+        }
         String containerLayoutHint = containerLayoutHintOption instanceof KStringOption
                 ? ((KStringOption) containerLayoutHintOption).getValue() : null;
         String containerDiagramType = (String) KimlUiUtil.getOption(containerEditPart,
