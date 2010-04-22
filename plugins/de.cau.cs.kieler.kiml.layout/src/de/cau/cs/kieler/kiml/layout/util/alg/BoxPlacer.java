@@ -33,7 +33,7 @@ import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
 public class BoxPlacer extends AbstractAlgorithm {
 
     /** maximal factor by which a row may be broader than the maximal row width. */
-    private static final float MAX_BROADEN = 1.1f;
+    public static final float DEF_ASPECT_RATIO = 1.3f;
 
     // width and height of the parent node
     private float parentWidth, parentHeight;
@@ -57,9 +57,14 @@ public class BoxPlacer extends AbstractAlgorithm {
                 - insets.getLeft() - insets.getRight(), 0);
         float minHeight = Math.max(LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_HEIGHT)
                 - insets.getTop() - insets.getBottom(), 0);
+        float aspectRatio = LayoutOptions.getFloat(parentLayout, LayoutOptions.ASPECT_RATIO);
+        if (Float.isNaN(aspectRatio) || aspectRatio <= 0) {
+            aspectRatio = DEF_ASPECT_RATIO;
+        }
 
         // do place the boxes
-        placeBoxes(sortedBoxes, objSpacing, borderSpacing, minWidth, minHeight, expandNodes);
+        placeBoxes(sortedBoxes, objSpacing, borderSpacing, minWidth, minHeight,
+                expandNodes, aspectRatio);
 
         // adjust parent size
         parentLayout.setWidth(insets.getLeft() + parentWidth + insets.getRight());
@@ -78,10 +83,11 @@ public class BoxPlacer extends AbstractAlgorithm {
      * @param minTotalWidth minimal width of the parent node
      * @param minTotalHeight minimal height of the parent node
      * @param expandNodes if true, the nodes are expanded to fill their parent
+     * @param aspectRatio the desired aspect ratio
      */
     private void placeBoxes(final List<KNode> sortedBoxes, final float minSpacing,
             final float borderSpacing, final float minTotalWidth, final float minTotalHeight,
-            final boolean expandNodes) {
+            final boolean expandNodes, final float aspectRatio) {
         // determine the maximal row width by the maximal box width and the
         // total area
         float maxRowWidth = 0.0f;
@@ -94,7 +100,7 @@ public class BoxPlacer extends AbstractAlgorithm {
             maxRowWidth = Math.max(maxRowWidth, boxLayout.getWidth());
             totalArea += boxLayout.getWidth() * boxLayout.getHeight();
         }
-        maxRowWidth = Math.max(maxRowWidth, (float) Math.sqrt(totalArea)) * MAX_BROADEN
+        maxRowWidth = Math.max(maxRowWidth, (float) Math.sqrt(totalArea) * aspectRatio)
                 + borderSpacing;
 
         // place nodes iteratively into rows

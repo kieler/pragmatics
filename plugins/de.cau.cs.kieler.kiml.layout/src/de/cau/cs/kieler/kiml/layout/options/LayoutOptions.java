@@ -42,6 +42,8 @@ public final class LayoutOptions {
     private LayoutOptions() {
     }
     
+    /** layout option key: aimed aspect ratio. */
+    public static final String ASPECT_RATIO = "de.cau.cs.kieler.layout.options.aspectRatio";
     /** layout option key: layout hint. */
     public static final String LAYOUT_HINT = "de.cau.cs.kieler.layout.options.layoutHint";
     /** layout option key: diagram type. */

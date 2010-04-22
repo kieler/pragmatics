@@ -42,6 +42,9 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.fixedSize">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.aspectRatio">
+         </knownOption>
       </layoutProvider>
       <layoutType
             id="de.cau.cs.kieler.layout.types.layered"
@@ -166,6 +169,13 @@
             id="de.cau.cs.kieler.layout.options.edgeType"
             name="Edge Type"
             type="enum">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            description="The aimed aspect ratio of the drawing, that is the quotient of width by height"
+            id="de.cau.cs.kieler.layout.options.aspectRatio"
+            name="Aspect Ratio"
+            type="float">
       </layoutOption>
    </extension>
    <extension

@@ -85,6 +85,8 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
             return 0;
         } else if (LayoutOptions.EXPAND_NODES.equals(optionId)) {
             return false;
+        } else if (LayoutOptions.ASPECT_RATIO.equals(optionId)) {
+            return BoxPlacer.DEF_ASPECT_RATIO;
         } else {
             return null;
         }

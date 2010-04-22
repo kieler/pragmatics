@@ -30,8 +30,6 @@ import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
  */
 public class PlanarizationLayouter extends OgdfLayouter {
 
-    /** layout option identifier for the page ratio. */
-    public static final String OPT_PAGE_RATIO = "de.cau.cs.kieler.kiml.ogdf.option.pageRatio";
     /** default value for page ratio. */
     public static final float DEF_PAGE_RATIO = 1.3f;
     /** default value for minimal spacing. */
@@ -55,7 +53,7 @@ public class PlanarizationLayouter extends OgdfLayouter {
         KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
 
         // set page ratio
-        float pageRatio = LayoutOptions.getFloat(parentLayout, OPT_PAGE_RATIO);
+        float pageRatio = LayoutOptions.getFloat(parentLayout, LayoutOptions.ASPECT_RATIO);
         if (Float.isNaN(pageRatio)) {
             pageRatio = DEF_PAGE_RATIO;
         }
@@ -116,7 +114,7 @@ public class PlanarizationLayouter extends OgdfLayouter {
             return DEF_MINSPACING;
         } else if (optionId.equals(LayoutOptions.BORDER_SPACING)) {
             return DEF_BORDER_SPACING;
-        } else if (optionId.equals(OPT_PAGE_RATIO)) {
+        } else if (optionId.equals(LayoutOptions.ASPECT_RATIO)) {
             return DEF_PAGE_RATIO;
         } else if (optionId.equals(OPT_LABEL_EDGE_DISTANCE)) {
             return DEF_LABEL_SPACING;

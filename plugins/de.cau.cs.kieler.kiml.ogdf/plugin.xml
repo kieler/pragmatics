@@ -75,16 +75,9 @@
                option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.pageRatio">
+               option="de.cau.cs.kieler.layout.options.aspectRatio">
          </knownOption>
       </layoutProvider>
-      <layoutOption
-            appliesTo="parents"
-            description="Width / height ratio of connected components"
-            id="de.cau.cs.kieler.kiml.ogdf.option.pageRatio"
-            name="Page Ratio"
-            type="float">
-      </layoutOption>
    </extension>
 
 </plugin>
