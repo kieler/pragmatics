@@ -107,7 +107,9 @@ public class EclipseLayoutServices extends LayoutServices {
     public static final String DEFAULT_OPTION_NAME = "<Unnamed Option>";
     
     /** preference identifier for the list of registered diagram elements. */
-    private static final String PREF_REG_ELEMENTS = "kiml.reg.elements";
+    public static final String PREF_REG_ELEMENTS = "kiml.reg.elements";
+    /** preference identifier for oblique edge routing. */
+    public static final String PREF_OBLIQUE_ROUTE = "kiml.oblique.route";
     
     /** set of registered diagram elements. */
     private Set<String> registeredElements = new HashSet<String>();

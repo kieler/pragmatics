@@ -45,6 +45,7 @@ import org.eclipse.gmf.runtime.draw2d.ui.geometry.PointListUtilities;
 import org.eclipse.gmf.runtime.emf.core.util.EObjectAdapter;
 import org.eclipse.gmf.runtime.notation.Edge;
 import org.eclipse.gmf.runtime.notation.View;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
@@ -61,6 +62,7 @@ import de.cau.cs.kieler.kiml.layout.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.layout.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 
 /**
@@ -116,6 +118,11 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                                 (LabelEditPart) layoutPair.getSecond());
                     }
                 }
+                
+                // set further options
+                IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
+                command.setObliqueRouting(preferenceStore.getBoolean(
+                        EclipseLayoutServices.PREF_OBLIQUE_ROUTE));
                 
                 pointListMap.clear();
                 return new ICommandProxy(command);

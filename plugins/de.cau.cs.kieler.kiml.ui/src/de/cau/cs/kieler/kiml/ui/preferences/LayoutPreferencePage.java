@@ -61,6 +61,8 @@ import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
  */
 public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
+    /** checkbox for edge routing style. */
+    private Button obliqueCheckBox;
     /** array of layout provider identifiers. */
     private String[] providerIds;
     /** array of diagram type identifiers. */
@@ -89,6 +91,8 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
      */
     protected Control createContents(final Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
+        Group generalGroup = createGeneralGroup(composite);
+        generalGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
         Group prioGroup = createPrioritiesGroup(composite);
         prioGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
         Group diagTypeGroup = createDiagramTypeGroup(composite);
@@ -98,6 +102,38 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         GridLayout compositeLayout = new GridLayout(1, false);
         composite.setLayout(compositeLayout);
         return composite;
+    }
+    
+    /** margin width for layouts. */
+    private static final int MARGIN_WIDTH = 10;
+    
+    /**
+     * Creates the group for general options.
+     * 
+     * @param parent the parent control
+     * @return a group with general options
+     */
+    private Group createGeneralGroup(final Composite parent) {
+        Group generalGroup = new Group(parent, SWT.NONE);
+        generalGroup.setText(Messages.getString("kiml.ui.35")); //$NON-NLS-1$
+        
+        // add checkbox for oblique routing
+        obliqueCheckBox = new Button(generalGroup, SWT.CHECK | SWT.LEFT);
+//        obliqueCheckBox.addSelectionListener(new SelectionAdapter() {
+//            public void widgetSelected(final SelectionEvent event) {
+//                boolean isSelected = obliqueCheckBox.getSelection();
+//                valueChanged(wasSelected, isSelected);
+//                wasSelected = isSelected;
+//            }
+//        });
+        obliqueCheckBox.setText(Messages.getString("kiml.ui.36")); //$NON-NLS-1$
+        obliqueCheckBox.setSelection(getPreferenceStore().getBoolean(
+                EclipseLayoutServices.PREF_OBLIQUE_ROUTE));
+        
+        FillLayout layout = new FillLayout();
+        layout.marginWidth = MARGIN_WIDTH;
+        generalGroup.setLayout(layout);
+        return generalGroup;
     }
     
     /** fixed height of the priorities table. */
@@ -435,6 +471,9 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
     @Override
     protected void performDefaults() {
         super.performDefaults();
+        // set default values for the general options
+        obliqueCheckBox.setSelection(getPreferenceStore().getDefaultBoolean(
+                EclipseLayoutServices.PREF_OBLIQUE_ROUTE));
         
         // read priority values from the extension point
         if (priorityData != null) {
@@ -460,6 +499,9 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
     @Override
     public boolean performOk() {
         LayoutServices layoutServices = LayoutServices.getInstance();
+        // set new values for the general options
+        getPreferenceStore().setValue(EclipseLayoutServices.PREF_OBLIQUE_ROUTE,
+                obliqueCheckBox.getSelection());
         
         // store data for the priorities table
         if (priorityData != null) {

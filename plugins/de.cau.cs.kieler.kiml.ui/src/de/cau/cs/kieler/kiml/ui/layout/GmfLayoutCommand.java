@@ -33,6 +33,8 @@ import org.eclipse.gmf.runtime.notation.IdentityAnchor;
 import org.eclipse.gmf.runtime.notation.NotationFactory;
 import org.eclipse.gmf.runtime.notation.NotationPackage;
 import org.eclipse.gmf.runtime.notation.RelativeBendpoints;
+import org.eclipse.gmf.runtime.notation.Routing;
+import org.eclipse.gmf.runtime.notation.RoutingStyle;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.gmf.runtime.notation.datatype.RelativeBendpoint;
 
@@ -76,6 +78,8 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
     private List<ShapeLayoutData> shapeLayouts = new LinkedList<ShapeLayoutData>();
     /** list of edge layouts to be applied to edges. */
     private List<EdgeLayoutData> edgeLayouts = new LinkedList<EdgeLayoutData>();
+    /** indicates whether oblique routing style shall be enforced. */
+    private boolean obliqueRouting = false;
     
     
     /**
@@ -129,6 +133,15 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
         layout.sourceTerminal = sourceTerminal;
         layout.targetTerminal = targetTerminal;
         edgeLayouts.add(layout);
+    }
+    
+    /**
+     * Enforces all edges to be drawn with oblique routing style.
+     * 
+     * @param theobliqueRouting whether oblique routing stlye shall be used or not
+     */
+    public void setObliqueRouting(final boolean theobliqueRouting) {
+        this.obliqueRouting = theobliqueRouting;
     }
 
     /**
@@ -193,6 +206,14 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
                     edgeLayout.edge.setTargetAnchor(anchor);
                 }
                 anchor.setId(edgeLayout.targetTerminal);
+            }
+            // set routing style to oblique
+            if (obliqueRouting) {
+                RoutingStyle routingStyle = (RoutingStyle) edgeLayout.edge.getStyle(
+                        NotationPackage.eINSTANCE.getRoutingStyle());
+                if (routingStyle != null) {
+                    routingStyle.setRouting(Routing.MANUAL_LITERAL);
+                }
             }
         }
         edgeLayouts.clear();
