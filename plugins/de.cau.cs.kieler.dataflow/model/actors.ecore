@@ -6,7 +6,6 @@
   <eClassifiers xsi:type="ecore:EClass" name="Entity" abstract="true" eSuperTypes="#//NamedObject">
     <eStructuralFeatures xsi:type="ecore:EReference" name="childEntities" upperBound="-1"
         eType="#//Entity" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="links" eType="#//Link"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="childLinks" upperBound="-1"
         eType="#//Link" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="childRelations" upperBound="-1"
@@ -14,9 +13,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="childPorts" upperBound="-1"
         eType="#//Port" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Port" eSuperTypes="#//Linkable #//NamedObject">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="link" eType="#//Link"/>
-  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Port" eSuperTypes="#//Linkable #//NamedObject"/>
   <eClassifiers xsi:type="ecore:EClass" name="Relation" eSuperTypes="#//Linkable #//NamedObject">
     <eStructuralFeatures xsi:type="ecore:EReference" name="connectedPorts" lowerBound="1"
         upperBound="-1" eType="#//Port"/>
