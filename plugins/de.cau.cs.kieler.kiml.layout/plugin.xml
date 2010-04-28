@@ -74,6 +74,13 @@
             type="string">
       </layoutOption>
       <layoutOption
+            appliesTo="parents,nodes,edges,ports,labels"
+            description="Indicates that no layout should be done for the diagram part"
+            id="de.cau.cs.kieler.layout.options.noLayout"
+            name="No Layout"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
             description="Identifier of a diagram type that is associated with the children of the respective node"
             id="de.cau.cs.kieler.layout.options.diagramType"
             name="Diagram Type"
@@ -180,10 +187,6 @@
    </extension>
    <extension
          point="de.cau.cs.kieler.kiml.layout.layoutInfo">
-      <diagramType
-            id="de.cau.cs.kieler.layout.diagrams.nolayout"
-            name="No Layout">
-      </diagramType>
       <diagramType
             id="de.cau.cs.kieler.layout.diagrams.general"
             name="General">

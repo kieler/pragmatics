@@ -44,22 +44,10 @@ public final class LayoutOptions {
     
     /** layout option key: aimed aspect ratio. */
     public static final String ASPECT_RATIO = "de.cau.cs.kieler.layout.options.aspectRatio";
-    /** layout option key: layout hint. */
-    public static final String LAYOUT_HINT = "de.cau.cs.kieler.layout.options.layoutHint";
+    /** layout option key: distance to border of the drawing. */
+    public static final String BORDER_SPACING = "de.cau.cs.kieler.layout.options.borderSpacing";
     /** layout option key: diagram type. */
     public static final String DIAGRAM_TYPE = "de.cau.cs.kieler.layout.options.diagramType";
-    /** layout option key: direction of layout. */
-    public static final String LAYOUT_DIRECTION = "de.cau.cs.kieler.layout.options.layoutDirection";
-    /** layout option key: distance of node contents to the boundary. */
-    public static final String INSETS = "de.cau.cs.kieler.layout.options.insets";
-    /** layout option key: side of a port on its node's boundary. */
-    public static final String PORT_SIDE = "de.cau.cs.kieler.layout.options.portSide";
-    /** layout option key: constraints for port positions. */
-    public static final String PORT_CONSTRAINTS = "de.cau.cs.kieler.layout.options.portConstraints";
-    /** layout option key: rank of a port. */
-    public static final String PORT_RANK = "de.cau.cs.kieler.layout.options.portRank";
-    /** layout option key: size constraint for nodes. */
-    public static final String FIXED_SIZE = "de.cau.cs.kieler.layout.options.fixedSize";
     /** layout option key: placement positions for edge labels. */
     public static final String EDGE_LABEL_PLACEMENT =
         "de.cau.cs.kieler.layout.options.edgeLabelPlacement";
@@ -67,30 +55,44 @@ public final class LayoutOptions {
     public static final String EDGE_ROUTING = "de.cau.cs.kieler.layout.options.edgeRouting";
     /** layout option key: edge type. */
     public static final String EDGE_TYPE = "de.cau.cs.kieler.layout.options.edgeType";
-    /** layout option key: minimal distance between elements. */
-    public static final String MIN_SPACING = "de.cau.cs.kieler.layout.options.minSpacing";    
-    /** layout option key: distance to border of the drawing. */
-    public static final String BORDER_SPACING = "de.cau.cs.kieler.layout.options.borderSpacing";
-    /** layout option key: priority of elements. */
-    public static final String PRIORITY = "de.cau.cs.kieler.layout.options.priority";
+    /** layout option key: expand nodes to fill their parent. */
+    public static final String EXPAND_NODES = "de.cau.cs.kieler.layout.options.expandNodes";
+    /** layout option key: size constraint for nodes. */
+    public static final String FIXED_SIZE = "de.cau.cs.kieler.layout.options.fixedSize";
     /** layout option key: font name. */
     public static final String FONT_NAME = "de.cau.cs.kieler.layout.options.fontName";
     /** layout option key: font size. */
     public static final String FONT_SIZE = "de.cau.cs.kieler.layout.options.fontSize";
-    /** layout option key: shape of a node. */
-    public static final String SHAPE = "de.cau.cs.kieler.layout.options.shape";
-    /** layout option key: expand nodes to fill their parent. */
-    public static final String EXPAND_NODES = "de.cau.cs.kieler.layout.options.expandNodes";
-    /** layout option key: minimal width. */
-    public static final String MIN_WIDTH = "de.cau.cs.kieler.layout.options.minWidth";
-    /** layout option key: minimal height. */
-    public static final String MIN_HEIGHT = "de.cau.cs.kieler.layout.options.minHeight";    
-    /** layout option key: randomization seed. */
-    public static final String RANDOM_SEED = "de.cau.cs.kieler.layout.options.randomSeed";    
+    /** layout option key: distance of node contents to the boundary. */
+    public static final String INSETS = "de.cau.cs.kieler.layout.options.insets";
     /** layout option key: optimize layout for user interaction. */
     public static final String INTERACTIVE = "de.cau.cs.kieler.layout.options.interactive";    
     /** layout option key: spacing of edge labels to edges. */
     public static final String LABEL_SPACING = "de.cau.cs.kieler.layout.options.labelSpacing";
+    /** layout option key: direction of layout. */
+    public static final String LAYOUT_DIRECTION = "de.cau.cs.kieler.layout.options.layoutDirection";
+    /** layout option key: layout hint. */
+    public static final String LAYOUT_HINT = "de.cau.cs.kieler.layout.options.layoutHint";
+    /** layout option key: minimal height. */
+    public static final String MIN_HEIGHT = "de.cau.cs.kieler.layout.options.minHeight";    
+    /** layout option key: minimal distance between elements. */
+    public static final String MIN_SPACING = "de.cau.cs.kieler.layout.options.minSpacing";    
+    /** layout option key: minimal width. */
+    public static final String MIN_WIDTH = "de.cau.cs.kieler.layout.options.minWidth";
+    /** layout option key: no layout. */
+    public static final String NO_LAYOUT = "de.cau.cs.kieler.layout.options.noLayout";
+    /** layout option key: constraints for port positions. */
+    public static final String PORT_CONSTRAINTS = "de.cau.cs.kieler.layout.options.portConstraints";
+    /** layout option key: side of a port on its node's boundary. */
+    public static final String PORT_SIDE = "de.cau.cs.kieler.layout.options.portSide";
+    /** layout option key: rank of a port. */
+    public static final String PORT_RANK = "de.cau.cs.kieler.layout.options.portRank";
+    /** layout option key: priority of elements. */
+    public static final String PRIORITY = "de.cau.cs.kieler.layout.options.priority";
+    /** layout option key: randomization seed. */
+    public static final String RANDOM_SEED = "de.cau.cs.kieler.layout.options.randomSeed";    
+    /** layout option key: shape of a node. */
+    public static final String SHAPE = "de.cau.cs.kieler.layout.options.shape";
 
     /** map of option identifiers to enumeration classes. */
     private static Map<String, Class<? extends Enum<?>>> id2enumMap =

@@ -464,11 +464,12 @@ public final class KimlUiUtil {
      * @return true if no layout should be performed for the edit part
      */
     public static boolean isNoLayout(final EditPart editPart) {
-        String diagramType = (String) getOption(editPart, LayoutOptions.DIAGRAM_TYPE);
-        if (diagramType != null) {
-            return diagramType.equals(LayoutServices.DIAGRAM_TYPE_NOLAYOUT);
+        Boolean result = (Boolean) getOption(editPart, LayoutOptions.NO_LAYOUT);
+        if (result != null) {
+            return result;
+        } else {
+            return false;
         }
-        return false;
     }
 
     /**

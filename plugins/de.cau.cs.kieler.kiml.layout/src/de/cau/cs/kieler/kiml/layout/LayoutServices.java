@@ -52,11 +52,6 @@ public class LayoutServices {
 
     /** identifier of the 'general' diagram type, which applies to all diagrams. */
     public static final String DIAGRAM_TYPE_GENERAL = "de.cau.cs.kieler.layout.diagrams.general";
-    /**
-     * identifier of the 'nolayout' diagram type, for which no automatic layout
-     * must be applied.
-     */
-    public static final String DIAGRAM_TYPE_NOLAYOUT = "de.cau.cs.kieler.layout.diagrams.nolayout";
 
     /** the singleton instance of the layout service. */
     private static LayoutServices instance = null;
@@ -212,18 +207,13 @@ public class LayoutServices {
         }
 
         /**
-         * Registers the given diagram type. Diagram types with
-         * {@link DIAGRAM_TYPE_NOLAYOUT} as identifier are rejected, since this
-         * is a special value used to indicate that a diagram part shall not be
-         * layouted at all.
+         * Registers the given diagram type.
          * 
          * @param id identifier of the diagram type
          * @param name user friendly name of the diagram type
          */
         public void addDiagramType(final String id, final String name) {
-            if (!DIAGRAM_TYPE_NOLAYOUT.equals(id)) {
-                diagramTypeMap.put(id, name);
-            }
+            diagramTypeMap.put(id, name);
         }
         
         /**

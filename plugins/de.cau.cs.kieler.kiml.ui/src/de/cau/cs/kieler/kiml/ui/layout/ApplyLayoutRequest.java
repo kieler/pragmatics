@@ -22,6 +22,9 @@ import org.eclipse.gef.Request;
 
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutData;
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataPackage;
+import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 
 /**
  * Request for automatic layout on a set of edit parts of a diagram.
@@ -46,13 +49,18 @@ public class ApplyLayoutRequest extends Request {
     }
 
     /**
-     * Adds the given graph element and edit part to the request.
+     * Adds the given graph element and edit part to the request. Graph elements
+     * for which the NO_LAYOUT option is active are not included.
      * 
      * @param element graph element with layout data
      * @param editPart the corresponding edit part
      */
     public void addElement(final KGraphElement element, final GraphicalEditPart editPart) {
-        mappingList.add(new Pair<KGraphElement, GraphicalEditPart>(element, editPart));
+        KLayoutData layoutData = (KLayoutData) element.getData(
+                KLayoutDataPackage.eINSTANCE.getKLayoutData());
+        if (layoutData == null || !LayoutOptions.getBoolean(layoutData, LayoutOptions.NO_LAYOUT)) {
+            mappingList.add(new Pair<KGraphElement, GraphicalEditPart>(element, editPart));
+        }
     }
     
     /**
