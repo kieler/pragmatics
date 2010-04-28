@@ -13,12 +13,15 @@
  */
 package de.cau.cs.kieler.kiml.ogdf;
 
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.ui.util.ExperimentalDialog;
+import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.layout.AbstractLayoutProvider;
 
 /**
@@ -58,6 +61,8 @@ public class OgdfLayoutProvider extends AbstractLayoutProvider {
         }
     }
 
+    private static final String PREF_EXPERIMENTAL = "experimental.dialog";
+    
     /**
      * {@inheritDoc}
      */
@@ -70,19 +75,28 @@ public class OgdfLayoutProvider extends AbstractLayoutProvider {
         }
         
         // display a warning that this feature is experimental
-        if (ExperimentalDialog.needWarning(OgdfPlugin.getDefault())) {
+        final IPreferenceStore preferenceStore = OgdfPlugin.getDefault().getPreferenceStore();
+        final Maybe<Boolean> docontinue = new Maybe<Boolean>();
+        docontinue.set(true);
+        if (!preferenceStore.getString(PREF_EXPERIMENTAL).equals(MessageDialogWithToggle.ALWAYS)) {
             final Display display = Display.getDefault();
             display.syncExec(new Runnable() {
                 public void run() {
-                    ExperimentalDialog experimentalDialog = new ExperimentalDialog(
-                            display.getActiveShell(), "OGDF Layouters", OgdfPlugin.getDefault());
-                    experimentalDialog.open();
+                    Window dialog = MessageDialogWithToggle.openOkCancelConfirm(
+                            display.getActiveShell(), "Experimental Feature",
+                            "Warning: The OGDF layouters feature is to be regarded as experimental"
+                            + " and may lead to sudden crash of the Eclipse process. Continue?",
+                            "Don't show this message again", true,
+                            preferenceStore, PREF_EXPERIMENTAL);
+                    docontinue.set(dialog.getReturnCode() == Window.OK);
                 }
             });
         }
 
         // layout the graph with the selected algorithm
-        layoutAlgorithm.doLayout(layoutNode, progressMonitor);
+        if (docontinue.get()) {
+            layoutAlgorithm.doLayout(layoutNode, progressMonitor);
+        }
     }
 
     /**
