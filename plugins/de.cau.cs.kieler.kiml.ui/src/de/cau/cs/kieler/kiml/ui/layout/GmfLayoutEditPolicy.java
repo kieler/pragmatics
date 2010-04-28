@@ -393,14 +393,18 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      * and a points list.  
      * 
      * @param bounds the {@code Rectangle} that is the bounding box of the label
-     * @param points the {@code PointList} that contains that the label offset is relative to
-     * @param refPoint the {@code Point} that is the reference point that the offset
-     *     is based on
+     * @param points the {@code PointList} that the label offset is relative to
+     * @param therefPoint the {@code Point} that is the reference point that the offset
+     *     is based on, or {@code null}
      * @return a {@code Point} which represents a value offset from the {@code refPoint}
      *     point oriented based on the nearest line segment
      */
     public static Point offsetFromRelativeCoordinate(final Rectangle bounds,
-            final PointList points, final Point refPoint) {
+            final PointList points, final Point therefPoint) {
+        Point refPoint = therefPoint;
+        if (refPoint == null) {
+            refPoint = points.getFirstPoint();
+        }
         Rectangle rect = new Rectangle(bounds);
         // compensate for the fact that we are using the figure center
         rect.translate(rect.width / 2, rect.height / 2);

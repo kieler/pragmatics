@@ -155,6 +155,9 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
                 if (draw2dTarget != null && draw2dTarget != draw2dSource) {
                     Edge draw2dEdge = new Edge(kedge, draw2dSource, draw2dTarget);
                     graph.edges.add(draw2dEdge);
+                } else {
+                    KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
+                    LayoutOptions.setBoolean(edgeLayout, LayoutOptions.NO_LAYOUT, true);
                 }
             }
         }

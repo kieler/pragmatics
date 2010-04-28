@@ -35,6 +35,7 @@ import org.eclipse.gmf.runtime.notation.NotationPackage;
 import org.eclipse.gmf.runtime.notation.RelativeBendpoints;
 import org.eclipse.gmf.runtime.notation.Routing;
 import org.eclipse.gmf.runtime.notation.RoutingStyle;
+import org.eclipse.gmf.runtime.notation.Smoothness;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.gmf.runtime.notation.datatype.RelativeBendpoint;
 
@@ -189,6 +190,7 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
                 RelativeBendpoints points = (RelativeBendpoints) edgeLayout.edge.getBendpoints();
                 points.setPoints(newBendpoints);
             }
+            
             // set new source anchor point of the edge
             if (edgeLayout.sourceTerminal != null) {
                 IdentityAnchor anchor = (IdentityAnchor) edgeLayout.edge.getSourceAnchor();
@@ -207,12 +209,14 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
                 }
                 anchor.setId(edgeLayout.targetTerminal);
             }
+            
             // set routing style to oblique
             if (obliqueRouting) {
                 RoutingStyle routingStyle = (RoutingStyle) edgeLayout.edge.getStyle(
                         NotationPackage.eINSTANCE.getRoutingStyle());
                 if (routingStyle != null) {
                     routingStyle.setRouting(Routing.MANUAL_LITERAL);
+                    routingStyle.setSmoothness(Smoothness.NONE_LITERAL);
                 }
             }
         }

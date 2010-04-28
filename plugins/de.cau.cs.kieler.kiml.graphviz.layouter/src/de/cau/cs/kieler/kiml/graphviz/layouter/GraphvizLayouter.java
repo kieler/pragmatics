@@ -282,6 +282,9 @@ public class GraphvizLayouter {
 
                     edgeStatement.setAttributes(attributes);
                     graph.getStatements().add(edgeStatement);
+                } else {
+                    KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(outgoingEdge);
+                    LayoutOptions.setBoolean(edgeLayout, LayoutOptions.NO_LAYOUT, true);
                 }
             }
         }

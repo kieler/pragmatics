@@ -26,7 +26,9 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.kiml.layout.AbstractLayoutProvider;
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.options.PortType;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -177,6 +179,9 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
                     LEdge newEdge = new LEdge(kedge);
                     newEdge.setSource(sourcePort);
                     newEdge.setTarget(targetPort);
+                } else {
+                    KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
+                    LayoutOptions.setBoolean(edgeLayout, LayoutOptions.NO_LAYOUT, true);
                 }
             }
         }
