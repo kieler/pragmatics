@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.ui.layout;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -159,10 +160,11 @@ public abstract class DiagramLayoutManager {
                                 .getDiagramEditPart();
                     }
 
-                    Collection<?> editParts = part.getViewer()
-                            .getEditPartRegistry().values();
+                    @SuppressWarnings("unchecked")
+                    Collection<EditPart> editParts = new ArrayList<EditPart>(
+                            part.getViewer().getEditPartRegistry().values());
 
-                    for (Object obj : editParts) {
+                    for (EditPart obj : editParts) {
                         if (obj instanceof LabelEditPart) {
                             ((LabelEditPart) obj).refresh();
                         }

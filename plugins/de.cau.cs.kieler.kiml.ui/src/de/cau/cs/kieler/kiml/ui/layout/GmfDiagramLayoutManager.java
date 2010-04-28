@@ -616,13 +616,26 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 Rectangle labelBounds = labelFigure.getBounds();
                 String labelText = null;
                 Font font = null;
+                Dimension iconBounds = null;
                 if (labelFigure instanceof WrappingLabel) {
                     WrappingLabel wrappingLabel = (WrappingLabel) labelFigure;
                     labelText = wrappingLabel.getText();
+                    if (wrappingLabel.getIcon() != null) {
+                        iconBounds = new Dimension();
+                        iconBounds.width = wrappingLabel.getIcon().getBounds().width
+                            + wrappingLabel.getIconTextGap();
+                        iconBounds.height = wrappingLabel.getIcon().getBounds().height;
+                        labelText = "O " + labelText;
+                    }
                     font = wrappingLabel.getFont();
                 } else if (labelFigure instanceof Label) {
                     Label label = (Label) labelFigure;
                     labelText = label.getText();
+                    if (label.getIcon() != null) {
+                        iconBounds = label.getIconBounds().getSize();
+                        iconBounds.width += label.getIconTextGap();
+                        labelText = "O " + labelText;
+                    }
                     font = label.getFont();
                 }
                 if (labelText != null && labelText.length() > 0) {
@@ -649,6 +662,9 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                             font.getFontData()[0].getHeight());
                     labelLayout.setXpos(labelBounds.x);
                     labelLayout.setYpos(labelBounds.y);
+                    if (iconBounds != null) {
+                        labelLayout.setWidth(labelBounds.width + iconBounds.width);
+                    }
                     labelLayout.setWidth(labelBounds.width);
                     labelLayout.setHeight(labelBounds.height);
                     label.setText(labelText);
