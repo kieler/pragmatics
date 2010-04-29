@@ -136,10 +136,14 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ICycleBreak
                 for (LEdge edge : port.getEdges()) {
                     int targetIx = edge.getTarget().getNode().id;
                     if (mark[index] > mark[targetIx]) {
+                        // TODO extend this to support port constraints
                         LPort source = edge.getSource();
                         LPort target = edge.getTarget();
                         edge.setSource(target);
                         edge.setTarget(source);
+                        edge.getSource().setType(PortType.OUTPUT);
+                        edge.getTarget().setType(PortType.INPUT);
+                        edge.setReversed(true);
                     }
                 }                
             }

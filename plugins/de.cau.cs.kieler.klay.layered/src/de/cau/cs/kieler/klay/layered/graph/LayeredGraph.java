@@ -50,6 +50,14 @@ public class LayeredGraph {
     public LayeredGraph() {
         this(null);
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "G" + layers.toString();
+    }
 
     /**
      * @return the size
@@ -93,20 +101,19 @@ public class LayeredGraph {
                         LPort targetPort = edge.getTarget();
                         int targetIndex = targetPort.getNode().getLayer().getIndex();
                         if (targetIndex != layerIter.nextIndex()) {
-                            ListIterator<Layer> dummyIter = layers.listIterator(layerIter.nextIndex());
-                            LEdge dummyEdge = edge;
-                            while (dummyIter.hasNext() && dummyIter.nextIndex() < targetIndex) {
-                                LNode dummyNode = new LNode(edge, null, LNode.Type.LONG_EDGE);
-                                dummyNode.setLayer(dummyIter.next());
-                                LPort dummyInput = new LPort(PortType.INPUT);
-                                dummyInput.setNode(dummyNode);
-                                LPort dummyOutput = new LPort(PortType.OUTPUT);
-                                dummyOutput.setNode(dummyNode);
-                                dummyEdge.setTarget(dummyInput);
-                                dummyEdge = new LEdge(edge.getOrigin());
-                                dummyEdge.setSource(dummyOutput);
-                            }
+                            Layer nextLayer = layerIter.next();
+                            LNode dummyNode = new LNode(edge, null, LNode.Type.LONG_EDGE);
+                            dummyNode.setLayer(nextLayer);
+                            LPort dummyInput = new LPort(PortType.INPUT);
+                            dummyInput.setNode(dummyNode);
+                            LPort dummyOutput = new LPort(PortType.OUTPUT);
+                            dummyOutput.setNode(dummyNode);
+                            edge.setTarget(dummyInput);
+                            LEdge dummyEdge = new LEdge(edge.getOrigin());
+                            dummyEdge.setReversed(edge.isReversed());
+                            dummyEdge.setSource(dummyOutput);
                             dummyEdge.setTarget(targetPort);
+                            layerIter.previous();
                         }
                     }
                 }

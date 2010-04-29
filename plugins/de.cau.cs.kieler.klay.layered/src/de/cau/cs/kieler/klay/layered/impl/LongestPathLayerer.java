@@ -96,7 +96,7 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayerer {
         for (int i = layers.size(); i < height; i++) {
             layers.add(0, new Layer(layeredGraph));
         }
-        layers.get(layers.size() - height).getNodes().add(node);
+        node.setLayer(layers.get(layers.size() - height));
         nodeHeights[node.id] = height;
     }
 

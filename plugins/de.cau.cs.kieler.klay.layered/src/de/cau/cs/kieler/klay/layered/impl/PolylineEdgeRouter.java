@@ -14,8 +14,12 @@
 package de.cau.cs.kieler.klay.layered.impl;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.kiml.layout.options.PortType;
 import de.cau.cs.kieler.klay.layered.LayeredLayoutProvider;
+import de.cau.cs.kieler.klay.layered.graph.Coord;
+import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.modules.IEdgeRouter;
@@ -41,14 +45,48 @@ public class PolylineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter
      * {@inheritDoc}
      */
     public void routeEdges(final LayeredGraph layeredGraph) {
-        // set horizontal positioning for each layer
+        // set horizontal positioning for each layer and add bend points
         float xpos = 0.0f;
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
                 node.getPos().x = xpos;
+                if (node.getType() == LNode.Type.LONG_EDGE) {
+                    LEdge edge = (LEdge) node.getOrigin();
+                    if (isEndnode(node, PortType.INPUT)) {
+                        edge.getBendPoints().add(new Coord(xpos, node.getPos().y));
+                    }
+                    if (isEndnode(node, PortType.OUTPUT)) {
+                        edge.getBendPoints().add(new Coord(xpos + layer.getSize().x,
+                                node.getPos().y));
+                    }
+                }
             }
             xpos += layer.getSize().x + spacing;
         }
+        layeredGraph.getSize().x = xpos - spacing;
+    }
+    
+    /**
+     * Determines whether the given node is the first or the last node of
+     * a series of aligned long edge parts, depending on the port type.
+     * 
+     * @param node a dummy node of a long edge
+     * @param portType if {@code INPUT}, the result is true if the node is the
+     *     first node of the long edge part; if {@code OUTPUT}, the result is true if
+     *     the node is the last node of the long edge part
+     * @return true if the node is an end-node
+     */
+    private boolean isEndnode(final LNode node, final PortType portType) {
+        for (LPort port : node.getPorts(portType)) {
+            for (LPort connectedPort : port.getConnectedPorts()) {
+                LNode otherNode = connectedPort.getNode();
+                if (otherNode.getType() == LNode.Type.LONG_EDGE
+                        && node.getPos().y == otherNode.getPos().y) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
 }

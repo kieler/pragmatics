@@ -29,6 +29,8 @@ public class LEdge extends LGraphElement {
     private Object origin;
     /** the source and target ports. */
     private LPort source, target;
+    /** indicates whether this is a reversed edge. */
+    private boolean reversed = false;
 
     /**
      * Creates an edge.
@@ -113,6 +115,24 @@ public class LEdge extends LGraphElement {
      */
     public Object getOrigin() {
         return origin;
+    }
+
+    /**
+     * Indicates whether this edge has been reversed.
+     * 
+     * @return the reversed status
+     */
+    public boolean isReversed() {
+        return reversed;
+    }
+
+    /**
+     * Sets the reversed status.
+     * 
+     * @param thereversed the reversed status to set
+     */
+    public void setReversed(final boolean thereversed) {
+        this.reversed = thereversed;
     }
 
 }

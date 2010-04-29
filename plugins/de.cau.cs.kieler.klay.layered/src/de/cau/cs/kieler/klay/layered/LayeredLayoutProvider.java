@@ -27,10 +27,13 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.kiml.layout.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataFactory;
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.options.PortType;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
+import de.cau.cs.kieler.klay.layered.graph.Coord;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -77,12 +80,17 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor)
             throws KielerException {
         progressMonitor.begin("Layered layout", 1);
+        KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
+        float spacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_SPACING);
+        if (Float.isNaN(spacing) || spacing < 0) {
+            spacing = DEF_SPACING;
+        }
         
         // transform the input graph
         List<LNode> nodes = transformGraph(layoutNode);
         // create an empty layered graph and perform the actual layout
         LayeredGraph layeredGraph = new LayeredGraph(layoutNode);
-        doLayout(layeredGraph, nodes, progressMonitor.subTask(1));
+        doLayout(layeredGraph, nodes, progressMonitor.subTask(1), spacing);
         // apply the layout results to the original graph
         applyLayout(layoutNode, layeredGraph);
 
@@ -95,9 +103,10 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
      * @param layeredGraph an initially empty layered graph
      * @param nodes a list of nodes
      * @param themonitor a progress monitor, or {@code null}
+     * @param spacing spacing for layout
      */
     public void doLayout(final LayeredGraph layeredGraph, final List<LNode> nodes,
-            final IKielerProgressMonitor themonitor) {
+            final IKielerProgressMonitor themonitor, final float spacing) {
         IKielerProgressMonitor monitor = themonitor;
         if (monitor == null) {
             monitor = new BasicProgressMonitor();
@@ -110,17 +119,34 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         // phase 2: layering
         layerer.reset(monitor.subTask(1));
         layerer.layer(nodes, layeredGraph);
+        layeredGraph.splitEdges();
         // phase 3: crossing minimization
         crossingMinimizer.reset(monitor.subTask(1));
         crossingMinimizer.minimizeCrossings(layeredGraph);
         // phase 4: node placement
         nodePlacer.reset(monitor.subTask(1));
+        nodePlacer.setSpacing(spacing);
         nodePlacer.placeNodes(layeredGraph);
         // phase 5: edge routing
         edgeRouter.reset(monitor.subTask(1));
+        edgeRouter.setSpacing(spacing);
         edgeRouter.routeEdges(layeredGraph);
         
         monitor.done();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object getDefault(final String optionId) {
+        if (LayoutOptions.MIN_SPACING.equals(optionId)) {
+            return DEF_SPACING;
+        } else if (LayoutOptions.BORDER_SPACING.equals(optionId)) {
+            return DEF_SPACING;
+        } else {
+            return super.getDefault(optionId);
+        }
     }
     
     /**
@@ -135,7 +161,10 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         // transform nodes and ports
         Map<KGraphElement, LGraphElement> elemMap = new HashMap<KGraphElement, LGraphElement>();
         for (KNode child : layoutNode.getChildren()) {
+            KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(child);
             LNode newNode = new LNode(child, child.getLabel().getText());
+            newNode.getSize().x = nodeLayout.getWidth();
+            newNode.getSize().y = nodeLayout.getHeight();
             layeredNodes.add(newNode);
             elemMap.put(child, newNode);
             for (KPort kport : child.getPorts()) {
@@ -196,14 +225,22 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
      * @param layeredGraph a layered graph
      */
     private void applyLayout(final KNode parentNode, final LayeredGraph layeredGraph) {
+        KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(parentNode);
+        float borderSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.BORDER_SPACING);
+        if (Float.isNaN(borderSpacing) || borderSpacing < 0) {
+            borderSpacing = DEF_SPACING;
+        }
+        Coord offset = new Coord(borderSpacing + layeredGraph.getOffset().x,
+                borderSpacing + layeredGraph.getOffset().y);
+
         // process nodes
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode lnode : layer.getNodes()) {
                 if (lnode.getOrigin() instanceof KNode) {
                     KNode knode = (KNode) lnode.getOrigin();
                     KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(knode);
-                    nodeLayout.setXpos(lnode.getPos().x);
-                    nodeLayout.setYpos(lnode.getPos().y);
+                    nodeLayout.setXpos(lnode.getPos().x + offset.x);
+                    nodeLayout.setYpos(lnode.getPos().y + offset.y);
                 }
                 for (LPort port : lnode.getPorts(PortType.OUTPUT)) {
                     for (LEdge edge : port.getEdges()) {
@@ -227,10 +264,57 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
                 }
             }
         }
+        for (Map.Entry<KEdge, List<LEdge>> edgeEntry : edgeMap.entrySet()) {
+            KEdge kedge = edgeEntry.getKey();
+            KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
+            List<LEdge> edgeList = edgeEntry.getValue();
+            LEdge firstEdge = edgeList.get(0);
+            LPort sourcePort = firstEdge.getSource();
+            sourcePort.getPos().add(sourcePort.getNode().getPos());
+            LEdge lastEdge = edgeList.get(edgeList.size() - 1);
+            LPort targetPort = lastEdge.getTarget();
+            targetPort.getPos().add(targetPort.getNode().getPos());
+            if (firstEdge.isReversed()) {
+                applyLayout(edgeLayout.getSourcePoint(), targetPort.getPos(), offset);
+                applyLayout(edgeLayout.getTargetPoint(), sourcePort.getPos(), offset);
+            } else {
+                applyLayout(edgeLayout.getSourcePoint(), sourcePort.getPos(), offset);
+                applyLayout(edgeLayout.getTargetPoint(), targetPort.getPos(), offset);
+            }
+            List<KPoint> bendPoints = edgeLayout.getBendPoints();
+            bendPoints.clear();
+            for (LEdge ledge : edgeList) {
+                for (Coord lpoint : ledge.getBendPoints()) {
+                    KPoint newPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
+                    applyLayout(newPoint, lpoint, offset);
+                    if (ledge.isReversed()) {
+                        bendPoints.add(0, newPoint);
+                    } else {
+                        bendPoints.add(newPoint);
+                    }
+                }
+            }
+        }
+        
+        // set up the parent node
+        parentLayout.setWidth(layeredGraph.getSize().x + 2 * borderSpacing);
+        parentLayout.setHeight(layeredGraph.getSize().y + 2 * borderSpacing);
+        LayoutOptions.setBoolean(parentLayout, LayoutOptions.FIXED_SIZE, true);
     }
     
     /**
-     * Collect all pieces of an long edge and puts them into the edge map.
+     * Apply the given point coordinates to the {@code KPoint}.
+     * 
+     * @param kpoint point where coordinates are written
+     * @param lpoint point from which coordinates are read
+     */
+    private void applyLayout(final KPoint kpoint, final Coord lpoint, final Coord offset) {
+        kpoint.setX(lpoint.x + offset.x);
+        kpoint.setY(lpoint.y + offset.y);
+    }
+    
+    /**
+     * Collect all pieces of a long edge and puts them into the edge map.
      * 
      * @param kedge an original KEdge
      * @param theledge an edge in the layered graph
@@ -238,24 +322,27 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
      */
     private void collectEdge(final KEdge kedge, final LEdge theledge,
             final Map<KEdge, List<LEdge>> edgeMap) {
+        List<LEdge> edgeList = edgeMap.get(kedge);
+        if (edgeList == null) {
+            edgeList = new LinkedList<LEdge>();
+            edgeMap.put(kedge, edgeList);
+        }
         LEdge ledge = theledge;
         do {
-            List<LEdge> edgeList = edgeMap.get(kedge);
-            if (edgeList == null) {
-                edgeList = new LinkedList<LEdge>();
-                edgeMap.put(kedge, edgeList);
-            }
-            ledge = null;
+            edgeList.add(ledge);
             LNode targetNode = ledge.getTarget().getNode();
-            for (LPort port : targetNode.getPorts(PortType.OUTPUT)) {
-                for (LEdge nextEdge : port.getEdges()) {
-                    if (nextEdge.getOrigin() == kedge) {
-                        ledge = nextEdge;
+            ledge = null;
+            if (targetNode.getType() == LNode.Type.LONG_EDGE) {
+                for (LPort port : targetNode.getPorts(PortType.OUTPUT)) {
+                    for (LEdge nextEdge : port.getEdges()) {
+                        if (nextEdge.getOrigin() == kedge) {
+                            ledge = nextEdge;
+                            break;
+                        }
+                    }
+                    if (ledge != null) {
                         break;
                     }
-                }
-                if (ledge != null) {
-                    break;
                 }
             }
         } while (ledge != null);

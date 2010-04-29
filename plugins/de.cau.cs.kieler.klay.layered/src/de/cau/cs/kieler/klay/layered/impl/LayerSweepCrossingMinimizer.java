@@ -137,7 +137,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
                 } else if (bary2 >= 0) {
                     return input ? 1 : -1;
                 } else {
-                    return port2.id - port1.id;
+                    return port1.id - port2.id;
                 }
             }
         });

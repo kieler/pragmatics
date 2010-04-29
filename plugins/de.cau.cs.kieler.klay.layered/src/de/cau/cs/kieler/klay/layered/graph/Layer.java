@@ -41,6 +41,14 @@ public class Layer extends LGraphElement {
     }
     
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "L_" + getIndex() + nodes.toString();
+    }
+    
+    /**
      * @return the size
      */
     public Coord getSize() {

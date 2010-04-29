@@ -65,14 +65,14 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
          * {@inheritDoc}
          */
         public String toString() {
-            return "ls_" + id;
+            return "ls" + nodes.toString();
         }
         
         /**
          * {@inheritDoc}
          */
         public int compareTo(final LinearSegment other) {
-            return other.id - this.id;
+            return this.id - other.id;
         }
         
     }
@@ -101,7 +101,9 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
         // sort the linear segments of the layered graph
         sortLinearSegments(layeredGraph);
         // create an unbalanced placement from the sorted segments
-        createUnbalancedPlacement();
+        createUnbalancedPlacement(layeredGraph);
+        // arrange port positions
+        arrangePorts(layeredGraph);
 
         // set the proper height for the whole graph
         Coord graphSize = layeredGraph.getSize();
@@ -141,6 +143,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
                     LinearSegment segment = new LinearSegment();
                     segment.id = index++;
                     fillSegment(node, segment);
+                    segmentList.add(segment);
                 }
             }
         }
@@ -206,6 +209,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
      */
     private void fillSegment(final LNode node, final LinearSegment segment) {
         node.id = segment.id;
+        segment.nodes.add(node);
         if (node.getType() == LNode.Type.LONG_EDGE) {
             for (LPort sourcePort : node.getPorts(PortType.OUTPUT)) {
                 for (LPort targetPort : sourcePort.getConnectedPorts()) {
@@ -222,21 +226,63 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
     /**
      * Creates an unbalanced placement for the sorted linear segments.
      */
-    private void createUnbalancedPlacement() {
+    private void createUnbalancedPlacement(final LayeredGraph layeredGraph) {
+        int[] nodeCount = new int[layeredGraph.getLayers().size()];
         for (LinearSegment segment : linearSegments) {
             // determine the uppermost placement for the linear segment
             float uppermostPlace = 0.0f;
+            int nodeCountSum = 0;
             for (LNode node : segment.getNodes()) {
                 uppermostPlace = Math.max(uppermostPlace, node.getLayer().getSize().y);
+                int layerIndex = node.getLayer().getIndex();
+                nodeCountSum += nodeCount[layerIndex];
+                nodeCount[layerIndex]++;
             }
             // apply the uppermost placement to all elements
-            float newPos = uppermostPlace == 0 ? 0.0f : uppermostPlace + spacing;
+            float newPos = uppermostPlace;
+            if (nodeCountSum > 0) {
+                newPos += spacing;
+            }
             for (LNode node : segment.getNodes()) {
                 Layer layer = node.getLayer();
                 node.getPos().y = newPos;
                 float height = node.getSize().y;
                 layer.getSize().y = newPos + height;
                 layer.getSize().x = Math.max(layer.getSize().x, node.getSize().x);
+            }
+        }
+    }
+    
+    /**
+     * Arrange the ports of all nodes in the layered graph.
+     * 
+     * @param layeredGraph a layered graph
+     */
+    private void arrangePorts(final LayeredGraph layeredGraph) {
+        for (Layer layer : layeredGraph.getLayers()) {
+            for (LNode node : layer.getNodes()) {
+                int inputCount = 1, outputCount = 1;
+                for (LPort port : node.getPorts()) {
+                    if (port.getType() == PortType.INPUT) {
+                        inputCount++;
+                    } else {
+                        outputCount++;
+                    }
+                }
+                float inputDelta = node.getSize().y  / inputCount;
+                float outputDelta = node.getSize().y / outputCount;
+                float inputY = inputDelta, outputY = outputDelta;
+                for (LPort port : node.getPorts()) {
+                    if (port.getType() == PortType.INPUT) {
+                        port.getPos().x = 0;
+                        port.getPos().y = inputY;
+                        inputY += inputDelta;
+                    } else {
+                        port.getPos().x = node.getSize().x;
+                        port.getPos().y = outputY;
+                        outputY += outputDelta;
+                    }
+                }
             }
         }
     }
