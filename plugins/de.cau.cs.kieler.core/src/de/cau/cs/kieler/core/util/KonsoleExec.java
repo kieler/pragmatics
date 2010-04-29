@@ -69,7 +69,7 @@ public class KonsoleExec {
             stdin.close();
             // wait for initial output
             long time = System.currentTimeMillis();
-            while (stdout.available() == 0) {
+            while (stdout.available() == 0 && stderr.available()==0) {
                 if (System.currentTimeMillis() - time > inittime) {
                     throw new KielerException("Timeout executing " + cmd);
                 }
