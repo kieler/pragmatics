@@ -36,6 +36,8 @@ import de.cau.cs.kieler.klay.layered.modules.INodePlacer;
  *     <i>Proceedings of the Symposium on Graph Drawing (GD '95)</i>, pp. 447-458,
  *     Springer, 1996.
  * </ul>
+ * 
+ * TODO implement balancing of the placement
  *
  * @author msp
  */

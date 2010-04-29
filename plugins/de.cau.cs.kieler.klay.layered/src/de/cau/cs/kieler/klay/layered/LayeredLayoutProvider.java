@@ -233,7 +233,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         Coord offset = new Coord(borderSpacing + layeredGraph.getOffset().x,
                 borderSpacing + layeredGraph.getOffset().y);
 
-        // process nodes
+        // process the nodes
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode lnode : layer.getNodes()) {
                 if (lnode.getOrigin() instanceof KNode) {
@@ -250,7 +250,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             }
         }
         
-        // process edges
+        // collect all parts of each long edge
         Map<KEdge, List<LEdge>> edgeMap = new HashMap<KEdge, List<LEdge>>();
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode lnode : layer.getNodes()) {
@@ -264,10 +264,12 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
                 }
             }
         }
+        // process the edges
         for (Map.Entry<KEdge, List<LEdge>> edgeEntry : edgeMap.entrySet()) {
             KEdge kedge = edgeEntry.getKey();
             KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
             List<LEdge> edgeList = edgeEntry.getValue();
+            // set source and target points, considering direction of the edge
             LEdge firstEdge = edgeList.get(0);
             LPort sourcePort = firstEdge.getSource();
             sourcePort.getPos().add(sourcePort.getNode().getPos());
@@ -281,6 +283,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
                 applyLayout(edgeLayout.getSourcePoint(), sourcePort.getPos(), offset);
                 applyLayout(edgeLayout.getTargetPoint(), targetPort.getPos(), offset);
             }
+            // set bend points, considering direction of the edge
             List<KPoint> bendPoints = edgeLayout.getBendPoints();
             bendPoints.clear();
             for (LEdge ledge : edgeList) {
@@ -314,7 +317,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     }
     
     /**
-     * Collect all pieces of a long edge and puts them into the edge map.
+     * Collect all pieces of a long edge and put them into the edge map.
      * 
      * @param kedge an original KEdge
      * @param theledge an edge in the layered graph

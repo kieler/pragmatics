@@ -29,7 +29,7 @@ public abstract class LGraphElement implements Comparable<LGraphElement> {
      * {@inheritDoc}
      */
     public int compareTo(final LGraphElement other) {
-        return other.id - this.id;
+        return this.id - other.id;
     }
     
 }

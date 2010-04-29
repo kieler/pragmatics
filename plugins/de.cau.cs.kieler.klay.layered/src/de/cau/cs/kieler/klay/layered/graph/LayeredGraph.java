@@ -21,6 +21,11 @@ import de.cau.cs.kieler.kiml.layout.options.PortType;
 
 /**
  * A layered graph has a set of layers that contain the nodes.
+ * Layout algorithms are required to layout the graph from left to right. If
+ * another layout direction is desired, it can be obtained by pre-processing
+ * and post-processing the graph.
+ * 
+ * TODO add methods to rotate / mirror the graph for alternative layout directions
  *
  * @author msp
  */
@@ -60,27 +65,37 @@ public class LayeredGraph {
     }
 
     /**
-     * @return the size
+     * Returns the size of the graph, that is the bounding box that covers the
+     * whole drawing.
+     * 
+     * @return the size of the layered graph
      */
     public Coord getSize() {
         return size;
     }
 
     /**
-     * @return the offset
+     * Returns the offset for the graph, that is a coordinate vector that has
+     * to be added to all position values of nodes and edges.
+     * 
+     * @return the offset of the layered graph
      */
     public Coord getOffset() {
         return offset;
     }
 
     /**
-     * @return the origin
+     * Returns the original object from which the graph was created.
+     * 
+     * @return the original object
      */
     public Object getOrigin() {
         return origin;
     }
 
     /**
+     * Returns the list of layers of the graph.
+     * 
      * @return the layers
      */
     public List<Layer> getLayers() {
@@ -89,9 +104,13 @@ public class LayeredGraph {
 
     /**
      * Split the long edges of the layered graph to obtain a proper layering.
+     * For each edge that connects two nodes that are more than one layer apart
+     * from each other, create a dummy node to split the edge. The resulting layering
+     * is <i>proper</i>, i.e. all edges connect only nodes from subsequent layers.
+     * 
+     * TODO create additional dummy nodes for feedback edges
      */
     public void splitEdges() {
-        // TODO create additional dummy nodes for feedback edges
         ListIterator<Layer> layerIter = layers.listIterator();
         while (layerIter.hasNext()) {
             Layer layer = layerIter.next();

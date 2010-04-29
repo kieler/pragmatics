@@ -101,6 +101,8 @@ public class LNode extends LGraphElement {
     }
 
     /**
+     * Returns the layer that owns this node.
+     * 
      * @return the owning layer
      */
     public Layer getLayer() {
@@ -110,7 +112,9 @@ public class LNode extends LGraphElement {
     /**
      * Sets the owning layer and adds itself to the layer's list of nodes.
      * If the node was previously in another layer, it is removed from
-     * that layer's list of nodes.
+     * that layer's list of nodes. Be careful not to use this method while
+     * iterating through the nodes list of the old layer nor of the new layer,
+     * since that could lead to {@link java.util.ConcurrentModificationException}s.
      * 
      * @param layer the owner to set
      */
@@ -123,6 +127,8 @@ public class LNode extends LGraphElement {
     }
 
     /**
+     * Returns the type of node.
+     * 
      * @return the type
      */
     public Type getType() {
@@ -130,13 +136,17 @@ public class LNode extends LGraphElement {
     }
 
     /**
-     * @return the pos
+     * Returns the current position of the node.
+     * 
+     * @return the position
      */
     public Coord getPos() {
         return pos;
     }
 
     /**
+     * Returns the current size of the node.
+     * 
      * @return the size
      */
     public Coord getSize() {
@@ -144,13 +154,21 @@ public class LNode extends LGraphElement {
     }
 
     /**
-     * @return the origin
+     * Returns the original object from which the node was created.
+     * 
+     * @return the original object
      */
     public Object getOrigin() {
         return origin;
     }
 
     /**
+     * Returns the list of ports of this node. The order of ports in this list
+     * corresponds to the order in which they are drawn: first it contains
+     * the input ports in counter-clockwise order, starting with the north side,
+     * then the output ports in clockwise order, starting with the north side.
+     * That order is potentially affected during the crossing minimization phase.
+     * 
      * @return the ports
      */
     public List<LPort> getPorts() {
@@ -180,7 +198,11 @@ public class LNode extends LGraphElement {
     }
     
     /**
-     * @return the index of this node
+     * Returns the index of the node in the containing layer's list of nodes.
+     * Note that this method has linear running time in the number of nodes,
+     * so use it with caution.
+     * 
+     * @return the index of this node, or -1 if the node has no owner
      */
     public int getIndex() {
         if (owner == null) {

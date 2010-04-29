@@ -20,6 +20,11 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 
 /**
  * Interface for cycle breaker modules.
+ * <dl>
+ *   <dt>Precondition:</dt><dd>none</dd>
+ *   <dt>Postcondition:</dt><dd>the graph has no cycles, but possibly
+ *     new nodes and edges</dd>
+ * </dl>
  *
  * @author msp
  */

@@ -22,7 +22,16 @@ import de.cau.cs.kieler.kiml.layout.options.PortSide;
 import de.cau.cs.kieler.kiml.layout.options.PortType;
 
 /**
- * A port in a layered graph.
+ * A port in a layered graph. The position of the port is relative to the upper
+ * left corner of the containing node. A port has only one list of incident
+ * edges; for input ports this list must only contain incoming edges, while
+ * for output ports it must only contain outgoing edges. Usually all ports
+ * are required to be either input ports or output ports.
+ * <p>
+ * Port must be used even if the original graph does not reveal them. In this
+ * case each edge has dedicated source and target ports, which are used to
+ * determine the points where the edge touches the source and target nodes.
+ * </p>
  *
  * @author msp
  */
@@ -132,6 +141,8 @@ public class LPort extends LGraphElement {
     }
 
     /**
+     * Returns the node that owns this port.
+     * 
      * @return the owning node
      */
     public LNode getNode() {
@@ -141,7 +152,9 @@ public class LPort extends LGraphElement {
     /**
      * Sets the owning node and adds itself to the node's list of ports.
      * If the port was previously in another node, it is removed from that
-     * node's list of ports.
+     * node's list of ports. Be careful not to use this method while
+     * iterating through the ports list of the old node nor of the new node,
+     * since that could lead to {@link java.util.ConcurrentModificationException}s.
      * 
      * @param node the owner to set
      */
@@ -154,20 +167,26 @@ public class LPort extends LGraphElement {
     }
 
     /**
-     * @return the condType
+     * Returns the type of port.
+     * 
+     * @return the port type
      */
     public PortType getType() {
         return type;
     }
 
     /**
-     * @param thetype the condType to set
+     * Sets the type of port.
+     * 
+     * @param thetype the port type to set
      */
     public void setType(final PortType thetype) {
         this.type = thetype;
     }
 
     /**
+     * Returns the node side on which the port is drawn.
+     * 
      * @return the side
      */
     public PortSide getSide() {
@@ -175,6 +194,8 @@ public class LPort extends LGraphElement {
     }
 
     /**
+     * Sets the node side on which the port is drawn.
+     * 
      * @param theside the side to set
      */
     public void setSide(final PortSide theside) {
@@ -182,20 +203,29 @@ public class LPort extends LGraphElement {
     }
 
     /**
-     * @return the pos
+     * Returns the position of the port, which is relative to the containing
+     * node's position.
+     * 
+     * @return the position
      */
     public Coord getPos() {
         return pos;
     }
 
     /**
-     * @return the origin
+     * Returns the original object from which the port was created.
+     * 
+     * @return the original object
      */
     public Object getOrigin() {
         return origin;
     }
 
     /**
+     * Returns the list of edges that are incident to this port. If the port
+     * type is {@code INPUT}, this list must only contain incoming edges; if
+     * the port is {@code OUTPUT}, this list must only contain outgoing edges.
+     * 
      * @return the edges
      */
     public List<LEdge> getEdges() {
@@ -233,7 +263,11 @@ public class LPort extends LGraphElement {
     }
     
     /**
-     * @return the index of this port
+     * Returns the index of the port in the containing node's list of ports. Note
+     * that this method has linear running time in the number of ports, so use
+     * it with caution.
+     * 
+     * @return the index of this port, or -1 if the port has no owner
      */
     public int getIndex() {
         if (owner == null) {

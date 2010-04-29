@@ -64,6 +64,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
 
     /**
      * Minimize the number of crossings for the edges between the two given layers.
+     * Currently the barycenter heuristic is used for this.
      * 
      * @param fixedLayer the fixed layer
      * @param freeLayer the free layer whose nodes are reordered

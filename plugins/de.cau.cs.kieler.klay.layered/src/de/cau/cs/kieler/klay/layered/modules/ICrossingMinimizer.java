@@ -18,6 +18,13 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 
 /**
  * Interface for crossing minimization modules.
+ * <dl>
+ *   <dt>Precondition:</dt><dd>the graph has a proper layering, i.e. all
+ *     long edges have been splitted</dd>
+ *   <dt>Postcondition:</dt><dd>the order of nodes in each layer and the order
+ *     of ports in each node are optimized to yield as few edge crossings
+ *     as possible</dd>
+ * </dl>
  *
  * @author msp
  */

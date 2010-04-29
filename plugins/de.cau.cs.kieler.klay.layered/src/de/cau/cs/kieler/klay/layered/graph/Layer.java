@@ -17,7 +17,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * A layer in a layered graph.
+ * A layer in a layered graph. A layer contains a list of nodes, which are
+ * drawn in one column.
  *
  * @author msp
  */
@@ -49,20 +50,29 @@ public class Layer extends LGraphElement {
     }
     
     /**
-     * @return the size
+     * Returns the size of the layer, that is the height of the stacked nodes
+     * and the maximal width of the nodes.
+     * 
+     * @return the size of the layer
      */
     public Coord getSize() {
         return size;
     }
 
     /**
-     * @return the nodes
+     * Returns the list of nodes. The order of nodes in this list corresponds to
+     * the order in which they are drawn inside the layer: the first node is
+     * drawn topmost. This order is affected during crossing minimization.
+     * 
+     * @return the nodes of the layer
      */
     public List<LNode> getNodes() {
         return nodes;
     }
     
     /**
+     * Returns the layered graph that owns this layer.
+     * 
      * @return the owner
      */
     public LayeredGraph getGraph() {
@@ -70,6 +80,10 @@ public class Layer extends LGraphElement {
     }
     
     /**
+     * Returns the index of this layer in the global list of layers. Note that
+     * this method has linear running time in the number of layers, so use it
+     * with caution.
+     * 
      * @return the index of this layer
      */
     public int getIndex() {

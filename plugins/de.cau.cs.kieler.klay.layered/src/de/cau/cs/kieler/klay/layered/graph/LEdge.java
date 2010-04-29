@@ -17,7 +17,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * An edge in a layered graph.
+ * An edge in a layered graph. Edges may only be connected to ports of a node, which
+ * represent the point where the edge touches the node.
  *
  * @author msp
  */
@@ -60,7 +61,9 @@ public class LEdge extends LGraphElement {
     }
     
     /**
-     * @return the source
+     * Returns the source port.
+     * 
+     * @return the source port
      */
     public LPort getSource() {
         return source;
@@ -69,9 +72,11 @@ public class LEdge extends LGraphElement {
     /**
      * Sets the source port of this edge and adds itself to the port's list
      * of edges. If the edge previously had another source, it is removed
-     * from the original port's list of edges.
+     * from the original port's list of edges. Be careful not to use this method
+     * while iterating through the edges list of the old port nor of the new port,
+     * since that could lead to {@link java.util.ConcurrentModificationException}s.
      * 
-     * @param thesource the source to set
+     * @param thesource the source port to set
      */
     public void setSource(final LPort thesource) {
         if (source != null) {
@@ -82,7 +87,9 @@ public class LEdge extends LGraphElement {
     }
 
     /**
-     * @return the target
+     * Returns the target port.
+     * 
+     * @return the target port
      */
     public LPort getTarget() {
         return target;
@@ -91,9 +98,11 @@ public class LEdge extends LGraphElement {
     /**
      * Sets the target port of this edge and adds itself to the port's list
      * of edges. If the edge previously had another target, it is removed from
-     * the original port's list of edges.
+     * the original port's list of edges. Be careful not to use this method
+     * while iterating through the edges list of the old port nor of the new port,
+     * since that could lead to {@link java.util.ConcurrentModificationException}s.
      * 
-     * @param thetarget the target to set
+     * @param thetarget the target port to set
      */
     public void setTarget(final LPort thetarget) {
         if (target != null) {
@@ -104,21 +113,26 @@ public class LEdge extends LGraphElement {
     }
 
     /**
-     * @return the bendPoints
+     * Returns the list of bend points, which is initially empty.
+     * 
+     * @return the bend points
      */
     public List<Coord> getBendPoints() {
         return bendPoints;
     }
 
     /**
-     * @return the origin
+     * Returns the original object from which the edge was created.
+     * 
+     * @return the original object
      */
     public Object getOrigin() {
         return origin;
     }
 
     /**
-     * Indicates whether this edge has been reversed.
+     * Indicates whether this edge has been reversed. This can happen during
+     * the cycle breaking phase.
      * 
      * @return the reversed status
      */

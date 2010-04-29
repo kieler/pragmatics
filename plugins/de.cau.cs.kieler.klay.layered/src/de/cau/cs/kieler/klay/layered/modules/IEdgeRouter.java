@@ -18,6 +18,13 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 
 /**
  * Interface for edge routing modules.
+ * <dl>
+ *   <dt>Precondition:</dt><dd>the graph has a proper layering with
+ *     assigned node and port positions; the size of each layer is
+ *     correctly set</dd>
+ *   <dt>Postcondition:</dt><dd>each node is assigned a horizontal coordinate;
+ *     the bend points of each edge are set; the width of the whole graph is set</dd>
+ * </dl>
  *
  * @author msp
  */
