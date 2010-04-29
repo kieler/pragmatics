@@ -14,7 +14,6 @@
  *****************************************************************************/
 package de.cau.cs.kieler.kiml.ui.layout;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +52,7 @@ import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.ui.figures.SplineConnection;
-import de.cau.cs.kieler.core.util.KielerMath;
+import de.cau.cs.kieler.core.ui.util.SplineUtilities;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KPoint;
@@ -346,11 +345,9 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
     private PointList getBendPoints(final KEdgeLayout edgeLayout, final IFigure edgeFigure) {
         PointList pointList = pointListMap.get(edgeLayout);
         if (pointList == null) {
-            pointList = new PointList();
             KPoint sourcePoint = edgeLayout.getSourcePoint();
             KPoint targetPoint = edgeLayout.getTargetPoint();
             List<KPoint> bendPoints = edgeLayout.getBendPoints();
-            pointList.addPoint((int) sourcePoint.getX(), (int) sourcePoint.getY());
             
             EdgeRouting edgeRouting = LayoutOptions.getEnum(edgeLayout, EdgeRouting.class);
             boolean splineActive = false;
@@ -363,20 +360,17 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
             if (edgeRouting == EdgeRouting.SPLINES && bendPoints.size() >= 1
                     && !splineActive) {
                 // treat the edge points as control points for splines
-                List<KielerMath.Point> controlPoints = new ArrayList<KielerMath.Point>(
-                        bendPoints.size() + 2);
-                controlPoints.add(new KielerMath.Point(sourcePoint.getX(), sourcePoint.getY()));
+                PointList control = new PointList(bendPoints.size() + 2);
+                control.addPoint(new Point(sourcePoint.getX(), sourcePoint.getY()));
                 for (KPoint bendPoint : bendPoints) {
-                    controlPoints.add(new KielerMath.Point(bendPoint.getX(), bendPoint.getY()));
+                    control.addPoint(new Point(bendPoint.getX(), bendPoint.getY()));
                 }
-                controlPoints.add(new KielerMath.Point(targetPoint.getX(), targetPoint.getY()));
-                KielerMath.Point[] approxPoints = KielerMath.calcBezierPoints(controlPoints,
-                        bendPoints.size() + 2);
-                for (KielerMath.Point approxPoint : approxPoints) {
-                    pointList.addPoint((int) approxPoint.x, (int) approxPoint.y);
-                }
+                control.addPoint(new Point(targetPoint.getX(), targetPoint.getY()));
+                pointList = SplineUtilities.approximateSpline(control);
             } else {
                 // treat the edge points as normal bend points
+                pointList = new PointList();
+                pointList.addPoint((int) sourcePoint.getX(), (int) sourcePoint.getY());
                 for (KPoint bendPoint : bendPoints) {
                     pointList.addPoint((int) bendPoint.getX(), (int) bendPoint.getY());
                 }
