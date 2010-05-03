@@ -20,9 +20,16 @@ import org.eclipse.swt.widgets.Display;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.kgraph.KEdge;
+import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.layout.AbstractLayoutProvider;
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
 
 /**
  * The OGDF layout provider, that is the entry class used by KIML to call individual layout
@@ -93,9 +100,27 @@ public class OgdfLayoutProvider extends AbstractLayoutProvider {
             });
         }
 
-        // layout the graph with the selected algorithm
         if (docontinue.get()) {
+            // layout the graph with the selected algorithm
             layoutAlgorithm.doLayout(layoutNode, progressMonitor);
+        } else {
+            // mark the graph as not layouted
+            for (KNode child : layoutNode.getChildren()) {
+                KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(child);
+                LayoutOptions.setBoolean(nodeLayout, LayoutOptions.NO_LAYOUT, true);
+                for (KPort port : layoutNode.getPorts()) {
+                    KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(port);
+                    LayoutOptions.setBoolean(portLayout, LayoutOptions.NO_LAYOUT, true);
+                }
+                for (KEdge edge : layoutNode.getOutgoingEdges()) {
+                    KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(edge);
+                    LayoutOptions.setBoolean(edgeLayout, LayoutOptions.NO_LAYOUT, true);
+                    for (KLabel label : edge.getLabels()) {
+                        KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
+                        LayoutOptions.setBoolean(labelLayout, LayoutOptions.NO_LAYOUT, true);
+                    }
+                }
+            }
         }
     }
 
