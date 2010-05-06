@@ -27,27 +27,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.eclipse.xtext.parser.IParseResult;
-import org.eclipse.xtext.parser.antlr.IAntlrParser;
-import org.eclipse.xtext.parsetree.SyntaxError;
-import org.eclipse.xtext.parsetree.reconstr.SerializerUtil;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.xtext.resource.XtextResource;
+import org.eclipse.xtext.resource.XtextResourceSet;
 
 import com.google.inject.Injector;
 
-import de.cau.cs.kieler.kiml.graphviz.DotStandaloneSetup;
-import de.cau.cs.kieler.kiml.graphviz.dot.Attribute;
-import de.cau.cs.kieler.kiml.graphviz.dot.AttributeList;
-import de.cau.cs.kieler.kiml.graphviz.dot.AttributeStatement;
-import de.cau.cs.kieler.kiml.graphviz.dot.AttributeType;
-import de.cau.cs.kieler.kiml.graphviz.dot.DotFactory;
-import de.cau.cs.kieler.kiml.graphviz.dot.EdgeStatement;
-import de.cau.cs.kieler.kiml.graphviz.dot.EdgeTarget;
-import de.cau.cs.kieler.kiml.graphviz.dot.Graph;
-import de.cau.cs.kieler.kiml.graphviz.dot.GraphType;
-import de.cau.cs.kieler.kiml.graphviz.dot.GraphvizModel;
-import de.cau.cs.kieler.kiml.graphviz.dot.Node;
-import de.cau.cs.kieler.kiml.graphviz.dot.NodeStatement;
-import de.cau.cs.kieler.kiml.graphviz.dot.Statement;
+import de.cau.cs.kieler.kiml.graphviz.dot.GraphvizDotStandaloneSetup;
+import de.cau.cs.kieler.kiml.graphviz.dot.dot.Attribute;
+import de.cau.cs.kieler.kiml.graphviz.dot.dot.AttributeStatement;
+import de.cau.cs.kieler.kiml.graphviz.dot.dot.AttributeType;
+import de.cau.cs.kieler.kiml.graphviz.dot.dot.DotFactory;
+import de.cau.cs.kieler.kiml.graphviz.dot.dot.EdgeStatement;
+import de.cau.cs.kieler.kiml.graphviz.dot.dot.EdgeTarget;
+import de.cau.cs.kieler.kiml.graphviz.dot.dot.Graph;
+import de.cau.cs.kieler.kiml.graphviz.dot.dot.GraphType;
+import de.cau.cs.kieler.kiml.graphviz.dot.dot.GraphvizModel;
+import de.cau.cs.kieler.kiml.graphviz.dot.dot.Node;
+import de.cau.cs.kieler.kiml.graphviz.dot.dot.NodeStatement;
+import de.cau.cs.kieler.kiml.graphviz.dot.dot.Statement;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutData;
@@ -112,8 +112,8 @@ public class GraphvizLayouter {
 
     /** maps each identifier of a graph element to the instance of the element. */
     private HashMap<String, KGraphElement> graphElementMap = new HashMap<String, KGraphElement>();
-    /** the Google injector used to create the Xtext serializer and parser. */
-    private Injector injector = null;
+    /** the resource set used for parsing and serialization. */
+    private XtextResourceSet resourceSet;
     /** offset value to be added to all coordinates. */
     private float offset;
     /** base file name for debug output. */
@@ -158,9 +158,11 @@ public class GraphvizLayouter {
             return;
         }
 
-        // create the Google injector for the Dot language
-        if (injector == null) {
-            injector = new DotStandaloneSetup().createInjectorAndDoEMFRegistration();
+        // create an Xtext resource set for parsing and serialization
+        if (resourceSet == null) {
+            Injector injector = new GraphvizDotStandaloneSetup().createInjectorAndDoEMFRegistration();
+            resourceSet = injector.getInstance(XtextResourceSet.class);
+            resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
         }
 
         // start the graphviz process, or retrieve the previously used process
@@ -221,7 +223,7 @@ public class GraphvizLayouter {
             node.setName(nodeID);
             nodeStatement.setNode(node);
 
-            AttributeList attributes = DotFactory.eINSTANCE.createAttributeList();
+            List<Attribute> attributes = nodeStatement.getAttributes();
             KShapeLayout shapeLayout = KimlLayoutUtil.getShapeLayout(childNode);
             // set label - removed as it is currently not needed for layout
             // KLabel label = childNode.getLabel();
@@ -233,21 +235,20 @@ public class GraphvizLayouter {
             }
             String width = Float.toString(shapeLayout.getWidth() / DPI);
             String height = Float.toString(shapeLayout.getHeight() / DPI);
-            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_WIDTH, width));
-            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_HEIGHT, height));
-            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_FIXEDSIZE, "true"));
+            attributes.add(createAttribute(GraphvizAPI.ATTR_WIDTH, width));
+            attributes.add(createAttribute(GraphvizAPI.ATTR_HEIGHT, height));
+            attributes.add(createAttribute(GraphvizAPI.ATTR_FIXEDSIZE, "true"));
             // add node position if interactive layout is chosen
             if (interactive) {
                 float xpos = (shapeLayout.getXpos() - offset) / DPI;
                 float ypos = (parentLayout.getHeight() - shapeLayout.getYpos() - offset) / DPI;
                 String posString = "\"" + Float.toString(xpos) + "," + Float.toString(ypos) + "\"";
-                attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_POS, posString));
+                attributes.add(createAttribute(GraphvizAPI.ATTR_POS, posString));
             }
             // set node shape
             // TODO customize the node shape
-            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_SHAPE, "box"));
+            attributes.add(createAttribute(GraphvizAPI.ATTR_SHAPE, "box"));
 
-            nodeStatement.setAttributes(attributes);
             graph.getStatements().add(nodeStatement);
         }
 
@@ -269,18 +270,17 @@ public class GraphvizLayouter {
                     edgeTarget.setTargetnode(targetNode);
                     edgeStatement.getEdgeTargets().add(edgeTarget);
 
-                    AttributeList attributes = DotFactory.eINSTANCE.createAttributeList();
+                    List<Attribute> attributes = edgeStatement.getAttributes();
                     // disable drawing arrows for the edges
-                    attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_EDGEDIR, "none"));
+                    attributes.add(createAttribute(GraphvizAPI.ATTR_EDGEDIR, "none"));
                     // add edge labels at head, tail, and middle position
                     setEdgeLabels(outgoingEdge, attributes, vertical);
                     // add comment with edge identifier
                     String edgeID = getEdgeID(outgoingEdge);
-                    attributes.getEntries().add(
+                    attributes.add(
                             createAttribute(GraphvizAPI.ATTR_COMMENT, "\"" + edgeID + "\""));
                     graphElementMap.put(edgeID, outgoingEdge);
 
-                    edgeStatement.setAttributes(attributes);
                     graph.getStatements().add(edgeStatement);
                 } else {
                     KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(outgoingEdge);
@@ -304,7 +304,7 @@ public class GraphvizLayouter {
             final KLayoutData parentLayout) {
         AttributeStatement graphAttrStatement = DotFactory.eINSTANCE.createAttributeStatement();
         graphAttrStatement.setType(AttributeType.GRAPH);
-        AttributeList graphAttrs = DotFactory.eINSTANCE.createAttributeList();
+        List<Attribute> graphAttrs = graphAttrStatement.getAttributes();
         // set minimal spacing
         float minSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_SPACING);
         if (Float.isNaN(minSpacing)) {
@@ -312,17 +312,16 @@ public class GraphvizLayouter {
         }
         String spacingVal = Float.toString(minSpacing / DPI);
         if (command.equals(DOT_COMMAND) || command.equals(TWOPI_COMMAND)) {
-            graphAttrs.getEntries().add(
-                    createAttribute(GraphvizAPI.ATTR_RANKSEP, Float.toString(2 * minSpacing / DPI)));
+            graphAttrs.add(createAttribute(GraphvizAPI.ATTR_RANKSEP,
+                    Float.toString(2 * minSpacing / DPI)));
         }
         if (command.equals(CIRCO_COMMAND)) {
-            graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_MINDIST, spacingVal));
+            graphAttrs.add(createAttribute(GraphvizAPI.ATTR_MINDIST, spacingVal));
         } else if (command.equals(NEATO_COMMAND) || command.equals(FDP_COMMAND)) {
             AttributeStatement edgeAttrStatement = DotFactory.eINSTANCE.createAttributeStatement();
             edgeAttrStatement.setType(AttributeType.EDGE);
-            AttributeList edgeAttrs = DotFactory.eINSTANCE.createAttributeList();
-            edgeAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_EDGELEN, spacingVal));
-            edgeAttrStatement.setAttributes(edgeAttrs);
+            List<Attribute> edgeAttrs = edgeAttrStatement.getAttributes();
+            edgeAttrs.add(createAttribute(GraphvizAPI.ATTR_EDGELEN, spacingVal));
             graph.getStatements().add(edgeAttrStatement);
         }
         // set offset to border
@@ -334,34 +333,33 @@ public class GraphvizLayouter {
         if (command.equals(DOT_COMMAND)) {
             switch (LayoutOptions.getEnum(parentLayout, LayoutDirection.class)) {
             case DOWN:
-                graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_RANKDIR, "TB"));
+                graphAttrs.add(createAttribute(GraphvizAPI.ATTR_RANKDIR, "TB"));
                 break;
             case UP:
-                graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_RANKDIR, "BT"));
+                graphAttrs.add(createAttribute(GraphvizAPI.ATTR_RANKDIR, "BT"));
                 break;
             case LEFT:
-                graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_RANKDIR, "RL"));
+                graphAttrs.add(createAttribute(GraphvizAPI.ATTR_RANKDIR, "RL"));
                 break;
             default:
-                graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_RANKDIR, "LR"));
+                graphAttrs.add(createAttribute(GraphvizAPI.ATTR_RANKDIR, "LR"));
                 break;
             }
         }
         // enable node overlap avoidance
         if (!command.equals(DOT_COMMAND)) {
-            graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_OVERLAP, "false"));
+            graphAttrs.add(createAttribute(GraphvizAPI.ATTR_OVERLAP, "false"));
         }
         // enable or disable drawing of splines
         EdgeRouting edgeRouting = LayoutOptions.getEnum(parentLayout, EdgeRouting.class);
         useSplines = (edgeRouting != EdgeRouting.POLYLINE && edgeRouting != EdgeRouting.ORTHOGONAL);
-        graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_SPLINES,
+        graphAttrs.add(createAttribute(GraphvizAPI.ATTR_SPLINES,
                 Boolean.toString(useSplines)));
         // configure initial placement of nodes
         if (command.equals(NEATO_COMMAND) || command.equals(FDP_COMMAND)) {
             int seed = LayoutOptions.getInt(parentLayout, LayoutOptions.RANDOM_SEED);
-            graphAttrs.getEntries().add(createAttribute(GraphvizAPI.ATTR_START, "random" + seed));
+            graphAttrs.add(createAttribute(GraphvizAPI.ATTR_START, "random" + seed));
         }
-        graphAttrStatement.setAttributes(graphAttrs);
         graph.getStatements().add(graphAttrStatement);
     }
 
@@ -389,7 +387,7 @@ public class GraphvizLayouter {
      * @param attributes edge attribute list to which the labels are added
      * @param isVertical indicates whether vertical layout direction is active
      */
-    private static void setEdgeLabels(final KEdge kedge, final AttributeList attributes,
+    private static void setEdgeLabels(final KEdge kedge, final List<Attribute> attributes,
             final boolean isVertical) {
         KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
         // as Graphviz only supports positioning of one label per label placement, all labels
@@ -449,36 +447,36 @@ public class GraphvizLayouter {
                 midLabel.append(isVertical ? "O" : "\nO");
             }
         }
-        attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_LABEL,
+        attributes.add(createAttribute(GraphvizAPI.ATTR_LABEL,
                 createString(midLabel.toString())));
         // set head label
         if (headLabel.length() > 0) {
-            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_HEADLABEL,
+            attributes.add(createAttribute(GraphvizAPI.ATTR_HEADLABEL,
                     createString(headLabel.toString())));
         }
         // set tail label
         if (tailLabel.length() > 0) {
-            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_TAILLABEL,
+            attributes.add(createAttribute(GraphvizAPI.ATTR_TAILLABEL,
                     createString(tailLabel.toString())));
         }
         // set font name
         if (fontName != null && fontName.length() > 0) {
-            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_FONTNAME,
+            attributes.add(createAttribute(GraphvizAPI.ATTR_FONTNAME,
                     "\"" +  fontName + "\""));
         }
         // set font size
         if (fontSize > 0) {
-            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_FONTSIZE,
+            attributes.add(createAttribute(GraphvizAPI.ATTR_FONTSIZE,
                     Integer.toString(fontSize)));
         }
         // set label distance
         float distance = LayoutOptions.getFloat(edgeLayout, OPT_LABEL_DISTANCE);
         if (!Float.isNaN(distance) && distance >= 0.0f) {
-            attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_LABELDISTANCE,
+            attributes.add(createAttribute(GraphvizAPI.ATTR_LABELDISTANCE,
                     Float.toString(distance)));
             if (distance > 1.0f) {
                 float labelAngle = DEF_LABEL_ANGLE / distance;
-                attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_LABELANGLE,
+                attributes.add(createAttribute(GraphvizAPI.ATTR_LABELANGLE,
                         Float.toString(labelAngle)));
             }
         }
@@ -547,10 +545,11 @@ public class GraphvizLayouter {
             }
         }
 
-        SerializerUtil serializerUtil = injector.getInstance(SerializerUtil.class);
         try {
-            serializerUtil.serialize(graphvizModel, outputStream, null,
-                    new SerializerUtil.SerializationOptions(false, false));
+            XtextResource resource = (XtextResource) resourceSet.createResource(
+                    URI.createURI("process.graphviz-dot"));
+            resource.getContents().add(graphvizModel);
+            resource.save(outputStream, null);
             outputStream.write('\n');
             outputStream.flush();
         } catch (IOException exception) {
@@ -623,25 +622,35 @@ public class GraphvizLayouter {
         }
 
         // parse the output stream of the dot process
-        IAntlrParser dotParser = injector.getInstance(IAntlrParser.class);
-        IParseResult parseResult = dotParser.parse(inputStream);
-        if (debugStream != null) {
-            try {
-                debugStream.close();
-            } catch (IOException exception) {
-                // ignore exception
+        XtextResource resource = (XtextResource) resourceSet.createResource(
+                URI.createURI("process.graphviz-dot"));
+        try {
+            resource.load(inputStream, null);
+            EcoreUtil.resolveAll(resource);
+        } catch (IOException exception) {
+            GraphvizAPI.endProcess();
+            throw new KielerException("Failed to read Graphviz output.", exception);
+        } finally {
+            if (debugStream != null) {
+                try {
+                    debugStream.close();
+                } catch (IOException exception) {
+                    // ignore exception
+                }
             }
         }
-        if (!parseResult.getParseErrors().isEmpty()) {
+        
+        // analyze errors and retrieve parse result
+        if (!resource.getErrors().isEmpty()) {
             StringBuilder errorString = new StringBuilder("Errors in Graphviz output:");
-            for (SyntaxError syntaxError : parseResult.getParseErrors()) {
-                errorString.append("\n" + syntaxError.getNode().getLine() + ": "
-                        + syntaxError.getMessage());
+            for (Diagnostic diagnostic : resource.getErrors()) {
+                errorString.append("\n" + diagnostic.getLine() + ": "
+                        + diagnostic.getMessage());
             }
             GraphvizAPI.endProcess();
             throw new KielerException(errorString.toString());
         }
-        GraphvizModel graphvizModel = (GraphvizModel) parseResult.getRootASTElement();
+        GraphvizModel graphvizModel = (GraphvizModel) resource.getParseResult().getRootASTElement();
         if (graphvizModel.getGraphs().isEmpty()) {
             GraphvizAPI.endProcess();
             throw new KielerException("No output from the Graphviz process.");
@@ -676,9 +685,8 @@ public class GraphvizLayouter {
                 NodeStatement nodeStatement = (NodeStatement) statement;
                 KNode knode = (KNode) graphElementMap.get(nodeStatement.getNode().getName());
                 KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(knode);
-                AttributeList attributes = nodeStatement.getAttributes();
                 float xpos = 0.0f, ypos = 0.0f, width = 0.0f, height = 0.0f;
-                for (Attribute attribute : attributes.getEntries()) {
+                for (Attribute attribute : nodeStatement.getAttributes()) {
                     try {
                         if (attribute.getName().equals(GraphvizAPI.ATTR_POS)) {
                             Point pos = parsePoint(attribute.getValue());
@@ -771,8 +779,7 @@ public class GraphvizLayouter {
                 // process an attribute
                 AttributeStatement attributeStatement = (AttributeStatement) statement;
                 if (attributeStatement.getType() == AttributeType.GRAPH) {
-                    AttributeList attributes = attributeStatement.getAttributes();
-                    for (Attribute attribute : attributes.getEntries()) {
+                    for (Attribute attribute : attributeStatement.getAttributes()) {
                         if (attribute.getName().equals(GraphvizAPI.ATTR_BOUNDINGBOX)) {
                             try {
                                 StringTokenizer tokenizer = new StringTokenizer(attribute.getValue(),
@@ -848,9 +855,9 @@ public class GraphvizLayouter {
      * @param attributes attribute list
      * @return a hash map that contains all given attributes
      */
-    private static Map<String, String> createAttributeMap(final AttributeList attributes) {
-        Map<String, String> attributeMap = new HashMap<String, String>(attributes.getEntries().size());
-        for (Attribute attribute : attributes.getEntries()) {
+    private static Map<String, String> createAttributeMap(final List<Attribute> attributes) {
+        Map<String, String> attributeMap = new HashMap<String, String>(attributes.size());
+        for (Attribute attribute : attributes) {
             attributeMap.put(attribute.getName(), attribute.getValue());
         }
         return attributeMap;

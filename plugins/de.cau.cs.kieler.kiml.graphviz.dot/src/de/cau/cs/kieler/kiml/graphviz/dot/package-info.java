@@ -13,7 +13,6 @@
  */
 
 /**
- * Connection of the Graphviz layouter to the KIML interface for automatic
- * layout.
+ * Base package of the parser and serializer for the Graphviz Dot language.
  */
-package de.cau.cs.kieler.kiml.graphviz.layouter;
+package de.cau.cs.kieler.kiml.graphviz.dot;
