@@ -25,8 +25,8 @@ Set[Port] getLocals(Box box) :
  // box.boxes.connections.collect(c | !box.inputs.contains(c.sourcePort) && !box.outputs.contains(c.targetPort));
   JAVA de.cau.cs.kieler.dataflow.codegen.Helper.getLocals(de.cau.cs.kieler.dataflow.Box);   
 
-boolean hasLocals(Box box) :
-  getLocals(box).size > 0;  
+//boolean hasLocals(Box box) :
+//  getLocals(box).size > 0;  
   
 String getName(Port p) :
   p.name;
