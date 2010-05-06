@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+@SuppressWarnings("all")
 public class InternalDotParser extends AbstractInternalAntlrParser {
     public static final String[] tokenNames = new String[] {
         "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_ID", "RULE_FLOAT", "RULE_STRING", "RULE_PREC_LINE", "RULE_INT", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'strict'", "'{'", "'}'", "'='", "';'", "'subgraph'", "'['", "','", "']'", "':'", "'->'", "'--'", "'graph'", "'digraph'", "'node'", "'edge'", "'n'", "'ne'", "'e'", "'se'", "'s'", "'sw'", "'w'", "'nw'"
@@ -128,7 +129,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         EObject lv_graphs_0_0 = null;
 
 
-         @SuppressWarnings("unused") EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
             
         try {
             // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:98:6: ( ( (lv_graphs_0_0= ruleGraph ) )* )
@@ -264,7 +265,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         EObject lv_statements_4_0 = null;
 
 
-         @SuppressWarnings("unused") EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
             
         try {
             // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:145:6: ( ( ( (lv_strict_0_0= 'strict' ) )? ( (lv_type_1_0= ruleGraphType ) ) ( (lv_name_2_0= RULE_ID ) )? '{' ( (lv_statements_4_0= ruleStatement ) )* '}' ) )
@@ -556,7 +557,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         AntlrDatatypeRuleToken lv_value_6_0 = null;
 
 
-         @SuppressWarnings("unused") EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
             
         try {
             // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:269:6: ( ( (this_EdgeStatement_0= ruleEdgeStatement | this_NodeStatement_1= ruleNodeStatement | this_AttributeStatement_2= ruleAttributeStatement | this_Subgraph_3= ruleSubgraph | ( ( (lv_name_4_0= ruleDotID ) ) '=' ( (lv_value_6_0= ruleDotID ) ) ) ) ( ';' )? ) )
@@ -993,7 +994,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         EObject lv_attributes_3_0 = null;
 
 
-         @SuppressWarnings("unused") EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
             
         try {
             // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:400:6: ( ( ( ( (lv_sourceSubgraph_0_0= ruleSubgraph ) ) | ( (lv_sourceNode_1_0= ruleNode ) ) ) ( (lv_edgeTargets_2_0= ruleEdgeTarget ) )+ ( (lv_attributes_3_0= ruleAttributeList ) )? ) )
@@ -1305,7 +1306,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         EObject lv_targetnode_2_0 = null;
 
 
-         @SuppressWarnings("unused") EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
             
         try {
             // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:520:6: ( ( ( (lv_operator_0_0= ruleEdgeOperator ) ) ( ( (lv_targetSubgraph_1_0= ruleSubgraph ) ) | ( (lv_targetnode_2_0= ruleNode ) ) ) ) )
@@ -1540,7 +1541,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         EObject lv_attributes_1_0 = null;
 
 
-         @SuppressWarnings("unused") EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
             
         try {
             // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:616:6: ( ( ( (lv_node_0_0= ruleNode ) ) ( (lv_attributes_1_0= ruleAttributeList ) )? ) )
@@ -1713,7 +1714,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         EObject lv_attributes_1_0 = null;
 
 
-         @SuppressWarnings("unused") EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
             
         try {
             // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:687:6: ( ( ( (lv_type_0_0= ruleAttributeType ) ) ( (lv_attributes_1_0= ruleAttributeList ) ) ) )
@@ -1874,7 +1875,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         EObject lv_statements_3_0 = null;
 
 
-         @SuppressWarnings("unused") EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
             
         try {
             // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:758:6: ( ( ( 'subgraph' ( (lv_name_1_0= RULE_ID ) )? )? '{' ( (lv_statements_3_0= ruleStatement ) )* '}' ) )
@@ -2097,7 +2098,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         EObject lv_entries_3_0 = null;
 
 
-         @SuppressWarnings("unused") EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
             
         try {
             // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:841:6: ( ( '[' ( (lv_entries_1_0= ruleAttribute ) ) ( ',' ( (lv_entries_3_0= ruleAttribute ) ) )* ']' ) )
@@ -2301,7 +2302,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         AntlrDatatypeRuleToken lv_value_2_0 = null;
 
 
-         @SuppressWarnings("unused") EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
             
         try {
             // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:924:6: ( ( ( (lv_name_0_0= ruleDotID ) ) ( '=' ( (lv_value_2_0= ruleDotID ) ) )? ) )
@@ -2486,7 +2487,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         EObject lv_port_2_0 = null;
 
 
-         @SuppressWarnings("unused") EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
             
         try {
             // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:999:6: ( ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_port_2_0= rulePort ) ) )? ) )
@@ -2673,7 +2674,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         Enumerator lv_compass_pt_3_0 = null;
 
 
-         @SuppressWarnings("unused") EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
             
         try {
             // ../de.cau.cs.kieler.kiml.graphviz.dot/src-gen/de/cau/cs/kieler/kiml/graphviz/parser/antlr/internal/InternalDot.g:1074:6: ( ( ( ( (lv_name_0_0= ruleDotID ) ) ( ':' ( (lv_compass_pt_2_0= ruleCompassPoint ) ) )? ) | ( (lv_compass_pt_3_0= ruleCompassPoint ) ) ) )

@@ -102,15 +102,16 @@ public class DotGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cSemicolonKeyword_1 = (Keyword)cGroup.eContents().get(1);
 		
 		//Statement:
-		//  (EdgeStatement|NodeStatement|AttributeStatement|Subgraph|name=DotID "=" value=
-		//  DotID) ";"?;
+		//  (EdgeStatement|NodeStatement|AttributeStatement|Subgraph|name=DotID "="
+		//  value=DotID) ";"?;
 		public ParserRule getRule() { return rule; }
 
-		//(EdgeStatement|NodeStatement|AttributeStatement|Subgraph|name=DotID "=" value=
-		//DotID) ";"?
+		//(EdgeStatement|NodeStatement|AttributeStatement|Subgraph|name=DotID "="
+		//value=DotID) ";"?
 		public Group getGroup() { return cGroup; }
 
-		//EdgeStatement|NodeStatement|AttributeStatement|Subgraph|name=DotID "=" value=DotID
+		//EdgeStatement|NodeStatement|AttributeStatement|Subgraph|name=DotID "="
+		//value=DotID
 		public Alternatives getAlternatives_0() { return cAlternatives_0; }
 
 		//EdgeStatement
@@ -161,12 +162,12 @@ public class DotGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cAttributesAttributeListParserRuleCall_2_0 = (RuleCall)cAttributesAssignment_2.eContents().get(0);
 		
 		//EdgeStatement:
-		//  (sourceSubgraph=Subgraph|sourceNode=Node) edgeTargets+=EdgeTarget+ attributes=
-		//  AttributeList?;
+		//  (sourceSubgraph=Subgraph|sourceNode=Node) edgeTargets+=EdgeTarget+
+		//  attributes=AttributeList?;
 		public ParserRule getRule() { return rule; }
 
-		//(sourceSubgraph=Subgraph|sourceNode=Node) edgeTargets+=EdgeTarget+ attributes=
-		//AttributeList?
+		//(sourceSubgraph=Subgraph|sourceNode=Node) edgeTargets+=EdgeTarget+
+		//attributes=AttributeList?
 		public Group getGroup() { return cGroup; }
 
 		//sourceSubgraph=Subgraph|sourceNode=Node
@@ -639,12 +640,12 @@ public class DotGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cNorthwestNwKeyword_7_0 = (Keyword)cNorthwestEnumLiteralDeclaration_7.eContents().get(0);
 		
 		//enum CompassPoint:
-		//  north="n" | northeast="ne" | east="e" | southeast="se" | south="s" | southwest="sw" | west=
-		//  "w" | northwest="nw";
+		//  north="n" | northeast="ne" | east="e" | southeast="se" | south="s" |
+		//  southwest="sw" | west="w" | northwest="nw";
 		public EnumRule getRule() { return rule; }
 
-		//north="n" | northeast="ne" | east="e" | southeast="se" | south="s" | southwest="sw" | west=
-		//"w" | northwest="nw"
+		//north="n" | northeast="ne" | east="e" | southeast="se" | south="s" | southwest=
+		//"sw" | west="w" | northwest="nw"
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//north="n"
@@ -760,8 +761,8 @@ public class DotGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//Statement:
-	//  (EdgeStatement|NodeStatement|AttributeStatement|Subgraph|name=DotID "=" value=
-	//  DotID) ";"?;
+	//  (EdgeStatement|NodeStatement|AttributeStatement|Subgraph|name=DotID "="
+	//  value=DotID) ";"?;
 	public StatementElements getStatementAccess() {
 		return (pStatement != null) ? pStatement : (pStatement = new StatementElements());
 	}
@@ -771,8 +772,8 @@ public class DotGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//EdgeStatement:
-	//  (sourceSubgraph=Subgraph|sourceNode=Node) edgeTargets+=EdgeTarget+ attributes=
-	//  AttributeList?;
+	//  (sourceSubgraph=Subgraph|sourceNode=Node) edgeTargets+=EdgeTarget+
+	//  attributes=AttributeList?;
 	public EdgeStatementElements getEdgeStatementAccess() {
 		return (pEdgeStatement != null) ? pEdgeStatement : (pEdgeStatement = new EdgeStatementElements());
 	}
@@ -902,8 +903,8 @@ public class DotGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//enum CompassPoint:
-	//  north="n" | northeast="ne" | east="e" | southeast="se" | south="s" | southwest="sw" | west=
-	//  "w" | northwest="nw";
+	//  north="n" | northeast="ne" | east="e" | southeast="se" | south="s" |
+	//  southwest="sw" | west="w" | northwest="nw";
 	public CompassPointElements getCompassPointAccess() {
 		return (unknownRuleCompassPoint != null) ? unknownRuleCompassPoint : (unknownRuleCompassPoint = new CompassPointElements());
 	}
