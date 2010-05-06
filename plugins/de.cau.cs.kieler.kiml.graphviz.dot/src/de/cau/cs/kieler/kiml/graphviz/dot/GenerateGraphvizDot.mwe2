@@ -44,13 +44,6 @@ Workflow {
 				
 			// the following fragment tries to use the Antlr Generator fragment
 			fragment = AntlrDelegatingFragment {}
-			
-			// java-based API for validation 
-			fragment = validation.JavaValidatorFragment {
-                composedCheck = "org.eclipse.xtext.validation.ImportUriValidator"
-                composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
-                // registerForImportedPackages = true
-            }
 
 		}
 	}
