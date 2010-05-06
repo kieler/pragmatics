@@ -135,7 +135,7 @@ public final class GraphvizAPI {
     /** preference constant for timeout. */
     public static final String PREF_TIMEOUT = "graphviz.timeout";
     /** default timeout for waiting for Graphviz to give some output. */
-    public static final int PROCESS_DEF_TIMEOUT = 7000;
+    public static final int PROCESS_DEF_TIMEOUT = 20000;
     /** minimal timeout for waiting for Graphviz to give some output. */
     public static final int PROCESS_MIN_TIMEOUT = 200;
 
@@ -152,7 +152,7 @@ public final class GraphvizAPI {
             "/usr/bin/",
             "/bin/" };
     /** number of milliseconds to wait if no input is available from the Graphviz process. */
-    private static final int PROCESS_INPUT_WAIT = 20;
+    private static final int PROCESS_INPUT_WAIT = 40;
     /** maximal number of characters that is read from the Graphviz error output. */
     private static final int MAX_ERROR_OUTPUT = 512;
 
@@ -278,7 +278,8 @@ public final class GraphvizAPI {
                 if (error.length() > 0) {
                     throw new KielerException("Graphviz error: " + error.toString());
                 } else {
-                    throw new KielerException("Timeout exceeded while waiting for Graphviz output.");
+                    throw new KielerException("Timeout exceeded while waiting for Graphviz output. "
+                            + "Try increasing the timeout value in the preferences.");
                 }
             } else {
                 // read the error stream anyway - if error stream is not empty,
