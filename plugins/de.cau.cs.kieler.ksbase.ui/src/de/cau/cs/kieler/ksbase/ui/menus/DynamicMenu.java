@@ -45,6 +45,10 @@ import de.cau.cs.kieler.ksbase.ui.handler.TransformationCommandHandler;
  * A class implementing a dynamic menu. Used to add custom transformation commands that have been
  * configured by using the preference page.
  * 
+ * @deprecated currently not used. transformations through preference pages are not supported
+ *             due to problems with creating dynamic bundles together with fixed menus. Leads to
+ *             index out of bounds exceptions (See Eclipse bug).
+ * 
  * @author mim
  * 
  * 

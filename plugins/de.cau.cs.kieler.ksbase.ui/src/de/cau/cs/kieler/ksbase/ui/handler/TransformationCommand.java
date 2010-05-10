@@ -44,7 +44,7 @@ import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 public class TransformationCommand extends AbstractTransactionalCommand {
 
     /** The component that handles execution of a transformation. **/
-    private ITransformationFramework component;
+    private ITransformationFramework transformationFramework;
 
     /**
      * Creates a command to execute a transformation.
@@ -59,7 +59,7 @@ public class TransformationCommand extends AbstractTransactionalCommand {
     public TransformationCommand(final TransactionalEditingDomain domain,
             final String label, final IAdaptable adapter) {
         super(domain, label, null);
-        component = null;
+        transformationFramework = null;
     }
 
     /**
@@ -83,8 +83,8 @@ public class TransformationCommand extends AbstractTransactionalCommand {
     @Override
     protected CommandResult doExecuteWithResult(final IProgressMonitor monitor,
             final IAdaptable info) throws ExecutionException {
-        if (component != null) {
-            component.executeTransformation();
+        if (transformationFramework != null) {
+            transformationFramework.executeTransformation();
 
             IEditorPart activeEditor = PlatformUI.getWorkbench()
                     .getActiveWorkbenchWindow().getActivePage()
@@ -111,7 +111,7 @@ public class TransformationCommand extends AbstractTransactionalCommand {
             // Clear the component, so a missing call to'initalize' won't
             // execute the same command
             // twice.
-            component = null;
+            transformationFramework = null;
             return CommandResult.newOKCommandResult();
         } else {
             KSBasEUIPlugin
@@ -140,17 +140,17 @@ public class TransformationCommand extends AbstractTransactionalCommand {
      *            The transformation framework to use for execution
      * @return False if an error occurred
      */
-    public final boolean initalize(final IEditorPart editPart,
+    public final boolean initialize(final IEditorPart editPart,
             final List<Object> selection, final String command,
             final String fileName, final String basePackage,
             final ITransformationFramework framework) {
-        component = framework;
+        transformationFramework = framework;
 
         // List<EObject> sel = selection.toList();
         // List<EObject> sel = ModelingUtil.getModelElementsFromSelection();
-        component
+        transformationFramework
                 .setParameters(selection.toArray(new Object[selection.size()]));
-        return component.initializeTransformation(fileName, command,
+        return transformationFramework.initializeTransformation(fileName, command,
                 basePackage);
     }
 

@@ -59,7 +59,7 @@ public class TransformationCommandHandler extends AbstractHandler {
      */
     public Object execute(final ExecutionEvent event) throws ExecutionException {
 
-        EditorTransformationSettings editor = TransformationManager.INSTANCE.getEditorById(event
+        EditorTransformationSettings editor = TransformationManager.INSTANCE.getEditorSettingsById(event
                 .getParameter(EDITOR_PARAM));
         if (editor != null) {
             TransformationUIManager.INSTANCE.createAndExecuteTransformationCommand(editor, editor

@@ -43,8 +43,8 @@ import de.cau.cs.kieler.ksbase.ui.utils.TransformationUtils;
 import de.cau.cs.kieler.viewmanagement.RunLogic;
 
 /**
- * Transformation-UI manager. Handles creation and execution of commands and notify of
- * transformationEvent listeners
+ * Transformation-UI manager. Handles creation and execution of commands and
+ * notify of transformationEvent listeners
  * 
  * @author mim
  * 
@@ -56,7 +56,8 @@ public final class TransformationUIManager {
     public static final TransformationUIManager INSTANCE = new TransformationUIManager();
 
     /**
-     * The list of listeners to notify before and after transformation has been executed.
+     * The list of listeners to notify before and after transformation has been
+     * executed.
      **/
     private LinkedList<ITransformationEventListener> transformationEventListeners;
 
@@ -92,18 +93,20 @@ public final class TransformationUIManager {
     }
 
     /**
-     * Creates and executes a transformation command by creating a request and execute the resulting
-     * command on the diagram command stack.
+     * Creates and executes a transformation command by creating a request and
+     * execute the resulting command on the diagram command stack.
      * 
-     * @param editor
+     * @param editorSettings
      *            The editor for which this transformation is
      * @param transformation
      *            The transformation that should be executed
      * @param selection
-     *            A selection containing the edit parts that should be used. This may also be null,
-     *            which indicates that the elements are selected automatically
+     *            A selection containing the edit parts that should be used.
+     *            This may also be null, which indicates that the elements are
+     *            selected automatically
      */
-    public void createAndExecuteTransformationCommand(final EditorTransformationSettings editor,
+    public void createAndExecuteTransformationCommand(
+            final EditorTransformationSettings editorSettings,
             final KSBasETransformation transformation, final List<EObject> selection) {
         // We need the view management
         if (!RunLogic.getInstance().getState()) {
@@ -117,9 +120,9 @@ public final class TransformationUIManager {
 
         IEditorPart activeEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
                 .getActivePage().getActiveEditor();
-        EditPart selectedElement = null;
+        EditPart selectedEditPart = null;
         if (selection != null) {
-            selectedElement = ModelingUtil.getEditPart(selection.get(0));
+            selectedEditPart = ModelingUtil.getEditPart(selection.get(0));
         } else {
             // retrieve selection:
             ISelection sel = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
@@ -127,20 +130,21 @@ public final class TransformationUIManager {
             if (sel instanceof StructuredSelection) {
                 Object selObj = ((StructuredSelection) sel).getFirstElement();
                 if (selObj instanceof EditPart) {
-                    selectedElement = (EditPart) selObj;
+                    selectedEditPart = (EditPart) selObj;
                 } else {
                     // we only support edit parts here.
                     return;
                 }
 
             } else {
-                // May we should support other selections but not right now.
+                // Maybe we should support other selections but not right now.
                 return;
             }
 
         }
 
-        // If the given selection is null, we have to calculate the actual mapping:
+        // If the given selection is null, we have to calculate the actual
+        // mapping:
         List<Object> selectionMapping = null;
         if (selection == null) {
             if (transformation.getParameterList().size() == 0) {
@@ -164,9 +168,10 @@ public final class TransformationUIManager {
         }
 
         ExecuteTransformationRequest request = new ExecuteTransformationRequest(activeEditor,
-                transformation.getTransformation(), editor.getTransformationFile(),
-                selectionMapping, editor.getModelPackageClass(), editor.getFramework());
-        Command transformationCommand = selectedElement.getCommand(request);
+                transformation.getTransformation(), editorSettings.getTransformationFile(),
+                selectionMapping, editorSettings.getModelPackageClass(), editorSettings
+                        .getFramework());
+        Command transformationCommand = selectedEditPart.getCommand(request);
 
         // gets a command stack to execute the command
         DiagramCommandStack commandStack = null;
@@ -202,7 +207,7 @@ public final class TransformationUIManager {
 
             // Notify event listeners:
             for (ITransformationEventListener te : transformationEventListeners) {
-                te.transformationExecuted(new Object[] {obj, activeEditor });
+                te.transformationExecuted(new Object[] { obj, activeEditor });
             }
 
         }

@@ -123,7 +123,7 @@ public final class TransformationManager {
      *            The editor's id.
      * @return The first editor in the list of registered editors which has the given name
      */
-    public EditorTransformationSettings getEditorById(final String editorId) {
+    public EditorTransformationSettings getEditorSettingsById(final String editorId) {
         if (activeEditors.containsKey(editorId)) {
             return activeEditors.get(editorId);
         } else if (activeUserEditors.containsKey(editorId)) {

@@ -67,7 +67,7 @@ public class ExecuteTransformationEditPolicy extends AbstractEditPolicy {
                         .getEditingDomain(),
                         Messages.executeTransformationEditPolicyTransformationCommandName,
                         new EObjectAdapter((View) hostEPart.getModel()));
-                command.initalize(transformationRequest.getEditPart(), transformationRequest
+                command.initialize(transformationRequest.getEditPart(), transformationRequest
                         .getSelection(), transformationRequest.getCommand(), transformationRequest
                         .getFileName(), transformationRequest.getModelPackage(),
                         transformationRequest.getFramework());

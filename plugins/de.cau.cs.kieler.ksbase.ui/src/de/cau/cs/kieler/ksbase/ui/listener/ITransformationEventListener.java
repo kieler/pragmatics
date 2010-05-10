@@ -29,7 +29,9 @@ public interface ITransformationEventListener {
      * Notifies the listener that a transformation has been executed.
      * 
      * @param args
-     *            List of parameters for the listener.
+     *            The following array:
+     *            0 : The diagram object on which the transformation has been executed.
+     *            1 : The currently active editor.
      */
     void transformationExecuted(Object[] args);
 
@@ -37,9 +39,7 @@ public interface ITransformationEventListener {
      * Notifies the listener that a transformation is about to be executed.
      * 
      * @param args
-     *            The following array:
-     *            0 : The diagram object on which the transformation has been executed.
-     *            1 : The currently active editor.
+     *            List of parameters for the listener.
      */
     void transformationAboutToExecute(Object[] args);
 }

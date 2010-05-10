@@ -55,8 +55,8 @@ import de.cau.cs.kieler.ksbase.core.TransformationManager;
 import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 
 /**
- * Creates menus for all registered editor transformation settings and contributes them when
- * starting an eclipse instance.
+ * Creates menus for all registered editor transformation settings and
+ * contributes them when starting an eclipse instance.
  * 
  * @author mim
  * 
@@ -67,15 +67,16 @@ public final class DynamicMenuContributions {
     /** DynamicMenuContribution instance. **/
     public static final DynamicMenuContributions INSTANCE = new DynamicMenuContributions();
     /**
-     * A list of cached commands used to increase performance because we will often have the same
-     * command added in multiple menus (e.g. main menu and popup).
+     * A list of cached commands used to increase performance because we will
+     * often have the same command added in multiple menus (e.g. main menu and
+     * popup).
      **/
     private HashMap<String, Node> cachedTransformationCommands;
     /** The list of command-Ids. **/
     private HashMap<KSBasETransformation, String> commandIds;
     /**
-     * Storing the key bindings for creating them AFTER the plug-in has been installed and the
-     * commands Id's are registered.
+     * Storing the key bindings for creating them AFTER the plug-in has been
+     * installed and the commands Id's are registered.
      */
     private HashMap<String, String[]> keybindings;
 
@@ -91,351 +92,352 @@ public final class DynamicMenuContributions {
     /**
      * Creates a menu for an editor.
      * 
-     * @param editor
+     * @param editorSettings
      *            The editor to create the menu for.
      */
-    public void createMenuForEditor(final EditorTransformationSettings editor) {
-        Assert.isNotNull(editor);
+    public void createMenuForEditor(final EditorTransformationSettings editorSettings) {
+        Assert.isNotNull(editorSettings);
 
         try {
-            try {
-                Document extension = javax.xml.parsers.DocumentBuilderFactory.newInstance()
-                        .newDocumentBuilder().newDocument();
-                extension.setXmlStandalone(true);
-                // Create extension point elements:
-                Element plugin = extension.createElement("plugin");
-                Element commandExtension = extension.createElement("extension");
-                commandExtension.setAttribute("point", "org.eclipse.ui.commands");
-                Element bindingExtension = extension.createElement("extension");
-                bindingExtension.setAttribute("point", "org.eclipse.ui.bindings");
-                Element contextExtension = extension.createElement("extension");
-                contextExtension.setAttribute("point", "org.eclipse.ui.contexts");
-                Element menuExtension = extension.createElement("extension");
-                menuExtension.setAttribute("point", "org.eclipse.ui.menus");
-                Element handlerExtension = extension.createElement("extension");
-                handlerExtension.setAttribute("point", "org.eclipse.ui.handlers");
-                Element popupExtension = extension.createElement("extension");
-                popupExtension.setAttribute("point",
-                        "de.cau.cs.kieler.core.ui.balloonPopupBarContribution");
-                Element popupEditPolicyProvider = extension.createElement("extension");
-                popupEditPolicyProvider.setAttribute("point",
-                        "org.eclipse.gmf.runtime.diagram.ui.editpolicyProviders");
-                Element policyProvider = extension.createElement("editpolicyProvider");
-                policyProvider.setAttribute("class",
-                        "de.cau.cs.kieler.core.ui.policies.BalloonPopupEditPolicyProvider");
-                Element policyProviderPrio = extension.createElement("Priority");
-                policyProviderPrio.setAttribute("name", "Lowest");
-                policyProvider.appendChild(policyProviderPrio);
-                popupEditPolicyProvider.appendChild(policyProvider);
+            Document extension = javax.xml.parsers.DocumentBuilderFactory.newInstance()
+                    .newDocumentBuilder().newDocument();
+            extension.setXmlStandalone(true);
+            // Create extension point elements:
+            Element plugin = extension.createElement("plugin");
+            Element commandExtension = extension.createElement("extension");
+            commandExtension.setAttribute("point", "org.eclipse.ui.commands");
+            Element bindingExtension = extension.createElement("extension");
+            bindingExtension.setAttribute("point", "org.eclipse.ui.bindings");
+            Element contextExtension = extension.createElement("extension");
+            contextExtension.setAttribute("point", "org.eclipse.ui.contexts");
+            Element menuExtension = extension.createElement("extension");
+            menuExtension.setAttribute("point", "org.eclipse.ui.menus");
+            Element handlerExtension = extension.createElement("extension");
+            handlerExtension.setAttribute("point", "org.eclipse.ui.handlers");
+            Element popupExtension = extension.createElement("extension");
+            popupExtension.setAttribute("point",
+                    "de.cau.cs.kieler.core.ui.balloonPopupBarContribution");
+            Element popupEditPolicyProvider = extension.createElement("extension");
+            popupEditPolicyProvider.setAttribute("point",
+                    "org.eclipse.gmf.runtime.diagram.ui.editpolicyProviders");
+            Element policyProvider = extension.createElement("editpolicyProvider");
+            policyProvider.setAttribute("class",
+                    "de.cau.cs.kieler.core.ui.policies.BalloonPopupEditPolicyProvider");
+            Element policyProviderPrio = extension.createElement("Priority");
+            policyProviderPrio.setAttribute("name", "Lowest");
+            policyProvider.appendChild(policyProviderPrio);
+            popupEditPolicyProvider.appendChild(policyProvider);
 
-                // Create visibility flags for menus
-                Element menuVisible = extension.createElement("visibleWhen");
-                menuVisible.setAttribute("checkEnabled", "false");
-                Element visIterate = extension.createElement("iterate");
-                visIterate.setAttribute("ifEmpty", "false");
-                visIterate.setAttribute("operator", "or");
-                Element visWith = extension.createElement("with");
-                visWith.setAttribute("variable", "activeEditorId");
-                Element visInstance = extension.createElement("equals");
-                visInstance.setAttribute("value", editor.getEditorId());
-                visWith.appendChild(visInstance);
-                visIterate.appendChild(visWith);
-                menuVisible.appendChild(visIterate);
-                // Create command extensions for all transformations:
-                for (KSBasETransformation t : editor.getTransformations()) {
-                    String commandID = "de.cau.cs.kieler.ksbase." + editor.getEditorId() + "."
-                            + t.getName().replace(' ', '_');
-                    // store id
-                    commandIds.put(t, commandID);
-                    Element command = extension.createElement("command");
-                    command.setAttribute("id", commandID);
-                    command.setAttribute("name", t.getName());
-                    command.setAttribute("categoryId", "de.cau.cs.kieler.ksbase.ui.ksbaseCategory");
-                    Element commandParameter = extension.createElement("commandParameter");
-                    commandParameter.setAttribute("id", "de.cau.cs.kieler.ksbase.editorParameter");
-                    commandParameter.setAttribute("name", "editor");
-                    command.appendChild(commandParameter);
-                    commandParameter = extension.createElement("commandParameter");
-                    commandParameter.setAttribute("id",
-                            "de.cau.cs.kieler.ksbase.transformationParameter");
-                    commandParameter.setAttribute("name", "transformation");
-                    command.appendChild(commandParameter);
-                    commandExtension.appendChild(command);
+            // Create visibility flags for menus
+            Element menuVisible = extension.createElement("visibleWhen");
+            menuVisible.setAttribute("checkEnabled", "false");
+            Element visIterate = extension.createElement("iterate");
+            visIterate.setAttribute("ifEmpty", "false");
+            visIterate.setAttribute("operator", "or");
+            Element visWith = extension.createElement("with");
+            visWith.setAttribute("variable", "activeEditorId");
+            Element visInstance = extension.createElement("equals");
+            visInstance.setAttribute("value", editorSettings.getEditorId());
+            visWith.appendChild(visInstance);
+            visIterate.appendChild(visWith);
+            menuVisible.appendChild(visIterate);
+            // Create command extensions for all transformations:
+            for (KSBasETransformation t : editorSettings.getTransformations()) {
+                String commandID = "de.cau.cs.kieler.ksbase." + editorSettings.getEditorId() + "."
+                        + t.getName().replace(' ', '_');
+                // store id
+                commandIds.put(t, commandID);
+                Element command = extension.createElement("command");
+                command.setAttribute("id", commandID);
+                command.setAttribute("name", t.getName());
+                command.setAttribute("categoryId", "de.cau.cs.kieler.ksbase.ui.ksbaseCategory");
+                Element commandParameter = extension.createElement("commandParameter");
+                commandParameter.setAttribute("id", "de.cau.cs.kieler.ksbase.editorParameter");
+                commandParameter.setAttribute("name", "editor");
+                command.appendChild(commandParameter);
+                commandParameter = extension.createElement("commandParameter");
+                commandParameter.setAttribute("id",
+                        "de.cau.cs.kieler.ksbase.transformationParameter");
+                commandParameter.setAttribute("name", "transformation");
+                command.appendChild(commandParameter);
+                commandExtension.appendChild(command);
 
-                    // KeyBindings
-                    if (t.getKeyboardShortcut() != null && t.getKeyboardShortcut().length() > 0
-                            && editor.getContext() != null && editor.getContext().length() > 0) {
+                // KeyBindings
+                if (t.getKeyboardShortcut() != null && t.getKeyboardShortcut().length() > 0
+                        && editorSettings.getContext() != null
+                        && editorSettings.getContext().length() > 0) {
 
-                        keybindings.put(commandID, new String[] {editor.getContext(),
-                                t.getKeyboardShortcut(), t.getTransformation() });
+                    keybindings.put(commandID, new String[] { editorSettings.getContext(),
+                            t.getKeyboardShortcut(), t.getTransformation() });
 
-                        Element key = extension.createElement("key");
-                        key.setAttribute("commandId", commandID);
-                        key.setAttribute("contextId", editor.getContext());
-                        key.setAttribute("schemeId",
-                                "org.eclipse.ui.defaultAcceleratorConfiguration");
-                        key.setAttribute("sequence", t.getKeyboardShortcut());
-                        // Set key parameters
-                        Element keyParam = extension.createElement("parameter");
-                        keyParam.setAttribute("id", "de.cau.cs.kieler.ksbase.editorParameter");
-                        keyParam.setAttribute("value", editor.getEditorId());
-                        key.appendChild(keyParam);
-                        keyParam = extension.createElement("parameter");
-                        keyParam.setAttribute("id",
-                                "de.cau.cs.kieler.ksbase.transformationParameter");
-                        keyParam.setAttribute("value", t.getTransformation());
-                        key.appendChild(keyParam);
-                        bindingExtension.appendChild(key);
-                    }
-
-                    // Create handler commands for transformations:
-                    Element handlerCommand = extension.createElement("handler");
-                    handlerCommand.setAttribute("commandId", commandIds.get(t));
-                    Element classHandler = extension.createElement("class");
-                    // Check if the editor has a custom command handler
-                    if (editor.getCommandHandler().length() == 0) {
-                        classHandler.setAttribute("class", "de.cau.cs.kieler.ksbase.ui.handler"
-                                + ".TransformationCommandHandler");
-                    } else {
-                        classHandler.setAttribute("class", editor.getCommandHandler());
-                    }
-                    handlerCommand.appendChild(classHandler);
-                    // Handler restrictions
-                    Element handlerEnabled = extension.createElement("enabledWhen");
-                    Element handlerWith = extension.createElement("with");
-                    handlerWith.setAttribute("variable", "selection");
-                    Element handlerIt = extension.createElement("iterate");
-                    handlerIt.setAttribute("ifEmpty", "false");
-                    handlerIt.setAttribute("operator", "and");
-                    Element handlerTest = extension.createElement("test");
-                    handlerTest.setAttribute("args", editor.getEditorId() + ","
-                            + t.getTransformationId());
-                    handlerTest.setAttribute("forcePluginActivation", "true");
-                    handlerTest.setAttribute("property",
-                            "de.cau.cs.kieler.ksbase.ui.modelTesting.isModelInstance");
-                    handlerIt.appendChild(handlerTest);
-                    handlerWith.appendChild(handlerIt);
-                    handlerEnabled.appendChild(handlerWith);
-                    if (editor.isCheckVisibility()) {
-                        handlerCommand.appendChild(handlerEnabled);
-                    }
-                    handlerExtension.appendChild(handlerCommand);
-
+                    Element key = extension.createElement("key");
+                    key.setAttribute("commandId", commandID);
+                    key.setAttribute("contextId", editorSettings.getContext());
+                    key.setAttribute("schemeId", "org.eclipse.ui.defaultAcceleratorConfiguration");
+                    key.setAttribute("sequence", t.getKeyboardShortcut());
+                    // Set key parameters
+                    Element keyParam = extension.createElement("parameter");
+                    keyParam.setAttribute("id", "de.cau.cs.kieler.ksbase.editorParameter");
+                    keyParam.setAttribute("value", editorSettings.getEditorId());
+                    key.appendChild(keyParam);
+                    keyParam = extension.createElement("parameter");
+                    keyParam.setAttribute("id", "de.cau.cs.kieler.ksbase.transformationParameter");
+                    keyParam.setAttribute("value", t.getTransformation());
+                    key.appendChild(keyParam);
+                    bindingExtension.appendChild(key);
                 }
-                // Create menu extension:
-                for (KSBasEMenuContribution contrib : editor.getMenuContributions()) {
-                    // PopupBar contributions need a special handling:
-                    if (contrib.getData().contains("popupBar:")) {
-                        for (String tid : contrib.getCommands()) {
-                            Element popupContribution = extension.createElement("PopupBarElement");
-                            popupContribution.setAttribute("class",
-                                    "de.cau.cs.kieler.ksbase.ui.menus.KSbasEBalloonPopup");
 
-                            Element editorAttrib = extension.createElement("Attribute");
-                            editorAttrib.setAttribute("key", "editorId");
-                            editorAttrib.setAttribute("value", editor.getEditorId());
-                            popupContribution.appendChild(editorAttrib);
-
-                            Element transAttrib = extension.createElement("Attribute");
-                            transAttrib.setAttribute("key", "transformationId");
-                            transAttrib.setAttribute("value", tid);
-                            popupContribution.appendChild(transAttrib);
-                            popupExtension.appendChild(popupContribution);
-                        }
-
-                    } else {
-                        // <extension point="org.eclipse.ui.menus>
-                        Element menuContribution = extension.createElement("menuContribution");
-                        menuContribution.setAttribute("locationURI", contrib.getData());
-                        for (String tid : contrib.getCommands()) {
-                            // only create contents for valid transformationIDs
-                            if (editor.getTransformationById(tid) != null) {
-                                // Create commands for root menu
-                                Node menuCommand = createElementForMenu(tid, extension, editor);
-                                Node menuCommandVisible = menuVisible.cloneNode(true);
-                                // Add visibility for popup
-                                if (contrib.getData().contains("popup:")) {
-                                    Element handlerAnd = extension.createElement("and");
-                                    // Create visibility flags for menus
-                                    Element handlerWith = extension.createElement("with");
-                                    handlerWith.setAttribute("variable", "selection");
-                                    Element handlerIt = extension.createElement("iterate");
-                                    handlerIt.setAttribute("ifEmpty", "false");
-                                    handlerIt.setAttribute("operator", "and");
-                                    Element handlerTest = extension.createElement("test");
-                                    handlerTest.setAttribute("args", editor.getEditorId() + ","
-                                            + tid);
-                                    handlerTest.setAttribute("forcePluginActivation", "true");
-                                    handlerTest.setAttribute("property",
-                                            "de.cau.cs.kieler.ksbase.ui."
-                                                    + "modelTesting.isModelInstance");
-                                    handlerIt.appendChild(handlerTest);
-                                    handlerWith.appendChild(handlerIt);
-
-                                    handlerAnd.appendChild(menuCommandVisible.getFirstChild());
-                                    handlerAnd.appendChild(handlerWith);
-                                    menuCommandVisible.appendChild(handlerAnd);
-                                }
-                                if (editor.isCheckVisibility()) {
-                                    menuCommand.appendChild(menuCommandVisible.cloneNode(true));
-                                }
-                                menuContribution.appendChild(menuCommand);
-                            }
-                        }
-                        // create sub menus
-                        for (KSBasEMenuContribution m : contrib.getMenus()) {
-                            Element menu = extension.createElement("menu");
-                            menu.setAttribute("id", m.getData());
-                            menu.setAttribute("label", m.getLabel());
-                            for (String tid : m.getCommands()) {
-                                // only create contents for valid transformationIDs
-                                if (editor.getTransformationById(tid) != null) {
-
-                                    Node menuCommand;
-                                    if (cachedTransformationCommands.containsKey(tid)) {
-                                        menuCommand = cachedTransformationCommands.get(tid)
-                                                .cloneNode(true);
-                                    } else {
-                                        menuCommand = createElementForMenu(tid, extension, editor);
-                                        menuCommand.appendChild(menuVisible.cloneNode(true));
-                                        cachedTransformationCommands.put(tid, menuCommand
-                                                .cloneNode(true));
-                                    }
-                                    menu.appendChild(menuCommand);
-                                }
-                            }
-                            if (editor.isCheckVisibility()) {
-                                menu.appendChild(menuVisible.cloneNode(true));
-                            }
-                            menuContribution.appendChild(menu);
-                        }
-
-                        menuExtension.appendChild(menuContribution);
-                    }
-                }
-                plugin.appendChild(commandExtension);
-                plugin.appendChild(menuExtension);
-                // plugin.appendChild(contextExtension);
-                plugin.appendChild(bindingExtension);
-                plugin.appendChild(handlerExtension);
-                plugin.appendChild(popupExtension);
-                plugin.appendChild(popupEditPolicyProvider);
-
-                extension.appendChild(plugin);
-
-                // Create plugin.xml
-                StringWriter str = new StringWriter();
-                TransformerFactory.newInstance().newTransformer().transform(
-                        new DOMSource(extension), new StreamResult(str));
-
-                // Create jar bundle
-                Bundle contributorBundle = null;
-                if (editor.getContributor() != null) {
-                    contributorBundle = ContributorFactoryOSGi.resolve(editor.getContributor());
+                // Create handler commands for transformations:
+                Element handlerCommand = extension.createElement("handler");
+                handlerCommand.setAttribute("commandId", commandIds.get(t));
+                Element classHandler = extension.createElement("class");
+                // Check if the editor has a custom command handler
+                if (editorSettings.getCommandHandler().length() == 0) {
+                    classHandler.setAttribute("class", "de.cau.cs.kieler.ksbase.ui.handler"
+                            + ".TransformationCommandHandler");
                 } else {
-                    contributorBundle = KSBasEUIPlugin.getDefault().getBundle();
+                    classHandler.setAttribute("class", editorSettings.getCommandHandler());
                 }
-                String pluginBundle = editor.getEditorId() + ".jar";
-
-                String editorDiagramName = contributorBundle.getSymbolicName()
-                        + "." +  editor.getEditorId() + ".generated";
-
-                File jarFile = KSBasEUIPlugin.getDefault().getStateLocation().append(pluginBundle)
-                        .toFile();
-                StringBuffer sbuf = new StringBuffer();
-                // Now we are importing the dependencies from the contributing plug-in:
-                Dictionary<?, ?> dict = contributorBundle.getHeaders();
-                Object dependencies = dict.get("Require-Bundle");
-                // This is important! We have do split the dependencies
-                // to new lines because the string line is limited!
-                String depString = dependencies.toString();
-                depString = depString.replace(",", ",\n ");
-                // We really need those deps:
-                if (!depString.contains("de.cau.cs.kieler.ksbase.ui")) {
-                    depString += ",\n de.cau.cs.kieler.ksbase.ui";
+                handlerCommand.appendChild(classHandler);
+                // Handler restrictions
+                Element handlerEnabled = extension.createElement("enabledWhen");
+                Element handlerWith = extension.createElement("with");
+                handlerWith.setAttribute("variable", "selection");
+                Element handlerIt = extension.createElement("iterate");
+                handlerIt.setAttribute("ifEmpty", "false");
+                handlerIt.setAttribute("operator", "and");
+                Element handlerTest = extension.createElement("test");
+                handlerTest.setAttribute("args", editorSettings.getEditorId() + ","
+                        + t.getTransformationId());
+                handlerTest.setAttribute("forcePluginActivation", "true");
+                handlerTest.setAttribute("property",
+                        "de.cau.cs.kieler.ksbase.ui.modelTesting.isModelInstance");
+                handlerIt.appendChild(handlerTest);
+                handlerWith.appendChild(handlerIt);
+                handlerEnabled.appendChild(handlerWith);
+                if (editorSettings.isCheckVisibility()) {
+                    handlerCommand.appendChild(handlerEnabled);
                 }
-                if (!depString.contains("de.cau.cs.kieler.core.ui")) {
-                    depString += ",\n de.cau.cs.kieler.core.ui";
-                }
-                if (!depString.contains("org.eclipse.gmf.runtime.diagram.ui")) {
-                    depString += ",\n org.eclipse.gmf.runtime.diagram.ui";
-                }
-                if (editor.getContributor() != null
-                        && !depString.contains(editor.getContributor().getName())) {
-                    depString += ",\n " + editor.getContributor().getName();
-                }
-                // And set the rest of the manifest attributes
+                handlerExtension.appendChild(handlerCommand);
 
-                sbuf.append("Require-Bundle: " + depString + "\n");
-                sbuf.append("Bundle-RequiredExecutionEnvironment: J2SE-1.5\n");
-                sbuf.append("Bundle-ActivationPolicy: lazy\n");
-                sbuf.append("Bundle-Version: 0.1.0.vqualifier\n");
-                sbuf.append("Manifest-Version: 1.0\n");
-                sbuf.append("Bundle-SymbolicName: " + editorDiagramName + ";singleton:=true\n");
-                sbuf.append("Bundle-Name: KSBasE Menu Contributions for " + editor.getEditorId()
-                        + "\n");
-                sbuf.append("Bundle-ManifestVersion: 2\n");
-                // Create manifest file
-                Manifest manifest = new Manifest(new ByteArrayInputStream(sbuf.toString().getBytes(
-                        "UTF-8")));
-
-                JarOutputStream jos = new JarOutputStream(new FileOutputStream(jarFile), manifest);
-                JarEntry entry = new JarEntry("plugin.xml");
-                jos.putNextEntry(entry);
-                jos.write(str.toString().getBytes("UTF-8"));
-                // If the editor/transformation has icons, we are now exporting them
-                if (editor.getDefaultIcon() != null && editor.getDefaultIcon().length() > 0) {
-                    copyResourceToJarBundle(jos, editor.getDefaultIcon(), editor.getContributor());
-                }
-                LinkedList<String> resources = new LinkedList<String>();
-                for (KSBasETransformation t : editor.getTransformations()) {
-                    if (t.getIcon() != null && t.getIcon().length() > 0
-                            && !resources.contains(t.getIcon())) {
-                        resources.add(t.getIcon());
-                    }
-                }
-                // Copy the source resources to the generated bundle if the contributor is valid
-                if (editor.getContributor() != null) {
-                    for (String resource : resources) {
-                        copyResourceToJarBundle(jos, resource, editor.getContributor());
-                    }
-                }
-                // don't forget the transformation file !
-                JarEntry transformationFile = new JarEntry("src/transformations/features."
-                        + editor.getFramework().getFileExtension());
-                jos.putNextEntry(transformationFile);
-                jos.write(editor.getTransformationFile().getBytes("UTF-8"));
-
-                jos.flush();
-                jos.close();
-
-                DynamicBundleLoader.INSTANCE.addBundle(editor, jarFile.toURI());
-
-            } catch (TransformerConfigurationException e) {
-                KSBasEUIPlugin.getDefault().logError(
-                        "Bundle could not be created: Invalid xml file.");
-            } catch (TransformerException e) {
-                KSBasEUIPlugin.getDefault().logError(
-                        "Bundle could not be created: Invalid xml file.");
-            } catch (TransformerFactoryConfigurationError e) {
-                KSBasEUIPlugin.getDefault().logError(
-                        "Bundle could not be created: Invalid xml file.");
-            } catch (UnsupportedEncodingException e) {
-                KSBasEUIPlugin.getDefault().logError(
-                        "Bundle could not be created: Unsupported encoding.");
-
-            } catch (IOException e) {
-                KSBasEUIPlugin.getDefault().logError("Bundle could not be created: IOException");
-            } catch (IllegalStateException e) {
-                KSBasEUIPlugin.getDefault().logError("Bundle could not be created: Invalid state.");
             }
+            // Create menu extension:
+            for (KSBasEMenuContribution contrib : editorSettings.getMenuContributions()) {
+                // PopupBar contributions need a special handling:
+                if (contrib.getData().contains("popupBar:")) {
+                    for (String tid : contrib.getCommands()) {
+                        Element popupContribution = extension.createElement("PopupBarElement");
+                        popupContribution.setAttribute("class",
+                                "de.cau.cs.kieler.ksbase.ui.menus.KSbasEBalloonPopup");
+
+                        Element editorAttrib = extension.createElement("Attribute");
+                        editorAttrib.setAttribute("key", "editorId");
+                        editorAttrib.setAttribute("value", editorSettings.getEditorId());
+                        popupContribution.appendChild(editorAttrib);
+
+                        Element transAttrib = extension.createElement("Attribute");
+                        transAttrib.setAttribute("key", "transformationId");
+                        transAttrib.setAttribute("value", tid);
+                        popupContribution.appendChild(transAttrib);
+                        popupExtension.appendChild(popupContribution);
+                    }
+
+                } else {
+                    // <extension point="org.eclipse.ui.menus>
+                    Element menuContribution = extension.createElement("menuContribution");
+                    menuContribution.setAttribute("locationURI", contrib.getData());
+                    for (String tid : contrib.getCommands()) {
+                        // only create contents for valid transformationIDs
+                        if (editorSettings.getTransformationById(tid) != null) {
+                            // Create commands for root menu
+                            Node menuCommand = createElementForMenu(tid, extension, editorSettings);
+                            Node menuCommandVisible = menuVisible.cloneNode(true);
+                            // Add visibility for popup
+                            if (contrib.getData().contains("popup:")) {
+                                Element handlerAnd = extension.createElement("and");
+                                // Create visibility flags for menus
+                                Element handlerWith = extension.createElement("with");
+                                handlerWith.setAttribute("variable", "selection");
+                                Element handlerIt = extension.createElement("iterate");
+                                handlerIt.setAttribute("ifEmpty", "false");
+                                handlerIt.setAttribute("operator", "and");
+                                Element handlerTest = extension.createElement("test");
+                                handlerTest.setAttribute("args", editorSettings.getEditorId() + ","
+                                        + tid);
+                                handlerTest.setAttribute("forcePluginActivation", "true");
+                                handlerTest.setAttribute("property", "de.cau.cs.kieler.ksbase.ui."
+                                        + "modelTesting.isModelInstance");
+                                handlerIt.appendChild(handlerTest);
+                                handlerWith.appendChild(handlerIt);
+
+                                handlerAnd.appendChild(menuCommandVisible.getFirstChild());
+                                handlerAnd.appendChild(handlerWith);
+                                menuCommandVisible.appendChild(handlerAnd);
+                            }
+                            if (editorSettings.isCheckVisibility()) {
+                                menuCommand.appendChild(menuCommandVisible.cloneNode(true));
+                            }
+                            menuContribution.appendChild(menuCommand);
+                        }
+                    }
+                    // create sub menus
+                    for (KSBasEMenuContribution m : contrib.getMenus()) {
+                        Element menu = extension.createElement("menu");
+                        menu.setAttribute("id", m.getData());
+                        menu.setAttribute("label", m.getLabel());
+                        for (String tid : m.getCommands()) {
+                            // only create contents for valid
+                            // transformationIDs
+                            if (editorSettings.getTransformationById(tid) != null) {
+
+                                Node menuCommand;
+                                if (cachedTransformationCommands.containsKey(tid)) {
+                                    menuCommand = cachedTransformationCommands.get(tid).cloneNode(
+                                            true);
+                                } else {
+                                    menuCommand = createElementForMenu(tid, extension,
+                                            editorSettings);
+                                    menuCommand.appendChild(menuVisible.cloneNode(true));
+                                    cachedTransformationCommands.put(tid, menuCommand
+                                            .cloneNode(true));
+                                }
+                                menu.appendChild(menuCommand);
+                            }
+                        }
+                        if (editorSettings.isCheckVisibility()) {
+                            menu.appendChild(menuVisible.cloneNode(true));
+                        }
+                        menuContribution.appendChild(menu);
+                    }
+
+                    menuExtension.appendChild(menuContribution);
+                }
+            }
+            plugin.appendChild(commandExtension);
+            plugin.appendChild(menuExtension);
+            // plugin.appendChild(contextExtension);
+            plugin.appendChild(bindingExtension);
+            plugin.appendChild(handlerExtension);
+            plugin.appendChild(popupExtension);
+            plugin.appendChild(popupEditPolicyProvider);
+
+            extension.appendChild(plugin);
+
+            // Create plugin.xml
+            StringWriter str = new StringWriter();
+            TransformerFactory.newInstance().newTransformer().transform(new DOMSource(extension),
+                    new StreamResult(str));
+
+            // Create jar bundle
+            Bundle contributorBundle = null;
+            if (editorSettings.getContributor() != null) {
+                contributorBundle = ContributorFactoryOSGi.resolve(editorSettings.getContributor());
+            } else {
+                contributorBundle = KSBasEUIPlugin.getDefault().getBundle();
+            }
+            String pluginBundle = editorSettings.getEditorId() + ".jar";
+
+            String editorDiagramName = contributorBundle.getSymbolicName() + "."
+                    + editorSettings.getEditorId() + ".generated";
+
+            File jarFile = KSBasEUIPlugin.getDefault().getStateLocation().append(pluginBundle)
+                    .toFile();
+            StringBuffer sbuf = new StringBuffer();
+            // Now we are importing the dependencies from the contributing
+            // plug-in:
+            Dictionary<?, ?> dict = contributorBundle.getHeaders();
+            Object dependencies = dict.get("Require-Bundle");
+            // This is important! We have do split the dependencies
+            // to new lines because the string line is limited!
+            String depString = dependencies.toString();
+            depString = depString.replace(",", ",\n ");
+            // We really need those deps:
+            if (!depString.contains("de.cau.cs.kieler.ksbase.ui")) {
+                depString += ",\n de.cau.cs.kieler.ksbase.ui";
+            }
+            if (!depString.contains("de.cau.cs.kieler.core.ui")) {
+                depString += ",\n de.cau.cs.kieler.core.ui";
+            }
+            if (!depString.contains("org.eclipse.gmf.runtime.diagram.ui")) {
+                depString += ",\n org.eclipse.gmf.runtime.diagram.ui";
+            }
+            if (editorSettings.getContributor() != null
+                    && !depString.contains(editorSettings.getContributor().getName())) {
+                depString += ",\n " + editorSettings.getContributor().getName();
+            }
+            // And set the rest of the manifest attributes
+
+            sbuf.append("Require-Bundle: " + depString + "\n");
+            sbuf.append("Bundle-RequiredExecutionEnvironment: J2SE-1.5\n");
+            sbuf.append("Bundle-ActivationPolicy: lazy\n");
+            sbuf.append("Bundle-Version: 0.1.0.vqualifier\n");
+            sbuf.append("Manifest-Version: 1.0\n");
+            sbuf.append("Bundle-SymbolicName: " + editorDiagramName + ";singleton:=true\n");
+            sbuf.append("Bundle-Name: KSBasE Menu Contributions for "
+                    + editorSettings.getEditorId() + "\n");
+            sbuf.append("Bundle-ManifestVersion: 2\n");
+            // Create manifest file
+            Manifest manifest = new Manifest(new ByteArrayInputStream(sbuf.toString().getBytes(
+                    "UTF-8")));
+
+            JarOutputStream jos = new JarOutputStream(new FileOutputStream(jarFile), manifest);
+            JarEntry entry = new JarEntry("plugin.xml");
+            jos.putNextEntry(entry);
+            jos.write(str.toString().getBytes("UTF-8"));
+            // If the editor/transformation has icons, we are now exporting
+            // them
+            if (editorSettings.getDefaultIcon() != null
+                    && editorSettings.getDefaultIcon().length() > 0) {
+                copyResourceToJarBundle(jos, editorSettings.getDefaultIcon(), editorSettings
+                        .getContributor());
+            }
+            LinkedList<String> resources = new LinkedList<String>();
+            for (KSBasETransformation t : editorSettings.getTransformations()) {
+                if (t.getIcon() != null && t.getIcon().length() > 0
+                        && !resources.contains(t.getIcon())) {
+                    resources.add(t.getIcon());
+                }
+            }
+            // Copy the source resources to the generated bundle if the
+            // contributor is valid
+            if (editorSettings.getContributor() != null) {
+                for (String resource : resources) {
+                    copyResourceToJarBundle(jos, resource, editorSettings.getContributor());
+                }
+            }
+            // don't forget the transformation file !
+            JarEntry transformationFile = new JarEntry("src/transformations/features."
+                    + editorSettings.getFramework().getFileExtension());
+            jos.putNextEntry(transformationFile);
+            jos.write(editorSettings.getTransformationFile().getBytes("UTF-8"));
+
+            jos.flush();
+            jos.close();
+
+            DynamicBundleLoader.INSTANCE.addBundle(editorSettings, jarFile.toURI());
+
+        } catch (TransformerConfigurationException e) {
+            KSBasEUIPlugin.getDefault().logError("Bundle could not be created: Invalid xml file.");
+        } catch (TransformerException e) {
+            KSBasEUIPlugin.getDefault().logError("Bundle could not be created: Invalid xml file.");
+        } catch (TransformerFactoryConfigurationError e) {
+            KSBasEUIPlugin.getDefault().logError("Bundle could not be created: Invalid xml file.");
+        } catch (UnsupportedEncodingException e) {
+            KSBasEUIPlugin.getDefault().logError(
+                    "Bundle could not be created: Unsupported encoding.");
+
+        } catch (IOException e) {
+            KSBasEUIPlugin.getDefault().logError("Bundle could not be created: IOException");
+        } catch (IllegalStateException e) {
+            KSBasEUIPlugin.getDefault().logError("Bundle could not be created: Invalid state.");
         } catch (ParserConfigurationException pce) {
             KSBasEUIPlugin.getDefault().logError("Bundle could not be created: Parser error.");
         }
     }
 
     /**
-     * Copies a resource, given by the contributor and the path to the given jar stream.
+     * Copies a resource, given by the contributor and the path to the given jar
+     * stream.
      * 
      * @param jarBundle
      *            The target jar bundle
@@ -478,7 +480,8 @@ public final class DynamicMenuContributions {
     }
 
     /**
-     * Creates a valid plug-in project for each editor and injects it to the eclipse run-time.
+     * Creates a valid plug-in project for each editor and injects it to the
+     * eclipse run-time.
      * 
      * @param collection
      *            The list of editors to create the menu for
@@ -523,7 +526,7 @@ public final class DynamicMenuContributions {
         }
         // Label
         menuCommand.setAttribute("label", t.getName());
-        //ToolTip
+        // ToolTip
         menuCommand.setAttribute("tooltip", t.getToolTip());
         // Set command parameters
         Element handlerParam = extension.createElement("parameter");

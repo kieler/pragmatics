@@ -58,7 +58,7 @@ public class ModelObjectTester extends PropertyTester {
         assert (args[0] instanceof String);
         assert (args[1] instanceof String);
         EditorTransformationSettings editor = TransformationManager.INSTANCE
-                .getEditorById((String) args[0]);
+                .getEditorSettingsById((String) args[0]);
         if (editor != null) {
             // First, check the editorID, so we do not execute transformations
             // from other editors.
