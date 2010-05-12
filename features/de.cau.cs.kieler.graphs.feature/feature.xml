@@ -6,7 +6,7 @@
       provider-name="Christian-Albrechts-Universität zu Kiel">
 
    <description>
-      A generic graph editor for testing of layout algorithms.
+      A generic graph editor for graph algorithm engineering.
    </description>
 
    <copyright>
@@ -214,32 +214,23 @@ litigation.
    </license>
 
    <requires>
-      <import plugin="org.eclipse.core.runtime" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.emf.ecore" version="2.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.emf.edit" version="2.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.draw2d" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.gmf.runtime.draw2d.ui" version="1.2.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.gmf.runtime.diagram.ui" version="1.2.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.ide" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.ui.ide" version="3.5.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.core.expressions"/>
       <import plugin="org.eclipse.jface"/>
       <import plugin="org.eclipse.ui.views"/>
       <import plugin="org.eclipse.ui.navigator"/>
       <import plugin="org.eclipse.ui.navigator.resources"/>
-      <import plugin="org.eclipse.emf.ecore.xmi"/>
-      <import plugin="org.eclipse.emf.edit.ui"/>
-      <import plugin="org.eclipse.gmf.runtime.emf.core"/>
-      <import plugin="org.eclipse.gmf.runtime.emf.commands.core"/>
-      <import plugin="org.eclipse.gmf.runtime.emf.ui.properties"/>
-      <import plugin="org.eclipse.gmf.runtime.diagram.ui.properties"/>
-      <import plugin="org.eclipse.gmf.runtime.diagram.ui.providers"/>
-      <import plugin="org.eclipse.gmf.runtime.diagram.ui.providers.ide"/>
-      <import plugin="org.eclipse.gmf.runtime.diagram.ui.render"/>
-      <import plugin="org.eclipse.gmf.runtime.diagram.ui.resources.editor"/>
-      <import plugin="org.eclipse.gmf.runtime.diagram.ui.resources.editor.ide"/>
-      <import plugin="org.eclipse.gef"/>
-      <import plugin="org.eclipse.ocl.ecore"/>
+      <import feature="de.cau.cs.kieler.core" version="0.2.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.draw2d" version="3.5.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.emf.ecore" version="2.5.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.emf.ecore.edit" version="2.5.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.emf.edit" version="2.5.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.emf.edit.ui" version="2.5.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.gef" version="3.5.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.gmf" version="1.3.0"/>
+      <import feature="org.eclipse.ocl" version="1.3.0"/>
    </requires>
 
    <plugin
@@ -251,6 +242,20 @@ litigation.
 
    <plugin
          id="de.cau.cs.kieler.graphs.diagram"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.core.kgraph.edit"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.graphs.edit"
          download-size="0"
          install-size="0"
          version="0.0.0"
