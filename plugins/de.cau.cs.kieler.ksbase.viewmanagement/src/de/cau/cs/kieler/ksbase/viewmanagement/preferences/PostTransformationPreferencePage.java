@@ -45,7 +45,7 @@ import de.cau.cs.kieler.viewmanagement.RunLogic;
  * 
  * @author mim
  * 
- * @kieler.rating 2010-03-22 proposed yellow 
+ * @kieler.rating 2010-03-22 proposed yellow
  */
 
 public class PostTransformationPreferencePage extends PreferencePage implements
@@ -58,12 +58,16 @@ public class PostTransformationPreferencePage extends PreferencePage implements
     private Button addEffect, removeEffect, addAll, removeAll;
 
     /** Image for the UP button. **/
-    private static final Image UP_ARROW = AbstractUIPlugin.imageDescriptorFromPlugin(
-            "de.cau.cs.kieler.ksbase.viewmanagement", "icons/up.png").createImage();
+    private static final Image UP_ARROW = AbstractUIPlugin
+            .imageDescriptorFromPlugin(
+                    "de.cau.cs.kieler.ksbase.viewmanagement", "icons/up.png")
+            .createImage();
 
     /** Image for the DOWN button. **/
-    private static final Image DOWN_ARROW = AbstractUIPlugin.imageDescriptorFromPlugin(
-            "de.cau.cs.kieler.ksbase.viewmanagement", "icons/down.png").createImage();
+    private static final Image DOWN_ARROW = AbstractUIPlugin
+            .imageDescriptorFromPlugin(
+                    "de.cau.cs.kieler.ksbase.viewmanagement", "icons/down.png")
+            .createImage();
 
     /**
      * Default constructor.
@@ -83,12 +87,14 @@ public class PostTransformationPreferencePage extends PreferencePage implements
     protected Control createContents(final Composite parent) {
         new Label(parent, SWT.NONE)
                 .setText("Select the effects that should be executed after a transformation.");
-        new Label(parent, SWT.NONE).setText("The order of execution is controlled by"
-                + " the order of the effects in the active effects list");
+        new Label(parent, SWT.NONE)
+                .setText("The order of execution is controlled by"
+                        + " the order of the effects in the active effects list");
 
         // new Label(container, SWT.NONE);
         Composite container = new Composite(parent, SWT.NONE);
-        container.setLayout(new FillLayout(SWT.VERTICAL));// (new GridLayout(1,true));
+        container.setLayout(new FillLayout(SWT.VERTICAL)); // (new
+                                                           // GridLayout(1,true));
         // Initialize RunLogic if not done already
         if (!RunLogic.getInstance().getState()) {
             RunLogic.getInstance().registerListeners();
@@ -105,15 +111,15 @@ public class PostTransformationPreferencePage extends PreferencePage implements
             }
         }
         availableList.addMouseListener(new MouseListener() {
-            
+
             public void mouseUp(final MouseEvent e) {
-                //nothing
+                // nothing
             }
-            
+
             public void mouseDown(final MouseEvent e) {
-                //nothing
+                // nothing
             }
-            
+
             public void mouseDoubleClick(final MouseEvent e) {
                 for (String item : availableList.getSelection()) {
                     activeList.add(item);
@@ -123,11 +129,12 @@ public class PostTransformationPreferencePage extends PreferencePage implements
                 checkButtonStatus();
             }
         });
-        availableList
-                .setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, true, true));
+        availableList.setLayoutData(new GridData(GridData.BEGINNING,
+                GridData.BEGINNING, true, true));
         // availableList.pack();
 
-        Composite availableButtonComposite = new Composite(availableGroup, SWT.NONE);
+        Composite availableButtonComposite = new Composite(availableGroup,
+                SWT.NONE);
         addEffect = new Button(availableButtonComposite, SWT.PUSH);
         addEffect.setText("Add");
         addEffect.setLayoutData(new GridData(SWT.TOP, SWT.LEFT, false, false));
@@ -183,15 +190,15 @@ public class PostTransformationPreferencePage extends PreferencePage implements
 
         }
         activeList.addMouseListener(new MouseListener() {
-            
+
             public void mouseUp(final MouseEvent e) {
-                //nothing
+                // nothing
             }
-            
+
             public void mouseDown(final MouseEvent e) {
-                //nothing
+                // nothing
             }
-            
+
             public void mouseDoubleClick(final MouseEvent e) {
                 for (String item : activeList.getSelection()) {
                     availableList.add(item);
@@ -201,10 +208,11 @@ public class PostTransformationPreferencePage extends PreferencePage implements
                 checkButtonStatus();
             }
         });
-        
+
         activeList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         // activeList.pack(true);
-        Composite prioButtonComposite = new Composite(activeListComposite, SWT.NONE);
+        Composite prioButtonComposite = new Composite(activeListComposite,
+                SWT.NONE);
         Button up = new Button(prioButtonComposite, SWT.PUSH);
         up.setImage(UP_ARROW);
         up.addSelectionListener(new SelectionListener() {
@@ -223,7 +231,8 @@ public class PostTransformationPreferencePage extends PreferencePage implements
                         // there are now other elements
                         activeList.add(element);
                     }
-                    KSBasECombination.changeIndex(element, activeList.indexOf(element));
+                    KSBasECombination.changeIndex(element, activeList
+                            .indexOf(element));
                     activeList.setSelection(activeList.indexOf(element));
                 }
             }
@@ -249,7 +258,8 @@ public class PostTransformationPreferencePage extends PreferencePage implements
                         // there are now other elements
                         activeList.add(element);
                     }
-                    KSBasECombination.changeIndex(element, activeList.indexOf(element));
+                    KSBasECombination.changeIndex(element, activeList
+                            .indexOf(element));
                     activeList.setSelection(activeList.indexOf(element));
                 }
             }
@@ -260,12 +270,14 @@ public class PostTransformationPreferencePage extends PreferencePage implements
 
         prioButtonComposite.setLayout(new GridLayout(1, false));
         activeListComposite.setLayout(new GridLayout(2, false));
-        activeListComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        activeListComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL,
+                true, true));
 
         Composite activeButtonComposite = new Composite(activeGroup, SWT.NONE);
         removeEffect = new Button(activeButtonComposite, SWT.PUSH);
         removeEffect.setText("Remove");
-        removeEffect.setLayoutData(new GridData(SWT.TOP, SWT.LEFT, false, false));
+        removeEffect
+                .setLayoutData(new GridData(SWT.TOP, SWT.LEFT, false, false));
         removeEffect.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(final SelectionEvent e) {
@@ -301,7 +313,8 @@ public class PostTransformationPreferencePage extends PreferencePage implements
         activeButtonComposite.setLayout(new GridLayout(2, true));
 
         activeGroup.setLayout(new GridLayout(1, true));
-        // activeGroup.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, true, true));
+        // activeGroup.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING,
+        // true, true));
 
         container.pack();
         checkButtonStatus();
@@ -310,8 +323,8 @@ public class PostTransformationPreferencePage extends PreferencePage implements
     }
 
     /**
-     * When effects have been added or removed we are checking if the buttons should be active or
-     * not.
+     * When effects have been added or removed we are checking if the buttons
+     * should be active or not.
      */
     private void checkButtonStatus() {
         if (activeList.getItemCount() == 0) {
@@ -337,8 +350,8 @@ public class PostTransformationPreferencePage extends PreferencePage implements
      *            The workbench for this preference page
      */
     public void init(final IWorkbench workbench) {
-        KSBasECombination.initalizeEffects(KSBasEViewManagementPlugin.getDefault()
-                .getPreferenceStore());
+        KSBasECombination.initalizeEffects(KSBasEViewManagementPlugin
+                .getDefault().getPreferenceStore());
     }
 
     /**
@@ -349,8 +362,8 @@ public class PostTransformationPreferencePage extends PreferencePage implements
     @Override
     public boolean performOk() {
 
-        KSBasECombination
-                .storeEffects(KSBasEViewManagementPlugin.getDefault().getPreferenceStore());
+        KSBasECombination.storeEffects(KSBasEViewManagementPlugin.getDefault()
+                .getPreferenceStore());
         return true;
     }
 }
