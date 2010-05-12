@@ -14,8 +14,12 @@ using a dedicated module mechanism. It includes sophisticated
 data structures that are commonly used in graph drawing, equipped
 with rich public interfaces. Its self-contained code does not
 require any additional libraries, except for some optional branch-and-cut
-algorithms.
+algorithms. This feature is built with the release version 2007.11 of OGDF.
    </description>
+
+   <copyright>
+      The OGDF is developed and maintained as an open source project by the Chair of Algorithm Engineering, Faculty of Computer Science, Dortmund University of Technology, the Juniorprofessorship of Algorithm Engineering, Faculty of Mathematics and Computer Science, Friedrich-Schiller-University Jena, the Chair of Prof. Jünger, Department of Computer Science, University of Cologne, and oreas GmbH, Cologne.
+   </copyright>
 
    <license url="http://www.gnu.org/copyleft/gpl.html">
       GNU GENERAL PUBLIC LICENSE
