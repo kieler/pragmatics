@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: de.cau.cs.kieler.core.kgraph.edit;singleton:=true
+Bundle-Version: 0.1.0.qualifier
+Bundle-ClassPath: .
+Bundle-Activator: de.cau.cs.kieler.core.kgraph.provider.KGraphEditPlugin$Implementation
+Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Export-Package: de.cau.cs.kieler.core.kgraph.provider
+Require-Bundle: org.eclipse.core.runtime,
+ de.cau.cs.kieler.core.kgraph;visibility:=reexport,
+ org.eclipse.emf.edit;visibility:=reexport,
+ org.eclipse.emf.ecore;visibility:=reexport,
+ org.eclipse.emf.ecore.edit;visibility:=reexport
+Bundle-ActivationPolicy: lazy
+Bundle-Name: %pluginName

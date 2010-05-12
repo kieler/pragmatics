@@ -1,0 +1,21 @@
+modeltype GMFGEN uses gmfgen('http://www.eclipse.org/gmf/2009/GenModel');
+
+transformation GraphsCustomization(inout gmfgen:GMFGEN);
+
+main() {
+	var model := gmfgen.rootObjects()![GenEditorGenerator];
+
+	model.sameFileForDiagramAndModel := false;
+	
+	model.domainFileExtension := "graph";
+	model.diagramFileExtension := "graphdiag";
+	
+	// some general plugin settings	
+	model.plugin.version := "0.1.0.qualifier";
+	model.plugin.provider := "Christian-Albrechts-Universität zu Kiel";
+	model.plugin.name := "Graphs Editor";
+	
+	// use our own category for the "new" wizard
+	model.diagram.creationWizardCategoryID := "de.cau.cs.kieler";
+}
+

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" copyrightText="KIELER - Kiel Integrated Environment for Layout Eclipse RichClient&#xA;&#xA;http://www.informatik.uni-kiel.de/rtsys/kieler/&#xA;&#xA;Copyright 2010 by&#xA;+ Christian-Albrechts-University of Kiel&#xA;  + Department of Computer Science&#xA;    + Real-Time and Embedded Systems Group&#xA;&#xA;This code is provided under the terms of the Eclipse Public License (EPL).&#xA;See the file epl-v10.html for the license text."
+    modelDirectory="/de.cau.cs.kieler.graphs/src" modelPluginID="de.cau.cs.kieler.graphs"
+    modelName="Graphs" modelPluginClass="" editPluginClass="de.cau.cs.kieler.graphs.provider.GraphsEditPlugin"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="6.0" copyrightFields="false"
+    language="" usedGenPackages="platform:/plugin/org.eclipse.emf.ecore/model/Ecore.genmodel#//ecore ../../de.cau.cs.kieler.core.kgraph/model/kgraph.genmodel#//kgraph"
+    classNamePattern="">
+  <foreignModel>graphs.ecore</foreignModel>
+  <genPackages prefix="Graphs" basePackage="de.cau.cs.kieler" disposableProviderFactory="true"
+      ecorePackage="graphs.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="graphs.ecore#//EdgeType">
+      <genEnumLiterals ecoreEnumLiteral="graphs.ecore#//EdgeType/Node2Node"/>
+      <genEnumLiterals ecoreEnumLiteral="graphs.ecore#//EdgeType/Node2Port"/>
+      <genEnumLiterals ecoreEnumLiteral="graphs.ecore#//EdgeType/Port2Node"/>
+      <genEnumLiterals ecoreEnumLiteral="graphs.ecore#//EdgeType/Port2Port"/>
+    </genEnums>
+    <genClasses ecoreClass="graphs.ecore#//Node">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphs.ecore#//Node/nodeLabel"/>
+      <genFeatures property="None" createChild="false" ecoreFeature="ecore:EAttribute graphs.ecore#//Node/isHypernode"/>
+    </genClasses>
+    <genClasses ecoreClass="graphs.ecore#//Edge">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphs.ecore#//Edge/headLabel1"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphs.ecore#//Edge/headLabel2"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphs.ecore#//Edge/midLabel"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphs.ecore#//Edge/tailLabel1"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphs.ecore#//Edge/tailLabel2"/>
+      <genFeatures property="None" createChild="false" ecoreFeature="ecore:EAttribute graphs.ecore#//Edge/isDirected"/>
+      <genFeatures property="None" createChild="false" ecoreFeature="ecore:EAttribute graphs.ecore#//Edge/type"/>
+    </genClasses>
+    <genClasses ecoreClass="graphs.ecore#//Port">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphs.ecore#//Port/portLabel"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

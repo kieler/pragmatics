@@ -1,0 +1,8 @@
+#Wed May 12 11:58:40 CEST 2010
+eclipse.preferences.version=1
+generate_rcp=false
+ignore_gmfgen_validation=true
+ignore_mapmodel_validation=true
+post-reconcile-qvto=platform\:/resource/de.cau.cs.kieler.graphs/model/graphs_gmfgen_customization.qvto
+use_map_mode=true
+use_runtime_figures=true
