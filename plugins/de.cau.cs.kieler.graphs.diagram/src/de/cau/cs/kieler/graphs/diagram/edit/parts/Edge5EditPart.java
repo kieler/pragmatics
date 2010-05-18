@@ -1,5 +1,6 @@
 package de.cau.cs.kieler.graphs.diagram.edit.parts;
 
+import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Connection;
 import org.eclipse.draw2d.PolygonDecoration;
 import org.eclipse.draw2d.RotatableDecoration;
@@ -12,7 +13,10 @@ import org.eclipse.gmf.runtime.draw2d.ui.figures.PolylineConnectionEx;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.swt.graphics.Color;
 
+import de.cau.cs.kieler.core.ui.figures.SplineConnection;
+import de.cau.cs.kieler.graphs.custom.DirectedConnection;
 import de.cau.cs.kieler.graphs.diagram.edit.policies.Edge5ItemSemanticEditPolicy;
+import de.cau.cs.kieler.graphs.diagram.part.GraphsDiagramEditorPlugin;
 
 /**
  * @generated
@@ -85,7 +89,14 @@ public class Edge5EditPart extends ConnectionNodeEditPart implements
      */
 
     protected Connection createConnectionFigure() {
-        return new DirectedEdgeFigure();
+        Connection figure = new DirectedEdgeFigure();
+
+        if (figure instanceof SplineConnection) {
+            ((SplineConnection) figure).setSplineMode(GraphsDiagramEditorPlugin
+                    .getInstance().getPreferenceStore().getInt(
+                            SplineConnection.PREF_SPLINE_MODE));
+        }
+        return figure;
     }
 
     /**
@@ -98,40 +109,35 @@ public class Edge5EditPart extends ConnectionNodeEditPart implements
     /**
      * @generated
      */
-    public class DirectedEdgeFigure extends PolylineConnectionEx {
+    public class DirectedEdgeFigure extends DirectedConnection {
 
         /**
          * @generated
          */
         public DirectedEdgeFigure() {
-            this.setLineWidth(1);
-            this.setForegroundColor(THIS_FORE);
 
-            setTargetDecoration(createTargetDecoration());
+            this.setForegroundColor(ColorConstants.black);
         }
 
         /**
          * @generated
          */
-        private RotatableDecoration createTargetDecoration() {
-            PolygonDecoration df = new PolygonDecoration();
-            df.setFill(true);
-            df.setLineWidth(1);
-            PointList pl = new PointList();
-            pl.addPoint(getMapMode().DPtoLP(-2), getMapMode().DPtoLP(1));
-            pl.addPoint(getMapMode().DPtoLP(0), getMapMode().DPtoLP(0));
-            pl.addPoint(getMapMode().DPtoLP(-2), getMapMode().DPtoLP(-1));
-            pl.addPoint(getMapMode().DPtoLP(-1), getMapMode().DPtoLP(0));
-            df.setTemplate(pl);
-            df.setScale(getMapMode().DPtoLP(7), getMapMode().DPtoLP(3));
-            return df;
+        private boolean myUseLocalCoordinates = false;
+
+        /**
+         * @generated
+         */
+        protected boolean useLocalCoordinates() {
+            return myUseLocalCoordinates;
+        }
+
+        /**
+         * @generated
+         */
+        protected void setUseLocalCoordinates(boolean useLocalCoordinates) {
+            myUseLocalCoordinates = useLocalCoordinates;
         }
 
     }
-
-    /**
-     * @generated
-     */
-    static final Color THIS_FORE = new Color(null, 0, 0, 20);
 
 }

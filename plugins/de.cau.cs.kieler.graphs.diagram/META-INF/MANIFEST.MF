@@ -7,7 +7,7 @@ Bundle-ClassPath: .
 Bundle-Activator: de.cau.cs.kieler.graphs.diagram.part.GraphsDiagramEditorPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: de.cau.cs.kieler.graphs.diagram.edit.parts, 
+Export-Package: de.cau.cs.kieler.graphs.diagram.edit.parts,
  de.cau.cs.kieler.graphs.diagram.part,
  de.cau.cs.kieler.graphs.diagram.providers
 Require-Bundle: org.eclipse.core.runtime,
@@ -40,5 +40,6 @@ Require-Bundle: org.eclipse.core.runtime,
  de.cau.cs.kieler.core.kgraph;visibility:=reexport,
  de.cau.cs.kieler.core.kgraph.edit;visibility:=reexport,
  org.eclipse.ocl.ecore;visibility:=reexport,
- org.eclipse.gef;visibility:=reexport
+ org.eclipse.gef;visibility:=reexport,
+ de.cau.cs.kieler.core.ui;visibility:=reexport
 Eclipse-LazyStart: true

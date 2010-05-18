@@ -1,5 +1,6 @@
 package de.cau.cs.kieler.graphs.diagram.edit.parts;
 
+import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Connection;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionNodeEditPart;
@@ -9,7 +10,9 @@ import org.eclipse.gmf.runtime.draw2d.ui.figures.PolylineConnectionEx;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.swt.graphics.Color;
 
+import de.cau.cs.kieler.core.ui.figures.SplineConnection;
 import de.cau.cs.kieler.graphs.diagram.edit.policies.Edge8ItemSemanticEditPolicy;
+import de.cau.cs.kieler.graphs.diagram.part.GraphsDiagramEditorPlugin;
 
 /**
  * @generated
@@ -82,7 +85,14 @@ public class Edge8EditPart extends ConnectionNodeEditPart implements
      */
 
     protected Connection createConnectionFigure() {
-        return new UndirectedEdgeFigure();
+        Connection figure = new UndirectedEdgeFigure();
+
+        if (figure instanceof SplineConnection) {
+            ((SplineConnection) figure).setSplineMode(GraphsDiagramEditorPlugin
+                    .getInstance().getPreferenceStore().getInt(
+                            SplineConnection.PREF_SPLINE_MODE));
+        }
+        return figure;
     }
 
     /**
@@ -95,22 +105,35 @@ public class Edge8EditPart extends ConnectionNodeEditPart implements
     /**
      * @generated
      */
-    public class UndirectedEdgeFigure extends PolylineConnectionEx {
+    public class UndirectedEdgeFigure extends SplineConnection {
 
         /**
          * @generated
          */
         public UndirectedEdgeFigure() {
-            this.setLineWidth(1);
-            this.setForegroundColor(THIS_FORE);
 
+            this.setForegroundColor(ColorConstants.black);
+        }
+
+        /**
+         * @generated
+         */
+        private boolean myUseLocalCoordinates = false;
+
+        /**
+         * @generated
+         */
+        protected boolean useLocalCoordinates() {
+            return myUseLocalCoordinates;
+        }
+
+        /**
+         * @generated
+         */
+        protected void setUseLocalCoordinates(boolean useLocalCoordinates) {
+            myUseLocalCoordinates = useLocalCoordinates;
         }
 
     }
-
-    /**
-     * @generated
-     */
-    static final Color THIS_FORE = new Color(null, 0, 0, 0);
 
 }
