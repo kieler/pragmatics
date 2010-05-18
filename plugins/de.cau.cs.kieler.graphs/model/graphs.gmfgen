@@ -3,7 +3,9 @@
     xmlns:xmi="http://www.omg.org/XMI"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:gmfgen="http://www.eclipse.org/gmf/2009/GenModel" diagramFileExtension="graphdiag"
-    domainFileExtension="graph">
+    domainFileExtension="graph"
+    dynamicTemplates="true"
+    templateDirectory="de.cau.cs.kieler.graphs/gmf-templates">
   <diagram
       visualID="1000"
       editPartClassName="NodeEditPart"
@@ -26,6 +28,7 @@
         visualID="3001"
         editPartClassName="Node4EditPart"
         itemSemanticEditPolicyClassName="Node4ItemSemanticEditPolicy"
+        notationViewFactoryClassName="NodeViewFactory"
         canonicalEditPolicyClassName="Node4CanonicalEditPolicy"
         childNodes="//@diagram/@childNodes.1"
         compartments="//@diagram/@compartments.1"
@@ -58,7 +61,8 @@
       <labels
           visualID="5002"
           editPartClassName="NodeNodeLabel2EditPart"
-          itemSemanticEditPolicyClassName="NodeNodeLabel2ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="NodeNodeLabel2ItemSemanticEditPolicy"
+          notationViewFactoryClassName="NodeNodeLabelViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -78,6 +82,7 @@
         visualID="3002"
         editPartClassName="PortEditPart"
         itemSemanticEditPolicyClassName="PortItemSemanticEditPolicy"
+        notationViewFactoryClassName="PortViewFactory"
         canonicalEditPolicyClassName="PortCanonicalEditPolicy"
         graphicalNodeEditPolicyClassName="PortGraphicalNodeEditPolicy"
         createCommandClassName="PortCreateCommand"
@@ -115,7 +120,8 @@
           xsi:type="gmfgen:GenExternalNodeLabel"
           visualID="5001"
           editPartClassName="PortPortLabelEditPart"
-          itemSemanticEditPolicyClassName="PortPortLabelItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="PortPortLabelItemSemanticEditPolicy"
+          notationViewFactoryClassName="PortPortLabelViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -134,6 +140,7 @@
         visualID="3003"
         editPartClassName="Node5EditPart"
         itemSemanticEditPolicyClassName="Node5ItemSemanticEditPolicy"
+        notationViewFactoryClassName="NodeViewFactory"
         canonicalEditPolicyClassName="Node5CanonicalEditPolicy"
         graphicalNodeEditPolicyClassName="Node4GraphicalNodeEditPolicy"
         createCommandClassName="Node4CreateCommand"
@@ -186,6 +193,7 @@
         visualID="2001"
         editPartClassName="Node2EditPart"
         itemSemanticEditPolicyClassName="Node2ItemSemanticEditPolicy"
+        notationViewFactoryClassName="NodeViewFactory"
         canonicalEditPolicyClassName="Node2CanonicalEditPolicy"
         childNodes="//@diagram/@childNodes.1"
         compartments="//@diagram/@compartments.0"
@@ -217,7 +225,8 @@
       <labels
           visualID="5003"
           editPartClassName="NodeNodeLabelEditPart"
-          itemSemanticEditPolicyClassName="NodeNodeLabelItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="NodeNodeLabelItemSemanticEditPolicy"
+          notationViewFactoryClassName="NodeNodeLabelViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -236,6 +245,7 @@
         visualID="2002"
         editPartClassName="Node3EditPart"
         itemSemanticEditPolicyClassName="Node3ItemSemanticEditPolicy"
+        notationViewFactoryClassName="NodeViewFactory"
         canonicalEditPolicyClassName="Node3CanonicalEditPolicy"
         graphicalNodeEditPolicyClassName="Node2GraphicalNodeEditPolicy"
         createCommandClassName="Node2CreateCommand">
@@ -287,6 +297,7 @@
         visualID="4001"
         editPartClassName="EdgeEditPart"
         itemSemanticEditPolicyClassName="EdgeItemSemanticEditPolicy"
+        notationViewFactoryClassName="EdgeViewFactory"
         createCommandClassName="EdgeCreateCommand"
         reorientCommandClassName="EdgeReorientCommand">
       <diagramRunTimeClass
@@ -297,7 +308,7 @@
       <viewmap
           xsi:type="gmfgen:InnerClassViewmap"
           className="DirectedEdgeFigure"
-          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class DirectedEdgeFigure extends org.eclipse.gmf.runtime.draw2d.ui.figures.PolylineConnectionEx {&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public DirectedEdgeFigure() {&#xA;&#x9;&#x9;this.setLineWidth(1);&#xA;&#x9;this.setForegroundColor(THIS_FORE&#xA;);&#xA;&#xA;&#x9;&#x9;setTargetDecoration(createTargetDecoration());&#xA;&#x9;}&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private org.eclipse.draw2d.RotatableDecoration createTargetDecoration() {&#xA;&#x9;&#x9;org.eclipse.draw2d.PolygonDecoration df = new org.eclipse.draw2d.PolygonDecoration();&#xA;df.setFill(true);&#xA;df.setLineWidth(1);&#xA;org.eclipse.draw2d.geometry.PointList pl = new org.eclipse.draw2d.geometry.PointList();&#xA;pl.addPoint(getMapMode().DPtoLP(-2)&#xA;, getMapMode().DPtoLP(1)&#xA;);&#xA;pl.addPoint(getMapMode().DPtoLP(0)&#xA;, getMapMode().DPtoLP(0)&#xA;);&#xA;pl.addPoint(getMapMode().DPtoLP(-2)&#xA;, getMapMode().DPtoLP(-1)&#xA;);&#xA;pl.addPoint(getMapMode().DPtoLP(-1)&#xA;, getMapMode().DPtoLP(0)&#xA;);&#xA;df.setTemplate(pl);&#xA;df.setScale(getMapMode().DPtoLP(7)&#xA;, getMapMode().DPtoLP(3)&#xA;);&#xA;&#x9;&#x9;return df;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;}&#xA;&#xA;/**&#xA; * @generated&#xA; */&#xA;static final org.eclipse.swt.graphics.Color THIS_FORE = new org.eclipse.swt.graphics.Color(null, 0, 0, 20);&#xA;&#xA;">
+          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class DirectedEdgeFigure extends de.cau.cs.kieler.graphs.custom.DirectedConnection {&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public DirectedEdgeFigure() {&#xA;&#x9;&#x9;&#x9;&#x9;&#xA;&#xA;&#x9;this.setForegroundColor(org.eclipse.draw2d.ColorConstants.black);&#xA;&#x9;}&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private boolean myUseLocalCoordinates = false;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;protected boolean useLocalCoordinates() {&#xA;&#x9;&#x9;return myUseLocalCoordinates;&#xA;&#x9;}&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;protected void setUseLocalCoordinates(boolean useLocalCoordinates) {&#xA;&#x9;&#x9;myUseLocalCoordinates = useLocalCoordinates;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;}&#xA;&#xA;">
         <attributes
             xsi:type="gmfgen:StyleAttributes"
             fixedForeground="true"/>
@@ -328,7 +339,8 @@
       <labels
           visualID="6001"
           editPartClassName="EdgeHeadLabel1EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel1ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeHeadLabel1ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeHeadLabel1ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -348,7 +360,8 @@
       <labels
           visualID="6002"
           editPartClassName="EdgeHeadLabel2EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel2ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeHeadLabel2ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeHeadLabel2ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -368,7 +381,8 @@
       <labels
           visualID="6003"
           editPartClassName="EdgeMidLabelEditPart"
-          itemSemanticEditPolicyClassName="EdgeMidLabelItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeMidLabelItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeMidLabelViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -388,7 +402,8 @@
       <labels
           visualID="6004"
           editPartClassName="EdgeTailLabel1EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel1ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeTailLabel1ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeTailLabel1ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -408,7 +423,8 @@
       <labels
           visualID="6005"
           editPartClassName="EdgeTailLabel2EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel2ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeTailLabel2ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeTailLabel2ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -430,6 +446,7 @@
         visualID="4002"
         editPartClassName="Edge2EditPart"
         itemSemanticEditPolicyClassName="Edge2ItemSemanticEditPolicy"
+        notationViewFactoryClassName="EdgeViewFactory"
         createCommandClassName="Edge2CreateCommand"
         reorientCommandClassName="Edge2ReorientCommand">
       <diagramRunTimeClass
@@ -440,7 +457,7 @@
       <viewmap
           xsi:type="gmfgen:InnerClassViewmap"
           className="UndirectedEdgeFigure"
-          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class UndirectedEdgeFigure extends org.eclipse.gmf.runtime.draw2d.ui.figures.PolylineConnectionEx {&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public UndirectedEdgeFigure() {&#xA;&#x9;&#x9;this.setLineWidth(1);&#xA;&#x9;this.setForegroundColor(THIS_FORE&#xA;);&#xA;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;}&#xA;&#xA;/**&#xA; * @generated&#xA; */&#xA;static final org.eclipse.swt.graphics.Color THIS_FORE = new org.eclipse.swt.graphics.Color(null, 0, 0, 0);&#xA;&#xA;">
+          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class UndirectedEdgeFigure extends de.cau.cs.kieler.core.ui.figures.SplineConnection {&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public UndirectedEdgeFigure() {&#xA;&#x9;&#x9;&#x9;&#x9;&#xA;&#xA;&#x9;this.setForegroundColor(org.eclipse.draw2d.ColorConstants.black);&#xA;&#x9;}&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private boolean myUseLocalCoordinates = false;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;protected boolean useLocalCoordinates() {&#xA;&#x9;&#x9;return myUseLocalCoordinates;&#xA;&#x9;}&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;protected void setUseLocalCoordinates(boolean useLocalCoordinates) {&#xA;&#x9;&#x9;myUseLocalCoordinates = useLocalCoordinates;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;}&#xA;&#xA;">
         <attributes
             xsi:type="gmfgen:StyleAttributes"
             fixedForeground="true"/>
@@ -462,7 +479,8 @@
       <labels
           visualID="6006"
           editPartClassName="EdgeHeadLabel12EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel12ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeHeadLabel12ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeHeadLabel1ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -482,7 +500,8 @@
       <labels
           visualID="6007"
           editPartClassName="EdgeHeadLabel22EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel22ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeHeadLabel22ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeHeadLabel2ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -502,7 +521,8 @@
       <labels
           visualID="6008"
           editPartClassName="EdgeMidLabel2EditPart"
-          itemSemanticEditPolicyClassName="EdgeMidLabel2ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeMidLabel2ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeMidLabelViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -522,7 +542,8 @@
       <labels
           visualID="6009"
           editPartClassName="EdgeTailLabel12EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel12ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeTailLabel12ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeTailLabel1ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -542,7 +563,8 @@
       <labels
           visualID="6010"
           editPartClassName="EdgeTailLabel22EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel22ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeTailLabel22ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeTailLabel2ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -564,6 +586,7 @@
         visualID="4003"
         editPartClassName="Edge3EditPart"
         itemSemanticEditPolicyClassName="Edge3ItemSemanticEditPolicy"
+        notationViewFactoryClassName="EdgeViewFactory"
         createCommandClassName="Edge3CreateCommand"
         reorientCommandClassName="Edge3ReorientCommand">
       <diagramRunTimeClass
@@ -574,7 +597,7 @@
       <viewmap
           xsi:type="gmfgen:InnerClassViewmap"
           className="DirectedEdgeFigure"
-          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class DirectedEdgeFigure extends org.eclipse.gmf.runtime.draw2d.ui.figures.PolylineConnectionEx {&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public DirectedEdgeFigure() {&#xA;&#x9;&#x9;this.setLineWidth(1);&#xA;&#x9;this.setForegroundColor(THIS_FORE&#xA;);&#xA;&#xA;&#x9;&#x9;setTargetDecoration(createTargetDecoration());&#xA;&#x9;}&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private org.eclipse.draw2d.RotatableDecoration createTargetDecoration() {&#xA;&#x9;&#x9;org.eclipse.draw2d.PolygonDecoration df = new org.eclipse.draw2d.PolygonDecoration();&#xA;df.setFill(true);&#xA;df.setLineWidth(1);&#xA;org.eclipse.draw2d.geometry.PointList pl = new org.eclipse.draw2d.geometry.PointList();&#xA;pl.addPoint(getMapMode().DPtoLP(-2)&#xA;, getMapMode().DPtoLP(1)&#xA;);&#xA;pl.addPoint(getMapMode().DPtoLP(0)&#xA;, getMapMode().DPtoLP(0)&#xA;);&#xA;pl.addPoint(getMapMode().DPtoLP(-2)&#xA;, getMapMode().DPtoLP(-1)&#xA;);&#xA;pl.addPoint(getMapMode().DPtoLP(-1)&#xA;, getMapMode().DPtoLP(0)&#xA;);&#xA;df.setTemplate(pl);&#xA;df.setScale(getMapMode().DPtoLP(7)&#xA;, getMapMode().DPtoLP(3)&#xA;);&#xA;&#x9;&#x9;return df;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;}&#xA;&#xA;/**&#xA; * @generated&#xA; */&#xA;static final org.eclipse.swt.graphics.Color THIS_FORE = new org.eclipse.swt.graphics.Color(null, 0, 0, 20);&#xA;&#xA;">
+          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class DirectedEdgeFigure extends de.cau.cs.kieler.graphs.custom.DirectedConnection {&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public DirectedEdgeFigure() {&#xA;&#x9;&#x9;&#x9;&#x9;&#xA;&#xA;&#x9;this.setForegroundColor(org.eclipse.draw2d.ColorConstants.black);&#xA;&#x9;}&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private boolean myUseLocalCoordinates = false;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;protected boolean useLocalCoordinates() {&#xA;&#x9;&#x9;return myUseLocalCoordinates;&#xA;&#x9;}&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;protected void setUseLocalCoordinates(boolean useLocalCoordinates) {&#xA;&#x9;&#x9;myUseLocalCoordinates = useLocalCoordinates;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;}&#xA;&#xA;">
         <attributes
             xsi:type="gmfgen:StyleAttributes"
             fixedForeground="true"/>
@@ -611,7 +634,8 @@
       <labels
           visualID="6011"
           editPartClassName="EdgeHeadLabel13EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel13ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeHeadLabel13ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeHeadLabel1ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -631,7 +655,8 @@
       <labels
           visualID="6012"
           editPartClassName="EdgeHeadLabel23EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel23ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeHeadLabel23ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeHeadLabel2ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -651,7 +676,8 @@
       <labels
           visualID="6013"
           editPartClassName="EdgeMidLabel3EditPart"
-          itemSemanticEditPolicyClassName="EdgeMidLabel3ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeMidLabel3ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeMidLabelViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -671,7 +697,8 @@
       <labels
           visualID="6014"
           editPartClassName="EdgeTailLabel13EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel13ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeTailLabel13ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeTailLabel1ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -691,7 +718,8 @@
       <labels
           visualID="6015"
           editPartClassName="EdgeTailLabel23EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel23ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeTailLabel23ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeTailLabel2ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -713,6 +741,7 @@
         visualID="4004"
         editPartClassName="Edge4EditPart"
         itemSemanticEditPolicyClassName="Edge4ItemSemanticEditPolicy"
+        notationViewFactoryClassName="EdgeViewFactory"
         createCommandClassName="Edge4CreateCommand"
         reorientCommandClassName="Edge4ReorientCommand">
       <diagramRunTimeClass
@@ -723,7 +752,7 @@
       <viewmap
           xsi:type="gmfgen:InnerClassViewmap"
           className="UndirectedEdgeFigure"
-          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class UndirectedEdgeFigure extends org.eclipse.gmf.runtime.draw2d.ui.figures.PolylineConnectionEx {&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public UndirectedEdgeFigure() {&#xA;&#x9;&#x9;this.setLineWidth(1);&#xA;&#x9;this.setForegroundColor(THIS_FORE&#xA;);&#xA;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;}&#xA;&#xA;/**&#xA; * @generated&#xA; */&#xA;static final org.eclipse.swt.graphics.Color THIS_FORE = new org.eclipse.swt.graphics.Color(null, 0, 0, 0);&#xA;&#xA;">
+          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class UndirectedEdgeFigure extends de.cau.cs.kieler.core.ui.figures.SplineConnection {&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public UndirectedEdgeFigure() {&#xA;&#x9;&#x9;&#x9;&#x9;&#xA;&#xA;&#x9;this.setForegroundColor(org.eclipse.draw2d.ColorConstants.black);&#xA;&#x9;}&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private boolean myUseLocalCoordinates = false;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;protected boolean useLocalCoordinates() {&#xA;&#x9;&#x9;return myUseLocalCoordinates;&#xA;&#x9;}&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;protected void setUseLocalCoordinates(boolean useLocalCoordinates) {&#xA;&#x9;&#x9;myUseLocalCoordinates = useLocalCoordinates;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;}&#xA;&#xA;">
         <attributes
             xsi:type="gmfgen:StyleAttributes"
             fixedForeground="true"/>
@@ -754,7 +783,8 @@
       <labels
           visualID="6016"
           editPartClassName="EdgeHeadLabel14EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel14ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeHeadLabel14ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeHeadLabel1ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -774,7 +804,8 @@
       <labels
           visualID="6017"
           editPartClassName="EdgeHeadLabel24EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel24ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeHeadLabel24ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeHeadLabel2ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -794,7 +825,8 @@
       <labels
           visualID="6018"
           editPartClassName="EdgeMidLabel4EditPart"
-          itemSemanticEditPolicyClassName="EdgeMidLabel4ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeMidLabel4ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeMidLabelViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -814,7 +846,8 @@
       <labels
           visualID="6019"
           editPartClassName="EdgeTailLabel14EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel14ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeTailLabel14ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeTailLabel1ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -834,7 +867,8 @@
       <labels
           visualID="6020"
           editPartClassName="EdgeTailLabel24EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel24ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeTailLabel24ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeTailLabel2ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -856,6 +890,7 @@
         visualID="4005"
         editPartClassName="Edge5EditPart"
         itemSemanticEditPolicyClassName="Edge5ItemSemanticEditPolicy"
+        notationViewFactoryClassName="EdgeViewFactory"
         createCommandClassName="Edge5CreateCommand"
         reorientCommandClassName="Edge5ReorientCommand">
       <diagramRunTimeClass
@@ -866,7 +901,7 @@
       <viewmap
           xsi:type="gmfgen:InnerClassViewmap"
           className="DirectedEdgeFigure"
-          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class DirectedEdgeFigure extends org.eclipse.gmf.runtime.draw2d.ui.figures.PolylineConnectionEx {&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public DirectedEdgeFigure() {&#xA;&#x9;&#x9;this.setLineWidth(1);&#xA;&#x9;this.setForegroundColor(THIS_FORE&#xA;);&#xA;&#xA;&#x9;&#x9;setTargetDecoration(createTargetDecoration());&#xA;&#x9;}&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private org.eclipse.draw2d.RotatableDecoration createTargetDecoration() {&#xA;&#x9;&#x9;org.eclipse.draw2d.PolygonDecoration df = new org.eclipse.draw2d.PolygonDecoration();&#xA;df.setFill(true);&#xA;df.setLineWidth(1);&#xA;org.eclipse.draw2d.geometry.PointList pl = new org.eclipse.draw2d.geometry.PointList();&#xA;pl.addPoint(getMapMode().DPtoLP(-2)&#xA;, getMapMode().DPtoLP(1)&#xA;);&#xA;pl.addPoint(getMapMode().DPtoLP(0)&#xA;, getMapMode().DPtoLP(0)&#xA;);&#xA;pl.addPoint(getMapMode().DPtoLP(-2)&#xA;, getMapMode().DPtoLP(-1)&#xA;);&#xA;pl.addPoint(getMapMode().DPtoLP(-1)&#xA;, getMapMode().DPtoLP(0)&#xA;);&#xA;df.setTemplate(pl);&#xA;df.setScale(getMapMode().DPtoLP(7)&#xA;, getMapMode().DPtoLP(3)&#xA;);&#xA;&#x9;&#x9;return df;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;}&#xA;&#xA;/**&#xA; * @generated&#xA; */&#xA;static final org.eclipse.swt.graphics.Color THIS_FORE = new org.eclipse.swt.graphics.Color(null, 0, 0, 20);&#xA;&#xA;">
+          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class DirectedEdgeFigure extends de.cau.cs.kieler.graphs.custom.DirectedConnection {&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public DirectedEdgeFigure() {&#xA;&#x9;&#x9;&#x9;&#x9;&#xA;&#xA;&#x9;this.setForegroundColor(org.eclipse.draw2d.ColorConstants.black);&#xA;&#x9;}&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private boolean myUseLocalCoordinates = false;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;protected boolean useLocalCoordinates() {&#xA;&#x9;&#x9;return myUseLocalCoordinates;&#xA;&#x9;}&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;protected void setUseLocalCoordinates(boolean useLocalCoordinates) {&#xA;&#x9;&#x9;myUseLocalCoordinates = useLocalCoordinates;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;}&#xA;&#xA;">
         <attributes
             xsi:type="gmfgen:StyleAttributes"
             fixedForeground="true"/>
@@ -903,7 +938,8 @@
       <labels
           visualID="6021"
           editPartClassName="EdgeHeadLabel15EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel15ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeHeadLabel15ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeHeadLabel1ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -923,7 +959,8 @@
       <labels
           visualID="6022"
           editPartClassName="EdgeHeadLabel25EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel25ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeHeadLabel25ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeHeadLabel2ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -943,7 +980,8 @@
       <labels
           visualID="6023"
           editPartClassName="EdgeMidLabel5EditPart"
-          itemSemanticEditPolicyClassName="EdgeMidLabel5ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeMidLabel5ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeMidLabelViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -963,7 +1001,8 @@
       <labels
           visualID="6024"
           editPartClassName="EdgeTailLabel15EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel15ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeTailLabel15ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeTailLabel1ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -983,7 +1022,8 @@
       <labels
           visualID="6025"
           editPartClassName="EdgeTailLabel25EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel25ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeTailLabel25ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeTailLabel2ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -1005,6 +1045,7 @@
         visualID="4006"
         editPartClassName="Edge6EditPart"
         itemSemanticEditPolicyClassName="Edge6ItemSemanticEditPolicy"
+        notationViewFactoryClassName="EdgeViewFactory"
         createCommandClassName="Edge6CreateCommand"
         reorientCommandClassName="Edge6ReorientCommand">
       <diagramRunTimeClass
@@ -1015,7 +1056,7 @@
       <viewmap
           xsi:type="gmfgen:InnerClassViewmap"
           className="UndirectedEdgeFigure"
-          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class UndirectedEdgeFigure extends org.eclipse.gmf.runtime.draw2d.ui.figures.PolylineConnectionEx {&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public UndirectedEdgeFigure() {&#xA;&#x9;&#x9;this.setLineWidth(1);&#xA;&#x9;this.setForegroundColor(THIS_FORE&#xA;);&#xA;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;}&#xA;&#xA;/**&#xA; * @generated&#xA; */&#xA;static final org.eclipse.swt.graphics.Color THIS_FORE = new org.eclipse.swt.graphics.Color(null, 0, 0, 0);&#xA;&#xA;">
+          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class UndirectedEdgeFigure extends de.cau.cs.kieler.core.ui.figures.SplineConnection {&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public UndirectedEdgeFigure() {&#xA;&#x9;&#x9;&#x9;&#x9;&#xA;&#xA;&#x9;this.setForegroundColor(org.eclipse.draw2d.ColorConstants.black);&#xA;&#x9;}&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private boolean myUseLocalCoordinates = false;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;protected boolean useLocalCoordinates() {&#xA;&#x9;&#x9;return myUseLocalCoordinates;&#xA;&#x9;}&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;protected void setUseLocalCoordinates(boolean useLocalCoordinates) {&#xA;&#x9;&#x9;myUseLocalCoordinates = useLocalCoordinates;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;}&#xA;&#xA;">
         <attributes
             xsi:type="gmfgen:StyleAttributes"
             fixedForeground="true"/>
@@ -1046,7 +1087,8 @@
       <labels
           visualID="6026"
           editPartClassName="EdgeHeadLabel16EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel16ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeHeadLabel16ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeHeadLabel1ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -1066,7 +1108,8 @@
       <labels
           visualID="6027"
           editPartClassName="EdgeHeadLabel26EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel26ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeHeadLabel26ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeHeadLabel2ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -1086,7 +1129,8 @@
       <labels
           visualID="6028"
           editPartClassName="EdgeMidLabel6EditPart"
-          itemSemanticEditPolicyClassName="EdgeMidLabel6ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeMidLabel6ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeMidLabelViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -1106,7 +1150,8 @@
       <labels
           visualID="6029"
           editPartClassName="EdgeTailLabel16EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel16ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeTailLabel16ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeTailLabel1ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -1126,7 +1171,8 @@
       <labels
           visualID="6030"
           editPartClassName="EdgeTailLabel26EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel26ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeTailLabel26ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeTailLabel2ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -1148,6 +1194,7 @@
         visualID="4007"
         editPartClassName="Edge7EditPart"
         itemSemanticEditPolicyClassName="Edge7ItemSemanticEditPolicy"
+        notationViewFactoryClassName="EdgeViewFactory"
         createCommandClassName="Edge7CreateCommand"
         reorientCommandClassName="Edge7ReorientCommand">
       <diagramRunTimeClass
@@ -1158,7 +1205,7 @@
       <viewmap
           xsi:type="gmfgen:InnerClassViewmap"
           className="DirectedEdgeFigure"
-          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class DirectedEdgeFigure extends org.eclipse.gmf.runtime.draw2d.ui.figures.PolylineConnectionEx {&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public DirectedEdgeFigure() {&#xA;&#x9;&#x9;this.setLineWidth(1);&#xA;&#x9;this.setForegroundColor(THIS_FORE&#xA;);&#xA;&#xA;&#x9;&#x9;setTargetDecoration(createTargetDecoration());&#xA;&#x9;}&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private org.eclipse.draw2d.RotatableDecoration createTargetDecoration() {&#xA;&#x9;&#x9;org.eclipse.draw2d.PolygonDecoration df = new org.eclipse.draw2d.PolygonDecoration();&#xA;df.setFill(true);&#xA;df.setLineWidth(1);&#xA;org.eclipse.draw2d.geometry.PointList pl = new org.eclipse.draw2d.geometry.PointList();&#xA;pl.addPoint(getMapMode().DPtoLP(-2)&#xA;, getMapMode().DPtoLP(1)&#xA;);&#xA;pl.addPoint(getMapMode().DPtoLP(0)&#xA;, getMapMode().DPtoLP(0)&#xA;);&#xA;pl.addPoint(getMapMode().DPtoLP(-2)&#xA;, getMapMode().DPtoLP(-1)&#xA;);&#xA;pl.addPoint(getMapMode().DPtoLP(-1)&#xA;, getMapMode().DPtoLP(0)&#xA;);&#xA;df.setTemplate(pl);&#xA;df.setScale(getMapMode().DPtoLP(7)&#xA;, getMapMode().DPtoLP(3)&#xA;);&#xA;&#x9;&#x9;return df;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;}&#xA;&#xA;/**&#xA; * @generated&#xA; */&#xA;static final org.eclipse.swt.graphics.Color THIS_FORE = new org.eclipse.swt.graphics.Color(null, 0, 0, 20);&#xA;&#xA;">
+          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class DirectedEdgeFigure extends de.cau.cs.kieler.graphs.custom.DirectedConnection {&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public DirectedEdgeFigure() {&#xA;&#x9;&#x9;&#x9;&#x9;&#xA;&#xA;&#x9;this.setForegroundColor(org.eclipse.draw2d.ColorConstants.black);&#xA;&#x9;}&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private boolean myUseLocalCoordinates = false;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;protected boolean useLocalCoordinates() {&#xA;&#x9;&#x9;return myUseLocalCoordinates;&#xA;&#x9;}&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;protected void setUseLocalCoordinates(boolean useLocalCoordinates) {&#xA;&#x9;&#x9;myUseLocalCoordinates = useLocalCoordinates;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;}&#xA;&#xA;">
         <attributes
             xsi:type="gmfgen:StyleAttributes"
             fixedForeground="true"/>
@@ -1195,7 +1242,8 @@
       <labels
           visualID="6031"
           editPartClassName="EdgeHeadLabel17EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel17ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeHeadLabel17ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeHeadLabel1ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -1215,7 +1263,8 @@
       <labels
           visualID="6032"
           editPartClassName="EdgeHeadLabel27EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel27ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeHeadLabel27ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeHeadLabel2ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -1235,7 +1284,8 @@
       <labels
           visualID="6033"
           editPartClassName="EdgeMidLabel7EditPart"
-          itemSemanticEditPolicyClassName="EdgeMidLabel7ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeMidLabel7ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeMidLabelViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -1255,7 +1305,8 @@
       <labels
           visualID="6034"
           editPartClassName="EdgeTailLabel17EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel17ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeTailLabel17ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeTailLabel1ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -1275,7 +1326,8 @@
       <labels
           visualID="6035"
           editPartClassName="EdgeTailLabel27EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel27ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeTailLabel27ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeTailLabel2ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -1297,6 +1349,7 @@
         visualID="4008"
         editPartClassName="Edge8EditPart"
         itemSemanticEditPolicyClassName="Edge8ItemSemanticEditPolicy"
+        notationViewFactoryClassName="EdgeViewFactory"
         createCommandClassName="Edge8CreateCommand"
         reorientCommandClassName="Edge8ReorientCommand">
       <diagramRunTimeClass
@@ -1307,7 +1360,7 @@
       <viewmap
           xsi:type="gmfgen:InnerClassViewmap"
           className="UndirectedEdgeFigure"
-          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class UndirectedEdgeFigure extends org.eclipse.gmf.runtime.draw2d.ui.figures.PolylineConnectionEx {&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public UndirectedEdgeFigure() {&#xA;&#x9;&#x9;this.setLineWidth(1);&#xA;&#x9;this.setForegroundColor(THIS_FORE&#xA;);&#xA;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;}&#xA;&#xA;/**&#xA; * @generated&#xA; */&#xA;static final org.eclipse.swt.graphics.Color THIS_FORE = new org.eclipse.swt.graphics.Color(null, 0, 0, 0);&#xA;&#xA;">
+          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class UndirectedEdgeFigure extends de.cau.cs.kieler.core.ui.figures.SplineConnection {&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public UndirectedEdgeFigure() {&#xA;&#x9;&#x9;&#x9;&#x9;&#xA;&#xA;&#x9;this.setForegroundColor(org.eclipse.draw2d.ColorConstants.black);&#xA;&#x9;}&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private boolean myUseLocalCoordinates = false;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;protected boolean useLocalCoordinates() {&#xA;&#x9;&#x9;return myUseLocalCoordinates;&#xA;&#x9;}&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;protected void setUseLocalCoordinates(boolean useLocalCoordinates) {&#xA;&#x9;&#x9;myUseLocalCoordinates = useLocalCoordinates;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;}&#xA;&#xA;">
         <attributes
             xsi:type="gmfgen:StyleAttributes"
             fixedForeground="true"/>
@@ -1338,7 +1391,8 @@
       <labels
           visualID="6036"
           editPartClassName="EdgeHeadLabel18EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel18ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeHeadLabel18ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeHeadLabel1ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -1358,7 +1412,8 @@
       <labels
           visualID="6037"
           editPartClassName="EdgeHeadLabel28EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel28ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeHeadLabel28ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeHeadLabel2ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -1378,7 +1433,8 @@
       <labels
           visualID="6038"
           editPartClassName="EdgeMidLabel8EditPart"
-          itemSemanticEditPolicyClassName="EdgeMidLabel8ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeMidLabel8ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeMidLabelViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -1398,7 +1454,8 @@
       <labels
           visualID="6039"
           editPartClassName="EdgeTailLabel18EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel18ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeTailLabel18ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeTailLabel1ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -1418,7 +1475,8 @@
       <labels
           visualID="6040"
           editPartClassName="EdgeTailLabel28EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel28ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="EdgeTailLabel28ItemSemanticEditPolicy"
+          notationViewFactoryClassName="EdgeTailLabel2ViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -1440,6 +1498,7 @@
         visualID="7001"
         editPartClassName="NodeNodeCompartmentEditPart"
         itemSemanticEditPolicyClassName="NodeNodeCompartmentItemSemanticEditPolicy"
+        notationViewFactoryClassName="NodeNodeCompartmentViewFactory"
         canonicalEditPolicyClassName="NodeNodeCompartmentCanonicalEditPolicy"
         childNodes="//@diagram/@childNodes.0 //@diagram/@childNodes.2"
         title="NodeCompartment"
@@ -1458,6 +1517,7 @@
         visualID="7002"
         editPartClassName="NodeNodeCompartment2EditPart"
         itemSemanticEditPolicyClassName="NodeNodeCompartment2ItemSemanticEditPolicy"
+        notationViewFactoryClassName="NodeNodeCompartmentViewFactory"
         canonicalEditPolicyClassName="NodeNodeCompartment2CanonicalEditPolicy"
         childNodes="//@diagram/@childNodes.0 //@diagram/@childNodes.2"
         title="NodeCompartment"
@@ -1536,6 +1596,7 @@
       version="0.1.0.qualifier">
     <requiredPlugins>org.eclipse.draw2d</requiredPlugins>
     <requiredPlugins>org.eclipse.gmf.runtime.draw2d.ui</requiredPlugins>
+    <requiredPlugins>de.cau.cs.kieler.core.ui</requiredPlugins>
   </plugin>
   <editor/>
   <navigator>
