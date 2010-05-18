@@ -48,7 +48,7 @@ public class KSBasETrigger extends ATrigger implements ITransformationEventListe
      */
     @Override
     public void finalize() {
-        super.finalize();
+        super.wrapup();
         // Remove from post transformation queue
         TransformationUIManager.INSTANCE.removeTransformationListener(this);
     }
