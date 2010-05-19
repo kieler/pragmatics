@@ -30,5 +30,28 @@
             project="false">
       </wizard>
    </extension>
-
+	<extension
+         point="org.eclipse.ui.menus">
+	<menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         <toolbar
+               id="de.cau.cs.kieler">
+            <command
+                  commandId="de.cau.cs.kieler.core.ui.debugDrawing"
+                  label="debugDraw"
+                  style="push">
+            </command>
+         </toolbar>
+      </menuContribution>
+      </extension>
+      
+      <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="de.cau.cs.kieler"
+            defaultHandler="de.cau.cs.kieler.graphs.handler.DrawDebugInfoHandler"
+            id="de.cau.cs.kieler.core.ui.debugDrawing"
+            name="Draw some debug info into a GMF editor">
+      </command>
+   </extension>
 </plugin>
