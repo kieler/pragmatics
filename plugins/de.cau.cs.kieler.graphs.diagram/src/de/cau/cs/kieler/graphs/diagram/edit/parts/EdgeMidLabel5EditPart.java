@@ -57,7 +57,7 @@ public class EdgeMidLabel5EditPart extends LabelEditPart implements
     /**
      * @generated
      */
-    public static final int VISUAL_ID = 6023;
+    public static final int VISUAL_ID = 6021;
 
     /**
      * @generated
@@ -86,7 +86,7 @@ public class EdgeMidLabel5EditPart extends LabelEditPart implements
         registerSnapBackPosition(
                 GraphsVisualIDRegistry
                         .getType(de.cau.cs.kieler.graphs.diagram.edit.parts.EdgeMidLabel5EditPart.VISUAL_ID),
-                new Point(0, 80));
+                new Point(0, 40));
     }
 
     /**

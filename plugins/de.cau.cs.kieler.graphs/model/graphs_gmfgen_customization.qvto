@@ -20,5 +20,20 @@ main() {
 	
 	// use our own category for the "new" wizard
 	model.diagram.creationWizardCategoryID := "de.cau.cs.kieler";
+	
+	// correct the edge label placement
+	model.diagram.allSubobjectsOfType(GenLink)[GenLink] ->map edgeSettings();
 }
 
+mapping inout GenLink::edgeSettings(){	
+	self.allSubobjectsOfType(GenLinkLabel)[GenLinkLabel] ->map edgeLabelSettings();
+}
+
+mapping inout GenLinkLabel::edgeLabelSettings(){
+	self.alignment := switch {
+		// SOURCE and TARGET seem to be confused but they are not -> gmf problem
+		case (self.editPartClassName.startsWith('EdgeHead'))  LinkLabelAlignment::SOURCE;
+		case (self.editPartClassName.startsWith('EdgeMid')) LinkLabelAlignment::MIDDLE;
+		case (self.editPartClassName.startsWith('EdgeTail')) LinkLabelAlignment::TARGET;
+	};
+}

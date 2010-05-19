@@ -16,4 +16,5 @@ public class DiagramAppearancePreferencePage extends AppearancePreferencePage {
         setPreferenceStore(GraphsDiagramEditorPlugin.getInstance()
                 .getPreferenceStore());
     }
+
 }

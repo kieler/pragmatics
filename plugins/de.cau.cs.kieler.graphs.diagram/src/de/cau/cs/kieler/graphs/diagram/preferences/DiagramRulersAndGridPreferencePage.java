@@ -16,4 +16,5 @@ public class DiagramRulersAndGridPreferencePage extends RulerGridPreferencePage 
         setPreferenceStore(GraphsDiagramEditorPlugin.getInstance()
                 .getPreferenceStore());
     }
+
 }

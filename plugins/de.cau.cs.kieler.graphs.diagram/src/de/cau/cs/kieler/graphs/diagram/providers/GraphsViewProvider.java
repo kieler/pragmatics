@@ -568,21 +568,21 @@ public class GraphsViewProvider extends AbstractProvider implements
                     .getRoutingStyle_Routing(), routing);
         }
         Node label6001 = createLabel(edge, GraphsVisualIDRegistry
-                .getType(EdgeHeadLabel1EditPart.VISUAL_ID));
+                .getType(EdgeMidLabelEditPart.VISUAL_ID));
         label6001.setLayoutConstraint(NotationFactory.eINSTANCE
                 .createLocation());
         Location location6001 = (Location) label6001.getLayoutConstraint();
         location6001.setX(0);
         location6001.setY(40);
         Node label6002 = createLabel(edge, GraphsVisualIDRegistry
-                .getType(EdgeHeadLabel2EditPart.VISUAL_ID));
+                .getType(EdgeHeadLabel1EditPart.VISUAL_ID));
         label6002.setLayoutConstraint(NotationFactory.eINSTANCE
                 .createLocation());
         Location location6002 = (Location) label6002.getLayoutConstraint();
         location6002.setX(0);
         location6002.setY(60);
         Node label6003 = createLabel(edge, GraphsVisualIDRegistry
-                .getType(EdgeMidLabelEditPart.VISUAL_ID));
+                .getType(EdgeHeadLabel2EditPart.VISUAL_ID));
         label6003.setLayoutConstraint(NotationFactory.eINSTANCE
                 .createLocation());
         Location location6003 = (Location) label6003.getLayoutConstraint();
@@ -647,21 +647,21 @@ public class GraphsViewProvider extends AbstractProvider implements
                     .getRoutingStyle_Routing(), routing);
         }
         Node label6006 = createLabel(edge, GraphsVisualIDRegistry
-                .getType(EdgeHeadLabel12EditPart.VISUAL_ID));
+                .getType(EdgeMidLabel2EditPart.VISUAL_ID));
         label6006.setLayoutConstraint(NotationFactory.eINSTANCE
                 .createLocation());
         Location location6006 = (Location) label6006.getLayoutConstraint();
         location6006.setX(0);
         location6006.setY(40);
         Node label6007 = createLabel(edge, GraphsVisualIDRegistry
-                .getType(EdgeHeadLabel22EditPart.VISUAL_ID));
+                .getType(EdgeHeadLabel12EditPart.VISUAL_ID));
         label6007.setLayoutConstraint(NotationFactory.eINSTANCE
                 .createLocation());
         Location location6007 = (Location) label6007.getLayoutConstraint();
         location6007.setX(0);
         location6007.setY(60);
         Node label6008 = createLabel(edge, GraphsVisualIDRegistry
-                .getType(EdgeMidLabel2EditPart.VISUAL_ID));
+                .getType(EdgeHeadLabel22EditPart.VISUAL_ID));
         label6008.setLayoutConstraint(NotationFactory.eINSTANCE
                 .createLocation());
         Location location6008 = (Location) label6008.getLayoutConstraint();
@@ -726,21 +726,21 @@ public class GraphsViewProvider extends AbstractProvider implements
                     .getRoutingStyle_Routing(), routing);
         }
         Node label6011 = createLabel(edge, GraphsVisualIDRegistry
-                .getType(EdgeHeadLabel13EditPart.VISUAL_ID));
+                .getType(EdgeMidLabel3EditPart.VISUAL_ID));
         label6011.setLayoutConstraint(NotationFactory.eINSTANCE
                 .createLocation());
         Location location6011 = (Location) label6011.getLayoutConstraint();
         location6011.setX(0);
         location6011.setY(40);
         Node label6012 = createLabel(edge, GraphsVisualIDRegistry
-                .getType(EdgeHeadLabel23EditPart.VISUAL_ID));
+                .getType(EdgeHeadLabel13EditPart.VISUAL_ID));
         label6012.setLayoutConstraint(NotationFactory.eINSTANCE
                 .createLocation());
         Location location6012 = (Location) label6012.getLayoutConstraint();
         location6012.setX(0);
         location6012.setY(60);
         Node label6013 = createLabel(edge, GraphsVisualIDRegistry
-                .getType(EdgeMidLabel3EditPart.VISUAL_ID));
+                .getType(EdgeHeadLabel23EditPart.VISUAL_ID));
         label6013.setLayoutConstraint(NotationFactory.eINSTANCE
                 .createLocation());
         Location location6013 = (Location) label6013.getLayoutConstraint();
@@ -805,21 +805,21 @@ public class GraphsViewProvider extends AbstractProvider implements
                     .getRoutingStyle_Routing(), routing);
         }
         Node label6016 = createLabel(edge, GraphsVisualIDRegistry
-                .getType(EdgeHeadLabel14EditPart.VISUAL_ID));
+                .getType(EdgeMidLabel4EditPart.VISUAL_ID));
         label6016.setLayoutConstraint(NotationFactory.eINSTANCE
                 .createLocation());
         Location location6016 = (Location) label6016.getLayoutConstraint();
         location6016.setX(0);
         location6016.setY(40);
         Node label6017 = createLabel(edge, GraphsVisualIDRegistry
-                .getType(EdgeHeadLabel24EditPart.VISUAL_ID));
+                .getType(EdgeHeadLabel14EditPart.VISUAL_ID));
         label6017.setLayoutConstraint(NotationFactory.eINSTANCE
                 .createLocation());
         Location location6017 = (Location) label6017.getLayoutConstraint();
         location6017.setX(0);
         location6017.setY(60);
         Node label6018 = createLabel(edge, GraphsVisualIDRegistry
-                .getType(EdgeMidLabel4EditPart.VISUAL_ID));
+                .getType(EdgeHeadLabel24EditPart.VISUAL_ID));
         label6018.setLayoutConstraint(NotationFactory.eINSTANCE
                 .createLocation());
         Location location6018 = (Location) label6018.getLayoutConstraint();
@@ -884,21 +884,21 @@ public class GraphsViewProvider extends AbstractProvider implements
                     .getRoutingStyle_Routing(), routing);
         }
         Node label6021 = createLabel(edge, GraphsVisualIDRegistry
-                .getType(EdgeHeadLabel15EditPart.VISUAL_ID));
+                .getType(EdgeMidLabel5EditPart.VISUAL_ID));
         label6021.setLayoutConstraint(NotationFactory.eINSTANCE
                 .createLocation());
         Location location6021 = (Location) label6021.getLayoutConstraint();
         location6021.setX(0);
         location6021.setY(40);
         Node label6022 = createLabel(edge, GraphsVisualIDRegistry
-                .getType(EdgeHeadLabel25EditPart.VISUAL_ID));
+                .getType(EdgeHeadLabel15EditPart.VISUAL_ID));
         label6022.setLayoutConstraint(NotationFactory.eINSTANCE
                 .createLocation());
         Location location6022 = (Location) label6022.getLayoutConstraint();
         location6022.setX(0);
         location6022.setY(60);
         Node label6023 = createLabel(edge, GraphsVisualIDRegistry
-                .getType(EdgeMidLabel5EditPart.VISUAL_ID));
+                .getType(EdgeHeadLabel25EditPart.VISUAL_ID));
         label6023.setLayoutConstraint(NotationFactory.eINSTANCE
                 .createLocation());
         Location location6023 = (Location) label6023.getLayoutConstraint();
@@ -963,21 +963,21 @@ public class GraphsViewProvider extends AbstractProvider implements
                     .getRoutingStyle_Routing(), routing);
         }
         Node label6026 = createLabel(edge, GraphsVisualIDRegistry
-                .getType(EdgeHeadLabel16EditPart.VISUAL_ID));
+                .getType(EdgeMidLabel6EditPart.VISUAL_ID));
         label6026.setLayoutConstraint(NotationFactory.eINSTANCE
                 .createLocation());
         Location location6026 = (Location) label6026.getLayoutConstraint();
         location6026.setX(0);
         location6026.setY(40);
         Node label6027 = createLabel(edge, GraphsVisualIDRegistry
-                .getType(EdgeHeadLabel26EditPart.VISUAL_ID));
+                .getType(EdgeHeadLabel16EditPart.VISUAL_ID));
         label6027.setLayoutConstraint(NotationFactory.eINSTANCE
                 .createLocation());
         Location location6027 = (Location) label6027.getLayoutConstraint();
         location6027.setX(0);
         location6027.setY(60);
         Node label6028 = createLabel(edge, GraphsVisualIDRegistry
-                .getType(EdgeMidLabel6EditPart.VISUAL_ID));
+                .getType(EdgeHeadLabel26EditPart.VISUAL_ID));
         label6028.setLayoutConstraint(NotationFactory.eINSTANCE
                 .createLocation());
         Location location6028 = (Location) label6028.getLayoutConstraint();
@@ -1042,21 +1042,21 @@ public class GraphsViewProvider extends AbstractProvider implements
                     .getRoutingStyle_Routing(), routing);
         }
         Node label6031 = createLabel(edge, GraphsVisualIDRegistry
-                .getType(EdgeHeadLabel17EditPart.VISUAL_ID));
+                .getType(EdgeMidLabel7EditPart.VISUAL_ID));
         label6031.setLayoutConstraint(NotationFactory.eINSTANCE
                 .createLocation());
         Location location6031 = (Location) label6031.getLayoutConstraint();
         location6031.setX(0);
         location6031.setY(40);
         Node label6032 = createLabel(edge, GraphsVisualIDRegistry
-                .getType(EdgeHeadLabel27EditPart.VISUAL_ID));
+                .getType(EdgeHeadLabel17EditPart.VISUAL_ID));
         label6032.setLayoutConstraint(NotationFactory.eINSTANCE
                 .createLocation());
         Location location6032 = (Location) label6032.getLayoutConstraint();
         location6032.setX(0);
         location6032.setY(60);
         Node label6033 = createLabel(edge, GraphsVisualIDRegistry
-                .getType(EdgeMidLabel7EditPart.VISUAL_ID));
+                .getType(EdgeHeadLabel27EditPart.VISUAL_ID));
         label6033.setLayoutConstraint(NotationFactory.eINSTANCE
                 .createLocation());
         Location location6033 = (Location) label6033.getLayoutConstraint();
@@ -1121,21 +1121,21 @@ public class GraphsViewProvider extends AbstractProvider implements
                     .getRoutingStyle_Routing(), routing);
         }
         Node label6036 = createLabel(edge, GraphsVisualIDRegistry
-                .getType(EdgeHeadLabel18EditPart.VISUAL_ID));
+                .getType(EdgeMidLabel8EditPart.VISUAL_ID));
         label6036.setLayoutConstraint(NotationFactory.eINSTANCE
                 .createLocation());
         Location location6036 = (Location) label6036.getLayoutConstraint();
         location6036.setX(0);
         location6036.setY(40);
         Node label6037 = createLabel(edge, GraphsVisualIDRegistry
-                .getType(EdgeHeadLabel28EditPart.VISUAL_ID));
+                .getType(EdgeHeadLabel18EditPart.VISUAL_ID));
         label6037.setLayoutConstraint(NotationFactory.eINSTANCE
                 .createLocation());
         Location location6037 = (Location) label6037.getLayoutConstraint();
         location6037.setX(0);
         location6037.setY(60);
         Node label6038 = createLabel(edge, GraphsVisualIDRegistry
-                .getType(EdgeMidLabel8EditPart.VISUAL_ID));
+                .getType(EdgeHeadLabel28EditPart.VISUAL_ID));
         label6038.setLayoutConstraint(NotationFactory.eINSTANCE
                 .createLocation());
         Location location6038 = (Location) label6038.getLayoutConstraint();

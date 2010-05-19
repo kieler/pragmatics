@@ -121,7 +121,7 @@ public class EdgeTailLabel2EditPart extends LabelEditPart implements
      * @generated
      */
     public int getKeyPoint() {
-        return ConnectionLocator.MIDDLE;
+        return ConnectionLocator.TARGET;
     }
 
     /**

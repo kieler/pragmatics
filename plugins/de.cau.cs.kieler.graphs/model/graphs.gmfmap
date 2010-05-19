@@ -126,6 +126,13 @@
       <diagramLabel
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
+          href="graphs.ecore#//Edge/midLabel"/>
+    </labelMappings>
+    <labelMappings
+        xsi:type="gmfmap:FeatureLabelMapping">
+      <diagramLabel
+          href="graphs.gmfgraph#EdgeLabel"/>
+      <features
           href="graphs.ecore#//Edge/headLabel1"/>
     </labelMappings>
     <labelMappings
@@ -134,13 +141,6 @@
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
           href="graphs.ecore#//Edge/headLabel2"/>
-    </labelMappings>
-    <labelMappings
-        xsi:type="gmfmap:FeatureLabelMapping">
-      <diagramLabel
-          href="graphs.gmfgraph#EdgeLabel"/>
-      <features
-          href="graphs.ecore#//Edge/midLabel"/>
     </labelMappings>
     <labelMappings
         xsi:type="gmfmap:FeatureLabelMapping">
@@ -180,6 +180,13 @@
       <diagramLabel
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
+          href="graphs.ecore#//Edge/midLabel"/>
+    </labelMappings>
+    <labelMappings
+        xsi:type="gmfmap:FeatureLabelMapping">
+      <diagramLabel
+          href="graphs.gmfgraph#EdgeLabel"/>
+      <features
           href="graphs.ecore#//Edge/headLabel1"/>
     </labelMappings>
     <labelMappings
@@ -188,13 +195,6 @@
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
           href="graphs.ecore#//Edge/headLabel2"/>
-    </labelMappings>
-    <labelMappings
-        xsi:type="gmfmap:FeatureLabelMapping">
-      <diagramLabel
-          href="graphs.gmfgraph#EdgeLabel"/>
-      <features
-          href="graphs.ecore#//Edge/midLabel"/>
     </labelMappings>
     <labelMappings
         xsi:type="gmfmap:FeatureLabelMapping">
@@ -253,6 +253,13 @@
       <diagramLabel
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
+          href="graphs.ecore#//Edge/midLabel"/>
+    </labelMappings>
+    <labelMappings
+        xsi:type="gmfmap:FeatureLabelMapping">
+      <diagramLabel
+          href="graphs.gmfgraph#EdgeLabel"/>
+      <features
           href="graphs.ecore#//Edge/headLabel1"/>
     </labelMappings>
     <labelMappings
@@ -261,13 +268,6 @@
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
           href="graphs.ecore#//Edge/headLabel2"/>
-    </labelMappings>
-    <labelMappings
-        xsi:type="gmfmap:FeatureLabelMapping">
-      <diagramLabel
-          href="graphs.gmfgraph#EdgeLabel"/>
-      <features
-          href="graphs.ecore#//Edge/midLabel"/>
     </labelMappings>
     <labelMappings
         xsi:type="gmfmap:FeatureLabelMapping">
@@ -318,6 +318,13 @@
       <diagramLabel
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
+          href="graphs.ecore#//Edge/midLabel"/>
+    </labelMappings>
+    <labelMappings
+        xsi:type="gmfmap:FeatureLabelMapping">
+      <diagramLabel
+          href="graphs.gmfgraph#EdgeLabel"/>
+      <features
           href="graphs.ecore#//Edge/headLabel1"/>
     </labelMappings>
     <labelMappings
@@ -326,13 +333,6 @@
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
           href="graphs.ecore#//Edge/headLabel2"/>
-    </labelMappings>
-    <labelMappings
-        xsi:type="gmfmap:FeatureLabelMapping">
-      <diagramLabel
-          href="graphs.gmfgraph#EdgeLabel"/>
-      <features
-          href="graphs.ecore#//Edge/midLabel"/>
     </labelMappings>
     <labelMappings
         xsi:type="gmfmap:FeatureLabelMapping">
@@ -391,6 +391,13 @@
       <diagramLabel
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
+          href="graphs.ecore#//Edge/midLabel"/>
+    </labelMappings>
+    <labelMappings
+        xsi:type="gmfmap:FeatureLabelMapping">
+      <diagramLabel
+          href="graphs.gmfgraph#EdgeLabel"/>
+      <features
           href="graphs.ecore#//Edge/headLabel1"/>
     </labelMappings>
     <labelMappings
@@ -399,13 +406,6 @@
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
           href="graphs.ecore#//Edge/headLabel2"/>
-    </labelMappings>
-    <labelMappings
-        xsi:type="gmfmap:FeatureLabelMapping">
-      <diagramLabel
-          href="graphs.gmfgraph#EdgeLabel"/>
-      <features
-          href="graphs.ecore#//Edge/midLabel"/>
     </labelMappings>
     <labelMappings
         xsi:type="gmfmap:FeatureLabelMapping">
@@ -456,6 +456,13 @@
       <diagramLabel
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
+          href="graphs.ecore#//Edge/midLabel"/>
+    </labelMappings>
+    <labelMappings
+        xsi:type="gmfmap:FeatureLabelMapping">
+      <diagramLabel
+          href="graphs.gmfgraph#EdgeLabel"/>
+      <features
           href="graphs.ecore#//Edge/headLabel1"/>
     </labelMappings>
     <labelMappings
@@ -464,13 +471,6 @@
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
           href="graphs.ecore#//Edge/headLabel2"/>
-    </labelMappings>
-    <labelMappings
-        xsi:type="gmfmap:FeatureLabelMapping">
-      <diagramLabel
-          href="graphs.gmfgraph#EdgeLabel"/>
-      <features
-          href="graphs.ecore#//Edge/midLabel"/>
     </labelMappings>
     <labelMappings
         xsi:type="gmfmap:FeatureLabelMapping">
@@ -529,6 +529,13 @@
       <diagramLabel
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
+          href="graphs.ecore#//Edge/midLabel"/>
+    </labelMappings>
+    <labelMappings
+        xsi:type="gmfmap:FeatureLabelMapping">
+      <diagramLabel
+          href="graphs.gmfgraph#EdgeLabel"/>
+      <features
           href="graphs.ecore#//Edge/headLabel1"/>
     </labelMappings>
     <labelMappings
@@ -537,13 +544,6 @@
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
           href="graphs.ecore#//Edge/headLabel2"/>
-    </labelMappings>
-    <labelMappings
-        xsi:type="gmfmap:FeatureLabelMapping">
-      <diagramLabel
-          href="graphs.gmfgraph#EdgeLabel"/>
-      <features
-          href="graphs.ecore#//Edge/midLabel"/>
     </labelMappings>
     <labelMappings
         xsi:type="gmfmap:FeatureLabelMapping">
@@ -594,6 +594,13 @@
       <diagramLabel
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
+          href="graphs.ecore#//Edge/midLabel"/>
+    </labelMappings>
+    <labelMappings
+        xsi:type="gmfmap:FeatureLabelMapping">
+      <diagramLabel
+          href="graphs.gmfgraph#EdgeLabel"/>
+      <features
           href="graphs.ecore#//Edge/headLabel1"/>
     </labelMappings>
     <labelMappings
@@ -602,13 +609,6 @@
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
           href="graphs.ecore#//Edge/headLabel2"/>
-    </labelMappings>
-    <labelMappings
-        xsi:type="gmfmap:FeatureLabelMapping">
-      <diagramLabel
-          href="graphs.gmfgraph#EdgeLabel"/>
-      <features
-          href="graphs.ecore#//Edge/midLabel"/>
     </labelMappings>
     <labelMappings
         xsi:type="gmfmap:FeatureLabelMapping">

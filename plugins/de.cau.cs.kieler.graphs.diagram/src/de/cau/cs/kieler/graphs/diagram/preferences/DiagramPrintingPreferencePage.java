@@ -16,4 +16,5 @@ public class DiagramPrintingPreferencePage extends PrintingPreferencePage {
         setPreferenceStore(GraphsDiagramEditorPlugin.getInstance()
                 .getPreferenceStore());
     }
+
 }

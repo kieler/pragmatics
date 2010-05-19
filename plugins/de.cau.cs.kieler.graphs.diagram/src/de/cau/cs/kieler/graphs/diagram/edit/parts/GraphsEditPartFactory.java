@@ -65,14 +65,14 @@ public class GraphsEditPartFactory implements EditPartFactory {
             case EdgeEditPart.VISUAL_ID:
                 return new EdgeEditPart(view);
 
+            case EdgeMidLabelEditPart.VISUAL_ID:
+                return new EdgeMidLabelEditPart(view);
+
             case EdgeHeadLabel1EditPart.VISUAL_ID:
                 return new EdgeHeadLabel1EditPart(view);
 
             case EdgeHeadLabel2EditPart.VISUAL_ID:
                 return new EdgeHeadLabel2EditPart(view);
-
-            case EdgeMidLabelEditPart.VISUAL_ID:
-                return new EdgeMidLabelEditPart(view);
 
             case EdgeTailLabel1EditPart.VISUAL_ID:
                 return new EdgeTailLabel1EditPart(view);
@@ -83,14 +83,14 @@ public class GraphsEditPartFactory implements EditPartFactory {
             case Edge2EditPart.VISUAL_ID:
                 return new Edge2EditPart(view);
 
+            case EdgeMidLabel2EditPart.VISUAL_ID:
+                return new EdgeMidLabel2EditPart(view);
+
             case EdgeHeadLabel12EditPart.VISUAL_ID:
                 return new EdgeHeadLabel12EditPart(view);
 
             case EdgeHeadLabel22EditPart.VISUAL_ID:
                 return new EdgeHeadLabel22EditPart(view);
-
-            case EdgeMidLabel2EditPart.VISUAL_ID:
-                return new EdgeMidLabel2EditPart(view);
 
             case EdgeTailLabel12EditPart.VISUAL_ID:
                 return new EdgeTailLabel12EditPart(view);
@@ -101,14 +101,14 @@ public class GraphsEditPartFactory implements EditPartFactory {
             case Edge3EditPart.VISUAL_ID:
                 return new Edge3EditPart(view);
 
+            case EdgeMidLabel3EditPart.VISUAL_ID:
+                return new EdgeMidLabel3EditPart(view);
+
             case EdgeHeadLabel13EditPart.VISUAL_ID:
                 return new EdgeHeadLabel13EditPart(view);
 
             case EdgeHeadLabel23EditPart.VISUAL_ID:
                 return new EdgeHeadLabel23EditPart(view);
-
-            case EdgeMidLabel3EditPart.VISUAL_ID:
-                return new EdgeMidLabel3EditPart(view);
 
             case EdgeTailLabel13EditPart.VISUAL_ID:
                 return new EdgeTailLabel13EditPart(view);
@@ -119,14 +119,14 @@ public class GraphsEditPartFactory implements EditPartFactory {
             case Edge4EditPart.VISUAL_ID:
                 return new Edge4EditPart(view);
 
+            case EdgeMidLabel4EditPart.VISUAL_ID:
+                return new EdgeMidLabel4EditPart(view);
+
             case EdgeHeadLabel14EditPart.VISUAL_ID:
                 return new EdgeHeadLabel14EditPart(view);
 
             case EdgeHeadLabel24EditPart.VISUAL_ID:
                 return new EdgeHeadLabel24EditPart(view);
-
-            case EdgeMidLabel4EditPart.VISUAL_ID:
-                return new EdgeMidLabel4EditPart(view);
 
             case EdgeTailLabel14EditPart.VISUAL_ID:
                 return new EdgeTailLabel14EditPart(view);
@@ -137,14 +137,14 @@ public class GraphsEditPartFactory implements EditPartFactory {
             case Edge5EditPart.VISUAL_ID:
                 return new Edge5EditPart(view);
 
+            case EdgeMidLabel5EditPart.VISUAL_ID:
+                return new EdgeMidLabel5EditPart(view);
+
             case EdgeHeadLabel15EditPart.VISUAL_ID:
                 return new EdgeHeadLabel15EditPart(view);
 
             case EdgeHeadLabel25EditPart.VISUAL_ID:
                 return new EdgeHeadLabel25EditPart(view);
-
-            case EdgeMidLabel5EditPart.VISUAL_ID:
-                return new EdgeMidLabel5EditPart(view);
 
             case EdgeTailLabel15EditPart.VISUAL_ID:
                 return new EdgeTailLabel15EditPart(view);
@@ -155,14 +155,14 @@ public class GraphsEditPartFactory implements EditPartFactory {
             case Edge6EditPart.VISUAL_ID:
                 return new Edge6EditPart(view);
 
+            case EdgeMidLabel6EditPart.VISUAL_ID:
+                return new EdgeMidLabel6EditPart(view);
+
             case EdgeHeadLabel16EditPart.VISUAL_ID:
                 return new EdgeHeadLabel16EditPart(view);
 
             case EdgeHeadLabel26EditPart.VISUAL_ID:
                 return new EdgeHeadLabel26EditPart(view);
-
-            case EdgeMidLabel6EditPart.VISUAL_ID:
-                return new EdgeMidLabel6EditPart(view);
 
             case EdgeTailLabel16EditPart.VISUAL_ID:
                 return new EdgeTailLabel16EditPart(view);
@@ -173,14 +173,14 @@ public class GraphsEditPartFactory implements EditPartFactory {
             case Edge7EditPart.VISUAL_ID:
                 return new Edge7EditPart(view);
 
+            case EdgeMidLabel7EditPart.VISUAL_ID:
+                return new EdgeMidLabel7EditPart(view);
+
             case EdgeHeadLabel17EditPart.VISUAL_ID:
                 return new EdgeHeadLabel17EditPart(view);
 
             case EdgeHeadLabel27EditPart.VISUAL_ID:
                 return new EdgeHeadLabel27EditPart(view);
-
-            case EdgeMidLabel7EditPart.VISUAL_ID:
-                return new EdgeMidLabel7EditPart(view);
 
             case EdgeTailLabel17EditPart.VISUAL_ID:
                 return new EdgeTailLabel17EditPart(view);
@@ -191,14 +191,14 @@ public class GraphsEditPartFactory implements EditPartFactory {
             case Edge8EditPart.VISUAL_ID:
                 return new Edge8EditPart(view);
 
+            case EdgeMidLabel8EditPart.VISUAL_ID:
+                return new EdgeMidLabel8EditPart(view);
+
             case EdgeHeadLabel18EditPart.VISUAL_ID:
                 return new EdgeHeadLabel18EditPart(view);
 
             case EdgeHeadLabel28EditPart.VISUAL_ID:
                 return new EdgeHeadLabel28EditPart(view);
-
-            case EdgeMidLabel8EditPart.VISUAL_ID:
-                return new EdgeMidLabel8EditPart(view);
 
             case EdgeTailLabel18EditPart.VISUAL_ID:
                 return new EdgeTailLabel18EditPart(view);

@@ -371,13 +371,13 @@ public class GraphsVisualIDRegistry {
             }
             break;
         case EdgeEditPart.VISUAL_ID:
+            if (EdgeMidLabelEditPart.VISUAL_ID == nodeVisualID) {
+                return true;
+            }
             if (EdgeHeadLabel1EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
             if (EdgeHeadLabel2EditPart.VISUAL_ID == nodeVisualID) {
-                return true;
-            }
-            if (EdgeMidLabelEditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
             if (EdgeTailLabel1EditPart.VISUAL_ID == nodeVisualID) {
@@ -388,13 +388,13 @@ public class GraphsVisualIDRegistry {
             }
             break;
         case Edge2EditPart.VISUAL_ID:
+            if (EdgeMidLabel2EditPart.VISUAL_ID == nodeVisualID) {
+                return true;
+            }
             if (EdgeHeadLabel12EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
             if (EdgeHeadLabel22EditPart.VISUAL_ID == nodeVisualID) {
-                return true;
-            }
-            if (EdgeMidLabel2EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
             if (EdgeTailLabel12EditPart.VISUAL_ID == nodeVisualID) {
@@ -405,13 +405,13 @@ public class GraphsVisualIDRegistry {
             }
             break;
         case Edge3EditPart.VISUAL_ID:
+            if (EdgeMidLabel3EditPart.VISUAL_ID == nodeVisualID) {
+                return true;
+            }
             if (EdgeHeadLabel13EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
             if (EdgeHeadLabel23EditPart.VISUAL_ID == nodeVisualID) {
-                return true;
-            }
-            if (EdgeMidLabel3EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
             if (EdgeTailLabel13EditPart.VISUAL_ID == nodeVisualID) {
@@ -422,13 +422,13 @@ public class GraphsVisualIDRegistry {
             }
             break;
         case Edge4EditPart.VISUAL_ID:
+            if (EdgeMidLabel4EditPart.VISUAL_ID == nodeVisualID) {
+                return true;
+            }
             if (EdgeHeadLabel14EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
             if (EdgeHeadLabel24EditPart.VISUAL_ID == nodeVisualID) {
-                return true;
-            }
-            if (EdgeMidLabel4EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
             if (EdgeTailLabel14EditPart.VISUAL_ID == nodeVisualID) {
@@ -439,13 +439,13 @@ public class GraphsVisualIDRegistry {
             }
             break;
         case Edge5EditPart.VISUAL_ID:
+            if (EdgeMidLabel5EditPart.VISUAL_ID == nodeVisualID) {
+                return true;
+            }
             if (EdgeHeadLabel15EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
             if (EdgeHeadLabel25EditPart.VISUAL_ID == nodeVisualID) {
-                return true;
-            }
-            if (EdgeMidLabel5EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
             if (EdgeTailLabel15EditPart.VISUAL_ID == nodeVisualID) {
@@ -456,13 +456,13 @@ public class GraphsVisualIDRegistry {
             }
             break;
         case Edge6EditPart.VISUAL_ID:
+            if (EdgeMidLabel6EditPart.VISUAL_ID == nodeVisualID) {
+                return true;
+            }
             if (EdgeHeadLabel16EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
             if (EdgeHeadLabel26EditPart.VISUAL_ID == nodeVisualID) {
-                return true;
-            }
-            if (EdgeMidLabel6EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
             if (EdgeTailLabel16EditPart.VISUAL_ID == nodeVisualID) {
@@ -473,13 +473,13 @@ public class GraphsVisualIDRegistry {
             }
             break;
         case Edge7EditPart.VISUAL_ID:
+            if (EdgeMidLabel7EditPart.VISUAL_ID == nodeVisualID) {
+                return true;
+            }
             if (EdgeHeadLabel17EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
             if (EdgeHeadLabel27EditPart.VISUAL_ID == nodeVisualID) {
-                return true;
-            }
-            if (EdgeMidLabel7EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
             if (EdgeTailLabel17EditPart.VISUAL_ID == nodeVisualID) {
@@ -490,13 +490,13 @@ public class GraphsVisualIDRegistry {
             }
             break;
         case Edge8EditPart.VISUAL_ID:
+            if (EdgeMidLabel8EditPart.VISUAL_ID == nodeVisualID) {
+                return true;
+            }
             if (EdgeHeadLabel18EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
             if (EdgeHeadLabel28EditPart.VISUAL_ID == nodeVisualID) {
-                return true;
-            }
-            if (EdgeMidLabel8EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
             if (EdgeTailLabel18EditPart.VISUAL_ID == nodeVisualID) {
