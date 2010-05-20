@@ -20,7 +20,7 @@ import org.eclipse.ui.views.properties.IPropertySheetEntry;
 import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
-import de.cau.cs.kieler.kiml.ui.layout.KimlUiUtil;
+import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
 /**
  * An action that sets the selected layout option as default for all instances of a

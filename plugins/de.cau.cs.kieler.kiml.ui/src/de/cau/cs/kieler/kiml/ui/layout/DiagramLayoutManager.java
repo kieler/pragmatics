@@ -54,6 +54,8 @@ public abstract class DiagramLayoutManager {
 
     /** list of registered diagram layout managers. */
     private static final List<DiagramLayoutManager> MANAGERS = new LinkedList<DiagramLayoutManager>();
+    /** the last used diagram layout manager. */
+    private static DiagramLayoutManager lastManager;
 
     /** the layouter engine used to layout diagrams. */
     private RecursiveLayouterEngine layouterEngine = new RecursiveLayouterEngine();
@@ -67,6 +69,15 @@ public abstract class DiagramLayoutManager {
     public static final synchronized void registerManager(
             final DiagramLayoutManager manager) {
         MANAGERS.add(manager);
+    }
+    
+    /**
+     * Returns the last used layout manager instance.
+     * 
+     * @return the last used instance
+     */
+    public static final DiagramLayoutManager getLastManager() {
+        return lastManager;
     }
 
     /**
@@ -242,6 +253,8 @@ public abstract class DiagramLayoutManager {
             final EditPart editPart, final boolean animate,
             final boolean progressBar, final boolean layoutAncestors,
             final boolean cacheLayout) {
+        // set the last used layout manager
+        lastManager = this;
         // perform layout with a progress bar
         if (progressBar) {
             final MonitoredOperation monitoredOperation = new MonitoredOperation() {
@@ -402,6 +415,14 @@ public abstract class DiagramLayoutManager {
                 + (int) (ANIM_FACT * Math.sqrt(graphSize));
         return time <= MAX_ANIMATION_TIME ? time : MAX_ANIMATION_TIME;
     }
+    
+    /**
+     * Returns the currently processed top level edit part.
+     * 
+     * @return the currently processed edit part
+     */
+    public abstract EditPart getCurrentEditPart();
+
 
     /**
      * Determines whether this layout manager is able to perform layout for the
@@ -471,5 +492,5 @@ public abstract class DiagramLayoutManager {
      * @return the last cached layout
      */
     protected abstract CachedLayout getCachedLayout();
-
+    
 }

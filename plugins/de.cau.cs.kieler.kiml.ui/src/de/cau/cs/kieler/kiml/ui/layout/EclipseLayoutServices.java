@@ -38,6 +38,7 @@ import de.cau.cs.kieler.kiml.layout.LayoutProviderData;
 import de.cau.cs.kieler.kiml.layout.LayoutServices;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.editors.IDiagramEditorConnector;
+import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
 /**
  * This class is responsible for reading all extension point elements for layout

@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.ui.layout;
+package de.cau.cs.kieler.kiml.ui.util;
 
 import java.util.LinkedHashMap;
 import java.util.ListIterator;
@@ -42,6 +42,7 @@ import de.cau.cs.kieler.kiml.layout.klayoutdata.KOption;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.options.PortConstraints;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyle;
 import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsPackage;
 

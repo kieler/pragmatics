@@ -60,6 +60,7 @@ import de.cau.cs.kieler.kiml.layout.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.options.PortConstraints;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
 /**
  * Diagram layout manager that is able to generically layout diagrams generated
@@ -103,6 +104,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected boolean supports(final IEditorPart editorPart) {
         return editorPart instanceof DiagramEditor;
     }
@@ -110,6 +112,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected boolean supports(final EditPart editPart) {
         return editPart instanceof IGraphicalEditPart;
     }
@@ -117,6 +120,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected KNode buildLayoutGraph(final IEditorPart editorPart, final EditPart editPart,
             final boolean layoutAncestors) {
         graphElem2EditPartMap.clear();
@@ -165,6 +169,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void transferLayout(final boolean cacheLayout) {
         // create a new request to change the layout
         ApplyLayoutRequest applyLayoutRequest = new ApplyLayoutRequest();
@@ -187,6 +192,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void applyLayout() {
         // get a command stack to execute the command
         CommandStack commandStack = null;
@@ -207,6 +213,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected KNode getLayoutGraph() {
         return layoutGraph;
     }
@@ -214,8 +221,17 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected CachedLayout getCachedLayout() {
         return cachedLayout;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public EditPart getCurrentEditPart() {
+        return layoutRootPart;
     }
 
     /**

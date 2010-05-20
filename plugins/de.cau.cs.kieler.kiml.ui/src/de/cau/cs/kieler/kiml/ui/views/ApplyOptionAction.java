@@ -28,10 +28,10 @@ import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
-import de.cau.cs.kieler.kiml.ui.layout.KimlUiUtil;
 import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyle;
 import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsFactory;
 import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsPackage;
+import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
 /**
  * An action that applies the selected layout option as default for the whole diagram.

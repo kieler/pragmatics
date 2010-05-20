@@ -61,7 +61,7 @@ import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.editors.IEditorChangeListener;
 import de.cau.cs.kieler.kiml.ui.editors.IDiagramEditorConnector;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
-import de.cau.cs.kieler.kiml.ui.layout.KimlUiUtil;
+import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
 /**
  * A view that displays layout options for selected objects.

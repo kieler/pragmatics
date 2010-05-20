@@ -20,7 +20,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 
 import de.cau.cs.kieler.kiml.ui.Messages;
-import de.cau.cs.kieler.kiml.ui.layout.KimlUiUtil;
+import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
 /**
  * An action that removes all layout options from the current diagram.
