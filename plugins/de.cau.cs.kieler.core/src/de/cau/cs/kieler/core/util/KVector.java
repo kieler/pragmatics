@@ -109,6 +109,19 @@ public class KVector extends Point {
     }
 
     /**
+     * Returns sum of two given vectors.
+     * 
+     * @param v1
+     *            first vector
+     * @param v2
+     *            snd vector
+     * @return new Vector first + snd
+     */
+    public static KVector add(final KVector v1, final KVector v2) {
+        return new KVector(v1.x + v2.x, v1.y + v2.y);
+    }
+
+    /**
      * Vector subtraction.
      * 
      * @param v
@@ -119,6 +132,19 @@ public class KVector extends Point {
         this.x -= v.x;
         this.y -= v.y;
         return this;
+    }
+
+    /**
+     * Returns the subtraction of the two given vectors.
+     * 
+     * @param v1
+     *            first vector
+     * @param v2
+     *            snd vector
+     * @return new Vector first - snd
+     */
+    public static KVector sub(final KVector v1, final KVector v2) {
+        return new KVector(v1.x - v2.x, v1.y - v2.y);
     }
 
     /**
@@ -263,6 +289,21 @@ public class KVector extends Point {
     }
 
     /**
+     * Returns the distance between two vectors.
+     * 
+     * @param v1
+     *            first vector
+     * @param v2
+     *            snd vector
+     * @return distance between first and snd
+     */
+    public static double distance(final KVector v1, final KVector v2) {
+        double dx = v1.x - v2.x;
+        double dy = v1.y - v2.y;
+        return Math.sqrt((dx * dx) + (dy * dy));
+    }
+
+    /**
      * Returns the dot product of the two given vectors.
      * 
      * @param v2
@@ -271,6 +312,19 @@ public class KVector extends Point {
      */
     public double productDot(final KVector v2) {
         return ((this.x * v2.x) + (this.y * v2.y));
+    }
+
+    /**
+     * Returns the dot product of the two given vectors.
+     * 
+     * @param v1
+     *            first vector
+     * @param v2
+     *            snd vector
+     * @return (this.x * this.x) + (v1.y * v2.y)
+     */
+    public static double productDot(final KVector v1, final KVector v2) {
+        return ((v1.x * v2.x) + (v1.y * v2.y));
     }
 
     /**
