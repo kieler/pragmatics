@@ -13,6 +13,9 @@
  */
 package de.cau.cs.kieler.kiml.ui.util;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Polyline;
@@ -59,6 +62,14 @@ public class DebugCanvas {
 
     }
 
+    /** the available drawing modes. */
+    public enum DrawingMode {
+        /** figures are drawn immediately. */
+        IMMEDIATE,
+        /** drawn figures are buffered. */
+        BUFFERED
+    }
+
     /** the layer that is drawn on. */
     private IFigure layer = null;
 
@@ -68,13 +79,26 @@ public class DebugCanvas {
     /** the y-Offset of this canvas. */
     private float yOffset = 0;
 
+    /** the custom x-Offset of this canvas. */
+    private float customXOffset = 0;
+
+    /** the custom y-Offset of this canvas. */
+    private float customYOffset = 0;
+
+    /** the selected drawing mode. */
+    private DrawingMode selectedDrawingMode = DrawingMode.IMMEDIATE;
+
+    private List<IFigure> figureBuffer = new LinkedList<IFigure>();
+
     /**
      * Constructs a debug canvas.
      * 
      * @param parentNode
      *            the parentNode this canvas is relative to
+     * @param drawingMode
+     *            the drawing mode
      */
-    public DebugCanvas(final KNode parentNode) {
+    public DebugCanvas(final KNode parentNode, final DrawingMode drawingMode) {
         DiagramEditPart editPart = KimlUiUtil
                 .getDiagramEditPart(DiagramLayoutManager.getLastManager()
                         .getCurrentEditPart());
@@ -91,6 +115,48 @@ public class DebugCanvas {
                 currentNode = currentNode.getParent();
             }
         }
+
+        selectedDrawingMode = drawingMode;
+    }
+
+    /**
+     * Sets a custom x-Offset for this canvas.
+     * 
+     * @param x
+     *            the x-Offset
+     */
+    public void setCustomXOffset(final float x) {
+        xOffset += x - customXOffset;
+        customXOffset = x;
+    }
+
+    /**
+     * Returns the custom x-Offset for this canvas.
+     * 
+     * @return the x-Offset
+     */
+    public float getCustomXOffset() {
+        return customXOffset;
+    }
+
+    /**
+     * Sets a custom y-Offset for this canvas.
+     * 
+     * @param y
+     *            the y-Offset
+     */
+    public void setCustomYOffset(final float y) {
+        yOffset += y - customYOffset;
+        customYOffset = y;
+    }
+
+    /**
+     * Returns the custom y-Offset for this canvas.
+     * 
+     * @return the y-Offset
+     */
+    public float getCustomYOffset() {
+        return customYOffset;
     }
 
     /**
@@ -141,18 +207,26 @@ public class DebugCanvas {
     public void drawFilledRectangle(final float x, final float y,
             final float w, final float h, final Color color) {
         if (layer != null) {
-            PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-                public void run() {
-                    Rectangle bounds = new Rectangle((int) (xOffset + x),
-                            (int) (yOffset + y), (int) w, (int) h);
-                    RectangleFigure rect = new RectangleFigure();
-                    rect.setForegroundColor(translateColor(color));
-                    rect.setBackgroundColor(translateColor(color));
-                    rect.setFill(true);
-                    rect.setBounds(bounds);
-                    layer.add(rect);
-                }
-            });
+            Rectangle bounds = new Rectangle((int) (xOffset + x),
+                    (int) (yOffset + y), (int) w, (int) h);
+            final RectangleFigure rect = new RectangleFigure();
+            rect.setForegroundColor(translateColor(color));
+            rect.setBackgroundColor(translateColor(color));
+            rect.setFill(true);
+            rect.setBounds(bounds);
+            switch(selectedDrawingMode) {
+            case IMMEDIATE:
+                PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+                    public void run() {
+                        layer.add(rect);
+                    }
+                });
+                break;
+            case BUFFERED:
+                figureBuffer.add(rect);
+                break;
+            default:
+            }
         }
     }
 
@@ -174,18 +248,25 @@ public class DebugCanvas {
     public void drawRectangle(final float x, final float y, final float w,
             final float h, final Color color) {
         if (layer != null) {
-            PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-                public void run() {
-                    Rectangle bounds = new Rectangle((int) (xOffset + x),
-                            (int) (yOffset + y), (int) w, (int) h);
-                    RectangleFigure rect = new RectangleFigure();
-                    rect.setForegroundColor(translateColor(color));
-                    rect.setBackgroundColor(translateColor(color));
-                    rect.setFill(false);
-                    rect.setBounds(bounds);
-                    layer.add(rect);
-                }
-            });
+            Rectangle bounds = new Rectangle((int) (xOffset + x),
+                    (int) (yOffset + y), (int) w, (int) h);
+            final RectangleFigure rect = new RectangleFigure();
+            rect.setForegroundColor(translateColor(color));
+            rect.setFill(false);
+            rect.setBounds(bounds);
+            switch(selectedDrawingMode) {
+            case IMMEDIATE:
+                PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+                    public void run() {
+                        layer.add(rect);
+                    }
+                });
+                break;
+            case BUFFERED:
+                figureBuffer.add(rect);
+                break;
+            default:
+            }
         }
     }
 
@@ -206,18 +287,26 @@ public class DebugCanvas {
     public void drawFilledEllipse(final float x, final float y, final float w,
             final float h, final Color color) {
         if (layer != null) {
-            PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-                public void run() {
-                    Rectangle bounds = new Rectangle((int) (xOffset + x),
-                            (int) (yOffset + y), (int) w, (int) h);
-                    Ellipse ellipse = new Ellipse();
-                    ellipse.setForegroundColor(translateColor(color));
-                    ellipse.setBackgroundColor(translateColor(color));
-                    ellipse.setFill(true);
-                    ellipse.setBounds(bounds);
-                    layer.add(ellipse);
-                }
-            });
+            Rectangle bounds = new Rectangle((int) (xOffset + x),
+                    (int) (yOffset + y), (int) w, (int) h);
+            final Ellipse ellipse = new Ellipse();
+            ellipse.setForegroundColor(translateColor(color));
+            ellipse.setBackgroundColor(translateColor(color));
+            ellipse.setFill(true);
+            ellipse.setBounds(bounds);
+            switch(selectedDrawingMode) {
+            case IMMEDIATE:
+                PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+                    public void run() {
+                        layer.add(ellipse);
+                    }
+                });
+                break;
+            case BUFFERED:
+                figureBuffer.add(ellipse);
+                break;
+            default:
+            }
         }
     }
 
@@ -238,18 +327,25 @@ public class DebugCanvas {
     public void drawEllipse(final float x, final float y, final float w,
             final float h, final Color color) {
         if (layer != null) {
-            PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-                public void run() {
-                    Rectangle bounds = new Rectangle((int) (xOffset + x),
-                            (int) (yOffset + y), (int) w, (int) h);
-                    Ellipse ellipse = new Ellipse();
-                    ellipse.setForegroundColor(translateColor(color));
-                    ellipse.setBackgroundColor(translateColor(color));
-                    ellipse.setFill(false);
-                    ellipse.setBounds(bounds);
-                    layer.add(ellipse);
-                }
-            });
+            Rectangle bounds = new Rectangle((int) (xOffset + x),
+                    (int) (yOffset + y), (int) w, (int) h);
+            final Ellipse ellipse = new Ellipse();
+            ellipse.setForegroundColor(translateColor(color));
+            ellipse.setFill(false);
+            ellipse.setBounds(bounds);
+            switch(selectedDrawingMode) {
+            case IMMEDIATE:
+                PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+                    public void run() {
+                        layer.add(ellipse);
+                    }
+                });
+                break;
+            case BUFFERED:
+                figureBuffer.add(ellipse);
+                break;
+            default:
+            }
         }
     }
 
@@ -268,18 +364,26 @@ public class DebugCanvas {
     public void drawFilledCircle(final float x, final float y, final float d,
             final Color color) {
         if (layer != null) {
-            PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-                public void run() {
-                    Rectangle bounds = new Rectangle((int) (xOffset + x),
-                            (int) (yOffset + y), (int) d, (int) d);
-                    Ellipse ellipse = new Ellipse();
-                    ellipse.setForegroundColor(translateColor(color));
-                    ellipse.setBackgroundColor(translateColor(color));
-                    ellipse.setFill(true);
-                    ellipse.setBounds(bounds);
-                    layer.add(ellipse);
-                }
-            });
+            Rectangle bounds = new Rectangle((int) (xOffset + x),
+                    (int) (yOffset + y), (int) d, (int) d);
+            final Ellipse ellipse = new Ellipse();
+            ellipse.setForegroundColor(translateColor(color));
+            ellipse.setBackgroundColor(translateColor(color));
+            ellipse.setFill(true);
+            ellipse.setBounds(bounds);
+            switch(selectedDrawingMode) {
+            case IMMEDIATE:
+                PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+                    public void run() {
+                        layer.add(ellipse);
+                    }
+                });
+                break;
+            case BUFFERED:
+                figureBuffer.add(ellipse);
+                break;
+            default:
+            }
         }
     }
 
@@ -298,18 +402,25 @@ public class DebugCanvas {
     public void drawCircle(final float x, final float y, final float d,
             final Color color) {
         if (layer != null) {
-            PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-                public void run() {
-                    Rectangle bounds = new Rectangle((int) (xOffset + x),
-                            (int) (yOffset + y), (int) d, (int) d);
-                    Ellipse ellipse = new Ellipse();
-                    ellipse.setForegroundColor(translateColor(color));
-                    ellipse.setBackgroundColor(translateColor(color));
-                    ellipse.setFill(false);
-                    ellipse.setBounds(bounds);
-                    layer.add(ellipse);
-                }
-            });
+            Rectangle bounds = new Rectangle((int) (xOffset + x),
+                    (int) (yOffset + y), (int) d, (int) d);
+            final Ellipse ellipse = new Ellipse();
+            ellipse.setForegroundColor(translateColor(color));
+            ellipse.setFill(false);
+            ellipse.setBounds(bounds);
+            switch(selectedDrawingMode) {
+            case IMMEDIATE:
+                PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+                    public void run() {
+                        layer.add(ellipse);
+                    }
+                });
+                break;
+            case BUFFERED:
+                figureBuffer.add(ellipse);
+                break;
+            default:
+            }
         }
     }
 
@@ -330,15 +441,24 @@ public class DebugCanvas {
     public void drawLine(final float x1, final float y1, final float x2,
             final float y2, final Color color) {
         if (layer != null) {
-            PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-                public void run() {
-                    Polyline line = new Polyline();
-                    line.addPoint(new Point(x1, y1));
-                    line.addPoint(new Point(x2, y2));
-                    line.setForegroundColor(translateColor(color));
-                    layer.add(line);
-                }
-            });
+            final Polyline line = new Polyline();
+            line.addPoint(new Point(x1, y1));
+            line.addPoint(new Point(x2, y2));
+            line.setForegroundColor(translateColor(color));
+            switch(selectedDrawingMode) {
+            case IMMEDIATE:
+                PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+                    public void run() {
+                        layer.add(line);
+                    }
+                });
+                break;
+            case BUFFERED:
+                figureBuffer.add(line);
+                break;
+            default:
+            }
+
         }
     }
 
@@ -354,38 +474,52 @@ public class DebugCanvas {
      * @param color
      *            the color
      */
-    //TODO make this working
-    /*public void drawString(final String string, final float x, final float y,
-            final Color color) {
-        if (layer != null) {
-            PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-                public void run() {
-                    Label label = new Label();
-                    label.setText(string);
-                    Rectangle rect = new Rectangle((int) (xOffset + x),
-                            (int) (yOffset + y), 100, 50);
-                    label.setBounds(rect);
-                    label.setForegroundColor(translateColor(color));
-                    layer.add(label);
-                }
-            });
-        }
-    }*/
+    // TODO make this working
+    /*
+     * public void drawString(final String string, final float x, final float y,
+     * final Color color) { if (layer != null) {
+     * PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() { public
+     * void run() { Label label = new Label(); label.setText(string); Rectangle
+     * rect = new Rectangle((int) (xOffset + x), (int) (yOffset + y), 100, 50);
+     * label.setBounds(rect); label.setForegroundColor(translateColor(color));
+     * layer.add(label); } }); } }
+     */
 
     /**
-     * Clears the canvas.
+     * Clears the canvas and the figure buffer.
      */
     public void clear() {
         if (layer != null) {
             PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                 public void run() {
-                    while (layer.getChildren().size() > 0) {
-                        Object obj = layer.getChildren().get(0);
+                    int i = 0;
+                    while (layer.getChildren().size() > i) {
+                        Object obj = layer.getChildren().get(i);
                         if (obj instanceof IFigure) {
                             IFigure figure = (IFigure) obj;
                             layer.remove(figure);
+                        } else {
+                            ++i;
                         }
                     }
+                }
+            });
+            
+            figureBuffer.clear();
+        }
+    }
+
+    /**
+     * Draws the buffered figures and clears the buffer.
+     */
+    public void drawBuffer() {
+        if (layer != null) {
+            PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+                public void run() {
+                    for (IFigure figure : figureBuffer) {
+                        layer.add(figure);
+                    }
+                    figureBuffer.clear();
                 }
             });
         }
