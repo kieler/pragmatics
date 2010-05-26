@@ -365,4 +365,26 @@ public class KVector extends Point {
         return new KVector(this.x, this.y);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj instanceof KVector) {
+            KVector v = (KVector) obj;
+            if (v.x == this.x && v.y == this.y) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return Double.valueOf(x).hashCode() + Double.valueOf(y).hashCode();
+    }
+
 }
