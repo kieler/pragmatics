@@ -166,8 +166,9 @@ public class KVector extends Point {
      * @return <code>this</code>
      */
     public KVector normalize() {
-        this.x = this.x / getLength();
-        this.y = this.y / getLength();
+        double length = this.getLength();
+        this.x = this.x / length;
+        this.y = this.y / length;
         return this;
     }
 
