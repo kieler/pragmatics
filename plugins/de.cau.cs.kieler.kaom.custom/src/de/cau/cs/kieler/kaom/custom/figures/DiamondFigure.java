@@ -32,7 +32,7 @@ public class DiamondFigure extends Shape {
      * @param graphics the graphics object
      */
     @Override
-    protected void fillShape(final Graphics graphics) {
+    protected final void fillShape(final Graphics graphics) {
         graphics.fillPolygon(getDiamond(this.getBounds()));
     }
 
@@ -42,7 +42,7 @@ public class DiamondFigure extends Shape {
      * @param graphics the graphics object
      */
     @Override
-    protected void outlineShape(final Graphics graphics) {
+    protected final void outlineShape(final Graphics graphics) {
         graphics.drawPolygon(getDiamond(this.getBounds()));
     }
 
@@ -52,7 +52,7 @@ public class DiamondFigure extends Shape {
      * @param bounds the rectangular bounds of the resulting diamond
      * @return the points of the diamond
      */
-    protected PointList getDiamond(final Rectangle bounds) {
+    protected final PointList getDiamond(final Rectangle bounds) {
         PointList points = new PointList();
         points.addPoint(bounds.x + bounds.width / 2, bounds.y);
         points.addPoint(bounds.x + bounds.width, bounds.y + bounds.height / 2);
