@@ -1,0 +1,32 @@
+modeltype GMFGEN uses gmfgen('http://www.eclipse.org/gmf/2009/GenModel');
+
+transformation KAOMCustomization(inout gmfgen:GMFGEN);
+
+main() {
+	var model := gmfgen.rootObjects()![GenEditorGenerator];
+	
+	// we want to use custom codegen templates which are required for
+	// certain special features
+	//model.dynamicTemplates :=true;
+	//model.templateDirectory := "de.cau.cs.kieler.kaom/gmf-templates";
+	//model.sameFileForDiagramAndModel := false;
+	
+	model.domainFileExtension := "kaom"; // kieler actor oriented model
+	model.diagramFileExtension := "kaod"; // kieler actor oriented modeling diagram
+	
+	// some general plugin settings	
+	model.plugin.requiredPlugins += "de.cau.cs.kieler.kaom.custom";
+	model.plugin.version := "0.1.0.qualifier";
+	model.plugin.provider := "Christian-Albrechts-Universität zu Kiel";
+	model.plugin.name := "KIELER Actor Oriented Modeling Editor";
+	model.plugin.printingEnabled := true;
+	
+	// enable model validation
+	//model.diagram.liveValidationUIFeedback := true;
+	//model.diagram.validationDecorators := true;
+	//model.diagram.validationEnabled := true;
+	
+	// use our own category for the "new" wizard
+	model.diagram.creationWizardCategoryID := "de.cau.cs.kieler";
+}
+

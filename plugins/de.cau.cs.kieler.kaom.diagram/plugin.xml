@@ -1,0 +1,558 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+   <extension point="org.eclipse.team.core.fileTypes" id="repo-ftype">
+      <?gmfgen generated="true"?>
+      <fileTypes type="text" extension="kaod"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.extension_parser" id="resource-factory">
+      <?gmfgen generated="true"?>
+      <parser
+         type="kaod"
+         class="org.eclipse.gmf.runtime.emf.core.resources.GMFResourceFactory">
+      </parser>
+   </extension>
+
+   <extension point="org.eclipse.ui.editors" id="gmf-editor">
+      <?gmfgen generated="true"?>
+      <editor
+         id="de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorID"
+         name="%editorName"
+         icon="icons/obj16/KaomDiagramFile.gif"
+         extensions="kaod"
+         default="true"
+         class="de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditor"
+         matchingStrategy="de.cau.cs.kieler.kaom.diagram.part.KaomMatchingStrategy"
+         contributorClass="de.cau.cs.kieler.kaom.diagram.part.KaomDiagramActionBarContributor">
+      </editor>
+   </extension>
+   
+   <extension point="org.eclipse.ui.contexts" id="ui-context">
+      <?gmfgen generated="true"?>
+      <context
+         description="%context.description"
+         id="de.cau.cs.kieler.kaom.diagram.ui.diagramContext"
+         name="%context.name"
+         parentId="org.eclipse.gmf.runtime.diagram.ui.diagramContext">
+      </context>
+   </extension>
+
+   <extension point="org.eclipse.ui.newWizards" id="creation-wizard">
+      <?gmfgen generated="true"?>
+  	  <wizard
+  	     name="%newWizardName"
+  	     icon="icons/obj16/KaomDiagramFile.gif"
+  	     category="de.cau.cs.kieler"
+  	     class="de.cau.cs.kieler.kaom.diagram.part.KaomCreationWizard"
+  	     id="de.cau.cs.kieler.kaom.diagram.part.KaomCreationWizardID">
+  	  	 <description>%newWizardDesc</description>  
+      </wizard>
+   </extension>
+
+   <extension point="org.eclipse.ui.popupMenus" id="init-diagram-action">
+      <?gmfgen generated="true"?>
+      <objectContribution
+            id="de.cau.cs.kieler.kaom.diagram.InitDiagram"
+            nameFilter="*.kaom"
+            objectClass="org.eclipse.core.resources.IFile">
+         <action
+               label="%initDiagramActionLabel"
+               class="de.cau.cs.kieler.kaom.diagram.part.KaomInitDiagramFileAction"
+               menubarPath="additions"
+               enablesFor="1"
+               id="de.cau.cs.kieler.kaom.diagram.InitDiagramAction">
+         </action>
+      </objectContribution>
+   </extension>
+	
+   <extension point="org.eclipse.gmf.runtime.common.ui.services.action.globalActionHandlerProviders" id="global-actions">
+      <?gmfgen generated="true"?>
+      <GlobalActionHandlerProvider
+         class="org.eclipse.gmf.runtime.diagram.ui.providers.DiagramGlobalActionHandlerProvider"
+         id="KaomPresentation">
+         <Priority name="Lowest"/>
+         <ViewId id="de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorID">
+            <ElementType class="org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart">
+               <GlobalActionId actionId="delete"/>
+            </ElementType>
+            <ElementType class="org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart">
+               <GlobalActionId actionId="save"/>
+            </ElementType>
+         </ViewId>
+      </GlobalActionHandlerProvider>
+      <GlobalActionHandlerProvider
+         class="org.eclipse.gmf.runtime.diagram.ui.printing.render.providers.DiagramWithPrintGlobalActionHandlerProvider"
+         id="KaomPresentationPrint">
+         <Priority name="Lowest"/>
+         <ViewId id="de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorID">
+            <ElementType class="org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart">
+               <GlobalActionId actionId="print"/>
+            </ElementType>
+         </ViewId>
+      </GlobalActionHandlerProvider>
+      <GlobalActionHandlerProvider
+         class="org.eclipse.gmf.runtime.diagram.ui.providers.ide.providers.DiagramIDEGlobalActionHandlerProvider"
+         id="KaomPresentationIDE">
+         <Priority name="Lowest"/>
+         <ViewId id="de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorID">
+            <ElementType class="org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart">
+               <GlobalActionId actionId="bookmark"/>
+            </ElementType>
+         </ViewId>
+      </GlobalActionHandlerProvider>
+      <GlobalActionHandlerProvider
+            class="org.eclipse.gmf.runtime.diagram.ui.render.providers.DiagramUIRenderGlobalActionHandlerProvider"
+            id="KaomRender">
+         <Priority name="Lowest"/>
+         <ViewId id="de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorID">
+            <ElementType class="org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart">
+               <GlobalActionId actionId="cut"/>
+               <GlobalActionId actionId="copy"/>
+               <GlobalActionId actionId="paste"/>
+            </ElementType>
+         </ViewId>
+      </GlobalActionHandlerProvider>
+   </extension>
+
+
+   <extension point="org.eclipse.core.runtime.preferences" id="prefs">
+      <?gmfgen generated="true"?>
+      <initializer class="de.cau.cs.kieler.kaom.diagram.preferences.DiagramPreferenceInitializer"/>
+   </extension>
+
+   <extension point="org.eclipse.ui.preferencePages" id="prefpages">
+      <?gmfgen generated="true"?>
+      <page
+            id="de.cau.cs.kieler.kaom.diagram.general"
+            name="%prefpage.de.cau.cs.kieler.kaom.diagram.general"
+            class="de.cau.cs.kieler.kaom.diagram.preferences.DiagramGeneralPreferencePage">
+      </page>
+      <page
+            id="de.cau.cs.kieler.kaom.diagram.appearance"
+            name="%prefpage.de.cau.cs.kieler.kaom.diagram.appearance"
+            category="de.cau.cs.kieler.kaom.diagram.general"
+            class="de.cau.cs.kieler.kaom.diagram.preferences.DiagramAppearancePreferencePage">
+      </page>
+      <page
+            id="de.cau.cs.kieler.kaom.diagram.connections"
+            name="%prefpage.de.cau.cs.kieler.kaom.diagram.connections"
+            category="de.cau.cs.kieler.kaom.diagram.general"
+            class="de.cau.cs.kieler.kaom.diagram.preferences.DiagramConnectionsPreferencePage">
+      </page>
+      <page
+            id="de.cau.cs.kieler.kaom.diagram.printing"
+            name="%prefpage.de.cau.cs.kieler.kaom.diagram.printing"
+            category="de.cau.cs.kieler.kaom.diagram.general"
+            class="de.cau.cs.kieler.kaom.diagram.preferences.DiagramPrintingPreferencePage">
+      </page>
+      <page
+            id="de.cau.cs.kieler.kaom.diagram.rulersAndGrid"
+            name="%prefpage.de.cau.cs.kieler.kaom.diagram.rulersAndGrid"
+            category="de.cau.cs.kieler.kaom.diagram.general"
+            class="de.cau.cs.kieler.kaom.diagram.preferences.DiagramRulersAndGridPreferencePage">
+      </page>
+   </extension>
+
+   <extension point="org.eclipse.ui.views.properties.tabbed.propertyContributor" id="prop-contrib">
+      <?gmfgen generated="true"?>
+      <propertyContributor
+            contributorId="de.cau.cs.kieler.kaom.diagram"
+            labelProvider="de.cau.cs.kieler.kaom.diagram.sheet.KaomSheetLabelProvider">
+         <propertyCategory category="domain"/>
+         <propertyCategory category="visual"/>
+         <propertyCategory category="extra"/>
+      </propertyContributor>
+   </extension>
+
+   <extension point="org.eclipse.ui.views.properties.tabbed.propertyTabs" id="proptabs">
+      <?gmfgen generated="true"?>   
+      <propertyTabs contributorId="de.cau.cs.kieler.kaom.diagram">
+         <propertyTab
+             category="visual"
+             id="property.tab.AppearancePropertySection"
+             label="%tab.appearance"/>
+          <propertyTab
+             category="visual"
+             id="property.tab.DiagramPropertySection"
+             label="%tab.diagram"/>
+          <propertyTab
+             category="domain"
+             id="property.tab.domain"
+             label="%tab.domain"/>
+      </propertyTabs>
+   </extension>
+
+   <extension point="org.eclipse.ui.views.properties.tabbed.propertySections" id="propsections">
+      <?gmfgen generated="true"?>   
+      <propertySections contributorId="de.cau.cs.kieler.kaom.diagram">
+         <propertySection id="property.section.ConnectorAppearancePropertySection" 
+            filter="org.eclipse.gmf.runtime.diagram.ui.properties.filters.ConnectionEditPartPropertySectionFilter" 
+            class="org.eclipse.gmf.runtime.diagram.ui.properties.sections.appearance.ConnectionAppearancePropertySection" 
+            tab="property.tab.AppearancePropertySection">
+         </propertySection>
+         <propertySection id="property.section.ShapeColorAndFontPropertySection" 
+            filter="org.eclipse.gmf.runtime.diagram.ui.properties.filters.ShapeEditPartPropertySectionFilter" 
+            class="org.eclipse.gmf.runtime.diagram.ui.properties.sections.appearance.ShapeColorsAndFontsPropertySection" 
+            tab="property.tab.AppearancePropertySection">
+         </propertySection> 
+         <propertySection id="property.section.DiagramColorsAndFontsPropertySection" 
+            filter="org.eclipse.gmf.runtime.diagram.ui.properties.filters.DiagramEditPartPropertySectionFilter" 
+            class="org.eclipse.gmf.runtime.diagram.ui.properties.sections.appearance.DiagramColorsAndFontsPropertySection" 
+            tab="property.tab.AppearancePropertySection">
+         </propertySection>     
+         <propertySection id="property.section.RulerGridPropertySection" 
+            filter="org.eclipse.gmf.runtime.diagram.ui.properties.filters.DiagramEditPartPropertySectionFilter" 
+            class="org.eclipse.gmf.runtime.diagram.ui.properties.sections.grid.RulerGridPropertySection" 
+            tab="property.tab.DiagramPropertySection">
+         </propertySection>     
+         <propertySection
+            id="property.section.domain" 
+            tab="property.tab.domain"
+            class="de.cau.cs.kieler.kaom.diagram.sheet.KaomPropertySection">
+            <input type="org.eclipse.gmf.runtime.notation.View"/>
+            <input type="org.eclipse.gef.EditPart"/>
+            <input type="de.cau.cs.kieler.kaom.diagram.navigator.KaomAbstractNavigatorItem"/>
+         </propertySection>
+      </propertySections>
+   </extension>
+
+   <extension point="org.eclipse.gmf.runtime.diagram.core.viewProviders" id="view-provider">
+      <?gmfgen generated="true"?>
+      <viewProvider class="de.cau.cs.kieler.kaom.diagram.providers.KaomViewProvider">
+         <Priority name="Lowest"/>
+         <context viewClass="org.eclipse.gmf.runtime.notation.Diagram" semanticHints="Kaom"/>
+         <context viewClass="org.eclipse.gmf.runtime.notation.Node" semanticHints="2001,2002,2003,3001,3002,3003,3004"/>
+         <context viewClass="org.eclipse.gmf.runtime.notation.Edge" semanticHints="4001"/>
+      </viewProvider>
+   </extension>
+
+   <extension point="org.eclipse.gmf.runtime.diagram.ui.editpartProviders" id="ep-provider">
+      <?gmfgen generated="true"?>
+      <editpartProvider class="de.cau.cs.kieler.kaom.diagram.providers.KaomEditPartProvider">
+         <Priority name="Lowest"/>
+         <object class="org.eclipse.gmf.runtime.notation.Diagram" id="generated-diagram">
+            <method name="getType()" value="Kaom"/>
+         </object>
+         <object class="org.eclipse.gmf.runtime.notation.Node" id="generated-nodes">
+            <method name="getType()" value="2001,2002,2003,3001,3002,3003,3004"/>
+         </object>
+         <object class="org.eclipse.gmf.runtime.notation.Edge" id="generated-links">
+            <method name="getType()" value="4001"/>
+         </object>
+         <object class="org.eclipse.gmf.runtime.notation.Node" id="generated-labels">
+            <method name="getType()" value="5005,5006,5007,5001,5004,5003,5002"/>
+         </object>
+         <object class="org.eclipse.gmf.runtime.notation.Node" id="generated-compartments">
+            <method name="getType()" value="7001,7002,7003,7004"/>
+         </object>
+         <context views="generated-diagram,generated-nodes,generated-links,generated-labels,generated-compartments"/>
+      </editpartProvider>
+   </extension>
+
+   <extension point="org.eclipse.gmf.runtime.emf.ui.modelingAssistantProviders" id="modelassist-provider">
+      <?gmfgen generated="true"?>
+      <modelingAssistantProvider class="de.cau.cs.kieler.kaom.diagram.providers.KaomModelingAssistantProvider">
+         <Priority name="Lowest"/>
+         <object class="de.cau.cs.kieler.kaom.diagram.edit.parts.StateEditPart" id="State_1000"/>
+         <object class="de.cau.cs.kieler.kaom.diagram.edit.parts.ActorEditPart" id="Actor_2001"/>
+         <object class="de.cau.cs.kieler.kaom.diagram.edit.parts.State2EditPart" id="State_2002"/>
+         <object class="de.cau.cs.kieler.kaom.diagram.edit.parts.RelationEditPart" id="Relation_2003"/>
+         <context elements="State_1000,Actor_2001,State_2002,Relation_2003"/>
+      </modelingAssistantProvider>
+   </extension>
+
+   <extension point="org.eclipse.gmf.runtime.common.ui.services.iconProviders" id="icon-provider">
+      <?gmfgen generated="true"?>
+      <IconProvider class="de.cau.cs.kieler.kaom.diagram.providers.KaomIconProvider">
+         <Priority name="Low"/>
+      </IconProvider>
+   </extension>
+
+   <extension point="org.eclipse.gmf.runtime.common.ui.services.parserProviders" id="parser-provider">
+      <?gmfgen generated="true"?>
+      <ParserProvider class="de.cau.cs.kieler.kaom.diagram.providers.KaomParserProvider">
+         <Priority name="Lowest"/>
+      </ParserProvider>
+   </extension>
+
+   <extension point="org.eclipse.gmf.runtime.emf.type.core.elementTypes" id="element-types">
+      <?gmfgen generated="true"?>
+      <metamodel nsURI="http://kieler.cs.cau.de/KAOM">
+         <metamodelType
+               id="de.cau.cs.kieler.kaom.diagram.State_1000"
+               name="%metatype.name.State_1000"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
+               eclass="State"
+               edithelper="de.cau.cs.kieler.kaom.diagram.edit.helpers.StateEditHelper">
+            <param name="semanticHint" value="1000"/>
+         </metamodelType>
+      </metamodel>
+      <metamodel nsURI="http://kieler.cs.cau.de/KAOM">
+         <metamodelType
+               id="de.cau.cs.kieler.kaom.diagram.Actor_2001"
+               name="%metatype.name.Actor_2001"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
+               eclass="Actor"
+               edithelper="de.cau.cs.kieler.kaom.diagram.edit.helpers.ActorEditHelper">
+            <param name="semanticHint" value="2001"/>
+         </metamodelType>
+      </metamodel>
+      <metamodel nsURI="http://kieler.cs.cau.de/KAOM">
+         <specializationType
+               id="de.cau.cs.kieler.kaom.diagram.State_2002"
+               name="%metatype.name.State_2002"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType">
+            <specializes id="de.cau.cs.kieler.kaom.diagram.State_1000"/>
+            <param name="semanticHint" value="2002"/>
+         </specializationType>
+      </metamodel>
+      <metamodel nsURI="http://kieler.cs.cau.de/KAOM">
+         <specializationType
+               id="de.cau.cs.kieler.kaom.diagram.Relation_2003"
+               name="%metatype.name.Relation_2003"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType">
+            <specializes id="de.cau.cs.kieler.kaom.diagram.Relation_3004"/>
+            <param name="semanticHint" value="2003"/>
+         </specializationType>
+      </metamodel>
+      <metamodel nsURI="http://kieler.cs.cau.de/KAOM">
+         <metamodelType
+               id="de.cau.cs.kieler.kaom.diagram.Port_3001"
+               name="%metatype.name.Port_3001"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
+               eclass="Port"
+               edithelper="de.cau.cs.kieler.kaom.diagram.edit.helpers.PortEditHelper">
+            <param name="semanticHint" value="3001"/>
+         </metamodelType>
+      </metamodel>
+      <metamodel nsURI="http://kieler.cs.cau.de/KAOM">
+         <specializationType
+               id="de.cau.cs.kieler.kaom.diagram.Actor_3002"
+               name="%metatype.name.Actor_3002"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType">
+            <specializes id="de.cau.cs.kieler.kaom.diagram.Actor_2001"/>
+            <param name="semanticHint" value="3002"/>
+         </specializationType>
+      </metamodel>
+      <metamodel nsURI="http://kieler.cs.cau.de/KAOM">
+         <specializationType
+               id="de.cau.cs.kieler.kaom.diagram.State_3003"
+               name="%metatype.name.State_3003"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType">
+            <specializes id="de.cau.cs.kieler.kaom.diagram.State_1000"/>
+            <param name="semanticHint" value="3003"/>
+         </specializationType>
+      </metamodel>
+      <metamodel nsURI="http://kieler.cs.cau.de/KAOM">
+         <metamodelType
+               id="de.cau.cs.kieler.kaom.diagram.Relation_3004"
+               name="%metatype.name.Relation_3004"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
+               eclass="Relation"
+               edithelper="de.cau.cs.kieler.kaom.diagram.edit.helpers.RelationEditHelper">
+            <param name="semanticHint" value="3004"/>
+         </metamodelType>
+      </metamodel>
+      <metamodel nsURI="http://kieler.cs.cau.de/KAOM">
+         <metamodelType
+               id="de.cau.cs.kieler.kaom.diagram.Link_4001"
+               name="%metatype.name.Link_4001"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
+               eclass="Link"
+               edithelper="de.cau.cs.kieler.kaom.diagram.edit.helpers.LinkEditHelper">
+            <param name="semanticHint" value="4001"/>
+         </metamodelType>
+      </metamodel>
+   </extension>
+
+   <extension point="org.eclipse.gmf.runtime.emf.type.core.elementTypeBindings" id="element-types-bindings">
+      <?gmfgen generated="true"?>
+      <clientContext id="de.cau.cs.kieler.kaom.diagram.TypeContext">
+         <enablement>
+            <test
+               property="org.eclipse.gmf.runtime.emf.core.editingDomain"
+               value="de.cau.cs.kieler.kaom.diagram.EditingDomain"/>
+         </enablement>
+      </clientContext> 
+      <binding context="de.cau.cs.kieler.kaom.diagram.TypeContext">
+         <elementType ref="de.cau.cs.kieler.kaom.diagram.State_1000"/>
+         <elementType ref="de.cau.cs.kieler.kaom.diagram.Actor_2001"/>
+         <elementType ref="de.cau.cs.kieler.kaom.diagram.State_2002"/>
+         <elementType ref="de.cau.cs.kieler.kaom.diagram.Relation_2003"/>
+         <elementType ref="de.cau.cs.kieler.kaom.diagram.Port_3001"/>
+         <elementType ref="de.cau.cs.kieler.kaom.diagram.Actor_3002"/>
+         <elementType ref="de.cau.cs.kieler.kaom.diagram.State_3003"/>
+         <elementType ref="de.cau.cs.kieler.kaom.diagram.Relation_3004"/>
+         <elementType ref="de.cau.cs.kieler.kaom.diagram.Link_4001"/>
+         <advice ref="org.eclipse.gmf.runtime.diagram.core.advice.notationDepdendents"/>
+      </binding>
+   </extension>
+	   <extension point="org.eclipse.core.expressions.propertyTesters" id="navigator-proptest.isURIEditorInput">
+      <?gmfgen generated="true"?>
+       <propertyTester
+           id="de.cau.cs.kieler.kaom.diagram.URIEditorInputPropertyTester"
+           type="org.eclipse.emf.common.ui.URIEditorInput"
+           namespace="de.cau.cs.kieler.kaom.diagram"
+           properties="isURIEditorInput"
+           class="de.cau.cs.kieler.kaom.diagram.part.KaomUriEditorInputTester">
+       </propertyTester>
+   </extension>
+
+	   <extension point="org.eclipse.ui.navigator.viewer" id="navigator-viewbinding">
+      <?gmfgen generated="true"?>
+      <viewerContentBinding viewerId="org.eclipse.ui.navigator.ProjectExplorer">
+         <includes>
+            <contentExtension pattern="de.cau.cs.kieler.kaom.diagram.resourceContent"/>
+			<contentExtension pattern="de.cau.cs.kieler.kaom.diagram.domainResourceContent"/>
+            <contentExtension pattern="de.cau.cs.kieler.kaom.diagram.navigatorLinkHelper"/>
+         </includes>
+      </viewerContentBinding>
+      <viewerActionBinding viewerId="org.eclipse.ui.navigator.ProjectExplorer">
+         <includes>
+            <actionExtension pattern="de.cau.cs.kieler.kaom.diagram.navigatorActionProvider"/>
+         </includes>
+      </viewerActionBinding>
+   </extension>
+
+   <extension point="org.eclipse.ui.navigator.navigatorContent" id="navigator-content">
+      <?gmfgen generated="true"?>
+      <navigatorContent
+            id="de.cau.cs.kieler.kaom.diagram.resourceContent" 
+            name="%navigatorContentName" 
+            priority="normal" 
+            contentProvider="de.cau.cs.kieler.kaom.diagram.navigator.KaomNavigatorContentProvider" 
+            labelProvider="de.cau.cs.kieler.kaom.diagram.navigator.KaomNavigatorLabelProvider"
+            icon="icons/obj16/KaomDiagramFile.gif"
+            activeByDefault="true">
+         <triggerPoints>
+            <or>
+	           <and>
+    	          <instanceof value="org.eclipse.core.resources.IFile"/>
+        	      <test property="org.eclipse.core.resources.extension" value="kaod"/>
+               </and>
+               <instanceof value="de.cau.cs.kieler.kaom.diagram.navigator.KaomAbstractNavigatorItem"/>
+            </or>
+         </triggerPoints>
+         <possibleChildren>
+            <or>
+         	   <instanceof value="de.cau.cs.kieler.kaom.diagram.navigator.KaomAbstractNavigatorItem"/>
+            </or>
+         </possibleChildren>
+         <commonSorter 
+               id="de.cau.cs.kieler.kaom.diagram.navigatorSorter" 
+               class="de.cau.cs.kieler.kaom.diagram.navigator.KaomNavigatorSorter">
+            <parentExpression>
+               <or>
+	              <and>
+    	             <instanceof value="org.eclipse.core.resources.IFile"/>
+        	         <test property="org.eclipse.core.resources.extension" value="kaod"/>
+                  </and>
+                  <instanceof value="de.cau.cs.kieler.kaom.diagram.navigator.KaomAbstractNavigatorItem"/>
+               </or>
+            </parentExpression>
+         </commonSorter>
+      </navigatorContent>
+      <navigatorContent
+            id="de.cau.cs.kieler.kaom.diagram.domainResourceContent" 
+            name="%domainNavigatorContentName" 
+            priority="normal" 
+            contentProvider="de.cau.cs.kieler.kaom.diagram.navigator.KaomDomainNavigatorContentProvider" 
+            labelProvider="de.cau.cs.kieler.kaom.diagram.navigator.KaomDomainNavigatorLabelProvider"
+            icon="icons/obj16/KaomDiagramFile.gif"
+            activeByDefault="true">
+         <triggerPoints>
+            <or>
+	           <and>
+    	          <instanceof value="org.eclipse.core.resources.IFile"/>
+        	      <test property="org.eclipse.core.resources.extension" value="kaom"/>
+               </and>
+               <instanceof value="de.cau.cs.kieler.kaom.diagram.navigator.KaomDomainNavigatorItem"/>
+            </or>
+         </triggerPoints>
+         <possibleChildren>
+            <instanceof value="de.cau.cs.kieler.kaom.diagram.navigator.KaomDomainNavigatorItem"/>
+         </possibleChildren>
+      </navigatorContent>
+      <actionProvider
+            id="de.cau.cs.kieler.kaom.diagram.navigatorActionProvider"
+            class="de.cau.cs.kieler.kaom.diagram.navigator.KaomNavigatorActionProvider">
+         <enablement>
+            <or>
+               <instanceof value="de.cau.cs.kieler.kaom.diagram.navigator.KaomAbstractNavigatorItem"/>
+            </or>
+         </enablement>
+      </actionProvider>
+   </extension>
+   
+	   <extension point="org.eclipse.ui.navigator.linkHelper" id="navigator-linkhelper">
+      <?gmfgen generated="true"?>
+      <linkHelper
+            id="de.cau.cs.kieler.kaom.diagram.navigatorLinkHelper"
+            class="de.cau.cs.kieler.kaom.diagram.navigator.KaomNavigatorLinkHelper">
+         <editorInputEnablement>
+            <and>
+               <instanceof value="org.eclipse.emf.common.ui.URIEditorInput"/>
+               <test property="de.cau.cs.kieler.kaom.diagram.isURIEditorInput"/>
+            </and>
+         </editorInputEnablement>
+         <selectionEnablement>
+            <instanceof value="de.cau.cs.kieler.kaom.diagram.navigator.KaomAbstractNavigatorItem"/>
+         </selectionEnablement>
+      </linkHelper>
+   </extension>
+   <extension point="org.eclipse.ui.commands" id="update-cmd">
+      <?gmfgen generated="true"?>
+      <command
+         categoryId="org.eclipse.ui.category.edit"
+         defaultHandler="de.cau.cs.kieler.kaom.diagram.part.KaomDiagramUpdateCommand"
+         description="%update.diagram.description"
+         id="de.cau.cs.kieler.kaom.diagram.updateDiagram"
+         name="%update.diagram.name"/>
+   </extension>
+   
+   <extension point="org.eclipse.ui.bindings" id="update-cmd-binding">
+      <?gmfgen generated="true"?>
+      <key 
+         commandId="de.cau.cs.kieler.kaom.diagram.updateDiagram"
+         contextId="de.cau.cs.kieler.kaom.diagram.ui.diagramContext"
+         schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+         sequence="F5"/>
+   </extension>
+
+   <extension point="org.eclipse.ui.menus" id="context-menus">
+      <?gmfgen generated="true"?>
+      <!-- menuContribution locationURI="menu:org.eclipse.ui.main.menu?after=">
+      </menuContribution>
+      <menuContribution locationURI="toolbar:org.eclipse.ui.main.toolbar?after=">
+      </menuContribution -->
+      <menuContribution locationURI="popup:org.eclipse.gmf.runtime.diagram.ui.DiagramEditorContextMenu">
+         <command commandId="de.cau.cs.kieler.kaom.diagram.LoadResourceAction">
+            <visibleWhen>
+               <and>
+                  <with variable="activePartId"><equals value="de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorID"/></with>
+                  <with variable="selection"><iterate ifEmpty="false"> 
+                     <instanceof value="de.cau.cs.kieler.kaom.diagram.edit.parts.StateEditPart"/>
+                  </iterate></with>
+               </and>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+
+   <extension point="org.eclipse.ui.commands" id="menu-commands">
+      <?gmfgen generated="true"?>
+      <category id="de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorID" name="%cmdcategory.name" description="%cmdcategory.desc"/>
+      <command id="de.cau.cs.kieler.kaom.diagram.LoadResourceAction"
+         name="Load Resource"
+         categoryId="de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorID"
+         defaultHandler="de.cau.cs.kieler.kaom.diagram.part.LoadResourceAction"/>
+   </extension>
+
+   <extension point="org.eclipse.ui.handlers" id="menu-handlers">
+      <?gmfgen generated="true"?>
+   </extension>
+
+   <!-- optionally, specify keybindings -->
+</plugin>

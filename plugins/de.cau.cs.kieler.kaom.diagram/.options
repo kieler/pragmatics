@@ -1,0 +1,7 @@
+# Tracing options for the de.cau.cs.kieler.kaom.diagram plug-in
+
+# Common issues
+de.cau.cs.kieler.kaom.diagram/debug=false
+
+# Visual IDs
+de.cau.cs.kieler.kaom.diagram/debug/visualID=false
