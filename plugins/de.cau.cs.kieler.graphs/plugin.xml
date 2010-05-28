@@ -45,13 +45,4 @@
       </menuContribution>
       </extension>
       
-      <extension
-         point="org.eclipse.ui.commands">
-      <command
-            categoryId="de.cau.cs.kieler"
-            defaultHandler="de.cau.cs.kieler.graphs.handler.DrawDebugInfoHandler"
-            id="de.cau.cs.kieler.core.ui.debugDrawing"
-            name="Draw some debug info into a GMF editor">
-      </command>
-   </extension>
 </plugin>
