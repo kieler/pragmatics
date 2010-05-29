@@ -24,7 +24,7 @@
             locationURI="popup:de.cau.cs.kieler">
          <command
                commandId="de.cau.cs.kieler.kaom.importer.ptolemy.ptolemy2kaom"
-               label="Create KAOM Model."
+               label="Create *.kaom KAOM Model from Ptolemy *.moml Model"
                style="push"
                tooltip="Create KAOM Model from Ptolemy Model.">
          </command>
