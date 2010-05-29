@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+ <copyright>
+ </copyright>
+
+ $Id$
+-->
+
+<plugin>
+	 <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="de.cau.cs.kieler"
+            defaultHandler="de.cau.cs.kieler.kaom.importer.ptolemy.Ptolemy2KaomTransformationHandler"
+            id="de.cau.cs.kieler.kaom.importer.ptolemy.ptolemy2kaom"
+            name="Create KAOM model from Ptolemy model.">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:de.cau.cs.kieler">
+         <command
+               commandId="de.cau.cs.kieler.kaom.importer.ptolemy.ptolemy2kaom"
+               label="Create KAOM Model."
+               style="push"
+               tooltip="Create KAOM Model from Ptolemy Model.">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="platform:/resource/de.cau.cs.kieler.sim.ptolemy/moml.xsd"
+            class="ptolemy.Moml.MomlPackage"
+            genModel="models/moml.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.extension_parser">
+      <parser
+            type="moml"
+            class="ptolemy.Moml.util.MomlResourceFactoryImpl"/>
+   </extension>
+
+</plugin>

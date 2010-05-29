@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: KAOM Ptolemy Import
+Bundle-SymbolicName: de.cau.cs.kieler.kaom.importer.ptolemy;singleton:=true
+Bundle-Version: 0.1.0
+Bundle-ClassPath: .
+Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Bundle-Localization: plugin
+Export-Package: ptolemy.Moml,
+ ptolemy.Moml.impl,
+ ptolemy.Moml.util
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.emf.ecore;visibility:=reexport,
+ org.eclipse.emf.ecore.xmi;visibility:=reexport,
+ org.eclipse.core.resources;bundle-version="3.5.2",
+ org.eclipse.ui;bundle-version="3.5.2",
+ de.cau.cs.kieler.kaom;bundle-version="0.1.0",
+ de.cau.cs.kieler.core;bundle-version="0.3.0",
+ de.cau.cs.kieler.core.model;bundle-version="0.2.0"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
