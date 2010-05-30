@@ -277,21 +277,6 @@ public class KVector extends Point {
     }
 
     /**
-     * returns angle in degrees represented by this vector.
-     * 
-     * @return angle out of [0,360[
-     */
-    public double toAngle() {
-        KVector thisTemp = this.normalizedCreate();
-        double radians = Math.atan(thisTemp.x / thisTemp.y);
-        if (radians < 0) {
-            radians = 2 * Math.PI - Math.abs(radians);
-        }
-        double degrees = Math.toDegrees(radians);
-        return degrees;
-    }
-
-    /**
      * Returns the distance between two vectors.
      * 
      * @param v2
