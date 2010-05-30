@@ -98,6 +98,33 @@ public interface KaomFactory extends EFactory {
     ReferenceAnnotation createReferenceAnnotation();
 
     /**
+     * Returns a new object of class '<em>Boolean Annotation</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Boolean Annotation</em>'.
+     * @generated
+     */
+    BooleanAnnotation createBooleanAnnotation();
+
+    /**
+     * Returns a new object of class '<em>Int Annotation</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Int Annotation</em>'.
+     * @generated
+     */
+    IntAnnotation createIntAnnotation();
+
+    /**
+     * Returns a new object of class '<em>Float Annotation</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Float Annotation</em>'.
+     * @generated
+     */
+    FloatAnnotation createFloatAnnotation();
+
+    /**
      * Returns the package supported by this factory.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->

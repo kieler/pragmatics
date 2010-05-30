@@ -18,21 +18,21 @@ package de.cau.cs.kieler.kaom;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>String Annotation</b></em>'.
+ * A representation of the model object '<em><b>Boolean Annotation</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link de.cau.cs.kieler.kaom.StringAnnotation#getValue <em>Value</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kaom.BooleanAnnotation#isValue <em>Value</em>}</li>
  * </ul>
  * </p>
  *
- * @see de.cau.cs.kieler.kaom.KaomPackage#getStringAnnotation()
+ * @see de.cau.cs.kieler.kaom.KaomPackage#getBooleanAnnotation()
  * @model
  * @generated
  */
-public interface StringAnnotation extends Annotation {
+public interface BooleanAnnotation extends Annotation {
     /**
      * Returns the value of the '<em><b>Value</b></em>' attribute.
      * <!-- begin-user-doc -->
@@ -42,21 +42,21 @@ public interface StringAnnotation extends Annotation {
      * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Value</em>' attribute.
-     * @see #setValue(String)
-     * @see de.cau.cs.kieler.kaom.KaomPackage#getStringAnnotation_Value()
+     * @see #setValue(boolean)
+     * @see de.cau.cs.kieler.kaom.KaomPackage#getBooleanAnnotation_Value()
      * @model required="true"
      * @generated
      */
-    String getValue();
+    boolean isValue();
 
     /**
-     * Sets the value of the '{@link de.cau.cs.kieler.kaom.StringAnnotation#getValue <em>Value</em>}' attribute.
+     * Sets the value of the '{@link de.cau.cs.kieler.kaom.BooleanAnnotation#isValue <em>Value</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @param value the new value of the '<em>Value</em>' attribute.
-     * @see #getValue()
+     * @see #isValue()
      * @generated
      */
-    void setValue(String value);
+    void setValue(boolean value);
 
-} // StringAnnotation
+} // BooleanAnnotation

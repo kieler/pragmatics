@@ -79,6 +79,9 @@ public class KaomFactoryImpl extends EFactoryImpl implements KaomFactory {
             case KaomPackage.ANNOTATION_MAP_ENTRY: return (EObject)createAnnotationMapEntry();
             case KaomPackage.STRING_ANNOTATION: return createStringAnnotation();
             case KaomPackage.REFERENCE_ANNOTATION: return createReferenceAnnotation();
+            case KaomPackage.BOOLEAN_ANNOTATION: return createBooleanAnnotation();
+            case KaomPackage.INT_ANNOTATION: return createIntAnnotation();
+            case KaomPackage.FLOAT_ANNOTATION: return createFloatAnnotation();
             default:
                 throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
         }
@@ -162,6 +165,36 @@ public class KaomFactoryImpl extends EFactoryImpl implements KaomFactory {
     public ReferenceAnnotation createReferenceAnnotation() {
         ReferenceAnnotationImpl referenceAnnotation = new ReferenceAnnotationImpl();
         return referenceAnnotation;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public BooleanAnnotation createBooleanAnnotation() {
+        BooleanAnnotationImpl booleanAnnotation = new BooleanAnnotationImpl();
+        return booleanAnnotation;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public IntAnnotation createIntAnnotation() {
+        IntAnnotationImpl intAnnotation = new IntAnnotationImpl();
+        return intAnnotation;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public FloatAnnotation createFloatAnnotation() {
+        FloatAnnotationImpl floatAnnotation = new FloatAnnotationImpl();
+        return floatAnnotation;
     }
 
     /**

@@ -639,13 +639,13 @@ public interface KaomPackage extends EPackage {
     int STRING_ANNOTATION = 11;
 
     /**
-     * The feature id for the '<em><b>Text</b></em>' attribute.
+     * The feature id for the '<em><b>Value</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int STRING_ANNOTATION__TEXT = ANNOTATION_FEATURE_COUNT + 0;
+    int STRING_ANNOTATION__VALUE = ANNOTATION_FEATURE_COUNT + 0;
 
     /**
      * The number of structural features of the '<em>String Annotation</em>' class.
@@ -683,6 +683,91 @@ public interface KaomPackage extends EPackage {
      * @ordered
      */
     int REFERENCE_ANNOTATION_FEATURE_COUNT = ANNOTATION_FEATURE_COUNT + 1;
+
+
+    /**
+     * The meta object id for the '{@link de.cau.cs.kieler.kaom.impl.BooleanAnnotationImpl <em>Boolean Annotation</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.kaom.impl.BooleanAnnotationImpl
+     * @see de.cau.cs.kieler.kaom.impl.KaomPackageImpl#getBooleanAnnotation()
+     * @generated
+     */
+    int BOOLEAN_ANNOTATION = 13;
+
+    /**
+     * The feature id for the '<em><b>Value</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int BOOLEAN_ANNOTATION__VALUE = ANNOTATION_FEATURE_COUNT + 0;
+
+    /**
+     * The number of structural features of the '<em>Boolean Annotation</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int BOOLEAN_ANNOTATION_FEATURE_COUNT = ANNOTATION_FEATURE_COUNT + 1;
+
+    /**
+     * The meta object id for the '{@link de.cau.cs.kieler.kaom.impl.IntAnnotationImpl <em>Int Annotation</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.kaom.impl.IntAnnotationImpl
+     * @see de.cau.cs.kieler.kaom.impl.KaomPackageImpl#getIntAnnotation()
+     * @generated
+     */
+    int INT_ANNOTATION = 14;
+
+    /**
+     * The feature id for the '<em><b>Value</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int INT_ANNOTATION__VALUE = ANNOTATION_FEATURE_COUNT + 0;
+
+    /**
+     * The number of structural features of the '<em>Int Annotation</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int INT_ANNOTATION_FEATURE_COUNT = ANNOTATION_FEATURE_COUNT + 1;
+
+    /**
+     * The meta object id for the '{@link de.cau.cs.kieler.kaom.impl.FloatAnnotationImpl <em>Float Annotation</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.kaom.impl.FloatAnnotationImpl
+     * @see de.cau.cs.kieler.kaom.impl.KaomPackageImpl#getFloatAnnotation()
+     * @generated
+     */
+    int FLOAT_ANNOTATION = 15;
+
+    /**
+     * The feature id for the '<em><b>Value</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int FLOAT_ANNOTATION__VALUE = ANNOTATION_FEATURE_COUNT + 0;
+
+    /**
+     * The number of structural features of the '<em>Float Annotation</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int FLOAT_ANNOTATION_FEATURE_COUNT = ANNOTATION_FEATURE_COUNT + 1;
 
 
     /**
@@ -941,15 +1026,15 @@ public interface KaomPackage extends EPackage {
     EClass getStringAnnotation();
 
     /**
-     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kaom.StringAnnotation#getText <em>Text</em>}'.
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kaom.StringAnnotation#getValue <em>Value</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Text</em>'.
-     * @see de.cau.cs.kieler.kaom.StringAnnotation#getText()
+     * @return the meta object for the attribute '<em>Value</em>'.
+     * @see de.cau.cs.kieler.kaom.StringAnnotation#getValue()
      * @see #getStringAnnotation()
      * @generated
      */
-    EAttribute getStringAnnotation_Text();
+    EAttribute getStringAnnotation_Value();
 
     /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.kaom.ReferenceAnnotation <em>Reference Annotation</em>}'.
@@ -971,6 +1056,69 @@ public interface KaomPackage extends EPackage {
      * @generated
      */
     EReference getReferenceAnnotation_Object();
+
+    /**
+     * Returns the meta object for class '{@link de.cau.cs.kieler.kaom.BooleanAnnotation <em>Boolean Annotation</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>Boolean Annotation</em>'.
+     * @see de.cau.cs.kieler.kaom.BooleanAnnotation
+     * @generated
+     */
+    EClass getBooleanAnnotation();
+
+    /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kaom.BooleanAnnotation#isValue <em>Value</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Value</em>'.
+     * @see de.cau.cs.kieler.kaom.BooleanAnnotation#isValue()
+     * @see #getBooleanAnnotation()
+     * @generated
+     */
+    EAttribute getBooleanAnnotation_Value();
+
+    /**
+     * Returns the meta object for class '{@link de.cau.cs.kieler.kaom.IntAnnotation <em>Int Annotation</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>Int Annotation</em>'.
+     * @see de.cau.cs.kieler.kaom.IntAnnotation
+     * @generated
+     */
+    EClass getIntAnnotation();
+
+    /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kaom.IntAnnotation#getValue <em>Value</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Value</em>'.
+     * @see de.cau.cs.kieler.kaom.IntAnnotation#getValue()
+     * @see #getIntAnnotation()
+     * @generated
+     */
+    EAttribute getIntAnnotation_Value();
+
+    /**
+     * Returns the meta object for class '{@link de.cau.cs.kieler.kaom.FloatAnnotation <em>Float Annotation</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>Float Annotation</em>'.
+     * @see de.cau.cs.kieler.kaom.FloatAnnotation
+     * @generated
+     */
+    EClass getFloatAnnotation();
+
+    /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kaom.FloatAnnotation#getValue <em>Value</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Value</em>'.
+     * @see de.cau.cs.kieler.kaom.FloatAnnotation#getValue()
+     * @see #getFloatAnnotation()
+     * @generated
+     */
+    EAttribute getFloatAnnotation_Value();
 
     /**
      * Returns the factory that creates the instances of the model.
@@ -1211,12 +1359,12 @@ public interface KaomPackage extends EPackage {
         EClass STRING_ANNOTATION = eINSTANCE.getStringAnnotation();
 
         /**
-         * The meta object literal for the '<em><b>Text</b></em>' attribute feature.
+         * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @generated
          */
-        EAttribute STRING_ANNOTATION__TEXT = eINSTANCE.getStringAnnotation_Text();
+        EAttribute STRING_ANNOTATION__VALUE = eINSTANCE.getStringAnnotation_Value();
 
         /**
          * The meta object literal for the '{@link de.cau.cs.kieler.kaom.impl.ReferenceAnnotationImpl <em>Reference Annotation</em>}' class.
@@ -1235,6 +1383,60 @@ public interface KaomPackage extends EPackage {
          * @generated
          */
         EReference REFERENCE_ANNOTATION__OBJECT = eINSTANCE.getReferenceAnnotation_Object();
+
+        /**
+         * The meta object literal for the '{@link de.cau.cs.kieler.kaom.impl.BooleanAnnotationImpl <em>Boolean Annotation</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see de.cau.cs.kieler.kaom.impl.BooleanAnnotationImpl
+         * @see de.cau.cs.kieler.kaom.impl.KaomPackageImpl#getBooleanAnnotation()
+         * @generated
+         */
+        EClass BOOLEAN_ANNOTATION = eINSTANCE.getBooleanAnnotation();
+
+        /**
+         * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute BOOLEAN_ANNOTATION__VALUE = eINSTANCE.getBooleanAnnotation_Value();
+
+        /**
+         * The meta object literal for the '{@link de.cau.cs.kieler.kaom.impl.IntAnnotationImpl <em>Int Annotation</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see de.cau.cs.kieler.kaom.impl.IntAnnotationImpl
+         * @see de.cau.cs.kieler.kaom.impl.KaomPackageImpl#getIntAnnotation()
+         * @generated
+         */
+        EClass INT_ANNOTATION = eINSTANCE.getIntAnnotation();
+
+        /**
+         * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute INT_ANNOTATION__VALUE = eINSTANCE.getIntAnnotation_Value();
+
+        /**
+         * The meta object literal for the '{@link de.cau.cs.kieler.kaom.impl.FloatAnnotationImpl <em>Float Annotation</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see de.cau.cs.kieler.kaom.impl.FloatAnnotationImpl
+         * @see de.cau.cs.kieler.kaom.impl.KaomPackageImpl#getFloatAnnotation()
+         * @generated
+         */
+        EClass FLOAT_ANNOTATION = eINSTANCE.getFloatAnnotation();
+
+        /**
+         * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute FLOAT_ANNOTATION__VALUE = eINSTANCE.getFloatAnnotation_Value();
 
     }
 

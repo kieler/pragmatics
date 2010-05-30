@@ -15,8 +15,8 @@
  */
 package de.cau.cs.kieler.kaom.impl;
 
+import de.cau.cs.kieler.kaom.BooleanAnnotation;
 import de.cau.cs.kieler.kaom.KaomPackage;
-import de.cau.cs.kieler.kaom.StringAnnotation;
 
 import org.eclipse.emf.common.notify.Notification;
 
@@ -27,44 +27,44 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>String Annotation</b></em>'.
+ * An implementation of the model object '<em><b>Boolean Annotation</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link de.cau.cs.kieler.kaom.impl.StringAnnotationImpl#getValue <em>Value</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kaom.impl.BooleanAnnotationImpl#isValue <em>Value</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class StringAnnotationImpl extends EObjectImpl implements StringAnnotation {
+public class BooleanAnnotationImpl extends EObjectImpl implements BooleanAnnotation {
     /**
-     * The default value of the '{@link #getValue() <em>Value</em>}' attribute.
+     * The default value of the '{@link #isValue() <em>Value</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #getValue()
+     * @see #isValue()
      * @generated
      * @ordered
      */
-    protected static final String VALUE_EDEFAULT = null;
+    protected static final boolean VALUE_EDEFAULT = false;
 
     /**
-     * The cached value of the '{@link #getValue() <em>Value</em>}' attribute.
+     * The cached value of the '{@link #isValue() <em>Value</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #getValue()
+     * @see #isValue()
      * @generated
      * @ordered
      */
-    protected String value = VALUE_EDEFAULT;
+    protected boolean value = VALUE_EDEFAULT;
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    protected StringAnnotationImpl() {
+    protected BooleanAnnotationImpl() {
         super();
     }
 
@@ -75,7 +75,7 @@ public class StringAnnotationImpl extends EObjectImpl implements StringAnnotatio
      */
     @Override
     protected EClass eStaticClass() {
-        return KaomPackage.Literals.STRING_ANNOTATION;
+        return KaomPackage.Literals.BOOLEAN_ANNOTATION;
     }
 
     /**
@@ -83,7 +83,7 @@ public class StringAnnotationImpl extends EObjectImpl implements StringAnnotatio
      * <!-- end-user-doc -->
      * @generated
      */
-    public String getValue() {
+    public boolean isValue() {
         return value;
     }
 
@@ -92,11 +92,11 @@ public class StringAnnotationImpl extends EObjectImpl implements StringAnnotatio
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setValue(String newValue) {
-        String oldValue = value;
+    public void setValue(boolean newValue) {
+        boolean oldValue = value;
         value = newValue;
         if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, KaomPackage.STRING_ANNOTATION__VALUE, oldValue, value));
+            eNotify(new ENotificationImpl(this, Notification.SET, KaomPackage.BOOLEAN_ANNOTATION__VALUE, oldValue, value));
     }
 
     /**
@@ -107,8 +107,8 @@ public class StringAnnotationImpl extends EObjectImpl implements StringAnnotatio
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case KaomPackage.STRING_ANNOTATION__VALUE:
-                return getValue();
+            case KaomPackage.BOOLEAN_ANNOTATION__VALUE:
+                return isValue();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -121,8 +121,8 @@ public class StringAnnotationImpl extends EObjectImpl implements StringAnnotatio
     @Override
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case KaomPackage.STRING_ANNOTATION__VALUE:
-                setValue((String)newValue);
+            case KaomPackage.BOOLEAN_ANNOTATION__VALUE:
+                setValue((Boolean)newValue);
                 return;
         }
         super.eSet(featureID, newValue);
@@ -136,7 +136,7 @@ public class StringAnnotationImpl extends EObjectImpl implements StringAnnotatio
     @Override
     public void eUnset(int featureID) {
         switch (featureID) {
-            case KaomPackage.STRING_ANNOTATION__VALUE:
+            case KaomPackage.BOOLEAN_ANNOTATION__VALUE:
                 setValue(VALUE_EDEFAULT);
                 return;
         }
@@ -151,8 +151,8 @@ public class StringAnnotationImpl extends EObjectImpl implements StringAnnotatio
     @Override
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case KaomPackage.STRING_ANNOTATION__VALUE:
-                return VALUE_EDEFAULT == null ? value != null : !VALUE_EDEFAULT.equals(value);
+            case KaomPackage.BOOLEAN_ANNOTATION__VALUE:
+                return value != VALUE_EDEFAULT;
         }
         return super.eIsSet(featureID);
     }
@@ -173,4 +173,4 @@ public class StringAnnotationImpl extends EObjectImpl implements StringAnnotatio
         return result.toString();
     }
 
-} //StringAnnotationImpl
+} //BooleanAnnotationImpl

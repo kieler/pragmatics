@@ -16,19 +16,16 @@
 package de.cau.cs.kieler.kaom.provider;
 
 
-import de.cau.cs.kieler.kaom.KaomFactory;
+import de.cau.cs.kieler.kaom.BooleanAnnotation;
 import de.cau.cs.kieler.kaom.KaomPackage;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.common.util.ResourceLocator;
-
-import org.eclipse.emf.ecore.EStructuralFeature;
 
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
@@ -42,12 +39,12 @@ import org.eclipse.emf.edit.provider.ItemProviderAdapter;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 
 /**
- * This is the item provider adapter for a {@link java.util.Map.Entry} object.
+ * This is the item provider adapter for a {@link de.cau.cs.kieler.kaom.BooleanAnnotation} object.
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
  * @generated
  */
-public class AnnotationMapEntryItemProvider
+public class BooleanAnnotationItemProvider
     extends ItemProviderAdapter
     implements
         IEditingDomainItemProvider,
@@ -61,7 +58,7 @@ public class AnnotationMapEntryItemProvider
      * <!-- end-user-doc -->
      * @generated
      */
-    public AnnotationMapEntryItemProvider(AdapterFactory adapterFactory) {
+    public BooleanAnnotationItemProvider(AdapterFactory adapterFactory) {
         super(adapterFactory);
     }
 
@@ -76,72 +73,42 @@ public class AnnotationMapEntryItemProvider
         if (itemPropertyDescriptors == null) {
             super.getPropertyDescriptors(object);
 
-            addKeyPropertyDescriptor(object);
+            addValuePropertyDescriptor(object);
         }
         return itemPropertyDescriptors;
     }
 
     /**
-     * This adds a property descriptor for the Key feature.
+     * This adds a property descriptor for the Value feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    protected void addKeyPropertyDescriptor(Object object) {
+    protected void addValuePropertyDescriptor(Object object) {
         itemPropertyDescriptors.add
             (createItemPropertyDescriptor
                 (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
                  getResourceLocator(),
-                 getString("_UI_AnnotationMapEntry_key_feature"),
-                 getString("_UI_PropertyDescriptor_description", "_UI_AnnotationMapEntry_key_feature", "_UI_AnnotationMapEntry_type"),
-                 KaomPackage.Literals.ANNOTATION_MAP_ENTRY__KEY,
+                 getString("_UI_BooleanAnnotation_value_feature"),
+                 getString("_UI_PropertyDescriptor_description", "_UI_BooleanAnnotation_value_feature", "_UI_BooleanAnnotation_type"),
+                 KaomPackage.Literals.BOOLEAN_ANNOTATION__VALUE,
                  true,
                  false,
                  false,
-                 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+                 ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE,
                  null,
                  null));
     }
 
     /**
-     * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
-     * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
-     * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
-        if (childrenFeatures == null) {
-            super.getChildrenFeatures(object);
-            childrenFeatures.add(KaomPackage.Literals.ANNOTATION_MAP_ENTRY__VALUE);
-        }
-        return childrenFeatures;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    protected EStructuralFeature getChildFeature(Object object, Object child) {
-        // Check the type of the specified child object and return the proper feature to use for
-        // adding (see {@link AddCommand}) it as a child.
-
-        return super.getChildFeature(object, child);
-    }
-
-    /**
-     * This returns AnnotationMapEntry.gif.
+     * This returns BooleanAnnotation.gif.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
     @Override
     public Object getImage(Object object) {
-        return overlayImage(object, getResourceLocator().getImage("full/obj16/AnnotationMapEntry"));
+        return overlayImage(object, getResourceLocator().getImage("full/obj16/BooleanAnnotation"));
     }
 
     /**
@@ -152,8 +119,8 @@ public class AnnotationMapEntryItemProvider
      */
     @Override
     public String getText(Object object) {
-        Map.Entry<?, ?> annotationMapEntry = (Map.Entry<?, ?>)object;
-        return "" + annotationMapEntry.getKey() + " -> " + annotationMapEntry.getValue();
+        BooleanAnnotation booleanAnnotation = (BooleanAnnotation)object;
+        return getString("_UI_BooleanAnnotation_type") + " " + booleanAnnotation.isValue();
     }
 
     /**
@@ -167,12 +134,9 @@ public class AnnotationMapEntryItemProvider
     public void notifyChanged(Notification notification) {
         updateChildren(notification);
 
-        switch (notification.getFeatureID(Map.Entry.class)) {
-            case KaomPackage.ANNOTATION_MAP_ENTRY__KEY:
+        switch (notification.getFeatureID(BooleanAnnotation.class)) {
+            case KaomPackage.BOOLEAN_ANNOTATION__VALUE:
                 fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
-                return;
-            case KaomPackage.ANNOTATION_MAP_ENTRY__VALUE:
-                fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
                 return;
         }
         super.notifyChanged(notification);
@@ -188,31 +152,6 @@ public class AnnotationMapEntryItemProvider
     @Override
     protected void collectNewChildDescriptors(Collection<Object> newChildDescriptors, Object object) {
         super.collectNewChildDescriptors(newChildDescriptors, object);
-
-        newChildDescriptors.add
-            (createChildParameter
-                (KaomPackage.Literals.ANNOTATION_MAP_ENTRY__VALUE,
-                 KaomFactory.eINSTANCE.createStringAnnotation()));
-
-        newChildDescriptors.add
-            (createChildParameter
-                (KaomPackage.Literals.ANNOTATION_MAP_ENTRY__VALUE,
-                 KaomFactory.eINSTANCE.createReferenceAnnotation()));
-
-        newChildDescriptors.add
-            (createChildParameter
-                (KaomPackage.Literals.ANNOTATION_MAP_ENTRY__VALUE,
-                 KaomFactory.eINSTANCE.createBooleanAnnotation()));
-
-        newChildDescriptors.add
-            (createChildParameter
-                (KaomPackage.Literals.ANNOTATION_MAP_ENTRY__VALUE,
-                 KaomFactory.eINSTANCE.createIntAnnotation()));
-
-        newChildDescriptors.add
-            (createChildParameter
-                (KaomPackage.Literals.ANNOTATION_MAP_ENTRY__VALUE,
-                 KaomFactory.eINSTANCE.createFloatAnnotation()));
     }
 
     /**

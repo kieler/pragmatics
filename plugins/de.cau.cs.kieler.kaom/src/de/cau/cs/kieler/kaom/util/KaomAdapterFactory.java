@@ -135,6 +135,18 @@ public class KaomAdapterFactory extends AdapterFactoryImpl {
                 return createReferenceAnnotationAdapter();
             }
             @Override
+            public Adapter caseBooleanAnnotation(BooleanAnnotation object) {
+                return createBooleanAnnotationAdapter();
+            }
+            @Override
+            public Adapter caseIntAnnotation(IntAnnotation object) {
+                return createIntAnnotationAdapter();
+            }
+            @Override
+            public Adapter caseFloatAnnotation(FloatAnnotation object) {
+                return createFloatAnnotationAdapter();
+            }
+            @Override
             public Adapter defaultCase(EObject object) {
                 return createEObjectAdapter();
             }
@@ -333,6 +345,48 @@ public class KaomAdapterFactory extends AdapterFactoryImpl {
      * @generated
      */
     public Adapter createReferenceAnnotationAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kaom.BooleanAnnotation <em>Boolean Annotation</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see de.cau.cs.kieler.kaom.BooleanAnnotation
+     * @generated
+     */
+    public Adapter createBooleanAnnotationAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kaom.IntAnnotation <em>Int Annotation</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see de.cau.cs.kieler.kaom.IntAnnotation
+     * @generated
+     */
+    public Adapter createIntAnnotationAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kaom.FloatAnnotation <em>Float Annotation</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see de.cau.cs.kieler.kaom.FloatAnnotation
+     * @generated
+     */
+    public Adapter createFloatAnnotationAdapter() {
         return null;
     }
 

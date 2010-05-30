@@ -269,6 +269,75 @@ public class KaomItemProviderAdapterFactory extends KaomAdapterFactory implement
     }
 
     /**
+     * This keeps track of the one adapter used for all {@link de.cau.cs.kieler.kaom.BooleanAnnotation} instances.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected BooleanAnnotationItemProvider booleanAnnotationItemProvider;
+
+    /**
+     * This creates an adapter for a {@link de.cau.cs.kieler.kaom.BooleanAnnotation}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Adapter createBooleanAnnotationAdapter() {
+        if (booleanAnnotationItemProvider == null) {
+            booleanAnnotationItemProvider = new BooleanAnnotationItemProvider(this);
+        }
+
+        return booleanAnnotationItemProvider;
+    }
+
+    /**
+     * This keeps track of the one adapter used for all {@link de.cau.cs.kieler.kaom.IntAnnotation} instances.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected IntAnnotationItemProvider intAnnotationItemProvider;
+
+    /**
+     * This creates an adapter for a {@link de.cau.cs.kieler.kaom.IntAnnotation}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Adapter createIntAnnotationAdapter() {
+        if (intAnnotationItemProvider == null) {
+            intAnnotationItemProvider = new IntAnnotationItemProvider(this);
+        }
+
+        return intAnnotationItemProvider;
+    }
+
+    /**
+     * This keeps track of the one adapter used for all {@link de.cau.cs.kieler.kaom.FloatAnnotation} instances.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected FloatAnnotationItemProvider floatAnnotationItemProvider;
+
+    /**
+     * This creates an adapter for a {@link de.cau.cs.kieler.kaom.FloatAnnotation}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Adapter createFloatAnnotationAdapter() {
+        if (floatAnnotationItemProvider == null) {
+            floatAnnotationItemProvider = new FloatAnnotationItemProvider(this);
+        }
+
+        return floatAnnotationItemProvider;
+    }
+
+    /**
      * This returns the root adapter factory that contains this factory.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -375,6 +444,9 @@ public class KaomItemProviderAdapterFactory extends KaomAdapterFactory implement
         if (annotationMapEntryItemProvider != null) annotationMapEntryItemProvider.dispose();
         if (stringAnnotationItemProvider != null) stringAnnotationItemProvider.dispose();
         if (referenceAnnotationItemProvider != null) referenceAnnotationItemProvider.dispose();
+        if (booleanAnnotationItemProvider != null) booleanAnnotationItemProvider.dispose();
+        if (intAnnotationItemProvider != null) intAnnotationItemProvider.dispose();
+        if (floatAnnotationItemProvider != null) floatAnnotationItemProvider.dispose();
     }
 
 }

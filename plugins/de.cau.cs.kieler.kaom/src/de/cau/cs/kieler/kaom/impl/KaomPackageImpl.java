@@ -18,7 +18,10 @@ package de.cau.cs.kieler.kaom.impl;
 import de.cau.cs.kieler.kaom.Actor;
 import de.cau.cs.kieler.kaom.Annotatable;
 import de.cau.cs.kieler.kaom.Annotation;
+import de.cau.cs.kieler.kaom.BooleanAnnotation;
 import de.cau.cs.kieler.kaom.Entity;
+import de.cau.cs.kieler.kaom.FloatAnnotation;
+import de.cau.cs.kieler.kaom.IntAnnotation;
 import de.cau.cs.kieler.kaom.KaomFactory;
 import de.cau.cs.kieler.kaom.KaomPackage;
 import de.cau.cs.kieler.kaom.Link;
@@ -137,6 +140,27 @@ public class KaomPackageImpl extends EPackageImpl implements KaomPackage {
      * @generated
      */
     private EClass referenceAnnotationEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass booleanAnnotationEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass intAnnotationEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass floatAnnotationEClass = null;
 
     /**
      * Creates an instance of the model <b>Package</b>, registered with
@@ -423,7 +447,7 @@ public class KaomPackageImpl extends EPackageImpl implements KaomPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EAttribute getStringAnnotation_Text() {
+    public EAttribute getStringAnnotation_Value() {
         return (EAttribute)stringAnnotationEClass.getEStructuralFeatures().get(0);
     }
 
@@ -443,6 +467,60 @@ public class KaomPackageImpl extends EPackageImpl implements KaomPackage {
      */
     public EReference getReferenceAnnotation_Object() {
         return (EReference)referenceAnnotationEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EClass getBooleanAnnotation() {
+        return booleanAnnotationEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getBooleanAnnotation_Value() {
+        return (EAttribute)booleanAnnotationEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EClass getIntAnnotation() {
+        return intAnnotationEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getIntAnnotation_Value() {
+        return (EAttribute)intAnnotationEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EClass getFloatAnnotation() {
+        return floatAnnotationEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getFloatAnnotation_Value() {
+        return (EAttribute)floatAnnotationEClass.getEStructuralFeatures().get(0);
     }
 
     /**
@@ -508,10 +586,19 @@ public class KaomPackageImpl extends EPackageImpl implements KaomPackage {
         createEAttribute(annotationMapEntryEClass, ANNOTATION_MAP_ENTRY__KEY);
 
         stringAnnotationEClass = createEClass(STRING_ANNOTATION);
-        createEAttribute(stringAnnotationEClass, STRING_ANNOTATION__TEXT);
+        createEAttribute(stringAnnotationEClass, STRING_ANNOTATION__VALUE);
 
         referenceAnnotationEClass = createEClass(REFERENCE_ANNOTATION);
         createEReference(referenceAnnotationEClass, REFERENCE_ANNOTATION__OBJECT);
+
+        booleanAnnotationEClass = createEClass(BOOLEAN_ANNOTATION);
+        createEAttribute(booleanAnnotationEClass, BOOLEAN_ANNOTATION__VALUE);
+
+        intAnnotationEClass = createEClass(INT_ANNOTATION);
+        createEAttribute(intAnnotationEClass, INT_ANNOTATION__VALUE);
+
+        floatAnnotationEClass = createEClass(FLOAT_ANNOTATION);
+        createEAttribute(floatAnnotationEClass, FLOAT_ANNOTATION__VALUE);
     }
 
     /**
@@ -557,6 +644,9 @@ public class KaomPackageImpl extends EPackageImpl implements KaomPackage {
         namedObjectEClass.getESuperTypes().add(this.getAnnotatable());
         stringAnnotationEClass.getESuperTypes().add(this.getAnnotation());
         referenceAnnotationEClass.getESuperTypes().add(this.getAnnotation());
+        booleanAnnotationEClass.getESuperTypes().add(this.getAnnotation());
+        intAnnotationEClass.getESuperTypes().add(this.getAnnotation());
+        floatAnnotationEClass.getESuperTypes().add(this.getAnnotation());
 
         // Initialize classes and features; add operations and parameters
         initEClass(entityEClass, Entity.class, "Entity", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -594,10 +684,19 @@ public class KaomPackageImpl extends EPackageImpl implements KaomPackage {
         initEAttribute(getAnnotationMapEntry_Key(), theEcorePackage.getEString(), "key", null, 1, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(stringAnnotationEClass, StringAnnotation.class, "StringAnnotation", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-        initEAttribute(getStringAnnotation_Text(), theEcorePackage.getEString(), "text", null, 1, 1, StringAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getStringAnnotation_Value(), theEcorePackage.getEString(), "value", null, 1, 1, StringAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(referenceAnnotationEClass, ReferenceAnnotation.class, "ReferenceAnnotation", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getReferenceAnnotation_Object(), theEcorePackage.getEObject(), null, "object", null, 1, 1, ReferenceAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+        initEClass(booleanAnnotationEClass, BooleanAnnotation.class, "BooleanAnnotation", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEAttribute(getBooleanAnnotation_Value(), theEcorePackage.getEBoolean(), "value", null, 1, 1, BooleanAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+        initEClass(intAnnotationEClass, IntAnnotation.class, "IntAnnotation", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEAttribute(getIntAnnotation_Value(), theEcorePackage.getEInt(), "value", null, 1, 1, IntAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+        initEClass(floatAnnotationEClass, FloatAnnotation.class, "FloatAnnotation", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEAttribute(getFloatAnnotation_Value(), theEcorePackage.getEFloat(), "value", null, 1, 1, FloatAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         // Create resource
         createResource(eNS_URI);
