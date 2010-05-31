@@ -19,17 +19,18 @@ import de.cau.cs.kieler.kaom.Annotatable;
 import de.cau.cs.kieler.kaom.Annotation;
 import de.cau.cs.kieler.kaom.KaomPackage;
 
+import java.util.Collection;
+
 import org.eclipse.emf.common.notify.NotificationChain;
 
-import org.eclipse.emf.common.util.EMap;
+import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 
-import org.eclipse.emf.ecore.util.EcoreEMap;
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
@@ -39,7 +40,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link de.cau.cs.kieler.kaom.impl.AnnotatableImpl#getAnnotationMap <em>Annotation Map</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kaom.impl.AnnotatableImpl#getAnnotations <em>Annotations</em>}</li>
  * </ul>
  * </p>
  *
@@ -47,14 +48,14 @@ import org.eclipse.emf.ecore.util.InternalEList;
  */
 public abstract class AnnotatableImpl extends EObjectImpl implements Annotatable {
     /**
-     * The cached value of the '{@link #getAnnotationMap() <em>Annotation Map</em>}' map.
+     * The cached value of the '{@link #getAnnotations() <em>Annotations</em>}' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #getAnnotationMap()
+     * @see #getAnnotations()
      * @generated
      * @ordered
      */
-    protected EMap<String, Annotation> annotationMap;
+    protected EList<Annotation> annotations;
 
     /**
      * <!-- begin-user-doc -->
@@ -80,11 +81,22 @@ public abstract class AnnotatableImpl extends EObjectImpl implements Annotatable
      * <!-- end-user-doc -->
      * @generated
      */
-    public EMap<String, Annotation> getAnnotationMap() {
-        if (annotationMap == null) {
-            annotationMap = new EcoreEMap<String,Annotation>(KaomPackage.Literals.ANNOTATION_MAP_ENTRY, AnnotationMapEntryImpl.class, this, KaomPackage.ANNOTATABLE__ANNOTATION_MAP);
+    public EList<Annotation> getAnnotations() {
+        if (annotations == null) {
+            annotations = new EObjectContainmentEList<Annotation>(Annotation.class, this, KaomPackage.ANNOTATABLE__ANNOTATIONS);
         }
-        return annotationMap;
+        return annotations;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public Annotation getAnnotation(String key) {
+        // TODO: implement this method
+        // Ensure that you remove @generated or mark it @generated NOT
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -95,8 +107,8 @@ public abstract class AnnotatableImpl extends EObjectImpl implements Annotatable
     @Override
     public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
-            case KaomPackage.ANNOTATABLE__ANNOTATION_MAP:
-                return ((InternalEList<?>)getAnnotationMap()).basicRemove(otherEnd, msgs);
+            case KaomPackage.ANNOTATABLE__ANNOTATIONS:
+                return ((InternalEList<?>)getAnnotations()).basicRemove(otherEnd, msgs);
         }
         return super.eInverseRemove(otherEnd, featureID, msgs);
     }
@@ -109,9 +121,8 @@ public abstract class AnnotatableImpl extends EObjectImpl implements Annotatable
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case KaomPackage.ANNOTATABLE__ANNOTATION_MAP:
-                if (coreType) return getAnnotationMap();
-                else return getAnnotationMap().map();
+            case KaomPackage.ANNOTATABLE__ANNOTATIONS:
+                return getAnnotations();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -121,11 +132,13 @@ public abstract class AnnotatableImpl extends EObjectImpl implements Annotatable
      * <!-- end-user-doc -->
      * @generated
      */
+    @SuppressWarnings("unchecked")
     @Override
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case KaomPackage.ANNOTATABLE__ANNOTATION_MAP:
-                ((EStructuralFeature.Setting)getAnnotationMap()).set(newValue);
+            case KaomPackage.ANNOTATABLE__ANNOTATIONS:
+                getAnnotations().clear();
+                getAnnotations().addAll((Collection<? extends Annotation>)newValue);
                 return;
         }
         super.eSet(featureID, newValue);
@@ -139,8 +152,8 @@ public abstract class AnnotatableImpl extends EObjectImpl implements Annotatable
     @Override
     public void eUnset(int featureID) {
         switch (featureID) {
-            case KaomPackage.ANNOTATABLE__ANNOTATION_MAP:
-                getAnnotationMap().clear();
+            case KaomPackage.ANNOTATABLE__ANNOTATIONS:
+                getAnnotations().clear();
                 return;
         }
         super.eUnset(featureID);
@@ -154,8 +167,8 @@ public abstract class AnnotatableImpl extends EObjectImpl implements Annotatable
     @Override
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case KaomPackage.ANNOTATABLE__ANNOTATION_MAP:
-                return annotationMap != null && !annotationMap.isEmpty();
+            case KaomPackage.ANNOTATABLE__ANNOTATIONS:
+                return annotations != null && !annotations.isEmpty();
         }
         return super.eIsSet(featureID);
     }

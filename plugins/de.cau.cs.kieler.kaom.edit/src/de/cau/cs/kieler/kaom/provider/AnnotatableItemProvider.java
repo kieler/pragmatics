@@ -90,7 +90,7 @@ public class AnnotatableItemProvider
     public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
         if (childrenFeatures == null) {
             super.getChildrenFeatures(object);
-            childrenFeatures.add(KaomPackage.Literals.ANNOTATABLE__ANNOTATION_MAP);
+            childrenFeatures.add(KaomPackage.Literals.ANNOTATABLE__ANNOTATIONS);
         }
         return childrenFeatures;
     }
@@ -131,7 +131,7 @@ public class AnnotatableItemProvider
         updateChildren(notification);
 
         switch (notification.getFeatureID(Annotatable.class)) {
-            case KaomPackage.ANNOTATABLE__ANNOTATION_MAP:
+            case KaomPackage.ANNOTATABLE__ANNOTATIONS:
                 fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
                 return;
         }
@@ -151,8 +151,33 @@ public class AnnotatableItemProvider
 
         newChildDescriptors.add
             (createChildParameter
-                (KaomPackage.Literals.ANNOTATABLE__ANNOTATION_MAP,
-                 KaomFactory.eINSTANCE.create(KaomPackage.Literals.ANNOTATION_MAP_ENTRY)));
+                (KaomPackage.Literals.ANNOTATABLE__ANNOTATIONS,
+                 KaomFactory.eINSTANCE.createAnnotation()));
+
+        newChildDescriptors.add
+            (createChildParameter
+                (KaomPackage.Literals.ANNOTATABLE__ANNOTATIONS,
+                 KaomFactory.eINSTANCE.createStringAnnotation()));
+
+        newChildDescriptors.add
+            (createChildParameter
+                (KaomPackage.Literals.ANNOTATABLE__ANNOTATIONS,
+                 KaomFactory.eINSTANCE.createReferenceAnnotation()));
+
+        newChildDescriptors.add
+            (createChildParameter
+                (KaomPackage.Literals.ANNOTATABLE__ANNOTATIONS,
+                 KaomFactory.eINSTANCE.createBooleanAnnotation()));
+
+        newChildDescriptors.add
+            (createChildParameter
+                (KaomPackage.Literals.ANNOTATABLE__ANNOTATIONS,
+                 KaomFactory.eINSTANCE.createIntAnnotation()));
+
+        newChildDescriptors.add
+            (createChildParameter
+                (KaomPackage.Literals.ANNOTATABLE__ANNOTATIONS,
+                 KaomFactory.eINSTANCE.createFloatAnnotation()));
     }
 
     /**

@@ -76,16 +76,16 @@ public interface KaomPackage extends EPackage {
      * @see de.cau.cs.kieler.kaom.impl.KaomPackageImpl#getAnnotatable()
      * @generated
      */
-    int ANNOTATABLE = 8;
+    int ANNOTATABLE = 6;
 
     /**
-     * The feature id for the '<em><b>Annotation Map</b></em>' map.
+     * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int ANNOTATABLE__ANNOTATION_MAP = 0;
+    int ANNOTATABLE__ANNOTATIONS = 0;
 
     /**
      * The number of structural features of the '<em>Annotatable</em>' class.
@@ -104,16 +104,16 @@ public interface KaomPackage extends EPackage {
      * @see de.cau.cs.kieler.kaom.impl.KaomPackageImpl#getNamedObject()
      * @generated
      */
-    int NAMED_OBJECT = 7;
+    int NAMED_OBJECT = 5;
 
     /**
-     * The feature id for the '<em><b>Annotation Map</b></em>' map.
+     * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int NAMED_OBJECT__ANNOTATION_MAP = ANNOTATABLE__ANNOTATION_MAP;
+    int NAMED_OBJECT__ANNOTATIONS = ANNOTATABLE__ANNOTATIONS;
 
     /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -144,13 +144,13 @@ public interface KaomPackage extends EPackage {
     int ENTITY = 0;
 
     /**
-     * The feature id for the '<em><b>Annotation Map</b></em>' map.
+     * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int ENTITY__ANNOTATION_MAP = NAMED_OBJECT__ANNOTATION_MAP;
+    int ENTITY__ANNOTATIONS = NAMED_OBJECT__ANNOTATIONS;
 
     /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -162,13 +162,31 @@ public interface KaomPackage extends EPackage {
     int ENTITY__NAME = NAMED_OBJECT__NAME;
 
     /**
+     * The feature id for the '<em><b>Outgoing Links</b></em>' reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int ENTITY__OUTGOING_LINKS = NAMED_OBJECT_FEATURE_COUNT + 0;
+
+    /**
+     * The feature id for the '<em><b>Incoming Links</b></em>' reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int ENTITY__INCOMING_LINKS = NAMED_OBJECT_FEATURE_COUNT + 1;
+
+    /**
      * The feature id for the '<em><b>Child Entities</b></em>' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int ENTITY__CHILD_ENTITIES = NAMED_OBJECT_FEATURE_COUNT + 0;
+    int ENTITY__CHILD_ENTITIES = NAMED_OBJECT_FEATURE_COUNT + 2;
 
     /**
      * The feature id for the '<em><b>Child Links</b></em>' containment reference list.
@@ -177,16 +195,7 @@ public interface KaomPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int ENTITY__CHILD_LINKS = NAMED_OBJECT_FEATURE_COUNT + 1;
-
-    /**
-     * The feature id for the '<em><b>Child Relations</b></em>' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int ENTITY__CHILD_RELATIONS = NAMED_OBJECT_FEATURE_COUNT + 2;
+    int ENTITY__CHILD_LINKS = NAMED_OBJECT_FEATURE_COUNT + 3;
 
     /**
      * The feature id for the '<em><b>Child Ports</b></em>' containment reference list.
@@ -195,7 +204,16 @@ public interface KaomPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int ENTITY__CHILD_PORTS = NAMED_OBJECT_FEATURE_COUNT + 3;
+    int ENTITY__CHILD_PORTS = NAMED_OBJECT_FEATURE_COUNT + 4;
+
+    /**
+     * The feature id for the '<em><b>Child Relations</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int ENTITY__CHILD_RELATIONS = NAMED_OBJECT_FEATURE_COUNT + 5;
 
     /**
      * The number of structural features of the '<em>Entity</em>' class.
@@ -204,7 +222,7 @@ public interface KaomPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int ENTITY_FEATURE_COUNT = NAMED_OBJECT_FEATURE_COUNT + 4;
+    int ENTITY_FEATURE_COUNT = NAMED_OBJECT_FEATURE_COUNT + 6;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.kaom.impl.LinkableImpl <em>Linkable</em>}' class.
@@ -272,13 +290,13 @@ public interface KaomPackage extends EPackage {
     int PORT__INCOMING_LINKS = LINKABLE__INCOMING_LINKS;
 
     /**
-     * The feature id for the '<em><b>Annotation Map</b></em>' map.
+     * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int PORT__ANNOTATION_MAP = LINKABLE_FEATURE_COUNT + 0;
+    int PORT__ANNOTATIONS = LINKABLE_FEATURE_COUNT + 0;
 
     /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -327,13 +345,13 @@ public interface KaomPackage extends EPackage {
     int RELATION__INCOMING_LINKS = LINKABLE__INCOMING_LINKS;
 
     /**
-     * The feature id for the '<em><b>Annotation Map</b></em>' map.
+     * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int RELATION__ANNOTATION_MAP = LINKABLE_FEATURE_COUNT + 0;
+    int RELATION__ANNOTATIONS = LINKABLE_FEATURE_COUNT + 0;
 
     /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -364,13 +382,13 @@ public interface KaomPackage extends EPackage {
     int LINK = 3;
 
     /**
-     * The feature id for the '<em><b>Annotation Map</b></em>' map.
+     * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int LINK__ANNOTATION_MAP = NAMED_OBJECT__ANNOTATION_MAP;
+    int LINK__ANNOTATIONS = NAMED_OBJECT__ANNOTATIONS;
 
     /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -409,178 +427,32 @@ public interface KaomPackage extends EPackage {
     int LINK_FEATURE_COUNT = NAMED_OBJECT_FEATURE_COUNT + 2;
 
     /**
-     * The meta object id for the '{@link de.cau.cs.kieler.kaom.impl.ActorImpl <em>Actor</em>}' class.
+     * The meta object id for the '{@link de.cau.cs.kieler.kaom.impl.AnnotationImpl <em>Annotation</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see de.cau.cs.kieler.kaom.impl.ActorImpl
-     * @see de.cau.cs.kieler.kaom.impl.KaomPackageImpl#getActor()
-     * @generated
-     */
-    int ACTOR = 5;
-
-    /**
-     * The feature id for the '<em><b>Annotation Map</b></em>' map.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int ACTOR__ANNOTATION_MAP = ENTITY__ANNOTATION_MAP;
-
-    /**
-     * The feature id for the '<em><b>Name</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int ACTOR__NAME = ENTITY__NAME;
-
-    /**
-     * The feature id for the '<em><b>Child Entities</b></em>' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int ACTOR__CHILD_ENTITIES = ENTITY__CHILD_ENTITIES;
-
-    /**
-     * The feature id for the '<em><b>Child Links</b></em>' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int ACTOR__CHILD_LINKS = ENTITY__CHILD_LINKS;
-
-    /**
-     * The feature id for the '<em><b>Child Relations</b></em>' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int ACTOR__CHILD_RELATIONS = ENTITY__CHILD_RELATIONS;
-
-    /**
-     * The feature id for the '<em><b>Child Ports</b></em>' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int ACTOR__CHILD_PORTS = ENTITY__CHILD_PORTS;
-
-    /**
-     * The number of structural features of the '<em>Actor</em>' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int ACTOR_FEATURE_COUNT = ENTITY_FEATURE_COUNT + 0;
-
-    /**
-     * The meta object id for the '{@link de.cau.cs.kieler.kaom.impl.StateImpl <em>State</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.cau.cs.kieler.kaom.impl.StateImpl
-     * @see de.cau.cs.kieler.kaom.impl.KaomPackageImpl#getState()
-     * @generated
-     */
-    int STATE = 6;
-
-    /**
-     * The feature id for the '<em><b>Annotation Map</b></em>' map.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int STATE__ANNOTATION_MAP = ENTITY__ANNOTATION_MAP;
-
-    /**
-     * The feature id for the '<em><b>Name</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int STATE__NAME = ENTITY__NAME;
-
-    /**
-     * The feature id for the '<em><b>Child Entities</b></em>' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int STATE__CHILD_ENTITIES = ENTITY__CHILD_ENTITIES;
-
-    /**
-     * The feature id for the '<em><b>Child Links</b></em>' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int STATE__CHILD_LINKS = ENTITY__CHILD_LINKS;
-
-    /**
-     * The feature id for the '<em><b>Child Relations</b></em>' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int STATE__CHILD_RELATIONS = ENTITY__CHILD_RELATIONS;
-
-    /**
-     * The feature id for the '<em><b>Child Ports</b></em>' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int STATE__CHILD_PORTS = ENTITY__CHILD_PORTS;
-
-    /**
-     * The feature id for the '<em><b>Outgoing Links</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int STATE__OUTGOING_LINKS = ENTITY_FEATURE_COUNT + 0;
-
-    /**
-     * The feature id for the '<em><b>Incoming Links</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int STATE__INCOMING_LINKS = ENTITY_FEATURE_COUNT + 1;
-
-    /**
-     * The number of structural features of the '<em>State</em>' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int STATE_FEATURE_COUNT = ENTITY_FEATURE_COUNT + 2;
-
-    /**
-     * The meta object id for the '{@link de.cau.cs.kieler.kaom.Annotation <em>Annotation</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.cau.cs.kieler.kaom.Annotation
+     * @see de.cau.cs.kieler.kaom.impl.AnnotationImpl
      * @see de.cau.cs.kieler.kaom.impl.KaomPackageImpl#getAnnotation()
      * @generated
      */
-    int ANNOTATION = 9;
+    int ANNOTATION = 7;
+
+    /**
+     * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int ANNOTATION__ANNOTATIONS = NAMED_OBJECT__ANNOTATIONS;
+
+    /**
+     * The feature id for the '<em><b>Name</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int ANNOTATION__NAME = NAMED_OBJECT__NAME;
 
     /**
      * The number of structural features of the '<em>Annotation</em>' class.
@@ -589,44 +461,7 @@ public interface KaomPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int ANNOTATION_FEATURE_COUNT = 0;
-
-    /**
-     * The meta object id for the '{@link de.cau.cs.kieler.kaom.impl.AnnotationMapEntryImpl <em>Annotation Map Entry</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.cau.cs.kieler.kaom.impl.AnnotationMapEntryImpl
-     * @see de.cau.cs.kieler.kaom.impl.KaomPackageImpl#getAnnotationMapEntry()
-     * @generated
-     */
-    int ANNOTATION_MAP_ENTRY = 10;
-
-    /**
-     * The feature id for the '<em><b>Value</b></em>' containment reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int ANNOTATION_MAP_ENTRY__VALUE = 0;
-
-    /**
-     * The feature id for the '<em><b>Key</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int ANNOTATION_MAP_ENTRY__KEY = 1;
-
-    /**
-     * The number of structural features of the '<em>Annotation Map Entry</em>' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int ANNOTATION_MAP_ENTRY_FEATURE_COUNT = 2;
+    int ANNOTATION_FEATURE_COUNT = NAMED_OBJECT_FEATURE_COUNT + 0;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.kaom.impl.StringAnnotationImpl <em>String Annotation</em>}' class.
@@ -636,7 +471,25 @@ public interface KaomPackage extends EPackage {
      * @see de.cau.cs.kieler.kaom.impl.KaomPackageImpl#getStringAnnotation()
      * @generated
      */
-    int STRING_ANNOTATION = 11;
+    int STRING_ANNOTATION = 8;
+
+    /**
+     * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int STRING_ANNOTATION__ANNOTATIONS = ANNOTATION__ANNOTATIONS;
+
+    /**
+     * The feature id for the '<em><b>Name</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int STRING_ANNOTATION__NAME = ANNOTATION__NAME;
 
     /**
      * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -664,7 +517,25 @@ public interface KaomPackage extends EPackage {
      * @see de.cau.cs.kieler.kaom.impl.KaomPackageImpl#getReferenceAnnotation()
      * @generated
      */
-    int REFERENCE_ANNOTATION = 12;
+    int REFERENCE_ANNOTATION = 9;
+
+    /**
+     * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int REFERENCE_ANNOTATION__ANNOTATIONS = ANNOTATION__ANNOTATIONS;
+
+    /**
+     * The feature id for the '<em><b>Name</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int REFERENCE_ANNOTATION__NAME = ANNOTATION__NAME;
 
     /**
      * The feature id for the '<em><b>Object</b></em>' reference.
@@ -684,7 +555,6 @@ public interface KaomPackage extends EPackage {
      */
     int REFERENCE_ANNOTATION_FEATURE_COUNT = ANNOTATION_FEATURE_COUNT + 1;
 
-
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.kaom.impl.BooleanAnnotationImpl <em>Boolean Annotation</em>}' class.
      * <!-- begin-user-doc -->
@@ -693,7 +563,25 @@ public interface KaomPackage extends EPackage {
      * @see de.cau.cs.kieler.kaom.impl.KaomPackageImpl#getBooleanAnnotation()
      * @generated
      */
-    int BOOLEAN_ANNOTATION = 13;
+    int BOOLEAN_ANNOTATION = 10;
+
+    /**
+     * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int BOOLEAN_ANNOTATION__ANNOTATIONS = ANNOTATION__ANNOTATIONS;
+
+    /**
+     * The feature id for the '<em><b>Name</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int BOOLEAN_ANNOTATION__NAME = ANNOTATION__NAME;
 
     /**
      * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -721,7 +609,25 @@ public interface KaomPackage extends EPackage {
      * @see de.cau.cs.kieler.kaom.impl.KaomPackageImpl#getIntAnnotation()
      * @generated
      */
-    int INT_ANNOTATION = 14;
+    int INT_ANNOTATION = 11;
+
+    /**
+     * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int INT_ANNOTATION__ANNOTATIONS = ANNOTATION__ANNOTATIONS;
+
+    /**
+     * The feature id for the '<em><b>Name</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int INT_ANNOTATION__NAME = ANNOTATION__NAME;
 
     /**
      * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -749,7 +655,25 @@ public interface KaomPackage extends EPackage {
      * @see de.cau.cs.kieler.kaom.impl.KaomPackageImpl#getFloatAnnotation()
      * @generated
      */
-    int FLOAT_ANNOTATION = 15;
+    int FLOAT_ANNOTATION = 12;
+
+    /**
+     * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int FLOAT_ANNOTATION__ANNOTATIONS = ANNOTATION__ANNOTATIONS;
+
+    /**
+     * The feature id for the '<em><b>Name</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int FLOAT_ANNOTATION__NAME = ANNOTATION__NAME;
 
     /**
      * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -803,17 +727,6 @@ public interface KaomPackage extends EPackage {
     EReference getEntity_ChildLinks();
 
     /**
-     * Returns the meta object for the containment reference list '{@link de.cau.cs.kieler.kaom.Entity#getChildRelations <em>Child Relations</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the containment reference list '<em>Child Relations</em>'.
-     * @see de.cau.cs.kieler.kaom.Entity#getChildRelations()
-     * @see #getEntity()
-     * @generated
-     */
-    EReference getEntity_ChildRelations();
-
-    /**
      * Returns the meta object for the containment reference list '{@link de.cau.cs.kieler.kaom.Entity#getChildPorts <em>Child Ports</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -823,6 +736,17 @@ public interface KaomPackage extends EPackage {
      * @generated
      */
     EReference getEntity_ChildPorts();
+
+    /**
+     * Returns the meta object for the containment reference list '{@link de.cau.cs.kieler.kaom.Entity#getChildRelations <em>Child Relations</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the containment reference list '<em>Child Relations</em>'.
+     * @see de.cau.cs.kieler.kaom.Entity#getChildRelations()
+     * @see #getEntity()
+     * @generated
+     */
+    EReference getEntity_ChildRelations();
 
     /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.kaom.Port <em>Port</em>}'.
@@ -909,26 +833,6 @@ public interface KaomPackage extends EPackage {
     EReference getLinkable_IncomingLinks();
 
     /**
-     * Returns the meta object for class '{@link de.cau.cs.kieler.kaom.Actor <em>Actor</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for class '<em>Actor</em>'.
-     * @see de.cau.cs.kieler.kaom.Actor
-     * @generated
-     */
-    EClass getActor();
-
-    /**
-     * Returns the meta object for class '{@link de.cau.cs.kieler.kaom.State <em>State</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for class '<em>State</em>'.
-     * @see de.cau.cs.kieler.kaom.State
-     * @generated
-     */
-    EClass getState();
-
-    /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.kaom.NamedObject <em>Named Object</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -960,15 +864,15 @@ public interface KaomPackage extends EPackage {
     EClass getAnnotatable();
 
     /**
-     * Returns the meta object for the map '{@link de.cau.cs.kieler.kaom.Annotatable#getAnnotationMap <em>Annotation Map</em>}'.
+     * Returns the meta object for the containment reference list '{@link de.cau.cs.kieler.kaom.Annotatable#getAnnotations <em>Annotations</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for the map '<em>Annotation Map</em>'.
-     * @see de.cau.cs.kieler.kaom.Annotatable#getAnnotationMap()
+     * @return the meta object for the containment reference list '<em>Annotations</em>'.
+     * @see de.cau.cs.kieler.kaom.Annotatable#getAnnotations()
      * @see #getAnnotatable()
      * @generated
      */
-    EReference getAnnotatable_AnnotationMap();
+    EReference getAnnotatable_Annotations();
 
     /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.kaom.Annotation <em>Annotation</em>}'.
@@ -979,41 +883,6 @@ public interface KaomPackage extends EPackage {
      * @generated
      */
     EClass getAnnotation();
-
-    /**
-     * Returns the meta object for class '{@link java.util.Map.Entry <em>Annotation Map Entry</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for class '<em>Annotation Map Entry</em>'.
-     * @see java.util.Map.Entry
-     * @model features="value key" 
-     *        valueType="de.cau.cs.kieler.kaom.Annotation" valueContainment="true" valueRequired="true"
-     *        keyDataType="org.eclipse.emf.ecore.EString" keyRequired="true"
-     * @generated
-     */
-    EClass getAnnotationMapEntry();
-
-    /**
-     * Returns the meta object for the containment reference '{@link java.util.Map.Entry <em>Value</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the containment reference '<em>Value</em>'.
-     * @see java.util.Map.Entry
-     * @see #getAnnotationMapEntry()
-     * @generated
-     */
-    EReference getAnnotationMapEntry_Value();
-
-    /**
-     * Returns the meta object for the attribute '{@link java.util.Map.Entry <em>Key</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Key</em>'.
-     * @see java.util.Map.Entry
-     * @see #getAnnotationMapEntry()
-     * @generated
-     */
-    EAttribute getAnnotationMapEntry_Key();
 
     /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.kaom.StringAnnotation <em>String Annotation</em>}'.
@@ -1169,20 +1038,20 @@ public interface KaomPackage extends EPackage {
         EReference ENTITY__CHILD_LINKS = eINSTANCE.getEntity_ChildLinks();
 
         /**
-         * The meta object literal for the '<em><b>Child Relations</b></em>' containment reference list feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EReference ENTITY__CHILD_RELATIONS = eINSTANCE.getEntity_ChildRelations();
-
-        /**
          * The meta object literal for the '<em><b>Child Ports</b></em>' containment reference list feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @generated
          */
         EReference ENTITY__CHILD_PORTS = eINSTANCE.getEntity_ChildPorts();
+
+        /**
+         * The meta object literal for the '<em><b>Child Relations</b></em>' containment reference list feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference ENTITY__CHILD_RELATIONS = eINSTANCE.getEntity_ChildRelations();
 
         /**
          * The meta object literal for the '{@link de.cau.cs.kieler.kaom.impl.PortImpl <em>Port</em>}' class.
@@ -1257,26 +1126,6 @@ public interface KaomPackage extends EPackage {
         EReference LINKABLE__INCOMING_LINKS = eINSTANCE.getLinkable_IncomingLinks();
 
         /**
-         * The meta object literal for the '{@link de.cau.cs.kieler.kaom.impl.ActorImpl <em>Actor</em>}' class.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @see de.cau.cs.kieler.kaom.impl.ActorImpl
-         * @see de.cau.cs.kieler.kaom.impl.KaomPackageImpl#getActor()
-         * @generated
-         */
-        EClass ACTOR = eINSTANCE.getActor();
-
-        /**
-         * The meta object literal for the '{@link de.cau.cs.kieler.kaom.impl.StateImpl <em>State</em>}' class.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @see de.cau.cs.kieler.kaom.impl.StateImpl
-         * @see de.cau.cs.kieler.kaom.impl.KaomPackageImpl#getState()
-         * @generated
-         */
-        EClass STATE = eINSTANCE.getState();
-
-        /**
          * The meta object literal for the '{@link de.cau.cs.kieler.kaom.impl.NamedObjectImpl <em>Named Object</em>}' class.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
@@ -1305,48 +1154,22 @@ public interface KaomPackage extends EPackage {
         EClass ANNOTATABLE = eINSTANCE.getAnnotatable();
 
         /**
-         * The meta object literal for the '<em><b>Annotation Map</b></em>' map feature.
+         * The meta object literal for the '<em><b>Annotations</b></em>' containment reference list feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @generated
          */
-        EReference ANNOTATABLE__ANNOTATION_MAP = eINSTANCE.getAnnotatable_AnnotationMap();
+        EReference ANNOTATABLE__ANNOTATIONS = eINSTANCE.getAnnotatable_Annotations();
 
         /**
-         * The meta object literal for the '{@link de.cau.cs.kieler.kaom.Annotation <em>Annotation</em>}' class.
+         * The meta object literal for the '{@link de.cau.cs.kieler.kaom.impl.AnnotationImpl <em>Annotation</em>}' class.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
-         * @see de.cau.cs.kieler.kaom.Annotation
+         * @see de.cau.cs.kieler.kaom.impl.AnnotationImpl
          * @see de.cau.cs.kieler.kaom.impl.KaomPackageImpl#getAnnotation()
          * @generated
          */
         EClass ANNOTATION = eINSTANCE.getAnnotation();
-
-        /**
-         * The meta object literal for the '{@link de.cau.cs.kieler.kaom.impl.AnnotationMapEntryImpl <em>Annotation Map Entry</em>}' class.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @see de.cau.cs.kieler.kaom.impl.AnnotationMapEntryImpl
-         * @see de.cau.cs.kieler.kaom.impl.KaomPackageImpl#getAnnotationMapEntry()
-         * @generated
-         */
-        EClass ANNOTATION_MAP_ENTRY = eINSTANCE.getAnnotationMapEntry();
-
-        /**
-         * The meta object literal for the '<em><b>Value</b></em>' containment reference feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EReference ANNOTATION_MAP_ENTRY__VALUE = eINSTANCE.getAnnotationMapEntry_Value();
-
-        /**
-         * The meta object literal for the '<em><b>Key</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EAttribute ANNOTATION_MAP_ENTRY__KEY = eINSTANCE.getAnnotationMapEntry_Key();
 
         /**
          * The meta object literal for the '{@link de.cau.cs.kieler.kaom.impl.StringAnnotationImpl <em>String Annotation</em>}' class.

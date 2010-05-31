@@ -17,8 +17,6 @@ package de.cau.cs.kieler.kaom.impl;
 
 import de.cau.cs.kieler.kaom.*;
 
-import java.util.Map;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -71,12 +69,11 @@ public class KaomFactoryImpl extends EFactoryImpl implements KaomFactory {
     @Override
     public EObject create(EClass eClass) {
         switch (eClass.getClassifierID()) {
+            case KaomPackage.ENTITY: return createEntity();
             case KaomPackage.PORT: return createPort();
             case KaomPackage.RELATION: return createRelation();
             case KaomPackage.LINK: return createLink();
-            case KaomPackage.ACTOR: return createActor();
-            case KaomPackage.STATE: return createState();
-            case KaomPackage.ANNOTATION_MAP_ENTRY: return (EObject)createAnnotationMapEntry();
+            case KaomPackage.ANNOTATION: return createAnnotation();
             case KaomPackage.STRING_ANNOTATION: return createStringAnnotation();
             case KaomPackage.REFERENCE_ANNOTATION: return createReferenceAnnotation();
             case KaomPackage.BOOLEAN_ANNOTATION: return createBooleanAnnotation();
@@ -85,6 +82,16 @@ public class KaomFactoryImpl extends EFactoryImpl implements KaomFactory {
             default:
                 throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
         }
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public Entity createEntity() {
+        EntityImpl entity = new EntityImpl();
+        return entity;
     }
 
     /**
@@ -122,29 +129,9 @@ public class KaomFactoryImpl extends EFactoryImpl implements KaomFactory {
      * <!-- end-user-doc -->
      * @generated
      */
-    public Actor createActor() {
-        ActorImpl actor = new ActorImpl();
-        return actor;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public State createState() {
-        StateImpl state = new StateImpl();
-        return state;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public Map.Entry<String, Annotation> createAnnotationMapEntry() {
-        AnnotationMapEntryImpl annotationMapEntry = new AnnotationMapEntryImpl();
-        return annotationMapEntry;
+    public Annotation createAnnotation() {
+        AnnotationImpl annotation = new AnnotationImpl();
+        return annotation;
     }
 
     /**

@@ -21,18 +21,19 @@ import de.cau.cs.kieler.kaom.KaomPackage;
 import de.cau.cs.kieler.kaom.NamedObject;
 import de.cau.cs.kieler.kaom.Relation;
 
+import java.util.Collection;
+
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
-import org.eclipse.emf.common.util.EMap;
+import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
-import org.eclipse.emf.ecore.util.EcoreEMap;
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
@@ -42,7 +43,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link de.cau.cs.kieler.kaom.impl.RelationImpl#getAnnotationMap <em>Annotation Map</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kaom.impl.RelationImpl#getAnnotations <em>Annotations</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kaom.impl.RelationImpl#getName <em>Name</em>}</li>
  * </ul>
  * </p>
@@ -51,14 +52,14 @@ import org.eclipse.emf.ecore.util.InternalEList;
  */
 public class RelationImpl extends LinkableImpl implements Relation {
     /**
-     * The cached value of the '{@link #getAnnotationMap() <em>Annotation Map</em>}' map.
+     * The cached value of the '{@link #getAnnotations() <em>Annotations</em>}' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #getAnnotationMap()
+     * @see #getAnnotations()
      * @generated
      * @ordered
      */
-    protected EMap<String, Annotation> annotationMap;
+    protected EList<Annotation> annotations;
 
     /**
      * The default value of the '{@link #getName() <em>Name</em>}' attribute.
@@ -104,11 +105,11 @@ public class RelationImpl extends LinkableImpl implements Relation {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EMap<String, Annotation> getAnnotationMap() {
-        if (annotationMap == null) {
-            annotationMap = new EcoreEMap<String,Annotation>(KaomPackage.Literals.ANNOTATION_MAP_ENTRY, AnnotationMapEntryImpl.class, this, KaomPackage.RELATION__ANNOTATION_MAP);
+    public EList<Annotation> getAnnotations() {
+        if (annotations == null) {
+            annotations = new EObjectContainmentEList<Annotation>(Annotation.class, this, KaomPackage.RELATION__ANNOTATIONS);
         }
-        return annotationMap;
+        return annotations;
     }
 
     /**
@@ -137,11 +138,22 @@ public class RelationImpl extends LinkableImpl implements Relation {
      * <!-- end-user-doc -->
      * @generated
      */
+    public Annotation getAnnotation(String key) {
+        // TODO: implement this method
+        // Ensure that you remove @generated or mark it @generated NOT
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     @Override
     public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
-            case KaomPackage.RELATION__ANNOTATION_MAP:
-                return ((InternalEList<?>)getAnnotationMap()).basicRemove(otherEnd, msgs);
+            case KaomPackage.RELATION__ANNOTATIONS:
+                return ((InternalEList<?>)getAnnotations()).basicRemove(otherEnd, msgs);
         }
         return super.eInverseRemove(otherEnd, featureID, msgs);
     }
@@ -154,9 +166,8 @@ public class RelationImpl extends LinkableImpl implements Relation {
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case KaomPackage.RELATION__ANNOTATION_MAP:
-                if (coreType) return getAnnotationMap();
-                else return getAnnotationMap().map();
+            case KaomPackage.RELATION__ANNOTATIONS:
+                return getAnnotations();
             case KaomPackage.RELATION__NAME:
                 return getName();
         }
@@ -168,11 +179,13 @@ public class RelationImpl extends LinkableImpl implements Relation {
      * <!-- end-user-doc -->
      * @generated
      */
+    @SuppressWarnings("unchecked")
     @Override
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case KaomPackage.RELATION__ANNOTATION_MAP:
-                ((EStructuralFeature.Setting)getAnnotationMap()).set(newValue);
+            case KaomPackage.RELATION__ANNOTATIONS:
+                getAnnotations().clear();
+                getAnnotations().addAll((Collection<? extends Annotation>)newValue);
                 return;
             case KaomPackage.RELATION__NAME:
                 setName((String)newValue);
@@ -189,8 +202,8 @@ public class RelationImpl extends LinkableImpl implements Relation {
     @Override
     public void eUnset(int featureID) {
         switch (featureID) {
-            case KaomPackage.RELATION__ANNOTATION_MAP:
-                getAnnotationMap().clear();
+            case KaomPackage.RELATION__ANNOTATIONS:
+                getAnnotations().clear();
                 return;
             case KaomPackage.RELATION__NAME:
                 setName(NAME_EDEFAULT);
@@ -207,8 +220,8 @@ public class RelationImpl extends LinkableImpl implements Relation {
     @Override
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case KaomPackage.RELATION__ANNOTATION_MAP:
-                return annotationMap != null && !annotationMap.isEmpty();
+            case KaomPackage.RELATION__ANNOTATIONS:
+                return annotations != null && !annotations.isEmpty();
             case KaomPackage.RELATION__NAME:
                 return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
         }
@@ -224,7 +237,7 @@ public class RelationImpl extends LinkableImpl implements Relation {
     public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
         if (baseClass == Annotatable.class) {
             switch (derivedFeatureID) {
-                case KaomPackage.RELATION__ANNOTATION_MAP: return KaomPackage.ANNOTATABLE__ANNOTATION_MAP;
+                case KaomPackage.RELATION__ANNOTATIONS: return KaomPackage.ANNOTATABLE__ANNOTATIONS;
                 default: return -1;
             }
         }
@@ -246,7 +259,7 @@ public class RelationImpl extends LinkableImpl implements Relation {
     public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
         if (baseClass == Annotatable.class) {
             switch (baseFeatureID) {
-                case KaomPackage.ANNOTATABLE__ANNOTATION_MAP: return KaomPackage.RELATION__ANNOTATION_MAP;
+                case KaomPackage.ANNOTATABLE__ANNOTATIONS: return KaomPackage.RELATION__ANNOTATIONS;
                 default: return -1;
             }
         }

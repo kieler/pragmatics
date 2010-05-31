@@ -15,7 +15,6 @@
  */
 package de.cau.cs.kieler.kaom;
 
-import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
@@ -24,8 +23,8 @@ import org.eclipse.emf.ecore.EObject;
  *
  *
  * @see de.cau.cs.kieler.kaom.KaomPackage#getAnnotation()
- * @model interface="true" abstract="true"
+ * @model
  * @generated
  */
-public interface Annotation extends EObject {
+public interface Annotation extends NamedObject, Annotatable {
 } // Annotation

@@ -15,27 +15,27 @@
  */
 package de.cau.cs.kieler.kaom.impl;
 
-import de.cau.cs.kieler.kaom.Actor;
+import de.cau.cs.kieler.kaom.Annotation;
 import de.cau.cs.kieler.kaom.KaomPackage;
 
 import org.eclipse.emf.ecore.EClass;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Actor</b></em>'.
+ * An implementation of the model object '<em><b>Annotation</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * </p>
  *
  * @generated
  */
-public class ActorImpl extends EntityImpl implements Actor {
+public class AnnotationImpl extends NamedObjectImpl implements Annotation {
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    protected ActorImpl() {
+    protected AnnotationImpl() {
         super();
     }
 
@@ -46,7 +46,7 @@ public class ActorImpl extends EntityImpl implements Actor {
      */
     @Override
     protected EClass eStaticClass() {
-        return KaomPackage.Literals.ACTOR;
+        return KaomPackage.Literals.ANNOTATION;
     }
 
-} //ActorImpl
+} //AnnotationImpl

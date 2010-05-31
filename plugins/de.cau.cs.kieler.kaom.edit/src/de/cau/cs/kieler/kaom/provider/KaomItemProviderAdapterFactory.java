@@ -85,6 +85,29 @@ public class KaomItemProviderAdapterFactory extends KaomAdapterFactory implement
     }
 
     /**
+     * This keeps track of the one adapter used for all {@link de.cau.cs.kieler.kaom.Entity} instances.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected EntityItemProvider entityItemProvider;
+
+    /**
+     * This creates an adapter for a {@link de.cau.cs.kieler.kaom.Entity}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Adapter createEntityAdapter() {
+        if (entityItemProvider == null) {
+            entityItemProvider = new EntityItemProvider(this);
+        }
+
+        return entityItemProvider;
+    }
+
+    /**
      * This keeps track of the one adapter used for all {@link de.cau.cs.kieler.kaom.Port} instances.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -154,72 +177,26 @@ public class KaomItemProviderAdapterFactory extends KaomAdapterFactory implement
     }
 
     /**
-     * This keeps track of the one adapter used for all {@link de.cau.cs.kieler.kaom.Actor} instances.
+     * This keeps track of the one adapter used for all {@link de.cau.cs.kieler.kaom.Annotation} instances.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    protected ActorItemProvider actorItemProvider;
+    protected AnnotationItemProvider annotationItemProvider;
 
     /**
-     * This creates an adapter for a {@link de.cau.cs.kieler.kaom.Actor}.
+     * This creates an adapter for a {@link de.cau.cs.kieler.kaom.Annotation}.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
     @Override
-    public Adapter createActorAdapter() {
-        if (actorItemProvider == null) {
-            actorItemProvider = new ActorItemProvider(this);
+    public Adapter createAnnotationAdapter() {
+        if (annotationItemProvider == null) {
+            annotationItemProvider = new AnnotationItemProvider(this);
         }
 
-        return actorItemProvider;
-    }
-
-    /**
-     * This keeps track of the one adapter used for all {@link de.cau.cs.kieler.kaom.State} instances.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected StateItemProvider stateItemProvider;
-
-    /**
-     * This creates an adapter for a {@link de.cau.cs.kieler.kaom.State}.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    public Adapter createStateAdapter() {
-        if (stateItemProvider == null) {
-            stateItemProvider = new StateItemProvider(this);
-        }
-
-        return stateItemProvider;
-    }
-
-    /**
-     * This keeps track of the one adapter used for all {@link java.util.Map.Entry} instances.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected AnnotationMapEntryItemProvider annotationMapEntryItemProvider;
-
-    /**
-     * This creates an adapter for a {@link java.util.Map.Entry}.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    public Adapter createAnnotationMapEntryAdapter() {
-        if (annotationMapEntryItemProvider == null) {
-            annotationMapEntryItemProvider = new AnnotationMapEntryItemProvider(this);
-        }
-
-        return annotationMapEntryItemProvider;
+        return annotationItemProvider;
     }
 
     /**
@@ -436,12 +413,11 @@ public class KaomItemProviderAdapterFactory extends KaomAdapterFactory implement
      * @generated
      */
     public void dispose() {
+        if (entityItemProvider != null) entityItemProvider.dispose();
         if (portItemProvider != null) portItemProvider.dispose();
         if (relationItemProvider != null) relationItemProvider.dispose();
         if (linkItemProvider != null) linkItemProvider.dispose();
-        if (actorItemProvider != null) actorItemProvider.dispose();
-        if (stateItemProvider != null) stateItemProvider.dispose();
-        if (annotationMapEntryItemProvider != null) annotationMapEntryItemProvider.dispose();
+        if (annotationItemProvider != null) annotationItemProvider.dispose();
         if (stringAnnotationItemProvider != null) stringAnnotationItemProvider.dispose();
         if (referenceAnnotationItemProvider != null) referenceAnnotationItemProvider.dispose();
         if (booleanAnnotationItemProvider != null) booleanAnnotationItemProvider.dispose();

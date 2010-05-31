@@ -18,6 +18,7 @@ package de.cau.cs.kieler.kaom.impl;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.KaomPackage;
 import de.cau.cs.kieler.kaom.Link;
+import de.cau.cs.kieler.kaom.Linkable;
 import de.cau.cs.kieler.kaom.Port;
 import de.cau.cs.kieler.kaom.Relation;
 
@@ -31,6 +32,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.EObjectWithInverseResolvingEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
@@ -40,16 +42,38 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <p>
  * The following features are implemented:
  * <ul>
+ *   <li>{@link de.cau.cs.kieler.kaom.impl.EntityImpl#getOutgoingLinks <em>Outgoing Links</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kaom.impl.EntityImpl#getIncomingLinks <em>Incoming Links</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kaom.impl.EntityImpl#getChildEntities <em>Child Entities</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kaom.impl.EntityImpl#getChildLinks <em>Child Links</em>}</li>
- *   <li>{@link de.cau.cs.kieler.kaom.impl.EntityImpl#getChildRelations <em>Child Relations</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kaom.impl.EntityImpl#getChildPorts <em>Child Ports</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kaom.impl.EntityImpl#getChildRelations <em>Child Relations</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public abstract class EntityImpl extends NamedObjectImpl implements Entity {
+public class EntityImpl extends NamedObjectImpl implements Entity {
+    /**
+     * The cached value of the '{@link #getOutgoingLinks() <em>Outgoing Links</em>}' reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getOutgoingLinks()
+     * @generated
+     * @ordered
+     */
+    protected EList<Link> outgoingLinks;
+
+    /**
+     * The cached value of the '{@link #getIncomingLinks() <em>Incoming Links</em>}' reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getIncomingLinks()
+     * @generated
+     * @ordered
+     */
+    protected EList<Link> incomingLinks;
+
     /**
      * The cached value of the '{@link #getChildEntities() <em>Child Entities</em>}' containment reference list.
      * <!-- begin-user-doc -->
@@ -71,16 +95,6 @@ public abstract class EntityImpl extends NamedObjectImpl implements Entity {
     protected EList<Link> childLinks;
 
     /**
-     * The cached value of the '{@link #getChildRelations() <em>Child Relations</em>}' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #getChildRelations()
-     * @generated
-     * @ordered
-     */
-    protected EList<Relation> childRelations;
-
-    /**
      * The cached value of the '{@link #getChildPorts() <em>Child Ports</em>}' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -89,6 +103,16 @@ public abstract class EntityImpl extends NamedObjectImpl implements Entity {
      * @ordered
      */
     protected EList<Port> childPorts;
+
+    /**
+     * The cached value of the '{@link #getChildRelations() <em>Child Relations</em>}' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getChildRelations()
+     * @generated
+     * @ordered
+     */
+    protected EList<Relation> childRelations;
 
     /**
      * <!-- begin-user-doc -->
@@ -107,6 +131,30 @@ public abstract class EntityImpl extends NamedObjectImpl implements Entity {
     @Override
     protected EClass eStaticClass() {
         return KaomPackage.Literals.ENTITY;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EList<Link> getOutgoingLinks() {
+        if (outgoingLinks == null) {
+            outgoingLinks = new EObjectWithInverseResolvingEList<Link>(Link.class, this, KaomPackage.ENTITY__OUTGOING_LINKS, KaomPackage.LINK__SOURCE);
+        }
+        return outgoingLinks;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EList<Link> getIncomingLinks() {
+        if (incomingLinks == null) {
+            incomingLinks = new EObjectWithInverseResolvingEList<Link>(Link.class, this, KaomPackage.ENTITY__INCOMING_LINKS, KaomPackage.LINK__TARGET);
+        }
+        return incomingLinks;
     }
 
     /**
@@ -138,18 +186,6 @@ public abstract class EntityImpl extends NamedObjectImpl implements Entity {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EList<Relation> getChildRelations() {
-        if (childRelations == null) {
-            childRelations = new EObjectContainmentEList<Relation>(Relation.class, this, KaomPackage.ENTITY__CHILD_RELATIONS);
-        }
-        return childRelations;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public EList<Port> getChildPorts() {
         if (childPorts == null) {
             childPorts = new EObjectContainmentEList<Port>(Port.class, this, KaomPackage.ENTITY__CHILD_PORTS);
@@ -162,17 +198,50 @@ public abstract class EntityImpl extends NamedObjectImpl implements Entity {
      * <!-- end-user-doc -->
      * @generated
      */
+    public EList<Relation> getChildRelations() {
+        if (childRelations == null) {
+            childRelations = new EObjectContainmentEList<Relation>(Relation.class, this, KaomPackage.ENTITY__CHILD_RELATIONS);
+        }
+        return childRelations;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+        switch (featureID) {
+            case KaomPackage.ENTITY__OUTGOING_LINKS:
+                return ((InternalEList<InternalEObject>)(InternalEList<?>)getOutgoingLinks()).basicAdd(otherEnd, msgs);
+            case KaomPackage.ENTITY__INCOMING_LINKS:
+                return ((InternalEList<InternalEObject>)(InternalEList<?>)getIncomingLinks()).basicAdd(otherEnd, msgs);
+        }
+        return super.eInverseAdd(otherEnd, featureID, msgs);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     @Override
     public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
+            case KaomPackage.ENTITY__OUTGOING_LINKS:
+                return ((InternalEList<?>)getOutgoingLinks()).basicRemove(otherEnd, msgs);
+            case KaomPackage.ENTITY__INCOMING_LINKS:
+                return ((InternalEList<?>)getIncomingLinks()).basicRemove(otherEnd, msgs);
             case KaomPackage.ENTITY__CHILD_ENTITIES:
                 return ((InternalEList<?>)getChildEntities()).basicRemove(otherEnd, msgs);
             case KaomPackage.ENTITY__CHILD_LINKS:
                 return ((InternalEList<?>)getChildLinks()).basicRemove(otherEnd, msgs);
-            case KaomPackage.ENTITY__CHILD_RELATIONS:
-                return ((InternalEList<?>)getChildRelations()).basicRemove(otherEnd, msgs);
             case KaomPackage.ENTITY__CHILD_PORTS:
                 return ((InternalEList<?>)getChildPorts()).basicRemove(otherEnd, msgs);
+            case KaomPackage.ENTITY__CHILD_RELATIONS:
+                return ((InternalEList<?>)getChildRelations()).basicRemove(otherEnd, msgs);
         }
         return super.eInverseRemove(otherEnd, featureID, msgs);
     }
@@ -185,14 +254,18 @@ public abstract class EntityImpl extends NamedObjectImpl implements Entity {
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
+            case KaomPackage.ENTITY__OUTGOING_LINKS:
+                return getOutgoingLinks();
+            case KaomPackage.ENTITY__INCOMING_LINKS:
+                return getIncomingLinks();
             case KaomPackage.ENTITY__CHILD_ENTITIES:
                 return getChildEntities();
             case KaomPackage.ENTITY__CHILD_LINKS:
                 return getChildLinks();
-            case KaomPackage.ENTITY__CHILD_RELATIONS:
-                return getChildRelations();
             case KaomPackage.ENTITY__CHILD_PORTS:
                 return getChildPorts();
+            case KaomPackage.ENTITY__CHILD_RELATIONS:
+                return getChildRelations();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -206,6 +279,14 @@ public abstract class EntityImpl extends NamedObjectImpl implements Entity {
     @Override
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
+            case KaomPackage.ENTITY__OUTGOING_LINKS:
+                getOutgoingLinks().clear();
+                getOutgoingLinks().addAll((Collection<? extends Link>)newValue);
+                return;
+            case KaomPackage.ENTITY__INCOMING_LINKS:
+                getIncomingLinks().clear();
+                getIncomingLinks().addAll((Collection<? extends Link>)newValue);
+                return;
             case KaomPackage.ENTITY__CHILD_ENTITIES:
                 getChildEntities().clear();
                 getChildEntities().addAll((Collection<? extends Entity>)newValue);
@@ -214,13 +295,13 @@ public abstract class EntityImpl extends NamedObjectImpl implements Entity {
                 getChildLinks().clear();
                 getChildLinks().addAll((Collection<? extends Link>)newValue);
                 return;
-            case KaomPackage.ENTITY__CHILD_RELATIONS:
-                getChildRelations().clear();
-                getChildRelations().addAll((Collection<? extends Relation>)newValue);
-                return;
             case KaomPackage.ENTITY__CHILD_PORTS:
                 getChildPorts().clear();
                 getChildPorts().addAll((Collection<? extends Port>)newValue);
+                return;
+            case KaomPackage.ENTITY__CHILD_RELATIONS:
+                getChildRelations().clear();
+                getChildRelations().addAll((Collection<? extends Relation>)newValue);
                 return;
         }
         super.eSet(featureID, newValue);
@@ -234,17 +315,23 @@ public abstract class EntityImpl extends NamedObjectImpl implements Entity {
     @Override
     public void eUnset(int featureID) {
         switch (featureID) {
+            case KaomPackage.ENTITY__OUTGOING_LINKS:
+                getOutgoingLinks().clear();
+                return;
+            case KaomPackage.ENTITY__INCOMING_LINKS:
+                getIncomingLinks().clear();
+                return;
             case KaomPackage.ENTITY__CHILD_ENTITIES:
                 getChildEntities().clear();
                 return;
             case KaomPackage.ENTITY__CHILD_LINKS:
                 getChildLinks().clear();
                 return;
-            case KaomPackage.ENTITY__CHILD_RELATIONS:
-                getChildRelations().clear();
-                return;
             case KaomPackage.ENTITY__CHILD_PORTS:
                 getChildPorts().clear();
+                return;
+            case KaomPackage.ENTITY__CHILD_RELATIONS:
+                getChildRelations().clear();
                 return;
         }
         super.eUnset(featureID);
@@ -258,16 +345,54 @@ public abstract class EntityImpl extends NamedObjectImpl implements Entity {
     @Override
     public boolean eIsSet(int featureID) {
         switch (featureID) {
+            case KaomPackage.ENTITY__OUTGOING_LINKS:
+                return outgoingLinks != null && !outgoingLinks.isEmpty();
+            case KaomPackage.ENTITY__INCOMING_LINKS:
+                return incomingLinks != null && !incomingLinks.isEmpty();
             case KaomPackage.ENTITY__CHILD_ENTITIES:
                 return childEntities != null && !childEntities.isEmpty();
             case KaomPackage.ENTITY__CHILD_LINKS:
                 return childLinks != null && !childLinks.isEmpty();
-            case KaomPackage.ENTITY__CHILD_RELATIONS:
-                return childRelations != null && !childRelations.isEmpty();
             case KaomPackage.ENTITY__CHILD_PORTS:
                 return childPorts != null && !childPorts.isEmpty();
+            case KaomPackage.ENTITY__CHILD_RELATIONS:
+                return childRelations != null && !childRelations.isEmpty();
         }
         return super.eIsSet(featureID);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
+        if (baseClass == Linkable.class) {
+            switch (derivedFeatureID) {
+                case KaomPackage.ENTITY__OUTGOING_LINKS: return KaomPackage.LINKABLE__OUTGOING_LINKS;
+                case KaomPackage.ENTITY__INCOMING_LINKS: return KaomPackage.LINKABLE__INCOMING_LINKS;
+                default: return -1;
+            }
+        }
+        return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
+        if (baseClass == Linkable.class) {
+            switch (baseFeatureID) {
+                case KaomPackage.LINKABLE__OUTGOING_LINKS: return KaomPackage.ENTITY__OUTGOING_LINKS;
+                case KaomPackage.LINKABLE__INCOMING_LINKS: return KaomPackage.ENTITY__INCOMING_LINKS;
+                default: return -1;
+            }
+        }
+        return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
     }
 
 } //EntityImpl

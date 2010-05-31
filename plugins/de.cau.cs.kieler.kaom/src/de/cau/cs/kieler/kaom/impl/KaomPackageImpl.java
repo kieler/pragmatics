@@ -15,7 +15,6 @@
  */
 package de.cau.cs.kieler.kaom.impl;
 
-import de.cau.cs.kieler.kaom.Actor;
 import de.cau.cs.kieler.kaom.Annotatable;
 import de.cau.cs.kieler.kaom.Annotation;
 import de.cau.cs.kieler.kaom.BooleanAnnotation;
@@ -30,13 +29,11 @@ import de.cau.cs.kieler.kaom.NamedObject;
 import de.cau.cs.kieler.kaom.Port;
 import de.cau.cs.kieler.kaom.ReferenceAnnotation;
 import de.cau.cs.kieler.kaom.Relation;
-import de.cau.cs.kieler.kaom.State;
 import de.cau.cs.kieler.kaom.StringAnnotation;
-
-import java.util.Map;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EcorePackage;
@@ -90,20 +87,6 @@ public class KaomPackageImpl extends EPackageImpl implements KaomPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    private EClass actorEClass = null;
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    private EClass stateEClass = null;
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     private EClass namedObjectEClass = null;
 
     /**
@@ -119,13 +102,6 @@ public class KaomPackageImpl extends EPackageImpl implements KaomPackage {
      * @generated
      */
     private EClass annotationEClass = null;
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    private EClass annotationMapEntryEClass = null;
 
     /**
      * <!-- begin-user-doc -->
@@ -258,7 +234,7 @@ public class KaomPackageImpl extends EPackageImpl implements KaomPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EReference getEntity_ChildRelations() {
+    public EReference getEntity_ChildPorts() {
         return (EReference)entityEClass.getEStructuralFeatures().get(2);
     }
 
@@ -267,7 +243,7 @@ public class KaomPackageImpl extends EPackageImpl implements KaomPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EReference getEntity_ChildPorts() {
+    public EReference getEntity_ChildRelations() {
         return (EReference)entityEClass.getEStructuralFeatures().get(3);
     }
 
@@ -348,24 +324,6 @@ public class KaomPackageImpl extends EPackageImpl implements KaomPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EClass getActor() {
-        return actorEClass;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EClass getState() {
-        return stateEClass;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public EClass getNamedObject() {
         return namedObjectEClass;
     }
@@ -393,7 +351,7 @@ public class KaomPackageImpl extends EPackageImpl implements KaomPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EReference getAnnotatable_AnnotationMap() {
+    public EReference getAnnotatable_Annotations() {
         return (EReference)annotatableEClass.getEStructuralFeatures().get(0);
     }
 
@@ -404,33 +362,6 @@ public class KaomPackageImpl extends EPackageImpl implements KaomPackage {
      */
     public EClass getAnnotation() {
         return annotationEClass;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EClass getAnnotationMapEntry() {
-        return annotationMapEntryEClass;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EReference getAnnotationMapEntry_Value() {
-        return (EReference)annotationMapEntryEClass.getEStructuralFeatures().get(0);
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EAttribute getAnnotationMapEntry_Key() {
-        return (EAttribute)annotationMapEntryEClass.getEStructuralFeatures().get(1);
     }
 
     /**
@@ -554,8 +485,8 @@ public class KaomPackageImpl extends EPackageImpl implements KaomPackage {
         entityEClass = createEClass(ENTITY);
         createEReference(entityEClass, ENTITY__CHILD_ENTITIES);
         createEReference(entityEClass, ENTITY__CHILD_LINKS);
-        createEReference(entityEClass, ENTITY__CHILD_RELATIONS);
         createEReference(entityEClass, ENTITY__CHILD_PORTS);
+        createEReference(entityEClass, ENTITY__CHILD_RELATIONS);
 
         portEClass = createEClass(PORT);
 
@@ -569,21 +500,13 @@ public class KaomPackageImpl extends EPackageImpl implements KaomPackage {
         createEReference(linkableEClass, LINKABLE__OUTGOING_LINKS);
         createEReference(linkableEClass, LINKABLE__INCOMING_LINKS);
 
-        actorEClass = createEClass(ACTOR);
-
-        stateEClass = createEClass(STATE);
-
         namedObjectEClass = createEClass(NAMED_OBJECT);
         createEAttribute(namedObjectEClass, NAMED_OBJECT__NAME);
 
         annotatableEClass = createEClass(ANNOTATABLE);
-        createEReference(annotatableEClass, ANNOTATABLE__ANNOTATION_MAP);
+        createEReference(annotatableEClass, ANNOTATABLE__ANNOTATIONS);
 
         annotationEClass = createEClass(ANNOTATION);
-
-        annotationMapEntryEClass = createEClass(ANNOTATION_MAP_ENTRY);
-        createEReference(annotationMapEntryEClass, ANNOTATION_MAP_ENTRY__VALUE);
-        createEAttribute(annotationMapEntryEClass, ANNOTATION_MAP_ENTRY__KEY);
 
         stringAnnotationEClass = createEClass(STRING_ANNOTATION);
         createEAttribute(stringAnnotationEClass, STRING_ANNOTATION__VALUE);
@@ -633,27 +556,28 @@ public class KaomPackageImpl extends EPackageImpl implements KaomPackage {
 
         // Add supertypes to classes
         entityEClass.getESuperTypes().add(this.getNamedObject());
+        entityEClass.getESuperTypes().add(this.getLinkable());
         portEClass.getESuperTypes().add(this.getLinkable());
         portEClass.getESuperTypes().add(this.getNamedObject());
         relationEClass.getESuperTypes().add(this.getLinkable());
         relationEClass.getESuperTypes().add(this.getNamedObject());
         linkEClass.getESuperTypes().add(this.getNamedObject());
-        actorEClass.getESuperTypes().add(this.getEntity());
-        stateEClass.getESuperTypes().add(this.getEntity());
-        stateEClass.getESuperTypes().add(this.getLinkable());
         namedObjectEClass.getESuperTypes().add(this.getAnnotatable());
+        annotationEClass.getESuperTypes().add(this.getNamedObject());
+        annotationEClass.getESuperTypes().add(this.getAnnotatable());
         stringAnnotationEClass.getESuperTypes().add(this.getAnnotation());
         referenceAnnotationEClass.getESuperTypes().add(this.getAnnotation());
         booleanAnnotationEClass.getESuperTypes().add(this.getAnnotation());
         intAnnotationEClass.getESuperTypes().add(this.getAnnotation());
         floatAnnotationEClass.getESuperTypes().add(this.getAnnotation());
+        floatAnnotationEClass.getESuperTypes().add(this.getAnnotatable());
 
         // Initialize classes and features; add operations and parameters
-        initEClass(entityEClass, Entity.class, "Entity", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEClass(entityEClass, Entity.class, "Entity", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getEntity_ChildEntities(), this.getEntity(), null, "childEntities", null, 0, -1, Entity.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getEntity_ChildLinks(), this.getLink(), null, "childLinks", null, 0, -1, Entity.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEReference(getEntity_ChildRelations(), this.getRelation(), null, "childRelations", null, 0, -1, Entity.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getEntity_ChildPorts(), this.getPort(), null, "childPorts", null, 0, -1, Entity.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getEntity_ChildRelations(), this.getRelation(), null, "childRelations", null, 0, -1, Entity.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(portEClass, Port.class, "Port", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -667,21 +591,16 @@ public class KaomPackageImpl extends EPackageImpl implements KaomPackage {
         initEReference(getLinkable_OutgoingLinks(), this.getLink(), this.getLink_Source(), "outgoingLinks", null, 0, -1, Linkable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getLinkable_IncomingLinks(), this.getLink(), this.getLink_Target(), "incomingLinks", null, 0, -1, Linkable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-        initEClass(actorEClass, Actor.class, "Actor", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-
-        initEClass(stateEClass, State.class, "State", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-
         initEClass(namedObjectEClass, NamedObject.class, "NamedObject", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getNamedObject_Name(), theEcorePackage.getEString(), "name", null, 0, 1, NamedObject.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(annotatableEClass, Annotatable.class, "Annotatable", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-        initEReference(getAnnotatable_AnnotationMap(), this.getAnnotationMapEntry(), null, "annotationMap", null, 0, -1, Annotatable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getAnnotatable_Annotations(), this.getAnnotation(), null, "annotations", null, 0, -1, Annotatable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-        initEClass(annotationEClass, Annotation.class, "Annotation", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        EOperation op = addEOperation(annotatableEClass, this.getAnnotation(), "getAnnotation", 1, 1, IS_UNIQUE, IS_ORDERED);
+        addEParameter(op, theEcorePackage.getEString(), "key", 0, 1, IS_UNIQUE, IS_ORDERED);
 
-        initEClass(annotationMapEntryEClass, Map.Entry.class, "AnnotationMapEntry", !IS_ABSTRACT, !IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
-        initEReference(getAnnotationMapEntry_Value(), this.getAnnotation(), null, "value", null, 1, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEAttribute(getAnnotationMapEntry_Key(), theEcorePackage.getEString(), "key", null, 1, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEClass(annotationEClass, Annotation.class, "Annotation", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
         initEClass(stringAnnotationEClass, StringAnnotation.class, "StringAnnotation", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getStringAnnotation_Value(), theEcorePackage.getEString(), "value", null, 1, 1, StringAnnotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

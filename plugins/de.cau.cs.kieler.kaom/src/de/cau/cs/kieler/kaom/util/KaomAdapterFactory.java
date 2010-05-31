@@ -17,8 +17,6 @@ package de.cau.cs.kieler.kaom.util;
 
 import de.cau.cs.kieler.kaom.*;
 
-import java.util.Map;
-
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
 
@@ -103,14 +101,6 @@ public class KaomAdapterFactory extends AdapterFactoryImpl {
                 return createLinkableAdapter();
             }
             @Override
-            public Adapter caseActor(Actor object) {
-                return createActorAdapter();
-            }
-            @Override
-            public Adapter caseState(State object) {
-                return createStateAdapter();
-            }
-            @Override
             public Adapter caseNamedObject(NamedObject object) {
                 return createNamedObjectAdapter();
             }
@@ -121,10 +111,6 @@ public class KaomAdapterFactory extends AdapterFactoryImpl {
             @Override
             public Adapter caseAnnotation(Annotation object) {
                 return createAnnotationAdapter();
-            }
-            @Override
-            public Adapter caseAnnotationMapEntry(Map.Entry<String, Annotation> object) {
-                return createAnnotationMapEntryAdapter();
             }
             @Override
             public Adapter caseStringAnnotation(StringAnnotation object) {
@@ -237,34 +223,6 @@ public class KaomAdapterFactory extends AdapterFactoryImpl {
     }
 
     /**
-     * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kaom.Actor <em>Actor</em>}'.
-     * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore cases;
-     * it's useful to ignore a case when inheritance will catch all the cases anyway.
-     * <!-- end-user-doc -->
-     * @return the new adapter.
-     * @see de.cau.cs.kieler.kaom.Actor
-     * @generated
-     */
-    public Adapter createActorAdapter() {
-        return null;
-    }
-
-    /**
-     * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kaom.State <em>State</em>}'.
-     * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore cases;
-     * it's useful to ignore a case when inheritance will catch all the cases anyway.
-     * <!-- end-user-doc -->
-     * @return the new adapter.
-     * @see de.cau.cs.kieler.kaom.State
-     * @generated
-     */
-    public Adapter createStateAdapter() {
-        return null;
-    }
-
-    /**
      * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kaom.NamedObject <em>Named Object</em>}'.
      * <!-- begin-user-doc -->
      * This default implementation returns null so that we can easily ignore cases;
@@ -303,20 +261,6 @@ public class KaomAdapterFactory extends AdapterFactoryImpl {
      * @generated
      */
     public Adapter createAnnotationAdapter() {
-        return null;
-    }
-
-    /**
-     * Creates a new adapter for an object of class '{@link java.util.Map.Entry <em>Annotation Map Entry</em>}'.
-     * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore cases;
-     * it's useful to ignore a case when inheritance will catch all the cases anyway.
-     * <!-- end-user-doc -->
-     * @return the new adapter.
-     * @see java.util.Map.Entry
-     * @generated
-     */
-    public Adapter createAnnotationMapEntryAdapter() {
         return null;
     }
 

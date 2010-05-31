@@ -27,16 +27,16 @@ import org.eclipse.emf.common.util.EList;
  * <ul>
  *   <li>{@link de.cau.cs.kieler.kaom.Entity#getChildEntities <em>Child Entities</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kaom.Entity#getChildLinks <em>Child Links</em>}</li>
- *   <li>{@link de.cau.cs.kieler.kaom.Entity#getChildRelations <em>Child Relations</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kaom.Entity#getChildPorts <em>Child Ports</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kaom.Entity#getChildRelations <em>Child Relations</em>}</li>
  * </ul>
  * </p>
  *
  * @see de.cau.cs.kieler.kaom.KaomPackage#getEntity()
- * @model abstract="true"
+ * @model
  * @generated
  */
-public interface Entity extends NamedObject {
+public interface Entity extends NamedObject, Linkable {
     /**
      * Returns the value of the '<em><b>Child Entities</b></em>' containment reference list.
      * The list contents are of type {@link de.cau.cs.kieler.kaom.Entity}.
@@ -70,22 +70,6 @@ public interface Entity extends NamedObject {
     EList<Link> getChildLinks();
 
     /**
-     * Returns the value of the '<em><b>Child Relations</b></em>' containment reference list.
-     * The list contents are of type {@link de.cau.cs.kieler.kaom.Relation}.
-     * <!-- begin-user-doc -->
-     * <p>
-     * If the meaning of the '<em>Child Relations</em>' containment reference list isn't clear,
-     * there really should be more of a description here...
-     * </p>
-     * <!-- end-user-doc -->
-     * @return the value of the '<em>Child Relations</em>' containment reference list.
-     * @see de.cau.cs.kieler.kaom.KaomPackage#getEntity_ChildRelations()
-     * @model containment="true"
-     * @generated
-     */
-    EList<Relation> getChildRelations();
-
-    /**
      * Returns the value of the '<em><b>Child Ports</b></em>' containment reference list.
      * The list contents are of type {@link de.cau.cs.kieler.kaom.Port}.
      * <!-- begin-user-doc -->
@@ -100,5 +84,21 @@ public interface Entity extends NamedObject {
      * @generated
      */
     EList<Port> getChildPorts();
+
+    /**
+     * Returns the value of the '<em><b>Child Relations</b></em>' containment reference list.
+     * The list contents are of type {@link de.cau.cs.kieler.kaom.Relation}.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Child Relations</em>' containment reference list isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Child Relations</em>' containment reference list.
+     * @see de.cau.cs.kieler.kaom.KaomPackage#getEntity_ChildRelations()
+     * @model containment="true"
+     * @generated
+     */
+    EList<Relation> getChildRelations();
 
 } // Entity

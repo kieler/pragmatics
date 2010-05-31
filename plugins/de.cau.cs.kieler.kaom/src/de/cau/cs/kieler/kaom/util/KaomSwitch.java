@@ -18,7 +18,6 @@ package de.cau.cs.kieler.kaom.util;
 import de.cau.cs.kieler.kaom.*;
 
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -101,6 +100,7 @@ public class KaomSwitch<T> {
                 Entity entity = (Entity)theEObject;
                 T result = caseEntity(entity);
                 if (result == null) result = caseNamedObject(entity);
+                if (result == null) result = caseLinkable(entity);
                 if (result == null) result = caseAnnotatable(entity);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
@@ -137,25 +137,6 @@ public class KaomSwitch<T> {
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
-            case KaomPackage.ACTOR: {
-                Actor actor = (Actor)theEObject;
-                T result = caseActor(actor);
-                if (result == null) result = caseEntity(actor);
-                if (result == null) result = caseNamedObject(actor);
-                if (result == null) result = caseAnnotatable(actor);
-                if (result == null) result = defaultCase(theEObject);
-                return result;
-            }
-            case KaomPackage.STATE: {
-                State state = (State)theEObject;
-                T result = caseState(state);
-                if (result == null) result = caseEntity(state);
-                if (result == null) result = caseLinkable(state);
-                if (result == null) result = caseNamedObject(state);
-                if (result == null) result = caseAnnotatable(state);
-                if (result == null) result = defaultCase(theEObject);
-                return result;
-            }
             case KaomPackage.NAMED_OBJECT: {
                 NamedObject namedObject = (NamedObject)theEObject;
                 T result = caseNamedObject(namedObject);
@@ -172,12 +153,8 @@ public class KaomSwitch<T> {
             case KaomPackage.ANNOTATION: {
                 Annotation annotation = (Annotation)theEObject;
                 T result = caseAnnotation(annotation);
-                if (result == null) result = defaultCase(theEObject);
-                return result;
-            }
-            case KaomPackage.ANNOTATION_MAP_ENTRY: {
-                @SuppressWarnings("unchecked") Map.Entry<String, Annotation> annotationMapEntry = (Map.Entry<String, Annotation>)theEObject;
-                T result = caseAnnotationMapEntry(annotationMapEntry);
+                if (result == null) result = caseNamedObject(annotation);
+                if (result == null) result = caseAnnotatable(annotation);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
@@ -185,6 +162,8 @@ public class KaomSwitch<T> {
                 StringAnnotation stringAnnotation = (StringAnnotation)theEObject;
                 T result = caseStringAnnotation(stringAnnotation);
                 if (result == null) result = caseAnnotation(stringAnnotation);
+                if (result == null) result = caseNamedObject(stringAnnotation);
+                if (result == null) result = caseAnnotatable(stringAnnotation);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
@@ -192,6 +171,8 @@ public class KaomSwitch<T> {
                 ReferenceAnnotation referenceAnnotation = (ReferenceAnnotation)theEObject;
                 T result = caseReferenceAnnotation(referenceAnnotation);
                 if (result == null) result = caseAnnotation(referenceAnnotation);
+                if (result == null) result = caseNamedObject(referenceAnnotation);
+                if (result == null) result = caseAnnotatable(referenceAnnotation);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
@@ -199,6 +180,8 @@ public class KaomSwitch<T> {
                 BooleanAnnotation booleanAnnotation = (BooleanAnnotation)theEObject;
                 T result = caseBooleanAnnotation(booleanAnnotation);
                 if (result == null) result = caseAnnotation(booleanAnnotation);
+                if (result == null) result = caseNamedObject(booleanAnnotation);
+                if (result == null) result = caseAnnotatable(booleanAnnotation);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
@@ -206,6 +189,8 @@ public class KaomSwitch<T> {
                 IntAnnotation intAnnotation = (IntAnnotation)theEObject;
                 T result = caseIntAnnotation(intAnnotation);
                 if (result == null) result = caseAnnotation(intAnnotation);
+                if (result == null) result = caseNamedObject(intAnnotation);
+                if (result == null) result = caseAnnotatable(intAnnotation);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
@@ -213,6 +198,8 @@ public class KaomSwitch<T> {
                 FloatAnnotation floatAnnotation = (FloatAnnotation)theEObject;
                 T result = caseFloatAnnotation(floatAnnotation);
                 if (result == null) result = caseAnnotation(floatAnnotation);
+                if (result == null) result = caseNamedObject(floatAnnotation);
+                if (result == null) result = caseAnnotatable(floatAnnotation);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
@@ -296,36 +283,6 @@ public class KaomSwitch<T> {
     }
 
     /**
-     * Returns the result of interpreting the object as an instance of '<em>Actor</em>'.
-     * <!-- begin-user-doc -->
-     * This implementation returns null;
-     * returning a non-null result will terminate the switch.
-     * <!-- end-user-doc -->
-     * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>Actor</em>'.
-     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-     * @generated
-     */
-    public T caseActor(Actor object) {
-        return null;
-    }
-
-    /**
-     * Returns the result of interpreting the object as an instance of '<em>State</em>'.
-     * <!-- begin-user-doc -->
-     * This implementation returns null;
-     * returning a non-null result will terminate the switch.
-     * <!-- end-user-doc -->
-     * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>State</em>'.
-     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-     * @generated
-     */
-    public T caseState(State object) {
-        return null;
-    }
-
-    /**
      * Returns the result of interpreting the object as an instance of '<em>Named Object</em>'.
      * <!-- begin-user-doc -->
      * This implementation returns null;
@@ -367,21 +324,6 @@ public class KaomSwitch<T> {
      * @generated
      */
     public T caseAnnotation(Annotation object) {
-        return null;
-    }
-
-    /**
-     * Returns the result of interpreting the object as an instance of '<em>Annotation Map Entry</em>'.
-     * <!-- begin-user-doc -->
-     * This implementation returns null;
-     * returning a non-null result will terminate the switch.
-     * <!-- end-user-doc -->
-     * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>Annotation Map Entry</em>'.
-     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-     * @generated
-     */
-    public T caseAnnotationMapEntry(Map.Entry<String, Annotation> object) {
         return null;
     }
 

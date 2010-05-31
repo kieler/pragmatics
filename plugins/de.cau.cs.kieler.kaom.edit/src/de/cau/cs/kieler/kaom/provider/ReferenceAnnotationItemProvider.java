@@ -17,14 +17,13 @@ package de.cau.cs.kieler.kaom.provider;
 
 
 import de.cau.cs.kieler.kaom.KaomPackage;
+import de.cau.cs.kieler.kaom.ReferenceAnnotation;
 
 import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
-
-import org.eclipse.emf.common.util.ResourceLocator;
 
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
@@ -33,7 +32,6 @@ import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.IItemPropertySource;
 import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
-import org.eclipse.emf.edit.provider.ItemProviderAdapter;
 
 /**
  * This is the item provider adapter for a {@link de.cau.cs.kieler.kaom.ReferenceAnnotation} object.
@@ -42,7 +40,7 @@ import org.eclipse.emf.edit.provider.ItemProviderAdapter;
  * @generated
  */
 public class ReferenceAnnotationItemProvider
-    extends ItemProviderAdapter
+    extends AnnotationItemProvider
     implements
         IEditingDomainItemProvider,
         IStructuredItemContentProvider,
@@ -116,7 +114,10 @@ public class ReferenceAnnotationItemProvider
      */
     @Override
     public String getText(Object object) {
-        return getString("_UI_ReferenceAnnotation_type");
+        String label = ((ReferenceAnnotation)object).getName();
+        return label == null || label.length() == 0 ?
+            getString("_UI_ReferenceAnnotation_type") :
+            getString("_UI_ReferenceAnnotation_type") + " " + label;
     }
 
     /**
@@ -142,17 +143,6 @@ public class ReferenceAnnotationItemProvider
     @Override
     protected void collectNewChildDescriptors(Collection<Object> newChildDescriptors, Object object) {
         super.collectNewChildDescriptors(newChildDescriptors, object);
-    }
-
-    /**
-     * Return the resource locator for this item provider's resources.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    public ResourceLocator getResourceLocator() {
-        return KaomEditPlugin.INSTANCE;
     }
 
 }

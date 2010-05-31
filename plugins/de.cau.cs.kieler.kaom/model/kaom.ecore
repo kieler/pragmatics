@@ -3,15 +3,15 @@
     xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="kaom"
     nsURI="http://kieler.cs.cau.de/KAOM" nsPrefix="kaom">
-  <eClassifiers xsi:type="ecore:EClass" name="Entity" abstract="true" eSuperTypes="#//NamedObject">
+  <eClassifiers xsi:type="ecore:EClass" name="Entity" eSuperTypes="#//NamedObject #//Linkable">
     <eStructuralFeatures xsi:type="ecore:EReference" name="childEntities" upperBound="-1"
         eType="#//Entity" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="childLinks" upperBound="-1"
         eType="#//Link" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="childRelations" upperBound="-1"
-        eType="#//Relation" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="childPorts" upperBound="-1"
         eType="#//Port" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="childRelations" upperBound="-1"
+        eType="#//Relation" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Port" eSuperTypes="#//Linkable #//NamedObject"/>
   <eClassifiers xsi:type="ecore:EClass" name="Relation" eSuperTypes="#//Linkable #//NamedObject"/>
@@ -27,21 +27,17 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="incomingLinks" upperBound="-1"
         eType="#//Link" eOpposite="#//Link/target"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Actor" eSuperTypes="#//Entity"/>
-  <eClassifiers xsi:type="ecore:EClass" name="State" eSuperTypes="#//Entity #//Linkable"/>
   <eClassifiers xsi:type="ecore:EClass" name="NamedObject" abstract="true" eSuperTypes="#//Annotatable">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Annotatable" abstract="true">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="annotationMap" upperBound="-1"
-        eType="#//AnnotationMapEntry" containment="true"/>
+    <eOperations name="getAnnotation" lowerBound="1" eType="#//Annotation">
+      <eParameters name="key" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="annotations" upperBound="-1"
+        eType="#//Annotation" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Annotation" abstract="true" interface="true"/>
-  <eClassifiers xsi:type="ecore:EClass" name="AnnotationMapEntry" instanceClassName="java.util.Map$Entry">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="value" lowerBound="1" eType="#//Annotation"
-        containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" lowerBound="1" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
-  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Annotation" eSuperTypes="#//NamedObject #//Annotatable"/>
   <eClassifiers xsi:type="ecore:EClass" name="StringAnnotation" eSuperTypes="#//Annotation">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
   </eClassifiers>
@@ -55,7 +51,7 @@
   <eClassifiers xsi:type="ecore:EClass" name="IntAnnotation" eSuperTypes="#//Annotation">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EInt"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="FloatAnnotation" eSuperTypes="#//Annotation">
+  <eClassifiers xsi:type="ecore:EClass" name="FloatAnnotation" eSuperTypes="#//Annotation #//Annotatable">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EFloat"/>
   </eClassifiers>
 </ecore:EPackage>

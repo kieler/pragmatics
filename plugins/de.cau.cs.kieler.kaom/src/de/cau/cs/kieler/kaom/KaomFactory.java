@@ -35,6 +35,15 @@ public interface KaomFactory extends EFactory {
     KaomFactory eINSTANCE = de.cau.cs.kieler.kaom.impl.KaomFactoryImpl.init();
 
     /**
+     * Returns a new object of class '<em>Entity</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Entity</em>'.
+     * @generated
+     */
+    Entity createEntity();
+
+    /**
      * Returns a new object of class '<em>Port</em>'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -62,22 +71,13 @@ public interface KaomFactory extends EFactory {
     Link createLink();
 
     /**
-     * Returns a new object of class '<em>Actor</em>'.
+     * Returns a new object of class '<em>Annotation</em>'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return a new object of class '<em>Actor</em>'.
+     * @return a new object of class '<em>Annotation</em>'.
      * @generated
      */
-    Actor createActor();
-
-    /**
-     * Returns a new object of class '<em>State</em>'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return a new object of class '<em>State</em>'.
-     * @generated
-     */
-    State createState();
+    Annotation createAnnotation();
 
     /**
      * Returns a new object of class '<em>String Annotation</em>'.

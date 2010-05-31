@@ -28,6 +28,7 @@ import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.ecore.EStructuralFeature;
 
+import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
@@ -71,8 +72,54 @@ public class EntityItemProvider
         if (itemPropertyDescriptors == null) {
             super.getPropertyDescriptors(object);
 
+            addOutgoingLinksPropertyDescriptor(object);
+            addIncomingLinksPropertyDescriptor(object);
         }
         return itemPropertyDescriptors;
+    }
+
+    /**
+     * This adds a property descriptor for the Outgoing Links feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected void addOutgoingLinksPropertyDescriptor(Object object) {
+        itemPropertyDescriptors.add
+            (createItemPropertyDescriptor
+                (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+                 getResourceLocator(),
+                 getString("_UI_Linkable_outgoingLinks_feature"),
+                 getString("_UI_PropertyDescriptor_description", "_UI_Linkable_outgoingLinks_feature", "_UI_Linkable_type"),
+                 KaomPackage.Literals.LINKABLE__OUTGOING_LINKS,
+                 true,
+                 false,
+                 true,
+                 null,
+                 null,
+                 null));
+    }
+
+    /**
+     * This adds a property descriptor for the Incoming Links feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected void addIncomingLinksPropertyDescriptor(Object object) {
+        itemPropertyDescriptors.add
+            (createItemPropertyDescriptor
+                (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+                 getResourceLocator(),
+                 getString("_UI_Linkable_incomingLinks_feature"),
+                 getString("_UI_PropertyDescriptor_description", "_UI_Linkable_incomingLinks_feature", "_UI_Linkable_type"),
+                 KaomPackage.Literals.LINKABLE__INCOMING_LINKS,
+                 true,
+                 false,
+                 true,
+                 null,
+                 null,
+                 null));
     }
 
     /**
@@ -89,8 +136,8 @@ public class EntityItemProvider
             super.getChildrenFeatures(object);
             childrenFeatures.add(KaomPackage.Literals.ENTITY__CHILD_ENTITIES);
             childrenFeatures.add(KaomPackage.Literals.ENTITY__CHILD_LINKS);
-            childrenFeatures.add(KaomPackage.Literals.ENTITY__CHILD_RELATIONS);
             childrenFeatures.add(KaomPackage.Literals.ENTITY__CHILD_PORTS);
+            childrenFeatures.add(KaomPackage.Literals.ENTITY__CHILD_RELATIONS);
         }
         return childrenFeatures;
     }
@@ -136,8 +183,8 @@ public class EntityItemProvider
         switch (notification.getFeatureID(Entity.class)) {
             case KaomPackage.ENTITY__CHILD_ENTITIES:
             case KaomPackage.ENTITY__CHILD_LINKS:
-            case KaomPackage.ENTITY__CHILD_RELATIONS:
             case KaomPackage.ENTITY__CHILD_PORTS:
+            case KaomPackage.ENTITY__CHILD_RELATIONS:
                 fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
                 return;
         }
@@ -158,12 +205,7 @@ public class EntityItemProvider
         newChildDescriptors.add
             (createChildParameter
                 (KaomPackage.Literals.ENTITY__CHILD_ENTITIES,
-                 KaomFactory.eINSTANCE.createActor()));
-
-        newChildDescriptors.add
-            (createChildParameter
-                (KaomPackage.Literals.ENTITY__CHILD_ENTITIES,
-                 KaomFactory.eINSTANCE.createState()));
+                 KaomFactory.eINSTANCE.createEntity()));
 
         newChildDescriptors.add
             (createChildParameter
@@ -172,13 +214,13 @@ public class EntityItemProvider
 
         newChildDescriptors.add
             (createChildParameter
-                (KaomPackage.Literals.ENTITY__CHILD_RELATIONS,
-                 KaomFactory.eINSTANCE.createRelation()));
+                (KaomPackage.Literals.ENTITY__CHILD_PORTS,
+                 KaomFactory.eINSTANCE.createPort()));
 
         newChildDescriptors.add
             (createChildParameter
-                (KaomPackage.Literals.ENTITY__CHILD_PORTS,
-                 KaomFactory.eINSTANCE.createPort()));
+                (KaomPackage.Literals.ENTITY__CHILD_RELATIONS,
+                 KaomFactory.eINSTANCE.createRelation()));
     }
 
 }

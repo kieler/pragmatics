@@ -15,7 +15,7 @@
  */
 package de.cau.cs.kieler.kaom;
 
-import org.eclipse.emf.common.util.EMap;
+import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -27,7 +27,7 @@ import org.eclipse.emf.ecore.EObject;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link de.cau.cs.kieler.kaom.Annotatable#getAnnotationMap <em>Annotation Map</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kaom.Annotatable#getAnnotations <em>Annotations</em>}</li>
  * </ul>
  * </p>
  *
@@ -37,20 +37,27 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Annotatable extends EObject {
     /**
-     * Returns the value of the '<em><b>Annotation Map</b></em>' map.
-     * The key is of type {@link java.lang.String},
-     * and the value is of type {@link de.cau.cs.kieler.kaom.Annotation},
+     * Returns the value of the '<em><b>Annotations</b></em>' containment reference list.
+     * The list contents are of type {@link de.cau.cs.kieler.kaom.Annotation}.
      * <!-- begin-user-doc -->
      * <p>
-     * If the meaning of the '<em>Annotation Map</em>' map isn't clear,
+     * If the meaning of the '<em>Annotations</em>' containment reference list isn't clear,
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * @return the value of the '<em>Annotation Map</em>' map.
-     * @see de.cau.cs.kieler.kaom.KaomPackage#getAnnotatable_AnnotationMap()
-     * @model mapType="de.cau.cs.kieler.kaom.AnnotationMapEntry<org.eclipse.emf.ecore.EString, de.cau.cs.kieler.kaom.Annotation>"
+     * @return the value of the '<em>Annotations</em>' containment reference list.
+     * @see de.cau.cs.kieler.kaom.KaomPackage#getAnnotatable_Annotations()
+     * @model containment="true"
      * @generated
      */
-    EMap<String, Annotation> getAnnotationMap();
+    EList<Annotation> getAnnotations();
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @model required="true"
+     * @generated
+     */
+    Annotation getAnnotation(String key);
 
 } // Annotatable

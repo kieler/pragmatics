@@ -32,7 +32,7 @@ package de.cau.cs.kieler.kaom;
  * @model
  * @generated
  */
-public interface FloatAnnotation extends Annotation {
+public interface FloatAnnotation extends Annotation, Annotatable {
     /**
      * Returns the value of the '<em><b>Value</b></em>' attribute.
      * <!-- begin-user-doc -->
