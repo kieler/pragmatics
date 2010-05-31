@@ -90,13 +90,17 @@ public abstract class AnnotatableImpl extends EObjectImpl implements Annotatable
 
     /**
      * <!-- begin-user-doc -->
+     * Return the first Annotation in the annotations list that equals to the given key.
      * <!-- end-user-doc -->
-     * @generated
      */
     public Annotation getAnnotation(String key) {
-        // TODO: implement this method
-        // Ensure that you remove @generated or mark it @generated NOT
-        throw new UnsupportedOperationException();
+        EList<Annotation> annotations = this.getAnnotations();
+        for (Annotation annotation : annotations) {
+            if(annotation.getName().equals(key)){
+                return annotation;
+            }
+        }
+        return null;
     }
 
     /**
