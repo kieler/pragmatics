@@ -17,16 +17,17 @@ extension org::eclipse::xtend::util::stdlib::issues;      // pass messages back 
 //-----------------------------------------------------------------------------
   
 //Start Model Transformation here.
-create State this transform(DocumentRoot root):
- 	this.childEntities.add(transform(root.entity))
+Entity transform(DocumentRoot root):
+ 	let entity = transform(root.entity) :
+ 	entity.optimize() ->
+ 	entity
 ;   
 
-create Actor this transform(Moml::EntityType entity):
+create Entity this transform(Moml::EntityType entity):
 	let list = {}:
 	this.setName(entity.name) ->
 	createTrace(this,entity,"ptolemy","kaom") ->
 	info("Created entity "+entity.name) ->
-//	test(entity,"bla",list) ->
 	addProperties(this, entity.property) ->
 	addChildPorts(this) ->
 	addChildEntities(this, entity.entity) ->
@@ -49,7 +50,7 @@ create Link this transform(Moml::LinkType link, Entity parent):
 	let relation = parent.getRelation(link.relation):
 	let relation1 = parent.getRelation(link.relation1):
 	let relation2 = parent.getRelation(link.relation2):
-	let port = parent.getPort(link.port):
+	let port = if(link.port == null) then null else parent.getPort(link.port):
 	let linkables = {}:
 	createTrace(this,link,"ptolemy","kaom") ->
 	(if(port != null) then (linkables.add(port)) else (null)) ->
@@ -57,7 +58,8 @@ create Link this transform(Moml::LinkType link, Entity parent):
 	(if(relation1 != null) then (linkables.add(relation1)) else (null)) ->
 	(if(relation2 != null) then (linkables.add(relation2)) else (null)) ->
 	(if(linkables.size == 2) then (this.setSource(linkables.get(0)) -> this.setTarget(linkables.get(1)))	else (null)) ->
-	this.setName("link")
+	// initially set all relations to be undirected
+	this.addUndirectedAnnotation()
 ;
 
 Void addChildEntities(Entity parent, List[EntityType] ptolemyEntities):
@@ -88,14 +90,7 @@ Void addProperties(Annotatable annotatable, List[PropertyType] properties):
 		addProperties(annotatable, properties.withoutFirst())
 ;
 
-Void addAnnotation(Annotatable annotatable, String key, String value):
-	let entry = new AnnotationMapEntry:
-	let annotation = new StringAnnotation:
-	entry.setKey(key) ->
-	annotation.setValue(value) ->
-	entry.setValue(annotation) ->
-	annotatable.annotationMap.add(entry)
-;
+
 
 // Ports are not necessarily explicit objects in a ptolemy model. Usually they are
 // created implicitly in an Actor's Java implementation. Hence to see what ports
@@ -105,12 +100,31 @@ Void addAnnotation(Annotatable annotatable, String key, String value):
 // specific attributes of the ports (e.g. input or output) will be unavailable.
 Void addChildPorts(Entity entity):
 	let ptolemyEntity = (EntityType)entity.getSingleTraceTarget("ptolemy"):
-//	let ports = ptolemyEntity.getPorts(): // this will instanciate the Entity in Ptolemy
-//	info(entity.getName() + " yields " + ports.size() + " ports.") -> 
-//	entity.childPorts.addAll(ports)
 	let entityList = {ptolemyEntity}:
-	let portList = getPorts(entityList):
-	entity.childPorts.addAll(portList)
+	entity.childPorts.addAll(getExplicitPorts(ptolemyEntity)) ->
+	entity.childPorts.addAll(getPorts(entityList))
+;
+
+List[Port] getExplicitPorts(EntityType entity):
+	let ptolemyPorts = entity.port:
+    info("getExplicitPorts "+ptolemyPorts.size) ->
+	getExplicitPorts(ptolemyPorts)
+;
+
+List[Port] getExplicitPorts(List[Moml::PortType] ptolemyPorts):
+	let kaomPorts = {}:
+	if(ptolemyPorts.isEmpty) then (info("empty") -> kaomPorts) else
+		(info("full") -> kaomPorts.add(transform(ptolemyPorts.first())) 
+		 -> kaomPorts.addAll(getExplicitPorts(ptolemyPorts.withoutFirst()))
+		 -> kaomPorts)  
+;
+
+create Port this transform(Moml::PortType ptolemyPort):
+	info("Creating explicit port: "+ptolemyPort.name) ->
+	this.setName(ptolemyPort.name) -> 
+	createTrace(this,ptolemyPort,"ptolemy","kaom") ->
+	(if( ptolemyPort.property.select(p|p.name == "input").isEmpty ) then this else this.addBooleanAnnotation("isInput",true)) ->
+	(if( ptolemyPort.property.select(p|p.name == "output").isEmpty ) then this else this.addBooleanAnnotation("isOutput",true)) 
 ;
 
 Relation getRelation(Entity parent,String relationName):
@@ -125,65 +139,234 @@ Port getPort(Entity parent, String portName):
 	let newPort = new Port:
 	let splitName = portName.split("\\."):
 	let actor = splitName.size > 0 ? parent.childEntities.selectFirst(a|a.name == splitName.get(0)): null:
-	let port = splitName.size > 1 ? actor.childPorts.selectFirst(p|p.name == splitName.get(1)): null:
-	
-	if(portName == null || splitName.size < 2) then(
-		//newPort.setName("Invalid:"+portName) ->
-		//parent.childPorts.add(newPort) ->
-		//newPort
-		reportWarning("A port with name "+portName+" was requested but was neither found nor created")->
-		null
-	)	
-	else
-		if(port != null) then
-			port
-		else
+	let port = switch{
+		case splitName.size > 1 : actor.childPorts.selectFirst(p|p.name == splitName.get(1))
+		case splitName.size == 1: parent.childPorts.selectFirst(p|p.name == portName)
+		default: null
+	}:
+	switch{
+		case portName == null :  
+			(reportWarning("Port with no name requested for Entity "+parent.name)->
+			null)
+		case port != null : port
+		default: 
 			(newPort.setName(splitName.get(1)) ->
 			actor.childPorts.add(newPort) ->
 			newPort)
+	}
 ;
 
 String getName(Object o):
 	if(NamedObject.isInstance(o)) then ((NamedObject)o).name else ""
 ;
 
-// have to call get Ports indirectly with an empty list parameter because Java extensions
-// may not have a return value
-//List[Port] getPorts(EntityType entity) :
-//   let ports = {}:
-//   entity.getPorts(ports) -> 
-//   ports
-//;
-
 List getPorts(List[EntityType] entities) :
-  JAVA de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyHelper.getPorts(java.util.List) // org.eclipse.emf.common.util.EList)
+  JAVA de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyHelper.getPorts(java.util.List) 
 ;
 
-// does not work
-//Void getPorts(EntityType entity, List ports) :
-//  JAVA de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyHelper.getPorts(ptolemy.Moml.EntityType,java.util.List) // org.eclipse.emf.common.util.EList)
-//;
+// --------------------------------------------------------------------------------------------
+//    OPTIMIZATION RULES
+// --------------------------------------------------------------------------------------------
 
-List[Port] getPorts(EntityType entity):
-	let ports = {}:
-	getPort(entity, 0, ports)
+// entry points for optimizations
+Void optimize(Entity entity):
+	analyzeLinkDirections(entity) ->
+	optimizeSingleRelations(entity)
 ;
 
-// recursive function to retrieve all ports of an entity
-List[kaom::Port] getPort(EntityType entity, Integer index, List[kaom::Port] inputList):
-	let nextPort = {}: // entity.getPort(index):
-	if(nextPort != null) then
-		(
-		inputList.add(nextPort) ->
-		getPort(entity, index+1, inputList)	
-		)
-	else inputList
+// --------------------------------------------------------------------------------------------
+//    Analysis of Link directions (Ptolemy Links are undirected)
+// --------------------------------------------------------------------------------------------
+
+Void analyzeLinkDirections(Entity entity):
+	analyzeLinkDirections(entity.childEntities) -> // depth first 
+	analyzeLinkDirectionsForPorts(entity.childPorts) ->
+	analyzeLinkDirectionsForLinksFixpoint(entity.childLinks)
 ;
 
-kaom::Port getPort(EntityType entity, Integer index):
-	JAVA de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyHelper.getPort(ptolemy.Moml.EntityType, java.lang.Integer)
+// Set Link directions for all connected Links to a List of Entities 
+// using the port input/output information
+Void analyzeLinkDirections(List[Entity] entities):
+	if(entities.size <= 0) then null else (
+		analyzeLinkDirections(entities.first()) ->
+		analyzeLinkDirections(entities.withoutFirst()))
 ;
 
-Void test(EntityType entity, String msg, List[Port] ports) :
- 	 JAVA de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyHelper.test(ptolemy.Moml.EntityType, java.lang.String, java.util.List)
+// Set Link directions for all connected Links to a List of Ports 
+// using the port input/output information
+Void analyzeLinkDirectionsForPorts(List[Port] ports):
+	if(ports.size <= 0) then null else ( 
+		analyzeLinkDirections(ports.first()) ->
+		analyzeLinkDirectionsForPorts(ports.withoutFirst()))
+;
+
+// Set Link directions for all connected Links to a Port 
+// using the port input/output information
+Void analyzeLinkDirections(Port port):
+	let isInput = port.isBooleanAnnotation("isInput"):
+	let isOutput = port.isBooleanAnnotation("isOutput"):
+	switch{
+		case isInput && isOutput : null
+		case isInput : setLinkDirection(port.getConnectedLinks(), port, true)
+		case isOutput: setLinkDirection(port.getConnectedLinks(), port, false)
+		default: null
+	}
+;
+
+// Set directions of all links to a port which is known to be an input or output
+Void setLinkDirection(List[Link] links, Port port, Boolean isInput):
+	let link = links.first():
+	switch{
+		case links.isEmpty: null
+		case isInput == true  && link.eContainer == port.eContainer : link.swapSourceTo(port)
+		case isInput == false && link.eContainer == port.eContainer : link.swapTargetTo(port)
+		case isInput == true  && link.eContainer != port.eContainer : link.swapTargetTo(port)
+		case isInput == false && link.eContainer != port.eContainer : link.swapSourceTo(port)
+		default: null
+	} ->
+	// recursively for all links in the list
+	if(! links.isEmpty) then setLinkDirection(links.withoutFirst(),port,isInput) else null 
+;
+
+// Do a fixpoint iteration on a set of Links and try to deduce link directions from
+// neighbor edges
+Void analyzeLinkDirectionsForLinksFixpoint(List[Link] links):
+	let hasChanged = analyzeLinkDirectionsForLinks(links):
+	if(hasChanged) then analyzeLinkDirectionsForLinksFixpoint(links) else null
+;
+
+// returns true if it found some link which it could specify the direction
+Boolean analyzeLinkDirectionsForLinks(List[Link] links):
+	let link = links.first():
+	let connectedRelations = {link.source, link.target}.typeSelect(kaom::Relation):
+	let switchedLink = if(links.isEmpty || connectedRelations.isEmpty || !link.isUndirected()) then false else 
+	       analyzeLinkDirectionForLink(link, connectedRelations):
+	let switchedOthers = if(links.isEmpty) then false else analyzeLinkDirectionsForLinks(links.withoutFirst()):
+	switchedLink || switchedOthers	
+;
+
+// Given a link and up to two relations, deduce from neighbor links the link's direction
+Boolean analyzeLinkDirectionForLink(Link link, List[Relation] relations):
+	let switchedAtRel1 = if(relations.size <1) then false else analyzeLinkDirectionForLink(link,relations.get(0)):
+	let switchedAtRel2 = if(relations.size <2) then false else analyzeLinkDirectionForLink(link,relations.get(1)):
+	switchedAtRel1 || switchedAtRel2
+;
+
+// Given a link and one relation, deduce from neighbor links the link's direction
+Boolean analyzeLinkDirectionForLink(Link link, Relation relation):
+	let neighborLinks = {relation.outgoingLinks, relation.incomingLinks} : 
+	analyzeLinkDirectionForLink(link, neighborLinks, relation)
+;
+
+Boolean analyzeLinkDirectionForLink(Link link, List[Link] neighborLinks, Relation relation):
+	let hasFirstSwitched = switch{
+		case (neighborLinks.isEmpty || link.source == link.target) : false
+		case ( (neighborLinks.first().target == relation) && (!neighborLinks.first().isUndirected())):
+			(link.swapSourceTo(relation) -> true)
+		case ( (neighborLinks.first().source == relation) && (!neighborLinks.first().isUndirected())):
+			(link.swapTargetTo(relation) -> true)
+		default : false
+	}:
+	let haveOthersSwitched = if (neighborLinks.isEmpty) then false else analyzeLinkDirectionForLink(link, neighborLinks.withoutFirst(), relation):
+	hasFirstSwitched || haveOthersSwitched		
+;
+
+Void swapSourceTo(Link link, Linkable linkable):
+	let source = link.source:
+	let target = link.target:
+	switch{
+		case source == target: null // check for selfloop
+		case target == linkable: link.setTarget(source)
+		default: null
+	}->
+	link.setSource(linkable) ->
+	link.removeUndirectedAnnotation()
+;
+
+Void swapTargetTo(Link link, Linkable linkable):
+	let source = link.source:
+	let target = link.target:
+	switch{
+		case source == target: null // check for selfloop
+		case source == linkable: link.setSource(target)
+		default: null
+	}->
+	link.setTarget(linkable) ->
+	link.removeUndirectedAnnotation()
+;
+
+
+// --------------------------------------------------------------------------------------------
+//    Optimization of single Relations (Ptolemy has always one relation)
+// --------------------------------------------------------------------------------------------
+
+Void optimizeSingleRelations(Entity entity):
+	let relations = entity.childRelations:
+	optimizeSingleRelations(relations)
+;
+
+Void optimizeSingleRelations(List[Relation] relations):
+	if(relations.isEmpty) then null else(
+		optimizeSingleRelation(relations.first()) ->
+		optimizeSingleRelations(relations.withoutFirst())
+	)
+;
+
+Void optimizeSingleRelation(Relation relation):
+	let inLink  = relation.incomingLinks.first():
+	let outLink = relation.outgoingLinks.first():
+	if( (relation.incomingLinks.size == 1) && (relation.outgoingLinks.size == 1) ) then(
+		inLink.setTarget(outLink.target) //->
+	//	((Entity)outLink.eContainer).childLinks.remove(outLink) ->
+	//	((Entity)relation.eContainer).childRelations.remove(relation)
+	) else null	
+;
+
+// --------------------------------------------------------------------------------------------
+//    Helper functions
+// --------------------------------------------------------------------------------------------
+
+Boolean isBooleanAnnotation(Annotatable annotatable, String key):
+	let annotation = annotatable.getAnnotation(key):
+	switch {
+		case annotation == null: false
+		case BooleanAnnotation.isInstance(annotation) : ((BooleanAnnotation)annotation).value
+		default: false
+	}
+;
+
+Void addBooleanAnnotation(Annotatable annotatable, String key, Boolean value):
+	let annotation = new BooleanAnnotation:
+	annotation.setName(key) ->
+	annotation.setValue(value) ->
+	annotatable.annotations.add(annotation)
+;
+
+Void addAnnotation(Annotatable annotatable, String key, String value):
+	let annotation = new StringAnnotation:
+	annotation.setName(key) ->
+	annotation.setValue(value) ->
+	annotatable.annotations.add(annotation)
+;
+
+List[Link] getConnectedLinks(Port port):
+	let links = {}:
+	links.addAll(port.incomingLinks) ->
+	links.addAll(port.outgoingLinks) ->
+	links
+;
+
+Void addUndirectedAnnotation(Link link):
+	let annotation = new Annotation:
+	annotation.setName("undirected") ->
+	link.annotations.add(annotation)
+;
+
+Boolean isUndirected(Link link):
+	(link.getAnnotation("undirected") != null)
+;
+
+Void removeUndirectedAnnotation(Link link):
+	let annotation = link.getAnnotation("undirected"):
+	if(annotation != null) then link.annotations.remove(annotation) else null 
 ;

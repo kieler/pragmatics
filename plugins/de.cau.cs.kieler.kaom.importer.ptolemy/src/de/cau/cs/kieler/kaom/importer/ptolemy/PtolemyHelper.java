@@ -60,13 +60,16 @@ public class PtolemyHelper {
                 // find out whether it is an input or output (or both)
                 if (inputs.contains(ptolemyPort)) {
                     BooleanAnnotation isInput = KaomFactory.eINSTANCE.createBooleanAnnotation();
+                    isInput.setName("isInput");
                     isInput.setValue(true);
-                    kaomPort.getAnnotationMap().put("isInput", isInput);
+                    kaomPort.getAnnotations().add(isInput);
+                    
                 }
                 if (outputs.contains(ptolemyPort)) {
                     BooleanAnnotation isOutput = KaomFactory.eINSTANCE.createBooleanAnnotation();
+                    isOutput.setName("isOutput");
                     isOutput.setValue(true);
-                    kaomPort.getAnnotationMap().put("isOutput", isOutput);
+                    kaomPort.getAnnotations().add(isOutput);
                 }
                 // set the name
                 kaomPort.setName(ptolemyPort.getName());
