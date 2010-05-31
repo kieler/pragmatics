@@ -235,33 +235,6 @@ public interface KaomPackage extends EPackage {
     int LINKABLE = 4;
 
     /**
-     * The feature id for the '<em><b>Outgoing Links</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int LINKABLE__OUTGOING_LINKS = 0;
-
-    /**
-     * The feature id for the '<em><b>Incoming Links</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int LINKABLE__INCOMING_LINKS = 1;
-
-    /**
-     * The number of structural features of the '<em>Linkable</em>' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int LINKABLE_FEATURE_COUNT = 2;
-
-    /**
      * The meta object id for the '{@link de.cau.cs.kieler.kaom.impl.PortImpl <em>Port</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -272,31 +245,13 @@ public interface KaomPackage extends EPackage {
     int PORT = 1;
 
     /**
-     * The feature id for the '<em><b>Outgoing Links</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int PORT__OUTGOING_LINKS = LINKABLE__OUTGOING_LINKS;
-
-    /**
-     * The feature id for the '<em><b>Incoming Links</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int PORT__INCOMING_LINKS = LINKABLE__INCOMING_LINKS;
-
-    /**
      * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int PORT__ANNOTATIONS = LINKABLE_FEATURE_COUNT + 0;
+    int PORT__ANNOTATIONS = NAMED_OBJECT__ANNOTATIONS;
 
     /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -305,7 +260,25 @@ public interface KaomPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int PORT__NAME = LINKABLE_FEATURE_COUNT + 1;
+    int PORT__NAME = NAMED_OBJECT__NAME;
+
+    /**
+     * The feature id for the '<em><b>Outgoing Links</b></em>' reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int PORT__OUTGOING_LINKS = NAMED_OBJECT_FEATURE_COUNT + 0;
+
+    /**
+     * The feature id for the '<em><b>Incoming Links</b></em>' reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int PORT__INCOMING_LINKS = NAMED_OBJECT_FEATURE_COUNT + 1;
 
     /**
      * The number of structural features of the '<em>Port</em>' class.
@@ -314,7 +287,7 @@ public interface KaomPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int PORT_FEATURE_COUNT = LINKABLE_FEATURE_COUNT + 2;
+    int PORT_FEATURE_COUNT = NAMED_OBJECT_FEATURE_COUNT + 2;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.kaom.impl.RelationImpl <em>Relation</em>}' class.
@@ -327,31 +300,13 @@ public interface KaomPackage extends EPackage {
     int RELATION = 2;
 
     /**
-     * The feature id for the '<em><b>Outgoing Links</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int RELATION__OUTGOING_LINKS = LINKABLE__OUTGOING_LINKS;
-
-    /**
-     * The feature id for the '<em><b>Incoming Links</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int RELATION__INCOMING_LINKS = LINKABLE__INCOMING_LINKS;
-
-    /**
      * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int RELATION__ANNOTATIONS = LINKABLE_FEATURE_COUNT + 0;
+    int RELATION__ANNOTATIONS = NAMED_OBJECT__ANNOTATIONS;
 
     /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -360,7 +315,25 @@ public interface KaomPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int RELATION__NAME = LINKABLE_FEATURE_COUNT + 1;
+    int RELATION__NAME = NAMED_OBJECT__NAME;
+
+    /**
+     * The feature id for the '<em><b>Outgoing Links</b></em>' reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int RELATION__OUTGOING_LINKS = NAMED_OBJECT_FEATURE_COUNT + 0;
+
+    /**
+     * The feature id for the '<em><b>Incoming Links</b></em>' reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int RELATION__INCOMING_LINKS = NAMED_OBJECT_FEATURE_COUNT + 1;
 
     /**
      * The number of structural features of the '<em>Relation</em>' class.
@@ -369,7 +342,7 @@ public interface KaomPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int RELATION_FEATURE_COUNT = LINKABLE_FEATURE_COUNT + 2;
+    int RELATION_FEATURE_COUNT = NAMED_OBJECT_FEATURE_COUNT + 2;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.kaom.impl.LinkImpl <em>Link</em>}' class.
@@ -425,6 +398,33 @@ public interface KaomPackage extends EPackage {
      * @ordered
      */
     int LINK_FEATURE_COUNT = NAMED_OBJECT_FEATURE_COUNT + 2;
+
+    /**
+     * The feature id for the '<em><b>Outgoing Links</b></em>' reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int LINKABLE__OUTGOING_LINKS = 0;
+
+    /**
+     * The feature id for the '<em><b>Incoming Links</b></em>' reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int LINKABLE__INCOMING_LINKS = 1;
+
+    /**
+     * The number of structural features of the '<em>Linkable</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int LINKABLE_FEATURE_COUNT = 2;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.kaom.impl.AnnotationImpl <em>Annotation</em>}' class.

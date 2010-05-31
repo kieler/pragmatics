@@ -108,8 +108,8 @@ public class KaomSwitch<T> {
             case KaomPackage.PORT: {
                 Port port = (Port)theEObject;
                 T result = casePort(port);
-                if (result == null) result = caseLinkable(port);
                 if (result == null) result = caseNamedObject(port);
+                if (result == null) result = caseLinkable(port);
                 if (result == null) result = caseAnnotatable(port);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
@@ -117,8 +117,8 @@ public class KaomSwitch<T> {
             case KaomPackage.RELATION: {
                 Relation relation = (Relation)theEObject;
                 T result = caseRelation(relation);
-                if (result == null) result = caseLinkable(relation);
                 if (result == null) result = caseNamedObject(relation);
+                if (result == null) result = caseLinkable(relation);
                 if (result == null) result = caseAnnotatable(relation);
                 if (result == null) result = defaultCase(theEObject);
                 return result;

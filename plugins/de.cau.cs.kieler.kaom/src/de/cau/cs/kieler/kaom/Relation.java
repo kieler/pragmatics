@@ -26,5 +26,5 @@ package de.cau.cs.kieler.kaom;
  * @model
  * @generated
  */
-public interface Relation extends Linkable, NamedObject {
+public interface Relation extends NamedObject, Linkable {
 } // Relation

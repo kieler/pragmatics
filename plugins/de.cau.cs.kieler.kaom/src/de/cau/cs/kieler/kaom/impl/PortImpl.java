@@ -18,6 +18,8 @@ package de.cau.cs.kieler.kaom.impl;
 import de.cau.cs.kieler.kaom.Annotatable;
 import de.cau.cs.kieler.kaom.Annotation;
 import de.cau.cs.kieler.kaom.KaomPackage;
+import de.cau.cs.kieler.kaom.Link;
+import de.cau.cs.kieler.kaom.Linkable;
 import de.cau.cs.kieler.kaom.NamedObject;
 import de.cau.cs.kieler.kaom.Port;
 
@@ -31,6 +33,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
+import org.eclipse.emf.ecore.util.EObjectWithInverseResolvingEList;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
@@ -43,43 +46,33 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link de.cau.cs.kieler.kaom.impl.PortImpl#getAnnotations <em>Annotations</em>}</li>
- *   <li>{@link de.cau.cs.kieler.kaom.impl.PortImpl#getName <em>Name</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kaom.impl.PortImpl#getOutgoingLinks <em>Outgoing Links</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kaom.impl.PortImpl#getIncomingLinks <em>Incoming Links</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class PortImpl extends LinkableImpl implements Port {
+public class PortImpl extends NamedObjectImpl implements Port {
     /**
-     * The cached value of the '{@link #getAnnotations() <em>Annotations</em>}' containment reference list.
+     * The cached value of the '{@link #getOutgoingLinks() <em>Outgoing Links</em>}' reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #getAnnotations()
+     * @see #getOutgoingLinks()
      * @generated
      * @ordered
      */
-    protected EList<Annotation> annotations;
+    protected EList<Link> outgoingLinks;
 
     /**
-     * The default value of the '{@link #getName() <em>Name</em>}' attribute.
+     * The cached value of the '{@link #getIncomingLinks() <em>Incoming Links</em>}' reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #getName()
+     * @see #getIncomingLinks()
      * @generated
      * @ordered
      */
-    protected static final String NAME_EDEFAULT = null;
-
-    /**
-     * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #getName()
-     * @generated
-     * @ordered
-     */
-    protected String name = NAME_EDEFAULT;
+    protected EList<Link> incomingLinks;
 
     /**
      * <!-- begin-user-doc -->
@@ -105,11 +98,11 @@ public class PortImpl extends LinkableImpl implements Port {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EList<Annotation> getAnnotations() {
-        if (annotations == null) {
-            annotations = new EObjectContainmentEList<Annotation>(Annotation.class, this, KaomPackage.PORT__ANNOTATIONS);
+    public EList<Link> getOutgoingLinks() {
+        if (outgoingLinks == null) {
+            outgoingLinks = new EObjectWithInverseResolvingEList<Link>(Link.class, this, KaomPackage.PORT__OUTGOING_LINKS, KaomPackage.LINK__SOURCE);
         }
-        return annotations;
+        return outgoingLinks;
     }
 
     /**
@@ -117,8 +110,11 @@ public class PortImpl extends LinkableImpl implements Port {
      * <!-- end-user-doc -->
      * @generated
      */
-    public String getName() {
-        return name;
+    public EList<Link> getIncomingLinks() {
+        if (incomingLinks == null) {
+            incomingLinks = new EObjectWithInverseResolvingEList<Link>(Link.class, this, KaomPackage.PORT__INCOMING_LINKS, KaomPackage.LINK__TARGET);
+        }
+        return incomingLinks;
     }
 
     /**
@@ -126,22 +122,16 @@ public class PortImpl extends LinkableImpl implements Port {
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setName(String newName) {
-        String oldName = name;
-        name = newName;
-        if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, KaomPackage.PORT__NAME, oldName, name));
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public Annotation getAnnotation(String key) {
-        // TODO: implement this method
-        // Ensure that you remove @generated or mark it @generated NOT
-        throw new UnsupportedOperationException();
+    @SuppressWarnings("unchecked")
+    @Override
+    public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+        switch (featureID) {
+            case KaomPackage.PORT__OUTGOING_LINKS:
+                return ((InternalEList<InternalEObject>)(InternalEList<?>)getOutgoingLinks()).basicAdd(otherEnd, msgs);
+            case KaomPackage.PORT__INCOMING_LINKS:
+                return ((InternalEList<InternalEObject>)(InternalEList<?>)getIncomingLinks()).basicAdd(otherEnd, msgs);
+        }
+        return super.eInverseAdd(otherEnd, featureID, msgs);
     }
 
     /**
@@ -152,8 +142,10 @@ public class PortImpl extends LinkableImpl implements Port {
     @Override
     public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
-            case KaomPackage.PORT__ANNOTATIONS:
-                return ((InternalEList<?>)getAnnotations()).basicRemove(otherEnd, msgs);
+            case KaomPackage.PORT__OUTGOING_LINKS:
+                return ((InternalEList<?>)getOutgoingLinks()).basicRemove(otherEnd, msgs);
+            case KaomPackage.PORT__INCOMING_LINKS:
+                return ((InternalEList<?>)getIncomingLinks()).basicRemove(otherEnd, msgs);
         }
         return super.eInverseRemove(otherEnd, featureID, msgs);
     }
@@ -166,10 +158,10 @@ public class PortImpl extends LinkableImpl implements Port {
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case KaomPackage.PORT__ANNOTATIONS:
-                return getAnnotations();
-            case KaomPackage.PORT__NAME:
-                return getName();
+            case KaomPackage.PORT__OUTGOING_LINKS:
+                return getOutgoingLinks();
+            case KaomPackage.PORT__INCOMING_LINKS:
+                return getIncomingLinks();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -183,12 +175,13 @@ public class PortImpl extends LinkableImpl implements Port {
     @Override
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case KaomPackage.PORT__ANNOTATIONS:
-                getAnnotations().clear();
-                getAnnotations().addAll((Collection<? extends Annotation>)newValue);
+            case KaomPackage.PORT__OUTGOING_LINKS:
+                getOutgoingLinks().clear();
+                getOutgoingLinks().addAll((Collection<? extends Link>)newValue);
                 return;
-            case KaomPackage.PORT__NAME:
-                setName((String)newValue);
+            case KaomPackage.PORT__INCOMING_LINKS:
+                getIncomingLinks().clear();
+                getIncomingLinks().addAll((Collection<? extends Link>)newValue);
                 return;
         }
         super.eSet(featureID, newValue);
@@ -202,11 +195,11 @@ public class PortImpl extends LinkableImpl implements Port {
     @Override
     public void eUnset(int featureID) {
         switch (featureID) {
-            case KaomPackage.PORT__ANNOTATIONS:
-                getAnnotations().clear();
+            case KaomPackage.PORT__OUTGOING_LINKS:
+                getOutgoingLinks().clear();
                 return;
-            case KaomPackage.PORT__NAME:
-                setName(NAME_EDEFAULT);
+            case KaomPackage.PORT__INCOMING_LINKS:
+                getIncomingLinks().clear();
                 return;
         }
         super.eUnset(featureID);
@@ -220,10 +213,10 @@ public class PortImpl extends LinkableImpl implements Port {
     @Override
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case KaomPackage.PORT__ANNOTATIONS:
-                return annotations != null && !annotations.isEmpty();
-            case KaomPackage.PORT__NAME:
-                return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+            case KaomPackage.PORT__OUTGOING_LINKS:
+                return outgoingLinks != null && !outgoingLinks.isEmpty();
+            case KaomPackage.PORT__INCOMING_LINKS:
+                return incomingLinks != null && !incomingLinks.isEmpty();
         }
         return super.eIsSet(featureID);
     }
@@ -235,15 +228,10 @@ public class PortImpl extends LinkableImpl implements Port {
      */
     @Override
     public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
-        if (baseClass == Annotatable.class) {
+        if (baseClass == Linkable.class) {
             switch (derivedFeatureID) {
-                case KaomPackage.PORT__ANNOTATIONS: return KaomPackage.ANNOTATABLE__ANNOTATIONS;
-                default: return -1;
-            }
-        }
-        if (baseClass == NamedObject.class) {
-            switch (derivedFeatureID) {
-                case KaomPackage.PORT__NAME: return KaomPackage.NAMED_OBJECT__NAME;
+                case KaomPackage.PORT__OUTGOING_LINKS: return KaomPackage.LINKABLE__OUTGOING_LINKS;
+                case KaomPackage.PORT__INCOMING_LINKS: return KaomPackage.LINKABLE__INCOMING_LINKS;
                 default: return -1;
             }
         }
@@ -257,35 +245,14 @@ public class PortImpl extends LinkableImpl implements Port {
      */
     @Override
     public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
-        if (baseClass == Annotatable.class) {
+        if (baseClass == Linkable.class) {
             switch (baseFeatureID) {
-                case KaomPackage.ANNOTATABLE__ANNOTATIONS: return KaomPackage.PORT__ANNOTATIONS;
-                default: return -1;
-            }
-        }
-        if (baseClass == NamedObject.class) {
-            switch (baseFeatureID) {
-                case KaomPackage.NAMED_OBJECT__NAME: return KaomPackage.PORT__NAME;
+                case KaomPackage.LINKABLE__OUTGOING_LINKS: return KaomPackage.PORT__OUTGOING_LINKS;
+                case KaomPackage.LINKABLE__INCOMING_LINKS: return KaomPackage.PORT__INCOMING_LINKS;
                 default: return -1;
             }
         }
         return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    public String toString() {
-        if (eIsProxy()) return super.toString();
-
-        StringBuffer result = new StringBuffer(super.toString());
-        result.append(" (name: ");
-        result.append(name);
-        result.append(')');
-        return result.toString();
     }
 
 } //PortImpl

@@ -557,10 +557,10 @@ public class KaomPackageImpl extends EPackageImpl implements KaomPackage {
         // Add supertypes to classes
         entityEClass.getESuperTypes().add(this.getNamedObject());
         entityEClass.getESuperTypes().add(this.getLinkable());
-        portEClass.getESuperTypes().add(this.getLinkable());
         portEClass.getESuperTypes().add(this.getNamedObject());
-        relationEClass.getESuperTypes().add(this.getLinkable());
+        portEClass.getESuperTypes().add(this.getLinkable());
         relationEClass.getESuperTypes().add(this.getNamedObject());
+        relationEClass.getESuperTypes().add(this.getLinkable());
         linkEClass.getESuperTypes().add(this.getNamedObject());
         namedObjectEClass.getESuperTypes().add(this.getAnnotatable());
         annotationEClass.getESuperTypes().add(this.getNamedObject());

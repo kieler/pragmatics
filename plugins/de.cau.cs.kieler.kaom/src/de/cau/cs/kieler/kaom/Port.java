@@ -26,5 +26,5 @@ package de.cau.cs.kieler.kaom;
  * @model
  * @generated
  */
-public interface Port extends Linkable, NamedObject {
+public interface Port extends NamedObject, Linkable {
 } // Port
