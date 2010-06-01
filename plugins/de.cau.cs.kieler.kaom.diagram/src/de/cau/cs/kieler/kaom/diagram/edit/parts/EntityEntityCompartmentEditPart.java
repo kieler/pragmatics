@@ -11,24 +11,24 @@ import org.eclipse.gmf.runtime.diagram.ui.figures.ResizableCompartmentFigure;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.ConstrainedToolbarLayout;
 import org.eclipse.gmf.runtime.notation.View;
 
-import de.cau.cs.kieler.kaom.diagram.edit.policies.StateStateCompartment2CanonicalEditPolicy;
-import de.cau.cs.kieler.kaom.diagram.edit.policies.StateStateCompartment2ItemSemanticEditPolicy;
+import de.cau.cs.kieler.kaom.diagram.edit.policies.EntityEntityCompartmentCanonicalEditPolicy;
+import de.cau.cs.kieler.kaom.diagram.edit.policies.EntityEntityCompartmentItemSemanticEditPolicy;
 import de.cau.cs.kieler.kaom.diagram.part.Messages;
 
 /**
  * @generated
  */
-public class StateStateCompartment2EditPart extends ShapeCompartmentEditPart {
+public class EntityEntityCompartmentEditPart extends ShapeCompartmentEditPart {
 
 	/**
 	 * @generated
 	 */
-	public static final int VISUAL_ID = 7004;
+	public static final int VISUAL_ID = 7001;
 
 	/**
 	 * @generated
 	 */
-	public StateStateCompartment2EditPart(View view) {
+	public EntityEntityCompartmentEditPart(View view) {
 		super(view);
 	}
 
@@ -36,7 +36,7 @@ public class StateStateCompartment2EditPart extends ShapeCompartmentEditPart {
 	 * @generated
 	 */
 	public String getCompartmentName() {
-		return Messages.StateStateCompartment2EditPart_title;
+		return Messages.EntityEntityCompartmentEditPart_title;
 	}
 
 	/**
@@ -57,13 +57,13 @@ public class StateStateCompartment2EditPart extends ShapeCompartmentEditPart {
 		installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE,
 				new ResizableCompartmentEditPolicy());
 		installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
-				new StateStateCompartment2ItemSemanticEditPolicy());
+				new EntityEntityCompartmentItemSemanticEditPolicy());
 		installEditPolicy(EditPolicyRoles.CREATION_ROLE,
 				new CreationEditPolicy());
 		installEditPolicy(EditPolicyRoles.DRAG_DROP_ROLE,
 				new DragDropEditPolicy());
 		installEditPolicy(EditPolicyRoles.CANONICAL_ROLE,
-				new StateStateCompartment2CanonicalEditPolicy());
+				new EntityEntityCompartmentCanonicalEditPolicy());
 	}
 
 	/**

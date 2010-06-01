@@ -17,15 +17,13 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 
 import de.cau.cs.kieler.kaom.KaomPackage;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.Actor2EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.ActorEditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.Entity2EditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.Entity3EditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityEditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.LinkEditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.PortEditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.Relation2EditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.RelationEditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.State2EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.State3EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.StateEditPart;
 import de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorPlugin;
 
 /**
@@ -57,19 +55,15 @@ public class KaomElementTypes extends ElementInitializers {
 	/**
 	 * @generated
 	 */
-	public static final IElementType State_1000 = getElementType("de.cau.cs.kieler.kaom.diagram.State_1000"); //$NON-NLS-1$
+	public static final IElementType Entity_1000 = getElementType("de.cau.cs.kieler.kaom.diagram.Entity_1000"); //$NON-NLS-1$
 	/**
 	 * @generated
 	 */
-	public static final IElementType Actor_2001 = getElementType("de.cau.cs.kieler.kaom.diagram.Actor_2001"); //$NON-NLS-1$
+	public static final IElementType Entity_2001 = getElementType("de.cau.cs.kieler.kaom.diagram.Entity_2001"); //$NON-NLS-1$
 	/**
 	 * @generated
 	 */
-	public static final IElementType State_2002 = getElementType("de.cau.cs.kieler.kaom.diagram.State_2002"); //$NON-NLS-1$
-	/**
-	 * @generated
-	 */
-	public static final IElementType Relation_2003 = getElementType("de.cau.cs.kieler.kaom.diagram.Relation_2003"); //$NON-NLS-1$
+	public static final IElementType Relation_2002 = getElementType("de.cau.cs.kieler.kaom.diagram.Relation_2002"); //$NON-NLS-1$
 	/**
 	 * @generated
 	 */
@@ -77,15 +71,11 @@ public class KaomElementTypes extends ElementInitializers {
 	/**
 	 * @generated
 	 */
-	public static final IElementType Actor_3002 = getElementType("de.cau.cs.kieler.kaom.diagram.Actor_3002"); //$NON-NLS-1$
+	public static final IElementType Entity_3002 = getElementType("de.cau.cs.kieler.kaom.diagram.Entity_3002"); //$NON-NLS-1$
 	/**
 	 * @generated
 	 */
-	public static final IElementType State_3003 = getElementType("de.cau.cs.kieler.kaom.diagram.State_3003"); //$NON-NLS-1$
-	/**
-	 * @generated
-	 */
-	public static final IElementType Relation_3004 = getElementType("de.cau.cs.kieler.kaom.diagram.Relation_3004"); //$NON-NLS-1$
+	public static final IElementType Relation_3003 = getElementType("de.cau.cs.kieler.kaom.diagram.Relation_3003"); //$NON-NLS-1$
 	/**
 	 * @generated
 	 */
@@ -202,21 +192,17 @@ public class KaomElementTypes extends ElementInitializers {
 		if (elements == null) {
 			elements = new IdentityHashMap();
 
-			elements.put(State_1000, KaomPackage.eINSTANCE.getState());
+			elements.put(Entity_1000, KaomPackage.eINSTANCE.getEntity());
 
-			elements.put(Actor_2001, KaomPackage.eINSTANCE.getActor());
+			elements.put(Entity_2001, KaomPackage.eINSTANCE.getEntity());
 
-			elements.put(State_2002, KaomPackage.eINSTANCE.getState());
-
-			elements.put(Relation_2003, KaomPackage.eINSTANCE.getRelation());
+			elements.put(Relation_2002, KaomPackage.eINSTANCE.getRelation());
 
 			elements.put(Port_3001, KaomPackage.eINSTANCE.getPort());
 
-			elements.put(Actor_3002, KaomPackage.eINSTANCE.getActor());
+			elements.put(Entity_3002, KaomPackage.eINSTANCE.getEntity());
 
-			elements.put(State_3003, KaomPackage.eINSTANCE.getState());
-
-			elements.put(Relation_3004, KaomPackage.eINSTANCE.getRelation());
+			elements.put(Relation_3003, KaomPackage.eINSTANCE.getRelation());
 
 			elements.put(Link_4001, KaomPackage.eINSTANCE.getLink());
 		}
@@ -236,14 +222,12 @@ public class KaomElementTypes extends ElementInitializers {
 	public static boolean isKnownElementType(IElementType elementType) {
 		if (KNOWN_ELEMENT_TYPES == null) {
 			KNOWN_ELEMENT_TYPES = new HashSet();
-			KNOWN_ELEMENT_TYPES.add(State_1000);
-			KNOWN_ELEMENT_TYPES.add(Actor_2001);
-			KNOWN_ELEMENT_TYPES.add(State_2002);
-			KNOWN_ELEMENT_TYPES.add(Relation_2003);
+			KNOWN_ELEMENT_TYPES.add(Entity_1000);
+			KNOWN_ELEMENT_TYPES.add(Entity_2001);
+			KNOWN_ELEMENT_TYPES.add(Relation_2002);
 			KNOWN_ELEMENT_TYPES.add(Port_3001);
-			KNOWN_ELEMENT_TYPES.add(Actor_3002);
-			KNOWN_ELEMENT_TYPES.add(State_3003);
-			KNOWN_ELEMENT_TYPES.add(Relation_3004);
+			KNOWN_ELEMENT_TYPES.add(Entity_3002);
+			KNOWN_ELEMENT_TYPES.add(Relation_3003);
 			KNOWN_ELEMENT_TYPES.add(Link_4001);
 		}
 		return KNOWN_ELEMENT_TYPES.contains(elementType);
@@ -254,22 +238,18 @@ public class KaomElementTypes extends ElementInitializers {
 	 */
 	public static IElementType getElementType(int visualID) {
 		switch (visualID) {
-		case StateEditPart.VISUAL_ID:
-			return State_1000;
-		case ActorEditPart.VISUAL_ID:
-			return Actor_2001;
-		case State2EditPart.VISUAL_ID:
-			return State_2002;
+		case EntityEditPart.VISUAL_ID:
+			return Entity_1000;
+		case Entity2EditPart.VISUAL_ID:
+			return Entity_2001;
 		case RelationEditPart.VISUAL_ID:
-			return Relation_2003;
+			return Relation_2002;
 		case PortEditPart.VISUAL_ID:
 			return Port_3001;
-		case Actor2EditPart.VISUAL_ID:
-			return Actor_3002;
-		case State3EditPart.VISUAL_ID:
-			return State_3003;
+		case Entity3EditPart.VISUAL_ID:
+			return Entity_3002;
 		case Relation2EditPart.VISUAL_ID:
-			return Relation_3004;
+			return Relation_3003;
 		case LinkEditPart.VISUAL_ID:
 			return Link_4001;
 		}

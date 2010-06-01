@@ -267,7 +267,7 @@ public class PortEditPart extends BorderedBorderItemEditPart {
 	public List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/getMARelTypesOnSourceAndTarget(
 			IGraphicalEditPart targetEditPart) {
 		List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
-		if (targetEditPart instanceof State2EditPart) {
+		if (targetEditPart instanceof Entity2EditPart) {
 			types.add(KaomElementTypes.Link_4001);
 		}
 		if (targetEditPart instanceof RelationEditPart) {
@@ -276,7 +276,7 @@ public class PortEditPart extends BorderedBorderItemEditPart {
 		if (targetEditPart instanceof de.cau.cs.kieler.kaom.diagram.edit.parts.PortEditPart) {
 			types.add(KaomElementTypes.Link_4001);
 		}
-		if (targetEditPart instanceof State3EditPart) {
+		if (targetEditPart instanceof Entity3EditPart) {
 			types.add(KaomElementTypes.Link_4001);
 		}
 		if (targetEditPart instanceof Relation2EditPart) {
@@ -292,19 +292,19 @@ public class PortEditPart extends BorderedBorderItemEditPart {
 			IElementType relationshipType) {
 		List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
 		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.State_2002);
+			types.add(KaomElementTypes.Entity_2001);
 		}
 		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.Relation_2003);
+			types.add(KaomElementTypes.Relation_2002);
 		}
 		if (relationshipType == KaomElementTypes.Link_4001) {
 			types.add(KaomElementTypes.Port_3001);
 		}
 		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.State_3003);
+			types.add(KaomElementTypes.Entity_3002);
 		}
 		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.Relation_3004);
+			types.add(KaomElementTypes.Relation_3003);
 		}
 		return types;
 	}
@@ -325,19 +325,19 @@ public class PortEditPart extends BorderedBorderItemEditPart {
 			IElementType relationshipType) {
 		List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
 		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.State_2002);
+			types.add(KaomElementTypes.Entity_2001);
 		}
 		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.Relation_2003);
+			types.add(KaomElementTypes.Relation_2002);
 		}
 		if (relationshipType == KaomElementTypes.Link_4001) {
 			types.add(KaomElementTypes.Port_3001);
 		}
 		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.State_3003);
+			types.add(KaomElementTypes.Entity_3002);
 		}
 		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.Relation_3004);
+			types.add(KaomElementTypes.Relation_3003);
 		}
 		return types;
 	}

@@ -58,7 +58,7 @@ public class RelationNameEditPart extends LabelEditPart implements
 	/**
 	 * @generated
 	 */
-	public static final int VISUAL_ID = 5007;
+	public static final int VISUAL_ID = 5005;
 
 	/**
 	 * @generated
@@ -329,7 +329,7 @@ public class RelationNameEditPart extends LabelEditPart implements
 		if (parser == null) {
 			parser = KaomParserProvider
 					.getParser(
-							KaomElementTypes.Relation_2003,
+							KaomElementTypes.Relation_2002,
 							getParserElement(),
 							KaomVisualIDRegistry
 									.getType(de.cau.cs.kieler.kaom.diagram.edit.parts.RelationNameEditPart.VISUAL_ID));

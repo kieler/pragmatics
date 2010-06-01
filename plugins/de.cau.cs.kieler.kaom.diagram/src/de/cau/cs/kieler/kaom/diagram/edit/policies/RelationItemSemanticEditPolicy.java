@@ -29,7 +29,7 @@ public class RelationItemSemanticEditPolicy extends
 	 * @generated
 	 */
 	public RelationItemSemanticEditPolicy() {
-		super(KaomElementTypes.Relation_2003);
+		super(KaomElementTypes.Relation_2002);
 	}
 
 	/**

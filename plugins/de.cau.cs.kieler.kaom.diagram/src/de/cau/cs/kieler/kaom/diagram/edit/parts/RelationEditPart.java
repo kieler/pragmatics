@@ -46,7 +46,7 @@ public class RelationEditPart extends AbstractBorderedShapeEditPart {
 	/**
 	 * @generated
 	 */
-	public static final int VISUAL_ID = 2003;
+	public static final int VISUAL_ID = 2002;
 
 	/**
 	 * @generated
@@ -262,7 +262,7 @@ public class RelationEditPart extends AbstractBorderedShapeEditPart {
 	public List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/getMARelTypesOnSourceAndTarget(
 			IGraphicalEditPart targetEditPart) {
 		List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
-		if (targetEditPart instanceof State2EditPart) {
+		if (targetEditPart instanceof Entity2EditPart) {
 			types.add(KaomElementTypes.Link_4001);
 		}
 		if (targetEditPart instanceof de.cau.cs.kieler.kaom.diagram.edit.parts.RelationEditPart) {
@@ -271,7 +271,7 @@ public class RelationEditPart extends AbstractBorderedShapeEditPart {
 		if (targetEditPart instanceof PortEditPart) {
 			types.add(KaomElementTypes.Link_4001);
 		}
-		if (targetEditPart instanceof State3EditPart) {
+		if (targetEditPart instanceof Entity3EditPart) {
 			types.add(KaomElementTypes.Link_4001);
 		}
 		if (targetEditPart instanceof Relation2EditPart) {
@@ -287,19 +287,19 @@ public class RelationEditPart extends AbstractBorderedShapeEditPart {
 			IElementType relationshipType) {
 		List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
 		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.State_2002);
+			types.add(KaomElementTypes.Entity_2001);
 		}
 		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.Relation_2003);
+			types.add(KaomElementTypes.Relation_2002);
 		}
 		if (relationshipType == KaomElementTypes.Link_4001) {
 			types.add(KaomElementTypes.Port_3001);
 		}
 		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.State_3003);
+			types.add(KaomElementTypes.Entity_3002);
 		}
 		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.Relation_3004);
+			types.add(KaomElementTypes.Relation_3003);
 		}
 		return types;
 	}
@@ -320,19 +320,19 @@ public class RelationEditPart extends AbstractBorderedShapeEditPart {
 			IElementType relationshipType) {
 		List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
 		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.State_2002);
+			types.add(KaomElementTypes.Entity_2001);
 		}
 		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.Relation_2003);
+			types.add(KaomElementTypes.Relation_2002);
 		}
 		if (relationshipType == KaomElementTypes.Link_4001) {
 			types.add(KaomElementTypes.Port_3001);
 		}
 		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.State_3003);
+			types.add(KaomElementTypes.Entity_3002);
 		}
 		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.Relation_3004);
+			types.add(KaomElementTypes.Relation_3003);
 		}
 		return types;
 	}

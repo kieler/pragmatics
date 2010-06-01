@@ -53,13 +53,13 @@ import de.cau.cs.kieler.kaom.diagram.providers.KaomParserProvider;
 /**
  * @generated
  */
-public class StateName2EditPart extends CompartmentEditPart implements
+public class EntityNameEditPart extends CompartmentEditPart implements
 		ITextAwareEditPart {
 
 	/**
 	 * @generated
 	 */
-	public static final int VISUAL_ID = 5003;
+	public static final int VISUAL_ID = 5004;
 
 	/**
 	 * @generated
@@ -84,7 +84,7 @@ public class StateName2EditPart extends CompartmentEditPart implements
 	/**
 	 * @generated
 	 */
-	public StateName2EditPart(View view) {
+	public EntityNameEditPart(View view) {
 		super(view);
 	}
 
@@ -310,10 +310,10 @@ public class StateName2EditPart extends CompartmentEditPart implements
 		if (parser == null) {
 			parser = KaomParserProvider
 					.getParser(
-							KaomElementTypes.State_3003,
+							KaomElementTypes.Entity_2001,
 							getParserElement(),
 							KaomVisualIDRegistry
-									.getType(de.cau.cs.kieler.kaom.diagram.edit.parts.StateName2EditPart.VISUAL_ID));
+									.getType(de.cau.cs.kieler.kaom.diagram.edit.parts.EntityNameEditPart.VISUAL_ID));
 		}
 		return parser;
 	}

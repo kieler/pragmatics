@@ -10,17 +10,8 @@
         title="kaom">
       <tools
           xsi:type="gmftool:CreationTool"
-          title="Actor"
-          description="Create new Actor">
-        <smallIcon
-            xsi:type="gmftool:DefaultImage"/>
-        <largeIcon
-            xsi:type="gmftool:DefaultImage"/>
-      </tools>
-      <tools
-          xsi:type="gmftool:CreationTool"
-          title="State"
-          description="Create new State">
+          title="Entity"
+          description="Create new Entity">
         <smallIcon
             xsi:type="gmftool:DefaultImage"/>
         <largeIcon

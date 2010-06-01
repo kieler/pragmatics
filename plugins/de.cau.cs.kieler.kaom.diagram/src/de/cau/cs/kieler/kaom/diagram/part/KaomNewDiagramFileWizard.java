@@ -29,7 +29,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 
-import de.cau.cs.kieler.kaom.diagram.edit.parts.StateEditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityEditPart;
 
 /**
  * @generated
@@ -67,7 +67,7 @@ public class KaomNewDiagramFileWizard extends Wizard {
 				.setTitle(Messages.KaomNewDiagramFileWizard_CreationPageTitle);
 		myFileCreationPage.setDescription(NLS.bind(
 				Messages.KaomNewDiagramFileWizard_CreationPageDescription,
-				StateEditPart.MODEL_ID));
+				EntityEditPart.MODEL_ID));
 		IPath filePath;
 		String fileName = URI.decode(domainModelURI.trimFileExtension()
 				.lastSegment());
@@ -128,13 +128,13 @@ public class KaomNewDiagramFileWizard extends Wizard {
 				int diagramVID = KaomVisualIDRegistry
 						.getDiagramVisualID(diagramRootElementSelectionPage
 								.getModelElement());
-				if (diagramVID != StateEditPart.VISUAL_ID) {
+				if (diagramVID != EntityEditPart.VISUAL_ID) {
 					return CommandResult
 							.newErrorCommandResult(Messages.KaomNewDiagramFileWizard_IncorrectRootError);
 				}
 				Diagram diagram = ViewService.createDiagram(
 						diagramRootElementSelectionPage.getModelElement(),
-						StateEditPart.MODEL_ID,
+						EntityEditPart.MODEL_ID,
 						KaomDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT);
 				diagramResource.getContents().add(diagram);
 				return CommandResult.newOKCommandResult();
@@ -188,7 +188,7 @@ public class KaomNewDiagramFileWizard extends Wizard {
 			}
 			boolean result = ViewService.getInstance().provides(
 					new CreateDiagramViewOperation(new EObjectAdapter(
-							selectedModelElement), StateEditPart.MODEL_ID,
+							selectedModelElement), EntityEditPart.MODEL_ID,
 							KaomDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT));
 			setErrorMessage(result ? null
 					: Messages.KaomNewDiagramFileWizard_RootSelectionPageInvalidSelectionMessage);

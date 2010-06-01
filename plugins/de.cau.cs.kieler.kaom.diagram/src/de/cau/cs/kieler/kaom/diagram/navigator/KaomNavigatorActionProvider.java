@@ -23,7 +23,7 @@ import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
 import org.eclipse.ui.part.FileEditorInput;
 
-import de.cau.cs.kieler.kaom.diagram.edit.parts.StateEditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityEditPart;
 import de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditor;
 import de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorPlugin;
 import de.cau.cs.kieler.kaom.diagram.part.KaomVisualIDRegistry;
@@ -125,7 +125,7 @@ public class KaomNavigatorActionProvider extends CommonActionProvider {
 				}
 				if (selectedElement instanceof Diagram) {
 					Diagram diagram = (Diagram) selectedElement;
-					if (StateEditPart.MODEL_ID.equals(KaomVisualIDRegistry
+					if (EntityEditPart.MODEL_ID.equals(KaomVisualIDRegistry
 							.getModelID(diagram))) {
 						myDiagram = diagram;
 					}

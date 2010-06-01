@@ -12,11 +12,11 @@
         href="kaom.ecore#//Entity/childEntities"/>
     <ownedChild>
       <domainMetaElement
-          href="kaom.ecore#//Actor"/>
+          href="kaom.ecore#//Entity"/>
       <labelMappings
           xsi:type="gmfmap:FeatureLabelMapping">
         <diagramLabel
-            href="kaom.gmfgraph#ActorNameLabel"/>
+            href="kaom.gmfgraph#EntityNameLabel"/>
         <features
             href="kaom.ecore#//NamedObject/name"/>
       </labelMappings>
@@ -24,7 +24,7 @@
           xsi:type="gmftool:CreationTool"
           href="kaom.gmftool#//@palette/@tools.0/@tools.0"/>
       <diagramNode
-          href="kaom.gmfgraph#ActorNode"/>
+          href="kaom.gmfgraph#EntityNode"/>
       <children
           referencedChild="//@nodes.0/@ownedChild/@children.0/@ownedChild">
         <containmentFeature
@@ -41,7 +41,7 @@
           </labelMappings>
           <tool
               xsi:type="gmftool:CreationTool"
-              href="kaom.gmftool#//@palette/@tools.0/@tools.2"/>
+              href="kaom.gmftool#//@palette/@tools.0/@tools.1"/>
           <diagramNode
               href="kaom.gmfgraph#PortNode"/>
         </ownedChild>
@@ -58,73 +58,14 @@
           compartment="//@nodes.0/@ownedChild/@compartments.0"
           referencedChild="//@nodes.1/@ownedChild">
         <containmentFeature
-            href="kaom.ecore#//Entity/childEntities"/>
-        <childrenFeature
-            href="kaom.ecore#//Entity/childEntities"/>
-      </children>
-      <children
-          compartment="//@nodes.0/@ownedChild/@compartments.0"
-          referencedChild="//@nodes.2/@ownedChild">
-        <containmentFeature
             href="kaom.ecore#//Entity/childRelations"/>
         <childrenFeature
             href="kaom.ecore#//Entity/childRelations"/>
       </children>
       <compartments
-          children="//@nodes.0/@ownedChild/@children.1 //@nodes.0/@ownedChild/@children.2 //@nodes.0/@ownedChild/@children.3">
+          children="//@nodes.0/@ownedChild/@children.1 //@nodes.0/@ownedChild/@children.2">
         <compartment
-            href="kaom.gmfgraph#ActorCompartment"/>
-      </compartments>
-    </ownedChild>
-  </nodes>
-  <nodes>
-    <containmentFeature
-        href="kaom.ecore#//Entity/childEntities"/>
-    <childrenFeature
-        href="kaom.ecore#//Entity/childEntities"/>
-    <ownedChild>
-      <domainMetaElement
-          href="kaom.ecore#//State"/>
-      <labelMappings
-          xsi:type="gmfmap:FeatureLabelMapping">
-        <diagramLabel
-            href="kaom.gmfgraph#StateNameLabel"/>
-        <features
-            href="kaom.ecore#//NamedObject/name"/>
-      </labelMappings>
-      <tool
-          xsi:type="gmftool:CreationTool"
-          href="kaom.gmftool#//@palette/@tools.0/@tools.1"/>
-      <diagramNode
-          href="kaom.gmfgraph#StateNode"/>
-      <children
-          compartment="//@nodes.1/@ownedChild/@compartments.0"
-          referencedChild="//@nodes.0/@ownedChild">
-        <containmentFeature
-            href="kaom.ecore#//Entity/childEntities"/>
-        <childrenFeature
-            href="kaom.ecore#//Entity/childEntities"/>
-      </children>
-      <children
-          compartment="//@nodes.1/@ownedChild/@compartments.0"
-          referencedChild="//@nodes.1/@ownedChild">
-        <containmentFeature
-            href="kaom.ecore#//Entity/childEntities"/>
-        <childrenFeature
-            href="kaom.ecore#//Entity/childEntities"/>
-      </children>
-      <children
-          compartment="//@nodes.1/@ownedChild/@compartments.0"
-          referencedChild="//@nodes.2/@ownedChild">
-        <containmentFeature
-            href="kaom.ecore#//Entity/childRelations"/>
-        <childrenFeature
-            href="kaom.ecore#//Entity/childRelations"/>
-      </children>
-      <compartments
-          children="//@nodes.1/@ownedChild/@children.0 //@nodes.1/@ownedChild/@children.1 //@nodes.1/@ownedChild/@children.2">
-        <compartment
-            href="kaom.gmfgraph#StateCompartment"/>
+            href="kaom.gmfgraph#EntityCompartment"/>
       </compartments>
     </ownedChild>
   </nodes>
@@ -145,7 +86,7 @@
       </labelMappings>
       <tool
           xsi:type="gmftool:CreationTool"
-          href="kaom.gmftool#//@palette/@tools.0/@tools.3"/>
+          href="kaom.gmftool#//@palette/@tools.0/@tools.2"/>
       <diagramNode
           href="kaom.gmfgraph#RelationNode"/>
     </ownedChild>
@@ -164,7 +105,7 @@
         href="kaom.ecore#//Entity/childLinks"/>
     <tool
         xsi:type="gmftool:CreationTool"
-        href="kaom.gmftool#//@palette/@tools.0/@tools.4"/>
+        href="kaom.gmftool#//@palette/@tools.0/@tools.3"/>
     <diagramLink
         href="kaom.gmfgraph#LinkConnection"/>
     <sourceMetaFeature
@@ -180,7 +121,7 @@
     <domainModel
         href="kaom.ecore#/"/>
     <domainMetaElement
-        href="kaom.ecore#//State"/>
+        href="kaom.ecore#//Entity"/>
     <palette
         href="kaom.gmftool#//@palette"/>
   </diagram>

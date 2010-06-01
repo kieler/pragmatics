@@ -26,15 +26,13 @@ import org.eclipse.gmf.runtime.notation.Edge;
 import org.eclipse.gmf.runtime.notation.View;
 
 import de.cau.cs.kieler.kaom.KaomPackage;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.Actor2EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.ActorEditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.Entity2EditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.Entity3EditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityEditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.LinkEditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.PortEditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.Relation2EditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.RelationEditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.State2EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.State3EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.StateEditPart;
 import de.cau.cs.kieler.kaom.diagram.part.KaomDiagramUpdater;
 import de.cau.cs.kieler.kaom.diagram.part.KaomLinkDescriptor;
 import de.cau.cs.kieler.kaom.diagram.part.KaomNodeDescriptor;
@@ -43,7 +41,7 @@ import de.cau.cs.kieler.kaom.diagram.part.KaomVisualIDRegistry;
 /**
  * @generated
  */
-public class StateCanonicalEditPolicy extends CanonicalConnectionEditPolicy {
+public class EntityCanonicalEditPolicy extends CanonicalConnectionEditPolicy {
 
 	/**
 	 * @generated
@@ -56,7 +54,7 @@ public class StateCanonicalEditPolicy extends CanonicalConnectionEditPolicy {
 	protected List getSemanticChildrenList() {
 		View viewObject = (View) getHost().getModel();
 		List result = new LinkedList();
-		for (Iterator it = KaomDiagramUpdater.getState_1000SemanticChildren(
+		for (Iterator it = KaomDiagramUpdater.getEntity_1000SemanticChildren(
 				viewObject).iterator(); it.hasNext();) {
 			result.add(((KaomNodeDescriptor) it.next()).getModelElement());
 		}
@@ -76,8 +74,7 @@ public class StateCanonicalEditPolicy extends CanonicalConnectionEditPolicy {
 	protected boolean isOrphaned(Collection semanticChildren, final View view) {
 		int visualID = KaomVisualIDRegistry.getVisualID(view);
 		switch (visualID) {
-		case ActorEditPart.VISUAL_ID:
-		case State2EditPart.VISUAL_ID:
+		case Entity2EditPart.VISUAL_ID:
 		case RelationEditPart.VISUAL_ID:
 			if (!semanticChildren.contains(view.getElement())) {
 				return true;
@@ -211,16 +208,16 @@ public class StateCanonicalEditPolicy extends CanonicalConnectionEditPolicy {
 	 * @generated
 	 */
 	private Collection collectAllLinks(View view, Map domain2NotationMap) {
-		if (!StateEditPart.MODEL_ID.equals(KaomVisualIDRegistry
+		if (!EntityEditPart.MODEL_ID.equals(KaomVisualIDRegistry
 				.getModelID(view))) {
 			return Collections.EMPTY_LIST;
 		}
 		Collection result = new LinkedList();
 		switch (KaomVisualIDRegistry.getVisualID(view)) {
-		case StateEditPart.VISUAL_ID: {
+		case EntityEditPart.VISUAL_ID: {
 			if (!domain2NotationMap.containsKey(view.getElement())) {
 				result.addAll(KaomDiagramUpdater
-						.getState_1000ContainedLinks(view));
+						.getEntity_1000ContainedLinks(view));
 			}
 			if (!domain2NotationMap.containsKey(view.getElement())
 					|| view.getEAnnotation("Shortcut") == null) { //$NON-NLS-1$
@@ -228,21 +225,10 @@ public class StateCanonicalEditPolicy extends CanonicalConnectionEditPolicy {
 			}
 			break;
 		}
-		case ActorEditPart.VISUAL_ID: {
+		case Entity2EditPart.VISUAL_ID: {
 			if (!domain2NotationMap.containsKey(view.getElement())) {
 				result.addAll(KaomDiagramUpdater
-						.getActor_2001ContainedLinks(view));
-			}
-			if (!domain2NotationMap.containsKey(view.getElement())
-					|| view.getEAnnotation("Shortcut") == null) { //$NON-NLS-1$
-				domain2NotationMap.put(view.getElement(), view);
-			}
-			break;
-		}
-		case State2EditPart.VISUAL_ID: {
-			if (!domain2NotationMap.containsKey(view.getElement())) {
-				result.addAll(KaomDiagramUpdater
-						.getState_2002ContainedLinks(view));
+						.getEntity_2001ContainedLinks(view));
 			}
 			if (!domain2NotationMap.containsKey(view.getElement())
 					|| view.getEAnnotation("Shortcut") == null) { //$NON-NLS-1$
@@ -253,7 +239,7 @@ public class StateCanonicalEditPolicy extends CanonicalConnectionEditPolicy {
 		case RelationEditPart.VISUAL_ID: {
 			if (!domain2NotationMap.containsKey(view.getElement())) {
 				result.addAll(KaomDiagramUpdater
-						.getRelation_2003ContainedLinks(view));
+						.getRelation_2002ContainedLinks(view));
 			}
 			if (!domain2NotationMap.containsKey(view.getElement())
 					|| view.getEAnnotation("Shortcut") == null) { //$NON-NLS-1$
@@ -272,21 +258,10 @@ public class StateCanonicalEditPolicy extends CanonicalConnectionEditPolicy {
 			}
 			break;
 		}
-		case Actor2EditPart.VISUAL_ID: {
+		case Entity3EditPart.VISUAL_ID: {
 			if (!domain2NotationMap.containsKey(view.getElement())) {
 				result.addAll(KaomDiagramUpdater
-						.getActor_3002ContainedLinks(view));
-			}
-			if (!domain2NotationMap.containsKey(view.getElement())
-					|| view.getEAnnotation("Shortcut") == null) { //$NON-NLS-1$
-				domain2NotationMap.put(view.getElement(), view);
-			}
-			break;
-		}
-		case State3EditPart.VISUAL_ID: {
-			if (!domain2NotationMap.containsKey(view.getElement())) {
-				result.addAll(KaomDiagramUpdater
-						.getState_3003ContainedLinks(view));
+						.getEntity_3002ContainedLinks(view));
 			}
 			if (!domain2NotationMap.containsKey(view.getElement())
 					|| view.getEAnnotation("Shortcut") == null) { //$NON-NLS-1$
@@ -297,7 +272,7 @@ public class StateCanonicalEditPolicy extends CanonicalConnectionEditPolicy {
 		case Relation2EditPart.VISUAL_ID: {
 			if (!domain2NotationMap.containsKey(view.getElement())) {
 				result.addAll(KaomDiagramUpdater
-						.getRelation_3004ContainedLinks(view));
+						.getRelation_3003ContainedLinks(view));
 			}
 			if (!domain2NotationMap.containsKey(view.getElement())
 					|| view.getEAnnotation("Shortcut") == null) { //$NON-NLS-1$

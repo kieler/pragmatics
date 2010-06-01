@@ -329,7 +329,7 @@ public class RelationName2EditPart extends LabelEditPart implements
 		if (parser == null) {
 			parser = KaomParserProvider
 					.getParser(
-							KaomElementTypes.Relation_3004,
+							KaomElementTypes.Relation_3003,
 							getParserElement(),
 							KaomVisualIDRegistry
 									.getType(de.cau.cs.kieler.kaom.diagram.edit.parts.RelationName2EditPart.VISUAL_ID));

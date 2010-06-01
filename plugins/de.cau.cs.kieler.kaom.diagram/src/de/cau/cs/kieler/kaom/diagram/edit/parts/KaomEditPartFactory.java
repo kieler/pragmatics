@@ -29,20 +29,14 @@ public class KaomEditPartFactory implements EditPartFactory {
 			View view = (View) model;
 			switch (KaomVisualIDRegistry.getVisualID(view)) {
 
-			case StateEditPart.VISUAL_ID:
-				return new StateEditPart(view);
+			case EntityEditPart.VISUAL_ID:
+				return new EntityEditPart(view);
 
-			case ActorEditPart.VISUAL_ID:
-				return new ActorEditPart(view);
+			case Entity2EditPart.VISUAL_ID:
+				return new Entity2EditPart(view);
 
-			case ActorNameEditPart.VISUAL_ID:
-				return new ActorNameEditPart(view);
-
-			case State2EditPart.VISUAL_ID:
-				return new State2EditPart(view);
-
-			case StateNameEditPart.VISUAL_ID:
-				return new StateNameEditPart(view);
+			case EntityNameEditPart.VISUAL_ID:
+				return new EntityNameEditPart(view);
 
 			case RelationEditPart.VISUAL_ID:
 				return new RelationEditPart(view);
@@ -56,17 +50,11 @@ public class KaomEditPartFactory implements EditPartFactory {
 			case PortNameEditPart.VISUAL_ID:
 				return new PortNameEditPart(view);
 
-			case Actor2EditPart.VISUAL_ID:
-				return new Actor2EditPart(view);
+			case Entity3EditPart.VISUAL_ID:
+				return new Entity3EditPart(view);
 
-			case ActorName2EditPart.VISUAL_ID:
-				return new ActorName2EditPart(view);
-
-			case State3EditPart.VISUAL_ID:
-				return new State3EditPart(view);
-
-			case StateName2EditPart.VISUAL_ID:
-				return new StateName2EditPart(view);
+			case EntityName2EditPart.VISUAL_ID:
+				return new EntityName2EditPart(view);
 
 			case Relation2EditPart.VISUAL_ID:
 				return new Relation2EditPart(view);
@@ -74,17 +62,11 @@ public class KaomEditPartFactory implements EditPartFactory {
 			case RelationName2EditPart.VISUAL_ID:
 				return new RelationName2EditPart(view);
 
-			case ActorActorCompartmentEditPart.VISUAL_ID:
-				return new ActorActorCompartmentEditPart(view);
+			case EntityEntityCompartmentEditPart.VISUAL_ID:
+				return new EntityEntityCompartmentEditPart(view);
 
-			case ActorActorCompartment2EditPart.VISUAL_ID:
-				return new ActorActorCompartment2EditPart(view);
-
-			case StateStateCompartmentEditPart.VISUAL_ID:
-				return new StateStateCompartmentEditPart(view);
-
-			case StateStateCompartment2EditPart.VISUAL_ID:
-				return new StateStateCompartment2EditPart(view);
+			case EntityEntityCompartment2EditPart.VISUAL_ID:
+				return new EntityEntityCompartment2EditPart(view);
 
 			case LinkEditPart.VISUAL_ID:
 				return new LinkEditPart(view);

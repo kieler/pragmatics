@@ -14,17 +14,16 @@ import org.eclipse.gmf.runtime.notation.View;
 
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.KaomFactory;
-import de.cau.cs.kieler.kaom.State;
 
 /**
  * @generated
  */
-public class StateCreateCommand extends EditElementCommand {
+public class EntityCreateCommand extends EditElementCommand {
 
 	/**
 	 * @generated
 	 */
-	public StateCreateCommand(CreateElementRequest req) {
+	public EntityCreateCommand(CreateElementRequest req) {
 		super(req.getLabel(), null, req);
 	}
 
@@ -54,7 +53,7 @@ public class StateCreateCommand extends EditElementCommand {
 	 */
 	protected CommandResult doExecuteWithResult(IProgressMonitor monitor,
 			IAdaptable info) throws ExecutionException {
-		State newElement = KaomFactory.eINSTANCE.createState();
+		Entity newElement = KaomFactory.eINSTANCE.createEntity();
 
 		Entity owner = (Entity) getElementToEdit();
 		owner.getChildEntities().add(newElement);
@@ -68,7 +67,7 @@ public class StateCreateCommand extends EditElementCommand {
 	/**
 	 * @generated
 	 */
-	protected void doConfigure(State newElement, IProgressMonitor monitor,
+	protected void doConfigure(Entity newElement, IProgressMonitor monitor,
 			IAdaptable info) throws ExecutionException {
 		IElementType elementType = ((CreateElementRequest) getRequest())
 				.getElementType();

@@ -11,8 +11,8 @@ import org.eclipse.gmf.runtime.diagram.ui.services.editpart.CreateGraphicEditPar
 import org.eclipse.gmf.runtime.diagram.ui.services.editpart.IEditPartOperation;
 import org.eclipse.gmf.runtime.notation.View;
 
+import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityEditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.KaomEditPartFactory;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.StateEditPart;
 import de.cau.cs.kieler.kaom.diagram.part.KaomVisualIDRegistry;
 
 /**
@@ -122,7 +122,7 @@ public class KaomEditPartProvider extends AbstractEditPartProvider {
 	public synchronized boolean provides(IOperation operation) {
 		if (operation instanceof CreateGraphicEditPartOperation) {
 			View view = ((IEditPartOperation) operation).getView();
-			if (!StateEditPart.MODEL_ID.equals(KaomVisualIDRegistry
+			if (!EntityEditPart.MODEL_ID.equals(KaomVisualIDRegistry
 					.getModelID(view))) {
 				return false;
 			}

@@ -21,18 +21,14 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
-import de.cau.cs.kieler.kaom.diagram.edit.parts.Actor2EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.ActorActorCompartment2EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.ActorActorCompartmentEditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.ActorEditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.Entity2EditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.Entity3EditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityEditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityEntityCompartment2EditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityEntityCompartmentEditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.PortEditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.Relation2EditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.RelationEditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.State2EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.State3EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.StateEditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.StateStateCompartment2EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.StateStateCompartmentEditPart;
 import de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorPlugin;
 import de.cau.cs.kieler.kaom.diagram.part.Messages;
 
@@ -47,49 +43,32 @@ public class KaomModelingAssistantProvider extends ModelingAssistantProvider {
 	public List getTypesForPopupBar(IAdaptable host) {
 		IGraphicalEditPart editPart = (IGraphicalEditPart) host
 				.getAdapter(IGraphicalEditPart.class);
-		if (editPart instanceof ActorEditPart) {
+		if (editPart instanceof Entity2EditPart) {
 			ArrayList types = new ArrayList(1);
 			types.add(KaomElementTypes.Port_3001);
 			return types;
 		}
-		if (editPart instanceof Actor2EditPart) {
+		if (editPart instanceof Entity3EditPart) {
 			ArrayList types = new ArrayList(1);
 			types.add(KaomElementTypes.Port_3001);
 			return types;
 		}
-		if (editPart instanceof ActorActorCompartmentEditPart) {
-			ArrayList types = new ArrayList(3);
-			types.add(KaomElementTypes.Actor_3002);
-			types.add(KaomElementTypes.State_3003);
-			types.add(KaomElementTypes.Relation_3004);
+		if (editPart instanceof EntityEntityCompartmentEditPart) {
+			ArrayList types = new ArrayList(2);
+			types.add(KaomElementTypes.Entity_3002);
+			types.add(KaomElementTypes.Relation_3003);
 			return types;
 		}
-		if (editPart instanceof ActorActorCompartment2EditPart) {
-			ArrayList types = new ArrayList(3);
-			types.add(KaomElementTypes.Actor_3002);
-			types.add(KaomElementTypes.State_3003);
-			types.add(KaomElementTypes.Relation_3004);
+		if (editPart instanceof EntityEntityCompartment2EditPart) {
+			ArrayList types = new ArrayList(2);
+			types.add(KaomElementTypes.Entity_3002);
+			types.add(KaomElementTypes.Relation_3003);
 			return types;
 		}
-		if (editPart instanceof StateStateCompartmentEditPart) {
-			ArrayList types = new ArrayList(3);
-			types.add(KaomElementTypes.Actor_3002);
-			types.add(KaomElementTypes.State_3003);
-			types.add(KaomElementTypes.Relation_3004);
-			return types;
-		}
-		if (editPart instanceof StateStateCompartment2EditPart) {
-			ArrayList types = new ArrayList(3);
-			types.add(KaomElementTypes.Actor_3002);
-			types.add(KaomElementTypes.State_3003);
-			types.add(KaomElementTypes.Relation_3004);
-			return types;
-		}
-		if (editPart instanceof StateEditPart) {
-			ArrayList types = new ArrayList(3);
-			types.add(KaomElementTypes.Actor_2001);
-			types.add(KaomElementTypes.State_2002);
-			types.add(KaomElementTypes.Relation_2003);
+		if (editPart instanceof EntityEditPart) {
+			ArrayList types = new ArrayList(2);
+			types.add(KaomElementTypes.Entity_2001);
+			types.add(KaomElementTypes.Relation_2002);
 			return types;
 		}
 		return Collections.EMPTY_LIST;
@@ -101,8 +80,8 @@ public class KaomModelingAssistantProvider extends ModelingAssistantProvider {
 	public List getRelTypesOnSource(IAdaptable source) {
 		IGraphicalEditPart sourceEditPart = (IGraphicalEditPart) source
 				.getAdapter(IGraphicalEditPart.class);
-		if (sourceEditPart instanceof State2EditPart) {
-			return ((State2EditPart) sourceEditPart).getMARelTypesOnSource();
+		if (sourceEditPart instanceof Entity2EditPart) {
+			return ((Entity2EditPart) sourceEditPart).getMARelTypesOnSource();
 		}
 		if (sourceEditPart instanceof RelationEditPart) {
 			return ((RelationEditPart) sourceEditPart).getMARelTypesOnSource();
@@ -110,8 +89,8 @@ public class KaomModelingAssistantProvider extends ModelingAssistantProvider {
 		if (sourceEditPart instanceof PortEditPart) {
 			return ((PortEditPart) sourceEditPart).getMARelTypesOnSource();
 		}
-		if (sourceEditPart instanceof State3EditPart) {
-			return ((State3EditPart) sourceEditPart).getMARelTypesOnSource();
+		if (sourceEditPart instanceof Entity3EditPart) {
+			return ((Entity3EditPart) sourceEditPart).getMARelTypesOnSource();
 		}
 		if (sourceEditPart instanceof Relation2EditPart) {
 			return ((Relation2EditPart) sourceEditPart).getMARelTypesOnSource();
@@ -125,8 +104,8 @@ public class KaomModelingAssistantProvider extends ModelingAssistantProvider {
 	public List getRelTypesOnTarget(IAdaptable target) {
 		IGraphicalEditPart targetEditPart = (IGraphicalEditPart) target
 				.getAdapter(IGraphicalEditPart.class);
-		if (targetEditPart instanceof State2EditPart) {
-			return ((State2EditPart) targetEditPart).getMARelTypesOnTarget();
+		if (targetEditPart instanceof Entity2EditPart) {
+			return ((Entity2EditPart) targetEditPart).getMARelTypesOnTarget();
 		}
 		if (targetEditPart instanceof RelationEditPart) {
 			return ((RelationEditPart) targetEditPart).getMARelTypesOnTarget();
@@ -134,8 +113,8 @@ public class KaomModelingAssistantProvider extends ModelingAssistantProvider {
 		if (targetEditPart instanceof PortEditPart) {
 			return ((PortEditPart) targetEditPart).getMARelTypesOnTarget();
 		}
-		if (targetEditPart instanceof State3EditPart) {
-			return ((State3EditPart) targetEditPart).getMARelTypesOnTarget();
+		if (targetEditPart instanceof Entity3EditPart) {
+			return ((Entity3EditPart) targetEditPart).getMARelTypesOnTarget();
 		}
 		if (targetEditPart instanceof Relation2EditPart) {
 			return ((Relation2EditPart) targetEditPart).getMARelTypesOnTarget();
@@ -152,8 +131,8 @@ public class KaomModelingAssistantProvider extends ModelingAssistantProvider {
 				.getAdapter(IGraphicalEditPart.class);
 		IGraphicalEditPart targetEditPart = (IGraphicalEditPart) target
 				.getAdapter(IGraphicalEditPart.class);
-		if (sourceEditPart instanceof State2EditPart) {
-			return ((State2EditPart) sourceEditPart)
+		if (sourceEditPart instanceof Entity2EditPart) {
+			return ((Entity2EditPart) sourceEditPart)
 					.getMARelTypesOnSourceAndTarget(targetEditPart);
 		}
 		if (sourceEditPart instanceof RelationEditPart) {
@@ -164,8 +143,8 @@ public class KaomModelingAssistantProvider extends ModelingAssistantProvider {
 			return ((PortEditPart) sourceEditPart)
 					.getMARelTypesOnSourceAndTarget(targetEditPart);
 		}
-		if (sourceEditPart instanceof State3EditPart) {
-			return ((State3EditPart) sourceEditPart)
+		if (sourceEditPart instanceof Entity3EditPart) {
+			return ((Entity3EditPart) sourceEditPart)
 					.getMARelTypesOnSourceAndTarget(targetEditPart);
 		}
 		if (sourceEditPart instanceof Relation2EditPart) {
@@ -182,8 +161,8 @@ public class KaomModelingAssistantProvider extends ModelingAssistantProvider {
 			IElementType relationshipType) {
 		IGraphicalEditPart targetEditPart = (IGraphicalEditPart) target
 				.getAdapter(IGraphicalEditPart.class);
-		if (targetEditPart instanceof State2EditPart) {
-			return ((State2EditPart) targetEditPart)
+		if (targetEditPart instanceof Entity2EditPart) {
+			return ((Entity2EditPart) targetEditPart)
 					.getMATypesForSource(relationshipType);
 		}
 		if (targetEditPart instanceof RelationEditPart) {
@@ -194,8 +173,8 @@ public class KaomModelingAssistantProvider extends ModelingAssistantProvider {
 			return ((PortEditPart) targetEditPart)
 					.getMATypesForSource(relationshipType);
 		}
-		if (targetEditPart instanceof State3EditPart) {
-			return ((State3EditPart) targetEditPart)
+		if (targetEditPart instanceof Entity3EditPart) {
+			return ((Entity3EditPart) targetEditPart)
 					.getMATypesForSource(relationshipType);
 		}
 		if (targetEditPart instanceof Relation2EditPart) {
@@ -212,8 +191,8 @@ public class KaomModelingAssistantProvider extends ModelingAssistantProvider {
 			IElementType relationshipType) {
 		IGraphicalEditPart sourceEditPart = (IGraphicalEditPart) source
 				.getAdapter(IGraphicalEditPart.class);
-		if (sourceEditPart instanceof State2EditPart) {
-			return ((State2EditPart) sourceEditPart)
+		if (sourceEditPart instanceof Entity2EditPart) {
+			return ((Entity2EditPart) sourceEditPart)
 					.getMATypesForTarget(relationshipType);
 		}
 		if (sourceEditPart instanceof RelationEditPart) {
@@ -224,8 +203,8 @@ public class KaomModelingAssistantProvider extends ModelingAssistantProvider {
 			return ((PortEditPart) sourceEditPart)
 					.getMATypesForTarget(relationshipType);
 		}
-		if (sourceEditPart instanceof State3EditPart) {
-			return ((State3EditPart) sourceEditPart)
+		if (sourceEditPart instanceof Entity3EditPart) {
+			return ((Entity3EditPart) sourceEditPart)
 					.getMATypesForTarget(relationshipType);
 		}
 		if (sourceEditPart instanceof Relation2EditPart) {

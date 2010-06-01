@@ -41,12 +41,13 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 
-import de.cau.cs.kieler.kaom.diagram.edit.parts.Actor2EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.ActorActorCompartment2EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.ActorActorCompartmentEditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.ActorEditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.ActorName2EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.ActorNameEditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.Entity2EditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.Entity3EditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityEditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityEntityCompartment2EditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityEntityCompartmentEditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityName2EditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityNameEditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.LinkEditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.LinkNameEditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.PortEditPart;
@@ -55,13 +56,6 @@ import de.cau.cs.kieler.kaom.diagram.edit.parts.Relation2EditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.RelationEditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.RelationName2EditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.RelationNameEditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.State2EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.State3EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.StateEditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.StateName2EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.StateNameEditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.StateStateCompartment2EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.StateStateCompartmentEditPart;
 import de.cau.cs.kieler.kaom.diagram.part.KaomVisualIDRegistry;
 
 /**
@@ -104,7 +98,7 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
 	 * @generated
 	 */
 	protected boolean provides(CreateDiagramViewOperation op) {
-		return StateEditPart.MODEL_ID.equals(op.getSemanticHint())
+		return EntityEditPart.MODEL_ID.equals(op.getSemanticHint())
 				&& KaomVisualIDRegistry
 						.getDiagramVisualID(getSemanticElement(op
 								.getSemanticAdapter())) != -1;
@@ -148,18 +142,16 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
 					return false; // visual id for node EClass should match visual id from element type
 				}
 			} else {
-				if (!StateEditPart.MODEL_ID.equals(KaomVisualIDRegistry
+				if (!EntityEditPart.MODEL_ID.equals(KaomVisualIDRegistry
 						.getModelID(op.getContainerView()))) {
 					return false; // foreign diagram
 				}
 				switch (visualID) {
-				case ActorEditPart.VISUAL_ID:
 				case PortEditPart.VISUAL_ID:
 				case Relation2EditPart.VISUAL_ID:
-				case State2EditPart.VISUAL_ID:
+				case Entity2EditPart.VISUAL_ID:
 				case RelationEditPart.VISUAL_ID:
-				case Actor2EditPart.VISUAL_ID:
-				case State3EditPart.VISUAL_ID:
+				case Entity3EditPart.VISUAL_ID:
 					if (domainElement == null
 							|| visualID != KaomVisualIDRegistry
 									.getNodeVisualID(op.getContainerView(),
@@ -172,12 +164,10 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
 				}
 			}
 		}
-		return ActorEditPart.VISUAL_ID == visualID
-				|| State2EditPart.VISUAL_ID == visualID
+		return Entity2EditPart.VISUAL_ID == visualID
 				|| RelationEditPart.VISUAL_ID == visualID
 				|| PortEditPart.VISUAL_ID == visualID
-				|| Actor2EditPart.VISUAL_ID == visualID
-				|| State3EditPart.VISUAL_ID == visualID
+				|| Entity3EditPart.VISUAL_ID == visualID
 				|| Relation2EditPart.VISUAL_ID == visualID;
 	}
 
@@ -214,7 +204,7 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
 			String diagramKind, PreferencesHint preferencesHint) {
 		Diagram diagram = NotationFactory.eINSTANCE.createDiagram();
 		diagram.getStyles().add(NotationFactory.eINSTANCE.createDiagramStyle());
-		diagram.setType(StateEditPart.MODEL_ID);
+		diagram.setType(EntityEditPart.MODEL_ID);
 		diagram.setElement(getSemanticElement(semanticAdapter));
 		diagram.setMeasurementUnit(MeasurementUnit.PIXEL_LITERAL);
 		return diagram;
@@ -235,26 +225,20 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
 			visualID = KaomVisualIDRegistry.getVisualID(semanticHint);
 		}
 		switch (visualID) {
-		case ActorEditPart.VISUAL_ID:
-			return createActor_2001(domainElement, containerView, index,
-					persisted, preferencesHint);
-		case State2EditPart.VISUAL_ID:
-			return createState_2002(domainElement, containerView, index,
+		case Entity2EditPart.VISUAL_ID:
+			return createEntity_2001(domainElement, containerView, index,
 					persisted, preferencesHint);
 		case RelationEditPart.VISUAL_ID:
-			return createRelation_2003(domainElement, containerView, index,
+			return createRelation_2002(domainElement, containerView, index,
 					persisted, preferencesHint);
 		case PortEditPart.VISUAL_ID:
 			return createPort_3001(domainElement, containerView, index,
 					persisted, preferencesHint);
-		case Actor2EditPart.VISUAL_ID:
-			return createActor_3002(domainElement, containerView, index,
-					persisted, preferencesHint);
-		case State3EditPart.VISUAL_ID:
-			return createState_3003(domainElement, containerView, index,
+		case Entity3EditPart.VISUAL_ID:
+			return createEntity_3002(domainElement, containerView, index,
 					persisted, preferencesHint);
 		case Relation2EditPart.VISUAL_ID:
-			return createRelation_3004(domainElement, containerView, index,
+			return createRelation_3003(domainElement, containerView, index,
 					persisted, preferencesHint);
 		}
 		// can't happen, provided #provides(CreateNodeViewOperation) is correct
@@ -281,14 +265,14 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
 	/**
 	 * @generated
 	 */
-	public Node createActor_2001(EObject domainElement, View containerView,
+	public Node createEntity_2001(EObject domainElement, View containerView,
 			int index, boolean persisted, PreferencesHint preferencesHint) {
 		Node node = NotationFactory.eINSTANCE.createNode();
 		node.getStyles()
 				.add(NotationFactory.eINSTANCE.createDescriptionStyle());
 		node.getStyles().add(NotationFactory.eINSTANCE.createFontStyle());
 		node.setLayoutConstraint(NotationFactory.eINSTANCE.createBounds());
-		node.setType(KaomVisualIDRegistry.getType(ActorEditPart.VISUAL_ID));
+		node.setType(KaomVisualIDRegistry.getType(Entity2EditPart.VISUAL_ID));
 		ViewUtil.insertChildView(containerView, node, index, persisted);
 		node.setElement(domainElement);
 		stampShortcut(containerView, node);
@@ -309,49 +293,10 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
 			nodeFontStyle.setFontColor(FigureUtilities.RGBToInteger(fontRGB)
 					.intValue());
 		}
-		Node label5005 = createLabel(node, KaomVisualIDRegistry
-				.getType(ActorNameEditPart.VISUAL_ID));
+		Node label5004 = createLabel(node, KaomVisualIDRegistry
+				.getType(EntityNameEditPart.VISUAL_ID));
 		createCompartment(node, KaomVisualIDRegistry
-				.getType(ActorActorCompartmentEditPart.VISUAL_ID), true, false,
-				false, false);
-		return node;
-	}
-
-	/**
-	 * @generated
-	 */
-	public Node createState_2002(EObject domainElement, View containerView,
-			int index, boolean persisted, PreferencesHint preferencesHint) {
-		Node node = NotationFactory.eINSTANCE.createNode();
-		node.getStyles()
-				.add(NotationFactory.eINSTANCE.createDescriptionStyle());
-		node.getStyles().add(NotationFactory.eINSTANCE.createFontStyle());
-		node.setLayoutConstraint(NotationFactory.eINSTANCE.createBounds());
-		node.setType(KaomVisualIDRegistry.getType(State2EditPart.VISUAL_ID));
-		ViewUtil.insertChildView(containerView, node, index, persisted);
-		node.setElement(domainElement);
-		stampShortcut(containerView, node);
-		// initializeFromPreferences 
-		final IPreferenceStore prefStore = (IPreferenceStore) preferencesHint
-				.getPreferenceStore();
-		FontStyle nodeFontStyle = (FontStyle) node
-				.getStyle(NotationPackage.Literals.FONT_STYLE);
-		if (nodeFontStyle != null) {
-			FontData fontData = PreferenceConverter.getFontData(prefStore,
-					IPreferenceConstants.PREF_DEFAULT_FONT);
-			nodeFontStyle.setFontName(fontData.getName());
-			nodeFontStyle.setFontHeight(fontData.getHeight());
-			nodeFontStyle.setBold((fontData.getStyle() & SWT.BOLD) != 0);
-			nodeFontStyle.setItalic((fontData.getStyle() & SWT.ITALIC) != 0);
-			org.eclipse.swt.graphics.RGB fontRGB = PreferenceConverter
-					.getColor(prefStore, IPreferenceConstants.PREF_FONT_COLOR);
-			nodeFontStyle.setFontColor(FigureUtilities.RGBToInteger(fontRGB)
-					.intValue());
-		}
-		Node label5006 = createLabel(node, KaomVisualIDRegistry
-				.getType(StateNameEditPart.VISUAL_ID));
-		createCompartment(node, KaomVisualIDRegistry
-				.getType(StateStateCompartment2EditPart.VISUAL_ID), true,
+				.getType(EntityEntityCompartmentEditPart.VISUAL_ID), true,
 				false, false, false);
 		return node;
 	}
@@ -359,7 +304,7 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
 	/**
 	 * @generated
 	 */
-	public Node createRelation_2003(EObject domainElement, View containerView,
+	public Node createRelation_2002(EObject domainElement, View containerView,
 			int index, boolean persisted, PreferencesHint preferencesHint) {
 		Node node = NotationFactory.eINSTANCE.createNode();
 		node.getStyles()
@@ -387,13 +332,13 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
 			nodeFontStyle.setFontColor(FigureUtilities.RGBToInteger(fontRGB)
 					.intValue());
 		}
-		Node label5007 = createLabel(node, KaomVisualIDRegistry
+		Node label5005 = createLabel(node, KaomVisualIDRegistry
 				.getType(RelationNameEditPart.VISUAL_ID));
-		label5007.setLayoutConstraint(NotationFactory.eINSTANCE
+		label5005.setLayoutConstraint(NotationFactory.eINSTANCE
 				.createLocation());
-		Location location5007 = (Location) label5007.getLayoutConstraint();
-		location5007.setX(0);
-		location5007.setY(5);
+		Location location5005 = (Location) label5005.getLayoutConstraint();
+		location5005.setX(0);
+		location5005.setY(5);
 		return node;
 	}
 
@@ -440,52 +385,14 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
 	/**
 	 * @generated
 	 */
-	public Node createActor_3002(EObject domainElement, View containerView,
+	public Node createEntity_3002(EObject domainElement, View containerView,
 			int index, boolean persisted, PreferencesHint preferencesHint) {
 		Node node = NotationFactory.eINSTANCE.createNode();
 		node.getStyles()
 				.add(NotationFactory.eINSTANCE.createDescriptionStyle());
 		node.getStyles().add(NotationFactory.eINSTANCE.createFontStyle());
 		node.setLayoutConstraint(NotationFactory.eINSTANCE.createBounds());
-		node.setType(KaomVisualIDRegistry.getType(Actor2EditPart.VISUAL_ID));
-		ViewUtil.insertChildView(containerView, node, index, persisted);
-		node.setElement(domainElement);
-		// initializeFromPreferences 
-		final IPreferenceStore prefStore = (IPreferenceStore) preferencesHint
-				.getPreferenceStore();
-		FontStyle nodeFontStyle = (FontStyle) node
-				.getStyle(NotationPackage.Literals.FONT_STYLE);
-		if (nodeFontStyle != null) {
-			FontData fontData = PreferenceConverter.getFontData(prefStore,
-					IPreferenceConstants.PREF_DEFAULT_FONT);
-			nodeFontStyle.setFontName(fontData.getName());
-			nodeFontStyle.setFontHeight(fontData.getHeight());
-			nodeFontStyle.setBold((fontData.getStyle() & SWT.BOLD) != 0);
-			nodeFontStyle.setItalic((fontData.getStyle() & SWT.ITALIC) != 0);
-			org.eclipse.swt.graphics.RGB fontRGB = PreferenceConverter
-					.getColor(prefStore, IPreferenceConstants.PREF_FONT_COLOR);
-			nodeFontStyle.setFontColor(FigureUtilities.RGBToInteger(fontRGB)
-					.intValue());
-		}
-		Node label5004 = createLabel(node, KaomVisualIDRegistry
-				.getType(ActorName2EditPart.VISUAL_ID));
-		createCompartment(node, KaomVisualIDRegistry
-				.getType(ActorActorCompartment2EditPart.VISUAL_ID), true,
-				false, false, false);
-		return node;
-	}
-
-	/**
-	 * @generated
-	 */
-	public Node createState_3003(EObject domainElement, View containerView,
-			int index, boolean persisted, PreferencesHint preferencesHint) {
-		Node node = NotationFactory.eINSTANCE.createNode();
-		node.getStyles()
-				.add(NotationFactory.eINSTANCE.createDescriptionStyle());
-		node.getStyles().add(NotationFactory.eINSTANCE.createFontStyle());
-		node.setLayoutConstraint(NotationFactory.eINSTANCE.createBounds());
-		node.setType(KaomVisualIDRegistry.getType(State3EditPart.VISUAL_ID));
+		node.setType(KaomVisualIDRegistry.getType(Entity3EditPart.VISUAL_ID));
 		ViewUtil.insertChildView(containerView, node, index, persisted);
 		node.setElement(domainElement);
 		// initializeFromPreferences 
@@ -506,17 +413,17 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
 					.intValue());
 		}
 		Node label5003 = createLabel(node, KaomVisualIDRegistry
-				.getType(StateName2EditPart.VISUAL_ID));
+				.getType(EntityName2EditPart.VISUAL_ID));
 		createCompartment(node, KaomVisualIDRegistry
-				.getType(StateStateCompartmentEditPart.VISUAL_ID), true, false,
-				false, false);
+				.getType(EntityEntityCompartment2EditPart.VISUAL_ID), true,
+				false, false, false);
 		return node;
 	}
 
 	/**
 	 * @generated
 	 */
-	public Node createRelation_3004(EObject domainElement, View containerView,
+	public Node createRelation_3003(EObject domainElement, View containerView,
 			int index, boolean persisted, PreferencesHint preferencesHint) {
 		Node node = NotationFactory.eINSTANCE.createNode();
 		node.getStyles()
@@ -608,13 +515,13 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
 	 * @generated
 	 */
 	private void stampShortcut(View containerView, Node target) {
-		if (!StateEditPart.MODEL_ID.equals(KaomVisualIDRegistry
+		if (!EntityEditPart.MODEL_ID.equals(KaomVisualIDRegistry
 				.getModelID(containerView))) {
 			EAnnotation shortcutAnnotation = EcoreFactory.eINSTANCE
 					.createEAnnotation();
 			shortcutAnnotation.setSource("Shortcut"); //$NON-NLS-1$
 			shortcutAnnotation.getDetails().put(
-					"modelID", StateEditPart.MODEL_ID); //$NON-NLS-1$
+					"modelID", EntityEditPart.MODEL_ID); //$NON-NLS-1$
 			target.getEAnnotations().add(shortcutAnnotation);
 		}
 	}

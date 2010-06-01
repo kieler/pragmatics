@@ -11,9 +11,8 @@ import org.eclipse.gmf.runtime.diagram.ui.editpolicies.CanonicalEditPolicy;
 import org.eclipse.gmf.runtime.notation.View;
 
 import de.cau.cs.kieler.kaom.KaomPackage;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.Actor2EditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.Entity3EditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.Relation2EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.State3EditPart;
 import de.cau.cs.kieler.kaom.diagram.part.KaomDiagramUpdater;
 import de.cau.cs.kieler.kaom.diagram.part.KaomNodeDescriptor;
 import de.cau.cs.kieler.kaom.diagram.part.KaomVisualIDRegistry;
@@ -21,7 +20,7 @@ import de.cau.cs.kieler.kaom.diagram.part.KaomVisualIDRegistry;
 /**
  * @generated
  */
-public class StateStateCompartment2CanonicalEditPolicy extends
+public class EntityEntityCompartment2CanonicalEditPolicy extends
 		CanonicalEditPolicy {
 
 	/**
@@ -36,7 +35,7 @@ public class StateStateCompartment2CanonicalEditPolicy extends
 		View viewObject = (View) getHost().getModel();
 		List result = new LinkedList();
 		for (Iterator it = KaomDiagramUpdater
-				.getStateStateCompartment_7004SemanticChildren(viewObject)
+				.getEntityEntityCompartment_7002SemanticChildren(viewObject)
 				.iterator(); it.hasNext();) {
 			result.add(((KaomNodeDescriptor) it.next()).getModelElement());
 		}
@@ -49,8 +48,7 @@ public class StateStateCompartment2CanonicalEditPolicy extends
 	protected boolean isOrphaned(Collection semanticChildren, final View view) {
 		int visualID = KaomVisualIDRegistry.getVisualID(view);
 		switch (visualID) {
-		case Actor2EditPart.VISUAL_ID:
-		case State3EditPart.VISUAL_ID:
+		case Entity3EditPart.VISUAL_ID:
 		case Relation2EditPart.VISUAL_ID:
 			if (!semanticChildren.contains(view.getElement())) {
 				return true;

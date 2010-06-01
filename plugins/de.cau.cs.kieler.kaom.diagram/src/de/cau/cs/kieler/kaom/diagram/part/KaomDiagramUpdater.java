@@ -12,27 +12,21 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gmf.runtime.notation.View;
 
-import de.cau.cs.kieler.kaom.Actor;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.KaomPackage;
 import de.cau.cs.kieler.kaom.Link;
 import de.cau.cs.kieler.kaom.Linkable;
 import de.cau.cs.kieler.kaom.Port;
 import de.cau.cs.kieler.kaom.Relation;
-import de.cau.cs.kieler.kaom.State;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.Actor2EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.ActorActorCompartment2EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.ActorActorCompartmentEditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.ActorEditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.Entity2EditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.Entity3EditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityEditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityEntityCompartment2EditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityEntityCompartmentEditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.LinkEditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.PortEditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.Relation2EditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.RelationEditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.State2EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.State3EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.StateEditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.StateStateCompartment2EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.StateStateCompartmentEditPart;
 import de.cau.cs.kieler.kaom.diagram.providers.KaomElementTypes;
 
 /**
@@ -45,20 +39,16 @@ public class KaomDiagramUpdater {
 	 */
 	public static List getSemanticChildren(View view) {
 		switch (KaomVisualIDRegistry.getVisualID(view)) {
-		case ActorEditPart.VISUAL_ID:
-			return getActor_2001SemanticChildren(view);
-		case Actor2EditPart.VISUAL_ID:
-			return getActor_3002SemanticChildren(view);
-		case ActorActorCompartmentEditPart.VISUAL_ID:
-			return getActorActorCompartment_7001SemanticChildren(view);
-		case ActorActorCompartment2EditPart.VISUAL_ID:
-			return getActorActorCompartment_7002SemanticChildren(view);
-		case StateStateCompartmentEditPart.VISUAL_ID:
-			return getStateStateCompartment_7003SemanticChildren(view);
-		case StateStateCompartment2EditPart.VISUAL_ID:
-			return getStateStateCompartment_7004SemanticChildren(view);
-		case StateEditPart.VISUAL_ID:
-			return getState_1000SemanticChildren(view);
+		case Entity2EditPart.VISUAL_ID:
+			return getEntity_2001SemanticChildren(view);
+		case Entity3EditPart.VISUAL_ID:
+			return getEntity_3002SemanticChildren(view);
+		case EntityEntityCompartmentEditPart.VISUAL_ID:
+			return getEntityEntityCompartment_7001SemanticChildren(view);
+		case EntityEntityCompartment2EditPart.VISUAL_ID:
+			return getEntityEntityCompartment_7002SemanticChildren(view);
+		case EntityEditPart.VISUAL_ID:
+			return getEntity_1000SemanticChildren(view);
 		}
 		return Collections.EMPTY_LIST;
 	}
@@ -66,11 +56,11 @@ public class KaomDiagramUpdater {
 	/**
 	 * @generated
 	 */
-	public static List getActor_2001SemanticChildren(View view) {
+	public static List getEntity_2001SemanticChildren(View view) {
 		if (!view.isSetElement()) {
 			return Collections.EMPTY_LIST;
 		}
-		Actor modelElement = (Actor) view.getElement();
+		Entity modelElement = (Entity) view.getElement();
 		List result = new LinkedList();
 		for (Iterator it = modelElement.getChildPorts().iterator(); it
 				.hasNext();) {
@@ -88,11 +78,11 @@ public class KaomDiagramUpdater {
 	/**
 	 * @generated
 	 */
-	public static List getActor_3002SemanticChildren(View view) {
+	public static List getEntity_3002SemanticChildren(View view) {
 		if (!view.isSetElement()) {
 			return Collections.EMPTY_LIST;
 		}
-		Actor modelElement = (Actor) view.getElement();
+		Entity modelElement = (Entity) view.getElement();
 		List result = new LinkedList();
 		for (Iterator it = modelElement.getChildPorts().iterator(); it
 				.hasNext();) {
@@ -110,7 +100,7 @@ public class KaomDiagramUpdater {
 	/**
 	 * @generated
 	 */
-	public static List getActorActorCompartment_7001SemanticChildren(View view) {
+	public static List getEntityEntityCompartment_7001SemanticChildren(View view) {
 		if (false == view.eContainer() instanceof View) {
 			return Collections.EMPTY_LIST;
 		}
@@ -118,18 +108,14 @@ public class KaomDiagramUpdater {
 		if (!containerView.isSetElement()) {
 			return Collections.EMPTY_LIST;
 		}
-		Actor modelElement = (Actor) containerView.getElement();
+		Entity modelElement = (Entity) containerView.getElement();
 		List result = new LinkedList();
 		for (Iterator it = modelElement.getChildEntities().iterator(); it
 				.hasNext();) {
 			Entity childElement = (Entity) it.next();
 			int visualID = KaomVisualIDRegistry.getNodeVisualID(view,
 					childElement);
-			if (visualID == Actor2EditPart.VISUAL_ID) {
-				result.add(new KaomNodeDescriptor(childElement, visualID));
-				continue;
-			}
-			if (visualID == State3EditPart.VISUAL_ID) {
+			if (visualID == Entity3EditPart.VISUAL_ID) {
 				result.add(new KaomNodeDescriptor(childElement, visualID));
 				continue;
 			}
@@ -150,7 +136,7 @@ public class KaomDiagramUpdater {
 	/**
 	 * @generated
 	 */
-	public static List getActorActorCompartment_7002SemanticChildren(View view) {
+	public static List getEntityEntityCompartment_7002SemanticChildren(View view) {
 		if (false == view.eContainer() instanceof View) {
 			return Collections.EMPTY_LIST;
 		}
@@ -158,18 +144,14 @@ public class KaomDiagramUpdater {
 		if (!containerView.isSetElement()) {
 			return Collections.EMPTY_LIST;
 		}
-		Actor modelElement = (Actor) containerView.getElement();
+		Entity modelElement = (Entity) containerView.getElement();
 		List result = new LinkedList();
 		for (Iterator it = modelElement.getChildEntities().iterator(); it
 				.hasNext();) {
 			Entity childElement = (Entity) it.next();
 			int visualID = KaomVisualIDRegistry.getNodeVisualID(view,
 					childElement);
-			if (visualID == Actor2EditPart.VISUAL_ID) {
-				result.add(new KaomNodeDescriptor(childElement, visualID));
-				continue;
-			}
-			if (visualID == State3EditPart.VISUAL_ID) {
+			if (visualID == Entity3EditPart.VISUAL_ID) {
 				result.add(new KaomNodeDescriptor(childElement, visualID));
 				continue;
 			}
@@ -190,102 +172,18 @@ public class KaomDiagramUpdater {
 	/**
 	 * @generated
 	 */
-	public static List getStateStateCompartment_7003SemanticChildren(View view) {
-		if (false == view.eContainer() instanceof View) {
-			return Collections.EMPTY_LIST;
-		}
-		View containerView = (View) view.eContainer();
-		if (!containerView.isSetElement()) {
-			return Collections.EMPTY_LIST;
-		}
-		State modelElement = (State) containerView.getElement();
-		List result = new LinkedList();
-		for (Iterator it = modelElement.getChildEntities().iterator(); it
-				.hasNext();) {
-			Entity childElement = (Entity) it.next();
-			int visualID = KaomVisualIDRegistry.getNodeVisualID(view,
-					childElement);
-			if (visualID == Actor2EditPart.VISUAL_ID) {
-				result.add(new KaomNodeDescriptor(childElement, visualID));
-				continue;
-			}
-			if (visualID == State3EditPart.VISUAL_ID) {
-				result.add(new KaomNodeDescriptor(childElement, visualID));
-				continue;
-			}
-		}
-		for (Iterator it = modelElement.getChildRelations().iterator(); it
-				.hasNext();) {
-			Relation childElement = (Relation) it.next();
-			int visualID = KaomVisualIDRegistry.getNodeVisualID(view,
-					childElement);
-			if (visualID == Relation2EditPart.VISUAL_ID) {
-				result.add(new KaomNodeDescriptor(childElement, visualID));
-				continue;
-			}
-		}
-		return result;
-	}
-
-	/**
-	 * @generated
-	 */
-	public static List getStateStateCompartment_7004SemanticChildren(View view) {
-		if (false == view.eContainer() instanceof View) {
-			return Collections.EMPTY_LIST;
-		}
-		View containerView = (View) view.eContainer();
-		if (!containerView.isSetElement()) {
-			return Collections.EMPTY_LIST;
-		}
-		State modelElement = (State) containerView.getElement();
-		List result = new LinkedList();
-		for (Iterator it = modelElement.getChildEntities().iterator(); it
-				.hasNext();) {
-			Entity childElement = (Entity) it.next();
-			int visualID = KaomVisualIDRegistry.getNodeVisualID(view,
-					childElement);
-			if (visualID == Actor2EditPart.VISUAL_ID) {
-				result.add(new KaomNodeDescriptor(childElement, visualID));
-				continue;
-			}
-			if (visualID == State3EditPart.VISUAL_ID) {
-				result.add(new KaomNodeDescriptor(childElement, visualID));
-				continue;
-			}
-		}
-		for (Iterator it = modelElement.getChildRelations().iterator(); it
-				.hasNext();) {
-			Relation childElement = (Relation) it.next();
-			int visualID = KaomVisualIDRegistry.getNodeVisualID(view,
-					childElement);
-			if (visualID == Relation2EditPart.VISUAL_ID) {
-				result.add(new KaomNodeDescriptor(childElement, visualID));
-				continue;
-			}
-		}
-		return result;
-	}
-
-	/**
-	 * @generated
-	 */
-	public static List getState_1000SemanticChildren(View view) {
+	public static List getEntity_1000SemanticChildren(View view) {
 		if (!view.isSetElement()) {
 			return Collections.EMPTY_LIST;
 		}
-		State modelElement = (State) view.getElement();
+		Entity modelElement = (Entity) view.getElement();
 		List result = new LinkedList();
 		for (Iterator it = modelElement.getChildEntities().iterator(); it
 				.hasNext();) {
 			Entity childElement = (Entity) it.next();
 			int visualID = KaomVisualIDRegistry.getNodeVisualID(view,
 					childElement);
-			if (visualID == ActorEditPart.VISUAL_ID) {
-				result.add(new KaomNodeDescriptor(childElement, visualID));
-				continue;
-			}
-			if (visualID == State2EditPart.VISUAL_ID) {
+			if (visualID == Entity2EditPart.VISUAL_ID) {
 				result.add(new KaomNodeDescriptor(childElement, visualID));
 				continue;
 			}
@@ -308,22 +206,18 @@ public class KaomDiagramUpdater {
 	 */
 	public static List getContainedLinks(View view) {
 		switch (KaomVisualIDRegistry.getVisualID(view)) {
-		case StateEditPart.VISUAL_ID:
-			return getState_1000ContainedLinks(view);
-		case ActorEditPart.VISUAL_ID:
-			return getActor_2001ContainedLinks(view);
-		case State2EditPart.VISUAL_ID:
-			return getState_2002ContainedLinks(view);
+		case EntityEditPart.VISUAL_ID:
+			return getEntity_1000ContainedLinks(view);
+		case Entity2EditPart.VISUAL_ID:
+			return getEntity_2001ContainedLinks(view);
 		case RelationEditPart.VISUAL_ID:
-			return getRelation_2003ContainedLinks(view);
+			return getRelation_2002ContainedLinks(view);
 		case PortEditPart.VISUAL_ID:
 			return getPort_3001ContainedLinks(view);
-		case Actor2EditPart.VISUAL_ID:
-			return getActor_3002ContainedLinks(view);
-		case State3EditPart.VISUAL_ID:
-			return getState_3003ContainedLinks(view);
+		case Entity3EditPart.VISUAL_ID:
+			return getEntity_3002ContainedLinks(view);
 		case Relation2EditPart.VISUAL_ID:
-			return getRelation_3004ContainedLinks(view);
+			return getRelation_3003ContainedLinks(view);
 		case LinkEditPart.VISUAL_ID:
 			return getLink_4001ContainedLinks(view);
 		}
@@ -335,20 +229,16 @@ public class KaomDiagramUpdater {
 	 */
 	public static List getIncomingLinks(View view) {
 		switch (KaomVisualIDRegistry.getVisualID(view)) {
-		case ActorEditPart.VISUAL_ID:
-			return getActor_2001IncomingLinks(view);
-		case State2EditPart.VISUAL_ID:
-			return getState_2002IncomingLinks(view);
+		case Entity2EditPart.VISUAL_ID:
+			return getEntity_2001IncomingLinks(view);
 		case RelationEditPart.VISUAL_ID:
-			return getRelation_2003IncomingLinks(view);
+			return getRelation_2002IncomingLinks(view);
 		case PortEditPart.VISUAL_ID:
 			return getPort_3001IncomingLinks(view);
-		case Actor2EditPart.VISUAL_ID:
-			return getActor_3002IncomingLinks(view);
-		case State3EditPart.VISUAL_ID:
-			return getState_3003IncomingLinks(view);
+		case Entity3EditPart.VISUAL_ID:
+			return getEntity_3002IncomingLinks(view);
 		case Relation2EditPart.VISUAL_ID:
-			return getRelation_3004IncomingLinks(view);
+			return getRelation_3003IncomingLinks(view);
 		case LinkEditPart.VISUAL_ID:
 			return getLink_4001IncomingLinks(view);
 		}
@@ -360,20 +250,16 @@ public class KaomDiagramUpdater {
 	 */
 	public static List getOutgoingLinks(View view) {
 		switch (KaomVisualIDRegistry.getVisualID(view)) {
-		case ActorEditPart.VISUAL_ID:
-			return getActor_2001OutgoingLinks(view);
-		case State2EditPart.VISUAL_ID:
-			return getState_2002OutgoingLinks(view);
+		case Entity2EditPart.VISUAL_ID:
+			return getEntity_2001OutgoingLinks(view);
 		case RelationEditPart.VISUAL_ID:
-			return getRelation_2003OutgoingLinks(view);
+			return getRelation_2002OutgoingLinks(view);
 		case PortEditPart.VISUAL_ID:
 			return getPort_3001OutgoingLinks(view);
-		case Actor2EditPart.VISUAL_ID:
-			return getActor_3002OutgoingLinks(view);
-		case State3EditPart.VISUAL_ID:
-			return getState_3003OutgoingLinks(view);
+		case Entity3EditPart.VISUAL_ID:
+			return getEntity_3002OutgoingLinks(view);
 		case Relation2EditPart.VISUAL_ID:
-			return getRelation_3004OutgoingLinks(view);
+			return getRelation_3003OutgoingLinks(view);
 		case LinkEditPart.VISUAL_ID:
 			return getLink_4001OutgoingLinks(view);
 		}
@@ -383,8 +269,8 @@ public class KaomDiagramUpdater {
 	/**
 	 * @generated
 	 */
-	public static List getState_1000ContainedLinks(View view) {
-		State modelElement = (State) view.getElement();
+	public static List getEntity_1000ContainedLinks(View view) {
+		Entity modelElement = (Entity) view.getElement();
 		List result = new LinkedList();
 		result.addAll(getContainedTypeModelFacetLinks_Link_4001(modelElement));
 		return result;
@@ -393,8 +279,8 @@ public class KaomDiagramUpdater {
 	/**
 	 * @generated
 	 */
-	public static List getActor_2001ContainedLinks(View view) {
-		Actor modelElement = (Actor) view.getElement();
+	public static List getEntity_2001ContainedLinks(View view) {
+		Entity modelElement = (Entity) view.getElement();
 		List result = new LinkedList();
 		result.addAll(getContainedTypeModelFacetLinks_Link_4001(modelElement));
 		return result;
@@ -403,17 +289,7 @@ public class KaomDiagramUpdater {
 	/**
 	 * @generated
 	 */
-	public static List getState_2002ContainedLinks(View view) {
-		State modelElement = (State) view.getElement();
-		List result = new LinkedList();
-		result.addAll(getContainedTypeModelFacetLinks_Link_4001(modelElement));
-		return result;
-	}
-
-	/**
-	 * @generated
-	 */
-	public static List getRelation_2003ContainedLinks(View view) {
+	public static List getRelation_2002ContainedLinks(View view) {
 		return Collections.EMPTY_LIST;
 	}
 
@@ -427,8 +303,8 @@ public class KaomDiagramUpdater {
 	/**
 	 * @generated
 	 */
-	public static List getActor_3002ContainedLinks(View view) {
-		Actor modelElement = (Actor) view.getElement();
+	public static List getEntity_3002ContainedLinks(View view) {
+		Entity modelElement = (Entity) view.getElement();
 		List result = new LinkedList();
 		result.addAll(getContainedTypeModelFacetLinks_Link_4001(modelElement));
 		return result;
@@ -437,17 +313,7 @@ public class KaomDiagramUpdater {
 	/**
 	 * @generated
 	 */
-	public static List getState_3003ContainedLinks(View view) {
-		State modelElement = (State) view.getElement();
-		List result = new LinkedList();
-		result.addAll(getContainedTypeModelFacetLinks_Link_4001(modelElement));
-		return result;
-	}
-
-	/**
-	 * @generated
-	 */
-	public static List getRelation_3004ContainedLinks(View view) {
+	public static List getRelation_3003ContainedLinks(View view) {
 		return Collections.EMPTY_LIST;
 	}
 
@@ -461,15 +327,8 @@ public class KaomDiagramUpdater {
 	/**
 	 * @generated
 	 */
-	public static List getActor_2001IncomingLinks(View view) {
-		return Collections.EMPTY_LIST;
-	}
-
-	/**
-	 * @generated
-	 */
-	public static List getState_2002IncomingLinks(View view) {
-		State modelElement = (State) view.getElement();
+	public static List getEntity_2001IncomingLinks(View view) {
+		Entity modelElement = (Entity) view.getElement();
 		Map crossReferences = EcoreUtil.CrossReferencer.find(view.eResource()
 				.getResourceSet().getResources());
 		List result = new LinkedList();
@@ -481,7 +340,7 @@ public class KaomDiagramUpdater {
 	/**
 	 * @generated
 	 */
-	public static List getRelation_2003IncomingLinks(View view) {
+	public static List getRelation_2002IncomingLinks(View view) {
 		Relation modelElement = (Relation) view.getElement();
 		Map crossReferences = EcoreUtil.CrossReferencer.find(view.eResource()
 				.getResourceSet().getResources());
@@ -507,15 +366,8 @@ public class KaomDiagramUpdater {
 	/**
 	 * @generated
 	 */
-	public static List getActor_3002IncomingLinks(View view) {
-		return Collections.EMPTY_LIST;
-	}
-
-	/**
-	 * @generated
-	 */
-	public static List getState_3003IncomingLinks(View view) {
-		State modelElement = (State) view.getElement();
+	public static List getEntity_3002IncomingLinks(View view) {
+		Entity modelElement = (Entity) view.getElement();
 		Map crossReferences = EcoreUtil.CrossReferencer.find(view.eResource()
 				.getResourceSet().getResources());
 		List result = new LinkedList();
@@ -527,7 +379,7 @@ public class KaomDiagramUpdater {
 	/**
 	 * @generated
 	 */
-	public static List getRelation_3004IncomingLinks(View view) {
+	public static List getRelation_3003IncomingLinks(View view) {
 		Relation modelElement = (Relation) view.getElement();
 		Map crossReferences = EcoreUtil.CrossReferencer.find(view.eResource()
 				.getResourceSet().getResources());
@@ -547,15 +399,8 @@ public class KaomDiagramUpdater {
 	/**
 	 * @generated
 	 */
-	public static List getActor_2001OutgoingLinks(View view) {
-		return Collections.EMPTY_LIST;
-	}
-
-	/**
-	 * @generated
-	 */
-	public static List getState_2002OutgoingLinks(View view) {
-		State modelElement = (State) view.getElement();
+	public static List getEntity_2001OutgoingLinks(View view) {
+		Entity modelElement = (Entity) view.getElement();
 		List result = new LinkedList();
 		result.addAll(getOutgoingTypeModelFacetLinks_Link_4001(modelElement));
 		return result;
@@ -564,7 +409,7 @@ public class KaomDiagramUpdater {
 	/**
 	 * @generated
 	 */
-	public static List getRelation_2003OutgoingLinks(View view) {
+	public static List getRelation_2002OutgoingLinks(View view) {
 		Relation modelElement = (Relation) view.getElement();
 		List result = new LinkedList();
 		result.addAll(getOutgoingTypeModelFacetLinks_Link_4001(modelElement));
@@ -584,15 +429,8 @@ public class KaomDiagramUpdater {
 	/**
 	 * @generated
 	 */
-	public static List getActor_3002OutgoingLinks(View view) {
-		return Collections.EMPTY_LIST;
-	}
-
-	/**
-	 * @generated
-	 */
-	public static List getState_3003OutgoingLinks(View view) {
-		State modelElement = (State) view.getElement();
+	public static List getEntity_3002OutgoingLinks(View view) {
+		Entity modelElement = (Entity) view.getElement();
 		List result = new LinkedList();
 		result.addAll(getOutgoingTypeModelFacetLinks_Link_4001(modelElement));
 		return result;
@@ -601,7 +439,7 @@ public class KaomDiagramUpdater {
 	/**
 	 * @generated
 	 */
-	public static List getRelation_3004OutgoingLinks(View view) {
+	public static List getRelation_3003OutgoingLinks(View view) {
 		Relation modelElement = (Relation) view.getElement();
 		List result = new LinkedList();
 		result.addAll(getOutgoingTypeModelFacetLinks_Link_4001(modelElement));

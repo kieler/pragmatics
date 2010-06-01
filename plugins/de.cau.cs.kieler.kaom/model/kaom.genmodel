@@ -8,11 +8,11 @@
   <foreignModel>kaom.ecore</foreignModel>
   <genPackages prefix="Kaom" basePackage="de.cau.cs.kieler" disposableProviderFactory="true"
       ecorePackage="kaom.ecore#/">
-    <genClasses image="false" ecoreClass="kaom.ecore#//Entity">
+    <genClasses ecoreClass="kaom.ecore#//Entity">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference kaom.ecore#//Entity/childEntities"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference kaom.ecore#//Entity/childLinks"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference kaom.ecore#//Entity/childRelations"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference kaom.ecore#//Entity/childPorts"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference kaom.ecore#//Entity/childRelations"/>
     </genClasses>
     <genClasses ecoreClass="kaom.ecore#//Port"/>
     <genClasses ecoreClass="kaom.ecore#//Relation"/>
@@ -24,24 +24,30 @@
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference kaom.ecore#//Linkable/outgoingLinks"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference kaom.ecore#//Linkable/incomingLinks"/>
     </genClasses>
-    <genClasses ecoreClass="kaom.ecore#//Actor"/>
-    <genClasses ecoreClass="kaom.ecore#//State"/>
     <genClasses image="false" ecoreClass="kaom.ecore#//NamedObject">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute kaom.ecore#//NamedObject/name"/>
     </genClasses>
     <genClasses image="false" ecoreClass="kaom.ecore#//Annotatable">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference kaom.ecore#//Annotatable/annotationMap"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference kaom.ecore#//Annotatable/annotations"/>
+      <genOperations ecoreOperation="kaom.ecore#//Annotatable/getAnnotation">
+        <genParameters ecoreParameter="kaom.ecore#//Annotatable/getAnnotation/key"/>
+      </genOperations>
     </genClasses>
     <genClasses image="false" ecoreClass="kaom.ecore#//Annotation"/>
-    <genClasses ecoreClass="kaom.ecore#//AnnotationMapEntry">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference kaom.ecore#//AnnotationMapEntry/value"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute kaom.ecore#//AnnotationMapEntry/key"/>
-    </genClasses>
     <genClasses ecoreClass="kaom.ecore#//StringAnnotation">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute kaom.ecore#//StringAnnotation/text"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute kaom.ecore#//StringAnnotation/value"/>
     </genClasses>
     <genClasses ecoreClass="kaom.ecore#//ReferenceAnnotation">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference kaom.ecore#//ReferenceAnnotation/object"/>
+    </genClasses>
+    <genClasses ecoreClass="kaom.ecore#//BooleanAnnotation">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute kaom.ecore#//BooleanAnnotation/value"/>
+    </genClasses>
+    <genClasses ecoreClass="kaom.ecore#//IntAnnotation">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute kaom.ecore#//IntAnnotation/value"/>
+    </genClasses>
+    <genClasses ecoreClass="kaom.ecore#//FloatAnnotation">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute kaom.ecore#//FloatAnnotation/value"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

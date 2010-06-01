@@ -16,11 +16,12 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
 
-import de.cau.cs.kieler.kaom.State;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.Actor2EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.ActorEditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.ActorName2EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.ActorNameEditPart;
+import de.cau.cs.kieler.kaom.Entity;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.Entity2EditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.Entity3EditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityEditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityName2EditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityNameEditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.LinkEditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.LinkNameEditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.PortEditPart;
@@ -29,11 +30,6 @@ import de.cau.cs.kieler.kaom.diagram.edit.parts.Relation2EditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.RelationEditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.RelationName2EditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.RelationNameEditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.State2EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.State3EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.StateEditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.StateName2EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.StateNameEditPart;
 import de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorPlugin;
 import de.cau.cs.kieler.kaom.diagram.part.KaomVisualIDRegistry;
 import de.cau.cs.kieler.kaom.diagram.providers.KaomElementTypes;
@@ -100,30 +96,24 @@ public class KaomNavigatorLabelProvider extends LabelProvider implements
 	 */
 	public Image getImage(View view) {
 		switch (KaomVisualIDRegistry.getVisualID(view)) {
-		case StateEditPart.VISUAL_ID:
+		case EntityEditPart.VISUAL_ID:
 			return getImage(
-					"Navigator?Diagram?http://kieler.cs.cau.de/KAOM?State", KaomElementTypes.State_1000); //$NON-NLS-1$
-		case ActorEditPart.VISUAL_ID:
+					"Navigator?Diagram?http://kieler.cs.cau.de/KAOM?Entity", KaomElementTypes.Entity_1000); //$NON-NLS-1$
+		case Entity2EditPart.VISUAL_ID:
 			return getImage(
-					"Navigator?TopLevelNode?http://kieler.cs.cau.de/KAOM?Actor", KaomElementTypes.Actor_2001); //$NON-NLS-1$
-		case State2EditPart.VISUAL_ID:
-			return getImage(
-					"Navigator?TopLevelNode?http://kieler.cs.cau.de/KAOM?State", KaomElementTypes.State_2002); //$NON-NLS-1$
+					"Navigator?TopLevelNode?http://kieler.cs.cau.de/KAOM?Entity", KaomElementTypes.Entity_2001); //$NON-NLS-1$
 		case RelationEditPart.VISUAL_ID:
 			return getImage(
-					"Navigator?TopLevelNode?http://kieler.cs.cau.de/KAOM?Relation", KaomElementTypes.Relation_2003); //$NON-NLS-1$
+					"Navigator?TopLevelNode?http://kieler.cs.cau.de/KAOM?Relation", KaomElementTypes.Relation_2002); //$NON-NLS-1$
 		case PortEditPart.VISUAL_ID:
 			return getImage(
 					"Navigator?Node?http://kieler.cs.cau.de/KAOM?Port", KaomElementTypes.Port_3001); //$NON-NLS-1$
-		case Actor2EditPart.VISUAL_ID:
+		case Entity3EditPart.VISUAL_ID:
 			return getImage(
-					"Navigator?Node?http://kieler.cs.cau.de/KAOM?Actor", KaomElementTypes.Actor_3002); //$NON-NLS-1$
-		case State3EditPart.VISUAL_ID:
-			return getImage(
-					"Navigator?Node?http://kieler.cs.cau.de/KAOM?State", KaomElementTypes.State_3003); //$NON-NLS-1$
+					"Navigator?Node?http://kieler.cs.cau.de/KAOM?Entity", KaomElementTypes.Entity_3002); //$NON-NLS-1$
 		case Relation2EditPart.VISUAL_ID:
 			return getImage(
-					"Navigator?Node?http://kieler.cs.cau.de/KAOM?Relation", KaomElementTypes.Relation_3004); //$NON-NLS-1$
+					"Navigator?Node?http://kieler.cs.cau.de/KAOM?Relation", KaomElementTypes.Relation_3003); //$NON-NLS-1$
 		case LinkEditPart.VISUAL_ID:
 			return getImage(
 					"Navigator?Link?http://kieler.cs.cau.de/KAOM?Link", KaomElementTypes.Link_4001); //$NON-NLS-1$
@@ -179,22 +169,18 @@ public class KaomNavigatorLabelProvider extends LabelProvider implements
 			return getUnresolvedDomainElementProxyText(view);
 		}
 		switch (KaomVisualIDRegistry.getVisualID(view)) {
-		case StateEditPart.VISUAL_ID:
-			return getState_1000Text(view);
-		case ActorEditPart.VISUAL_ID:
-			return getActor_2001Text(view);
-		case State2EditPart.VISUAL_ID:
-			return getState_2002Text(view);
+		case EntityEditPart.VISUAL_ID:
+			return getEntity_1000Text(view);
+		case Entity2EditPart.VISUAL_ID:
+			return getEntity_2001Text(view);
 		case RelationEditPart.VISUAL_ID:
-			return getRelation_2003Text(view);
+			return getRelation_2002Text(view);
 		case PortEditPart.VISUAL_ID:
 			return getPort_3001Text(view);
-		case Actor2EditPart.VISUAL_ID:
-			return getActor_3002Text(view);
-		case State3EditPart.VISUAL_ID:
-			return getState_3003Text(view);
+		case Entity3EditPart.VISUAL_ID:
+			return getEntity_3002Text(view);
 		case Relation2EditPart.VISUAL_ID:
-			return getRelation_3004Text(view);
+			return getRelation_3003Text(view);
 		case LinkEditPart.VISUAL_ID:
 			return getLink_4001Text(view);
 		}
@@ -204,8 +190,8 @@ public class KaomNavigatorLabelProvider extends LabelProvider implements
 	/**
 	 * @generated
 	 */
-	private String getState_1000Text(View view) {
-		State domainModelElement = (State) view.getElement();
+	private String getEntity_1000Text(View view) {
+		Entity domainModelElement = (Entity) view.getElement();
 		if (domainModelElement != null) {
 			return domainModelElement.getName();
 		} else {
@@ -218,18 +204,18 @@ public class KaomNavigatorLabelProvider extends LabelProvider implements
 	/**
 	 * @generated
 	 */
-	private String getActor_2001Text(View view) {
+	private String getEntity_2001Text(View view) {
 		IParser parser = KaomParserProvider.getParser(
-				KaomElementTypes.Actor_2001, view.getElement() != null ? view
+				KaomElementTypes.Entity_2001, view.getElement() != null ? view
 						.getElement() : view, KaomVisualIDRegistry
-						.getType(ActorNameEditPart.VISUAL_ID));
+						.getType(EntityNameEditPart.VISUAL_ID));
 		if (parser != null) {
 			return parser.getPrintString(new EObjectAdapter(
 					view.getElement() != null ? view.getElement() : view),
 					ParserOptions.NONE.intValue());
 		} else {
 			KaomDiagramEditorPlugin.getInstance().logError(
-					"Parser was not found for label " + 5005); //$NON-NLS-1$
+					"Parser was not found for label " + 5004); //$NON-NLS-1$
 			return ""; //$NON-NLS-1$
 		}
 	}
@@ -237,28 +223,9 @@ public class KaomNavigatorLabelProvider extends LabelProvider implements
 	/**
 	 * @generated
 	 */
-	private String getState_2002Text(View view) {
+	private String getRelation_2002Text(View view) {
 		IParser parser = KaomParserProvider.getParser(
-				KaomElementTypes.State_2002, view.getElement() != null ? view
-						.getElement() : view, KaomVisualIDRegistry
-						.getType(StateNameEditPart.VISUAL_ID));
-		if (parser != null) {
-			return parser.getPrintString(new EObjectAdapter(
-					view.getElement() != null ? view.getElement() : view),
-					ParserOptions.NONE.intValue());
-		} else {
-			KaomDiagramEditorPlugin.getInstance().logError(
-					"Parser was not found for label " + 5006); //$NON-NLS-1$
-			return ""; //$NON-NLS-1$
-		}
-	}
-
-	/**
-	 * @generated
-	 */
-	private String getRelation_2003Text(View view) {
-		IParser parser = KaomParserProvider.getParser(
-				KaomElementTypes.Relation_2003,
+				KaomElementTypes.Relation_2002,
 				view.getElement() != null ? view.getElement() : view,
 				KaomVisualIDRegistry.getType(RelationNameEditPart.VISUAL_ID));
 		if (parser != null) {
@@ -267,7 +234,7 @@ public class KaomNavigatorLabelProvider extends LabelProvider implements
 					ParserOptions.NONE.intValue());
 		} else {
 			KaomDiagramEditorPlugin.getInstance().logError(
-					"Parser was not found for label " + 5007); //$NON-NLS-1$
+					"Parser was not found for label " + 5005); //$NON-NLS-1$
 			return ""; //$NON-NLS-1$
 		}
 	}
@@ -294,30 +261,11 @@ public class KaomNavigatorLabelProvider extends LabelProvider implements
 	/**
 	 * @generated
 	 */
-	private String getActor_3002Text(View view) {
+	private String getEntity_3002Text(View view) {
 		IParser parser = KaomParserProvider.getParser(
-				KaomElementTypes.Actor_3002, view.getElement() != null ? view
+				KaomElementTypes.Entity_3002, view.getElement() != null ? view
 						.getElement() : view, KaomVisualIDRegistry
-						.getType(ActorName2EditPart.VISUAL_ID));
-		if (parser != null) {
-			return parser.getPrintString(new EObjectAdapter(
-					view.getElement() != null ? view.getElement() : view),
-					ParserOptions.NONE.intValue());
-		} else {
-			KaomDiagramEditorPlugin.getInstance().logError(
-					"Parser was not found for label " + 5004); //$NON-NLS-1$
-			return ""; //$NON-NLS-1$
-		}
-	}
-
-	/**
-	 * @generated
-	 */
-	private String getState_3003Text(View view) {
-		IParser parser = KaomParserProvider.getParser(
-				KaomElementTypes.State_3003, view.getElement() != null ? view
-						.getElement() : view, KaomVisualIDRegistry
-						.getType(StateName2EditPart.VISUAL_ID));
+						.getType(EntityName2EditPart.VISUAL_ID));
 		if (parser != null) {
 			return parser.getPrintString(new EObjectAdapter(
 					view.getElement() != null ? view.getElement() : view),
@@ -332,9 +280,9 @@ public class KaomNavigatorLabelProvider extends LabelProvider implements
 	/**
 	 * @generated
 	 */
-	private String getRelation_3004Text(View view) {
+	private String getRelation_3003Text(View view) {
 		IParser parser = KaomParserProvider.getParser(
-				KaomElementTypes.Relation_3004,
+				KaomElementTypes.Relation_3003,
 				view.getElement() != null ? view.getElement() : view,
 				KaomVisualIDRegistry.getType(RelationName2EditPart.VISUAL_ID));
 		if (parser != null) {
@@ -410,7 +358,7 @@ public class KaomNavigatorLabelProvider extends LabelProvider implements
 	 * @generated
 	 */
 	private boolean isOwnView(View view) {
-		return StateEditPart.MODEL_ID.equals(KaomVisualIDRegistry
+		return EntityEditPart.MODEL_ID.equals(KaomVisualIDRegistry
 				.getModelID(view));
 	}
 

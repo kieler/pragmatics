@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
-import de.cau.cs.kieler.kaom.diagram.edit.parts.StateEditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityEditPart;
 
 /**
  * @generated
@@ -90,7 +90,7 @@ public class KaomInitDiagramFileAction implements IObjectActionDelegate {
 		Wizard wizard = new KaomNewDiagramFileWizard(domainModelURI,
 				diagramRoot, editingDomain);
 		wizard.setWindowTitle(NLS.bind(Messages.InitDiagramFile_WizardTitle,
-				StateEditPart.MODEL_ID));
+				EntityEditPart.MODEL_ID));
 		KaomDiagramEditorUtil.runWizard(getShell(), wizard, "InitDiagramFile"); //$NON-NLS-1$
 	}
 }

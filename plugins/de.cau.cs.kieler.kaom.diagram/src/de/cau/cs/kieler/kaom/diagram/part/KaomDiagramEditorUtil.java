@@ -49,9 +49,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
+import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.KaomFactory;
-import de.cau.cs.kieler.kaom.State;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.StateEditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityEditPart;
 
 /**
  * @generated
@@ -173,11 +173,11 @@ public class KaomDiagramEditorUtil {
 			protected CommandResult doExecuteWithResult(
 					IProgressMonitor monitor, IAdaptable info)
 					throws ExecutionException {
-				State model = createInitialModel();
+				Entity model = createInitialModel();
 				attachModelToResource(model, modelResource);
 
 				Diagram diagram = ViewService.createDiagram(model,
-						StateEditPart.MODEL_ID,
+						EntityEditPart.MODEL_ID,
 						KaomDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT);
 				if (diagram != null) {
 					diagramResource.getContents().add(diagram);
@@ -218,8 +218,8 @@ public class KaomDiagramEditorUtil {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private static State createInitialModel() {
-		return KaomFactory.eINSTANCE.createState();
+	private static Entity createInitialModel() {
+		return KaomFactory.eINSTANCE.createEntity();
 	}
 
 	/**
@@ -228,7 +228,7 @@ public class KaomDiagramEditorUtil {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private static void attachModelToResource(State model, Resource resource) {
+	private static void attachModelToResource(Entity model, Resource resource) {
 		resource.getContents().add(model);
 	}
 

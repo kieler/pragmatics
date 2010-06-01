@@ -4,13 +4,13 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles;
 import org.eclipse.gmf.runtime.notation.View;
 
-import de.cau.cs.kieler.kaom.diagram.edit.policies.StateCanonicalEditPolicy;
-import de.cau.cs.kieler.kaom.diagram.edit.policies.StateItemSemanticEditPolicy;
+import de.cau.cs.kieler.kaom.diagram.edit.policies.EntityCanonicalEditPolicy;
+import de.cau.cs.kieler.kaom.diagram.edit.policies.EntityItemSemanticEditPolicy;
 
 /**
  * @generated
  */
-public class StateEditPart extends DiagramEditPart {
+public class EntityEditPart extends DiagramEditPart {
 
 	/**
 	 * @generated
@@ -25,7 +25,7 @@ public class StateEditPart extends DiagramEditPart {
 	/**
 	 * @generated
 	 */
-	public StateEditPart(View view) {
+	public EntityEditPart(View view) {
 		super(view);
 	}
 
@@ -35,9 +35,9 @@ public class StateEditPart extends DiagramEditPart {
 	protected void createDefaultEditPolicies() {
 		super.createDefaultEditPolicies();
 		installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
-				new StateItemSemanticEditPolicy());
+				new EntityItemSemanticEditPolicy());
 		installEditPolicy(EditPolicyRoles.CANONICAL_ROLE,
-				new StateCanonicalEditPolicy());
+				new EntityCanonicalEditPolicy());
 		// removeEditPolicy(org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles.POPUPBAR_ROLE);
 	}
 

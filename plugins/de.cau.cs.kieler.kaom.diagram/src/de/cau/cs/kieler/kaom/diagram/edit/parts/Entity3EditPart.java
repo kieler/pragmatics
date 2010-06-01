@@ -6,10 +6,10 @@ import java.util.List;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.MarginBorder;
-import org.eclipse.draw2d.RoundedRectangle;
+import org.eclipse.draw2d.PositionConstants;
+import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.Shape;
 import org.eclipse.draw2d.StackLayout;
-import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.Request;
@@ -17,9 +17,14 @@ import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editpolicies.LayoutEditPolicy;
 import org.eclipse.gef.editpolicies.NonResizableEditPolicy;
 import org.eclipse.gef.requests.CreateRequest;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderedShapeEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.IBorderItemEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editpolicies.BorderItemSelectionEditPolicy;
+import org.eclipse.gmf.runtime.diagram.ui.editpolicies.CreationEditPolicy;
+import org.eclipse.gmf.runtime.diagram.ui.editpolicies.DragDropEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles;
+import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.ConstrainedToolbarLayout;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
 import org.eclipse.gmf.runtime.emf.type.core.IElementType;
@@ -28,19 +33,20 @@ import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.swt.graphics.Color;
 
-import de.cau.cs.kieler.kaom.diagram.edit.policies.State3ItemSemanticEditPolicy;
+import de.cau.cs.kieler.kaom.diagram.edit.policies.Entity3CanonicalEditPolicy;
+import de.cau.cs.kieler.kaom.diagram.edit.policies.Entity3ItemSemanticEditPolicy;
 import de.cau.cs.kieler.kaom.diagram.part.KaomVisualIDRegistry;
 import de.cau.cs.kieler.kaom.diagram.providers.KaomElementTypes;
 
 /**
  * @generated
  */
-public class State3EditPart extends ShapeNodeEditPart {
+public class Entity3EditPart extends AbstractBorderedShapeEditPart {
 
 	/**
 	 * @generated
 	 */
-	public static final int VISUAL_ID = 3003;
+	public static final int VISUAL_ID = 3002;
 
 	/**
 	 * @generated
@@ -55,7 +61,7 @@ public class State3EditPart extends ShapeNodeEditPart {
 	/**
 	 * @generated
 	 */
-	public State3EditPart(View view) {
+	public Entity3EditPart(View view) {
 		super(view);
 	}
 
@@ -63,9 +69,15 @@ public class State3EditPart extends ShapeNodeEditPart {
 	 * @generated
 	 */
 	protected void createDefaultEditPolicies() {
+		installEditPolicy(EditPolicyRoles.CREATION_ROLE,
+				new CreationEditPolicy());
 		super.createDefaultEditPolicies();
 		installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
-				new State3ItemSemanticEditPolicy());
+				new Entity3ItemSemanticEditPolicy());
+		installEditPolicy(EditPolicyRoles.DRAG_DROP_ROLE,
+				new DragDropEditPolicy());
+		installEditPolicy(EditPolicyRoles.CANONICAL_ROLE,
+				new Entity3CanonicalEditPolicy());
 		installEditPolicy(EditPolicy.LAYOUT_ROLE, createLayoutEditPolicy());
 		// XXX need an SCR to runtime to have another abstract superclass that would let children add reasonable editpolicies
 		// removeEditPolicy(org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles.CONNECTION_HANDLES_ROLE);
@@ -78,6 +90,11 @@ public class State3EditPart extends ShapeNodeEditPart {
 		LayoutEditPolicy lep = new LayoutEditPolicy() {
 
 			protected EditPolicy createChildEditPolicy(EditPart child) {
+				View childView = (View) child.getModel();
+				switch (KaomVisualIDRegistry.getVisualID(childView)) {
+				case PortEditPart.VISUAL_ID:
+					return new BorderItemSelectionEditPolicy();
+				}
 				EditPolicy result = child
 						.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
 				if (result == null) {
@@ -101,24 +118,31 @@ public class State3EditPart extends ShapeNodeEditPart {
 	 * @generated
 	 */
 	protected IFigure createNodeShape() {
-		StateFigure figure = new StateFigure();
+		EntityFigure figure = new EntityFigure();
 		return primaryShape = figure;
 	}
 
 	/**
 	 * @generated
 	 */
-	public StateFigure getPrimaryShape() {
-		return (StateFigure) primaryShape;
+	public EntityFigure getPrimaryShape() {
+		return (EntityFigure) primaryShape;
 	}
 
 	/**
 	 * @generated
 	 */
 	protected boolean addFixedChild(EditPart childEditPart) {
-		if (childEditPart instanceof StateName2EditPart) {
-			((StateName2EditPart) childEditPart).setLabel(getPrimaryShape()
-					.getFigureStateNameLabel());
+		if (childEditPart instanceof EntityName2EditPart) {
+			((EntityName2EditPart) childEditPart).setLabel(getPrimaryShape()
+					.getFigureEntityNameLabel());
+			return true;
+		}
+		if (childEditPart instanceof PortEditPart) {
+			BorderItemLocator locator = new BorderItemLocator(getMainFigure(),
+					PositionConstants.NONE);
+			getBorderedFigure().getBorderItemContainer().add(
+					((PortEditPart) childEditPart).getFigure(), locator);
 			return true;
 		}
 		return false;
@@ -128,7 +152,12 @@ public class State3EditPart extends ShapeNodeEditPart {
 	 * @generated
 	 */
 	protected boolean removeFixedChild(EditPart childEditPart) {
-		if (childEditPart instanceof StateName2EditPart) {
+		if (childEditPart instanceof EntityName2EditPart) {
+			return true;
+		}
+		if (childEditPart instanceof PortEditPart) {
+			getBorderedFigure().getBorderItemContainer().remove(
+					((PortEditPart) childEditPart).getFigure());
 			return true;
 		}
 		return false;
@@ -158,6 +187,9 @@ public class State3EditPart extends ShapeNodeEditPart {
 	 * @generated
 	 */
 	protected IFigure getContentPaneFor(IGraphicalEditPart editPart) {
+		if (editPart instanceof IBorderItemEditPart) {
+			return getBorderedFigure().getBorderItemContainer();
+		}
 		return getContentPane();
 	}
 
@@ -177,7 +209,7 @@ public class State3EditPart extends ShapeNodeEditPart {
 	 * 
 	 * @generated
 	 */
-	protected NodeFigure createNodeFigure() {
+	protected NodeFigure createMainFigure() {
 		NodeFigure figure = createNodePlate();
 		figure.setLayoutManager(new StackLayout());
 		IFigure shape = createNodeShape();
@@ -252,7 +284,7 @@ public class State3EditPart extends ShapeNodeEditPart {
 	 */
 	public EditPart getPrimaryChildEditPart() {
 		return getChildBySemanticHint(KaomVisualIDRegistry
-				.getType(StateName2EditPart.VISUAL_ID));
+				.getType(EntityName2EditPart.VISUAL_ID));
 	}
 
 	/**
@@ -270,7 +302,7 @@ public class State3EditPart extends ShapeNodeEditPart {
 	public List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/getMARelTypesOnSourceAndTarget(
 			IGraphicalEditPart targetEditPart) {
 		List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
-		if (targetEditPart instanceof State2EditPart) {
+		if (targetEditPart instanceof Entity2EditPart) {
 			types.add(KaomElementTypes.Link_4001);
 		}
 		if (targetEditPart instanceof RelationEditPart) {
@@ -279,7 +311,7 @@ public class State3EditPart extends ShapeNodeEditPart {
 		if (targetEditPart instanceof PortEditPart) {
 			types.add(KaomElementTypes.Link_4001);
 		}
-		if (targetEditPart instanceof de.cau.cs.kieler.kaom.diagram.edit.parts.State3EditPart) {
+		if (targetEditPart instanceof de.cau.cs.kieler.kaom.diagram.edit.parts.Entity3EditPart) {
 			types.add(KaomElementTypes.Link_4001);
 		}
 		if (targetEditPart instanceof Relation2EditPart) {
@@ -295,19 +327,19 @@ public class State3EditPart extends ShapeNodeEditPart {
 			IElementType relationshipType) {
 		List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
 		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.State_2002);
+			types.add(KaomElementTypes.Entity_2001);
 		}
 		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.Relation_2003);
+			types.add(KaomElementTypes.Relation_2002);
 		}
 		if (relationshipType == KaomElementTypes.Link_4001) {
 			types.add(KaomElementTypes.Port_3001);
 		}
 		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.State_3003);
+			types.add(KaomElementTypes.Entity_3002);
 		}
 		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.Relation_3004);
+			types.add(KaomElementTypes.Relation_3003);
 		}
 		return types;
 	}
@@ -328,19 +360,19 @@ public class State3EditPart extends ShapeNodeEditPart {
 			IElementType relationshipType) {
 		List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
 		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.State_2002);
+			types.add(KaomElementTypes.Entity_2001);
 		}
 		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.Relation_2003);
+			types.add(KaomElementTypes.Relation_2002);
 		}
 		if (relationshipType == KaomElementTypes.Link_4001) {
 			types.add(KaomElementTypes.Port_3001);
 		}
 		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.State_3003);
+			types.add(KaomElementTypes.Entity_3002);
 		}
 		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.Relation_3004);
+			types.add(KaomElementTypes.Relation_3003);
 		}
 		return types;
 	}
@@ -348,19 +380,17 @@ public class State3EditPart extends ShapeNodeEditPart {
 	/**
 	 * @generated
 	 */
-	public class StateFigure extends RoundedRectangle {
+	public class EntityFigure extends RectangleFigure {
 
 		/**
 		 * @generated
 		 */
-		private WrappingLabel fFigureStateNameLabel;
+		private WrappingLabel fFigureEntityNameLabel;
 
 		/**
 		 * @generated
 		 */
-		public StateFigure() {
-			this.setCornerDimensions(new Dimension(getMapMode().DPtoLP(8),
-					getMapMode().DPtoLP(8)));
+		public EntityFigure() {
 			this.setLineWidth(1);
 			this.setForegroundColor(ColorConstants.black);
 			this.setBackgroundColor(ColorConstants.white);
@@ -375,10 +405,10 @@ public class State3EditPart extends ShapeNodeEditPart {
 		 */
 		private void createContents() {
 
-			fFigureStateNameLabel = new WrappingLabel();
-			fFigureStateNameLabel.setText("");
+			fFigureEntityNameLabel = new WrappingLabel();
+			fFigureEntityNameLabel.setText("");
 
-			this.add(fFigureStateNameLabel);
+			this.add(fFigureEntityNameLabel);
 
 		}
 
@@ -404,8 +434,8 @@ public class State3EditPart extends ShapeNodeEditPart {
 		/**
 		 * @generated
 		 */
-		public WrappingLabel getFigureStateNameLabel() {
-			return fFigureStateNameLabel;
+		public WrappingLabel getFigureEntityNameLabel() {
+			return fFigureEntityNameLabel;
 		}
 
 	}

@@ -12,7 +12,7 @@ public class KaomNavigatorSorter extends ViewerSorter {
 	/**
 	 * @generated
 	 */
-	private static final int GROUP_CATEGORY = 7006;
+	private static final int GROUP_CATEGORY = 7004;
 
 	/**
 	 * @generated

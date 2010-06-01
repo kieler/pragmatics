@@ -6,10 +6,10 @@
   <figures
       name="FigureGallery">
     <descriptors
-        name="ActorFigure">
+        name="EntityFigure">
       <actualFigure
           xsi:type="gmfgraph:Rectangle"
-          name="ActorRectangle">
+          name="EntityRectangle">
         <foregroundColor
             xsi:type="gmfgraph:ConstantColor"
             value="black"/>
@@ -25,35 +25,10 @@
         </border>
         <children
             xsi:type="gmfgraph:Label"
-            name="ActorNameLabel"/>
+            name="EntityNameLabel"/>
       </actualFigure>
       <accessors
           figure="//@figures.0/@descriptors.0/@actualFigure/@children.0"/>
-    </descriptors>
-    <descriptors
-        name="StateFigure">
-      <actualFigure
-          xsi:type="gmfgraph:RoundedRectangle"
-          name="StateRoundedRectangle">
-        <foregroundColor
-            xsi:type="gmfgraph:ConstantColor"
-            value="black"/>
-        <backgroundColor
-            xsi:type="gmfgraph:ConstantColor"/>
-        <border
-            xsi:type="gmfgraph:MarginBorder">
-          <insets
-              top="5"
-              left="5"
-              bottom="5"
-              right="5"/>
-        </border>
-        <children
-            xsi:type="gmfgraph:Label"
-            name="StateNameLabel"/>
-      </actualFigure>
-      <accessors
-          figure="//@figures.0/@descriptors.1/@actualFigure/@children.0"/>
     </descriptors>
     <descriptors
         name="PortFigure">
@@ -71,7 +46,7 @@
             dy="6"/>
       </actualFigure>
       <accessors
-          figure="//@figures.0/@descriptors.7/@actualFigure"/>
+          figure="//@figures.0/@descriptors.5/@actualFigure"/>
     </descriptors>
     <descriptors
         name="RelationFigure">
@@ -90,14 +65,14 @@
             dy="10"/>
       </actualFigure>
       <accessors
-          figure="//@figures.0/@descriptors.8/@actualFigure"/>
+          figure="//@figures.0/@descriptors.6/@actualFigure"/>
     </descriptors>
     <descriptors
         name="LinkFigure">
       <actualFigure
           xsi:type="gmfgraph:PolylineConnection"
           name="LinkPolylineConnection"
-          targetDecoration="//@figures.0/@descriptors.4/@actualFigure/@children.0">
+          targetDecoration="//@figures.0/@descriptors.3/@actualFigure/@children.0">
         <foregroundColor
             xsi:type="gmfgraph:ConstantColor"
             value="black"/>
@@ -116,23 +91,13 @@
         </children>
       </actualFigure>
       <accessors
-          figure="//@figures.0/@descriptors.9/@actualFigure"/>
+          figure="//@figures.0/@descriptors.7/@actualFigure"/>
     </descriptors>
     <descriptors
-        name="ActorCompartmentFigure">
+        name="EntityCompartmentFigure">
       <actualFigure
           xsi:type="gmfgraph:Rectangle"
-          name="ActorCompartmentRectangle">
-        <maximumSize
-            dx="50"
-            dy="50"/>
-      </actualFigure>
-    </descriptors>
-    <descriptors
-        name="StateCompartmentFigure">
-      <actualFigure
-          xsi:type="gmfgraph:Rectangle"
-          name="StateCompartmentRectangle">
+          name="EntityCompartmentRectangle">
         <maximumSize
             dx="50"
             dy="50"/>
@@ -173,11 +138,8 @@
     </descriptors>
   </figures>
   <nodes
-      name="ActorNode"
-      figure="ActorFigure"/>
-  <nodes
-      name="StateNode"
-      figure="StateFigure"/>
+      name="EntityNode"
+      figure="EntityFigure"/>
   <nodes
       name="PortNode"
       figure="PortFigure"
@@ -191,25 +153,15 @@
       name="LinkConnection"
       figure="LinkFigure"/>
   <compartments
-      name="ActorCompartment"
-      figure="ActorCompartmentFigure"
-      collapsible="true"/>
-  <compartments
-      name="StateCompartment"
-      figure="StateCompartmentFigure"
+      name="EntityCompartment"
+      figure="EntityCompartmentFigure"
       collapsible="true"/>
   <labels
-      name="ActorNameLabel"
-      figure="ActorFigure"
+      name="EntityNameLabel"
+      figure="EntityFigure"
       affixedParentSide="SOUTH"
       elementIcon="false"
       accessor="//@figures.0/@descriptors.0/@accessors.0"/>
-  <labels
-      name="StateNameLabel"
-      figure="StateFigure"
-      affixedParentSide="SOUTH"
-      elementIcon="false"
-      accessor="//@figures.0/@descriptors.1/@accessors.0"/>
   <labels
       name="PortNameLabel"
       figure="PortNameFigure"

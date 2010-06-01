@@ -248,72 +248,52 @@ public class Messages extends NLS {
 	/**
 	 * @generated
 	 */
-	public static String Actor1CreationTool_title;
+	public static String Entity1CreationTool_title;
 
 	/**
 	 * @generated
 	 */
-	public static String Actor1CreationTool_desc;
+	public static String Entity1CreationTool_desc;
 
 	/**
 	 * @generated
 	 */
-	public static String State2CreationTool_title;
+	public static String Port2CreationTool_title;
 
 	/**
 	 * @generated
 	 */
-	public static String State2CreationTool_desc;
+	public static String Port2CreationTool_desc;
 
 	/**
 	 * @generated
 	 */
-	public static String Port3CreationTool_title;
+	public static String Relation3CreationTool_title;
 
 	/**
 	 * @generated
 	 */
-	public static String Port3CreationTool_desc;
+	public static String Relation3CreationTool_desc;
 
 	/**
 	 * @generated
 	 */
-	public static String Relation4CreationTool_title;
+	public static String Link4CreationTool_title;
 
 	/**
 	 * @generated
 	 */
-	public static String Relation4CreationTool_desc;
+	public static String Link4CreationTool_desc;
 
 	/**
 	 * @generated
 	 */
-	public static String Link5CreationTool_title;
+	public static String EntityEntityCompartmentEditPart_title;
 
 	/**
 	 * @generated
 	 */
-	public static String Link5CreationTool_desc;
-
-	/**
-	 * @generated
-	 */
-	public static String ActorActorCompartmentEditPart_title;
-
-	/**
-	 * @generated
-	 */
-	public static String ActorActorCompartment2EditPart_title;
-
-	/**
-	 * @generated
-	 */
-	public static String StateStateCompartmentEditPart_title;
-
-	/**
-	 * @generated
-	 */
-	public static String StateStateCompartment2EditPart_title;
+	public static String EntityEntityCompartment2EditPart_title;
 
 	/**
 	 * @generated
@@ -323,27 +303,27 @@ public class Messages extends NLS {
 	/**
 	 * @generated
 	 */
-	public static String NavigatorGroupName_State_1000_links;
+	public static String NavigatorGroupName_Entity_1000_links;
 
 	/**
 	 * @generated
 	 */
-	public static String NavigatorGroupName_State_2002_incominglinks;
+	public static String NavigatorGroupName_Entity_2001_incominglinks;
 
 	/**
 	 * @generated
 	 */
-	public static String NavigatorGroupName_State_2002_outgoinglinks;
+	public static String NavigatorGroupName_Entity_2001_outgoinglinks;
 
 	/**
 	 * @generated
 	 */
-	public static String NavigatorGroupName_Relation_2003_incominglinks;
+	public static String NavigatorGroupName_Relation_2002_incominglinks;
 
 	/**
 	 * @generated
 	 */
-	public static String NavigatorGroupName_Relation_2003_outgoinglinks;
+	public static String NavigatorGroupName_Relation_2002_outgoinglinks;
 
 	/**
 	 * @generated
@@ -358,22 +338,22 @@ public class Messages extends NLS {
 	/**
 	 * @generated
 	 */
-	public static String NavigatorGroupName_State_3003_incominglinks;
+	public static String NavigatorGroupName_Entity_3002_incominglinks;
 
 	/**
 	 * @generated
 	 */
-	public static String NavigatorGroupName_State_3003_outgoinglinks;
+	public static String NavigatorGroupName_Entity_3002_outgoinglinks;
 
 	/**
 	 * @generated
 	 */
-	public static String NavigatorGroupName_Relation_3004_incominglinks;
+	public static String NavigatorGroupName_Relation_3003_incominglinks;
 
 	/**
 	 * @generated
 	 */
-	public static String NavigatorGroupName_Relation_3004_outgoinglinks;
+	public static String NavigatorGroupName_Relation_3003_outgoinglinks;
 
 	/**
 	 * @generated

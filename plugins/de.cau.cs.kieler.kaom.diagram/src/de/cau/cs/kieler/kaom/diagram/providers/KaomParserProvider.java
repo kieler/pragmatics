@@ -14,14 +14,12 @@ import org.eclipse.gmf.runtime.emf.ui.services.parser.ParserHintAdapter;
 import org.eclipse.gmf.runtime.notation.View;
 
 import de.cau.cs.kieler.kaom.KaomPackage;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.ActorName2EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.ActorNameEditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityName2EditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityNameEditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.LinkNameEditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.PortNameEditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.RelationName2EditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.RelationNameEditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.StateName2EditPart;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.StateNameEditPart;
 import de.cau.cs.kieler.kaom.diagram.parsers.MessageFormatParser;
 import de.cau.cs.kieler.kaom.diagram.part.KaomVisualIDRegistry;
 
@@ -34,55 +32,37 @@ public class KaomParserProvider extends AbstractProvider implements
 	/**
 	 * @generated
 	 */
-	private IParser actorName_5005Parser;
+	private IParser entityName_5004Parser;
 
 	/**
 	 * @generated
 	 */
-	private IParser getActorName_5005Parser() {
-		if (actorName_5005Parser == null) {
+	private IParser getEntityName_5004Parser() {
+		if (entityName_5004Parser == null) {
 			EAttribute[] features = new EAttribute[] { KaomPackage.eINSTANCE
 					.getNamedObject_Name() };
 			MessageFormatParser parser = new MessageFormatParser(features);
-			actorName_5005Parser = parser;
+			entityName_5004Parser = parser;
 		}
-		return actorName_5005Parser;
+		return entityName_5004Parser;
 	}
 
 	/**
 	 * @generated
 	 */
-	private IParser stateName_5006Parser;
+	private IParser relationName_5005Parser;
 
 	/**
 	 * @generated
 	 */
-	private IParser getStateName_5006Parser() {
-		if (stateName_5006Parser == null) {
+	private IParser getRelationName_5005Parser() {
+		if (relationName_5005Parser == null) {
 			EAttribute[] features = new EAttribute[] { KaomPackage.eINSTANCE
 					.getNamedObject_Name() };
 			MessageFormatParser parser = new MessageFormatParser(features);
-			stateName_5006Parser = parser;
+			relationName_5005Parser = parser;
 		}
-		return stateName_5006Parser;
-	}
-
-	/**
-	 * @generated
-	 */
-	private IParser relationName_5007Parser;
-
-	/**
-	 * @generated
-	 */
-	private IParser getRelationName_5007Parser() {
-		if (relationName_5007Parser == null) {
-			EAttribute[] features = new EAttribute[] { KaomPackage.eINSTANCE
-					.getNamedObject_Name() };
-			MessageFormatParser parser = new MessageFormatParser(features);
-			relationName_5007Parser = parser;
-		}
-		return relationName_5007Parser;
+		return relationName_5005Parser;
 	}
 
 	/**
@@ -106,37 +86,19 @@ public class KaomParserProvider extends AbstractProvider implements
 	/**
 	 * @generated
 	 */
-	private IParser actorName_5004Parser;
+	private IParser entityName_5003Parser;
 
 	/**
 	 * @generated
 	 */
-	private IParser getActorName_5004Parser() {
-		if (actorName_5004Parser == null) {
+	private IParser getEntityName_5003Parser() {
+		if (entityName_5003Parser == null) {
 			EAttribute[] features = new EAttribute[] { KaomPackage.eINSTANCE
 					.getNamedObject_Name() };
 			MessageFormatParser parser = new MessageFormatParser(features);
-			actorName_5004Parser = parser;
+			entityName_5003Parser = parser;
 		}
-		return actorName_5004Parser;
-	}
-
-	/**
-	 * @generated
-	 */
-	private IParser stateName_5003Parser;
-
-	/**
-	 * @generated
-	 */
-	private IParser getStateName_5003Parser() {
-		if (stateName_5003Parser == null) {
-			EAttribute[] features = new EAttribute[] { KaomPackage.eINSTANCE
-					.getNamedObject_Name() };
-			MessageFormatParser parser = new MessageFormatParser(features);
-			stateName_5003Parser = parser;
-		}
-		return stateName_5003Parser;
+		return entityName_5003Parser;
 	}
 
 	/**
@@ -180,18 +142,14 @@ public class KaomParserProvider extends AbstractProvider implements
 	 */
 	protected IParser getParser(int visualID) {
 		switch (visualID) {
-		case ActorNameEditPart.VISUAL_ID:
-			return getActorName_5005Parser();
-		case StateNameEditPart.VISUAL_ID:
-			return getStateName_5006Parser();
+		case EntityNameEditPart.VISUAL_ID:
+			return getEntityName_5004Parser();
 		case RelationNameEditPart.VISUAL_ID:
-			return getRelationName_5007Parser();
+			return getRelationName_5005Parser();
 		case PortNameEditPart.VISUAL_ID:
 			return getPortName_5001Parser();
-		case ActorName2EditPart.VISUAL_ID:
-			return getActorName_5004Parser();
-		case StateName2EditPart.VISUAL_ID:
-			return getStateName_5003Parser();
+		case EntityName2EditPart.VISUAL_ID:
+			return getEntityName_5003Parser();
 		case RelationName2EditPart.VISUAL_ID:
 			return getRelationName_5002Parser();
 		case LinkNameEditPart.VISUAL_ID:

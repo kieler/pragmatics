@@ -1,5 +1,8 @@
 package de.cau.cs.kieler.kaom.diagram.edit.parts;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.MarginBorder;
@@ -24,19 +27,21 @@ import org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.ConstrainedToolbarLayout;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
+import org.eclipse.gmf.runtime.emf.type.core.IElementType;
 import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
 import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.swt.graphics.Color;
 
-import de.cau.cs.kieler.kaom.diagram.edit.policies.ActorCanonicalEditPolicy;
-import de.cau.cs.kieler.kaom.diagram.edit.policies.ActorItemSemanticEditPolicy;
+import de.cau.cs.kieler.kaom.diagram.edit.policies.Entity2CanonicalEditPolicy;
+import de.cau.cs.kieler.kaom.diagram.edit.policies.Entity2ItemSemanticEditPolicy;
 import de.cau.cs.kieler.kaom.diagram.part.KaomVisualIDRegistry;
+import de.cau.cs.kieler.kaom.diagram.providers.KaomElementTypes;
 
 /**
  * @generated
  */
-public class ActorEditPart extends AbstractBorderedShapeEditPart {
+public class Entity2EditPart extends AbstractBorderedShapeEditPart {
 
 	/**
 	 * @generated
@@ -56,7 +61,7 @@ public class ActorEditPart extends AbstractBorderedShapeEditPart {
 	/**
 	 * @generated
 	 */
-	public ActorEditPart(View view) {
+	public Entity2EditPart(View view) {
 		super(view);
 	}
 
@@ -68,11 +73,11 @@ public class ActorEditPart extends AbstractBorderedShapeEditPart {
 				new CreationEditPolicy());
 		super.createDefaultEditPolicies();
 		installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
-				new ActorItemSemanticEditPolicy());
+				new Entity2ItemSemanticEditPolicy());
 		installEditPolicy(EditPolicyRoles.DRAG_DROP_ROLE,
 				new DragDropEditPolicy());
 		installEditPolicy(EditPolicyRoles.CANONICAL_ROLE,
-				new ActorCanonicalEditPolicy());
+				new Entity2CanonicalEditPolicy());
 		installEditPolicy(EditPolicy.LAYOUT_ROLE, createLayoutEditPolicy());
 		// XXX need an SCR to runtime to have another abstract superclass that would let children add reasonable editpolicies
 		// removeEditPolicy(org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles.CONNECTION_HANDLES_ROLE);
@@ -113,24 +118,24 @@ public class ActorEditPart extends AbstractBorderedShapeEditPart {
 	 * @generated
 	 */
 	protected IFigure createNodeShape() {
-		ActorFigure figure = new ActorFigure();
+		EntityFigure figure = new EntityFigure();
 		return primaryShape = figure;
 	}
 
 	/**
 	 * @generated
 	 */
-	public ActorFigure getPrimaryShape() {
-		return (ActorFigure) primaryShape;
+	public EntityFigure getPrimaryShape() {
+		return (EntityFigure) primaryShape;
 	}
 
 	/**
 	 * @generated
 	 */
 	protected boolean addFixedChild(EditPart childEditPart) {
-		if (childEditPart instanceof ActorNameEditPart) {
-			((ActorNameEditPart) childEditPart).setLabel(getPrimaryShape()
-					.getFigureActorNameLabel());
+		if (childEditPart instanceof EntityNameEditPart) {
+			((EntityNameEditPart) childEditPart).setLabel(getPrimaryShape()
+					.getFigureEntityNameLabel());
 			return true;
 		}
 		if (childEditPart instanceof PortEditPart) {
@@ -147,7 +152,7 @@ public class ActorEditPart extends AbstractBorderedShapeEditPart {
 	 * @generated
 	 */
 	protected boolean removeFixedChild(EditPart childEditPart) {
-		if (childEditPart instanceof ActorNameEditPart) {
+		if (childEditPart instanceof EntityNameEditPart) {
 			return true;
 		}
 		if (childEditPart instanceof PortEditPart) {
@@ -279,23 +284,113 @@ public class ActorEditPart extends AbstractBorderedShapeEditPart {
 	 */
 	public EditPart getPrimaryChildEditPart() {
 		return getChildBySemanticHint(KaomVisualIDRegistry
-				.getType(ActorNameEditPart.VISUAL_ID));
+				.getType(EntityNameEditPart.VISUAL_ID));
 	}
 
 	/**
 	 * @generated
 	 */
-	public class ActorFigure extends RectangleFigure {
+	public List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/getMARelTypesOnSource() {
+		List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
+		types.add(KaomElementTypes.Link_4001);
+		return types;
+	}
+
+	/**
+	 * @generated
+	 */
+	public List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/getMARelTypesOnSourceAndTarget(
+			IGraphicalEditPart targetEditPart) {
+		List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
+		if (targetEditPart instanceof de.cau.cs.kieler.kaom.diagram.edit.parts.Entity2EditPart) {
+			types.add(KaomElementTypes.Link_4001);
+		}
+		if (targetEditPart instanceof RelationEditPart) {
+			types.add(KaomElementTypes.Link_4001);
+		}
+		if (targetEditPart instanceof PortEditPart) {
+			types.add(KaomElementTypes.Link_4001);
+		}
+		if (targetEditPart instanceof Entity3EditPart) {
+			types.add(KaomElementTypes.Link_4001);
+		}
+		if (targetEditPart instanceof Relation2EditPart) {
+			types.add(KaomElementTypes.Link_4001);
+		}
+		return types;
+	}
+
+	/**
+	 * @generated
+	 */
+	public List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/getMATypesForTarget(
+			IElementType relationshipType) {
+		List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
+		if (relationshipType == KaomElementTypes.Link_4001) {
+			types.add(KaomElementTypes.Entity_2001);
+		}
+		if (relationshipType == KaomElementTypes.Link_4001) {
+			types.add(KaomElementTypes.Relation_2002);
+		}
+		if (relationshipType == KaomElementTypes.Link_4001) {
+			types.add(KaomElementTypes.Port_3001);
+		}
+		if (relationshipType == KaomElementTypes.Link_4001) {
+			types.add(KaomElementTypes.Entity_3002);
+		}
+		if (relationshipType == KaomElementTypes.Link_4001) {
+			types.add(KaomElementTypes.Relation_3003);
+		}
+		return types;
+	}
+
+	/**
+	 * @generated
+	 */
+	public List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/getMARelTypesOnTarget() {
+		List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
+		types.add(KaomElementTypes.Link_4001);
+		return types;
+	}
+
+	/**
+	 * @generated
+	 */
+	public List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/getMATypesForSource(
+			IElementType relationshipType) {
+		List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
+		if (relationshipType == KaomElementTypes.Link_4001) {
+			types.add(KaomElementTypes.Entity_2001);
+		}
+		if (relationshipType == KaomElementTypes.Link_4001) {
+			types.add(KaomElementTypes.Relation_2002);
+		}
+		if (relationshipType == KaomElementTypes.Link_4001) {
+			types.add(KaomElementTypes.Port_3001);
+		}
+		if (relationshipType == KaomElementTypes.Link_4001) {
+			types.add(KaomElementTypes.Entity_3002);
+		}
+		if (relationshipType == KaomElementTypes.Link_4001) {
+			types.add(KaomElementTypes.Relation_3003);
+		}
+		return types;
+	}
+
+	/**
+	 * @generated
+	 */
+	public class EntityFigure extends RectangleFigure {
 
 		/**
 		 * @generated
 		 */
-		private WrappingLabel fFigureActorNameLabel;
+		private WrappingLabel fFigureEntityNameLabel;
 
 		/**
 		 * @generated
 		 */
-		public ActorFigure() {
+		public EntityFigure() {
 			this.setLineWidth(1);
 			this.setForegroundColor(ColorConstants.black);
 			this.setBackgroundColor(ColorConstants.white);
@@ -310,10 +405,10 @@ public class ActorEditPart extends AbstractBorderedShapeEditPart {
 		 */
 		private void createContents() {
 
-			fFigureActorNameLabel = new WrappingLabel();
-			fFigureActorNameLabel.setText("");
+			fFigureEntityNameLabel = new WrappingLabel();
+			fFigureEntityNameLabel.setText("");
 
-			this.add(fFigureActorNameLabel);
+			this.add(fFigureEntityNameLabel);
 
 		}
 
@@ -339,8 +434,8 @@ public class ActorEditPart extends AbstractBorderedShapeEditPart {
 		/**
 		 * @generated
 		 */
-		public WrappingLabel getFigureActorNameLabel() {
-			return fFigureActorNameLabel;
+		public WrappingLabel getFigureEntityNameLabel() {
+			return fFigureEntityNameLabel;
 		}
 
 	}

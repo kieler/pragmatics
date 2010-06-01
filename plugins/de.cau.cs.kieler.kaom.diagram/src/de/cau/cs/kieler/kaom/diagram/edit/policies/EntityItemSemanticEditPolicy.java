@@ -7,34 +7,31 @@ import org.eclipse.gmf.runtime.emf.commands.core.commands.DuplicateEObjectsComma
 import org.eclipse.gmf.runtime.emf.type.core.requests.CreateElementRequest;
 import org.eclipse.gmf.runtime.emf.type.core.requests.DuplicateElementsRequest;
 
-import de.cau.cs.kieler.kaom.diagram.edit.commands.ActorCreateCommand;
+import de.cau.cs.kieler.kaom.diagram.edit.commands.EntityCreateCommand;
 import de.cau.cs.kieler.kaom.diagram.edit.commands.RelationCreateCommand;
-import de.cau.cs.kieler.kaom.diagram.edit.commands.StateCreateCommand;
 import de.cau.cs.kieler.kaom.diagram.providers.KaomElementTypes;
 
 /**
  * @generated
  */
-public class StateItemSemanticEditPolicy extends KaomBaseItemSemanticEditPolicy {
+public class EntityItemSemanticEditPolicy extends
+		KaomBaseItemSemanticEditPolicy {
 
 	/**
 	 * @generated
 	 */
-	public StateItemSemanticEditPolicy() {
-		super(KaomElementTypes.State_1000);
+	public EntityItemSemanticEditPolicy() {
+		super(KaomElementTypes.Entity_1000);
 	}
 
 	/**
 	 * @generated
 	 */
 	protected Command getCreateCommand(CreateElementRequest req) {
-		if (KaomElementTypes.Actor_2001 == req.getElementType()) {
-			return getGEFWrapper(new ActorCreateCommand(req));
+		if (KaomElementTypes.Entity_2001 == req.getElementType()) {
+			return getGEFWrapper(new EntityCreateCommand(req));
 		}
-		if (KaomElementTypes.State_2002 == req.getElementType()) {
-			return getGEFWrapper(new StateCreateCommand(req));
-		}
-		if (KaomElementTypes.Relation_2003 == req.getElementType()) {
+		if (KaomElementTypes.Relation_2002 == req.getElementType()) {
 			return getGEFWrapper(new RelationCreateCommand(req));
 		}
 		return super.getCreateCommand(req);
