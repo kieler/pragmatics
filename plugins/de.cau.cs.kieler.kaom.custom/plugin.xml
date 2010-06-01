@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.kiml.layout.layoutInfo">
+      <option
+            class="de.cau.cs.kieler.kaom.Entity"
+            option="de.cau.cs.kieler.layout.options.diagramType"
+            value="de.cau.cs.kieler.layout.diagrams.dataFlow">
+      </option>
+   </extension>
+
+</plugin>
