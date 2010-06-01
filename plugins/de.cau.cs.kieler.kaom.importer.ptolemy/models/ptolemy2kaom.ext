@@ -2,7 +2,7 @@ import kaom;
 import Moml;
 extension org::eclipse::xtend::util::stdlib::io;          // debug printouts
 //extension org::eclipse:xtend:::util::stdlib::counter;   // usage of counters 
-//extension org::eclipse::xtend::util::stdlib::crossref;  // find elements that reference others
+extension org::eclipse::xtend::util::stdlib::crossref;  // find elements that reference others
 //extension org::eclipse::xtend::util::stdlib::mixin;     // annotations
 //extension org::eclipse::xtend::util::stdlib::naming;    // help with qualified names
 extension org::eclipse::xtend::util::stdlib::cloning;     // copy model elements and whole trees
@@ -85,8 +85,18 @@ Void addChildLinks(Entity parent, List[LinkType] ptolemyLinks):
 
 Void addProperties(Annotatable annotatable, List[PropertyType] properties):
 	let property = properties.first():
+	let stringAnnotation = new StringAnnotation:
+	let classType = new StringAnnotation:
 	if(properties.isEmpty) then null else
-		annotatable.addAnnotation(property.name, property.value)->
+		stringAnnotation.setName(property.name) ->
+		stringAnnotation.setValue(property.value) ->
+		classType.setName("ptolemyClass") ->
+		classType.setValue(property.class) ->
+		stringAnnotation.annotations.add(classType) ->
+		annotatable.annotations.add(stringAnnotation)->
+		// recursively add nested annotations
+		stringAnnotation.addProperties(property.property) ->
+		// now add remaining properties
 		addProperties(annotatable, properties.withoutFirst())
 ;
 
@@ -101,14 +111,8 @@ Void addProperties(Annotatable annotatable, List[PropertyType] properties):
 Void addChildPorts(Entity entity):
 	let ptolemyEntity = (EntityType)entity.getSingleTraceTarget("ptolemy"):
 	let entityList = {ptolemyEntity}:
-	entity.childPorts.addAll(getExplicitPorts(ptolemyEntity)) ->
+	entity.childPorts.addAll(getExplicitPorts(ptolemyEntity.port)) ->
 	entity.childPorts.addAll(getPorts(entityList))
-;
-
-List[Port] getExplicitPorts(EntityType entity):
-	let ptolemyPorts = entity.port:
-    info("getExplicitPorts "+ptolemyPorts.size) ->
-	getExplicitPorts(ptolemyPorts)
 ;
 
 List[Port] getExplicitPorts(List[Moml::PortType] ptolemyPorts):
@@ -171,7 +175,8 @@ List getPorts(List[EntityType] entities) :
 // entry points for optimizations
 Void optimize(Entity entity):
 	analyzeLinkDirections(entity) ->
-	optimizeSingleRelations(entity)
+	optimizeSingleRelations(entity) ->
+	optimizeAnnotationRepresentation(entity)
 ;
 
 // --------------------------------------------------------------------------------------------
@@ -180,7 +185,9 @@ Void optimize(Entity entity):
 
 Void analyzeLinkDirections(Entity entity):
 	analyzeLinkDirections(entity.childEntities) -> // depth first 
+	// set directions for links connected directly to inputs/outputs
 	analyzeLinkDirectionsForPorts(entity.childPorts) ->
+	// then analyze other links from the neighbor information
 	analyzeLinkDirectionsForLinksFixpoint(entity.childLinks)
 ;
 
@@ -301,25 +308,87 @@ Void swapTargetTo(Link link, Linkable linkable):
 // --------------------------------------------------------------------------------------------
 
 Void optimizeSingleRelations(Entity entity):
-	let relations = entity.childRelations:
-	optimizeSingleRelations(relations)
+	//let relations = entity.childRelations:
+	//optimizeSingleRelations(relations)
+	entity.childRelations.optimizeSingleRelation() ->
+	// remove in a second iteration to avoid concurrent modification exceptions
+	entity.childLinks.select(a|a.getAnnotation("toBeRemoved")!=null).remove() ->
+	entity.childRelations.select(a|a.getAnnotation("toBeRemoved")!=null).remove() ->
+	entity.childEntities.optimizeSingleRelations()
 ;
 
-Void optimizeSingleRelations(List[Relation] relations):
-	if(relations.isEmpty) then null else(
-		optimizeSingleRelation(relations.first()) ->
-		optimizeSingleRelations(relations.withoutFirst())
-	)
-;
+//Void optimizeSingleRelations(List[Relation] relations):
+//	if(relations.isEmpty) then null else(
+//		optimizeSingleRelation(relations.first()) ->
+//		optimizeSingleRelations(relations.withoutFirst())
+//	)
+//;
 
 Void optimizeSingleRelation(Relation relation):
 	let inLink  = relation.incomingLinks.first():
 	let outLink = relation.outgoingLinks.first():
+	info("looking at: "+relation.eContainer.getName()+"."+relation.name) ->
 	if( (relation.incomingLinks.size == 1) && (relation.outgoingLinks.size == 1) ) then(
-		inLink.setTarget(outLink.target) //->
-	//	((Entity)outLink.eContainer).childLinks.remove(outLink) ->
-	//	((Entity)relation.eContainer).childRelations.remove(relation)
+		inLink.setTarget(outLink.target) -> 
+		outLink.addAnnotation("toBeRemoved") ->
+		relation.addAnnotation("toBeRemoved")
 	) else null	
+;
+
+Void remove(Relation relation):
+	((Entity)relation.eContainer).childRelations.remove(relation)
+;
+
+Void remove(Link link):
+	link.setSource(null) 
+	-> link.setTarget(null)
+	-> ((Entity)link.eContainer).childLinks.remove(link) 
+;
+
+// --------------------------------------------------------------------------------------------
+//    Transform some special Annotations to visible Entities
+// --------------------------------------------------------------------------------------------
+
+Void optimizeAnnotationRepresentation(Entity entity):
+	entity.annotations.optimizeAnnotationRepresentation() ->
+	entity.annotations.removeAll(entity.annotations.select(a|a.getAnnotation("toBeRemoved")!=null)) ->
+	entity.childEntities.optimizeAnnotationRepresentation() 
+;
+
+// Marks an Annotation as "toBeRemoved". In another iteration it may be removed. This is
+// necessary to avoid concurrent modification exceptions during iteration of an annotation list.
+Void optimizeAnnotationRepresentation(Annotation annotation):
+	let isTopLevel = Entity.isInstance(annotation.eContainer) :
+	let topLevel = (Entity)annotation.eContainer :
+	let newEntity = new Entity: 
+	// need to clone the attribute to avoid concurrent modification (remove while iterating)
+	let clonedAnnotation = annotation.clone():
+	let marker = new Annotation:
+	let annoMarker = new Annotation:
+	switch{
+		// if the entity already is an annotation representation, don't do anything
+		case topLevel.getAnnotation("annotationNode") != null : null
+		case isTopLevel && annotation.getAnnotation("ptolemyClass").value.matches(".*Director") : (
+			newEntity.setName(annotation.getName()) ->
+			marker.setName("annotationNode") ->
+			newEntity.annotations.add(marker) ->
+			newEntity.annotations.add(clonedAnnotation) -> // move annotation to the new Entity
+			topLevel.childEntities.add(newEntity) ->
+			annoMarker.setName("toBeRemoved") ->
+			annotation.annotations.add(annoMarker)
+		) 
+		case isTopLevel && annotation.getAnnotation("ptolemyClass").value.matches("ptolemy.vergil.kernel.attributes.TextAttribute") : (
+			// TODO: stupid way to display a big text
+			newEntity.setName(annotation.getAnnotation("text").value) ->
+			marker.setName("annotationNode") ->
+			newEntity.annotations.add(marker) ->
+			newEntity.annotations.add(clonedAnnotation) -> // move annotation to the new Entity
+			topLevel.childEntities.add(newEntity) ->
+			annoMarker.setName("toBeRemoved") ->
+			annotation.annotations.add(annoMarker)
+		)
+		default: null	
+	}
 ;
 
 // --------------------------------------------------------------------------------------------
@@ -349,6 +418,12 @@ Void addAnnotation(Annotatable annotatable, String key, String value):
 	annotatable.annotations.add(annotation)
 ;
 
+Void addAnnotation(Annotatable annotatable, String key):
+	let annotation = new Annotation:
+	annotation.setName(key) ->
+	annotatable.annotations.add(annotation)
+;
+
 List[Link] getConnectedLinks(Port port):
 	let links = {}:
 	links.addAll(port.incomingLinks) ->
@@ -369,4 +444,8 @@ Boolean isUndirected(Link link):
 Void removeUndirectedAnnotation(Link link):
 	let annotation = link.getAnnotation("undirected"):
 	if(annotation != null) then link.annotations.remove(annotation) else null 
+;
+
+List infoAndReturn(List input):
+	info(input) -> input
 ;

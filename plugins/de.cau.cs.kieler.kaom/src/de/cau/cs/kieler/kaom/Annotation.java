@@ -26,5 +26,5 @@ package de.cau.cs.kieler.kaom;
  * @model
  * @generated
  */
-public interface Annotation extends NamedObject, Annotatable {
+public interface Annotation extends NamedObject {
 } // Annotation
