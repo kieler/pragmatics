@@ -144,7 +144,7 @@ public class RectilinearEdgeRouter extends AbstractAlgorithm implements IEdgeRou
             for (LayerConnection connection : element.getOutgoingConnections()) {
                 // determine source and target positions
                 ExternalRouting externalRouting = ExternalRouting.NORMAL;
-                if (layer.getRank() == 0) {
+                if (layer.getRank() == 0 && connection.getSourcePort() != null) {
                     PortSide placement = LayoutOptions.getEnum(KimlLayoutUtil
                             .getShapeLayout(connection.getSourcePort()), PortSide.class);
                     if (layoutDirection == LayoutDirection.DOWN) {
@@ -170,7 +170,7 @@ public class RectilinearEdgeRouter extends AbstractAlgorithm implements IEdgeRou
                             aroundExtEdges++;
                         }
                     }
-                } else if (layer.getHeight() == 1) {
+                } else if (layer.getHeight() == 1 && connection.getTargetPort() != null) {
                     PortSide placement = LayoutOptions.getEnum(KimlLayoutUtil
                             .getShapeLayout(connection.getTargetPort()), PortSide.class);
                     if (layoutDirection == LayoutDirection.DOWN) {

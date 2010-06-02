@@ -206,7 +206,9 @@ public class LayeredGraph {
     public void createConnections(final KSlimGraph kGraph) {
         for (Layer layer : layers) {
             List<LayerElement> elements = layer.getElements();
-            for (LayerElement element : elements) {
+            for (int i = 0; i < elements.size(); i++) {
+                // avoid ConcurrentModificationExceptions
+                LayerElement element = elements.get(i);
                 if (element.getLinearSegment() == null) {
                     // create new linear segment
                     createLinearSegment(element);
