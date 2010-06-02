@@ -184,6 +184,13 @@
             name="Aspect Ratio"
             type="float">
       </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            description="Defines whether the layouter should also layout all decendants of the parent node."
+            id="de.cau.cs.kieler.layout.options.layoutDescendants"
+            name="Layout Descendants"
+            type="boolean">
+      </layoutOption>
    </extension>
    <extension
          point="de.cau.cs.kieler.kiml.layout.layoutInfo">

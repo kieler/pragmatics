@@ -93,6 +93,8 @@ public final class LayoutOptions {
     public static final String RANDOM_SEED = "de.cau.cs.kieler.layout.options.randomSeed";    
     /** layout option key: shape of a node. */
     public static final String SHAPE = "de.cau.cs.kieler.layout.options.shape";
+    /** layout option key: layout descendants. */
+    public static final String LAYOUT_DESCENDANTS = "de.cau.cs.kieler.layout.options.layoutDescendants";
 
     /** map of option identifiers to enumeration classes. */
     private static Map<String, Class<? extends Enum<?>>> id2enumMap =
