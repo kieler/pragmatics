@@ -4,41 +4,43 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.emf.common.util.BasicEList;
+import org.eclipse.xtend.expression.ExecutionContext;
+import org.eclipse.xtend.expression.IExecutionContextAware;
 
 import ptolemy.Moml.EntityType;
 import ptolemy.actor.TypedCompositeActor;
 import ptolemy.kernel.Entity;
+import ptolemy.kernel.util.Attribute;
 import ptolemy.kernel.util.NamedObj;
 import ptolemy.moml.MoMLParser;
 
 import com.microstar.xml.XmlException;
 
+import de.cau.cs.kieler.annotations.Annotation;
 import de.cau.cs.kieler.annotations.AnnotationsFactory;
 import de.cau.cs.kieler.annotations.BooleanAnnotation;
+import de.cau.cs.kieler.annotations.StringAnnotation;
 import de.cau.cs.kieler.kaom.KaomFactory;
 import de.cau.cs.kieler.kaom.Port;
 
-public class PtolemyHelper {
+public class PtolemyHelper implements IExecutionContextAware{
 
-    public static void getPorts(EntityType entity, List ports) {
-        // List<Port> ports = new LinkedList<Port>();
-        System.out.println("Ptolemy Helper");
-    }
-
-    public static List<Port> getPorts(List<EntityType> entities) {
-        System.out.println("Ptolemy Helper yehaaaw");
+    ExecutionContext ctx;
+    
+    public PtolemyHelper() {}
+    
+    public List<Port> getPorts(List<EntityType> entities) {
         List<Port> ports = new BasicEList<Port>();
         for (EntityType entity : entities) {
-            System.out.println(entity.getName());
             ports.addAll(getPorts(entity));
         }
         return ports;
     }
 
-    public static List<Port> getPorts(EntityType entity) {
+    public List<Port> getPorts(EntityType ptolemyEntity) {
         List<Port> kaomPorts = new LinkedList<Port>();
         try {
-            NamedObj actor = instanciatePtolemyEntity(entity);
+            NamedObj actor = instanciatePtolemyEntity(ptolemyEntity);
             
             // get lists of all ports
             List ptolemyPorts = new LinkedList();
@@ -58,19 +60,24 @@ public class PtolemyHelper {
                 Port kaomPort = KaomFactory.eINSTANCE.createPort();
                 // find out whether it is an input or output (or both)
                 if (inputs.contains(ptolemyPort)) {
-                    BooleanAnnotation isInput = AnnotationsFactory.eINSTANCE.createBooleanAnnotation();
-                    isInput.setName("isInput");
-                    isInput.setValue(true);
+                    Annotation isInput = AnnotationsFactory.eINSTANCE.createAnnotation();
+                    isInput.setName("input");
                     kaomPort.getAnnotations().add(isInput);
                 }
                 if (outputs.contains(ptolemyPort)) {
-                    BooleanAnnotation isOutput = AnnotationsFactory.eINSTANCE.createBooleanAnnotation();
-                    isOutput.setName("isOutput");
-                    isOutput.setValue(true);
+                    Annotation isOutput = AnnotationsFactory.eINSTANCE.createAnnotation();
+                    isOutput.setName("output");
                     kaomPort.getAnnotations().add(isOutput);
                 }
                 // set the name
                 kaomPort.setName(ptolemyPort.getName());
+                
+                for(Object attribute : ptolemyPort.attributeList()){
+                    if(attribute instanceof Attribute){
+                        kaomPort.getAnnotations().add(getAnnotation((Attribute) attribute));
+                    }
+                }
+                
                 kaomPorts.add(kaomPort);
             }
         } catch (XmlException xe){
@@ -87,7 +94,7 @@ public class PtolemyHelper {
      * @return corresponding Ptolemy object
      * @throws Exception may throw different Exceptions during parsing
      */
-    private static NamedObj instanciatePtolemyEntity(EntityType entity) throws Exception {
+    private NamedObj instanciatePtolemyEntity(EntityType entity) throws Exception {
         String classname = entity.getClass1();
         // use the Ptolemy internal Model ML (MoML) parser parsing XML and creates Ptolemy models
         MoMLParser parser = new MoMLParser();
@@ -101,8 +108,30 @@ public class PtolemyHelper {
         return actor;
     }
 
-    public static void test(EntityType test, String msg, List myList) {
-        System.out.println("Ptolemy Helper test "+ myList+" "+test.getName());
+    /**
+     * Transform Ptolemy Attribute to a KAOM Annotation including all nested Attributes.
+     * @param ptolemyAttribute
+     * @return the created KAOM Annotation
+     */
+    static private Annotation getAnnotation(Attribute ptolemyAttribute){
+        StringAnnotation kaomAnnotation = AnnotationsFactory.eINSTANCE.createStringAnnotation();
+        StringAnnotation classAnnotation = AnnotationsFactory.eINSTANCE.createStringAnnotation();
+        
+        kaomAnnotation.setName(ptolemyAttribute.getName());
+        classAnnotation.setName("ptolemyClass");
+        classAnnotation.setValue(ptolemyAttribute.getClassName());
+        kaomAnnotation.getAnnotations().add(classAnnotation);
+        
+        for(Object childAttribute : ptolemyAttribute.attributeList()){
+            if(childAttribute instanceof Attribute){
+                kaomAnnotation.getAnnotations().add(getAnnotation((Attribute) childAttribute));
+            }
+        }
+        return kaomAnnotation;
+    }
+
+    public void setExecutionContext(ExecutionContext ctx) {
+        this.ctx = ctx;
     }
 
 }

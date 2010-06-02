@@ -28,7 +28,6 @@ create Entity this transform(Moml::EntityType entity):
 	let list = {}:
 	this.setName(entity.name) ->
 	createTrace(this,entity,"ptolemy","kaom") ->
-	info("Created entity "+entity.name) ->
 	addProperties(this, entity.property) ->
 	addChildPorts(this) ->
 	addChildEntities(this, entity.entity) ->
@@ -112,24 +111,16 @@ Void addProperties(Annotatable annotatable, List[PropertyType] properties):
 Void addChildPorts(Entity entity):
 	let ptolemyEntity = (EntityType)entity.getSingleTraceTarget("ptolemy"):
 	let entityList = {ptolemyEntity}:
-	entity.childPorts.addAll(getExplicitPorts(ptolemyEntity.port)) ->
-	entity.childPorts.addAll(getPorts(entityList))
-;
-
-List[Port] getExplicitPorts(List[Moml::PortType] ptolemyPorts):
-	let kaomPorts = {}:
-	if(ptolemyPorts.isEmpty) then (info("empty") -> kaomPorts) else
-		(info("full") -> kaomPorts.add(transform(ptolemyPorts.first())) 
-		 -> kaomPorts.addAll(getExplicitPorts(ptolemyPorts.withoutFirst()))
-		 -> kaomPorts)  
+	let javaPorts = getPorts(entityList):
+	let explicitPorts = ptolemyEntity.port.transform():
+	let mergedPorts = mergePortAttributes(javaPorts,explicitPorts):
+	entity.childPorts.addAll(mergedPorts)
 ;
 
 create Port this transform(Moml::PortType ptolemyPort):
-	info("Creating explicit port: "+ptolemyPort.name) ->
 	this.setName(ptolemyPort.name) -> 
 	createTrace(this,ptolemyPort,"ptolemy","kaom") ->
-	(if( ptolemyPort.property.select(p|p.name == "input").isEmpty ) then this else this.addBooleanAnnotation("isInput",true)) ->
-	(if( ptolemyPort.property.select(p|p.name == "output").isEmpty ) then this else this.addBooleanAnnotation("isOutput",true)) 
+	addProperties(this,ptolemyPort.property) // this might add "input"/"output" annotations
 ;
 
 Relation getRelation(Entity parent,String relationName):
@@ -154,11 +145,30 @@ Port getPort(Entity parent, String portName):
 			(reportWarning("Port with no name requested for Entity "+parent.name)->
 			null)
 		case port != null : port
+		case actor == null :( 
+			reportWarning("Non-Existing Port referenced: "+portName+" for Entity "+parent.name) 
+			-> newPort.setName(portName)
+			-> parent.childPorts.add(newPort) 
+			-> newPort)
 		default: 
-			(newPort.setName(splitName.get(1)) ->
-			actor.childPorts.add(newPort) ->
-			newPort)
+			(reportWarning("Non-Existing Port referenced: "+portName) 
+			-> newPort.setName(splitName.size < 2? "null" : splitName.get(1)) 
+			-> actor.childPorts.add(newPort) 
+			-> newPort)
 	}
+;
+
+List[Port] mergePortAttributes(List[Port] newPorts, List[Port] existingPorts):
+	switch{
+		case newPorts == null || newPorts.size == 0: existingPorts
+		case existingPorts == null || existingPorts.size == 0: newPorts
+		default: newPorts.mergePortAttributesSingle(existingPorts)  
+	}
+;
+
+Port mergePortAttributesSingle(Port newPort, List[Port] existingPorts):
+	let samePort = existingPorts.select(p|p.name == newPort.name).first():
+	if(samePort == null) then newPort else (samePort.annotations.addAll(newPort.annotations) -> samePort)
 ;
 
 String getName(Object o):
@@ -185,19 +195,11 @@ Void optimize(Entity entity):
 // --------------------------------------------------------------------------------------------
 
 Void analyzeLinkDirections(Entity entity):
-	analyzeLinkDirections(entity.childEntities) -> // depth first 
+	entity.childEntities.analyzeLinkDirections() -> // depth first 
 	// set directions for links connected directly to inputs/outputs
 	analyzeLinkDirectionsForPorts(entity.childPorts) ->
 	// then analyze other links from the neighbor information
 	analyzeLinkDirectionsForLinksFixpoint(entity.childLinks)
-;
-
-// Set Link directions for all connected Links to a List of Entities 
-// using the port input/output information
-Void analyzeLinkDirections(List[Entity] entities):
-	if(entities.size <= 0) then null else (
-		analyzeLinkDirections(entities.first()) ->
-		analyzeLinkDirections(entities.withoutFirst()))
 ;
 
 // Set Link directions for all connected Links to a List of Ports 
@@ -211,50 +213,37 @@ Void analyzeLinkDirectionsForPorts(List[Port] ports):
 // Set Link directions for all connected Links to a Port 
 // using the port input/output information
 Void analyzeLinkDirections(Port port):
-	let isInput = port.isBooleanAnnotation("isInput"):
-	let isOutput = port.isBooleanAnnotation("isOutput"):
+	let isInput = port.hasAnnotation("input"):
+	let isOutput = port.hasAnnotation("output"):
 	switch{
 		case isInput && isOutput : null
-		case isInput : setLinkDirection(port.getConnectedLinks(), port, true)
-		case isOutput: setLinkDirection(port.getConnectedLinks(), port, false)
+		case isInput : 	port.getConnectedLinks().setLinkDirection(port, true)
+		case isOutput:  port.getConnectedLinks().setLinkDirection(port, false)
 		default: null
 	}
 ;
 
 // Set directions of all links to a port which is known to be an input or output
-Void setLinkDirection(List[Link] links, Port port, Boolean isInput):
-	let link = links.first():
+Void setLinkDirection(Link link, Port port, Boolean isInput):
 	switch{
-		case links.isEmpty: null
 		case isInput == true  && link.eContainer == port.eContainer : link.swapSourceTo(port)
 		case isInput == false && link.eContainer == port.eContainer : link.swapTargetTo(port)
 		case isInput == true  && link.eContainer != port.eContainer : link.swapTargetTo(port)
 		case isInput == false && link.eContainer != port.eContainer : link.swapSourceTo(port)
 		default: null
-	} ->
-	// recursively for all links in the list
-	if(! links.isEmpty) then setLinkDirection(links.withoutFirst(),port,isInput) else null 
+	}
 ;
 
 // Do a fixpoint iteration on a set of Links and try to deduce link directions from
 // neighbor edges
 Void analyzeLinkDirectionsForLinksFixpoint(List[Link] links):
-	let hasChanged = analyzeLinkDirectionsForLinks(links):
+	let hasChanged = links.analyzeLinkDirectionForLink().exists(b|b==true):
 	if(hasChanged) then analyzeLinkDirectionsForLinksFixpoint(links) else null
 ;
 
-// returns true if it found some link which it could specify the direction
-Boolean analyzeLinkDirectionsForLinks(List[Link] links):
-	let link = links.first():
-	let connectedRelations = {link.source, link.target}.typeSelect(kaom::Relation):
-	let switchedLink = if(links.isEmpty || connectedRelations.isEmpty || !link.isUndirected()) then false else 
-	       analyzeLinkDirectionForLink(link, connectedRelations):
-	let switchedOthers = if(links.isEmpty) then false else analyzeLinkDirectionsForLinks(links.withoutFirst()):
-	switchedLink || switchedOthers	
-;
-
 // Given a link and up to two relations, deduce from neighbor links the link's direction
-Boolean analyzeLinkDirectionForLink(Link link, List[Relation] relations):
+Boolean analyzeLinkDirectionForLink(Link link):
+	let relations = {link.source, link.target}.typeSelect(kaom::Relation):
 	let switchedAtRel1 = if(relations.size <1) then false else analyzeLinkDirectionForLink(link,relations.get(0)):
 	let switchedAtRel2 = if(relations.size <2) then false else analyzeLinkDirectionForLink(link,relations.get(1)):
 	switchedAtRel1 || switchedAtRel2
@@ -262,21 +251,23 @@ Boolean analyzeLinkDirectionForLink(Link link, List[Relation] relations):
 
 // Given a link and one relation, deduce from neighbor links the link's direction
 Boolean analyzeLinkDirectionForLink(Link link, Relation relation):
-	let neighborLinks = {relation.outgoingLinks, relation.incomingLinks} : 
-	analyzeLinkDirectionForLink(link, neighborLinks, relation)
+	let neighborLinks = {} : 
+	if(link.isUndirected()) 
+		then  (neighborLinks.addAll(relation.outgoingLinks)
+		    -> neighborLinks.addAll(relation.incomingLinks) 
+			-> neighborLinks.analyzeLinkDirection(relation,link).exists(b|b==true))
+		else false
 ;
 
-Boolean analyzeLinkDirectionForLink(Link link, List[Link] neighborLinks, Relation relation):
-	let hasFirstSwitched = switch{
-		case (neighborLinks.isEmpty || link.source == link.target) : false
-		case ( (neighborLinks.first().target == relation) && (!neighborLinks.first().isUndirected())):
+Boolean analyzeLinkDirection(Link neighborLink, Relation relation, Link link):
+	switch{
+		case (link.source == link.target) : false
+		case ( (neighborLink.target == relation) && (neighborLink.isUndirected())):
 			(link.swapSourceTo(relation) -> true)
-		case ( (neighborLinks.first().source == relation) && (!neighborLinks.first().isUndirected())):
+		case ( (neighborLink.source == relation) && (neighborLink.isUndirected())):
 			(link.swapTargetTo(relation) -> true)
 		default : false
-	}:
-	let haveOthersSwitched = if (neighborLinks.isEmpty) then false else analyzeLinkDirectionForLink(link, neighborLinks.withoutFirst(), relation):
-	hasFirstSwitched || haveOthersSwitched		
+	}
 ;
 
 Void swapSourceTo(Link link, Linkable linkable):
@@ -318,17 +309,9 @@ Void optimizeSingleRelations(Entity entity):
 	entity.childEntities.optimizeSingleRelations()
 ;
 
-//Void optimizeSingleRelations(List[Relation] relations):
-//	if(relations.isEmpty) then null else(
-//		optimizeSingleRelation(relations.first()) ->
-//		optimizeSingleRelations(relations.withoutFirst())
-//	)
-//;
-
 Void optimizeSingleRelation(Relation relation):
 	let inLink  = relation.incomingLinks.first():
 	let outLink = relation.outgoingLinks.first():
-	info("looking at: "+relation.eContainer.getName()+"."+relation.name) ->
 	if( (relation.incomingLinks.size == 1) && (relation.outgoingLinks.size == 1) ) then(
 		inLink.setTarget(outLink.target) -> 
 		outLink.addAnnotation("toBeRemoved") ->
@@ -412,6 +395,10 @@ Void addBooleanAnnotation(Annotatable annotatable, String key, Boolean value):
 	annotatable.annotations.add(annotation)
 ;
 
+Boolean hasAnnotation(Annotatable annotatable, String key):
+	(annotatable.getAnnotation(key) !=  null)
+;
+
 Void addAnnotation(Annotatable annotatable, String key, String value):
 	let annotation = new StringAnnotation:
 	annotation.setName(key) ->
@@ -449,4 +436,8 @@ Void removeUndirectedAnnotation(Link link):
 
 List infoAndReturn(List input):
 	info(input) -> input
+;
+
+List reportWarningAndReturn(List input):
+	reportWarning(""+input) -> input
 ;

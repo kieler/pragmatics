@@ -16,10 +16,13 @@
 package de.cau.cs.kieler.kaom.provider;
 
 
+import de.cau.cs.kieler.annotations.NamedObject;
 import de.cau.cs.kieler.annotations.provider.NamedObjectItemProvider;
 
+import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.KaomPackage;
 import de.cau.cs.kieler.kaom.Link;
+import de.cau.cs.kieler.kaom.Linkable;
 
 import java.util.Collection;
 import java.util.List;
@@ -137,11 +140,22 @@ public class LinkItemProvider
      * This returns the label text for the adapted class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @generated
      */
     @Override
     public String getText(Object object) {
-        String label = ((Link)object).getName();
+        Link link = (Link)object;
+        StringBuffer label = new StringBuffer();
+        label.append(link.getName() == null ? "" : link.getName());
+        
+        NamedObject source = (NamedObject)link.getSource();
+        Entity sourceParent = (Entity)source.eContainer();
+        NamedObject target = (NamedObject)link.getTarget();
+        Entity targetParent = (Entity)target.eContainer();
+        
+        label.append(": ");
+        label.append(sourceParent.getName()+"."+source.getName());
+        label.append(" -> ");
+        label.append(targetParent.getName()+"."+target.getName());
         return label == null || label.length() == 0 ?
             getString("_UI_Link_type") :
             getString("_UI_Link_type") + " " + label;
