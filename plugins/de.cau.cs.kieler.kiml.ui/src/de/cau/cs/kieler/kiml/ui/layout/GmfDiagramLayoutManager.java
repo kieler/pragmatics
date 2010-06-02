@@ -121,7 +121,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      * {@inheritDoc}
      */
     @Override
-    protected KNode buildLayoutGraph(final IEditorPart editorPart, final EditPart editPart,
+    public KNode buildLayoutGraph(final IEditorPart editorPart, final EditPart editPart,
             final boolean layoutAncestors) {
         graphElem2EditPartMap.clear();
         editPart2GraphElemMap.clear();
@@ -214,7 +214,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      * {@inheritDoc}
      */
     @Override
-    protected KNode getLayoutGraph() {
+    public KNode getLayoutGraph() {
         return layoutGraph;
     }
     

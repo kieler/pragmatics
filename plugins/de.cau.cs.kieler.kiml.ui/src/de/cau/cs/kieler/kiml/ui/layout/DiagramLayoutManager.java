@@ -79,6 +79,33 @@ public abstract class DiagramLayoutManager {
     public static final DiagramLayoutManager getLastManager() {
         return lastManager;
     }
+    
+    /**
+     * Returns the most suitable layout manager for the given editor and edit part.
+     * 
+     * @param theeditorPart the editor for which the layout manager should be
+     *     fetched, or {@code null}
+     * @param editPart the edit part for which the layout manager should be
+     *     fetched, or {@code null}
+     * @return the most suitable diagram layout manager
+     */
+    public static final DiagramLayoutManager getManager(final IEditorPart theeditorPart,
+            final EditPart editPart) {
+        IEditorPart editorPart = theeditorPart;
+        for (IDiagramEditorConnector connector : EclipseLayoutServices
+                .getInstance().getEditorConnectors()) {
+            if (connector.supports(editorPart)) {
+                editorPart = connector.getActiveEditor(editorPart);
+                break;
+            }
+        }
+        for (DiagramLayoutManager manager : MANAGERS) {
+            if (manager.supports(editorPart) || manager.supports(editPart)) {
+                return manager;
+            }
+        }
+        return null;
+    }
 
     /**
      * Performs layout on the given editor by choosing an appropriate layout
@@ -107,7 +134,7 @@ public abstract class DiagramLayoutManager {
      * manager instance. Animation, a progress bar, and layout of ancestors can
      * be optionally turned on.
      * 
-     * @param theeditorPart
+     * @param editorPart
      *            the editor for which layout is performed, or {@code null} if
      *            the diagram is not part of an editor
      * @param editPart
@@ -121,28 +148,18 @@ public abstract class DiagramLayoutManager {
      *            if true, layout is not only performed for the selected edit
      *            part, but also for its ancestors
      */
-    public static final void layout(final IEditorPart theeditorPart,
+    public static final void layout(final IEditorPart editorPart,
             final EditPart editPart, final boolean animate,
             final boolean progressBar, final boolean layoutAncestors) {
-        IEditorPart editorPart = theeditorPart;
-        for (IDiagramEditorConnector connector : EclipseLayoutServices
-                .getInstance().getEditorConnectors()) {
-            if (connector.supports(editorPart)) {
-                editorPart = connector.getActiveEditor(editorPart);
-                break;
-            }
+        DiagramLayoutManager manager = getManager(editorPart, editPart);
+        if (manager != null) {
+            manager.doLayout(editorPart, editPart, animate, progressBar,
+                    layoutAncestors, false);
+            refreshDiagram(editorPart, editPart);
+        } else {
+            throw new UnsupportedOperationException(Messages.getString("kiml.ui.15")
+                    + editorPart.getTitle() + ".");
         }
-        for (DiagramLayoutManager manager : MANAGERS) {
-            if (manager.supports(editorPart) || manager.supports(editPart)) {
-                manager.doLayout(editorPart, editPart, animate, progressBar,
-                        layoutAncestors, false);
-                refreshDiagram(editorPart, editPart);
-                return;
-            }
-        }
-        throw new UnsupportedOperationException(Messages
-                .getString("kiml.ui.15")
-                + editorPart.getTitle() + ".");
     }
 
     /**
@@ -460,7 +477,7 @@ public abstract class DiagramLayoutManager {
      *            part, but also for its ancestors
      * @return a layout graph instance
      */
-    protected abstract KNode buildLayoutGraph(IEditorPart editorPart,
+    public abstract KNode buildLayoutGraph(IEditorPart editorPart,
             EditPart editPart, boolean layoutAncestors);
 
     /**
@@ -484,7 +501,7 @@ public abstract class DiagramLayoutManager {
      * 
      * @return the last built layout graph
      */
-    protected abstract KNode getLayoutGraph();
+    public abstract KNode getLayoutGraph();
 
     /**
      * Returns the cached layout for the last layout run.
