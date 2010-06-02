@@ -18,7 +18,7 @@
         <diagramLabel
             href="kaom.gmfgraph#EntityNameLabel"/>
         <features
-            href="kaom.ecore#//NamedObject/name"/>
+            href="../../de.cau.cs.kieler.core.annotations/model/annotations.ecore#//NamedObject/name"/>
       </labelMappings>
       <tool
           xsi:type="gmftool:CreationTool"
@@ -37,7 +37,7 @@
             <diagramLabel
                 href="kaom.gmfgraph#PortNameLabel"/>
             <features
-                href="kaom.ecore#//NamedObject/name"/>
+                href="../../de.cau.cs.kieler.core.annotations/model/annotations.ecore#//NamedObject/name"/>
           </labelMappings>
           <tool
               xsi:type="gmftool:CreationTool"
@@ -82,7 +82,7 @@
         <diagramLabel
             href="kaom.gmfgraph#RelationNameLabel"/>
         <features
-            href="kaom.ecore#//NamedObject/name"/>
+            href="../../de.cau.cs.kieler.core.annotations/model/annotations.ecore#//NamedObject/name"/>
       </labelMappings>
       <tool
           xsi:type="gmftool:CreationTool"
@@ -99,7 +99,7 @@
       <diagramLabel
           href="kaom.gmfgraph#LinkNameLabel"/>
       <features
-          href="kaom.ecore#//NamedObject/name"/>
+          href="../../de.cau.cs.kieler.core.annotations/model/annotations.ecore#//NamedObject/name"/>
     </labelMappings>
     <containmentFeature
         href="kaom.ecore#//Entity/childLinks"/>

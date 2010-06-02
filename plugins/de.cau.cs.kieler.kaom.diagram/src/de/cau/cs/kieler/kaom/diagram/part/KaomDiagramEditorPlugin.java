@@ -21,6 +21,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import de.cau.cs.kieler.annotations.provider.AnnotationsItemProviderAdapterFactory;
 import de.cau.cs.kieler.kaom.provider.KaomItemProviderAdapterFactory;
 
 /**
@@ -102,6 +103,7 @@ public class KaomDiagramEditorPlugin extends AbstractUIPlugin {
 	 */
 	protected void fillItemProviderFactories(List factories) {
 		factories.add(new KaomItemProviderAdapterFactory());
+		factories.add(new AnnotationsItemProviderAdapterFactory());
 		factories.add(new EcoreItemProviderAdapterFactory());
 		factories.add(new ResourceItemProviderAdapterFactory());
 		factories.add(new ReflectiveItemProviderAdapterFactory());

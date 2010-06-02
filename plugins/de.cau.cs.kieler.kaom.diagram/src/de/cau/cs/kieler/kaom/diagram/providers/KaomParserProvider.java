@@ -13,7 +13,7 @@ import org.eclipse.gmf.runtime.emf.type.core.IElementType;
 import org.eclipse.gmf.runtime.emf.ui.services.parser.ParserHintAdapter;
 import org.eclipse.gmf.runtime.notation.View;
 
-import de.cau.cs.kieler.kaom.KaomPackage;
+import de.cau.cs.kieler.annotations.AnnotationsPackage;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityName2EditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityNameEditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.LinkNameEditPart;
@@ -39,7 +39,7 @@ public class KaomParserProvider extends AbstractProvider implements
 	 */
 	private IParser getEntityName_5004Parser() {
 		if (entityName_5004Parser == null) {
-			EAttribute[] features = new EAttribute[] { KaomPackage.eINSTANCE
+			EAttribute[] features = new EAttribute[] { AnnotationsPackage.eINSTANCE
 					.getNamedObject_Name() };
 			MessageFormatParser parser = new MessageFormatParser(features);
 			entityName_5004Parser = parser;
@@ -57,7 +57,7 @@ public class KaomParserProvider extends AbstractProvider implements
 	 */
 	private IParser getRelationName_5005Parser() {
 		if (relationName_5005Parser == null) {
-			EAttribute[] features = new EAttribute[] { KaomPackage.eINSTANCE
+			EAttribute[] features = new EAttribute[] { AnnotationsPackage.eINSTANCE
 					.getNamedObject_Name() };
 			MessageFormatParser parser = new MessageFormatParser(features);
 			relationName_5005Parser = parser;
@@ -75,7 +75,7 @@ public class KaomParserProvider extends AbstractProvider implements
 	 */
 	private IParser getPortName_5001Parser() {
 		if (portName_5001Parser == null) {
-			EAttribute[] features = new EAttribute[] { KaomPackage.eINSTANCE
+			EAttribute[] features = new EAttribute[] { AnnotationsPackage.eINSTANCE
 					.getNamedObject_Name() };
 			MessageFormatParser parser = new MessageFormatParser(features);
 			portName_5001Parser = parser;
@@ -93,7 +93,7 @@ public class KaomParserProvider extends AbstractProvider implements
 	 */
 	private IParser getEntityName_5003Parser() {
 		if (entityName_5003Parser == null) {
-			EAttribute[] features = new EAttribute[] { KaomPackage.eINSTANCE
+			EAttribute[] features = new EAttribute[] { AnnotationsPackage.eINSTANCE
 					.getNamedObject_Name() };
 			MessageFormatParser parser = new MessageFormatParser(features);
 			entityName_5003Parser = parser;
@@ -111,7 +111,7 @@ public class KaomParserProvider extends AbstractProvider implements
 	 */
 	private IParser getRelationName_5002Parser() {
 		if (relationName_5002Parser == null) {
-			EAttribute[] features = new EAttribute[] { KaomPackage.eINSTANCE
+			EAttribute[] features = new EAttribute[] { AnnotationsPackage.eINSTANCE
 					.getNamedObject_Name() };
 			MessageFormatParser parser = new MessageFormatParser(features);
 			relationName_5002Parser = parser;
@@ -129,7 +129,7 @@ public class KaomParserProvider extends AbstractProvider implements
 	 */
 	private IParser getLinkName_6001Parser() {
 		if (linkName_6001Parser == null) {
-			EAttribute[] features = new EAttribute[] { KaomPackage.eINSTANCE
+			EAttribute[] features = new EAttribute[] { AnnotationsPackage.eINSTANCE
 					.getNamedObject_Name() };
 			MessageFormatParser parser = new MessageFormatParser(features);
 			linkName_6001Parser = parser;

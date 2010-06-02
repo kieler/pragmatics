@@ -78,7 +78,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="kaom.genmodel#//kaom/NamedObject/name"/>
+              href="kaom.genmodel#//annotations/NamedObject/name"/>
         </modelFacet>
       </labels>
     </childNodes>
@@ -128,7 +128,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="kaom.genmodel#//kaom/NamedObject/name"/>
+              href="kaom.genmodel#//annotations/NamedObject/name"/>
         </modelFacet>
       </labels>
     </childNodes>
@@ -187,7 +187,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="kaom.genmodel#//kaom/NamedObject/name"/>
+              href="kaom.genmodel#//annotations/NamedObject/name"/>
         </modelFacet>
       </labels>
     </childNodes>
@@ -236,7 +236,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="kaom.genmodel#//kaom/NamedObject/name"/>
+              href="kaom.genmodel#//annotations/NamedObject/name"/>
         </modelFacet>
       </labels>
     </topLevelNodes>
@@ -294,7 +294,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="kaom.genmodel#//kaom/NamedObject/name"/>
+              href="kaom.genmodel#//annotations/NamedObject/name"/>
         </modelFacet>
       </labels>
     </topLevelNodes>
@@ -352,7 +352,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="kaom.genmodel#//kaom/NamedObject/name"/>
+              href="kaom.genmodel#//annotations/NamedObject/name"/>
         </modelFacet>
       </labels>
     </links>
