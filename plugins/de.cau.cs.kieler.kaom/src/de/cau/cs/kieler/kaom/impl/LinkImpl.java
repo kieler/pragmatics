@@ -15,6 +15,8 @@
  */
 package de.cau.cs.kieler.kaom.impl;
 
+import de.cau.cs.kieler.annotations.impl.NamedObjectImpl;
+
 import de.cau.cs.kieler.kaom.KaomPackage;
 import de.cau.cs.kieler.kaom.Link;
 import de.cau.cs.kieler.kaom.Linkable;

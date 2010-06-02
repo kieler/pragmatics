@@ -46,383 +46,239 @@ import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
  * @generated
  */
 public class KaomItemProviderAdapterFactory extends KaomAdapterFactory implements ComposeableAdapterFactory, IChangeNotifier, IDisposable {
-	/**
-	 * This keeps track of the root adapter factory that delegates to this adapter factory.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected ComposedAdapterFactory parentAdapterFactory;
+    /**
+     * This keeps track of the root adapter factory that delegates to this adapter factory.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected ComposedAdapterFactory parentAdapterFactory;
 
-	/**
-	 * This is used to implement {@link org.eclipse.emf.edit.provider.IChangeNotifier}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected IChangeNotifier changeNotifier = new ChangeNotifier();
+    /**
+     * This is used to implement {@link org.eclipse.emf.edit.provider.IChangeNotifier}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected IChangeNotifier changeNotifier = new ChangeNotifier();
 
-	/**
-	 * This keeps track of all the supported types checked by {@link #isFactoryForType isFactoryForType}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected Collection<Object> supportedTypes = new ArrayList<Object>();
+    /**
+     * This keeps track of all the supported types checked by {@link #isFactoryForType isFactoryForType}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected Collection<Object> supportedTypes = new ArrayList<Object>();
 
-	/**
-	 * This constructs an instance.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public KaomItemProviderAdapterFactory() {
-		supportedTypes.add(IEditingDomainItemProvider.class);
-		supportedTypes.add(IStructuredItemContentProvider.class);
-		supportedTypes.add(ITreeItemContentProvider.class);
-		supportedTypes.add(IItemLabelProvider.class);
-		supportedTypes.add(IItemPropertySource.class);
-	}
+    /**
+     * This constructs an instance.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public KaomItemProviderAdapterFactory() {
+        supportedTypes.add(IEditingDomainItemProvider.class);
+        supportedTypes.add(IStructuredItemContentProvider.class);
+        supportedTypes.add(ITreeItemContentProvider.class);
+        supportedTypes.add(IItemLabelProvider.class);
+        supportedTypes.add(IItemPropertySource.class);
+    }
 
-	/**
-	 * This keeps track of the one adapter used for all {@link de.cau.cs.kieler.kaom.Entity} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected EntityItemProvider entityItemProvider;
+    /**
+     * This keeps track of the one adapter used for all {@link de.cau.cs.kieler.kaom.Entity} instances.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected EntityItemProvider entityItemProvider;
 
-	/**
-	 * This creates an adapter for a {@link de.cau.cs.kieler.kaom.Entity}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createEntityAdapter() {
-		if (entityItemProvider == null) {
-			entityItemProvider = new EntityItemProvider(this);
-		}
+    /**
+     * This creates an adapter for a {@link de.cau.cs.kieler.kaom.Entity}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Adapter createEntityAdapter() {
+        if (entityItemProvider == null) {
+            entityItemProvider = new EntityItemProvider(this);
+        }
 
-		return entityItemProvider;
-	}
+        return entityItemProvider;
+    }
 
-	/**
-	 * This keeps track of the one adapter used for all {@link de.cau.cs.kieler.kaom.Port} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected PortItemProvider portItemProvider;
+    /**
+     * This keeps track of the one adapter used for all {@link de.cau.cs.kieler.kaom.Port} instances.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected PortItemProvider portItemProvider;
 
-	/**
-	 * This creates an adapter for a {@link de.cau.cs.kieler.kaom.Port}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createPortAdapter() {
-		if (portItemProvider == null) {
-			portItemProvider = new PortItemProvider(this);
-		}
+    /**
+     * This creates an adapter for a {@link de.cau.cs.kieler.kaom.Port}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Adapter createPortAdapter() {
+        if (portItemProvider == null) {
+            portItemProvider = new PortItemProvider(this);
+        }
 
-		return portItemProvider;
-	}
+        return portItemProvider;
+    }
 
-	/**
-	 * This keeps track of the one adapter used for all {@link de.cau.cs.kieler.kaom.Relation} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected RelationItemProvider relationItemProvider;
+    /**
+     * This keeps track of the one adapter used for all {@link de.cau.cs.kieler.kaom.Relation} instances.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected RelationItemProvider relationItemProvider;
 
-	/**
-	 * This creates an adapter for a {@link de.cau.cs.kieler.kaom.Relation}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createRelationAdapter() {
-		if (relationItemProvider == null) {
-			relationItemProvider = new RelationItemProvider(this);
-		}
+    /**
+     * This creates an adapter for a {@link de.cau.cs.kieler.kaom.Relation}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Adapter createRelationAdapter() {
+        if (relationItemProvider == null) {
+            relationItemProvider = new RelationItemProvider(this);
+        }
 
-		return relationItemProvider;
-	}
+        return relationItemProvider;
+    }
 
-	/**
-	 * This keeps track of the one adapter used for all {@link de.cau.cs.kieler.kaom.Link} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected LinkItemProvider linkItemProvider;
+    /**
+     * This keeps track of the one adapter used for all {@link de.cau.cs.kieler.kaom.Link} instances.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected LinkItemProvider linkItemProvider;
 
-	/**
-	 * This creates an adapter for a {@link de.cau.cs.kieler.kaom.Link}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createLinkAdapter() {
-		if (linkItemProvider == null) {
-			linkItemProvider = new LinkItemProvider(this);
-		}
+    /**
+     * This creates an adapter for a {@link de.cau.cs.kieler.kaom.Link}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Adapter createLinkAdapter() {
+        if (linkItemProvider == null) {
+            linkItemProvider = new LinkItemProvider(this);
+        }
 
-		return linkItemProvider;
-	}
+        return linkItemProvider;
+    }
 
-	/**
-	 * This keeps track of the one adapter used for all {@link de.cau.cs.kieler.kaom.Annotation} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected AnnotationItemProvider annotationItemProvider;
+    /**
+     * This returns the root adapter factory that contains this factory.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public ComposeableAdapterFactory getRootAdapterFactory() {
+        return parentAdapterFactory == null ? this : parentAdapterFactory.getRootAdapterFactory();
+    }
 
-	/**
-	 * This creates an adapter for a {@link de.cau.cs.kieler.kaom.Annotation}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createAnnotationAdapter() {
-		if (annotationItemProvider == null) {
-			annotationItemProvider = new AnnotationItemProvider(this);
-		}
+    /**
+     * This sets the composed adapter factory that contains this factory.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void setParentAdapterFactory(ComposedAdapterFactory parentAdapterFactory) {
+        this.parentAdapterFactory = parentAdapterFactory;
+    }
 
-		return annotationItemProvider;
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public boolean isFactoryForType(Object type) {
+        return supportedTypes.contains(type) || super.isFactoryForType(type);
+    }
 
-	/**
-	 * This keeps track of the one adapter used for all {@link de.cau.cs.kieler.kaom.StringAnnotation} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected StringAnnotationItemProvider stringAnnotationItemProvider;
+    /**
+     * This implementation substitutes the factory itself as the key for the adapter.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Adapter adapt(Notifier notifier, Object type) {
+        return super.adapt(notifier, this);
+    }
 
-	/**
-	 * This creates an adapter for a {@link de.cau.cs.kieler.kaom.StringAnnotation}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createStringAnnotationAdapter() {
-		if (stringAnnotationItemProvider == null) {
-			stringAnnotationItemProvider = new StringAnnotationItemProvider(this);
-		}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Object adapt(Object object, Object type) {
+        if (isFactoryForType(type)) {
+            Object adapter = super.adapt(object, type);
+            if (!(type instanceof Class<?>) || (((Class<?>)type).isInstance(adapter))) {
+                return adapter;
+            }
+        }
 
-		return stringAnnotationItemProvider;
-	}
+        return null;
+    }
 
-	/**
-	 * This keeps track of the one adapter used for all {@link de.cau.cs.kieler.kaom.ReferenceAnnotation} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected ReferenceAnnotationItemProvider referenceAnnotationItemProvider;
+    /**
+     * This adds a listener.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void addListener(INotifyChangedListener notifyChangedListener) {
+        changeNotifier.addListener(notifyChangedListener);
+    }
 
-	/**
-	 * This creates an adapter for a {@link de.cau.cs.kieler.kaom.ReferenceAnnotation}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createReferenceAnnotationAdapter() {
-		if (referenceAnnotationItemProvider == null) {
-			referenceAnnotationItemProvider = new ReferenceAnnotationItemProvider(this);
-		}
+    /**
+     * This removes a listener.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void removeListener(INotifyChangedListener notifyChangedListener) {
+        changeNotifier.removeListener(notifyChangedListener);
+    }
 
-		return referenceAnnotationItemProvider;
-	}
+    /**
+     * This delegates to {@link #changeNotifier} and to {@link #parentAdapterFactory}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void fireNotifyChanged(Notification notification) {
+        changeNotifier.fireNotifyChanged(notification);
 
-	/**
-	 * This keeps track of the one adapter used for all {@link de.cau.cs.kieler.kaom.BooleanAnnotation} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected BooleanAnnotationItemProvider booleanAnnotationItemProvider;
+        if (parentAdapterFactory != null) {
+            parentAdapterFactory.fireNotifyChanged(notification);
+        }
+    }
 
-	/**
-	 * This creates an adapter for a {@link de.cau.cs.kieler.kaom.BooleanAnnotation}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createBooleanAnnotationAdapter() {
-		if (booleanAnnotationItemProvider == null) {
-			booleanAnnotationItemProvider = new BooleanAnnotationItemProvider(this);
-		}
-
-		return booleanAnnotationItemProvider;
-	}
-
-	/**
-	 * This keeps track of the one adapter used for all {@link de.cau.cs.kieler.kaom.IntAnnotation} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected IntAnnotationItemProvider intAnnotationItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link de.cau.cs.kieler.kaom.IntAnnotation}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createIntAnnotationAdapter() {
-		if (intAnnotationItemProvider == null) {
-			intAnnotationItemProvider = new IntAnnotationItemProvider(this);
-		}
-
-		return intAnnotationItemProvider;
-	}
-
-	/**
-	 * This keeps track of the one adapter used for all {@link de.cau.cs.kieler.kaom.FloatAnnotation} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected FloatAnnotationItemProvider floatAnnotationItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link de.cau.cs.kieler.kaom.FloatAnnotation}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createFloatAnnotationAdapter() {
-		if (floatAnnotationItemProvider == null) {
-			floatAnnotationItemProvider = new FloatAnnotationItemProvider(this);
-		}
-
-		return floatAnnotationItemProvider;
-	}
-
-	/**
-	 * This returns the root adapter factory that contains this factory.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public ComposeableAdapterFactory getRootAdapterFactory() {
-		return parentAdapterFactory == null ? this : parentAdapterFactory.getRootAdapterFactory();
-	}
-
-	/**
-	 * This sets the composed adapter factory that contains this factory.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setParentAdapterFactory(ComposedAdapterFactory parentAdapterFactory) {
-		this.parentAdapterFactory = parentAdapterFactory;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public boolean isFactoryForType(Object type) {
-		return supportedTypes.contains(type) || super.isFactoryForType(type);
-	}
-
-	/**
-	 * This implementation substitutes the factory itself as the key for the adapter.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter adapt(Notifier notifier, Object type) {
-		return super.adapt(notifier, this);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Object adapt(Object object, Object type) {
-		if (isFactoryForType(type)) {
-			Object adapter = super.adapt(object, type);
-			if (!(type instanceof Class<?>) || (((Class<?>)type).isInstance(adapter))) {
-				return adapter;
-			}
-		}
-
-		return null;
-	}
-
-	/**
-	 * This adds a listener.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void addListener(INotifyChangedListener notifyChangedListener) {
-		changeNotifier.addListener(notifyChangedListener);
-	}
-
-	/**
-	 * This removes a listener.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void removeListener(INotifyChangedListener notifyChangedListener) {
-		changeNotifier.removeListener(notifyChangedListener);
-	}
-
-	/**
-	 * This delegates to {@link #changeNotifier} and to {@link #parentAdapterFactory}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void fireNotifyChanged(Notification notification) {
-		changeNotifier.fireNotifyChanged(notification);
-
-		if (parentAdapterFactory != null) {
-			parentAdapterFactory.fireNotifyChanged(notification);
-		}
-	}
-
-	/**
-	 * This disposes all of the item providers created by this factory. 
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void dispose() {
-		if (entityItemProvider != null) entityItemProvider.dispose();
-		if (portItemProvider != null) portItemProvider.dispose();
-		if (relationItemProvider != null) relationItemProvider.dispose();
-		if (linkItemProvider != null) linkItemProvider.dispose();
-		if (annotationItemProvider != null) annotationItemProvider.dispose();
-		if (stringAnnotationItemProvider != null) stringAnnotationItemProvider.dispose();
-		if (referenceAnnotationItemProvider != null) referenceAnnotationItemProvider.dispose();
-		if (booleanAnnotationItemProvider != null) booleanAnnotationItemProvider.dispose();
-		if (intAnnotationItemProvider != null) intAnnotationItemProvider.dispose();
-		if (floatAnnotationItemProvider != null) floatAnnotationItemProvider.dispose();
-	}
+    /**
+     * This disposes all of the item providers created by this factory. 
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void dispose() {
+        if (entityItemProvider != null) entityItemProvider.dispose();
+        if (portItemProvider != null) portItemProvider.dispose();
+        if (relationItemProvider != null) relationItemProvider.dispose();
+        if (linkItemProvider != null) linkItemProvider.dispose();
+    }
 
 }

@@ -15,6 +15,9 @@
  */
 package de.cau.cs.kieler.kaom.util;
 
+import de.cau.cs.kieler.annotations.Annotatable;
+import de.cau.cs.kieler.annotations.NamedObject;
+
 import de.cau.cs.kieler.kaom.*;
 
 import java.util.List;
@@ -137,72 +140,6 @@ public class KaomSwitch<T> {
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
-            case KaomPackage.NAMED_OBJECT: {
-                NamedObject namedObject = (NamedObject)theEObject;
-                T result = caseNamedObject(namedObject);
-                if (result == null) result = caseAnnotatable(namedObject);
-                if (result == null) result = defaultCase(theEObject);
-                return result;
-            }
-            case KaomPackage.ANNOTATABLE: {
-                Annotatable annotatable = (Annotatable)theEObject;
-                T result = caseAnnotatable(annotatable);
-                if (result == null) result = defaultCase(theEObject);
-                return result;
-            }
-            case KaomPackage.ANNOTATION: {
-                Annotation annotation = (Annotation)theEObject;
-                T result = caseAnnotation(annotation);
-                if (result == null) result = caseNamedObject(annotation);
-                if (result == null) result = caseAnnotatable(annotation);
-                if (result == null) result = defaultCase(theEObject);
-                return result;
-            }
-            case KaomPackage.STRING_ANNOTATION: {
-                StringAnnotation stringAnnotation = (StringAnnotation)theEObject;
-                T result = caseStringAnnotation(stringAnnotation);
-                if (result == null) result = caseAnnotation(stringAnnotation);
-                if (result == null) result = caseNamedObject(stringAnnotation);
-                if (result == null) result = caseAnnotatable(stringAnnotation);
-                if (result == null) result = defaultCase(theEObject);
-                return result;
-            }
-            case KaomPackage.REFERENCE_ANNOTATION: {
-                ReferenceAnnotation referenceAnnotation = (ReferenceAnnotation)theEObject;
-                T result = caseReferenceAnnotation(referenceAnnotation);
-                if (result == null) result = caseAnnotation(referenceAnnotation);
-                if (result == null) result = caseNamedObject(referenceAnnotation);
-                if (result == null) result = caseAnnotatable(referenceAnnotation);
-                if (result == null) result = defaultCase(theEObject);
-                return result;
-            }
-            case KaomPackage.BOOLEAN_ANNOTATION: {
-                BooleanAnnotation booleanAnnotation = (BooleanAnnotation)theEObject;
-                T result = caseBooleanAnnotation(booleanAnnotation);
-                if (result == null) result = caseAnnotation(booleanAnnotation);
-                if (result == null) result = caseNamedObject(booleanAnnotation);
-                if (result == null) result = caseAnnotatable(booleanAnnotation);
-                if (result == null) result = defaultCase(theEObject);
-                return result;
-            }
-            case KaomPackage.INT_ANNOTATION: {
-                IntAnnotation intAnnotation = (IntAnnotation)theEObject;
-                T result = caseIntAnnotation(intAnnotation);
-                if (result == null) result = caseAnnotation(intAnnotation);
-                if (result == null) result = caseNamedObject(intAnnotation);
-                if (result == null) result = caseAnnotatable(intAnnotation);
-                if (result == null) result = defaultCase(theEObject);
-                return result;
-            }
-            case KaomPackage.FLOAT_ANNOTATION: {
-                FloatAnnotation floatAnnotation = (FloatAnnotation)theEObject;
-                T result = caseFloatAnnotation(floatAnnotation);
-                if (result == null) result = caseAnnotation(floatAnnotation);
-                if (result == null) result = caseNamedObject(floatAnnotation);
-                if (result == null) result = caseAnnotatable(floatAnnotation);
-                if (result == null) result = defaultCase(theEObject);
-                return result;
-            }
             default: return defaultCase(theEObject);
         }
     }
@@ -283,21 +220,6 @@ public class KaomSwitch<T> {
     }
 
     /**
-     * Returns the result of interpreting the object as an instance of '<em>Named Object</em>'.
-     * <!-- begin-user-doc -->
-     * This implementation returns null;
-     * returning a non-null result will terminate the switch.
-     * <!-- end-user-doc -->
-     * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>Named Object</em>'.
-     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-     * @generated
-     */
-    public T caseNamedObject(NamedObject object) {
-        return null;
-    }
-
-    /**
      * Returns the result of interpreting the object as an instance of '<em>Annotatable</em>'.
      * <!-- begin-user-doc -->
      * This implementation returns null;
@@ -313,92 +235,17 @@ public class KaomSwitch<T> {
     }
 
     /**
-     * Returns the result of interpreting the object as an instance of '<em>Annotation</em>'.
+     * Returns the result of interpreting the object as an instance of '<em>Named Object</em>'.
      * <!-- begin-user-doc -->
      * This implementation returns null;
      * returning a non-null result will terminate the switch.
      * <!-- end-user-doc -->
      * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>Annotation</em>'.
+     * @return the result of interpreting the object as an instance of '<em>Named Object</em>'.
      * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
      * @generated
      */
-    public T caseAnnotation(Annotation object) {
-        return null;
-    }
-
-    /**
-     * Returns the result of interpreting the object as an instance of '<em>String Annotation</em>'.
-     * <!-- begin-user-doc -->
-     * This implementation returns null;
-     * returning a non-null result will terminate the switch.
-     * <!-- end-user-doc -->
-     * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>String Annotation</em>'.
-     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-     * @generated
-     */
-    public T caseStringAnnotation(StringAnnotation object) {
-        return null;
-    }
-
-    /**
-     * Returns the result of interpreting the object as an instance of '<em>Reference Annotation</em>'.
-     * <!-- begin-user-doc -->
-     * This implementation returns null;
-     * returning a non-null result will terminate the switch.
-     * <!-- end-user-doc -->
-     * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>Reference Annotation</em>'.
-     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-     * @generated
-     */
-    public T caseReferenceAnnotation(ReferenceAnnotation object) {
-        return null;
-    }
-
-    /**
-     * Returns the result of interpreting the object as an instance of '<em>Boolean Annotation</em>'.
-     * <!-- begin-user-doc -->
-     * This implementation returns null;
-     * returning a non-null result will terminate the switch.
-     * <!-- end-user-doc -->
-     * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>Boolean Annotation</em>'.
-     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-     * @generated
-     */
-    public T caseBooleanAnnotation(BooleanAnnotation object) {
-        return null;
-    }
-
-    /**
-     * Returns the result of interpreting the object as an instance of '<em>Int Annotation</em>'.
-     * <!-- begin-user-doc -->
-     * This implementation returns null;
-     * returning a non-null result will terminate the switch.
-     * <!-- end-user-doc -->
-     * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>Int Annotation</em>'.
-     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-     * @generated
-     */
-    public T caseIntAnnotation(IntAnnotation object) {
-        return null;
-    }
-
-    /**
-     * Returns the result of interpreting the object as an instance of '<em>Float Annotation</em>'.
-     * <!-- begin-user-doc -->
-     * This implementation returns null;
-     * returning a non-null result will terminate the switch.
-     * <!-- end-user-doc -->
-     * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>Float Annotation</em>'.
-     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-     * @generated
-     */
-    public T caseFloatAnnotation(FloatAnnotation object) {
+    public T caseNamedObject(NamedObject object) {
         return null;
     }
 

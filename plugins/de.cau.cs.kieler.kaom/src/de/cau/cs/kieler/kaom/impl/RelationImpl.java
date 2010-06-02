@@ -15,12 +15,15 @@
  */
 package de.cau.cs.kieler.kaom.impl;
 
-import de.cau.cs.kieler.kaom.Annotatable;
-import de.cau.cs.kieler.kaom.Annotation;
+import de.cau.cs.kieler.annotations.impl.NamedObjectImpl;
+import de.cau.cs.kieler.annotations.Annotatable;
+import de.cau.cs.kieler.annotations.Annotation;
+import de.cau.cs.kieler.annotations.AnnotationsPackage;
+import de.cau.cs.kieler.annotations.NamedObject;
+
 import de.cau.cs.kieler.kaom.KaomPackage;
 import de.cau.cs.kieler.kaom.Link;
 import de.cau.cs.kieler.kaom.Linkable;
-import de.cau.cs.kieler.kaom.NamedObject;
 import de.cau.cs.kieler.kaom.Relation;
 
 import java.util.Collection;

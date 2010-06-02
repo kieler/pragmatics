@@ -3,21 +3,20 @@ package de.cau.cs.kieler.kaom.importer.ptolemy;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.util.BasicEList;
-import org.osgi.framework.Bundle;
-
-import com.microstar.xml.XmlException;
-
-import de.cau.cs.kieler.kaom.BooleanAnnotation;
-import de.cau.cs.kieler.kaom.KaomFactory;
-import de.cau.cs.kieler.kaom.Port;
 
 import ptolemy.Moml.EntityType;
 import ptolemy.actor.TypedCompositeActor;
 import ptolemy.kernel.Entity;
 import ptolemy.kernel.util.NamedObj;
 import ptolemy.moml.MoMLParser;
+
+import com.microstar.xml.XmlException;
+
+import de.cau.cs.kieler.annotations.AnnotationsFactory;
+import de.cau.cs.kieler.annotations.BooleanAnnotation;
+import de.cau.cs.kieler.kaom.KaomFactory;
+import de.cau.cs.kieler.kaom.Port;
 
 public class PtolemyHelper {
 
@@ -59,14 +58,13 @@ public class PtolemyHelper {
                 Port kaomPort = KaomFactory.eINSTANCE.createPort();
                 // find out whether it is an input or output (or both)
                 if (inputs.contains(ptolemyPort)) {
-                    BooleanAnnotation isInput = KaomFactory.eINSTANCE.createBooleanAnnotation();
+                    BooleanAnnotation isInput = AnnotationsFactory.eINSTANCE.createBooleanAnnotation();
                     isInput.setName("isInput");
                     isInput.setValue(true);
                     kaomPort.getAnnotations().add(isInput);
-                    
                 }
                 if (outputs.contains(ptolemyPort)) {
-                    BooleanAnnotation isOutput = KaomFactory.eINSTANCE.createBooleanAnnotation();
+                    BooleanAnnotation isOutput = AnnotationsFactory.eINSTANCE.createBooleanAnnotation();
                     isOutput.setName("isOutput");
                     isOutput.setValue(true);
                     kaomPort.getAnnotations().add(isOutput);

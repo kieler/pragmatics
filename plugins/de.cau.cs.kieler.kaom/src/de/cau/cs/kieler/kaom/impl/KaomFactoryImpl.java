@@ -73,12 +73,6 @@ public class KaomFactoryImpl extends EFactoryImpl implements KaomFactory {
             case KaomPackage.PORT: return createPort();
             case KaomPackage.RELATION: return createRelation();
             case KaomPackage.LINK: return createLink();
-            case KaomPackage.ANNOTATION: return createAnnotation();
-            case KaomPackage.STRING_ANNOTATION: return createStringAnnotation();
-            case KaomPackage.REFERENCE_ANNOTATION: return createReferenceAnnotation();
-            case KaomPackage.BOOLEAN_ANNOTATION: return createBooleanAnnotation();
-            case KaomPackage.INT_ANNOTATION: return createIntAnnotation();
-            case KaomPackage.FLOAT_ANNOTATION: return createFloatAnnotation();
             default:
                 throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
         }
@@ -122,66 +116,6 @@ public class KaomFactoryImpl extends EFactoryImpl implements KaomFactory {
     public Link createLink() {
         LinkImpl link = new LinkImpl();
         return link;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public Annotation createAnnotation() {
-        AnnotationImpl annotation = new AnnotationImpl();
-        return annotation;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public StringAnnotation createStringAnnotation() {
-        StringAnnotationImpl stringAnnotation = new StringAnnotationImpl();
-        return stringAnnotation;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public ReferenceAnnotation createReferenceAnnotation() {
-        ReferenceAnnotationImpl referenceAnnotation = new ReferenceAnnotationImpl();
-        return referenceAnnotation;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public BooleanAnnotation createBooleanAnnotation() {
-        BooleanAnnotationImpl booleanAnnotation = new BooleanAnnotationImpl();
-        return booleanAnnotation;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public IntAnnotation createIntAnnotation() {
-        IntAnnotationImpl intAnnotation = new IntAnnotationImpl();
-        return intAnnotation;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public FloatAnnotation createFloatAnnotation() {
-        FloatAnnotationImpl floatAnnotation = new FloatAnnotationImpl();
-        return floatAnnotation;
     }
 
     /**
