@@ -22,8 +22,9 @@ package de.cau.cs.kieler.kiml.evol.alg;
  * 
  */
 public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
+
     /**
-     * Return the generation.
+     * Returns the generation.
      * 
      * @return the generation
      */
@@ -48,7 +49,7 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
     }
     
     /**
-     * Perform a step of the algorithm by proceeding to the next generation.
+     * Performs a step of the algorithm by proceeding to the next generation.
      */
     public final void step() {
         if (isInitialized && !isDone()) {
@@ -69,7 +70,7 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
     }
     
     /**
-     * Return <code>true</code> if a stop criterion is satisfied, else return
+     * Returns <code>true</code> if a stop criterion is satisfied, else returns
      * <code>false</code>.
      * 
      * @return A boolean value that indicates if stop criterion is satisfied.
@@ -80,6 +81,7 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
     /** Initialize population. **/
     protected void initialize() {
         if (isInitialized) {
+            // TODO: throw exception?
             System.out.println("Warning: Algorithm already initialized.");
         } else {
             generation = 0;
@@ -87,28 +89,28 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
         }
     }
     
-    /** Determine fitness values for all individuals. **/
+    /** Determines fitness values for all individuals. **/
     protected abstract void determineFitness();
     
     /**
-     * Select parent individuals for recombination, depending on some strategy
+     * Selects parent individuals for recombination, depending on some strategy
      * for parent selection.
      **/
     protected abstract void select();
     
     /**
-     * Generate offspring by recombining selected parent individuals, depending
+     * Generates offspring by recombining selected parent individuals, depending
      * on some recombination strategy.
      **/
     protected abstract void crossOver();
     
     /**
-     * Mutate offspring, depending on some mutation strategy.
+     * Mutates offspring, depending on some mutation strategy.
      **/
     protected abstract void mutate();
     
     /**
-     * Select individuals that shall be preserved and proceed to next
+     * Selects individuals that shall be preserved and proceed to next
      * generation. According to the implemented survivors' selection strategy,
      * only newly generated individuals or also parent individuals may be
      * considered.

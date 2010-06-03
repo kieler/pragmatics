@@ -29,15 +29,14 @@ public class Population extends ArrayList<Individual> {
     private static final long serialVersionUID = -5511104369758838181L;
     
     /**
-     * Constructor for an empty population.
+     * Constructs an empty population.
      */
     public Population() {
         super();
     }
     
     /**
-     * Constructor for a new Population instance using the given list of
-     * individuals.
+     * Constructs a new Population instance using the given list of individuals.
      * 
      * @param individuals
      *            List of individuals
@@ -47,9 +46,10 @@ public class Population extends ArrayList<Individual> {
     }
     
     /**
-     * Randomly choose one of the individuals in the list.
+     * Randomly chooses one of the individuals in the list.
      * 
-     * @return an individual that is in the list, or {@code null}, if the list is empty.
+     * @return an individual that is in the list, or {@code null}, if the list
+     *         is empty.
      */
     public Individual pick() {
         Individual result = null;
@@ -60,23 +60,9 @@ public class Population extends ArrayList<Individual> {
         return result;
     }
     
-//    @Override
-//    /**
-//     * 
-//     * @param fromIndex
-//     * @param toIndex
-//     * @return
-//     */    
-//    public Population subList(final int fromIndex, final int toIndex) {
-//        Population result = new Population();
-//        for (int i = fromIndex; i < toIndex; i++) {
-//            result.add(get(i));
-//        }
-//        return result;
-//    }
-    
     @Override
     public String toString() {
-        return super.toString() + " (" + size() + " individuals)";
+        final String newLine = System.getProperty("line.separator");
+        return super.toString() + newLine + " (" + size() + " individuals)";
     }
 }

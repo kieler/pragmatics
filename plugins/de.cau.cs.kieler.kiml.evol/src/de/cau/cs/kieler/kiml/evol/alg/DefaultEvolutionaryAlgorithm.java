@@ -27,6 +27,7 @@ import de.cau.cs.kieler.kiml.evol.Population;
  * 
  */
 public class DefaultEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
+
     /**
      * Constructor for an evolutionary algorithm with the given initial
      * population. Creates and initializes the algorithm instance.
@@ -53,13 +54,14 @@ public class DefaultEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm 
     
     @Override
     protected void crossOver() {
-        // TODO Auto-generated method stub
         System.out.println("*** cross over");
         if (!selection.isEmpty()) {
+            final int proposal = (int) (selection.size() * CROSS_OVER_RATIO);
+            final int min = MIN_CROSS_OVERS;
+            final int crossOvers = ((proposal < min) ? min : proposal);
             offspring = new Population();
-            final int crossovers = (int) (selection.size() * CROSS_OVER_RATIO) + 1;
-            System.out.println(" -- generate " + crossovers + " out of " + selection.size());
-            for (int i = 0; i < crossovers; i++) {
+            System.out.println(" -- generate " + crossOvers + " out of " + selection.size());
+            for (int i = 0; i < crossOvers; i++) {
                 Individual parent1 = selection.pick();
                 Individual parent2 = selection.pick();
                 Genome genome1 = parent1.getGenome();
@@ -92,7 +94,7 @@ public class DefaultEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm 
     
     @Override
     public boolean isDone() {
-        // TODO Auto-generated method stub
+        // no stop criterion -- algorithm shall run forever
         return false;
     }
     
@@ -120,10 +122,14 @@ public class DefaultEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm 
         population.toArray(individuals);
         Arrays.sort(individuals, Individual.DESCENDING_RATING_COMPARATOR);
         // only some are allowed to generate offspring
-        final int lim = (int) (individuals.length * SELECTION_RATIO) + 1;
-        System.out.println(" -- select " + lim + " of " + count);
+
+        final int min = MIN_SELECT;
+        final int proposal = (int) (individuals.length * SELECTION_RATIO);
+        final int select = ((proposal > min) ? proposal : min);
+
+        System.out.println(" -- select " + select + " of " + count);
         for (Individual ind : individuals) {
-            if (selection.size() < lim) {
+            if (selection.size() < select) {
                 selection.add(ind);
                 System.out.println(" -- select: " + ind);
             } else {
@@ -140,10 +146,9 @@ public class DefaultEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm 
         population.toArray(individuals);
         Arrays.sort(individuals, Individual.DESCENDING_RATING_COMPARATOR);
         // only some survive
-        final int min = 5;
-        final int proposed = (int) (count * SURVIVAL_RATIO);
-        
-        final int lim = ((proposed < min) ? min : proposed);
+        final int min = MIN_SURVIVORS;
+        final int proposal = (int) (count * SURVIVAL_RATIO);
+        final int lim = ((proposal < min) ? min : proposal);
         final Population survivors = new Population();
         System.out.println(" -- keep " + lim + " of " + count);
         for (Individual ind : individuals) {
@@ -154,15 +159,18 @@ public class DefaultEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm 
                 break;
             }
         }
-        population = survivors;
+        population = new Population(survivors);
     }
     
     // private fields
     private Population population;
     private Population selection;
     private Population offspring;
-    private static final double SELECTION_RATIO = .6;
-    private static final double CROSS_OVER_RATIO = .5;
+    private static final double SELECTION_RATIO = .9;
+    private static final double CROSS_OVER_RATIO = 1.0;
     private static final double MUTATION_APPLICATION_PROBABILITY = .6;
-    private static final double SURVIVAL_RATIO = .4;
+    private static final double SURVIVAL_RATIO = .5;
+    private static final int MIN_SELECT = 2;
+    private static final int MIN_CROSS_OVERS = 1;
+    private static final int MIN_SURVIVORS = 5;
 }
