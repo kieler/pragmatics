@@ -3,7 +3,7 @@ import annotations;
 import Moml;
 extension org::eclipse::xtend::util::stdlib::io;          // debug printouts
 //extension org::eclipse:xtend:::util::stdlib::counter;   // usage of counters 
-extension org::eclipse::xtend::util::stdlib::crossref;  // find elements that reference others
+extension org::eclipse::xtend::util::stdlib::crossref;    // find elements that reference others
 //extension org::eclipse::xtend::util::stdlib::mixin;     // annotations
 //extension org::eclipse::xtend::util::stdlib::naming;    // help with qualified names
 extension org::eclipse::xtend::util::stdlib::cloning;     // copy model elements and whole trees
@@ -18,16 +18,17 @@ extension org::eclipse::xtend::util::stdlib::issues;      // pass messages back 
 //-----------------------------------------------------------------------------
   
 //Start Model Transformation here.
-Entity transform(DocumentRoot root):
+create Entity this transform(DocumentRoot root):
  	let entity = transform(root.entity) :
- 	entity.optimize() ->
- 	entity
+ 	this.childEntities.add(entity) ->
+ 	this.optimize()
 ;   
 
 create Entity this transform(Moml::EntityType entity):
 	let list = {}:
 	this.setName(entity.name) ->
 	createTrace(this,entity,"ptolemy","kaom") ->
+	this.addAnnotation("ptolemyClass",entity.class1) ->
 	addProperties(this, entity.property) ->
 	addChildPorts(this) ->
 	addChildEntities(this, entity.entity) ->
@@ -186,8 +187,11 @@ List getPorts(List[EntityType] entities) :
 // entry points for optimizations
 Void optimize(Entity entity):
 	analyzeLinkDirections(entity) ->
+	// optimizeStates has to be before relation optimization because it fixes link directions
+	optimizeStates(entity) ->
 	optimizeSingleRelations(entity) ->
 	optimizeAnnotationRepresentation(entity)
+	
 ;
 
 // --------------------------------------------------------------------------------------------
@@ -300,8 +304,6 @@ Void swapTargetTo(Link link, Linkable linkable):
 // --------------------------------------------------------------------------------------------
 
 Void optimizeSingleRelations(Entity entity):
-	//let relations = entity.childRelations:
-	//optimizeSingleRelations(relations)
 	entity.childRelations.optimizeSingleRelation() ->
 	// remove in a second iteration to avoid concurrent modification exceptions
 	entity.childLinks.select(a|a.getAnnotation("toBeRemoved")!=null).remove() ->
@@ -327,6 +329,10 @@ Void remove(Link link):
 	link.setSource(null) 
 	-> link.setTarget(null)
 	-> ((Entity)link.eContainer).childLinks.remove(link) 
+;
+
+Void remove(Port port):
+	((Entity)port.eContainer).childPorts.remove(port)
 ;
 
 // --------------------------------------------------------------------------------------------
@@ -373,6 +379,47 @@ Void optimizeAnnotationRepresentation(Annotation annotation):
 		)
 		default: null	
 	}
+;
+
+// --------------------------------------------------------------------------------------------
+//    Transform links of states into transitions that dont use ports
+// --------------------------------------------------------------------------------------------
+
+Void optimizeStates(Entity entity):
+	// temp list for iteration
+	let ports = {}:
+	ports.addAll(entity.childPorts) ->
+	if(entity.getAnnotation("ptolemyClass").value == "ptolemy.domains.modal.kernel.State") then
+			(reportWarning("size="+ports)->ports.moveLinksUp())
+	else null ->
+	entity.childEntities.optimizeStates()
+;
+
+Void moveLinksUp(Port port):
+	// create new temp list to avoid concurrent modification exception
+	let list = {}:
+	reportWarning("moveLinkUp "+port.eContainer.getName() + "." + port.name) ->
+	list.addAll(port.outgoingLinks) ->
+	list.addAll(port.incomingLinks) ->
+	((List[Link])list).fixLinkDirectionForState(port) ->
+	((List[Link])list).moveLinkUp(port) ->
+	port.remove()
+;
+
+Void moveLinkUp(Link link, Port port):
+	//reportWarning("moveLinkUp "+port.eContainer.getName() + "." + port.name) ->
+	if(link.source == port) 
+	then link.setSource(port.eContainer)
+	else link.setTarget(port.eContainer)
+;
+
+// a Ptolemy State is an Entity with exactly one input and one output
+// they carry a name indicating the type of port, so use that if the attribute cannot
+// be found
+Void fixLinkDirectionForState(Link link, Port port):
+	if(port.hasAnnotation("input") || port.name == "incomingPort") 
+	then link.swapTargetTo(port)
+	else link.swapSourceTo(port)
 ;
 
 // --------------------------------------------------------------------------------------------
@@ -441,3 +488,4 @@ List infoAndReturn(List input):
 List reportWarningAndReturn(List input):
 	reportWarning(""+input) -> input
 ;
+
