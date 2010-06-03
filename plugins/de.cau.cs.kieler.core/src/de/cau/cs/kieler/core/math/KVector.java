@@ -11,54 +11,94 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.core.util;
-
-import de.cau.cs.kieler.core.util.KielerMath.Point;
+package de.cau.cs.kieler.core.math;
 
 /**
- * A simple 2d-vector class which supports translation, scaling, normalization ...
- * 
- * Extends <code>KielerMath.Point</code>, because there are some calculations defined on Point.
+ * A simple 2D vector class which supports translation, scaling, normalization etc.
  * 
  * @author uru
  * @author owo
- * 
  */
-public class KVector extends Point {
+public class KVector {
 
-    private static final double HALF_ROTATION = 180d;
+    /** angle for a half rotation. */
+    private static final double HALF_ROTATION = 180.0;
 
+    // CHECKSTYLEOFF VisibilityModifier
+    /** x coordinate. */
+    public double x;
+    /** y coordinate. */
+    public double y;
+    // CHECKSTYLEON VisibilityModifier
+    
     /**
      * Create vector with default coordinates (0,0).
      */
     public KVector() {
-        super(0.0d, 0.0d);
+        this.x = 0.0;
+        this.y = 0.0;
     }
 
     /**
-     * Constructs new Vector from given values.
+     * Constructs a new vector from given values.
      * 
-     * @param x
-     *            x value
-     * @param y
-     *            y value
+     * @param thex x value
+     * @param they y value
      */
-    public KVector(final double x, final double y) {
-        super(x, y);
+    public KVector(final double thex, final double they) {
+        this.x = thex;
+        this.y = they;
     }
 
     /**
-     * Creates an exact copy of given vector v.
+     * Creates an exact copy of a given vector v.
      * 
-     * @param v
-     *            vector
+     * @param v existing vector
      */
     public KVector(final KVector v) {
-        this(v.x, v.y);
+        this.x = v.x;
+        this.y = v.y;
+    }
+
+    /**
+     * returns an exact copy of this vector.
+     * 
+     * @return identical vector
+     */
+    @Override
+    public KVector clone() {
+        return new KVector(this.x, this.y);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        return "(" + x + "," + y + ")";
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean equals(final Object obj) {
+        if (obj instanceof KVector) {
+            KVector other = (KVector) obj;
+            return this.x == other.x && this.y == other.y;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int hashCode() {
+        return Double.valueOf(x).hashCode() + Double.valueOf(y).hashCode();
     }
 
     /**
      * Compute euclidean norm (a.k.a length).
+     * FIXME why define two names for the same function? (msp)
      * 
      * @return length of this vector
      */
@@ -109,13 +149,11 @@ public class KVector extends Point {
     }
 
     /**
-     * Returns sum of two given vectors.
+     * Returns the sum of two given vectors as a new vector instance.
      * 
-     * @param v1
-     *            first vector
-     * @param v2
-     *            snd vector
-     * @return new Vector first + snd
+     * @param v1 first vector
+     * @param v2 second vector
+     * @return new vector first + second
      */
     public static KVector add(final KVector v1, final KVector v2) {
         return new KVector(v1.x + v2.x, v1.y + v2.y);
@@ -124,8 +162,7 @@ public class KVector extends Point {
     /**
      * Vector subtraction.
      * 
-     * @param v
-     *            vector to subtract
+     * @param v vector to subtract
      * @return <code>this</code>
      */
     public final KVector sub(final KVector v) {
@@ -135,13 +172,11 @@ public class KVector extends Point {
     }
 
     /**
-     * Returns the subtraction of the two given vectors.
+     * Returns the subtraction of the two given vectors as a new vector instance.
      * 
-     * @param v1
-     *            first vector
-     * @param v2
-     *            snd vector
-     * @return new Vector first - snd
+     * @param v1 first vector
+     * @param v2 second vector
+     * @return new vector first - second
      */
     public static KVector sub(final KVector v1, final KVector v2) {
         return new KVector(v1.x - v2.x, v1.y - v2.y);
@@ -150,8 +185,7 @@ public class KVector extends Point {
     /**
      * Scale the vector.
      * 
-     * @param scale
-     *            scaling factor
+     * @param scale scaling factor
      * @return <code>this</code>
      */
     public final KVector scale(final double scale) {
@@ -161,7 +195,7 @@ public class KVector extends Point {
     }
 
     /**
-     * normalizes this vector.
+     * Normalize the vector.
      * 
      * @return <code>this</code>
      */
@@ -173,7 +207,7 @@ public class KVector extends Point {
     }
 
     /**
-     * returns negated vector.
+     * Negate the vector.
      * 
      * @return <code>this</code>
      */
@@ -194,6 +228,7 @@ public class KVector extends Point {
 
     /**
      * Return x-coordinate.
+     * FIXME remove this
      * 
      * @return x-coordinate
      * @deprecated
@@ -204,6 +239,7 @@ public class KVector extends Point {
 
     /**
      * Return y-coordinate.
+     * FIXME remove this
      * 
      * @return y-coordinate
      * @deprecated
@@ -214,6 +250,7 @@ public class KVector extends Point {
 
     /**
      * Set new x-coordinate.
+     * FIXME remove this
      * 
      * @param newxpos
      *            new x-coordinate
@@ -225,6 +262,7 @@ public class KVector extends Point {
 
     /**
      * Set new y-coordinate.
+     * FIXME remove this
      * 
      * @param newypos
      *            new y-coordinate
@@ -237,8 +275,7 @@ public class KVector extends Point {
     /**
      * Create a scaled version of this vector.
      * 
-     * @param lambda
-     *            scaling factor
+     * @param lambda scaling factor
      * @return new vector which is <code>this</code> scaled by <code>lambda</code>
      */
     public final KVector scaledCreate(final double lambda) {
@@ -257,8 +294,7 @@ public class KVector extends Point {
     /**
      * Create a sum from this vector and another vector.
      * 
-     * @param v
-     *            second addend
+     * @param v second addend
      * @return new vector which is the sum of <code>this</code> and <code>v</code>
      */
     public final KVector sumCreate(final KVector v) {
@@ -268,8 +304,7 @@ public class KVector extends Point {
     /**
      * Create a sum from this vector and another vector.
      * 
-     * @param v
-     *            subtrahend
+     * @param v subtrahend
      * @return new vector which is the difference between <code>this</code> and <code>v</code>
      */
     public final KVector differenceCreate(final KVector v) {
@@ -279,9 +314,8 @@ public class KVector extends Point {
     /**
      * Returns the distance between two vectors.
      * 
-     * @param v2
-     *            snd vector
-     * @return distance between this and snd vector
+     * @param v2 second vector
+     * @return distance between this and second vector
      */
     public double distance(final KVector v2) {
         double dx = this.x - v2.x;
@@ -292,11 +326,9 @@ public class KVector extends Point {
     /**
      * Returns the distance between two vectors.
      * 
-     * @param v1
-     *            first vector
-     * @param v2
-     *            snd vector
-     * @return distance between first and snd
+     * @param v1 first vector
+     * @param v2 second vector
+     * @return distance between first and second
      */
     public static double distance(final KVector v1, final KVector v2) {
         double dx = v1.x - v2.x;
@@ -307,8 +339,7 @@ public class KVector extends Point {
     /**
      * Returns the dot product of the two given vectors.
      * 
-     * @param v2
-     *            snd vector
+     * @param v2 second vector
      * @return (this.x * this.x) + (v1.y * v2.y)
      */
     public double productDot(final KVector v2) {
@@ -318,10 +349,8 @@ public class KVector extends Point {
     /**
      * Returns the dot product of the two given vectors.
      * 
-     * @param v1
-     *            first vector
-     * @param v2
-     *            snd vector
+     * @param v1 first vector
+     * @param v2 second vector
      * @return (this.x * this.x) + (v1.y * v2.y)
      */
     public static double productDot(final KVector v1, final KVector v2) {
@@ -339,38 +368,6 @@ public class KVector extends Point {
         double radians = (angle * Math.PI) / HALF_ROTATION;
         // vector automatically is normalized
         return new KVector(Math.sin(radians), Math.cos(radians));
-    }
-
-    /**
-     * returns an exact copy of this vector.
-     * 
-     * @return identical vector
-     */
-    @Override
-    public KVector clone() {
-        return new KVector(this.x, this.y);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj instanceof KVector) {
-            KVector v = (KVector) obj;
-            if (v.x == this.x && v.y == this.y) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return Double.valueOf(x).hashCode() + Double.valueOf(y).hashCode();
     }
 
 }

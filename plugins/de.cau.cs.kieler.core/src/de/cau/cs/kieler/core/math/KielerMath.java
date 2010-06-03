@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.core.util;
+package de.cau.cs.kieler.core.math;
 
 import java.util.List;
 
@@ -27,53 +27,6 @@ public final class KielerMath {
      * Hidden constructor to avoid instantiation.
      */
     private KielerMath() {
-    }
-    
-    /** Data class to store two coordinate values. */
-    public static class Point {
-        // CHECKSTYLEOFF VisibilityModifier
-        /** x coordinate. */
-        public double x;
-        /** y coordinate. */
-        public double y;
-        // CHECKSTYLEON VisibilityModifier
-
-        /**
-         * Creates a point given two coordinates.
-         * 
-         * @param thex the x coordinate
-         * @param they the y coordinate
-         */
-        public Point(final double thex, final double they) {
-            this.x = thex;
-            this.y = they;
-        }
-        
-        /**
-         * {@inheritDoc}
-         */
-        public String toString() {
-            return "(" + x + "," + y + ")";
-        }
-        
-        /**
-         * {@inheritDoc}
-         */
-        public boolean equals(final Object obj) {
-            if (obj instanceof Point) {
-                Point other = (Point) obj;
-                return this.x == other.x && this.y == other.y;
-            } else {
-                return false;
-            }
-        }
-    
-        /**
-         * {@inheritDoc}
-         */
-        public int hashCode() {
-            return Double.valueOf(x).hashCode() + Double.valueOf(y).hashCode();
-        }
     }
     
     /** table of precomputed factorial values. */
@@ -193,23 +146,24 @@ public final class KielerMath {
      * @param resultSize number of returned curve points
      * @return points on the curve defined by the given control points
      */
-    public static Point[] calcBezierPoints(final List<Point> controlPoints, final int resultSize) {
+    public static KVector[] calcBezierPoints(final List<KVector> controlPoints,
+            final int resultSize) {
         if (resultSize <= 0) {
-            return new Point[0];
+            return new KVector[0];
         }
-        Point[] result = new Point[resultSize];
+        KVector[] result = new KVector[resultSize];
         int n = controlPoints.size() - 1;
         double dt = (1.0 / resultSize), t = 0;
         for (int i = 0; i < resultSize; i++) {
             t += dt;
             double x = 0, y = 0;
             for (int j = 0; j <= n; j++) {
-                Point p = controlPoints.get(j);
+                KVector p = controlPoints.get(j);
                 double factor = binomiald(n, j) * pow(1 - t, n - j) * pow(t, j);
                 x += p.x * factor;
                 y += p.y * factor;
             }
-            result[i] = new Point(x, y);
+            result[i] = new KVector(x, y);
         }
         return result;
     }

@@ -24,7 +24,7 @@ import de.cau.cs.kieler.core.kgraph.KGraphFactory;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
-import de.cau.cs.kieler.core.util.KielerMath;
+import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KBooleanOption;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;

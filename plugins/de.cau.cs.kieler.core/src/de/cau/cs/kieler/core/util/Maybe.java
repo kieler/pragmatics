@@ -83,7 +83,7 @@ public class Maybe<T> {
     @Override
     public boolean equals(final Object obj) {
         if (obj instanceof Maybe<?>) {
-            Maybe<?> other = (Maybe<?>)obj;
+            Maybe<?> other = (Maybe<?>) obj;
             return this.object == null ? other.object == null
                     : this.object.equals(other.object);
         } else {

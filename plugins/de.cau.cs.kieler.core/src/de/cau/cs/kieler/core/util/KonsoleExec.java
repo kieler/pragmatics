@@ -25,9 +25,15 @@ import de.cau.cs.kieler.core.KielerException;
  * Utility class to execute external programs.
  * 
  * @author ctr
- * 
  */
-public class KonsoleExec {
+public final class KonsoleExec {
+    
+    /**
+     * Hidden constructor to avoid instantiation.
+     */
+    private KonsoleExec() {
+    }
+    
     /**
      * Run an external process with a timeout. This method works for Linux/Mac and Windows.
      * 
@@ -69,7 +75,7 @@ public class KonsoleExec {
             stdin.close();
             // wait for initial output
             long time = System.currentTimeMillis();
-            while (stdout.available() == 0 && stderr.available()==0) {
+            while (stdout.available() == 0 && stderr.available() == 0) {
                 if (System.currentTimeMillis() - time > inittime) {
                     throw new KielerException("Timeout executing " + cmd);
                 }
@@ -127,6 +133,6 @@ public class KonsoleExec {
         } catch (IOException e1) {
             throw new KielerException("error executing " + cmd, e1);
         }
-
     }
+    
 }

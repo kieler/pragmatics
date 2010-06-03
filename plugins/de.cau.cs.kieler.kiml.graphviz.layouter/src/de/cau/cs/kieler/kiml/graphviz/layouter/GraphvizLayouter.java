@@ -65,10 +65,10 @@ import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.util.ForkedOutputStream;
 import de.cau.cs.kieler.core.util.ForwardingInputStream;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.core.util.KielerMath.Point;;
 
 /**
  * Layouter that calls Graphviz through a child process to perform layout. The
@@ -676,7 +676,7 @@ public class GraphvizLayouter {
             final IKielerProgressMonitor monitor) {
         monitor.begin("Transfer layout result", 1);
         Graph graph = graphvizModel.getGraphs().get(0);
-        Point boundingBox = null;
+        KVector boundingBox = null;
         float edgeOffsetx = offset, edgeOffsety = offset;
         for (Statement statement : graph.getStatements()) {
 
@@ -689,7 +689,7 @@ public class GraphvizLayouter {
                 for (Attribute attribute : nodeStatement.getAttributes()) {
                     try {
                         if (attribute.getName().equals(GraphvizAPI.ATTR_POS)) {
-                            Point pos = parsePoint(attribute.getValue());
+                            KVector pos = parsePoint(attribute.getValue());
                             xpos = (float) pos.x + offset;
                             ypos = (float) pos.y + offset;
                         } else if (attribute.getName().equals(GraphvizAPI.ATTR_WIDTH)) {
@@ -719,7 +719,7 @@ public class GraphvizLayouter {
                 String posString = attributeMap.get(GraphvizAPI.ATTR_POS);
                 
                 // parse the list of spline control coordinates
-                List<List<Point>> splines = new LinkedList<List<Point>>();
+                List<List<KVector>> splines = new LinkedList<List<KVector>>();
                 Pair<KPoint, KPoint> endpoints = parseSplinePoints(posString, splines,
                         edgeOffsetx, edgeOffsety);
 
@@ -730,21 +730,21 @@ public class GraphvizLayouter {
                     // the first point in the list is the start point, if no arrowhead is given
                     if (sourcePoint == null) {
                         sourcePoint = layoutDataFactory.createKPoint();
-                        Point firstPoint = splines.get(0).remove(0);
+                        KVector firstPoint = splines.get(0).remove(0);
                         sourcePoint.setX((float) firstPoint.x);
                         sourcePoint.setY((float) firstPoint.y);
                     }
                     // the last point in the list is the end point, if no arrowhead is given
                     if (targetPoint == null) {
                         targetPoint = layoutDataFactory.createKPoint();
-                        List<Point> points = splines.get(splines.size() - 1);
-                        Point lastPoint = points.remove(points.size() - 1);
+                        List<KVector> points = splines.get(splines.size() - 1);
+                        KVector lastPoint = points.remove(points.size() - 1);
                         targetPoint.setX((float) lastPoint.x);
                         targetPoint.setY((float) lastPoint.y);
                     }
                     // add all other control points to the edge
-                    for (List<Point> points : splines) {
-                        for (Point point : points) {
+                    for (List<KVector> points : splines) {
+                        for (KVector point : points) {
                             KPoint controlPoint = layoutDataFactory.createKPoint();
                             controlPoint.setX((float) point.x);
                             controlPoint.setY((float) point.y);
@@ -788,7 +788,7 @@ public class GraphvizLayouter {
                                 float bottomy = Float.parseFloat(tokenizer.nextToken());
                                 float rightx = Float.parseFloat(tokenizer.nextToken());
                                 float topy = Float.parseFloat(tokenizer.nextToken());
-                                boundingBox = new Point(rightx - leftx, bottomy - topy);
+                                boundingBox = new KVector(rightx - leftx, bottomy - topy);
                                 // on some platforms the edges have an offset, but the nodes don't
                                 //  -- maybe a Graphviz bug?
                                 edgeOffsetx -= leftx;
@@ -834,7 +834,7 @@ public class GraphvizLayouter {
                 combinedHeight += labelLayout.getHeight();
             }
         }
-        Point pos = parsePoint(posString);
+        KVector pos = parsePoint(posString);
         float xpos = (float) pos.x - combinedWidth / 2 + offsetx;
         float ypos = (float) pos.y - combinedHeight / 2 + offsety;
         for (KLabel label : kedge.getLabels()) {
@@ -873,11 +873,11 @@ public class GraphvizLayouter {
      * @return the source and the target point, if specified by the position string
      */
     private static Pair<KPoint, KPoint> parseSplinePoints(final String posString,
-            final List<List<Point>> splines, final float offsetx, final float offsety) {
+            final List<List<KVector>> splines, final float offsetx, final float offsety) {
         KPoint sourcePoint = null, targetPoint = null;
         StringTokenizer splinesTokenizer = new StringTokenizer(posString, "\";");
         while (splinesTokenizer.hasMoreTokens()) {
-            ArrayList<Point> pointList = new ArrayList<Point>();
+            ArrayList<KVector> pointList = new ArrayList<KVector>();
             StringTokenizer posTokenizer = new StringTokenizer(splinesTokenizer.nextToken(), " ");
             while (posTokenizer.hasMoreTokens()) {
                 String token = posTokenizer.nextToken();
@@ -885,7 +885,7 @@ public class GraphvizLayouter {
                     if (sourcePoint == null) {
                         sourcePoint = KLayoutDataFactory.eINSTANCE.createKPoint();
                         int commaIndex = token.indexOf(',');
-                        Point point = parsePoint(token.substring(commaIndex + 1));
+                        KVector point = parsePoint(token.substring(commaIndex + 1));
                         sourcePoint.setX((float) point.x + offsetx);
                         sourcePoint.setY((float) point.y + offsety);
                     }
@@ -893,12 +893,12 @@ public class GraphvizLayouter {
                     if (targetPoint == null) {
                         targetPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
                         int commaIndex = token.indexOf(',');
-                        Point point = parsePoint(token.substring(commaIndex + 1));
+                        KVector point = parsePoint(token.substring(commaIndex + 1));
                         targetPoint.setX((float) point.x + offsetx);
                         targetPoint.setY((float) point.y + offsety);
                     }
                 } else {
-                    Point point = parsePoint(token);
+                    KVector point = parsePoint(token);
                     point.x += offsetx;
                     point.y += offsety;
                     pointList.add(point);
@@ -918,7 +918,7 @@ public class GraphvizLayouter {
      * @param string string from which the point is parsed
      * @return a point with x and y coordinates
      */
-    private static Point parsePoint(final String string) {
+    private static KVector parsePoint(final String string) {
         double x = 0.0f, y = 0.0f;
         StringBuilder xbuilder = null, ybuilder = null;
         boolean commaRead = false;
@@ -949,7 +949,7 @@ public class GraphvizLayouter {
         if (ybuilder != null) {
             y = Double.valueOf(ybuilder.toString());
         }
-        return new Point(x, y);
+        return new KVector(x, y);
     }
 
 }
