@@ -20,11 +20,14 @@ import com.microstar.xml.XmlException;
 
 import de.cau.cs.kieler.annotations.Annotation;
 import de.cau.cs.kieler.annotations.AnnotationsFactory;
-import de.cau.cs.kieler.annotations.BooleanAnnotation;
 import de.cau.cs.kieler.annotations.StringAnnotation;
 import de.cau.cs.kieler.kaom.KaomFactory;
 import de.cau.cs.kieler.kaom.Port;
 
+/**
+ * Helper methods to inspect Ptolemy models. Could be used from Xtend transformations.
+ * @author haf
+ */
 public class PtolemyHelper implements IExecutionContextAware {
 
     ExecutionContext ctx;
@@ -45,29 +48,16 @@ public class PtolemyHelper implements IExecutionContextAware {
         try {
             NamedObj actor = instanciatePtolemyEntity(ptolemyEntity);
 
-            // get lists of all ports
-            /*
-             * List ptolemyPorts = new LinkedList(); List inputs =
-             * ((ptolemy.actor.Actor) actor).inputPortList(); List outputs =
-             * ((ptolemy.actor.Actor) actor).outputPortList();
-             * ptolemyPorts.addAll(inputs); // avoid duplicates. A port may be
-             * both, input and output for (Object output : outputs) { if
-             * (ptolemyPorts.contains(output)) { continue; }
-             * ptolemyPorts.add(output); }
-             */
-            // for (Object obj : ptolemyPorts) {
             for (Object obj : ((Entity) actor).portList()) {
                 if (obj instanceof IOPort) {
                     IOPort ptolemyPort = (IOPort) obj;
                     Port kaomPort = KaomFactory.eINSTANCE.createPort();
                     // find out whether it is an input or output (or both)
-                    //if (inputs.contains(ptolemyPort)) {
                     if (ptolemyPort.isInput()) {
                         Annotation isInput = AnnotationsFactory.eINSTANCE.createAnnotation();
                         isInput.setName("input");
                         kaomPort.getAnnotations().add(isInput);
                     }
-                    //if (outputs.contains(ptolemyPort)) {
                     if (ptolemyPort.isOutput()) {
                         Annotation isOutput = AnnotationsFactory.eINSTANCE.createAnnotation();
                         isOutput.setName("output");
@@ -168,6 +158,10 @@ public class PtolemyHelper implements IExecutionContextAware {
         return kaomAnnotation;
     }
 
+    /**
+     * Execution context is set by Xtend component from outside. It can be used
+     * to obtain detailed information about the transformation.
+     */
     public void setExecutionContext(ExecutionContext ctx) {
         this.ctx = ctx;
     }
