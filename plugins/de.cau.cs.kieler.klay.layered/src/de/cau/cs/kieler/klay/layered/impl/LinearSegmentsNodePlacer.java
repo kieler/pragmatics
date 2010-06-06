@@ -22,6 +22,7 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.layout.options.PortType;
 import de.cau.cs.kieler.klay.layered.LayeredLayoutProvider;
 import de.cau.cs.kieler.klay.layered.graph.Coord;
+import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
@@ -29,16 +30,15 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.modules.INodePlacer;
 
 /**
- * Node placement implementation that aligns long edges using linear segments.
- * Inspired by Section 4 of
+ * Node placement implementation that aligns long edges using linear segments. Inspired by Section 4
+ * of
  * <ul>
- *   <li>Georg Sander. A fast heuristic for hierarchical manhattan layout. In
- *     <i>Proceedings of the Symposium on Graph Drawing (GD '95)</i>, pp. 447-458,
- *     Springer, 1996.
+ * <li>Georg Sander. A fast heuristic for hierarchical manhattan layout. In <i>Proceedings of the
+ * Symposium on Graph Drawing (GD '95)</i>, pp. 447-458, Springer, 1996.
  * </ul>
  * 
  * TODO implement balancing of the placement
- *
+ * 
  * @author msp
  */
 public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INodePlacer {
@@ -47,7 +47,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
      * A linear segment contains a single regular node or all dummy nodes of a long edge.
      */
     public static class LinearSegment implements Comparable<LinearSegment> {
-        
+
         /** nodes of the linear segment. */
         private List<LNode> nodes = new LinkedList<LNode>();
 
@@ -57,32 +57,94 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
         public List<LNode> getNodes() {
             return nodes;
         }
-        
+
         // CHECKSTYLEOFF VisibilityModifier
         /** Identifier value, may be arbitrarily used by algorithms. */
         public int id;
+
         // CHECKSTYLEON VisibilityModifier
-        
+
         /**
          * {@inheritDoc}
          */
         public String toString() {
             return "ls" + nodes.toString();
         }
-        
+
         /**
          * {@inheritDoc}
          */
         public int compareTo(final LinearSegment other) {
             return this.id - other.id;
         }
-        
+
     }
-    
+
+    /**
+     * A Region contains Nodes or LinearSegments, that are touching and therefor need to be moved as
+     * a unit.
+     */
+    public static class Region {
+        // The nodes that forms the region
+        private List<LNode> nodes = new LinkedList<LNode>();
+        // The accumulated force of the contained nodes
+        private float force = 0;
+        
+        /** Contructor. */
+        public Region() {
+            regions.add(this);
+        }
+        
+        /** @return List of Nodes contained in the region */
+        public List<LNode> getNodes() {
+            return nodes;
+        }
+
+        /** @param node LNode to be added to the region */
+        public void addNode(final LNode node) {
+            nodes.add(node);
+        }
+
+        /** @param newForce the force to be added */
+        public void addForce(final float newForce) {
+            this.force += newForce;
+        }
+
+        /** @return the force */
+        public float getForce() {
+            return force;
+        }
+        
+        /** @param newForce the force to set */
+        public void setForce(final float newForce) {
+            this.force = newForce;
+        }
+        
+        /** @param other The other Region to be 'unioned' */
+        public void union(final Region other) {
+            // Keep the Region with lower index
+            if (regions.indexOf(this) > regions.indexOf(other)) {
+                // TODO concurrent modification :(
+                for (LNode node : this.getNodes()) {
+                    other.addNode(node);
+                }
+                regions.remove(this);
+            } else {
+                // Add all nodes of other region to this region
+                for (LNode node : other.getNodes()) {
+                    this.addNode(node);
+                }
+                regions.remove(other);
+            }
+        }
+    }
+
     /** minimal spacing between objects. */
     private float spacing = LayeredLayoutProvider.DEF_SPACING;
     /** array of sorted linear segments. */
     private LinearSegment[] linearSegments;
+    /** List of regions. */
+    private static List<Region> regions = new LinkedList<Region>();
 
     /**
      * {@inheritDoc}
@@ -97,8 +159,8 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
     public void placeNodes(final LayeredGraph layeredGraph) {
         getMonitor().begin("Linear segments node placement", 1);
 
-//        this.lastElements = new LayerElement[layeredGraph.getLayers().size()
-//                + layeredGraph.getLayers().get(0).getRank()];
+        // this.lastElements = new LayerElement[layeredGraph.getLayers().size()
+        // + layeredGraph.getLayers().get(0).getRank()];
 
         // sort the linear segments of the layered graph
         sortLinearSegments(layeredGraph);
@@ -106,6 +168,8 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
         createUnbalancedPlacement(layeredGraph);
         // arrange port positions
         arrangePorts(layeredGraph);
+        // balance the placement
+        // balancePlacement(layeredGraph);
 
         // set the proper height for the whole graph
         Coord graphSize = layeredGraph.getSize();
@@ -115,7 +179,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
 
         getMonitor().done();
     }
-    
+
     /**
      * @return the linear segments
      */
@@ -124,10 +188,11 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
     }
 
     /**
-     * Sorts the linear segments of the given layered graph by finding a
-     * topological ordering in the corresponding segment ordering graph.
+     * Sorts the linear segments of the given layered graph by finding a topological ordering in the
+     * corresponding segment ordering graph.
      * 
-     * @param layeredGraph layered graph to process
+     * @param layeredGraph
+     *            layered graph to process
      * @return a sorted array of linear segments
      */
     private LinearSegment[] sortLinearSegments(final LayeredGraph layeredGraph) {
@@ -201,13 +266,14 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
         Arrays.sort(linearSegments);
         return linearSegments;
     }
-    
+
     /**
-     * Put a node into the given linear segment and check for following parts of
-     * a long edge.
+     * Put a node into the given linear segment and check for following parts of a long edge.
      * 
-     * @param node the node to put into the linear segment
-     * @param segment a linear segment
+     * @param node
+     *            the node to put into the linear segment
+     * @param segment
+     *            a linear segment
      */
     private void fillSegment(final LNode node, final LinearSegment segment) {
         node.id = segment.id;
@@ -254,11 +320,146 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
             }
         }
     }
-    
+
+    private void balancePlacement(final LayeredGraph layeredGraph) {
+        // Initialize Regions = Linear segments
+        for (int s = 0; s < linearSegments.length; s++) {
+            LinearSegment segment = linearSegments[s];
+            Region region = new Region();
+            for (LNode node : segment.getNodes()) {
+                region.addNode(node);
+            }
+        }
+        
+        // Iterate the balancing
+        boolean forward = true;
+        boolean ready = false;    
+
+        while (!ready) {
+            ready = true;
+            
+            // Iterate regions
+            for (int i = 0; i < regions.size(); i++) {
+                // Iterate alternating forward or backward
+                // through the regions
+                int regionIndex;
+                if (forward) {
+                    regionIndex = i;
+                } else {
+                    regionIndex = regions.size() - i - 1;
+                }
+                Region region = regions.get(regionIndex);
+
+                List<LNode> nodes = region.getNodes();
+                for (LNode node : nodes) {
+                    System.out.println("Node: Index:" + node.getIndex() + " id:" + node.id
+                            + " String:" + node.toString());
+                    float sum = 0.0f;
+                    int numEdges = 0;
+                    for (LPort port : node.getPorts()) {
+                        for (LEdge edge : port.getEdges()) {
+                            LPort gegenPort;
+                            // Check only Edges in one direction
+                            if (forward && port.getType() == PortType.OUTPUT) {
+                                gegenPort = edge.getTarget();
+                                LNode gegenNode = gegenPort.getNode();
+                                sum += (gegenNode.getPos().y + gegenPort.getPos().y)
+                                        - (node.getPos().y + port.getPos().y);
+                                numEdges++;
+                            } else if (!forward && port.getType() == PortType.INPUT) {
+                                gegenPort = edge.getSource();
+                                LNode gegenNode = gegenPort.getNode();
+                                sum += (gegenNode.getPos().y + gegenPort.getPos().y)
+                                        - (node.getPos().y + port.getPos().y);
+                                numEdges++;
+                            }
+                        }
+                    }
+                    // Avoid division by zero on sources and sinks
+                    if (numEdges > 0) {
+                        sum /= numEdges;
+                    } else {
+                        sum = 0.0f;
+                    }
+
+                    LNode blocking = null;
+                    LNode neighbor = null;
+                    int numNodes = node.getLayer().getNodes().size();
+                    // Force directed downward
+                    if (sum > 0.0f) {
+                        // Node is not last node in layer
+                        if (node.getIndex() < numNodes - 1) {
+                            // Check if there is enough place to move
+                            neighbor = node.getLayer().getNodes().get(node.getIndex() + 1);
+                            if (neighbor.getPos().y < node.getPos().y + node.getSize().y) {
+                                blocking = neighbor;
+                            }
+                        }
+                        // Force directed upwards
+                    } else if (sum < 0.0f) {
+                        // Node is not first node in layer
+                        if (node.getIndex() != 0) {
+                            neighbor = node.getLayer().getNodes().get(node.getIndex() - 1);
+                            if (neighbor.getPos().y + neighbor.getSize().y > node.getPos().y + sum) {
+                                blocking = neighbor;
+                            }
+                        }
+                    }
+
+                    if (blocking == null) {
+                        System.out.println("Sum for Node" + node.getIndex() + ": " + sum);
+                        region.addForce(sum);
+                    } else {
+                        // Union both regions
+                        // get Region from Node
+                        for (Region otherRegion : regions) {
+                            if (otherRegion.getNodes().contains(node)) {
+                                region.union(otherRegion);
+                                break;
+                            }
+                        }
+                        ready = false;
+                        System.out.println(blocking.getIndex() + " U " + node.getIndex());
+                    }
+                }
+
+                // test for all nodes, if they can be moved that far
+                for (LNode node : region.getNodes()) {
+                    if (region.getForce() < 0.0f 
+                            && node.getIndex() > 0) {
+                        // Force is directed upward and the node is not topmost
+                        LNode neighbor = node.getLayer().getNodes().get(node.getIndex() - 1);
+                        if (neighbor.getPos().y + neighbor.getSize().y + spacing > node.getPos().y) {
+                            // Set force on region to the max possible force
+                            region.setForce(node.getPos().y 
+                                    - (neighbor.getPos().y + neighbor.getSize().y + spacing));
+                        }
+                    } else if (region.getForce() > 0.0f
+                        // Force is directed downward and the node is not lowermost
+                            && node.getIndex() < node.getLayer().getNodes().size() - 1) {
+                        LNode neighbor = node.getLayer().getNodes().get(node.getIndex() + 1);
+                        if (node.getPos().y + node.getSize().y + spacing > neighbor.getPos().y) {
+                            // Set force on region to the max possible force
+                            region.setForce(neighbor.getPos().y
+                                    - (node.getPos().y + node.getSize().y + spacing));
+                        }
+                    }
+                }
+                // move nodes
+                for (LNode node : region.getNodes()) {
+                    node.getPos().y = node.getPos().y + region.getForce();
+                }
+                
+            }
+            forward = !forward;
+        }
+    }
+
     /**
      * Arrange the ports of all nodes in the layered graph.
      * 
-     * @param layeredGraph a layered graph
+     * @param layeredGraph
+     *            a layered graph
      */
     private void arrangePorts(final LayeredGraph layeredGraph) {
         for (Layer layer : layeredGraph.getLayers()) {
@@ -271,7 +472,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
                         outputCount++;
                     }
                 }
-                float inputDelta = node.getSize().y  / inputCount;
+                float inputDelta = node.getSize().y / inputCount;
                 float outputDelta = node.getSize().y / outputCount;
                 float inputY = inputDelta, outputY = outputDelta;
                 for (LPort port : node.getPorts()) {

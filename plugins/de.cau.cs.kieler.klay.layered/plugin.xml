@@ -15,6 +15,9 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.borderSpacing">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.priority">
+         </knownOption>
       </layoutProvider>
    </extension>
 
