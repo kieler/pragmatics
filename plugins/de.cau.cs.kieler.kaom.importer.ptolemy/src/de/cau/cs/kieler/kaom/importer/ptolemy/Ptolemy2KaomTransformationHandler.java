@@ -1,6 +1,8 @@
 package de.cau.cs.kieler.kaom.importer.ptolemy;
 
 
+import java.net.UnknownHostException;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -60,7 +62,7 @@ public class Ptolemy2KaomTransformationHandler extends AbstractHandler implement
                     IStatus.WARNING,
                     Activator.PLUGIN_ID,
                     "Failed to transform Ptolemy model into KAOM model. Could not determine input file. No file selected.");
-        } finally {
+        }finally {
             if (myStatus != null) {
                 StatusManager.getManager().handle(myStatus, StatusManager.SHOW);
             }
