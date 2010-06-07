@@ -15,7 +15,6 @@ package de.cau.cs.kieler.core.math;
 
 import java.util.LinkedList;
 
-
 /**
  * Provides a technique to calculate a piece-wise bezier spline for a list of given points.
  * 
@@ -25,9 +24,6 @@ import java.util.LinkedList;
  * 
  */
 public class CubicSplineInterpolator implements ISplineInterpolator {
-
-    // private static final double[] f = new double[] { 1, -3, 11, -41, 153, -571, 2131, -7953 };
-    // private static final double[] g = new double[] { 1, -4, 15, -56, 209, -780, 2911, -10864 };
 
     /**
      * Interpolation Coefficients for even n. Address like : [m-1][k-1] for m > 7 the values for 1
@@ -57,23 +53,6 @@ public class CubicSplineInterpolator implements ISplineInterpolator {
     /** factor describing the length a in/outgoing vector is scaled. */
     private static final double TANGENT_SCALE = 0.25d;
 
-    // /**
-    // * some testing.
-    // */
-    // public CubicSplineInterpolation() {
-    // KVector[] points = new KVector[20];
-    // // points[0] = new KVector(0, 0);
-    // // points[1] = new KVector(1, 1);
-    // // points[2] = new KVector(2, 1);
-    // // points[3] = new KVector(3, 0);
-    //
-    // for (int i = 0; i < points.length; i++) {
-    // points[i] = new KVector(i + 1, i + 2);
-    // }
-    //
-    // // calculateClosedDs(points);
-    // calculateOpenTs(points);
-    // }
     /**
      * Calculates a closed piecewise bezier spline where the first point is start and end.
      * 
@@ -82,14 +61,12 @@ public class CubicSplineInterpolator implements ISplineInterpolator {
      * @return piecewise bezier spline
      */
     public BezierSpline calculateClosedBezierSpline(final KVector[] points) {
-
         BezierSpline spline = new BezierSpline();
 
         int n = points.length;
         boolean even = (n % 2 == 0);
         // set m depending on n even or odd.
         int m = (even) ? (n - 2) / 2 : (n - 1) / 2;
-        // for n>=15 set m = 7
         m = Math.min(m, MAX_K);
 
         double a = 0;
@@ -100,27 +77,20 @@ public class CubicSplineInterpolator implements ISplineInterpolator {
 
             // calculate sum for every Di
             for (int k = 1; k <= m; k++) {
-                // a = (even) ? -getF(m - k) / getF(m) : getG(m - k) / getG(m);
                 a = (even) ? INTERP_COOF_ODD[Math.min(m - 1, MAX_K - 1)][Math.min(k - 1, MAX_K - 1)]
                         : INTERP_COOF_EVEN[Math.min(m - 1, MAX_K - 1)][Math.min(k - 1, MAX_K - 1)];
                 d[i].x += a * (points[(i + k) % n].x - points[(i - k + n) % n].x);
                 d[i].y += a * (points[(i + k) % n].y - points[(i - k + n) % n].y);
             }
-            // System.out.println("D" + i + ": " + D[i]);
-            // System.out.println("\tQ" + i + ": " + Vectors.add(D[i], points[i]));
-            // System.out.println("\tR" + (i - 1) + ": " + Vectors.sub(points[i], D[i]));
         }
 
         // add all pieces to the piecewise bezier spline
         for (int i = 0; i < n; i++) {
-            // TODO validate
             spline.addCurve(points[i], KVector.add(d[i], points[i]), KVector.sub(
                     points[(i + 1) % n], d[(i + 1) % n]), points[(i + 1) % n]);
         }
 
-        // System.out.println(spline);
         return spline;
-
     }
 
     /**
@@ -162,7 +132,6 @@ public class CubicSplineInterpolator implements ISplineInterpolator {
         KVector[] d = new KVector[n + 1];
 
         // set initial and final tangent vectors
-        // TODO differenciate between 2 point curves and curves with more points.
         double startScale = 0;
         double endScale = 0;
         if (points.length == 2) {
@@ -200,44 +169,17 @@ public class CubicSplineInterpolator implements ISplineInterpolator {
                 d[i].x += a * (t[i + k].x - t[Math.abs((i - k))].x);
                 d[i].y += a * (t[i + k].y - t[Math.abs((i - k))].y);
             }
-            // System.out.println("D" + i + ": " + d[i]);
-            // System.out.println("\tQ" + i + ": " + KVector.add(d[i], t[i]));
-            // System.out.println("\tR" + (i - 1) + ": " + KVector.sub(t[i], d[i]));
         }
 
         // create all bezier spline segments
         for (int i = 0; i < n; i++) {
-            // TODO verify
             KVector bend1 = KVector.add(d[i], points[i]);
             KVector bend2 = KVector.sub(points[(i + 1) % (n + 1)], d[(i + 1) % (n + 1)]);
             spline.addCurve(points[i], bend1, bend2, points[i + 1]);
         }
 
-        // System.out.println(spline);
         return spline;
     }
-
-    // private double getF(int j) {
-    // if (j <= 7) {
-    // return f[j];
-    // } else {
-    // return -4 * getF(j - 1) - getF(j - 2);
-    // }
-    // }
-    //
-    // private double getG(int j) {
-    // if (j <= 7) {
-    // return g[j];
-    // } else {
-    // return -4 * getG(j - 1) - getG(j - 2);
-    // }
-    // }
-    //
-    // public static void main(String[] args) {
-    //
-    // new CubicSplineInterpolation();
-    //
-    // }
 
     /**
      * {@inheritDoc}
@@ -264,8 +206,8 @@ public class CubicSplineInterpolator implements ISplineInterpolator {
     /**
      * {@inheritDoc}
      */
-    public BezierSpline interpolatePoints(final LinkedList<KVector> points,
-            final KVector startVec, final KVector endVec) {
+    public BezierSpline interpolatePoints(final LinkedList<KVector> points, final KVector startVec,
+            final KVector endVec) {
         return calculateOpenBezierSpline(points.toArray(new KVector[points.size()]), startVec,
                 endVec);
     }

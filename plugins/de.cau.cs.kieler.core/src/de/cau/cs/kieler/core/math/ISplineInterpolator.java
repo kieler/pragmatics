@@ -15,25 +15,24 @@ package de.cau.cs.kieler.core.math;
 
 import java.util.LinkedList;
 
-
 /**
- * Global interface for any Spline Interpolator.
+ * Global interface for any Spline interpolator.
  * 
  * @author uru
  */
 public interface ISplineInterpolator {
 
     /**
-     * returns a biecewise bezierspline.
+     * returns a piecewise bezierspline.
      * 
      * @param points
      *            as an array, see implementing class if to prefer Vector or List implementation.
-     * @return biecewise bezierspline
+     * @return piecewise bezierspline
      */
     BezierSpline interpolatePoints(KVector[] points);
 
     /**
-     * returns a biecewise bezierspline.
+     * returns a piecewise bezierspline.
      * 
      * @param points
      *            as an array, see implementing class if to prefer Vector or List implementation.
@@ -41,21 +40,21 @@ public interface ISplineInterpolator {
      *            tangent vector specifying to head out of the first node
      * @param endVec
      *            tangent vector specifying to head into the last node
-     * @return biecewise bezierspline
+     * @return piecewise bezierspline
      */
     BezierSpline interpolatePoints(KVector[] points, KVector startVec, KVector endVec);
 
     /**
-     * returns a biecewise bezierspline.
+     * returns a piecewise bezierspline.
      * 
      * @param points
      *            as an array, see implementing class if to prefer Vector or List implementation.
-     * @return biecewise bezierspline
+     * @return piecewise bezierspline
      */
     BezierSpline interpolatePoints(LinkedList<KVector> points);
 
     /**
-     * returns a biecewise bezierspline.
+     * returns a piecewise bezierspline.
      * 
      * @param points
      *            as an array, see implementing class if to prefer Vector or List implementation.
@@ -63,7 +62,7 @@ public interface ISplineInterpolator {
      *            tangent vector specifying to head out of the first node
      * @param endVec
      *            tangent vector specifying to head into the last node
-     * @return biecewise bezierspline
+     * @return piecewise bezierspline
      */
     BezierSpline interpolatePoints(LinkedList<KVector> points, KVector startVec, KVector endVec);
 }

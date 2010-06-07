@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-
 /**
  * Represents a piecewise bezier spline. This means a collection of bezier curves adding up to a
  * smooth spline.
@@ -71,7 +70,8 @@ public class BezierSpline {
     }
 
     /**
-     * .
+     * Adds a new curve to this piecewise bezier spline. The curve is represented by the startPnt,
+     * endPnt and its control points.
      * 
      * @param startPnt
      *            starting point
@@ -170,8 +170,6 @@ public class BezierSpline {
      * @return approximated set of points
      */
     public KVector[] getPolylineApprx(final int accuracy) {
-
-        // @ TODO verify
 
         // there are #accuracy points per curve, plus the additional start point
         KVector[] apprx = new KVector[(curves.size() * accuracy) + 1];
