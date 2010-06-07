@@ -107,18 +107,20 @@ public class TestView extends ViewPart {
         createToolBar();
         final ISelectionChangedListener listener = new ISelectionChangedListener() {
             public void selectionChanged(final SelectionChangedEvent event) {
-                // TODO Auto-generated method stub
                 final ISelection selection = event.getSelection();
+                System.out.println("selectionChanged");
                 if ((selection != null) && (!selection.isEmpty())
                         && (selection instanceof IStructuredSelection)) {
                     final Object element = ((IStructuredSelection) selection).getFirstElement();
                     if (element instanceof LayoutTableEntry) {
+                        int oldPosition = position;
                         position = ((LayoutTableEntry) element).index;
-                        tableViewer.selectRow(position);
-                        tableViewer.refresh();
-                        refreshLayoutViewPart();
-                        layoutDiagram(false, true);
-                        measureDiagram(false);
+                        if (position != oldPosition) {
+                            // tableViewer.selectRow(position);
+                            tableViewer.refresh();
+                        }
+                        refreshLayout();
+                        System.out.println();
                     }
                 }
             }
@@ -452,9 +454,7 @@ public class TestView extends ViewPart {
             Assert.isTrue(position >= 0);
             tableViewer.selectRow(position);
             tableViewer.refresh();
-            refreshLayoutViewPart();
-            layoutDiagram(false, false);
-            measureDiagram(false);
+            refreshLayout();
         }
     }
 
@@ -472,7 +472,7 @@ public class TestView extends ViewPart {
 
         private void selectRow(final int pos) {
             Assert.isTrue((pos >= 0) && (pos <= population.size()), "position out of range");
-            Display.getCurrent().asyncExec(new Runnable() {
+            Display.getCurrent().syncExec(new Runnable() {
                 public void run() {
                     tableViewer.doSelect(new int[] { position });
                 }
@@ -499,7 +499,16 @@ public class TestView extends ViewPart {
         }
         return result;
     }
-
+    
+    /**
+     * Refresh the layout according to selected individual.
+     */
+    private void refreshLayout() {
+        refreshLayoutViewPart();
+        layoutDiagram(false, false);
+        measureDiagram(false);
+    }
+    
     /**
      * Layout the diagram.
      * 
@@ -507,6 +516,7 @@ public class TestView extends ViewPart {
      * @param showProgressBar
      */
     private void layoutDiagram(final boolean showAnimation, final boolean showProgressBar) {
+        System.out.println("layout diagram");
         if ((propertySource != null) && (population != null)) {
             final LayoutViewPart layoutViewPart = LayoutViewPart.findView();
             if (layoutViewPart == null) {
@@ -529,12 +539,13 @@ public class TestView extends ViewPart {
                     }
                 }
             }
-            refreshLayoutViewPart();
+            // refreshLayoutViewPart();
             DiagramLayoutManager.layout(editor, part, showAnimation, showProgressBar);
         }
     }
 
     private void measureDiagram(final boolean showProgressBar) {
+        System.out.println("measure diagram");
         if ((propertySource == null) || (population == null)) {
             return;
         }
@@ -559,11 +570,17 @@ public class TestView extends ViewPart {
                 }
             }
         }
-        final String id = "de.cau.cs.kieler.kiml.grana.bendsMetric";
-        final AbstractInfoAnalysis bendsMetric = AnalysisServices.getInstance().getAnalysisById(id);
+        final String bendsMetricId = "de.cau.cs.kieler.kiml.grana.bendsMetric";
+        final String hCompactnessMetricId = "de.cau.cs.kieler.kiml.grana.horizontalCompactnessMetric";
+        final AbstractInfoAnalysis bendsMetric = AnalysisServices.getInstance().getAnalysisById(
+                bendsMetricId);
+        final AbstractInfoAnalysis hCompactnessMetric = AnalysisServices.getInstance()
+                .getAnalysisById(hCompactnessMetricId);
         final Object[] results = DiagramAnalyser.analyse(editor, part,
-                new AbstractInfoAnalysis[] { bendsMetric }, showProgressBar);
-        final int newRating = (int) (Double.parseDouble(results[0].toString()) * 100);
+ new AbstractInfoAnalysis[] {
+                bendsMetric, hCompactnessMetric }, showProgressBar);
+        final int newRating = (int) ((Double.parseDouble(results[0].toString()) + Double
+                .parseDouble(results[1].toString())) * 100);
         final Individual ind = getCurrentIndividual();
         ind.setRating(newRating);
         tableViewer.refresh();
@@ -581,6 +598,7 @@ public class TestView extends ViewPart {
      * <code>propertySource</code> need to be valid.
      */
     private void refreshLayoutViewPart() {
+        System.out.println("refresh layout viewpart");
         Assert.isNotNull(population, "population is null");
         Assert.isNotNull(propertySource, "propertySource is null");
         // Assert.isTrue(population.size() > 0, "zero population");
@@ -624,6 +642,9 @@ public class TestView extends ViewPart {
         }
     }
 
+    /**
+     * Creates the tool bar for the view.
+     */
     private void createToolBar() {
         // Get tool bar manager.
         final IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
