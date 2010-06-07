@@ -442,8 +442,8 @@ public class DebugCanvas {
             final float y2, final Color color) {
         if (layer != null) {
             final Polyline line = new Polyline();
-            line.addPoint(new Point(x1, y1));
-            line.addPoint(new Point(x2, y2));
+            line.addPoint(new Point(x1 + xOffset, y1 + yOffset));
+            line.addPoint(new Point(x2 + xOffset, y2 + yOffset));
             line.setForegroundColor(translateColor(color));
             switch(selectedDrawingMode) {
             case IMMEDIATE:
