@@ -51,7 +51,7 @@ public class CubicSplineInterpolator implements ISplineInterpolator {
     private static final int MAX_K = 7;
 
     /** factor describing the length a in/outgoing vector is scaled. */
-    private static final double TANGENT_SCALE = 0.8d;
+    private static final double TANGENT_SCALE = 0.5d;
 
     /**
      * Calculates a closed piecewise bezier spline where the first point is start and end.
