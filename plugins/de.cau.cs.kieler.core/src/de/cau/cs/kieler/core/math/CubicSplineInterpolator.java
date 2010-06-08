@@ -51,7 +51,7 @@ public class CubicSplineInterpolator implements ISplineInterpolator {
     private static final int MAX_K = 7;
 
     /** factor describing the length a in/outgoing vector is scaled. */
-    private static final double TANGENT_SCALE = 0.25d;
+    private static final double TANGENT_SCALE = 0.8d;
 
     /**
      * Calculates a closed piecewise bezier spline where the first point is start and end.
@@ -142,8 +142,7 @@ public class CubicSplineInterpolator implements ISplineInterpolator {
             endScale = Math.abs(points[n - 1].x - points[n].x) * TANGENT_SCALE;
         }
         d[0] = startTan.scaledCreate(startScale);
-        // negate finishing tangent, as it is already subtracted at the end
-        d[n] = endTan.scaledCreate(endScale).negate();
+        d[n] = endTan.scaledCreate(endScale);
 
         // set first and last t
         t[0] = KVector.add(points[0], d[0]);
