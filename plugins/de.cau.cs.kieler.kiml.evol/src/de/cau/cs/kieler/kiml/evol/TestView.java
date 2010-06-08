@@ -41,6 +41,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
+import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.evol.alg.AbstractEvolutionaryAlgorithm;
 import de.cau.cs.kieler.kiml.evol.alg.DefaultEvolutionaryAlgorithm;
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
@@ -106,7 +107,7 @@ public class TestView extends ViewPart {
         }
         createToolBar();
         final ISelectionChangedListener listener = new ISelectionChangedListener() {
-            public void selectionChanged(final SelectionChangedEvent event) {
+            public synchronized void selectionChanged(final SelectionChangedEvent event) {
                 final ISelection selection = event.getSelection();
                 System.out.println("selectionChanged");
                 if ((selection != null) && (!selection.isEmpty())
@@ -284,51 +285,6 @@ public class TestView extends ViewPart {
         }
     }
 
-    // /**
-    // * Action for moving to next table entry.
-    // *
-    // * @author bdu
-    // *
-    // */
-    // private class MoveNextAction extends Action {
-    // public MoveNextAction() {
-    // setText("Down");
-    // }
-    //
-    // public void run() {
-    // if (propertySource == null) {
-    // return;
-    // }
-    // if (population != null && position < population.size() - 1) {
-    // position++;
-    // tableViewer.selectRow(position);
-    // tableViewer.refresh();
-    // refreshLayoutViewPart();
-    // layoutDiagram(false, true);
-    // }
-    // }
-    // }
-    // /**
-    // * Action for moving to previous table entry.
-    // *
-    // * @author bdu
-    // *
-    // */
-    // private class MovePrevAction extends Action {
-    // public MovePrevAction() {
-    // setText("Up");
-    // }
-    //
-    // public void run() {
-    // if (position > 0) {
-    // position--;
-    // tableViewer.selectRow(position);
-    // tableViewer.refresh();
-    // refreshLayoutViewPart();
-    // layoutDiagram(false, true);
-    // }
-    // }
-    // }
     /**
      * Action for resetting the view.
      * 
@@ -479,9 +435,9 @@ public class TestView extends ViewPart {
             });
         }
     }
-
+    
     /**
-     * Return position of first unrated individual.
+     * Return position of first unrated individual in the list.
      * 
      * @return -1 if no unrated individual exists.
      */
@@ -503,12 +459,22 @@ public class TestView extends ViewPart {
     /**
      * Refresh the layout according to selected individual.
      */
-    private void refreshLayout() {
+    private synchronized void refreshLayout() {
         refreshLayoutViewPart();
-        layoutDiagram(false, false);
-        measureDiagram(false);
-    }
-    
+        
+        MonitoredOperation.runInUI(new Runnable() {
+            public void run() {
+                layoutDiagram(false, false);
+                // FIXME: need a layout listener to wait for the layouting to be
+                // finished before measuring it.
+
+                measureDiagram(false);
+                tableViewer.refresh();
+            }
+        }, true);
+        }
+
+
     /**
      * Layout the diagram.
      * 
@@ -582,8 +548,9 @@ public class TestView extends ViewPart {
         final int newRating = (int) ((Double.parseDouble(results[0].toString()) + Double
                 .parseDouble(results[1].toString())) * 100);
         final Individual ind = getCurrentIndividual();
+        System.out.println("Assign rating " + newRating + " to individual " + ind.toString());
         ind.setRating(newRating);
-        tableViewer.refresh();
+        // tableViewer.refresh();
     }
 
     private Individual getCurrentIndividual() {
@@ -592,10 +559,13 @@ public class TestView extends ViewPart {
         }
         return population.get(position);
     }
-
+    
     /**
-     * Refreshes the layout view, if it exists. <code>population</code> and
+     * Refreshes the layout view, if it exists. Layout options are adopted from
+     * the current individual. The <code>population</code> and
      * <code>propertySource</code> need to be valid.
+     * 
+     * If the <code>position</code> is out of range, nothing is done.
      */
     private void refreshLayoutViewPart() {
         System.out.println("refresh layout viewpart");
@@ -606,11 +576,12 @@ public class TestView extends ViewPart {
         if ((population == null) || population.isEmpty() || (propertySource == null)) {
             return;
         }
-        // ensure that the position is not out of range
+        // ensure that the position is within the valid range
         if ((position > population.size()) || (position < 0)) {
             return;
         }
-        final Individual currentIndividual = population.get(position);
+        final Individual currentIndividual = getCurrentIndividual();
+        System.out.println("adopt " + currentIndividual.toString());
         final Genome genome = currentIndividual.getGenome();
         final LayoutServices layoutServices = LayoutServices.getInstance();
         for (final IGene<?> gene : genome) {
