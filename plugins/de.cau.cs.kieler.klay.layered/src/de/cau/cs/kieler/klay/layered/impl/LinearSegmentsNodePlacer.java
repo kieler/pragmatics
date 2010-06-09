@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.layered.impl;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -85,9 +86,9 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
      * a unit.
      */
     public static class Region {
-        // The nodes that forms the region
+        /** The nodes that forms the region. */
         private List<LNode> nodes = new LinkedList<LNode>();
-        // The accumulated force of the contained nodes
+        /** The accumulated force of the contained nodes. */
         private float force = 0;
         
         /** Contructor. */
@@ -99,40 +100,22 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
         public List<LNode> getNodes() {
             return nodes;
         }
-
-        /** @param node LNode to be added to the region */
-        public void addNode(final LNode node) {
-            nodes.add(node);
-        }
-
-        /** @param newForce the force to be added */
-        public void addForce(final float newForce) {
-            this.force += newForce;
-        }
-
-        /** @return the force */
-        public float getForce() {
-            return force;
-        }
-        
-        /** @param newForce the force to set */
-        public void setForce(final float newForce) {
-            this.force = newForce;
-        }
         
         /** @param other The other Region to be 'unioned' */
         public void union(final Region other) {
             // Keep the Region with lower index
             if (regions.indexOf(this) > regions.indexOf(other)) {
-                // TODO concurrent modification :(
+                // Add all nodes of this region to the other region
+                other.getNodes().addAll(this.getNodes());
                 for (LNode node : this.getNodes()) {
-                    other.addNode(node);
+                    node.setRegion(other);
                 }
                 regions.remove(this);
             } else {
                 // Add all nodes of other region to this region
+                this.getNodes().addAll(other.getNodes());
                 for (LNode node : other.getNodes()) {
-                    this.addNode(node);
+                    node.setRegion(this);
                 }
                 regions.remove(other);
             }
@@ -169,7 +152,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
         // arrange port positions
         arrangePorts(layeredGraph);
         // balance the placement
-        // balancePlacement(layeredGraph);
+        balancePlacement(layeredGraph);
 
         // set the proper height for the whole graph
         Coord graphSize = layeredGraph.getSize();
@@ -327,39 +310,29 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
             LinearSegment segment = linearSegments[s];
             Region region = new Region();
             for (LNode node : segment.getNodes()) {
-                region.addNode(node);
+                region.nodes.add(node);
+                node.setRegion(region);
             }
         }
         
         // Iterate the balancing
+        boolean ready = false;
         boolean forward = true;
-        boolean ready = false;    
 
         while (!ready) {
             ready = true;
-            
-            // Iterate regions
-            for (int i = 0; i < regions.size(); i++) {
-                // Iterate alternating forward or backward
-                // through the regions
-                int regionIndex;
-                if (forward) {
-                    regionIndex = i;
-                } else {
-                    regionIndex = regions.size() - i - 1;
-                }
-                Region region = regions.get(regionIndex);
-
-                List<LNode> nodes = region.getNodes();
-                for (LNode node : nodes) {
-                    System.out.println("Node: Index:" + node.getIndex() + " id:" + node.id
-                            + " String:" + node.toString());
+            // Iterate regions alternating forward or backward
+            Collections.reverse(regions);
+            for (Region region : regions) {
+                // Reset force for region
+                region.force = 0.0f;
+                
+                for (LNode node : region.getNodes()) {
                     float sum = 0.0f;
                     int numEdges = 0;
                     for (LPort port : node.getPorts()) {
                         for (LEdge edge : port.getEdges()) {
                             LPort gegenPort;
-                            // Check only Edges in one direction
                             if (forward && port.getType() == PortType.OUTPUT) {
                                 gegenPort = edge.getTarget();
                                 LNode gegenNode = gegenPort.getNode();
@@ -375,83 +348,79 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
                             }
                         }
                     }
-                    // Avoid division by zero on sources and sinks
+                    // Avoid division by zero
                     if (numEdges > 0) {
                         sum /= numEdges;
                     } else {
                         sum = 0.0f;
                     }
-
-                    LNode blocking = null;
-                    LNode neighbor = null;
-                    int numNodes = node.getLayer().getNodes().size();
-                    // Force directed downward
-                    if (sum > 0.0f) {
-                        // Node is not last node in layer
-                        if (node.getIndex() < numNodes - 1) {
-                            // Check if there is enough place to move
-                            neighbor = node.getLayer().getNodes().get(node.getIndex() + 1);
-                            if (neighbor.getPos().y < node.getPos().y + node.getSize().y) {
-                                blocking = neighbor;
-                            }
-                        }
-                        // Force directed upwards
-                    } else if (sum < 0.0f) {
-                        // Node is not first node in layer
-                        if (node.getIndex() != 0) {
-                            neighbor = node.getLayer().getNodes().get(node.getIndex() - 1);
-                            if (neighbor.getPos().y + neighbor.getSize().y > node.getPos().y + sum) {
-                                blocking = neighbor;
-                            }
-                        }
-                    }
-
-                    if (blocking == null) {
-                        System.out.println("Sum for Node" + node.getIndex() + ": " + sum);
-                        region.addForce(sum);
-                    } else {
-                        // Union both regions
-                        // get Region from Node
-                        for (Region otherRegion : regions) {
-                            if (otherRegion.getNodes().contains(node)) {
-                                region.union(otherRegion);
-                                break;
-                            }
-                        }
-                        ready = false;
-                        System.out.println(blocking.getIndex() + " U " + node.getIndex());
-                    }
+                    region.force += sum / region.getNodes().size();
                 }
+                // ENDE KNOTEN DER REGION
 
                 // test for all nodes, if they can be moved that far
+                // test only if the neighbor is of another region
                 for (LNode node : region.getNodes()) {
-                    if (region.getForce() < 0.0f 
-                            && node.getIndex() > 0) {
-                        // Force is directed upward and the node is not topmost
-                        LNode neighbor = node.getLayer().getNodes().get(node.getIndex() - 1);
-                        if (neighbor.getPos().y + neighbor.getSize().y + spacing > node.getPos().y) {
-                            // Set force on region to the max possible force
-                            region.setForce(node.getPos().y 
-                                    - (neighbor.getPos().y + neighbor.getSize().y + spacing));
+                    if (region.force < 0.0f) {
+                        // Force is directed upward
+                        if (node.getIndex() > 0) {
+                            // Node is not topmost node
+                            LNode neighbor = node.getLayer().getNodes().get(node.getIndex() - 1);
+                            if (node.getRegion() != neighbor.getRegion()
+                                        && neighbor.getPos().y + neighbor.getSize().y + spacing 
+                                        > node.getPos().y + region.force) {
+                                // Set force on region to the max possible force
+                                region.force = node.getPos().y 
+                                    - (neighbor.getPos().y + neighbor.getSize().y + spacing);
+                            }
+                        } else {
+                            // Node is topmost node
+                            if (node.getPos().y + region.force < 0.0f) {
+                                // Node woult like to go out of Frame
+                                region.force = -node.getPos().y; 
+                            }
                         }
-                    } else if (region.getForce() > 0.0f
-                        // Force is directed downward and the node is not lowermost
+                    } else if (region.force > 0.0f
                             && node.getIndex() < node.getLayer().getNodes().size() - 1) {
+                        // Force is directed downward and the node is not lowermost
                         LNode neighbor = node.getLayer().getNodes().get(node.getIndex() + 1);
-                        if (node.getPos().y + node.getSize().y + spacing > neighbor.getPos().y) {
+                        if (node.getRegion() != neighbor.getRegion()
+                                && node.getPos().y + node.getSize().y + spacing + region.force 
+                                > neighbor.getPos().y) {
                             // Set force on region to the max possible force
-                            region.setForce(neighbor.getPos().y
-                                    - (node.getPos().y + node.getSize().y + spacing));
+                            region.force = neighbor.getPos().y
+                                - (node.getPos().y + node.getSize().y + spacing);
                         }
                     }
                 }
                 // move nodes
                 for (LNode node : region.getNodes()) {
-                    node.getPos().y = node.getPos().y + region.getForce();
+                    node.getPos().y += region.force;
                 }
-                
             }
+            
+            // durch alle Knoten durchgehen und testen ob Nachbar
+            // berührt und wenn ja, ob gleiche Region
+            for (Layer layer : layeredGraph.getLayers()) {
+                List<LNode> nodes = layer.getNodes();
+                for (LNode node : nodes) {
+                    if (node.getIndex() < nodes.size() - 1) {
+                        // Test if nodes have different regions
+                        LNode neighbor = nodes.get(node.getIndex() + 1);
+                        if (node.getRegion() != neighbor.getRegion()) {
+                            // Test if the nodes are touching
+                            if (node.getPos().y + node.getSize().y + spacing
+                                    > neighbor.getPos().y - 1.0f) {
+                                node.getRegion().union(neighbor.getRegion());
+                                ready = false;
+                            } 
+                        }
+                    }
+                }
+            }
+            
             forward = !forward;
+
         }
     }
 
