@@ -90,6 +90,8 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
     public static final int DEF_CROSSRED_PASSES = 2;
     /** preference identifier for the priority of node balancing over diagram size. */
     public static final String PREF_BALANCE_VS_SIZE = "klodd.hierarchical.balance";
+    /** layout option identifier: level of interaction. */
+    public static final String OPT_INTERACTIVE = "de.cau.cs.kieler.klodd.interactive";
 
     /** the preference store for this layouter. */
     private static IKielerPreferenceStore preferenceStore;
@@ -127,6 +129,15 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
     private static final int SMALL_TASK = 5;
     /** amount of work for a large task. */
     private static final int LARGE_TASK = 15;
+    
+    /**
+     * Creates an instance of the layout provider.
+     */
+    public HierarchicalDataflowLayoutProvider() {
+        // register layout options
+        LayoutOptions.registerEnum(HierarchicalDataflowLayoutProvider.OPT_INTERACTIVE,
+                InteractionLevel.class);
+    }
     
     /**
      * {@inheritDoc}
@@ -210,9 +221,12 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
      * @param parentLayout layout data of the parent node
      */
     private void updateModules(final KShapeLayout parentLayout) {
-        boolean interactive = LayoutOptions.getBoolean(parentLayout, LayoutOptions.INTERACTIVE);
+        InteractionLevel interactionLevel = LayoutOptions.getEnum(parentLayout,
+                InteractionLevel.class);
         // choose cycle remover module
-        if (interactive) {
+        if (interactionLevel == InteractionLevel.CYCLES
+                || interactionLevel == InteractionLevel.LAYERS
+                || interactionLevel == InteractionLevel.FULL) {
             if (!(cycleRemover instanceof InteractiveCycleRemover)) {
                 cycleRemover = new InteractiveCycleRemover();
             }
@@ -242,7 +256,8 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
             }
         }
 
-        if (interactive) {
+        if (interactionLevel == InteractionLevel.ORDERING
+                || interactionLevel == InteractionLevel.FULL) {
             if (!(crossingReducer instanceof InteractiveCrossingReducer)) {
                 crossingReducer = new InteractiveCrossingReducer();
             }

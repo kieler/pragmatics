@@ -29,9 +29,16 @@
                option="de.cau.cs.kieler.layout.options.portConstraints">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.interactive">
+               option="de.cau.cs.kieler.klodd.interactive">
          </knownOption>
       </layoutProvider>
+      <layoutOption
+            appliesTo="parents"
+            description="Select the level of interaction, that is how the algorithm respects the user&apos;s layout"
+            id="de.cau.cs.kieler.klodd.interactive"
+            name="Interactive"
+            type="enum">
+      </layoutOption>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
