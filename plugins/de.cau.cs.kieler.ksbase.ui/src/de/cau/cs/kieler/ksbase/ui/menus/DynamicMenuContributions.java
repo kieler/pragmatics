@@ -95,12 +95,13 @@ public final class DynamicMenuContributions {
      * @param editorSettings
      *            The editor to create the menu for.
      */
-    public void createMenuForEditor(final EditorTransformationSettings editorSettings) {
+    public void createMenuForEditor(
+            final EditorTransformationSettings editorSettings) {
         Assert.isNotNull(editorSettings);
 
         try {
-            Document extension = javax.xml.parsers.DocumentBuilderFactory.newInstance()
-                    .newDocumentBuilder().newDocument();
+            Document extension = javax.xml.parsers.DocumentBuilderFactory
+                    .newInstance().newDocumentBuilder().newDocument();
             extension.setXmlStandalone(true);
             // Create extension point elements:
             Element plugin = extension.createElement("plugin");
@@ -117,12 +118,15 @@ public final class DynamicMenuContributions {
             Element popupExtension = extension.createElement("extension");
             popupExtension.setAttribute("point",
                     "de.cau.cs.kieler.core.ui.balloonPopupBarContribution");
-            Element popupEditPolicyProvider = extension.createElement("extension");
+            Element popupEditPolicyProvider = extension
+                    .createElement("extension");
             popupEditPolicyProvider.setAttribute("point",
                     "org.eclipse.gmf.runtime.diagram.ui.editpolicyProviders");
-            Element policyProvider = extension.createElement("editpolicyProvider");
-            policyProvider.setAttribute("class",
-                    "de.cau.cs.kieler.core.ui.policies.BalloonPopupEditPolicyProvider");
+            Element policyProvider = extension
+                    .createElement("editpolicyProvider");
+            policyProvider
+                    .setAttribute("class",
+                            "de.cau.cs.kieler.core.ui.policies.BalloonPopupEditPolicyProvider");
             Element policyProviderPrio = extension.createElement("Priority");
             policyProviderPrio.setAttribute("name", "Lowest");
             policyProvider.appendChild(policyProviderPrio);
@@ -143,16 +147,20 @@ public final class DynamicMenuContributions {
             menuVisible.appendChild(visIterate);
             // Create command extensions for all transformations:
             for (KSBasETransformation t : editorSettings.getTransformations()) {
-                String commandID = "de.cau.cs.kieler.ksbase." + editorSettings.getEditorId() + "."
+                String commandID = "de.cau.cs.kieler.ksbase."
+                        + editorSettings.getEditorId() + "."
                         + t.getName().replace(' ', '_');
                 // store id
                 commandIds.put(t, commandID);
                 Element command = extension.createElement("command");
                 command.setAttribute("id", commandID);
                 command.setAttribute("name", t.getName());
-                command.setAttribute("categoryId", "de.cau.cs.kieler.ksbase.ui.ksbaseCategory");
-                Element commandParameter = extension.createElement("commandParameter");
-                commandParameter.setAttribute("id", "de.cau.cs.kieler.ksbase.editorParameter");
+                command.setAttribute("categoryId",
+                        "de.cau.cs.kieler.ksbase.ui.ksbaseCategory");
+                Element commandParameter = extension
+                        .createElement("commandParameter");
+                commandParameter.setAttribute("id",
+                        "de.cau.cs.kieler.ksbase.editorParameter");
                 commandParameter.setAttribute("name", "editor");
                 command.appendChild(commandParameter);
                 commandParameter = extension.createElement("commandParameter");
@@ -163,25 +171,31 @@ public final class DynamicMenuContributions {
                 commandExtension.appendChild(command);
 
                 // KeyBindings
-                if (t.getKeyboardShortcut() != null && t.getKeyboardShortcut().length() > 0
+                if (t.getKeyboardShortcut() != null
+                        && t.getKeyboardShortcut().length() > 0
                         && editorSettings.getContext() != null
                         && editorSettings.getContext().length() > 0) {
 
-                    keybindings.put(commandID, new String[] { editorSettings.getContext(),
+                    keybindings.put(commandID, new String[] {
+                            editorSettings.getContext(),
                             t.getKeyboardShortcut(), t.getTransformation() });
 
                     Element key = extension.createElement("key");
                     key.setAttribute("commandId", commandID);
                     key.setAttribute("contextId", editorSettings.getContext());
-                    key.setAttribute("schemeId", "org.eclipse.ui.defaultAcceleratorConfiguration");
+                    key.setAttribute("schemeId",
+                            "org.eclipse.ui.defaultAcceleratorConfiguration");
                     key.setAttribute("sequence", t.getKeyboardShortcut());
                     // Set key parameters
                     Element keyParam = extension.createElement("parameter");
-                    keyParam.setAttribute("id", "de.cau.cs.kieler.ksbase.editorParameter");
-                    keyParam.setAttribute("value", editorSettings.getEditorId());
+                    keyParam.setAttribute("id",
+                            "de.cau.cs.kieler.ksbase.editorParameter");
+                    keyParam
+                            .setAttribute("value", editorSettings.getEditorId());
                     key.appendChild(keyParam);
                     keyParam = extension.createElement("parameter");
-                    keyParam.setAttribute("id", "de.cau.cs.kieler.ksbase.transformationParameter");
+                    keyParam.setAttribute("id",
+                            "de.cau.cs.kieler.ksbase.transformationParameter");
                     keyParam.setAttribute("value", t.getTransformation());
                     key.appendChild(keyParam);
                     bindingExtension.appendChild(key);
@@ -193,10 +207,12 @@ public final class DynamicMenuContributions {
                 Element classHandler = extension.createElement("class");
                 // Check if the editor has a custom command handler
                 if (editorSettings.getCommandHandler().length() == 0) {
-                    classHandler.setAttribute("class", "de.cau.cs.kieler.ksbase.ui.handler"
-                            + ".TransformationCommandHandler");
+                    classHandler.setAttribute("class",
+                            "de.cau.cs.kieler.ksbase.ui.handler"
+                                    + ".TransformationCommandHandler");
                 } else {
-                    classHandler.setAttribute("class", editorSettings.getCommandHandler());
+                    classHandler.setAttribute("class", editorSettings
+                            .getCommandHandler());
                 }
                 handlerCommand.appendChild(classHandler);
                 // Handler restrictions
@@ -207,11 +223,12 @@ public final class DynamicMenuContributions {
                 handlerIt.setAttribute("ifEmpty", "false");
                 handlerIt.setAttribute("operator", "and");
                 Element handlerTest = extension.createElement("test");
-                handlerTest.setAttribute("args", editorSettings.getEditorId() + ","
-                        + t.getTransformationId());
+                handlerTest.setAttribute("args", editorSettings.getEditorId()
+                        + "," + t.getTransformationId());
                 handlerTest.setAttribute("forcePluginActivation", "true");
-                handlerTest.setAttribute("property",
-                        "de.cau.cs.kieler.ksbase.ui.modelTesting.isModelInstance");
+                handlerTest
+                        .setAttribute("property",
+                                "de.cau.cs.kieler.ksbase.ui.modelTesting.isModelInstance");
                 handlerIt.appendChild(handlerTest);
                 handlerWith.appendChild(handlerIt);
                 handlerEnabled.appendChild(handlerWith);
@@ -222,20 +239,26 @@ public final class DynamicMenuContributions {
 
             }
             // Create menu extension:
-            for (KSBasEMenuContribution contrib : editorSettings.getMenuContributions()) {
+            for (KSBasEMenuContribution contrib : editorSettings
+                    .getMenuContributions()) {
                 // PopupBar contributions need a special handling:
                 if (contrib.getData().contains("popupBar:")) {
                     for (String tid : contrib.getCommands()) {
-                        Element popupContribution = extension.createElement("PopupBarElement");
-                        popupContribution.setAttribute("class",
-                                "de.cau.cs.kieler.ksbase.ui.menus.KSbasEBalloonPopup");
+                        Element popupContribution = extension
+                                .createElement("PopupBarElement");
+                        popupContribution
+                                .setAttribute("class",
+                                        "de.cau.cs.kieler.ksbase.ui.menus.KSbasEBalloonPopup");
 
-                        Element editorAttrib = extension.createElement("Attribute");
+                        Element editorAttrib = extension
+                                .createElement("Attribute");
                         editorAttrib.setAttribute("key", "editorId");
-                        editorAttrib.setAttribute("value", editorSettings.getEditorId());
+                        editorAttrib.setAttribute("value", editorSettings
+                                .getEditorId());
                         popupContribution.appendChild(editorAttrib);
 
-                        Element transAttrib = extension.createElement("Attribute");
+                        Element transAttrib = extension
+                                .createElement("Attribute");
                         transAttrib.setAttribute("key", "transformationId");
                         transAttrib.setAttribute("value", tid);
                         popupContribution.appendChild(transAttrib);
@@ -244,38 +267,59 @@ public final class DynamicMenuContributions {
 
                 } else {
                     // <extension point="org.eclipse.ui.menus>
-                    Element menuContribution = extension.createElement("menuContribution");
-                    menuContribution.setAttribute("locationURI", contrib.getData());
+                    Element menuContribution = extension
+                            .createElement("menuContribution");
+                    menuContribution.setAttribute("locationURI", contrib
+                            .getData());
+                    Element separator = extension.createElement("separator");
+                    separator.setAttribute("name",
+                            "de.cau.cs.kieler.ksbase.separator01");
+                    separator.setAttribute("visible", "true");
+                    menuContribution.appendChild(separator);
                     for (String tid : contrib.getCommands()) {
                         // only create contents for valid transformationIDs
                         if (editorSettings.getTransformationById(tid) != null) {
                             // Create commands for root menu
-                            Node menuCommand = createElementForMenu(tid, extension, editorSettings);
-                            Node menuCommandVisible = menuVisible.cloneNode(true);
+                            Node menuCommand = createElementForMenu(tid,
+                                    extension, editorSettings);
+                            Node menuCommandVisible = menuVisible
+                                    .cloneNode(true);
                             // Add visibility for popup
                             if (contrib.getData().contains("popup:")) {
-                                Element handlerAnd = extension.createElement("and");
+                                Element handlerAnd = extension
+                                        .createElement("and");
                                 // Create visibility flags for menus
-                                Element handlerWith = extension.createElement("with");
-                                handlerWith.setAttribute("variable", "selection");
-                                Element handlerIt = extension.createElement("iterate");
+                                Element handlerWith = extension
+                                        .createElement("with");
+                                handlerWith.setAttribute("variable",
+                                        "selection");
+                                Element handlerIt = extension
+                                        .createElement("iterate");
                                 handlerIt.setAttribute("ifEmpty", "false");
                                 handlerIt.setAttribute("operator", "and");
-                                Element handlerTest = extension.createElement("test");
-                                handlerTest.setAttribute("args", editorSettings.getEditorId() + ","
-                                        + tid);
-                                handlerTest.setAttribute("forcePluginActivation", "true");
-                                handlerTest.setAttribute("property", "de.cau.cs.kieler.ksbase.ui."
-                                        + "modelTesting.isModelInstance");
+                                Element handlerTest = extension
+                                        .createElement("test");
+                                handlerTest.setAttribute("args", editorSettings
+                                        .getEditorId()
+                                        + "," + tid);
+                                handlerTest.setAttribute(
+                                        "forcePluginActivation", "true");
+                                handlerTest
+                                        .setAttribute(
+                                                "property",
+                                                "de.cau.cs.kieler.ksbase.ui."
+                                                        + "modelTesting.isModelInstance");
                                 handlerIt.appendChild(handlerTest);
                                 handlerWith.appendChild(handlerIt);
 
-                                handlerAnd.appendChild(menuCommandVisible.getFirstChild());
+                                handlerAnd.appendChild(menuCommandVisible
+                                        .getFirstChild());
                                 handlerAnd.appendChild(handlerWith);
                                 menuCommandVisible.appendChild(handlerAnd);
                             }
                             if (editorSettings.isCheckVisibility()) {
-                                menuCommand.appendChild(menuCommandVisible.cloneNode(true));
+                                menuCommand.appendChild(menuCommandVisible
+                                        .cloneNode(true));
                             }
                             menuContribution.appendChild(menuCommand);
                         }
@@ -291,15 +335,17 @@ public final class DynamicMenuContributions {
                             if (editorSettings.getTransformationById(tid) != null) {
 
                                 Node menuCommand;
-                                if (cachedTransformationCommands.containsKey(tid)) {
-                                    menuCommand = cachedTransformationCommands.get(tid).cloneNode(
-                                            true);
+                                if (cachedTransformationCommands
+                                        .containsKey(tid)) {
+                                    menuCommand = cachedTransformationCommands
+                                            .get(tid).cloneNode(true);
                                 } else {
-                                    menuCommand = createElementForMenu(tid, extension,
-                                            editorSettings);
-                                    menuCommand.appendChild(menuVisible.cloneNode(true));
-                                    cachedTransformationCommands.put(tid, menuCommand
+                                    menuCommand = createElementForMenu(tid,
+                                            extension, editorSettings);
+                                    menuCommand.appendChild(menuVisible
                                             .cloneNode(true));
+                                    cachedTransformationCommands.put(tid,
+                                            menuCommand.cloneNode(true));
                                 }
                                 menu.appendChild(menuCommand);
                             }
@@ -310,6 +356,11 @@ public final class DynamicMenuContributions {
                         menuContribution.appendChild(menu);
                     }
 
+                    Element separator2 = extension.createElement("separator");
+                    separator2.setAttribute("name",
+                            "de.cau.cs.kieler.ksbase.separator02");
+                    separator2.setAttribute("visible", "true");
+                    menuContribution.appendChild(separator2);
                     menuExtension.appendChild(menuContribution);
                 }
             }
@@ -325,23 +376,24 @@ public final class DynamicMenuContributions {
 
             // Create plugin.xml
             StringWriter str = new StringWriter();
-            TransformerFactory.newInstance().newTransformer().transform(new DOMSource(extension),
-                    new StreamResult(str));
+            TransformerFactory.newInstance().newTransformer().transform(
+                    new DOMSource(extension), new StreamResult(str));
 
             // Create jar bundle
             Bundle contributorBundle = null;
             if (editorSettings.getContributor() != null) {
-                contributorBundle = ContributorFactoryOSGi.resolve(editorSettings.getContributor());
+                contributorBundle = ContributorFactoryOSGi
+                        .resolve(editorSettings.getContributor());
             } else {
                 contributorBundle = KSBasEUIPlugin.getDefault().getBundle();
             }
             String pluginBundle = editorSettings.getEditorId() + ".jar";
 
-            String editorDiagramName = contributorBundle.getSymbolicName() + "."
-                    + editorSettings.getEditorId() + ".generated";
+            String editorDiagramName = contributorBundle.getSymbolicName()
+                    + "." + editorSettings.getEditorId() + ".generated";
 
-            File jarFile = KSBasEUIPlugin.getDefault().getStateLocation().append(pluginBundle)
-                    .toFile();
+            File jarFile = KSBasEUIPlugin.getDefault().getStateLocation()
+                    .append(pluginBundle).toFile();
             StringBuffer sbuf = new StringBuffer();
             // Now we are importing the dependencies from the contributing
             // plug-in:
@@ -362,7 +414,8 @@ public final class DynamicMenuContributions {
                 depString += ",\n org.eclipse.gmf.runtime.diagram.ui";
             }
             if (editorSettings.getContributor() != null
-                    && !depString.contains(editorSettings.getContributor().getName())) {
+                    && !depString.contains(editorSettings.getContributor()
+                            .getName())) {
                 depString += ",\n " + editorSettings.getContributor().getName();
             }
             // And set the rest of the manifest attributes
@@ -372,15 +425,17 @@ public final class DynamicMenuContributions {
             sbuf.append("Bundle-ActivationPolicy: lazy\n");
             sbuf.append("Bundle-Version: 0.1.0.vqualifier\n");
             sbuf.append("Manifest-Version: 1.0\n");
-            sbuf.append("Bundle-SymbolicName: " + editorDiagramName + ";singleton:=true\n");
+            sbuf.append("Bundle-SymbolicName: " + editorDiagramName
+                    + ";singleton:=true\n");
             sbuf.append("Bundle-Name: KSBasE Menu Contributions for "
                     + editorSettings.getEditorId() + "\n");
             sbuf.append("Bundle-ManifestVersion: 2\n");
             // Create manifest file
-            Manifest manifest = new Manifest(new ByteArrayInputStream(sbuf.toString().getBytes(
-                    "UTF-8")));
+            Manifest manifest = new Manifest(new ByteArrayInputStream(sbuf
+                    .toString().getBytes("UTF-8")));
 
-            JarOutputStream jos = new JarOutputStream(new FileOutputStream(jarFile), manifest);
+            JarOutputStream jos = new JarOutputStream(new FileOutputStream(
+                    jarFile), manifest);
             JarEntry entry = new JarEntry("plugin.xml");
             jos.putNextEntry(entry);
             jos.write(str.toString().getBytes("UTF-8"));
@@ -388,8 +443,8 @@ public final class DynamicMenuContributions {
             // them
             if (editorSettings.getDefaultIcon() != null
                     && editorSettings.getDefaultIcon().length() > 0) {
-                copyResourceToJarBundle(jos, editorSettings.getDefaultIcon(), editorSettings
-                        .getContributor());
+                copyResourceToJarBundle(jos, editorSettings.getDefaultIcon(),
+                        editorSettings.getContributor());
             }
             LinkedList<String> resources = new LinkedList<String>();
             for (KSBasETransformation t : editorSettings.getTransformations()) {
@@ -402,36 +457,45 @@ public final class DynamicMenuContributions {
             // contributor is valid
             if (editorSettings.getContributor() != null) {
                 for (String resource : resources) {
-                    copyResourceToJarBundle(jos, resource, editorSettings.getContributor());
+                    copyResourceToJarBundle(jos, resource, editorSettings
+                            .getContributor());
                 }
             }
             // don't forget the transformation file !
-            JarEntry transformationFile = new JarEntry("src/transformations/features."
-                    + editorSettings.getFramework().getFileExtension());
+            JarEntry transformationFile = new JarEntry(
+                    "src/transformations/features."
+                            + editorSettings.getFramework().getFileExtension());
             jos.putNextEntry(transformationFile);
             jos.write(editorSettings.getTransformationFile().getBytes("UTF-8"));
 
             jos.flush();
             jos.close();
 
-            DynamicBundleLoader.INSTANCE.addBundle(editorSettings, jarFile.toURI());
+            DynamicBundleLoader.INSTANCE.addBundle(editorSettings, jarFile
+                    .toURI());
 
         } catch (TransformerConfigurationException e) {
-            KSBasEUIPlugin.getDefault().logError("Bundle could not be created: Invalid xml file.");
+            KSBasEUIPlugin.getDefault().logError(
+                    "Bundle could not be created: Invalid xml file.");
         } catch (TransformerException e) {
-            KSBasEUIPlugin.getDefault().logError("Bundle could not be created: Invalid xml file.");
+            KSBasEUIPlugin.getDefault().logError(
+                    "Bundle could not be created: Invalid xml file.");
         } catch (TransformerFactoryConfigurationError e) {
-            KSBasEUIPlugin.getDefault().logError("Bundle could not be created: Invalid xml file.");
+            KSBasEUIPlugin.getDefault().logError(
+                    "Bundle could not be created: Invalid xml file.");
         } catch (UnsupportedEncodingException e) {
             KSBasEUIPlugin.getDefault().logError(
                     "Bundle could not be created: Unsupported encoding.");
 
         } catch (IOException e) {
-            KSBasEUIPlugin.getDefault().logError("Bundle could not be created: IOException");
+            KSBasEUIPlugin.getDefault().logError(
+                    "Bundle could not be created: IOException");
         } catch (IllegalStateException e) {
-            KSBasEUIPlugin.getDefault().logError("Bundle could not be created: Invalid state.");
+            KSBasEUIPlugin.getDefault().logError(
+                    "Bundle could not be created: Invalid state.");
         } catch (ParserConfigurationException pce) {
-            KSBasEUIPlugin.getDefault().logError("Bundle could not be created: Parser error.");
+            KSBasEUIPlugin.getDefault().logError(
+                    "Bundle could not be created: Parser error.");
         }
     }
 
@@ -453,7 +517,8 @@ public final class DynamicMenuContributions {
         Assert.isNotNull(contributor);
 
         Bundle contributorBundle = ContributorFactoryOSGi.resolve(contributor);
-        URL iconURL = FileLocator.find(contributorBundle, new Path(resourcePath), null);
+        URL iconURL = FileLocator.find(contributorBundle,
+                new Path(resourcePath), null);
         try {
             if (iconURL != null) {
                 JarEntry iconEntry = new JarEntry(resourcePath);
@@ -467,8 +532,8 @@ public final class DynamicMenuContributions {
             }
         } catch (IOException e) {
             KSBasEUIPlugin.getDefault().logError(
-                    "Bundle could not be created: Error while storing resource (" + resourcePath
-                            + ").");
+                    "Bundle could not be created: Error while storing resource ("
+                            + resourcePath + ").");
         }
     }
 
@@ -486,7 +551,8 @@ public final class DynamicMenuContributions {
      * @param collection
      *            The list of editors to create the menu for
      */
-    public void createMenuForEditors(final Collection<EditorTransformationSettings> collection) {
+    public void createMenuForEditors(
+            final Collection<EditorTransformationSettings> collection) {
         if (collection != null) {
             // Iterate through editors and create extension point contents
             for (EditorTransformationSettings editor : collection) {
@@ -506,8 +572,8 @@ public final class DynamicMenuContributions {
      *            The current editor
      * @return a valid DOM tree containing menu commands
      */
-    private Node createElementForMenu(final String tid, final Document extension,
-            final EditorTransformationSettings editor) {
+    private Node createElementForMenu(final String tid,
+            final Document extension, final EditorTransformationSettings editor) {
         assert (tid != null);
         assert (extension != null);
         assert (editor != null);
@@ -521,7 +587,8 @@ public final class DynamicMenuContributions {
         // Menu icon
         if (t.getIcon() != null && t.getIcon().length() > 0) {
             menuCommand.setAttribute("icon", t.getIcon());
-        } else if (editor.getDefaultIcon() != null && editor.getDefaultIcon().length() > 0) {
+        } else if (editor.getDefaultIcon() != null
+                && editor.getDefaultIcon().length() > 0) {
             menuCommand.setAttribute("icon", editor.getDefaultIcon());
         }
         // Label
@@ -530,11 +597,13 @@ public final class DynamicMenuContributions {
         menuCommand.setAttribute("tooltip", t.getToolTip());
         // Set command parameters
         Element handlerParam = extension.createElement("parameter");
-        handlerParam.setAttribute("name", "de.cau.cs.kieler.ksbase.editorParameter");
+        handlerParam.setAttribute("name",
+                "de.cau.cs.kieler.ksbase.editorParameter");
         handlerParam.setAttribute("value", editor.getEditorId());
         menuCommand.appendChild(handlerParam);
         handlerParam = extension.createElement("parameter");
-        handlerParam.setAttribute("name", "de.cau.cs.kieler.ksbase.transformationParameter");
+        handlerParam.setAttribute("name",
+                "de.cau.cs.kieler.ksbase.transformationParameter");
         handlerParam.setAttribute("value", t.getTransformation());
         menuCommand.appendChild(handlerParam);
 
