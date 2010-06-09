@@ -10,5 +10,74 @@
          </Priority>
       </editpolicyProvider>
    </extension>
+   <extension point="org.eclipse.ui.commands">
+         <command
+            categoryId="de.cau.cs.kieler"
+            defaultHandler="de.cau.cs.kieler.kaom.diagram.custom.commands.ReInitKaomDiagramCommand"
+            description="Reinitialize the diagram for the selected kaom file overwriting the olds kaod file."
+            id="de.cau.cs.kieler.kaom.ui.reinitDiagram"
+            name="Reinitialize diagram from model">
+      </command>
+         </extension>
+            <extension
+         point="org.eclipse.ui.menus">
 
+            <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <menu
+               id="de.cau.cs.kieler"
+               label="KIELER"
+               mnemonic="K">
+            <command
+                  commandId="de.cau.cs.kieler.kaom.ui.reinitDiagram"
+                  label="Reinitialize diagram from model"
+                  style="push"
+                  tooltip="Reinitialize the diagram for the selected kaom file overwriting the olds kaod file.">
+               <visibleWhen
+                     checkEnabled="false">
+                  <or>
+                     <with
+                           variable="activeEditor">
+                        <test
+                              forcePluginActivation="false"
+                              property="de.cau.cs.kieler.kaom.activeKaomEditor">
+                        </test>
+                     </with>
+                     <iterate>
+                 <adapt
+                       type="org.eclipse.core.resources.IResource">
+                    <test
+                          forcePluginActivation="false"
+                          property="org.eclipse.core.resources.name"
+                          value="*.kaod">
+                    </test>
+                 </adapt>
+              </iterate>
+              <iterate>
+                 <adapt
+                       type="org.eclipse.core.resources.IResource">
+                    <test
+                          forcePluginActivation="false"
+                          property="org.eclipse.core.resources.name"
+                          value="*.kaom">
+                    </test>
+                 </adapt>
+              </iterate>
+                  </or>
+               </visibleWhen>
+            </command>
+            </menu>
+                     </menuContribution>
+                        </extension>
+                        
+                              <extension
+            point="org.eclipse.core.expressions.propertyTesters">
+         <propertyTester
+               class="de.cau.cs.kieler.kaom.diagram.custom.commands.KaomPropertyTester"
+               id="de.cau.cs.kieler.kaom.activeKaomEditor"
+               namespace="de.cau.cs.kieler.kaom"
+               properties="activeKaomEditor"
+               type="org.eclipse.ui.IEditorPart">
+         </propertyTester>
+      </extension>
 </plugin>
