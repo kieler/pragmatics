@@ -7,9 +7,9 @@ main() {
 	
 	// we want to use custom codegen templates which are required for
 	// certain special features
-	//model.dynamicTemplates :=true;
-	//model.templateDirectory := "de.cau.cs.kieler.kaom/gmf-templates";
-	//model.sameFileForDiagramAndModel := false;
+	model.dynamicTemplates :=true;
+	model.templateDirectory := "de.cau.cs.kieler.kaom/gmf-templates";
+	model.sameFileForDiagramAndModel := false;
 	
 	model.domainFileExtension := "kaom"; // kieler actor oriented model
 	model.diagramFileExtension := "kaod"; // kieler actor oriented modeling diagram
