@@ -11,10 +11,10 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.core.slimgraph.alg;
+package de.cau.cs.kieler.klodd.orthogonal.impl;
 
 import de.cau.cs.kieler.core.alg.IAlgorithm;
-import de.cau.cs.kieler.core.slimgraph.KGraphSection;
+import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KGraphSection;
 
 /**
  * Interface for algorithms that test planarity of a biconnected graph.

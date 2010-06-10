@@ -16,9 +16,9 @@ package de.cau.cs.kieler.klodd.orthogonal.structures;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
 import de.cau.cs.kieler.klodd.orthogonal.impl.ec.EmbeddingConstraint;
+import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimGraph;
+import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimNode;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.slimgraph.KSlimGraph;
-import de.cau.cs.kieler.core.slimgraph.KSlimNode;
 
 /**
  * A node in the graph structure used for the topology-shape-metrics approach.

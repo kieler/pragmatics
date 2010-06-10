@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.core.slimgraph.alg;
+package de.cau.cs.kieler.klodd.orthogonal.impl;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -21,10 +21,10 @@ import java.util.ListIterator;
 import java.util.Stack;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.core.slimgraph.KSlimEdge;
-import de.cau.cs.kieler.core.slimgraph.KGraphSection;
-import de.cau.cs.kieler.core.slimgraph.KSlimNode;
 import de.cau.cs.kieler.core.util.ConcatenableList;
+import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KGraphSection;
+import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimEdge;
+import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimNode;
 
 /**
  * Implementation of the Hopcroft & Tarjan planarity test.

@@ -14,8 +14,8 @@
 package de.cau.cs.kieler.klodd.orthogonal.impl.ec;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.core.slimgraph.KGraphSection;
-import de.cau.cs.kieler.core.slimgraph.alg.IPlanarityTester;
+import de.cau.cs.kieler.klodd.orthogonal.impl.IPlanarityTester;
+import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KGraphSection;
 
 /**
  * Planarity tester that checks for normal planarity and EC-planarity.

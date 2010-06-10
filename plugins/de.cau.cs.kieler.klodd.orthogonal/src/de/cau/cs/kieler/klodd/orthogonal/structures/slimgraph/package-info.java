@@ -22,4 +22,4 @@
  * The dual graph, which consists of faces and edges separating those
  * faces, can be generated from a slim graph instance.
  */
-package de.cau.cs.kieler.core.slimgraph;
+package de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph;

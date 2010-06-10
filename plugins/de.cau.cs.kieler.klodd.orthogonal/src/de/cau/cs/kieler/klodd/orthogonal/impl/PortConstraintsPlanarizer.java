@@ -22,8 +22,6 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
-import de.cau.cs.kieler.core.slimgraph.KSlimGraph;
-import de.cau.cs.kieler.core.slimgraph.KSlimNode;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.options.PortConstraints;
@@ -33,6 +31,8 @@ import de.cau.cs.kieler.klodd.orthogonal.impl.ec.EmbeddingConstraint;
 import de.cau.cs.kieler.klodd.orthogonal.modules.IPlanarizer;
 import de.cau.cs.kieler.klodd.orthogonal.structures.TSMEdge;
 import de.cau.cs.kieler.klodd.orthogonal.structures.TSMNode;
+import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimGraph;
+import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimNode;
 
 /**
  * Planarizer implementation that uses an EC planarizer to handle port

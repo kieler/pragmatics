@@ -22,11 +22,6 @@ import lpsolve.LpSolve;
 import lpsolve.LpSolveException;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.slimgraph.KSlimEdge;
-import de.cau.cs.kieler.core.slimgraph.KSlimFace;
-import de.cau.cs.kieler.core.slimgraph.KSlimGraph;
-import de.cau.cs.kieler.core.slimgraph.KSlimNode;
-import de.cau.cs.kieler.core.slimgraph.KSlimEdge.Bend;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.options.PortSide;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
@@ -34,6 +29,11 @@ import de.cau.cs.kieler.klodd.orthogonal.Messages;
 import de.cau.cs.kieler.klodd.orthogonal.modules.IOrthogonalizer;
 import de.cau.cs.kieler.klodd.orthogonal.structures.TSMEdge;
 import de.cau.cs.kieler.klodd.orthogonal.structures.TSMNode;
+import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimEdge;
+import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimFace;
+import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimGraph;
+import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimNode;
+import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimEdge.Bend;
 
 /**
  * Orthogonalizer implementation that uses LP methods to solve the Kandinsky

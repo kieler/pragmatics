@@ -14,11 +14,11 @@
 package de.cau.cs.kieler.klodd.orthogonal.impl.ec;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.core.slimgraph.KSlimEdge;
-import de.cau.cs.kieler.core.slimgraph.KSlimGraph;
-import de.cau.cs.kieler.core.slimgraph.KSlimNode;
 import de.cau.cs.kieler.klodd.orthogonal.modules.IPlanarizer;
 import de.cau.cs.kieler.klodd.orthogonal.structures.TSMNode;
+import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimEdge;
+import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimGraph;
+import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimNode;
 
 /**
  * Planarizer implementation that handles embedding constraints by inserting all

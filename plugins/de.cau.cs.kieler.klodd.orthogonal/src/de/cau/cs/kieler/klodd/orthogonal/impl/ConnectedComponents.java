@@ -21,11 +21,11 @@ import java.util.Map;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.slimgraph.KSlimEdge;
-import de.cau.cs.kieler.core.slimgraph.KSlimNode;
 import de.cau.cs.kieler.klodd.orthogonal.structures.TSMEdge;
 import de.cau.cs.kieler.klodd.orthogonal.structures.TSMGraph;
 import de.cau.cs.kieler.klodd.orthogonal.structures.TSMNode;
+import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimEdge;
+import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimNode;
 
 /**
  * Algorithm that finds the connected components for a layout graph and outputs

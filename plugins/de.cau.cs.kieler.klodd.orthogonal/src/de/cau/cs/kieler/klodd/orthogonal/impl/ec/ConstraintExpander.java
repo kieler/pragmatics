@@ -18,12 +18,12 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.slimgraph.KSlimEdge;
-import de.cau.cs.kieler.core.slimgraph.KSlimGraph;
-import de.cau.cs.kieler.core.slimgraph.KSlimNode;
 import de.cau.cs.kieler.klodd.orthogonal.structures.TSMEdge;
 import de.cau.cs.kieler.klodd.orthogonal.structures.TSMGraph;
 import de.cau.cs.kieler.klodd.orthogonal.structures.TSMNode;
+import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimEdge;
+import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimGraph;
+import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimNode;
 
 /**
  * Algorithm for the expansion of embedding constraints.

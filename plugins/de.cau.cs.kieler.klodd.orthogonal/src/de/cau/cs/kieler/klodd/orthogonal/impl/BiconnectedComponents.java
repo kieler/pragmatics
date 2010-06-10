@@ -18,9 +18,9 @@ import java.util.List;
 import java.util.Stack;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.core.slimgraph.KSlimGraph;
-import de.cau.cs.kieler.core.slimgraph.KGraphSection;
-import de.cau.cs.kieler.core.slimgraph.KSlimNode;
+import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KGraphSection;
+import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimGraph;
+import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimNode;
 
 /**
  * Algorithm that determines the biconnected components of a graph with a DFS.

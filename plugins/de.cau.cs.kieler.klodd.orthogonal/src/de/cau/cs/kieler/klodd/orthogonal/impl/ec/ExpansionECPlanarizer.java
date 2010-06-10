@@ -14,8 +14,8 @@
 package de.cau.cs.kieler.klodd.orthogonal.impl.ec;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.core.slimgraph.KSlimGraph;
 import de.cau.cs.kieler.klodd.orthogonal.modules.IPlanarizer;
+import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimGraph;
 
 /**
  * Planarizer implementation that handles embedding constraints by performing EC

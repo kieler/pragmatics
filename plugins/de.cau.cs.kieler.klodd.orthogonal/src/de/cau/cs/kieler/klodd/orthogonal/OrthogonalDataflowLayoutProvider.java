@@ -19,7 +19,6 @@ import de.cau.cs.kieler.core.IKielerPreferenceStore;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.slimgraph.KSlimGraph;
 import de.cau.cs.kieler.kiml.layout.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
@@ -37,6 +36,7 @@ import de.cau.cs.kieler.klodd.orthogonal.modules.ICompacter;
 import de.cau.cs.kieler.klodd.orthogonal.modules.IOrthogonalizer;
 import de.cau.cs.kieler.klodd.orthogonal.modules.IPlanarizer;
 import de.cau.cs.kieler.klodd.orthogonal.structures.TSMGraph;
+import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimGraph;
 
 /**
  * Layout provider for the KLoDD orthogonal dataflow diagram layouter.

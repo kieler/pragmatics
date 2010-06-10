@@ -14,7 +14,7 @@
 package de.cau.cs.kieler.klodd.orthogonal.modules;
 
 import de.cau.cs.kieler.core.alg.IAlgorithm;
-import de.cau.cs.kieler.core.slimgraph.KSlimGraph;
+import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimGraph;
 
 /**
  * Interface for algorithms that perform orthogonalization of a graph.
