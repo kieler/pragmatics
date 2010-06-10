@@ -109,7 +109,6 @@ public class LayeredGraph {
      * @param rank rank of the object
      * @param kNode the corresponding node in the acyclic KIELER graph
      */
-    // TODO putFront -> put, putBack->?
     public void putFront(final KGraphElement obj, final int rank, final KSlimNode kNode) {
         ListIterator<Layer> layerIter = layers.listIterator();
         while (layerIter.hasNext()) {
@@ -172,7 +171,6 @@ public class LayeredGraph {
      * @param obj the object
      * @return the corresponding layer element, or null if none exists
      */
-    //TODO common superclass? generics?
     public LayerElement getLayerElement(final Object obj) {
         return obj2LayerElemMap.get(obj);
     }
@@ -202,7 +200,6 @@ public class LayeredGraph {
      * 
      * @param kGraph acyclic version of the graph
      */
-    //TODO List of reversed edges as param
     public void createConnections(final KSlimGraph kGraph) {
         for (Layer layer : layers) {
             List<LayerElement> elements = layer.getElements();
@@ -327,43 +324,45 @@ public class LayeredGraph {
      * 
      * @return the position
      */
-    // TODO offset
     public KPoint getPosition() {
         return position;
     }
     
     /**
-     * Sets the crosswiseDim.
-     * TODO explain
+     * Sets the crosswise dimension, that is the height for horizontal
+     * layout or the width for vertical layout.
      *
-     * @param thecrosswiseDim the crosswiseDim to set
+     * @param thecrosswiseDim the crosswise dimension to set
      */
     public void setCrosswiseDim(final float thecrosswiseDim) {
         this.crosswiseDim = thecrosswiseDim;
     }
 
     /**
-     * Returns the crosswiseDim.
+     * Returns the crosswise dimension, that is the height for horizontal
+     * layout or the width for vertical layout.
      *
-     * @return the crosswiseDim
+     * @return the crosswise dimension
      */
     public float getCrosswiseDim() {
         return crosswiseDim;
     }
 
     /**
-     * Sets the lengthwiseDim.
+     * Sets the lengthwise dimension, that is the width for horizontal
+     * layout or the height for vertical layout.
      *
-     * @param thelengthwiseDim the lengthwiseDim to set
+     * @param thelengthwiseDim the lengthwise dimension to set
      */
     public void setLengthwiseDim(final float thelengthwiseDim) {
         this.lengthwiseDim = thelengthwiseDim;
     }
 
     /**
-     * Returns the lengthwiseDim.
+     * Returns the lengthwise dimension, that is the width for horizontal
+     * layout or the height for vertical layout.
      *
-     * @return the lengthwiseDim
+     * @return the lengthwise dimension
      */
     public float getLengthwiseDim() {
         return lengthwiseDim;
