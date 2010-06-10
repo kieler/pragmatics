@@ -15,8 +15,8 @@ package de.cau.cs.kieler.klodd.hierarchical.modules;
 
 import de.cau.cs.kieler.core.alg.IAlgorithm;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.slimgraph.KSlimGraph;
 import de.cau.cs.kieler.klodd.hierarchical.structures.LayeredGraph;
+import de.cau.cs.kieler.klodd.hierarchical.structures.slimgraph.KSlimGraph;
 
 /**
  * Interface for algorithms that assign layers to each node of a graph.

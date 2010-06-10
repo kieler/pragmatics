@@ -17,8 +17,6 @@ import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.slimgraph.KSlimGraph;
-import de.cau.cs.kieler.core.slimgraph.KSlimNode;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.layout.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
@@ -28,6 +26,8 @@ import de.cau.cs.kieler.klodd.hierarchical.modules.ILayerAssigner;
 import de.cau.cs.kieler.klodd.hierarchical.structures.Layer;
 import de.cau.cs.kieler.klodd.hierarchical.structures.LayerElement;
 import de.cau.cs.kieler.klodd.hierarchical.structures.LayeredGraph;
+import de.cau.cs.kieler.klodd.hierarchical.structures.slimgraph.KSlimGraph;
+import de.cau.cs.kieler.klodd.hierarchical.structures.slimgraph.KSlimNode;
 
 /**
  * Layer assigner that balances the output of a basic layer assigner.

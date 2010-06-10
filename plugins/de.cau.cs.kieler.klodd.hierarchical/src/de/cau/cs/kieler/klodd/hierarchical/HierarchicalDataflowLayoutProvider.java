@@ -21,12 +21,6 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.slimgraph.KSlimEdge;
-import de.cau.cs.kieler.core.slimgraph.KSlimGraph;
-import de.cau.cs.kieler.core.slimgraph.alg.DFSCycleRemover;
-import de.cau.cs.kieler.core.slimgraph.alg.GreedyCycleRemover;
-import de.cau.cs.kieler.core.slimgraph.alg.ICycleRemover;
-import de.cau.cs.kieler.core.slimgraph.alg.InteractiveCycleRemover;
 import de.cau.cs.kieler.kiml.layout.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutData;
@@ -35,7 +29,6 @@ import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.layout.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.options.PortConstraints;
-import de.cau.cs.kieler.kiml.layout.util.GraphConverter;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
 import de.cau.cs.kieler.klodd.hierarchical.impl.BalancingLayerAssigner;
 import de.cau.cs.kieler.klodd.hierarchical.impl.BalancingNodePlacer;
@@ -55,6 +48,12 @@ import de.cau.cs.kieler.klodd.hierarchical.modules.ILayerwiseEdgePlacer;
 import de.cau.cs.kieler.klodd.hierarchical.modules.INodePlacer;
 import de.cau.cs.kieler.klodd.hierarchical.modules.INodewiseEdgePlacer;
 import de.cau.cs.kieler.klodd.hierarchical.structures.LayeredGraph;
+import de.cau.cs.kieler.klodd.hierarchical.structures.slimgraph.KSlimEdge;
+import de.cau.cs.kieler.klodd.hierarchical.structures.slimgraph.KSlimGraph;
+import de.cau.cs.kieler.klodd.hierarchical.structures.slimgraph.alg.DFSCycleRemover;
+import de.cau.cs.kieler.klodd.hierarchical.structures.slimgraph.alg.GreedyCycleRemover;
+import de.cau.cs.kieler.klodd.hierarchical.structures.slimgraph.alg.ICycleRemover;
+import de.cau.cs.kieler.klodd.hierarchical.structures.slimgraph.alg.InteractiveCycleRemover;
 
 /**
  * Layout provider for the KLoDD hierarchical dataflow diagram layouter.

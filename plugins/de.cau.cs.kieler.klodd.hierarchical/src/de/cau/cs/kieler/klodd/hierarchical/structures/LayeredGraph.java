@@ -24,10 +24,6 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
-import de.cau.cs.kieler.core.slimgraph.KSlimEdge;
-import de.cau.cs.kieler.core.slimgraph.KSlimGraph;
-import de.cau.cs.kieler.core.slimgraph.KSlimNode;
-import de.cau.cs.kieler.core.slimgraph.alg.ICycleRemover;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutData;
@@ -39,6 +35,10 @@ import de.cau.cs.kieler.kiml.layout.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.options.PortConstraints;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
+import de.cau.cs.kieler.klodd.hierarchical.structures.slimgraph.KSlimEdge;
+import de.cau.cs.kieler.klodd.hierarchical.structures.slimgraph.KSlimGraph;
+import de.cau.cs.kieler.klodd.hierarchical.structures.slimgraph.KSlimNode;
+import de.cau.cs.kieler.klodd.hierarchical.structures.slimgraph.alg.ICycleRemover;
 
 /**
  * This structure manages the layering of an acyclic directed graph.

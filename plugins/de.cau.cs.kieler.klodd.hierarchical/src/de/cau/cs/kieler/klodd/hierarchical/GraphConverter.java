@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.layout.util;
+package de.cau.cs.kieler.klodd.hierarchical;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,10 +20,11 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
-import de.cau.cs.kieler.core.slimgraph.KSlimEdge;
-import de.cau.cs.kieler.core.slimgraph.KSlimGraph;
-import de.cau.cs.kieler.core.slimgraph.KSlimNode;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
+import de.cau.cs.kieler.klodd.hierarchical.structures.slimgraph.KSlimEdge;
+import de.cau.cs.kieler.klodd.hierarchical.structures.slimgraph.KSlimGraph;
+import de.cau.cs.kieler.klodd.hierarchical.structures.slimgraph.KSlimNode;
 
 /**
  * Class that converts a KGraph into a slim graph.
