@@ -24,6 +24,7 @@ import de.cau.cs.kieler.core.slimgraph.KSlimEdge;
 import de.cau.cs.kieler.core.slimgraph.KSlimGraph;
 import de.cau.cs.kieler.core.slimgraph.KSlimNode;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 
 /**
  * Class that converts a KGraph into a slim graph.
@@ -76,6 +77,9 @@ public class GraphConverter extends AbstractAlgorithm {
                     KSlimEdge newEdge = new KSlimEdge(slimGraph, nodeMap.get(child), nodeMap
                             .get(targetNode), layoutEdge);
                     newEdge.connectNodes();
+                } else if (targetNode != child.getParent()) {
+                    LayoutOptions.setBoolean(KimlLayoutUtil.getShapeLayout(layoutEdge),
+                            LayoutOptions.NO_LAYOUT, true);
                 }
             }
         }
@@ -92,17 +96,23 @@ public class GraphConverter extends AbstractAlgorithm {
 
             // convert edges to external ports
             for (KPort port : parentNode.getPorts()) {
+                int flow = KimlLayoutUtil.calcFlow(port);
                 for (KEdge layoutEdge : port.getEdges()) {
                     KNode source = layoutEdge.getSource();
                     KNode target = layoutEdge.getTarget();
-                    if (layoutEdge.getSourcePort() == port && target.getParent() == parentNode) {
+                    if (layoutEdge.getSourcePort() == port && target.getParent() == parentNode
+                            && flow < 0) {
                         KSlimEdge newEdge = new KSlimEdge(slimGraph, nodeMap.get(port), nodeMap
                                 .get(target), layoutEdge);
                         newEdge.connectNodes();
-                    } else if (layoutEdge.getTargetPort() == port && source.getParent() == parentNode) {
+                    } else if (layoutEdge.getTargetPort() == port && source.getParent() == parentNode
+                            && flow > 0) {
                         KSlimEdge newEdge = new KSlimEdge(slimGraph, nodeMap.get(source), nodeMap
                                 .get(port), layoutEdge);
                         newEdge.connectNodes();
+                    } else {
+                        LayoutOptions.setBoolean(KimlLayoutUtil.getEdgeLayout(layoutEdge),
+                                LayoutOptions.NO_LAYOUT, true);
                     }
                 }
             }

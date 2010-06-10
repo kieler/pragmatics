@@ -599,12 +599,14 @@ public final class KimlLayoutUtil {
         for (KEdge edge : port.getEdges()) {
             KPort sourcePort = edge.getSourcePort();
             KPort targetPort = edge.getTargetPort();
-            if (sourcePort != null && targetPort != null) {
-                KPort otherPort = sourcePort;
-                if (otherPort == port) {
-                    otherPort = targetPort;
-                }
-                if (isDescendant(otherPort.getNode(), port.getNode())) {
+            KNode otherNode = null;
+            if (sourcePort == port) {
+                otherNode = edge.getTarget();
+            } else if (targetPort == port) {
+                otherNode = edge.getSource();
+            }
+            if (otherNode != null) {
+                if (isDescendant(otherNode, port.getNode())) {
                     if (sourcePort == port) {
                         flow--;
                     }
