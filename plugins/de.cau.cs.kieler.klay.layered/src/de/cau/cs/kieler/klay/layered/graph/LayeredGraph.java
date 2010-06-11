@@ -29,7 +29,7 @@ import de.cau.cs.kieler.kiml.layout.options.PortType;
  *
  * @author msp
  */
-public class LayeredGraph {
+public class LayeredGraph extends LGraphElement {
 
     /** the total size of the drawing, without offset. */
     private Coord size = new Coord();

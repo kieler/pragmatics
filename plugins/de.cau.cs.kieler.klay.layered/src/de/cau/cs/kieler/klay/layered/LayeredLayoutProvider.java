@@ -192,6 +192,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         // transform edges
         for (KNode child : layoutNode.getChildren()) {
             for (KEdge kedge : child.getOutgoingEdges()) {
+                KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
                 if (kedge.getTarget().getParent() == child.getParent()) {
                     LNode sourceNode = (LNode) elemMap.get(child);
                     LPort sourcePort = (LPort) elemMap.get(kedge.getSourcePort());
@@ -208,8 +209,12 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
                     LEdge newEdge = new LEdge(kedge);
                     newEdge.setSource(sourcePort);
                     newEdge.setTarget(targetPort);
+                    // set properties of the new edge
+                    int priority = LayoutOptions.getInt(edgeLayout, LayoutOptions.PRIORITY);
+                    if (priority > 0) {
+                        newEdge.setProperty(Properties.PRIORITY, Integer.valueOf(priority));
+                    }
                 } else {
-                    KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
                     LayoutOptions.setBoolean(edgeLayout, LayoutOptions.NO_LAYOUT, true);
                 }
             }

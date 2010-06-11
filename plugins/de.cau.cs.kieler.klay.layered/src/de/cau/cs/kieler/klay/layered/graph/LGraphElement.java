@@ -13,18 +13,21 @@
  */
 package de.cau.cs.kieler.klay.layered.graph;
 
+import de.cau.cs.kieler.core.util.PropertyHolder;
+
 /**
  * Abstract superclass for the layers, nodes, ports, and edges of a layered graph.
  *
  * @author msp
  */
-public abstract class LGraphElement implements Comparable<LGraphElement> {
+public abstract class LGraphElement extends PropertyHolder
+        implements Comparable<LGraphElement> {
 
     // CHECKSTYLEOFF VisibilityModifier
     /** Identifier value, may be arbitrarily used by algorithms. */
     public int id;
     // CHECKSTYLEON VisibilityModifier
-
+    
     /**
      * {@inheritDoc}
      */
