@@ -50,6 +50,7 @@ import de.cau.cs.kieler.kiml.grana.ui.DiagramAnalyser;
 import de.cau.cs.kieler.kiml.layout.ILayoutListener;
 import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
 import de.cau.cs.kieler.kiml.layout.LayoutServices;
+import de.cau.cs.kieler.kiml.layout.LayoutServices.Registry;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.views.GmfLayoutPropertySource;
 import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
@@ -444,11 +445,9 @@ public class TestView extends ViewPart {
      * @author bdu
      * 
      */
-    private class LayoutListener implements ILayoutListener {
-        public void layoutPerformed(final KNode layoutGraph, final IKielerProgressMonitor monitor) {
-            System.out.println("LayoutListener: Layout performed.");
-            measureDiagram(true, layoutGraph);
-        }
+    private abstract static class LayoutListener implements ILayoutListener {
+        public abstract void layoutPerformed(
+                final KNode layoutGraph, final IKielerProgressMonitor monitor);
         
         public void layoutRequested(final KNode layoutGraph) {
             System.out.println("LayoutListener: Layout requested.");
@@ -487,20 +486,29 @@ public class TestView extends ViewPart {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        layoutDiagram(false, false);
-        // FIXME: need a layout listener to wait for the layouting to be
+        // need a layout listener to wait for the layouting to be
         // finished and applied before measuring it.
+        ILayoutListener listener = new LayoutListener() {
+            public void layoutPerformed(
+                    final KNode layoutGraph, final IKielerProgressMonitor monitor) {
+                System.out.println("LayoutListener: Layout performed.");
+                measureDiagram(true, layoutGraph);
+            }
+        };
+        Registry registry = LayoutServices.getRegistry();
+        registry.addLayoutListener(listener);
+        layoutDiagram(false, false);
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        // tableViewer.refresh();
+        registry.removeLayoutListener(listener);
 
         final Runnable runnable = new Runnable() {
             public void run() {
-                System.out.println("enter measuring");
+                System.out.println("after layouting");
                 try {
                     Thread.sleep(400);
                 } catch (InterruptedException e) {
@@ -511,12 +519,6 @@ public class TestView extends ViewPart {
 
                     tableViewer.refresh();
 
-                try {
-                    Thread.sleep(400);
-                } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
                 System.out.println(population.toString());
             }
         };
@@ -538,12 +540,8 @@ public class TestView extends ViewPart {
                 return;
             }
 
-            ILayoutListener listener = new LayoutListener();
-            LayoutServices.getRegistry().addLayoutListener(listener);
             EditPart part = getEditPart(editor);
-
             DiagramLayoutManager.layout(editor, part, showAnimation, showProgressBar);
-            LayoutServices.getRegistry().removeLayoutListener(listener);
         }
     }
     
@@ -587,38 +585,39 @@ public class TestView extends ViewPart {
 
     private void measureDiagram(final boolean showProgressBar, final KNode parentNode) {
         System.out.println("measure diagram");
-        if ((propertySource == null) || (population == null)) {
+        if (parentNode == null || (propertySource == null) || (population == null)) {
             return;
         }
-        final IEditorPart editor = getCurrentEditor();
-        if (editor == null) {
-            // we cannot find the editor.
-            // so we have nothing to measure.
-            return;
-        }
-        final EditPart part = getEditPart(editor);
+        // final EditPart part = getEditPart(editor);
         final String bendsMetricId = "de.cau.cs.kieler.kiml.granatesting.bendsMetric";
         final String narrownessMetricId = "de.cau.cs.kieler.kiml.granatesting.narrownessMetric";
         final AbstractInfoAnalysis bendsMetric = AnalysisServices.getInstance().getAnalysisById(
                 bendsMetricId);
-        final AbstractInfoAnalysis hCompactnessMetric = AnalysisServices.getInstance()
+        final AbstractInfoAnalysis narrownessMetric = AnalysisServices.getInstance()
                 .getAnalysisById(narrownessMetricId);
         final AbstractInfoAnalysis[] metrics = new AbstractInfoAnalysis[] { bendsMetric,
-                hCompactnessMetric };
+                narrownessMetric };
         // FIXME: DiagramAnalyser.analyse possibly uses obsolete layout graph
 
-        final Object[] results = DiagramAnalyser.analyse(parentNode, metrics, showProgressBar);
+
         // final Object[] results = DiagramAnalyser.analyse(editor, part,
         // metrics, showProgressBar);
 
-        final int newRating = (int) ((Double.parseDouble(results[0].toString()) + Double
-                .parseDouble(results[1].toString())) * 100);
+        final Object[] results = DiagramAnalyser.analyse(parentNode, metrics, showProgressBar);
+        final double bendsResult = Double.parseDouble(results[0].toString());
+        final double narrownessResult = Double.parseDouble(results[1].toString());
+        System.out.println(bendsResult + "  " + narrownessResult);
+        final int newRating = (int) ((bendsResult + narrownessResult) * 100);
         final Individual ind = getCurrentIndividual();
         System.out.println("Assign rating " + newRating + " to individual " + ind.toString());
         ind.setRating(newRating);
         // tableViewer.refresh();
     }
 
+    /**
+     * 
+     * @return the current individual, or {@code null} if none is selected.
+     */
     private Individual getCurrentIndividual() {
         if ((population == null) || population.isEmpty() || position >= population.size()) {
             return null;
@@ -673,7 +672,7 @@ public class TestView extends ViewPart {
                 break;
             }
         }
-        System.out.println(propertySource);
+        System.out.println(propertySource.getPropertyDescriptors());
         final LayoutViewPart layoutView = LayoutViewPart.findView();
         if (layoutView != null) {
             Runnable runnable = new Runnable() {
