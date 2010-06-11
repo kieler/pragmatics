@@ -26,7 +26,7 @@ import de.cau.cs.kieler.kiml.evol.Population;
  * @author bdu
  * 
  */
-public class DefaultEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
+public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
 
     /**
      * Constructor for an evolutionary algorithm with the given initial
@@ -35,7 +35,7 @@ public class DefaultEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm 
      * @param thePopulation
      *            initial population
      */
-    public DefaultEvolutionaryAlgorithm(final Population thePopulation) {
+    public BasicEvolutionaryAlgorithm(final Population thePopulation) {
         this.population = new Population(thePopulation);
         this.offspring = null;
         this.selection = null;
@@ -66,7 +66,7 @@ public class DefaultEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm 
                 Individual parent2 = selection.pick();
                 Genome genome1 = parent1.getGenome();
                 Genome genome2 = parent2.getGenome();
-                // TODO: ensure that parents are different
+                // it is not ensured that both parents are different
                 Genome newGenome = genome1.newRecombination(genome2);
                 System.out.println(" -- cross over of " + parent1);
                 System.out.println("              and " + parent2);
