@@ -36,9 +36,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -89,26 +86,28 @@ public class TestView extends ViewPart {
         tableViewer = new SelectorTableViewer(table);
         tableViewer.setContentProvider(new LayoutSetContentProvider());
         tableViewer.setLabelProvider(new LayoutSetLabelProvider());
-        final IWorkbench workbench = PlatformUI.getWorkbench();
-        final IWorkbenchPage page = workbench.getActiveWorkbenchWindow().getActivePage();
-        IEditorPart editor = null;
-        if (page != null) {
-            editor = page.getActiveEditor();
-        }
-        IGraphicalEditPart part = null;
+        // final IWorkbench workbench = PlatformUI.getWorkbench();
+        // final IWorkbenchPage page =
+        // workbench.getActiveWorkbenchWindow().getActivePage();
+        IEditorPart editor = getCurrentEditor();
+        // if (page != null) {
+        // editor = page.getActiveEditor();
+        // }
+        IGraphicalEditPart part = (IGraphicalEditPart) getEditPart(editor);
         if (editor != null) {
-            // TODO: test whether editor is for KIML
-            final ISelection selection = editor.getEditorSite().getSelectionProvider()
-                    .getSelection();
-            Object element = null;
-            if (selection != null) {
-                if (selection instanceof StructuredSelection) {
-                    element = ((StructuredSelection) selection).getFirstElement();
-                    if (element instanceof IGraphicalEditPart) {
-                        part = (IGraphicalEditPart) element;
-                    }
-                }
-            }
+            // // TODO: test whether editor is for KIML
+            // final ISelection selection =
+            // editor.getEditorSite().getSelectionProvider()
+            // .getSelection();
+            // Object element = null;
+            // if (selection != null) {
+            // if (selection instanceof StructuredSelection) {
+            // element = ((StructuredSelection) selection).getFirstElement();
+            // if (element instanceof IGraphicalEditPart) {
+            // part = (IGraphicalEditPart) element;
+            // }
+            // }
+            // }
             // FIXME: should share synchronized property source with LayoutView
             final GmfLayoutPropertySource source = new GmfLayoutPropertySource(part);
             propertySource = source;
@@ -134,7 +133,7 @@ public class TestView extends ViewPart {
                             tableViewer.selectRow(position);
                             tableViewer.refresh(element);
                         }
-                        refreshLayout();
+                        onSelectIndividual();
                         tableViewer.refresh();
                         tableViewer.addPostSelectionChangedListener(this);
                         System.out.println();
@@ -413,7 +412,7 @@ public class TestView extends ViewPart {
             Assert.isTrue(position >= 0);
             tableViewer.selectRow(position);
             tableViewer.refresh();
-            refreshLayout();
+            onSelectIndividual();
         }
     }
 
@@ -440,6 +439,23 @@ public class TestView extends ViewPart {
     }
     
     /**
+     * A layout listener to get noticed when the layout is done.
+     * 
+     * @author bdu
+     * 
+     */
+    private class LayoutListener implements ILayoutListener {
+        public void layoutPerformed(final KNode layoutGraph, final IKielerProgressMonitor monitor) {
+            System.out.println("LayoutListener: Layout performed.");
+            measureDiagram(true, layoutGraph);
+        }
+        
+        public void layoutRequested(final KNode layoutGraph) {
+            System.out.println("LayoutListener: Layout requested.");
+        }
+    }
+
+    /**
      * Return position of first unrated individual in the list.
      * 
      * @return {@code -1} if no unrated individual exists.
@@ -462,7 +478,7 @@ public class TestView extends ViewPart {
     /**
      * Refresh the layout according to selected individual.
      */
-    private void refreshLayout() {
+    private void onSelectIndividual() {
         System.out.println(population.toString());
         refreshLayoutViewPart();
         try {
@@ -491,7 +507,7 @@ public class TestView extends ViewPart {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-                measureDiagram(false);
+                // measureDiagram(false, null);
 
                     tableViewer.refresh();
 
@@ -521,26 +537,11 @@ public class TestView extends ViewPart {
                 // so we have nothing to layout.
                 return;
             }
-            /**
-             * A layout listener to get noticed when the layout is done.
-             * 
-             * @author bdu
-             * 
-             */
-            class LayoutListener implements ILayoutListener {
-                public void layoutPerformed(
-                        final KNode layoutGraph, final IKielerProgressMonitor monitor) {
-                    System.out.println("LayoutListener: Layout performed.");
-                }
-                
-                public void layoutRequested(final KNode layoutGraph) {
-                    System.out.println("LayoutListener: Layout requested.");
-                }
-            }
+
             ILayoutListener listener = new LayoutListener();
             LayoutServices.getRegistry().addLayoutListener(listener);
             EditPart part = getEditPart(editor);
-            // refreshLayoutViewPart();
+
             DiagramLayoutManager.layout(editor, part, showAnimation, showProgressBar);
             LayoutServices.getRegistry().removeLayoutListener(listener);
         }
@@ -584,7 +585,7 @@ public class TestView extends ViewPart {
         return result;
     }
 
-    private void measureDiagram(final boolean showProgressBar) {
+    private void measureDiagram(final boolean showProgressBar, final KNode parentNode) {
         System.out.println("measure diagram");
         if ((propertySource == null) || (population == null)) {
             return;
@@ -605,7 +606,11 @@ public class TestView extends ViewPart {
         final AbstractInfoAnalysis[] metrics = new AbstractInfoAnalysis[] { bendsMetric,
                 hCompactnessMetric };
         // FIXME: DiagramAnalyser.analyse possibly uses obsolete layout graph
-        final Object[] results = DiagramAnalyser.analyse(editor, part, metrics, showProgressBar);
+
+        final Object[] results = DiagramAnalyser.analyse(parentNode, metrics, showProgressBar);
+        // final Object[] results = DiagramAnalyser.analyse(editor, part,
+        // metrics, showProgressBar);
+
         final int newRating = (int) ((Double.parseDouble(results[0].toString()) + Double
                 .parseDouble(results[1].toString())) * 100);
         final Individual ind = getCurrentIndividual();
