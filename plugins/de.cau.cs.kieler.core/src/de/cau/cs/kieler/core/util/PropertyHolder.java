@@ -57,4 +57,18 @@ public abstract class PropertyHolder {
         return property.getDefault();
     }
     
+    /**
+     * Copy all properties from another property holder to this one.
+     * 
+     * @param other another property holder
+     */
+    public void copyProperties(final PropertyHolder other) {
+        if (other.propertyMap != null) {
+            if (this.propertyMap == null) {
+                propertyMap = new HashMap<Property<?>, Object>();
+            }
+            this.propertyMap.putAll(other.propertyMap);
+        }
+    }
+    
 }

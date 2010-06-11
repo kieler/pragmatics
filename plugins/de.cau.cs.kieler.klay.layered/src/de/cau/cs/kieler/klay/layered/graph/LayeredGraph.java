@@ -129,6 +129,7 @@ public class LayeredGraph extends LGraphElement {
                             dummyOutput.setNode(dummyNode);
                             edge.setTarget(dummyInput);
                             LEdge dummyEdge = new LEdge(edge.getOrigin());
+                            dummyEdge.copyProperties(edge);
                             dummyEdge.setReversed(edge.isReversed());
                             dummyEdge.setSource(dummyOutput);
                             dummyEdge.setTarget(targetPort);
