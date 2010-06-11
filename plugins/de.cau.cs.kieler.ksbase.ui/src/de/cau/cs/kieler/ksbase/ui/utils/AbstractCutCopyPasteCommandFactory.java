@@ -57,364 +57,367 @@ import de.cau.cs.kieler.ksbase.ui.handler.TransformationCommand;
  * @author soh
  */
 public abstract class AbstractCutCopyPasteCommandFactory implements
-		ICutCopyPasteCommandFactory {
+        ICutCopyPasteCommandFactory {
 
-	/** The transformation FRAMEWORK. */
-	private static final ITransformationFramework FRAMEWORK = new XtendTransformationFramework();
+    /** The transformation FRAMEWORK. */
+    private static final ITransformationFramework FRAMEWORK = new XtendTransformationFramework();
 
-	/** The path of the transformation file. */
-	private String filePath = null;
+    /** The path of the transformation file. */
+    private String filePath = null;
 
-	/** The last selection. */
-	private List<EObject> lastSelection;
+    /** The last selection. */
+    private List<EObject> lastSelection;
 
-	/** The instance of the job. */
-	private static WorkerJob jobInstance = null;
+    /** The instance of the job. */
+    private static WorkerJob jobInstance = null;
 
-	/**
-	 * Build a new copy command.
-	 * 
-	 * @param part
-	 *            the editor
-	 * @param selection
-	 *            the selection
-	 * @return the command
-	 */
-	public ICommand buildCopyCommand(final IDiagramWorkbenchPart part,
-			final List<EObject> selection) {
-		return buildCommand(part, selection, "Copy");
-	}
+    /**
+     * Build a new copy command.
+     * 
+     * @param part
+     *            the editor
+     * @param selection
+     *            the selection
+     * @return the command
+     */
+    public ICommand buildCopyCommand(final IDiagramWorkbenchPart part,
+            final List<EObject> selection) {
+        return buildCommand(part, selection, "Copy");
+    }
 
-	/**
-	 * Build a new cut command.
-	 * 
-	 * @param part
-	 *            the editor
-	 * @param selection
-	 *            the selection
-	 * @return the command
-	 */
-	public ICommand buildCutCommand(final IDiagramWorkbenchPart part,
-			final List<EObject> selection) {
-		return buildCommand(part, selection, "Cut");
-	}
+    /**
+     * Build a new cut command.
+     * 
+     * @param part
+     *            the editor
+     * @param selection
+     *            the selection
+     * @return the command
+     */
+    public ICommand buildCutCommand(final IDiagramWorkbenchPart part,
+            final List<EObject> selection) {
+        return buildCommand(part, selection, "Cut");
+    }
 
-	/**
-	 * Build a new paste command.
-	 * 
-	 * @param part
-	 *            the editor
-	 * @param selection
-	 *            the selection
-	 * @return the command
-	 */
-	public ICommand buildPasteCommand(final IDiagramWorkbenchPart part,
-			final List<EObject> selection) {
-		return buildCommand(part, selection, "Paste");
-	}
+    /**
+     * Build a new paste command.
+     * 
+     * @param part
+     *            the editor
+     * @param selection
+     *            the selection
+     * @return the command
+     */
+    public ICommand buildPasteCommand(final IDiagramWorkbenchPart part,
+            final List<EObject> selection) {
+        return buildCommand(part, selection, "Paste");
+    }
 
-	/**
-	 * Getter for the transformation file. e.g.: /transformations/feature.ext
-	 * 
-	 * @return the file
-	 */
-	protected abstract String getFile();
+    /**
+     * Getter for the transformation file. e.g.: /transformations/feature.ext
+     * 
+     * @return the file
+     */
+    protected abstract String getFile();
 
-	/**
-	 * Getter for the bundle of the plugin where the file is located.
-	 * 
-	 * @return the bundle
-	 */
-	protected abstract Bundle getBundle();
+    /**
+     * Getter for the bundle of the plugin where the file is located.
+     * 
+     * @return the bundle
+     */
+    protected abstract Bundle getBundle();
 
-	/**
-	 * Build a command.
-	 * 
-	 * @param part
-	 *            the editor
-	 * @param selection
-	 *            the selection
-	 * @param label
-	 *            the label and name of the transformation
-	 * @return the command
-	 */
-	private ICommand buildCommand(final IDiagramWorkbenchPart part,
-			final List<EObject> selection, final String label) {
-		lastSelection = selection;
+    /**
+     * Build a command.
+     * 
+     * @param part
+     *            the editor
+     * @param selection
+     *            the selection
+     * @param label
+     *            the label and name of the transformation
+     * @return the command
+     */
+    private ICommand buildCommand(final IDiagramWorkbenchPart part,
+            final List<EObject> selection, final String label) {
+        lastSelection = selection;
 
-		Bundle bundle = getBundle();
-		InputStream inStream = null;
-		StringBuffer contentBuffer = new StringBuffer();
-		try {
-			if (bundle != null) {
-				URL urlPath = bundle.getEntry(getFile());
-				// Parse transformation file to read transformations and
-				// parameters now:
-				if (urlPath != null) {
-					inStream = urlPath.openStream();
-					while (inStream.available() > 0) {
-						contentBuffer.append((char) inStream.read());
+        Bundle bundle = getBundle();
+        InputStream inStream = null;
+        StringBuffer contentBuffer = new StringBuffer();
+        try {
+            if (bundle != null) {
+                URL urlPath = bundle.getEntry(getFile());
+                // Parse transformation file to read transformations and
+                // parameters now:
+                if (urlPath != null) {
+                    inStream = urlPath.openStream();
+                    while (inStream.available() > 0) {
+                        contentBuffer.append((char) inStream.read());
 
-					}
-				}
-			}
-			// Write transformation file to .metadata
-			IPath path = ResourcesPlugin.getPlugin().getStateLocation();
-			// Transformation file name:
-			path = path.append("feature").addFileExtension("ext");
+                    }
+                }
+            }
+            // Write transformation file to .metadata
+            IPath path = ResourcesPlugin.getPlugin().getStateLocation();
+            // Transformation file name:
+            path = path.append("feature").addFileExtension("ext");
 
-			File file = new File(path.toOSString());
-			if (file != null) {
-				FileOutputStream out = null;
-				try {
-					out = new FileOutputStream(file);
-					if (out != null) {
-						if (!file.exists()) {
-							if (!file.createNewFile()) {
-								System.out.println("Can't create file.");
-							}
-						}
+            File file = new File(path.toOSString());
+            if (file != null) {
+                FileOutputStream out = null;
+                try {
+                    out = new FileOutputStream(file);
+                    if (out != null) {
+                        if (!file.exists()) {
+                            if (!file.createNewFile()) {
+                                System.out.println("Can't create file.");
+                            }
+                        }
 
-						out.write(contentBuffer.toString().getBytes());
-						out.flush();
-						out.close();
-					}
-				} catch (FileNotFoundException fne) {
-				} catch (SecurityException sece) {
-				} finally {
-					if (out != null) {
-						out.close();
-					}
-				}
-				// Set delete on exit flag, so the files will be cleaned when
-				// exiting
-				// eclipse
-				filePath = file.getAbsolutePath();
-				file.deleteOnExit();
-			}
-		} catch (IOException e0) {
-			e0.printStackTrace();
-		}
-		TransformationCommandWithAutoLayout result = null;
-		if (part instanceof DiagramEditor) {
-			if (jobInstance != null) {
-				jobInstance.cancel();
-			}
-			DiagramEditor editor = (DiagramEditor) part;
-			TransactionalEditingDomain transDomain = editor.getEditingDomain();
+                        out.write(contentBuffer.toString().getBytes());
+                        out.flush();
+                        out.close();
+                    }
+                } catch (FileNotFoundException fne) {
+                } catch (SecurityException sece) {
+                } finally {
+                    if (out != null) {
+                        out.close();
+                    }
+                }
+                // Set delete on exit flag, so the files will be cleaned when
+                // exiting
+                // eclipse
+                filePath = file.getAbsolutePath();
+                file.deleteOnExit();
+            }
+        } catch (IOException e0) {
+            e0.printStackTrace();
+        }
+        TransformationCommandWithAutoLayout result = null;
+        if (part instanceof DiagramEditor) {
+            if (jobInstance != null) {
+                jobInstance.cancel();
+            }
+            DiagramEditor editor = (DiagramEditor) part;
+            TransactionalEditingDomain transDomain = editor.getEditingDomain();
 
-			result = new TransformationCommandWithAutoLayout(transDomain, label);
+            result = new TransformationCommandWithAutoLayout(transDomain, label);
 
-			if (selection.size() > 1) {
+            if (selection.size() > 1) {
 
-				Class<?>[] types = getTypes();
-				List<Boolean> hasListType = new LinkedList<Boolean>();
-				for (int i = 0; i < types.length; i++) {
-					hasListType.add(false);
-				}
-				List<String> pureMapping = new LinkedList<String>();
+                Class<?>[] types = getTypes();
+                List<Boolean> hasListType = new LinkedList<Boolean>();
+                for (int i = 0; i < types.length; i++) {
+                    hasListType.add(false);
+                }
+                List<String> pureMapping = new LinkedList<String>();
 
-				for (int i = 0; i < selection.size(); i++) {
-					EObject obj = selection.get(i);
-					for (int j = 0; j < types.length; j++) {
-						if (obj.getClass().equals(types[i])) {
-							pureMapping.add(types[i].getSimpleName());
-							hasListType.set(i, true);
-						}
-					}
-				}
+                for (int i = 0; i < selection.size(); i++) {
+                    EObject obj = selection.get(i);
+                    for (int j = 0; j < types.length; j++) {
+                        if (types[j].isAssignableFrom(obj.getClass())) {
+                            pureMapping.add(types[j].getSimpleName());
+                            hasListType.set(j, true);
+                        }
+                    }
+                }
 
-				List<String[]> possibleMappings = new LinkedList<String[]>();
-				for (int i = 0; i < types.length; i++) {
-					if (hasListType.get(i)) {
-						String[] array = { "List[" + types[i].getSimpleName()
-								+ "]" };
-						possibleMappings.add(array);
-					}
-				}
+                List<String[]> possibleMappings = new LinkedList<String[]>();
+                for (int i = 0; i < types.length; i++) {
+                    if (hasListType.get(i)) {
+                        String[] array = { "List[" + types[i].getSimpleName()
+                                + "]" };
+                        possibleMappings.add(array);
+                    }
+                }
 
-				if (label.equals("Paste")) {
-					possibleMappings.add(pureMapping
-							.toArray(new String[pureMapping.size()]));
-				} else {
-					String[] array = { "List[Object]" };
-					possibleMappings.add(array);
-				}
+                if (label.equals("Paste")) {
+                    possibleMappings.add(pureMapping
+                            .toArray(new String[pureMapping.size()]));
+                } else {
+                    String[] array = { "List[Object]" };
+                    possibleMappings.add(array);
+                }
 
-				for (String[] s : possibleMappings) {
-					List<Object> mappedSelection = FRAMEWORK
-							.createParameterMapping(selection, s);
-					if (mappedSelection != null
-							&& result.initialize(editor, mappedSelection, label
-									.toLowerCase(), filePath, getModel(),
-									FRAMEWORK)) {
-						break;
-					}
-				}
-			} else {
-				List<Object> list = new LinkedList<Object>();
-				list.add(selection.get(0));
-				result.initialize(editor, list, label.toLowerCase(), filePath,
-						getModel(), FRAMEWORK);
-			}
-		}
-		return result;
-	}
+                for (String[] s : possibleMappings) {
+                    List<Object> mappedSelection = FRAMEWORK
+                            .createParameterMapping(selection, s);
+                    System.out.println(s);
+                    System.out.println(mappedSelection);
+                    if (mappedSelection != null
+                            && result.initialize(editor, mappedSelection, label
+                                    .toLowerCase(), filePath, getModel(),
+                                    FRAMEWORK)) {
+                        System.out.println("  " + mappedSelection);
+                        break;
+                    }
+                }
+            } else {
+                List<Object> list = new LinkedList<Object>();
+                list.add(selection.get(0));
+                result.initialize(editor, list, label.toLowerCase(), filePath,
+                        getModel(), FRAMEWORK);
+            }
+        }
+        return result;
+    }
 
-	/**
-	 * Get a list of all types that can be copied or pasted.
-	 * 
-	 * @return the list of types
-	 */
-	protected abstract Class<?>[] getTypes();
+    /**
+     * Get a list of all types that can be copied or pasted.
+     * 
+     * @return the list of types
+     */
+    protected abstract Class<?>[] getTypes();
 
-	/**
-	 * Get the path to the model package. e.g.:
-	 * de.cau.cs.kieler.synccharts.SyncchartsPackage
-	 * 
-	 * @return the model package
-	 */
-	protected abstract String getModel();
+    /**
+     * Get the path to the model package. e.g.:
+     * de.cau.cs.kieler.synccharts.SyncchartsPackage
+     * 
+     * @return the model package
+     */
+    protected abstract String getModel();
 
-	/**
-	 * Perform actions after the operation has finished.
-	 * 
-	 * @param monitor
-	 *            a progress monitor
-	 */
-	protected abstract void performPostOperationActions(
-			final IProgressMonitor monitor);
+    /**
+     * Perform actions after the operation has finished.
+     * 
+     * @param monitor
+     *            a progress monitor
+     */
+    protected abstract void performPostOperationActions(
+            final IProgressMonitor monitor);
 
-	/**
-	 * This transformation command performs an auto layout some time after the
-	 * last transformation.
-	 * 
-	 * @author soh
-	 */
-	private class TransformationCommandWithAutoLayout extends
-			TransformationCommand {
+    /**
+     * This transformation command performs an auto layout some time after the
+     * last transformation.
+     * 
+     * @author soh
+     */
+    private class TransformationCommandWithAutoLayout extends
+            TransformationCommand {
 
-		/** The label. */
-		private final String label;
+        /** The label. */
+        private final String label;
 
-		/** The delay. */
-		private static final int DELAY = 500;
+        /** The delay. */
+        private static final int DELAY = 500;
 
-		/**
-		 * Creates a new Transformation command.
-		 * 
-		 * @param domain
-		 * @param labelParam
-		 */
-		public TransformationCommandWithAutoLayout(
-				final TransactionalEditingDomain domain, final String labelParam) {
-			super(domain, labelParam, null);
-			this.label = labelParam;
-		}
+        /**
+         * Creates a new Transformation command.
+         * 
+         * @param domain
+         * @param labelParam
+         */
+        public TransformationCommandWithAutoLayout(
+                final TransactionalEditingDomain domain, final String labelParam) {
+            super(domain, labelParam, null);
+            this.label = labelParam;
+        }
 
-		@Override
-		protected CommandResult doExecuteWithResult(
-				final IProgressMonitor monitor, final IAdaptable info)
-				throws ExecutionException {
-			CommandResult res = super.doExecuteWithResult(monitor, info);
-			if (label.equalsIgnoreCase("paste")) {
-				WorkerJob job = new WorkerJob();
-				job.schedule(DELAY);
+        @Override
+        protected CommandResult doExecuteWithResult(
+                final IProgressMonitor monitor, final IAdaptable info)
+                throws ExecutionException {
+            CommandResult res = super.doExecuteWithResult(monitor, info);
+            if (label.equalsIgnoreCase("paste")) {
+                WorkerJob job = new WorkerJob();
+                job.schedule(DELAY);
 
-			}
-			return res;
-		}
-	}
+            }
+            return res;
+        }
+    }
 
-	/**
-	 * Thread for triggering an autolayout after some time.
-	 * 
-	 * @author soh
-	 */
-	private class WorkerJob extends Job {
+    /**
+     * Thread for triggering an autolayout after some time.
+     * 
+     * @author soh
+     */
+    private class WorkerJob extends Job {
 
-		/**
-		 * Creates a new AbstractCutCopyPasteCommandFactory.java.
-		 * 
-		 * @param name
-		 */
-		public WorkerJob() {
-			super("Autolayout");
-			jobInstance = this;
-		}
+        /**
+         * Creates a new AbstractCutCopyPasteCommandFactory.java.
+         * 
+         * @param name
+         */
+        public WorkerJob() {
+            super("Autolayout");
+            jobInstance = this;
+        }
 
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		protected IStatus run(final IProgressMonitor monitor) {
-			performPostOperationActions(monitor);
-			return new Status(IStatus.OK,
-					"de.cau.cs.kieler.synccharts.diagram.custom", "Layout done");
-		}
-	}
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected IStatus run(final IProgressMonitor monitor) {
+            performPostOperationActions(monitor);
+            return new Status(IStatus.OK,
+                    "de.cau.cs.kieler.synccharts.diagram.custom", "Layout done");
+        }
+    }
 
-	/**
-	 * Refresh the edit policies.
-	 * 
-	 * @param editorPart
-	 *            the editor
-	 */
-	protected void refreshEditPolicies(final IEditorPart editorPart) {
-		if (editorPart instanceof IDiagramWorkbenchPart) {
-			IDiagramWorkbenchPart part = (IDiagramWorkbenchPart) editorPart;
-			if (lastSelection != null) {
-				for (EObject sel : lastSelection) {
-					refreshPolicy(sel);
-				}
-				// commit changes to view
-				IDiagramGraphicalViewer graphViewer = part
-						.getDiagramGraphicalViewer();
-				graphViewer.flush();
-			}
-		}
-		lastSelection = null;
-	}
+    /**
+     * Refresh the edit policies.
+     * 
+     * @param editorPart
+     *            the editor
+     */
+    protected void refreshEditPolicies(final IEditorPart editorPart) {
+        if (editorPart instanceof IDiagramWorkbenchPart) {
+            IDiagramWorkbenchPart part = (IDiagramWorkbenchPart) editorPart;
+            if (lastSelection != null) {
+                for (EObject sel : lastSelection) {
+                    refreshPolicy(sel);
+                }
+                // commit changes to view
+                IDiagramGraphicalViewer graphViewer = part
+                        .getDiagramGraphicalViewer();
+                graphViewer.flush();
+            }
+        }
+        lastSelection = null;
+    }
 
-	/**
-	 * Refresh the edit policy on the given element.
-	 * 
-	 * @param sel
-	 *            the element
-	 */
-	private void refreshPolicy(final EObject sel) {
-		EditPart editPart = ModelingUtil.getEditPart(sel);
-		// get all registered edit parts in order to get transitions as well
-		Collection<?> parts = editPart.getViewer().getEditPartRegistry()
-				.values();
+    /**
+     * Refresh the edit policy on the given element.
+     * 
+     * @param sel
+     *            the element
+     */
+    private void refreshPolicy(final EObject sel) {
+        EditPart editPart = ModelingUtil.getEditPart(sel);
+        // get all registered edit parts in order to get transitions as well
+        Collection<?> parts = editPart.getViewer().getEditPartRegistry()
+                .values();
 
-		// results list
-		List<CanonicalEditPolicy> policies = new LinkedList<CanonicalEditPolicy>();
-		// iterate over all parts
-		for (Iterator<?> iter = parts.iterator(); iter.hasNext();) {
-			Object obj = iter.next();
-			if (obj instanceof EditPart) {
-				Object model = ((EditPart) obj).getModel();
-				if (model instanceof View) {
-					EObject eObject = ((View) model).getElement();
+        // results list
+        List<CanonicalEditPolicy> policies = new LinkedList<CanonicalEditPolicy>();
+        // iterate over all parts
+        for (Iterator<?> iter = parts.iterator(); iter.hasNext();) {
+            Object obj = iter.next();
+            if (obj instanceof EditPart) {
+                Object model = ((EditPart) obj).getModel();
+                if (model instanceof View) {
+                    EObject eObject = ((View) model).getElement();
 
-					// get policy for the semantic element
-					List<?> editPolicies = CanonicalEditPolicy
-							.getRegisteredEditPolicies(eObject);
-					for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
-						CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it
-								.next();
-						policies.add(nextEditPolicy);
+                    // get policy for the semantic element
+                    List<?> editPolicies = CanonicalEditPolicy
+                            .getRegisteredEditPolicies(eObject);
+                    for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
+                        CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it
+                                .next();
+                        policies.add(nextEditPolicy);
 
-					}
-				}
-			}
-		}
+                    }
+                }
+            }
+        }
 
-		// refresh all policies at once to avoid concurrent modification
-		// exception
-		for (CanonicalEditPolicy policy : policies) {
-			policy.refresh();
-		}
-	}
+        // refresh all policies at once to avoid concurrent modification
+        // exception
+        for (CanonicalEditPolicy policy : policies) {
+            policy.refresh();
+        }
+    }
 }
