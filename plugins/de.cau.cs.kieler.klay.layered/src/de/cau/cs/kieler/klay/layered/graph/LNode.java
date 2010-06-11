@@ -28,14 +28,6 @@ import de.cau.cs.kieler.klay.layered.impl.LinearSegmentsNodePlacer.Region;
  */
 public class LNode extends LGraphElement {
     
-    /** Definition of node types used in the layered approach. */
-    public enum Type {
-        /** a normal node is created from a node of the original graph. */
-        NORMAL,
-        /** a dummy node created to split a long edge. */
-        LONG_EDGE;
-    }
-    
     /** the owning layer. */
     private Layer owner;
     /** the owning region. */
@@ -50,22 +42,7 @@ public class LNode extends LGraphElement {
     private List<LPort> ports = new LinkedList<LPort>();
     /** name of the node. */
     private String name;
-    /** type of the node. */
-    private Type type;
 
-    /**
-     * Creates a layer node.
-     * 
-     * @param theorigin the original object for the node, or {@code null}
-     * @param thename name of the node, or {@code null}
-     * @param thetype type of the node
-     */
-    public LNode(final Object theorigin, final String thename, final Type thetype) {
-        this.origin = theorigin;
-        this.name = thename;
-        this.type = thetype;
-    }
-    
     /**
      * Creates a layer node.
      * 
@@ -73,7 +50,8 @@ public class LNode extends LGraphElement {
      * @param thename name of the node, or {@code null}
      */
     public LNode(final Object theorigin, final String thename) {
-        this(theorigin, thename, Type.NORMAL);
+        this.origin = theorigin;
+        this.name = thename;
     }
     
     /**
@@ -82,14 +60,14 @@ public class LNode extends LGraphElement {
      * @param theorigin the original object for the node, or {@code null}
      */
     public LNode(final Object theorigin) {
-        this(theorigin, null, Type.NORMAL);
+        this(theorigin, null);
     }
     
     /**
      * Creates a layer node.
      */
     public LNode() {
-        this(null, null, Type.NORMAL);
+        this(null, null);
     }
 
     /**
@@ -141,15 +119,6 @@ public class LNode extends LGraphElement {
      */
     public Region getRegion() {
         return region;
-    }
-
-    /**
-     * Returns the type of node.
-     * 
-     * @return the type
-     */
-    public Type getType() {
-        return type;
     }
 
     /**

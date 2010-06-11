@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import de.cau.cs.kieler.kiml.layout.options.PortType;
+import de.cau.cs.kieler.klay.layered.Properties;
 
 /**
  * A layered graph has a set of layers that contain the nodes.
@@ -35,26 +36,8 @@ public class LayeredGraph extends LGraphElement {
     private Coord size = new Coord();
     /** the offset to be added to all positions. */
     private Coord offset = new Coord();
-    /** the original object from which the graph was created. */
-    private Object origin;
     /** the layers of the layered graph. */
     private List<Layer> layers = new LinkedList<Layer>();
-
-    /**
-     * Creates a layered graph.
-     * 
-     * @param theorigin the original object for the graph
-     */
-    public LayeredGraph(final Object theorigin) {
-        this.origin = theorigin;
-    }
-    
-    /**
-     * Creates a layered graph.
-     */
-    public LayeredGraph() {
-        this(null);
-    }
     
     /**
      * {@inheritDoc}
@@ -85,15 +68,6 @@ public class LayeredGraph extends LGraphElement {
     }
 
     /**
-     * Returns the original object from which the graph was created.
-     * 
-     * @return the original object
-     */
-    public Object getOrigin() {
-        return origin;
-    }
-
-    /**
      * Returns the list of layers of the graph.
      * 
      * @return the layers
@@ -121,7 +95,9 @@ public class LayeredGraph extends LGraphElement {
                         int targetIndex = targetPort.getNode().getLayer().getIndex();
                         if (targetIndex != layerIter.nextIndex()) {
                             Layer nextLayer = layerIter.next();
-                            LNode dummyNode = new LNode(edge, null, LNode.Type.LONG_EDGE);
+                            LNode dummyNode = new LNode(edge);
+                            dummyNode.setProperty(Properties.NODE_TYPE,
+                                    Properties.NodeType.LONG_EDGE);
                             dummyNode.setLayer(nextLayer);
                             LPort dummyInput = new LPort(PortType.INPUT);
                             dummyInput.setNode(dummyNode);

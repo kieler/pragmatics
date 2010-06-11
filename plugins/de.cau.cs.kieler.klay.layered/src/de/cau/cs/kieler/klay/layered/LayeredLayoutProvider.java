@@ -89,7 +89,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         // transform the input graph
         List<LNode> nodes = transformGraph(layoutNode);
         // create an empty layered graph and perform the actual layout
-        LayeredGraph layeredGraph = new LayeredGraph(layoutNode);
+        LayeredGraph layeredGraph = new LayeredGraph();
         doLayout(layeredGraph, nodes, progressMonitor.subTask(1), spacing);
         // apply the layout results to the original graph
         applyLayout(layoutNode, layeredGraph);
@@ -263,7 +263,12 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
                     for (LEdge ledge : port.getEdges()) {
                         if (ledge.id < 0 && ledge.getOrigin() instanceof KEdge) {
                             KEdge kedge = (KEdge) ledge.getOrigin();
-                            collectEdge(kedge, ledge, edgeMap);
+                            List<LEdge> edgeList = edgeMap.get(kedge);
+                            if (edgeList == null) {
+                                edgeList = new LinkedList<LEdge>();
+                                edgeMap.put(kedge, edgeList);
+                            }
+                            edgeList.add(ledge);
                         }
                     }
                 }
@@ -319,41 +324,6 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     private void applyLayout(final KPoint kpoint, final Coord lpoint, final Coord offset) {
         kpoint.setX(lpoint.x + offset.x);
         kpoint.setY(lpoint.y + offset.y);
-    }
-    
-    /**
-     * Collect all pieces of a long edge and put them into the edge map.
-     * 
-     * @param kedge an original KEdge
-     * @param theledge an edge in the layered graph
-     * @param edgeMap the edge map
-     */
-    private void collectEdge(final KEdge kedge, final LEdge theledge,
-            final Map<KEdge, List<LEdge>> edgeMap) {
-        List<LEdge> edgeList = edgeMap.get(kedge);
-        if (edgeList == null) {
-            edgeList = new LinkedList<LEdge>();
-            edgeMap.put(kedge, edgeList);
-        }
-        LEdge ledge = theledge;
-        do {
-            edgeList.add(ledge);
-            LNode targetNode = ledge.getTarget().getNode();
-            ledge = null;
-            if (targetNode.getType() == LNode.Type.LONG_EDGE) {
-                for (LPort port : targetNode.getPorts(PortType.OUTPUT)) {
-                    for (LEdge nextEdge : port.getEdges()) {
-                        if (nextEdge.getOrigin() == kedge) {
-                            ledge = nextEdge;
-                            break;
-                        }
-                    }
-                    if (ledge != null) {
-                        break;
-                    }
-                }
-            }
-        } while (ledge != null);
     }
 
 }

@@ -22,13 +22,25 @@ import de.cau.cs.kieler.core.util.Property;
  */
 public final class Properties {
     
+    /** Definition of node types used in the layered approach. */
+    public enum NodeType {
+        /** a normal node is created from a node of the original graph. */
+        NORMAL,
+        /** a dummy node created to split a long edge. */
+        LONG_EDGE;
+    }    
+
+    /** priority of elements. */
+    public static final Property<Integer> PRIORITY = new Property<Integer>(
+            "priority", 0);
+    /** node type. */
+    public static final Property<NodeType> NODE_TYPE = new Property<NodeType>(
+            "nodeType", NodeType.NORMAL);
+    
     /**
      * Hidden default constructor.
      */
     private Properties() {
     }
 
-    /** priority of elements. */
-    public static final Property<Integer> PRIORITY = new Property<Integer>("priority", 0);
-    
 }

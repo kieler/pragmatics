@@ -16,6 +16,8 @@ package de.cau.cs.kieler.klay.layered.impl;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.layout.options.PortType;
 import de.cau.cs.kieler.klay.layered.LayeredLayoutProvider;
+import de.cau.cs.kieler.klay.layered.Properties;
+import de.cau.cs.kieler.klay.layered.Properties.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.Coord;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -50,7 +52,7 @@ public class PolylineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
                 node.getPos().x = xpos;
-                if (node.getType() == LNode.Type.LONG_EDGE) {
+                if (node.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
                     LEdge edge = (LEdge) node.getOrigin();
                     if (isEndnode(node, PortType.INPUT)) {
                         edge.getBendPoints().add(new Coord(xpos, node.getPos().y));
@@ -80,7 +82,7 @@ public class PolylineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter
         for (LPort port : node.getPorts(portType)) {
             for (LPort connectedPort : port.getConnectedPorts()) {
                 LNode otherNode = connectedPort.getNode();
-                if (otherNode.getType() == LNode.Type.LONG_EDGE
+                if (otherNode.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE
                         && node.getPos().y == otherNode.getPos().y) {
                     return false;
                 }

@@ -22,6 +22,8 @@ import java.util.List;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.layout.options.PortType;
 import de.cau.cs.kieler.klay.layered.LayeredLayoutProvider;
+import de.cau.cs.kieler.klay.layered.Properties;
+import de.cau.cs.kieler.klay.layered.Properties.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.Coord;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -261,11 +263,11 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
     private void fillSegment(final LNode node, final LinearSegment segment) {
         node.id = segment.id;
         segment.nodes.add(node);
-        if (node.getType() == LNode.Type.LONG_EDGE) {
+        if (node.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
             for (LPort sourcePort : node.getPorts(PortType.OUTPUT)) {
                 for (LPort targetPort : sourcePort.getConnectedPorts()) {
                     LNode targetNode = targetPort.getNode();
-                    if (targetNode.getType() == LNode.Type.LONG_EDGE) {
+                    if (targetNode.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
                         fillSegment(targetNode, segment);
                     }
                 }
