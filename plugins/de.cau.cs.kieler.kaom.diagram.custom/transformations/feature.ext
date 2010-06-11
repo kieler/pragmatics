@@ -1,2 +1,14 @@
 import kaom;
 import utilities;
+
+Void cut(Object obj):
+
+;
+
+Void copy(Object obj):
+
+;
+
+Void paste(Object obj):
+
+;
