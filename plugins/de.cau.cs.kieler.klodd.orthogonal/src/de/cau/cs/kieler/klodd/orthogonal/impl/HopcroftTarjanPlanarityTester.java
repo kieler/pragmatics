@@ -21,7 +21,7 @@ import java.util.ListIterator;
 import java.util.Stack;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.core.util.ConcatenableList;
+import de.cau.cs.kieler.klodd.orthogonal.ConcatenableList;
 import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KGraphSection;
 import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimEdge;
 import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimNode;
