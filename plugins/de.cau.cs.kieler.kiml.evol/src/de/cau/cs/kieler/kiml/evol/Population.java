@@ -63,6 +63,11 @@ public class Population extends ArrayList<Individual> {
     @Override
     public String toString() {
         final String newLine = System.getProperty("line.separator");
-        return super.toString() + newLine + " (" + size() + " individuals)";
+        final StringBuilder result = new StringBuilder();
+        int i = 0;
+        for (Individual ind : this) {
+            result.append("#" + ++i + ": " + ind.toString() + newLine);
+        }
+        return result.toString();
     }
 }

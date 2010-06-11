@@ -596,12 +596,12 @@ public class TestView extends ViewPart {
             return;
         }
         final EditPart part = getEditPart(editor);
-        final String bendsMetricId = "de.cau.cs.kieler.kiml.grana.bendsMetric";
-        final String hCompactnessMetricId = "de.cau.cs.kieler.kiml.grana.horizontalCompactnessMetric";
+        final String bendsMetricId = "de.cau.cs.kieler.kiml.granatesting.bendsMetric";
+        final String narrownessMetricId = "de.cau.cs.kieler.kiml.granatesting.narrownessMetric";
         final AbstractInfoAnalysis bendsMetric = AnalysisServices.getInstance().getAnalysisById(
                 bendsMetricId);
         final AbstractInfoAnalysis hCompactnessMetric = AnalysisServices.getInstance()
-                .getAnalysisById(hCompactnessMetricId);
+                .getAnalysisById(narrownessMetricId);
         final AbstractInfoAnalysis[] metrics = new AbstractInfoAnalysis[] { bendsMetric,
                 hCompactnessMetric };
         // FIXME: DiagramAnalyser.analyse possibly uses obsolete layout graph
