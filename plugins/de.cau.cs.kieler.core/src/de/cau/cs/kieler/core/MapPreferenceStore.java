@@ -46,11 +46,11 @@ public class MapPreferenceStore implements IKielerPreferenceStore {
     public boolean getBoolean(final String name) {
         Object currentValue = currentMap.get(name);
         if (currentValue instanceof Boolean) {
-            return ((Boolean)currentValue).booleanValue();
+            return ((Boolean) currentValue).booleanValue();
         }
         Object defaultValue = defaultMap.get(name);
         if (defaultValue instanceof Boolean) {
-            return ((Boolean)defaultValue).booleanValue();
+            return ((Boolean) defaultValue).booleanValue();
         }
         return false;
     }
@@ -61,7 +61,7 @@ public class MapPreferenceStore implements IKielerPreferenceStore {
     public boolean getDefaultBoolean(final String name) {
         Object defaultValue = defaultMap.get(name);
         if (defaultValue instanceof Boolean) {
-            return ((Boolean)defaultValue).booleanValue();
+            return ((Boolean) defaultValue).booleanValue();
         }
         return false;
     }
@@ -72,7 +72,7 @@ public class MapPreferenceStore implements IKielerPreferenceStore {
     public double getDefaultDouble(final String name) {
         Object defaultValue = defaultMap.get(name);
         if (defaultValue instanceof Double) {
-            return ((Double)defaultValue).doubleValue();
+            return ((Double) defaultValue).doubleValue();
         }
         return 0.0;
     }
@@ -83,7 +83,7 @@ public class MapPreferenceStore implements IKielerPreferenceStore {
     public float getDefaultFloat(final String name) {
         Object defaultValue = defaultMap.get(name);
         if (defaultValue instanceof Float) {
-            return ((Float)defaultValue).floatValue();
+            return ((Float) defaultValue).floatValue();
         }
         return 0.0f;
     }
@@ -94,7 +94,7 @@ public class MapPreferenceStore implements IKielerPreferenceStore {
     public int getDefaultInt(final String name) {
         Object defaultValue = defaultMap.get(name);
         if (defaultValue instanceof Integer) {
-            return ((Integer)defaultValue).intValue();
+            return ((Integer) defaultValue).intValue();
         }
         return 0;
     }
@@ -105,7 +105,7 @@ public class MapPreferenceStore implements IKielerPreferenceStore {
     public long getDefaultLong(final String name) {
         Object defaultValue = defaultMap.get(name);
         if (defaultValue instanceof Long) {
-            return ((Long)defaultValue).longValue();
+            return ((Long) defaultValue).longValue();
         }
         return 0;
     }
@@ -116,7 +116,7 @@ public class MapPreferenceStore implements IKielerPreferenceStore {
     public String getDefaultString(final String name) {
         Object defaultValue = defaultMap.get(name);
         if (defaultValue instanceof String) {
-            return (String)defaultValue;
+            return (String) defaultValue;
         }
         return "";
     }
@@ -127,11 +127,11 @@ public class MapPreferenceStore implements IKielerPreferenceStore {
     public double getDouble(final String name) {
         Object currentValue = currentMap.get(name);
         if (currentValue instanceof Double) {
-            return ((Double)currentValue).doubleValue();
+            return ((Double) currentValue).doubleValue();
         }
         Object defaultValue = defaultMap.get(name);
         if (defaultValue instanceof Double) {
-            return ((Double)defaultValue).doubleValue();
+            return ((Double) defaultValue).doubleValue();
         }
         return 0.0;
     }
@@ -142,11 +142,11 @@ public class MapPreferenceStore implements IKielerPreferenceStore {
     public float getFloat(final String name) {
         Object currentValue = currentMap.get(name);
         if (currentValue instanceof Float) {
-            return ((Float)currentValue).floatValue();
+            return ((Float) currentValue).floatValue();
         }
         Object defaultValue = defaultMap.get(name);
         if (defaultValue instanceof Float) {
-            return ((Float)defaultValue).floatValue();
+            return ((Float) defaultValue).floatValue();
         }
         return 0.0f;
     }
@@ -157,11 +157,11 @@ public class MapPreferenceStore implements IKielerPreferenceStore {
     public int getInt(final String name) {
         Object currentValue = currentMap.get(name);
         if (currentValue instanceof Integer) {
-            return ((Integer)currentValue).intValue();
+            return ((Integer) currentValue).intValue();
         }
         Object defaultValue = defaultMap.get(name);
         if (defaultValue instanceof Integer) {
-            return ((Integer)defaultValue).intValue();
+            return ((Integer) defaultValue).intValue();
         }
         return 0;
     }
@@ -172,11 +172,11 @@ public class MapPreferenceStore implements IKielerPreferenceStore {
     public long getLong(final String name) {
         Object currentValue = currentMap.get(name);
         if (currentValue instanceof Long) {
-            return ((Long)currentValue).longValue();
+            return ((Long) currentValue).longValue();
         }
         Object defaultValue = defaultMap.get(name);
         if (defaultValue instanceof Long) {
-            return ((Long)defaultValue).longValue();
+            return ((Long) defaultValue).longValue();
         }
         return 0;
     }
@@ -187,11 +187,11 @@ public class MapPreferenceStore implements IKielerPreferenceStore {
     public String getString(final String name) {
         Object currentValue = currentMap.get(name);
         if (currentValue instanceof String) {
-            return (String)currentValue;
+            return (String) currentValue;
         }
         Object defaultValue = defaultMap.get(name);
         if (defaultValue instanceof String) {
-            return (String)defaultValue;
+            return (String) defaultValue;
         }
         return "";
     }

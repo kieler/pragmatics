@@ -7,7 +7,7 @@ Bundle-ClassPath: .
 Bundle-Activator: de.cau.cs.kieler.graphs.provider.GraphsEditPlugin$Implementation
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
 Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: de.cau.cs.kieler.graphs.provider
 Require-Bundle: org.eclipse.core.runtime,
  de.cau.cs.kieler.graphs;visibility:=reexport,
