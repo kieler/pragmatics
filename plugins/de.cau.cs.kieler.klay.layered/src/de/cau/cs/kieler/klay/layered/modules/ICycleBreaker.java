@@ -18,6 +18,8 @@ import java.util.Collection;
 import de.cau.cs.kieler.core.alg.IAlgorithm;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 
+//CHECKSTYLEOFF JavadocStyle
+
 /**
  * Interface for cycle breaker modules.
  * <dl>

@@ -19,6 +19,8 @@ import de.cau.cs.kieler.core.alg.IAlgorithm;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 
+//CHECKSTYLEOFF JavadocStyle
+
 /**
  * Interface for layerer modules.
  * <dl>

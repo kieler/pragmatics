@@ -16,6 +16,8 @@ package de.cau.cs.kieler.klay.layered.modules;
 import de.cau.cs.kieler.core.alg.IAlgorithm;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 
+//CHECKSTYLEOFF JavadocStyle
+
 /**
  * Interface for node placement modules.
  * <dl>
