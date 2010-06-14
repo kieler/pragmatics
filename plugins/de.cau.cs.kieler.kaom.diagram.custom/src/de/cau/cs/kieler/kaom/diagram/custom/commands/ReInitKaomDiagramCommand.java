@@ -60,7 +60,7 @@ import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
  * A command that reinitializes a diagram file from a given kixs file.
  * 
  * @author soh
- * @kieler.rating 2010-03-01 proposed yellow
+ * @kieler.rating 2010-06-14 proposed yellow
  */
 public class ReInitKaomDiagramCommand extends ReInitDiagramCommand {
 
