@@ -2,13 +2,13 @@ import kaom;
 import utilities;
 
 Void cut(Object obj):
-
+ obj.toString();
 ;
 
 Void copy(Object obj):
-
+ obj.toString();
 ;
 
 Void paste(Object obj):
-
+ obj.toString();
 ;
