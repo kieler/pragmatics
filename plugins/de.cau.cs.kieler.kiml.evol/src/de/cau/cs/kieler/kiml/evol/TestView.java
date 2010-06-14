@@ -135,6 +135,7 @@ public class TestView extends ViewPart {
                             tableViewer.refresh(element);
                         }
                         onSelectIndividual();
+                        System.out.println("after onSelectIndividual");
                         tableViewer.refresh();
                         tableViewer.addPostSelectionChangedListener(this);
                         System.out.println();
@@ -478,12 +479,12 @@ public class TestView extends ViewPart {
      * Refresh the layout according to selected individual.
      */
     private void onSelectIndividual() {
+        System.out.println("in onSelectIndividual");
         System.out.println(population.toString());
         refreshLayoutViewPart();
         try {
-            Thread.sleep(4000);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         // need a layout listener to wait for the layouting to be
@@ -498,28 +499,27 @@ public class TestView extends ViewPart {
         Registry registry = LayoutServices.getRegistry();
         registry.addLayoutListener(listener);
         layoutDiagram(false, false);
+        System.out.println("after layoutDiagram");
         try {
-            Thread.sleep(1000);
+            Thread.sleep(300);
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        System.out.println("remove layout listener");
         registry.removeLayoutListener(listener);
 
         final Runnable runnable = new Runnable() {
             public void run() {
-                System.out.println("after layouting");
+                System.out.println("last runnable");
                 try {
-                    Thread.sleep(400);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
                 // measureDiagram(false, null);
 
-                    tableViewer.refresh();
-
-                System.out.println(population.toString());
+                tableViewer.refresh();
+                System.out.println("end of last runnable");
             }
         };
         MonitoredOperation.runInUI(runnable, true);
@@ -532,7 +532,7 @@ public class TestView extends ViewPart {
      * @param showProgressBar
      */
     private void layoutDiagram(final boolean showAnimation, final boolean showProgressBar) {
-        System.out.println("layout diagram");
+        System.out.println("in layoutDiagram");
         if ((propertySource != null) && (population != null)) {
             IEditorPart editor = getCurrentEditor();
             if (editor == null) {
@@ -591,13 +591,16 @@ public class TestView extends ViewPart {
         // final EditPart part = getEditPart(editor);
         final String bendsMetricId = "de.cau.cs.kieler.kiml.granatesting.bendsMetric";
         final String narrownessMetricId = "de.cau.cs.kieler.kiml.granatesting.narrownessMetric";
-        final AbstractInfoAnalysis bendsMetric = AnalysisServices.getInstance().getAnalysisById(
+        final String flatnessMetricId = "de.cau.cs.kieler.kiml.granatesting.flatnessMetric";
+        final AnalysisServices as = AnalysisServices.getInstance();
+        final AbstractInfoAnalysis bendsMetric = as.getAnalysisById(
                 bendsMetricId);
-        final AbstractInfoAnalysis narrownessMetric = AnalysisServices.getInstance()
+        final AbstractInfoAnalysis narrownessMetric = as
                 .getAnalysisById(narrownessMetricId);
+        final AbstractInfoAnalysis flatnessMetric = as.getAnalysisById(flatnessMetricId);
         final AbstractInfoAnalysis[] metrics = new AbstractInfoAnalysis[] { bendsMetric,
-                narrownessMetric };
-        // FIXME: DiagramAnalyser.analyse possibly uses obsolete layout graph
+                flatnessMetric };
+        // DiagramAnalyser.analyse possibly uses obsolete layout graph
 
 
         // final Object[] results = DiagramAnalyser.analyse(editor, part,
@@ -633,7 +636,7 @@ public class TestView extends ViewPart {
      * If the <code>position</code> is out of range, nothing is done.
      */
     private void refreshLayoutViewPart() {
-        System.out.println("refresh layout viewpart");
+        System.out.println("in refreshLayoutViewPart");
         Assert.isNotNull(population, "population is null");
         Assert.isNotNull(propertySource, "propertySource is null");
         // Assert.isTrue(population.size() > 0, "zero population");
@@ -672,21 +675,19 @@ public class TestView extends ViewPart {
                 break;
             }
         }
-        System.out.println(propertySource.getPropertyDescriptors());
+        // System.out.println(Arrays.toString(propertySource.getPropertyDescriptors()));
         final LayoutViewPart layoutView = LayoutViewPart.findView();
         if (layoutView != null) {
             Runnable runnable = new Runnable() {
                 public void run() {
-                    System.out.println("layout refresh start.");
-
+                    System.out.println("layoutView refresh start.");
                     try {
-                        Thread.sleep(10000);
+                        Thread.sleep(2200);
                     } catch (InterruptedException e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
                     layoutView.refresh(); // async!
-                    System.out.println("layout refresh called.");
+                    System.out.println("layoutView refresh called.");
                 }
             };
             Thread t = new Thread(runnable);
