@@ -65,9 +65,10 @@ public abstract class PropertyHolder {
     public void copyProperties(final PropertyHolder other) {
         if (other.propertyMap != null) {
             if (this.propertyMap == null) {
-                propertyMap = new HashMap<Property<?>, Object>();
+                propertyMap = new HashMap<Property<?>, Object>(other.propertyMap);
+            } else {
+                this.propertyMap.putAll(other.propertyMap);
             }
-            this.propertyMap.putAll(other.propertyMap);
         }
     }
     
