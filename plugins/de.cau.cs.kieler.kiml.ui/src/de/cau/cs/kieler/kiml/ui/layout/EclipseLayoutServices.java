@@ -13,21 +13,28 @@
  */
 package de.cau.cs.kieler.kiml.ui.layout;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.gef.EditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramWorkbenchPart;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.util.Pair;
@@ -37,7 +44,7 @@ import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
 import de.cau.cs.kieler.kiml.layout.LayoutProviderData;
 import de.cau.cs.kieler.kiml.layout.LayoutServices;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
-import de.cau.cs.kieler.kiml.ui.editors.IDiagramEditorConnector;
+import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
 /**
@@ -55,16 +62,16 @@ public class EclipseLayoutServices extends LayoutServices {
     public static final String EXTP_ID_LAYOUT_LISTENERS = "de.cau.cs.kieler.kiml.layout.layoutListeners";
     /** identifier of the extension point for layout info. */
     public static final String EXTP_ID_LAYOUT_INFO = "de.cau.cs.kieler.kiml.layout.layoutInfo";
-    /** identifier of the extension point for diagram connectors. */
-    public static final String EXTP_ID_DIAGRAM_CONNECTORS = "de.cau.cs.kieler.kiml.ui.diagramConnectors";
+    /** identifier of the extension point for layout managers. */
+    public static final String EXTP_ID_LAYOUT_MANAGERS = "de.cau.cs.kieler.kiml.ui.layoutManagers";
     /** name of the 'layoutProvider' element in the 'layout providers' extension point. */
     public static final String ELEMENT_LAYOUT_PROVIDER = "layoutProvider";
     /** name of the 'layoutType' element in the 'layout providers' extension point. */
     public static final String ELEMENT_LAYOUT_TYPE = "layoutType";
     /** name of the 'category' element in the 'layout providers' extension point. */
     public static final String ELEMENT_CATEGORY = "category";
-    /** name of the 'editorConnector' element in the 'diagram connectors' extension point. */
-    public static final String ELEMENT_EDITOR_CONNECTOR = "editorConnector";
+    /** name of the 'manager' element in the 'layout managers' extension point. */
+    public static final String ELEMENT_MANAGER = "manager";
     /** name of the 'layoutOption' element in the 'layout providers' extension point. */
     public static final String ELEMENT_LAYOUT_OPTION = "layoutOption";
     /** name of the 'knownOption' element in the 'layout providers' extension point. */
@@ -112,12 +119,14 @@ public class EclipseLayoutServices extends LayoutServices {
     /** preference identifier for oblique edge routing. */
     public static final String PREF_OBLIQUE_ROUTE = "kiml.oblique.route";
     
+    /** list of registered diagram layout managers. */
+    private final List<DiagramLayoutManager> managers = new LinkedList<DiagramLayoutManager>();
+    /** the last used diagram layout manager. */
+    private DiagramLayoutManager lastManager;
     /** set of registered diagram elements. */
     private Set<String> registeredElements = new HashSet<String>();
     /** list of default options read from the extension point. */
     private List<String[]> defaultOptions = new LinkedList<String[]>();
-    /** list of connectors to diagram editors. */
-    private List<IDiagramEditorConnector> editorConnectors = new LinkedList<IDiagramEditorConnector>();
 
     /**
      * Builds the layout services for the Eclipse platform.
@@ -130,19 +139,17 @@ public class EclipseLayoutServices extends LayoutServices {
         layoutServices.loadLayoutProviderExtensions();
         layoutServices.loadLayoutListenerExtensions();
         layoutServices.loadLayoutInfoExtensions();
-        layoutServices.loadDiagramConnectorExtensions();
+        layoutServices.loadLayoutManagerExtensions();
         layoutServices.loadDefaultOptions();
         // load preferences for KIML
         layoutServices.loadPreferences();
-        // register an instance of the GMF diagram layout manager
-        DiagramLayoutManager.registerManager(new GmfDiagramLayoutManager());
     }
     
     /**
      * Returns the singleton instance as Eclipse layout services.
      * 
      * @return the singleton instance, or {@code null} if the instance is not
-     *         of instance of Eclipse layout services
+     *         of Eclipse layout services
      */
     public static EclipseLayoutServices getInstance() {
         LayoutServices instance = LayoutServices.getInstance();
@@ -151,6 +158,158 @@ public class EclipseLayoutServices extends LayoutServices {
         } else {
             return null;
         }
+    }
+    
+    /**
+     * Returns the most suitable layout manager for the given editor and edit part.
+     * 
+     * @param editorPart the editor for which the layout manager should be
+     *     fetched, or {@code null}
+     * @param editPart the edit part for which the layout manager should be
+     *     fetched, or {@code null}
+     * @return the most suitable diagram layout manager
+     */
+    public final DiagramLayoutManager getManager(final IEditorPart editorPart,
+            final EditPart editPart) {
+        for (DiagramLayoutManager manager : managers) {
+            if (manager.supports(editorPart)
+                    || editorPart == null && manager.supports(editPart)) {
+                return manager;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Returns the last used layout manager instance.
+     * 
+     * @return the last used instance
+     */
+    public DiagramLayoutManager getLastManager() {
+        return lastManager;
+    }
+    
+    /**
+     * Performs layout on the given editor by choosing an appropriate layout
+     * manager instance. Animation and a progress bar can be optionally turned
+     * on.
+     * 
+     * @param editorPart
+     *            the editor for which layout is performed, or {@code null} if
+     *            the diagram is not part of an editor
+     * @param editPart
+     *            the parent edit part for which layout is performed, or {@code
+     *            null} if the whole diagram shall be layouted
+     * @param animate
+     *            if true, Draw2D animation is activated
+     * @param progressBar
+     *            if true, a progress bar is displayed
+     */
+    public void layout(final IEditorPart editorPart,
+            final EditPart editPart, final boolean animate,
+            final boolean progressBar) {
+        layout(editorPart, editPart, animate, progressBar, false);
+    }
+
+    /**
+     * Performs layout on the given editor by choosing an appropriate layout
+     * manager instance and caches the layout result. Animation and a progress
+     * bar can be optionally turned on.
+     * 
+     * @param editorPart
+     *            the editor for which layout is performed, or {@code null} if
+     *            the diagram is not part of an editor
+     * @param editPart
+     *            the parent edit part for which layout is performed, or {@code
+     *            null} if the whole diagram shall be layouted
+     * @param animate
+     *            if true, Draw2D animation is activated
+     * @param progressBar
+     *            if true, a progress bar is displayed
+     * @return the cached layout result
+     */
+    public CachedLayout cacheLayout(
+            final IEditorPart editorPart, final EditPart editPart,
+            final boolean animate, final boolean progressBar) {
+        layout(editorPart, editPart, animate, progressBar, true);
+        return lastManager.getCachedLayout();
+    }
+
+    /**
+     * Performs layout on the given editor by choosing an appropriate layout
+     * manager instance. Animation, a progress bar, and layout of ancestors can
+     * be optionally turned on.
+     * 
+     * @param editorPart
+     *            the editor for which layout is performed, or {@code null} if
+     *            the diagram is not part of an editor
+     * @param editPart
+     *            the parent edit part for which layout is performed, or {@code
+     *            null} if the whole diagram shall be layouted
+     * @param animate
+     *            if true, Draw2D animation is activated
+     * @param progressBar
+     *            if true, a progress bar is displayed
+     * @param layoutAncestors
+     *            if true, layout is not only performed for the selected edit
+     *            part, but also for its ancestors
+     */
+    public void layout(final IEditorPart editorPart,
+            final EditPart editPart, final boolean animate,
+            final boolean progressBar, final boolean layoutAncestors) {
+        DiagramLayoutManager manager = getManager(editorPart, editPart);
+        if (manager != null) {
+            lastManager = manager;
+            manager.layout(editorPart, editPart, animate, progressBar,
+                    layoutAncestors, false);
+            // additionally refresh the diagram, should be eliminated sooner or later
+            refreshDiagram(editorPart, editPart);
+        } else {
+            throw new UnsupportedOperationException(Messages.getString("kiml.ui.15")
+                    + editorPart.getTitle() + ".");
+        }
+    }
+
+    /**
+     * Refreshes all LabelEditParts in the diagram. This is necessary in order
+     * to prevent Transition labels from vanishing.
+     * 
+     * author: soh FIXME: Someone should look into this. What causes transition
+     * labels to fly out of alignment.
+     * 
+     * @param editor
+     *            the editor
+     * @param editPart
+     *            the root edit part
+     */
+    private static void refreshDiagram(final IEditorPart editor,
+            final EditPart editPart) {
+        Job worker = new Job("Diagram refresh") {
+
+            @Override
+            protected IStatus run(final IProgressMonitor monitor) {
+                if (editor instanceof IDiagramWorkbenchPart) {
+                    EditPart part = editPart;
+
+                    if (part == null) {
+                        part = ((IDiagramWorkbenchPart) editor)
+                                .getDiagramEditPart();
+                    }
+
+                    @SuppressWarnings("unchecked")
+                    Collection<EditPart> editParts = new ArrayList<EditPart>(
+                            part.getViewer().getEditPartRegistry().values());
+
+                    for (EditPart obj : editParts) {
+                        if (obj instanceof LabelEditPart) {
+                            ((LabelEditPart) obj).refresh();
+                        }
+                    }
+                }
+                return new Status(Status.OK, KimlUiPlugin.PLUGIN_ID, "Refresh done");
+            }
+        };
+        worker.schedule();
     }
 
     /**
@@ -492,25 +651,53 @@ public class EclipseLayoutServices extends LayoutServices {
     }
     
     /**
-     * Loads all diagram editor connectors from the extension point.
+     * Loads all diagram layout managers from the extension point.
      */
-    private void loadDiagramConnectorExtensions() {
+    private void loadLayoutManagerExtensions() {
         IConfigurationElement[] extensions = Platform.getExtensionRegistry()
-                .getConfigurationElementsFor(EXTP_ID_DIAGRAM_CONNECTORS);
+                .getConfigurationElementsFor(EXTP_ID_LAYOUT_MANAGERS);
         
         for (IConfigurationElement element : extensions) {
-            if (ELEMENT_EDITOR_CONNECTOR.equals(element.getName())) {
+            if (ELEMENT_MANAGER.equals(element.getName())) {
                 try {
-                    IDiagramEditorConnector connector = (IDiagramEditorConnector)
+                    DiagramLayoutManager manager = (DiagramLayoutManager)
                             element.createExecutableExtension(ATTRIBUTE_CLASS);
-                    if (connector != null) {
-                        editorConnectors.add(connector);
+                    int priority = 0;
+                    String prioEntry = element.getAttribute(ATTRIBUTE_PRIORITY);
+                    if (prioEntry != null) {
+                        try {
+                            priority = Integer.parseInt(prioEntry);
+                        } catch (NumberFormatException exception) {
+                            // ignore exception
+                        }
+                    }
+                    if (manager != null) {
+                        insertManager(manager, priority);
                     }
                 } catch (CoreException exception) {
                     StatusManager.getManager().handle(exception, KimlUiPlugin.PLUGIN_ID);
                 }
             }
         }
+    }
+    
+    /**
+     * Insert the given diagram layout manager with a specific priority.
+     * 
+     * @param manager a diagram layout manager
+     * @param priority priority at which the manager is inserted
+     */
+    private void insertManager(final DiagramLayoutManager manager, final int priority) {
+        ListIterator<DiagramLayoutManager> iter = managers.listIterator();
+        while (iter.hasNext()) {
+            DiagramLayoutManager next = iter.next();
+            if (next.getPriority() <= priority) {
+                iter.previous();
+                break;
+            }
+        }
+        iter.add(manager);
+        manager.setPriority(priority);
     }
 
     /**
@@ -585,15 +772,6 @@ public class EclipseLayoutServices extends LayoutServices {
      */
     public Set<String> getRegisteredElements() {
         return registeredElements;
-    }
-    
-    /**
-     * Returns the list of connector classes to foreign editors.
-     * 
-     * @return list of connector classes
-     */
-    public List<IDiagramEditorConnector> getEditorConnectors() {
-        return editorConnectors;
     }
 
 }

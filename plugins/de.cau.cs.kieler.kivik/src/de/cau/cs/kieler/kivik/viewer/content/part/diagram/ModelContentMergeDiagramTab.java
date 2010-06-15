@@ -80,7 +80,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.PlatformUI;
 
-import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 import de.cau.cs.kieler.kivik.Constants;
 import de.cau.cs.kieler.kivik.KivikPlugin;
 import de.cau.cs.kieler.kivik.preferences.PreferenceConstants;
@@ -259,8 +259,8 @@ public class ModelContentMergeDiagramTab extends DiagramGraphicalViewer implemen
              * connections and labels are not drawn properly. Normally, 3 should be enough, don't
              * know why we need 4.
              */
-            DiagramLayoutManager.layout(null, (EditPart) getEditPartRegistry().get(diagram), false,
-                    false);
+            EclipseLayoutServices.getInstance().layout(null,
+                    (EditPart) getEditPartRegistry().get(diagram), false, false);
         }
 
         /* check if user wants to be able to click on changed Elements */

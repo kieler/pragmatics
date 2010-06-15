@@ -51,7 +51,7 @@ import de.cau.cs.kieler.kiml.layout.ILayoutListener;
 import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
 import de.cau.cs.kieler.kiml.layout.LayoutServices;
 import de.cau.cs.kieler.kiml.layout.LayoutServices.Registry;
-import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 import de.cau.cs.kieler.kiml.ui.views.GmfLayoutPropertySource;
 import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
 
@@ -541,7 +541,7 @@ public class TestView extends ViewPart {
             }
 
             EditPart part = getEditPart(editor);
-            DiagramLayoutManager.layout(editor, part, showAnimation, showProgressBar);
+            EclipseLayoutServices.getInstance().layout(editor, part, showAnimation, showProgressBar);
         }
     }
     

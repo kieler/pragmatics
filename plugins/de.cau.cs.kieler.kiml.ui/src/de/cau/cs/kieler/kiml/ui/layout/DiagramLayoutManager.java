@@ -13,19 +13,11 @@
  */
 package de.cau.cs.kieler.kiml.ui.layout;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.draw2d.Animation;
 import org.eclipse.gef.EditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramWorkbenchPart;
 import org.eclipse.ui.IEditorPart;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
@@ -37,12 +29,9 @@ import de.cau.cs.kieler.kiml.layout.LayoutServices;
 import de.cau.cs.kieler.kiml.layout.RecursiveLayouterEngine;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
-import de.cau.cs.kieler.kiml.ui.editors.IDiagramEditorConnector;
 
 /**
- * Abstract superclass for managers of diagram layout. Contains static methods
- * to layout a specific diagram, and manages selection of an appropriate
- * subclass to translate the diagram into the internal {@code KGraph} structure.
+ * Abstract superclass for managers of diagram layout.
  * 
  * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
@@ -52,197 +41,28 @@ public abstract class DiagramLayoutManager {
     /** maximal number of recursion levels for which progress is displayed. */
     public static final int MAX_PROGRESS_LEVELS = 2;
 
-    /** list of registered diagram layout managers. */
-    private static final List<DiagramLayoutManager> MANAGERS = new LinkedList<DiagramLayoutManager>();
-    /** the last used diagram layout manager. */
-    private static DiagramLayoutManager lastManager;
-
     /** the layouter engine used to layout diagrams. */
     private RecursiveLayouterEngine layouterEngine = new RecursiveLayouterEngine();
+    /** the configured priority of the layout manager. */
+    private int priority;
+
 
     /**
-     * Registers the given diagram layout manager.
+     * Return the manager priority.
      * 
-     * @param manager
-     *            an instance of a diagram layout manager
+     * @return the priority
      */
-    public static final synchronized void registerManager(
-            final DiagramLayoutManager manager) {
-        MANAGERS.add(manager);
-    }
-    
-    /**
-     * Returns the last used layout manager instance.
-     * 
-     * @return the last used instance
-     */
-    public static final DiagramLayoutManager getLastManager() {
-        return lastManager;
-    }
-    
-    /**
-     * Returns the most suitable layout manager for the given editor and edit part.
-     * 
-     * @param theeditorPart the editor for which the layout manager should be
-     *     fetched, or {@code null}
-     * @param editPart the edit part for which the layout manager should be
-     *     fetched, or {@code null}
-     * @return the most suitable diagram layout manager
-     */
-    public static final DiagramLayoutManager getManager(final IEditorPart theeditorPart,
-            final EditPart editPart) {
-        IEditorPart editorPart = theeditorPart;
-        for (IDiagramEditorConnector connector : EclipseLayoutServices
-                .getInstance().getEditorConnectors()) {
-            if (connector.supports(editorPart)) {
-                editorPart = connector.getActiveEditor(editorPart);
-                break;
-            }
-        }
-        for (DiagramLayoutManager manager : MANAGERS) {
-            if (manager.supports(editorPart) || manager.supports(editPart)) {
-                return manager;
-            }
-        }
-        return null;
+    public final int getPriority() {
+        return priority;
     }
 
     /**
-     * Performs layout on the given editor by choosing an appropriate layout
-     * manager instance. Animation and a progress bar can be optionally turned
-     * on.
+     * Set the manager priority.
      * 
-     * @param editorPart
-     *            the editor for which layout is performed, or {@code null} if
-     *            the diagram is not part of an editor
-     * @param editPart
-     *            the parent edit part for which layout is performed, or {@code
-     *            null} if the whole diagram shall be layouted
-     * @param animate
-     *            if true, Draw2D animation is activated
-     * @param progressBar
-     *            if true, a progress bar is displayed
+     * @param thepriority the priority to set
      */
-    public static final void layout(final IEditorPart editorPart,
-            final EditPart editPart, final boolean animate,
-            final boolean progressBar) {
-        layout(editorPart, editPart, animate, progressBar, false);
-    }
-
-    /**
-     * Performs layout on the given editor by choosing an appropriate layout
-     * manager instance. Animation, a progress bar, and layout of ancestors can
-     * be optionally turned on.
-     * 
-     * @param editorPart
-     *            the editor for which layout is performed, or {@code null} if
-     *            the diagram is not part of an editor
-     * @param editPart
-     *            the parent edit part for which layout is performed, or {@code
-     *            null} if the whole diagram shall be layouted
-     * @param animate
-     *            if true, Draw2D animation is activated
-     * @param progressBar
-     *            if true, a progress bar is displayed
-     * @param layoutAncestors
-     *            if true, layout is not only performed for the selected edit
-     *            part, but also for its ancestors
-     */
-    public static final void layout(final IEditorPart editorPart,
-            final EditPart editPart, final boolean animate,
-            final boolean progressBar, final boolean layoutAncestors) {
-        DiagramLayoutManager manager = getManager(editorPart, editPart);
-        if (manager != null) {
-            manager.doLayout(editorPart, editPart, animate, progressBar,
-                    layoutAncestors, false);
-            refreshDiagram(editorPart, editPart);
-        } else {
-            throw new UnsupportedOperationException(Messages.getString("kiml.ui.15")
-                    + editorPart.getTitle() + ".");
-        }
-    }
-
-    /**
-     * Refreshes all LabelEditParts in the diagram. This is necessary in order
-     * to prevent Transition labels from vanishing.
-     * 
-     * author: soh FIXME: Someone should look into this. What causes transition
-     * labels to fly out of alignment.
-     * 
-     * @param editor
-     *            the editor
-     * @param editPart
-     *            the root edit part
-     */
-    private static void refreshDiagram(final IEditorPart editor,
-            final EditPart editPart) {
-        Job worker = new Job("Diagram refresh") {
-
-            @Override
-            protected IStatus run(final IProgressMonitor monitor) {
-                if (editor instanceof IDiagramWorkbenchPart) {
-                    EditPart part = editPart;
-
-                    if (part == null) {
-                        part = ((IDiagramWorkbenchPart) editor)
-                                .getDiagramEditPart();
-                    }
-
-                    @SuppressWarnings("unchecked")
-                    Collection<EditPart> editParts = new ArrayList<EditPart>(
-                            part.getViewer().getEditPartRegistry().values());
-
-                    for (EditPart obj : editParts) {
-                        if (obj instanceof LabelEditPart) {
-                            ((LabelEditPart) obj).refresh();
-                        }
-                    }
-                }
-                return new Status(Status.OK, "de.cau.cs.kieler.kiml.ui",
-                        "Refresh done");
-            }
-        };
-        worker.schedule();
-    }
-
-    /**
-     * Performs layout on the given editor by choosing an appropriate layout
-     * manager instance and caches the layout result. Animation and a progress
-     * bar can be optionally turned on.
-     * 
-     * @param theeditorPart
-     *            the editor for which layout is performed, or {@code null} if
-     *            the diagram is not part of an editor
-     * @param editPart
-     *            the parent edit part for which layout is performed, or {@code
-     *            null} if the whole diagram shall be layouted
-     * @param animate
-     *            if true, Draw2D animation is activated
-     * @param progressBar
-     *            if true, a progress bar is displayed
-     * @return the cached layout result
-     */
-    public static final CachedLayout cacheLayout(
-            final IEditorPart theeditorPart, final EditPart editPart,
-            final boolean animate, final boolean progressBar) {
-        IEditorPart editorPart = theeditorPart;
-        for (IDiagramEditorConnector connector : EclipseLayoutServices
-                .getInstance().getEditorConnectors()) {
-            if (connector.supports(editorPart)) {
-                editorPart = connector.getActiveEditor(editorPart);
-                break;
-            }
-        }
-        for (DiagramLayoutManager manager : MANAGERS) {
-            if (manager.supports(editorPart) || manager.supports(editPart)) {
-                manager.doLayout(editorPart, editPart, animate, progressBar,
-                        false, true);
-                return manager.getCachedLayout();
-            }
-        }
-        throw new UnsupportedOperationException(Messages
-                .getString("kiml.ui.15")
-                + editorPart.getTitle() + ".");
+    public final void setPriority(final int thepriority) {
+        this.priority = thepriority;
     }
 
     /**
@@ -266,12 +86,10 @@ public abstract class DiagramLayoutManager {
      * @param cacheLayout
      *            if true, the layout result is cached for the underlying model
      */
-    public final synchronized void doLayout(final IEditorPart editorPart,
+    public final void layout(final IEditorPart editorPart,
             final EditPart editPart, final boolean animate,
             final boolean progressBar, final boolean layoutAncestors,
             final boolean cacheLayout) {
-        // set the last used layout manager
-        lastManager = this;
         // perform layout with a progress bar
         if (progressBar) {
             final MonitoredOperation monitoredOperation = new MonitoredOperation() {
@@ -284,7 +102,7 @@ public abstract class DiagramLayoutManager {
                 // second phase: execute layout algorithms
                 @Override
                 protected IStatus execute(final IProgressMonitor monitor) {
-                    return doLayout(new KielerProgressMonitor(monitor,
+                    return layout(new KielerProgressMonitor(monitor,
                             MAX_PROGRESS_LEVELS), layoutAncestors, cacheLayout);
                 }
 
@@ -306,7 +124,7 @@ public abstract class DiagramLayoutManager {
                 }
             }, true);
             // second phase: execute layout algorithms
-            final IStatus status = doLayout(new BasicProgressMonitor(0),
+            final IStatus status = layout(new BasicProgressMonitor(0),
                     layoutAncestors, cacheLayout);
             MonitoredOperation.runInUI(new Runnable() {
                 // third phase: apply layout with animation
@@ -355,7 +173,7 @@ public abstract class DiagramLayoutManager {
      * @return a status indicating success or failure; if successful, the status
      *         contains the number of layouted nodes as code value
      */
-    private IStatus doLayout(final IKielerProgressMonitor progressMonitor,
+    private IStatus layout(final IKielerProgressMonitor progressMonitor,
             final boolean layoutAncestors, final boolean cacheLayout) {
         try {
             LayoutServices layoutServices = LayoutServices.getInstance();
@@ -439,7 +257,6 @@ public abstract class DiagramLayoutManager {
      * @return the currently processed edit part
      */
     public abstract EditPart getCurrentEditPart();
-
 
     /**
      * Determines whether this layout manager is able to perform layout for the

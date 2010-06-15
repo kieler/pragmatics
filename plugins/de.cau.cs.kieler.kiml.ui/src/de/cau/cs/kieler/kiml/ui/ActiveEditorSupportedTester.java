@@ -11,10 +11,9 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.ui.editors;
+package de.cau.cs.kieler.kiml.ui;
 
 import org.eclipse.core.expressions.PropertyTester;
-import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.ui.IEditorPart;
 
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
@@ -32,16 +31,8 @@ public class ActiveEditorSupportedTester extends PropertyTester {
     public boolean test(final Object receiver, final String property,
             final Object[] args, final Object expectedValue) {
         if (receiver instanceof IEditorPart) {
-            IEditorPart part = (IEditorPart) receiver;
-            if (receiver instanceof DiagramEditor) {
-                return true;
-            }
-            for (IDiagramEditorConnector connector : EclipseLayoutServices.getInstance()
-                    .getEditorConnectors()) {
-                if (connector.supports(part)) {
-                    return true;
-                }
-            }
+            IEditorPart editorPart = (IEditorPart) receiver;
+            return EclipseLayoutServices.getInstance().getManager(editorPart, null) != null;
         }
         return false;
     }

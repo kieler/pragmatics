@@ -54,7 +54,7 @@ import de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorPlugin;
 import de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorUtil;
 import de.cau.cs.kieler.kaom.diagram.part.KaomVisualIDRegistry;
 import de.cau.cs.kieler.kaom.diagram.part.Messages;
-import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 
 /**
  * A command that reinitializes a diagram file from a given kixs file.
@@ -92,7 +92,7 @@ public class ReInitKaomDiagramCommand extends ReInitDiagramCommand {
                 IEditorPart editor = getActiveEditor();
                 EditPart part = null;
                 if (editor != null) {
-                    DiagramLayoutManager.layout(editor, part, false, true);
+                    EclipseLayoutServices.getInstance().layout(editor, part, false, true);
                 }
                 return new Status(IStatus.OK,
                         "de.cau.cs.kieler.synccharts.diagram.custom", "Done");

@@ -241,18 +241,19 @@ public class LayoutViewPart extends ViewPart implements ISelectionChangedListene
                 }
             } else {
                 // look for a connector class for the given editor
-                for (IDiagramEditorConnector connector : EclipseLayoutServices
-                        .getInstance().getEditorConnectors()) {
-                    if (connector.supports(editorPart)) {
-                        if (currentConnector != null) {
-                            currentConnector.removeChangeListener(this);
-                        }
-                        connector.addChangeListener(editorPart, this);
-                        editorPart = connector.getActiveEditor(editorPart);
-                        currentConnector = connector;
-                        break;
-                    }
-                }
+                // FIXME update to new mechanism!
+//                for (IDiagramEditorConnector connector : EclipseLayoutServices
+//                        .getInstance().getEditorConnectors()) {
+//                    if (connector.supports(editorPart)) {
+//                        if (currentConnector != null) {
+//                            currentConnector.removeChangeListener(this);
+//                        }
+//                        connector.addChangeListener(editorPart, this);
+//                        editorPart = connector.getActiveEditor(editorPart);
+//                        currentConnector = connector;
+//                        break;
+//                    }
+//                }
             }
             editorChanged(editorPart);
         }

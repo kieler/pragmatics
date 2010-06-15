@@ -22,7 +22,7 @@ import de.cau.cs.kieler.kaom.Link;
 import de.cau.cs.kieler.kaom.Port;
 import de.cau.cs.kieler.kaom.Relation;
 import de.cau.cs.kieler.kaom.diagram.custom.KaomDiagramCustomPlugin;
-import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 import de.cau.cs.kieler.ksbase.ui.utils.AbstractCutCopyPasteCommandFactory;
 
 /**
@@ -65,8 +65,8 @@ public class KaomCutCopyPasteCommandFactory extends
                         if (editorPart != null) {
                             refreshEditPolicies(editorPart);
 
-                            DiagramLayoutManager.layout(editorPart, null, true,
-                                    false);
+                            EclipseLayoutServices.getInstance().layout(editorPart, null,
+                                    true, false);
                         }
                     }
 

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.5"?>
 <plugin>
-   <extension-point id="diagramConnectors" name="DiagramConnectors" schema="schema/diagramConnectors.exsd"/>
+   <extension-point id="layoutManagers" name="Layout Managers" schema="schema/layoutManagers.exsd"/>
  <extension
        point="org.eclipse.core.expressions.propertyTesters">
     <propertyTester
-          class="de.cau.cs.kieler.kiml.ui.editors.ActiveEditorSupportedTester"
+          class="de.cau.cs.kieler.kiml.ui.ActiveEditorSupportedTester"
           id="de.cau.cs.kieler.kiml.ui.activeEditorSupportedTester"
           namespace="de.cau.cs.kieler.kiml.ui"
           properties="activeEditorIsSupported"
@@ -218,6 +218,12 @@ point="org.eclipse.ui.menus">
           name="%view.name.0"
           restorable="true">
     </view>
+ </extension>
+ <extension
+       point="de.cau.cs.kieler.kiml.ui.layoutManagers">
+    <manager
+          class="de.cau.cs.kieler.kiml.ui.layout.GmfDiagramLayoutManager">
+    </manager>
  </extension>
  
    

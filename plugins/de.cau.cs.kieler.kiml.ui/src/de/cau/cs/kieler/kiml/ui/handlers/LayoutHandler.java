@@ -22,7 +22,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 
 /**
  * The handler which is responsible to perform layout in a graphical diagram.
@@ -61,11 +61,12 @@ public class LayoutHandler extends AbstractHandler {
             IStructuredSelection structuredSelection = (IStructuredSelection) selection;
             if (structuredSelection.getFirstElement() instanceof EditPart) {
                 EditPart selectedElement = (EditPart) structuredSelection.getFirstElement();
-                DiagramLayoutManager.layout(editorPart, selectedElement, true, true);
+                EclipseLayoutServices.getInstance().layout(
+                        editorPart, selectedElement, true, true);
                 return null;
             }
         }
-        DiagramLayoutManager.layout(editorPart, null, true, true);
+        EclipseLayoutServices.getInstance().layout(editorPart, null, true, true);
         return null;
     }
 
