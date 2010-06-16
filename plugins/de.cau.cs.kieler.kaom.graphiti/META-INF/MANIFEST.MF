@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: KAOM Graphiti Editor
 Bundle-SymbolicName: de.cau.cs.kieler.kaom.graphiti
 Bundle-Version: 0.1.0.qualifier
-Bundle-Activator: de.cau.cs.kieler.kaom.graphiti.Activator
+Bundle-Activator: de.cau.cs.kieler.kaom.graphiti.KaomGraphitiPlugin
 Bundle-Vendor: Christian-Albrechts-Universitaet zu Kiel
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime

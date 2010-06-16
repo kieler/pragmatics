@@ -6,18 +6,18 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class Activator extends AbstractUIPlugin {
+public class KaomGraphitiPlugin extends AbstractUIPlugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "de.cau.cs.kieler.kaom.graphiti";
 
 	// The shared instance
-	private static Activator plugin;
+	private static KaomGraphitiPlugin plugin;
 	
 	/**
 	 * The constructor
 	 */
-	public Activator() {
+	public KaomGraphitiPlugin() {
 	}
 
 	/*
@@ -43,7 +43,7 @@ public class Activator extends AbstractUIPlugin {
 	 *
 	 * @return the shared instance
 	 */
-	public static Activator getDefault() {
+	public static KaomGraphitiPlugin getDefault() {
 		return plugin;
 	}
 
