@@ -13,6 +13,9 @@
  */
 package de.cau.cs.kieler.kiml.evol;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
@@ -41,7 +44,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.evol.alg.AbstractEvolutionaryAlgorithm;
 import de.cau.cs.kieler.kiml.evol.alg.BasicEvolutionaryAlgorithm;
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
@@ -130,10 +132,10 @@ public class TestView extends ViewPart {
                         tableViewer.removeSelectionChangedListener(this);
                         int oldPosition = position;
                         position = ((PopulationTableEntry) element).index;
-                        if (position != oldPosition) {
-                            tableViewer.selectRow(position);
-                            tableViewer.refresh(element);
-                        }
+                        // if (position != oldPosition) {
+                        // tableViewer.selectRow(position);
+                        // tableViewer.refresh(element);
+                        // }
                         onSelectIndividual();
                         System.out.println("after onSelectIndividual");
                         tableViewer.refresh();
@@ -191,7 +193,7 @@ public class TestView extends ViewPart {
     private static class LayoutSetContentProvider implements IStructuredContentProvider {
         public Object[] getElements(final Object inputElement) {
             // suppose inputElement contains a reference to a Population object.
-            Population inputPopulation;
+            final Population inputPopulation;
             if (!(inputElement instanceof Population)) {
                 return new PopulationTableEntry[] {};
             }
@@ -493,7 +495,11 @@ public class TestView extends ViewPart {
             public void layoutPerformed(
                     final KNode layoutGraph, final IKielerProgressMonitor monitor) {
                 System.out.println("LayoutListener: Layout performed.");
-                measureDiagram(true, layoutGraph);
+                try {
+                    measureDiagram(true, layoutGraph);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         };
         Registry registry = LayoutServices.getRegistry();
@@ -507,22 +513,7 @@ public class TestView extends ViewPart {
         }
         System.out.println("remove layout listener");
         registry.removeLayoutListener(listener);
-
-        final Runnable runnable = new Runnable() {
-            public void run() {
-                System.out.println("last runnable");
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                // measureDiagram(false, null);
-
-                tableViewer.refresh();
-                System.out.println("end of last runnable");
-            }
-        };
-        MonitoredOperation.runInUI(runnable, true);
+        tableViewer.refresh();
     }
 
     /**
@@ -539,9 +530,9 @@ public class TestView extends ViewPart {
                 // so we have nothing to layout.
                 return;
             }
-
             EditPart part = getEditPart(editor);
-            EclipseLayoutServices.getInstance().layout(editor, part, showAnimation, showProgressBar);
+            EclipseLayoutServices.getInstance()
+                    .layout(editor, part, showAnimation, showProgressBar);
         }
     }
     
@@ -588,29 +579,30 @@ public class TestView extends ViewPart {
         if (parentNode == null || (propertySource == null) || (population == null)) {
             return;
         }
-        // final EditPart part = getEditPart(editor);
-        final String bendsMetricId = "de.cau.cs.kieler.kiml.granatesting.bendsMetric";
-        final String narrownessMetricId = "de.cau.cs.kieler.kiml.granatesting.narrownessMetric";
-        final String flatnessMetricId = "de.cau.cs.kieler.kiml.granatesting.flatnessMetric";
+
+        final String[] metricIds = new String[] { "de.cau.cs.kieler.kiml.granatesting.bendsMetric",
+                "de.cau.cs.kieler.kiml.granatesting.flatnessMetric",
+                "de.cau.cs.kieler.kiml.granatesting.narrownessMetric" };
         final AnalysisServices as = AnalysisServices.getInstance();
-        final AbstractInfoAnalysis bendsMetric = as.getAnalysisById(
-                bendsMetricId);
-        final AbstractInfoAnalysis narrownessMetric = as
-                .getAnalysisById(narrownessMetricId);
-        final AbstractInfoAnalysis flatnessMetric = as.getAnalysisById(flatnessMetricId);
-        final AbstractInfoAnalysis[] metrics = new AbstractInfoAnalysis[] { bendsMetric,
-                flatnessMetric };
+        final List<AbstractInfoAnalysis> metricsList = new LinkedList<AbstractInfoAnalysis>();
+        for (String metricId : metricIds) {
+            final AbstractInfoAnalysis metric = as.getAnalysisById(metricId);
+            metricsList.add(metric);
+        }
+        final AbstractInfoAnalysis[] metrics = metricsList
+                .toArray(new AbstractInfoAnalysis[metricsList.size()]);
+
         // DiagramAnalyser.analyse possibly uses obsolete layout graph
-
-
         // final Object[] results = DiagramAnalyser.analyse(editor, part,
         // metrics, showProgressBar);
-
+        final double[] factors = new double[] { .4, .5, .1 };
         final Object[] results = DiagramAnalyser.analyse(parentNode, metrics, showProgressBar);
         final double bendsResult = Double.parseDouble(results[0].toString());
-        final double narrownessResult = Double.parseDouble(results[1].toString());
-        System.out.println(bendsResult + "  " + narrownessResult);
-        final int newRating = (int) ((bendsResult + narrownessResult) * 100);
+        final double flatnessResult = Double.parseDouble(results[1].toString());
+        final double narrownessResult = Double.parseDouble(results[2].toString());
+        System.out.println(bendsResult + "  " + flatnessResult + "  " + narrownessResult);
+        final int newRating = (int) ((bendsResult * factors[0] + flatnessResult * factors[1] + narrownessResult
+                * factors[2]) * 100);
         final Individual ind = getCurrentIndividual();
         System.out.println("Assign rating " + newRating + " to individual " + ind.toString());
         ind.setRating(newRating);
@@ -692,7 +684,6 @@ public class TestView extends ViewPart {
             };
             Thread t = new Thread(runnable);
             t.start();
-
         }
         System.out.println("leaving refreshLayoutViewPart");
     }
