@@ -1,0 +1,30 @@
+import kgraph;
+import graphs;
+import utilities;
+
+//Adds a successor to the given node
+Void addSuccessorNode(Node source):
+	let target = new Node:
+	connectNodes(source, target) ->
+	source.parent.children.add(target) ->
+	setSelection(target)
+;
+
+//Connects two nodes
+Void connectNodes(Node source, Node target):
+	let edge = new Edge:
+	edge.setIsDirected(true) ->
+	edge.setSource(source) ->
+	edge.setTarget(target) ->
+	setSelection(edge)
+;
+
+//Checks if the node is the root node
+Boolean isNoRootNode(Node node): 
+	node.parent != null
+;
+
+//Sets the object that should be selected after the transformation is executed
+Void setSelection(Object object):
+ JAVA de.cau.cs.kieler.ksbase.ui.utils.TransformationUtils.setPostTransformationSelection(java.lang.Object)
+;
