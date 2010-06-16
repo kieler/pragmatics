@@ -66,6 +66,10 @@
             id="de.cau.cs.kieler.layout.types.radial"
             name="Radial">
       </layoutType>
+      <layoutType
+            id="de.cau.cs.kieler.layout.types.tree"
+            name="Tree">
+      </layoutType>
       <layoutOption
             appliesTo="parents"
             description="Select either a specific layout algorithm or a layout type"
