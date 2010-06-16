@@ -19,6 +19,7 @@ import java.util.List;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Ellipse;
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.Polyline;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.geometry.Point;
@@ -458,7 +459,6 @@ public class DebugCanvas {
                 break;
             default:
             }
-
         }
     }
 
@@ -474,16 +474,29 @@ public class DebugCanvas {
      * @param color
      *            the color
      */
-    // TODO make this working
-    /*
-     * public void drawString(final String string, final float x, final float y,
-     * final Color color) { if (layer != null) {
-     * PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() { public
-     * void run() { Label label = new Label(); label.setText(string); Rectangle
-     * rect = new Rectangle((int) (xOffset + x), (int) (yOffset + y), 100, 50);
-     * label.setBounds(rect); label.setForegroundColor(translateColor(color));
-     * layer.add(label); } }); } }
-     */
+    public void drawString(final String string, final float x, final float y,
+            final Color color) {
+        if (layer != null) {
+            final Label label = new Label();
+            label.setText(string);
+            label.setForegroundColor(translateColor(color));
+            label.setLocation(new Point(x + xOffset, y + yOffset));
+            switch (selectedDrawingMode) {
+            case IMMEDIATE:
+                PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+                    public void run() {
+                        layer.add(label);
+                        label.setSize(label.getPreferredSize());
+                    }
+                });
+                break;
+            case BUFFERED:
+                figureBuffer.add(label);
+                break;
+            default:
+            }
+        }
+    }
 
     /**
      * Clears the canvas and the figure buffer.
@@ -518,6 +531,12 @@ public class DebugCanvas {
                 public void run() {
                     for (IFigure figure : figureBuffer) {
                         layer.add(figure);
+                        // getPreferredSize can only be called after the label
+                        // is attached to a parent due to a swt bug
+                        if (figure instanceof Label) {
+                            Label label = (Label) figure;
+                            label.setSize(label.getPreferredSize());
+                        }
                     }
                     figureBuffer.clear();
                 }
