@@ -1,0 +1,59 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ *
+ * Copyright 2010 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ *
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
+
+/*
+ User Dialogs --- functions that open a blocking user dialog that ask for
+ an input value. Can be used to make extensions interactive. 
+ 
+ @author haf
+
+*/
+
+Void testUserDialogs():
+	let newName = getStringFromUser("Enter a String please!","A"):
+	let newInt = getIntFromUser("Enter Integer please!",5):
+	let newFloat = getRealFromUser("Enter Float please!",5.3):
+	let newBool = getBooleanFromUser("Enter Boolean please!"):
+	let list = getObjectFromListFromUser("Select one item please!",{"One","Two","Three"}):
+	null
+;
+
+// open a dialog to request a String from the user. The field will be initialized with
+// the default value and if the user hits cancel also default value will be returned
+String getStringFromUser(String userMessage, String defaultValue):
+	JAVA de.cau.cs.kieler.ksbase.util.UserDialogUtil.getUserString(java.lang.String, java.lang.String)
+;
+
+// open a dialog to request an int from the user. The field will be initialized with
+// the default value and if the user hits cancel also default value will be returned
+Integer getIntFromUser(String userMessage, Integer defaultValue):
+	JAVA de.cau.cs.kieler.ksbase.util.UserDialogUtil.getUserInt(java.lang.String, java.lang.Integer)
+;
+
+// open a dialog to request a float value from the user. The field will be initialized with
+// the default value and if the user hits cancel also default value will be returned
+Real getRealFromUser(String userMessage, Real defaultValue):
+	JAVA de.cau.cs.kieler.ksbase.util.UserDialogUtil.getUserFloat(java.lang.String, java.lang.Float)
+;
+
+// open a dialog to request a Boolean from the user. A simple yes/no question.
+Boolean getBooleanFromUser(String userMessage):
+	JAVA de.cau.cs.kieler.ksbase.util.UserDialogUtil.getUserBoolean(java.lang.String)
+;
+
+// open a dialog to request a String from the user. The field will be initialized with
+// the default value and if the user hits cancel also default value will be returned
+List getObjectFromListFromUser(String userMessage, List inputList):
+	JAVA de.cau.cs.kieler.ksbase.util.UserDialogUtil.getUserObjectFromList(java.lang.String, java.util.List)
+;
