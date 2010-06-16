@@ -17,10 +17,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.draw2d.ColorConstants;
+import org.eclipse.draw2d.Ellipse;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Polyline;
 import org.eclipse.draw2d.RectangleFigure;
-import org.eclipse.draw2d.Ellipse;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
@@ -30,7 +30,7 @@ import org.eclipse.ui.PlatformUI;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
-import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 
 /**
  * A canvas for drawing debug information on the active diagram.
@@ -100,8 +100,8 @@ public class DebugCanvas {
      */
     public DebugCanvas(final KNode parentNode, final DrawingMode drawingMode) {
         DiagramEditPart editPart = KimlUiUtil
-                .getDiagramEditPart(DiagramLayoutManager.getLastManager()
-                        .getCurrentEditPart());
+                .getDiagramEditPart(EclipseLayoutServices.getInstance()
+                        .getLastManager().getCurrentEditPart());
         if (editPart != null) {
             layer = editPart.getLayer(DiagramRootEditPart.PAGE_BREAKS_LAYER);
 
@@ -214,7 +214,7 @@ public class DebugCanvas {
             rect.setBackgroundColor(translateColor(color));
             rect.setFill(true);
             rect.setBounds(bounds);
-            switch(selectedDrawingMode) {
+            switch (selectedDrawingMode) {
             case IMMEDIATE:
                 PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                     public void run() {
@@ -254,7 +254,7 @@ public class DebugCanvas {
             rect.setForegroundColor(translateColor(color));
             rect.setFill(false);
             rect.setBounds(bounds);
-            switch(selectedDrawingMode) {
+            switch (selectedDrawingMode) {
             case IMMEDIATE:
                 PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                     public void run() {
@@ -294,7 +294,7 @@ public class DebugCanvas {
             ellipse.setBackgroundColor(translateColor(color));
             ellipse.setFill(true);
             ellipse.setBounds(bounds);
-            switch(selectedDrawingMode) {
+            switch (selectedDrawingMode) {
             case IMMEDIATE:
                 PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                     public void run() {
@@ -333,7 +333,7 @@ public class DebugCanvas {
             ellipse.setForegroundColor(translateColor(color));
             ellipse.setFill(false);
             ellipse.setBounds(bounds);
-            switch(selectedDrawingMode) {
+            switch (selectedDrawingMode) {
             case IMMEDIATE:
                 PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                     public void run() {
@@ -371,7 +371,7 @@ public class DebugCanvas {
             ellipse.setBackgroundColor(translateColor(color));
             ellipse.setFill(true);
             ellipse.setBounds(bounds);
-            switch(selectedDrawingMode) {
+            switch (selectedDrawingMode) {
             case IMMEDIATE:
                 PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                     public void run() {
@@ -408,7 +408,7 @@ public class DebugCanvas {
             ellipse.setForegroundColor(translateColor(color));
             ellipse.setFill(false);
             ellipse.setBounds(bounds);
-            switch(selectedDrawingMode) {
+            switch (selectedDrawingMode) {
             case IMMEDIATE:
                 PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                     public void run() {
@@ -445,7 +445,7 @@ public class DebugCanvas {
             line.addPoint(new Point(x1 + xOffset, y1 + yOffset));
             line.addPoint(new Point(x2 + xOffset, y2 + yOffset));
             line.setForegroundColor(translateColor(color));
-            switch(selectedDrawingMode) {
+            switch (selectedDrawingMode) {
             case IMMEDIATE:
                 PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                     public void run() {
@@ -504,7 +504,7 @@ public class DebugCanvas {
                     }
                 }
             });
-            
+
             figureBuffer.clear();
         }
     }
