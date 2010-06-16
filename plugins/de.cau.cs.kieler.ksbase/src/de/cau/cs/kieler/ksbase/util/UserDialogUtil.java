@@ -24,6 +24,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
@@ -110,11 +111,12 @@ public class UserDialogUtil {
         ListDialog dialog = new ListDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell());
         dialog.setMessage(message);
         dialog.setBlockOnOpen(true);
-        dialog.setLabelProvider(new ToStringLabelProvider());
-        dialog.setContentProvider(new SimpleListContentProvider(list));
+        dialog.setLabelProvider(new LabelProvider());
+        dialog.setContentProvider(new SimpleListContentProvider());
+        dialog.setInput(list);
         dialog.setHelpAvailable(false);
         dialog.open();
-        
+
         if (dialog.getResult() != null) {
             return (List<T>) Arrays.asList(dialog.getResult());
         }
@@ -123,15 +125,13 @@ public class UserDialogUtil {
     }
 
     private static final class SimpleListContentProvider<T> implements IStructuredContentProvider {
-        private final List<T> myList;
 
-        public SimpleListContentProvider(final List<T> list) {
-            this.myList = list;
-        }
-        
         @Override
         public Object[] getElements(Object inputElement) {
-            return myList.toArray();
+            if (inputElement instanceof List<?>) {
+                return ((List<?>) inputElement).toArray();
+            }
+            return null;
         }
 
         @Override
@@ -140,46 +140,7 @@ public class UserDialogUtil {
 
         @Override
         public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-            if(viewer instanceof TableViewer){
-                ((TableViewer) viewer).add(this.getElements(null));
-                viewer.refresh();
-            }
         }
     }
 
-    /**
-     * Primitive ILabelProvider that simply returns the toString values of the
-     * given Objects.
-     * 
-     * @author haf
-     * 
-     */
-    private static final class ToStringLabelProvider implements ILabelProvider {
-        @Override
-        public Image getImage(final Object element) {
-            return null;
-        }
-
-        @Override
-        public String getText(final Object element) {
-            return element.toString();
-        }
-
-        @Override
-        public void addListener(final ILabelProviderListener listener) {
-        }
-
-        @Override
-        public void dispose() {
-        }
-
-        @Override
-        public boolean isLabelProperty(final Object element, final String property) {
-            return false;
-        }
-
-        @Override
-        public void removeListener(final ILabelProviderListener listener) {
-        }
-    }
 }
