@@ -21,16 +21,14 @@ package de.cau.cs.kieler.core.math;
  */
 public class KVector {
 
-    /** angle for a half rotation. */
-    private static final double HALF_ROTATION = 180.0;
-
     // CHECKSTYLEOFF VisibilityModifier
     /** x coordinate. */
     public double x;
     /** y coordinate. */
     public double y;
+
     // CHECKSTYLEON VisibilityModifier
-    
+
     /**
      * Create vector with default coordinates (0,0).
      */
@@ -42,8 +40,10 @@ public class KVector {
     /**
      * Constructs a new vector from given values.
      * 
-     * @param thex x value
-     * @param they y value
+     * @param thex
+     *            x value
+     * @param they
+     *            y value
      */
     public KVector(final double thex, final double they) {
         this.x = thex;
@@ -53,7 +53,8 @@ public class KVector {
     /**
      * Creates an exact copy of a given vector v.
      * 
-     * @param v existing vector
+     * @param v
+     *            existing vector
      */
     public KVector(final KVector v) {
         this.x = v.x;
@@ -69,14 +70,14 @@ public class KVector {
     public KVector clone() {
         return new KVector(this.x, this.y);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public String toString() {
         return "(" + x + "," + y + ")";
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -97,9 +98,10 @@ public class KVector {
     }
 
     /**
-     * Compute euclidean norm (a.k.a length).
-     * FIXME why define two names for the same function? (msp)
+     * Compute euclidean norm (a.k.a length). FIXME why define two names for the same function?
+     * (msp)
      * 
+     * @deprecated use getLength()
      * @return length of this vector
      */
     public final double getNorm() {
@@ -151,8 +153,10 @@ public class KVector {
     /**
      * Returns the sum of two given vectors as a new vector instance.
      * 
-     * @param v1 first vector
-     * @param v2 second vector
+     * @param v1
+     *            first vector
+     * @param v2
+     *            second vector
      * @return new vector first + second
      */
     public static KVector add(final KVector v1, final KVector v2) {
@@ -162,7 +166,8 @@ public class KVector {
     /**
      * Vector subtraction.
      * 
-     * @param v vector to subtract
+     * @param v
+     *            vector to subtract
      * @return <code>this</code>
      */
     public final KVector sub(final KVector v) {
@@ -174,8 +179,10 @@ public class KVector {
     /**
      * Returns the subtraction of the two given vectors as a new vector instance.
      * 
-     * @param v1 first vector
-     * @param v2 second vector
+     * @param v1
+     *            first vector
+     * @param v2
+     *            second vector
      * @return new vector first - second
      */
     public static KVector sub(final KVector v1, final KVector v2) {
@@ -185,7 +192,8 @@ public class KVector {
     /**
      * Scale the vector.
      * 
-     * @param scale scaling factor
+     * @param scale
+     *            scaling factor
      * @return <code>this</code>
      */
     public final KVector scale(final double scale) {
@@ -203,6 +211,19 @@ public class KVector {
         double length = this.getLength();
         this.x = this.x / length;
         this.y = this.y / length;
+        return this;
+    }
+
+    /**
+     * scales this vector to the passed length.
+     * 
+     * @param length
+     *            length to scale to
+     * @return <code>this</code>
+     */
+    public KVector scaleToLength(final double length) {
+        this.normalize();
+        this.scale(length);
         return this;
     }
 
@@ -227,55 +248,10 @@ public class KVector {
     }
 
     /**
-     * Return x-coordinate.
-     * FIXME remove this
-     * 
-     * @return x-coordinate
-     * @deprecated
-     */
-    public final double getXpos() {
-        return this.x;
-    }
-
-    /**
-     * Return y-coordinate.
-     * FIXME remove this
-     * 
-     * @return y-coordinate
-     * @deprecated
-     */
-    public final double getYpos() {
-        return this.y;
-    }
-
-    /**
-     * Set new x-coordinate.
-     * FIXME remove this
-     * 
-     * @param newxpos
-     *            new x-coordinate
-     * @deprecated
-     */
-    public final void setXpos(final double newxpos) {
-        this.x = newxpos;
-    }
-
-    /**
-     * Set new y-coordinate.
-     * FIXME remove this
-     * 
-     * @param newypos
-     *            new y-coordinate
-     * @deprecated
-     */
-    public final void setYpos(final double newypos) {
-        this.y = newypos;
-    }
-
-    /**
      * Create a scaled version of this vector.
      * 
-     * @param lambda scaling factor
+     * @param lambda
+     *            scaling factor
      * @return new vector which is <code>this</code> scaled by <code>lambda</code>
      */
     public final KVector scaledCreate(final double lambda) {
@@ -294,7 +270,8 @@ public class KVector {
     /**
      * Create a sum from this vector and another vector.
      * 
-     * @param v second addend
+     * @param v
+     *            second addend
      * @return new vector which is the sum of <code>this</code> and <code>v</code>
      */
     public final KVector sumCreate(final KVector v) {
@@ -304,7 +281,8 @@ public class KVector {
     /**
      * Create a sum from this vector and another vector.
      * 
-     * @param v subtrahend
+     * @param v
+     *            subtrahend
      * @return new vector which is the difference between <code>this</code> and <code>v</code>
      */
     public final KVector differenceCreate(final KVector v) {
@@ -314,7 +292,8 @@ public class KVector {
     /**
      * Returns the distance between two vectors.
      * 
-     * @param v2 second vector
+     * @param v2
+     *            second vector
      * @return distance between this and second vector
      */
     public double distance(final KVector v2) {
@@ -326,8 +305,10 @@ public class KVector {
     /**
      * Returns the distance between two vectors.
      * 
-     * @param v1 first vector
-     * @param v2 second vector
+     * @param v1
+     *            first vector
+     * @param v2
+     *            second vector
      * @return distance between first and second
      */
     public static double distance(final KVector v1, final KVector v2) {
@@ -339,7 +320,8 @@ public class KVector {
     /**
      * Returns the dot product of the two given vectors.
      * 
-     * @param v2 second vector
+     * @param v2
+     *            second vector
      * @return (this.x * this.x) + (v1.y * v2.y)
      */
     public double productDot(final KVector v2) {
@@ -349,25 +331,13 @@ public class KVector {
     /**
      * Returns the dot product of the two given vectors.
      * 
-     * @param v1 first vector
-     * @param v2 second vector
+     * @param v1
+     *            first vector
+     * @param v2
+     *            second vector
      * @return (this.x * this.x) + (v1.y * v2.y)
      */
     public static double productDot(final KVector v1, final KVector v2) {
         return ((v1.x * v2.x) + (v1.y * v2.y));
     }
-
-    /**
-     * converts a given angle in degree to an equivalent vector.
-     * 
-     * @param angle
-     *            angle out of [0,360[
-     * @return normalized vector representing angle
-     */
-    public static KVector angleVector(final double angle) {
-        double radians = (angle * Math.PI) / HALF_ROTATION;
-        // vector automatically is normalized
-        return new KVector(Math.sin(radians), Math.cos(radians));
-    }
-
 }
