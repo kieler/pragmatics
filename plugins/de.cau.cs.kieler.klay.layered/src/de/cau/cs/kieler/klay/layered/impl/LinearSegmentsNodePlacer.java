@@ -147,12 +147,12 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
         // this.lastElements = new LayerElement[layeredGraph.getLayers().size()
         // + layeredGraph.getLayers().get(0).getRank()];
 
+        // arrange port positions
+        arrangePorts(layeredGraph);
         // sort the linear segments of the layered graph
         sortLinearSegments(layeredGraph);
         // create an unbalanced placement from the sorted segments
         createUnbalancedPlacement(layeredGraph);
-        // arrange port positions
-        arrangePorts(layeredGraph);
         // balance the placement
         balancePlacement(layeredGraph);
 
@@ -272,6 +272,21 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
                     }
                 }
             }
+        } else {
+            // Check if outgoing edge has priority > 0
+            LEdge highestPrioEdge = null;
+            int highestPrio = 0;
+            for (LPort sourcePort : node.getPorts(PortType.OUTPUT)) {
+                for (LEdge targetEdge : sourcePort.getEdges()) {
+                    if (targetEdge.getProperty(Properties.PRIORITY) > highestPrio) {
+                        highestPrioEdge = targetEdge;
+                    }
+                }
+            }
+            // At least one of the outgoing edges has priority > 0
+            if (highestPrioEdge != null) {
+                fillSegment(highestPrioEdge.getTarget().getNode(), segment);
+            }
         }
 
     }
@@ -320,28 +335,32 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
         // Iterate the balancing
         boolean ready = false;
         boolean forward = true;
+        int finalIterations = 0;
 
-        while (!ready) {
+        while (!ready || finalIterations > 0) {
             ready = true;
+            finalIterations--;
             // Iterate regions alternating forward or backward
             Collections.reverse(regions);
             for (Region region : regions) {
                 // Reset force for region
                 region.force = 0.0f;
                 
+                // Calculate force for every node
                 for (LNode node : region.getNodes()) {
                     float sum = 0.0f;
                     int numEdges = 0;
+                    // Calculate force for every port/edge
                     for (LPort port : node.getPorts()) {
                         for (LEdge edge : port.getEdges()) {
                             LPort gegenPort;
-                            if (forward && port.getType() == PortType.OUTPUT) {
+                            if (port.getType() == PortType.OUTPUT) {
                                 gegenPort = edge.getTarget();
                                 LNode gegenNode = gegenPort.getNode();
                                 sum += (gegenNode.getPos().y + gegenPort.getPos().y)
                                         - (node.getPos().y + port.getPos().y);
                                 numEdges++;
-                            } else if (!forward && port.getType() == PortType.INPUT) {
+                            } else if (port.getType() == PortType.INPUT) {
                                 gegenPort = edge.getSource();
                                 LNode gegenNode = gegenPort.getNode();
                                 sum += (gegenNode.getPos().y + gegenPort.getPos().y)
@@ -358,10 +377,9 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
                     }
                     region.force += sum / region.getNodes().size();
                 }
-                // ENDE KNOTEN DER REGION
 
-                // test for all nodes, if they can be moved that far
-                // test only if the neighbor is of another region
+                // Test for all nodes, if they can be moved that far.
+                // Test only if the neighbor is of another region.
                 for (LNode node : region.getNodes()) {
                     if (region.force < 0.0f) {
                         // Force is directed upward
@@ -395,14 +413,13 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
                         }
                     }
                 }
-                // move nodes
+                // Move nodes
                 for (LNode node : region.getNodes()) {
                     node.getPos().y += region.force;
                 }
             }
-            
-            // durch alle Knoten durchgehen und testen ob Nachbar
-            // berührt und wenn ja, ob gleiche Region
+
+            // Test for touching neighbors
             for (Layer layer : layeredGraph.getLayers()) {
                 List<LNode> nodes = layer.getNodes();
                 for (LNode node : nodes) {
@@ -413,6 +430,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
                             // Test if the nodes are touching
                             if (node.getPos().y + node.getSize().y + spacing
                                     > neighbor.getPos().y - 1.0f) {
+                                // Union the regions of the neighbors
                                 node.getRegion().union(neighbor.getRegion());
                                 ready = false;
                             } 
@@ -420,9 +438,10 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
                     }
                 }
             }
-            
+            if (ready && finalIterations < 0) {
+                finalIterations = 2;
+            }
             forward = !forward;
-
         }
     }
 
