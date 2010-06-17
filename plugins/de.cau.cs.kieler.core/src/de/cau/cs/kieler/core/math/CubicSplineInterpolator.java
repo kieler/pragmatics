@@ -31,7 +31,7 @@ public class CubicSplineInterpolator implements ISplineInterpolator {
      * the values of m = 7
      */
     private static final double[][] INTERP_COOF_EVEN = new double[][] { { 0.25d },
-            { 0.2677, -0.0667 }, { 0.2679, -0.0714, 0.0179 }, { 0.2679, -0.0718, 0.0192, -0.0048 },
+            { 0.2677, -0.0667 }, { 0.2679, -0.0714, 0.0179 }, { 0.2679, -0.0718, 0.0191, -0.0048 },
             { 0.2679, -0.0718, 0.0192, -0.0051, 0.0013 },
             { 0.2679, -0.0718, 0.0192, -0.0052, 0.0014, -0.0003 },
             { 0.2679, -0.0718, 0.0192, -0.0052, 0.0014, -0.0004, 0.0001 } };
@@ -43,7 +43,7 @@ public class CubicSplineInterpolator implements ISplineInterpolator {
      */
     private static final double[][] INTERP_COOF_ODD = new double[][] { { 0.3333d },
             { 0.2727, -0.0909 }, { 0.2683, -0.0732, 0.0244 }, { 0.2680, -0.0719, 0.0196, -0.0065 },
-            { 0.2680, -0.0719, 0.0196, -0.0053, 0.0018 },
+            { 0.2680, -0.0718, 0.0193, -0.0053, 0.0018 },
             { 0.2679, -0.0718, 0.0192, -0.0052, 0.0014, -0.0005 },
             { 0.2679, -0.0718, 0.0192, -0.0052, 0.0014, -0.0004, 0.0001 } };
 
@@ -55,6 +55,8 @@ public class CubicSplineInterpolator implements ISplineInterpolator {
 
     /**
      * Calculates a closed piecewise bezier spline where the first point is start and end.
+     * 
+     * this function is not fully tested yet!
      * 
      * @param points
      *            points being passed by the spline
@@ -135,11 +137,11 @@ public class CubicSplineInterpolator implements ISplineInterpolator {
         double startScale = 0;
         double endScale = 0;
         if (points.length == 2) {
-            startScale = Math.abs(points[0].x - points[n].x) * TANGENT_SCALE;
+            startScale = KVector.distance(points[0], points[1]) * TANGENT_SCALE;
             endScale = startScale;
         } else {
-            startScale = Math.abs(points[0].x - points[1].x) * TANGENT_SCALE;
-            endScale = Math.abs(points[n - 1].x - points[n].x) * TANGENT_SCALE;
+            startScale = KVector.distance(points[0], points[1]) * TANGENT_SCALE;
+            endScale = KVector.distance(points[n - 1], points[n]) * TANGENT_SCALE;
         }
         d[0] = startTan.scaledCreate(startScale);
         d[n] = endTan.scaledCreate(endScale);
@@ -147,7 +149,7 @@ public class CubicSplineInterpolator implements ISplineInterpolator {
         // set first and last t
         t[0] = KVector.add(points[0], d[0]);
         t[n] = KVector.sub(points[n], d[n]);
-        
+
         // extend t
         for (int i = 1; i < n; i++) {
             t[i] = points[i];
@@ -161,9 +163,9 @@ public class CubicSplineInterpolator implements ISplineInterpolator {
         // calculate all Di's using the Ti's
         for (int i = 1; i < n; i++) {
             d[i] = new KVector();
-            for (int k = 1; k <= Math.min(m, MAX_K); k++) {
-                a = INTERP_COOF_EVEN[Math.min(m - 1, MAX_K - 1)][Math.min(k - 1, MAX_K - 1)];
-
+            for (int k = 1; k <= m; k++) {
+                a = INTERP_COOF_EVEN[m - 1][k - 1];
+                // Ti = T-i for 0 < i < n, is it really ok to neglect 0 and n?!
                 d[i].x += a * (t[i + k].x - t[Math.abs((i - k))].x);
                 d[i].y += a * (t[i + k].y - t[Math.abs((i - k))].y);
             }
@@ -171,8 +173,8 @@ public class CubicSplineInterpolator implements ISplineInterpolator {
 
         // create all bezier spline segments
         for (int i = 0; i < n; i++) {
-            KVector bend1 = KVector.add(d[i], points[i]);
-            KVector bend2 = KVector.sub(points[(i + 1) % (n + 1)], d[(i + 1) % (n + 1)]);
+            KVector bend1 = KVector.add(points[i], d[i]);
+            KVector bend2 = KVector.sub(points[i + 1], d[i + 1]);
             spline.addCurve(points[i], bend1, bend2, points[i + 1]);
         }
 
