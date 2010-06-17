@@ -36,10 +36,16 @@ public class SimpleSplineGenerator extends AbstractAlgorithm implements ISplineG
     private static final double INCREASE_FACTOR = 0.5d;
     private static final double DECREASE_FACTOR = 0.5d;
 
-    // private static final int MAX_ITERATIONS = 8;
-
     /** factor being used when straightening a bezier segment. */
     private static final double STRAIGHTENING_FACTOR = 0.75;
+
+    /** factor with which a control point is moved closer to the start/end point. */
+    private static final double SMOOTHNESS_FACTOR = 0.5d;
+    /**
+     * how long may the distance between the fst/snd ctr point and the start/end point be,
+     * considering the distance between start and end.
+     */
+    private static final int MAX_DISTANCE = 2;
 
     /**
      * {@inheritDoc}
@@ -47,14 +53,41 @@ public class SimpleSplineGenerator extends AbstractAlgorithm implements ISplineG
     public BezierSpline generateSpline(final LinkedList<KVector> pArray, final KVector vectorQ,
             final KVector vectorS) {
 
-        return interp.interpolatePoints(pArray, vectorQ, vectorS);
+        BezierSpline spline;
+        if (vectorQ == null || vectorS == null) {
+            spline = interp.interpolatePoints(pArray);
+        } else {
+            spline = interp.interpolatePoints(pArray, vectorQ, vectorS);
+        }
+
+        // as the generated spline can contain loops etc, we try to remove those, by adjusting the
+        // control points
+        for (BezierCurve curve : spline.getCurves()) {
+            double dist = KVector.distance(curve.start, curve.end);
+            double distFst = KVector.distance(curve.start, curve.fstControlPnt);
+            double distSnd = KVector.distance(curve.end, curve.sndControlPnt);
+
+            // scale the control points to a certain distance from the start/end point
+            if (distFst > dist / MAX_DISTANCE) {
+                KVector v = KVector.sub(curve.fstControlPnt, curve.start);
+                v.scaleToLength(dist * SMOOTHNESS_FACTOR);
+                curve.fstControlPnt = KVector.add(curve.start, v);
+            }
+            if (distSnd > dist / MAX_DISTANCE) {
+                KVector v = KVector.sub(curve.sndControlPnt, curve.end);
+                v.scaleToLength(dist * SMOOTHNESS_FACTOR);
+                curve.sndControlPnt = KVector.add(curve.end, v);
+            }
+        }
+
+        return spline;
     }
 
     /**
      * {@inheritDoc}
      */
     public BezierSpline generateSpline(final LinkedList<KVector> pArray) {
-        return interp.interpolatePoints(pArray);
+        return generateSpline(pArray, null, null);
     }
 
     /**
@@ -63,9 +96,10 @@ public class SimpleSplineGenerator extends AbstractAlgorithm implements ISplineG
     public boolean refineSpline(final LinkedList<KVector> pArray, final BezierSpline ospline,
             final curvature mode) {
 
-        double factor = 0.99d;
+        // @ TODO get this working!
 
         for (BezierCurve curve : ospline.getCurves()) {
+
             // calculate directions, to keep the C1 and C2 derive ability
             KVector fstdir = KVector.sub(curve.fstControlPnt, curve.start).normalize();
             KVector snddir = KVector.sub(curve.sndControlPnt, curve.end).normalize();
@@ -97,10 +131,13 @@ public class SimpleSplineGenerator extends AbstractAlgorithm implements ISplineG
             // ERROR
             return false;
         }
-
         BezierCurve curve = spline.getCurves().getFirst();
-        curve.fstControlPnt.scale(STRAIGHTENING_FACTOR);
-        curve.sndControlPnt.scale(STRAIGHTENING_FACTOR);
+
+        KVector fstdir = KVector.sub(curve.fstControlPnt, curve.start).scale(STRAIGHTENING_FACTOR);
+        KVector snddir = KVector.sub(curve.sndControlPnt, curve.end).scale(STRAIGHTENING_FACTOR);
+
+        curve.fstControlPnt.sub(fstdir);
+        curve.sndControlPnt.sub(snddir);
         return true;
     }
 

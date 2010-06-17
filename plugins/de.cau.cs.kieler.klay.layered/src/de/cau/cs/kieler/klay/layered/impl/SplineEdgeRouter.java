@@ -114,8 +114,7 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
                 if (node.getProperty(Properties.NODE_TYPE) != Properties.NodeType.LONG_EDGE) {
                     for (LPort port : node.getPorts(PortType.OUTPUT)) {
                         for (LEdge edge : port.getEdges()) {
-                            if (edge.getTarget()
-                                    .getNode().getProperty(Properties.NODE_TYPE) 
+                            if (edge.getTarget().getNode().getProperty(Properties.NODE_TYPE) 
                                     == Properties.NodeType.LONG_EDGE) {
                                 longEdges.add(edge);
                                 realLongEdges.add(new LongEdge(edge));
@@ -478,15 +477,17 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
             double qsYStart = a * box.x + b;
             double qsYEnd = a * box.x + box.width + b;
 
+            // @ TODO correlate this with box generation 
+            int tolerance = 5;
             // if the line intersects the box completely
-            if ((box.y <= qsYStart) && (box.y + box.height >= qsYStart) && (box.y <= qsYEnd)
-                    && (box.y + box.height >= qsYEnd)) {
+            if ((box.y - tolerance <= qsYStart) && (box.y + box.height + tolerance >= qsYStart)
+                    && (box.y - tolerance <= qsYEnd) && (box.y + box.height + tolerance >= qsYEnd)) {
                 // check the lines too
                 // for the last box there is no further line
                 if (!(box == boxes.getLast())) {
                     line = lineIt.next();
                     // we check the line "on the right" of the box
-                    if (!(line.y1 <= qsYEnd && line.y2 >= qsYEnd)) {
+                    if (!(line.y1 - tolerance <= qsYEnd && line.y2 + tolerance >= qsYEnd)) {
                         return false;
                     }
                 }
