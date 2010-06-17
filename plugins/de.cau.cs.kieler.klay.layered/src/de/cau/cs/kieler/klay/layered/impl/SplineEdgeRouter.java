@@ -546,6 +546,8 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
      * compute_splinesplit finds the endpoint of a segment on the path that is the furthest from the
      * spline and subdivides the box and path arrays along that point.
      * 
+     * @ TODO THIS IS TOTALLY NOT WORKING
+     * 
      * @param spline
      * @param pArray
      * @return
@@ -666,12 +668,63 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
      */
     private boolean splineFits(final BezierSpline spline,
             final LinkedList<Rectangle2D.Double> boxes, final LinkedList<Line2D.Double> lines) {
+        return splineFits(spline, boxes.toArray(new Rectangle2D.Double[boxes.size()]), lines);
+    }
+
+    /**
+     * spline_fits checks if the spline lies entirely inside the region. The spline is sampled along
+     * its length and these samples are then clipped as a linear path against the box region.
+     * 
+     * @param spline
+     * @param boxes
+     * @param lines
+     * @return
+     */
+    private boolean splineFits(final BezierSpline spline, final Rectangle2D.Double[] boxes,
+            final LinkedList<Line2D.Double> lines) {
+
+        // boxes are left right .. so start is at first box
+        double boxstart = boxes[0].x;
+        // we guess all boxes have the same distance
+        double boxres = boxes[0].width;
 
         for (BezierCurve curve : spline.getCurves()) {
             KVector[] pts = KielerMath.calcBezierPoints(curve.asVectorList(), SPLINE_PRECISION);
+
             for (KVector p : pts) {
-                if (!pointInBox(p, boxes)) {
-                    return false;
+                if (p == pts[pts.length - 2]) {
+                    break;
+                }
+                // @ TODO improve guessing!
+                int guessIndex = (int) ((p.x - boxstart) / boxres);
+                // most of the time we are guessing one to high
+                guessIndex = Math.max(0, guessIndex - 1);
+                int offset = 0;
+                boolean match = false;
+                if (guessIndex == boxes.length) {
+                    // try one smaller as we may have missguessed
+                    guessIndex--;
+                }
+                while (!match) {
+                    if (guessIndex + offset < 0 || guessIndex + offset >= boxes.length) {
+                        return false;
+                    }
+                    Rectangle2D.Double box = boxes[guessIndex + offset];
+                    if ((box.x <= p.x) && (box.x + box.width >= p.x)) {
+                        match = true;
+                        if (box.y > Math.ceil(p.y) || box.y + box.height < Math.floor(p.y)) {
+                            return false;
+                        }
+                    } else if (box.x > p.x) {
+                        // try one to the left
+                        // System.out.println("-- Box: " + box.x + " pt: " + p.x);
+                        offset--;
+                    } else if (box.x + box.width < p.x) {
+                        // try one to the right
+                        // System.out.println("++ Box: " + box.x + box.width + " pt: " + p.x);
+                        offset++;
+                    }
+
                 }
             }
         }
@@ -679,42 +732,7 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
         // @ TODO still need to check lines as well
 
         return true;
-    }
 
-    /**
-     * tests whether point is in this area of boxes.
-     * 
-     * @TODO rewrite this, it possesses very evil performance.
-     * 
-     * @param pnt
-     * @param boxes
-     * @return
-     */
-    private boolean pointInBox(final KVector pnt, final LinkedList<Rectangle2D.Double> boxes) {
-
-        return true;
-        // double ceilY = Math.ceil(pnt.y);
-        // double floorY = Math.floor(pnt.y);
-        // // for (Rectangle2D.Double box : boxes) {
-        // while (boxIterator.hasNext()) {
-        // if (currentBox == null) {
-        // currentBox = boxIterator.next();
-        // }
-        // System.out.println("BOX: " + currentBox + " Point: " + pnt);
-        // if (pnt.x >= currentBox.x && pnt.x <= currentBox.x + currentBox.width) {
-        // if ((ceilY >= currentBox.y) && (ceilY <= currentBox.y + currentBox.height)) {
-        // return true;
-        // }
-        // if ((floorY >= currentBox.y) && (floorY <= currentBox.y + currentBox.height)) {
-        // return true;
-        // }
-        // } else if (pnt.x < currentBox.x) {
-        // currentBox = boxIterator.next();
-        // } else {
-        // return false;
-        // }
-        // }
-        // return false;
     }
 
 }
