@@ -40,8 +40,6 @@ import de.cau.cs.kieler.klay.layered.modules.INodePlacer;
  * Symposium on Graph Drawing (GD '95)</i>, pp. 447-458, Springer, 1996.
  * </ul>
  * 
- * TODO implement balancing of the placement
- * 
  * @author msp
  */
 public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INodePlacer {
@@ -278,14 +276,17 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
             int highestPrio = 0;
             for (LPort sourcePort : node.getPorts(PortType.OUTPUT)) {
                 for (LEdge targetEdge : sourcePort.getEdges()) {
-                    if (targetEdge.getProperty(Properties.PRIORITY) > highestPrio) {
+                    int prio = targetEdge.getProperty(Properties.PRIORITY);
+                    if (prio > highestPrio) {
                         highestPrioEdge = targetEdge;
+                        highestPrio = prio;
                     }
                 }
             }
             // At least one of the outgoing edges has priority > 0
             if (highestPrioEdge != null) {
                 fillSegment(highestPrioEdge.getTarget().getNode(), segment);
+                // TODO calculate offset (Properties.LINSEG_OFFSET)
             }
         }
 
@@ -297,6 +298,8 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
     private void createUnbalancedPlacement(final LayeredGraph layeredGraph) {
         int[] nodeCount = new int[layeredGraph.getLayers().size()];
         for (LinearSegment segment : linearSegments) {
+            // TODO determine minimal offset of 'segment'
+            
             // determine the uppermost placement for the linear segment
             float uppermostPlace = 0.0f;
             int nodeCountSum = 0;
@@ -312,6 +315,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
                 newPos += spacing;
             }
             for (LNode node : segment.getNodes()) {
+                // TODO add node offset - minimal offset
                 Layer layer = node.getLayer();
                 node.getPos().y = newPos;
                 float height = node.getSize().y;
@@ -352,16 +356,17 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
                     int numEdges = 0;
                     // Calculate force for every port/edge
                     for (LPort port : node.getPorts()) {
-                        for (LEdge edge : port.getEdges()) {
-                            LPort gegenPort;
-                            if (port.getType() == PortType.OUTPUT) {
-                                gegenPort = edge.getTarget();
+                        if (port.getType() == PortType.OUTPUT) {
+                            for (LEdge edge : port.getEdges()) {
+                                LPort gegenPort = edge.getTarget();
                                 LNode gegenNode = gegenPort.getNode();
                                 sum += (gegenNode.getPos().y + gegenPort.getPos().y)
                                         - (node.getPos().y + port.getPos().y);
                                 numEdges++;
-                            } else if (port.getType() == PortType.INPUT) {
-                                gegenPort = edge.getSource();
+                            }
+                        } else if (port.getType() == PortType.INPUT) {
+                            for (LEdge edge : port.getEdges()) {
+                                LPort gegenPort = edge.getSource();
                                 LNode gegenNode = gegenPort.getNode();
                                 sum += (gegenNode.getPos().y + gegenPort.getPos().y)
                                         - (node.getPos().y + port.getPos().y);

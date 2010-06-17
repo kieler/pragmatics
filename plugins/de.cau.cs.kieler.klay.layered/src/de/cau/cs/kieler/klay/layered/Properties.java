@@ -36,6 +36,9 @@ public final class Properties {
     /** node type. */
     public static final Property<NodeType> NODE_TYPE = new Property<NodeType>(
             "nodeType", NodeType.NORMAL);
+    /** offset for nodes in linear segments. */
+    public static final Property<Integer> LINSEG_OFFSET = new Property<Integer>(
+            "linsegOffset", 0);
     
     /**
      * Hidden default constructor.
