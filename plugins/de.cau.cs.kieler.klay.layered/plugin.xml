@@ -18,7 +18,25 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.priority">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.options.LayeredEdgeRouting">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.options.LayeredDebugInfo">
+         </knownOption>
       </layoutProvider>
+      <layoutOption
+            appliesTo="parents"
+            id="de.cau.cs.kieler.klay.layered.options.LayeredEdgeRouting"
+            name="LayeredEdgeRouting"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            id="de.cau.cs.kieler.klay.layered.options.LayeredDebugInfo"
+            name="LayeredDebugInfo"
+            type="boolean">
+      </layoutOption>
    </extension>
 
 </plugin>

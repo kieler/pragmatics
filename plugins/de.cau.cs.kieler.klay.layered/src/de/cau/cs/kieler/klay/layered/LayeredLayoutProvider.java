@@ -33,6 +33,8 @@ import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.options.PortType;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.ui.util.DebugCanvas;
+import de.cau.cs.kieler.kiml.ui.util.DebugCanvas.DrawingMode;
 import de.cau.cs.kieler.klay.layered.graph.Coord;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
@@ -44,24 +46,26 @@ import de.cau.cs.kieler.klay.layered.impl.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.impl.LayerSweepCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.impl.LinearSegmentsNodePlacer;
 import de.cau.cs.kieler.klay.layered.impl.LongestPathLayerer;
+import de.cau.cs.kieler.klay.layered.impl.NaiveSplineEdgeRouter;
 import de.cau.cs.kieler.klay.layered.impl.PolylineEdgeRouter;
+import de.cau.cs.kieler.klay.layered.impl.SplineEdgeRouter;
 import de.cau.cs.kieler.klay.layered.modules.ICrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.modules.ICycleBreaker;
 import de.cau.cs.kieler.klay.layered.modules.IEdgeRouter;
 import de.cau.cs.kieler.klay.layered.modules.ILayerer;
 import de.cau.cs.kieler.klay.layered.modules.INodePlacer;
+import de.cau.cs.kieler.klay.layered.options.LayeredEdgeRouting;
 
 /**
- * Layout provider to connect the layered layouter to the Eclipse based layout
- * services.
- *
+ * Layout provider to connect the layered layouter to the Eclipse based layout services.
+ * 
  * @author msp
  */
 public class LayeredLayoutProvider extends AbstractLayoutProvider {
 
     /** default value for object spacing. */
     public static final float DEF_SPACING = 20.0f;
-    
+
     /** phase 1: cycle breaking module. */
     private ICycleBreaker cycleBreaker = new GreedyCycleBreaker();
     /** phase 2: layering module. */
@@ -72,7 +76,23 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     private INodePlacer nodePlacer = new LinearSegmentsNodePlacer();
     /** phase 5: Edge routing module. */
     private IEdgeRouter edgeRouter = new PolylineEdgeRouter();
-    
+
+    /** the DebugCanvas to use for debug-drawings. **/
+    private DebugCanvas debugCanvas;
+
+    /** Option to choose edgerouter. */
+    public static final String KLAY_EDGE_ROUTING = 
+        "de.cau.cs.kieler.klay.layered.options.LayeredEdgeRouting";
+
+    /** option to choose if debug info is shown. */
+    public static final String KLAY_DEBUG_INFO = 
+        "de.cau.cs.kieler.klay.layered.options.LayeredDebugInfo";
+
+    /** constructor registering the new enum option. */
+    public LayeredLayoutProvider() {
+        LayoutOptions.registerEnum(KLAY_EDGE_ROUTING, LayeredEdgeRouting.class);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -85,7 +105,43 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         if (Float.isNaN(spacing) || spacing < 0) {
             spacing = DEF_SPACING;
         }
-        
+
+        // check which EdgeRouter to use
+        LayeredEdgeRouting router = LayoutOptions.getEnum(parentLayout, LayeredEdgeRouting.class);
+        switch (router) {
+        case POLYLINE:
+            if (!(edgeRouter instanceof PolylineEdgeRouter)) {
+                edgeRouter = new PolylineEdgeRouter();
+            }
+            break;
+        case NAIVE_SPLINES:
+            if (!(edgeRouter instanceof NaiveSplineEdgeRouter)) {
+                edgeRouter = new NaiveSplineEdgeRouter();
+            }
+            break;
+        case BOX_SPLINES:
+            if (!(edgeRouter instanceof SplineEdgeRouter)) {
+                edgeRouter = new SplineEdgeRouter();
+            }
+        }
+
+        // debug mode
+        Boolean debug = LayoutOptions.getBoolean(parentLayout, KLAY_DEBUG_INFO);
+        if (debug) {
+            // get debug canvas and clear
+            debugCanvas = new DebugCanvas(layoutNode, DrawingMode.BUFFERED);
+            float borderspacing = LayoutOptions
+                    .getFloat(parentLayout, LayoutOptions.BORDER_SPACING);
+            debugCanvas.setCustomXOffset(borderspacing);
+            debugCanvas.setCustomYOffset(borderspacing);
+            debugCanvas.clear();
+        } else {
+            if (debugCanvas != null) {
+                debugCanvas.clear();
+            }
+            debugCanvas = null;
+        }
+
         // transform the input graph
         List<LNode> nodes = transformGraph(layoutNode);
         // create an empty layered graph and perform the actual layout
@@ -96,14 +152,18 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
 
         progressMonitor.done();
     }
-    
+
     /**
      * Perform the five phases of the layered layouter.
      * 
-     * @param layeredGraph an initially empty layered graph
-     * @param nodes a list of nodes
-     * @param themonitor a progress monitor, or {@code null}
-     * @param spacing spacing for layout
+     * @param layeredGraph
+     *            an initially empty layered graph
+     * @param nodes
+     *            a list of nodes
+     * @param themonitor
+     *            a progress monitor, or {@code null}
+     * @param spacing
+     *            spacing for layout
      */
     public void doLayout(final LayeredGraph layeredGraph, final List<LNode> nodes,
             final IKielerProgressMonitor themonitor, final float spacing) {
@@ -112,7 +172,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             monitor = new BasicProgressMonitor();
         }
         monitor.begin("Layered layout phases", 1 + 1 + 1 + 1 + 1);
-        
+
         // phase 1: cycle breaking
         cycleBreaker.reset(monitor.subTask(1));
         cycleBreaker.breakCycles(nodes);
@@ -130,11 +190,15 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         // phase 5: edge routing
         edgeRouter.reset(monitor.subTask(1));
         edgeRouter.setSpacing(spacing);
-        edgeRouter.routeEdges(layeredGraph);
-        
+        if (edgeRouter instanceof SplineEdgeRouter) {
+            ((SplineEdgeRouter) edgeRouter).routeEdges(layeredGraph, debugCanvas);
+        } else {
+            edgeRouter.routeEdges(layeredGraph);
+        }
+
         monitor.done();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -148,16 +212,17 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             return super.getDefault(optionId);
         }
     }
-    
+
     /**
      * Transform the given KGraph to a layered graph.
      * 
-     * @param layoutNode parent node of the KGraph
+     * @param layoutNode
+     *            parent node of the KGraph
      * @return a list of nodes for a layered graph
      */
     private List<LNode> transformGraph(final KNode layoutNode) {
         List<LNode> layeredNodes = new LinkedList<LNode>();
-        
+
         // transform nodes and ports
         Map<KGraphElement, LGraphElement> elemMap = new HashMap<KGraphElement, LGraphElement>();
         for (KNode child : layoutNode.getChildren()) {
@@ -188,7 +253,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
                 elemMap.put(kport, newPort);
             }
         }
-        
+
         // transform edges
         for (KNode child : layoutNode.getChildren()) {
             for (KEdge kedge : child.getOutgoingEdges()) {
@@ -219,15 +284,17 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
                 }
             }
         }
-        
+
         return layeredNodes;
     }
-    
+
     /**
      * Apply the computed layout of a layered graph to the original graph.
      * 
-     * @param parentNode parent node of the original graph
-     * @param layeredGraph a layered graph
+     * @param parentNode
+     *            parent node of the original graph
+     * @param layeredGraph
+     *            a layered graph
      */
     private void applyLayout(final KNode parentNode, final LayeredGraph layeredGraph) {
         KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(parentNode);
@@ -235,8 +302,8 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         if (Float.isNaN(borderSpacing) || borderSpacing < 0) {
             borderSpacing = DEF_SPACING;
         }
-        Coord offset = new Coord(borderSpacing + layeredGraph.getOffset().x,
-                borderSpacing + layeredGraph.getOffset().y);
+        Coord offset = new Coord(borderSpacing + layeredGraph.getOffset().x, borderSpacing
+                + layeredGraph.getOffset().y);
 
         // process the nodes
         for (Layer layer : layeredGraph.getLayers()) {
@@ -254,7 +321,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
                 }
             }
         }
-        
+
         // collect all parts of each long edge
         Map<KEdge, List<LEdge>> edgeMap = new HashMap<KEdge, List<LEdge>>();
         for (Layer layer : layeredGraph.getLayers()) {
@@ -308,18 +375,20 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
                 }
             }
         }
-        
+
         // set up the parent node
         parentLayout.setWidth(layeredGraph.getSize().x + 2 * borderSpacing);
         parentLayout.setHeight(layeredGraph.getSize().y + 2 * borderSpacing);
         LayoutOptions.setBoolean(parentLayout, LayoutOptions.FIXED_SIZE, true);
     }
-    
+
     /**
      * Apply the given point coordinates to the {@code KPoint}.
      * 
-     * @param kpoint point where coordinates are written
-     * @param lpoint point from which coordinates are read
+     * @param kpoint
+     *            point where coordinates are written
+     * @param lpoint
+     *            point from which coordinates are read
      */
     private void applyLayout(final KPoint kpoint, final Coord lpoint, final Coord offset) {
         kpoint.setX(lpoint.x + offset.x);
