@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import org.eclipse.draw2d.geometry.Point;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.BezierSpline;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KielerMath;
@@ -72,8 +73,12 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
 
     /** maximal numbers spline refining is produced. */
     private static final int MAX_ITERATIONS = 9;
-    /** precision the splineFits method is working with. */
-    private static final int SPLINE_PRECISION = 20;
+    /**
+     * precision the splineFits method is working with.
+     * 
+     * @TODO this should be depending on the length of a spline!
+     */
+    private static final int SPLINE_PRECISION = 10;
 
     private static final double TANGENT_SCALE = 0.25d;
 
@@ -96,6 +101,8 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
      * {@inheritDoc}
      */
     public void routeEdges(final LayeredGraph layeredGraph) {
+
+        getMonitor().begin("Edge routing", 1);
         System.out.println("routeEdges()");
 
         // contains nodes from which long edges are starting
@@ -114,8 +121,7 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
                 if (node.getProperty(Properties.NODE_TYPE) != Properties.NodeType.LONG_EDGE) {
                     for (LPort port : node.getPorts(PortType.OUTPUT)) {
                         for (LEdge edge : port.getEdges()) {
-                            if (edge.getTarget().getNode().getProperty(Properties.NODE_TYPE) 
-                                    == Properties.NodeType.LONG_EDGE) {
+                            if (edge.getTarget().getNode().getProperty(Properties.NODE_TYPE) == Properties.NodeType.LONG_EDGE) {
                                 longEdges.add(edge);
                                 realLongEdges.add(new LongEdge(edge));
                             } else {
@@ -136,6 +142,9 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
 
         boxCalculator.initialize(layeredGraph, debugCanvas);
 
+        double cumBoxTime = 0;
+        double cumSplineTime = 0;
+        int counter = 0;
         // handle every long edge
         for (LongEdge longEdge : realLongEdges) {
 
@@ -146,12 +155,22 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
             longEdge.initialize();
             // globBarray = boxCalculator.getBoxes(longEdge.getEdge());
             target = longEdge.getTarget();
-            LinkedList<Rectangle2D.Double> boxes = boxCalculator.getBoxes(longEdge.getEdge());
 
+            IKielerProgressMonitor subMon = getMonitor().subTask(1);
+
+            subMon.begin("Box Calculation " + counter, 1);
+            LinkedList<Rectangle2D.Double> boxes = boxCalculator.getBoxes(longEdge.getEdge());
+            subMon.done();
+            cumBoxTime += subMon.getExecutionTime();
+
+            subMon = getMonitor().subTask(1);
+            subMon.begin("Spline Calculation " + counter++, 1);
             computeSpline(boxes, new KVector(source.getNode().getPos().x + source.getPos().x,
                     source.getNode().getPos().y + source.getPos().y), new KVector(target.getNode()
                     .getPos().x
                     + target.getPos().x, target.getNode().getPos().y + target.getPos().y));
+            subMon.done();
+            cumSplineTime += subMon.getExecutionTime();
 
             if (globSpline != null) {
                 // add calculated bend points
@@ -162,12 +181,18 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
             }
         }
 
+        System.out.println("BoxTime: " + cumBoxTime + "s, SplineTime: " + cumSplineTime + "s");
+
+        IKielerProgressMonitor labelMon = getMonitor().subTask(1);
+        labelMon.begin("Label placing", 1);
         /**
          * LABEL PLACING
          */
         // place labels
         labelPlacer.placeLabels(layeredGraph);
 
+        labelMon.done();
+        getMonitor().done();
     }
 
     /**
@@ -256,33 +281,35 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
                     count++;
                 }
 
-                // split the spline and handle separately if it still does not fit
-                LinkedList<Rectangle2D.Double> newBarray1 = new LinkedList<Rectangle2D.Double>();
-                LinkedList<Rectangle2D.Double> newBarray2 = new LinkedList<Rectangle2D.Double>();
-                LinkedList<Line2D.Double> newLarray1 = new LinkedList<Line2D.Double>();
-                LinkedList<Line2D.Double> newLarray2 = new LinkedList<Line2D.Double>();
+                if (!fits) {
+                    // split the spline and handle separately if it still does not fit
+                    LinkedList<Rectangle2D.Double> newBarray1 = new LinkedList<Rectangle2D.Double>();
+                    LinkedList<Rectangle2D.Double> newBarray2 = new LinkedList<Rectangle2D.Double>();
+                    LinkedList<Line2D.Double> newLarray1 = new LinkedList<Line2D.Double>();
+                    LinkedList<Line2D.Double> newLarray2 = new LinkedList<Line2D.Double>();
 
-                // TODO !!!!
-                KVector[][] p = computeSplineSplit(spline, boxes, lines, newBarray1, newLarray1,
-                        newBarray2, newLarray2);
+                    // TODO !!!!
+                    KVector[][] p = computeSplineSplit(spline, boxes, lines, newBarray1,
+                            newLarray1, newBarray2, newLarray2);
 
-                if (p != null) {
-                    KVector v1 = p[1][1];
-                    KVector v2 = p[0][p[0].length - 2];
-                    KVector vectorP = KVector.sub(v1, v2).normalize();
-                    LinkedList<KVector> p0 = new LinkedList<KVector>();
-                    for (KVector v : p[0]) {
-                        p0.add(v);
-                    }
-                    LinkedList<KVector> p1 = new LinkedList<KVector>();
-                    for (KVector v : p[1]) {
-                        p1.add(v);
-                    }
-                    // insert two new piecewise bezier curves corresponding to p
-                    if (p[0].length > 1 && p[1].length > 1) {
-                        computeSarray(newBarray1, newLarray1, p0, vectorQ, vectorP);
-                        computeSarray(newBarray2, newLarray2, p1, vectorP, vectorS);
-                        return null;
+                    if (p != null) {
+                        KVector v1 = p[1][1];
+                        KVector v2 = p[0][p[0].length - 2];
+                        KVector vectorP = KVector.sub(v1, v2).normalize();
+                        LinkedList<KVector> p0 = new LinkedList<KVector>();
+                        for (KVector v : p[0]) {
+                            p0.add(v);
+                        }
+                        LinkedList<KVector> p1 = new LinkedList<KVector>();
+                        for (KVector v : p[1]) {
+                            p1.add(v);
+                        }
+                        // insert two new piecewise bezier curves corresponding to p
+                        if (p[0].length > 1 && p[1].length > 1) {
+                            computeSarray(newBarray1, newLarray1, p0, vectorQ, vectorP);
+                            computeSarray(newBarray2, newLarray2, p1, vectorP, vectorS);
+                            return null;
+                        }
                     }
                 }
             }
@@ -477,7 +504,7 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
             double qsYStart = a * box.x + b;
             double qsYEnd = a * box.x + box.width + b;
 
-            // @ TODO correlate this with box generation 
+            // @ TODO correlate this with box generation
             int tolerance = 5;
             // if the line intersects the box completely
             if ((box.y - tolerance <= qsYStart) && (box.y + box.height + tolerance >= qsYStart)
@@ -649,6 +676,8 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
             }
         }
 
+        // @ TODO still need to check lines as well
+
         return true;
     }
 
@@ -663,19 +692,29 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
      */
     private boolean pointInBox(final KVector pnt, final LinkedList<Rectangle2D.Double> boxes) {
 
-        double ceilY = Math.ceil(pnt.y);
-        double floorY = Math.floor(pnt.y);
-        for (Rectangle2D.Double box : boxes) {
-            if (pnt.x >= box.x && pnt.x <= box.x + box.width) {
-                if ((ceilY >= box.y) && (ceilY <= box.y + box.height)) {
-                    return true;
-                }
-                if ((floorY >= box.y) && (floorY <= box.y + box.height)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return true;
+        // double ceilY = Math.ceil(pnt.y);
+        // double floorY = Math.floor(pnt.y);
+        // // for (Rectangle2D.Double box : boxes) {
+        // while (boxIterator.hasNext()) {
+        // if (currentBox == null) {
+        // currentBox = boxIterator.next();
+        // }
+        // System.out.println("BOX: " + currentBox + " Point: " + pnt);
+        // if (pnt.x >= currentBox.x && pnt.x <= currentBox.x + currentBox.width) {
+        // if ((ceilY >= currentBox.y) && (ceilY <= currentBox.y + currentBox.height)) {
+        // return true;
+        // }
+        // if ((floorY >= currentBox.y) && (floorY <= currentBox.y + currentBox.height)) {
+        // return true;
+        // }
+        // } else if (pnt.x < currentBox.x) {
+        // currentBox = boxIterator.next();
+        // } else {
+        // return false;
+        // }
+        // }
+        // return false;
     }
 
 }
