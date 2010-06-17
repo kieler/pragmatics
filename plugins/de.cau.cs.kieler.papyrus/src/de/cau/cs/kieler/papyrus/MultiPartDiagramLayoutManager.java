@@ -19,21 +19,23 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.papyrus.core.editor.IMultiDiagramEditor;
+import org.eclipse.gef.EditPart;
+import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPropertyListener;
 
+import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.ui.editors.IEditorChangeListener;
-import de.cau.cs.kieler.kiml.ui.editors.IDiagramEditorConnector;
+import de.cau.cs.kieler.kiml.ui.IEditorChangeListener;
+import de.cau.cs.kieler.kiml.ui.layout.GmfDiagramLayoutManager;
 
 /**
+ * Layout manager wrapper for the Papyrus multi diagram editor.
  * 
- * Implementation of the editor connector interface for the Papyrus multi part diagram editor.
- * 
- * @author jjc
  * @author msp
  */
-public class MultiPartDiagramConnector implements IDiagramEditorConnector {
+public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
 
     /** map of editor change listeners to all editors for which they have registered. */
     private Map<IEditorChangeListener, List<Pair<IMultiDiagramEditor, IPropertyListener>>> listenerMap
@@ -42,31 +44,36 @@ public class MultiPartDiagramConnector implements IDiagramEditorConnector {
     /**
      * {@inheritDoc}
      */
-    public IEditorPart getActiveEditor(final IEditorPart editorPart) {
-        IEditorPart result = editorPart;
-        if (editorPart instanceof IMultiDiagramEditor) {
-            result = ((IMultiDiagramEditor) editorPart).getActiveEditor();
-        }
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public boolean supports(final IEditorPart editorPart) {
         return editorPart instanceof IMultiDiagramEditor;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public KNode buildLayoutGraph(final IEditorPart editorPart,
+            final EditPart editPart, final boolean layoutAncestors) {
+        if (editorPart instanceof IMultiDiagramEditor) {
+            return super.buildLayoutGraph(((IMultiDiagramEditor) editorPart).getActiveEditor(),
+                    editPart, layoutAncestors);
+        } else {
+            return super.buildLayoutGraph(editorPart, editPart, layoutAncestors);
+        }
+    }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public void addChangeListener(final IEditorPart editorPart,
             final IEditorChangeListener editorListener) {
         if (editorPart instanceof IMultiDiagramEditor) {
             final IMultiDiagramEditor diagramEditor = (IMultiDiagramEditor) editorPart;
             IPropertyListener tabListener = new IPropertyListener() {
                 public void propertyChanged(final Object source, final int propId) {
-                    editorListener.editorChanged(diagramEditor.getActiveEditor());
+                    editorListener.editorChanged();
                 }
             };
             diagramEditor.addPropertyListener(tabListener);
@@ -78,12 +85,16 @@ public class MultiPartDiagramConnector implements IDiagramEditorConnector {
             }
             editorList.add(new Pair<IMultiDiagramEditor, IPropertyListener>(
                     diagramEditor, tabListener));
+            super.addChangeListener(diagramEditor.getActiveEditor(), editorListener);
+        } else {
+            super.addChangeListener(editorPart, editorListener);
         }
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public void removeChangeListener(final IEditorChangeListener editorListener) {
         List<Pair<IMultiDiagramEditor, IPropertyListener>> editorList
                 = listenerMap.remove(editorListener);
@@ -91,6 +102,19 @@ public class MultiPartDiagramConnector implements IDiagramEditorConnector {
             for (Pair<IMultiDiagramEditor, IPropertyListener> pair : editorList) {
                 pair.getFirst().removePropertyListener(pair.getSecond());
             }
+        }
+        super.removeChangeListener(editorListener);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ISelection getSelection(final IEditorPart editorPart) {
+        if (editorPart instanceof IMultiDiagramEditor) {
+            return super.getSelection(((IMultiDiagramEditor) editorPart).getActiveEditor());
+        } else {
+            return super.getSelection(editorPart);
         }
     }
 

@@ -18,6 +18,7 @@ import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.ui.IEditorPart;
 
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
@@ -48,8 +49,9 @@ public class RemoveOptionsAction extends Action {
      * {@inheritDoc}
      */
     public void run() {
-        final DiagramEditor editor = layoutView.getCurrentEditor();
-        if (editor != null) {
+        IEditorPart editorPart = layoutView.getCurrentEditor();
+        if (editorPart instanceof DiagramEditor) {
+            final DiagramEditor editor = (DiagramEditor) editorPart;
             // show a dialog to confirm the removal of all layout options
             String diagramName = editor.getTitle();
             boolean userResponse = MessageDialog.openQuestion(layoutView.getSite().getShell(),

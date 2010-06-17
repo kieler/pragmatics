@@ -29,6 +29,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
@@ -41,6 +42,8 @@ import de.cau.cs.kieler.kiml.layout.klayoutdata.KStringOption;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
 import de.cau.cs.kieler.kiml.ui.Messages;
+import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyle;
 import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsFactory;
 import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsPackage;
@@ -52,7 +55,7 @@ import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
  * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
  */
-public class GmfLayoutPropertySource implements IPropertySource {
+public class LayoutPropertySource implements IPropertySource {
 
     /** array of choices for the layout hint option. */
     private static String[] layoutHintChoices;
@@ -101,28 +104,41 @@ public class GmfLayoutPropertySource implements IPropertySource {
     }
     
     /**
-     * Creates a layout property source for the given graphical edit part.
+     * Creates a layout property source for the given editor and edit part.
      * 
-     * @param sourceEditPart a graphical edit part from a GMF diagram
+     * @param editorPart an editor part
+     * @param editPart an edit part
      */
-    public GmfLayoutPropertySource(final IGraphicalEditPart sourceEditPart) {
-        // find an appropriate property source and set the layout option targets
-        IGraphicalEditPart editPart = getShownEditPart(sourceEditPart);
-        LayoutOptionData.Target partTarget = findTarget(editPart);
-        // check if the selected edit part is not supported
-        if (partTarget == null) {
-            optionDataList = Collections.emptyList();
-            return;
+    public LayoutPropertySource(final IEditorPart editorPart, final EditPart editPart) {
+        this(EclipseLayoutServices.getInstance().getManager(editorPart, editPart), editPart);
+    }
+
+    /**
+     * Creates a layout property source for the given layout manager and edit part.
+     * 
+     * @param manager a diagram layout manager
+     * @param editPart an edit part
+     */
+    public LayoutPropertySource(final DiagramLayoutManager manager, final EditPart editPart) {
+        if (editPart instanceof IGraphicalEditPart) {
+            // find an appropriate property source and set the layout option targets
+            IGraphicalEditPart geditPart = getShownEditPart((IGraphicalEditPart) editPart);
+            LayoutOptionData.Target partTarget = findTarget(geditPart);
+            // check if the selected edit part is not supported
+            if (partTarget == null) {
+                optionDataList = Collections.emptyList();
+                return;
+            }
+            
+            // get default options from the notation view
+            shownEditPart = geditPart;
+            optionStyle = (LayoutOptionStyle) geditPart.getNotationView().getStyle(
+                    LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
+            String partLayoutHint = getNotationOptions();
+            
+            // create the list of shown layout options
+            createShownOptions(partTarget, partLayoutHint);
         }
-        
-        // get default options from the notation view
-        shownEditPart = editPart;
-        optionStyle = (LayoutOptionStyle) editPart.getNotationView().getStyle(
-                LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
-        String partLayoutHint = getNotationOptions();
-        
-        // create the list of shown layout options
-        createShownOptions(partTarget, partLayoutHint);
     }
     
     /**

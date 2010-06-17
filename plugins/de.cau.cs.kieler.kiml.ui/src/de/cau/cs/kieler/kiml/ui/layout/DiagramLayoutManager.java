@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.draw2d.Animation;
 import org.eclipse.gef.EditPart;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
@@ -27,6 +28,7 @@ import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.layout.LayoutServices;
 import de.cau.cs.kieler.kiml.layout.RecursiveLayouterEngine;
+import de.cau.cs.kieler.kiml.ui.IEditorChangeListener;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 
@@ -326,5 +328,32 @@ public abstract class DiagramLayoutManager {
      * @return the last cached layout
      */
     protected abstract CachedLayout getCachedLayout();
+    
+    /**
+     * Register a listener for change of the active editor or active selection.
+     * The default implementation does nothing.
+     * 
+     * @param editorPart editor to register to
+     * @param listener listener to register
+     */
+    public abstract void addChangeListener(IEditorPart editorPart,
+            IEditorChangeListener listener);
+
+    /**
+     * Remove a change listener from all editors for which it has registered.
+     * The default implementation does nothing.
+     * 
+     * @param listener listener to remove
+     */
+    public abstract void removeChangeListener(IEditorChangeListener listener);
+    
+    /**
+     * Returns the current selection for the given editor part.
+     * 
+     * @param editorPart an editor part
+     * @return the current selection, or {@code null} if the selection cannot
+     *     be determined
+     */
+    public abstract ISelection getSelection(IEditorPart editorPart);
     
 }

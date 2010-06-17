@@ -54,7 +54,7 @@ import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
 import de.cau.cs.kieler.kiml.layout.LayoutServices;
 import de.cau.cs.kieler.kiml.layout.LayoutServices.Registry;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
-import de.cau.cs.kieler.kiml.ui.views.GmfLayoutPropertySource;
+import de.cau.cs.kieler.kiml.ui.views.LayoutPropertySource;
 import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
 
 /**
@@ -112,7 +112,7 @@ public class TestView extends ViewPart {
             // }
             // }
             // FIXME: should share synchronized property source with LayoutView
-            final GmfLayoutPropertySource source = new GmfLayoutPropertySource(part);
+            final LayoutPropertySource source = new LayoutPropertySource(editor, part);
             propertySource = source;
             final Population sourcePopulation = EvolUtil.createPopulation(source,
                     DEFAULT_INITIAL_POPULATION_SIZE);
@@ -158,7 +158,7 @@ public class TestView extends ViewPart {
     // private fields
     private SelectorTableViewer tableViewer;
     private int position = 0;
-    private GmfLayoutPropertySource propertySource;
+    private LayoutPropertySource propertySource;
     private AbstractEvolutionaryAlgorithm evolAlg;
     private Population population;
     /**
@@ -321,7 +321,7 @@ public class TestView extends ViewPart {
             position = 0;
             final IEditorPart editor = getCurrentEditor();
             EditPart part = getEditPart(editor);
-            propertySource = new GmfLayoutPropertySource((IGraphicalEditPart) part);
+            propertySource = new LayoutPropertySource(editor, part);
             final Population newPopulation = EvolUtil.createPopulation(propertySource,
                     DEFAULT_INITIAL_POPULATION_SIZE);
             evolAlg = new BasicEvolutionaryAlgorithm(newPopulation);

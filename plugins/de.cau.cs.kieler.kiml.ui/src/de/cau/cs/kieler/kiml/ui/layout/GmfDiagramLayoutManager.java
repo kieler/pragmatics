@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kiml.ui.layout;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -43,6 +44,8 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.figures.ResizableCompartmentFigure;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.IEditorPart;
 
@@ -51,6 +54,7 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataFactory;
@@ -60,6 +64,7 @@ import de.cau.cs.kieler.kiml.layout.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.layout.options.PortConstraints;
 import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.ui.IEditorChangeListener;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
 /**
@@ -115,6 +120,57 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     @Override
     protected boolean supports(final EditPart editPart) {
         return editPart instanceof IGraphicalEditPart;
+    }
+
+    /** map of editor change listeners to all editors for which they have registered. */
+    private Map<IEditorChangeListener, List<Pair<DiagramEditor, ISelectionChangedListener>>> listenerMap
+            = new HashMap<IEditorChangeListener, List<Pair<DiagramEditor, ISelectionChangedListener>>>();
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addChangeListener(final IEditorPart editorPart,
+            final IEditorChangeListener listener) {
+        if (editorPart instanceof DiagramEditor) {
+            final DiagramEditor diagramEditor = (DiagramEditor) editorPart;
+            diagramEditor.getDiagramGraphicalViewer().addSelectionChangedListener(listener);
+            List<Pair<DiagramEditor, ISelectionChangedListener>> editorList
+                    = listenerMap.get(listener);
+            if (editorList == null) {
+                editorList = new LinkedList<Pair<DiagramEditor, ISelectionChangedListener>>();
+                listenerMap.put(listener, editorList);
+            }
+            editorList.add(new Pair<DiagramEditor, ISelectionChangedListener>(
+                    diagramEditor, listener));
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeChangeListener(final IEditorChangeListener listener) {
+        List<Pair<DiagramEditor, ISelectionChangedListener>> editorList
+                = listenerMap.remove(listener);
+        if (editorList != null) {
+            for (Pair<DiagramEditor, ISelectionChangedListener> pair : editorList) {
+                pair.getFirst().getDiagramGraphicalViewer()
+                        .removeSelectionChangedListener(pair.getSecond());
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ISelection getSelection(final IEditorPart editorPart) {
+        if (editorPart instanceof DiagramEditor) {
+            return ((DiagramEditor) editorPart).getDiagramGraphicalViewer().getSelection();
+        } else {
+            return null;
+        }
     }
 
     /**

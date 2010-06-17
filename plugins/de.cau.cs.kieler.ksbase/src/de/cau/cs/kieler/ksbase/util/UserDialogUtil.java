@@ -55,7 +55,6 @@ public class UserDialogUtil {
     public int getUserInt(final String message, final Integer defaultValue) {
         String title = "User input required";
         IInputValidator validator = new IInputValidator() {
-            @Override
             public String isValid(final String newText) {
                 try {
                     Integer.parseInt(newText);
@@ -79,7 +78,6 @@ public class UserDialogUtil {
     public float getUserFloat(final String message, final Float defaultValue) {
         String title = "User input required";
         IInputValidator validator = new IInputValidator() {
-            @Override
             public String isValid(final String newText) {
                 try {
                     Float.parseFloat(newText);
@@ -125,8 +123,6 @@ public class UserDialogUtil {
     }
 
     private static final class SimpleListContentProvider<T> implements IStructuredContentProvider {
-
-        @Override
         public Object[] getElements(Object inputElement) {
             if (inputElement instanceof List<?>) {
                 return ((List<?>) inputElement).toArray();
@@ -134,11 +130,9 @@ public class UserDialogUtil {
             return null;
         }
 
-        @Override
         public void dispose() {
         }
 
-        @Override
         public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         }
     }

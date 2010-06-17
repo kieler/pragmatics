@@ -6,7 +6,7 @@ Bundle-Version: 0.2.0.qualifier
 Bundle-Activator: de.cau.cs.kieler.kiml.ui.KimlUiPlugin
 Bundle-Vendor: %Bundle-Vendor.0
 Bundle-Localization: plugin
-Export-Package: de.cau.cs.kieler.kiml.ui.editors,
+Export-Package: de.cau.cs.kieler.kiml.ui,
  de.cau.cs.kieler.kiml.ui.layout,
  de.cau.cs.kieler.kiml.ui.util,
  de.cau.cs.kieler.kiml.ui.views

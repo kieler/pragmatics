@@ -24,7 +24,7 @@ import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
 import de.cau.cs.kieler.kiml.layout.LayoutServices;
 import de.cau.cs.kieler.kiml.layout.LayoutOptionData.Type;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.ui.views.GmfLayoutPropertySource;
+import de.cau.cs.kieler.kiml.ui.views.LayoutPropertySource;
 
 /**
  * Utility methods for Evolutionary Meta Layout.
@@ -48,7 +48,7 @@ public final class EvolUtil {
      *            determines the initial size of the population.
      * @return population
      */
-    public static Population createPopulation(final GmfLayoutPropertySource source, final int size) {
+    public static Population createPopulation(final LayoutPropertySource source, final int size) {
         Population result = new Population();
         for (int i = 0; i < size; i++) {
             Genome genome = createGenome(source);
@@ -157,7 +157,7 @@ public final class EvolUtil {
      * @param source
      * @return
      */
-    private static Genome createGenome(final GmfLayoutPropertySource source) {
+    private static Genome createGenome(final LayoutPropertySource source) {
         if (source == null) {
             return null;
         }

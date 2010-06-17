@@ -123,7 +123,7 @@ public class ApplyOptionAction extends Action {
                     // set the new option value
                     if (LayoutOptions.LAYOUT_HINT.equals(optionData.getId())) {
                         KimlLayoutUtil.setValue(koption, optionData,
-                                GmfLayoutPropertySource.getLayoutHint((String) value));
+                                LayoutPropertySource.getLayoutHint((String) value));
                     } else {
                         KimlLayoutUtil.setValue(koption, optionData, value);
                     }
