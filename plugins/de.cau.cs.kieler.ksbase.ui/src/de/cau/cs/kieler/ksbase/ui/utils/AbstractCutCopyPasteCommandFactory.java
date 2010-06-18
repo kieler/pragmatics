@@ -250,7 +250,6 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
                             && result.initialize(editor, mappedSelection, label
                                     .toLowerCase(), filePath, getModel(),
                                     FRAMEWORK)) {
-                        System.out.println("  " + mappedSelection);
                         break;
                     }
                 }
