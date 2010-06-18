@@ -139,7 +139,9 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
                         .getSource()).getText());
                 EditorsPreferencePage.setActiveEditor(editor);
                 if (activeEditor != null) { // Load editor settings
-                    sfMetaModel.setText(editor.getModelPackageClass());
+                    
+                    // FIXME handle multiple metamodels
+                    sfMetaModel.setText(editor.getModelPackages().get(0));
                     // Fill menu tree viewer
                     if (menuTreeViewer != null && menuTreeViewer.getContentProvider() != null
                             && activeEditor.getMenuContributions() != null
@@ -279,7 +281,8 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
                     String modelPackage = ((String) dlg.getFirstResult()).split("@")[0];
                     // only add a diagram once !
                     if (manager.getUserDefinedEditorById(modelPackage) == null) {
-                        activeEditor.setModelPackageClass(modelPackage);
+                        // FIXME handle multiple packages
+                        activeEditor.getModelPackages().add(modelPackage);
                         cbEditors.notifyListeners(SWT.Selection, null);
                     }
                 }
@@ -519,7 +522,8 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
     @Override
     protected void performApply() {
         if (activeEditor != null) {
-            activeEditor.setModelPackageClass(sfMetaModel.getText());
+            // FIXME handle multiple packages
+            activeEditor.getModelPackages().add(sfMetaModel.getText());
         }
         super.performApply();
     }

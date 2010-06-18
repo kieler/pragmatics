@@ -69,7 +69,7 @@ public class ExecuteTransformationEditPolicy extends AbstractEditPolicy {
                         new EObjectAdapter((View) hostEPart.getModel()));
                 command.initialize(transformationRequest.getEditPart(), transformationRequest
                         .getSelection(), transformationRequest.getCommand(), transformationRequest
-                        .getFileName(), transformationRequest.getModelPackage(),
+                        .getFileName(), transformationRequest.getModelPackages(),
                         transformationRequest.getFramework());
                 return new ICommandProxy(command);
             } else {

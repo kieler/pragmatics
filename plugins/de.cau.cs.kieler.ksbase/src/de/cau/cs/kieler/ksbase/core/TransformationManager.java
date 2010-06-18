@@ -311,8 +311,7 @@ public final class TransformationManager {
 
             // Check for valid Configuration:
             if (!settings.getName().equals("configuration")
-                    || settings.getAttribute("editorId") == null
-                    || settings.getAttribute("packageName") == null) {
+                    || settings.getAttribute("editorId") == null) {
                 KSBasEPlugin.getDefault().logWarning("Invalid KSBasE extension point found.");
                 continue;
             }
@@ -322,13 +321,25 @@ public final class TransformationManager {
             editor.setContributor(settings.getContributor());
             editor.setContext(settings.getAttribute("contextId"));
             editor.setDefaultIcon(settings.getAttribute("defautlIcon"));
-            editor.setModelPackageClass(settings.getAttribute("packageName"));
             String check = settings.getAttribute("checkVisibility");
             if (check != null && check.equals("false")) {
                 editor.setCheckVisibility(false);
             } else {
                 editor.setCheckVisibility(true);
             }
+            
+            // get all package declarations
+            IConfigurationElement[] packages = settings.getChildren("package");
+            for (IConfigurationElement elem : packages) {
+                String packageClass = elem.getAttribute("class");
+                if (packageClass == null) {
+                    KSBasEPlugin.getDefault().logWarning(
+                            "Invalid KSBasE configuration found. Please check "
+                                    + "transformations defined for " + editor.getEditorId());
+                }
+                editor.getModelPackages().add(packageClass);
+            }
+                
             IConfigurationElement[] transformations = settings.getChildren("transformations");
             if (transformations != null && transformations.length > 0) {
                 // since we only allowed one single <transformations> child, we

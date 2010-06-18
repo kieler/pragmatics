@@ -134,15 +134,15 @@ public class TransformationCommand extends AbstractTransactionalCommand {
      *            The command to execute
      * @param fileName
      *            Name of the transformation file
-     * @param basePackage
-     *            The package of the underlying meta model
+     * @param packages
+     *            The packages of the underlying meta model
      * @param framework
      *            The transformation framework to use for execution
      * @return False if an error occurred
      */
     public final boolean initialize(final IEditorPart editPart,
             final List<Object> selection, final String command,
-            final String fileName, final String basePackage,
+            final String fileName, final List<String> packages,
             final ITransformationFramework framework) {
         transformationFramework = framework;
 
@@ -151,7 +151,7 @@ public class TransformationCommand extends AbstractTransactionalCommand {
         transformationFramework
                 .setParameters(selection.toArray(new Object[selection.size()]));
         return transformationFramework.initializeTransformation(fileName, command,
-                basePackage);
+                packages.toArray(new String[packages.size()]));
     }
 
 }

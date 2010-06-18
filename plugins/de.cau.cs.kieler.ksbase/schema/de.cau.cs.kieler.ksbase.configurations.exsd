@@ -59,6 +59,7 @@
             <element ref="transformations"/>
             <element ref="commandHandler" minOccurs="0" maxOccurs="1"/>
             <element ref="transformationFactory" minOccurs="0" maxOccurs="1"/>
+            <element ref="package" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="editorId" type="string">
             <annotation>
@@ -77,17 +78,6 @@
                </documentation>
                <appinfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="packageName" type="string">
-            <annotation>
-               <documentation>
-                  The name of the main package that represents the underlying meta model. 
-This class has to extend &apos;emf.ecore.EPackage&apos;
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.emf.ecore.EPackage:"/>
                </appinfo>
             </annotation>
          </attribute>
@@ -297,6 +287,26 @@ Make sure that the transformation is short and fast, it is not recommended to ca
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.core.model.transformation.ITransformationFramework"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="package">
+      <annotation>
+         <documentation>
+            An EMF package that represents a specific metamodel.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The name of the main package that represents the underlying meta model. This class has to extend &apos;emf.ecore.EPackage&apos;.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.emf.ecore.EPackage:"/>
                </appinfo>
             </annotation>
          </attribute>

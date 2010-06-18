@@ -145,7 +145,7 @@ public class ModelObjectTester extends PropertyTester {
             }
         }
         if (!framework.initializeTransformation(editor.getTransformationFile(), transformation,
-                editor.getModelPackageClass())) {
+                editor.getModelPackages().toArray(new String[0]))) {
             framework.reset();
             return false;
         }

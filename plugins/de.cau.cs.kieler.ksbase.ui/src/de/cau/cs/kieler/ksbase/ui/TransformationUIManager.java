@@ -169,7 +169,7 @@ public final class TransformationUIManager {
 
         ExecuteTransformationRequest request = new ExecuteTransformationRequest(activeEditor,
                 transformation.getTransformation(), editorSettings.getTransformationFile(),
-                selectionMapping, editorSettings.getModelPackageClass(), editorSettings
+                selectionMapping, editorSettings.getModelPackages(), editorSettings
                         .getFramework());
         Command transformationCommand = selectedEditPart.getCommand(request);
 

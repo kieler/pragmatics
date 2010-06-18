@@ -277,7 +277,7 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
      * 
      * @return the model package
      */
-    protected abstract String getModel();
+    protected abstract List<String> getModel();
 
     /**
      * Perform actions after the operation has finished.

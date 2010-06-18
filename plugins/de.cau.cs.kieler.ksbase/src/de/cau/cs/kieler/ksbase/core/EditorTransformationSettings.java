@@ -45,7 +45,7 @@ public class EditorTransformationSettings implements Serializable {
     /** Serialization Id. **/
     private static final long serialVersionUID = 836873211581178353L;
     /** The model package class. **/
-    private String modelPackageClass;
+    private List<String> modelPackages = new LinkedList<String>();
     /** Default icon for menu entries. **/
     private String defaultIcon;
     /** Editor ID to which this setting is assigned. **/
@@ -86,7 +86,6 @@ public class EditorTransformationSettings implements Serializable {
      */
     public EditorTransformationSettings(final String editorClass) {
         this.editorId = editorClass;
-        this.modelPackageClass = ""; //$NON-NLS-1$
         this.defaultIcon = ""; //$NON-NLS-1$
         this.transformationFile = ""; //$NON-NLS-1$
         this.context = ""; //$NON-NLS-1$
@@ -124,23 +123,8 @@ public class EditorTransformationSettings implements Serializable {
      * 
      * @return The fqn of the model package class
      */
-    public final String getModelPackageClass() {
-
-        if (modelPackageClass == null) {
-            return ""; //$NON-NLS-1$
-        } else {
-            return modelPackageClass;
-        }
-    }
-
-    /**
-     * Sets a model package class.
-     * 
-     * @param modelPackage
-     *            The package class
-     */
-    public final void setModelPackageClass(final String modelPackage) {
-        this.modelPackageClass = modelPackage;
+    public final List<String> getModelPackages() {
+        return modelPackages;
     }
 
     /**

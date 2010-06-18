@@ -38,7 +38,7 @@ public class ExecuteTransformationRequest extends Request {
     private String command;
     private String fileName;
     private List<Object> selection;
-    private String modelPackage;
+    private List<String> modelPackages;
     private ITransformationFramework framework;
 
     /**
@@ -52,32 +52,22 @@ public class ExecuteTransformationRequest extends Request {
      *            Name of the transformation file
      * @param sel
      *            The active selection
-     * @param modelPackageClass
-     *            The model package for the active editor
+     * @param themodelPackages
+     *            The model packages for the active editor
      * @param fframework
      *            The ITransformationFramework to use for execution
      */
     public ExecuteTransformationRequest(final IEditorPart ePart,
             final String cmd, final String file, final List<Object> sel,
-            final String modelPackageClass,
+            final List<String> themodelPackages,
             final ITransformationFramework fframework) {
         super(REQ_EXEC_TRANS);
         this.editPart = ePart;
         this.command = cmd;
         this.fileName = file;
-        this.modelPackage = modelPackageClass;
+        this.modelPackages = themodelPackages;
         this.selection = sel;
         this.framework = fframework;
-    }
-
-    /**
-     * Sets the model package.
-     * 
-     * @param modelPackageClass
-     *            The model package class.
-     */
-    public final void setModelPackage(final String modelPackageClass) {
-        this.modelPackage = modelPackageClass;
     }
 
     /**
@@ -85,8 +75,8 @@ public class ExecuteTransformationRequest extends Request {
      * 
      * @return modelPackage
      */
-    public final String getModelPackage() {
-        return this.modelPackage;
+    public final List<String> getModelPackages() {
+        return this.modelPackages;
     }
 
     /**
