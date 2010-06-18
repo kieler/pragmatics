@@ -175,7 +175,7 @@ public abstract class DiagramLayoutManager {
      * @return a status indicating success or failure; if successful, the status
      *         contains the number of layouted nodes as code value
      */
-    private IStatus layout(final IKielerProgressMonitor progressMonitor,
+    public IStatus layout(final IKielerProgressMonitor progressMonitor,
             final boolean layoutAncestors, final boolean cacheLayout) {
         try {
             LayoutServices layoutServices = LayoutServices.getInstance();
