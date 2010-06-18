@@ -27,17 +27,17 @@ public class Individual {
     /**
      * Descending rating comparator.
      */
-    // strange: automatic code formatter won't wrap the following long line?!
-    public static final Comparator<Individual> DESCENDING_RATING_COMPARATOR = new Comparator<Individual>() {
-        public int compare(final Individual ind0, final Individual ind1) {
-            if (ind0.getRating() == ind1.getRating()) {
-                return 0;
-            } else if (ind0.getRating() < ind1.getRating()) {
-                return 1;
-            }
-            return -1;
-        }
-    };
+    public static final Comparator<Individual> DESCENDING_RATING_COMPARATOR =
+            new Comparator<Individual>() {
+                public int compare(final Individual ind0, final Individual ind1) {
+                    if (ind0.getRating() == ind1.getRating()) {
+                        return 0;
+                    } else if (ind0.getRating() < ind1.getRating()) {
+                        return 1;
+                    }
+                    return -1;
+                }
+            };
     
     /**
      * 
@@ -215,7 +215,7 @@ public class Individual {
     }
     
     // private fields
-    private int generation;
+    private final int generation;
     private String id;
     private int rating;
     private Genome genome; // TODO: make genome final and immutable

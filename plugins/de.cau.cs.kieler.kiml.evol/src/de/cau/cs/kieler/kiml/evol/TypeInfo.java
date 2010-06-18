@@ -62,7 +62,6 @@ public class TypeInfo<T extends Comparable<? super T>> {
     private final Class<?> clazz; // not used
 
     // TODO: "degenericalize" this class and use clazz for casting the value
-
     /**
      * @return the default value
      */
@@ -92,13 +91,8 @@ public class TypeInfo<T extends Comparable<? super T>> {
      * @return true iff the given value is within the valid range
      */
     public boolean isValueWithinBounds(final T theValue) {
-        boolean result;
-        if (theValue instanceof Comparable<?>) {
-            result = (lowerBound.compareTo(theValue) <= 0) && (theValue.compareTo(upperBound) <= 0);
-        } else {
-            result = false;
-        }
-
+        final boolean result;
+        result = (lowerBound.compareTo(theValue) <= 0) && (theValue.compareTo(upperBound) <= 0);
         return result;
     }
 }
