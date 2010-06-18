@@ -13,6 +13,9 @@
  */
 package de.cau.cs.kieler.kaom.diagram.custom.commands;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.IEditorPart;
 import org.osgi.framework.Bundle;
@@ -37,7 +40,7 @@ public class KaomCutCopyPasteCommandFactory extends
     private static final String FILE = "/transformations/feature.ext";
 
     /** The base package of the underlying meta model. */
-    private static final String MODEL = "de.cau.cs.kieler.kaom.KaomPackage";
+    private static final String[] MODEL = { "de.cau.cs.kieler.kaom.KaomPackage" };
 
     /** The types touched by cut copy and paste. */
     private static final Class<?>[] TYPES = { Entity.class, Relation.class,
@@ -65,8 +68,8 @@ public class KaomCutCopyPasteCommandFactory extends
                         if (editorPart != null) {
                             refreshEditPolicies(editorPart);
 
-                            EclipseLayoutServices.getInstance().layout(editorPart, null,
-                                    true, false);
+                            EclipseLayoutServices.getInstance().layout(
+                                    editorPart, null, true, false);
                         }
                     }
 
@@ -85,8 +88,8 @@ public class KaomCutCopyPasteCommandFactory extends
      * {@inheritDoc}
      */
     @Override
-    protected String getModel() {
-        return MODEL;
+    protected List<String> getModel() {
+        return Arrays.asList(MODEL);
     }
 
     /**
