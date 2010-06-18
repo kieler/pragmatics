@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.gmf.runtime.diagram.ui.editpolicyProviders">
       <editpolicyProvider
-            class="de.cau.cs.kieler.kaom.diagram.custom.policies.DeletionPolicy">
+            class="de.cau.cs.kieler.kaom.diagram.custom.policies.KaomDeletionPolicyProvider">
          <Priority
                name="Lowest">
          </Priority>
