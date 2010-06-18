@@ -399,43 +399,44 @@ public class TestView extends ViewPart {
     }
     
     /**
-     * Performs auto-rating on each individual.
+     * Performs auto-rating on each unrated individual.
      */
     private void autoratePopulation() {
-        if (population != null && !population.isEmpty()) {
-            final Population pop = this.population;
-            final int oldPosition = this.position;
-            final IEditorPart editor = getCurrentEditor();
-            final Registry registry = LayoutServices.getRegistry();
-
-            // ILayoutListener listener = new LayoutListener() {
-            // @Override
-            // public void layoutPerformed(
-            // final KNode layoutGraph, final IKielerProgressMonitor monitor) {
-            // final int rating = measureDiagram(false, layoutGraph);
-            // final Individual ind = getCurrentIndividual();
-            // Assert.isNotNull(ind);
-            // ind.setRating(rating);
-            // }
-            // };
-            ILayoutListener listener = layoutListener;
-            registry.addLayoutListener(listener);
-            final DiagramLayoutManager manager =
-                    EclipseLayoutServices.getInstance().getManager(editor, null);
-            final IKielerProgressMonitor monitor =
-                    new BasicProgressMonitor(DiagramLayoutManager.MAX_PROGRESS_LEVELS);
-
-            for (int pos = 0; pos < pop.size(); pos++) {
-                this.position = pos;
-                final Individual ind = pop.get(pos);
+        if (population == null || population.isEmpty()) {
+            return;
+        }
+        final Population pop = this.population;
+        final int oldPosition = this.position;
+        final IEditorPart editor = getCurrentEditor();
+        final Registry registry = LayoutServices.getRegistry();
+        // ILayoutListener listener = new LayoutListener() {
+        // @Override
+        // public void layoutPerformed(
+        // final KNode layoutGraph, final IKielerProgressMonitor monitor) {
+        // final int rating = measureDiagram(false, layoutGraph);
+        // final Individual ind = getCurrentIndividual();
+        // Assert.isNotNull(ind);
+        // ind.setRating(rating);
+        // }
+        // };
+        ILayoutListener listener = layoutListener;
+        registry.addLayoutListener(listener);
+        final DiagramLayoutManager manager =
+                EclipseLayoutServices.getInstance().getManager(editor, null);
+        final IKielerProgressMonitor monitor =
+                new BasicProgressMonitor(DiagramLayoutManager.MAX_PROGRESS_LEVELS);
+        MonitoredOperation.runInUI(new Runnable() {
+            // first phase: build the layout graph
+            public void run() {
+                manager.buildLayoutGraph(editor, null, true);
+            }
+        }, true);
+        for (int pos = 0; pos < pop.size(); pos++) {
+            this.position = pos;
+            final Individual ind = pop.get(pos);
+            if (ind.getRating() == 0) {
+                // yet unrated
                 adoptIndividual(ind, false);
-                MonitoredOperation.runInUI(new Runnable() {
-                    // first phase: build the layout graph
-                    public void run() {
-                        manager.buildLayoutGraph(editor, null, true);
-                    }
-                }, true);
-
                 MonitoredOperation.runInUI(new Runnable() {
                     // second phase: execute layout algorithms
                     public void run() {
@@ -443,18 +444,18 @@ public class TestView extends ViewPart {
                         System.out.println(status.getCode());
                     }
                 }, true);
+                System.out.println("after manager.layout");
+                try {
+                    Thread.sleep(300);
+                } catch (final InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-            System.out.println("after manager.layout");
-            try {
-                Thread.sleep(300);
-            } catch (final InterruptedException e) {
-                e.printStackTrace();
-            }
-            System.out.println("remove layout listener");
-            registry.removeLayoutListener(listener);
-            this.position = oldPosition;
-            this.tableViewer.refresh();
         }
+        System.out.println("remove layout listener");
+        registry.removeLayoutListener(listener);
+        this.position = oldPosition;
+        this.tableViewer.refresh();
     }
 
     /**
