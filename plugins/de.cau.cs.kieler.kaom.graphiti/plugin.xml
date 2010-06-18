@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.graphiti.ui.diagramTypeProviders">
+      <diagramTypeProvider
+            class="de.cau.cs.kieler.kaom.graphiti.diagram.DiagramTypeProvider"
+            id="de.cau.cs.kieler.kaom.graphiti.diagramTypeProvider1"
+            name="de.cau.cs.kieler.kaom.graphiti.diagramTypeProvider1">
+         <diagramType
+               id="de.cau.cs.kieler.kaom.graphiti.diagramType1">
+         </diagramType>
+      </diagramTypeProvider>
+   </extension>
+   <extension
+         point="org.eclipse.graphiti.ui.diagramTypes">
+      <diagramType
+            id="de.cau.cs.kieler.kaom.graphiti.diagramType1"
+            name="de.cau.cs.kieler.kaom.graphiti.diagramType1"
+            type="de.cau.cs.kieler.kaom.graphiti.diagramType1">
+      </diagramType>
+   </extension>
+
+</plugin>

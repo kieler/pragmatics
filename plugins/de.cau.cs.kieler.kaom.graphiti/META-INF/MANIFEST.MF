@@ -1,11 +1,19 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: KAOM Graphiti Editor
-Bundle-SymbolicName: de.cau.cs.kieler.kaom.graphiti
+Bundle-SymbolicName: de.cau.cs.kieler.kaom.graphiti;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: de.cau.cs.kieler.kaom.graphiti.KaomGraphitiPlugin
 Bundle-Vendor: Christian-Albrechts-Universitaet zu Kiel
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ org.eclipse.graphiti.ui,
+ org.eclipse.graphiti.mm,
+ org.eclipse.graphiti,
+ de.cau.cs.kieler.kaom;bundle-version="0.1.0",
+ de.cau.cs.kieler.core.annotations;bundle-version="0.1.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
+Import-Package: de.cau.cs.kieler.kaom,
+ org.eclipse.graphiti,
+ org.eclipse.graphiti.examples.common
