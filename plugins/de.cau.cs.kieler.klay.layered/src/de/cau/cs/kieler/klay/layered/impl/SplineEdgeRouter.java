@@ -15,6 +15,7 @@ package de.cau.cs.kieler.klay.layered.impl;
 
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -81,6 +82,9 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
     private static final int SPLINE_PRECISION = 10;
 
     private static final double TANGENT_SCALE = 0.25d;
+
+    /** @TODO correspond with box generation */
+    private static final int FITTING_TOLERANCE = 3;
 
     /**
      * {@inheritDoc}
@@ -261,13 +265,22 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
         if (points.size() == 2) {
             // in this case we know a straight connection exists, so try straightening until the
             // spline fits
-            while (!splineFits(spline, boxes, lines)) {
+            // TODO remove the count, as soon as the line splits (0,0) problem is fixed
+            int count = 0;
+            while (!splineFits(spline, boxes, lines) && count <= MAX_ITERATIONS) {
+                if (lineFits(boxes, lines, spline.getCurves().getFirst().start, spline.getCurves()
+                        .getFirst().end)) {
+                    System.out.println("SPLINE DOESNT FIT: BUT LINEFITS: ");
+                    System.out.println("BOXES: " + boxes);
+                }
+
                 splineGenerator.straightenSpline(spline);
+                count++;
             }
         } else if (!splineFits(spline, boxes, lines)) {
 
             // ############## TODO
-            boolean splinesplitting = false;
+            boolean splinesplitting = true;
             // ###############
 
             if (splinesplitting) {
@@ -293,6 +306,11 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
                             newLarray1, newBarray2, newLarray2);
 
                     if (p != null) {
+
+                        // System.out.println("P[0]: " + Arrays.toString(p[0]));
+                        // System.out.println("Box[0]: " + newBarray1);
+                        // System.out.println("P[1]: " + Arrays.toString(p[1]));
+                        // System.out.println("Box[1]: " + newBarray2);
                         KVector v1 = p[1][1];
                         KVector v2 = p[0][p[0].length - 2];
                         KVector vectorP = KVector.sub(v1, v2).normalize();
@@ -501,20 +519,21 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
 
         for (Rectangle2D.Double box : boxes) {
 
-            double qsYStart = a * box.x + b;
-            double qsYEnd = a * box.x + box.width + b;
+            // position where the box need to be intersected
+            double qsYStart = a * (box.x) + b;
+            double qsYEnd = a * (box.x + box.width) + b;
 
-            // @ TODO correlate this with box generation
-            int tolerance = 5;
             // if the line intersects the box completely
-            if ((box.y - tolerance <= qsYStart) && (box.y + box.height + tolerance >= qsYStart)
-                    && (box.y - tolerance <= qsYEnd) && (box.y + box.height + tolerance >= qsYEnd)) {
+            if ((box.y - FITTING_TOLERANCE <= qsYStart)
+                    && (box.y + box.height + FITTING_TOLERANCE >= qsYStart)
+                    && (box.y - FITTING_TOLERANCE <= qsYEnd)
+                    && (box.y + box.height + FITTING_TOLERANCE >= qsYEnd)) {
                 // check the lines too
                 // for the last box there is no further line
                 if (!(box == boxes.getLast())) {
                     line = lineIt.next();
                     // we check the line "on the right" of the box
-                    if (!(line.y1 - tolerance <= qsYEnd && line.y2 + tolerance >= qsYEnd)) {
+                    if (!(line.y1 - FITTING_TOLERANCE <= qsYEnd && line.y2 + FITTING_TOLERANCE >= qsYEnd)) {
                         return false;
                     }
                 }
@@ -569,11 +588,10 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
         int index = 0;
         // check all curves for the point being the furthest from a line
         for (BezierCurve curve : spline.getCurves()) {
-
             double minX = curve.start.x;
             double maxX = curve.end.x;
+            index = 0;
             for (Line2D.Double line : lArray) {
-
                 // first check if we are in range
                 if (line != null && line.x1 < minX) {
                     // if not do nothing
@@ -600,8 +618,8 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
                     // finished
                     break;
                 }
+                index++;
             }
-            index++;
         }
 
         // nothing found error!!
@@ -633,23 +651,39 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
             index++;
         }
 
-        // add new curve
-        index = maxDistPos;
-        int length = spline.getBasePoints().length + 1;
-        KVector[][] pts = new KVector[2][];
-        pts[0] = new KVector[index + 2];
-        pts[1] = new KVector[(length - index) - 1];
+        // System.out.println("SPLIT NEW POINT + " + newPoint);
+        // System.out.println("Box[0]: " + newBarry1);
+        // System.out.println("Box[1]: " + newBarry2);
 
+        // split the current curve
+        KVector[] basePoints = spline.getBasePoints();
+        // determine new points position
+        int detPos = -1;
+        for (int i = 0; i < basePoints.length; i++) {
+            if (basePoints[i].x > newPoint.x) {
+                detPos = i;
+                break;
+            }
+        }
+
+        if (detPos == -1) {
+            System.out.println("FEHLER!!!!");
+        }
+
+        // create two new point arrays
+        KVector[][] pts = new KVector[2][];
+        pts[0] = new KVector[detPos + 1];
+        pts[1] = new KVector[basePoints.length - detPos + 1];
         int i = 0;
         for (KVector v : spline.getBasePoints()) {
-            if (i <= index) {
+            if (i < detPos) {
                 pts[0][i] = v;
-            } else if (i == index + 1) {
+            } else if (i == detPos) {
                 pts[0][i] = newPoint;
                 pts[1][0] = newPoint;
-                pts[1][i - index] = v;
+                pts[1][i - detPos + 1] = v;
             } else {
-                pts[1][i - index] = v;
+                pts[1][i - detPos + 1] = v;
             }
             i++;
         }
@@ -712,7 +746,8 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
                     Rectangle2D.Double box = boxes[guessIndex + offset];
                     if ((box.x <= p.x) && (box.x + box.width >= p.x)) {
                         match = true;
-                        if (box.y > Math.ceil(p.y) || box.y + box.height < Math.floor(p.y)) {
+                        if (box.y - FITTING_TOLERANCE > Math.ceil(p.y)
+                                || box.y + box.height + FITTING_TOLERANCE < Math.floor(p.y)) {
                             return false;
                         }
                     } else if (box.x > p.x) {
