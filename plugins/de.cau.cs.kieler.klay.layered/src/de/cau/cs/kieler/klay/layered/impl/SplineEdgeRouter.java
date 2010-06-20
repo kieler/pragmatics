@@ -77,9 +77,9 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
     /**
      * precision the splineFits method is working with.
      * 
-     * @TODO this should be depending on the length of a spline!
+     * current result curve length / Spline precision
      */
-    private static final int SPLINE_PRECISION = 10;
+    private static final double SPLINE_PRECISION = 12.5d;
 
     private static final double TANGENT_SCALE = 0.25d;
 
@@ -268,12 +268,16 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
             // TODO remove the count, as soon as the line splits (0,0) problem is fixed
             int count = 0;
             while (!splineFits(spline, boxes, lines) && count <= MAX_ITERATIONS) {
-                if (lineFits(boxes, lines, spline.getCurves().getFirst().start, spline.getCurves()
-                        .getFirst().end)) {
-                    System.out.println("SPLINE DOESNT FIT: BUT LINEFITS: ");
-                    System.out.println("BOXES: " + boxes);
-                }
-
+                // currently looks good :) no infinite loop
+                // if (lineFits(boxes, lines, spline.getCurves().getFirst().start,
+                // spline.getCurves()
+                // .getFirst().end)) {
+                // System.out.println("SPLINE DOESNT FIT: BUT LINEFITS: ");
+                // System.out.println("BOXES: " + boxes);
+                // lineFits(boxes, lines, spline.getCurves().getFirst().start, spline.getCurves()
+                // .getFirst().end);
+                // splineFits(spline, boxes, lines);
+                // }
                 splineGenerator.straightenSpline(spline);
                 count++;
             }
@@ -723,10 +727,13 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
         double boxres = boxes[0].width;
 
         for (BezierCurve curve : spline.getCurves()) {
-            KVector[] pts = KielerMath.calcBezierPoints(curve.asVectorList(), SPLINE_PRECISION);
+            // get number of curve points depending on its length
+            double length = KVector.distance(curve.start, curve.end);
+            int numPoints = new Double(length / SPLINE_PRECISION).intValue();
+            KVector[] pts = KielerMath.calcBezierPoints(curve.asVectorList(), numPoints);
 
             for (KVector p : pts) {
-                if (p == pts[pts.length - 2]) {
+                if (p == pts[pts.length - 1]) {
                     break;
                 }
                 // @ TODO improve guessing!
