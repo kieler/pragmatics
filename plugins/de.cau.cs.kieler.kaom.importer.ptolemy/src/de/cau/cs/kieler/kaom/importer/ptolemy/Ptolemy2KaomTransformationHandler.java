@@ -2,6 +2,8 @@ package de.cau.cs.kieler.kaom.importer.ptolemy;
 
 
 import java.net.UnknownHostException;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -31,9 +33,9 @@ public class Ptolemy2KaomTransformationHandler extends AbstractHandler implement
         URI input = URI.createURI("");
         URI output = URI.createURI("");
         
-        final EPackage p1 = MomlPackage.eINSTANCE;
-        final EPackage p2 = KaomPackage.eINSTANCE;
-
+        EPackage p1 = MomlPackage.eINSTANCE;
+        EPackage p2 = KaomPackage.eINSTANCE;
+        
         Status myStatus = null;
         try {
             // get input model from currently selected file in Explorer
