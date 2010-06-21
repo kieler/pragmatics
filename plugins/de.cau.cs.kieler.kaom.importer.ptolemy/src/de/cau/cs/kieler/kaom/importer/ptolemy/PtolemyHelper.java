@@ -18,9 +18,9 @@ import ptolemy.moml.MoMLParser;
 
 import com.microstar.xml.XmlException;
 
-import de.cau.cs.kieler.annotations.Annotation;
-import de.cau.cs.kieler.annotations.AnnotationsFactory;
-import de.cau.cs.kieler.annotations.StringAnnotation;
+import de.cau.cs.kieler.core.annotations.Annotation;
+import de.cau.cs.kieler.core.annotations.AnnotationsFactory;
+import de.cau.cs.kieler.core.annotations.StringAnnotation;
 import de.cau.cs.kieler.kaom.KaomFactory;
 import de.cau.cs.kieler.kaom.Port;
 

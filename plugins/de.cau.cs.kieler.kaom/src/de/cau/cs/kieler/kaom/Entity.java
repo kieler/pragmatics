@@ -15,7 +15,7 @@
  */
 package de.cau.cs.kieler.kaom;
 
-import de.cau.cs.kieler.annotations.NamedObject;
+import de.cau.cs.kieler.core.annotations.NamedObject;
 
 import org.eclipse.emf.common.util.EList;
 

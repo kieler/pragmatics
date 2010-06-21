@@ -13,7 +13,7 @@ import org.eclipse.gmf.runtime.emf.type.core.IElementType;
 import org.eclipse.gmf.runtime.emf.ui.services.parser.ParserHintAdapter;
 import org.eclipse.gmf.runtime.notation.View;
 
-import de.cau.cs.kieler.annotations.AnnotationsPackage;
+import de.cau.cs.kieler.core.annotations.AnnotationsPackage;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityName2EditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityNameEditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.LinkNameEditPart;

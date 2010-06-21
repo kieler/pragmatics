@@ -23,7 +23,7 @@ create Entity this transform(DocumentRoot root):
  	this.childEntities.add(entity) ->
  	this.optimize()
 ;   
-
+ 
 create Entity this transform(Moml::EntityType entity):
 	let list = {}:
 	this.setName(entity.name) ->
@@ -342,7 +342,7 @@ Void remove(Port port):
 Void optimizeAnnotationRepresentation(Entity entity):
 	entity.annotations.optimizeAnnotationRepresentation() ->
 	entity.annotations.removeAll(entity.annotations.select(a|a.getAnnotation("toBeRemoved")!=null)) ->
-	entity.childEntities.optimizeAnnotationRepresentation() 
+	entity.childEntities.optimizeAnnotationRepresentation()  
 ;
 
 // Marks an Annotation as "toBeRemoved". In another iteration it may be removed. This is

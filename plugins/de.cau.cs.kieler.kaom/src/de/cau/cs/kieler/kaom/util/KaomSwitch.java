@@ -15,8 +15,8 @@
  */
 package de.cau.cs.kieler.kaom.util;
 
-import de.cau.cs.kieler.annotations.Annotatable;
-import de.cau.cs.kieler.annotations.NamedObject;
+import de.cau.cs.kieler.core.annotations.Annotatable;
+import de.cau.cs.kieler.core.annotations.NamedObject;
 
 import de.cau.cs.kieler.kaom.*;
 

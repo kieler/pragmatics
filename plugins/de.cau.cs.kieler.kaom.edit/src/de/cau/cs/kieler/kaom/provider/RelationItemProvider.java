@@ -16,7 +16,7 @@
 package de.cau.cs.kieler.kaom.provider;
 
 
-import de.cau.cs.kieler.annotations.provider.NamedObjectItemProvider;
+import de.cau.cs.kieler.core.annotations.provider.NamedObjectItemProvider;
 
 import de.cau.cs.kieler.kaom.KaomPackage;
 import de.cau.cs.kieler.kaom.Relation;

@@ -15,7 +15,7 @@
  */
 package de.cau.cs.kieler.kaom;
 
-import de.cau.cs.kieler.annotations.AnnotationsPackage;
+import de.cau.cs.kieler.core.annotations.AnnotationsPackage;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;

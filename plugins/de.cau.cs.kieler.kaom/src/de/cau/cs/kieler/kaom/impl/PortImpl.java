@@ -15,11 +15,11 @@
  */
 package de.cau.cs.kieler.kaom.impl;
 
-import de.cau.cs.kieler.annotations.impl.NamedObjectImpl;
-import de.cau.cs.kieler.annotations.Annotatable;
-import de.cau.cs.kieler.annotations.Annotation;
-import de.cau.cs.kieler.annotations.AnnotationsPackage;
-import de.cau.cs.kieler.annotations.NamedObject;
+import de.cau.cs.kieler.core.annotations.Annotatable;
+import de.cau.cs.kieler.core.annotations.Annotation;
+import de.cau.cs.kieler.core.annotations.AnnotationsPackage;
+import de.cau.cs.kieler.core.annotations.NamedObject;
+import de.cau.cs.kieler.core.annotations.impl.NamedObjectImpl;
 
 import de.cau.cs.kieler.kaom.KaomPackage;
 import de.cau.cs.kieler.kaom.Link;
