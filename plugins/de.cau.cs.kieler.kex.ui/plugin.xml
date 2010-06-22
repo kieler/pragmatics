@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+<extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="de.cau.cs.kieler.kex.wizard"
+            name="KIELER">
+      </category>
+      <wizard
+            category="de.cau.cs.kieler.kex.wizard"
+            class="de.cau.cs.kieler.kex.ui.wizards.KEXWizard"
+            icon="resources/icons/sample.gif"
+            id="de.cau.cs.kieler.kex.wizard"
+            name="KIELER Example Management">
+      </wizard>
+      <actionSet
+            id="de.cau.cs.kieler.ui.examplewizard.actionSet"
+            label="Sample Action Set"
+            visible="true">
+         <menu
+               id="sampleMenu"
+               label="Sample &amp;Menu">
+            <separator
+                  name="sampleGroup">
+            </separator>
+         </menu>
+         <action
+               class="de.cau.cs.kieler.kex.actions.StartAction"
+               icon="icons/sample.gif"
+               id="de.cau.cs.kieler.kex.actions.StartAction"
+               label="KIELER Example Management"
+               menubarPath="sampleMenu/sampleGroup"
+               toolbarPath="sampleGroup"
+               tooltip="Hello, Eclipse world">
+         </action>
+      </actionSet>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="de.cau.cs.kieler.kex.ui.actionSet"
+            label="KEX"
+            visible="true">
+         <menu
+               id="sampleMenu"
+               label="KEX">
+            <separator
+                  name="sampleGroup">
+            </separator>
+         </menu>
+         <action
+               class="de.cau.cs.kieler.kex.ui.actions.KEXStartAction"
+               id="de.cau.cs.kieler.kex.ui.actions.SampleAction"
+               label="KIELER Example Management"
+               menubarPath="sampleMenu/sampleGroup"
+               style="push"
+               tooltip="Kieler Example Management">
+         </action>
+      </actionSet>
+   </extension>
+</plugin>
