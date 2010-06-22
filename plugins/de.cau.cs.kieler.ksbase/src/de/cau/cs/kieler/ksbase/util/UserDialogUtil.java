@@ -14,20 +14,14 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.util;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListDialog;
 
@@ -39,20 +33,39 @@ import org.eclipse.ui.dialogs.ListDialog;
  */
 public class UserDialogUtil {
 
+    /**
+     * Get a string from the user.
+     * 
+     * @param message
+     *            the message for the dialog
+     * @param defaultValue
+     *            the default value
+     * @return the users choice, null if the user hit cancel
+     */
     public String getUserString(final String message, final String defaultValue) {
         String title = "User input required";
-        InputDialog dialog = new InputDialog(PlatformUI.getWorkbench().getDisplay()
-                .getActiveShell(), title, message, defaultValue, null);
+        InputDialog dialog = new InputDialog(PlatformUI.getWorkbench()
+                .getDisplay().getActiveShell(), title, message, defaultValue,
+                null);
         dialog.setBlockOnOpen(true);
         dialog.open();
         if (dialog.getValue() != null) {
             return dialog.getValue();
         }
         // if user hits cancel
-        return defaultValue;
+        return null;
     }
 
-    public int getUserInt(final String message, final Integer defaultValue) {
+    /**
+     * Get an int from the user.
+     * 
+     * @param message
+     *            the message for the dialog
+     * @param defaultValue
+     *            the default value
+     * @return the user input, null if canceled
+     */
+    public Integer getUserInt(final String message, final Integer defaultValue) {
         String title = "User input required";
         IInputValidator validator = new IInputValidator() {
             public String isValid(final String newText) {
@@ -64,18 +77,28 @@ public class UserDialogUtil {
                 return null;
             }
         };
-        InputDialog dialog = new InputDialog(PlatformUI.getWorkbench().getDisplay()
-                .getActiveShell(), title, message, "" + defaultValue, validator);
+        InputDialog dialog = new InputDialog(PlatformUI.getWorkbench()
+                .getDisplay().getActiveShell(), title, message, ""
+                + defaultValue, validator);
         dialog.setBlockOnOpen(true);
         dialog.open();
         if (dialog.getValue() != null) {
             return Integer.parseInt(dialog.getValue());
         }
         // if user hits cancel
-        return defaultValue;
+        return null;
     }
 
-    public float getUserFloat(final String message, final Float defaultValue) {
+    /**
+     * Get a float from the user.
+     * 
+     * @param message
+     *            the message for the dialog
+     * @param defaultValue
+     *            the default value
+     * @return the user input, null if cancel
+     */
+    public Float getUserFloat(final String message, final Float defaultValue) {
         String title = "User input required";
         IInputValidator validator = new IInputValidator() {
             public String isValid(final String newText) {
@@ -87,43 +110,71 @@ public class UserDialogUtil {
                 return null;
             }
         };
-        InputDialog dialog = new InputDialog(PlatformUI.getWorkbench().getDisplay()
-                .getActiveShell(), title, message, "" + defaultValue, validator);
+        InputDialog dialog = new InputDialog(PlatformUI.getWorkbench()
+                .getDisplay().getActiveShell(), title, message, ""
+                + defaultValue, validator);
         dialog.setBlockOnOpen(true);
         dialog.open();
         if (dialog.getValue() != null) {
             return Float.parseFloat(dialog.getValue());
         }
         // if user hits cancel
-        return defaultValue;
+        return null;
     }
 
+    /**
+     * Give the user a yes/no choice.
+     * 
+     * @param message
+     *            the question
+     * @return true if the user clicked yes
+     */
     public boolean getUserBoolean(final String message) {
         String title = "User input required";
-        return MessageDialog.openQuestion(PlatformUI.getWorkbench().getDisplay().getActiveShell(),
-                title, message);
+        return MessageDialog.openQuestion(PlatformUI.getWorkbench()
+                .getDisplay().getActiveShell(), title, message);
     }
 
-    public <T> List<T> getUserObjectFromList(final String message, final List<T> list) {
+    /**
+     * Give the user a choice from a list of elements.
+     * 
+     * @param <T>
+     *            the type of element
+     * @param message
+     *            the message to display
+     * @param list
+     *            the list of elements
+     * @return the users choice
+     */
+    public <T> T getUserObjectFromList(final String message, final List<T> list) {
         String title = "User input required";
-        ListDialog dialog = new ListDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell());
+        ListDialog dialog = new ListDialog(PlatformUI.getWorkbench()
+                .getDisplay().getActiveShell());
         dialog.setMessage(message);
         dialog.setBlockOnOpen(true);
         dialog.setLabelProvider(new LabelProvider());
-        dialog.setContentProvider(new SimpleListContentProvider());
+        dialog.setContentProvider(new SimpleListContentProvider<T>());
         dialog.setInput(list);
         dialog.setHelpAvailable(false);
         dialog.open();
 
         if (dialog.getResult() != null) {
-            return (List<T>) Arrays.asList(dialog.getResult());
+            return (T) dialog.getResult()[0];
         }
         // if user hits cancel
-        return Collections.emptyList();
+        return null;
     }
 
-    private static final class SimpleListContentProvider<T> implements IStructuredContentProvider {
-        public Object[] getElements(Object inputElement) {
+    /**
+     * A simple content provider for a list dialog.
+     * 
+     * @author haf
+     * @param <T>
+     *            the type of elements in the dialog.
+     */
+    private static final class SimpleListContentProvider<T> implements
+            IStructuredContentProvider {
+        public Object[] getElements(final Object inputElement) {
             if (inputElement instanceof List<?>) {
                 return ((List<?>) inputElement).toArray();
             }
@@ -133,7 +184,8 @@ public class UserDialogUtil {
         public void dispose() {
         }
 
-        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+        public void inputChanged(final Viewer viewer, final Object oldInput,
+                final Object newInput) {
         }
     }
 
