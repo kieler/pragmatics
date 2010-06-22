@@ -18,7 +18,8 @@ public class ExtPointCollectionUtil {
 	// plugin ueberfuehrt werden sollte
 
 	/**
-	 * 
+	 * creates an new Example with properties of given exampleElement
+	 * which should generally comes from extension of extension point.
 	 * @param exampleElement
 	 * @return
 	 * @throws InvalidRegistryObjectException
@@ -81,12 +82,12 @@ public class ExtPointCollectionUtil {
     }
     // TODO hier muss sicherlich noch der Projekt Pfad mit angegeben werden.
     File file = new File(resourcePath);
-    validate(file);
+    validateFile(file);
     return file;
   }
   
-  private static void validate(final File file) {
-
+  private static void validateFile(final File file) {
+	  
   }
 	
 }

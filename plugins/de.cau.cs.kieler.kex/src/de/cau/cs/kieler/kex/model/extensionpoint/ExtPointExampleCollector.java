@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
@@ -26,42 +28,42 @@ public class ExtPointExampleCollector extends ExampleCollector {
 	private List<String> categoryPool;
 
 	public ExtPointExampleCollector() {
-	    categoryPool = new ArrayList<String>();
-	    examplePool = new HashMap<String, Example>();
-		
+		categoryPool = new ArrayList<String>();
+		examplePool = new HashMap<String, Example>();
+
 	}
 
 	public void collectCategories(IConfigurationElement categoryElement) {
-			String categoryId = categoryElement.getAttribute("id");
-			if (categoryId == null || categoryId.length() < 4) {
+		String categoryId = categoryElement.getAttribute("id");
+		if (categoryId == null || categoryId.length() < 4) {
+			// ExceptionHandler
+			// .get()
+			// .add(
+			// new KielerModelException(
+			// "Attribute of context "
+			// + element.getName()
+			// + "is not set or shorter than 4 characters.",
+			// element));
+			// TODO StatusManager als globalen Exceptionhandler
+			// ansprechen...
+		} else {
+			if (!getCategoryPool().contains(categoryId))
+				getCategoryPool().add(categoryId);
+			else {
 				// ExceptionHandler
 				// .get()
-				// .add(
-				// new KielerModelException(
-				// "Attribute of context "
+				// .addUnique(
+				// new KielerException(
+				// "Extension: "
 				// + element.getName()
-				// + "is not set or shorter than 4 characters.",
-				// element));
-				// TODO StatusManager als globalen Exceptionhandler
-				// ansprechen...
-			} else {
-				if (!getCategoryPool().contains(categoryId))
-				    getCategoryPool().add(categoryId);
-				else {
-					// ExceptionHandler
-					// .get()
-					// .addUnique(
-					// new KielerException(
-					// "Extension: "
-					// + element.getName()
-					// + ", was found after searching with extension id: "
-					// + CONTEXT_EXT_ID));
-					// ERROR Level ueberdenken...
-					// TODO StatusManager ansprechen
+				// + ", was found after searching with extension id: "
+				// + CONTEXT_EXT_ID));
+				// ERROR Level ueberdenken...
+				// TODO StatusManager ansprechen
 
-				}
 			}
 		}
+	}
 
 	/**
 	 * loads examples of extenders.
@@ -95,18 +97,16 @@ public class ExtPointExampleCollector extends ExampleCollector {
 					// TODO Statusmanager benutzen
 				}
 			} catch (Exception e) {
-//				if (e instanceof KielerException)
-					// TODO auch hier besser machen, den ganzen mechanismus und
-					// natuerlich ueber statusmanager
-//					ExceptionHandler.get().add(
-//							new KielerModelException(e.getMessage(), element));
-//				else
-//					e.printStackTrace();
+				// if (e instanceof KielerException)
+				// TODO auch hier besser machen, den ganzen mechanismus und
+				// natuerlich ueber statusmanager
+				// ExceptionHandler.get().add(
+				// new KielerModelException(e.getMessage(), element));
+				// else
+				// e.printStackTrace();
 			}
 		}
 	}
-
-
 
 	public Map<String, Example> getExamplePool() {
 		return this.examplePool;

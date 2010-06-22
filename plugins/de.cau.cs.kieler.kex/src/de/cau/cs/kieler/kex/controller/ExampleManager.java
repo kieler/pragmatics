@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -55,6 +56,8 @@ public class ExampleManager {
 		return this.extPointExampleCollector.getExamplePool();
 	}
 
+	
+	
 	public List<String>getExtPointCategories(){
 		return this.extPointExampleCollector.getCategoryPool();
 	}
@@ -73,9 +76,59 @@ public class ExampleManager {
 //	public List<String> getErrorsAsString() {
 //		return ExceptionHandler.get().getExceptionsAsStrings();
 //	}
-
+	
+	/**
+	 * lists all projects of instantiating workspace.
+	 * 
+	 * @return
+	 */
 	public IProject[] getLocalProjects(){
-	  return extensionCreation.getLocalProjects();
+		//TODO in andere model klasse auslagern.
+		return ResourcesPlugin.getWorkspace().getRoot().getProjects();
 	}
 	
+	public void addExample(String projectId, String location, Map<String,Object> properties){
+		//TODO ueberlegen, ob hier auch Example uebergeben werden koennte problematisch ist nur,
+		// dass dann VIEW element von MODEL enthaelt, nicht gut nach mvc
+		try {
+			extensionCreation.addExtension(projectId, location, mapToExample(properties));
+		} catch (KielerException e) {
+			StatusManager.getManager().addLoggedStatus(new Status(Status.ERROR, projectId, e.getMessage()));
+
+		}
+	}
+	/**
+	 * mapping of properties onto an example.
+	 * @param properties, Map<String, Object>
+	 * @return Example
+	 */
+	public Example mapToExample(Map<String, Object> properties){
+		//TODO implementieren
+		Example result = new Example(null, null);
+		try {
+			// zusaetzliche sicherung...
+			validateExample(result);
+			
+		} catch (KielerException e) {
+			//TODO vernuenftig behandeln, es reicht nicht ihn nur in den statusmanager zu ueberreichen,
+			// wie kann dann die action abgebrochen werden, bzw der wizard dennoch weiterlaufen...???
+		}
+		return result;
+	}
+	
+	// TODO sollte schon waehrend des erstelllens aufgerufen werden, um sicher zu gehen,dass kein mist eingecheckt wird.
+	/**
+	 * 
+	 * @param example
+	 * @throws KielerException
+	 */
+	public void validateExample(Example example) throws KielerException{
+		if(example.getId() == null)
+			throw new KielerException("ID of an example could not be null.");
+		boolean extPointContain = extPointExampleCollector.getExamplePool().containsKey(example.getId());
+		boolean onlineContain = onlineExampleCollector.getExamplePool().containsKey(example.getId());
+		if(extPointContain || onlineContain)
+			throw new KielerException("Duplicate example id. Please choose an other one!");
+	}
+
 }

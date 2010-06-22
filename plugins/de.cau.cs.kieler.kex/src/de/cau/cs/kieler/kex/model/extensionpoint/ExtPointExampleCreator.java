@@ -31,13 +31,12 @@ public class ExtPointExampleCreator {
 			throws KielerException {
 		validateProject(projectId, location);
 		xmlHandler.addExtension(projectId, location, example);
-		
 	}
 
 	/**
 	 * creates example files to given project path
 	 */
-	public void createExampleResources(ExampleResource resource) {
+	public void createExampleResources(String location, ExampleResource resource) {
 		// String workspacePath = ResourcesPlugin.getWorkspace().getRoot()
 		// .getLocation().toString();
 		// List<File> resources = resource.getResources();
@@ -59,38 +58,7 @@ public class ExtPointExampleCreator {
 		// }
 	}
 
-	/**
-	 * lists all projects of working workspace.
-	 * 
-	 * @return
-	 */
-	public IProject[] getLocalProjects() {
-		// TODO am besten nicht mit den ganzen projekten umher werfen,
-		// vielleicht kann man die dateipfade irgendwie raus holen...
-		return ResourcesPlugin.getWorkspace().getRoot().getProjects();
-	}
-
-	// TODO give workspace as default folder for export new examples from local
-	// project.
-	// public void getWorkspaceProjects() {
-	// // Location instanceLocation = Platform.getInstanceLocation();
-	// // IPath location = Platform.getLocation();
-	// IExtensionRegistry reg = Platform.getExtensionRegistry();
-	// IExtensionPoint point = reg
-	// .getExtensionPoint("org.eclipse.core.filesystem.filesystems");
-	// IConfigurationElement[] elements = point.getConfigurationElements();
-	//
-	// System.out.println("There are " + elements.length + " implementations");
-	// for (int i = 0; i < elements.length; i++) {
-	// for (String attrString : elements[i].getAttributeNames()) {
-	// System.out.print(elements[i].getName());
-	// System.out.print(" " + attrString + ": "
-	// + elements[i].getAttribute(attrString));
-	// System.out.println();
-	// }
-	// }
-	// }
-
+	
 	private void validateProject(String projectId, String location)
 			throws KielerException {
 		File file = new File(location);

@@ -39,7 +39,8 @@ import de.cau.cs.kieler.kex.model.Example;
 	
 	public void addExtension(String projectId, String location, Example example) throws KielerException{
 		try {
-			parseXML(projectId);
+			parsePluginXML(projectId);
+			extendPluginXML();
 			// TODO plugin.xml erweitern... mit geparstem file
 		} catch (SAXException e) {
 			String msg = "Error appears while parsing plugin.xml of project: " + projectId;
@@ -50,7 +51,12 @@ import de.cau.cs.kieler.kex.model.Example;
 		}
 	}
 	
-	private void parseXML(String projectId) throws SAXException,
+	private void extendPluginXML() {
+				// parsedXML nun nutzen und aufloesen...
+	}
+
+
+	private void parsePluginXML(String projectId) throws SAXException,
 			IOException {
 		IFile iPluginXML = filterPluginXML(projectId);
 		if (!(iPluginXML instanceof File) || !iPluginXML.exists()) {
