@@ -1,10 +1,10 @@
-package de.cau.cs.kieler.kex.model.collection.online;
+package de.cau.cs.kieler.kex.model.online;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import de.cau.cs.kieler.kex.model.Example;
-import de.cau.cs.kieler.kex.model.collection.ExampleCollector;
+import de.cau.cs.kieler.kex.model.ExampleCollector;
 
 
 public class OnlineExampleCollector extends ExampleCollector{

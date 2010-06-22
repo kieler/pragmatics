@@ -1,4 +1,4 @@
-package de.cau.cs.kieler.kex.model.collection.extensionpoint;
+package de.cau.cs.kieler.kex.model.extensionpoint;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,7 +9,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
 import de.cau.cs.kieler.kex.model.Example;
-import de.cau.cs.kieler.kex.model.collection.ExampleCollector;
+import de.cau.cs.kieler.kex.model.ExampleCollector;
 
 public class ExtPointExampleCollector extends ExampleCollector {
 

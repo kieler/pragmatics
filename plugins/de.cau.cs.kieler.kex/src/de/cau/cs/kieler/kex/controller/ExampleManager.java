@@ -4,11 +4,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.statushandlers.StatusManager;
 
+import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.model.Example;
-import de.cau.cs.kieler.kex.model.collection.extensionpoint.ExtPointExampleCollector;
-import de.cau.cs.kieler.kex.model.collection.online.OnlineExampleCollector;
-import de.cau.cs.kieler.kex.model.creation.ExtPointExampleCreator;
+import de.cau.cs.kieler.kex.model.extensionpoint.ExtPointExampleCollector;
+import de.cau.cs.kieler.kex.model.extensionpoint.ExtPointExampleCreator;
+import de.cau.cs.kieler.kex.model.online.OnlineExampleCollector;
 
 public class ExampleManager {
 
@@ -26,7 +29,12 @@ public class ExampleManager {
     extPointExampleCollector.loadExamples();
     this.onlineExampleCollector = new OnlineExampleCollector();
     onlineExampleCollector.loadExamples();
-    extensionCreation = new ExtPointExampleCreator();
+    try {
+		extensionCreation = new ExtPointExampleCreator();
+	} catch (KielerException e) {
+		//FIXME plugin id sollte nicht null sein.
+		StatusManager.getManager().addLoggedStatus(new Status(Status.ERROR, null, e.getMessage()));
+	}
 	}
 	
 	public synchronized static ExampleManager get(){

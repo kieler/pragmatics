@@ -1,4 +1,4 @@
-package de.cau.cs.kieler.kex.model.collection.extensionpoint;
+package de.cau.cs.kieler.kex.model.extensionpoint;
 
 import java.io.File;
 import java.util.ArrayList;
