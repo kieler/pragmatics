@@ -30,32 +30,5 @@
             project="false">
       </wizard>
    </extension>
-   <extension
-         point="de.cau.cs.kieler.ksbase.configurations">
-      <configuration
-            TransformationFile="transformations/feature.ext"
-            checkVisibility="true"
-            contextId="de.cau.cs.kieler.graphs.diagram.ui.diagramContext"
-            editorId="de.cau.cs.kieler.graphs.diagram.part.GraphsDiagramEditorID"
-            packageName="de.cau.cs.kieler.graphs.GraphsPackage">
-         <transformations>
-            <transformation
-                  name="Add Successor Node"
-                  tooltip="Create a successor for the selected node"
-                  transformation="addSuccessorNode"
-                  transformationId="de.cau.cs.kieler.graphs.addSuc"
-                  validation="isNoRootNode">
-            </transformation>
-         </transformations>
-         <menus>
-            <menuContribution
-                  locationURI="menu:de.cau.cs.kieler">
-               <transformationCommand
-                     transformationId="de.cau.cs.kieler.graphs.addSuc">
-               </transformationCommand>
-            </menuContribution>
-         </menus>
-      </configuration>
-   </extension>
       
 </plugin>
