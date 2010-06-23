@@ -130,6 +130,7 @@ public final class DynamicBundleLoader implements IWindowListener, IPageListener
                     // FIXME: haf: context might be null after the next line
                     // However, when stepping through this via Debug mode, it is usually not
                     // So this seems to be a severe concurrency issue
+                    bundle.start();
                     BundleContext context = bundle.getBundleContext();
                     ServiceReference ref = context.getServiceReference(className);
                     PackageAdmin admin = (PackageAdmin) bundle.getBundleContext().getService(ref);
