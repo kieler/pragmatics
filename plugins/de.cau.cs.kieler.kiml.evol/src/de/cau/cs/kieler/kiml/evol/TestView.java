@@ -95,24 +95,9 @@ public class TestView extends ViewPart {
         // final IWorkbenchPage page =
         // workbench.getActiveWorkbenchWindow().getActivePage();
         final IEditorPart editor = getCurrentEditor();
-        // if (page != null) {
-        // editor = page.getActiveEditor();
-        // }
         final IGraphicalEditPart part = (IGraphicalEditPart) getEditPart(editor);
         if (editor != null) {
-            // // TODO: test whether editor is for KIML
-            // final ISelection selection =
-            // editor.getEditorSite().getSelectionProvider()
-            // .getSelection();
-            // Object element = null;
-            // if (selection != null) {
-            // if (selection instanceof StructuredSelection) {
-            // element = ((StructuredSelection) selection).getFirstElement();
-            // if (element instanceof IGraphicalEditPart) {
-            // part = (IGraphicalEditPart) element;
-            // }
-            // }
-            // }
+            // TODO: test whether editor is for KIML
             // FIXME: should share synchronized property source with LayoutView
             final LayoutPropertySource source = new LayoutPropertySource(editor, part);
             propertySource = source;
@@ -132,7 +117,7 @@ public class TestView extends ViewPart {
                     final Object element = ((IStructuredSelection) selection).getFirstElement();
                     if (element instanceof PopulationTableEntry) {
                         tableViewer.removeSelectionChangedListener(this);
-                        final int oldPosition = position;
+                        // final int oldPosition = position;
                         position = ((PopulationTableEntry) element).index;
                         onSelectIndividual();
                         System.out.println("after onSelectIndividual");
@@ -160,9 +145,12 @@ public class TestView extends ViewPart {
     private BasicEvolutionaryAlgorithm evolAlg;
     private Population population;
     /**
-     * column width for columns in viewer table.
+     * Column width for columns in viewer table.
      */
     private static final int DEFAULT_COLUMN_WIDTH = 140;
+    /**
+     * Initial population size.
+     */
     private static final int DEFAULT_INITIAL_POPULATION_SIZE = 5;
     
     /**
@@ -394,7 +382,7 @@ public class TestView extends ViewPart {
         
         @Override
         public void run() {
-            autoratePopulation(Target.ALL);
+            autoratePopulation(TargetIndividuals.ALL);
         }
     }
     
@@ -405,14 +393,14 @@ public class TestView extends ViewPart {
      * @author bdu
      * 
      */
-    private enum Target {
+    private enum TargetIndividuals {
         ALL, UNRATED, RATED
     }
     
     /**
      * Performs auto-rating on each individual that belongs to the given target.
      */
-    private void autoratePopulation(final Target target) {
+    private void autoratePopulation(final TargetIndividuals target) {
         if (population == null || population.isEmpty()) {
             return;
         }
@@ -421,7 +409,6 @@ public class TestView extends ViewPart {
         final int oldPosition = this.position;
         final IEditorPart editor = getCurrentEditor();
         final Registry registry = LayoutServices.getRegistry();
-
         final DiagramLayoutManager manager =
                 EclipseLayoutServices.getInstance().getManager(editor, null);
         Runnable layoutLoop = new Runnable() {
@@ -556,13 +543,26 @@ public class TestView extends ViewPart {
     
     private final ILayoutListener layoutListener = new LayoutListener() {
         @Override
+        public void layoutRequested(final KNode layoutGraph) {
+            super.layoutRequested(layoutGraph);
+            System.out.println(layoutGraph.getData());
+        }
+        
+        @Override
         public void layoutPerformed(final KNode layoutGraph, final IKielerProgressMonitor monitor) {
             System.out.println("LayoutListener: Layout performed.");
             try {
-                int rating = measureDiagram(false, layoutGraph);
-                final Individual ind = getCurrentIndividual();
-                System.out.println("Assign rating " + rating + " to individual " + ind.toString());
-                ind.setRating(rating);
+                Runnable measuringRunnable = new Runnable() {
+                    public void run() {
+                        final Individual ind = getCurrentIndividual();
+                        int rating = measureDiagram(false, layoutGraph);
+                        Assert.isTrue(ind == getCurrentIndividual());
+                        System.out.println("Assign rating " + rating + " to individual "
+                                + ind.toString());
+                        ind.setRating(rating);
+                    }
+                };
+                MonitoredOperation.runInUI(measuringRunnable, true);
                 // tableViewer.refresh();
                 Thread.sleep(700);
             } catch (final Exception e) {
@@ -637,7 +637,8 @@ public class TestView extends ViewPart {
                 // so we have nothing to layout.
                 return;
             }
-            // final EditPart part = getEditPart(editor);
+            // we don't need to specify the editpart because we want to layout
+            // the whole diagram
             EclipseLayoutServices.getInstance()
                     .layout(editor, null, showAnimation, showProgressBar);
         }
