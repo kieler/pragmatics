@@ -73,7 +73,7 @@ public class TestView extends ViewPart {
         super();
         this.tableViewer = null;
     }
-
+    
     // individual property settings
     @Override
     public void createPartControl(final Composite parent) {
@@ -147,12 +147,12 @@ public class TestView extends ViewPart {
         };
         tableViewer.addPostSelectionChangedListener(listener);
     }
-
+    
     @Override
     public void setFocus() {
         tableViewer.getControl().setFocus();
     }
-
+    
     // private fields
     private SelectorTableViewer tableViewer;
     private int position = 0;
@@ -164,7 +164,7 @@ public class TestView extends ViewPart {
      */
     private static final int DEFAULT_COLUMN_WIDTH = 140;
     private static final int DEFAULT_INITIAL_POPULATION_SIZE = 5;
-
+    
     /**
      * Sets a population as the input of the viewer.
      * 
@@ -182,7 +182,7 @@ public class TestView extends ViewPart {
             runnable.run();
         }
     }
-
+    
     /**
      * Content provider for table view.
      * 
@@ -207,16 +207,16 @@ public class TestView extends ViewPart {
             }
             return result;
         }
-
+        
         public void dispose() {
             // do nothing
         }
-
+        
         public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
             System.out.println("Viewer " + viewer.toString() + " input changed.");
         }
     }
-
+    
     /**
      * provides labels for LayoutSet table.
      * 
@@ -230,7 +230,7 @@ public class TestView extends ViewPart {
         private final Image defaultImage =
                 AbstractUIPlugin.imageDescriptorFromPlugin(EvolPlugin.PLUGIN_ID,
                         "icons/default.png").createImage();
-
+        
         public Image getColumnImage(final Object element, final int columnIndex) {
             switch (columnIndex) {
             case 0:
@@ -243,7 +243,7 @@ public class TestView extends ViewPart {
                 return null;
             }
         }
-
+        
         // TODO: use CellLabelProviders
         public String getColumnText(final Object element, final int columnIndex) {
             //
@@ -257,19 +257,19 @@ public class TestView extends ViewPart {
                 return null;
             }
         }
-
+        
         @Override
         public void dispose() {
             this.currentImage.dispose();
             this.defaultImage.dispose();
         }
-
+        
         @Override
         public boolean isLabelProperty(final Object element, final String property) {
             return false;
         }
     }
-
+    
     /**
      * A population table entry contains an individual.
      * 
@@ -279,23 +279,23 @@ public class TestView extends ViewPart {
     private static class PopulationTableEntry {
         private int index = 0;
         private Individual individual;
-
+        
         public String getId() {
             if (individual != null) {
                 return individual.getGeneration() + "." + individual.getId();
             }
             return null;
         }
-
+        
         public Individual getIndividual() {
             return individual;
         }
-
+        
         public void setIndividual(final Individual theIndividual) {
             this.individual = theIndividual;
         }
     }
-
+    
     /**
      * Action for resetting the view.
      * 
@@ -307,7 +307,7 @@ public class TestView extends ViewPart {
             setText("Reset");
             setToolTipText("Restart with a new population.");
         }
-
+        
         @Override
         public void run() {
             position = 0;
@@ -323,7 +323,7 @@ public class TestView extends ViewPart {
             tableViewer.refresh();
         }
     }
-
+    
     /**
      * Action for giving a positive rating to an individual.
      * 
@@ -332,14 +332,14 @@ public class TestView extends ViewPart {
      */
     private class PromoteAction extends ChangeRatingAction {
         private static final int AMOUNT = +30;
-
+        
         public PromoteAction() {
             super(AMOUNT);
             setText("Favor");
             setToolTipText("Promote the selected individual.");
         }
     }
-
+    
     /**
      * Action for giving a negative rating to an individual.
      * 
@@ -348,14 +348,14 @@ public class TestView extends ViewPart {
      */
     private class DemoteAction extends ChangeRatingAction {
         private static final int AMOUNT = -10;
-
+        
         public DemoteAction() {
             super(AMOUNT);
             setText("Disregard");
             setToolTipText("Demote the selected individual.");
         }
     }
-
+    
     /**
      * Action for rating an individual.
      * 
@@ -364,11 +364,11 @@ public class TestView extends ViewPart {
      */
     private class ChangeRatingAction extends Action {
         private final int delta;
-
+        
         public ChangeRatingAction(final int theDelta) {
             delta = theDelta;
         }
-
+        
         @Override
         public void run() {
             if (population != null) {
@@ -379,7 +379,7 @@ public class TestView extends ViewPart {
             }
         }
     }
-
+    
     /**
      * Action for auto-rating all individuals.
      * 
@@ -391,7 +391,7 @@ public class TestView extends ViewPart {
             this.setText("Auto-rate");
             this.setToolTipText("Auto-rate all individuals");
         }
-
+        
         @Override
         public void run() {
             autoratePopulation();
@@ -405,6 +405,7 @@ public class TestView extends ViewPart {
         if (population == null || population.isEmpty()) {
             return;
         }
+        System.out.println("autorate population");
         final Population pop = this.population;
         final int oldPosition = this.position;
         final IEditorPart editor = getCurrentEditor();
@@ -423,41 +424,43 @@ public class TestView extends ViewPart {
         registry.addLayoutListener(listener);
         final DiagramLayoutManager manager =
                 EclipseLayoutServices.getInstance().getManager(editor, null);
-        final IKielerProgressMonitor monitor =
-                new BasicProgressMonitor(DiagramLayoutManager.MAX_PROGRESS_LEVELS);
-        MonitoredOperation.runInUI(new Runnable() {
-            // first phase: build the layout graph
+
+        Runnable layoutLoop = new Runnable() {
             public void run() {
-                manager.buildLayoutGraph(editor, null, true);
-            }
-        }, true);
-        for (int pos = 0; pos < pop.size(); pos++) {
-            this.position = pos;
-            final Individual ind = pop.get(pos);
-            if (ind.getRating() == 0) {
-                // yet unrated
-                adoptIndividual(ind, false);
-                MonitoredOperation.runInUI(new Runnable() {
-                    // second phase: execute layout algorithms
-                    public void run() {
+                for (int pos = 0; pos < pop.size(); pos++) {
+                    TestView.this.position = pos;
+                    System.out.println("Position: " + pos);
+                    final Individual ind = pop.get(pos);
+                    System.out.println(ind.toString());
+                    // TODO: synchronize on the layout graph?
+                    // for yet unrated individual
+                    if (ind.getRating() >= 0) { // XXX must be == 0
+                        // first phase: build the layout graph
+                        manager.buildLayoutGraph(editor, null, true);
+                        // second phase: execute layout algorithms
+                        adoptIndividual(ind, false);
+                        final IKielerProgressMonitor monitor =
+                                new BasicProgressMonitor(DiagramLayoutManager.MAX_PROGRESS_LEVELS);
                         final IStatus status = manager.layout(monitor, true, false);
-                        System.out.println(status.getCode());
+                        System.out.println("layout result: " + status.getCode());
+                        System.out.println("after manager.layout");
                     }
-                }, true);
-                System.out.println("after manager.layout");
-                try {
-                    Thread.sleep(300);
-                } catch (final InterruptedException e) {
-                    e.printStackTrace();
+
+                    try {
+                        Thread.sleep(100);
+                    } catch (final InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
-        }
+        };
+        MonitoredOperation.runInUI(layoutLoop, true);
         System.out.println("remove layout listener");
         registry.removeLayoutListener(listener);
         this.position = oldPosition;
         this.tableViewer.refresh();
     }
-
+    
     /**
      * Action for performing a step of the evolutionary algorithm. This creates
      * a new generation.
@@ -469,7 +472,7 @@ public class TestView extends ViewPart {
         public EvolveAction() {
             setText("Evolve");
         }
-
+        
         @Override
         public void run() {
             if (evolAlg == null) {
@@ -489,9 +492,16 @@ public class TestView extends ViewPart {
             tableViewer.selectRow(position);
             tableViewer.refresh();
             onSelectIndividual();
+            // BasicNetwork b = new BasicNetwork();
+            // b.addLayer(new BasicLayer(2));
+            // b.addLayer(new BasicLayer(3));
+            // b.addLayer(new BasicLayer(6));
+            // b.addLayer(new BasicLayer(1));
+            // b.getStructure().finalizeStructure();
+            // System.out.println(b.calculateNeuronCount());
         }
     }
-
+    
     /**
      * A table viewer with selectable rows.
      * 
@@ -503,7 +513,7 @@ public class TestView extends ViewPart {
             super(table);
             // TODO Auto-generated constructor stub
         }
-
+        
         private void selectRow(final int pos) {
             Assert.isTrue((pos >= 0) && (pos <= population.size()), "position out of range");
             Display.getCurrent().syncExec(new Runnable() {
@@ -513,7 +523,7 @@ public class TestView extends ViewPart {
             });
         }
     }
-
+    
     /**
      * A layout listener to get noticed when the layout is done.
      * 
@@ -523,28 +533,29 @@ public class TestView extends ViewPart {
     private abstract static class LayoutListener implements ILayoutListener {
         public abstract void layoutPerformed(
                 final KNode layoutGraph, final IKielerProgressMonitor monitor);
-
+        
         public void layoutRequested(final KNode layoutGraph) {
             System.out.println("LayoutListener: Layout requested.");
         }
     }
-
+    
     private final ILayoutListener layoutListener = new LayoutListener() {
         @Override
         public void layoutPerformed(final KNode layoutGraph, final IKielerProgressMonitor monitor) {
             System.out.println("LayoutListener: Layout performed.");
             try {
-                int rating = measureDiagram(true, layoutGraph);
+                int rating = measureDiagram(false, layoutGraph);
                 final Individual ind = getCurrentIndividual();
                 System.out.println("Assign rating " + rating + " to individual " + ind.toString());
                 ind.setRating(rating);
                 // tableViewer.refresh();
+                Thread.sleep(700);
             } catch (final Exception e) {
                 e.printStackTrace();
             }
         }
     };
-
+    
     /**
      * Return position of first unrated individual in the list.
      * 
@@ -564,7 +575,7 @@ public class TestView extends ViewPart {
         }
         return result;
     }
-
+    
     /**
      * Refresh the layout according to selected individual.
      */
@@ -596,7 +607,7 @@ public class TestView extends ViewPart {
         registry.removeLayoutListener(layoutListener);
         tableViewer.refresh();
     }
-
+    
     /**
      * Layout the diagram.
      * 
@@ -617,7 +628,7 @@ public class TestView extends ViewPart {
         }
         System.out.println("leaving layoutDiagram");
     }
-
+    
     /**
      * Returns the current edit part.
      * 
@@ -640,7 +651,7 @@ public class TestView extends ViewPart {
         }
         return result;
     }
-
+    
     /**
      * Returns the current editor.
      * 
@@ -655,7 +666,7 @@ public class TestView extends ViewPart {
         final IEditorPart result = layoutViewPart.getCurrentEditor();
         return result;
     }
-
+    
     private int measureDiagram(final boolean showProgressBar, final KNode parentNode) {
         System.out.println("measure diagram");
         if ((parentNode == null) || (propertySource == null) || (population == null)) {
@@ -686,7 +697,7 @@ public class TestView extends ViewPart {
                 (int) (((bendsResult * factors[0]) + (flatnessResult * factors[1]) + (narrownessResult * factors[2])) * 100);
         return newRating;
     }
-
+    
     /**
      * 
      * @return the current individual, or {@code null} if none is selected.
@@ -769,7 +780,7 @@ public class TestView extends ViewPart {
         }
         System.out.println("leaving adoptIndividual");
     }
-
+    
     /**
      * Creates the tool bar for the view.
      */
