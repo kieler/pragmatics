@@ -394,14 +394,25 @@ public class TestView extends ViewPart {
         
         @Override
         public void run() {
-            autoratePopulation();
+            autoratePopulation(Target.ALL);
         }
     }
     
     /**
-     * Performs auto-rating on each unrated individual.
+     * Determines which individuals of a population shall be affected by an
+     * operation.
+     * 
+     * @author bdu
+     * 
      */
-    private void autoratePopulation() {
+    private enum Target {
+        ALL, UNRATED, RATED
+    }
+    
+    /**
+     * Performs auto-rating on each individual that belongs to the given target.
+     */
+    private void autoratePopulation(final Target target) {
         if (population == null || population.isEmpty()) {
             return;
         }
@@ -410,21 +421,9 @@ public class TestView extends ViewPart {
         final int oldPosition = this.position;
         final IEditorPart editor = getCurrentEditor();
         final Registry registry = LayoutServices.getRegistry();
-        // ILayoutListener listener = new LayoutListener() {
-        // @Override
-        // public void layoutPerformed(
-        // final KNode layoutGraph, final IKielerProgressMonitor monitor) {
-        // final int rating = measureDiagram(false, layoutGraph);
-        // final Individual ind = getCurrentIndividual();
-        // Assert.isNotNull(ind);
-        // ind.setRating(rating);
-        // }
-        // };
-        ILayoutListener listener = layoutListener;
-        registry.addLayoutListener(listener);
+
         final DiagramLayoutManager manager =
                 EclipseLayoutServices.getInstance().getManager(editor, null);
-
         Runnable layoutLoop = new Runnable() {
             public void run() {
                 for (int pos = 0; pos < pop.size(); pos++) {
@@ -433,8 +432,22 @@ public class TestView extends ViewPart {
                     final Individual ind = pop.get(pos);
                     System.out.println(ind.toString());
                     // TODO: synchronize on the layout graph?
-                    // for yet unrated individual
-                    if (ind.getRating() >= 0) { // XXX must be == 0
+                    final boolean isAffected;
+                    switch (target) {
+                    case ALL:
+                        isAffected = true;
+                        break;
+                    case RATED:
+                        isAffected = (ind.getRating() != 0);
+                        break;
+                    case UNRATED:
+                        isAffected = (ind.getRating() == 0);
+                        break;
+                    default: // this case should never happen
+                        isAffected = false;
+                        break;
+                    }
+                    if (isAffected) {
                         // first phase: build the layout graph
                         manager.buildLayoutGraph(editor, null, true);
                         // second phase: execute layout algorithms
@@ -442,10 +455,9 @@ public class TestView extends ViewPart {
                         final IKielerProgressMonitor monitor =
                                 new BasicProgressMonitor(DiagramLayoutManager.MAX_PROGRESS_LEVELS);
                         final IStatus status = manager.layout(monitor, true, false);
-                        System.out.println("layout result: " + status.getCode());
-                        System.out.println("after manager.layout");
+                        // layout should trigger the measurement
+                        System.out.println("after manager.layout. result: " + status.getCode());
                     }
-
                     try {
                         Thread.sleep(100);
                     } catch (final InterruptedException e) {
@@ -454,6 +466,9 @@ public class TestView extends ViewPart {
                 }
             }
         };
+        ILayoutListener listener = layoutListener;
+        registry.addLayoutListener(listener);
+        // FIXME: not the current layout gets measured but the previous one
         MonitoredOperation.runInUI(layoutLoop, true);
         System.out.println("remove layout listener");
         registry.removeLayoutListener(listener);
