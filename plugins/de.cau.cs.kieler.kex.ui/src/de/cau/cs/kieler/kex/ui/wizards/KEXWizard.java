@@ -41,7 +41,7 @@ public class KEXWizard extends Wizard implements IWizard {
 
 	public void show() {
 		// manager.reload();
-
+		ExampleManager.get().addExample(null, null, null);
 		List<String> examplesAsStrings = ExampleManager.get().getExamplesAsStrings();
 		if (examplesAsStrings.size() > 0) {
 			System.out.println("generated examples:");

@@ -8,6 +8,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.Platform;
 
 import de.cau.cs.kieler.kex.model.Example;
@@ -72,6 +73,11 @@ public class ExtPointExampleCollector extends ExampleCollector {
 
 		IConfigurationElement[] configElements = Platform
 				.getExtensionRegistry().getConfigurationElementsFor(KEX_EXT_ID);
+		
+		IExtension[] extensions = Platform.getExtensionRegistry().getExtensions("de.cau.cs.kieler.core.kex.model");
+		
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(
+				"de.cau.cs.kieler.kex");
 
 		for (IConfigurationElement element : configElements) {
 			try {

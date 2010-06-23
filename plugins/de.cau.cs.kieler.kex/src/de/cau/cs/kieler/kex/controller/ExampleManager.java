@@ -105,14 +105,14 @@ public class ExampleManager {
 	public Example mapToExample(Map<String, Object> properties){
 		//TODO implementieren
 		Example result = new Example(null, null);
-		try {
+//		try {
 			// zusaetzliche sicherung...
-			validateExample(result);
+//			validateExample(result);
 			
-		} catch (KielerException e) {
+//		} catch (KielerException e) {
 			//TODO vernuenftig behandeln, es reicht nicht ihn nur in den statusmanager zu ueberreichen,
 			// wie kann dann die action abgebrochen werden, bzw der wizard dennoch weiterlaufen...???
-		}
+//		}
 		return result;
 	}
 	
