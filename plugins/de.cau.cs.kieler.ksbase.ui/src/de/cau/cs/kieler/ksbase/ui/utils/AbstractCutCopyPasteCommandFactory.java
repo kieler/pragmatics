@@ -244,8 +244,6 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
                 for (String[] s : possibleMappings) {
                     List<Object> mappedSelection = FRAMEWORK
                             .createParameterMapping(selection, s);
-                    System.out.println(s);
-                    System.out.println(mappedSelection);
                     if (mappedSelection != null
                             && result.initialize(editor, mappedSelection, label
                                     .toLowerCase(), filePath, getModel(),
