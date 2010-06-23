@@ -98,7 +98,7 @@ public class TestView extends ViewPart {
         final IGraphicalEditPart part = (IGraphicalEditPart) getEditPart(editor);
         if (editor != null) {
             // TODO: test whether editor is for KIML
-            // FIXME: should share synchronized property source with LayoutView
+            // FIXME: should share synchronized property source with LayoutView?
             final LayoutPropertySource source = new LayoutPropertySource(editor, part);
             propertySource = source;
             final Population sourcePopulation =
@@ -142,6 +142,7 @@ public class TestView extends ViewPart {
     private SelectorTableViewer tableViewer;
     private int position = 0;
     private LayoutPropertySource propertySource;
+    // TODO: get rid of field property source
     private BasicEvolutionaryAlgorithm evolAlg;
     private Population population;
     /**
@@ -414,6 +415,12 @@ public class TestView extends ViewPart {
         Runnable layoutLoop = new Runnable() {
             public void run() {
                 for (int pos = 0; pos < pop.size(); pos++) {
+                    // set current position because measurer needs that
+                    // FIXME: the layout listener measures not the layout of the
+                    // current
+                    // individual, but the layout of the previous one.
+                    // Maybe the listener should have a field that stores the
+                    // proper corresponding individual?
                     TestView.this.position = pos;
                     System.out.println("Position: " + pos);
                     final Individual ind = pop.get(pos);
@@ -436,14 +443,22 @@ public class TestView extends ViewPart {
                     }
                     if (isAffected) {
                         // first phase: build the layout graph
+                        // TODO: build layout graph once before the loop?
+                        // TODO: or get a new manager for every iteration?
                         manager.buildLayoutGraph(editor, null, true);
                         // second phase: execute layout algorithms
                         adoptIndividual(ind, false);
                         final IKielerProgressMonitor monitor =
                                 new BasicProgressMonitor(DiagramLayoutManager.MAX_PROGRESS_LEVELS);
+                        try {
+                            Thread.sleep(100);
+                        } catch (final InterruptedException e) {
+                            e.printStackTrace();
+                        }
                         final IStatus status = manager.layout(monitor, true, false);
                         // layout should trigger the measurement
                         System.out.println("after manager.layout. result: " + status.getCode());
+                        tableViewer.refresh();
                     }
                     try {
                         Thread.sleep(100);
@@ -455,11 +470,12 @@ public class TestView extends ViewPart {
         };
         ILayoutListener listener = layoutListener;
         registry.addLayoutListener(listener);
-        // FIXME: not the current layout gets measured but the previous one
+        // FIXME: not the current layout gets measured but the previous one.
         MonitoredOperation.runInUI(layoutLoop, true);
         System.out.println("remove layout listener");
         registry.removeLayoutListener(listener);
-        this.position = oldPosition;
+        // restore position
+        position = oldPosition;
         this.tableViewer.refresh();
     }
     
@@ -541,6 +557,11 @@ public class TestView extends ViewPart {
         }
     }
     
+    /**
+     * A layout listener that measures the layout graph it is notified about,
+     * and assigns the rating to the current individual.
+     * 
+     */
     private final ILayoutListener layoutListener = new LayoutListener() {
         @Override
         public void layoutRequested(final KNode layoutGraph) {
@@ -554,11 +575,18 @@ public class TestView extends ViewPart {
             try {
                 Runnable measuringRunnable = new Runnable() {
                     public void run() {
-                        final Individual ind = getCurrentIndividual();
+                        final Individual currentInd = getCurrentIndividual();
+                        final Individual ind = currentInd;
+                        // if (position > 0) {
+                        // // XXX dirty hack to assign rating to proper indiv.
+                        // ind = population.get(position - 1);
+                        // } else {
+                        // ind = population.get(0);
+                        // }
                         int rating = measureDiagram(false, layoutGraph);
-                        Assert.isTrue(ind == getCurrentIndividual());
-                        System.out.println("Assign rating " + rating + " to individual "
-                                + ind.toString());
+                        // Assert.isTrue(ind == getCurrentIndividual());
+                        System.out.println("Assign rating " + rating + " to individual @"
+                                + position + ": " + ind.toString());
                         ind.setRating(rating);
                     }
                 };
@@ -683,6 +711,15 @@ public class TestView extends ViewPart {
         return result;
     }
     
+    /**
+     * Analyzes the given KGraph.
+     * 
+     * @param showProgressBar
+     *            indicates whether a progress bar shall be shown
+     * @param parentNode
+     *            the KGraph to be analyzed.
+     * @return
+     */
     private int measureDiagram(final boolean showProgressBar, final KNode parentNode) {
         System.out.println("measure diagram");
         if ((parentNode == null) || (propertySource == null) || (population == null)) {
@@ -703,14 +740,14 @@ public class TestView extends ViewPart {
         // DiagramAnalyser.analyse possibly uses obsolete layout graph
         // final Object[] results = DiagramAnalyser.analyse(editor, part,
         // metrics, showProgressBar);
-        final double[] factors = new double[] { .4, .5, .1 };
+        final double[] coeffs = new double[] { .4, .5, .1 };
         final Object[] results = DiagramAnalyser.analyse(parentNode, metrics, showProgressBar);
-        final double bendsResult = Double.parseDouble(results[0].toString());
-        final double flatnessResult = Double.parseDouble(results[1].toString());
-        final double narrownessResult = Double.parseDouble(results[2].toString());
+        final double bendsResult = Double.parseDouble(results[0].toString()) * coeffs[0];
+        final double flatnessResult = Double.parseDouble(results[1].toString()) * coeffs[1];
+        final double narrownessResult = Double.parseDouble(results[2].toString()) * coeffs[2];
         System.out.println(bendsResult + "  " + flatnessResult + "  " + narrownessResult);
-        final int newRating =
-                (int) (((bendsResult * factors[0]) + (flatnessResult * factors[1]) + (narrownessResult * factors[2])) * 100);
+        final int newRating = (int) ((bendsResult + flatnessResult + narrownessResult) * 100);
+        System.out.println("leaving measureDiagram");
         return newRating;
     }
     
