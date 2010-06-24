@@ -37,7 +37,7 @@ public class KaomCutCopyPasteCommandFactory extends
         AbstractCutCopyPasteCommandFactory {
 
     /** The transformation file. */
-    private static final String FILE = "/transformations/feature.ext";
+    private static final String FILE = "/transformations/copyAndPaste.ext";
 
     /** The base package of the underlying meta model. */
     private static final String[] MODEL = { "de.cau.cs.kieler.kaom.KaomPackage" };
