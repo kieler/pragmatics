@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension-point id="evolutionData" name="Evolution Data" schema="schema/evolutionData.exsd"/>
    <extension
          point="org.eclipse.ui.views">
       <view
@@ -10,6 +11,30 @@
             name="WildLife"
             restorable="true">
       </view>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.kiml.evol.evolutionData">
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.kiml.grana.analysisProviders">
+      <analysisProvider
+            class="de.cau.cs.kieler.kiml.evol.grana.BendsMetric"
+            description="description"
+            id="de.cau.cs.kieler.kiml.evol.bendsMetric"
+            name="Bends Metric">
+      </analysisProvider>
+      <analysisProvider
+            class="de.cau.cs.kieler.kiml.evol.grana.NarrownessMetric"
+            description="description"
+            id="de.cau.cs.kieler.kiml.evol.narrownessMetric"
+            name="Narrowness Metric">
+      </analysisProvider>
+      <analysisProvider
+            class="de.cau.cs.kieler.kiml.evol.grana.FlatnessMetric"
+            description="description"
+            id="de.cau.cs.kieler.kiml.evol.flatnessMetric"
+            name="Flatness Metric">
+      </analysisProvider>
    </extension>
 
 </plugin>

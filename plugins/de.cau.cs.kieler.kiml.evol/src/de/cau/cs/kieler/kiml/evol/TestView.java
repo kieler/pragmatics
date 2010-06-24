@@ -609,7 +609,7 @@ public class TestView extends ViewPart {
         Assert.isNotNull(currentIndividual);
         adoptIndividual(currentIndividual, true);
         try {
-            Thread.sleep(400);
+            Thread.sleep(200);
         } catch (final InterruptedException e) {
             e.printStackTrace();
         }
@@ -620,7 +620,7 @@ public class TestView extends ViewPart {
         layoutDiagram(false, false);
         System.out.println("after layoutDiagram");
         try {
-            Thread.sleep(300);
+            Thread.sleep(100);
         } catch (final InterruptedException e) {
             e.printStackTrace();
         }
@@ -704,9 +704,9 @@ public class TestView extends ViewPart {
             return 0;
         }
         final String[] metricIds =
-                new String[] { "de.cau.cs.kieler.kiml.granatesting.bendsMetric",
-                        "de.cau.cs.kieler.kiml.granatesting.flatnessMetric",
-                        "de.cau.cs.kieler.kiml.granatesting.narrownessMetric" };
+                new String[] { "de.cau.cs.kieler.kiml.evol.bendsMetric",
+                        "de.cau.cs.kieler.kiml.evol.flatnessMetric",
+                        "de.cau.cs.kieler.kiml.evol.narrownessMetric" };
         final AnalysisServices as = AnalysisServices.getInstance();
         final List<AbstractInfoAnalysis> metricsList = new LinkedList<AbstractInfoAnalysis>();
         for (final String metricId : metricIds) {
@@ -797,7 +797,7 @@ public class TestView extends ViewPart {
                     public void run() {
                         System.out.println("layoutView refresh start.");
                         try {
-                            Thread.sleep(2000);
+                            Thread.sleep(1000);
                         } catch (final InterruptedException e) {
                             e.printStackTrace();
                         }
