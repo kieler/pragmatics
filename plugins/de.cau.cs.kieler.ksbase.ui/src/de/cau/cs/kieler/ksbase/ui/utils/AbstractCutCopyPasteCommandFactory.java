@@ -55,15 +55,13 @@ import de.cau.cs.kieler.ksbase.ui.handler.TransformationCommand;
  * Creates the cut, copy and paste commands from ksbase.
  * 
  * @author soh
+ * @kieler.rating 2010-06-15 yellow msp, cmot
  */
 public abstract class AbstractCutCopyPasteCommandFactory implements
         ICutCopyPasteCommandFactory {
 
     /** The transformation FRAMEWORK. */
     private static final ITransformationFramework FRAMEWORK = new XtendTransformationFramework();
-
-    /** The path of the transformation file. */
-    private String filePath = null;
 
     /** The last selection. */
     private List<EObject> lastSelection;
@@ -142,12 +140,102 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
             final List<EObject> selection, final String label) {
         lastSelection = selection;
 
+        /* The path of the transformation file. */
+        String filePath = prepareFile();
+
+        TransformationCommandWithAutoLayout result = null;
+        if (part instanceof DiagramEditor && filePath != null) {
+            if (jobInstance != null) {
+                jobInstance.cancel();
+            }
+            DiagramEditor editor = (DiagramEditor) part;
+            TransactionalEditingDomain transDomain = editor.getEditingDomain();
+
+            result = new TransformationCommandWithAutoLayout(transDomain, label);
+
+            mapParameters(selection, label, filePath, result, editor);
+        }
+        return result;
+    }
+
+    /**
+     * @param selection
+     * @param label
+     * @param filePath
+     * @param result
+     * @param editor
+     */
+    private void mapParameters(final List<EObject> selection,
+            final String label, final String filePath,
+            final TransformationCommandWithAutoLayout result,
+            final DiagramEditor editor) {
+        if (selection.size() > 1) {
+
+            Class<?>[] types = getTypes();
+            List<Boolean> hasListType = new LinkedList<Boolean>();
+            for (int i = 0; i < types.length; i++) {
+                hasListType.add(false);
+            }
+            List<String> pureMapping = new LinkedList<String>();
+
+            for (int i = 0; i < selection.size(); i++) {
+                EObject obj = selection.get(i);
+                for (int j = 0; j < types.length; j++) {
+                    if (types[j].isAssignableFrom(obj.getClass())) {
+                        pureMapping.add(types[j].getSimpleName());
+                        hasListType.set(j, true);
+                    }
+                }
+            }
+
+            List<String[]> possibleMappings = new LinkedList<String[]>();
+            for (int i = 0; i < types.length; i++) {
+                if (hasListType.get(i)) {
+                    String[] array = { "List[" + types[i].getSimpleName() + "]" };
+                    possibleMappings.add(array);
+                }
+            }
+
+            if (label.equals("Paste")) {
+                possibleMappings.add(pureMapping.toArray(new String[pureMapping
+                        .size()]));
+            } else {
+                String[] array = { "List[Object]" };
+                possibleMappings.add(array);
+            }
+
+            for (String[] s : possibleMappings) {
+                List<Object> mappedSelection = FRAMEWORK
+                        .createParameterMapping(selection, s);
+                if (mappedSelection != null
+                        && result
+                                .initialize(editor, mappedSelection, label
+                                        .toLowerCase(), filePath, getModel(),
+                                        FRAMEWORK)) {
+                    break;
+                }
+            }
+        } else {
+            List<Object> list = new LinkedList<Object>();
+            list.add(selection.get(0));
+            result.initialize(editor, list, label.toLowerCase(), filePath,
+                    getModel(), FRAMEWORK);
+        }
+    }
+
+    /**
+     * @param filePath
+     * @return
+     */
+    private String prepareFile() {
+        String filePath = null;
         Bundle bundle = getBundle();
         InputStream inStream = null;
         StringBuffer contentBuffer = new StringBuffer();
+        String transformationFile = getFile();
         try {
             if (bundle != null) {
-                URL urlPath = bundle.getEntry(getFile());
+                URL urlPath = bundle.getEntry(transformationFile);
                 // Parse transformation file to read transformations and
                 // parameters now:
                 if (urlPath != null) {
@@ -160,8 +248,10 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
             }
             // Write transformation file to .metadata
             IPath path = ResourcesPlugin.getPlugin().getStateLocation();
+
+            String[] segments = transformationFile.split("/");
             // Transformation file name:
-            path = path.append("feature").addFileExtension("ext");
+            path = path.append(segments[segments.length - 1]);
 
             File file = new File(path.toOSString());
             if (file != null) {
@@ -187,78 +277,14 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
                     }
                 }
                 // Set delete on exit flag, so the files will be cleaned when
-                // exiting
-                // eclipse
+                // exiting eclipse
                 filePath = file.getAbsolutePath();
                 file.deleteOnExit();
             }
         } catch (IOException e0) {
             e0.printStackTrace();
         }
-        TransformationCommandWithAutoLayout result = null;
-        if (part instanceof DiagramEditor) {
-            if (jobInstance != null) {
-                jobInstance.cancel();
-            }
-            DiagramEditor editor = (DiagramEditor) part;
-            TransactionalEditingDomain transDomain = editor.getEditingDomain();
-
-            result = new TransformationCommandWithAutoLayout(transDomain, label);
-
-            if (selection.size() > 1) {
-
-                Class<?>[] types = getTypes();
-                List<Boolean> hasListType = new LinkedList<Boolean>();
-                for (int i = 0; i < types.length; i++) {
-                    hasListType.add(false);
-                }
-                List<String> pureMapping = new LinkedList<String>();
-
-                for (int i = 0; i < selection.size(); i++) {
-                    EObject obj = selection.get(i);
-                    for (int j = 0; j < types.length; j++) {
-                        if (types[j].isAssignableFrom(obj.getClass())) {
-                            pureMapping.add(types[j].getSimpleName());
-                            hasListType.set(j, true);
-                        }
-                    }
-                }
-
-                List<String[]> possibleMappings = new LinkedList<String[]>();
-                for (int i = 0; i < types.length; i++) {
-                    if (hasListType.get(i)) {
-                        String[] array = { "List[" + types[i].getSimpleName()
-                                + "]" };
-                        possibleMappings.add(array);
-                    }
-                }
-
-                if (label.equals("Paste")) {
-                    possibleMappings.add(pureMapping
-                            .toArray(new String[pureMapping.size()]));
-                } else {
-                    String[] array = { "List[Object]" };
-                    possibleMappings.add(array);
-                }
-
-                for (String[] s : possibleMappings) {
-                    List<Object> mappedSelection = FRAMEWORK
-                            .createParameterMapping(selection, s);
-                    if (mappedSelection != null
-                            && result.initialize(editor, mappedSelection, label
-                                    .toLowerCase(), filePath, getModel(),
-                                    FRAMEWORK)) {
-                        break;
-                    }
-                }
-            } else {
-                List<Object> list = new LinkedList<Object>();
-                list.add(selection.get(0));
-                result.initialize(editor, list, label.toLowerCase(), filePath,
-                        getModel(), FRAMEWORK);
-            }
-        }
-        return result;
+        return filePath;
     }
 
     /**
