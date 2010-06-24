@@ -425,6 +425,8 @@ public class TestView extends ViewPart {
             if (position >= lim) {
                 position = lim - 1;
             }
+            autorateIndividuals(TargetIndividuals.UNRATED);
+            
             Assert.isTrue(position >= 0);
             tableViewer.selectRow(position);
             tableViewer.refresh();
