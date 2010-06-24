@@ -132,6 +132,9 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             debugCanvas = new DebugCanvas(layoutNode, DrawingMode.BUFFERED);
             float borderspacing = LayoutOptions
                     .getFloat(parentLayout, LayoutOptions.BORDER_SPACING);
+            if (Float.isNaN(borderspacing) || borderspacing < 0) {
+                borderspacing = DEF_SPACING;
+            }
             debugCanvas.setCustomXOffset(borderspacing);
             debugCanvas.setCustomYOffset(borderspacing);
             debugCanvas.clear();

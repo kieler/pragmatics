@@ -54,7 +54,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
 
     private static final float DUMMY_NODE_DEBUG_SIZE = 10;
 
-    private static final int BOX_RESIZE_STEPSIZE = 4;
+    private static final int BOX_RESIZE_STEPSIZE = 3;
 
     /** the DebugCanvas to use for debug-drawings. **/
     private DebugCanvas debugCanvas;
@@ -122,6 +122,13 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
         return null;
     }
 
+    /**
+     * Calculate the coordinate on a line between two nodes
+     * @param src the source-node
+     * @param dst the destination-node
+     * @param x the position you want to know the y-coordinate for
+     * @return the point on the line at position x 
+     */
     private static double pointOnLine(final LPort src, final LPort dst, final double x) {
         // this is basically the line-equation for this direct path between source and target Ports
         double starty = (src.getPos().y + src.getNode().getPos().y)
@@ -151,9 +158,11 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
             debugCanvas.clear();
         }
 
-        int defaultboxwidth = (int) spacing;
+        int defaultboxwidth = (int) Math.max(10, (int) spacing / 10);
+        
+        // where are we currently
         float reachedx = (float) currentSource.getPos().x + currentSource.getNode().getPos().x;
-        int boxes = 0;
+        
 
         // wander along the edge
         do {
@@ -272,10 +281,10 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                         newBox.y = (Math.ceil(newBox.y / BOX_RESIZE_STEPSIZE) + 1)
                                 * BOX_RESIZE_STEPSIZE;
                         newBox.height -= (newBox.y - oldy);
-                    } else {
+                    } else { // run against a another edge
                         // one step back
-                        newBox.y += BOX_RESIZE_STEPSIZE;
-                        newBox.height -= BOX_RESIZE_STEPSIZE;
+                        newBox.y += 2 * BOX_RESIZE_STEPSIZE;
+                        newBox.height -= 2 * BOX_RESIZE_STEPSIZE;
 
                         // we ran against a line? go one step further
                         // newBox.y -= BOX_RESIZE_STEPSIZE;
@@ -310,9 +319,9 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                                 * BOX_RESIZE_STEPSIZE;
                         tempBox.height = (newd - tempBox.y);
 
-                    } else {
+                    } else { // run against a another edge
                         // one step back
-                        newBox.height -= BOX_RESIZE_STEPSIZE;
+                        newBox.height -= 2 * BOX_RESIZE_STEPSIZE;
 
                         // we ran against a line? go one step further
                         // tempBox.height += BOX_RESIZE_STEPSIZE;
@@ -338,7 +347,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                 }
 
                 // the first box has to cover the complete first node
-                if (boxes == 0) {
+                if (globBarray.isEmpty()) {
                     if (newBox.y > currentSource.getNode().getPos().y) {
                         double diff = newBox.y - currentSource.getNode().getPos().y;
                         newBox.y -= diff;
@@ -358,8 +367,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                 }
 
                 // add the new box
-                globBarray.add(newBox);
-                boxes++;
+                globBarray.add(newBox);                
                 prevBox = newBox;
                 reachedx += newBox.width;
 
