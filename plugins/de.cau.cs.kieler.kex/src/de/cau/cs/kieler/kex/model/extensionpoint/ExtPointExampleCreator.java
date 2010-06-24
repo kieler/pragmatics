@@ -10,14 +10,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.ContributorFactoryOSGi;
 import org.eclipse.core.runtime.IContributor;
-import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.RegistryFactory;
-import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
-import org.eclipse.core.runtime.dynamichelpers.IFilter;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.model.Example;
@@ -67,14 +62,15 @@ public class ExtPointExampleCreator {
 		sb.append("</example>");
 		sb.append("</extension>");
 		sb.append("</plugin>");
-
-		try {
-			new ExtensionPointChangeHandler().start(org.eclipse.core.internal.registry.osgi.Activator.getContext());
-		} catch (Exception e) {
-			// bla bla bla
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+		addExtension(sb.toString());
+//		try {
+////			new ExtensionPointChangeHandler().start(org.eclipse.core.internal.registry.osgi.Activator.getContext());
+//		} catch (Exception e) {
+//			// bla bla bla
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 
 	}
 
@@ -126,7 +122,7 @@ public class ExtPointExampleCreator {
 		// }
 	}
 
-	private void validateProject(String projectId, String location)
+	public void validateProject(String projectId, String location)
 			throws KielerException {
 		File file = new File(location);
 		if (!file.exists()) {

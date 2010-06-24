@@ -21,6 +21,7 @@ import de.cau.cs.kieler.kex.model.Example;
 
 	private static final String PLUGIN_XML = "plugin.xml";
 	private SAXParser saxParser;
+	@SuppressWarnings("unused")
 	private StringBuffer parsedXML;
 
 	public PluginXMLHandler() throws KielerException {
