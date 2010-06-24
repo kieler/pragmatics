@@ -9,7 +9,7 @@
       </category>
       <wizard
             category="de.cau.cs.kieler.kex.wizard"
-            class="de.cau.cs.kieler.kex.ui.wizards.KEXWizard"
+            class="de.cau.cs.kieler.kex.ui.wizards.importwizard.KEXWizard"
             icon="resources/icons/sample.gif"
             id="de.cau.cs.kieler.kex.wizard"
             name="KIELER Example Management">

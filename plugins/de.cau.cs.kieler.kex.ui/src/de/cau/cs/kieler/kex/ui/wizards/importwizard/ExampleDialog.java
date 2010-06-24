@@ -1,4 +1,4 @@
-package de.cau.cs.kieler.kex.ui.wizards;
+package de.cau.cs.kieler.kex.ui.wizards.importwizard;
 
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
