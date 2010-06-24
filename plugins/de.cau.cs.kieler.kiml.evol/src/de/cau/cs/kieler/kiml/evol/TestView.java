@@ -89,8 +89,8 @@ public class TestView extends ViewPart {
         column.setWidth(DEFAULT_COLUMN_WIDTH);
         column2.setWidth(DEFAULT_COLUMN_WIDTH);
         tableViewer = new SelectorTableViewer(table);
-        tableViewer.setContentProvider(new LayoutSetContentProvider());
-        tableViewer.setLabelProvider(new LayoutSetLabelProvider());
+        tableViewer.setContentProvider(new PopulationTableContentProvider());
+        tableViewer.setLabelProvider(new PopulationTableLabelProvider());
         // final IWorkbench workbench = PlatformUI.getWorkbench();
         // final IWorkbenchPage page =
         // workbench.getActiveWorkbenchWindow().getActivePage();
@@ -178,7 +178,7 @@ public class TestView extends ViewPart {
      * @author bdu
      * 
      */
-    private static class LayoutSetContentProvider implements IStructuredContentProvider {
+    private static class PopulationTableContentProvider implements IStructuredContentProvider {
         public Object[] getElements(final Object inputElement) {
             // suppose inputElement contains a reference to a Population object.
             final Population inputPopulation;
@@ -212,7 +212,7 @@ public class TestView extends ViewPart {
      * @author bdu
      * 
      */
-    private class LayoutSetLabelProvider extends LabelProvider implements ITableLabelProvider {
+    private class PopulationTableLabelProvider extends LabelProvider implements ITableLabelProvider {
         private final Image currentImage =
                 AbstractUIPlugin.imageDescriptorFromPlugin(EvolPlugin.PLUGIN_ID,
                         "icons/current.png").createImage();
@@ -370,7 +370,7 @@ public class TestView extends ViewPart {
     }
     
     /**
-     * Action for auto-rating all individuals.
+     * An action that assigns an automatic rating to all individuals.
      * 
      * @author bdu
      * 
@@ -383,7 +383,7 @@ public class TestView extends ViewPart {
         
         @Override
         public void run() {
-            autoratePopulation(TargetIndividuals.ALL);
+            autorateIndividuals(TargetIndividuals.ALL);
         }
     }
     
@@ -396,87 +396,6 @@ public class TestView extends ViewPart {
      */
     private enum TargetIndividuals {
         ALL, UNRATED, RATED
-    }
-    
-    /**
-     * Performs auto-rating on each individual that belongs to the given target.
-     */
-    private void autoratePopulation(final TargetIndividuals target) {
-        if (population == null || population.isEmpty()) {
-            return;
-        }
-        System.out.println("autorate population");
-        final Population pop = this.population;
-        final int oldPosition = this.position;
-        final IEditorPart editor = getCurrentEditor();
-        final Registry registry = LayoutServices.getRegistry();
-        final DiagramLayoutManager manager =
-                EclipseLayoutServices.getInstance().getManager(editor, null);
-        Runnable layoutLoop = new Runnable() {
-            public void run() {
-                for (int pos = 0; pos < pop.size(); pos++) {
-                    // set current position because measurer needs that
-                    // FIXME: the layout listener measures not the layout of the
-                    // current
-                    // individual, but the layout of the previous one.
-                    // Maybe the listener should have a field that stores the
-                    // proper corresponding individual?
-                    TestView.this.position = pos;
-                    System.out.println("Position: " + pos);
-                    final Individual ind = pop.get(pos);
-                    System.out.println(ind.toString());
-                    // TODO: synchronize on the layout graph?
-                    final boolean isAffected;
-                    switch (target) {
-                    case ALL:
-                        isAffected = true;
-                        break;
-                    case RATED:
-                        isAffected = (ind.getRating() != 0);
-                        break;
-                    case UNRATED:
-                        isAffected = (ind.getRating() == 0);
-                        break;
-                    default: // this case should never happen
-                        isAffected = false;
-                        break;
-                    }
-                    if (isAffected) {
-                        // first phase: build the layout graph
-                        // TODO: build layout graph once before the loop?
-                        // TODO: or get a new manager for every iteration?
-                        manager.buildLayoutGraph(editor, null, true);
-                        // second phase: execute layout algorithms
-                        adoptIndividual(ind, false);
-                        final IKielerProgressMonitor monitor =
-                                new BasicProgressMonitor(DiagramLayoutManager.MAX_PROGRESS_LEVELS);
-                        try {
-                            Thread.sleep(100);
-                        } catch (final InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        final IStatus status = manager.layout(monitor, true, false);
-                        // layout should trigger the measurement
-                        System.out.println("after manager.layout. result: " + status.getCode());
-                        tableViewer.refresh();
-                    }
-                    try {
-                        Thread.sleep(100);
-                    } catch (final InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        };
-        ILayoutListener listener = layoutListener;
-        registry.addLayoutListener(listener);
-        // FIXME: not the current layout gets measured but the previous one.
-        MonitoredOperation.runInUI(layoutLoop, true);
-        System.out.println("remove layout listener");
-        registry.removeLayoutListener(listener);
-        // restore position
-        position = oldPosition;
-        this.tableViewer.refresh();
     }
     
     /**
@@ -572,32 +491,89 @@ public class TestView extends ViewPart {
         @Override
         public void layoutPerformed(final KNode layoutGraph, final IKielerProgressMonitor monitor) {
             System.out.println("LayoutListener: Layout performed.");
-            try {
-                Runnable measuringRunnable = new Runnable() {
-                    public void run() {
-                        final Individual currentInd = getCurrentIndividual();
-                        final Individual ind = currentInd;
-                        // if (position > 0) {
-                        // // XXX dirty hack to assign rating to proper indiv.
-                        // ind = population.get(position - 1);
-                        // } else {
-                        // ind = population.get(0);
-                        // }
-                        int rating = measureDiagram(false, layoutGraph);
-                        // Assert.isTrue(ind == getCurrentIndividual());
-                        System.out.println("Assign rating " + rating + " to individual @"
-                                + position + ": " + ind.toString());
-                        ind.setRating(rating);
-                    }
-                };
-                MonitoredOperation.runInUI(measuringRunnable, true);
-                // tableViewer.refresh();
-                Thread.sleep(700);
-            } catch (final Exception e) {
-                e.printStackTrace();
-            }
+            Runnable measuringRunnable = new Runnable() {
+                public void run() {
+                    final Individual ind = getCurrentIndividual();
+                    int rating = measureDiagram(false, layoutGraph);
+                    System.out.println("Assign rating " + rating + " to individual @" + position
+                            + ": " + ind.toString());
+                    ind.setRating(rating);
+                    Assert.isTrue(ind == getCurrentIndividual());
+                }
+            };
+            MonitoredOperation.runInUI(measuringRunnable, true);
+            // tableViewer.refresh();
         }
     };
+    
+    /**
+     * Performs auto-rating on each individual that belongs to the given target.
+     */
+    private void autorateIndividuals(final TargetIndividuals target) {
+        if (population == null || population.isEmpty()) {
+            return;
+        }
+        System.out.println("autorate population");
+        final Population pop = this.population;
+        final int oldPosition = this.position;
+        final IEditorPart editor = getCurrentEditor();
+        final Registry registry = LayoutServices.getRegistry();
+        final DiagramLayoutManager manager =
+                EclipseLayoutServices.getInstance().getManager(editor, null);
+        Runnable layoutLoop = new Runnable() {
+            public void run() {
+                for (int pos = 0; pos < pop.size(); pos++) {
+                    // set current position because measurer needs that
+                    // Maybe the listener should have a field that stores the
+                    // proper corresponding individual?
+                    TestView.this.position = pos;
+                    System.out.println("Position: " + pos);
+                    final Individual ind = pop.get(pos);
+                    System.out.println(ind.toString());
+                    // TODO: synchronize on the layout graph?
+                    final boolean isAffected;
+                    switch (target) {
+                    case ALL:
+                        isAffected = true;
+                        break;
+                    case RATED:
+                        isAffected = (ind.getRating() != 0);
+                        break;
+                    case UNRATED:
+                        isAffected = (ind.getRating() == 0);
+                        break;
+                    default: // this case should never happen
+                        isAffected = false;
+                        break;
+                    }
+                    if (isAffected) {
+                        adoptIndividual(ind, false);
+                        // first phase: build the layout graph
+                        // TODO: get a new manager for every iteration?
+                        manager.buildLayoutGraph(editor, null, true);
+                        // second phase: execute layout algorithms
+                        // need a new monitor each time because the old one gets
+                        // closed.
+                        final IKielerProgressMonitor monitor =
+                                new BasicProgressMonitor(DiagramLayoutManager.MAX_PROGRESS_LEVELS);
+                        final IStatus status = manager.layout(monitor, true, false);
+                        // layout should trigger the measurement of the current
+                        // diagram
+                        System.out.println("after manager.layout. result: " + status.getCode());
+                        // tableViewer.refresh();
+                    }
+                }
+            }
+        };
+        registry.addLayoutListener(layoutListener);
+        // the current diagram gets measured.
+        MonitoredOperation.runInUI(layoutLoop, true);
+        System.out.println("remove layout listener");
+        registry.removeLayoutListener(layoutListener);
+        // restore position
+        this.position = oldPosition;
+        this.tableViewer.refresh();
+    }
     
     /**
      * Return position of first unrated individual in the list.
@@ -631,7 +607,7 @@ public class TestView extends ViewPart {
         Assert.isNotNull(currentIndividual);
         adoptIndividual(currentIndividual, true);
         try {
-            Thread.sleep(600);
+            Thread.sleep(400);
         } catch (final InterruptedException e) {
             e.printStackTrace();
         }
