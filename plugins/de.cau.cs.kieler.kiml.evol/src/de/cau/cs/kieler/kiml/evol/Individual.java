@@ -17,11 +17,14 @@ import java.util.Comparator;
 
 import org.eclipse.core.runtime.Assert;
 
+import de.cau.cs.kieler.kiml.evol.genetic.Genome;
+import de.cau.cs.kieler.kiml.evol.genetic.IGene;
+
+// TODO: discuss whether this class should be merged with Genome.
 /**
  * Implementation of an individual used in an evolutionary algorithm.
  * 
  * @author bdu
- * 
  */
 public class Individual {
     /**
@@ -108,19 +111,7 @@ public class Individual {
         this.generation = theGeneration;
         System.out.println("Created individual " + toString());
     }
-    
-    // /**
-    // * Copy constructor for an individual, using the given individual as
-    // * template. The new individual has an exact clone of the template genome,
-    // * but a different id and a higher generation.
-    // *
-    // * @param template
-    // * A template individual
-    // */
-    // public Individual(final Individual template) {
-    // this((Genome) template.genome.clone(), template.generation + 1);
-    // this.rating = template.rating;
-    // }
+
     /**
      * Constructor for an Individual with the given genome and the given
      * generation.
@@ -144,7 +135,6 @@ public class Individual {
         if (this.genome != null) {
             for (IGene<?> gene : this.genome) {
                 Assert.isNotNull(gene);
-                // System.out.println("  Gene: " + gene.getId());
                 IGene<?> newGene = gene.newMutation();
                 Assert.isNotNull(newGene, "Invalid mutation of " + gene);
                 newGenome.add(newGene);

@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.evol;
+package de.cau.cs.kieler.kiml.evol.ui;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -46,7 +46,13 @@ import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
+import de.cau.cs.kieler.kiml.evol.EvolPlugin;
+import de.cau.cs.kieler.kiml.evol.EvolUtil;
+import de.cau.cs.kieler.kiml.evol.Individual;
 import de.cau.cs.kieler.kiml.evol.alg.BasicEvolutionaryAlgorithm;
+import de.cau.cs.kieler.kiml.evol.genetic.Genome;
+import de.cau.cs.kieler.kiml.evol.genetic.IGene;
+import de.cau.cs.kieler.kiml.evol.genetic.Population;
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.AnalysisServices;
 import de.cau.cs.kieler.kiml.grana.ui.DiagramAnalyser;

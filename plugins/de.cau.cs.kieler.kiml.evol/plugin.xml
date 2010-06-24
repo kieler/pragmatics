@@ -5,7 +5,7 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            class="de.cau.cs.kieler.kiml.evol.TestView"
+            class="de.cau.cs.kieler.kiml.evol.ui.TestView"
             icon="icons/gazelle.png"
             id="de.cau.cs.kieler.kiml.evol.wildlife"
             name="WildLife"

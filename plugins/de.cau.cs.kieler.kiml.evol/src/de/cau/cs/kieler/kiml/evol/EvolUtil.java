@@ -20,6 +20,15 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
+import de.cau.cs.kieler.kiml.evol.genetic.BooleanGene;
+import de.cau.cs.kieler.kiml.evol.genetic.EnumGene;
+import de.cau.cs.kieler.kiml.evol.genetic.FloatGene;
+import de.cau.cs.kieler.kiml.evol.genetic.Genome;
+import de.cau.cs.kieler.kiml.evol.genetic.IGene;
+import de.cau.cs.kieler.kiml.evol.genetic.IntegerGene;
+import de.cau.cs.kieler.kiml.evol.genetic.MutationInfo;
+import de.cau.cs.kieler.kiml.evol.genetic.Population;
+import de.cau.cs.kieler.kiml.evol.genetic.StrictlyPositiveFloatGene;
 import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
 import de.cau.cs.kieler.kiml.layout.LayoutServices;
 import de.cau.cs.kieler.kiml.layout.LayoutOptionData.Type;

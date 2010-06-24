@@ -11,9 +11,9 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.evol;
+package de.cau.cs.kieler.kiml.evol.genetic;
 
-import de.cau.cs.kieler.kiml.evol.MutationInfo.Distribution;
+import de.cau.cs.kieler.kiml.evol.genetic.MutationInfo.Distribution;
 
 /**
  * Implementation of a gene with strictly positive float values.

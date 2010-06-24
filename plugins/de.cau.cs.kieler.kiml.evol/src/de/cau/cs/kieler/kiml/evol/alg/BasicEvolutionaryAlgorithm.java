@@ -16,9 +16,9 @@ package de.cau.cs.kieler.kiml.evol.alg;
 
 import java.util.Arrays;
 
-import de.cau.cs.kieler.kiml.evol.Genome;
 import de.cau.cs.kieler.kiml.evol.Individual;
-import de.cau.cs.kieler.kiml.evol.Population;
+import de.cau.cs.kieler.kiml.evol.genetic.Genome;
+import de.cau.cs.kieler.kiml.evol.genetic.Population;
 
 /**
  * Implementation of an evolutionary algorithm.

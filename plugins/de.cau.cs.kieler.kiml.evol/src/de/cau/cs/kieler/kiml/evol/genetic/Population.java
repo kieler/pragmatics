@@ -11,10 +11,12 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.evol;
+package de.cau.cs.kieler.kiml.evol.genetic;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.cau.cs.kieler.kiml.evol.Individual;
 
 /**
  * A population is a list of individuals.

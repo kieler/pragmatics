@@ -12,7 +12,7 @@
  * See the file epl-v10.html for the license text.
  */
 /**
- * Base package for Evolutionary Meta Layout.
+ * Package for genetic data structures for Evolutionary Meta Layout.
  */
-package de.cau.cs.kieler.kiml.evol;
+package de.cau.cs.kieler.kiml.evol.genetic;
 
