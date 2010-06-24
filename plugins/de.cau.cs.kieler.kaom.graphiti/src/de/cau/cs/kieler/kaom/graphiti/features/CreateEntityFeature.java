@@ -1,5 +1,8 @@
 package de.cau.cs.kieler.kaom.graphiti.features;
 
+import java.util.List;
+
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.impl.AbstractCreateFeature;
@@ -47,7 +50,7 @@ public class CreateEntityFeature extends AbstractCreateFeature {
         // We add the model element to the resource of the diagram for
         // simplicity's sake. Normally, a customer would use its own
         // model persistence layer for storing the business model separately.
-        getDiagram().eResource().getContents().add(newEntity);
+        addToDiagram(newEntity);
        // newEntity.setName(newClassName);
  
         // do the add
@@ -56,6 +59,22 @@ public class CreateEntityFeature extends AbstractCreateFeature {
         getFeatureProvider().getDirectEditingInfo().setActive(true);
         
         return new Object[] { newEntity };
+    }
+    
+    private void addToDiagram(final Entity newEntity) {
+        List<EObject> contents = getDiagram().eResource().getContents();
+        Entity topEntity = null;
+        for (EObject obj : contents) {
+            if (obj instanceof Entity) {
+                topEntity = (Entity) obj;
+                break;
+            }
+        }
+        if (topEntity == null) {
+            topEntity = KaomFactory.eINSTANCE.createEntity();
+            contents.add(topEntity);
+        }
+        topEntity.getChildEntities().add(newEntity);
     }
     
 }  

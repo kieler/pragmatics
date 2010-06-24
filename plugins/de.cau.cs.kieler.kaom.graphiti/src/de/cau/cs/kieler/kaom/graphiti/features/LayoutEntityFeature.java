@@ -15,7 +15,9 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Polyline;
+import org.eclipse.graphiti.mm.pictograms.Rectangle;
 import org.eclipse.graphiti.mm.pictograms.Shape;
+import org.eclipse.graphiti.mm.pictograms.Text;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 
@@ -39,7 +41,9 @@ public class LayoutEntityFeature extends AbstractLayoutFeature {
         }
         
         return false;
-        
+      
+      //  System.out.println("Value:"+PropertyUtil.isEClassShape(pe));
+       // return PropertyUtil.isEClassShape(pe);
     }
 
     public boolean layout(ILayoutContext context) {
@@ -61,7 +65,7 @@ public class LayoutEntityFeature extends AbstractLayoutFeature {
             changed=true;
         }
         
-        int containerWidth = containerGa.getWidth();
+        int containerWidth = containerGa.getWidth()-2*AddPortFeature.INVISIBLE_RECTANGLE_WIDTH;
         Iterator iter=containerShape.getChildren().iterator();
         while(iter.hasNext())
         {
@@ -73,16 +77,28 @@ public class LayoutEntityFeature extends AbstractLayoutFeature {
                 if (ga instanceof Polyline)
                 {
                     Polyline polyline=(Polyline)ga;
+                    Point firstPoint=polyline.getPoints().get(0);
+                    Point newfirstPoint=gaService.createPoint(AddPortFeature.INVISIBLE_RECTANGLE_WIDTH, firstPoint.getY());                    
                     Point secondpoint=polyline.getPoints().get(1);
-                    Point newsecondpoint=gaService.createPoint(containerWidth, secondpoint.getY());
+                    Point newsecondpoint=gaService.createPoint(AddPortFeature.INVISIBLE_RECTANGLE_WIDTH+containerWidth, secondpoint.getY());
+                    polyline.getPoints().set(0, newfirstPoint);
                     polyline.getPoints().set(1, newsecondpoint);
                     changed =true;
                 }
-                else
+                else if(ga instanceof Text)
                 {
-                   gaService.setWidth(ga, containerWidth);
+                  
+                   Text text=(Text)ga;
+                   gaService.setLocationAndSize(ga, AddPortFeature.INVISIBLE_RECTANGLE_WIDTH,text.getY(), containerWidth, text.getHeight());//, avoidNegativeCoordinates)
                    changed=true;
                    }
+                else if(ga instanceof Rectangle)
+                {
+                    System.out.println("hello i cam here");
+                    Rectangle rectangle=(Rectangle)ga;
+                    gaService.setLocationAndSize(ga, AddPortFeature.INVISIBLE_RECTANGLE_WIDTH,rectangle.getY(), containerWidth, rectangle.getHeight());//, avoidNegativeCoordinates)
+                    changed=true;
+                }
             }
         }
          return changed;       

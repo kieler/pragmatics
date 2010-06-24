@@ -6,6 +6,7 @@ import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.impl.DefaultResizeShapeFeature;
 import org.eclipse.graphiti.mm.pictograms.Shape;
+import org.eclipse.graphiti.services.Graphiti;
 
 public class ResizeEntityFeature extends DefaultResizeShapeFeature {
 
@@ -17,8 +18,8 @@ public class ResizeEntityFeature extends DefaultResizeShapeFeature {
     public boolean canResizeShape(IResizeShapeContext context)
     {
         boolean canResize=super.canResizeShape(context);
-        
-        if(canResize)
+      //  boolean correctResize=PropertyUtil.isEClassShape(context.getPictogramElement());
+        if(canResize)// && correctResize)
         {
             Shape shape=context.getShape();
             Object obj=getBusinessObjectForPictogramElement(shape);
@@ -33,4 +34,18 @@ public class ResizeEntityFeature extends DefaultResizeShapeFeature {
         return canResize;
     }
 
+   /* public void resizeShape(IResizeShapeContext context) {
+        
+        Shape shape = context.getShape();
+        int width = context.getWidth();
+        int height = context.getHeight();
+
+        if (shape.getGraphicsAlgorithm() != null ) {
+                Graphiti.getGaService().setSize(shape.getGraphicsAlgorithm(), width, height);
+        }
+
+        layoutPictogramElement(shape);
+    }*/
+    
+    
 }

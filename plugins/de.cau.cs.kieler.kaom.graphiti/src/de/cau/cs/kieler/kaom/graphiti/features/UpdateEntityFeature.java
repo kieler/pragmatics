@@ -41,13 +41,14 @@ public class UpdateEntityFeature extends AbstractUpdateFeature {
         if(pictogramElement instanceof ContainerShape)
         {
             ContainerShape cs=(ContainerShape)pictogramElement;
-           // for(Iterator iter = cs.getChildren().iterator();iter.hasNext())
+      //      for(Iterator iter = cs.getChildren().iterator();iter.hasNext())
             for(int i=0;i<cs.getChildren().size();i++)
             {
                 Shape shape=(Shape)cs.getChildren().get(i);
-                if(shape instanceof Entity)
+     
+                if(shape.getGraphicsAlgorithm() instanceof Text)
                 {
-                    ((Entity)shape).setName(businessName);
+                    ((Text)shape.getGraphicsAlgorithm()).setValue(businessName);
                     return true;
                 }
             }
@@ -71,6 +72,7 @@ public class UpdateEntityFeature extends AbstractUpdateFeature {
                     {
                         Text text=(Text)shape.getGraphicsAlgorithm();
                         pictogramName=text.getValue();
+                        System.out.println("The pictogram name is "+pictogramName);
                     }
                 }
             }

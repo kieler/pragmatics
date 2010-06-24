@@ -2,17 +2,24 @@ package de.cau.cs.kieler.kaom.graphiti.diagram;
 
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.IAddFeature;
+import org.eclipse.graphiti.features.ICopyFeature;
+import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.ICreateFeature;
 import org.eclipse.graphiti.features.IDirectEditingFeature;
+import org.eclipse.graphiti.features.IFeature;
 import org.eclipse.graphiti.features.ILayoutFeature;
 import org.eclipse.graphiti.features.IMoveShapeFeature;
+import org.eclipse.graphiti.features.IPasteFeature;
 import org.eclipse.graphiti.features.IResizeShapeFeature;
 import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.IAddContext;
+import org.eclipse.graphiti.features.context.ICopyContext;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IMoveShapeContext;
+import org.eclipse.graphiti.features.context.IPasteContext;
+import org.eclipse.graphiti.features.context.IPictogramElementContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
@@ -22,11 +29,22 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.ui.features.DefaultFeatureProvider;
 
 import de.cau.cs.kieler.kaom.Entity;
+import de.cau.cs.kieler.kaom.Link;
+import de.cau.cs.kieler.kaom.Port;
+import de.cau.cs.kieler.kaom.Relation;
 import de.cau.cs.kieler.kaom.graphiti.features.AddEntityFeature;
+import de.cau.cs.kieler.kaom.graphiti.features.AddLinkFeature;
+import de.cau.cs.kieler.kaom.graphiti.features.AddPortFeature;
+import de.cau.cs.kieler.kaom.graphiti.features.AddRelationFeature;
+import de.cau.cs.kieler.kaom.graphiti.features.CopyEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.CreateEntityFeature;
+import de.cau.cs.kieler.kaom.graphiti.features.CreateLinkFeature;
+import de.cau.cs.kieler.kaom.graphiti.features.CreatePortFeature;
+import de.cau.cs.kieler.kaom.graphiti.features.CreateRelationFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.DirectEditEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.LayoutEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.MoveEntityFeature;
+import de.cau.cs.kieler.kaom.graphiti.features.PasteEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.RenameEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.ResizeEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.UpdateEntityFeature;
@@ -40,13 +58,20 @@ public class FeatureProvider extends DefaultFeatureProvider {
 
     @Override
     public ICreateFeature[] getCreateFeatures() {
-        return new ICreateFeature[] { new CreateEntityFeature(this) };
+        
+        return new ICreateFeature[] { new CreateEntityFeature(this) ,new CreatePortFeature(this,"Port","Create Port"),new CreateRelationFeature(this,"Relation","Create Relation") };
     }
     
     public IAddFeature getAddFeature(IAddContext context)
     {
         if (context.getNewObject() instanceof Entity)
             return new AddEntityFeature(this);
+        else if (context.getNewObject() instanceof Link) 
+            return new AddLinkFeature(this);        
+        else if (context.getNewObject() instanceof Port)
+            return new AddPortFeature(this);
+        else if (context.getNewObject() instanceof Relation)
+            return new AddRelationFeature(this);
     return super.getAddFeature(context);
         
     }
@@ -117,6 +142,29 @@ public class FeatureProvider extends DefaultFeatureProvider {
         return super.getDirectEditingFeature(context);
     }
         
-    
+    @Override
+    public ICopyFeature getCopyFeature(ICopyContext context) {
+        return new CopyEntityFeature(this);
 
+    }
+    
+    @Override
+    public IPasteFeature getPasteFeature(IPasteContext context) {
+        return new PasteEntityFeature(this);
+    }
+    
+    @Override
+
+    public ICreateConnectionFeature[] getCreateConnectionFeatures() {
+        return new ICreateConnectionFeature[] {new CreateLinkFeature(this)};//,"Link","Create Link") };
+
+    }
+    
+    @Override
+    public IFeature[] getDragAndDropFeatures(IPictogramElementContext context) {
+        return getCreateConnectionFeatures();
+
+    }
+    
+     
 }
