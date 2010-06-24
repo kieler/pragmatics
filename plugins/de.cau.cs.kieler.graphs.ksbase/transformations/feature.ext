@@ -1,0 +1,109 @@
+import graphs;
+
+//Adds a successor to the given node
+Void addSuccessor(Node source): 
+	let target = new Node:
+	connectDirected(source, target) ->
+	source.parent.children.add(target) ->
+	setSelection(target)
+;
+
+//Adds a predecessor to the given node
+Void addPredecessor(Node target):
+	let source = new Node:
+	connectDirected(source, target) ->
+	target.parent.children.add(source) ->
+	setSelection(source)
+;
+
+//Adds a neighbour to the given node
+Void addNeighbour(Node node):
+	let newNode = new Node:
+	connectUndirected(node, newNode) ->
+	node.parent.children.add(newNode) ->
+	setSelection(newNode)
+;
+
+//Connects two nodes with a directed edge
+Void connectDirected(Node source, Node target):
+	let edge = new Edge:
+	edge.setIsDirected(true) ->
+	edge.setSource(source) ->
+	edge.setTarget(target) ->
+	setSelection(edge)
+;
+
+//Connects two nodes with an undirected edge
+Void connectUndirected(Node source, Node target):
+	let edge = new Edge:
+	edge.setIsDirected(false) ->
+	edge.setSource(source) ->
+	edge.setTarget(target) ->
+	setSelection(edge)
+;
+
+//Connects any number of nodes with a hyperedge
+Void connectHyper(List[Node] nodes):
+	let hypernode = new Node:
+	hypernode.setIsHypernode(true) ->
+	nodes.connectUndirectedReverse(hypernode) ->
+	nodes.get(0).parent.children.add(hypernode) ->
+	setSelection(hypernode)
+;
+
+//Flips the direction of an edge
+Void flip(Edge edge):
+	let source = edge.source:
+	let target = edge.target:
+	edge.setSource(target) ->
+	edge.setTarget(source)
+;
+
+//Toggle directed/undirected edge
+Void toggleDirectedUndirected(Edge edge):
+	let directed = edge.isDirected:
+	edge.setIsDirected(!directed)
+;
+
+//Toggle node/hypernode
+Void toggleNodeHyper(Node node):
+	let hypernode = node.isHypernode:
+	node.setIsHypernode(!hypernode)
+;
+
+//Moves any number of nodes into a compound node
+Void encapsulate(List[Node] nodes):
+	let compound = new Node:
+	nodes.get(0).parent.children.add(compound) ->
+	nodes.moveTo(compound) ->
+	setSelection(compound)
+;
+
+Void moveTo(Node node, Node parent):
+	node.parent.children.remove(node) ->
+	parent.children.add(node)
+;
+
+//Connects two nodes with an undirected edge (parameter ordering reversed)
+Void connectUndirectedReverse(Node target, Node source):
+	let edge = new Edge:
+	edge.setIsDirected(false) ->
+	edge.setSource(source) ->
+	edge.setTarget(target) ->
+	setSelection(edge)
+;
+
+//Checks if the node is the root node
+Boolean isNoRootNode(Node node): 
+	node.parent != null
+;
+
+//Checks if the selection is empty
+Boolean isNotEmptySelection(List[Node] nodes):
+	nodes.size > 0 && nodes.get(0).parent != null
+;
+
+//Sets the object that should be selected after the transformation is executed
+Void setSelection(Object object):
+ JAVA de.cau.cs.kieler.ksbase.ui.utils.TransformationUtils.setPostTransformationSelection(java.lang.Object)
+;
