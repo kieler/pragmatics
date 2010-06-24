@@ -2,6 +2,7 @@ package de.cau.cs.kieler.kex.ui.actions;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -33,14 +34,16 @@ public class KEXStartAction implements IWorkbenchWindowActionDelegate {
 			// action has been disposed
 			return;
 		}
-		ImportExampleWizard wizard = new ImportExampleWizard();
+		ISelection selection = workbenchWindow.getSelectionService()
+				.getSelection();
+		ImportExampleWizard wizard = new ImportExampleWizard(
+				(selection instanceof IStructuredSelection) ? (IStructuredSelection) selection
+						: null);
 		Shell parent = workbenchWindow.getShell();
 		WizardDialog dialog = new WizardDialog(parent, wizard);
 		dialog.create();
 		dialog.open();
 	}
-
-	
 
 	/**
 	 * Selection in the workbench has been changed. We can change the state of

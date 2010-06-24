@@ -2,11 +2,9 @@ package de.cau.cs.kieler.kex.ui.wizards.importwizard;
 
 import java.util.List;
 
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.ui.IWorkbench;
 
 import de.cau.cs.kieler.kex.controller.ExampleManager;
 
@@ -14,9 +12,13 @@ public class ImportExampleWizard extends Wizard implements IWizard {
 
 	private OverviewPage overviewPage;
 	private ChooseExamplePage chooseExamplePage;
+	private ImportExamplePage importExamplePage;
+	
+	private IStructuredSelection selection;
 
-	public ImportExampleWizard() {
+	public ImportExampleWizard(IStructuredSelection selection) {
 		super();
+		this.selection = selection;
 		setNeedsProgressMonitor(true);
 		setWindowTitle("Kieler Example Management");
 		// show();
@@ -33,10 +35,12 @@ public class ImportExampleWizard extends Wizard implements IWizard {
 	
 	@Override
 	public void addPages() {
-		overviewPage = new OverviewPage("Overview");
+		overviewPage = new OverviewPage("overviewPage");
 		addPage(overviewPage);
-		chooseExamplePage = new ChooseExamplePage("Choose Example");
+		chooseExamplePage = new ChooseExamplePage("chooseExamplePage");
 		addPage(chooseExamplePage);
+		importExamplePage = new ImportExamplePage("importExamplePage", selection);
+		addPage(importExamplePage);
 	}
 
 	public void show() {
