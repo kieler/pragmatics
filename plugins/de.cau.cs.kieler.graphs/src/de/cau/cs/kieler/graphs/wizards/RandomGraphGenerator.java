@@ -154,8 +154,8 @@ public class RandomGraphGenerator {
         edge.setIsDirected(directed);
         // connect through ports
         if (usePorts) {
-            if (sourceNode.getIsHypernode()) {
-                if (!targetNode.getIsHypernode()) {
+            if (sourceNode.isIsHypernode()) {
+                if (!targetNode.isIsHypernode()) {
                     Port targetPort = factory.createPort();
                     targetNode.getPorts().add(targetPort);
                     edge.setTargetPort(targetPort);
@@ -165,7 +165,7 @@ public class RandomGraphGenerator {
                 Port sourcePort = factory.createPort();
                 sourceNode.getPorts().add(sourcePort);
                 edge.setSourcePort(sourcePort);
-                if (targetNode.getIsHypernode()) {
+                if (targetNode.isIsHypernode()) {
                     edge.setType(EdgeType.PORT2_NODE);
                 } else {
                     Port targetPort = factory.createPort();

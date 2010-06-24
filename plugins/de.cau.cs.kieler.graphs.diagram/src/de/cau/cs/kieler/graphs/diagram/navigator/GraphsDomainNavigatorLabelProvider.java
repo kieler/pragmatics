@@ -17,9 +17,9 @@ public class GraphsDomainNavigatorLabelProvider implements ICommonLabelProvider 
     /**
      * @generated
      */
-    private AdapterFactoryLabelProvider myAdapterFactoryLabelProvider = new AdapterFactoryLabelProvider(
-            GraphsDiagramEditorPlugin.getInstance()
-                    .getItemProvidersAdapterFactory());
+    private AdapterFactoryLabelProvider myAdapterFactoryLabelProvider =
+            new AdapterFactoryLabelProvider(GraphsDiagramEditorPlugin
+                    .getInstance().getItemProvidersAdapterFactory());
 
     /**
      * @generated

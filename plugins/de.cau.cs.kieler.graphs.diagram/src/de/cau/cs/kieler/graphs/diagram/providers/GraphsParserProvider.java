@@ -76,8 +76,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getNodeNodeLabel_5003Parser() {
         if (nodeNodeLabel_5003Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getNode_NodeLabel() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getNode_NodeLabel() };
             MessageFormatParser parser = new MessageFormatParser(features);
             nodeNodeLabel_5003Parser = parser;
         }
@@ -94,8 +95,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getNodeNodeLabel_5002Parser() {
         if (nodeNodeLabel_5002Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getNode_NodeLabel() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getNode_NodeLabel() };
             MessageFormatParser parser = new MessageFormatParser(features);
             nodeNodeLabel_5002Parser = parser;
         }
@@ -112,8 +114,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getPortPortLabel_5001Parser() {
         if (portPortLabel_5001Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getPort_PortLabel() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getPort_PortLabel() };
             MessageFormatParser parser = new MessageFormatParser(features);
             portPortLabel_5001Parser = parser;
         }
@@ -130,8 +133,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeMidLabel_6001Parser() {
         if (edgeMidLabel_6001Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_MidLabel() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_MidLabel() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeMidLabel_6001Parser = parser;
         }
@@ -148,8 +152,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeHeadLabel1_6002Parser() {
         if (edgeHeadLabel1_6002Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_HeadLabel1() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_HeadLabel1() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeHeadLabel1_6002Parser = parser;
         }
@@ -166,8 +171,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeHeadLabel2_6003Parser() {
         if (edgeHeadLabel2_6003Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_HeadLabel2() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_HeadLabel2() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeHeadLabel2_6003Parser = parser;
         }
@@ -184,8 +190,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeTailLabel1_6004Parser() {
         if (edgeTailLabel1_6004Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_TailLabel1() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_TailLabel1() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeTailLabel1_6004Parser = parser;
         }
@@ -202,8 +209,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeTailLabel2_6005Parser() {
         if (edgeTailLabel2_6005Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_TailLabel2() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_TailLabel2() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeTailLabel2_6005Parser = parser;
         }
@@ -220,8 +228,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeMidLabel_6006Parser() {
         if (edgeMidLabel_6006Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_MidLabel() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_MidLabel() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeMidLabel_6006Parser = parser;
         }
@@ -238,8 +247,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeHeadLabel1_6007Parser() {
         if (edgeHeadLabel1_6007Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_HeadLabel1() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_HeadLabel1() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeHeadLabel1_6007Parser = parser;
         }
@@ -256,8 +266,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeHeadLabel2_6008Parser() {
         if (edgeHeadLabel2_6008Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_HeadLabel2() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_HeadLabel2() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeHeadLabel2_6008Parser = parser;
         }
@@ -274,8 +285,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeTailLabel1_6009Parser() {
         if (edgeTailLabel1_6009Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_TailLabel1() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_TailLabel1() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeTailLabel1_6009Parser = parser;
         }
@@ -292,8 +304,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeTailLabel2_6010Parser() {
         if (edgeTailLabel2_6010Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_TailLabel2() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_TailLabel2() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeTailLabel2_6010Parser = parser;
         }
@@ -310,8 +323,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeMidLabel_6011Parser() {
         if (edgeMidLabel_6011Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_MidLabel() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_MidLabel() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeMidLabel_6011Parser = parser;
         }
@@ -328,8 +342,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeHeadLabel1_6012Parser() {
         if (edgeHeadLabel1_6012Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_HeadLabel1() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_HeadLabel1() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeHeadLabel1_6012Parser = parser;
         }
@@ -346,8 +361,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeHeadLabel2_6013Parser() {
         if (edgeHeadLabel2_6013Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_HeadLabel2() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_HeadLabel2() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeHeadLabel2_6013Parser = parser;
         }
@@ -364,8 +380,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeTailLabel1_6014Parser() {
         if (edgeTailLabel1_6014Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_TailLabel1() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_TailLabel1() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeTailLabel1_6014Parser = parser;
         }
@@ -382,8 +399,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeTailLabel2_6015Parser() {
         if (edgeTailLabel2_6015Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_TailLabel2() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_TailLabel2() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeTailLabel2_6015Parser = parser;
         }
@@ -400,8 +418,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeMidLabel_6016Parser() {
         if (edgeMidLabel_6016Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_MidLabel() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_MidLabel() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeMidLabel_6016Parser = parser;
         }
@@ -418,8 +437,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeHeadLabel1_6017Parser() {
         if (edgeHeadLabel1_6017Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_HeadLabel1() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_HeadLabel1() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeHeadLabel1_6017Parser = parser;
         }
@@ -436,8 +456,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeHeadLabel2_6018Parser() {
         if (edgeHeadLabel2_6018Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_HeadLabel2() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_HeadLabel2() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeHeadLabel2_6018Parser = parser;
         }
@@ -454,8 +475,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeTailLabel1_6019Parser() {
         if (edgeTailLabel1_6019Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_TailLabel1() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_TailLabel1() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeTailLabel1_6019Parser = parser;
         }
@@ -472,8 +494,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeTailLabel2_6020Parser() {
         if (edgeTailLabel2_6020Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_TailLabel2() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_TailLabel2() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeTailLabel2_6020Parser = parser;
         }
@@ -490,8 +513,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeMidLabel_6021Parser() {
         if (edgeMidLabel_6021Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_MidLabel() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_MidLabel() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeMidLabel_6021Parser = parser;
         }
@@ -508,8 +532,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeHeadLabel1_6022Parser() {
         if (edgeHeadLabel1_6022Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_HeadLabel1() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_HeadLabel1() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeHeadLabel1_6022Parser = parser;
         }
@@ -526,8 +551,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeHeadLabel2_6023Parser() {
         if (edgeHeadLabel2_6023Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_HeadLabel2() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_HeadLabel2() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeHeadLabel2_6023Parser = parser;
         }
@@ -544,8 +570,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeTailLabel1_6024Parser() {
         if (edgeTailLabel1_6024Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_TailLabel1() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_TailLabel1() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeTailLabel1_6024Parser = parser;
         }
@@ -562,8 +589,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeTailLabel2_6025Parser() {
         if (edgeTailLabel2_6025Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_TailLabel2() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_TailLabel2() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeTailLabel2_6025Parser = parser;
         }
@@ -580,8 +608,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeMidLabel_6026Parser() {
         if (edgeMidLabel_6026Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_MidLabel() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_MidLabel() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeMidLabel_6026Parser = parser;
         }
@@ -598,8 +627,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeHeadLabel1_6027Parser() {
         if (edgeHeadLabel1_6027Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_HeadLabel1() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_HeadLabel1() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeHeadLabel1_6027Parser = parser;
         }
@@ -616,8 +646,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeHeadLabel2_6028Parser() {
         if (edgeHeadLabel2_6028Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_HeadLabel2() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_HeadLabel2() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeHeadLabel2_6028Parser = parser;
         }
@@ -634,8 +665,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeTailLabel1_6029Parser() {
         if (edgeTailLabel1_6029Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_TailLabel1() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_TailLabel1() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeTailLabel1_6029Parser = parser;
         }
@@ -652,8 +684,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeTailLabel2_6030Parser() {
         if (edgeTailLabel2_6030Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_TailLabel2() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_TailLabel2() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeTailLabel2_6030Parser = parser;
         }
@@ -670,8 +703,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeMidLabel_6031Parser() {
         if (edgeMidLabel_6031Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_MidLabel() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_MidLabel() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeMidLabel_6031Parser = parser;
         }
@@ -688,8 +722,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeHeadLabel1_6032Parser() {
         if (edgeHeadLabel1_6032Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_HeadLabel1() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_HeadLabel1() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeHeadLabel1_6032Parser = parser;
         }
@@ -706,8 +741,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeHeadLabel2_6033Parser() {
         if (edgeHeadLabel2_6033Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_HeadLabel2() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_HeadLabel2() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeHeadLabel2_6033Parser = parser;
         }
@@ -724,8 +760,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeTailLabel1_6034Parser() {
         if (edgeTailLabel1_6034Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_TailLabel1() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_TailLabel1() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeTailLabel1_6034Parser = parser;
         }
@@ -742,8 +779,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeTailLabel2_6035Parser() {
         if (edgeTailLabel2_6035Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_TailLabel2() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_TailLabel2() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeTailLabel2_6035Parser = parser;
         }
@@ -760,8 +798,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeMidLabel_6036Parser() {
         if (edgeMidLabel_6036Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_MidLabel() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_MidLabel() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeMidLabel_6036Parser = parser;
         }
@@ -778,8 +817,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeHeadLabel1_6037Parser() {
         if (edgeHeadLabel1_6037Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_HeadLabel1() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_HeadLabel1() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeHeadLabel1_6037Parser = parser;
         }
@@ -796,8 +836,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeHeadLabel2_6038Parser() {
         if (edgeHeadLabel2_6038Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_HeadLabel2() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_HeadLabel2() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeHeadLabel2_6038Parser = parser;
         }
@@ -814,8 +855,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeTailLabel1_6039Parser() {
         if (edgeTailLabel1_6039Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_TailLabel1() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_TailLabel1() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeTailLabel1_6039Parser = parser;
         }
@@ -832,8 +874,9 @@ public class GraphsParserProvider extends AbstractProvider implements
      */
     private IParser getEdgeTailLabel2_6040Parser() {
         if (edgeTailLabel2_6040Parser == null) {
-            EAttribute[] features = new EAttribute[] { GraphsPackage.eINSTANCE
-                    .getEdge_TailLabel2() };
+            EAttribute[] features =
+                    new EAttribute[] { GraphsPackage.eINSTANCE
+                            .getEdge_TailLabel2() };
             MessageFormatParser parser = new MessageFormatParser(features);
             edgeTailLabel2_6040Parser = parser;
         }

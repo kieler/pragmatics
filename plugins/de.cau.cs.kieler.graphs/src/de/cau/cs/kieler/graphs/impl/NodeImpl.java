@@ -34,7 +34,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link de.cau.cs.kieler.graphs.impl.NodeImpl#getNodeLabel <em>Node Label</em>}</li>
- *   <li>{@link de.cau.cs.kieler.graphs.impl.NodeImpl#getIsHypernode <em>Is Hypernode</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.graphs.impl.NodeImpl#isIsHypernode <em>Is Hypernode</em>}</li>
  * </ul>
  * </p>
  *
@@ -62,24 +62,24 @@ public class NodeImpl extends KNodeImpl implements Node {
     protected String nodeLabel = NODE_LABEL_EDEFAULT;
 
     /**
-     * The default value of the '{@link #getIsHypernode() <em>Is Hypernode</em>}' attribute.
+     * The default value of the '{@link #isIsHypernode() <em>Is Hypernode</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #getIsHypernode()
+     * @see #isIsHypernode()
      * @generated
      * @ordered
      */
-    protected static final Boolean IS_HYPERNODE_EDEFAULT = Boolean.FALSE;
+    protected static final boolean IS_HYPERNODE_EDEFAULT = false;
 
     /**
-     * The cached value of the '{@link #getIsHypernode() <em>Is Hypernode</em>}' attribute.
+     * The cached value of the '{@link #isIsHypernode() <em>Is Hypernode</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #getIsHypernode()
+     * @see #isIsHypernode()
      * @generated
      * @ordered
      */
-    protected Boolean isHypernode = IS_HYPERNODE_EDEFAULT;
+    protected boolean isHypernode = IS_HYPERNODE_EDEFAULT;
 
     /**
      * <!-- begin-user-doc -->
@@ -126,7 +126,7 @@ public class NodeImpl extends KNodeImpl implements Node {
      * <!-- end-user-doc -->
      * @generated
      */
-    public Boolean getIsHypernode() {
+    public boolean isIsHypernode() {
         return isHypernode;
     }
 
@@ -135,8 +135,8 @@ public class NodeImpl extends KNodeImpl implements Node {
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setIsHypernode(Boolean newIsHypernode) {
-        Boolean oldIsHypernode = isHypernode;
+    public void setIsHypernode(boolean newIsHypernode) {
+        boolean oldIsHypernode = isHypernode;
         isHypernode = newIsHypernode;
         if (eNotificationRequired())
             eNotify(new ENotificationImpl(this, Notification.SET, GraphsPackage.NODE__IS_HYPERNODE, oldIsHypernode, isHypernode));
@@ -153,7 +153,7 @@ public class NodeImpl extends KNodeImpl implements Node {
             case GraphsPackage.NODE__NODE_LABEL:
                 return getNodeLabel();
             case GraphsPackage.NODE__IS_HYPERNODE:
-                return getIsHypernode();
+                return isIsHypernode();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -205,7 +205,7 @@ public class NodeImpl extends KNodeImpl implements Node {
             case GraphsPackage.NODE__NODE_LABEL:
                 return NODE_LABEL_EDEFAULT == null ? nodeLabel != null : !NODE_LABEL_EDEFAULT.equals(nodeLabel);
             case GraphsPackage.NODE__IS_HYPERNODE:
-                return IS_HYPERNODE_EDEFAULT == null ? isHypernode != null : !IS_HYPERNODE_EDEFAULT.equals(isHypernode);
+                return isHypernode != IS_HYPERNODE_EDEFAULT;
         }
         return super.eIsSet(featureID);
     }

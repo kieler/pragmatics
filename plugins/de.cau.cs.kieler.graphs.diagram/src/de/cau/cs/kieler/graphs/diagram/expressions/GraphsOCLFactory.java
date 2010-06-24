@@ -139,8 +139,9 @@ public class GraphsOCLFactory {
 
                     public Object visitOperationCallExp(OperationCallExp oc) {
                         if (!usesAllInstances) {
-                            usesAllInstances = PredefinedType.ALL_INSTANCES == oc
-                                    .getOperationCode();
+                            usesAllInstances =
+                                    PredefinedType.ALL_INSTANCES == oc
+                                            .getOperationCode();
                             if (usesAllInstances) {
                                 queryToInit
                                         .getExtentMap()

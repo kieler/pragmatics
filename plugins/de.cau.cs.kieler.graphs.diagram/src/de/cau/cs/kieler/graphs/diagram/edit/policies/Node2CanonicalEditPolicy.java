@@ -32,8 +32,9 @@ public class Node2CanonicalEditPolicy extends CanonicalEditPolicy {
     protected List getSemanticChildrenList() {
         View viewObject = (View) getHost().getModel();
         List result = new LinkedList();
-        for (Iterator it = GraphsDiagramUpdater.getNode_2001SemanticChildren(
-                viewObject).iterator(); it.hasNext();) {
+        for (Iterator it =
+                GraphsDiagramUpdater.getNode_2001SemanticChildren(viewObject)
+                        .iterator(); it.hasNext();) {
             result.add(((GraphsNodeDescriptor) it.next()).getModelElement());
         }
         return result;

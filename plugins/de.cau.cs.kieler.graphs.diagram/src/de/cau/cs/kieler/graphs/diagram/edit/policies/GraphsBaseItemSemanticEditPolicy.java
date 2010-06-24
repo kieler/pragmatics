@@ -71,11 +71,13 @@ public class GraphsBaseItemSemanticEditPolicy extends SemanticEditPolicy {
      */
     public Command getCommand(Request request) {
         if (request instanceof ReconnectRequest) {
-            Object view = ((ReconnectRequest) request).getConnectionEditPart()
-                    .getModel();
+            Object view =
+                    ((ReconnectRequest) request).getConnectionEditPart()
+                            .getModel();
             if (view instanceof View) {
-                Integer id = new Integer(GraphsVisualIDRegistry
-                        .getVisualID((View) view));
+                Integer id =
+                        new Integer(GraphsVisualIDRegistry
+                                .getVisualID((View) view));
                 request.getExtendedData().put(VISUAL_ID_KEY, id);
             }
         }
@@ -97,8 +99,8 @@ public class GraphsBaseItemSemanticEditPolicy extends SemanticEditPolicy {
     protected Command getSemanticCommand(IEditCommandRequest request) {
         IEditCommandRequest completedRequest = completeRequest(request);
         Command semanticCommand = getSemanticCommandSwitch(completedRequest);
-        semanticCommand = getEditHelperCommand(completedRequest,
-                semanticCommand);
+        semanticCommand =
+                getEditHelperCommand(completedRequest, semanticCommand);
         if (completedRequest instanceof DestroyRequest) {
             DestroyRequest destroyRequest = (DestroyRequest) completedRequest;
             return shouldProceed(destroyRequest) ? addDeleteViewCommand(
@@ -112,8 +114,9 @@ public class GraphsBaseItemSemanticEditPolicy extends SemanticEditPolicy {
      */
     protected Command addDeleteViewCommand(Command mainCommand,
             DestroyRequest completedRequest) {
-        Command deleteViewCommand = getGEFWrapper(new DeleteCommand(
-                getEditingDomain(), (View) getHost().getModel()));
+        Command deleteViewCommand =
+                getGEFWrapper(new DeleteCommand(getEditingDomain(),
+                        (View) getHost().getModel()));
         return mainCommand == null ? deleteViewCommand : mainCommand
                 .chain(deleteViewCommand);
     }
@@ -124,9 +127,10 @@ public class GraphsBaseItemSemanticEditPolicy extends SemanticEditPolicy {
     private Command getEditHelperCommand(IEditCommandRequest request,
             Command editPolicyCommand) {
         if (editPolicyCommand != null) {
-            ICommand command = editPolicyCommand instanceof ICommandProxy ? ((ICommandProxy) editPolicyCommand)
-                    .getICommand()
-                    : new CommandProxy(editPolicyCommand);
+            ICommand command =
+                    editPolicyCommand instanceof ICommandProxy ? ((ICommandProxy) editPolicyCommand)
+                            .getICommand()
+                            : new CommandProxy(editPolicyCommand);
             request.setParameter(GraphsBaseEditHelper.EDIT_POLICY_COMMAND,
                     command);
         }
@@ -138,8 +142,9 @@ public class GraphsBaseItemSemanticEditPolicy extends SemanticEditPolicy {
         request.setParameter(GraphsBaseEditHelper.CONTEXT_ELEMENT_TYPE, null);
         if (command != null) {
             if (!(command instanceof CompositeTransactionalCommand)) {
-                command = new CompositeTransactionalCommand(getEditingDomain(),
-                        command.getLabel()).compose(command);
+                command =
+                        new CompositeTransactionalCommand(getEditingDomain(),
+                                command.getLabel()).compose(command);
             }
             return new ICommandProxy(command);
         }
@@ -150,8 +155,8 @@ public class GraphsBaseItemSemanticEditPolicy extends SemanticEditPolicy {
      * @generated
      */
     private IElementType getContextElementType(IEditCommandRequest request) {
-        IElementType requestContextElementType = GraphsElementTypes
-                .getElementType(getVisualID(request));
+        IElementType requestContextElementType =
+                GraphsElementTypes.getElementType(getVisualID(request));
         return requestContextElementType != null ? requestContextElementType
                 : myElementType;
     }

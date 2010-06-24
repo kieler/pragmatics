@@ -50,9 +50,10 @@ public class NodeNodeCompartment2CanonicalEditPolicy extends
     protected List getSemanticChildrenList() {
         View viewObject = (View) getHost().getModel();
         List result = new LinkedList();
-        for (Iterator it = GraphsDiagramUpdater
-                .getNodeNodeCompartment_7002SemanticChildren(viewObject)
-                .iterator(); it.hasNext();) {
+        for (Iterator it =
+                GraphsDiagramUpdater
+                        .getNodeNodeCompartment_7002SemanticChildren(viewObject)
+                        .iterator(); it.hasNext();) {
             result.add(((GraphsNodeDescriptor) it.next()).getModelElement());
         }
         return result;
@@ -72,11 +73,13 @@ public class NodeNodeCompartment2CanonicalEditPolicy extends
             EObject domainModelElement = view.getElement();
             if (visualID != GraphsVisualIDRegistry.getNodeVisualID(
                     (View) getHost().getModel(), domainModelElement)) {
-                List createdViews = createViews(Collections
-                        .singletonList(domainModelElement));
+                List createdViews =
+                        createViews(Collections
+                                .singletonList(domainModelElement));
                 assert createdViews.size() == 1;
-                final View createdView = (View) ((IAdaptable) createdViews
-                        .get(0)).getAdapter(View.class);
+                final View createdView =
+                        (View) ((IAdaptable) createdViews.get(0))
+                                .getAdapter(View.class);
                 if (createdView != null) {
                     try {
                         new AbstractEMFOperation(host().getEditingDomain(),

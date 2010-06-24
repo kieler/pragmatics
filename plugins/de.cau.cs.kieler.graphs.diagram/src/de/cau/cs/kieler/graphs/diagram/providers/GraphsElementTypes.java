@@ -62,59 +62,73 @@ public class GraphsElementTypes extends ElementInitializers {
     /**
      * @generated
      */
-    public static final IElementType Node_1000 = getElementType("de.cau.cs.kieler.graphs.diagram.Node_1000"); //$NON-NLS-1$
+    public static final IElementType Node_1000 =
+            getElementType("de.cau.cs.kieler.graphs.diagram.Node_1000"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Node_2001 = getElementType("de.cau.cs.kieler.graphs.diagram.Node_2001"); //$NON-NLS-1$
+    public static final IElementType Node_2001 =
+            getElementType("de.cau.cs.kieler.graphs.diagram.Node_2001"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Node_2002 = getElementType("de.cau.cs.kieler.graphs.diagram.Node_2002"); //$NON-NLS-1$
+    public static final IElementType Node_2002 =
+            getElementType("de.cau.cs.kieler.graphs.diagram.Node_2002"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Node_3001 = getElementType("de.cau.cs.kieler.graphs.diagram.Node_3001"); //$NON-NLS-1$
+    public static final IElementType Node_3001 =
+            getElementType("de.cau.cs.kieler.graphs.diagram.Node_3001"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Port_3002 = getElementType("de.cau.cs.kieler.graphs.diagram.Port_3002"); //$NON-NLS-1$
+    public static final IElementType Port_3002 =
+            getElementType("de.cau.cs.kieler.graphs.diagram.Port_3002"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Node_3003 = getElementType("de.cau.cs.kieler.graphs.diagram.Node_3003"); //$NON-NLS-1$
+    public static final IElementType Node_3003 =
+            getElementType("de.cau.cs.kieler.graphs.diagram.Node_3003"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Edge_4001 = getElementType("de.cau.cs.kieler.graphs.diagram.Edge_4001"); //$NON-NLS-1$
+    public static final IElementType Edge_4001 =
+            getElementType("de.cau.cs.kieler.graphs.diagram.Edge_4001"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Edge_4002 = getElementType("de.cau.cs.kieler.graphs.diagram.Edge_4002"); //$NON-NLS-1$
+    public static final IElementType Edge_4002 =
+            getElementType("de.cau.cs.kieler.graphs.diagram.Edge_4002"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Edge_4003 = getElementType("de.cau.cs.kieler.graphs.diagram.Edge_4003"); //$NON-NLS-1$
+    public static final IElementType Edge_4003 =
+            getElementType("de.cau.cs.kieler.graphs.diagram.Edge_4003"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Edge_4004 = getElementType("de.cau.cs.kieler.graphs.diagram.Edge_4004"); //$NON-NLS-1$
+    public static final IElementType Edge_4004 =
+            getElementType("de.cau.cs.kieler.graphs.diagram.Edge_4004"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Edge_4005 = getElementType("de.cau.cs.kieler.graphs.diagram.Edge_4005"); //$NON-NLS-1$
+    public static final IElementType Edge_4005 =
+            getElementType("de.cau.cs.kieler.graphs.diagram.Edge_4005"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Edge_4006 = getElementType("de.cau.cs.kieler.graphs.diagram.Edge_4006"); //$NON-NLS-1$
+    public static final IElementType Edge_4006 =
+            getElementType("de.cau.cs.kieler.graphs.diagram.Edge_4006"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Edge_4007 = getElementType("de.cau.cs.kieler.graphs.diagram.Edge_4007"); //$NON-NLS-1$
+    public static final IElementType Edge_4007 =
+            getElementType("de.cau.cs.kieler.graphs.diagram.Edge_4007"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Edge_4008 = getElementType("de.cau.cs.kieler.graphs.diagram.Edge_4008"); //$NON-NLS-1$
+    public static final IElementType Edge_4008 =
+            getElementType("de.cau.cs.kieler.graphs.diagram.Edge_4008"); //$NON-NLS-1$
 
     /**
      * @generated
@@ -185,7 +199,8 @@ public class GraphsElementTypes extends ElementInitializers {
         String key = getImageRegistryKey(element);
         Image image = getImageRegistry().get(key);
         if (image == null) {
-            ImageDescriptor imageDescriptor = getProvidedImageDescriptor(element);
+            ImageDescriptor imageDescriptor =
+                    getProvidedImageDescriptor(element);
             if (imageDescriptor == null) {
                 imageDescriptor = ImageDescriptor.getMissingImageDescriptor();
             }

@@ -84,7 +84,8 @@ public class GraphsVisualIDRegistry {
     /**
      * @generated
      */
-    private static final String DEBUG_KEY = "de.cau.cs.kieler.graphs.diagram/debug/visualID"; //$NON-NLS-1$
+    private static final String DEBUG_KEY =
+            "de.cau.cs.kieler.graphs.diagram/debug/visualID"; //$NON-NLS-1$
 
     /**
      * @generated
@@ -227,15 +228,17 @@ public class GraphsVisualIDRegistry {
         if (domainElement == null) {
             return -1;
         }
-        String containerModelID = de.cau.cs.kieler.graphs.diagram.part.GraphsVisualIDRegistry
-                .getModelID(containerView);
+        String containerModelID =
+                de.cau.cs.kieler.graphs.diagram.part.GraphsVisualIDRegistry
+                        .getModelID(containerView);
         if (!NodeEditPart.MODEL_ID.equals(containerModelID)) {
             return -1;
         }
         int containerVisualID;
         if (NodeEditPart.MODEL_ID.equals(containerModelID)) {
-            containerVisualID = de.cau.cs.kieler.graphs.diagram.part.GraphsVisualIDRegistry
-                    .getVisualID(containerView);
+            containerVisualID =
+                    de.cau.cs.kieler.graphs.diagram.part.GraphsVisualIDRegistry
+                            .getVisualID(containerView);
         } else {
             if (containerView instanceof Diagram) {
                 containerVisualID = NodeEditPart.VISUAL_ID;
@@ -302,15 +305,17 @@ public class GraphsVisualIDRegistry {
      * @generated
      */
     public static boolean canCreateNode(View containerView, int nodeVisualID) {
-        String containerModelID = de.cau.cs.kieler.graphs.diagram.part.GraphsVisualIDRegistry
-                .getModelID(containerView);
+        String containerModelID =
+                de.cau.cs.kieler.graphs.diagram.part.GraphsVisualIDRegistry
+                        .getModelID(containerView);
         if (!NodeEditPart.MODEL_ID.equals(containerModelID)) {
             return false;
         }
         int containerVisualID;
         if (NodeEditPart.MODEL_ID.equals(containerModelID)) {
-            containerVisualID = de.cau.cs.kieler.graphs.diagram.part.GraphsVisualIDRegistry
-                    .getVisualID(containerView);
+            containerVisualID =
+                    de.cau.cs.kieler.graphs.diagram.part.GraphsVisualIDRegistry
+                            .getVisualID(containerView);
         } else {
             if (containerView instanceof Diagram) {
                 containerVisualID = NodeEditPart.VISUAL_ID;
@@ -575,9 +580,10 @@ public class GraphsVisualIDRegistry {
      */
     private static boolean isNode_2001(Node domainElement) {
         if (Node_2001_Constraint == null) { // lazy initialization
-            Node_2001_Constraint = GraphsOCLFactory
-                    .getExpression(
-                            "self.isHypernode = false", GraphsPackage.eINSTANCE.getNode()); //$NON-NLS-1$
+            Node_2001_Constraint =
+                    GraphsOCLFactory
+                            .getExpression(
+                                    "self.isHypernode = false", GraphsPackage.eINSTANCE.getNode()); //$NON-NLS-1$
         }
         Object result = Node_2001_Constraint.evaluate(domainElement);
         return result instanceof Boolean && ((Boolean) result).booleanValue();
@@ -588,9 +594,10 @@ public class GraphsVisualIDRegistry {
      */
     private static boolean isNode_2002(Node domainElement) {
         if (Node_2002_Constraint == null) { // lazy initialization
-            Node_2002_Constraint = GraphsOCLFactory
-                    .getExpression(
-                            "self.isHypernode = true", GraphsPackage.eINSTANCE.getNode()); //$NON-NLS-1$
+            Node_2002_Constraint =
+                    GraphsOCLFactory
+                            .getExpression(
+                                    "self.isHypernode = true", GraphsPackage.eINSTANCE.getNode()); //$NON-NLS-1$
         }
         Object result = Node_2002_Constraint.evaluate(domainElement);
         return result instanceof Boolean && ((Boolean) result).booleanValue();
@@ -601,9 +608,10 @@ public class GraphsVisualIDRegistry {
      */
     private static boolean isNode_3001(Node domainElement) {
         if (Node_3001_Constraint == null) { // lazy initialization
-            Node_3001_Constraint = GraphsOCLFactory
-                    .getExpression(
-                            "self.isHypernode = false", GraphsPackage.eINSTANCE.getNode()); //$NON-NLS-1$
+            Node_3001_Constraint =
+                    GraphsOCLFactory
+                            .getExpression(
+                                    "self.isHypernode = false", GraphsPackage.eINSTANCE.getNode()); //$NON-NLS-1$
         }
         Object result = Node_3001_Constraint.evaluate(domainElement);
         return result instanceof Boolean && ((Boolean) result).booleanValue();
@@ -614,9 +622,10 @@ public class GraphsVisualIDRegistry {
      */
     private static boolean isPort_3002(Port domainElement) {
         if (Port_3002_Constraint == null) { // lazy initialization
-            Port_3002_Constraint = GraphsOCLFactory
-                    .getExpression(
-                            "self.node.parent->size() > 0", GraphsPackage.eINSTANCE.getPort()); //$NON-NLS-1$
+            Port_3002_Constraint =
+                    GraphsOCLFactory
+                            .getExpression(
+                                    "self.node.parent->size() > 0", GraphsPackage.eINSTANCE.getPort()); //$NON-NLS-1$
         }
         Object result = Port_3002_Constraint.evaluate(domainElement);
         return result instanceof Boolean && ((Boolean) result).booleanValue();
@@ -627,9 +636,10 @@ public class GraphsVisualIDRegistry {
      */
     private static boolean isNode_3003(Node domainElement) {
         if (Node_3003_Constraint == null) { // lazy initialization
-            Node_3003_Constraint = GraphsOCLFactory
-                    .getExpression(
-                            "self.isHypernode = true", GraphsPackage.eINSTANCE.getNode()); //$NON-NLS-1$
+            Node_3003_Constraint =
+                    GraphsOCLFactory
+                            .getExpression(
+                                    "self.isHypernode = true", GraphsPackage.eINSTANCE.getNode()); //$NON-NLS-1$
         }
         Object result = Node_3003_Constraint.evaluate(domainElement);
         return result instanceof Boolean && ((Boolean) result).booleanValue();
@@ -640,9 +650,10 @@ public class GraphsVisualIDRegistry {
      */
     private static boolean isEdge_4001(Edge domainElement) {
         if (Edge_4001_Constraint == null) { // lazy initialization
-            Edge_4001_Constraint = GraphsOCLFactory
-                    .getExpression(
-                            "self.oclAsType(graphs::Edge).isDirected = true and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Node2Node", GraphsPackage.eINSTANCE.getEdge()); //$NON-NLS-1$
+            Edge_4001_Constraint =
+                    GraphsOCLFactory
+                            .getExpression(
+                                    "self.oclAsType(graphs::Edge).isDirected = true and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Node2Node", GraphsPackage.eINSTANCE.getEdge()); //$NON-NLS-1$
         }
         Object result = Edge_4001_Constraint.evaluate(domainElement);
         return result instanceof Boolean && ((Boolean) result).booleanValue();
@@ -653,9 +664,10 @@ public class GraphsVisualIDRegistry {
      */
     private static boolean isEdge_4002(Edge domainElement) {
         if (Edge_4002_Constraint == null) { // lazy initialization
-            Edge_4002_Constraint = GraphsOCLFactory
-                    .getExpression(
-                            "self.oclAsType(graphs::Edge).isDirected = false and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Node2Node", GraphsPackage.eINSTANCE.getEdge()); //$NON-NLS-1$
+            Edge_4002_Constraint =
+                    GraphsOCLFactory
+                            .getExpression(
+                                    "self.oclAsType(graphs::Edge).isDirected = false and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Node2Node", GraphsPackage.eINSTANCE.getEdge()); //$NON-NLS-1$
         }
         Object result = Edge_4002_Constraint.evaluate(domainElement);
         return result instanceof Boolean && ((Boolean) result).booleanValue();
@@ -666,9 +678,10 @@ public class GraphsVisualIDRegistry {
      */
     private static boolean isEdge_4003(Edge domainElement) {
         if (Edge_4003_Constraint == null) { // lazy initialization
-            Edge_4003_Constraint = GraphsOCLFactory
-                    .getExpression(
-                            "self.oclAsType(graphs::Edge).isDirected = true and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Port2Port", GraphsPackage.eINSTANCE.getEdge()); //$NON-NLS-1$
+            Edge_4003_Constraint =
+                    GraphsOCLFactory
+                            .getExpression(
+                                    "self.oclAsType(graphs::Edge).isDirected = true and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Port2Port", GraphsPackage.eINSTANCE.getEdge()); //$NON-NLS-1$
         }
         Object result = Edge_4003_Constraint.evaluate(domainElement);
         return result instanceof Boolean && ((Boolean) result).booleanValue();
@@ -679,9 +692,10 @@ public class GraphsVisualIDRegistry {
      */
     private static boolean isEdge_4004(Edge domainElement) {
         if (Edge_4004_Constraint == null) { // lazy initialization
-            Edge_4004_Constraint = GraphsOCLFactory
-                    .getExpression(
-                            "self.oclAsType(graphs::Edge).isDirected = false and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Port2Port", GraphsPackage.eINSTANCE.getEdge()); //$NON-NLS-1$
+            Edge_4004_Constraint =
+                    GraphsOCLFactory
+                            .getExpression(
+                                    "self.oclAsType(graphs::Edge).isDirected = false and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Port2Port", GraphsPackage.eINSTANCE.getEdge()); //$NON-NLS-1$
         }
         Object result = Edge_4004_Constraint.evaluate(domainElement);
         return result instanceof Boolean && ((Boolean) result).booleanValue();
@@ -692,9 +706,10 @@ public class GraphsVisualIDRegistry {
      */
     private static boolean isEdge_4005(Edge domainElement) {
         if (Edge_4005_Constraint == null) { // lazy initialization
-            Edge_4005_Constraint = GraphsOCLFactory
-                    .getExpression(
-                            "self.oclAsType(graphs::Edge).isDirected = true and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Port2Node", GraphsPackage.eINSTANCE.getEdge()); //$NON-NLS-1$
+            Edge_4005_Constraint =
+                    GraphsOCLFactory
+                            .getExpression(
+                                    "self.oclAsType(graphs::Edge).isDirected = true and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Port2Node", GraphsPackage.eINSTANCE.getEdge()); //$NON-NLS-1$
         }
         Object result = Edge_4005_Constraint.evaluate(domainElement);
         return result instanceof Boolean && ((Boolean) result).booleanValue();
@@ -705,9 +720,10 @@ public class GraphsVisualIDRegistry {
      */
     private static boolean isEdge_4006(Edge domainElement) {
         if (Edge_4006_Constraint == null) { // lazy initialization
-            Edge_4006_Constraint = GraphsOCLFactory
-                    .getExpression(
-                            "self.oclAsType(graphs::Edge).isDirected = false and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Port2Node", GraphsPackage.eINSTANCE.getEdge()); //$NON-NLS-1$
+            Edge_4006_Constraint =
+                    GraphsOCLFactory
+                            .getExpression(
+                                    "self.oclAsType(graphs::Edge).isDirected = false and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Port2Node", GraphsPackage.eINSTANCE.getEdge()); //$NON-NLS-1$
         }
         Object result = Edge_4006_Constraint.evaluate(domainElement);
         return result instanceof Boolean && ((Boolean) result).booleanValue();
@@ -718,9 +734,10 @@ public class GraphsVisualIDRegistry {
      */
     private static boolean isEdge_4007(Edge domainElement) {
         if (Edge_4007_Constraint == null) { // lazy initialization
-            Edge_4007_Constraint = GraphsOCLFactory
-                    .getExpression(
-                            "self.oclAsType(graphs::Edge).isDirected = true and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Node2Port", GraphsPackage.eINSTANCE.getEdge()); //$NON-NLS-1$
+            Edge_4007_Constraint =
+                    GraphsOCLFactory
+                            .getExpression(
+                                    "self.oclAsType(graphs::Edge).isDirected = true and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Node2Port", GraphsPackage.eINSTANCE.getEdge()); //$NON-NLS-1$
         }
         Object result = Edge_4007_Constraint.evaluate(domainElement);
         return result instanceof Boolean && ((Boolean) result).booleanValue();
@@ -731,9 +748,10 @@ public class GraphsVisualIDRegistry {
      */
     private static boolean isEdge_4008(Edge domainElement) {
         if (Edge_4008_Constraint == null) { // lazy initialization
-            Edge_4008_Constraint = GraphsOCLFactory
-                    .getExpression(
-                            "self.oclAsType(graphs::Edge).isDirected = false and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Node2Port", GraphsPackage.eINSTANCE.getEdge()); //$NON-NLS-1$
+            Edge_4008_Constraint =
+                    GraphsOCLFactory
+                            .getExpression(
+                                    "self.oclAsType(graphs::Edge).isDirected = false and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Node2Port", GraphsPackage.eINSTANCE.getEdge()); //$NON-NLS-1$
         }
         Object result = Edge_4008_Constraint.evaluate(domainElement);
         return result instanceof Boolean && ((Boolean) result).booleanValue();

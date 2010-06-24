@@ -430,11 +430,11 @@ public interface GraphsPackage extends EPackage {
     EAttribute getNode_NodeLabel();
 
     /**
-     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.graphs.Node#getIsHypernode <em>Is Hypernode</em>}'.
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.graphs.Node#isIsHypernode <em>Is Hypernode</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @return the meta object for the attribute '<em>Is Hypernode</em>'.
-     * @see de.cau.cs.kieler.graphs.Node#getIsHypernode()
+     * @see de.cau.cs.kieler.graphs.Node#isIsHypernode()
      * @see #getNode()
      * @generated
      */

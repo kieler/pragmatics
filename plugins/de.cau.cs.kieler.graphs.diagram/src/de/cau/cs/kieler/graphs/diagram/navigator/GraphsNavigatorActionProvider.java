@@ -71,8 +71,8 @@ public class GraphsNavigatorActionProvider extends CommonActionProvider {
         if (!myContribute) {
             return;
         }
-        IStructuredSelection selection = (IStructuredSelection) getContext()
-                .getSelection();
+        IStructuredSelection selection =
+                (IStructuredSelection) getContext().getSelection();
         myOpenDiagramAction.selectionChanged(selection);
         if (myOpenDiagramAction.isEnabled()) {
             actionBars.setGlobalActionHandler(ICommonActionConstants.OPEN,
@@ -117,11 +117,12 @@ public class GraphsNavigatorActionProvider extends CommonActionProvider {
             if (selection.size() == 1) {
                 Object selectedElement = selection.getFirstElement();
                 if (selectedElement instanceof GraphsNavigatorItem) {
-                    selectedElement = ((GraphsNavigatorItem) selectedElement)
-                            .getView();
+                    selectedElement =
+                            ((GraphsNavigatorItem) selectedElement).getView();
                 } else if (selectedElement instanceof IAdaptable) {
-                    selectedElement = ((IAdaptable) selectedElement)
-                            .getAdapter(View.class);
+                    selectedElement =
+                            ((IAdaptable) selectedElement)
+                                    .getAdapter(View.class);
                 }
                 if (selectedElement instanceof Diagram) {
                     Diagram diagram = (Diagram) selectedElement;
@@ -168,8 +169,9 @@ public class GraphsNavigatorActionProvider extends CommonActionProvider {
                 }
             }
             URI uri = EcoreUtil.getURI(myDiagram);
-            String editorName = uri.lastSegment()
-                    + "#" + myDiagram.eResource().getContents().indexOf(myDiagram); //$NON-NLS-1$
+            String editorName =
+                    uri.lastSegment()
+                            + "#" + myDiagram.eResource().getContents().indexOf(myDiagram); //$NON-NLS-1$
             IEditorInput editorInput = new URIEditorInput(uri, editorName);
             return editorInput;
         }

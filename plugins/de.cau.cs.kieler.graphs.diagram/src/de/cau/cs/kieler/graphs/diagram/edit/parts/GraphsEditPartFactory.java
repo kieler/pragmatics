@@ -267,8 +267,9 @@ public class GraphsEditPartFactory implements EditPartFactory {
                 rect.setSize(new Dimension(text.computeSize(rect.width,
                         SWT.DEFAULT)));
             } else {
-                int avr = FigureUtilities.getFontMetrics(text.getFont())
-                        .getAverageCharWidth();
+                int avr =
+                        FigureUtilities.getFontMetrics(text.getFont())
+                                .getAverageCharWidth();
                 rect.setSize(new Dimension(text.computeSize(SWT.DEFAULT,
                         SWT.DEFAULT)).expand(avr * 2, 0));
             }
@@ -309,8 +310,9 @@ public class GraphsEditPartFactory implements EditPartFactory {
             Text text = (Text) celleditor.getControl();
             Rectangle rect = getLabel().getTextBounds().getCopy();
             getLabel().translateToAbsolute(rect);
-            int avr = FigureUtilities.getFontMetrics(text.getFont())
-                    .getAverageCharWidth();
+            int avr =
+                    FigureUtilities.getFontMetrics(text.getFont())
+                            .getAverageCharWidth();
             rect.setSize(new Dimension(text.computeSize(SWT.DEFAULT,
                     SWT.DEFAULT)).expand(avr * 2, 0));
             if (!rect.equals(new Rectangle(text.getBounds()))) {

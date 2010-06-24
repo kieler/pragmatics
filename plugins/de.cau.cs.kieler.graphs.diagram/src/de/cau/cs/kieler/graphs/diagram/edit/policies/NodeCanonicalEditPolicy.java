@@ -74,8 +74,9 @@ public class NodeCanonicalEditPolicy extends CanonicalConnectionEditPolicy {
     protected List getSemanticChildrenList() {
         View viewObject = (View) getHost().getModel();
         List result = new LinkedList();
-        for (Iterator it = GraphsDiagramUpdater.getNode_1000SemanticChildren(
-                viewObject).iterator(); it.hasNext();) {
+        for (Iterator it =
+                GraphsDiagramUpdater.getNode_1000SemanticChildren(viewObject)
+                        .iterator(); it.hasNext();) {
             result.add(((GraphsNodeDescriptor) it.next()).getModelElement());
         }
         return result;
@@ -102,11 +103,13 @@ public class NodeCanonicalEditPolicy extends CanonicalConnectionEditPolicy {
             EObject domainModelElement = view.getElement();
             if (visualID != GraphsVisualIDRegistry.getNodeVisualID(
                     (View) getHost().getModel(), domainModelElement)) {
-                List createdViews = createViews(Collections
-                        .singletonList(domainModelElement));
+                List createdViews =
+                        createViews(Collections
+                                .singletonList(domainModelElement));
                 assert createdViews.size() == 1;
-                final View createdView = (View) ((IAdaptable) createdViews
-                        .get(0)).getAdapter(View.class);
+                final View createdView =
+                        (View) ((IAdaptable) createdViews.get(0))
+                                .getAdapter(View.class);
                 if (createdView != null) {
                     try {
                         new AbstractEMFOperation(host().getEditingDomain(),
@@ -225,8 +228,9 @@ public class NodeCanonicalEditPolicy extends CanonicalConnectionEditPolicy {
 
         if (createdViews.size() > 1) {
             // perform a layout of the container
-            DeferredLayoutCommand layoutCmd = new DeferredLayoutCommand(host()
-                    .getEditingDomain(), createdViews, host());
+            DeferredLayoutCommand layoutCmd =
+                    new DeferredLayoutCommand(host().getEditingDomain(),
+                            createdViews, host());
             executeCommand(new ICommandProxy(layoutCmd));
         }
 
@@ -246,14 +250,14 @@ public class NodeCanonicalEditPolicy extends CanonicalConnectionEditPolicy {
      */
     private Collection refreshConnections() {
         Map domain2NotationMap = new HashMap();
-        Collection linkDescriptors = collectAllLinks(getDiagram(),
-                domain2NotationMap);
+        Collection linkDescriptors =
+                collectAllLinks(getDiagram(), domain2NotationMap);
         Collection existingLinks = new LinkedList(getDiagram().getEdges());
         for (Iterator linksIterator = existingLinks.iterator(); linksIterator
                 .hasNext();) {
             Edge nextDiagramLink = (Edge) linksIterator.next();
-            int diagramLinkVisualID = GraphsVisualIDRegistry
-                    .getVisualID(nextDiagramLink);
+            int diagramLinkVisualID =
+                    GraphsVisualIDRegistry.getVisualID(nextDiagramLink);
             if (diagramLinkVisualID == -1) {
                 if (nextDiagramLink.getSource() != null
                         && nextDiagramLink.getTarget() != null) {
@@ -266,8 +270,8 @@ public class NodeCanonicalEditPolicy extends CanonicalConnectionEditPolicy {
             EObject diagramLinkDst = nextDiagramLink.getTarget().getElement();
             for (Iterator linkDescriptorsIterator = linkDescriptors.iterator(); linkDescriptorsIterator
                     .hasNext();) {
-                GraphsLinkDescriptor nextLinkDescriptor = (GraphsLinkDescriptor) linkDescriptorsIterator
-                        .next();
+                GraphsLinkDescriptor nextLinkDescriptor =
+                        (GraphsLinkDescriptor) linkDescriptorsIterator.next();
                 if (diagramLinkObject == nextLinkDescriptor.getModelElement()
                         && diagramLinkSrc == nextLinkDescriptor.getSource()
                         && diagramLinkDst == nextLinkDescriptor
@@ -469,22 +473,26 @@ public class NodeCanonicalEditPolicy extends CanonicalConnectionEditPolicy {
         List adapters = new LinkedList();
         for (Iterator linkDescriptorsIterator = linkDescriptors.iterator(); linkDescriptorsIterator
                 .hasNext();) {
-            final GraphsLinkDescriptor nextLinkDescriptor = (GraphsLinkDescriptor) linkDescriptorsIterator
-                    .next();
-            EditPart sourceEditPart = getEditPart(nextLinkDescriptor
-                    .getSource(), domain2NotationMap);
-            EditPart targetEditPart = getEditPart(nextLinkDescriptor
-                    .getDestination(), domain2NotationMap);
+            final GraphsLinkDescriptor nextLinkDescriptor =
+                    (GraphsLinkDescriptor) linkDescriptorsIterator.next();
+            EditPart sourceEditPart =
+                    getEditPart(nextLinkDescriptor.getSource(),
+                            domain2NotationMap);
+            EditPart targetEditPart =
+                    getEditPart(nextLinkDescriptor.getDestination(),
+                            domain2NotationMap);
             if (sourceEditPart == null || targetEditPart == null) {
                 continue;
             }
-            CreateConnectionViewRequest.ConnectionViewDescriptor descriptor = new CreateConnectionViewRequest.ConnectionViewDescriptor(
-                    nextLinkDescriptor.getSemanticAdapter(), String
-                            .valueOf(nextLinkDescriptor.getVisualID()),
-                    ViewUtil.APPEND, false, ((IGraphicalEditPart) getHost())
-                            .getDiagramPreferencesHint());
-            CreateConnectionViewRequest ccr = new CreateConnectionViewRequest(
-                    descriptor);
+            CreateConnectionViewRequest.ConnectionViewDescriptor descriptor =
+                    new CreateConnectionViewRequest.ConnectionViewDescriptor(
+                            nextLinkDescriptor.getSemanticAdapter(), String
+                                    .valueOf(nextLinkDescriptor.getVisualID()),
+                            ViewUtil.APPEND, false,
+                            ((IGraphicalEditPart) getHost())
+                                    .getDiagramPreferencesHint());
+            CreateConnectionViewRequest ccr =
+                    new CreateConnectionViewRequest(descriptor);
             ccr.setType(RequestConstants.REQ_CONNECTION_START);
             ccr.setSourceEditPart(sourceEditPart);
             sourceEditPart.getCommand(ccr);

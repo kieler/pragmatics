@@ -75,11 +75,13 @@ public class GraphsDiagramEditorUtil {
     public static boolean openDiagram(Resource diagram)
             throws PartInitException {
         String path = diagram.getURI().toPlatformString(true);
-        IResource workspaceResource = ResourcesPlugin.getWorkspace().getRoot()
-                .findMember(new Path(path));
+        IResource workspaceResource =
+                ResourcesPlugin.getWorkspace().getRoot().findMember(
+                        new Path(path));
         if (workspaceResource instanceof IFile) {
-            IWorkbenchPage page = PlatformUI.getWorkbench()
-                    .getActiveWorkbenchWindow().getActivePage();
+            IWorkbenchPage page =
+                    PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                            .getActivePage();
             return null != page.openEditor(new FileEditorInput(
                     (IFile) workspaceResource), GraphsDiagramEditor.ID);
         }
@@ -135,13 +137,13 @@ public class GraphsDiagramEditorUtil {
      * @generated
      */
     public static void runWizard(Shell shell, Wizard wizard, String settingsKey) {
-        IDialogSettings pluginDialogSettings = GraphsDiagramEditorPlugin
-                .getInstance().getDialogSettings();
-        IDialogSettings wizardDialogSettings = pluginDialogSettings
-                .getSection(settingsKey);
+        IDialogSettings pluginDialogSettings =
+                GraphsDiagramEditorPlugin.getInstance().getDialogSettings();
+        IDialogSettings wizardDialogSettings =
+                pluginDialogSettings.getSection(settingsKey);
         if (wizardDialogSettings == null) {
-            wizardDialogSettings = pluginDialogSettings
-                    .addNewSection(settingsKey);
+            wizardDialogSettings =
+                    pluginDialogSettings.addNewSection(settingsKey);
         }
         wizard.setDialogSettings(wizardDialogSettings);
         WizardDialog dialog = new WizardDialog(shell, wizard);
@@ -157,49 +159,55 @@ public class GraphsDiagramEditorUtil {
      */
     public static Resource createDiagram(URI diagramURI, URI modelURI,
             IProgressMonitor progressMonitor) {
-        TransactionalEditingDomain editingDomain = GMFEditingDomainFactory.INSTANCE
-                .createEditingDomain();
+        TransactionalEditingDomain editingDomain =
+                GMFEditingDomainFactory.INSTANCE.createEditingDomain();
         progressMonitor.beginTask(
                 Messages.GraphsDiagramEditorUtil_CreateDiagramProgressTask, 3);
-        final Resource diagramResource = editingDomain.getResourceSet()
-                .createResource(diagramURI);
-        final Resource modelResource = editingDomain.getResourceSet()
-                .createResource(modelURI);
+        final Resource diagramResource =
+                editingDomain.getResourceSet().createResource(diagramURI);
+        final Resource modelResource =
+                editingDomain.getResourceSet().createResource(modelURI);
         final String diagramName = diagramURI.lastSegment();
-        AbstractTransactionalCommand command = new AbstractTransactionalCommand(
-                editingDomain,
-                Messages.GraphsDiagramEditorUtil_CreateDiagramCommandLabel,
-                Collections.EMPTY_LIST) {
-            protected CommandResult doExecuteWithResult(
-                    IProgressMonitor monitor, IAdaptable info)
-                    throws ExecutionException {
-                Node model = createInitialModel();
-                attachModelToResource(model, modelResource);
+        AbstractTransactionalCommand command =
+                new AbstractTransactionalCommand(
+                        editingDomain,
+                        Messages.GraphsDiagramEditorUtil_CreateDiagramCommandLabel,
+                        Collections.EMPTY_LIST) {
+                    protected CommandResult doExecuteWithResult(
+                            IProgressMonitor monitor, IAdaptable info)
+                            throws ExecutionException {
+                        Node model = createInitialModel();
+                        attachModelToResource(model, modelResource);
 
-                Diagram diagram = ViewService.createDiagram(model,
-                        NodeEditPart.MODEL_ID,
-                        GraphsDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT);
-                if (diagram != null) {
-                    diagramResource.getContents().add(diagram);
-                    diagram.setName(diagramName);
-                    diagram.setElement(model);
-                }
+                        Diagram diagram =
+                                ViewService
+                                        .createDiagram(
+                                                model,
+                                                NodeEditPart.MODEL_ID,
+                                                GraphsDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT);
+                        if (diagram != null) {
+                            diagramResource.getContents().add(diagram);
+                            diagram.setName(diagramName);
+                            diagram.setElement(model);
+                        }
 
-                try {
-                    modelResource
-                            .save(de.cau.cs.kieler.graphs.diagram.part.GraphsDiagramEditorUtil
-                                    .getSaveOptions());
-                    diagramResource
-                            .save(de.cau.cs.kieler.graphs.diagram.part.GraphsDiagramEditorUtil
-                                    .getSaveOptions());
-                } catch (IOException e) {
+                        try {
+                            modelResource
+                                    .save(de.cau.cs.kieler.graphs.diagram.part.GraphsDiagramEditorUtil
+                                            .getSaveOptions());
+                            diagramResource
+                                    .save(de.cau.cs.kieler.graphs.diagram.part.GraphsDiagramEditorUtil
+                                            .getSaveOptions());
+                        } catch (IOException e) {
 
-                    GraphsDiagramEditorPlugin.getInstance().logError(
-                            "Unable to store model and diagram resources", e); //$NON-NLS-1$
-                }
-                return CommandResult.newOKCommandResult();
-            }
-        };
+                            GraphsDiagramEditorPlugin
+                                    .getInstance()
+                                    .logError(
+                                            "Unable to store model and diagram resources", e); //$NON-NLS-1$
+                        }
+                        return CommandResult.newOKCommandResult();
+                    }
+                };
         try {
             OperationHistoryFactory.getOperationHistory().execute(command,
                     new SubProgressMonitor(progressMonitor, 1), null);
@@ -260,13 +268,13 @@ public class GraphsDiagramEditorUtil {
      */
     private static int findElementsInDiagramByID(DiagramEditPart diagramPart,
             EObject element, List editPartCollector) {
-        IDiagramGraphicalViewer viewer = (IDiagramGraphicalViewer) diagramPart
-                .getViewer();
+        IDiagramGraphicalViewer viewer =
+                (IDiagramGraphicalViewer) diagramPart.getViewer();
         final int intialNumOfEditParts = editPartCollector.size();
 
         if (element instanceof View) { // support notation element lookup
-            EditPart editPart = (EditPart) viewer.getEditPartRegistry().get(
-                    element);
+            EditPart editPart =
+                    (EditPart) viewer.getEditPartRegistry().get(element);
             if (editPart != null) {
                 editPartCollector.add(editPart);
                 return 1;
@@ -274,8 +282,9 @@ public class GraphsDiagramEditorUtil {
         }
 
         String elementID = EMFCoreUtil.getProxyID(element);
-        List associatedParts = viewer.findEditPartsForElement(elementID,
-                IGraphicalEditPart.class);
+        List associatedParts =
+                viewer.findEditPartsForElement(elementID,
+                        IGraphicalEditPart.class);
         // perform the possible hierarchy disjoint -> take the top-most parts only
         for (Iterator editPartIt = associatedParts.iterator(); editPartIt
                 .hasNext();) {
@@ -309,22 +318,25 @@ public class GraphsDiagramEditorUtil {
             EObject targetElement, LazyElement2ViewMap lazyElement2ViewMap) {
         boolean hasStructuralURI = false;
         if (targetElement.eResource() instanceof XMLResource) {
-            hasStructuralURI = ((XMLResource) targetElement.eResource())
-                    .getID(targetElement) == null;
+            hasStructuralURI =
+                    ((XMLResource) targetElement.eResource())
+                            .getID(targetElement) == null;
         }
 
         View view = null;
         if (hasStructuralURI
                 && !lazyElement2ViewMap.getElement2ViewMap().isEmpty()) {
-            view = (View) lazyElement2ViewMap.getElement2ViewMap().get(
-                    targetElement);
+            view =
+                    (View) lazyElement2ViewMap.getElement2ViewMap().get(
+                            targetElement);
         } else if (findElementsInDiagramByID(diagramEditPart, targetElement,
                 lazyElement2ViewMap.editPartTmpHolder) > 0) {
-            EditPart editPart = (EditPart) lazyElement2ViewMap.editPartTmpHolder
-                    .get(0);
+            EditPart editPart =
+                    (EditPart) lazyElement2ViewMap.editPartTmpHolder.get(0);
             lazyElement2ViewMap.editPartTmpHolder.clear();
-            view = editPart.getModel() instanceof View ? (View) editPart
-                    .getModel() : null;
+            view =
+                    editPart.getModel() instanceof View ? (View) editPart
+                            .getModel() : null;
         }
 
         return (view == null) ? diagramEditPart.getDiagramView() : view;

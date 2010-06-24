@@ -26,7 +26,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
  * The following features are supported:
  * <ul>
  *   <li>{@link de.cau.cs.kieler.graphs.Node#getNodeLabel <em>Node Label</em>}</li>
- *   <li>{@link de.cau.cs.kieler.graphs.Node#getIsHypernode <em>Is Hypernode</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.graphs.Node#isIsHypernode <em>Is Hypernode</em>}</li>
  * </ul>
  * </p>
  *
@@ -71,21 +71,21 @@ public interface Node extends KNode {
      * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Is Hypernode</em>' attribute.
-     * @see #setIsHypernode(Boolean)
+     * @see #setIsHypernode(boolean)
      * @see de.cau.cs.kieler.graphs.GraphsPackage#getNode_IsHypernode()
      * @model default="false" required="true"
      * @generated
      */
-    Boolean getIsHypernode();
+    boolean isIsHypernode();
 
     /**
-     * Sets the value of the '{@link de.cau.cs.kieler.graphs.Node#getIsHypernode <em>Is Hypernode</em>}' attribute.
+     * Sets the value of the '{@link de.cau.cs.kieler.graphs.Node#isIsHypernode <em>Is Hypernode</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @param value the new value of the '<em>Is Hypernode</em>' attribute.
-     * @see #getIsHypernode()
+     * @see #isIsHypernode()
      * @generated
      */
-    void setIsHypernode(Boolean value);
+    void setIsHypernode(boolean value);
 
 } // Node

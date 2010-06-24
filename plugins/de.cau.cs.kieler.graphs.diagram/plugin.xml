@@ -218,9 +218,11 @@
       <?gmfgen generated="true"?>
       <viewProvider class="de.cau.cs.kieler.graphs.diagram.providers.GraphsViewProvider">
          <Priority name="Lowest"/>
+		 
          <context viewClass="org.eclipse.gmf.runtime.notation.Diagram" semanticHints="Graphs"/>
-         <context viewClass="org.eclipse.gmf.runtime.notation.Node" semanticHints="2001,2002,3001,3002,3003"/>
-         <context viewClass="org.eclipse.gmf.runtime.notation.Edge" semanticHints="4001,4002,4003,4004,4005,4006,4007,4008"/>
+         <context viewClass="org.eclipse.gmf.runtime.notation.Node" semanticHints=""/>
+         <context viewClass="org.eclipse.gmf.runtime.notation.Edge" semanticHints=""/>
+         
       </viewProvider>
    </extension>
 

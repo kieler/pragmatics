@@ -112,8 +112,8 @@ public class PortPortLabelEditPart extends LabelEditPart implements
     public IBorderItemLocator getBorderItemLocator() {
         IFigure parentFigure = getFigure().getParent();
         if (parentFigure != null && parentFigure.getLayoutManager() != null) {
-            Object constraint = parentFigure.getLayoutManager().getConstraint(
-                    getFigure());
+            Object constraint =
+                    parentFigure.getLayoutManager().getConstraint(getFigure());
             return (IBorderItemLocator) constraint;
         }
         return null;
@@ -123,14 +123,18 @@ public class PortPortLabelEditPart extends LabelEditPart implements
      * @generated
      */
     public void refreshBounds() {
-        int x = ((Integer) getStructuralFeatureValue(NotationPackage.eINSTANCE
-                .getLocation_X())).intValue();
-        int y = ((Integer) getStructuralFeatureValue(NotationPackage.eINSTANCE
-                .getLocation_Y())).intValue();
-        int width = ((Integer) getStructuralFeatureValue(NotationPackage.eINSTANCE
-                .getSize_Width())).intValue();
-        int height = ((Integer) getStructuralFeatureValue(NotationPackage.eINSTANCE
-                .getSize_Height())).intValue();
+        int x =
+                ((Integer) getStructuralFeatureValue(NotationPackage.eINSTANCE
+                        .getLocation_X())).intValue();
+        int y =
+                ((Integer) getStructuralFeatureValue(NotationPackage.eINSTANCE
+                        .getLocation_Y())).intValue();
+        int width =
+                ((Integer) getStructuralFeatureValue(NotationPackage.eINSTANCE
+                        .getSize_Width())).intValue();
+        int height =
+                ((Integer) getStructuralFeatureValue(NotationPackage.eINSTANCE
+                        .getSize_Height())).intValue();
         getBorderItemLocator()
                 .setConstraint(new Rectangle(x, y, width, height));
     }
@@ -225,9 +229,10 @@ public class PortPortLabelEditPart extends LabelEditPart implements
         String text = null;
         EObject parserElement = getParserElement();
         if (parserElement != null && getParser() != null) {
-            text = getParser().getPrintString(
-                    new EObjectAdapter(parserElement),
-                    getParserOptions().intValue());
+            text =
+                    getParser().getPrintString(
+                            new EObjectAdapter(parserElement),
+                            getParserOptions().intValue());
         }
         if (text == null || text.length() == 0) {
             text = defaultText;
@@ -280,15 +285,19 @@ public class PortPortLabelEditPart extends LabelEditPart implements
                     final EObject element = getParserElement();
                     final IParser parser = getParser();
                     try {
-                        IParserEditStatus valid = (IParserEditStatus) getEditingDomain()
-                                .runExclusive(new RunnableWithResult.Impl() {
+                        IParserEditStatus valid =
+                                (IParserEditStatus) getEditingDomain()
+                                        .runExclusive(
+                                                new RunnableWithResult.Impl() {
 
-                                    public void run() {
-                                        setResult(parser.isValidEditString(
-                                                new EObjectAdapter(element),
-                                                (String) value));
-                                    }
-                                });
+                                                    public void run() {
+                                                        setResult(parser
+                                                                .isValidEditString(
+                                                                        new EObjectAdapter(
+                                                                                element),
+                                                                        (String) value));
+                                                    }
+                                                });
                         return valid.getCode() == ParserEditStatus.EDITABLE ? null
                                 : valid.getMessage();
                     } catch (InterruptedException ie) {
@@ -325,12 +334,13 @@ public class PortPortLabelEditPart extends LabelEditPart implements
      */
     public IParser getParser() {
         if (parser == null) {
-            parser = GraphsParserProvider
-                    .getParser(
-                            GraphsElementTypes.Port_3002,
-                            getParserElement(),
-                            GraphsVisualIDRegistry
-                                    .getType(de.cau.cs.kieler.graphs.diagram.edit.parts.PortPortLabelEditPart.VISUAL_ID));
+            parser =
+                    GraphsParserProvider
+                            .getParser(
+                                    GraphsElementTypes.Port_3002,
+                                    getParserElement(),
+                                    GraphsVisualIDRegistry
+                                            .getType(de.cau.cs.kieler.graphs.diagram.edit.parts.PortPortLabelEditPart.VISUAL_ID));
         }
         return parser;
     }
@@ -396,14 +406,16 @@ public class PortPortLabelEditPart extends LabelEditPart implements
                                 .getExtendedData()
                                 .get(
                                         RequestConstants.REQ_DIRECTEDIT_EXTENDEDDATA_INITIAL_CHAR) instanceof Character) {
-                            Character initialChar = (Character) theRequest
-                                    .getExtendedData()
-                                    .get(
-                                            RequestConstants.REQ_DIRECTEDIT_EXTENDEDDATA_INITIAL_CHAR);
+                            Character initialChar =
+                                    (Character) theRequest
+                                            .getExtendedData()
+                                            .get(
+                                                    RequestConstants.REQ_DIRECTEDIT_EXTENDEDDATA_INITIAL_CHAR);
                             performDirectEdit(initialChar.charValue());
                         } else if ((theRequest instanceof DirectEditRequest)
                                 && (getEditText().equals(getLabelText()))) {
-                            DirectEditRequest editRequest = (DirectEditRequest) theRequest;
+                            DirectEditRequest editRequest =
+                                    (DirectEditRequest) theRequest;
                             performDirectEdit(editRequest.getLocation());
                         } else {
                             performDirectEdit();
@@ -448,8 +460,9 @@ public class PortPortLabelEditPart extends LabelEditPart implements
      * @generated
      */
     protected void refreshUnderline() {
-        FontStyle style = (FontStyle) getFontStyleOwnerView().getStyle(
-                NotationPackage.eINSTANCE.getFontStyle());
+        FontStyle style =
+                (FontStyle) getFontStyleOwnerView().getStyle(
+                        NotationPackage.eINSTANCE.getFontStyle());
         if (style != null && getFigure() instanceof WrappingLabel) {
             ((WrappingLabel) getFigure()).setTextUnderline(style.isUnderline());
         }
@@ -459,8 +472,9 @@ public class PortPortLabelEditPart extends LabelEditPart implements
      * @generated
      */
     protected void refreshStrikeThrough() {
-        FontStyle style = (FontStyle) getFontStyleOwnerView().getStyle(
-                NotationPackage.eINSTANCE.getFontStyle());
+        FontStyle style =
+                (FontStyle) getFontStyleOwnerView().getStyle(
+                        NotationPackage.eINSTANCE.getFontStyle());
         if (style != null && getFigure() instanceof WrappingLabel) {
             ((WrappingLabel) getFigure()).setTextStrikeThrough(style
                     .isStrikeThrough());
@@ -471,12 +485,15 @@ public class PortPortLabelEditPart extends LabelEditPart implements
      * @generated
      */
     protected void refreshFont() {
-        FontStyle style = (FontStyle) getFontStyleOwnerView().getStyle(
-                NotationPackage.eINSTANCE.getFontStyle());
+        FontStyle style =
+                (FontStyle) getFontStyleOwnerView().getStyle(
+                        NotationPackage.eINSTANCE.getFontStyle());
         if (style != null) {
-            FontData fontData = new FontData(style.getFontName(), style
-                    .getFontHeight(), (style.isBold() ? SWT.BOLD : SWT.NORMAL)
-                    | (style.isItalic() ? SWT.ITALIC : SWT.NORMAL));
+            FontData fontData =
+                    new FontData(style.getFontName(), style.getFontHeight(),
+                            (style.isBold() ? SWT.BOLD : SWT.NORMAL)
+                                    | (style.isItalic() ? SWT.ITALIC
+                                            : SWT.NORMAL));
             setFont(fontData);
         }
     }
@@ -494,8 +511,9 @@ public class PortPortLabelEditPart extends LabelEditPart implements
     protected void addSemanticListeners() {
         if (getParser() instanceof ISemanticParser) {
             EObject element = resolveSemanticElement();
-            parserElements = ((ISemanticParser) getParser())
-                    .getSemanticElementsBeingParsed(element);
+            parserElements =
+                    ((ISemanticParser) getParser())
+                            .getSemanticElementsBeingParsed(element);
             for (int i = 0; i < parserElements.size(); i++) {
                 addListenerFilter(
                         "SemanticModel" + i, this, (EObject) parserElements.get(i)); //$NON-NLS-1$

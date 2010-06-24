@@ -17,15 +17,16 @@ public class GraphsDomainNavigatorItem extends PlatformObject {
      * @generated
      */
     static {
-        final Class[] supportedTypes = new Class[] { EObject.class,
-                IPropertySource.class };
+        final Class[] supportedTypes =
+                new Class[] { EObject.class, IPropertySource.class };
         Platform.getAdapterManager().registerAdapters(
                 new IAdapterFactory() {
 
                     public Object getAdapter(Object adaptableObject,
                             Class adapterType) {
                         if (adaptableObject instanceof de.cau.cs.kieler.graphs.diagram.navigator.GraphsDomainNavigatorItem) {
-                            de.cau.cs.kieler.graphs.diagram.navigator.GraphsDomainNavigatorItem domainNavigatorItem = (de.cau.cs.kieler.graphs.diagram.navigator.GraphsDomainNavigatorItem) adaptableObject;
+                            de.cau.cs.kieler.graphs.diagram.navigator.GraphsDomainNavigatorItem domainNavigatorItem =
+                                    (de.cau.cs.kieler.graphs.diagram.navigator.GraphsDomainNavigatorItem) adaptableObject;
                             EObject eObject = domainNavigatorItem.getEObject();
                             if (adapterType == EObject.class) {
                                 return eObject;

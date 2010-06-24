@@ -158,8 +158,8 @@ public class GraphsNavigatorLabelProvider extends LabelProvider implements
      * @generated
      */
     private Image getImage(String key, IElementType elementType) {
-        ImageRegistry imageRegistry = GraphsDiagramEditorPlugin.getInstance()
-                .getImageRegistry();
+        ImageRegistry imageRegistry =
+                GraphsDiagramEditorPlugin.getInstance().getImageRegistry();
         Image image = imageRegistry.get(key);
         if (image == null && elementType != null
                 && GraphsElementTypes.isKnownElementType(elementType)) {
@@ -252,10 +252,11 @@ public class GraphsNavigatorLabelProvider extends LabelProvider implements
      * @generated
      */
     private String getNode_2001Text(View view) {
-        IParser parser = GraphsParserProvider.getParser(
-                GraphsElementTypes.Node_2001, view.getElement() != null ? view
-                        .getElement() : view, GraphsVisualIDRegistry
-                        .getType(NodeNodeLabelEditPart.VISUAL_ID));
+        IParser parser =
+                GraphsParserProvider.getParser(GraphsElementTypes.Node_2001,
+                        view.getElement() != null ? view.getElement() : view,
+                        GraphsVisualIDRegistry
+                                .getType(NodeNodeLabelEditPart.VISUAL_ID));
         if (parser != null) {
             return parser.getPrintString(new EObjectAdapter(
                     view.getElement() != null ? view.getElement() : view),
@@ -285,10 +286,11 @@ public class GraphsNavigatorLabelProvider extends LabelProvider implements
      * @generated
      */
     private String getNode_3001Text(View view) {
-        IParser parser = GraphsParserProvider.getParser(
-                GraphsElementTypes.Node_3001, view.getElement() != null ? view
-                        .getElement() : view, GraphsVisualIDRegistry
-                        .getType(NodeNodeLabel2EditPart.VISUAL_ID));
+        IParser parser =
+                GraphsParserProvider.getParser(GraphsElementTypes.Node_3001,
+                        view.getElement() != null ? view.getElement() : view,
+                        GraphsVisualIDRegistry
+                                .getType(NodeNodeLabel2EditPart.VISUAL_ID));
         if (parser != null) {
             return parser.getPrintString(new EObjectAdapter(
                     view.getElement() != null ? view.getElement() : view),
@@ -304,10 +306,11 @@ public class GraphsNavigatorLabelProvider extends LabelProvider implements
      * @generated
      */
     private String getPort_3002Text(View view) {
-        IParser parser = GraphsParserProvider.getParser(
-                GraphsElementTypes.Port_3002, view.getElement() != null ? view
-                        .getElement() : view, GraphsVisualIDRegistry
-                        .getType(PortPortLabelEditPart.VISUAL_ID));
+        IParser parser =
+                GraphsParserProvider.getParser(GraphsElementTypes.Port_3002,
+                        view.getElement() != null ? view.getElement() : view,
+                        GraphsVisualIDRegistry
+                                .getType(PortPortLabelEditPart.VISUAL_ID));
         if (parser != null) {
             return parser.getPrintString(new EObjectAdapter(
                     view.getElement() != null ? view.getElement() : view),
@@ -337,10 +340,11 @@ public class GraphsNavigatorLabelProvider extends LabelProvider implements
      * @generated
      */
     private String getEdge_4001Text(View view) {
-        IParser parser = GraphsParserProvider.getParser(
-                GraphsElementTypes.Edge_4001, view.getElement() != null ? view
-                        .getElement() : view, GraphsVisualIDRegistry
-                        .getType(EdgeMidLabelEditPart.VISUAL_ID));
+        IParser parser =
+                GraphsParserProvider.getParser(GraphsElementTypes.Edge_4001,
+                        view.getElement() != null ? view.getElement() : view,
+                        GraphsVisualIDRegistry
+                                .getType(EdgeMidLabelEditPart.VISUAL_ID));
         if (parser != null) {
             return parser.getPrintString(new EObjectAdapter(
                     view.getElement() != null ? view.getElement() : view),
@@ -356,10 +360,11 @@ public class GraphsNavigatorLabelProvider extends LabelProvider implements
      * @generated
      */
     private String getEdge_4002Text(View view) {
-        IParser parser = GraphsParserProvider.getParser(
-                GraphsElementTypes.Edge_4002, view.getElement() != null ? view
-                        .getElement() : view, GraphsVisualIDRegistry
-                        .getType(EdgeMidLabel2EditPart.VISUAL_ID));
+        IParser parser =
+                GraphsParserProvider.getParser(GraphsElementTypes.Edge_4002,
+                        view.getElement() != null ? view.getElement() : view,
+                        GraphsVisualIDRegistry
+                                .getType(EdgeMidLabel2EditPart.VISUAL_ID));
         if (parser != null) {
             return parser.getPrintString(new EObjectAdapter(
                     view.getElement() != null ? view.getElement() : view),
@@ -375,10 +380,11 @@ public class GraphsNavigatorLabelProvider extends LabelProvider implements
      * @generated
      */
     private String getEdge_4003Text(View view) {
-        IParser parser = GraphsParserProvider.getParser(
-                GraphsElementTypes.Edge_4003, view.getElement() != null ? view
-                        .getElement() : view, GraphsVisualIDRegistry
-                        .getType(EdgeMidLabel3EditPart.VISUAL_ID));
+        IParser parser =
+                GraphsParserProvider.getParser(GraphsElementTypes.Edge_4003,
+                        view.getElement() != null ? view.getElement() : view,
+                        GraphsVisualIDRegistry
+                                .getType(EdgeMidLabel3EditPart.VISUAL_ID));
         if (parser != null) {
             return parser.getPrintString(new EObjectAdapter(
                     view.getElement() != null ? view.getElement() : view),
@@ -394,10 +400,11 @@ public class GraphsNavigatorLabelProvider extends LabelProvider implements
      * @generated
      */
     private String getEdge_4004Text(View view) {
-        IParser parser = GraphsParserProvider.getParser(
-                GraphsElementTypes.Edge_4004, view.getElement() != null ? view
-                        .getElement() : view, GraphsVisualIDRegistry
-                        .getType(EdgeMidLabel4EditPart.VISUAL_ID));
+        IParser parser =
+                GraphsParserProvider.getParser(GraphsElementTypes.Edge_4004,
+                        view.getElement() != null ? view.getElement() : view,
+                        GraphsVisualIDRegistry
+                                .getType(EdgeMidLabel4EditPart.VISUAL_ID));
         if (parser != null) {
             return parser.getPrintString(new EObjectAdapter(
                     view.getElement() != null ? view.getElement() : view),
@@ -413,10 +420,11 @@ public class GraphsNavigatorLabelProvider extends LabelProvider implements
      * @generated
      */
     private String getEdge_4005Text(View view) {
-        IParser parser = GraphsParserProvider.getParser(
-                GraphsElementTypes.Edge_4005, view.getElement() != null ? view
-                        .getElement() : view, GraphsVisualIDRegistry
-                        .getType(EdgeMidLabel5EditPart.VISUAL_ID));
+        IParser parser =
+                GraphsParserProvider.getParser(GraphsElementTypes.Edge_4005,
+                        view.getElement() != null ? view.getElement() : view,
+                        GraphsVisualIDRegistry
+                                .getType(EdgeMidLabel5EditPart.VISUAL_ID));
         if (parser != null) {
             return parser.getPrintString(new EObjectAdapter(
                     view.getElement() != null ? view.getElement() : view),
@@ -432,10 +440,11 @@ public class GraphsNavigatorLabelProvider extends LabelProvider implements
      * @generated
      */
     private String getEdge_4006Text(View view) {
-        IParser parser = GraphsParserProvider.getParser(
-                GraphsElementTypes.Edge_4006, view.getElement() != null ? view
-                        .getElement() : view, GraphsVisualIDRegistry
-                        .getType(EdgeMidLabel6EditPart.VISUAL_ID));
+        IParser parser =
+                GraphsParserProvider.getParser(GraphsElementTypes.Edge_4006,
+                        view.getElement() != null ? view.getElement() : view,
+                        GraphsVisualIDRegistry
+                                .getType(EdgeMidLabel6EditPart.VISUAL_ID));
         if (parser != null) {
             return parser.getPrintString(new EObjectAdapter(
                     view.getElement() != null ? view.getElement() : view),
@@ -451,10 +460,11 @@ public class GraphsNavigatorLabelProvider extends LabelProvider implements
      * @generated
      */
     private String getEdge_4007Text(View view) {
-        IParser parser = GraphsParserProvider.getParser(
-                GraphsElementTypes.Edge_4007, view.getElement() != null ? view
-                        .getElement() : view, GraphsVisualIDRegistry
-                        .getType(EdgeMidLabel7EditPart.VISUAL_ID));
+        IParser parser =
+                GraphsParserProvider.getParser(GraphsElementTypes.Edge_4007,
+                        view.getElement() != null ? view.getElement() : view,
+                        GraphsVisualIDRegistry
+                                .getType(EdgeMidLabel7EditPart.VISUAL_ID));
         if (parser != null) {
             return parser.getPrintString(new EObjectAdapter(
                     view.getElement() != null ? view.getElement() : view),
@@ -470,10 +480,11 @@ public class GraphsNavigatorLabelProvider extends LabelProvider implements
      * @generated
      */
     private String getEdge_4008Text(View view) {
-        IParser parser = GraphsParserProvider.getParser(
-                GraphsElementTypes.Edge_4008, view.getElement() != null ? view
-                        .getElement() : view, GraphsVisualIDRegistry
-                        .getType(EdgeMidLabel8EditPart.VISUAL_ID));
+        IParser parser =
+                GraphsParserProvider.getParser(GraphsElementTypes.Edge_4008,
+                        view.getElement() != null ? view.getElement() : view,
+                        GraphsVisualIDRegistry
+                                .getType(EdgeMidLabel8EditPart.VISUAL_ID));
         if (parser != null) {
             return parser.getPrintString(new EObjectAdapter(
                     view.getElement() != null ? view.getElement() : view),

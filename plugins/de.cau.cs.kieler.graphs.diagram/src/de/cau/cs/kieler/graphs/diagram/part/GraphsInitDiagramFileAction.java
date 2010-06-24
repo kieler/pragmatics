@@ -52,10 +52,11 @@ public class GraphsInitDiagramFileAction implements IObjectActionDelegate {
                 || selection.isEmpty()) {
             return;
         }
-        IFile file = (IFile) ((IStructuredSelection) selection)
-                .getFirstElement();
-        domainModelURI = URI.createPlatformResourceURI(file.getFullPath()
-                .toString(), true);
+        IFile file =
+                (IFile) ((IStructuredSelection) selection).getFirstElement();
+        domainModelURI =
+                URI.createPlatformResourceURI(file.getFullPath().toString(),
+                        true);
         action.setEnabled(true);
     }
 
@@ -70,8 +71,8 @@ public class GraphsInitDiagramFileAction implements IObjectActionDelegate {
      * @generated
      */
     public void run(IAction action) {
-        TransactionalEditingDomain editingDomain = GMFEditingDomainFactory.INSTANCE
-                .createEditingDomain();
+        TransactionalEditingDomain editingDomain =
+                GMFEditingDomainFactory.INSTANCE.createEditingDomain();
         ResourceSet resourceSet = editingDomain.getResourceSet();
         EObject diagramRoot = null;
         try {
@@ -87,8 +88,9 @@ public class GraphsInitDiagramFileAction implements IObjectActionDelegate {
                     Messages.InitDiagramFile_ResourceErrorDialogMessage);
             return;
         }
-        Wizard wizard = new GraphsNewDiagramFileWizard(domainModelURI,
-                diagramRoot, editingDomain);
+        Wizard wizard =
+                new GraphsNewDiagramFileWizard(domainModelURI, diagramRoot,
+                        editingDomain);
         wizard.setWindowTitle(NLS.bind(Messages.InitDiagramFile_WizardTitle,
                 NodeEditPart.MODEL_ID));
         GraphsDiagramEditorUtil

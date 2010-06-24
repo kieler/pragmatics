@@ -71,8 +71,8 @@ public class GraphsDiagramUpdater {
         List result = new LinkedList();
         for (Iterator it = modelElement.getPorts().iterator(); it.hasNext();) {
             KPort childElement = (KPort) it.next();
-            int visualID = GraphsVisualIDRegistry.getNodeVisualID(view,
-                    childElement);
+            int visualID =
+                    GraphsVisualIDRegistry.getNodeVisualID(view, childElement);
             if (visualID == PortEditPart.VISUAL_ID) {
                 result.add(new GraphsNodeDescriptor(childElement, visualID));
                 continue;
@@ -92,8 +92,8 @@ public class GraphsDiagramUpdater {
         List result = new LinkedList();
         for (Iterator it = modelElement.getPorts().iterator(); it.hasNext();) {
             KPort childElement = (KPort) it.next();
-            int visualID = GraphsVisualIDRegistry.getNodeVisualID(view,
-                    childElement);
+            int visualID =
+                    GraphsVisualIDRegistry.getNodeVisualID(view, childElement);
             if (visualID == PortEditPart.VISUAL_ID) {
                 result.add(new GraphsNodeDescriptor(childElement, visualID));
                 continue;
@@ -117,8 +117,8 @@ public class GraphsDiagramUpdater {
         List result = new LinkedList();
         for (Iterator it = modelElement.getChildren().iterator(); it.hasNext();) {
             KNode childElement = (KNode) it.next();
-            int visualID = GraphsVisualIDRegistry.getNodeVisualID(view,
-                    childElement);
+            int visualID =
+                    GraphsVisualIDRegistry.getNodeVisualID(view, childElement);
             if (visualID == Node4EditPart.VISUAL_ID) {
                 result.add(new GraphsNodeDescriptor(childElement, visualID));
                 continue;
@@ -146,8 +146,8 @@ public class GraphsDiagramUpdater {
         List result = new LinkedList();
         for (Iterator it = modelElement.getChildren().iterator(); it.hasNext();) {
             KNode childElement = (KNode) it.next();
-            int visualID = GraphsVisualIDRegistry.getNodeVisualID(view,
-                    childElement);
+            int visualID =
+                    GraphsVisualIDRegistry.getNodeVisualID(view, childElement);
             if (visualID == Node4EditPart.VISUAL_ID) {
                 result.add(new GraphsNodeDescriptor(childElement, visualID));
                 continue;
@@ -171,8 +171,8 @@ public class GraphsDiagramUpdater {
         List result = new LinkedList();
         for (Iterator it = modelElement.getChildren().iterator(); it.hasNext();) {
             KNode childElement = (KNode) it.next();
-            int visualID = GraphsVisualIDRegistry.getNodeVisualID(view,
-                    childElement);
+            int visualID =
+                    GraphsVisualIDRegistry.getNodeVisualID(view, childElement);
             if (visualID == Node2EditPart.VISUAL_ID) {
                 result.add(new GraphsNodeDescriptor(childElement, visualID));
                 continue;
@@ -445,8 +445,9 @@ public class GraphsDiagramUpdater {
      */
     public static List getNode_2001IncomingLinks(View view) {
         Node modelElement = (Node) view.getElement();
-        Map crossReferences = EcoreUtil.CrossReferencer.find(view.eResource()
-                .getResourceSet().getResources());
+        Map crossReferences =
+                EcoreUtil.CrossReferencer.find(view.eResource()
+                        .getResourceSet().getResources());
         List result = new LinkedList();
         result.addAll(getIncomingTypeModelFacetLinks_Edge_4001(modelElement,
                 crossReferences));
@@ -464,8 +465,9 @@ public class GraphsDiagramUpdater {
      */
     public static List getNode_2002IncomingLinks(View view) {
         Node modelElement = (Node) view.getElement();
-        Map crossReferences = EcoreUtil.CrossReferencer.find(view.eResource()
-                .getResourceSet().getResources());
+        Map crossReferences =
+                EcoreUtil.CrossReferencer.find(view.eResource()
+                        .getResourceSet().getResources());
         List result = new LinkedList();
         result.addAll(getIncomingTypeModelFacetLinks_Edge_4001(modelElement,
                 crossReferences));
@@ -483,8 +485,9 @@ public class GraphsDiagramUpdater {
      */
     public static List getNode_3001IncomingLinks(View view) {
         Node modelElement = (Node) view.getElement();
-        Map crossReferences = EcoreUtil.CrossReferencer.find(view.eResource()
-                .getResourceSet().getResources());
+        Map crossReferences =
+                EcoreUtil.CrossReferencer.find(view.eResource()
+                        .getResourceSet().getResources());
         List result = new LinkedList();
         result.addAll(getIncomingTypeModelFacetLinks_Edge_4001(modelElement,
                 crossReferences));
@@ -502,8 +505,9 @@ public class GraphsDiagramUpdater {
      */
     public static List getPort_3002IncomingLinks(View view) {
         Port modelElement = (Port) view.getElement();
-        Map crossReferences = EcoreUtil.CrossReferencer.find(view.eResource()
-                .getResourceSet().getResources());
+        Map crossReferences =
+                EcoreUtil.CrossReferencer.find(view.eResource()
+                        .getResourceSet().getResources());
         List result = new LinkedList();
         result.addAll(getIncomingTypeModelFacetLinks_Edge_4003(modelElement,
                 crossReferences));
@@ -521,8 +525,9 @@ public class GraphsDiagramUpdater {
      */
     public static List getNode_3003IncomingLinks(View view) {
         Node modelElement = (Node) view.getElement();
-        Map crossReferences = EcoreUtil.CrossReferencer.find(view.eResource()
-                .getResourceSet().getResources());
+        Map crossReferences =
+                EcoreUtil.CrossReferencer.find(view.eResource()
+                        .getResourceSet().getResources());
         List result = new LinkedList();
         result.addAll(getIncomingTypeModelFacetLinks_Edge_4001(modelElement,
                 crossReferences));
@@ -920,8 +925,8 @@ public class GraphsDiagramUpdater {
         Collection result = new LinkedList();
         Collection settings = (Collection) crossReferences.get(target);
         for (Iterator it = settings.iterator(); it.hasNext();) {
-            EStructuralFeature.Setting setting = (EStructuralFeature.Setting) it
-                    .next();
+            EStructuralFeature.Setting setting =
+                    (EStructuralFeature.Setting) it.next();
             if (setting.getEStructuralFeature() != KGraphPackage.eINSTANCE
                     .getKEdge_Target()
                     || false == setting.getEObject() instanceof Edge) {
@@ -947,8 +952,8 @@ public class GraphsDiagramUpdater {
         Collection result = new LinkedList();
         Collection settings = (Collection) crossReferences.get(target);
         for (Iterator it = settings.iterator(); it.hasNext();) {
-            EStructuralFeature.Setting setting = (EStructuralFeature.Setting) it
-                    .next();
+            EStructuralFeature.Setting setting =
+                    (EStructuralFeature.Setting) it.next();
             if (setting.getEStructuralFeature() != KGraphPackage.eINSTANCE
                     .getKEdge_Target()
                     || false == setting.getEObject() instanceof Edge) {
@@ -974,8 +979,8 @@ public class GraphsDiagramUpdater {
         Collection result = new LinkedList();
         Collection settings = (Collection) crossReferences.get(target);
         for (Iterator it = settings.iterator(); it.hasNext();) {
-            EStructuralFeature.Setting setting = (EStructuralFeature.Setting) it
-                    .next();
+            EStructuralFeature.Setting setting =
+                    (EStructuralFeature.Setting) it.next();
             if (setting.getEStructuralFeature() != KGraphPackage.eINSTANCE
                     .getKEdge_TargetPort()
                     || false == setting.getEObject() instanceof Edge) {
@@ -1001,8 +1006,8 @@ public class GraphsDiagramUpdater {
         Collection result = new LinkedList();
         Collection settings = (Collection) crossReferences.get(target);
         for (Iterator it = settings.iterator(); it.hasNext();) {
-            EStructuralFeature.Setting setting = (EStructuralFeature.Setting) it
-                    .next();
+            EStructuralFeature.Setting setting =
+                    (EStructuralFeature.Setting) it.next();
             if (setting.getEStructuralFeature() != KGraphPackage.eINSTANCE
                     .getKEdge_TargetPort()
                     || false == setting.getEObject() instanceof Edge) {
@@ -1028,8 +1033,8 @@ public class GraphsDiagramUpdater {
         Collection result = new LinkedList();
         Collection settings = (Collection) crossReferences.get(target);
         for (Iterator it = settings.iterator(); it.hasNext();) {
-            EStructuralFeature.Setting setting = (EStructuralFeature.Setting) it
-                    .next();
+            EStructuralFeature.Setting setting =
+                    (EStructuralFeature.Setting) it.next();
             if (setting.getEStructuralFeature() != KGraphPackage.eINSTANCE
                     .getKEdge_Target()
                     || false == setting.getEObject() instanceof Edge) {
@@ -1055,8 +1060,8 @@ public class GraphsDiagramUpdater {
         Collection result = new LinkedList();
         Collection settings = (Collection) crossReferences.get(target);
         for (Iterator it = settings.iterator(); it.hasNext();) {
-            EStructuralFeature.Setting setting = (EStructuralFeature.Setting) it
-                    .next();
+            EStructuralFeature.Setting setting =
+                    (EStructuralFeature.Setting) it.next();
             if (setting.getEStructuralFeature() != KGraphPackage.eINSTANCE
                     .getKEdge_Target()
                     || false == setting.getEObject() instanceof Edge) {
@@ -1082,8 +1087,8 @@ public class GraphsDiagramUpdater {
         Collection result = new LinkedList();
         Collection settings = (Collection) crossReferences.get(target);
         for (Iterator it = settings.iterator(); it.hasNext();) {
-            EStructuralFeature.Setting setting = (EStructuralFeature.Setting) it
-                    .next();
+            EStructuralFeature.Setting setting =
+                    (EStructuralFeature.Setting) it.next();
             if (setting.getEStructuralFeature() != KGraphPackage.eINSTANCE
                     .getKEdge_TargetPort()
                     || false == setting.getEObject() instanceof Edge) {
@@ -1109,8 +1114,8 @@ public class GraphsDiagramUpdater {
         Collection result = new LinkedList();
         Collection settings = (Collection) crossReferences.get(target);
         for (Iterator it = settings.iterator(); it.hasNext();) {
-            EStructuralFeature.Setting setting = (EStructuralFeature.Setting) it
-                    .next();
+            EStructuralFeature.Setting setting =
+                    (EStructuralFeature.Setting) it.next();
             if (setting.getEStructuralFeature() != KGraphPackage.eINSTANCE
                     .getKEdge_TargetPort()
                     || false == setting.getEObject() instanceof Edge) {
@@ -1137,8 +1142,8 @@ public class GraphsDiagramUpdater {
         // Find container element for the link.
         // Climb up by containment hierarchy starting from the source
         // and return the first element that is instance of the container class.
-        for (EObject element = source; element != null && container == null; element = element
-                .eContainer()) {
+        for (EObject element = source; element != null && container == null; element =
+                element.eContainer()) {
             if (element instanceof KNode) {
                 container = (KNode) element;
             }
@@ -1178,8 +1183,8 @@ public class GraphsDiagramUpdater {
         // Find container element for the link.
         // Climb up by containment hierarchy starting from the source
         // and return the first element that is instance of the container class.
-        for (EObject element = source; element != null && container == null; element = element
-                .eContainer()) {
+        for (EObject element = source; element != null && container == null; element =
+                element.eContainer()) {
             if (element instanceof KNode) {
                 container = (KNode) element;
             }
@@ -1219,8 +1224,8 @@ public class GraphsDiagramUpdater {
         // Find container element for the link.
         // Climb up by containment hierarchy starting from the source
         // and return the first element that is instance of the container class.
-        for (EObject element = source; element != null && container == null; element = element
-                .eContainer()) {
+        for (EObject element = source; element != null && container == null; element =
+                element.eContainer()) {
             if (element instanceof KNode) {
                 container = (KNode) element;
             }
@@ -1260,8 +1265,8 @@ public class GraphsDiagramUpdater {
         // Find container element for the link.
         // Climb up by containment hierarchy starting from the source
         // and return the first element that is instance of the container class.
-        for (EObject element = source; element != null && container == null; element = element
-                .eContainer()) {
+        for (EObject element = source; element != null && container == null; element =
+                element.eContainer()) {
             if (element instanceof KNode) {
                 container = (KNode) element;
             }
@@ -1301,8 +1306,8 @@ public class GraphsDiagramUpdater {
         // Find container element for the link.
         // Climb up by containment hierarchy starting from the source
         // and return the first element that is instance of the container class.
-        for (EObject element = source; element != null && container == null; element = element
-                .eContainer()) {
+        for (EObject element = source; element != null && container == null; element =
+                element.eContainer()) {
             if (element instanceof KNode) {
                 container = (KNode) element;
             }
@@ -1342,8 +1347,8 @@ public class GraphsDiagramUpdater {
         // Find container element for the link.
         // Climb up by containment hierarchy starting from the source
         // and return the first element that is instance of the container class.
-        for (EObject element = source; element != null && container == null; element = element
-                .eContainer()) {
+        for (EObject element = source; element != null && container == null; element =
+                element.eContainer()) {
             if (element instanceof KNode) {
                 container = (KNode) element;
             }
@@ -1383,8 +1388,8 @@ public class GraphsDiagramUpdater {
         // Find container element for the link.
         // Climb up by containment hierarchy starting from the source
         // and return the first element that is instance of the container class.
-        for (EObject element = source; element != null && container == null; element = element
-                .eContainer()) {
+        for (EObject element = source; element != null && container == null; element =
+                element.eContainer()) {
             if (element instanceof KNode) {
                 container = (KNode) element;
             }
@@ -1424,8 +1429,8 @@ public class GraphsDiagramUpdater {
         // Find container element for the link.
         // Climb up by containment hierarchy starting from the source
         // and return the first element that is instance of the container class.
-        for (EObject element = source; element != null && container == null; element = element
-                .eContainer()) {
+        for (EObject element = source; element != null && container == null; element =
+                element.eContainer()) {
             if (element instanceof KNode) {
                 container = (KNode) element;
             }

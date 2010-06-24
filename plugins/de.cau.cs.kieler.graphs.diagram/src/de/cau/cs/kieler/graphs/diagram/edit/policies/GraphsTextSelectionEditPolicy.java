@@ -53,7 +53,8 @@ public class GraphsTextSelectionEditPolicy extends SelectionEditPolicy {
             ((WrappingLabel) getHostFigure()).setFocus(false);
         } else {
             hideSelection();
-            addFeedback(selectionFeedbackFigure = createSelectionFeedbackFigure());
+            addFeedback(selectionFeedbackFigure =
+                    createSelectionFeedbackFigure());
             getHostFigure().addFigureListener(getHostPositionListener());
             refreshSelectionFeedback();
             hideFocus();

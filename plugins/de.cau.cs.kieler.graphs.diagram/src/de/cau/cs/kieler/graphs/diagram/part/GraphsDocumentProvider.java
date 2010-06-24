@@ -81,7 +81,8 @@ public class GraphsDocumentProvider extends AbstractDocumentProvider implements
                             null));
         }
         IEditorInput editorInput = (IEditorInput) element;
-        IDiagramDocument document = (IDiagramDocument) createDocument(editorInput);
+        IDiagramDocument document =
+                (IDiagramDocument) createDocument(editorInput);
 
         ResourceSetInfo info = new ResourceSetInfo(document, editorInput);
         info.setModificationStamp(computeModificationStamp(info));
@@ -132,8 +133,8 @@ public class GraphsDocumentProvider extends AbstractDocumentProvider implements
      */
     private long computeModificationStamp(ResourceSetInfo info) {
         int result = 0;
-        for (Iterator/*<org.eclipse.emf.ecore.resource.Resource>*/it = info
-                .getLoadedResourcesIterator(); it.hasNext();) {
+        for (Iterator/*<org.eclipse.emf.ecore.resource.Resource>*/it =
+                info.getLoadedResourcesIterator(); it.hasNext();) {
             Resource nextResource = (Resource) it.next();
             IFile file = WorkspaceSynchronizer.getFile(nextResource);
             if (file != null) {
@@ -160,11 +161,12 @@ public class GraphsDocumentProvider extends AbstractDocumentProvider implements
      * @generated
      */
     private TransactionalEditingDomain createEditingDomain() {
-        TransactionalEditingDomain editingDomain = DiagramEditingDomainFactory
-                .getInstance().createEditingDomain();
+        TransactionalEditingDomain editingDomain =
+                DiagramEditingDomainFactory.getInstance().createEditingDomain();
         editingDomain.setID("de.cau.cs.kieler.graphs.diagram.EditingDomain"); //$NON-NLS-1$
-        final NotificationFilter diagramResourceModifiedFilter = NotificationFilter
-                .createNotifierFilter(editingDomain.getResourceSet()).and(
+        final NotificationFilter diagramResourceModifiedFilter =
+                NotificationFilter.createNotifierFilter(
+                        editingDomain.getResourceSet()).and(
                         NotificationFilter
                                 .createEventTypeFilter(Notification.ADD)).and(
                         NotificationFilter.createFeatureFilter(
@@ -209,23 +211,27 @@ public class GraphsDocumentProvider extends AbstractDocumentProvider implements
         TransactionalEditingDomain domain = diagramDocument.getEditingDomain();
         if (element instanceof FileEditorInput) {
             IStorage storage = ((FileEditorInput) element).getStorage();
-            Diagram diagram = DiagramIOUtil.load(domain, storage, true,
-                    getProgressMonitor());
+            Diagram diagram =
+                    DiagramIOUtil.load(domain, storage, true,
+                            getProgressMonitor());
             document.setContent(diagram);
         } else if (element instanceof URIEditorInput) {
             URI uri = ((URIEditorInput) element).getURI();
             Resource resource = null;
             try {
-                resource = domain.getResourceSet().getResource(
-                        uri.trimFragment(), false);
+                resource =
+                        domain.getResourceSet().getResource(uri.trimFragment(),
+                                false);
                 if (resource == null) {
-                    resource = domain.getResourceSet().createResource(
-                            uri.trimFragment());
+                    resource =
+                            domain.getResourceSet().createResource(
+                                    uri.trimFragment());
                 }
                 if (!resource.isLoaded()) {
                     try {
-                        Map options = new HashMap(GMFResourceFactory
-                                .getDefaultLoadOptions());
+                        Map options =
+                                new HashMap(GMFResourceFactory
+                                        .getDefaultLoadOptions());
                         // @see 171060 
                         // options.put(org.eclipse.emf.ecore.xmi.XMLResource.OPTION_RECORD_UNKNOWN_FEATURE, Boolean.TRUE);
                         resource.load(options);
@@ -258,14 +264,15 @@ public class GraphsDocumentProvider extends AbstractDocumentProvider implements
                     thrownExcp = (CoreException) e;
                 } else {
                     String msg = e.getLocalizedMessage();
-                    thrownExcp = new CoreException(
-                            new Status(
-                                    IStatus.ERROR,
-                                    GraphsDiagramEditorPlugin.ID,
-                                    0,
-                                    msg != null ? msg
-                                            : Messages.GraphsDocumentProvider_DiagramLoadingError,
-                                    e));
+                    thrownExcp =
+                            new CoreException(
+                                    new Status(
+                                            IStatus.ERROR,
+                                            GraphsDiagramEditorPlugin.ID,
+                                            0,
+                                            msg != null ? msg
+                                                    : Messages.GraphsDocumentProvider_DiagramLoadingError,
+                                            e));
                 }
                 throw thrownExcp;
             }
@@ -337,9 +344,10 @@ public class GraphsDocumentProvider extends AbstractDocumentProvider implements
             throws CoreException {
         ResourceSetInfo info = getResourceSetInfo(element);
         if (info != null) {
-            Collection/*<org.eclipse.core.resources.IFile>*/files2Validate = new ArrayList/*<org.eclipse.core.resources.IFile>*/();
-            for (Iterator/*<org.eclipse.emf.ecore.resource.Resource>*/it = info
-                    .getLoadedResourcesIterator(); it.hasNext();) {
+            Collection/*<org.eclipse.core.resources.IFile>*/files2Validate =
+                    new ArrayList/*<org.eclipse.core.resources.IFile>*/();
+            for (Iterator/*<org.eclipse.emf.ecore.resource.Resource>*/it =
+                    info.getLoadedResourcesIterator(); it.hasNext();) {
                 Resource nextResource = (Resource) it.next();
                 IFile file = WorkspaceSynchronizer.getFile(nextResource);
                 if (file != null && file.isReadOnly()) {
@@ -406,8 +414,8 @@ public class GraphsDocumentProvider extends AbstractDocumentProvider implements
     protected void updateCache(Object element) throws CoreException {
         ResourceSetInfo info = getResourceSetInfo(element);
         if (info != null) {
-            for (Iterator/*<org.eclipse.emf.ecore.resource.Resource>*/it = info
-                    .getLoadedResourcesIterator(); it.hasNext();) {
+            for (Iterator/*<org.eclipse.emf.ecore.resource.Resource>*/it =
+                    info.getLoadedResourcesIterator(); it.hasNext();) {
                 Resource nextResource = (Resource) it.next();
                 IFile file = WorkspaceSynchronizer.getFile(nextResource);
                 if (file != null && file.isReadOnly()) {
@@ -450,9 +458,10 @@ public class GraphsDocumentProvider extends AbstractDocumentProvider implements
     protected ISchedulingRule getResetRule(Object element) {
         ResourceSetInfo info = getResourceSetInfo(element);
         if (info != null) {
-            Collection/*<org.eclipse.core.runtime.jobs.ISchedulingRule>*/rules = new ArrayList/*<org.eclipse.core.runtime.jobs.ISchedulingRule>*/();
-            for (Iterator/*<org.eclipse.emf.ecore.resource.Resource>*/it = info
-                    .getLoadedResourcesIterator(); it.hasNext();) {
+            Collection/*<org.eclipse.core.runtime.jobs.ISchedulingRule>*/rules =
+                    new ArrayList/*<org.eclipse.core.runtime.jobs.ISchedulingRule>*/();
+            for (Iterator/*<org.eclipse.emf.ecore.resource.Resource>*/it =
+                    info.getLoadedResourcesIterator(); it.hasNext();) {
                 Resource nextResource = (Resource) it.next();
                 IFile file = WorkspaceSynchronizer.getFile(nextResource);
                 if (file != null) {
@@ -472,9 +481,10 @@ public class GraphsDocumentProvider extends AbstractDocumentProvider implements
     protected ISchedulingRule getSaveRule(Object element) {
         ResourceSetInfo info = getResourceSetInfo(element);
         if (info != null) {
-            Collection/*<org.eclipse.core.runtime.jobs.ISchedulingRule>*/rules = new ArrayList/*<org.eclipse.core.runtime.jobs.ISchedulingRule>*/();
-            for (Iterator/*<org.eclipse.emf.ecore.resource.Resource>*/it = info
-                    .getLoadedResourcesIterator(); it.hasNext();) {
+            Collection/*<org.eclipse.core.runtime.jobs.ISchedulingRule>*/rules =
+                    new ArrayList/*<org.eclipse.core.runtime.jobs.ISchedulingRule>*/();
+            for (Iterator/*<org.eclipse.emf.ecore.resource.Resource>*/it =
+                    info.getLoadedResourcesIterator(); it.hasNext();) {
                 Resource nextResource = (Resource) it.next();
                 IFile file = WorkspaceSynchronizer.getFile(nextResource);
                 if (file != null) {
@@ -493,9 +503,10 @@ public class GraphsDocumentProvider extends AbstractDocumentProvider implements
     protected ISchedulingRule getSynchronizeRule(Object element) {
         ResourceSetInfo info = getResourceSetInfo(element);
         if (info != null) {
-            Collection/*<org.eclipse.core.runtime.jobs.ISchedulingRule>*/rules = new ArrayList/*<org.eclipse.core.runtime.jobs.ISchedulingRule>*/();
-            for (Iterator/*<org.eclipse.emf.ecore.resource.Resource>*/it = info
-                    .getLoadedResourcesIterator(); it.hasNext();) {
+            Collection/*<org.eclipse.core.runtime.jobs.ISchedulingRule>*/rules =
+                    new ArrayList/*<org.eclipse.core.runtime.jobs.ISchedulingRule>*/();
+            for (Iterator/*<org.eclipse.emf.ecore.resource.Resource>*/it =
+                    info.getLoadedResourcesIterator(); it.hasNext();) {
                 Resource nextResource = (Resource) it.next();
                 IFile file = WorkspaceSynchronizer.getFile(nextResource);
                 if (file != null) {
@@ -515,9 +526,10 @@ public class GraphsDocumentProvider extends AbstractDocumentProvider implements
     protected ISchedulingRule getValidateStateRule(Object element) {
         ResourceSetInfo info = getResourceSetInfo(element);
         if (info != null) {
-            Collection/*<org.eclipse.core.runtime.jobs.ISchedulingRule>*/files = new ArrayList/*<org.eclipse.core.runtime.jobs.ISchedulingRule>*/();
-            for (Iterator/*<org.eclipse.emf.ecore.resource.Resource>*/it = info
-                    .getLoadedResourcesIterator(); it.hasNext();) {
+            Collection/*<org.eclipse.core.runtime.jobs.ISchedulingRule>*/files =
+                    new ArrayList/*<org.eclipse.core.runtime.jobs.ISchedulingRule>*/();
+            for (Iterator/*<org.eclipse.emf.ecore.resource.Resource>*/it =
+                    info.getLoadedResourcesIterator(); it.hasNext();) {
                 Resource nextResource = (Resource) it.next();
                 IFile file = WorkspaceSynchronizer.getFile(nextResource);
                 if (file != null) {
@@ -562,8 +574,8 @@ public class GraphsDocumentProvider extends AbstractDocumentProvider implements
             throws CoreException {
         ResourceSetInfo info = getResourceSetInfo(element);
         if (info != null) {
-            for (Iterator/*<org.eclipse.emf.ecore.resource.Resource>*/it = info
-                    .getLoadedResourcesIterator(); it.hasNext();) {
+            for (Iterator/*<org.eclipse.emf.ecore.resource.Resource>*/it =
+                    info.getLoadedResourcesIterator(); it.hasNext();) {
                 Resource nextResource = (Resource) it.next();
                 handleElementChanged(info, nextResource, monitor);
             }
@@ -594,8 +606,8 @@ public class GraphsDocumentProvider extends AbstractDocumentProvider implements
                 monitor.beginTask(
                         Messages.GraphsDocumentProvider_SaveDiagramTask, info
                                 .getResourceSet().getResources().size() + 1); //"Saving diagram"
-                for (Iterator/*<org.eclipse.emf.ecore.resource.Resource>*/it = info
-                        .getLoadedResourcesIterator(); it.hasNext();) {
+                for (Iterator/*<org.eclipse.emf.ecore.resource.Resource>*/it =
+                        info.getLoadedResourcesIterator(); it.hasNext();) {
                     Resource nextResource = (Resource) it.next();
                     monitor
                             .setTaskName(NLS
@@ -632,8 +644,9 @@ public class GraphsDocumentProvider extends AbstractDocumentProvider implements
             if (element instanceof FileEditorInput) {
                 IFile newFile = ((FileEditorInput) element).getFile();
                 affectedFiles = Collections.singletonList(newFile);
-                newResoruceURI = URI.createPlatformResourceURI(newFile
-                        .getFullPath().toString(), true);
+                newResoruceURI =
+                        URI.createPlatformResourceURI(newFile.getFullPath()
+                                .toString(), true);
             } else if (element instanceof URIEditorInput) {
                 newResoruceURI = ((URIEditorInput) element).getURI();
             } else {
@@ -661,10 +674,11 @@ public class GraphsDocumentProvider extends AbstractDocumentProvider implements
                                 "Incorrect document used: " + document + " instead of org.eclipse.gmf.runtime.diagram.ui.resources.editor.document.IDiagramDocument", null)); //$NON-NLS-1$ //$NON-NLS-2$
             }
             IDiagramDocument diagramDocument = (IDiagramDocument) document;
-            final Resource newResource = diagramDocument.getEditingDomain()
-                    .getResourceSet().createResource(newResoruceURI);
-            final Diagram diagramCopy = (Diagram) EcoreUtil
-                    .copy(diagramDocument.getDiagram());
+            final Resource newResource =
+                    diagramDocument.getEditingDomain().getResourceSet()
+                            .createResource(newResoruceURI);
+            final Diagram diagramCopy =
+                    (Diagram) EcoreUtil.copy(diagramDocument.getDiagram());
             try {
                 new AbstractTransactionalCommand(diagramDocument
                         .getEditingDomain(), NLS.bind(
@@ -733,8 +747,10 @@ public class GraphsDocumentProvider extends AbstractDocumentProvider implements
      */
     protected void handleElementMoved(IEditorInput input, URI uri) {
         if (input instanceof FileEditorInput) {
-            IFile newFile = ResourcesPlugin.getWorkspace().getRoot().getFile(
-                    new Path(URI.decode(uri.path())).removeFirstSegments(1));
+            IFile newFile =
+                    ResourcesPlugin.getWorkspace().getRoot().getFile(
+                            new Path(URI.decode(uri.path()))
+                                    .removeFirstSegments(1));
             fireElementMoved(input, newFile == null ? null
                     : new FileEditorInput(newFile));
             return;
@@ -881,8 +897,8 @@ public class GraphsDocumentProvider extends AbstractDocumentProvider implements
         public void dispose() {
             stopResourceListening();
             getResourceSet().eAdapters().remove(myResourceSetListener);
-            for (Iterator/*<org.eclipse.emf.ecore.resource.Resource>*/it = getLoadedResourcesIterator(); it
-                    .hasNext();) {
+            for (Iterator/*<org.eclipse.emf.ecore.resource.Resource>*/it =
+                    getLoadedResourcesIterator(); it.hasNext();) {
                 Resource resource = (Resource) it.next();
                 resource.unload();
             }
@@ -922,8 +938,9 @@ public class GraphsDocumentProvider extends AbstractDocumentProvider implements
          * @generated
          */
         public final void startResourceListening() {
-            mySynchronizer = new WorkspaceSynchronizer(getEditingDomain(),
-                    new SynchronizerDelegate());
+            mySynchronizer =
+                    new WorkspaceSynchronizer(getEditingDomain(),
+                            new SynchronizerDelegate());
         }
 
         /**
@@ -1066,12 +1083,16 @@ public class GraphsDocumentProvider extends AbstractDocumentProvider implements
          */
         public ResourceSetModificationListener(ResourceSetInfo info) {
             myInfo = info;
-            myModifiedFilter = NotificationFilter.createEventTypeFilter(
-                    Notification.SET).or(
+            myModifiedFilter =
                     NotificationFilter
-                            .createEventTypeFilter(Notification.UNSET)).and(
-                    NotificationFilter.createFeatureFilter(Resource.class,
-                            Resource.RESOURCE__IS_MODIFIED));
+                            .createEventTypeFilter(Notification.SET)
+                            .or(
+                                    NotificationFilter
+                                            .createEventTypeFilter(Notification.UNSET))
+                            .and(
+                                    NotificationFilter.createFeatureFilter(
+                                            Resource.class,
+                                            Resource.RESOURCE__IS_MODIFIED));
         }
 
         /**
@@ -1087,8 +1108,9 @@ public class GraphsDocumentProvider extends AbstractDocumentProvider implements
                     Resource resource = (Resource) notification.getNotifier();
                     if (resource.isLoaded()) {
                         boolean modified = false;
-                        for (Iterator/*<org.eclipse.emf.ecore.resource.Resource>*/it = myInfo
-                                .getLoadedResourcesIterator(); it.hasNext()
+                        for (Iterator/*<org.eclipse.emf.ecore.resource.Resource>*/it =
+                                myInfo.getLoadedResourcesIterator(); it
+                                .hasNext()
                                 && !modified;) {
                             Resource nextResource = (Resource) it.next();
                             if (nextResource.isLoaded()) {

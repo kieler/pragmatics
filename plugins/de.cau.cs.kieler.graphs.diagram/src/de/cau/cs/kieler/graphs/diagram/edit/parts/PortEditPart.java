@@ -90,15 +90,16 @@ public class PortEditPart extends BorderedBorderItemEditPart {
                     return new BorderItemSelectionEditPolicy() {
 
                         protected List createSelectionHandles() {
-                            MoveHandle mh = new MoveHandle(
-                                    (GraphicalEditPart) getHost());
+                            MoveHandle mh =
+                                    new MoveHandle(
+                                            (GraphicalEditPart) getHost());
                             mh.setBorder(null);
                             return Collections.singletonList(mh);
                         }
                     };
                 }
-                EditPolicy result = child
-                        .getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
+                EditPolicy result =
+                        child.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
                 if (result == null) {
                     result = new NonResizableEditPolicy();
                 }
@@ -137,8 +138,9 @@ public class PortEditPart extends BorderedBorderItemEditPart {
     protected void addBorderItem(IFigure borderItemContainer,
             IBorderItemEditPart borderItemEditPart) {
         if (borderItemEditPart instanceof PortPortLabelEditPart) {
-            BorderItemLocator locator = new BorderItemLocator(getMainFigure(),
-                    PositionConstants.SOUTH);
+            BorderItemLocator locator =
+                    new BorderItemLocator(getMainFigure(),
+                            PositionConstants.SOUTH);
             locator.setBorderItemOffset(new Dimension(-20, -20));
             borderItemContainer.add(borderItemEditPart.getFigure(), locator);
         } else {
@@ -254,7 +256,8 @@ public class PortEditPart extends BorderedBorderItemEditPart {
      * @generated
      */
     public List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/getMARelTypesOnSource() {
-        List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
+        List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types =
+                new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
         types.add(GraphsElementTypes.Edge_4003);
         types.add(GraphsElementTypes.Edge_4004);
         types.add(GraphsElementTypes.Edge_4005);
@@ -267,7 +270,8 @@ public class PortEditPart extends BorderedBorderItemEditPart {
      */
     public List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/getMARelTypesOnSourceAndTarget(
             IGraphicalEditPart targetEditPart) {
-        List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
+        List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types =
+                new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
         if (targetEditPart instanceof de.cau.cs.kieler.graphs.diagram.edit.parts.PortEditPart) {
             types.add(GraphsElementTypes.Edge_4003);
         }
@@ -306,7 +310,8 @@ public class PortEditPart extends BorderedBorderItemEditPart {
      */
     public List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/getMATypesForTarget(
             IElementType relationshipType) {
-        List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
+        List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types =
+                new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
         if (relationshipType == GraphsElementTypes.Edge_4003) {
             types.add(GraphsElementTypes.Port_3002);
         }
@@ -344,7 +349,8 @@ public class PortEditPart extends BorderedBorderItemEditPart {
      * @generated
      */
     public List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/getMARelTypesOnTarget() {
-        List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
+        List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types =
+                new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
         types.add(GraphsElementTypes.Edge_4003);
         types.add(GraphsElementTypes.Edge_4004);
         types.add(GraphsElementTypes.Edge_4007);
@@ -357,7 +363,8 @@ public class PortEditPart extends BorderedBorderItemEditPart {
      */
     public List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/getMATypesForSource(
             IElementType relationshipType) {
-        List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
+        List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types =
+                new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
         if (relationshipType == GraphsElementTypes.Edge_4003) {
             types.add(GraphsElementTypes.Port_3002);
         }

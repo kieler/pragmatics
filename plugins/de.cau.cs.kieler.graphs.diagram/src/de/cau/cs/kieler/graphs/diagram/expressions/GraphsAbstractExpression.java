@@ -30,8 +30,9 @@ public abstract class GraphsAbstractExpression {
      */
     protected void setStatus(int severity, String message, Throwable throwable) {
         String pluginID = GraphsDiagramEditorPlugin.ID;
-        this.status = new Status(severity, pluginID, -1,
-                (message != null) ? message : "", throwable); //$NON-NLS-1$
+        this.status =
+                new Status(severity, pluginID, -1, (message != null) ? message
+                        : "", throwable); //$NON-NLS-1$
         if (!this.status.isOK()) {
             GraphsDiagramEditorPlugin
                     .getInstance()

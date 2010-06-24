@@ -198,13 +198,13 @@ public abstract class AbstractParser implements IParser {
             return UnexecutableCommand.INSTANCE;
         }
         EObject element = (EObject) adapter.getAdapter(EObject.class);
-        TransactionalEditingDomain editingDomain = TransactionUtil
-                .getEditingDomain(element);
+        TransactionalEditingDomain editingDomain =
+                TransactionUtil.getEditingDomain(element);
         if (editingDomain == null) {
             return UnexecutableCommand.INSTANCE;
         }
-        CompositeTransactionalCommand command = new CompositeTransactionalCommand(
-                editingDomain, "Set Values"); //$NON-NLS-1$
+        CompositeTransactionalCommand command =
+                new CompositeTransactionalCommand(editingDomain, "Set Values"); //$NON-NLS-1$
         for (int i = 0; i < values.length; i++) {
             command.compose(getModificationCommand(element,
                     editableFeatures[i], values[i]));
@@ -255,9 +255,12 @@ public abstract class AbstractParser implements IParser {
                 } else if (value instanceof String) {
                     value = Boolean.valueOf((String) value);
                 } else {
-                    value = new InvalidValue(NLS.bind(
-                            Messages.AbstractParser_UnexpectedValueType, iClass
-                                    .getName()));
+                    value =
+                            new InvalidValue(
+                                    NLS
+                                            .bind(
+                                                    Messages.AbstractParser_UnexpectedValueType,
+                                                    iClass.getName()));
                 }
             } else if (Character.TYPE.equals(iClass)) {
                 if (value instanceof Character) {
@@ -270,9 +273,12 @@ public abstract class AbstractParser implements IParser {
                         value = new Character(s.charAt(0));
                     }
                 } else {
-                    value = new InvalidValue(NLS.bind(
-                            Messages.AbstractParser_UnexpectedValueType, iClass
-                                    .getName()));
+                    value =
+                            new InvalidValue(
+                                    NLS
+                                            .bind(
+                                                    Messages.AbstractParser_UnexpectedValueType,
+                                                    iClass.getName()));
                 }
             } else if (Byte.TYPE.equals(iClass)) {
                 if (value instanceof Byte) {
@@ -287,17 +293,21 @@ public abstract class AbstractParser implements IParser {
                         try {
                             value = Byte.valueOf(s);
                         } catch (NumberFormatException nfe) {
-                            value = new InvalidValue(
-                                    NLS
-                                            .bind(
-                                                    Messages.AbstractParser_WrongStringConversion,
-                                                    iClass.getName()));
+                            value =
+                                    new InvalidValue(
+                                            NLS
+                                                    .bind(
+                                                            Messages.AbstractParser_WrongStringConversion,
+                                                            iClass.getName()));
                         }
                     }
                 } else {
-                    value = new InvalidValue(NLS.bind(
-                            Messages.AbstractParser_UnexpectedValueType, iClass
-                                    .getName()));
+                    value =
+                            new InvalidValue(
+                                    NLS
+                                            .bind(
+                                                    Messages.AbstractParser_UnexpectedValueType,
+                                                    iClass.getName()));
                 }
             } else if (Short.TYPE.equals(iClass)) {
                 if (value instanceof Short) {
@@ -312,17 +322,21 @@ public abstract class AbstractParser implements IParser {
                         try {
                             value = Short.valueOf(s);
                         } catch (NumberFormatException nfe) {
-                            value = new InvalidValue(
-                                    NLS
-                                            .bind(
-                                                    Messages.AbstractParser_WrongStringConversion,
-                                                    iClass.getName()));
+                            value =
+                                    new InvalidValue(
+                                            NLS
+                                                    .bind(
+                                                            Messages.AbstractParser_WrongStringConversion,
+                                                            iClass.getName()));
                         }
                     }
                 } else {
-                    value = new InvalidValue(NLS.bind(
-                            Messages.AbstractParser_UnexpectedValueType, iClass
-                                    .getName()));
+                    value =
+                            new InvalidValue(
+                                    NLS
+                                            .bind(
+                                                    Messages.AbstractParser_UnexpectedValueType,
+                                                    iClass.getName()));
                 }
             } else if (Integer.TYPE.equals(iClass)) {
                 if (value instanceof Integer) {
@@ -337,17 +351,21 @@ public abstract class AbstractParser implements IParser {
                         try {
                             value = Integer.valueOf(s);
                         } catch (NumberFormatException nfe) {
-                            value = new InvalidValue(
-                                    NLS
-                                            .bind(
-                                                    Messages.AbstractParser_WrongStringConversion,
-                                                    iClass.getName()));
+                            value =
+                                    new InvalidValue(
+                                            NLS
+                                                    .bind(
+                                                            Messages.AbstractParser_WrongStringConversion,
+                                                            iClass.getName()));
                         }
                     }
                 } else {
-                    value = new InvalidValue(NLS.bind(
-                            Messages.AbstractParser_UnexpectedValueType, iClass
-                                    .getName()));
+                    value =
+                            new InvalidValue(
+                                    NLS
+                                            .bind(
+                                                    Messages.AbstractParser_UnexpectedValueType,
+                                                    iClass.getName()));
                 }
             } else if (Long.TYPE.equals(iClass)) {
                 if (value instanceof Long) {
@@ -362,17 +380,21 @@ public abstract class AbstractParser implements IParser {
                         try {
                             value = Long.valueOf(s);
                         } catch (NumberFormatException nfe) {
-                            value = new InvalidValue(
-                                    NLS
-                                            .bind(
-                                                    Messages.AbstractParser_WrongStringConversion,
-                                                    iClass.getName()));
+                            value =
+                                    new InvalidValue(
+                                            NLS
+                                                    .bind(
+                                                            Messages.AbstractParser_WrongStringConversion,
+                                                            iClass.getName()));
                         }
                     }
                 } else {
-                    value = new InvalidValue(NLS.bind(
-                            Messages.AbstractParser_UnexpectedValueType, iClass
-                                    .getName()));
+                    value =
+                            new InvalidValue(
+                                    NLS
+                                            .bind(
+                                                    Messages.AbstractParser_UnexpectedValueType,
+                                                    iClass.getName()));
                 }
             } else if (Float.TYPE.equals(iClass)) {
                 if (value instanceof Float) {
@@ -387,17 +409,21 @@ public abstract class AbstractParser implements IParser {
                         try {
                             value = Float.valueOf(s);
                         } catch (NumberFormatException nfe) {
-                            value = new InvalidValue(
-                                    NLS
-                                            .bind(
-                                                    Messages.AbstractParser_WrongStringConversion,
-                                                    iClass.getName()));
+                            value =
+                                    new InvalidValue(
+                                            NLS
+                                                    .bind(
+                                                            Messages.AbstractParser_WrongStringConversion,
+                                                            iClass.getName()));
                         }
                     }
                 } else {
-                    value = new InvalidValue(NLS.bind(
-                            Messages.AbstractParser_UnexpectedValueType, iClass
-                                    .getName()));
+                    value =
+                            new InvalidValue(
+                                    NLS
+                                            .bind(
+                                                    Messages.AbstractParser_UnexpectedValueType,
+                                                    iClass.getName()));
                 }
             } else if (Double.TYPE.equals(iClass)) {
                 if (value instanceof Double) {
@@ -412,32 +438,42 @@ public abstract class AbstractParser implements IParser {
                         try {
                             value = Double.valueOf(s);
                         } catch (NumberFormatException nfe) {
-                            value = new InvalidValue(
-                                    NLS
-                                            .bind(
-                                                    Messages.AbstractParser_WrongStringConversion,
-                                                    iClass.getName()));
+                            value =
+                                    new InvalidValue(
+                                            NLS
+                                                    .bind(
+                                                            Messages.AbstractParser_WrongStringConversion,
+                                                            iClass.getName()));
                         }
                     }
                 } else {
-                    value = new InvalidValue(NLS.bind(
-                            Messages.AbstractParser_UnexpectedValueType, iClass
-                                    .getName()));
+                    value =
+                            new InvalidValue(
+                                    NLS
+                                            .bind(
+                                                    Messages.AbstractParser_UnexpectedValueType,
+                                                    iClass.getName()));
                 }
             } else if (type instanceof EEnum) {
                 if (value instanceof String) {
-                    EEnumLiteral literal = ((EEnum) type)
-                            .getEEnumLiteralByLiteral((String) value);
+                    EEnumLiteral literal =
+                            ((EEnum) type)
+                                    .getEEnumLiteralByLiteral((String) value);
                     if (literal == null) {
-                        value = new InvalidValue(NLS.bind(
-                                Messages.AbstractParser_UnknownLiteral, value));
+                        value =
+                                new InvalidValue(NLS.bind(
+                                        Messages.AbstractParser_UnknownLiteral,
+                                        value));
                     } else {
                         value = literal.getInstance();
                     }
                 } else {
-                    value = new InvalidValue(NLS.bind(
-                            Messages.AbstractParser_UnexpectedValueType,
-                            String.class.getName()));
+                    value =
+                            new InvalidValue(
+                                    NLS
+                                            .bind(
+                                                    Messages.AbstractParser_UnexpectedValueType,
+                                                    String.class.getName()));
                 }
             }
         }

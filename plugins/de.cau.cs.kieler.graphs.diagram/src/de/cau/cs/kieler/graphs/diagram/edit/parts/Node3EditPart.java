@@ -75,8 +75,8 @@ public class Node3EditPart extends ShapeNodeEditPart {
         LayoutEditPolicy lep = new LayoutEditPolicy() {
 
             protected EditPolicy createChildEditPolicy(EditPart child) {
-                EditPolicy result = child
-                        .getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
+                EditPolicy result =
+                        child.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
                 if (result == null) {
                     result = new NonResizableEditPolicy();
                 }
@@ -206,7 +206,8 @@ public class Node3EditPart extends ShapeNodeEditPart {
      * @generated
      */
     public List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/getMARelTypesOnSource() {
-        List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
+        List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types =
+                new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
         types.add(GraphsElementTypes.Edge_4001);
         types.add(GraphsElementTypes.Edge_4002);
         types.add(GraphsElementTypes.Edge_4007);
@@ -219,7 +220,8 @@ public class Node3EditPart extends ShapeNodeEditPart {
      */
     public List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/getMARelTypesOnSourceAndTarget(
             IGraphicalEditPart targetEditPart) {
-        List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
+        List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types =
+                new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
         if (targetEditPart instanceof Node2EditPart) {
             types.add(GraphsElementTypes.Edge_4001);
         }
@@ -258,7 +260,8 @@ public class Node3EditPart extends ShapeNodeEditPart {
      */
     public List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/getMATypesForTarget(
             IElementType relationshipType) {
-        List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
+        List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types =
+                new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
         if (relationshipType == GraphsElementTypes.Edge_4001) {
             types.add(GraphsElementTypes.Node_2001);
         }
@@ -296,7 +299,8 @@ public class Node3EditPart extends ShapeNodeEditPart {
      * @generated
      */
     public List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/getMARelTypesOnTarget() {
-        List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
+        List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types =
+                new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
         types.add(GraphsElementTypes.Edge_4001);
         types.add(GraphsElementTypes.Edge_4002);
         types.add(GraphsElementTypes.Edge_4005);
@@ -309,7 +313,8 @@ public class Node3EditPart extends ShapeNodeEditPart {
      */
     public List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/getMATypesForSource(
             IElementType relationshipType) {
-        List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
+        List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types =
+                new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
         if (relationshipType == GraphsElementTypes.Edge_4001) {
             types.add(GraphsElementTypes.Node_2001);
         }
