@@ -21,17 +21,16 @@ public class DirectEditEntityFeature extends AbstractDirectEditingFeature {
 
     public String getInitialValue(IDirectEditingContext context) {
         // TODO Auto-generated method stub
-     PictogramElement pe=context.getPictogramElement();
-     return((Entity)getBusinessObjectForPictogramElement(pe)).getName();
+     PictogramElement pe = context.getPictogramElement();
+     return ((Entity) getBusinessObjectForPictogramElement(pe)).getName();
     }
 
     public void setValue(String value, IDirectEditingContext context) {
         // TODO Auto-generated method stub
-        PictogramElement pe=context.getPictogramElement();
-        Object obj=getBusinessObjectForPictogramElement(pe);
-        if(obj instanceof Entity)
-        {
-        Entity entity=(Entity)obj;
+        PictogramElement pe = context.getPictogramElement();
+        Object obj = getBusinessObjectForPictogramElement(pe);
+        if (obj instanceof Entity) {
+        Entity entity = (Entity) obj;
         entity.setName(value);
         }
         updatePictogramElement(((Shape) pe).getContainer());
@@ -40,12 +39,12 @@ public class DirectEditEntityFeature extends AbstractDirectEditingFeature {
 
     @Override
     public String checkValueValid(String value, IDirectEditingContext context) {
-        if (value.length() < 1)
-            return "Please enter any text as class name.";
-        if (value.contains(" "))
-            return "Spaces are not allowed in class names.";
-        if (value.contains("\n"))
-            return "Line breakes are not allowed in class names.";
+        if (value.length() < 1) {
+            return "Please enter any text as class name."; }
+        if (value.contains(" ")) {
+            return "Spaces are not allowed in class names."; }
+        if (value.contains("\n")) {
+            return "Line breakes are not allowed in class names."; }
 
         return null;
     }

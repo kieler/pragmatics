@@ -25,12 +25,12 @@ public class CreateEntityFeature extends AbstractCreateFeature {
 
  
     public boolean canCreate(ICreateContext context) {
-        if(context.getTargetContainer() instanceof Diagram)
-            return true;
-        else if(context.getTargetContainer() instanceof ContainerShape)
-            return true;
-        else
-            return false;
+        if (context.getTargetContainer() instanceof Diagram 
+                || context.getTargetContainer() instanceof ContainerShape) {
+            return true; }
+        else {
+            return false; 
+            }
               
     }
 
@@ -50,7 +50,7 @@ public class CreateEntityFeature extends AbstractCreateFeature {
         // We add the model element to the resource of the diagram for
         // simplicity's sake. Normally, a customer would use its own
         // model persistence layer for storing the business model separately.
-        addToDiagram(newEntity);
+      //  addToDiagram(newEntity);
        // newEntity.setName(newClassName);
  
         // do the add

@@ -1,6 +1,11 @@
 package de.cau.cs.kieler.kaom.graphiti.features;
 
 
+import java.util.List;
+
+import javax.swing.JOptionPane;
+
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
@@ -8,22 +13,21 @@ import org.eclipse.graphiti.features.impl.AbstractCreateConnectionFeature;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
 import org.eclipse.graphiti.mm.pictograms.Connection;
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
-import org.eclipse.graphiti.mm.pictograms.Rectangle;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.KaomFactory;
 import de.cau.cs.kieler.kaom.Link;
+import de.cau.cs.kieler.kaom.Linkable;
 import de.cau.cs.kieler.kaom.Port;
 import de.cau.cs.kieler.kaom.Relation;
 
 public class CreateLinkFeature extends AbstractCreateConnectionFeature {
 
-    public CreateLinkFeature(IFeatureProvider fp)//, String name, String description) {
+    public CreateLinkFeature(final IFeatureProvider fp)//, String name, String description) {
     {
-        super(fp,"Link","Create Link");// name, description);
-        // TODO Auto-generated constructor stub
-    }
+        super(fp , "Link" , "Create Link"); // name, description);
+         }
 
     public boolean canCreate(ICreateConnectionContext context) {
     /*    Entity target=null,source=null;
@@ -41,11 +45,16 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
             source=getEntity(context.getTargetAnchor());
         }
       */
-        Object source=null,target=null;
-            source=getObject(context.getSourceAnchor());
-            target=getObject(context.getTargetAnchor());
+        Object source = null , target = null;
+            source = getObject(context.getSourceAnchor());
+            target = getObject(context.getTargetAnchor());
                     
+            if (target == null) {
+      //          System.out.println("helelelelllllo     it is here");
+            }
         if (source != null && target != null && source != target) {
+          
+      //      System.out.println("helelelelllllo     it is here111111111111111");
             return true;
         }
 
@@ -54,8 +63,8 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
 
  
 
-    public boolean canStartConnection(ICreateConnectionContext context) {
-        System.out.println("I cam here111111111!!!!!");
+    public boolean canStartConnection(final ICreateConnectionContext context) {
+    //    System.out.println("I cam here111111111!!!!!");
        // if(getBusinessObjectForPictogramElement(context.getSourcePictogramElement()) instanceof Entity)
      //      return true;
     /*  if(context.getSourcePictogramElement() instanceof AnchorContainer )
@@ -64,15 +73,19 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
             AnchorContainer anchorContainer=(AnchorContainer)context.getSourcePictogramElement();
            )
       */  
-        if(getBusinessObjectForPictogramElement(context.getSourceAnchor().getParent()) != null) {
+       
+        if (context.getSourceAnchor() != null) {
+      //      System.out.println("sourceAnchor is not null");
+            if (getBusinessObjectForPictogramElement(context.getSourceAnchor().getParent()) != null) {
             return true;
+        }
         }
         return false;
     }
 
 
-    public Connection create(ICreateConnectionContext context) {
-        System.out.println("I cam here222222222222222222!!!!!");
+    public Connection create(final ICreateConnectionContext context) {
+     //   System.out.println("I cam here222222222222222222!!!!!");
         Connection newConnection = null;
      /*   Entity target=null,source=null;
         if(getBusinessObjectForPictogramElement(context.getSourcePictogramElement()) instanceof Entity)
@@ -90,21 +103,21 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
         }
         */
         
-        Object source=null,target=null;
+        Object source = null, target = null;
         
-        source=getObject(context.getSourceAnchor());
-        target=getObject(context.getTargetAnchor());
+        source = getObject(context.getSourceAnchor());
+        target = getObject(context.getTargetAnchor());
         
         
         if (source != null && target != null) {
 
             Link link = createLink(source, target);
-            System.out.println("Link has been correctly formed");
-            AddConnectionContext addContext =new AddConnectionContext(context.getSourceAnchor(), context.getTargetAnchor());
-          //  AddConnectionContext addContext =new AddConnectionContext(context.getSourcePictogramElement().getGraphicsAlgorithm()., context.getTargetAnchor());
+        //    System.out.println("Link has been correctly formed");
+            AddConnectionContext addContext = 
+                new AddConnectionContext(context.getSourceAnchor(), context.getTargetAnchor());
 
             addContext.setNewObject(link);
-            newConnection =(Connection) getFeatureProvider().addIfPossible(addContext);
+            newConnection = (Connection) getFeatureProvider().addIfPossible(addContext);
         }
 
        
@@ -113,18 +126,20 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
 
     }
 
-     private Object getObject(Anchor anchor) {
+     private Object getObject(final Anchor anchor) {
           
-         if (anchor!=null) {
+         if (anchor != null) {
              
-             Object obj=getBusinessObjectForPictogramElement(anchor);
-             if(obj instanceof Entity)
-                 return (Entity)obj;
-             else if(obj instanceof Port)
-                 return (Port)obj;
-             else if(obj instanceof Relation)
-                 return (Relation)obj;
-             
+             Object obj = getBusinessObjectForPictogramElement(anchor.getParent());
+         /*    if (obj instanceof Entity) {
+                 return (Entity) obj;  }
+             else if (obj instanceof Port) {
+                 return (Port) obj; }
+             else if (obj instanceof Relation) {
+                 return (Relation) obj; }
+           */
+             if(obj instanceof Linkable)
+                 return (Linkable) obj;
          }
          return null;
      }
@@ -160,22 +175,96 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
 
     private Link createLink(Object source,Object target) {
 
-        KaomFactory kaomFactory=KaomFactory.eINSTANCE;
-        Link link=kaomFactory.createLink();
+        KaomFactory kaomFactory = KaomFactory.eINSTANCE;
+        Link link = kaomFactory.createLink();
         link.setName("new Link");
         
+      /*
+        if (source instanceof Entity) {
+       
+            
+            Entity entitySource = (Entity) source;
+            link.setSource(entitySource);
+            entitySource.getOutgoingLinks().add(link);
+        }
+        else if (source instanceof Port) {
+            Port portSource = (Port) source;
+            link.setSource(portSource);
+            portSource.getOutgoingLinks().add(link);
+        }
+        else {
+            Relation relationSource = (Relation) source;
+            link.setSource(relationSource);
+            relationSource.getOutgoingLinks().add(link);
+          }
+  */
+        if (source instanceof Linkable) {
+                  
+            Linkable linkableSource = (Linkable) source;
+            linkableSource.getOutgoingLinks().add(link);
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(null, "Source object not linkable", "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
+           
+        if (target instanceof Linkable) {
+            
+            Linkable linkableTarget = (Linkable) target;
+            linkableTarget.getIncomingLinks().add(link);
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(null, "Target Object not linkable", "ERROR", JOptionPane.ERROR_MESSAGE);
+        }     
         
+      /*  if (target instanceof Entity) {
+            Entity entityTarget = (Entity) target;
+            link.setTarget(entityTarget);
+            entityTarget.getIncomingLinks().add(link);
+        }
+        else if (target instanceof Port) {
+            Port portTarget = (Port) target;
+            link.setTarget(portTarget);
+            portTarget.getIncomingLinks().add(link);
+        }
+        else {
+            Relation relationTarget = (Relation) target;
+            link.setTarget(relationTarget);
+            relationTarget.getIncomingLinks().add(link);
+          }
+          */
+              
         
+    //    System.out.println("Entity has been identified correctly:Source"+source.getName()+
+      //          "Target"+target.getName());
+     //   link.setSource(source);
+     //   link.setTarget(target);
         
-        System.out.println("Entity has been identified correctly:Source"+source.getName()+
-                "Target"+target.getName());
-        link.setSource(source);
-        link.setTarget(target);
-        source.getOutgoingLinks().add(link);
-        target.getIncomingLinks().add(link);
+      //  target.getIncomingLinks().add(link);
         
        // source.getEStructuralFeatures().add(link);
+        addToDiagram(link);
         return link;
 
    }
+    
+    private void addToDiagram(final Link newLink) {
+        List<EObject> contents = getDiagram().eResource().getContents();
+        Entity topEntity = null;
+        for (EObject obj : contents) {
+            if (obj instanceof Entity) {
+                topEntity = (Entity) obj;
+                break;
+            }
+        }
+        if (topEntity == null) {
+            topEntity = KaomFactory.eINSTANCE.createEntity();
+            contents.add(topEntity);
+        }
+        topEntity.getChildLinks().add(newLink);
+    }
+    
+    
+    
 }

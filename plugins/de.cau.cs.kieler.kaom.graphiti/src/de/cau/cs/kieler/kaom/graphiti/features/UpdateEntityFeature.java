@@ -19,36 +19,33 @@ import de.cau.cs.kieler.kaom.Entity;
 
 public class UpdateEntityFeature extends AbstractUpdateFeature {
 
-    public UpdateEntityFeature(IFeatureProvider fp) {
+    public UpdateEntityFeature(final IFeatureProvider fp) {
         super(fp);
         // TODO Auto-generated constructor stub
     }
 
-    public boolean canUpdate(IUpdateContext context) {
+    public boolean canUpdate(final IUpdateContext context) {
         // TODO Auto-generated method stub
-       Object obj=getBusinessObjectForPictogramElement(context.getPictogramElement());
-       return(obj instanceof Entity);
+       Object obj = getBusinessObjectForPictogramElement(context.getPictogramElement());
+       return (obj instanceof Entity);
     }
 
-    public boolean update(IUpdateContext context) {
+    public boolean update(final IUpdateContext context) {
         // TODO Auto-generated method stub
-        String businessName=null;
-        PictogramElement pictogramElement= context.getPictogramElement();
-        Object obj=getBusinessObjectForPictogramElement(pictogramElement);
-        if(obj instanceof Entity)
-           businessName=((Entity)obj).getName();
-        
-        if(pictogramElement instanceof ContainerShape)
-        {
-            ContainerShape cs=(ContainerShape)pictogramElement;
+        String businessName = null;
+        PictogramElement pictogramElement = context.getPictogramElement();
+        Object obj = getBusinessObjectForPictogramElement(pictogramElement);
+        if (obj instanceof Entity) {
+           businessName = ((Entity) obj).getName();
+        }
+        if (pictogramElement instanceof ContainerShape) {
+            ContainerShape cs = (ContainerShape)  pictogramElement;
       //      for(Iterator iter = cs.getChildren().iterator();iter.hasNext())
-            for(int i=0;i<cs.getChildren().size();i++)
-            {
-                Shape shape=(Shape)cs.getChildren().get(i);
+            for (int i = 0; i < cs.getChildren().size(); i++) {
+                Shape shape = (Shape) cs.getChildren().get(i);
      
-                if(shape.getGraphicsAlgorithm() instanceof Text)
-                {
-                    ((Text)shape.getGraphicsAlgorithm()).setValue(businessName);
+                if (shape.getGraphicsAlgorithm() instanceof Text) {
+                    ((Text) shape.getGraphicsAlgorithm()).setValue(businessName);
                     return true;
                 }
             }
@@ -58,38 +55,41 @@ public class UpdateEntityFeature extends AbstractUpdateFeature {
         return false;
     }
 
-    public IReason updateNeeded(IUpdateContext context) {
+   
+    public IReason updateNeeded(final IUpdateContext context) {
         // TODO Auto-generated method stub
-        String pictogramName=null;
-        PictogramElement pictogramElement=context.getPictogramElement();
-        if(pictogramElement instanceof ContainerShape)
-            {
-                ContainerShape cs=(ContainerShape)pictogramElement;
-                for(int i=0;i<cs.getChildren().size();i++)
-                {
-                    Shape shape=(Shape)cs.getChildren().get(i);                    
-                    if(shape.getGraphicsAlgorithm() instanceof Text)
-                    {
-                        Text text=(Text)shape.getGraphicsAlgorithm();
-                        pictogramName=text.getValue();
-                        System.out.println("The pictogram name is "+pictogramName);
+        String pictogramName = null;
+        PictogramElement pictogramElement = context.getPictogramElement();
+        if (pictogramElement instanceof ContainerShape) {
+                ContainerShape cs = (ContainerShape) pictogramElement;
+                for (int i = 0; i < cs.getChildren().size(); i++) {
+                    Shape shape = (Shape) cs.getChildren().get(i);                    
+                    if (shape.getGraphicsAlgorithm() instanceof Text) {
+                        Text text = (Text) shape.getGraphicsAlgorithm();
+                        pictogramName = text.getValue();
+                        System.out.println("The pictogram name is " + pictogramName);
                     }
                 }
             }
             
-            String businessName=null;
-            Object obj=getBusinessObjectForPictogramElement(pictogramElement);
-            if(obj instanceof Entity)
-                businessName=((Entity)obj).getName();
+            String businessName = null;
+            Object obj = getBusinessObjectForPictogramElement(pictogramElement);
+            if (obj instanceof Entity) {
+                businessName = ((Entity) obj).getName();
+            }
             
             boolean updateRequired = false;
-            if((pictogramName==null && !(businessName==null)) || (!(pictogramName==null) && !pictogramName.equals(businessName)))
-                updateRequired=true;
-            if(updateRequired)
+            if ((pictogramName == null && !(businessName == null))
+                    || (!(pictogramName == null) && !pictogramName.equals(businessName))) {
+                updateRequired = true;
+            }
+            if (updateRequired) {
                 return Reason.createTrueReason("Name is out of Date");
-            else
+            }
+            else {
                 return Reason.createFalseReason();
-        }
+            }
+            }
 
   
 }

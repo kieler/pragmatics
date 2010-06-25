@@ -27,9 +27,9 @@ public class MoveEntityFeature extends DefaultMoveShapeFeature {
         // TODO Auto-generated constructor stub
     }
 
-    public boolean canMoveShape(IMoveShapeContext context)
-    {
-        boolean canMove=context.getSourceContainer() != null;
+    @Override
+    public boolean canMoveShape(final IMoveShapeContext context) {
+        boolean canMove = context.getSourceContainer() != null;
         
      //   if(canMove)
      //   {
@@ -46,7 +46,8 @@ public class MoveEntityFeature extends DefaultMoveShapeFeature {
         return canMove;
     }
     
-    protected void internalMove(IMoveShapeContext context) {
+    @Override
+    protected void internalMove(final IMoveShapeContext context) {
         if (!getUserDecision()) {
                 return;
         }
@@ -59,9 +60,11 @@ public class MoveEntityFeature extends DefaultMoveShapeFeature {
 
         if (oldContainerShape != newContainerShape) {
                
-                Entity oldParentEntity=(Entity)getBusinessObjectForPictogramElement(oldContainerShape);
-                Entity newParentEntity=(Entity)getBusinessObjectForPictogramElement(newContainerShape);
-                Entity en=(Entity)getBusinessObjectForPictogramElement(shapeToMove);           
+                Entity oldParentEntity = 
+                    (Entity) getBusinessObjectForPictogramElement(oldContainerShape);
+                Entity newParentEntity = 
+                    (Entity) getBusinessObjectForPictogramElement(newContainerShape);
+                Entity en = (Entity) getBusinessObjectForPictogramElement(shapeToMove);           
               
                 // remember selection, because it is lost when temporarily removing the shapes.
                 PictogramElement[] currentSelection = getDiagramEditor().getSelectedPictogramElements();
@@ -70,24 +73,26 @@ public class MoveEntityFeature extends DefaultMoveShapeFeature {
                         Collection<Shape> children = oldContainerShape.getChildren();
                         if (children != null) {
                              children.remove(shapeToMove);
-                             if(oldParentEntity!=null)
+                             if (oldParentEntity != null) {
                              oldParentEntity.getChildEntities().remove(en);
+                             }
                         }
                 }
 
                 shapeToMove.setContainer(newContainerShape);
-                if(newParentEntity!=null)
+                if (newParentEntity != null) {
                 newParentEntity.getChildEntities().add(en);
+                }
                 if (shapeToMove.getGraphicsAlgorithm() != null) {
-                        Graphiti.getGaService()
-                                        .setLocation(shapeToMove.getGraphicsAlgorithm(), x, y, avoidNegativeCoordinates());
+                        Graphiti.getGaService().setLocation(
+                                shapeToMove.getGraphicsAlgorithm(), x, y, avoidNegativeCoordinates());
                 }
                 // restore selection
                 getDiagramEditor().setPictogramElementsForSelection(currentSelection);
         } else { // move within the same container
                 if (shapeToMove.getGraphicsAlgorithm() != null) {
-                        Graphiti.getGaService()
-                                        .setLocation(shapeToMove.getGraphicsAlgorithm(), x, y, avoidNegativeCoordinates());
+                        Graphiti.getGaService().setLocation(
+                                shapeToMove.getGraphicsAlgorithm(), x, y, avoidNegativeCoordinates());
                 }
         }
 }
@@ -99,7 +104,7 @@ public class MoveEntityFeature extends DefaultMoveShapeFeature {
      * @param context
      *            the context
      */
-    protected void moveAllBendpoints(IMoveShapeContext context) {
+    protected void moveAllBendpoints(final IMoveShapeContext context) {
         
            if (!(context.getShape() instanceof ContainerShape)) {
                 return;
@@ -128,7 +133,8 @@ public class MoveEntityFeature extends DefaultMoveShapeFeature {
                                         Collection<Connection> incomingConnections = anchorTo.getIncomingConnections();
                                         if (incomingConnections.contains(connection)) {
                                                 if (connection instanceof FreeFormConnection) {
-                                                        FreeFormConnection ffc = (FreeFormConnection) connection;
+                                                        FreeFormConnection ffc = 
+                                                            (FreeFormConnection) connection;
                                                         List<Point> points = ffc.getBendpoints();
                                                         for (int i = 0; i < points.size(); i++) {
                                                                 Point point = points.get(i);
@@ -144,7 +150,7 @@ public class MoveEntityFeature extends DefaultMoveShapeFeature {
         }
 }
 
-    private List<Anchor> getAnchors(ContainerShape containerShape) {
+    private List<Anchor> getAnchors(final ContainerShape containerShape) {
             List<Anchor> ret = new ArrayList<Anchor>();
             ret.addAll(containerShape.getAnchors());
 

@@ -49,21 +49,28 @@ public class AddPortFeature extends AbstractAddShapeFeature{
    float heightPercent;
 
     BoxRelativeAnchor boxAnchor = peCreateService.createBoxRelativeAnchor(containerShape);
-    if (context.getX() < 10 ) {
+    if (context.getX() < 10) {
      //   widthPercent=(float)8.0/(float)containerShape.getGraphicsAlgorithm().getWidth();
         widthPercent = (float) 0;
         }
-        else if(Math.abs(context.getX()-(float)containerShape.getGraphicsAlgorithm().getWidth())<10)
+        else if (Math.abs(context.getX() 
+                - (float) containerShape.getGraphicsAlgorithm().getWidth()) < 10){
      //   widthPercent=(float)1-((float)8.0/(float)containerShape.getGraphicsAlgorithm().getWidth());
-            widthPercent=(float)1;
-            else
-    widthPercent=((float)context.getX())/containerShape.getGraphicsAlgorithm().getWidth();
+            widthPercent = (float) 1;
+        }
+            else {
+                widthPercent = ((float) context.getX()) 
+                / containerShape.getGraphicsAlgorithm().getWidth();
+            }
     
-    if(Math.abs(context.getY()-(float)containerShape.getGraphicsAlgorithm().getHeight())<10)
+    if (Math.abs(context.getY() - (float) containerShape.getGraphicsAlgorithm().getHeight()) < 10) {
      //   heightPercent=(float)1-((float)8.0/(float)containerShape.getGraphicsAlgorithm().getHeight());
-        heightPercent=(float)1;
-        else
-    heightPercent=((float)context.getY())/containerShape.getGraphicsAlgorithm().getHeight();
+        heightPercent = (float) 1;
+    }
+        else {
+                heightPercent = ((float) context.getY()) 
+                / containerShape.getGraphicsAlgorithm().getHeight();
+        }
    
     boxAnchor.setRelativeWidth(widthPercent);
     boxAnchor.setRelativeHeight(heightPercent);
@@ -72,24 +79,26 @@ public class AddPortFeature extends AbstractAddShapeFeature{
   //      boxAnchor.setRelativeHeight(0.38);
   //      boxAnchor.setRelativeWidth(1.0);
         
-        IGaService gaService=Graphiti.getGaService();
+        IGaService gaService = Graphiti.getGaService();
         
      //   Rectangle invisibleRectangle=gaService.createInvisibleRectangle(containerShape);
-        Iterator iter=containerShape.getChildren().iterator();
-        PictogramElement pe=(PictogramElement) containerShape.getLink().getPictogramElement();
+        Iterator iter = containerShape.getChildren().iterator();
+        PictogramElement pe = (PictogramElement) containerShape.getLink().getPictogramElement();
       
    
-        if(pe.getGraphicsAlgorithm() instanceof Rectangle)
+        if (pe.getGraphicsAlgorithm() instanceof Rectangle)
         {
-            Rectangle invisibleRectangle=(Rectangle)pe.getGraphicsAlgorithm();
+            Rectangle invisibleRectangle = (Rectangle) pe.getGraphicsAlgorithm();
            // System.out.println("I came here also");
-            for(int i=0;i<invisibleRectangle.getGraphicsAlgorithmChildren().size();i++)
-                if(invisibleRectangle.getGraphicsAlgorithmChildren().get(i) instanceof RoundedRectangle)
+            for (int i = 0; i < invisibleRectangle.getGraphicsAlgorithmChildren().size(); i++) {
+                if (invisibleRectangle.getGraphicsAlgorithmChildren().get(i) instanceof RoundedRectangle)
                     {
-                    boxAnchor.setReferencedGraphicsAlgorithm((RoundedRectangle)(invisibleRectangle.getGraphicsAlgorithmChildren().get(i)));
+                    boxAnchor.setReferencedGraphicsAlgorithm((RoundedRectangle) 
+                            (invisibleRectangle.getGraphicsAlgorithmChildren().get(i)));
              //       System.out.println("Hello I cam here!!");
                     }
-              } 
+              }
+            } 
      
    // assign a rectangle graphics algorithm for the box relative anchor
 
@@ -98,7 +107,7 @@ public class AddPortFeature extends AbstractAddShapeFeature{
     Ellipse boxEllipse = gaService.createEllipse(boxAnchor);
     boxEllipse.setFilled(true);
     boxEllipse.setStyle(StyleUtil.getStyleForEClass(getDiagram()));
-    System.out.println("X:"+context.getX()+"Y:"+context.getY());
+    System.out.println("X:" + context.getX() + "Y:" + context.getY());
    // gaService.setLocationAndSize(boxEllipse,-8, -4, 8, 8);
    
     final int w = INVISIBLE_RECTANGLE_WIDTH;
@@ -110,7 +119,7 @@ public class AddPortFeature extends AbstractAddShapeFeature{
 //    return (PictogramElement) boxRect;
  //   layoutPictogramElement(containerShape);
     
-    Entity entity=(Entity)getBusinessObjectForPictogramElement(context.getTargetContainer());
+    Entity entity = (Entity) getBusinessObjectForPictogramElement(context.getTargetContainer());
     entity.getChildPorts().add(port);
     
     link(boxAnchor, port);
@@ -119,18 +128,19 @@ public class AddPortFeature extends AbstractAddShapeFeature{
 
     public boolean canAdd(IAddContext context) {
         // TODO Auto-generated method stub
-        if (context.getNewObject() instanceof Port)
-            if(context.getTargetContainer() instanceof ContainerShape)      
-            {
-                ContainerShape containerShape=context.getTargetContainer();
+        if (context.getNewObject() instanceof Port) {
+            if (context.getTargetContainer() instanceof ContainerShape) {
+                ContainerShape containerShape = context.getTargetContainer();
              
-                if (getBusinessObjectForPictogramElement(containerShape) instanceof Entity)
-
-                    if(Math.abs(context.getX()-containerShape.getGraphicsAlgorithm().getWidth())<10 
-                        || Math.abs(context.getY()-containerShape.getGraphicsAlgorithm().getHeight())<10
-                        || context.getX()<10)
+                if (getBusinessObjectForPictogramElement(containerShape) instanceof Entity) {
+                    if (Math.abs(context.getX() - containerShape.getGraphicsAlgorithm().getWidth()) < 10 
+                        || Math.abs(context.getY() - containerShape.getGraphicsAlgorithm().getHeight()) < 10
+                        || context.getX() < 10) {
                             return true;
+                    }
                 }
+            }
+        }
         return false;
     }
 

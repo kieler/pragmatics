@@ -33,11 +33,10 @@ public class LayoutEntityFeature extends AbstractLayoutFeature {
 
     public boolean canLayout(ILayoutContext context) {
         // TODO Auto-generated method stub
-        PictogramElement pe=context.getPictogramElement();
-        if(pe instanceof ContainerShape)
-        {
-            EList<EObject> ob=pe.getLink().getBusinessObjects();
-            return ob.size()==1 && (ob.get(0) instanceof Entity);
+        PictogramElement pe = context.getPictogramElement();
+        if (pe instanceof ContainerShape) {
+            EList<EObject> ob = pe.getLink().getBusinessObjects();
+            return ob.size() == 1 && (ob.get(0) instanceof Entity);
         }
         
         return false;
@@ -46,58 +45,59 @@ public class LayoutEntityFeature extends AbstractLayoutFeature {
        // return PropertyUtil.isEClassShape(pe);
     }
 
-    public boolean layout(ILayoutContext context) {
+    public boolean layout(final ILayoutContext context) {
         // TODO Auto-generated method stub
         
-        boolean changed=false;
-        ContainerShape containerShape=(ContainerShape)context.getPictogramElement();
-        GraphicsAlgorithm containerGa=containerShape.getGraphicsAlgorithm();
+        boolean changed = false;
+        ContainerShape containerShape = (ContainerShape) context.getPictogramElement();
+        GraphicsAlgorithm containerGa = containerShape.getGraphicsAlgorithm();
         
-        if(containerGa.getHeight()<MIN_HEIGHT)
-        {
+        if (containerGa.getHeight() < MIN_HEIGHT) {
             containerGa.setHeight(MIN_HEIGHT);
-            changed=true;
+            changed = true;
         }
         
-        if(containerGa.getWidth()<MIN_WIDTH)
-        {
+        if (containerGa.getWidth() < MIN_WIDTH) {
             containerGa.setWidth(MIN_WIDTH);
-            changed=true;
+            changed = true;
         }
         
-        int containerWidth = containerGa.getWidth()-2*AddPortFeature.INVISIBLE_RECTANGLE_WIDTH;
-        Iterator iter=containerShape.getChildren().iterator();
-        while(iter.hasNext())
-        {
-            Shape shape=(Shape)iter.next();
-            GraphicsAlgorithm ga=shape.getGraphicsAlgorithm();
-            IGaService gaService=Graphiti.getGaService();
-            IDimension size=gaService.calculateSize(ga);
-            if(size.getWidth()!=containerWidth){
-                if (ga instanceof Polyline)
-                {
-                    Polyline polyline=(Polyline)ga;
-                    Point firstPoint=polyline.getPoints().get(0);
-                    Point newfirstPoint=gaService.createPoint(AddPortFeature.INVISIBLE_RECTANGLE_WIDTH, firstPoint.getY());                    
-                    Point secondpoint=polyline.getPoints().get(1);
-                    Point newsecondpoint=gaService.createPoint(AddPortFeature.INVISIBLE_RECTANGLE_WIDTH+containerWidth, secondpoint.getY());
+        int containerWidth = containerGa.getWidth() - 2 * AddPortFeature.INVISIBLE_RECTANGLE_WIDTH;
+        Iterator iter = containerShape.getChildren().iterator();
+        while (iter.hasNext()) {
+            Shape shape = (Shape) iter.next();
+            GraphicsAlgorithm ga = shape.getGraphicsAlgorithm();
+            IGaService gaService = Graphiti.getGaService();
+            IDimension size = gaService.calculateSize(ga);
+            if (size.getWidth() != containerWidth) {
+                if (ga instanceof Polyline) {
+                    Polyline polyline = (Polyline) ga;
+                    Point firstPoint = polyline.getPoints().get(0);
+                    Point newfirstPoint = gaService.createPoint(
+                            AddPortFeature.INVISIBLE_RECTANGLE_WIDTH, 
+                            firstPoint.getY());                    
+                    Point secondpoint = polyline.getPoints().get(1);
+                    Point newsecondpoint = gaService.createPoint(
+                            AddPortFeature.INVISIBLE_RECTANGLE_WIDTH + containerWidth, 
+                            secondpoint.getY());
                     polyline.getPoints().set(0, newfirstPoint);
                     polyline.getPoints().set(1, newsecondpoint);
-                    changed =true;
+                    changed = true;
                 }
-                else if(ga instanceof Text)
-                {
+                else if (ga instanceof Text) {
                   
-                   Text text=(Text)ga;
-                   gaService.setLocationAndSize(ga, AddPortFeature.INVISIBLE_RECTANGLE_WIDTH,text.getY(), containerWidth, text.getHeight());//, avoidNegativeCoordinates)
-                   changed=true;
+                   Text text = (Text) ga;
+                   gaService.setLocationAndSize(ga, AddPortFeature.INVISIBLE_RECTANGLE_WIDTH, 
+                           text.getY(), containerWidth, text.getHeight()); //, avoidNegativeCoordinates)
+                   changed = true;
                    }
-                else if(ga instanceof Rectangle)
-                {
+                else if (ga instanceof Rectangle) {
                     System.out.println("hello i cam here");
-                    Rectangle rectangle=(Rectangle)ga;
-                    gaService.setLocationAndSize(ga, AddPortFeature.INVISIBLE_RECTANGLE_WIDTH,rectangle.getY(), containerWidth, rectangle.getHeight());//, avoidNegativeCoordinates)
-                    changed=true;
+                    Rectangle rectangle = (Rectangle) ga;
+                    gaService.setLocationAndSize(ga, AddPortFeature.INVISIBLE_RECTANGLE_WIDTH, 
+                            rectangle.getY(), 
+                            containerWidth, rectangle.getHeight()); //, avoidNegativeCoordinates)
+                    changed = true;
                 }
             }
         }

@@ -34,7 +34,7 @@ public class AddRelationFeature extends AbstractAddShapeFeature {
         IPeCreateService peCreateService=Graphiti.getPeCreateService();
         ContainerShape containerShape = (ContainerShape)context.getTargetContainer();
         Entity parentEntity = null;
-        Shape shape=peCreateService.createShape(containerShape, false);
+        Shape shape=peCreateService.createShape(containerShape, true);
         IGaService gaService=Graphiti.getGaService();
        // RoundedRectangle polygon=gaService.createRoundedRectangle(containerShape, 5, 5);
         Polygon polygon= gaService.createPolygon(shape, new int[]{context.getX()-9,context.getY(),context.getX(),context.getY()+12,context.getX()+9,context.getY(),context.getX(),context.getY()-12});        
@@ -47,7 +47,7 @@ public class AddRelationFeature extends AbstractAddShapeFeature {
         parentEntity=(Entity)getBusinessObjectForPictogramElement(context.getTargetContainer());
         parentEntity.getChildRelations().add(relation);
    
-                         
+        peCreateService.createChopboxAnchor(shape);          
         
          link(shape, relation);
          

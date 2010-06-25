@@ -59,31 +59,34 @@ public class FeatureProvider extends DefaultFeatureProvider {
     @Override
     public ICreateFeature[] getCreateFeatures() {
         
-        return new ICreateFeature[] { new CreateEntityFeature(this) ,new CreatePortFeature(this,"Port","Create Port"),new CreateRelationFeature(this,"Relation","Create Relation") };
+        return new ICreateFeature[] { new CreateEntityFeature(this) ,
+                new CreatePortFeature(this, "Port", "Create Port"),
+                new CreateRelationFeature(this, "Relation", "Create Relation") };
     }
     
-    public IAddFeature getAddFeature(IAddContext context)
-    {
-        if (context.getNewObject() instanceof Entity)
+    @Override
+    public IAddFeature getAddFeature(final IAddContext context) {
+        if (context.getNewObject() instanceof Entity) {
             return new AddEntityFeature(this);
-        else if (context.getNewObject() instanceof Link) 
+        }
+        else if (context.getNewObject() instanceof Link) { 
             return new AddLinkFeature(this);        
-        else if (context.getNewObject() instanceof Port)
+        }
+        else if (context.getNewObject() instanceof Port) {
             return new AddPortFeature(this);
-        else if (context.getNewObject() instanceof Relation)
+        }
+        else if (context.getNewObject() instanceof Relation) {
             return new AddRelationFeature(this);
+        }
     return super.getAddFeature(context);
         
     }
     
     @Override
-    public IUpdateFeature getUpdateFeature(IUpdateContext context)
-    {
-        if(context.getPictogramElement() instanceof ContainerShape)
-        {
-            Object obj=getBusinessObjectForPictogramElement(context.getPictogramElement());
-            if(obj instanceof Entity)
-            {
+    public IUpdateFeature getUpdateFeature(final IUpdateContext context) {
+        if (context.getPictogramElement() instanceof ContainerShape) {
+            Object obj = getBusinessObjectForPictogramElement(context.getPictogramElement());
+            if (obj instanceof Entity) {
                 return new UpdateEntityFeature(this);
             }
             
@@ -94,74 +97,75 @@ public class FeatureProvider extends DefaultFeatureProvider {
 
 
     @Override
-    public IMoveShapeFeature getMoveShapeFeature(IMoveShapeContext context)
-    {
-        Shape shape=context.getShape();
-        Object ob=getBusinessObjectForPictogramElement(shape);
-        if(ob instanceof Entity)
+    public IMoveShapeFeature getMoveShapeFeature(final IMoveShapeContext context) {
+        Shape shape = context.getShape();
+        Object ob = getBusinessObjectForPictogramElement(shape);
+        if (ob instanceof Entity) {
             return new MoveEntityFeature(this);
-        return super.getMoveShapeFeature(context);
+        }
+            return super.getMoveShapeFeature(context);
         
         }
 
     @Override
-    public IResizeShapeFeature getResizeShapeFeature(IResizeShapeContext context)
+    public IResizeShapeFeature getResizeShapeFeature(final IResizeShapeContext context)
     {
-        Shape shape=context.getShape();
-        Object ob=getBusinessObjectForPictogramElement(shape);
-        if(ob instanceof Entity)
+        Shape shape = context.getShape();
+        Object ob = getBusinessObjectForPictogramElement(shape);
+        if (ob instanceof Entity) {
             return new ResizeEntityFeature(this);
-        return super.getResizeShapeFeature(context);
+        }
+            return super.getResizeShapeFeature(context);
         
         }
     
-    public ILayoutFeature getLayoutFeature(ILayoutContext context)
-    {
-        PictogramElement pe= context.getPictogramElement();
-        Object obj=getBusinessObjectForPictogramElement(pe);
-        if(obj instanceof Entity)
+    @Override
+    public ILayoutFeature getLayoutFeature(final ILayoutContext context) {
+        PictogramElement pe = context.getPictogramElement();
+        Object obj = getBusinessObjectForPictogramElement(pe);
+        if (obj instanceof Entity) {
             return new LayoutEntityFeature(this);
+        }
         return super.getLayoutFeature(context);
     }
     
     @Override
-    public ICustomFeature[] getCustomFeatures(ICustomContext context) {
+    public ICustomFeature[] getCustomFeatures(final ICustomContext context) {
         return new ICustomFeature[] { new RenameEntityFeature(this) };
 
     }
     
     @Override
-    public IDirectEditingFeature getDirectEditingFeature(IDirectEditingContext context)
+    public IDirectEditingFeature getDirectEditingFeature(final IDirectEditingContext context)
     {
-        PictogramElement pe=context.getPictogramElement();
-        Object ob=getBusinessObjectForPictogramElement(pe);
-        if(ob instanceof Entity)
-        {
+        PictogramElement pe = context.getPictogramElement();
+        Object ob = getBusinessObjectForPictogramElement(pe);
+        if (ob instanceof Entity) {
             return new DirectEditEntityFeature(this);
         }
         return super.getDirectEditingFeature(context);
     }
         
     @Override
-    public ICopyFeature getCopyFeature(ICopyContext context) {
+    public ICopyFeature getCopyFeature(final ICopyContext context) {
         return new CopyEntityFeature(this);
 
     }
     
     @Override
-    public IPasteFeature getPasteFeature(IPasteContext context) {
+    public IPasteFeature getPasteFeature(final IPasteContext context) {
         return new PasteEntityFeature(this);
     }
     
     @Override
 
     public ICreateConnectionFeature[] getCreateConnectionFeatures() {
-        return new ICreateConnectionFeature[] {new CreateLinkFeature(this)};//,"Link","Create Link") };
+        return new ICreateConnectionFeature[] {new CreateLinkFeature(this)}; //,"Link","Create Link") };
 
     }
     
     @Override
-    public IFeature[] getDragAndDropFeatures(IPictogramElementContext context) {
+    public IFeature[] getDragAndDropFeatures(final IPictogramElementContext context) {
         return getCreateConnectionFeatures();
 
     }

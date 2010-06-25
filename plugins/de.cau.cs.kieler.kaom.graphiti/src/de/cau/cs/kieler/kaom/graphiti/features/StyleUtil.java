@@ -12,14 +12,15 @@ import org.eclipse.graphiti.util.IColorConstant;
 
 public class StyleUtil {
 
-    private static final IColorConstant E_CLASS_TEXT_FOREGROUND = new ColorConstant(100,100,100);
+    private static final IColorConstant E_CLASS_TEXT_FOREGROUND = new ColorConstant(100, 100, 100);
 
-    private static final IColorConstant E_CLASS_FOREGROUND = new ColorConstant(40,55,180);
+    private static final IColorConstant E_CLASS_FOREGROUND = new ColorConstant(40, 55, 180);
 
-    private static final IColorConstant E_CLASS_BACKGROUND = new ColorConstant(255,255,150);
+    private static final IColorConstant E_CLASS_BACKGROUND = new ColorConstant(255, 255, 150);
 
+   // private static final IColorConstant E_CLASS_BACKGROUND = new ColorConstant(226, 233, 255);
  
-    public static Style getStyleForEClass(Diagram diagram) {
+    public static Style getStyleForEClass(final Diagram diagram) {
 
         final String styleId = "E-CLASS";
 
@@ -29,8 +30,8 @@ public class StyleUtil {
 
             IGaService gaService = Graphiti.getGaService();
             style = gaService.createStyle(diagram, styleId);
-            style.setForeground(gaService.manageColor(diagram,E_CLASS_FOREGROUND));
-            style.setBackground(gaService.manageColor(diagram,E_CLASS_BACKGROUND));
+            style.setForeground(gaService.manageColor(diagram, E_CLASS_FOREGROUND));
+            style.setBackground(gaService.manageColor(diagram, E_CLASS_BACKGROUND));
             style.setLineWidth(2);
 
         }

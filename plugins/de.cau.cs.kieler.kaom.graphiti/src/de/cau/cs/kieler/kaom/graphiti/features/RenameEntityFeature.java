@@ -9,7 +9,7 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
 public class RenameEntityFeature extends AbstractCustomFeature {
 
-    public RenameEntityFeature(IFeatureProvider fp) {
+    public RenameEntityFeature(final IFeatureProvider fp) {
         super(fp);
         // TODO Auto-generated constructor stub
     }
@@ -26,7 +26,7 @@ public class RenameEntityFeature extends AbstractCustomFeature {
  
 
     @Override
-    public boolean canExecute(ICustomContext context) {
+    public boolean canExecute(final ICustomContext context) {
         boolean ret = false;
         PictogramElement[] pes = context.getPictogramElements();
         if (pes != null && pes.length == 1) {
@@ -38,15 +38,15 @@ public class RenameEntityFeature extends AbstractCustomFeature {
         return ret;
     }
  
-
-    public void execute(ICustomContext context) {
+    
+    public void execute(final ICustomContext context) {
         PictogramElement[] pes = context.getPictogramElements();
         if (pes != null && pes.length == 1) {
             Object bo = getBusinessObjectForPictogramElement(pes[0]);
             if (bo instanceof Entity) {
                Entity entity = (Entity) bo;
                 String currentName = entity.getName();
-                String newName =SampleUtil.askString(getName(), getDescription(),currentName);
+                String newName = SampleUtil.askString(getName(), getDescription(), currentName);
 
                 if (newName != null) {
                     entity.setName(newName);

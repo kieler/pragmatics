@@ -9,13 +9,13 @@ public class PropertyUtil {
  
     public static final String SHAPE_VALUE_E_CLASS = "e-class";
  
-    public static final void setEClassShape(PictogramElement pe) {
+    public static final void setEClassShape(final PictogramElement pe) {
     Graphiti.getPeService().setPropertyValue(pe, SHAPE_KEY,
             SHAPE_VALUE_E_CLASS);
 
     }
 
-    public static boolean isEClassShape(PictogramElement pe) {
+    public static boolean isEClassShape(final PictogramElement pe) {
 
         return SHAPE_VALUE_E_CLASS.equals(Graphiti.getPeService()
            .getPropertyValue(pe, SHAPE_KEY));

@@ -18,17 +18,17 @@ public class CreatePortFeature extends AbstractCreateFeature {
 
     public boolean canCreate(ICreateContext context) {
         // TODO Auto-generated method stub
-       if (context.getTargetContainer() instanceof ContainerShape)
-       {
-           ContainerShape containerShape=context.getTargetContainer();
-           if (getBusinessObjectForPictogramElement(containerShape) instanceof Entity)
-               if(Math.abs(context.getX()-containerShape.getGraphicsAlgorithm().getWidth())<10 
-                       || Math.abs(context.getY()-containerShape.getGraphicsAlgorithm().getHeight())<10
-                       || context.getX()<10)
+       if (context.getTargetContainer() instanceof ContainerShape) {
+           ContainerShape containerShape = context.getTargetContainer();
+           if (getBusinessObjectForPictogramElement(containerShape) instanceof Entity) {
+               if (Math.abs(context.getX() - containerShape.getGraphicsAlgorithm().getWidth()) < 10 
+                   || Math.abs(context.getY() - containerShape.getGraphicsAlgorithm().getHeight()) < 10
+                       || context.getX() < 10) {
                               
                return true;
-           }
-      
+               }
+            }
+       }
            return false;
     }
 
@@ -45,7 +45,7 @@ public class CreatePortFeature extends AbstractCreateFeature {
         // do the add
         addGraphicalRepresentation(context, port);
  
-        getFeatureProvider().getDirectEditingInfo().setActive(true);     
+     //   getFeatureProvider().getDirectEditingInfo().setActive(true);     
         
         return new Object[] { port };
     }

@@ -16,7 +16,7 @@ public class PasteEntityFeature extends AbstractPasteFeature {
         // TODO Auto-generated constructor stub
     }
 
-    public boolean  canPaste(IPasteContext context) {
+    public boolean canPaste(final IPasteContext context) {
 
         PictogramElement[] pes = context.getPictogramElements();
         if (pes.length != 1 || !(pes[0] instanceof Diagram)) {

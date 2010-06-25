@@ -14,7 +14,7 @@ public class CopyEntityFeature extends AbstractCopyFeature {
         // TODO Auto-generated constructor stub
     }
 
-    public boolean  canCopy(ICopyContext context) {
+     public boolean canCopy(final ICopyContext context) {
         final PictogramElement[] pes = context.getPictogramElements();
 
         if (pes == null || pes.length == 0) {  // nothing selected
@@ -32,8 +32,7 @@ public class CopyEntityFeature extends AbstractCopyFeature {
         return true;
     }
  
-
-    public void copy(ICopyContext context) {
+      public void copy(final ICopyContext context) {
 
         PictogramElement[] pes = context.getPictogramElements();
         Object[] bos = new Object[pes.length];

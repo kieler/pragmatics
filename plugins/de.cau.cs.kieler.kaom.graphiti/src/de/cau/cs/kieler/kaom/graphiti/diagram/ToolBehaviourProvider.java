@@ -19,38 +19,35 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
     }
     
    @Override
-   protected boolean isContextMenuApplicable(IFeature feature) {
+   protected boolean isContextMenuApplicable(final IFeature feature) {
        boolean ret = (feature instanceof ICustomFeature);
        return ret;
 
         }
 
-   public GraphicsAlgorithm[] getSelectionArea(PictogramElement pe){
+   @Override
+   public GraphicsAlgorithm[] getSelectionArea(final PictogramElement pe) {
      
        IFeatureProvider featureProvider = getFeatureProvider();
-       Object obj=featureProvider.getBusinessObjectForPictogramElement(pe);
-       if(obj instanceof Entity)
-       {
-           GraphicsAlgorithm invisible=pe.getGraphicsAlgorithm();
-           GraphicsAlgorithm rectangle=invisible.getGraphicsAlgorithmChildren().get(0);
+       Object obj = featureProvider.getBusinessObjectForPictogramElement(pe);
+       if (obj instanceof Entity) {
+           GraphicsAlgorithm invisible = pe.getGraphicsAlgorithm();
+           GraphicsAlgorithm rectangle = invisible.getGraphicsAlgorithmChildren().get(0);
            return new GraphicsAlgorithm[]{rectangle};
        }
      return super.getSelectionArea(pe);
    }
    
    @Override
-   public GraphicsAlgorithm getSelectionGraphicsAlgorithm(PictogramElement pe)
-   {
-       IFeatureProvider featureProvider=getFeatureProvider();
-       Object obj=featureProvider.getBusinessObjectForPictogramElement(pe);
+   public GraphicsAlgorithm getSelectionGraphicsAlgorithm(final PictogramElement pe) {
+       IFeatureProvider featureProvider = getFeatureProvider();
+       Object obj = featureProvider.getBusinessObjectForPictogramElement(pe);
        
-       if(obj instanceof Entity)
-       {
-           GraphicsAlgorithm invisible=pe.getGraphicsAlgorithm();
-           EList<GraphicsAlgorithm> graphicsAlgorithmChildren=invisible.getGraphicsAlgorithmChildren();
+       if (obj instanceof Entity) {
+           GraphicsAlgorithm invisible = pe.getGraphicsAlgorithm();
+           EList<GraphicsAlgorithm> graphicsAlgorithmChildren = invisible.getGraphicsAlgorithmChildren();
            
-           if(!graphicsAlgorithmChildren.isEmpty())
-           {
+           if (!graphicsAlgorithmChildren.isEmpty()) {
                return graphicsAlgorithmChildren.get(0);
             }
        }

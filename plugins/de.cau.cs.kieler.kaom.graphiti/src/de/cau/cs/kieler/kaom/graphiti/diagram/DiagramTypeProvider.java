@@ -8,21 +8,18 @@ public class DiagramTypeProvider extends AbstractDiagramTypeProvider {
 
     private  IToolBehaviorProvider[] toolBehaviorProviders;
     
-    public DiagramTypeProvider()
-    {
+    public DiagramTypeProvider() {
         super();
         setFeatureProvider(new FeatureProvider(this));
     }
     
     @Override
-    public boolean isAutoUpdateAtRuntime()
-    {
+    public boolean isAutoUpdateAtRuntime() {
         return true;
     }
 
     @Override
-    public boolean isAutoUpdateAtStartup()
-    {
+    public boolean isAutoUpdateAtStartup() {
         return true;
     }
     
@@ -30,7 +27,7 @@ public class DiagramTypeProvider extends AbstractDiagramTypeProvider {
     @Override
     public IToolBehaviorProvider[] getAvailableToolBehaviorProviders() {
         if (toolBehaviorProviders == null) {
-            toolBehaviorProviders =new IToolBehaviorProvider[] { new ToolBehaviourProvider(
+            toolBehaviorProviders = new IToolBehaviorProvider[] { new ToolBehaviourProvider(
                     this) };
         }
         return toolBehaviorProviders;

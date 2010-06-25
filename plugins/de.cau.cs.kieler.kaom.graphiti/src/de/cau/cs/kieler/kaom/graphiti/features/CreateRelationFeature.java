@@ -16,23 +16,24 @@ public class CreateRelationFeature extends AbstractCreateFeature {
 
     public CreateRelationFeature(IFeatureProvider fp, String name, String description) {
         super(fp, name, description);
-        // TODO Auto-generated constructor stub
+    
     }
 
     public boolean canCreate(ICreateContext context) {
-        // TODO Auto-generated method stub   
-            if(context.getTargetContainer() instanceof Diagram || context.getTargetContainer() instanceof ContainerShape)
+      
+            if (context.getTargetContainer() instanceof ContainerShape) {
                 return true;
+    }
         
         return false;
     }
     
 
     public Object[] create(ICreateContext context) {
-        // TODO Auto-generated method stub
-        KaomFactory kaomFactory=KaomFactory.eINSTANCE;
+       
+        KaomFactory kaomFactory = KaomFactory.eINSTANCE;
         
-        Relation relation=kaomFactory.createRelation();
+        Relation relation = kaomFactory.createRelation();
         // Add model element to resource.
         // We add the model element to the resource of the diagram for
         // simplicity's sake. Normally, a customer would use its own
@@ -42,10 +43,7 @@ public class CreateRelationFeature extends AbstractCreateFeature {
  
         // do the add
         addGraphicalRepresentation(context, relation);
- 
-        getFeatureProvider().getDirectEditingInfo().setActive(true);
-        
-                
+                       
         return new Object[] { relation };
     }
 
