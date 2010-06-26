@@ -64,9 +64,7 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
                 if (node.getProperty(Properties.NODE_TYPE) != Properties.NodeType.LONG_EDGE) {
                     for (LPort port : node.getPorts(PortType.OUTPUT)) {
                         for (LEdge edge : port.getEdges()) {
-                            if (edge.getTarget()
-                                    .getNode().getProperty(Properties.NODE_TYPE) 
-                                    == Properties.NodeType.LONG_EDGE) {
+                            if (edge.getTarget().getNode().getProperty(Properties.NODE_TYPE) == Properties.NodeType.LONG_EDGE) {
                                 longEdges.add(edge);
                                 realLongEdges.add(new LongEdge(edge));
                             }
@@ -88,6 +86,8 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
 
             BezierSpline spline = splineInterp.interpolatePoints(longEdge.getPoints(), startAngle,
                     endAngle);
+
+            spline = optimizeSpline(spline);
             if (spline != null) {
                 // add calculated bend points
                 for (KVector v : spline.getInnerPoints()) {
@@ -97,6 +97,82 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
 
         }
 
+    }
+
+    private BezierSpline optimizeSpline(BezierSpline spline) {
+        if (spline.getBasePoints().length >= 4 && isLongStraightSpline(spline)) {
+
+            KVector[] basePoints = spline.getBasePoints();
+            int n = basePoints.length - 1;
+
+            int offset = (n >= 7) ? 3 : 2;
+            if (n < 5)
+                offset = 1;
+
+            KVector start = spline.getStartPoint();
+            KVector end = spline.getEndPoint();
+
+            LinkedList<KVector> newPoints = new LinkedList<KVector>();
+            newPoints.add(start);
+
+            if (n >= 5) {
+                KVector intermediateLeft = basePoints[1].clone();
+                intermediateLeft.y += (start.y - intermediateLeft.y) / 4;
+                newPoints.add(intermediateLeft);
+            }
+
+            KVector bendLeft = null;
+            if (n >= 5) {
+                 bendLeft = basePoints[offset].clone();
+                newPoints.add(bendLeft);
+            }
+            KVector bendRight = basePoints[n - offset].clone();
+            newPoints.add(bendRight);
+
+            if (n >= 5) {
+                KVector intermediateRight = basePoints[n - 1].clone();
+                intermediateRight.y += (end.y - intermediateRight.y) / 4;
+                newPoints.add(intermediateRight);
+            }
+            newPoints.add(end);
+
+            // KVector startTangent = KVector.sub(intermediateLeft, start).normalize();
+            // KVector endTangent = KVector.sub(intermediateRight, end).normalize().negate();
+
+            KVector test = null;
+            if(bendLeft == null){
+                test = bendRight.clone();
+//                test.y = start.y - bendRight.y;
+//                test.x -= (bendRight.x - start.x);
+//                test.normalize();
+//                test.negate();
+            }
+            KVector startTangent = KVector.sub((bendLeft == null) ? test : bendLeft, start).normalize();
+            KVector endTangent = KVector.sub(bendRight, end).normalize().negate();
+
+            return splineInterp.interpolatePoints(newPoints, startTangent, endTangent);
+
+        } else {
+            return spline;
+        }
+    }
+
+    private boolean isLongStraightSpline(BezierSpline spline) {
+        KVector start = spline.getStartPoint();
+        KVector end = spline.getEndPoint();
+        Integer y = null;
+        for (KVector pt : spline.getBasePoints()) {
+            if (pt != start && pt != end) {
+                if (y == null) {
+                    y = (int) pt.y;
+                } else {
+                    if (!((int) pt.y == (int) y)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     /**
