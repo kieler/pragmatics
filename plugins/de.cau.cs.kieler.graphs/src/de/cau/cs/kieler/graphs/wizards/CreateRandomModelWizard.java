@@ -38,6 +38,7 @@ import de.cau.cs.kieler.graphs.Node;
  * 
  * @author haf
  * @author msp
+ * @author mri
  */
 public class CreateRandomModelWizard extends Wizard implements INewWizard {
 

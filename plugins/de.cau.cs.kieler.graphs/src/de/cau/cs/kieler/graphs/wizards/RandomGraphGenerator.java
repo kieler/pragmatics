@@ -34,8 +34,6 @@ public class RandomGraphGenerator {
     private boolean usePorts;
     /** current index for new node. */
     private int nodeIndex;
-    /** list of all compound nodes. */
-    private List<Node> compoundNodes = new LinkedList<Node>();
 
     /**
      * Creates a random graph model according to given parameters.
@@ -62,7 +60,6 @@ public class RandomGraphGenerator {
         Node graph = factory.createNode();
 
         createNodes(graph, nodes, minConnections, maxConnections);
-        this.compoundNodes.clear();
 
         return graph;
     }
@@ -88,6 +85,7 @@ public class RandomGraphGenerator {
         }
         int nodesLeft = nodesToCreate;
         int compoundCount = 0, totalCount = 0;
+        List<Node> compoundNodes = new LinkedList<Node>();
         do {
             Node node = factory.createNode();
             double rand = Math.random();
