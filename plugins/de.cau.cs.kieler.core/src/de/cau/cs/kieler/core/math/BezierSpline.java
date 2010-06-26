@@ -146,6 +146,7 @@ public class BezierSpline {
 
     /**
      * returns just the base points, including start and end point.
+     * those are the points REALLY lying on the curve.
      * 
      * @return base points
      */
