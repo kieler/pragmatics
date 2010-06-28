@@ -70,12 +70,16 @@ public class SimpleLabelPlacer extends AbstractAlgorithm implements ILabelPlacer
                             if (longEdge == null) {
                                 label.getPos().y = (target.y - source.y) / 2;
                             } else {
+                                Coord portPosition = new Coord(edge.getSource().getPos().x,
+                                        edge.getSource().getPos().y);
+                                portPosition.add(edge.getSource().getNode().getPos());
                                 int numberOfBendpoints = longEdge.getEdge().getBendPoints().size();
-                                label.getPos().y = longEdge.getEdge().getBendPoints().get(numberOfBendpoints / 2).y;
-                                //System.out.println(label.getPos().y);
-                                for (Coord bendPoint : longEdge.getEdge().getBendPoints()) {
-                                  //System.out.println(label.getText() + " " + bendPoint.y);  
-                                }
+                                label.getPos().x = longEdge.getEdge().
+                                    getBendPoints().get(numberOfBendpoints / 2).x - portPosition.x;
+                                label.getPos().y = longEdge.getEdge().
+                                    getBendPoints().get(numberOfBendpoints / 2).y - portPosition.y;
+                                /*for (Coord bendPoint : longEdge.getEdge().getBendPoints()) {
+                                }*/
                             }
                             label.getPos().x -= label.getSize().x / 2;
                         }
