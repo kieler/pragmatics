@@ -124,7 +124,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
     }
 
     /**
-     * Calculate the coordinate on a line between two nodes
+     * Calculate the coordinate on a line between two nodes.
      * 
      * @param src
      *            the source-node
@@ -220,12 +220,10 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
 
                 newBox = new Rectangle2D.Double(reachedx, starty, newBoxWidth, newBoxHeight);
 
-          
-
                 // stuff we intersect with right from the start is ignored to enlarge the boxes
                 // the path we follow will (hopefully) cause the next boxes to fit better
                 Object previntersects = intersectsWithAny(newBox, null, edges, nodes);
-                if (previntersects instanceof Rectangle2D) { // any line we cross at startup, we
+                if (previntersects instanceof Rectangle2D) { // do not start on a node
 
                     // System.out.println("damn, on a node");
                     if (prevBox != null) {
@@ -234,51 +232,46 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                         if (prevBox.y < newBox.y) {
                             // newBox.y = (prevBox.y + prevBox.height) - newBoxHeight * 2;
                             if (runAgainstNodeTop != null) {
-                                //newBox = floorBox(newBox, runAgainstNodeTop);
-                                //drawOnDebug(new Line2D.Double(0, 0, runAgainstNodeTop.x, runAgainstNodeTop.y), DebugCanvas.Color.RED, false);
+                                // newBox = floorBox(newBox, runAgainstNodeTop);
+                                drawOnDebug(new Line2D.Double(0, 0, runAgainstNodeTop.x,
+                                        runAgainstNodeTop.y), DebugCanvas.Color.RED, false);
 
-                            } 
-                                newBox = floorBox(newBox, hitbox);
-                            
+                            }
+                            newBox = floorBox(newBox, hitbox);
+
                         } else if (prevBox.y > newBox.y) {
                             // newBox.y = prevBox.y;
                             if (runAgainstNodeBottom != null) {
-                                //newBox = ceilBox(newBox, runAgainstNodeBottom);
-                                //drawOnDebug(new Line2D.Double(0, 0, runAgainstNodeTop.x, runAgainstNodeTop.y), DebugCanvas.Color.GREEN, false);
+                                // newBox = ceilBox(newBox, runAgainstNodeBottom);
+                                drawOnDebug(new Line2D.Double(0, 0, runAgainstNodeBottom.x,
+                                        runAgainstNodeBottom.x), DebugCanvas.Color.GREEN, false);
                             }
-                                newBox = ceilBox(newBox, hitbox);
-                            
+                            newBox = ceilBox(newBox, hitbox);
+
                         }
                     }
-
-                    // propably should be crossing, but no nodes
                     previntersects = null;
+                } // but on edges is ok
 
-                }
-
-                // enlarge two boxes independently from each other, one to the top, one to the
-                // bottom
-                Rectangle2D.Double tempBox = new Rectangle2D.Double(reachedx, Math.max(0, newBox.y
-                        + newBox.height), newBoxWidth, newBoxHeight);
                 drawOnDebug(newBox.clone(), DebugCanvas.Color.GREEN, true);
-                drawOnDebug(tempBox.clone(), DebugCanvas.Color.ORANGE, true);
+
+                Object runagainst = intersectsWithAny(newBox, previntersects, edges, nodes);
 
                 // enlarge boxes from bottom to top
-                while (newBox.y > 0
-                        && intersectsWithAny(newBox, previntersects, edges, nodes) == null) {
+                while (newBox.y > 0 && runagainst == null) {
                     newBox.y -= BOX_RESIZE_STEPSIZE;
                     newBox.height += BOX_RESIZE_STEPSIZE;
+                    runagainst = intersectsWithAny(newBox, previntersects, edges, nodes);
                 }
 
                 // we got one step too far
                 // node/edge above box
-                Object runagainst = intersectsWithAny(newBox, null, edges, nodes);
                 if (runagainst != null) {
                     // show us the bad boy we ran into
                     drawOnDebug(runagainst, DebugCanvas.Color.RED, true);
                     if (runagainst instanceof Rectangle2D) {
                         newBox = ceilBox(newBox, (Rectangle2D.Double) runagainst);
-                        runAgainstNodeTop = (Rectangle2D.Double)runagainst; 
+                        runAgainstNodeTop = (Rectangle2D.Double) runagainst;
                     } else { // run against a another edge
                         // one step back
                         newBox.y += 2 * BOX_RESIZE_STEPSIZE;
@@ -292,28 +285,37 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                     }
                 }
 
+                // enlarge two boxes independently from each other, one to the top, one to the
+                // bottom
+                Rectangle2D.Double tempBox = new Rectangle2D.Double(reachedx, Math.max(0, newBox.y
+                        + newBox.height), newBoxWidth, newBoxHeight);
+                drawOnDebug(tempBox.clone(), DebugCanvas.Color.ORANGE, true);
+
                 // from top downwards to bottom
                 previntersects = intersectsWithAny(tempBox, null, edges, nodes);
-                if (previntersects instanceof Rectangle2D) { // any line we cross at startup, we
-                    // propably should be crossing
+                if (previntersects instanceof Rectangle2D) { // do not start on a node
                     previntersects = null;
-                }
+                } // but on edges is ok
+
+                runagainst = intersectsWithAny(tempBox, previntersects, edges, nodes);
+                
                 while (tempBox.y + tempBox.height < layeredGraph.getSize().y
-                        && intersectsWithAny(tempBox, previntersects, edges, nodes) == null) {
+                        && runagainst == null) {
                     tempBox.height += BOX_RESIZE_STEPSIZE;
+                    runagainst = intersectsWithAny(tempBox, previntersects, edges, nodes);
                 }
 
                 // we got one step too far again
-                runagainst = intersectsWithAny(tempBox, null, edges, nodes);
+                runagainst = intersectsWithAny(tempBox, previntersects, edges, nodes);
                 if (runagainst != null) {
                     // show bad box
                     drawOnDebug(runagainst, DebugCanvas.Color.RED, true);
                     if (runagainst instanceof Rectangle2D) {
                         tempBox = floorBox(tempBox, (Rectangle2D.Double) runagainst);
-                        runAgainstNodeBottom = (Rectangle2D.Double)runagainst; 
+                        runAgainstNodeBottom = (Rectangle2D.Double) runagainst;
                     } else { // run against a another edge
                         // one step back
-                        newBox.height -= 2 * BOX_RESIZE_STEPSIZE;
+                        tempBox.height -= 2 * BOX_RESIZE_STEPSIZE;
 
                         // we ran against a line? go one step further
                         // tempBox.height += BOX_RESIZE_STEPSIZE;
@@ -402,7 +404,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
     }
 
     /**
-     * take a given box and snap it to a grid with BOX_RESIZE_STEPSIZE stepsize
+     * take a given box and snap it to a grid with BOX_RESIZE_STEPSIZE stepsize.
      * 
      * @param box
      * @param node
@@ -420,7 +422,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
     }
 
     /**
-     * take a given box and snap it to a grid with BOX_RESIZE_STEPSIZE stepsize
+     * take a given box and snap it to a grid with BOX_RESIZE_STEPSIZE stepsize.
      * 
      * @param box
      * @param node
