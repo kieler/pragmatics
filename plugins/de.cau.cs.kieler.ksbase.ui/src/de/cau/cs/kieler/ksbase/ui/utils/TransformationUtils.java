@@ -27,7 +27,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 import de.cau.cs.kieler.core.model.util.ModelingUtil;
 import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
-import de.cau.cs.kieler.ksbase.ui.TransformationUIManager;
 import de.cau.cs.kieler.ksbase.ui.listener.ITransformationEventListener;
 
 /**

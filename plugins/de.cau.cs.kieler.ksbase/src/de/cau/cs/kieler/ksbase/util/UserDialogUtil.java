@@ -146,8 +146,9 @@ public class UserDialogUtil {
      *            the list of elements
      * @return the users choice
      */
+    @SuppressWarnings("unchecked")
     public <T> T getUserObjectFromList(final String message, final List<T> list) {
-        String title = "User input required";
+//        String title = "User input required";
         ListDialog dialog = new ListDialog(PlatformUI.getWorkbench()
                 .getDisplay().getActiveShell());
         dialog.setMessage(message);

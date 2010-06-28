@@ -58,7 +58,7 @@ public class KaomCutCopyPasteCommandFactory extends
      * {@inheritDoc}
      */
     @Override
-    protected void performPostOperationActions(IProgressMonitor monitor) {
+    protected void performPostOperationActions(final IProgressMonitor monitor) {
         KaomDiagramCustomPlugin.getDefault().getDisplay().syncExec(
                 new Runnable() {
 

@@ -20,67 +20,66 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.viewer.KimlViewerPlugin;
 
 /**
- * Label provider for execution times retrieved from KIELER progress
- * monitors.
+ * Label provider for execution times retrieved from KIELER progress monitors.
  * 
  * @author msp
  */
 public class ExecutionLabelProvider extends LabelProvider {
 
-	/** path to the image used for elements. */
-	private static final String IMAGE_PATH = "/icons/execution.gif";
-	
-	/** the image used for each element. */
-	private Image elementImage;
-	
-	/**
-	 * Creates an execution label provider.
-	 */
-	public ExecutionLabelProvider() {
-		elementImage = KimlViewerPlugin.imageDescriptorFromPlugin(
-				KimlViewerPlugin.PLUGIN_ID, IMAGE_PATH).createImage();
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Image getImage(final Object element) {
-		if (element instanceof IKielerProgressMonitor) {
-			return elementImage;
-		} else {
-		    return null;
-		}
-	}
+    /** path to the image used for elements. */
+    private static final String IMAGE_PATH = "/icons/execution.gif";
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getText(final Object element) {
-		if (element instanceof IKielerProgressMonitor) {
-			IKielerProgressMonitor monitor = (IKielerProgressMonitor)element;
-			String baseText = monitor.getTaskName() + ": ";
-			double time = monitor.getExecutionTime();
-			if (time >= 1.0) {
-				return baseText + String.format("%1$.3f s", time);
-			} else {
-				return baseText + String.format("%1$.3f ms", time * 1000);
-			}
-		} else {
-		    return null;
-		}
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void dispose() {
-		super.dispose();
-		if (elementImage != null) {
-			elementImage.dispose();
-		}
-	}
+    /** the image used for each element. */
+    private Image elementImage;
+
+    /**
+     * Creates an execution label provider.
+     */
+    public ExecutionLabelProvider() {
+        elementImage = KimlViewerPlugin
+                .imageDescriptorFromPlugin(KimlViewerPlugin.PLUGIN_ID, IMAGE_PATH).createImage();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Image getImage(final Object element) {
+        if (element instanceof IKielerProgressMonitor) {
+            return elementImage;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getText(final Object element) {
+        if (element instanceof IKielerProgressMonitor) {
+            IKielerProgressMonitor monitor = (IKielerProgressMonitor) element;
+            String baseText = monitor.getTaskName() + ": ";
+            double time = monitor.getExecutionTime();
+            if (time >= 1.0) {
+                return baseText + String.format("%1$.3f s", time);
+            } else {
+                return baseText + String.format("%1$.3f ms", time * 1000);
+            }
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void dispose() {
+        super.dispose();
+        if (elementImage != null) {
+            elementImage.dispose();
+        }
+    }
 
 }

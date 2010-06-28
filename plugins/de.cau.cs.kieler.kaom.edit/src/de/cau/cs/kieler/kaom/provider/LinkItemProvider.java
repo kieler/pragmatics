@@ -22,7 +22,6 @@ import de.cau.cs.kieler.core.annotations.provider.NamedObjectItemProvider;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.KaomPackage;
 import de.cau.cs.kieler.kaom.Link;
-import de.cau.cs.kieler.kaom.Linkable;
 
 import java.util.Collection;
 import java.util.List;

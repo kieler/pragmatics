@@ -15,10 +15,6 @@
  */
 package de.cau.cs.kieler.kaom.impl;
 
-import de.cau.cs.kieler.core.annotations.Annotatable;
-import de.cau.cs.kieler.core.annotations.Annotation;
-import de.cau.cs.kieler.core.annotations.AnnotationsPackage;
-import de.cau.cs.kieler.core.annotations.NamedObject;
 import de.cau.cs.kieler.core.annotations.impl.NamedObjectImpl;
 
 import de.cau.cs.kieler.kaom.Entity;
@@ -30,15 +26,12 @@ import de.cau.cs.kieler.kaom.Relation;
 
 import java.util.Collection;
 
-import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
-
-import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EObjectWithInverseResolvingEList;

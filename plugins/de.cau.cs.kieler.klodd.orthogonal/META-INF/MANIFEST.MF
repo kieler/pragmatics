@@ -9,3 +9,4 @@ Require-Bundle: org.eclipse.emf.ecore;bundle-version="2.4.1",
  net.sourceforge.lpsolve;bundle-version="5.5.0"
 Export-Package: de.cau.cs.kieler.klodd.orthogonal;uses:="de.cau.cs.kieler.kiml.layout.services,de.cau.cs.kieler.kiml.layout.KimlLayoutGraph,de.cau.cs.kieler.core.alg"
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

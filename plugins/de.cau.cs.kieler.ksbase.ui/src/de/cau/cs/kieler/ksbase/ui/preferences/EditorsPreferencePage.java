@@ -451,8 +451,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
                                 KSBasEUIPlugin.getDefault().logError("Could not read file");
                             } catch (IOException e1) {
                                 KSBasEUIPlugin.getDefault().logError("Could not read file");
-                            }
-                            finally {
+                            } finally {
                                 if (bis != null) {
                                     try {
                                         bis.close();

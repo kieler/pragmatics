@@ -270,7 +270,9 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
                         out.close();
                     }
                 } catch (FileNotFoundException fne) {
+                    // do nothing
                 } catch (SecurityException sece) {
+                    // do nothing
                 } finally {
                     if (out != null) {
                         out.close();

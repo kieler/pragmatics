@@ -103,7 +103,8 @@ public final class DynamicBundleLoader implements IWindowListener, IPageListener
         if (waitingBundles.size() == 0) {
             return;
         }
-        HashMap<EditorTransformationSettings, Bundle> installedBundles = new HashMap<EditorTransformationSettings, Bundle>();
+        HashMap<EditorTransformationSettings, Bundle> installedBundles
+                = new HashMap<EditorTransformationSettings, Bundle>();
         for (Entry<EditorTransformationSettings, URI> entry : waitingBundles.entrySet()) {
             EditorTransformationSettings editor = entry.getKey();
             if (editor.getEditorId().equals(activeEditor)) {

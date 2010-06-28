@@ -105,7 +105,7 @@ public class LayoutOptionData {
     /** configured targets (accessed through bit masks). */
     private int targets;
     /** cached value of the enumeration class, used for ENUM typed options. */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     private Class<? extends Enum> enumClass = null;
     /** cached value of the available choices. */
     private String[] choices = null;

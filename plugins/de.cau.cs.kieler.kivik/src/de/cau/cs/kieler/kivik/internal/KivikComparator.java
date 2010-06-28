@@ -139,8 +139,8 @@ public final class KivikComparator {
         }
     }
 
-    public ComparisonResourceSetSnapshot getNotationComparisonResult() {
-        ComparisonResourceSetSnapshot crs = getComparator().getComparisonResult();
+    public ComparisonSnapshot getNotationComparisonResult() {
+        ComparisonSnapshot crs = getComparator().getComparisonResult();
         return crs;// (new ComparisonResourceSnapshot(crs.getMatchResourceSet(),crs.getDiffResourceSet()));
     }
 
@@ -151,8 +151,8 @@ public final class KivikComparator {
             return fKivikComparisonResult;
     }
 
-    public ComparisonResourceSetSnapshot compareNotationModel() {
-        ComparisonResourceSetSnapshot crs = getComparator().compare(fCompareConfiguration);
+    public ComparisonSnapshot compareNotationModel() {
+        ComparisonSnapshot crs = getComparator().compare(fCompareConfiguration);
         return crs; //(new ModelCompareInput(crs.getMatchResourceSet(),crs.getDiffResourceSet()));
     }
 

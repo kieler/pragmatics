@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.eclipse.papyrus.core.editor.IMultiDiagramEditor;
 import org.eclipse.gef.EditPart;
-import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPropertyListener;
