@@ -45,6 +45,7 @@ public class Individual {
     /**
      * 
      * @return the user-defined rating. A higher value means a better rating.
+     *         The value may be negative.
      */
     public int getRating() {
         return this.rating;
@@ -62,7 +63,8 @@ public class Individual {
     }
     
     /**
-     * Downscale the rating.
+     * Downscales the rating. This makes the rating less relevant without
+     * discarding it completely. This can be used for outdated ratings.
      */
     public void fadeRating() {
         // TODO: implement more sophisticated fading of ratings
@@ -72,6 +74,14 @@ public class Individual {
         }
     }
     
+    /**
+     * 
+     * @return {@code true} if this individual has been rated.
+     */
+    public boolean hasRating() {
+        return (this.rating != 0);
+    }
+
     /**
      * Generation the individual belongs to.
      * 

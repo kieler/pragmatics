@@ -545,10 +545,10 @@ public class TestView extends ViewPart {
                         isAffected = true;
                         break;
                     case RATED:
-                        isAffected = (ind.getRating() != 0);
+                        isAffected = (ind.hasRating());
                         break;
                     case UNRATED:
-                        isAffected = (ind.getRating() == 0);
+                        isAffected = (!ind.hasRating());
                         break;
                     default: // this case should never happen
                         isAffected = false;
@@ -595,7 +595,7 @@ public class TestView extends ViewPart {
         int result = -1;
         for (int i = 0; i < population.size(); i++) {
             final Individual ind = population.get(i);
-            if (ind.getRating() == 0) {
+            if (!ind.hasRating()) {
                 result = i;
                 break;
             }
