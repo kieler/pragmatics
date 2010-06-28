@@ -41,6 +41,7 @@ public interface ILabelPlacer extends IAlgorithm {
     
     /**
      * Gives the size of the longest label in the given layer.
+     * You should only consider those of source ports.
      * 
      * @param thelayer The layer to check 
      * @return The size of the longest label as Coord

@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.layered.impl.edges;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.kiml.layout.options.PortType;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.Coord;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -66,10 +67,15 @@ public class SimpleLabelPlacer extends AbstractAlgorithm implements ILabelPlacer
                                 target = target.add(longEdge.getTarget().getNode().getPos());
                             }
                             label.getPos().x = Math.abs(source.x - target.x) / 2;
-                            if (target.y <= source.y) {
+                            if (longEdge == null) {
                                 label.getPos().y = (target.y - source.y) / 2;
                             } else {
-                                label.getPos().y = Math.abs(source.y - target.y) / 2;
+                                int numberOfBendpoints = longEdge.getEdge().getBendPoints().size();
+                                label.getPos().y = longEdge.getEdge().getBendPoints().get(numberOfBendpoints / 2).y;
+                                //System.out.println(label.getPos().y);
+                                for (Coord bendPoint : longEdge.getEdge().getBendPoints()) {
+                                  //System.out.println(label.getText() + " " + bendPoint.y);  
+                                }
                             }
                             label.getPos().x -= label.getSize().x / 2;
                         }
@@ -89,14 +95,15 @@ public class SimpleLabelPlacer extends AbstractAlgorithm implements ILabelPlacer
             for (LPort port : node.getPorts()) {
                 for (LEdge edge : port.getEdges()) {
                     for (LLabel label : edge.getLabels()) {
-                        if (label.getSize().x > longest.getSize().x) {
+                        //Only consider source ports
+                        if (label.getSize().x > longest.getSize().x
+                                && port.getType() == PortType.OUTPUT) {
                             longest = label;
                         }
                     }
                 }
             }
         }
-        System.out.println(longest + "   " + longest.getText());
         return longest;
     }
 
