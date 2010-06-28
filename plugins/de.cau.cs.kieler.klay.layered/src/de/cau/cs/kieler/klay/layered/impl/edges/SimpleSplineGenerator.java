@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.layered.impl.edges;
 
 import java.util.LinkedList;
+import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.BezierSpline;
@@ -62,25 +63,56 @@ public class SimpleSplineGenerator extends AbstractAlgorithm implements ISplineG
 
         // as the generated spline can contain loops etc, we try to remove those, by adjusting the
         // control points
-        for (BezierCurve curve : spline.getCurves()) {
+        removeFunnyCycles(spline);
+
+        return spline;
+    }
+
+    /**
+     * twiddles some ctr points, as there may be situations where they are inappropriate. function
+     * ensures that C1 derive ability is preserved.
+     * 
+     * @param spline
+     */
+    private void removeFunnyCycles(final BezierSpline spline) {
+        ListIterator<BezierCurve> listIt = spline.getCurves().listIterator();
+
+        while (listIt.hasNext()) {
+            BezierCurve curve = listIt.next();
             double dist = KVector.distance(curve.start, curve.end);
             double distFst = KVector.distance(curve.start, curve.fstControlPnt);
             double distSnd = KVector.distance(curve.end, curve.sndControlPnt);
-
-            // scale the control points to a certain distance from the start/end point
+            // scale fst ctr point and therefore snd of next curve
             if (distFst > dist / MAX_DISTANCE) {
                 KVector v = KVector.sub(curve.fstControlPnt, curve.start);
                 v.scaleToLength(dist * SMOOTHNESS_FACTOR);
                 curve.fstControlPnt = KVector.add(curve.start, v);
+                if (listIt.hasPrevious()) {
+                    listIt.previous();
+                    if (listIt.hasPrevious()) {
+                        BezierCurve tempCurve = listIt.previous();
+                        KVector v1 = KVector.sub(tempCurve.sndControlPnt, tempCurve.end);
+                        v1.scaleToLength(dist * SMOOTHNESS_FACTOR);
+                        tempCurve.sndControlPnt = KVector.add(tempCurve.end, v1);
+                        listIt.next();
+                    }
+                    listIt.next();
+                }
             }
+            // scale snd ctr point and therefore first of next curve
             if (distSnd > dist / MAX_DISTANCE) {
                 KVector v = KVector.sub(curve.sndControlPnt, curve.end);
                 v.scaleToLength(dist * SMOOTHNESS_FACTOR);
                 curve.sndControlPnt = KVector.add(curve.end, v);
+                if (listIt.hasNext()) {
+                    BezierCurve tempCurve = listIt.next();
+                    KVector v1 = KVector.sub(tempCurve.fstControlPnt, tempCurve.start);
+                    v1.scaleToLength(dist * SMOOTHNESS_FACTOR);
+                    tempCurve.fstControlPnt = KVector.add(tempCurve.start, v1);
+                    listIt.previous();
+                }
             }
         }
-
-        return spline;
     }
 
     /**
@@ -100,7 +132,6 @@ public class SimpleSplineGenerator extends AbstractAlgorithm implements ISplineG
 
         for (BezierCurve curve : ospline.getCurves()) {
 
-            // calculate directions, to keep the C1 and C2 derive ability
             KVector fstdir = KVector.sub(curve.fstControlPnt, curve.start).normalize();
             KVector snddir = KVector.sub(curve.sndControlPnt, curve.end).normalize();
             double dist = KVector.distance(curve.start, curve.fstControlPnt);
@@ -108,16 +139,14 @@ public class SimpleSplineGenerator extends AbstractAlgorithm implements ISplineG
             if (mode == curvature.decrease) {
                 curve.fstControlPnt.sub(fstdir.scale(DECREASE_FACTOR * dist));
                 curve.sndControlPnt.sub(snddir.scale(DECREASE_FACTOR * dist2));
-                // curve.fstControlPnt.scale(0.9d);
-                // curve.sndControlPnt.scale(0.9d);
             } else if (mode == curvature.increase) {
                 curve.fstControlPnt.add(fstdir.scale(INCREASE_FACTOR * dist));
                 curve.sndControlPnt.add(snddir.scale(INCREASE_FACTOR * dist2));
-                // curve.fstControlPnt.scale(1.1d);
-                // curve.sndControlPnt.scale(1.1d);
             } else {
                 return false;
             }
+
+            removeFunnyCycles(ospline);
         }
 
         return true;

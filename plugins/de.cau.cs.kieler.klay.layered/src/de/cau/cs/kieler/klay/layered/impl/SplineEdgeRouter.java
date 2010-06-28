@@ -15,7 +15,6 @@ package de.cau.cs.kieler.klay.layered.impl;
 
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -106,7 +105,6 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
      * {@inheritDoc}
      */
     public void routeEdges(final LayeredGraph layeredGraph) {
-
         getMonitor().begin("Edge routing", 1);
         System.out.println("routeEdges()");
 
@@ -182,6 +180,12 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
                 }
                 boxCalculator.addEdge(globSpline);
             }
+
+            // System.out.println(source.getNode().toString());
+            if (source.getNode().toString().equals("n_n5")) {
+                double d = 0;
+                d++;
+            }
         }
 
         System.out.println("BoxTime: " + cumBoxTime + "s, SplineTime: " + cumSplineTime + "s");
@@ -232,7 +236,7 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
             return;
         }
 
-        // create tangents for start and endpoint, currently they head to their neighbour point
+        // create tangents for start and end point, currently they head to their neighbor point
         KVector startTan = KVector.sub(points.get(1), points.getFirst()).normalize();
         KVector endTan = KVector.sub(points.getLast(), points.get(points.size() - 2)).normalize();
 
@@ -282,58 +286,48 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
             }
         } else if (!splineFits(spline, boxes, lines)) {
 
-            // ############## TODO
-            boolean splinesplitting = true;
-            // ###############
+            int count = 0;
+            boolean fits = false;
 
-            if (splinesplitting) {
-                int count = 0;
-                boolean fits = false;
+            // try to scale the control points a bit until the spline fits
+            while (!fits && count <= MAX_ITERATIONS) {
+                splineGenerator.refineSpline(points, spline, mode(count, MAX_ITERATIONS));
+                fits = splineFits(spline, boxes, lines);
+                count++;
+            }
 
-                // try to scale the control points a bit until the spline fits
-                while (!fits && count <= MAX_ITERATIONS) {
-                    splineGenerator.refineSpline(points, spline, mode(count, MAX_ITERATIONS));
-                    fits = splineFits(spline, boxes, lines);
-                    count++;
-                }
+            if (!fits) {
+                // split the spline and handle separately if it still does not fit
+                LinkedList<Rectangle2D.Double> newBoxes1 = new LinkedList<Rectangle2D.Double>();
+                LinkedList<Rectangle2D.Double> newBoxes2 = new LinkedList<Rectangle2D.Double>();
+                LinkedList<Line2D.Double> newLines1 = new LinkedList<Line2D.Double>();
+                LinkedList<Line2D.Double> newLines2 = new LinkedList<Line2D.Double>();
 
-                if (!fits) {
-                    // split the spline and handle separately if it still does not fit
-                    LinkedList<Rectangle2D.Double> newBarray1 = new LinkedList<Rectangle2D.Double>();
-                    LinkedList<Rectangle2D.Double> newBarray2 = new LinkedList<Rectangle2D.Double>();
-                    LinkedList<Line2D.Double> newLarray1 = new LinkedList<Line2D.Double>();
-                    LinkedList<Line2D.Double> newLarray2 = new LinkedList<Line2D.Double>();
+                // compute a spline split, pass all empty buckets needed afterwards
+                KVector[][] p = computeSplineSplit(spline, boxes, lines, newBoxes1, newLines1,
+                        newBoxes2, newLines2);
 
-                    // TODO !!!!
-                    KVector[][] p = computeSplineSplit(spline, boxes, lines, newBarray1,
-                            newLarray1, newBarray2, newLarray2);
-
-                    if (p != null) {
-
-                        // System.out.println("P[0]: " + Arrays.toString(p[0]));
-                        // System.out.println("Box[0]: " + newBarray1);
-                        // System.out.println("P[1]: " + Arrays.toString(p[1]));
-                        // System.out.println("Box[1]: " + newBarray2);
-                        KVector v1 = p[1][1];
-                        KVector v2 = p[0][p[0].length - 2];
-                        KVector vectorP = KVector.sub(v1, v2).normalize();
-                        LinkedList<KVector> p0 = new LinkedList<KVector>();
-                        for (KVector v : p[0]) {
-                            p0.add(v);
-                        }
-                        LinkedList<KVector> p1 = new LinkedList<KVector>();
-                        for (KVector v : p[1]) {
-                            p1.add(v);
-                        }
-                        // insert two new piecewise bezier curves corresponding to p
-                        if (p[0].length > 1 && p[1].length > 1) {
-                            computeSarray(newBarray1, newLarray1, p0, vectorQ, vectorP);
-                            computeSarray(newBarray2, newLarray2, p1, vectorP, vectorS);
-                            return null;
-                        }
+                if (p != null) {
+                    KVector v1 = p[1][1];
+                    KVector v2 = p[0][p[0].length - 2];
+                    KVector vectorP = KVector.sub(v1, v2).normalize();
+                    LinkedList<KVector> p0 = new LinkedList<KVector>();
+                    for (KVector v : p[0]) {
+                        p0.add(v);
+                    }
+                    LinkedList<KVector> p1 = new LinkedList<KVector>();
+                    for (KVector v : p[1]) {
+                        p1.add(v);
+                    }
+                    // insert two new piecewise bezier curves corresponding to p
+                    if (p[0].length > 1 && p[1].length > 1) {
+                        computeSarray(newBoxes1, newLines1, p0, vectorQ, vectorP);
+                        computeSarray(newBoxes2, newLines2, p1, vectorP, vectorS);
+                        return null;
                     }
                 }
             }
+
         }
 
         globSpline.addSpline(spline, false);
@@ -342,11 +336,12 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
     }
 
     /**
-     * computes points p0 , . . . , pn defining a feasible path that connects q and s.
+     * Computes a list of points defining a path from q to s, that is lying entirely insite the
+     * region defined by the boxes and lines.
      * 
      * @param boxes
      *            area bounding the path
-     * @param lArray
+     * @param lines
      *            lines which need to be intersected
      * @param q
      *            start point
@@ -356,7 +351,7 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
      *            bucket list, cannot be null!
      */
     private void computePoints(final LinkedList<Rectangle2D.Double> boxes,
-            final LinkedList<Line2D.Double> lArray, final KVector q, final KVector s,
+            final LinkedList<Line2D.Double> lines, final KVector q, final KVector s,
             final LinkedList<KVector> points) {
 
         // add first and last point
@@ -366,19 +361,18 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
         }
 
         // if the line fits we are happy
-        if (lineFits(boxes, lArray, q, s)) {
+        if (lineFits(boxes, lines, q, s)) {
             return;
         }
 
         // else split
-        LinkedList<Rectangle2D.Double> newBarray1 = new LinkedList<Rectangle2D.Double>();
-        LinkedList<Rectangle2D.Double> newBarray2 = new LinkedList<Rectangle2D.Double>();
-        LinkedList<Line2D.Double> newLarray1 = new LinkedList<Line2D.Double>();
-        LinkedList<Line2D.Double> newLarray2 = new LinkedList<Line2D.Double>();
+        LinkedList<Rectangle2D.Double> newBoxes1 = new LinkedList<Rectangle2D.Double>();
+        LinkedList<Rectangle2D.Double> newBoxes2 = new LinkedList<Rectangle2D.Double>();
+        LinkedList<Line2D.Double> newLines1 = new LinkedList<Line2D.Double>();
+        LinkedList<Line2D.Double> newLines2 = new LinkedList<Line2D.Double>();
 
         // calculate the splitting point
-        KVector p = computeLineSplit(boxes, lArray, q, s, newBarray1, newLarray1, newBarray2,
-                newLarray2);
+        KVector p = computeLineSplit(boxes, lines, q, s, newBoxes1, newLines1, newBoxes2, newLines2);
 
         // @ TODO
         // some cases that shouldn't occur ...
@@ -392,13 +386,13 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
         // add found point to the list of points
         points.add(points.indexOf(s), p);
         // handle the new sections recursively
-        computePoints(newBarray1, newLarray1, q, p, points);
-        computePoints(newBarray2, newLarray2, p, s, points);
+        computePoints(newBoxes1, newLines1, q, p, points);
+        computePoints(newBoxes2, newLines2, p, s, points);
     }
 
     /**
-     * finds the line segment that is the farthest from the (q, s) line and subdivides the boxes and
-     * lines along that segment.
+     * Splits the path (q,s) at the point lying inside the box region, that is the furthest away
+     * from the path itself. Splits the boxes and lines at this point.
      * 
      * @param boxes
      * @param lines
@@ -418,7 +412,6 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
             final LinkedList<Line2D.Double> newLines2) {
 
         // @ TODO !! verify this !!
-        // @ TODO there's something wrong with the line/box splitting ...
         // cant be that there's a (0,0) coming back
         // for some reason the method doesnt find ANY line that is away from (q,s) ...
 
@@ -498,9 +491,8 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
     }
 
     /**
-     * line_fits checks if the line defined by q and s lies entirely inside the feasible region. The
-     * line is clipped to each box; if the line intersects a box, it must do so along the
-     * corresponding L segments.
+     * checks if the path defined by (q,s) entirely lies inside the passed region and intersects all
+     * passed lines.
      * 
      * @param boxes
      * @param lines
@@ -510,8 +502,6 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
      */
     private boolean lineFits(final LinkedList<Rectangle2D.Double> boxes,
             final LinkedList<Line2D.Double> lines, final KVector q, final KVector s) {
-
-        // @ TODO verify this !!
 
         Iterator<Line2D.Double> lineIt = lines.iterator();
         Line2D.Double line = null;
@@ -568,7 +558,6 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
      * compute_splinesplit finds the endpoint of a segment on the path that is the furthest from the
      * spline and subdivides the box and path arrays along that point.
      * 
-     * @ TODO THIS IS TOTALLY NOT WORKING
      * 
      * @param spline
      * @param pArray
@@ -577,28 +566,22 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
     private KVector[][] computeSplineSplit(final BezierSpline spline,
             final LinkedList<Rectangle2D.Double> boxes, final LinkedList<Line2D.Double> lArray,
             final LinkedList<Rectangle2D.Double> newBarry1,
-            final LinkedList<Line2D.Double> newLarray1,
+            final LinkedList<Line2D.Double> newLines1,
             final LinkedList<Rectangle2D.Double> newBarry2,
-            final LinkedList<Line2D.Double> newLarray2) {
-
-        // @ TODO it seems this isn't working at all currently
+            final LinkedList<Line2D.Double> newLines2) {
 
         double maxDist = 0;
-
         int maxDistPos = -1;
         KVector newPoint = new KVector();
-
         int index = 0;
-        // check all curves for the point being the furthest from a line
+
+        // check all curves for the point being the farthest from a line
         for (BezierCurve curve : spline.getCurves()) {
-            double minX = curve.start.x;
             double maxX = curve.end.x;
             index = 0;
             for (Line2D.Double line : lArray) {
                 // first check if we are in range
-                if (line != null && line.x1 < minX) {
-                    // if not do nothing
-                } else if (line != null && line.x1 < maxX) {
+                if (line != null && line.x1 < maxX) {
                     double dist1 = Math.abs(SplineUtilities.distanceFromSpline(new Point(
                             curve.start.x, curve.start.y), new Point(curve.fstControlPnt.x,
                             curve.fstControlPnt.y), new Point(curve.sndControlPnt.x,
@@ -631,18 +614,18 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
         }
 
         // split arrays
-        // copy new lArrays
+        // copy new lines
         index = 0;
         for (Line2D.Double currLine : lArray) {
             if (index < maxDistPos) {
-                newLarray1.add(currLine);
+                newLines1.add(currLine);
             } else if (index > maxDistPos) {
-                newLarray2.add(currLine);
+                newLines2.add(currLine);
             }
             index++;
         }
 
-        // copy new bArrays
+        // copy new boxes
         index = 0;
         for (Rectangle2D.Double currRect : boxes) {
             if (index <= maxDistPos) {
@@ -653,10 +636,6 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
             }
             index++;
         }
-
-        // System.out.println("SPLIT NEW POINT + " + newPoint);
-        // System.out.println("Box[0]: " + newBarry1);
-        // System.out.println("Box[1]: " + newBarry2);
 
         // split the current curve
         KVector[] basePoints = spline.getBasePoints();
@@ -670,7 +649,8 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
         }
 
         if (detPos == -1) {
-            System.out.println("FEHLER!!!!");
+            System.out.println("ERROR!!!!");
+            // shouldnt occur!
         }
 
         // create two new point arrays
@@ -709,8 +689,14 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
     }
 
     /**
-     * spline_fits checks if the spline lies entirely inside the region. The spline is sampled along
-     * its length and these samples are then clipped as a linear path against the box region.
+     * Checks if the passed spline fits into the box region. Currently no checking for the lines! We
+     * take a number of points on the spline, defined by {@code SPLINE_PRECISION}, and check if all
+     * of those are within the box region. To fasten this process we use a guessing method, to guess
+     * the box corresponding to the current point to check.
+     * 
+     * Maybe try: (spline_fits checks if the spline lies entirely inside the region. The spline is
+     * sampled along its length and these samples are then clipped as a linear path against the box
+     * region.)
      * 
      * @param spline
      * @param boxes
@@ -735,14 +721,14 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
                 if (p == pts[pts.length - 1]) {
                     break;
                 }
-                // @ TODO improve guessing!
                 int guessIndex = (int) ((p.x - boxstart) / boxres);
-                // most of the time we are guessing one to high
-                guessIndex = Math.max(0, guessIndex - 1);
+                // most of the time we hit!
+                // test show, that every ~20th box we miss guess
+                guessIndex = Math.max(0, guessIndex);
                 int offset = 0;
                 boolean match = false;
                 if (guessIndex == boxes.length) {
-                    // try one smaller as we may have missguessed
+                    // try one smaller as we may have miss guessed
                     guessIndex--;
                 }
                 while (!match) {
@@ -756,24 +742,19 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
                                 || box.y + box.height + FITTING_TOLERANCE < Math.floor(p.y)) {
                             return false;
                         }
+                        // TODO if box fits, we check the corresponding line
                     } else if (box.x > p.x) {
                         // try one to the left
-                        // System.out.println("-- Box: " + box.x + " pt: " + p.x);
                         offset--;
                     } else if (box.x + box.width < p.x) {
                         // try one to the right
-                        // System.out.println("++ Box: " + box.x + box.width + " pt: " + p.x);
                         offset++;
                     }
 
                 }
             }
         }
-
-        // @ TODO still need to check lines as well
-
         return true;
-
     }
 
 }
