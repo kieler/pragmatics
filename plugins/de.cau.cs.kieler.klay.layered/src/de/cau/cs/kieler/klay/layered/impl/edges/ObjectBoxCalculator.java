@@ -124,10 +124,14 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
 
     /**
      * Calculate the coordinate on a line between two nodes
-     * @param src the source-node
-     * @param dst the destination-node
-     * @param x the position you want to know the y-coordinate for
-     * @return the point on the line at position x 
+     * 
+     * @param src
+     *            the source-node
+     * @param dst
+     *            the destination-node
+     * @param x
+     *            the position you want to know the y-coordinate for
+     * @return the point on the line at position x
      */
     private static double pointOnLine(final LPort src, final LPort dst, final double x) {
         // this is basically the line-equation for this direct path between source and target Ports
@@ -145,12 +149,8 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
     public LinkedList<Rectangle2D.Double> getBoxes(final LEdge edge) {
 
         LPort currentTarget = edge.getTarget();
-        LPort prevTarget = currentTarget;
-
         LPort currentSource = edge.getSource();
-        LPort prevSource = currentSource;
-
-        int minBoxHeight = Math.max(5, (int) spacing / 5);
+        int minBoxHeight = Math.max(2 + 2 + 1, (int) spacing / (2 + 2 + 1));
 
         LinkedList<Rectangle2D.Double> globBarray = new LinkedList<Rectangle2D.Double>();
 
@@ -158,18 +158,21 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
             debugCanvas.clear();
         }
 
-        int defaultboxwidth = (int) Math.max(10, (int) spacing / 10);
-        
+        int defaultboxwidth = (int) Math.max(2 + 2 + 1, (int) spacing / ((2 + 2 + 1) * 2));
+
         // where are we currently
         float reachedx = (float) currentSource.getPos().x + currentSource.getNode().getPos().x;
-        
 
+
+        // remember against which Nodes we we running in last iteration to NOT cross them
+        Rectangle2D.Double runAgainstNodeTop = null;
+        Rectangle2D.Double runAgainstNodeBottom = null;
+        
         // wander along the edge
         do {
             Rectangle2D.Double newBox = null, prevBox = null;
             float targetx = (float) currentTarget.getPos().x + currentTarget.getNode().getPos().x;
 
-            
             // only take care of edges that can hit us
             LinkedList<Line2D.Double> edges = new LinkedList<Line2D.Double>();
             for (Line2D.Double oneEdge : allEdges) {
@@ -187,9 +190,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                 }
             }
 
-            /*LinkedList<Line2D.Double> edges  = allEdges;
-            LinkedList<Rectangle2D.Double> nodes = allNodes;*/
-            
+
             while (reachedx < targetx) {
 
                 // when there won't fit two boxes anymore, enlarge current box to be the last one
@@ -202,36 +203,6 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
 
                 double endy = pointOnLine(currentSource, currentTarget, reachedx + newBoxWidth);
 
-                /*
-                 * if (prevBox != null) { starty = pointOnLine(currentSource, currentTarget,
-                 * reachedx - defaultboxwidth); }
-                 */
-
-                if (false && prevTarget != null && prevTarget != currentTarget && prevBox != null) {
-                    double prevstarty = pointOnLine(prevSource, prevTarget, reachedx
-                            - prevBox.width);
-                    double prevendy = pointOnLine(prevSource, prevTarget, reachedx);
-                    // we need to intersect after a target-switch
-                    // System.out.println("switch" + edge.toString());
-                    if (newBox.y < Math.min(prevstarty, prevendy)) {
-                        double oldy = newBox.y;
-                        newBox.y = Math.min(prevstarty, prevendy);
-                        newBox.width += newBox.y - oldy;
-                    }
-                }
-
-                // center box on direct line
-                if (Math.abs(starty - endy) < minBoxHeight) {
-                    double diff = (minBoxHeight - Math.abs(starty - endy)) / 2;
-                    if (starty < endy) {
-                        starty -= diff;
-                        endy += diff;
-                    } else {
-                        starty += diff;
-                        endy -= diff;
-                    }
-                }
-
                 // box would be upside down? swap...
                 if (starty > endy) {
                     double tmp = starty;
@@ -239,14 +210,56 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                     endy = tmp;
                 }
 
+                // put box above center of direct line
+                if (Math.abs(endy - starty) < minBoxHeight) {
+                    double diff = (minBoxHeight - Math.abs(endy - starty)) / 2;
+                    starty -= diff;
+                    endy += diff;
+                }
+
                 double newBoxHeight = Math.max(minBoxHeight, endy - starty);
 
-                newBox = new Rectangle2D.Double(reachedx, Math.max(0, starty - newBoxHeight),
-                        newBoxWidth, newBoxHeight);
+                newBox = new Rectangle2D.Double(reachedx, starty - (endy - starty), newBoxWidth,
+                        newBoxHeight);
+                
 
-                // enlarge two boxes independently from each other
-                Rectangle2D.Double tempBox = new Rectangle2D.Double(reachedx, Math.max(0, starty
-                        + newBoxHeight), newBoxWidth, newBoxHeight);
+                // enlarge two boxes independently from each other, one to the top, one to the bottom
+                Rectangle2D.Double tempBox = new Rectangle2D.Double(reachedx, Math.max(0, newBox.y
+                        + newBox.height), newBoxWidth, newBoxHeight);
+                
+
+                // due to a far from perfect dummy-node placement it might happen that we cross
+                // nodes, to prevent this we move new boxes over/below the nodes we ran against the
+                // last iteration
+                if (runAgainstNodeBottom != null
+                        && newBox.y <= runAgainstNodeBottom.y + runAgainstNodeBottom.height) {
+                    
+                    // there is a box below us, so go further to the top (y--)
+                    newBox.y = runAgainstNodeBottom.y - (newBox.height + BOX_RESIZE_STEPSIZE);
+                    tempBox.y = newBox.y + newBox.height;
+                    drawOnDebug(new Line2D.Double(0, 0, newBox.x, newBox.x), DebugCanvas.Color.RED, false);
+                    drawOnDebug(new Line2D.Double(newBox.x, 0, newBox.x, newBox.x), DebugCanvas.Color.RED, false);
+                    /*
+                     * drawOnDebug(new Rectangle2D.Double(runAgainstNodeBottom.x - 2,
+                     * runAgainstNodeBottom.y - 2, runAgainstNodeBottom.width + 4,
+                     * runAgainstNodeBottom.height + 4), DebugCanvas.Color.GREEN, true);
+                     */
+                    runAgainstNodeBottom = null;
+                } else if (runAgainstNodeTop != null && newBox.y >= runAgainstNodeTop.y) {
+                    
+                    // there is a box over us, so go further to the bottom (y++)
+                    newBox.y = runAgainstNodeTop.y + runAgainstNodeTop.height + BOX_RESIZE_STEPSIZE;
+                    tempBox.y = newBox.y + newBox.height; // the 2nd box is always below the first one
+                    /*
+                     * drawOnDebug(new Rectangle2D.Double(runAgainstNodeTop.x - 2,
+                     * runAgainstNodeTop.y - 2, runAgainstNodeTop.width + 4,
+                     * runAgainstNodeTop.height + 4), DebugCanvas.Color.YELLOW, true);
+                     */
+                    runAgainstNodeTop = null;
+                }
+
+                drawOnDebug(newBox.clone(), DebugCanvas.Color.GREEN, true);                
+                drawOnDebug(tempBox.clone(), DebugCanvas.Color.ORANGE, true);
 
                 // show initial position
                 // drawOnDebug(newBox, DebugCanvas.Color.ORANGE, false);
@@ -256,11 +269,11 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                 // the path we follow will (hopefully) cause the next boxes to fit better
                 Object previntersects = intersectsWithAny(newBox, null, edges, nodes);
                 if (previntersects instanceof Rectangle2D) { // any line we cross at startup, we
-                    // propably should be crossing
+                    // propably should be crossing, but no nodes
                     previntersects = null;
                 }
 
-                // enlarge boxes
+                // enlarge boxes from bottom to top
                 while (newBox.y > 0
                         && intersectsWithAny(newBox, previntersects, edges, nodes) == null) {
                     newBox.y -= BOX_RESIZE_STEPSIZE;
@@ -268,7 +281,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                 }
 
                 // we got one step too far
-                // von unten gegen nen node gegen gelaufen
+                // node/edge above box
                 Object runagainst = intersectsWithAny(newBox, null, edges, nodes);
                 if (runagainst != null) {
                     // show us the bad boy we ran into
@@ -281,6 +294,8 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                         newBox.y = (Math.ceil(newBox.y / BOX_RESIZE_STEPSIZE) + 1)
                                 * BOX_RESIZE_STEPSIZE;
                         newBox.height -= (newBox.y - oldy);
+
+                        runAgainstNodeBottom = hitbox;
                     } else { // run against a another edge
                         // one step back
                         newBox.y += 2 * BOX_RESIZE_STEPSIZE;
@@ -289,9 +304,11 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                         // we ran against a line? go one step further
                         // newBox.y -= BOX_RESIZE_STEPSIZE;
                         // newBox.height += BOX_RESIZE_STEPSIZE;
+                        runAgainstNodeBottom = null;
                     }
                 }
 
+                // from top downwards to bottom
                 previntersects = intersectsWithAny(tempBox, null, edges, nodes);
                 if (previntersects instanceof Rectangle2D) { // any line we cross at startup, we
                     // propably should be crossing
@@ -319,28 +336,34 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                                 * BOX_RESIZE_STEPSIZE;
                         tempBox.height = (newd - tempBox.y);
 
+                        runAgainstNodeTop = hitbox;
                     } else { // run against a another edge
                         // one step back
                         newBox.height -= 2 * BOX_RESIZE_STEPSIZE;
 
                         // we ran against a line? go one step further
                         // tempBox.height += BOX_RESIZE_STEPSIZE;
+                        runAgainstNodeTop = null;
                     }
                 }
 
-                drawOnDebug(tempBox, DebugCanvas.Color.GRAY, true);
-                newBox.height = Math.max(newBox.height, tempBox.y + tempBox.height - newBox.y);
+                drawOnDebug(tempBox, DebugCanvas.Color.GRAY, false);
 
-                // ensure that the box is intersecting the previous box
+                // the actual new box shall be the size of BOTH boxes joint
+                newBox.y = Math.min(newBox.y, tempBox.y);
+                newBox.height = Math.max(newBox.height, Math.abs(tempBox.y + tempBox.height
+                        - newBox.y));
+
+                // ensure that the new box is intersecting the previous box
                 if (prevBox != null) {
                     // the old box is "below" the new Box
-                    if (prevBox.y > newBox.y + newBox.height) {
-                        newBox.height = prevBox.y + minBoxHeight - newBox.y;
+                    if (prevBox.y >= newBox.y + newBox.height) {
+                        newBox.height = prevBox.y + minBoxHeight * 2 - newBox.y;
                     }
 
                     // or "over" the new box
-                    if (prevBox.y + prevBox.height < newBox.y) {
-                        double diff = newBox.y - ((prevBox.y + prevBox.height) - minBoxHeight);
+                    if (prevBox.y + prevBox.height <= newBox.y) {
+                        double diff = newBox.y - ((prevBox.y + prevBox.height) - minBoxHeight * 2);
                         newBox.y -= diff;
                         newBox.height += diff;
                     }
@@ -367,7 +390,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                 }
 
                 // add the new box
-                globBarray.add(newBox);                
+                globBarray.add(newBox);
                 prevBox = newBox;
                 reachedx += newBox.width;
 
@@ -385,9 +408,6 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                     .getPos().x), (currentTarget.getNode().getPos().y + currentTarget.getPos().y),
                     DUMMY_NODE_DEBUG_SIZE, DUMMY_NODE_DEBUG_SIZE), DebugCanvas.Color.CYAN, true);
 
-            // find next target
-            prevSource = currentSource;
-            prevTarget = currentTarget;
             currentSource = currentTarget;
             for (LPort iterPort : currentTarget.getNode().getPorts(PortType.OUTPUT)) {
                 for (LEdge iterEdge : iterPort.getEdges()) {
@@ -437,27 +457,23 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
         }
         return false;
     }
-/*
-    private void drawFilledEllipse(final Ellipse2D object, final DebugCanvas.Color c) {
-        drawOnDebug(object, c, true);
-    }
 
-    private void drawEllipse(final Ellipse2D object, final DebugCanvas.Color c) {
-        drawOnDebug(object, c, false);
-    }
-
-    private void drawFilledRectangle(final Rectangle2D object, final DebugCanvas.Color c) {
-        drawOnDebug(object, c, true);
-    }
-
-    private void drawRectangle(final Rectangle2D object, final DebugCanvas.Color c) {
-        drawOnDebug(object, c, false);
-    }
-
-    private void drawLine(final Line2D object, final DebugCanvas.Color c) {
-        drawOnDebug(object, c, false);
-    }
-*/
+    /*
+     * private void drawFilledEllipse(final Ellipse2D object, final DebugCanvas.Color c) {
+     * drawOnDebug(object, c, true); }
+     * 
+     * private void drawEllipse(final Ellipse2D object, final DebugCanvas.Color c) {
+     * drawOnDebug(object, c, false); }
+     * 
+     * private void drawFilledRectangle(final Rectangle2D object, final DebugCanvas.Color c) {
+     * drawOnDebug(object, c, true); }
+     * 
+     * private void drawRectangle(final Rectangle2D object, final DebugCanvas.Color c) {
+     * drawOnDebug(object, c, false); }
+     * 
+     * private void drawLine(final Line2D object, final DebugCanvas.Color c) { drawOnDebug(object,
+     * c, false); }
+     */
     /**
      * {@inheritDoc}
      */
