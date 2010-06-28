@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.graphdrawing.graphml/src"
+    modelPluginID="org.graphdrawing.graphml" modelName="Graphml" importerID="org.eclipse.xsd.ecore.importer"
+    complianceLevel="5.0" copyrightFields="false">
+  <foreignModel>graphml.xsd</foreignModel>
+  <genPackages prefix="Xmlns" basePackage="org.graphdrawing.graphml" resource="XML"
+      disposableProviderFactory="true" ecorePackage="xmlns.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="xmlns.ecore#//EndpointTypeType">
+      <genEnumLiterals ecoreEnumLiteral="xmlns.ecore#//EndpointTypeType/in"/>
+      <genEnumLiterals ecoreEnumLiteral="xmlns.ecore#//EndpointTypeType/out"/>
+      <genEnumLiterals ecoreEnumLiteral="xmlns.ecore#//EndpointTypeType/undir"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="xmlns.ecore#//GraphEdgedefaultType">
+      <genEnumLiterals ecoreEnumLiteral="xmlns.ecore#//GraphEdgedefaultType/directed"/>
+      <genEnumLiterals ecoreEnumLiteral="xmlns.ecore#//GraphEdgedefaultType/undirected"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="xmlns.ecore#//GraphEdgeidsType">
+      <genEnumLiterals ecoreEnumLiteral="xmlns.ecore#//GraphEdgeidsType/canonical"/>
+      <genEnumLiterals ecoreEnumLiteral="xmlns.ecore#//GraphEdgeidsType/free"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="xmlns.ecore#//GraphNodeidsType">
+      <genEnumLiterals ecoreEnumLiteral="xmlns.ecore#//GraphNodeidsType/canonical"/>
+      <genEnumLiterals ecoreEnumLiteral="xmlns.ecore#//GraphNodeidsType/free"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="xmlns.ecore#//GraphOrderType">
+      <genEnumLiterals ecoreEnumLiteral="xmlns.ecore#//GraphOrderType/free"/>
+      <genEnumLiterals ecoreEnumLiteral="xmlns.ecore#//GraphOrderType/nodesfirst"/>
+      <genEnumLiterals ecoreEnumLiteral="xmlns.ecore#//GraphOrderType/adjacencylist"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="xmlns.ecore#//KeyForType">
+      <genEnumLiterals ecoreEnumLiteral="xmlns.ecore#//KeyForType/all"/>
+      <genEnumLiterals ecoreEnumLiteral="xmlns.ecore#//KeyForType/graphml"/>
+      <genEnumLiterals ecoreEnumLiteral="xmlns.ecore#//KeyForType/graph"/>
+      <genEnumLiterals ecoreEnumLiteral="xmlns.ecore#//KeyForType/node"/>
+      <genEnumLiterals ecoreEnumLiteral="xmlns.ecore#//KeyForType/edge"/>
+      <genEnumLiterals ecoreEnumLiteral="xmlns.ecore#//KeyForType/hyperedge"/>
+      <genEnumLiterals ecoreEnumLiteral="xmlns.ecore#//KeyForType/port"/>
+      <genEnumLiterals ecoreEnumLiteral="xmlns.ecore#//KeyForType/endpoint"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="xmlns.ecore#//KeyTypeType">
+      <genEnumLiterals ecoreEnumLiteral="xmlns.ecore#//KeyTypeType/boolean"/>
+      <genEnumLiterals ecoreEnumLiteral="xmlns.ecore#//KeyTypeType/int"/>
+      <genEnumLiterals ecoreEnumLiteral="xmlns.ecore#//KeyTypeType/long"/>
+      <genEnumLiterals ecoreEnumLiteral="xmlns.ecore#//KeyTypeType/float"/>
+      <genEnumLiterals ecoreEnumLiteral="xmlns.ecore#//KeyTypeType/double"/>
+      <genEnumLiterals ecoreEnumLiteral="xmlns.ecore#//KeyTypeType/string"/>
+    </genEnums>
+    <genDataTypes ecoreDataType="xmlns.ecore#//EndpointTypeTypeObject"/>
+    <genDataTypes ecoreDataType="xmlns.ecore#//GraphEdgedefaultTypeObject"/>
+    <genDataTypes ecoreDataType="xmlns.ecore#//GraphEdgeidsTypeObject"/>
+    <genDataTypes ecoreDataType="xmlns.ecore#//GraphEdgesType"/>
+    <genDataTypes ecoreDataType="xmlns.ecore#//GraphMaxindegreeType"/>
+    <genDataTypes ecoreDataType="xmlns.ecore#//GraphMaxoutdegreeType"/>
+    <genDataTypes ecoreDataType="xmlns.ecore#//GraphNodeidsTypeObject"/>
+    <genDataTypes ecoreDataType="xmlns.ecore#//GraphNodesType"/>
+    <genDataTypes ecoreDataType="xmlns.ecore#//GraphOrderTypeObject"/>
+    <genDataTypes ecoreDataType="xmlns.ecore#//KeyForTypeObject"/>
+    <genDataTypes ecoreDataType="xmlns.ecore#//KeyNameType"/>
+    <genDataTypes ecoreDataType="xmlns.ecore#//KeyTypeTypeObject"/>
+    <genDataTypes ecoreDataType="xmlns.ecore#//NodeIndegreeType"/>
+    <genDataTypes ecoreDataType="xmlns.ecore#//NodeOutdegreeType"/>
+    <genClasses ecoreClass="xmlns.ecore#//DataExtensionType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute xmlns.ecore#//DataExtensionType/mixed"/>
+    </genClasses>
+    <genClasses ecoreClass="xmlns.ecore#//DataType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//DataType/id"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//DataType/key"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//DataType/time"/>
+    </genClasses>
+    <genClasses ecoreClass="xmlns.ecore#//DefaultType"/>
+    <genClasses ecoreClass="xmlns.ecore#//DocumentRoot">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//DocumentRoot/mixed"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference xmlns.ecore#//DocumentRoot/xMLNSPrefixMap"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference xmlns.ecore#//DocumentRoot/xSISchemaLocation"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference xmlns.ecore#//DocumentRoot/data"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference xmlns.ecore#//DocumentRoot/default"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//DocumentRoot/desc"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference xmlns.ecore#//DocumentRoot/edge"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference xmlns.ecore#//DocumentRoot/endpoint"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference xmlns.ecore#//DocumentRoot/graph"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference xmlns.ecore#//DocumentRoot/graphml"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference xmlns.ecore#//DocumentRoot/hyperedge"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference xmlns.ecore#//DocumentRoot/key"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference xmlns.ecore#//DocumentRoot/locator"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference xmlns.ecore#//DocumentRoot/node"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference xmlns.ecore#//DocumentRoot/port"/>
+    </genClasses>
+    <genClasses ecoreClass="xmlns.ecore#//EdgeType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//EdgeType/desc"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference xmlns.ecore#//EdgeType/data"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference xmlns.ecore#//EdgeType/graph"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//EdgeType/directed"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//EdgeType/id"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//EdgeType/source"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//EdgeType/sourceport"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//EdgeType/target"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//EdgeType/targetport"/>
+    </genClasses>
+    <genClasses ecoreClass="xmlns.ecore#//EndpointType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//EndpointType/desc"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//EndpointType/id"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//EndpointType/node"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//EndpointType/port"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//EndpointType/type"/>
+    </genClasses>
+    <genClasses ecoreClass="xmlns.ecore#//GraphmlType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//GraphmlType/desc"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference xmlns.ecore#//GraphmlType/key"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute xmlns.ecore#//GraphmlType/group"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference xmlns.ecore#//GraphmlType/graph"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference xmlns.ecore#//GraphmlType/data"/>
+    </genClasses>
+    <genClasses ecoreClass="xmlns.ecore#//GraphType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//GraphType/desc"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute xmlns.ecore#//GraphType/group"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference xmlns.ecore#//GraphType/data"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference xmlns.ecore#//GraphType/node"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference xmlns.ecore#//GraphType/edge"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference xmlns.ecore#//GraphType/hyperedge"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference xmlns.ecore#//GraphType/locator"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//GraphType/edgedefault"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//GraphType/id"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//GraphType/parseEdgeids"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//GraphType/parseEdges"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//GraphType/parseMaxindegree"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//GraphType/parseMaxoutdegree"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//GraphType/parseNodeids"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//GraphType/parseNodes"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//GraphType/parseOrder"/>
+    </genClasses>
+    <genClasses ecoreClass="xmlns.ecore#//HyperedgeType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//HyperedgeType/desc"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute xmlns.ecore#//HyperedgeType/group"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference xmlns.ecore#//HyperedgeType/data"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference xmlns.ecore#//HyperedgeType/endpoint"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference xmlns.ecore#//HyperedgeType/graph"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//HyperedgeType/id"/>
+    </genClasses>
+    <genClasses ecoreClass="xmlns.ecore#//KeyType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//KeyType/desc"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference xmlns.ecore#//KeyType/default"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//KeyType/attrName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//KeyType/attrType"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//KeyType/dynamic"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//KeyType/for"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//KeyType/id"/>
+    </genClasses>
+    <genClasses ecoreClass="xmlns.ecore#//LocatorType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//LocatorType/href"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//LocatorType/type"/>
+    </genClasses>
+    <genClasses ecoreClass="xmlns.ecore#//NodeType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//NodeType/desc"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute xmlns.ecore#//NodeType/group"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference xmlns.ecore#//NodeType/data"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference xmlns.ecore#//NodeType/port"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference xmlns.ecore#//NodeType/graph"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference xmlns.ecore#//NodeType/locator"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//NodeType/id"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//NodeType/parseIndegree"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//NodeType/parseOutdegree"/>
+    </genClasses>
+    <genClasses ecoreClass="xmlns.ecore#//PortType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//PortType/desc"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute xmlns.ecore#//PortType/group"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference xmlns.ecore#//PortType/data"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference xmlns.ecore#//PortType/port"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute xmlns.ecore#//PortType/name"/>
+    </genClasses>
+  </genPackages>
+  <genPackages prefix="Xlink" basePackage="org.w3._1999" resource="XML" disposableProviderFactory="true"
+      ecorePackage="xlink.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="xlink.ecore#//TypeType">
+      <genEnumLiterals ecoreEnumLiteral="xlink.ecore#//TypeType/simple"/>
+      <genEnumLiterals ecoreEnumLiteral="xlink.ecore#//TypeType/extended"/>
+      <genEnumLiterals ecoreEnumLiteral="xlink.ecore#//TypeType/locator"/>
+      <genEnumLiterals ecoreEnumLiteral="xlink.ecore#//TypeType/arc"/>
+    </genEnums>
+    <genDataTypes ecoreDataType="xlink.ecore#//TypeTypeObject"/>
+  </genPackages>
+</genmodel:GenModel>
