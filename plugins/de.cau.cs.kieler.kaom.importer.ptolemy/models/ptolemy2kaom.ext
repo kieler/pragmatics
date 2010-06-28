@@ -58,7 +58,7 @@ create Link this transform(Moml::LinkType link, Entity parent):
 	(if(relation != null) then (linkables.add(relation)) else (null)) ->
 	(if(relation1 != null) then (linkables.add(relation1)) else (null)) ->
 	(if(relation2 != null) then (linkables.add(relation2)) else (null)) ->
-	(if(linkables.size == 2) then (this.setSource(linkables.get(0)) -> this.setTarget(linkables.get(1)))	else (null)) ->
+	(if(linkables.size == 2) then (this.setSource((Linkable)linkables.get(0)) -> this.setTarget((Linkable)linkables.get(1)))	else (null)) ->
 	// initially set all relations to be undirected
 	this.addUndirectedAnnotation()
 ;
