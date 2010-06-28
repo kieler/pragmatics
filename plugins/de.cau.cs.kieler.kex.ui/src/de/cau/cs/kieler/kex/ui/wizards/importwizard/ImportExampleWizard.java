@@ -12,9 +12,9 @@ public class ImportExampleWizard extends Wizard implements IWizard {
 
 	private OverviewPage overviewPage;
 	private ChooseExamplePage chooseExamplePage;
-	private ImportExamplePage importExamplePage;
-	
-	private IStructuredSelection selection;
+	// private ImportExamplePage importExamplePage;
+
+	private final IStructuredSelection selection;
 
 	public ImportExampleWizard(IStructuredSelection selection) {
 		super();
@@ -26,21 +26,20 @@ public class ImportExampleWizard extends Wizard implements IWizard {
 
 	@Override
 	public boolean performFinish() {
-//		ExampleManager.get().
-		
+		// ExampleManager.get().
+
 		return true;
 	}
 
-	
-	
 	@Override
 	public void addPages() {
 		overviewPage = new OverviewPage("overviewPage");
 		addPage(overviewPage);
 		chooseExamplePage = new ChooseExamplePage("chooseExamplePage");
 		addPage(chooseExamplePage);
-		importExamplePage = new ImportExamplePage("importExamplePage", selection);
-		addPage(importExamplePage);
+		// importExamplePage = new ImportExamplePage("importExamplePage",
+		// selection);
+		// addPage(importExamplePage);
 	}
 
 	public void show() {
@@ -63,6 +62,5 @@ public class ImportExampleWizard extends Wizard implements IWizard {
 		}
 		// TODO: Errors ueber den Statusmanager verteilen
 	}
-
 
 }
