@@ -14,9 +14,11 @@
 package de.cau.cs.kieler.klay.layered.modules;
 
 import de.cau.cs.kieler.core.alg.IAlgorithm;
-import de.cau.cs.kieler.klay.layered.graph.Coord;
+import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+
+//CHECKSTYLEOFF JavadocStyle
 
 /**
  * Interface for label placement modules.
@@ -43,6 +45,6 @@ public interface ILabelPlacer extends IAlgorithm {
      * @param thelayer The layer to check 
      * @return The size of the longest label as Coord
      */
-    Coord sizeOfLongestLabel(Layer thelayer);
+    LLabel longestLabel(Layer thelayer);
     
 }

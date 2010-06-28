@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.klay.layered.impl.edges;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.Coord;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -45,7 +44,8 @@ public class SimpleLabelPlacer extends AbstractAlgorithm implements ILabelPlacer
                     for (LEdge edge : port.getEdges()) {
                         for (LLabel label : edge.getLabels()) {
                             LongEdge longEdge = null;
-                            if (edge.getTarget().getNode().getProperty(Properties.NODE_TYPE) == Properties.NodeType.LONG_EDGE) {
+                            if (edge.getTarget().getNode().getProperty(Properties.NODE_TYPE)
+                                    == Properties.NodeType.LONG_EDGE) {
                                 longEdge = new LongEdge(edge);
                                 longEdge.initialize();
                             }
@@ -83,19 +83,20 @@ public class SimpleLabelPlacer extends AbstractAlgorithm implements ILabelPlacer
     /**
      * {@inheritDoc}
      */
-    public Coord sizeOfLongestLabel(final Layer thelayer) {
-        Coord longest = new Coord(0, 0);
+    public LLabel longestLabel(final Layer thelayer) {
+        LLabel longest = new LLabel(null, "");
         for (LNode node : thelayer.getNodes()) {
             for (LPort port : node.getPorts()) {
                 for (LEdge edge : port.getEdges()) {
                     for (LLabel label : edge.getLabels()) {
-                        if (label.getSize().x > longest.x) {
-                            longest = label.getSize();
+                        if (label.getSize().x > longest.getSize().x) {
+                            longest = label;
                         }
                     }
                 }
             }
         }
+        System.out.println(longest + "   " + longest.getText());
         return longest;
     }
 

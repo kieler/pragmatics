@@ -14,8 +14,10 @@
 package de.cau.cs.kieler.klay.layered.impl;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.BezierSpline;
 import de.cau.cs.kieler.core.math.CubicSplineInterpolator;
 import de.cau.cs.kieler.core.math.ISplineInterpolator;
@@ -25,12 +27,15 @@ import de.cau.cs.kieler.klay.layered.LayeredLayoutProvider;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.Coord;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
+import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.impl.edges.LongEdge;
+import de.cau.cs.kieler.klay.layered.impl.edges.SimpleLabelPlacer;
 import de.cau.cs.kieler.klay.layered.modules.IEdgeRouter;
+import de.cau.cs.kieler.klay.layered.modules.ILabelPlacer;
 
 /**
  * Implements a naive way of routing the edges with splines. Uses the dummy nodes as reference
@@ -47,6 +52,9 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
 
     /** spline interpolator. */
     private ISplineInterpolator splineInterp = new CubicSplineInterpolator();
+    
+    /** label placer. */
+    private ILabelPlacer labelPlacer = new SimpleLabelPlacer();
 
     /**
      * {@inheritDoc}
@@ -57,6 +65,7 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
         LinkedList<LongEdge> realLongEdges = new LinkedList<LongEdge>();
         // set horizontal positioning for each layer and add bend points
         float xpos = 0.0f;
+        List<LLabel> consideredLabelsInLayerSize = new LinkedList<LLabel>();
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
                 node.getPos().x = xpos;
@@ -73,6 +82,11 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
                 }
             }
             xpos += layer.getSize().x + spacing;
+            LLabel longestLabelHere = labelPlacer.longestLabel(layer);
+            if (!consideredLabelsInLayerSize.contains(longestLabelHere)) {
+                xpos += longestLabelHere.getSize().x;
+                consideredLabelsInLayerSize.add(longestLabelHere);
+            }
         }
         layeredGraph.getSize().x = xpos - spacing;
 
@@ -96,6 +110,16 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
             }
 
         }
+        IKielerProgressMonitor labelMon = getMonitor().subTask(1);
+        labelMon.begin("Label placing", 1);
+        /**
+         * LABEL PLACING
+         */
+        // place labels
+        labelPlacer.placeLabels(layeredGraph);
+
+        labelMon.done();
+        getMonitor().done();
 
     }
 

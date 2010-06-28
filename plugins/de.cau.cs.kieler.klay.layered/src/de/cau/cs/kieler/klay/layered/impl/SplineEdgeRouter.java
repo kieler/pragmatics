@@ -18,6 +18,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.draw2d.geometry.Point;
 
@@ -115,9 +116,7 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
         LinkedList<LEdge> shortEdges = new LinkedList<LEdge>();
         // set horizontal positioning for each layer and add bend points
         float xpos = 0.0f;
-        // not used at the moment
-        // TODO add this value to the correct layers, not to all!
-        float longestLabel = 0.0f;
+        List<LLabel> consideredLabelsInLayerSize = new LinkedList<LLabel>();
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
                 node.getPos().x = xpos;
@@ -131,16 +130,16 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
                             } else {
                                 shortEdges.add(edge);
                             }
-                            for (LLabel label : edge.getLabels()) {
-                                if (label.getSize().x > longestLabel) {
-                                    longestLabel = label.getSize().x;
-                                }
-                            }
                         }
                     }
                 }
             }
             xpos += layer.getSize().x + spacing;
+            LLabel longestLabelHere = labelPlacer.longestLabel(layer);
+            if (!consideredLabelsInLayerSize.contains(longestLabelHere)) {
+                xpos += longestLabelHere.getSize().x;
+                consideredLabelsInLayerSize.add(longestLabelHere);
+            }
         }
         layeredGraph.getSize().x = xpos - spacing;
 

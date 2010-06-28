@@ -73,4 +73,13 @@ public class LLabel extends LGraphElement {
     public Coord getSize() {
         return size;
     }
+    
+    /**
+     * Returns the text of the label.
+     * 
+     * @return the text
+     */
+    public String getText() {
+        return text;
+    }
 }

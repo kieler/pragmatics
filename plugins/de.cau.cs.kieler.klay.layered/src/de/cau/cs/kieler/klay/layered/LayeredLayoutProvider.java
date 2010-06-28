@@ -23,6 +23,7 @@ import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
+import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.kiml.layout.AbstractLayoutProvider;
@@ -38,6 +39,7 @@ import de.cau.cs.kieler.kiml.ui.util.DebugCanvas.DrawingMode;
 import de.cau.cs.kieler.klay.layered.graph.Coord;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
+import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
@@ -277,6 +279,13 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
                     LEdge newEdge = new LEdge(kedge);
                     newEdge.setSource(sourcePort);
                     newEdge.setTarget(targetPort);
+                    for (KLabel label : kedge.getLabels()) {
+                        KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
+                        Coord labelSize = new Coord(labelLayout.getWidth(), labelLayout.getHeight());
+                        LLabel newLabel = new LLabel(label, label.getText());
+                        newLabel.getSize().add(labelSize);
+                        newEdge.getLabels().add(newLabel);
+                    }
                     // set properties of the new edge
                     int priority = LayoutOptions.getInt(edgeLayout, LayoutOptions.PRIORITY);
                     if (priority > 0) {
@@ -339,6 +348,17 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
                                 edgeMap.put(kedge, edgeList);
                             }
                             edgeList.add(ledge);
+                            // apply layout to labels
+                            for (LLabel label : ledge.getLabels()) {
+                                KLabel klabel = (KLabel) label.getOrigin();
+                                KShapeLayout klabelLayout = KimlLayoutUtil.getShapeLayout(klabel);
+                                Coord labelPos = new Coord(ledge.getSource().getPos().x, ledge
+                                        .getSource().getPos().y);
+                                labelPos.add(ledge.getSource().getNode().getPos());
+                                labelPos.add(label.getPos());
+                                klabelLayout.setXpos(labelPos.x + offset.x);
+                                klabelLayout.setYpos(labelPos.y + offset.y);
+                            }
                         }
                     }
                 }
