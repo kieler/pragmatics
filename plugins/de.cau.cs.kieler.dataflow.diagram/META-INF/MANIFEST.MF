@@ -37,4 +37,5 @@ Require-Bundle: org.eclipse.core.runtime,
  de.cau.cs.kieler.dataflow.edit;visibility:=reexport,
  org.eclipse.ocl.ecore;visibility:=reexport,
  org.eclipse.gef;visibility:=reexport
-Eclipse-LazyStart: true
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ActivationPolicy: lazy
