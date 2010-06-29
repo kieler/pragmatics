@@ -14,51 +14,49 @@ import de.cau.cs.kieler.kex.controller.ExampleManager;
 
 public class ExportExampleWizard extends Wizard implements IWizard {
 
-	private ExamplePage examplePage;
+    private ExamplePage examplePage;
 
-	private IProject[] localProjects;
+    private final IProject[] localProjects;
 
-	public ExportExampleWizard() {
-		IProject[] localProjects = ExampleManager.get().getLocalProjects();
+    public ExportExampleWizard() {
+        localProjects = ExampleManager.get().getLocalProjects();
 
-		// TODO lade hier die projectList
-	}
+    }
 
-	@Override
-	public void addPages() {
+    @Override
+    public void addPages() {
 
-		examplePage = new ExamplePage("examplePage", localProjects);
+        examplePage = new ExamplePage("examplePage", localProjects);
 
-	}
+    }
 
-	@Override
-	public boolean performFinish() {
+    @Override
+    public boolean performFinish() {
 
-		// TODO exampleResource mit einbinden...
+        // TODO exampleResource mit einbinden...
 
-		String projectId = examplePage.getProjectId();
-		String location = examplePage.getLocation();
+        String projectId = examplePage.getProjectId();
+        String location = examplePage.getLocation();
 
-		Map<ExampleElement, Object> result = new HashMap<ExampleElement, Object>();
-		String exampleId = examplePage.getId().toString();
-		result.put(ExampleElement.ID, exampleId);
-		String exampleName = examplePage.getName().toString();
-		result.put(ExampleElement.NAME, exampleName);
-		String exampleDescription = examplePage.getDescription().toString();
-		result.put(ExampleElement.DESCRIPTION, exampleDescription);
-		String exampleVersion = examplePage.getVersion().toString();
-		result.put(ExampleElement.VERSION, exampleVersion);
-		result.put(ExampleElement.PROJECTID, examplePage.getProjectId());
-		result.put(ExampleElement.LOCATION, examplePage.getLocation());
+        Map<ExampleElement, Object> result = new HashMap<ExampleElement, Object>();
+        String exampleId = examplePage.getId().toString();
+        result.put(ExampleElement.ID, exampleId);
+        String exampleName = examplePage.getName().toString();
+        result.put(ExampleElement.NAME, exampleName);
+        String exampleDescription = examplePage.getDescription().toString();
+        result.put(ExampleElement.DESCRIPTION, exampleDescription);
+        String exampleVersion = examplePage.getVersion().toString();
+        result.put(ExampleElement.VERSION, exampleVersion);
+        result.put(ExampleElement.PROJECTID, examplePage.getProjectId());
+        result.put(ExampleElement.LOCATION, examplePage.getLocation());
 
-		try {
-			ExampleManager.get().exportExample(result);
-		} catch (KielerException e) {
-			MessageDialog.openError(getShell(),
-					"Error while exporting example.", e.getMessage());
-			return false;
-		}
-		return true;
-	}
+        try {
+            ExampleManager.get().exportExample(result);
+        } catch (KielerException e) {
+            MessageDialog.openError(getShell(), "Error while exporting example.", e.getMessage());
+            return false;
+        }
+        return true;
+    }
 
 }
