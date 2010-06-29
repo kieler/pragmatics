@@ -36,5 +36,14 @@
             name="Flatness Metric">
       </analysisProvider>
    </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.cau.cs.kieler.kiml.evol.AutoRateAllHandler"
+            description="computes automatic rating for all individuals"
+            id="de.cau.cs.kieler.kiml.evol.autoRateAll"
+            name="Auto-rate All">
+      </command>
+   </extension>
 
 </plugin>

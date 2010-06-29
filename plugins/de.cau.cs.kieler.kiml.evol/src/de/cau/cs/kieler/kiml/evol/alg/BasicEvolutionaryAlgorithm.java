@@ -167,9 +167,9 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
     private Population selection;
     private Population offspring;
     private static final double SELECTION_RATIO = .9;
-    private static final double CROSS_OVER_RATIO = 1.0;
+    private static final double CROSS_OVER_RATIO = .95;
     private static final double MUTATION_APPLICATION_PROBABILITY = .6;
-    private static final double SURVIVAL_RATIO = .5;
+    private static final double SURVIVAL_RATIO = .55;
     private static final int MIN_SELECT = 2;
     private static final int MIN_CROSS_OVERS = 1;
     private static final int MIN_SURVIVORS = 5;

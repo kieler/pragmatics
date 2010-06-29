@@ -14,12 +14,14 @@
 package de.cau.cs.kieler.kiml.evol;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
+import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.evol.genetic.BooleanGene;
 import de.cau.cs.kieler.kiml.evol.genetic.EnumGene;
 import de.cau.cs.kieler.kiml.evol.genetic.FloatGene;
@@ -29,9 +31,12 @@ import de.cau.cs.kieler.kiml.evol.genetic.IntegerGene;
 import de.cau.cs.kieler.kiml.evol.genetic.MutationInfo;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 import de.cau.cs.kieler.kiml.evol.genetic.StrictlyPositiveFloatGene;
+import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
+import de.cau.cs.kieler.kiml.grana.AnalysisServices;
+import de.cau.cs.kieler.kiml.grana.ui.DiagramAnalyser;
 import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
-import de.cau.cs.kieler.kiml.layout.LayoutServices;
 import de.cau.cs.kieler.kiml.layout.LayoutOptionData.Type;
+import de.cau.cs.kieler.kiml.layout.LayoutServices;
 import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.views.LayoutPropertySource;
 
@@ -42,14 +47,9 @@ import de.cau.cs.kieler.kiml.ui.views.LayoutPropertySource;
  * 
  */
 public final class EvolUtil {
-    /** Hidden constructor to avoid instantiation. **/
-    private EvolUtil() {
-        // nothing
-    }
-    
     /**
      * Create a population of the given size, taking initial values from the
-     * given GmfLayoutPropertySource.
+     * given {@code LayoutPropertySource}.
      * 
      * @param source
      *            where the initial data is taken from.
@@ -68,14 +68,50 @@ public final class EvolUtil {
     }
     
     /**
+     * Analyzes the given KGraph.
+     * 
+     * @param showProgressBar
+     *            indicates whether a progress bar shall be shown
+     * @param parentNode
+     *            the KGraph to be analyzed.
+     * @return a rating
+     */
+    public static int measureDiagram(final boolean showProgressBar, final KNode parentNode) {
+        System.out.println("measure diagram");
+        if (parentNode == null) {
+            return 0;
+        }
+        final String[] metricIds =
+                new String[] { "de.cau.cs.kieler.kiml.evol.bendsMetric",
+                        "de.cau.cs.kieler.kiml.evol.flatnessMetric",
+                        "de.cau.cs.kieler.kiml.evol.narrownessMetric" };
+        final AnalysisServices as = AnalysisServices.getInstance();
+        final List<AbstractInfoAnalysis> metricsList = new LinkedList<AbstractInfoAnalysis>();
+        for (final String metricId : metricIds) {
+            final AbstractInfoAnalysis metric = as.getAnalysisById(metricId);
+            metricsList.add(metric);
+        }
+        final AbstractInfoAnalysis[] metrics =
+                metricsList.toArray(new AbstractInfoAnalysis[metricsList.size()]);
+        // arbitrarily chosen coefficients
+        final double[] coeffs = new double[] { .4, .5, .1 };
+        final Object[] results = DiagramAnalyser.analyse(parentNode, metrics, showProgressBar);
+        final double bendsResult = Double.parseDouble(results[0].toString()) * coeffs[0];
+        final double flatnessResult = Double.parseDouble(results[1].toString()) * coeffs[1];
+        final double narrownessResult = Double.parseDouble(results[2].toString()) * coeffs[2];
+        System.out.println(bendsResult + "  " + flatnessResult + "  " + narrownessResult);
+        final int newRating = (int) ((bendsResult + flatnessResult + narrownessResult) * 100);
+        System.out.println("leaving measureDiagram");
+        return newRating;
+    }
+    
+    /**
      * Count the learnable properties of the given list of IPropertyDescriptor.
      * 
-     * @return
+     * @return number of learnable properties
      */
     private static int countLearnableProperties(final List<IPropertyDescriptor> propertyDescriptors) {
         int result = 0;
-        // IPropertyDescriptor[] propertyDescriptors =
-        // source.getPropertyDescriptors();
         for (IPropertyDescriptor p : propertyDescriptors) {
             String id = (String) p.getId();
             // check property descriptor id
@@ -209,5 +245,10 @@ public final class EvolUtil {
         }
         Assert.isTrue(learnableCount == result.size());
         return result;
+    }
+    
+    /** Hidden constructor to avoid instantiation. **/
+    private EvolUtil() {
+        // nothing
     }
 }

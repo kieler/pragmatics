@@ -13,9 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.evol.ui;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.gef.EditPart;
@@ -39,24 +36,24 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.EvolUtil;
 import de.cau.cs.kieler.kiml.evol.Individual;
+import de.cau.cs.kieler.kiml.evol.IndividualLayoutListener;
+import de.cau.cs.kieler.kiml.evol.LayoutListener;
 import de.cau.cs.kieler.kiml.evol.alg.BasicEvolutionaryAlgorithm;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.IGene;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
-import de.cau.cs.kieler.kiml.grana.AnalysisServices;
-import de.cau.cs.kieler.kiml.grana.ui.DiagramAnalyser;
-import de.cau.cs.kieler.kiml.layout.ILayoutListener;
 import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
 import de.cau.cs.kieler.kiml.layout.LayoutServices;
 import de.cau.cs.kieler.kiml.layout.LayoutServices.Registry;
@@ -73,111 +70,130 @@ import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
  */
 public class TestView extends ViewPart {
     /**
-     *
-     */
-    public TestView() {
-        super();
-        this.tableViewer = null;
-    }
-    
-    // individual property settings
-    @Override
-    public void createPartControl(final Composite parent) {
-        final Table table = new Table(parent, SWT.BORDER | SWT.BORDER_SOLID);
-        // Composite tableComposite = new Composite(parent, SWT.NONE);
-        // TableColumnLayout tableColumnLayout = new TableColumnLayout();
-        // tableComposite.setLayout(tableColumnLayout);
-        // tableViewer = new TableViewer(tableComposite, SWT.BORDER |
-        // SWT.FULL_SELECTION);
-        // Table table = tableViewer.getTable();
-        final TableColumn column = new TableColumn(table, SWT.NONE);
-        final TableColumn column2 = new TableColumn(table, SWT.NONE);
-        column.setWidth(DEFAULT_COLUMN_WIDTH);
-        column2.setWidth(DEFAULT_COLUMN_WIDTH);
-        tableViewer = new SelectorTableViewer(table);
-        tableViewer.setContentProvider(new PopulationTableContentProvider());
-        tableViewer.setLabelProvider(new PopulationTableLabelProvider());
-        // final IWorkbench workbench = PlatformUI.getWorkbench();
-        // final IWorkbenchPage page =
-        // workbench.getActiveWorkbenchWindow().getActivePage();
-        final IEditorPart editor = getCurrentEditor();
-        final IGraphicalEditPart part = (IGraphicalEditPart) getEditPart(editor);
-        if (editor != null) {
-            // TODO: test whether editor is for KIML
-            // FIXME: should share synchronized property source with LayoutView?
-            final LayoutPropertySource source = new LayoutPropertySource(editor, part);
-            propertySource = source;
-            final Population sourcePopulation =
-                    EvolUtil.createPopulation(source, DEFAULT_INITIAL_POPULATION_SIZE);
-            evolAlg = new BasicEvolutionaryAlgorithm(sourcePopulation);
-            evolAlg.step();
-            setInput(evolAlg.getPopulation());
-        }
-        createToolBar();
-        final ISelectionChangedListener listener = new ISelectionChangedListener() {
-            public synchronized void selectionChanged(final SelectionChangedEvent event) {
-                final ISelection selection = event.getSelection();
-                System.out.println("selectionChanged");
-                if ((selection != null) && (!selection.isEmpty())
-                        && (selection instanceof IStructuredSelection)) {
-                    final Object element = ((IStructuredSelection) selection).getFirstElement();
-                    if (element instanceof PopulationTableEntry) {
-                        tableViewer.removeSelectionChangedListener(this);
-                        // final int oldPosition = position;
-                        position = ((PopulationTableEntry) element).index;
-                        onSelectIndividual();
-                        System.out.println("after onSelectIndividual");
-                        tableViewer.refresh();
-                        tableViewer.addPostSelectionChangedListener(this);
-                        System.out.println();
-                    }
-                } else {
-                    System.out.println("empty or null selection");
-                }
-            }
-        };
-        tableViewer.addPostSelectionChangedListener(listener);
-    }
-    
-    @Override
-    public void setFocus() {
-        tableViewer.getControl().setFocus();
-    }
-    
-    // private fields
-    private SelectorTableViewer tableViewer;
-    private int position = 0;
-    private LayoutPropertySource propertySource;
-    // TODO: get rid of field property source
-    private BasicEvolutionaryAlgorithm evolAlg;
-    private Population population;
-    /**
-     * Column width for columns in viewer table.
-     */
-    private static final int DEFAULT_COLUMN_WIDTH = 140;
-    /**
-     * Initial population size.
-     */
-    private static final int DEFAULT_INITIAL_POPULATION_SIZE = 5;
-    
-    /**
-     * Sets a population as the input of the viewer.
+     * An action that assigns an automatic rating to all individuals.
      * 
-     * @param thePopulation
-     *            new source population
+     * @author bdu
+     * 
      */
-    private void setInput(final Population thePopulation) {
-        if ((thePopulation != null) && (thePopulation != population)) {
-            population = thePopulation;
-            final Runnable runnable = new Runnable() {
-                public void run() {
-                    tableViewer.setInput(population);
-                }
-            };
-            runnable.run();
+    private class AutorateAllAction extends Action {
+        public AutorateAllAction() {
+            this.setText("Auto-rate");
+            this.setToolTipText("Auto-rate all individuals");
+        }
+        
+        @Override
+        public void run() {
+            autorateIndividuals(TargetIndividuals.ALL);
         }
     }
     
+    /**
+     * Action for rating an individual.
+     * 
+     * @author bdu
+     * 
+     */
+    private class ChangeRatingAction extends Action {
+        public ChangeRatingAction(final int theDelta) {
+            delta = theDelta;
+        }
+        
+        private final int delta;
+        
+        @Override
+        public void run() {
+            if (population != null) {
+                final Individual ind = getCurrentIndividual();
+                final int rating = ind.getRating() + delta;
+                ind.setRating(rating);
+                tableViewer.refresh();
+            }
+        }
+    }
+    
+    /**
+     * Action for giving a negative rating to an individual.
+     * 
+     * @author bdu
+     * 
+     */
+    private class DemoteAction extends ChangeRatingAction {
+        private static final int AMOUNT = -10;
+        
+        public DemoteAction() {
+            super(AMOUNT);
+            setText("Disregard");
+            setToolTipText("Demote the selected individual.");
+        }
+    }
+    
+    /**
+     * Action for performing a step of the evolutionary algorithm. This creates
+     * a new generation.
+     * 
+     * @author bdu
+     * 
+     */
+    private class EvolveAction extends Action {
+        public EvolveAction() {
+            setText("Evolve");
+        }
+        
+        @Override
+        public void run() {
+            final BasicEvolutionaryAlgorithm alg = TestView.this.evolAlg;
+            if (alg == null) {
+                return;
+            }
+            alg.step();
+            setInput(alg.getPopulation());
+            final int firstUnrated = firstUnrated();
+            if (firstUnrated > -1) {
+                position = firstUnrated;
+            }
+            final int lim = population.size();
+            if (position >= lim) {
+                position = lim - 1;
+            }
+            autorateIndividuals(TargetIndividuals.UNRATED);
+            Assert.isTrue(position >= 0);
+            tableViewer.selectRow(position);
+            tableViewer.refresh();
+            onSelectIndividual();
+            // BasicNetwork b = new BasicNetwork();
+            // b.addLayer(new BasicLayer(2));
+            // b.addLayer(new BasicLayer(3));
+            // b.addLayer(new BasicLayer(6));
+            // b.addLayer(new BasicLayer(1));
+            // b.getStructure().finalizeStructure();
+            // System.out.println(b.calculateNeuronCount());
+        }
+    }
+
+
+
+    /**
+     * Refresher for the layout view.
+     * 
+     * @author bdu
+     * 
+     */
+    private static class LayoutViewRefresher implements Runnable {
+        public void run() {
+            System.out.println("layoutView refresh start.");
+            final LayoutViewPart layoutView = LayoutViewPart.findView();
+            if (layoutView != null) {
+                try {
+                    Thread.sleep(800);
+                } catch (final InterruptedException e) {
+                    e.printStackTrace();
+                }
+                layoutView.refresh(); // async!
+            }
+            System.out.println("layoutView refresh called.");
+        }
+    }
+
     /**
      * Content provider for table view.
      * 
@@ -185,6 +201,10 @@ public class TestView extends ViewPart {
      * 
      */
     private static class PopulationTableContentProvider implements IStructuredContentProvider {
+        public void dispose() {
+            // do nothing
+        }
+        
         public Object[] getElements(final Object inputElement) {
             // suppose inputElement contains a reference to a Population object.
             final Population inputPopulation;
@@ -203,15 +223,37 @@ public class TestView extends ViewPart {
             return result;
         }
         
-        public void dispose() {
-            // do nothing
-        }
-        
         public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
             System.out.println("Viewer " + viewer.toString() + " input changed.");
         }
     }
-    
+
+    /**
+     * A population table entry contains an individual.
+     * 
+     * @author bdu
+     * 
+     */
+    private static class PopulationTableEntry {
+        private int index = 0;
+        private Individual individual;
+        
+        public String getId() {
+            if (this.individual != null) {
+                return this.individual.getGeneration() + "." + this.individual.getId();
+            }
+            return null;
+        }
+        
+        public Individual getIndividual() {
+            return this.individual;
+        }
+        
+        public void setIndividual(final Individual theIndividual) {
+            this.individual = theIndividual;
+        }
+    }
+
     /**
      * provides labels for LayoutSet table.
      * 
@@ -219,12 +261,16 @@ public class TestView extends ViewPart {
      * 
      */
     private class PopulationTableLabelProvider extends LabelProvider implements ITableLabelProvider {
-        private final Image currentImage =
-                AbstractUIPlugin.imageDescriptorFromPlugin(EvolPlugin.PLUGIN_ID,
-                        "icons/current.png").createImage();
-        private final Image defaultImage =
-                AbstractUIPlugin.imageDescriptorFromPlugin(EvolPlugin.PLUGIN_ID,
-                        "icons/default.png").createImage();
+        private final Image currentImage = AbstractUIPlugin.imageDescriptorFromPlugin(
+                EvolPlugin.PLUGIN_ID, "icons/current.png").createImage();
+        private final Image defaultImage = AbstractUIPlugin.imageDescriptorFromPlugin(
+                EvolPlugin.PLUGIN_ID, "icons/default.png").createImage();
+        
+        @Override
+        public void dispose() {
+            this.currentImage.dispose();
+            this.defaultImage.dispose();
+        }
         
         public Image getColumnImage(final Object element, final int columnIndex) {
             switch (columnIndex) {
@@ -254,68 +300,8 @@ public class TestView extends ViewPart {
         }
         
         @Override
-        public void dispose() {
-            this.currentImage.dispose();
-            this.defaultImage.dispose();
-        }
-        
-        @Override
         public boolean isLabelProperty(final Object element, final String property) {
             return false;
-        }
-    }
-    
-    /**
-     * A population table entry contains an individual.
-     * 
-     * @author bdu
-     * 
-     */
-    private static class PopulationTableEntry {
-        private int index = 0;
-        private Individual individual;
-        
-        public String getId() {
-            if (individual != null) {
-                return individual.getGeneration() + "." + individual.getId();
-            }
-            return null;
-        }
-        
-        public Individual getIndividual() {
-            return individual;
-        }
-        
-        public void setIndividual(final Individual theIndividual) {
-            this.individual = theIndividual;
-        }
-    }
-    
-    /**
-     * Action for resetting the view.
-     * 
-     * @author bdu
-     * 
-     */
-    private class ResetAction extends Action {
-        public ResetAction() {
-            setText("Reset");
-            setToolTipText("Restart with a new population.");
-        }
-        
-        @Override
-        public void run() {
-            position = 0;
-            final IEditorPart editor = getCurrentEditor();
-            final EditPart part = getEditPart(editor);
-            propertySource = new LayoutPropertySource(editor, part);
-            final Population newPopulation =
-                    EvolUtil.createPopulation(propertySource, DEFAULT_INITIAL_POPULATION_SIZE);
-            evolAlg = new BasicEvolutionaryAlgorithm(newPopulation);
-            evolAlg.step();
-            setInput(evolAlg.getPopulation());
-            tableViewer.selectRow(position);
-            tableViewer.refresh();
         }
     }
     
@@ -336,114 +322,32 @@ public class TestView extends ViewPart {
     }
     
     /**
-     * Action for giving a negative rating to an individual.
+     * Action for resetting the view.
      * 
      * @author bdu
      * 
      */
-    private class DemoteAction extends ChangeRatingAction {
-        private static final int AMOUNT = -10;
-        
-        public DemoteAction() {
-            super(AMOUNT);
-            setText("Disregard");
-            setToolTipText("Demote the selected individual.");
-        }
-    }
-    
-    /**
-     * Action for rating an individual.
-     * 
-     * @author bdu
-     * 
-     */
-    private class ChangeRatingAction extends Action {
-        private final int delta;
-        
-        public ChangeRatingAction(final int theDelta) {
-            delta = theDelta;
+    private class ResetAction extends Action {
+        public ResetAction() {
+            setText("Reset");
+            setToolTipText("Restart with a new population.");
         }
         
         @Override
         public void run() {
-            if (population != null) {
-                final Individual ind = getCurrentIndividual();
-                final int rating = ind.getRating() + delta;
-                ind.setRating(rating);
-                tableViewer.refresh();
-            }
-        }
-    }
-    
-    /**
-     * An action that assigns an automatic rating to all individuals.
-     * 
-     * @author bdu
-     * 
-     */
-    private class AutorateAllAction extends Action {
-        public AutorateAllAction() {
-            this.setText("Auto-rate");
-            this.setToolTipText("Auto-rate all individuals");
-        }
-        
-        @Override
-        public void run() {
-            autorateIndividuals(TargetIndividuals.ALL);
-        }
-    }
-    
-    /**
-     * Determines which individuals of a population shall be affected by an
-     * operation.
-     * 
-     * @author bdu
-     * 
-     */
-    private enum TargetIndividuals {
-        ALL, UNRATED, RATED
-    }
-    
-    /**
-     * Action for performing a step of the evolutionary algorithm. This creates
-     * a new generation.
-     * 
-     * @author bdu
-     * 
-     */
-    private class EvolveAction extends Action {
-        public EvolveAction() {
-            setText("Evolve");
-        }
-        
-        @Override
-        public void run() {
-            if (evolAlg == null) {
-                return;
-            }
-            evolAlg.step();
-            setInput((evolAlg).getPopulation());
-            final int firstUnrated = firstUnrated();
-            if (firstUnrated > -1) {
-                position = firstUnrated;
-            }
-            final int lim = population.size();
-            if (position >= lim) {
-                position = lim - 1;
-            }
-            autorateIndividuals(TargetIndividuals.UNRATED);
-            
-            Assert.isTrue(position >= 0);
+            position = 0;
+
+            final IEditorPart editor = getCurrentEditor();
+            final EditPart part = getEditPart(editor);
+            LayoutPropertySource propertySource = new LayoutPropertySource(editor, part);
+            final Population newPopulation =
+                    EvolUtil.createPopulation(propertySource, DEFAULT_INITIAL_POPULATION_SIZE);
+            final BasicEvolutionaryAlgorithm alg = new BasicEvolutionaryAlgorithm(newPopulation);
+            alg.step();
+            TestView.this.evolAlg = alg;
+            setInput(alg.getPopulation());
             tableViewer.selectRow(position);
             tableViewer.refresh();
-            onSelectIndividual();
-            // BasicNetwork b = new BasicNetwork();
-            // b.addLayer(new BasicLayer(2));
-            // b.addLayer(new BasicLayer(3));
-            // b.addLayer(new BasicLayer(6));
-            // b.addLayer(new BasicLayer(1));
-            // b.getStructure().finalizeStructure();
-            // System.out.println(b.calculateNeuronCount());
         }
     }
     
@@ -470,74 +374,189 @@ public class TestView extends ViewPart {
     }
     
     /**
-     * A layout listener to get noticed when the layout is done.
+     * Determines which individuals of a population shall be affected by an
+     * operation.
      * 
      * @author bdu
      * 
      */
-    private abstract static class LayoutListener implements ILayoutListener {
-        public abstract void layoutPerformed(
-                final KNode layoutGraph, final IKielerProgressMonitor monitor);
-        
-        public void layoutRequested(final KNode layoutGraph) {
-            System.out.println("LayoutListener: Layout requested.");
-        }
+    private enum TargetIndividuals {
+        ALL, UNRATED, RATED
     }
     
     /**
-     * A layout listener that measures the layout graph it is notified about,
-     * and assigns the rating to the current individual.
-     * 
+     * Initial population size.
      */
-    private final ILayoutListener layoutListener = new LayoutListener() {
-        @Override
-        public void layoutRequested(final KNode layoutGraph) {
-            super.layoutRequested(layoutGraph);
-            System.out.println(layoutGraph.getData());
+    private static final int DEFAULT_INITIAL_POPULATION_SIZE = 25;
+    
+    /**
+     *
+     */
+    public TestView() {
+        super();
+        this.tableViewer = null;
+    }
+    
+    // private fields
+    private SelectorTableViewer tableViewer;
+
+    private int position = 0;
+    private BasicEvolutionaryAlgorithm evolAlg;
+    private Population population;
+    private IEditorPart graphEditor;
+    private String layouter;
+    /**
+     * Column width for columns in viewer table.
+     */
+    private static final int DEFAULT_COLUMN_WIDTH = 140;
+
+    // individual property settings
+    @Override
+    public void createPartControl(final Composite parent) {
+        final Table table = new Table(parent, SWT.BORDER | SWT.BORDER_SOLID);
+        // Composite tableComposite = new Composite(parent, SWT.NONE);
+        // TableColumnLayout tableColumnLayout = new TableColumnLayout();
+        // tableComposite.setLayout(tableColumnLayout);
+        // tableViewer = new TableViewer(tableComposite, SWT.BORDER |
+        // SWT.FULL_SELECTION);
+        // Table table = tableViewer.getTable();
+        final TableColumn column = new TableColumn(table, SWT.NONE);
+        final TableColumn column2 = new TableColumn(table, SWT.NONE);
+        column.setWidth(DEFAULT_COLUMN_WIDTH);
+        column2.setWidth(DEFAULT_COLUMN_WIDTH);
+        final SelectorTableViewer tv = new SelectorTableViewer(table);
+        tv.setContentProvider(new PopulationTableContentProvider());
+        tv.setLabelProvider(new PopulationTableLabelProvider());
+
+        final IEditorPart editor = getCurrentEditor();
+        final IGraphicalEditPart part = (IGraphicalEditPart) getEditPart(editor);
+        this.graphEditor = editor;
+        this.tableViewer = tv;
+        if (editor != null) {
+            // TODO: test whether editor is for KIML
+            // FIXME: should share synchronized property source with LayoutView?
+            final LayoutPropertySource source = new LayoutPropertySource(editor, part);
+            final Population sourcePopulation =
+                    EvolUtil.createPopulation(source, DEFAULT_INITIAL_POPULATION_SIZE);
+            final BasicEvolutionaryAlgorithm alg = new BasicEvolutionaryAlgorithm(sourcePopulation);
+            alg.step();
+            this.evolAlg = alg;
+            setInput(alg.getPopulation());
         }
-        
-        @Override
-        public void layoutPerformed(final KNode layoutGraph, final IKielerProgressMonitor monitor) {
-            System.out.println("LayoutListener: Layout performed.");
-            Runnable measuringRunnable = new Runnable() {
-                public void run() {
-                    final Individual ind = getCurrentIndividual();
-                    int rating = measureDiagram(false, layoutGraph);
-                    System.out.println("Assign rating " + rating + " to individual @" + position
-                            + ": " + ind.toString());
-                    ind.setRating(rating);
-                    Assert.isTrue(ind == getCurrentIndividual());
+
+        createToolBar();
+        final ISelectionChangedListener listener = new ISelectionChangedListener() {
+            public synchronized void selectionChanged(final SelectionChangedEvent event) {
+                final ISelection selection = event.getSelection();
+                System.out.println("selectionChanged");
+                if ((selection != null) && (!selection.isEmpty())
+                        && (selection instanceof IStructuredSelection)) {
+                    final Object element = ((IStructuredSelection) selection).getFirstElement();
+                    if (element instanceof PopulationTableEntry) {
+                        tv.removeSelectionChangedListener(this);
+                        // final int oldPosition = position;
+                        position = ((PopulationTableEntry) element).index;
+                        onSelectIndividual();
+                        System.out.println("after onSelectIndividual");
+                        tv.refresh();
+                        tv.addPostSelectionChangedListener(this);
+                        System.out.println();
+                    }
+                } else {
+                    System.out.println("empty or null selection");
                 }
-            };
-            MonitoredOperation.runInUI(measuringRunnable, true);
-            // tableViewer.refresh();
+            }
+        };
+        tv.addPostSelectionChangedListener(listener);
+    }
+    
+    @Override
+    public void setFocus() {
+        tableViewer.getControl().setFocus();
+    }
+    
+    /**
+     * Adopts layout options from the given {@code Individual}. The given
+     * individual must not be {@code null}.
+     * 
+     * @param theIndividual
+     *            the individual
+     * @param wantLayoutViewRefresh
+     *            whether the layout view shall be refreshed
+     */
+    private void adoptIndividual(final Individual theIndividual, final boolean wantLayoutViewRefresh) {
+        System.out.println("in adoptIndividual");
+
+        Assert.isLegal(theIndividual != null);
+        final Population pop = this.population;
+        if ((pop == null) || pop.isEmpty() || theIndividual == null) {
+            return;
         }
-    };
+        final LayoutPropertySource source = getLayoutPropertySource();
+
+        System.out.println("adopt " + theIndividual.toString());
+        final Genome genome = theIndividual.getGenome();
+        final LayoutServices layoutServices = LayoutServices.getInstance();
+        for (final IGene<?> gene : genome) {
+            Assert.isNotNull(gene);
+            final Object theValue = gene.getValue();
+            final Object id = gene.getId();
+            final LayoutOptionData data = layoutServices.getLayoutOptionData((String) id);
+            Assert.isNotNull(data);
+            switch (data.getType()) {
+            case BOOLEAN:
+                source.setPropertyValue(id, ((Boolean) theValue ? 1 : 0));
+                break;
+            case ENUM:
+                try {
+                    source.setPropertyValue(id, theValue);
+                } catch (final NullPointerException e) {
+                    System.out.println("WARNING: enum property could not be set.");
+                    Assert.isTrue(false);
+                }
+                break;
+            default:
+                source.setPropertyValue(id, theValue.toString());
+                break;
+            }
+        }
+        // refresh layout view?
+        if (wantLayoutViewRefresh) {
+            final Thread t = new Thread(new LayoutViewRefresher());
+            t.start();
+        }
+        System.out.println("leaving adoptIndividual");
+    }
     
     /**
      * Performs auto-rating on each individual that belongs to the given target.
      */
     private void autorateIndividuals(final TargetIndividuals target) {
-        if (population == null || population.isEmpty()) {
-            return;
-        }
         System.out.println("autorate population");
         final Population pop = this.population;
-        final int oldPosition = this.position;
-        final IEditorPart editor = getCurrentEditor();
+        if (pop == null || pop.isEmpty()) {
+            return;
+        }
+
+        if (this.graphEditor == null) {
+            this.graphEditor = getCurrentEditor();
+        }
         final Registry registry = LayoutServices.getRegistry();
+        final IndividualLayoutListener listener =
+                new IndividualLayoutListener(getCurrentIndividual());
+        // we don't specify the edit part because we want a manager for the
+        // whole diagram
         final DiagramLayoutManager manager =
-                EclipseLayoutServices.getInstance().getManager(editor, null);
+                EclipseLayoutServices.getInstance().getManager(this.graphEditor, null);
         Runnable layoutLoop = new Runnable() {
             public void run() {
                 for (int pos = 0; pos < pop.size(); pos++) {
-                    // set current position because measurer needs that
-                    // Maybe the listener should have a field that stores the
-                    // proper corresponding individual?
-                    TestView.this.position = pos;
+
                     System.out.println("Position: " + pos);
                     final Individual ind = pop.get(pos);
                     System.out.println(ind.toString());
+                    listener.setIndividual(ind);
+
                     // TODO: synchronize on the layout graph?
                     final boolean isAffected;
                     switch (target) {
@@ -558,10 +577,10 @@ public class TestView extends ViewPart {
                         adoptIndividual(ind, false);
                         // first phase: build the layout graph
                         // TODO: get a new manager for every iteration?
-                        manager.buildLayoutGraph(editor, null, true);
+                        manager.buildLayoutGraph(graphEditor, null, true);
                         // second phase: execute layout algorithms
-                        // need a new monitor each time because the old one gets
-                        // closed.
+                        // We need a new monitor each time because the old one
+                        // gets closed.
                         final IKielerProgressMonitor monitor =
                                 new BasicProgressMonitor(DiagramLayoutManager.MAX_PROGRESS_LEVELS);
                         final IStatus status = manager.layout(monitor, true, false);
@@ -573,14 +592,27 @@ public class TestView extends ViewPart {
                 }
             }
         };
-        registry.addLayoutListener(layoutListener);
-        // the current diagram gets measured.
+        registry.addLayoutListener(listener);
+        // the current diagram gets layouted and measured.
         MonitoredOperation.runInUI(layoutLoop, true);
         System.out.println("remove layout listener");
-        registry.removeLayoutListener(layoutListener);
-        // restore position
-        this.position = oldPosition;
+        registry.removeLayoutListener(listener);
+
         this.tableViewer.refresh();
+    }
+    
+    /**
+     * Creates the tool bar for the view.
+     */
+    private void createToolBar() {
+        // Get tool bar manager.
+        final IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
+        // Create some actions and add them to tool bar manager.
+        toolBarManager.add(new AutorateAllAction());
+        toolBarManager.add(new PromoteAction());
+        toolBarManager.add(new DemoteAction());
+        toolBarManager.add(new EvolveAction());
+        toolBarManager.add(new ResetAction());
     }
     
     /**
@@ -589,12 +621,13 @@ public class TestView extends ViewPart {
      * @return {@code -1} if no unrated individual exists.
      */
     private int firstUnrated() {
-        if (population == null) {
+        final Population pop = this.population;
+        if (pop == null) {
             return -1;
         }
         int result = -1;
-        for (int i = 0; i < population.size(); i++) {
-            final Individual ind = population.get(i);
+        for (int i = 0; i < pop.size(); i++) {
+            final Individual ind = pop.get(i);
             if (!ind.hasRating()) {
                 result = i;
                 break;
@@ -604,57 +637,43 @@ public class TestView extends ViewPart {
     }
     
     /**
-     * Refresh the layout according to selected individual.
+     * Returns the current editor.
+     * 
+     * @return the current editor or {@code null} if none exists.
      */
-    private void onSelectIndividual() {
-        Assert.isNotNull(population, "population is null");
-        // Assert.isTrue(population.size() > 0, "zero population");
-        System.out.println("in onSelectIndividual");
-        System.out.println(population.toString());
-        final Individual currentIndividual = getCurrentIndividual();
-        Assert.isNotNull(currentIndividual);
-        adoptIndividual(currentIndividual, true);
-        try {
-            Thread.sleep(200);
-        } catch (final InterruptedException e) {
-            e.printStackTrace();
+    private IEditorPart getCurrentEditor() {
+
+        // TODO: cache editor and assert that it is not replaced?
+        final LayoutViewPart layoutViewPart = LayoutViewPart.findView();
+        if (layoutViewPart == null) {
+            final IWorkbench workbench = PlatformUI.getWorkbench();
+            final IWorkbenchPage page = workbench.getActiveWorkbenchWindow().getActivePage();
+            if (page != null) {
+                return page.getActiveEditor();
+            }
+            return null;
         }
-        // need a layout listener to wait for the layouting to be
-        // finished and applied before measuring it.
-        final Registry registry = LayoutServices.getRegistry();
-        registry.addLayoutListener(layoutListener);
-        layoutDiagram(false, false);
-        System.out.println("after layoutDiagram");
-        try {
-            Thread.sleep(100);
-        } catch (final InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.println("remove layout listener");
-        registry.removeLayoutListener(layoutListener);
-        tableViewer.refresh();
+        final IEditorPart result = layoutViewPart.getCurrentEditor();
+        return result;
     }
     
     /**
-     * Layout the diagram.
      * 
-     * @param showAnimation
-     * @param showProgressBar
+     * @return the current {@code Individual}, or {@code null} if none is
+     *         selected.
      */
-    private void layoutDiagram(final boolean showAnimation, final boolean showProgressBar) {
-        System.out.println("in layoutDiagram");
-        if ((propertySource != null) && (population != null)) {
-            final IEditorPart editor = getCurrentEditor();
-            if (editor == null) {
-                // so we have nothing to layout.
-                return;
-            }
-            // we don't need to specify the editpart because we want to layout
-            // the whole diagram
-            EclipseLayoutServices.getInstance()
-                    .layout(editor, null, showAnimation, showProgressBar);
+    private Individual getCurrentIndividual() {
+        final Population pop = this.population;
+        final int pos = this.position;
+        Assert.isTrue((pos >= 0) && (pos < pop.size()), "position out of range");
+        if ((pop == null) || pop.isEmpty()) {
+            return null;
         }
-        System.out.println("leaving layoutDiagram");
+        // ensure that the position is within the valid range
+        if ((pos >= pop.size()) || (pos < 0)) {
+            return null;
+        }
+        return pop.get(pos);
     }
     
     /**
@@ -681,154 +700,91 @@ public class TestView extends ViewPart {
     }
     
     /**
-     * Returns the current editor.
      * 
-     * @return the current editor or {@code null} if none exists.
+     * @return a {@code LayoutPropertySource} for the current editor.
      */
-    private IEditorPart getCurrentEditor() {
-        final LayoutViewPart layoutViewPart = LayoutViewPart.findView();
-        if (layoutViewPart == null) {
-            // without the layoutViewPart, we cannot find the editor.
-            return null;
-        }
-        final IEditorPart result = layoutViewPart.getCurrentEditor();
+    private LayoutPropertySource getLayoutPropertySource() {
+        final IEditorPart editor = getCurrentEditor();
+        final IGraphicalEditPart part = (IGraphicalEditPart) getEditPart(editor);
+        // TODO: use root edit part
+        final LayoutPropertySource result = new LayoutPropertySource(editor, part);
         return result;
     }
     
     /**
-     * Analyzes the given KGraph.
+     * Layout the diagram in the current editor.
      * 
+     * @param showAnimation
+     *            indicates whether the layout shall be animated
      * @param showProgressBar
      *            indicates whether a progress bar shall be shown
-     * @param parentNode
-     *            the KGraph to be analyzed.
-     * @return
      */
-    private int measureDiagram(final boolean showProgressBar, final KNode parentNode) {
-        System.out.println("measure diagram");
-        if ((parentNode == null) || (propertySource == null) || (population == null)) {
-            return 0;
+    private void layoutDiagram(final boolean showAnimation, final boolean showProgressBar) {
+        System.out.println("in layoutDiagram");
+        final Population pop = this.population;
+        if (pop != null) {
+            final IEditorPart editor = getCurrentEditor();
+            if (editor == null) {
+                // so we have nothing to layout.
+                return;
+            }
+            // we don't need to specify the edit part because we want to layout
+            // the whole diagram
+            EclipseLayoutServices.getInstance()
+                    .layout(editor, null, showAnimation, showProgressBar);
         }
-        final String[] metricIds =
-                new String[] { "de.cau.cs.kieler.kiml.evol.bendsMetric",
-                        "de.cau.cs.kieler.kiml.evol.flatnessMetric",
-                        "de.cau.cs.kieler.kiml.evol.narrownessMetric" };
-        final AnalysisServices as = AnalysisServices.getInstance();
-        final List<AbstractInfoAnalysis> metricsList = new LinkedList<AbstractInfoAnalysis>();
-        for (final String metricId : metricIds) {
-            final AbstractInfoAnalysis metric = as.getAnalysisById(metricId);
-            metricsList.add(metric);
-        }
-        final AbstractInfoAnalysis[] metrics =
-                metricsList.toArray(new AbstractInfoAnalysis[metricsList.size()]);
-        // DiagramAnalyser.analyse possibly uses obsolete layout graph
-        // final Object[] results = DiagramAnalyser.analyse(editor, part,
-        // metrics, showProgressBar);
-        final double[] coeffs = new double[] { .4, .5, .1 };
-        final Object[] results = DiagramAnalyser.analyse(parentNode, metrics, showProgressBar);
-        final double bendsResult = Double.parseDouble(results[0].toString()) * coeffs[0];
-        final double flatnessResult = Double.parseDouble(results[1].toString()) * coeffs[1];
-        final double narrownessResult = Double.parseDouble(results[2].toString()) * coeffs[2];
-        System.out.println(bendsResult + "  " + flatnessResult + "  " + narrownessResult);
-        final int newRating = (int) ((bendsResult + flatnessResult + narrownessResult) * 100);
-        System.out.println("leaving measureDiagram");
-        return newRating;
+        System.out.println("leaving layoutDiagram");
     }
     
+
     /**
-     * 
-     * @return the current individual, or {@code null} if none is selected.
+     * Refresh the layout according to selected individual.
      */
-    private Individual getCurrentIndividual() {
-        Assert.isTrue((position >= 0) && (position < population.size()), "position out of range");
-        if ((population == null) || population.isEmpty()) {
-            return null;
+    private void onSelectIndividual() {
+        Assert.isNotNull(population, "population is null");
+        // Assert.isTrue(population.size() > 0, "zero population");
+        System.out.println("in onSelectIndividual");
+        System.out.println(population.toString());
+        final Individual currentIndividual = getCurrentIndividual();
+        Assert.isNotNull(currentIndividual);
+        adoptIndividual(currentIndividual, true);
+        try {
+            Thread.sleep(100);
+        } catch (final InterruptedException e) {
+            e.printStackTrace();
         }
-        // ensure that the position is within the valid range
-        if ((position >= population.size()) || (position < 0)) {
-            return null;
+        // need a layout listener to wait for the layouting to be
+        // finished and applied before measuring it.
+        final Registry registry = LayoutServices.getRegistry();
+        final LayoutListener listener = new IndividualLayoutListener(currentIndividual);
+        registry.addLayoutListener(listener);
+        layoutDiagram(false, false);
+        System.out.println("after layoutDiagram");
+        try {
+            Thread.sleep(50);
+        } catch (final InterruptedException e) {
+            e.printStackTrace();
         }
-        return population.get(position);
+        System.out.println("remove layout listener");
+        registry.removeLayoutListener(listener);
+        tableViewer.refresh();
     }
-    
+
     /**
-     * Adopts layout options from the given individual. The
-     * <code>propertySource</code> needs to be valid. The given individual must
-     * not be {@code null}.
+     * Sets a population as the input of the viewer.
      * 
-     * @param theIndividual
-     *            the individual
-     * @param wantLayoutViewRefresh
-     *            whether the layout view shall be refreshed
+     * @param thePopulation
+     *            new source population
      */
-    private void adoptIndividual(final Individual theIndividual, final boolean wantLayoutViewRefresh) {
-        System.out.println("in adoptIndividual");
-        Assert.isLegal(theIndividual != null);
-        Assert.isNotNull(propertySource, "propertySource is null");
-        if ((population == null) || population.isEmpty() || (propertySource == null)
-                || theIndividual == null) {
-            return;
-        }
-        System.out.println("adopt " + theIndividual.toString());
-        final Genome genome = theIndividual.getGenome();
-        final LayoutServices layoutServices = LayoutServices.getInstance();
-        for (final IGene<?> gene : genome) {
-            Assert.isNotNull(gene);
-            final Object theValue = gene.getValue();
-            final Object id = gene.getId();
-            final LayoutOptionData data = layoutServices.getLayoutOptionData((String) id);
-            Assert.isNotNull(data);
-            switch (data.getType()) {
-            case BOOLEAN:
-                this.propertySource.setPropertyValue(id, ((Boolean) theValue ? 1 : 0));
-                break;
-            case ENUM:
-                try {
-                    this.propertySource.setPropertyValue(id, theValue);
-                } catch (final NullPointerException e) {
-                    System.out.println("WARNING: enum property could not be set.");
-                    Assert.isTrue(false);
+    private void setInput(final Population thePopulation) {
+        if ((thePopulation != null) && (thePopulation != population)) {
+            population = thePopulation;
+            final Runnable runnable = new Runnable() {
+                public void run() {
+                    tableViewer.setInput(thePopulation);
                 }
-                break;
-            default:
-                this.propertySource.setPropertyValue(id, theValue.toString());
-                break;
-            }
+            };
+            runnable.run();
         }
-        // refresh layout view?
-        if (wantLayoutViewRefresh) {
-            final LayoutViewPart layoutView = LayoutViewPart.findView();
-            if (layoutView != null) {
-                final Runnable runnable = new Runnable() {
-                    public void run() {
-                        System.out.println("layoutView refresh start.");
-                        try {
-                            Thread.sleep(1000);
-                        } catch (final InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        layoutView.refresh(); // async!
-                        System.out.println("layoutView refresh called.");
-                    }
-                };
-                final Thread t = new Thread(runnable);
-                t.start();
-            }
-        }
-        System.out.println("leaving adoptIndividual");
-    }
-    
-    /**
-     * Creates the tool bar for the view.
-     */
-    private void createToolBar() {
-        // Get tool bar manager.
-        final IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
-        // Create some actions and add them to tool bar manager.
-        toolBarManager.add(new AutorateAllAction());
-        toolBarManager.add(new PromoteAction());
-        toolBarManager.add(new DemoteAction());
-        toolBarManager.add(new EvolveAction());
-        toolBarManager.add(new ResetAction());
     }
 }
