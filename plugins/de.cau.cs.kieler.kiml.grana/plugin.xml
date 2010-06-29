@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="analysisProviders" name="AnalysisProviders" schema="schema/analysisProviders.exsd"/>
+   <extension
+         point="de.cau.cs.kieler.kiml.grana.analysisProviders">
+      <analysisCategory
+            description="This is the default category."
+            id="de.cau.cs.kieler.kiml.grana.defaultCategory"
+            name="Other">
+      </analysisCategory>
+      <analysisCategory
+            description="Basic graph analyses."
+            id="de.cau.cs.kieler.kiml.grana.basicAnalyses"
+            name="Basic Analyses">
+      </analysisCategory>
+      <analysisProvider
+            category="de.cau.cs.kieler.kiml.grana.basicAnalyses"
+            class="de.cau.cs.kieler.kiml.grana.analyses.AverageNodeDegreeAnalysis"
+            description="The average node degree of all nodes including hierarchies."
+            id="de.cau.cs.kieler.kiml.grana.averageNodeDegree"
+            name="Average Node Degree">
+      </analysisProvider>
+      <analysisProvider
+            category="de.cau.cs.kieler.kiml.grana.basicAnalyses"
+            class="de.cau.cs.kieler.kiml.grana.analyses.EdgeCountAnalysis"
+            description="The number of edges including hierarchies."
+            id="de.cau.cs.kieler.kiml.grana.edgeCount"
+            name="Edge Count">
+      </analysisProvider>
+      <analysisProvider
+            category="de.cau.cs.kieler.kiml.grana.basicAnalyses"
+            class="de.cau.cs.kieler.kiml.grana.analyses.NodeCountAnalysis"
+            description="The number of nodes including hierarchies."
+            id="de.cau.cs.kieler.kiml.grana.nodeCount"
+            name="Node Count">
+      </analysisProvider>
+      <analysisResultVisualizer
+            class="de.cau.cs.kieler.kiml.grana.visualizers.ToStringVisualizer"
+            priority="1">
+      </analysisResultVisualizer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="de.cau.cs.kieler"
+            defaultHandler="de.cau.cs.kieler.kiml.grana.handlers.AnalysisHandler"
+            id="de.cau.cs.kieler.kiml.grana.command.analyse"
+            name="Analyse">
+      </command>
+      <command
+            categoryId="de.cau.cs.kieler"
+            defaultHandler="de.cau.cs.kieler.kiml.grana.handlers.FastAnalysisHandler"
+            id="de.cau.cs.kieler.kiml.grana.command.fastAnalyse"
+            name="Fast Analyse">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="toolbar:de.cau.cs.kieler">
+         <command
+               commandId="de.cau.cs.kieler.kiml.grana.command.analyse"
+               icon="icons/menu16/analyzediagram.gif"
+               label="Analyse"
+               style="push"
+               tooltip="Analyse the current diagram with KIELER">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeEditor">
+                  <test
+                        forcePluginActivation="false"
+                        property="de.cau.cs.kieler.kiml.ui.activeEditorIsSupported">
+                  </test>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="de.cau.cs.kieler.kiml.grana.command.fastAnalyse"
+               icon="icons/menu16/analyzediagramquick.gif"
+               label="Fast Analyse"
+               style="push"
+               tooltip="Analyse the current diagram with KIELER using the last selected options">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeEditor">
+                  <test
+                        forcePluginActivation="false"
+                        property="de.cau.cs.kieler.kiml.ui.activeEditorIsSupported">
+                  </test>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+
+</plugin>
