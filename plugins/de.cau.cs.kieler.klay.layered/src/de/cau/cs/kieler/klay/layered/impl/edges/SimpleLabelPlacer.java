@@ -70,16 +70,29 @@ public class SimpleLabelPlacer extends AbstractAlgorithm implements ILabelPlacer
                             if (longEdge == null) {
                                 label.getPos().y = (target.y - source.y) / 2;
                             } else {
+                                //find bendpoint with max distance to source AND target node
                                 Coord portPosition = new Coord(edge.getSource().getPos().x,
                                         edge.getSource().getPos().y);
                                 portPosition.add(edge.getSource().getNode().getPos());
-                                int numberOfBendpoints = longEdge.getEdge().getBendPoints().size();
-                                label.getPos().x = longEdge.getEdge().
-                                    getBendPoints().get(numberOfBendpoints / 2).x - portPosition.x;
-                                label.getPos().y = longEdge.getEdge().
-                                    getBendPoints().get(numberOfBendpoints / 2).y - portPosition.y;
-                                /*for (Coord bendPoint : longEdge.getEdge().getBendPoints()) {
-                                }*/
+                                float minDistanceDifference = Float.POSITIVE_INFINITY;
+                                Coord middlePoint = null;
+                                for (Coord bPoint : longEdge.getEdge().getBendPoints()) {
+                                    float bPointDistanceA, bPointDistanceB, bPointDifference;
+                                    //euklidean metric
+                                    bPointDistanceA =
+                                            (float) Math.sqrt(Math.pow((source.x - bPoint.x), 2)
+                                            + Math.pow((source.y - bPoint.y), 2));
+                                    bPointDistanceB =
+                                            (float) Math.sqrt(Math.pow((target.x - bPoint.x), 2)
+                                            + Math.pow((target.y - bPoint.y), 2));
+                                    bPointDifference = Math.abs(bPointDistanceA - bPointDistanceB);
+                                    if (bPointDifference < minDistanceDifference) {
+                                        minDistanceDifference = bPointDifference;
+                                        middlePoint = bPoint;
+                                    }
+                                }
+                                label.getPos().x = middlePoint.x - portPosition.x;
+                                label.getPos().y = middlePoint.y - portPosition.y;
                             }
                             label.getPos().x -= label.getSize().x / 2;
                         }
