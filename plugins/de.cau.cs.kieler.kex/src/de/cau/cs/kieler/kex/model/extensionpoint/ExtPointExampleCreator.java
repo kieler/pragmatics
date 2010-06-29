@@ -62,23 +62,25 @@ public class ExtPointExampleCreator {
 		sb.append("</example>");
 		sb.append("</extension>");
 		sb.append("</plugin>");
-		
+
 		addExtension(sb.toString());
-//		try {
-////			new ExtensionPointChangeHandler().start(org.eclipse.core.internal.registry.osgi.Activator.getContext());
-//		} catch (Exception e) {
-//			// bla bla bla
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		// try {
+		// // new
+		// ExtensionPointChangeHandler().start(org.eclipse.core.internal.registry.osgi.Activator.getContext());
+		// } catch (Exception e) {
+		// // bla bla bla
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 
 	}
 
 	/**
 	 * common way, but does not work.
+	 * 
 	 * @param sb
 	 */
-	private void addExtension(String sb){
+	private void addExtension(String sb) {
 		try {
 			// use Eclipse Dynamic Extension API
 			IExtensionRegistry reg = RegistryFactory.getRegistry();
@@ -88,15 +90,14 @@ public class ExtPointExampleCreator {
 			org.eclipse.core.internal.registry.osgi.Activator.getContext();
 			IContributor contributor = ContributorFactoryOSGi
 					.createContributor(bundle);
-			ByteArrayInputStream is = new ByteArrayInputStream((sb.toString())
-					.getBytes("UTF-8"));
-			reg.addContribution(is, contributor, false, null, null, key);
+			ByteArrayInputStream is = new ByteArrayInputStream(
+					(sb.toString()).getBytes("UTF-8"));
+			reg.addContribution(is, contributor, true, null, null, key);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	
+
 	/**
 	 * creates example files to given project path
 	 */
@@ -108,7 +109,7 @@ public class ExtPointExampleCreator {
 		// File tmpFile = new File(workspacePath
 		// + File.separator + ((projects.length > 0) ? projects[0].getName() :
 		// "test")+ File.separator +"test.file");
-		//      
+		//
 		// if (!tmpFile.exists()){
 		// tmpFile.getParentFile().mkdirs();
 		// try {
@@ -129,8 +130,8 @@ public class ExtPointExampleCreator {
 			throw new KielerException("There is no file for given location:"
 					+ location);
 		}
-		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(
-				projectId);
+		IProject project = ResourcesPlugin.getWorkspace().getRoot()
+				.getProject(projectId);
 		if (project == null)
 			throw new KielerException(
 					"There is no project for given project id:" + projectId);

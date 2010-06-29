@@ -1,41 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-<extension
-         point="org.eclipse.ui.newWizards">
-      <category
-            id="de.cau.cs.kieler.kex.wizard"
-            name="KIELER">
-      </category>
-      <wizard
-            category="de.cau.cs.kieler.kex.wizard"
-            class="de.cau.cs.kieler.kex.ui.wizards.importwizard.ImportExampleWizard"
-            icon="resources/icons/sample.gif"
-            id="de.cau.cs.kieler.kex.wizard"
-            name="KIELER Example Management">
-      </wizard>
-      <actionSet
-            id="de.cau.cs.kieler.ui.examplewizard.actionSet"
-            label="Sample Action Set"
-            visible="true">
-         <menu
-               id="sampleMenu"
-               label="Sample &amp;Menu">
-            <separator
-                  name="sampleGroup">
-            </separator>
-         </menu>
-         <action
-               class="de.cau.cs.kieler.kex.actions.StartAction"
-               icon="icons/sample.gif"
-               id="de.cau.cs.kieler.kex.actions.StartAction"
-               label="KIELER Example Management"
-               menubarPath="sampleMenu/sampleGroup"
-               toolbarPath="sampleGroup"
-               tooltip="Hello, Eclipse world">
-         </action>
-      </actionSet>
-   </extension>
    <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
@@ -43,19 +8,27 @@
             label="KEX"
             visible="true">
          <menu
-               id="sampleMenu"
+               id="kexMenu"
                label="KEX">
             <separator
-                  name="sampleGroup">
+                  name="kexGroup">
             </separator>
          </menu>
          <action
-               class="de.cau.cs.kieler.kex.ui.actions.KEXStartAction"
-               id="de.cau.cs.kieler.kex.ui.actions.SampleAction"
-               label="KIELER Example Management"
-               menubarPath="sampleMenu/sampleGroup"
+               class="de.cau.cs.kieler.kex.ui.actions.KEXImportAction"
+               id="de.cau.cs.kieler.kex.ui.actions.import"
+               label="KIELER Example Import"
+               menubarPath="kexMenu/kexGroup"
                style="push"
-               tooltip="Kieler Example Management">
+               tooltip="Import examples to your local workspace">
+         </action>
+         <action
+               class="de.cau.cs.kieler.kex.ui.actions.KEXExportAction"
+               id="de.cau.cs.kieler.kex.ui.export"
+               label="KIELER Example Export"
+               menubarPath="kexMenu/kexGroup"
+               style="push"
+               tooltip="Export examples of your local workspace">
          </action>
       </actionSet>
    </extension>
