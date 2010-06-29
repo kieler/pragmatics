@@ -177,7 +177,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.kiml.grana.IAnalysisResultVisualizer"/>
+                  <meta.attribute kind="java" basedOn="de.cau.cs.kieler.kiml.grana.AbstractAnalysisResultVisualizer:"/>
                </appinfo>
             </annotation>
          </attribute>

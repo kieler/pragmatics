@@ -21,13 +21,15 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
+import de.cau.cs.kieler.kiml.grana.MinAvgMaxResult;
 
 /**
- * A graph analysis that computes the average node degree of the given graph.
+ * A graph analysis that computes the min/avg/max node degree of the given
+ * graph.
  * 
  * @author mri
  */
-public class AverageNodeDegreeAnalysis implements IAnalysis {
+public class NodeDegreeAnalysis implements IAnalysis {
 
     /**
      * {@inheritDoc}
@@ -39,36 +41,48 @@ public class AverageNodeDegreeAnalysis implements IAnalysis {
 
         int numberOfNodes = 0;
         int overallNodeDegree = 0;
+        int minNodeDegree = Integer.MAX_VALUE;
+        int maxNodeDegree = 0;
         List<KNode> nodes = new LinkedList<KNode>();
-        nodes.add(parentNode);
+        numberOfNodes += parentNode.getChildren().size();
+        nodes.addAll(parentNode.getChildren());
         while (nodes.size() > 0) {
             // pop first element
             KNode node = nodes.remove(0);
+            int nodeDegree = 0;
             // node degree outgoing
             for (KEdge edge : node.getOutgoingEdges()) {
                 if (edge.getTarget() != node) {
-                    overallNodeDegree++;
+                    nodeDegree++;
                 }
             }
             // node degree incoming
             for (KEdge edge : node.getIncomingEdges()) {
                 if (edge.getSource() != node) {
-                    overallNodeDegree++;
+                    nodeDegree++;
                 }
             }
-            numberOfNodes += node.getChildren().size();
-            for (KNode childNode : node.getChildren()) {
-                nodes.add(childNode);
+            // min node degree
+            if (nodeDegree < minNodeDegree) {
+                minNodeDegree = nodeDegree;
             }
+            // max node degree
+            if (nodeDegree > maxNodeDegree) {
+                maxNodeDegree = nodeDegree;
+            }
+            overallNodeDegree += nodeDegree;
+            numberOfNodes += node.getChildren().size();
+            nodes.addAll(node.getChildren());
         }
 
         progressMonitor.done();
 
         if (numberOfNodes > 0) {
-            return (float) overallNodeDegree / (float) numberOfNodes;
+            return new MinAvgMaxResult<Integer, Float>(minNodeDegree,
+                    (float) overallNodeDegree / (float) numberOfNodes,
+                    maxNodeDegree);
         } else {
-            return 0;
+            return new MinAvgMaxResult<Integer, Float>(0, 0.0f, 0);
         }
     }
-
 }

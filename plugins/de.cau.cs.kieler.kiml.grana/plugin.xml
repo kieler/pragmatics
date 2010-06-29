@@ -16,7 +16,7 @@
       </analysisCategory>
       <analysisProvider
             category="de.cau.cs.kieler.kiml.grana.basicAnalyses"
-            class="de.cau.cs.kieler.kiml.grana.analyses.AverageNodeDegreeAnalysis"
+            class="de.cau.cs.kieler.kiml.grana.analyses.NodeDegreeAnalysis"
             description="The average node degree of all nodes including hierarchies."
             id="de.cau.cs.kieler.kiml.grana.averageNodeDegree"
             name="Average Node Degree">
@@ -38,6 +38,14 @@
       <analysisResultVisualizer
             class="de.cau.cs.kieler.kiml.grana.visualizers.ToStringVisualizer"
             priority="1">
+      </analysisResultVisualizer>
+      <analysisResultVisualizer
+            class="de.cau.cs.kieler.kiml.grana.visualizers.MinAvgMaxResultVisualizer"
+            priority="10">
+      </analysisResultVisualizer>
+      <analysisResultVisualizer
+            class="de.cau.cs.kieler.kiml.grana.visualizers.AnalysisFailedVisualizer"
+            priority="10">
       </analysisResultVisualizer>
    </extension>
    <extension

@@ -37,7 +37,7 @@ public class AnalysisResultDialog extends Dialog {
     /** the dialogs title. */
     private static final String TITLE = "Analysis results";
     /** the dialogs default width. */
-    private static final int DEFAULT_WIDTH = 500;
+    private static final int DEFAULT_WIDTH = 580;
     /** the dialogs default height. */
     private static final int DEFAULT_HEIGHT = 600;
 
