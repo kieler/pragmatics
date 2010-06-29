@@ -108,16 +108,39 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
      *            list of nodes
      * @return the object which intersects
      */
-    private static Object intersectsWithAny(final Rectangle2D box, final Object currently,
-            final LinkedList<Line2D.Double> edges, final LinkedList<Rectangle2D.Double> nodes) {
+    private static Object intersectsWithAny(final Rectangle2D.Double box,
+            final LinkedList<Line2D.Double> ignoredEdges, final LinkedList<Line2D.Double> edges,
+            final LinkedList<Rectangle2D.Double> nodes) {
         for (Rectangle2D.Double node : nodes) {
-            if (node != currently && node.intersects(box)) {
+            if (node.intersects(box)) {
                 return node;
             }
         }
         for (Line2D.Double line : edges) {
-            if (line != currently && line.intersects(box)) {
+            if (!ignoredEdges.contains(line) && line.intersects(box)) {
+
                 return line;
+            }
+        }
+        return null;
+    }
+
+    private static LinkedList<Line2D.Double> allIntersectingLines(final Rectangle2D.Double box,
+            final LinkedList<Line2D.Double> edges) {
+        LinkedList<Line2D.Double> ret = new LinkedList<Line2D.Double>();
+        for (Line2D.Double line : edges) {
+            if (line.intersects(box)) {
+                ret.add(line);
+            }
+        }
+        return ret;
+    }
+
+    private static Rectangle2D.Double intersectsWithNode(final Rectangle2D.Double box,
+            final LinkedList<Rectangle2D.Double> nodes) {
+        for (Rectangle2D.Double node : nodes) {
+            if (node.intersects(box)) {
+                return node;
             }
         }
         return null;
@@ -165,29 +188,43 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
         float reachedx = (float) currentSource.getPos().x + currentSource.getNode().getPos().x;
 
         // remember against which Nodes we we running in last iteration to maintain the space
-        Rectangle2D.Double runAgainstNodeTop = null;
-        Rectangle2D.Double runAgainstNodeBottom = null;
+        Rectangle2D.Double boxInOurWayOnTop = null;
+        Rectangle2D.Double boxInOurWayOnBottom = null;
+        Rectangle2D.Double newBox = null, prevBox = null;
+
+        LinkedList<Line2D.Double> ignoredEdges = new LinkedList<Line2D.Double>();
+        LinkedList<Line2D.Double> edges = new LinkedList<Line2D.Double>();
+        LinkedList<Rectangle2D.Double> nodes = new LinkedList<Rectangle2D.Double>();
 
         // wander along the edge
         do {
-            Rectangle2D.Double newBox = null, prevBox = null;
-            float targetx = (float) currentTarget.getPos().x + currentTarget.getNode().getPos().x;
+            double targetx = currentTarget.getPos().x + currentTarget.getNode().getPos().x;
 
             // only take care of edges that can hit us
-            LinkedList<Line2D.Double> edges = new LinkedList<Line2D.Double>();
+            edges.clear();
             for (Line2D.Double oneEdge : allEdges) {
                 if (!(oneEdge.getX2() < reachedx || oneEdge.getX1() > targetx)) {
                     edges.add(oneEdge);
+                    // point to a line that matters
+//                    drawOnDebug(new Line2D.Double(0, 0, oneEdge.x1
+//                            + ((oneEdge.x2 - oneEdge.x1) / 2), oneEdge.y1
+//                            + ((oneEdge.y2 - oneEdge.y1) / 2)), DebugCanvas.Color.CYAN, false);
                 }
             }
 
             // and of course only take care of nods that can be in our way
-            LinkedList<Rectangle2D.Double> nodes = new LinkedList<Rectangle2D.Double>();
+            nodes.clear();
             for (Rectangle2D.Double oneNode : allNodes) {
                 if (!(oneNode.getX() + oneNode.getWidth() < reachedx || oneNode.getX() > targetx)) {
                     nodes.add(oneNode);
+                    // point to a node that matters
+                     drawOnDebug(new Line2D.Double(0, 0, oneNode.getX(), oneNode.getY()),
+                     DebugCanvas.Color.CYAN, false);
                 }
             }
+
+            // clear ignored Edges for every new node->nextNode segment
+            ignoredEdges.clear();
 
             while (reachedx < targetx) {
 
@@ -197,88 +234,76 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
 
                 // a good starting point for the boxes is ON the direct line between source and
                 // target
-                double starty = pointOnLine(currentSource, currentTarget, reachedx);
+                double newLowY = pointOnLine(currentSource, currentTarget, reachedx);
 
-                double endy = pointOnLine(currentSource, currentTarget, reachedx + newBoxWidth);
+                double newHighY = pointOnLine(currentSource, currentTarget, reachedx + newBoxWidth);
 
                 // box would be upside down? swap...
-                if (starty > endy) {
-                    double tmp = starty;
-                    starty = endy;
-                    endy = tmp;
+                if (newLowY > newHighY) {
+                    double tmp = newLowY;
+                    newLowY = newHighY;
+                    newHighY = tmp;
                 }
 
                 // put box above center of direct line
-                if (Math.abs(endy - starty) < minBoxHeight) {
-                    double diff = (minBoxHeight - Math.abs(endy - starty)) / 2;
-                    starty -= diff;
-                    endy += diff;
+                if (Math.abs(newHighY - newLowY) < minBoxHeight) {
+                    double diff = (minBoxHeight - Math.abs(newHighY - newLowY)) / 2;
+                    newLowY -= diff;
+                    newHighY += diff;
                 }
 
-                double newBoxHeight = Math.max(minBoxHeight, endy - starty);
+                double newBoxHeight = Math.max(minBoxHeight, newHighY - newLowY);
 
-                if (currentTarget.getNode().toString().equals("n_n14")) {
-                    double ddd = 0;
-                    ddd++;
-                }
+                // if (currentTarget.getNode().toString().equals("n_n14")) {
+                // double ddd = 0;
+                // ddd++;
+                // }
 
-                newBox = new Rectangle2D.Double(reachedx, starty, newBoxWidth, newBoxHeight);
+                // create the new box
+                newBox = new Rectangle2D.Double(reachedx, newLowY, newBoxWidth, newBoxHeight);
 
-                // stuff we intersect with right from the start is ignored to enlarge the boxes
-                // the path we follow will (hopefully) cause the next boxes to fit better
-                Object previntersects = intersectsWithAny(newBox, null, edges, nodes);
-                if (previntersects instanceof Rectangle2D) { // do not start on a node
+                // do not start on a node!!
+                Rectangle2D.Double onNode = intersectsWithNode(newBox, nodes);
 
-                    // System.out.println("damn, on a node");
-                    if (prevBox != null) {
-                        Rectangle2D.Double hitbox = (Rectangle2D.Double) previntersects;
-
-                        if (prevBox.y < newBox.y) {
-                            // newBox.y = (prevBox.y + prevBox.height) - newBoxHeight * 2;
-                            if (runAgainstNodeTop != null) {
-                                // newBox = floorBox(newBox, runAgainstNodeTop);
-                                drawOnDebug(new Line2D.Double(0, 0, runAgainstNodeTop.x,
-                                        runAgainstNodeTop.y), DebugCanvas.Color.RED, false);
-
-                            }
-                            newBox = floorBox(newBox, hitbox);
-                            newBox.y -= newBoxHeight;
-
-                        } else if (prevBox.y > newBox.y) {
-                            // newBox.y = prevBox.y;
-                            if (runAgainstNodeBottom != null) {
-                                // newBox = ceilBox(newBox, runAgainstNodeBottom);
-                                drawOnDebug(new Line2D.Double(0, 0, runAgainstNodeBottom.x,
-                                        runAgainstNodeBottom.x), DebugCanvas.Color.GREEN, false);
-                            }
-                            newBox = ceilBox(newBox, hitbox);
-
-                        }
+                // if we are on a node, there has to be a previous box because initial boxsize is
+                // smaller than object spacing
+                if (onNode != null && prevBox != null) {
+                    if (prevBox.y < newBox.y) {
+                        newBox = floorBox(newBox, onNode);
+                        newBox.y -= newBoxHeight; // reserve space for the other box that comes
+                    } else if (prevBox.y > newBox.y) {
+                        newBox = ceilBox(newBox, onNode);
                     }
-                    previntersects = null;
-                } // but on edges is ok
+                }
 
+                // show our initial position
                 drawOnDebug(newBox.clone(), DebugCanvas.Color.GREEN, true);
 
-                Object runagainst = intersectsWithAny(newBox, previntersects, edges, nodes);
+                // remember on which lines we were starting, those might be the ones we can cross /
+                // have to cross
+                ignoredEdges.addAll(allIntersectingLines(newBox, edges));
 
                 // enlarge boxes from bottom to top
+                Object runagainst = intersectsWithAny(newBox, ignoredEdges, edges, nodes);
+
                 while (newBox.y > 0 && runagainst == null) {
                     newBox.y -= BOX_RESIZE_STEPSIZE;
                     newBox.height += BOX_RESIZE_STEPSIZE;
-                    runagainst = intersectsWithAny(newBox, previntersects, edges, nodes);
+                    runagainst = intersectsWithAny(newBox, ignoredEdges, edges, nodes);
                 }
 
-                // we got one step too far
-                // node/edge above box
+                // there is a node/edge above the box
                 if (runagainst != null) {
                     // show us the bad boy we ran into
                     drawOnDebug(runagainst, DebugCanvas.Color.RED, true);
                     if (runagainst instanceof Rectangle2D) {
+                        // maintain the larger grid for smoother splines
+                        // when running against a node
                         newBox = ceilBox(newBox, (Rectangle2D.Double) runagainst);
-                        runAgainstNodeTop = (Rectangle2D.Double) runagainst;
+                        // remember the box that was in our way
+                        boxInOurWayOnTop = (Rectangle2D.Double) runagainst;
                     } else { // run against a another edge
-                        // one step back
+                        // one big step back
                         newBox.y += 2 * BOX_RESIZE_STEPSIZE;
                         newBox.height -= 2 * BOX_RESIZE_STEPSIZE;
 
@@ -286,7 +311,6 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                         // newBox.y -= BOX_RESIZE_STEPSIZE;
                         // newBox.height += BOX_RESIZE_STEPSIZE;
                         // runAgainstNodeBottom = null;
-                        runAgainstNodeTop = null;
                     }
                 }
 
@@ -296,54 +320,33 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                         + newBox.height), newBoxWidth, newBoxHeight);
                 drawOnDebug(tempBox.clone(), DebugCanvas.Color.ORANGE, true);
 
-                // from top downwards to bottom
-                previntersects = intersectsWithAny(tempBox, null, edges, nodes);
+                // remember on which lines we were starting
+                ignoredEdges.addAll(allIntersectingLines(tempBox, edges));
 
-                if (previntersects instanceof Rectangle2D) { // do not start on a node
-
-                    // System.out.println("damn, on a node");
-                    if (prevBox != null) {
-                        Rectangle2D.Double hitbox = (Rectangle2D.Double) previntersects;
-
-                        if (prevBox.y < tempBox.y) {
-                            // newBox.y = (prevBox.y + prevBox.height) - newBoxHeight * 2;
-                            if (runAgainstNodeTop != null) {
-                                // newBox = floorBox(newBox, runAgainstNodeTop);
-                                drawOnDebug(new Line2D.Double(0, 0, runAgainstNodeTop.x,
-                                        runAgainstNodeTop.y), DebugCanvas.Color.RED, false);
-
-                            }
-                            tempBox = floorBox(tempBox, hitbox);
-                            tempBox.y -= newBoxHeight;
-
-                        } else if (prevBox.y > newBox.y) {
-                            // newBox.y = prevBox.y;
-                            if (runAgainstNodeBottom != null) {
-                                // newBox = ceilBox(newBox, runAgainstNodeBottom);
-                                drawOnDebug(new Line2D.Double(0, 0, runAgainstNodeBottom.x,
-                                        runAgainstNodeBottom.x), DebugCanvas.Color.GREEN, false);
-                            }
-                            tempBox = ceilBox(tempBox, hitbox);
-
-                        }
-                    }
-                    previntersects = null;
-                } // but on edges is ok
-                runagainst = intersectsWithAny(tempBox, previntersects, edges, nodes);
-
-                while (tempBox.y + tempBox.height < layeredGraph.getSize().y && runagainst == null) {
-                    tempBox.height += BOX_RESIZE_STEPSIZE;
-                    runagainst = intersectsWithAny(tempBox, previntersects, edges, nodes);
+                for (Line2D.Double oneEdge : ignoredEdges) {
+                    drawOnDebug(new Line2D.Double(layeredGraph.getSize().x,
+                            layeredGraph.getSize().y, oneEdge.x1 + ((oneEdge.x2 - oneEdge.x1) / 2),
+                            oneEdge.y1 + ((oneEdge.y2 - oneEdge.y1) / 2)),
+                            DebugCanvas.Color.YELLOW, false);
                 }
 
-                // we got one step too far again
-                runagainst = intersectsWithAny(tempBox, previntersects, edges, nodes);
+                // enlarge boxes from bottom to top
+                runagainst = intersectsWithAny(tempBox, ignoredEdges, edges, nodes);
+                while (tempBox.y + tempBox.height < layeredGraph.getSize().y && runagainst == null) {
+                    tempBox.height += BOX_RESIZE_STEPSIZE;
+                    runagainst = intersectsWithAny(tempBox, ignoredEdges, edges, nodes);
+                }
+
                 if (runagainst != null) {
-                    // show bad box
+                    // show bad boy
                     drawOnDebug(runagainst, DebugCanvas.Color.RED, true);
                     if (runagainst instanceof Rectangle2D) {
+                        // maintain the larger grid for smoother splines
+                        // when running against a node
+
                         tempBox = floorBox(tempBox, (Rectangle2D.Double) runagainst);
-                        runAgainstNodeBottom = (Rectangle2D.Double) runagainst;
+                        // remember the box that was in our way
+                        boxInOurWayOnBottom = (Rectangle2D.Double) runagainst;
                     } else { // run against a another edge
                         // one step back
                         tempBox.height -= 2 * BOX_RESIZE_STEPSIZE;
@@ -351,26 +354,29 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                         // we ran against a line? go one step further
                         // tempBox.height += BOX_RESIZE_STEPSIZE;
                         // runAgainstNodeTop = null;
-                        runAgainstNodeTop = null;
                     }
                 }
 
                 drawOnDebug(tempBox, DebugCanvas.Color.GRAY, false);
 
-          
-                if (tempBox.y + tempBox.height < newBox.y + newBox.height) {
-                    newBox.y = Math.min(tempBox.y, newBox.y);
-                    newBox.height = tempBox.y + tempBox.height;
-                    //floorBox(newBox, runAgainstNodeBottom);
-                    System.out.println(newBox + " " +  tempBox);
-                    System.out.println();
-                } else {
-                    // the actual new box shall be the size of BOTH boxes joint
-                    // newBox.y = Math.min(newBox.y, tempBox.y); // should not be necessary
-                    newBox.height = Math.max(newBox.height, Math.abs((tempBox.y + tempBox.height)
-                            - newBox.y));
-                    
-                }
+                // tempBox had to be shifted?
+                // if (tempBox.y + tempBox.height < newBox.y + newBox.height) {
+                // newBox.y = Math.min(tempBox.y, newBox.y);
+                // newBox.height = tempBox.y + tempBox.height;
+                // // floorBox(newBox, runAgainstNodeBottom);
+                // System.out.println(newBox + " " + tempBox);
+                // System.out.println();
+                // } else {
+                // the actual new box shall be the size of BOTH boxes joint
+                // newBox.y = Math.min(newBox.y, tempBox.y); // should not be necessary
+                // newBox.height = Math.max(newBox.height, Math.abs((tempBox.y + tempBox.height)
+                // - newBox.y));
+                //
+                // }
+
+                // for debug turn this off to see box positions better
+                newBox.height = Math.max(newBox.height, Math.abs((tempBox.y + tempBox.height)
+                        - newBox.y));
 
                 // ensure that the new box is intersecting the previous box
                 if (prevBox != null) {
@@ -415,7 +421,6 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                 // and draw the new box
                 drawOnDebug(newBox, DebugCanvas.Color.BLUE, false);
             }
-
             drawOnDebug(new Line2D.Double((currentSource.getNode().getPos().x + currentSource
                     .getPos().x), (currentSource.getNode().getPos().y + currentSource.getPos().y),
                     (currentTarget.getNode().getPos().x + currentTarget.getPos().x), (currentTarget
