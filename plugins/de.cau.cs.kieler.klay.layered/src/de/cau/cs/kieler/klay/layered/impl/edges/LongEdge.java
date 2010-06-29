@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered.impl.edges;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 import de.cau.cs.kieler.core.math.KVector;
@@ -24,28 +23,35 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 
 /**
- * @author chicken
+ * @author uru
  * 
  */
 public class LongEdge {
-    private LEdge edge;
 
-    /** @deprecated */
+    /** underlying edge. */
+    private LEdge edge;
+    /** start tangent heading to first dummy node. */
     private KVector startTangent;
-    /** @deprecated */
+    /** end tangent heading to last dummy node. */
     private KVector endTangent;
+    /** the real target of this edge. */
     private LPort target;
+    /** points being passed by this edge. (actually the positions of the dummy nodes) */
     private LinkedList<KVector> points = new LinkedList<KVector>();
 
     /**
+     * default constructor. One also need to call {@code initalize()} to initialize all values
+     * stored for this long edge.
      * 
+     * @param newEdge
+     *            underlying edge.
      */
-    public LongEdge(LEdge edge) {
-        this.edge = edge;
+    public LongEdge(final LEdge newEdge) {
+        this.edge = newEdge;
     }
 
     /**
-     * calculates the target port/node, and the start/end tangents
+     * calculates the target port/node, and the start/end tangents.
      */
     public void initialize() {
         // calc startTangent
@@ -81,7 +87,8 @@ public class LongEdge {
             points.add(new KVector(currentTarget.getPos().x + port.getPos().x, currentTarget
                     .getPos().y
                     + port.getPos().y));
-        } while (intermediateEdge.getTarget().getNode().getProperty(Properties.NODE_TYPE) == Properties.NodeType.LONG_EDGE);
+        } while (intermediateEdge.getTarget().getNode().getProperty(Properties.NODE_TYPE) 
+                == Properties.NodeType.LONG_EDGE);
 
         start = intermediateEdge.getSource();
         startNode = start.getNode();
@@ -126,6 +133,10 @@ public class LongEdge {
         return target;
     }
 
+    /**
+     * @return positions being passed by this long edge (actually these are the positions of the
+     *         dummy nodes).
+     */
     public LinkedList<KVector> getPoints() {
         return points;
     }
@@ -135,7 +146,6 @@ public class LongEdge {
      */
     @Override
     public String toString() {
-        // TODO Auto-generated method stub
         return "Node: " + edge + " StartTangent: " + startTangent + " EndTangent: " + endTangent;
     }
 }

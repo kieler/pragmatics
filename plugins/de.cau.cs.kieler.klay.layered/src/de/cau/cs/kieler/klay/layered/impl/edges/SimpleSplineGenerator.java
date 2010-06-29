@@ -34,6 +34,7 @@ public class SimpleSplineGenerator extends AbstractAlgorithm implements ISplineG
 
     private ISplineInterpolator interp = new CubicSplineInterpolator();
 
+    /** factors for increasing/decreasing curvature. */
     private static final double INCREASE_FACTOR = 0.5d;
     private static final double DECREASE_FACTOR = 0.5d;
 
@@ -41,7 +42,7 @@ public class SimpleSplineGenerator extends AbstractAlgorithm implements ISplineG
     private static final double STRAIGHTENING_FACTOR = 0.75;
 
     /** factor with which a control point is moved closer to the start/end point. */
-    private static final double SMOOTHNESS_FACTOR = 0.5d;
+    private static final double SMOOTHNESS_FACTOR = 0.3d;
     /**
      * how long may the distance between the fst/snd ctr point and the start/end point be,
      * considering the distance between start and end.
@@ -128,10 +129,7 @@ public class SimpleSplineGenerator extends AbstractAlgorithm implements ISplineG
     public boolean refineSpline(final LinkedList<KVector> pArray, final BezierSpline ospline,
             final curvature mode) {
 
-        // @ TODO get this working!
-
         for (BezierCurve curve : ospline.getCurves()) {
-
             KVector fstdir = KVector.sub(curve.fstControlPnt, curve.start).normalize();
             KVector snddir = KVector.sub(curve.sndControlPnt, curve.end).normalize();
             double dist = KVector.distance(curve.start, curve.fstControlPnt);
@@ -157,7 +155,6 @@ public class SimpleSplineGenerator extends AbstractAlgorithm implements ISplineG
      */
     public boolean straightenSpline(final BezierSpline spline) {
         if (spline.getCurves().size() != 1) {
-            // ERROR
             return false;
         }
         BezierCurve curve = spline.getCurves().getFirst();

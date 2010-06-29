@@ -77,7 +77,7 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
     /**
      * precision the splineFits method is working with.
      * 
-     * current result curve length / Spline precision
+     * current result : curve length / Spline precision
      */
     private static final double SPLINE_PRECISION = 12.5d;
 
@@ -166,6 +166,12 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
 
             subMon = getMonitor().subTask(1);
             subMon.begin("Spline Calculation " + counter++, 1);
+            // System.out.println(source.getNode().toString());
+            if (source.getNode().toString().equals("n_n3")
+                    && target.getNode().toString().equals("n_n4")) {
+                double d = 0;
+                d++;
+            }
             computeSpline(boxes, new KVector(source.getNode().getPos().x + source.getPos().x,
                     source.getNode().getPos().y + source.getPos().y), new KVector(target.getNode()
                     .getPos().x
@@ -181,11 +187,6 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
                 boxCalculator.addEdge(globSpline);
             }
 
-            // System.out.println(source.getNode().toString());
-            if (source.getNode().toString().equals("n_n5")) {
-                double d = 0;
-                d++;
-            }
         }
 
         System.out.println("BoxTime: " + cumBoxTime + "s, SplineTime: " + cumSplineTime + "s");
@@ -449,7 +450,7 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
                     double dist1 = Math.abs(currLine.getY1() - qsY);
                     double dist2 = Math.abs(currLine.getY2() - qsY);
                     // minimal distance from the line with the maximum distance!
-                    double currMaxDist = Math.ceil(Math.min(dist1, dist2));
+                    double currMaxDist = Math.min(dist1, dist2);
                     if (currMaxDist > maxDist) {
                         maxDist = currMaxDist;
                         maxDistPos = index;
