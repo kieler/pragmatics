@@ -131,7 +131,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         Boolean debug = LayoutOptions.getBoolean(parentLayout, KLAY_DEBUG_INFO);
         if (debug) {
             // get debug canvas and clear
-            debugCanvas = new DebugCanvas(layoutNode, DrawingMode.BUFFERED);
+            debugCanvas = new DebugCanvas(layoutNode, DrawingMode.IMMEDIATE);
             float borderspacing = LayoutOptions
                     .getFloat(parentLayout, LayoutOptions.BORDER_SPACING);
             if (Float.isNaN(borderspacing) || borderspacing < 0) {

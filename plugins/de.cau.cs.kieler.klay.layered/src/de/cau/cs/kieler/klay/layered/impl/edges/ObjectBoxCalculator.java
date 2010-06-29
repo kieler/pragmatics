@@ -176,7 +176,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
             // only take care of edges that can hit us
             LinkedList<Line2D.Double> edges = new LinkedList<Line2D.Double>();
             for (Line2D.Double oneEdge : allEdges) {
-                if (!(oneEdge.getX1() < reachedx) && !(oneEdge.getX2() > targetx)) {
+                if (!(oneEdge.getX2() < reachedx || oneEdge.getX1() > targetx)) {
                     edges.add(oneEdge);
                 }
             }
@@ -184,8 +184,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
             // and of course only take care of nods that can be in our way
             LinkedList<Rectangle2D.Double> nodes = new LinkedList<Rectangle2D.Double>();
             for (Rectangle2D.Double oneNode : allNodes) {
-                if (!(oneNode.getX() < reachedx)
-                        && !(oneNode.getX() + oneNode.getWidth() > targetx)) {
+                if (!(oneNode.getX() + oneNode.getWidth() < reachedx || oneNode.getX() > targetx)) {
                     nodes.add(oneNode);
                 }
             }
@@ -218,6 +217,11 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
 
                 double newBoxHeight = Math.max(minBoxHeight, endy - starty);
 
+                if (currentTarget.getNode().toString().equals("n_n14")) {
+                    double ddd = 0;
+                    ddd++;
+                }
+
                 newBox = new Rectangle2D.Double(reachedx, starty, newBoxWidth, newBoxHeight);
 
                 // stuff we intersect with right from the start is ignored to enlarge the boxes
@@ -238,6 +242,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
 
                             }
                             newBox = floorBox(newBox, hitbox);
+                            newBox.y -= newBoxHeight;
 
                         } else if (prevBox.y > newBox.y) {
                             // newBox.y = prevBox.y;
@@ -293,14 +298,40 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
 
                 // from top downwards to bottom
                 previntersects = intersectsWithAny(tempBox, null, edges, nodes);
+
                 if (previntersects instanceof Rectangle2D) { // do not start on a node
+
+                    // System.out.println("damn, on a node");
+                    if (prevBox != null) {
+                        Rectangle2D.Double hitbox = (Rectangle2D.Double) previntersects;
+
+                        if (prevBox.y < tempBox.y) {
+                            // newBox.y = (prevBox.y + prevBox.height) - newBoxHeight * 2;
+                            if (runAgainstNodeTop != null) {
+                                // newBox = floorBox(newBox, runAgainstNodeTop);
+                                drawOnDebug(new Line2D.Double(0, 0, runAgainstNodeTop.x,
+                                        runAgainstNodeTop.y), DebugCanvas.Color.RED, false);
+
+                            }
+                            tempBox = floorBox(tempBox, hitbox);
+                            tempBox.y -= newBoxHeight;
+
+                        } else if (prevBox.y > newBox.y) {
+                            // newBox.y = prevBox.y;
+                            if (runAgainstNodeBottom != null) {
+                                // newBox = ceilBox(newBox, runAgainstNodeBottom);
+                                drawOnDebug(new Line2D.Double(0, 0, runAgainstNodeBottom.x,
+                                        runAgainstNodeBottom.x), DebugCanvas.Color.GREEN, false);
+                            }
+                            tempBox = ceilBox(tempBox, hitbox);
+
+                        }
+                    }
                     previntersects = null;
                 } // but on edges is ok
-
                 runagainst = intersectsWithAny(tempBox, previntersects, edges, nodes);
-                
-                while (tempBox.y + tempBox.height < layeredGraph.getSize().y
-                        && runagainst == null) {
+
+                while (tempBox.y + tempBox.height < layeredGraph.getSize().y && runagainst == null) {
                     tempBox.height += BOX_RESIZE_STEPSIZE;
                     runagainst = intersectsWithAny(tempBox, previntersects, edges, nodes);
                 }
@@ -326,10 +357,20 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
 
                 drawOnDebug(tempBox, DebugCanvas.Color.GRAY, false);
 
-                // the actual new box shall be the size of BOTH boxes joint
-                // newBox.y = Math.min(newBox.y, tempBox.y); // should not be necessary
-                newBox.height = Math.max(newBox.height, Math.abs((tempBox.y + tempBox.height)
-                        - newBox.y));
+          
+                if (tempBox.y + tempBox.height < newBox.y + newBox.height) {
+                    newBox.y = Math.min(tempBox.y, newBox.y);
+                    newBox.height = tempBox.y + tempBox.height;
+                    //floorBox(newBox, runAgainstNodeBottom);
+                    System.out.println(newBox + " " +  tempBox);
+                    System.out.println();
+                } else {
+                    // the actual new box shall be the size of BOTH boxes joint
+                    // newBox.y = Math.min(newBox.y, tempBox.y); // should not be necessary
+                    newBox.height = Math.max(newBox.height, Math.abs((tempBox.y + tempBox.height)
+                            - newBox.y));
+                    
+                }
 
                 // ensure that the new box is intersecting the previous box
                 if (prevBox != null) {
