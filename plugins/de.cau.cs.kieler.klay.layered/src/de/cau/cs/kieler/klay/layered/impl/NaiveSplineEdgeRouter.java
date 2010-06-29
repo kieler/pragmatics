@@ -52,7 +52,7 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
 
     /** spline interpolator. */
     private ISplineInterpolator splineInterp = new CubicSplineInterpolator();
-    
+
     /** label placer. */
     private ILabelPlacer labelPlacer = new SimpleLabelPlacer();
 
@@ -73,7 +73,8 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
                 if (node.getProperty(Properties.NODE_TYPE) != Properties.NodeType.LONG_EDGE) {
                     for (LPort port : node.getPorts(PortType.OUTPUT)) {
                         for (LEdge edge : port.getEdges()) {
-                            if (edge.getTarget().getNode().getProperty(Properties.NODE_TYPE) == Properties.NodeType.LONG_EDGE) {
+                            if (edge.getTarget().getNode().getProperty(Properties.NODE_TYPE) 
+                                    == Properties.NodeType.LONG_EDGE) {
                                 longEdges.add(edge);
                                 realLongEdges.add(new LongEdge(edge));
                             }
@@ -123,16 +124,26 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
 
     }
 
-    private BezierSpline optimizeSpline(BezierSpline spline) {
+    /**
+     * Initial try to improve naive splines by post processing.
+     * 
+     * We try to reduce the funny curves by removing some control points and therefore "smoothing"
+     * the curve.
+     * 
+     * @param spline
+     * @return
+     */
+    private BezierSpline optimizeSpline(final BezierSpline spline) {
+        // CHECKSTYLEOFF Magic Numbers
         if (spline.getBasePoints().length >= 4 && isLongStraightSpline(spline)) {
 
             KVector[] basePoints = spline.getBasePoints();
             int n = basePoints.length - 1;
 
             int offset = (n >= 7) ? 3 : 2;
-            if (n < 5)
+            if (n < 5) {
                 offset = 1;
-
+            }
             KVector start = spline.getStartPoint();
             KVector end = spline.getEndPoint();
 
@@ -147,7 +158,7 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
 
             KVector bendLeft = null;
             if (n >= 5) {
-                 bendLeft = basePoints[offset].clone();
+                bendLeft = basePoints[offset].clone();
                 newPoints.add(bendLeft);
             }
             KVector bendRight = basePoints[n - offset].clone();
@@ -160,18 +171,12 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
             }
             newPoints.add(end);
 
-            // KVector startTangent = KVector.sub(intermediateLeft, start).normalize();
-            // KVector endTangent = KVector.sub(intermediateRight, end).normalize().negate();
-
             KVector test = null;
-            if(bendLeft == null){
+            if (bendLeft == null) {
                 test = bendRight.clone();
-//                test.y = start.y - bendRight.y;
-//                test.x -= (bendRight.x - start.x);
-//                test.normalize();
-//                test.negate();
             }
-            KVector startTangent = KVector.sub((bendLeft == null) ? test : bendLeft, start).normalize();
+            KVector startTangent = KVector.sub((bendLeft == null) ? test : bendLeft, start)
+                    .normalize();
             KVector endTangent = KVector.sub(bendRight, end).normalize().negate();
 
             return splineInterp.interpolatePoints(newPoints, startTangent, endTangent);
@@ -181,7 +186,13 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
         }
     }
 
-    private boolean isLongStraightSpline(BezierSpline spline) {
+    /**
+     * Test whether this is a spline with a straight path between the dummy nodes.
+     * 
+     * @param spline
+     * @return
+     */
+    private boolean isLongStraightSpline(final BezierSpline spline) {
         KVector start = spline.getStartPoint();
         KVector end = spline.getEndPoint();
         Integer y = null;
