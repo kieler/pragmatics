@@ -25,11 +25,11 @@ import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.util.Maybe;
-import de.cau.cs.kieler.kiml.layout.AbstractLayoutProvider;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
+import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
 
 /**
  * The OGDF layout provider, that is the entry class used by KIML to call individual layout

@@ -15,7 +15,7 @@ package de.cau.cs.kieler.kiml.ui;
 
 import org.eclipse.jface.dialogs.IInputValidator;
 
-import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
+import de.cau.cs.kieler.kiml.LayoutOptionData;
 
 /**
  * A validator for string input of layout option values by the user.

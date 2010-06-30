@@ -16,11 +16,11 @@ package de.cau.cs.kieler.klodd.orthogonal.structures;
 import java.util.List;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataFactory;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KPoint;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
+import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
 import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimEdge;
 import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimGraph;
 import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimNode;

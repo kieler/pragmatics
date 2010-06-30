@@ -44,9 +44,9 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
-import de.cau.cs.kieler.kiml.layout.LayoutProviderData;
-import de.cau.cs.kieler.kiml.layout.LayoutServices;
+import de.cau.cs.kieler.kiml.LayoutOptionData;
+import de.cau.cs.kieler.kiml.LayoutProviderData;
+import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.LayoutOptionValidator;
 import de.cau.cs.kieler.kiml.ui.Messages;

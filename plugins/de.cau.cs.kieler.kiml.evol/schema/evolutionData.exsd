@@ -55,7 +55,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.layout.layoutProviders/layoutOption/@id"/>
+                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.layoutProviders/layoutOption/@id"/>
                </appinfo>
             </annotation>
          </attribute>

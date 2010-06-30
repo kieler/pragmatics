@@ -38,11 +38,11 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.layout.AbstractLayoutProvider;
-import de.cau.cs.kieler.kiml.layout.ILayoutListener;
-import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
-import de.cau.cs.kieler.kiml.layout.LayoutProviderData;
-import de.cau.cs.kieler.kiml.layout.LayoutServices;
+import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
+import de.cau.cs.kieler.kiml.ILayoutListener;
+import de.cau.cs.kieler.kiml.LayoutOptionData;
+import de.cau.cs.kieler.kiml.LayoutProviderData;
+import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;

@@ -22,9 +22,9 @@ import org.eclipse.gef.Request;
 
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutData;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataPackage;
-import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
  * Request for automatic layout on a set of edit parts of a diagram.

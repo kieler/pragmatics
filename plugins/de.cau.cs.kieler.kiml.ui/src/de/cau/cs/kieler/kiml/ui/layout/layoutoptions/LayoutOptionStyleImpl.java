@@ -15,7 +15,7 @@
  */
 package de.cau.cs.kieler.kiml.ui.layout.layoutoptions;
 
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KOption;
+import de.cau.cs.kieler.kiml.klayoutdata.KOption;
 
 import java.util.Collection;
 

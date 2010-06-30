@@ -2,7 +2,7 @@
 <?eclipse version="3.2"?>
 <plugin>
    <extension
-         point="de.cau.cs.kieler.kiml.layout.layoutProviders">
+         point="de.cau.cs.kieler.kiml.layoutProviders">
       <category
             id="de.cau.cs.kieler.kiml.categories.zest"
             name="Zest">

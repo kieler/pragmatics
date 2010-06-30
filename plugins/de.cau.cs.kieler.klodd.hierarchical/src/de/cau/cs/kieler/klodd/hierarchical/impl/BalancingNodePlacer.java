@@ -16,10 +16,10 @@ package de.cau.cs.kieler.klodd.hierarchical.impl;
 import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KPoint;
-import de.cau.cs.kieler.kiml.layout.options.LayoutDirection;
-import de.cau.cs.kieler.kiml.layout.options.PortConstraints;
-import de.cau.cs.kieler.kiml.layout.options.PortSide;
+import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
+import de.cau.cs.kieler.kiml.options.LayoutDirection;
+import de.cau.cs.kieler.kiml.options.PortConstraints;
+import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klodd.hierarchical.modules.INodePlacer;
 import de.cau.cs.kieler.klodd.hierarchical.structures.Layer;
 import de.cau.cs.kieler.klodd.hierarchical.structures.LayerConnection;

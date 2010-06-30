@@ -1,4 +1,4 @@
-| de.cau.cs.kieler.kiml.layout
+| de.cau.cs.kieler.kiml
 \______________________________________
 
 Base class for the KIELER Infrastructure for Meta Layout (KIML). Contains

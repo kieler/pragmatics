@@ -22,7 +22,7 @@ import de.cau.cs.kieler.core.math.BezierSpline;
 import de.cau.cs.kieler.core.math.CubicSplineInterpolator;
 import de.cau.cs.kieler.core.math.ISplineInterpolator;
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.kiml.layout.options.PortType;
+import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.LayeredLayoutProvider;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.Coord;

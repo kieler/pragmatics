@@ -18,10 +18,10 @@ import net.ogdf.lib.OrthoDir;
 import net.ogdf.lib.OrthoLayout;
 import net.ogdf.lib.PlanarizationLayout;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.layout.options.LayoutDirection;
-import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.LayoutDirection;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
 
 /**
  * The Mixed-Upward Planarization layouter from the OGDF library.

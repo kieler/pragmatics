@@ -24,7 +24,7 @@ import de.cau.cs.kieler.core.math.BezierSpline;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.core.math.BezierSpline.BezierCurve;
-import de.cau.cs.kieler.kiml.layout.options.PortType;
+import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.kiml.ui.util.DebugCanvas;
 import de.cau.cs.kieler.klay.layered.LayeredLayoutProvider;
 import de.cau.cs.kieler.klay.layered.Properties;

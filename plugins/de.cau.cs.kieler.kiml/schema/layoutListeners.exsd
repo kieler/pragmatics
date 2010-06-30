@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="de.cau.cs.kieler.kiml.layout" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="de.cau.cs.kieler.kiml" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
-         <meta.schema plugin="de.cau.cs.kieler.kiml.layout" id="layoutListeners" name="Layout Listeners"/>
+         <meta.schema plugin="de.cau.cs.kieler.kiml" id="layoutListeners" name="Layout Listeners"/>
       </appInfo>
       <documentation>
          The layout listeners extension point allows to listen to the layout infrastructure, and to receive a notification whenever automatic layout is triggered.
@@ -23,7 +23,7 @@
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  de.cau.cs.kieler.kiml.layout.layoutListeners
+                  de.cau.cs.kieler.kiml.layoutListeners
                </documentation>
             </annotation>
          </attribute>
@@ -57,10 +57,10 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  Implementing class of the layout listener, must implement &lt;code&gt;de.cau.cs.kieler.kiml.layout.ILayoutListener&lt;/code&gt;
+                  Implementing class of the layout listener, must implement &lt;code&gt;de.cau.cs.kieler.kiml.ILayoutListener&lt;/code&gt;
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.kiml.layout.ILayoutListener"/>
+                  <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.kiml.ILayoutListener"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -84,7 +84,7 @@
          The following is an example for a layout listener extension:
  &lt;pre&gt;
    &lt;extension
-         point=&quot;de.cau.cs.kieler.kiml.layout.layoutListeners&quot;&gt;
+         point=&quot;de.cau.cs.kieler.kiml.layoutListeners&quot;&gt;
       &lt;layoutListener
             class=&quot;de.cau.cs.kieler.kiml.viewer.ViewLayoutListener&quot;&gt;
       &lt;/layoutListener&gt;
@@ -98,9 +98,9 @@
          <meta.section type="apiinfo"/>
       </appInfo>
       <documentation>
-         All data that is contributed to this extension point is gathered in the singleton class &lt;code&gt;de.cau.cs.kieler.kiml.layout.LayoutServices&lt;/code&gt;. This is the point where registered data can be read at runtime.
+         All data that is contributed to this extension point is gathered in the singleton class &lt;code&gt;de.cau.cs.kieler.kiml.LayoutServices&lt;/code&gt;. This is the point where registered data can be read at runtime.
 &lt;p&gt;
-&lt;b&gt;NOTE:&lt;/b&gt; The extension point is read out by the &lt;code&gt;de.cau.cs.kieler.kiml.ui&lt;/code&gt; plug-in, &lt;em&gt;not&lt;/em&gt; by &lt;code&gt;de.cau.cs.kieler.kiml.layout&lt;/code&gt;.
+&lt;b&gt;NOTE:&lt;/b&gt; The extension point is read out by the &lt;code&gt;de.cau.cs.kieler.kiml.ui&lt;/code&gt; plug-in, &lt;em&gt;not&lt;/em&gt; by &lt;code&gt;de.cau.cs.kieler.kiml&lt;/code&gt;.
       </documentation>
    </annotation>
 

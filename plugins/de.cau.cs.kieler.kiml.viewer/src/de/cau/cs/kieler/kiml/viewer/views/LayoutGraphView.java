@@ -44,7 +44,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataPackage;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
 import de.cau.cs.kieler.kiml.viewer.KimlViewerPlugin;
 import de.cau.cs.kieler.kiml.viewer.Messages;
 import de.cau.cs.kieler.kiml.viewer.actions.GmfDebugGraphicsAction;

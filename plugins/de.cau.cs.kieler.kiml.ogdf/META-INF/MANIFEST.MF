@@ -6,7 +6,7 @@ Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: net.ogdf.lib,
- de.cau.cs.kieler.kiml.layout,
+ de.cau.cs.kieler.kiml,
  de.cau.cs.kieler.core,
  de.cau.cs.kieler.core.ui,
  org.eclipse.core.runtime;bundle-version="3.5.0",

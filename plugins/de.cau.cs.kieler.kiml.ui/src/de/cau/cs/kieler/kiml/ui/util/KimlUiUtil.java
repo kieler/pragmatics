@@ -33,18 +33,18 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.notation.Style;
 import org.eclipse.gmf.runtime.notation.View;
 
-import de.cau.cs.kieler.kiml.layout.LayoutOptionData;
-import de.cau.cs.kieler.kiml.layout.LayoutProviderData;
-import de.cau.cs.kieler.kiml.layout.LayoutServices;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutData;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataFactory;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KOption;
-import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.layout.options.PortConstraints;
-import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.LayoutOptionData;
+import de.cau.cs.kieler.kiml.LayoutProviderData;
+import de.cau.cs.kieler.kiml.LayoutServices;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
+import de.cau.cs.kieler.kiml.klayoutdata.KOption;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyle;
 import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsPackage;
+import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
 
 /**
  * Utility methods used for the KIML UI.

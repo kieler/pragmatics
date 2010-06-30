@@ -17,9 +17,9 @@ import net.ogdf.lib.FastHierarchyLayout;
 import net.ogdf.lib.LayoutModule;
 import net.ogdf.lib.SugiyamaLayout;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.layout.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
 
 /**
  * The Sugiyama layouter from the OGDF library.

@@ -4,7 +4,7 @@
    <extension
          id="de.cau.cs.kieler.papyrus.layout.class"
          name="Class Diagram Layout"
-         point="de.cau.cs.kieler.kiml.layout.layoutInfo">
+         point="de.cau.cs.kieler.kiml.layoutInfo">
       <option
             class="org.eclipse.papyrus.diagram.clazz.edit.parts.ModelEditPart"
             option="de.cau.cs.kieler.layout.options.diagramType"
@@ -39,7 +39,7 @@
    <extension
          id="de.cau.cs.kieler.papyrus.layout.useCase"
          name="Use Case Diagram Layout"
-         point="de.cau.cs.kieler.kiml.layout.layoutInfo">
+         point="de.cau.cs.kieler.kiml.layoutInfo">
       <option
             class="org.eclipse.papyrus.diagram.usecase.edit.parts.UseCaseDiagramEditPart"
             option="de.cau.cs.kieler.layout.options.diagramType"

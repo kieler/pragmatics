@@ -13,8 +13,8 @@
  */
 package de.cau.cs.kieler.klodd.orthogonal.structures;
 
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.layout.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
 import de.cau.cs.kieler.klodd.orthogonal.impl.ec.EmbeddingConstraint;
 import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimGraph;
 import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimNode;

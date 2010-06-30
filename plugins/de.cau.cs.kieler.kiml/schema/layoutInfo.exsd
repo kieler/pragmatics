@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="de.cau.cs.kieler.kiml.layout" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="de.cau.cs.kieler.kiml" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
-         <meta.schema plugin="de.cau.cs.kieler.kiml.layout" id="layoutInfo" name="Layout Info"/>
+         <meta.schema plugin="de.cau.cs.kieler.kiml" id="layoutInfo" name="Layout Info"/>
       </appInfo>
       <documentation>
          The layout info extension point allows to specify the properties of a specific diagram editor with regard to automatic layout. Layout options can be configured for specific model elements or edit parts.
@@ -24,7 +24,7 @@
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  de.cau.cs.kieler.kiml.layout.layoutInfo
+                  de.cau.cs.kieler.kiml.layoutInfo
                </documentation>
             </annotation>
          </attribute>
@@ -100,7 +100,7 @@
                   Identifier of a layout option, which can be defined using the &lt;code&gt;layoutOption&lt;/code&gt; element of the &lt;code&gt;layoutProviders&lt;/code&gt; extension point.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.layout.layoutProviders/layoutOption/@id"/>
+                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.layoutProviders/layoutOption/@id"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -131,7 +131,7 @@
          The following is an example for a diagram type and an option extension, which together assign the diagram type &quot;State Machine&quot; to a specific domain model element:
 &lt;pre&gt;
    &lt;extension
-         point=&quot;de.cau.cs.kieler.kiml.layout.layoutInfo&quot;&gt;
+         point=&quot;de.cau.cs.kieler.kiml.layoutInfo&quot;&gt;
       &lt;diagramType
             id=&quot;de.cau.cs.kieler.layout.info.types.stateMachine&quot;
             name=&quot;State Machine&quot;&gt;
@@ -151,9 +151,9 @@
          <meta.section type="apiinfo"/>
       </appInfo>
       <documentation>
-         All data that is contributed to this extension point is gathered in the singleton class &lt;code&gt;de.cau.cs.kieler.kiml.layout.LayoutServices&lt;/code&gt;. This is the point where registered data can be read at runtime.
+         All data that is contributed to this extension point is gathered in the singleton class &lt;code&gt;de.cau.cs.kieler.kiml.LayoutServices&lt;/code&gt;. This is the point where registered data can be read at runtime.
 &lt;p&gt;
-&lt;b&gt;NOTE:&lt;/b&gt; The extension point is read out by the &lt;code&gt;de.cau.cs.kieler.kiml.ui&lt;/code&gt; plug-in, &lt;em&gt;not&lt;/em&gt; by &lt;code&gt;de.cau.cs.kieler.kiml.layout&lt;/code&gt;.
+&lt;b&gt;NOTE:&lt;/b&gt; The extension point is read out by the &lt;code&gt;de.cau.cs.kieler.kiml.ui&lt;/code&gt; plug-in, &lt;em&gt;not&lt;/em&gt; by &lt;code&gt;de.cau.cs.kieler.kiml&lt;/code&gt;.
       </documentation>
    </annotation>
 

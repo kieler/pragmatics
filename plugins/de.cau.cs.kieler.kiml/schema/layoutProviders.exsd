@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="de.cau.cs.kieler.kiml.layout" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="de.cau.cs.kieler.kiml" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
-         <meta.schema plugin="de.cau.cs.kieler.kiml.layout" id="layoutProviders" name="Layout Providers"/>
+         <meta.schema plugin="de.cau.cs.kieler.kiml" id="layoutProviders" name="Layout Providers"/>
       </appInfo>
       <documentation>
          The Layout Providers extension point allows plug-ins to add new layout providers to be used within the KIELER Infrastructure for Meta Layout. Layout providers are algorithms that automatically compute layout information for an instance of the &lt;code&gt;KGraph&lt;/code&gt; data structure.
@@ -28,7 +28,7 @@ Layout providers can be grouped using categories, and they can be given a type t
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  de.cau.cs.kieler.kiml.layout.layoutProviders
+                  de.cau.cs.kieler.kiml.layoutProviders
                </documentation>
             </annotation>
          </attribute>
@@ -83,10 +83,10 @@ Layout providers can be grouped using categories, and they can be given a type t
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  Implementing class of the layout provider, must extend &lt;code&gt;de.cau.cs.kieler.kiml.layout.AbstractLayoutProvider&lt;/code&gt;.
+                  Implementing class of the layout provider, must extend &lt;code&gt;de.cau.cs.kieler.kiml.AbstractLayoutProvider&lt;/code&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="de.cau.cs.kieler.kiml.layout.AbstractLayoutProvider:"/>
+                  <meta.attribute kind="java" basedOn="de.cau.cs.kieler.kiml.AbstractLayoutProvider:"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -103,7 +103,7 @@ Layout providers can be grouped using categories, and they can be given a type t
                   Identifier of a category, which can be defined using the &lt;code&gt;category&lt;/code&gt; element. Categories are used to group layout providers.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.layout.layoutProviders/category/@id"/>
+                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.layoutProviders/category/@id"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -113,7 +113,7 @@ Layout providers can be grouped using categories, and they can be given a type t
                   Identifier of a layout type, which can be defined using the &lt;code&gt;layoutType&lt;/code&gt; element. Layout types describe the general kind of layout algorithm that is implemented by that provider.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.layout.layoutProviders/layoutType/@id"/>
+                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.layoutProviders/layoutType/@id"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -240,7 +240,7 @@ Apart from a set of default layout types offered by KIML, new layout providers a
                   Identifier of a layout option, which can be defined using the &lt;code&gt;layoutOption&lt;/code&gt; element.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.layout.layoutProviders/layoutOption/@id"/>
+                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.layoutProviders/layoutOption/@id"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -260,7 +260,7 @@ Apart from a set of default layout types offered by KIML, new layout providers a
                   Identifier of a diagram type, which can be defined using the &lt;code&gt;diagramType&lt;/code&gt; element of the &lt;code&gt;layoutInfo&lt;/code&gt; extension point. Diagram types are used to classify diagrams with respect to their layout.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.layout.layoutInfo/diagramType/@id"/>
+                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.layoutInfo/diagramType/@id"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -291,7 +291,7 @@ Apart from a set of default layout types offered by KIML, new layout providers a
          The following is an example for a layout provider extension:
 &lt;pre&gt;
    &lt;extension
-         point=&quot;de.cau.cs.kieler.kiml.layout.layoutProviders&quot;&gt;
+         point=&quot;de.cau.cs.kieler.kiml.layoutProviders&quot;&gt;
       &lt;layoutProvider
             class=&quot;de.cau.cs.kieler.klodd.hierarchical.HierarchicalDataflowLayoutProvider&quot;
             category=&quot;de.cau.cs.kieler.layouter.category&quot;
@@ -325,9 +325,9 @@ Apart from a set of default layout types offered by KIML, new layout providers a
          <meta.section type="apiinfo"/>
       </appInfo>
       <documentation>
-         All data that is contributed to this extension point is gathered in the singleton class &lt;code&gt;de.cau.cs.kieler.kiml.layout.LayoutServices&lt;/code&gt;. This is the point where registered data can be read at runtime.
+         All data that is contributed to this extension point is gathered in the singleton class &lt;code&gt;de.cau.cs.kieler.kiml.LayoutServices&lt;/code&gt;. This is the point where registered data can be read at runtime.
 &lt;p&gt;
-&lt;b&gt;NOTE:&lt;/b&gt; The extension point is read out by the &lt;code&gt;de.cau.cs.kieler.kiml.ui&lt;/code&gt; plug-in, &lt;em&gt;not&lt;/em&gt; by &lt;code&gt;de.cau.cs.kieler.kiml.layout&lt;/code&gt;.
+&lt;b&gt;NOTE:&lt;/b&gt; The extension point is read out by the &lt;code&gt;de.cau.cs.kieler.kiml.ui&lt;/code&gt; plug-in, &lt;em&gt;not&lt;/em&gt; by &lt;code&gt;de.cau.cs.kieler.kiml&lt;/code&gt;.
       </documentation>
    </annotation>
 

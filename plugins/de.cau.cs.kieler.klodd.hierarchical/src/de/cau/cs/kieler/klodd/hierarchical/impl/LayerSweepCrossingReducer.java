@@ -16,7 +16,7 @@ package de.cau.cs.kieler.klodd.hierarchical.impl;
 import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.kiml.layout.options.PortConstraints;
+import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.klodd.hierarchical.modules.ICrossingReducer;
 import de.cau.cs.kieler.klodd.hierarchical.modules.ISingleLayerCrossingReducer;
 import de.cau.cs.kieler.klodd.hierarchical.structures.Layer;

@@ -23,7 +23,7 @@
       </view>
    </extension>
    <extension
-         point="de.cau.cs.kieler.kiml.layout.layoutListeners">
+         point="de.cau.cs.kieler.kiml.layoutListeners">
       <layoutListener
             class="de.cau.cs.kieler.kiml.viewer.ViewLayoutListener">
       </layoutListener>

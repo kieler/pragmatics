@@ -15,7 +15,7 @@ package de.cau.cs.kieler.kiml.evol;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.layout.ILayoutListener;
+import de.cau.cs.kieler.kiml.ILayoutListener;
 
 /**
  * A layout listener to get noticed when the layout is done.

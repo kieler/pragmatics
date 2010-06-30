@@ -16,7 +16,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="options" upperBound="-1"
         eType="#//KOption" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xA;Layout options specify how a layout algorithm shall handle the related&#xA;graph element or its children. Options are defined in&#xA;{@link de.cau.cs.kieler.kiml.layout.options.LayoutOptions LayoutOptions}&#xA;and consist of a key-value pair of specific type.&#xA;&lt;/p>"/>
+        <details key="documentation" value="&lt;p>&#xA;Layout options specify how a layout algorithm shall handle the related&#xA;graph element or its children. Options are defined in&#xA;{@link de.cau.cs.kieler.kiml.options.LayoutOptions LayoutOptions}&#xA;and consist of a key-value pair of specific type.&#xA;&lt;/p>"/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>

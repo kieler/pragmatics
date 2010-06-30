@@ -18,8 +18,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.util.ICondition;
-import de.cau.cs.kieler.kiml.layout.options.PortSide;
-import de.cau.cs.kieler.kiml.layout.options.PortType;
+import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.options.PortType;
 
 /**
  * A port in a layered graph. The position of the port is relative to the upper

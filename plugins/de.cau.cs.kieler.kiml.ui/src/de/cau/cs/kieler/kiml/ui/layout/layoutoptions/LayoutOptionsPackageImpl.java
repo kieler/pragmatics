@@ -15,7 +15,7 @@
  */
 package de.cau.cs.kieler.kiml.ui.layout.layoutoptions;
 
-import de.cau.cs.kieler.kiml.layout.klayoutdata.KLayoutDataPackage;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
