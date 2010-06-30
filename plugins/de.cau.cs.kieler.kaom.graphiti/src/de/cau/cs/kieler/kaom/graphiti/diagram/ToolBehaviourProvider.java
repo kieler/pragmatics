@@ -32,8 +32,9 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
        Object obj = featureProvider.getBusinessObjectForPictogramElement(pe);
        if (obj instanceof Entity) {
            GraphicsAlgorithm invisible = pe.getGraphicsAlgorithm();
-           GraphicsAlgorithm rectangle = invisible.getGraphicsAlgorithmChildren().get(0);
-           return new GraphicsAlgorithm[]{rectangle};
+           if (invisible.getGraphicsAlgorithmChildren().size() != 0) {
+               GraphicsAlgorithm rectangle = invisible.getGraphicsAlgorithmChildren().get(0);
+               return new GraphicsAlgorithm[]{rectangle};}
        }
      return super.getSelectionArea(pe);
    }

@@ -98,12 +98,7 @@ public class MoveEntityFeature extends DefaultMoveShapeFeature {
 }
 
     // move bendpoints within a container shape
-    /**
-     * Move all bendpoints.
-     * 
-     * @param context
-     *            the context
-     */
+    @Override
     protected void moveAllBendpoints(final IMoveShapeContext context) {
         
            if (!(context.getShape() instanceof ContainerShape)) {

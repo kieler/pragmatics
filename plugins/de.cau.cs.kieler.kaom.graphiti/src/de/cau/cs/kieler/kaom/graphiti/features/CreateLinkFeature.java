@@ -203,9 +203,9 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
             Linkable linkableSource = (Linkable) source;
             linkableSource.getOutgoingLinks().add(link);
         }
-        else
-        {
-            JOptionPane.showMessageDialog(null, "Source object not linkable", "ERROR", JOptionPane.ERROR_MESSAGE);
+        else {
+            JOptionPane.showMessageDialog(null, "Source object not linkable",
+                    "ERROR", JOptionPane.ERROR_MESSAGE);
         }
            
         if (target instanceof Linkable) {
@@ -215,7 +215,8 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
         }
         else
         {
-            JOptionPane.showMessageDialog(null, "Target Object not linkable", "ERROR", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Target Object not linkable",
+                    "ERROR", JOptionPane.ERROR_MESSAGE);
         }     
         
       /*  if (target instanceof Entity) {
@@ -244,25 +245,94 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
       //  target.getIncomingLinks().add(link);
         
        // source.getEStructuralFeatures().add(link);
-        addToDiagram(link);
+        addToDiagram(link, source, target);
         return link;
 
    }
     
-    private void addToDiagram(final Link newLink) {
+    private void addToDiagram(final Link newLink, final Object source, final Object target) {
+      boolean flag = false;
         List<EObject> contents = getDiagram().eResource().getContents();
         Entity topEntity = null;
         for (EObject obj : contents) {
             if (obj instanceof Entity) {
                 topEntity = (Entity) obj;
-                break;
+                
+                if (target instanceof Entity) {
+                    Entity targetEntity = (Entity) target;
+                  if ((Entity) targetEntity.eContainer() == (topEntity)) {
+                     if ((Entity) topEntity.eContainer() == null) {
+                         topEntity.getChildLinks().add(newLink);
+                          flag = true;
+                          break;
+                      }
+                  }
+                }
+                else if (target instanceof Port) {
+                    Port port = (Port) target;
+                  if ((Entity) port.eContainer() == (topEntity)) {
+                      if ((Entity) topEntity.eContainer() == null) {
+                       topEntity.getChildLinks().add(newLink);
+                      flag = true;
+                          break;
+                      }
+                  }
+                }
+                else {
+                    Relation relation = (Relation) target;
+                  if ((Entity) relation.eContainer() == (topEntity)) {
+                      if ((Entity) topEntity.eContainer() == null) {
+                      topEntity.getChildLinks().add(newLink);
+                      flag = true;
+                          break;
+                      }
+                }
+                
+            }
+           
             }
         }
-        if (topEntity == null) {
-            topEntity = KaomFactory.eINSTANCE.createEntity();
-            contents.add(topEntity);
+        
+        
+            if(flag == false)
+                for (EObject obj : contents) {
+                    if (obj instanceof Entity) {
+                        topEntity = (Entity) obj;
+                
+                
+                
+                if (source instanceof Entity) {
+                    Entity sourceEntity = (Entity) source;
+                  if ((Entity) sourceEntity.eContainer() == (topEntity)) {
+                      topEntity.getChildLinks().add(newLink);
+                      break;
+                      }
+                }
+                else if (source instanceof Port) {
+                    Port port = (Port) source;
+                  if ((Entity) port.eContainer() == (topEntity)) {
+                      topEntity.getChildLinks().add(newLink);
+                      break;
+                      }
+                }
+                else {
+                    Relation relation = (Relation) source;
+                  if ((Entity) relation.eContainer() == (topEntity)) {
+                      if ((Entity) topEntity.eContainer() == null) {
+                      topEntity.getChildLinks().add(newLink);
+                      break;
+                      }
+                }
+                    
+                
+                
+               
+            }
         }
-        topEntity.getChildLinks().add(newLink);
+       
+        }
+        
+        
     }
     
     

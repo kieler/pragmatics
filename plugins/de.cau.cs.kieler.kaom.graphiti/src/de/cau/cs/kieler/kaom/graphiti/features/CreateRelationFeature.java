@@ -21,7 +21,9 @@ public class CreateRelationFeature extends AbstractCreateFeature {
 
     public boolean canCreate(ICreateContext context) {
       
-            if (context.getTargetContainer() instanceof ContainerShape) {
+            if (context.getTargetContainer() instanceof ContainerShape 
+                    || context.getTargetContainer() instanceof Diagram) {
+                
                 return true;
     }
         
@@ -38,8 +40,8 @@ public class CreateRelationFeature extends AbstractCreateFeature {
         // We add the model element to the resource of the diagram for
         // simplicity's sake. Normally, a customer would use its own
         // model persistence layer for storing the business model separately.
-      //  getDiagram().eResource().getContents().add(relation);
-       // newEntity.setName(newClassName);
+        //  getDiagram().eResource().getContents().add(relation);
+        // newEntity.setName(newClassName);
  
         // do the add
         addGraphicalRepresentation(context, relation);

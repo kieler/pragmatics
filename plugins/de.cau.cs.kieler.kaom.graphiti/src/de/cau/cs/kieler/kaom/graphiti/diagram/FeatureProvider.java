@@ -44,6 +44,7 @@ import de.cau.cs.kieler.kaom.graphiti.features.CreateRelationFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.DirectEditEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.LayoutEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.MoveEntityFeature;
+import de.cau.cs.kieler.kaom.graphiti.features.MoveRelationFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.PasteEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.RenameEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.ResizeEntityFeature;
@@ -51,9 +52,13 @@ import de.cau.cs.kieler.kaom.graphiti.features.UpdateEntityFeature;
 
 public class FeatureProvider extends DefaultFeatureProvider {
 
+    
     public FeatureProvider(IDiagramTypeProvider dtp) {
         super(dtp);
         // TODO Auto-generated constructor stub
+        if (dtp.getDiagram()==null) 
+            System.out.println("This is not possible");
+    
     }
 
     @Override
@@ -103,7 +108,10 @@ public class FeatureProvider extends DefaultFeatureProvider {
         if (ob instanceof Entity) {
             return new MoveEntityFeature(this);
         }
-            return super.getMoveShapeFeature(context);
+        else if (ob instanceof Relation) {
+            return new MoveRelationFeature(this);
+        }
+        return super.getMoveShapeFeature(context);
         
         }
 

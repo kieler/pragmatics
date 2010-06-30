@@ -24,7 +24,7 @@ public class ResizeEntityFeature extends DefaultResizeShapeFeature {
             Object obj = getBusinessObjectForPictogramElement(shape);
             if (obj instanceof Entity) {
                 Entity en = (Entity) obj;
-                if (en.getName() == null || en.getName().length() == 1) {
+                if (en.getName() != null || en.getName().length() == 1) {
                     canResize = false;
                 }
             }

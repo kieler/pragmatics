@@ -54,8 +54,10 @@ public class CreateEntityFeature extends AbstractCreateFeature {
        // newEntity.setName(newClassName);
  
         // do the add
+  //      if (AddEntityFeature.topEntityFlag 
+   //             == true) {
         addGraphicalRepresentation(context, newEntity);
- 
+     //   }
         getFeatureProvider().getDirectEditingInfo().setActive(true);
         
         return new Object[] { newEntity };
