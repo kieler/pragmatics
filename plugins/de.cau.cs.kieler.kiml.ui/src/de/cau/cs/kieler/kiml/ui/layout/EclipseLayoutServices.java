@@ -57,11 +57,11 @@ import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 public class EclipseLayoutServices extends LayoutServices {
 
     /** identifier of the extension point for layout providers. */
-    public static final String EXTP_ID_LAYOUT_PROVIDERS = "de.cau.cs.kieler.kiml.layout.layoutProviders";
+    public static final String EXTP_ID_LAYOUT_PROVIDERS = "de.cau.cs.kieler.kiml.layoutProviders";
     /** identifier of the extension point for layout listeners. */
-    public static final String EXTP_ID_LAYOUT_LISTENERS = "de.cau.cs.kieler.kiml.layout.layoutListeners";
+    public static final String EXTP_ID_LAYOUT_LISTENERS = "de.cau.cs.kieler.kiml.layoutListeners";
     /** identifier of the extension point for layout info. */
-    public static final String EXTP_ID_LAYOUT_INFO = "de.cau.cs.kieler.kiml.layout.layoutInfo";
+    public static final String EXTP_ID_LAYOUT_INFO = "de.cau.cs.kieler.kiml.layoutInfo";
     /** identifier of the extension point for layout managers. */
     public static final String EXTP_ID_LAYOUT_MANAGERS = "de.cau.cs.kieler.kiml.ui.layoutManagers";
     /** name of the 'layoutProvider' element in the 'layout providers' extension point. */
