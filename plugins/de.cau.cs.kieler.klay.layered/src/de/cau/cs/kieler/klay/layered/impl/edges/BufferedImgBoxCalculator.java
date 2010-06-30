@@ -49,7 +49,7 @@ import de.cau.cs.kieler.klay.layered.modules.IBoxCalculator;
  * @author car
  * @deprecated
  */
-public class BuffereImgBoxCalculator extends AbstractAlgorithm implements IBoxCalculator {
+public class BufferedImgBoxCalculator extends AbstractAlgorithm implements IBoxCalculator {
 
     /** minimal spacing between objects. */
     private float spacing = LayeredLayoutProvider.DEF_SPACING;
@@ -258,7 +258,7 @@ public class BuffereImgBoxCalculator extends AbstractAlgorithm implements IBoxCa
             currentSource = currentTarget;
             for (LPort iterPort : currentTarget.getNode().getPorts(PortType.OUTPUT)) {
                 for (LEdge iterEdge : iterPort.getEdges()) {
-                    // if (iterEdge.getOrigin() != null) {
+                    // if (iterEdge.getOrigin() != null) {22
                     if (iterEdge.getOrigin() != null) {
                         currentTarget = iterEdge.getTarget();
                         break;

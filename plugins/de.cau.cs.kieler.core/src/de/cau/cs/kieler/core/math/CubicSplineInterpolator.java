@@ -30,7 +30,7 @@ public class CubicSplineInterpolator implements ISplineInterpolator {
      * <= k <= 7 have converged to constant values independent of m. thus, fur n >= 15 one can use
      * the values of m = 7
      */
-    private static final double[][] INTERP_COOF_EVEN = new double[][] { { 0.25d },
+    private static final double[][] INTERP_COEF_EVEN = new double[][] { { 0.25 },
             { 0.2677, -0.0667 }, { 0.2679, -0.0714, 0.0179 }, { 0.2679, -0.0718, 0.0191, -0.0048 },
             { 0.2679, -0.0718, 0.0192, -0.0051, 0.0013 },
             { 0.2679, -0.0718, 0.0192, -0.0052, 0.0014, -0.0003 },
@@ -41,7 +41,7 @@ public class CubicSplineInterpolator implements ISplineInterpolator {
      * <= k <= 7 have converged to constant values independent of m. thus, fur n >= 15 one can use
      * the values of m = 7
      */
-    private static final double[][] INTERP_COOF_ODD = new double[][] { { 0.3333d },
+    private static final double[][] INTERP_COEF_ODD = new double[][] { { 0.3333 },
             { 0.2727, -0.0909 }, { 0.2683, -0.0732, 0.0244 }, { 0.2680, -0.0719, 0.0196, -0.0065 },
             { 0.2680, -0.0718, 0.0193, -0.0053, 0.0018 },
             { 0.2679, -0.0718, 0.0192, -0.0052, 0.0014, -0.0005 },
@@ -79,8 +79,8 @@ public class CubicSplineInterpolator implements ISplineInterpolator {
 
             // calculate sum for every Di
             for (int k = 1; k <= m; k++) {
-                a = (even) ? INTERP_COOF_ODD[Math.min(m - 1, MAX_K - 1)][Math.min(k - 1, MAX_K - 1)]
-                        : INTERP_COOF_EVEN[Math.min(m - 1, MAX_K - 1)][Math.min(k - 1, MAX_K - 1)];
+                a = (even) ? INTERP_COEF_ODD[Math.min(m - 1, MAX_K - 1)][Math.min(k - 1, MAX_K - 1)]
+                        : INTERP_COEF_EVEN[Math.min(m - 1, MAX_K - 1)][Math.min(k - 1, MAX_K - 1)];
                 d[i].x += a * (points[(i + k) % n].x - points[(i - k + n) % n].x);
                 d[i].y += a * (points[(i + k) % n].y - points[(i - k + n) % n].y);
             }
@@ -164,7 +164,7 @@ public class CubicSplineInterpolator implements ISplineInterpolator {
         for (int i = 1; i < n; i++) {
             d[i] = new KVector();
             for (int k = 1; k <= m; k++) {
-                a = INTERP_COOF_EVEN[m - 1][k - 1];
+                a = INTERP_COEF_EVEN[m - 1][k - 1];
                 // Ti = T-i for 0 < i < n, is it really ok to neglect 0 and n?!
                 d[i].x += a * (t[i + k].x - t[Math.abs((i - k))].x);
                 d[i].y += a * (t[i + k].y - t[Math.abs((i - k))].y);

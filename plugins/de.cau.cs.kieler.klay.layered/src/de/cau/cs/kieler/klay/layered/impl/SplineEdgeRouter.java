@@ -527,7 +527,7 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
                 if (!(box == boxes.getLast())) {
                     line = lineIt.next();
                     // we check the line "on the right" of the box
-                    if (!(line.y1 - FITTING_TOLERANCE <= qsYEnd && line.y2 + FITTING_TOLERANCE >= qsYEnd)) {
+                    if (!((line.y1 - FITTING_TOLERANCE <= qsYEnd) && (line.y2 + FITTING_TOLERANCE >= qsYEnd))) {
                         return false;
                     }
                 }
@@ -710,7 +710,7 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
         // boxes are left right .. so start is at first box
         double boxstart = boxes[0].x;
         // we guess all boxes have the same distance
-        double boxres = boxes[0].width;
+        double boxwidth = boxes[0].width;
 
         for (BezierCurve curve : spline.getCurves()) {
             // get number of curve points depending on its length
@@ -722,7 +722,7 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
                 if (p == pts[pts.length - 1]) {
                     break;
                 }
-                int guessIndex = (int) ((p.x - boxstart) / boxres);
+                int guessIndex = (int) ((p.x - boxstart) / boxwidth);
                 // most of the time we hit!
                 // test show, that every ~20th box we miss guess
                 guessIndex = Math.max(0, guessIndex);

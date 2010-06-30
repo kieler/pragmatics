@@ -25,7 +25,7 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * <dl>
  *   <dt>Precondition:</dt><dd>the graph has a proper layering with
  *     assigned node and port positions</dd>
- *   <dt>Postcondition:</dt><dd>the positon of every label is set</dd>
+ *   <dt>Postcondition:</dt><dd>the position of every label is set</dd>
  * </dl>
  * @author jjc
  *
@@ -44,7 +44,7 @@ public interface ILabelPlacer extends IAlgorithm {
      * You should only consider those of source ports.
      * 
      * @param thelayer The layer to check 
-     * @return The size of the longest label as Coord
+     * @return The longest LLabel
      */
     LLabel longestLabel(Layer thelayer);
     

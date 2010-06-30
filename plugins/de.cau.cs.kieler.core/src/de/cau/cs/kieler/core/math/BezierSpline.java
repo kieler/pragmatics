@@ -117,7 +117,7 @@ public class BezierSpline {
         }
 
         int size = (curves.size() * 3) - 1;
-        KVector[] retu = new KVector[size];
+        KVector[] points = new KVector[size];
 
         int i = 0;
         if (curves.size() > 1) {
@@ -126,22 +126,22 @@ public class BezierSpline {
 
             // start and middle pieces
             for (BezierCurve cu : curves) {
-                retu[i++] = cu.fstControlPnt;
-                retu[i++] = cu.sndControlPnt;
-                retu[i++] = cu.end;
+                points[i++] = cu.fstControlPnt;
+                points[i++] = cu.sndControlPnt;
+                points[i++] = cu.end;
             }
 
             // end piece
-            retu[i++] = lastCurve.fstControlPnt;
-            retu[i++] = lastCurve.sndControlPnt;
+            points[i++] = lastCurve.fstControlPnt;
+            points[i++] = lastCurve.sndControlPnt;
             curves.add(lastCurve);
 
         } else {
-            retu[i++] = curves.getFirst().fstControlPnt;
-            retu[i++] = curves.getFirst().sndControlPnt;
+            points[i++] = curves.getFirst().fstControlPnt;
+            points[i++] = curves.getFirst().sndControlPnt;
         }
 
-        return retu;
+        return points;
     }
 
     /**
