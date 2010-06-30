@@ -118,12 +118,16 @@ public final class DynamicBundleLoader implements IWindowListener, IPageListener
                     bundle = KSBasEUIPlugin.getDefault().getBundle();
                 }
 
+                //FIXME: is this right?
+                //de.cau.cs.kieler.synccharts.ksbase.de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditorID.generated ???
                 String editorDiagramName = bundle.getSymbolicName() + "." + editor.getEditorId()
                         + ".generated";
                 try {
                     // To avoid %20 exceptions in paths:
                     String val = entry.getValue().toString().replace("%20", " ");
 
+                    //FIXME: is this right?
+                    // reference:file:/X:/dop_eclipse/runtime-New_configuration2/.metadata/.plugins/de.cau.cs.kieler.ksbase.ui/de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditorID.jar
                     URL url = new URL("reference:" + val);
 
                     InputStream in = url.openStream();
@@ -144,13 +148,21 @@ public final class DynamicBundleLoader implements IWindowListener, IPageListener
                     // existing ?
                     existing = admin.getBundles(editorDiagramName, null);
                     // only load if this hasn't been loaded before
+                    Bundle b;
                     if (existing == null || existing.length == 0) {
-                        Bundle b = KSBasEUIPlugin.getDefault().getBundle().getBundleContext()
+                        b = KSBasEUIPlugin.getDefault().getBundle().getBundleContext()
                                 .installBundle(editorDiagramName, in);
-                        // b.start();
+                    }
+                    else { 
+                        b = existing[0];
+                    }
+                    
+                   
+                     // b.start(); 
+                    
                         // Activating bundle with package admin service
                         // System.out.println("Bundle state : " + b.getState());
-                        if (b.getState() != Bundle.STARTING) {
+                        if ((b.getState() != Bundle.STARTING) && (b.getState() != Bundle.ACTIVE)) {
                             if (b.getState() == Bundle.INSTALLED) {
                                 // System.out.println("resolving");
                                 boolean res = admin.resolveBundles(new Bundle[] { b });
@@ -162,15 +174,18 @@ public final class DynamicBundleLoader implements IWindowListener, IPageListener
                                 }
                             }
                             if (b.getState() == Bundle.RESOLVED) {
-                                // System.out.println("starting");
+                                System.out.println("starting");
                                 b.start();
                             }
+                            
                         }
-                        installedBundles.put(editor, b);
-                    } else {
-                        installedBundles.put(editor, null);
-                    }
-
+                        
+                        if (b.getState() == Bundle.ACTIVE) {
+                            installedBundles.put(editor, b);
+                        }
+                        else {
+                          installedBundles.put(editor, null);
+                        }
                 } catch (MalformedURLException e) {
                     KSBasEUIPlugin.getDefault()
                             .logError("Bundle could not be loaded: Invalid URI.");
