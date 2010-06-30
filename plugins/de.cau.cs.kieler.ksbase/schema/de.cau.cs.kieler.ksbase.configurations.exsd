@@ -189,6 +189,7 @@ Make sure that the transformation is short and fast, it is not recommended to ca
       <complexType>
          <sequence minOccurs="1" maxOccurs="unbounded">
             <element ref="transformationCommand" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="separator" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="locationURI" type="string" use="required">
             <annotation>
@@ -308,6 +309,18 @@ Make sure that the transformation is short and fast, it is not recommended to ca
                <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.emf.ecore.EPackage:"/>
                </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="separator">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
             </annotation>
          </attribute>
       </complexType>

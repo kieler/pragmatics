@@ -80,6 +80,8 @@ public final class DynamicMenuContributions {
      */
     private HashMap<String, String[]> keybindings;
 
+    private static int separatorIndex = 0;
+
     /**
      * Default constructor.
      */
@@ -176,9 +178,11 @@ public final class DynamicMenuContributions {
                         && editorSettings.getContext() != null
                         && editorSettings.getContext().length() > 0) {
 
-                    keybindings.put(commandID, new String[] {
-                            editorSettings.getContext(),
-                            t.getKeyboardShortcut(), t.getTransformation() });
+                    keybindings.put(
+                            commandID,
+                            new String[] { editorSettings.getContext(),
+                                    t.getKeyboardShortcut(),
+                                    t.getTransformation() });
 
                     Element key = extension.createElement("key");
                     key.setAttribute("commandId", commandID);
@@ -190,8 +194,7 @@ public final class DynamicMenuContributions {
                     Element keyParam = extension.createElement("parameter");
                     keyParam.setAttribute("id",
                             "de.cau.cs.kieler.ksbase.editorParameter");
-                    keyParam
-                            .setAttribute("value", editorSettings.getEditorId());
+                    keyParam.setAttribute("value", editorSettings.getEditorId());
                     key.appendChild(keyParam);
                     keyParam = extension.createElement("parameter");
                     keyParam.setAttribute("id",
@@ -211,8 +214,8 @@ public final class DynamicMenuContributions {
                             "de.cau.cs.kieler.ksbase.ui.handler"
                                     + ".TransformationCommandHandler");
                 } else {
-                    classHandler.setAttribute("class", editorSettings
-                            .getCommandHandler());
+                    classHandler.setAttribute("class",
+                            editorSettings.getCommandHandler());
                 }
                 handlerCommand.appendChild(classHandler);
                 // Handler restrictions
@@ -253,8 +256,8 @@ public final class DynamicMenuContributions {
                         Element editorAttrib = extension
                                 .createElement("Attribute");
                         editorAttrib.setAttribute("key", "editorId");
-                        editorAttrib.setAttribute("value", editorSettings
-                                .getEditorId());
+                        editorAttrib.setAttribute("value",
+                                editorSettings.getEditorId());
                         popupContribution.appendChild(editorAttrib);
 
                         Element transAttrib = extension
@@ -269,16 +272,19 @@ public final class DynamicMenuContributions {
                     // <extension point="org.eclipse.ui.menus>
                     Element menuContribution = extension
                             .createElement("menuContribution");
-                    menuContribution.setAttribute("locationURI", contrib
-                            .getData());
-                    Element separator = extension.createElement("separator");
-                    separator.setAttribute("name",
-                            "de.cau.cs.kieler.ksbase.separator01");
-                    separator.setAttribute("visible", "true");
-                    menuContribution.appendChild(separator);
+                    menuContribution.setAttribute("locationURI",
+                            contrib.getData());
+                    String separatorName = "de.cau.cs.kieler.ksbase.separator01";
+                    addSeparator(extension, menuContribution, separatorName);
+
                     for (String tid : contrib.getCommands()) {
                         // only create contents for valid transformationIDs
-                        if (editorSettings.getTransformationById(tid) != null) {
+                        // XXX
+                        if (tid.equals("_SEPARATOR")) {
+                            addSeparator(extension, menuContribution,
+                                    "de.cau.cs.kieler.ksbase.separator"
+                                            + separatorIndex++);
+                        } else if (editorSettings.getTransformationById(tid) != null) {
                             // Create commands for root menu
                             Node menuCommand = createElementForMenu(tid,
                                     extension, editorSettings);
@@ -299,9 +305,9 @@ public final class DynamicMenuContributions {
                                 handlerIt.setAttribute("operator", "and");
                                 Element handlerTest = extension
                                         .createElement("test");
-                                handlerTest.setAttribute("args", editorSettings
-                                        .getEditorId()
-                                        + "," + tid);
+                                handlerTest.setAttribute("args",
+                                        editorSettings.getEditorId() + ","
+                                                + tid);
                                 handlerTest.setAttribute(
                                         "forcePluginActivation", "true");
                                 handlerTest
@@ -332,7 +338,13 @@ public final class DynamicMenuContributions {
                         for (String tid : m.getCommands()) {
                             // only create contents for valid
                             // transformationIDs
-                            if (editorSettings.getTransformationById(tid) != null) {
+                            // XXX
+                            if (tid.equals("_SEPARATOR")) {
+                                addSeparator(extension, menuContribution,
+                                        "de.cau.cs.kieler.ksbase.separator"
+                                                + separatorIndex++);
+                            } else if (editorSettings
+                                    .getTransformationById(tid) != null) {
 
                                 Node menuCommand;
                                 if (cachedTransformationCommands
@@ -356,11 +368,8 @@ public final class DynamicMenuContributions {
                         menuContribution.appendChild(menu);
                     }
 
-                    Element separator2 = extension.createElement("separator");
-                    separator2.setAttribute("name",
-                            "de.cau.cs.kieler.ksbase.separator02");
-                    separator2.setAttribute("visible", "true");
-                    menuContribution.appendChild(separator2);
+                    separatorName = "de.cau.cs.kieler.ksbase.separator02";
+                    addSeparator(extension, menuContribution, separatorName);
                     menuExtension.appendChild(menuContribution);
                 }
             }
@@ -376,8 +385,8 @@ public final class DynamicMenuContributions {
 
             // Create plugin.xml
             StringWriter str = new StringWriter();
-            TransformerFactory.newInstance().newTransformer().transform(
-                    new DOMSource(extension), new StreamResult(str));
+            TransformerFactory.newInstance().newTransformer()
+                    .transform(new DOMSource(extension), new StreamResult(str));
 
             // Create jar bundle
             Bundle contributorBundle = null;
@@ -457,8 +466,8 @@ public final class DynamicMenuContributions {
             // contributor is valid
             if (editorSettings.getContributor() != null) {
                 for (String resource : resources) {
-                    copyResourceToJarBundle(jos, resource, editorSettings
-                            .getContributor());
+                    copyResourceToJarBundle(jos, resource,
+                            editorSettings.getContributor());
                 }
             }
             // don't forget the transformation file !
@@ -471,8 +480,8 @@ public final class DynamicMenuContributions {
             jos.flush();
             jos.close();
 
-            DynamicBundleLoader.INSTANCE.addBundle(editorSettings, jarFile
-                    .toURI());
+            DynamicBundleLoader.INSTANCE.addBundle(editorSettings,
+                    jarFile.toURI());
 
         } catch (TransformerConfigurationException e) {
             KSBasEUIPlugin.getDefault().logError(
@@ -497,6 +506,21 @@ public final class DynamicMenuContributions {
             KSBasEUIPlugin.getDefault().logError(
                     "Bundle could not be created: Parser error.");
         }
+    }
+
+    /**
+     * Adds a separator with the given name to the provided menuContribution.
+     * 
+     * @param extension
+     * @param menuContribution
+     * @param separatorName
+     */
+    private void addSeparator(final Document extension,
+            final Element menuContribution, final String separatorName) {
+        Element separator = extension.createElement("separator");
+        separator.setAttribute("name", separatorName);
+        separator.setAttribute("visible", "true");
+        menuContribution.appendChild(separator);
     }
 
     /**
