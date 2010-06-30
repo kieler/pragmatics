@@ -103,7 +103,9 @@ public final class DynamicBundleLoader implements IWindowListener, IPageListener
         if (waitingBundles.size() == 0) {
             return;
         }
-        HashMap<EditorTransformationSettings, Bundle> installedBundles = new HashMap<EditorTransformationSettings, Bundle>();         // SUPPRESS CHECKSTYLE MaximumLineLength
+        HashMap<EditorTransformationSettings, Bundle> installedBundles = new HashMap<EditorTransformationSettings, Bundle>(); // SUPPRESS
+                                                                                                                              // CHECKSTYLE
+                                                                                                                              // MaximumLineLength
         for (Entry<EditorTransformationSettings, URI> entry : waitingBundles.entrySet()) {
             EditorTransformationSettings editor = entry.getKey();
             if (editor.getEditorId().equals(activeEditor)) {
@@ -144,36 +146,28 @@ public final class DynamicBundleLoader implements IWindowListener, IPageListener
                     if ((dynamicBundle.getState() != Bundle.STARTING)
                         && (dynamicBundle.getState() != Bundle.ACTIVE)) {
                         if (dynamicBundle.getState() == Bundle.INSTALLED) {
-                            boolean res = admin.resolveBundles(new Bundle[] { dynamicBundle });
-                            if (!res) {
-                                // resolving may fail if dependencies cannot be resolved
-                                KSBasEUIPlugin.getDefault().logError(
-                                    "KSBasE: Bundle " + dynamicBundle.getBundleId()
-                                        + " could not be resolved. "
-                                        + "Corresponding KSBasE actions won't be available. "
-                                        + "Most likely not all dependencies could be resolved.");
-                            }
-                        }
-                        if (dynamicBundle.getState() == Bundle.RESOLVED) {
-                            System.out.println("starting");
+                            // haf: according to doc, starting a bundle first tries to resolve the
+                            // bundle; this might fail if dependencies are not fulfilled and
+                            // BundleException is thrown
                             dynamicBundle.start();
                         }
                     }
                     if (dynamicBundle.getState() == Bundle.ACTIVE) {
                         installedBundles.put(editor, dynamicBundle);
                     } else {
-                        // this is the error case, this should not happen
+                        // this is the error case, this should not happen (BundleException should be
+                        // thrown first)
                         installedBundles.put(editor, null);
                     }
                 } catch (MalformedURLException e) {
-                    KSBasEUIPlugin.getDefault()
-                        .logError("Bundle could not be loaded: Invalid URI.");
+                    KSBasEUIPlugin.getDefault().logError(
+                        "Bundle could not be loaded: Invalid URI. " + e.getMessage());
                 } catch (IOException e) {
                     KSBasEUIPlugin.getDefault().logError(
-                        "Bundle could not be loaded: Error while reading.");
+                        "Bundle could not be loaded: Error while reading. " + e.getMessage());
                 } catch (BundleException e) {
                     KSBasEUIPlugin.getDefault().logError(
-                        "Bundle could not be loaded: Invalid bundle.");
+                        "KSBasE: Dynamic Bundle could not be loaded. " + e.getMessage());
                 }
             }
 
