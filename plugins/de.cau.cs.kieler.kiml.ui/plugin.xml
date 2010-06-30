@@ -173,15 +173,6 @@ point="org.eclipse.ui.menus">
       </key>
    </extension>
  <extension
-       point="org.eclipse.gmf.runtime.diagram.ui.editpolicyProviders">
-    <editpolicyProvider
-          class="de.cau.cs.kieler.kiml.ui.layout.LayoutEditPolicyProvider">
-       <Priority
-             name="Lowest">
-       </Priority>
-    </editpolicyProvider>
- </extension>
- <extension
        point="de.cau.cs.kieler.kiml.layout.layoutProviders">
     <layoutProvider
           class="de.cau.cs.kieler.kiml.ui.layouter.Draw2DLayoutProvider"
@@ -219,12 +210,5 @@ point="org.eclipse.ui.menus">
           restorable="true">
     </view>
  </extension>
- <extension
-       point="de.cau.cs.kieler.kiml.ui.layoutManagers">
-    <manager
-          class="de.cau.cs.kieler.kiml.ui.layout.GmfDiagramLayoutManager">
-    </manager>
- </extension>
- 
    
 </plugin>

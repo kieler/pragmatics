@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+ <extension
+       point="de.cau.cs.kieler.kiml.ui.layoutManagers">
+    <manager
+          class="de.cau.cs.kieler.kiml.gmf.GmfDiagramLayoutManager">
+    </manager>
+ </extension>
+  <extension
+       point="org.eclipse.gmf.runtime.diagram.ui.editpolicyProviders">
+    <editpolicyProvider
+          class="de.cau.cs.kieler.kiml.ui.layout.LayoutEditPolicyProvider">
+       <Priority
+             name="Lowest">
+       </Priority>
+    </editpolicyProvider>
+ </extension>
+
+</plugin>

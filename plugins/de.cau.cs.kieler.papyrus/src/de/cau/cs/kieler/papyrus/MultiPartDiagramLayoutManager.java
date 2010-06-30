@@ -26,8 +26,8 @@ import org.eclipse.ui.IPropertyListener;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.gmf.GmfDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.IEditorChangeListener;
-import de.cau.cs.kieler.kiml.ui.layout.GmfDiagramLayoutManager;
 
 /**
  * Layout manager wrapper for the Papyrus multi diagram editor.
