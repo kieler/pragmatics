@@ -44,6 +44,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutServices;
@@ -335,7 +336,7 @@ public class TestView extends ViewPart {
         
         @Override
         public void run() {
-            position = 0;
+            TestView.this.position = 0;
 
             final IEditorPart editor = getCurrentEditor();
             final EditPart part = getEditPart(editor);
@@ -404,7 +405,7 @@ public class TestView extends ViewPart {
     private BasicEvolutionaryAlgorithm evolAlg;
     private Population population;
     private IEditorPart graphEditor;
-    private String layouter;
+    private String layoutProviderId;
     /**
      * Column width for columns in viewer table.
      */
@@ -433,7 +434,7 @@ public class TestView extends ViewPart {
         this.graphEditor = editor;
         this.tableViewer = tv;
         if (editor != null) {
-            // TODO: test whether editor is for KIML
+            // TODO: test whether the editor is for KIML
             // FIXME: should share synchronized property source with LayoutView?
             final LayoutPropertySource source = new LayoutPropertySource(editor, part);
             final Population sourcePopulation =
@@ -454,7 +455,6 @@ public class TestView extends ViewPart {
                     final Object element = ((IStructuredSelection) selection).getFirstElement();
                     if (element instanceof PopulationTableEntry) {
                         tv.removeSelectionChangedListener(this);
-                        // final int oldPosition = position;
                         position = ((PopulationTableEntry) element).index;
                         onSelectIndividual();
                         System.out.println("after onSelectIndividual");
@@ -541,13 +541,13 @@ public class TestView extends ViewPart {
         if (this.graphEditor == null) {
             this.graphEditor = getCurrentEditor();
         }
-        final Registry registry = LayoutServices.getRegistry();
-        final IndividualLayoutListener listener =
-                new IndividualLayoutListener(getCurrentIndividual());
+
+        final IEditorPart editor = this.graphEditor;
+
         // we don't specify the edit part because we want a manager for the
         // whole diagram
         final DiagramLayoutManager manager =
-                EclipseLayoutServices.getInstance().getManager(this.graphEditor, null);
+                EclipseLayoutServices.getInstance().getManager(editor, null);
         Runnable layoutLoop = new Runnable() {
             public void run() {
                 for (int pos = 0; pos < pop.size(); pos++) {
@@ -555,29 +555,13 @@ public class TestView extends ViewPart {
                     System.out.println("Position: " + pos);
                     final Individual ind = pop.get(pos);
                     System.out.println(ind.toString());
-                    listener.setIndividual(ind);
 
                     // TODO: synchronize on the layout graph?
-                    final boolean isAffected;
-                    switch (target) {
-                    case ALL:
-                        isAffected = true;
-                        break;
-                    case RATED:
-                        isAffected = (ind.hasRating());
-                        break;
-                    case UNRATED:
-                        isAffected = (!ind.hasRating());
-                        break;
-                    default: // this case should never happen
-                        isAffected = false;
-                        break;
-                    }
-                    if (isAffected) {
+                    if (isAffected(ind, target)) {
                         adoptIndividual(ind, false);
                         // first phase: build the layout graph
                         // TODO: get a new manager for every iteration?
-                        manager.buildLayoutGraph(graphEditor, null, true);
+                        KNode layoutGraph = manager.buildLayoutGraph(editor, null, true);
                         // second phase: execute layout algorithms
                         // We need a new monitor each time because the old one
                         // gets closed.
@@ -586,28 +570,46 @@ public class TestView extends ViewPart {
                         final IStatus status = manager.layout(monitor, true, false);
                         // layout should trigger the measurement of the current
                         // diagram
+                        KNode layoutGraphAfterLayout = manager.getLayoutGraph();
+                        Assert.isTrue(layoutGraph == layoutGraphAfterLayout);
+
                         System.out.println("after manager.layout. result: " + status.getCode());
                         // tableViewer.refresh();
+                        int rating = EvolUtil.measureDiagram(false, layoutGraphAfterLayout);
+                        System.out.println("Assign rating " + rating + " to individual" + ": "
+                                + ind.toString());
+                        ind.setRating(rating);
                     }
                 }
             }
+            
+            private boolean isAffected(final Individual ind, final TargetIndividuals target) {
+                switch (target) {
+                case ALL:
+                    return true;
+                case RATED:
+                    return (ind.hasRating());
+                case UNRATED:
+                    return (!ind.hasRating());
+                default: // this case should never happen
+                    return false;
+                }
+            }
         };
-        registry.addLayoutListener(listener);
+
         // the current diagram gets layouted and measured.
         MonitoredOperation.runInUI(layoutLoop, true);
-        System.out.println("remove layout listener");
-        registry.removeLayoutListener(listener);
 
         this.tableViewer.refresh();
     }
-    
+
     /**
      * Creates the tool bar for the view.
      */
     private void createToolBar() {
         // Get tool bar manager.
         final IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
-        // Create some actions and add them to tool bar manager.
+        // Create some actions and add them to the tool bar manager.
         toolBarManager.add(new AutorateAllAction());
         toolBarManager.add(new PromoteAction());
         toolBarManager.add(new DemoteAction());
