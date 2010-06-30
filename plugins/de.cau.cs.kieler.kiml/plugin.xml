@@ -19,7 +19,7 @@
             name="KIELER">
       </category>
       <layoutProvider
-            class="de.cau.cs.kieler.kiml.layout.util.BoxLayoutProvider"
+            class="de.cau.cs.kieler.kiml.util.BoxLayoutProvider"
             category="de.cau.cs.kieler.layouter.category"
             id="de.cau.cs.kieler.kiml.layouter.boxLayout"
             name="Box Layout">
