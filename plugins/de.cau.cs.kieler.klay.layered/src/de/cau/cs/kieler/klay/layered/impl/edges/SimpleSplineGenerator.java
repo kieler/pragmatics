@@ -59,7 +59,7 @@ public class SimpleSplineGenerator extends AbstractAlgorithm implements ISplineG
         if (vectorQ == null || vectorS == null) {
             spline = interp.interpolatePoints(pArray);
         } else {
-            spline = interp.interpolatePoints(pArray, vectorQ, vectorS);
+            spline = interp.interpolatePoints(pArray, vectorQ, vectorS, true);
         }
 
         // as the generated spline can contain loops etc, we try to remove those, by adjusting the

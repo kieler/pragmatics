@@ -56,6 +56,20 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
     /** label placer. */
     private ILabelPlacer labelPlacer = new SimpleLabelPlacer();
 
+    /** amounts of points treated the same way. */
+    private static final int HIGH_LIMIT = 7;
+    private static final int MID_LIMIT = 5;
+
+    /** corresponding offsets of used dummy node positions. */
+    private static final int SMALL_OFFSET = 2;
+    private static final int BIG_OFFSET = 3;
+
+    /** how strong is the first and last ctr point scaled down? new size is 1/VERTICAL_CHANGE. */
+    private static final int VERTICAL_CHANGE = 4;
+
+    /** at least this many points are needed to handle the spline. */
+    private static final int MINIMAL_POINTS_HANDLES = 4;
+
     /**
      * {@inheritDoc}
      */
@@ -63,6 +77,7 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
         // contains nodes from which long edges are starting
         LinkedList<LEdge> longEdges = new LinkedList<LEdge>();
         LinkedList<LongEdge> realLongEdges = new LinkedList<LongEdge>();
+        LinkedList<LEdge> shortEdges = new LinkedList<LEdge>();
         // set horizontal positioning for each layer and add bend points
         float xpos = 0.0f;
         List<LLabel> consideredLabelsInLayerSize = new LinkedList<LLabel>();
@@ -73,10 +88,11 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
                 if (node.getProperty(Properties.NODE_TYPE) != Properties.NodeType.LONG_EDGE) {
                     for (LPort port : node.getPorts(PortType.OUTPUT)) {
                         for (LEdge edge : port.getEdges()) {
-                            if (edge.getTarget().getNode().getProperty(Properties.NODE_TYPE) 
-                                    == Properties.NodeType.LONG_EDGE) {
+                            if (edge.getTarget().getNode().getProperty(Properties.NODE_TYPE) == Properties.NodeType.LONG_EDGE) {
                                 longEdges.add(edge);
                                 realLongEdges.add(new LongEdge(edge));
+                            } else {
+                                shortEdges.add(edge);
                             }
                         }
                     }
@@ -91,6 +107,49 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
         }
         layeredGraph.getSize().x = xpos - spacing;
 
+        int border = LayeredLayoutProvider.MINIMAL_EDGE_ANGLE;
+        if (border != 0) {
+            // handle short edges
+            for (LEdge edge : shortEdges) {
+                LPort start = edge.getSource();
+                LNode startNode = start.getNode();
+                LPort end = edge.getTarget();
+                LNode endNode = end.getNode();
+
+                KVector startVec = new KVector(startNode.getPos().x + start.getPos().x, startNode
+                        .getPos().y
+                        + start.getPos().y);
+                KVector endVec = new KVector(endNode.getPos().x + end.getPos().x,
+                        endNode.getPos().y + end.getPos().y);
+
+                // it is enough to check one vector, as the angle at the other node is the same
+                KVector startToEnd = KVector.sub(endVec, startVec);
+                // System.out.println(startToEnd);
+                double degrees = startToEnd.toDegrees();
+
+                boolean topDown = (startVec.y < endVec.y);
+
+                if ((degrees < border || degrees > 180 - border)) {
+                    LinkedList<KVector> pts = new LinkedList<KVector>();
+                    pts.add(startVec);
+                    pts.add(endVec);
+
+                    double widthdiff = Math.abs(startVec.x - endVec.x);
+                    KVector startTan = new KVector(widthdiff, 0);
+                    KVector endTan = new KVector(widthdiff, 0);
+
+                    BezierSpline spline = splineInterp.interpolatePoints(pts, startTan, endTan,
+                            false);
+                    for (KVector v : spline.getInnerPoints()) {
+                        if (getMonitor().isCanceled()) {
+                            break;
+                        }
+                        edge.getBendPoints().add(new Coord((float) v.x, (float) v.y));
+                    }
+                }
+
+            }
+        }
         // handle every long edge
         for (LongEdge longEdge : realLongEdges) {
             // initialize this long edge
@@ -100,12 +159,17 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
             KVector endAngle = longEdge.getEndTangent().negate();
 
             BezierSpline spline = splineInterp.interpolatePoints(longEdge.getPoints(), startAngle,
-                    endAngle);
+                    endAngle, true);
 
+            // apply optimizations for NaiveApproach
             spline = optimizeSpline(spline);
+
             if (spline != null) {
                 // add calculated bend points
                 for (KVector v : spline.getInnerPoints()) {
+                    if (getMonitor().isCanceled()) {
+                        break;
+                    }
                     longEdge.getEdge().getBendPoints().add(new Coord((float) v.x, (float) v.y));
                 }
             }
@@ -121,7 +185,6 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
 
         labelMon.done();
         getMonitor().done();
-
     }
 
     /**
@@ -134,14 +197,13 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
      * @return
      */
     private BezierSpline optimizeSpline(final BezierSpline spline) {
-        // CHECKSTYLEOFF Magic Numbers
-        if (spline.getBasePoints().length >= 4 && isLongStraightSpline(spline)) {
+        if (spline.getBasePoints().length >= MINIMAL_POINTS_HANDLES && isLongStraightSpline(spline)) {
 
             KVector[] basePoints = spline.getBasePoints();
             int n = basePoints.length - 1;
 
-            int offset = (n >= 7) ? 3 : 2;
-            if (n < 5) {
+            int offset = (n >= HIGH_LIMIT) ? BIG_OFFSET : SMALL_OFFSET;
+            if (n < MID_LIMIT) {
                 offset = 1;
             }
             KVector start = spline.getStartPoint();
@@ -150,23 +212,23 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
             LinkedList<KVector> newPoints = new LinkedList<KVector>();
             newPoints.add(start);
 
-            if (n >= 5) {
+            if (n >= MID_LIMIT) {
                 KVector intermediateLeft = basePoints[1].clone();
-                intermediateLeft.y += (start.y - intermediateLeft.y) / 4;
+                intermediateLeft.y += (start.y - intermediateLeft.y) / VERTICAL_CHANGE;
                 newPoints.add(intermediateLeft);
             }
 
             KVector bendLeft = null;
-            if (n >= 5) {
+            if (n >= MID_LIMIT) {
                 bendLeft = basePoints[offset].clone();
                 newPoints.add(bendLeft);
             }
             KVector bendRight = basePoints[n - offset].clone();
             newPoints.add(bendRight);
 
-            if (n >= 5) {
+            if (n >= MID_LIMIT) {
                 KVector intermediateRight = basePoints[n - 1].clone();
-                intermediateRight.y += (end.y - intermediateRight.y) / 4;
+                intermediateRight.y += (end.y - intermediateRight.y) / VERTICAL_CHANGE;
                 newPoints.add(intermediateRight);
             }
             newPoints.add(end);
@@ -179,7 +241,7 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
                     .normalize();
             KVector endTangent = KVector.sub(bendRight, end).normalize().negate();
 
-            return splineInterp.interpolatePoints(newPoints, startTangent, endTangent);
+            return splineInterp.interpolatePoints(newPoints, startTangent, endTangent, true);
 
         } else {
             return spline;

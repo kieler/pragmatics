@@ -24,6 +24,8 @@ import org.eclipse.draw2d.geometry.Point;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.BezierSpline;
+import de.cau.cs.kieler.core.math.CubicSplineInterpolator;
+import de.cau.cs.kieler.core.math.ISplineInterpolator;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.core.math.BezierSpline.BezierCurve;
@@ -143,11 +145,69 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
 
         boxCalculator.initialize(layeredGraph, debugCanvas);
 
+        // handle short edges
+        for (LEdge edge : shortEdges) {
+            // if (getMonitor().isCanceled()) {
+            // break;
+            // }
+            // LPort start = edge.getSource();
+            // LNode startNode = start.getNode();
+            // LPort end = edge.getTarget();
+            // LNode endNode = end.getNode();
+            //
+            // KVector startVec = new KVector(startNode.getPos().x + start.getPos().x, startNode
+            // .getPos().y
+            // + start.getPos().y);
+            // KVector endVec = new KVector(endNode.getPos().x + end.getPos().x, endNode.getPos().y
+            // + end.getPos().y);
+            //
+            // // it is enough to check one vector, as the angle at the other node is the same
+            // KVector startToEnd = KVector.sub(endVec, startVec);
+            // // System.out.println(startToEnd);
+            // double degrees = startToEnd.toDegrees();
+            // //System.out.println(startToEnd.toDegrees());
+            //
+            // int border = LayeredLayoutProvider.MINIMAL_EDGE_ANGLE;
+            //
+            // boolean topDown = (startVec.y < endVec.y);
+            //
+            // if ((degrees < border || degrees > 180 - border)) {
+            // LinkedList<KVector> pts = new LinkedList<KVector>();
+            // pts.add(startVec);
+            // pts.add(endVec);
+            //
+            // // double heigthdiff = Math.abs(startVec.y - endVec.y);
+            // double widthdiff = Math.abs(startVec.x - endVec.x);
+            //                
+            // // double foo = heigthdiff / widthdiff / 6;
+            //    
+            // // border *= 2;
+            //                
+            // // KVector startTan = new KVector(((topDown) ? border : 180 - border)).scale(1.5);
+            // // KVector endTan = new KVector(((topDown) ? border : 180 - border)).scale(1.5);
+            //
+            // KVector startTan = new KVector(widthdiff ,0);
+            // KVector endTan = new KVector(widthdiff ,0);
+            // ISplineInterpolator splineInterp = new CubicSplineInterpolator();
+            // BezierSpline spline = splineInterp.interpolatePoints(pts, startTan, endTan, false);
+            // for (KVector v : spline.getInnerPoints()) {
+            // edge.getBendPoints().add(new Coord((float) v.x, (float) v.y));
+            // }
+            // }
+
+        }
+
         double cumBoxTime = 0;
         double cumSplineTime = 0;
         int counter = 0;
         // handle every long edge
         for (LongEdge longEdge : realLongEdges) {
+            if (getMonitor().isCanceled()) {
+                break;
+            }
+            if (getMonitor().isCanceled()) {
+                return;
+            }
 
             LPort source = longEdge.getEdge().getSource();
             LPort target = longEdge.getEdge().getTarget();
@@ -172,6 +232,7 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
                 double d = 0;
                 d++;
             }
+            // compute the actual spline
             computeSpline(boxes, new KVector(source.getNode().getPos().x + source.getPos().x,
                     source.getNode().getPos().y + source.getPos().y), new KVector(target.getNode()
                     .getPos().x
@@ -252,12 +313,7 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
      * This method will be called recursively if the spline is split and each part is handled
      * separately in order to fit the region.
      * 
-     * @param boxes
-     * @param lines
-     * @param points
-     * @param vectorQ
-     * @param vectorS
-     * @return
+     * @return calculated spline
      */
     private BezierSpline computeSarray(final LinkedList<Rectangle2D.Double> boxes,
             final LinkedList<Line2D.Double> lines, final LinkedList<KVector> points,

@@ -82,13 +82,19 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     /** the DebugCanvas to use for debug-drawings. **/
     private DebugCanvas debugCanvas;
 
+    public static int MINIMAL_EDGE_ANGLE = 0;
+
     /** Option to choose edgerouter. */
-    public static final String KLAY_EDGE_ROUTING = 
-        "de.cau.cs.kieler.klay.layered.options.LayeredEdgeRouting";
+    public static final String KLAY_EDGE_ROUTING = "de.cau.cs.kieler.klay.layered."
+            + "options.LayeredEdgeRouting";
 
     /** option to choose if debug info is shown. */
-    public static final String KLAY_DEBUG_INFO = 
-        "de.cau.cs.kieler.klay.layered.options.LayeredDebugInfo";
+    public static final String KLAY_DEBUG_INFO = "de.cau.cs.kieler.klay.layered."
+            + "options.LayeredDebugInfo";
+
+    /** option defines the minimal angle a shortedge may have. */
+    public static final String KLAY_MINIMAL_EDGE_ANGLE = "de.cau.cs.kieler.klay.layered."
+            + "options.MinimalAngle";
 
     /** constructor registering the new enum option. */
     public LayeredLayoutProvider() {
@@ -127,6 +133,9 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             }
         }
 
+        // get minimal edge angle
+        MINIMAL_EDGE_ANGLE = LayoutOptions.getInt(parentLayout, KLAY_MINIMAL_EDGE_ANGLE);
+        
         // debug mode
         Boolean debug = LayoutOptions.getBoolean(parentLayout, KLAY_DEBUG_INFO);
         if (debug) {
@@ -213,6 +222,8 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             return DEF_SPACING;
         } else if (LayoutOptions.BORDER_SPACING.equals(optionId)) {
             return DEF_SPACING;
+        } else if (KLAY_MINIMAL_EDGE_ANGLE.equals(optionId)) {
+            return 0;
         } else {
             return super.getDefault(optionId);
         }

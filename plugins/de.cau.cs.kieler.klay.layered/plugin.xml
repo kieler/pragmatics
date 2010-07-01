@@ -24,6 +24,9 @@
          <knownOption
                option="de.cau.cs.kieler.klay.layered.options.LayeredDebugInfo">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.options.MinimalAngle">
+         </knownOption>
       </layoutProvider>
       <layoutOption
             appliesTo="parents"
@@ -36,6 +39,13 @@
             id="de.cau.cs.kieler.klay.layered.options.LayeredDebugInfo"
             name="LayeredDebugInfo"
             type="boolean">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            description="Defines the minimal angle short edges may have."
+            id="de.cau.cs.kieler.klay.layered.options.MinimalAngle"
+            name="MinimalAngle"
+            type="int">
       </layoutOption>
    </extension>
 
