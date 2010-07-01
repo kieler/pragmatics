@@ -10,6 +10,9 @@
          <diagramType
                id="de.cau.cs.kieler.kaom.graphiti.diagramType1">
          </diagramType>
+         <imageProvider
+               id="de.cau.cs.kieler.kaom.graphiti.imageProvider1">
+         </imageProvider>
       </diagramTypeProvider>
    </extension>
    <extension
@@ -19,6 +22,13 @@
             name="de.cau.cs.kieler.kaom.graphiti.diagramType1"
             type="de.cau.cs.kieler.kaom.graphiti.diagramType1">
       </diagramType>
+   </extension>
+   <extension
+         point="org.eclipse.graphiti.ui.imageProviders">
+      <imageProvider
+            class="de.cau.cs.kieler.kaom.graphiti.diagram.ImageProvider"
+            id="de.cau.cs.kieler.kaom.graphiti.imageProvider1">
+      </imageProvider>
    </extension>
 
 </plugin>
