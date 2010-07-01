@@ -23,8 +23,13 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 
 /**
- * @author uru
+ * Class for convenient use of "long edges", this are edges covering more than one layer. In the
+ * base LGraph data structure it is not possible to access the target of such an edge directly. This
+ * class also supplies two tangents for the endpoints, each heading to the adjacent dummynode.
  * 
+ * It is necessary to call {@code initialize()} prior usage!
+ * 
+ * @author uru
  */
 public class LongEdge {
 
