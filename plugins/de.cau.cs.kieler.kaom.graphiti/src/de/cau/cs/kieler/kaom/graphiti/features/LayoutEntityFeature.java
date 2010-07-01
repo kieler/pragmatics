@@ -76,7 +76,7 @@ public class LayoutEntityFeature extends AbstractLayoutFeature {
           //           - AddPortFeature.INVISIBLE_RECTANGLE_WIDTH);
            gaService.setLocationAndSize(rectangle.getGraphicsAlgorithmChildren().get(0), 
                    AddPortFeature.INVISIBLE_RECTANGLE_WIDTH, 
-                   0, containerWidth, rectangle.getHeight()); 
+                   0, containerWidth, rectangle.getHeight()-AddPortFeature.INVISIBLE_RECTANGLE_WIDTH); 
            changed = true;
        }
       

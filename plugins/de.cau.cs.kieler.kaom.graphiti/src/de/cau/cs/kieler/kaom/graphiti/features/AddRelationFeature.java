@@ -141,24 +141,21 @@ public class AddRelationFeature extends AbstractAddShapeFeature {
     private void addToDiagram(final Relation newRelation , final IAddContext context) {
         List<EObject> contents = getDiagram().eResource().getContents();
         Entity topEntity = null;
+        if (context.getTargetContainer() instanceof Diagram) {
         for (EObject obj : contents) {
             if (obj instanceof Entity) {
                 topEntity = (Entity) obj;
-                if (context.getTargetContainer() instanceof Diagram)
-                    break;
-                else {
-                    Object ob = getBusinessObjectForPictogramElement(context.getTargetContainer());
-                    if (ob instanceof Entity)  {
-                        if ((Entity) ob == topEntity) {
-                         break;
-                        }
-                      }
-               
-                    }
+                 break;
+                }
             }
         }
-        
-        
+        else {
+                    Object ob = getBusinessObjectForPictogramElement(context.getTargetContainer());
+                    if (ob instanceof Entity)  {
+                        topEntity = (Entity) ob;
+                      }
+               
+                    }         
         
         if (topEntity == null) {
                 topEntity = TopParentEntity.createParentEntity(getDiagram());

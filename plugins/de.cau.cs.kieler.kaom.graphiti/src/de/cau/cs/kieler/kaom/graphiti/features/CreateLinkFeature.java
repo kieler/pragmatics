@@ -257,6 +257,9 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
         for (EObject obj : contents) {
             if (obj instanceof Entity) {
                 topEntity = (Entity) obj;
+                break;
+            }
+        }
                 
                 if (target instanceof Entity) {
                     Entity targetEntity = (Entity) target;
@@ -264,8 +267,7 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
                      if ((Entity) topEntity.eContainer() == null) {
                          topEntity.getChildLinks().add(newLink);
                           flag = true;
-                          break;
-                      }
+                    }
                   }
                 }
                 else if (target instanceof Port) {
@@ -274,7 +276,6 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
                       if ((Entity) topEntity.eContainer() == null) {
                        topEntity.getChildLinks().add(newLink);
                       flag = true;
-                          break;
                       }
                   }
                 }
@@ -284,57 +285,36 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
                       if ((Entity) topEntity.eContainer() == null) {
                       topEntity.getChildLinks().add(newLink);
                       flag = true;
-                          break;
                       }
                 }
                 
-            }
-           
-            }
-        }
+           }    
         
-        
-            if(flag == false)
-                for (EObject obj : contents) {
-                    if (obj instanceof Entity) {
-                        topEntity = (Entity) obj;
-                
-                
-                
+        Entity parentEntity;
+          
+        if(flag == false) {
+                            
                 if (source instanceof Entity) {
                     Entity sourceEntity = (Entity) source;
-                  if ((Entity) sourceEntity.eContainer() == (topEntity)) {
-                      topEntity.getChildLinks().add(newLink);
-                      break;
-                      }
+                    parentEntity=(Entity) sourceEntity.eContainer();
+                    parentEntity.getChildLinks().add(newLink);
+                 
                 }
                 else if (source instanceof Port) {
                     Port port = (Port) source;
-                  if ((Entity) port.eContainer() == (topEntity)) {
-                      topEntity.getChildLinks().add(newLink);
-                      break;
-                      }
+                    parentEntity=(Entity) port.eContainer();
+                    parentEntity.getChildLinks().add(newLink);
+                     
                 }
                 else {
                     Relation relation = (Relation) source;
-                  if ((Entity) relation.eContainer() == (topEntity)) {
-                      if ((Entity) topEntity.eContainer() == null) {
-                      topEntity.getChildLinks().add(newLink);
-                      break;
-                      }
+                    parentEntity=(Entity) relation.eContainer();
+                    parentEntity.getChildLinks().add(newLink);
+                      
                 }
-                    
-                
-                
-               
-            }
-        }
-       
-        }
+                 
+            }             
         
-        
-    }
-    
-    
-    
+        }
 }
+

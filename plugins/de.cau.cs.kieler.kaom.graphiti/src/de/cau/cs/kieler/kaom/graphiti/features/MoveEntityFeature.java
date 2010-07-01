@@ -13,12 +13,15 @@ import org.eclipse.graphiti.mm.datatypes.Point;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
+import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.FreeFormConnection;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
 
 import de.cau.cs.kieler.kaom.Entity;
+import de.cau.cs.kieler.kaom.Relation;
+import de.cau.cs.kieler.kaom.graphiti.util.TopParentEntity;
 
 public class MoveEntityFeature extends DefaultMoveShapeFeature {
 
@@ -30,6 +33,12 @@ public class MoveEntityFeature extends DefaultMoveShapeFeature {
     @Override
     public boolean canMoveShape(final IMoveShapeContext context) {
         boolean canMove = context.getSourceContainer() != null;
+        if (canMove 
+                && !(getBusinessObjectForPictogramElement(context.getTargetContainer()) 
+                    instanceof Relation)) {
+            canMove = true;
+    }
+            
         
      //   if(canMove)
      //   {
@@ -54,16 +63,27 @@ public class MoveEntityFeature extends DefaultMoveShapeFeature {
         Shape shapeToMove = context.getShape();
         ContainerShape oldContainerShape = context.getSourceContainer();
         ContainerShape newContainerShape = context.getTargetContainer();
-       
+        Entity oldParentEntity, newParentEntity;
         int x = context.getX();
         int y = context.getY();
 
         if (oldContainerShape != newContainerShape) {
                
-                Entity oldParentEntity = 
+            if (context.getSourceContainer() instanceof Diagram) {
+                oldParentEntity = TopParentEntity.parentEntity;   
+            }
+            else {
+               oldParentEntity = 
                     (Entity) getBusinessObjectForPictogramElement(oldContainerShape);
-                Entity newParentEntity = 
+            }
+               if (context.getTargetContainer() instanceof Diagram) {
+                  newParentEntity = TopParentEntity.parentEntity;
+               }
+              else {
+                  newParentEntity = 
                     (Entity) getBusinessObjectForPictogramElement(newContainerShape);
+              }
+                
                 Entity en = (Entity) getBusinessObjectForPictogramElement(shapeToMove);           
               
                 // remember selection, because it is lost when temporarily removing the shapes.
