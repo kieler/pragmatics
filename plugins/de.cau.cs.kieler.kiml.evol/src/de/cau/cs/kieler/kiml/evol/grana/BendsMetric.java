@@ -2,12 +2,12 @@
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
+ *
  * Copyright 2010 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- * 
+ *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
@@ -24,7 +24,7 @@ import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
 /**
  * Calculates a metric for the number of bends in the graph.
  * Does not care for hierarchies.
- * 
+ *
  * @author mri
  */
 public class BendsMetric implements IAnalysis {
@@ -40,10 +40,10 @@ public class BendsMetric implements IAnalysis {
         // count the number of edges and bend points
         int m = 0;
         int bends = 0;
-        for (KNode node : parentNode.getChildren()) {
-            for (KEdge edge : node.getOutgoingEdges()) {
+        for (final KNode node : parentNode.getChildren()) {
+            for (final KEdge edge : node.getOutgoingEdges()) {
                 ++m;
-                KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(edge);
+                final KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(edge);
                 bends += edgeLayout.getBendPoints().size();
             }
         }
@@ -53,12 +53,12 @@ public class BendsMetric implements IAnalysis {
         // normalize
         Float result;
         if (m + bends > 0) {
-            result = 1 - (float) bends / (float) (m + bends);
+            result = 1.0f - (float) bends / (float) (m + bends);
             System.out.println("bends: " + bends + " m: " + m);
         } else {
             result = 1.0f;
         }
-        
+
         return result;
     }
 
