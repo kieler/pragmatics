@@ -106,7 +106,8 @@ public class CubicSplineInterpolator implements ISplineInterpolator {
      */
     private BezierSpline calculateOpenBezierSpline(final KVector[] points) {
         return calculateOpenBezierSpline(points, KVector.sub(points[1], points[0]).normalize(),
-                KVector.sub(points[points.length - 2], points[points.length - 1]).normalize());
+                KVector.sub(points[points.length - 2], points[points.length - 1]).normalize(),
+                false);
     }
 
     /**
@@ -119,10 +120,13 @@ public class CubicSplineInterpolator implements ISplineInterpolator {
      *            vector describing into which direction to head out of the initial point
      * @param endTan
      *            vector describing direction to head into the final node
+     * @param tangentScale
+     *            if true, the tangent is scaled depending on the distance to the next ctr point, if
+     *            false the tangent is used as passed
      * @return piecewise bezier spline
      */
     private BezierSpline calculateOpenBezierSpline(final KVector[] points, final KVector startTan,
-            final KVector endTan) {
+            final KVector endTan, final boolean tangentScale) {
 
         // in this case the paper talks about n-1 points, therefore it's kind of inconsistent to the
         // closed approach
@@ -134,15 +138,17 @@ public class CubicSplineInterpolator implements ISplineInterpolator {
         KVector[] d = new KVector[n + 1];
 
         // set initial and final tangent vectors
-        double startScale = 0;
-        double endScale = 0;
-        if (points.length == 2) {
-            startScale = KVector.distance(points[0], points[1]) * TANGENT_SCALE;
-            endScale = startScale;
-        } else {
-            startScale = KVector.distance(points[0], points[1]) * TANGENT_SCALE;
-            endScale = KVector.distance(points[n - 1], points[n]) * TANGENT_SCALE;
-        }
+        double startScale = 1;
+        double endScale = 1;
+        if (tangentScale) {
+            if (points.length == 2) {
+                startScale = KVector.distance(points[0], points[1]) * TANGENT_SCALE;
+                endScale = startScale;
+            } else {
+                startScale = KVector.distance(points[0], points[1]) * TANGENT_SCALE;
+                endScale = KVector.distance(points[n - 1], points[n]) * TANGENT_SCALE;
+            }
+        } 
         d[0] = startTan.scaledCreate(startScale);
         d[n] = endTan.scaledCreate(endScale);
 
@@ -199,16 +205,16 @@ public class CubicSplineInterpolator implements ISplineInterpolator {
      * {@inheritDoc}
      */
     public BezierSpline interpolatePoints(final KVector[] points, final KVector startVec,
-            final KVector endVec) {
-        return calculateOpenBezierSpline(points, startVec, endVec);
+            final KVector endVec, final boolean tangendScale) {
+        return calculateOpenBezierSpline(points, startVec, endVec, tangendScale);
     }
 
     /**
      * {@inheritDoc}
      */
     public BezierSpline interpolatePoints(final LinkedList<KVector> points, final KVector startVec,
-            final KVector endVec) {
+            final KVector endVec, final boolean tangendScale) {
         return calculateOpenBezierSpline(points.toArray(new KVector[points.size()]), startVec,
-                endVec);
+                endVec, tangendScale);
     }
 }

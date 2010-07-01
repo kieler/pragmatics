@@ -40,9 +40,13 @@ public interface ISplineInterpolator {
      *            tangent vector specifying to head out of the first node
      * @param endVec
      *            tangent vector specifying to head into the last node
+     * @param tangentScale
+     *            if true, the tangent is scaled depending on the distance to the next ctr point, if
+     *            false the tangent is used as passed
      * @return piecewise bezierspline
      */
-    BezierSpline interpolatePoints(KVector[] points, KVector startVec, KVector endVec);
+    BezierSpline interpolatePoints(KVector[] points, KVector startVec, KVector endVec,
+            boolean tangentScale);
 
     /**
      * returns a piecewise bezierspline.
@@ -62,7 +66,11 @@ public interface ISplineInterpolator {
      *            tangent vector specifying to head out of the first node
      * @param endVec
      *            tangent vector specifying to head into the last node
+     * @param tangentScale
+     *            if true, the tangent is scaled depending on the distance to the next ctr point, if
+     *            false the tangent is used as passed
      * @return piecewise bezierspline
      */
-    BezierSpline interpolatePoints(LinkedList<KVector> points, KVector startVec, KVector endVec);
+    BezierSpline interpolatePoints(LinkedList<KVector> points, KVector startVec, KVector endVec,
+            boolean tangentScale);
 }
