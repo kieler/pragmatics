@@ -36,6 +36,7 @@ import de.cau.cs.kieler.kaom.graphiti.features.AddEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.AddLinkFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.AddPortFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.AddRelationFeature;
+import de.cau.cs.kieler.kaom.graphiti.features.ChangeColorEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.CopyEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.CreateEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.CreateLinkFeature;
@@ -139,10 +140,10 @@ public class FeatureProvider extends DefaultFeatureProvider {
     
     @Override
     public ICustomFeature[] getCustomFeatures(final ICustomContext context) {
-        return new ICustomFeature[] { new RenameEntityFeature(this) };
-
-    }
-    
+        return new ICustomFeature[] { new RenameEntityFeature(this) ,      
+               new ChangeColorEntityFeature(this, true),
+               new ChangeColorEntityFeature(this, false) };
+     }    
     @Override
     public IDirectEditingFeature getDirectEditingFeature(final IDirectEditingContext context)
     {
