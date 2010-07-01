@@ -66,6 +66,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="upperBound" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

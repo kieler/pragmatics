@@ -5,7 +5,7 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            class="de.cau.cs.kieler.kiml.evol.ui.TestView"
+            class="de.cau.cs.kieler.kiml.evol.ui.EvolView"
             icon="icons/gazelle.png"
             id="de.cau.cs.kieler.kiml.evol.wildlife"
             name="WildLife"
@@ -18,22 +18,28 @@
    <extension
          point="de.cau.cs.kieler.kiml.grana.analysisProviders">
       <analysisProvider
+            class="de.cau.cs.kieler.kiml.evol.grana.AreaMetric"
+            description="description"
+            id="de.cau.cs.kieler.kiml.evol.areaMetric"
+            name="Area Metric">
+      </analysisProvider>
+      <analysisProvider
             class="de.cau.cs.kieler.kiml.evol.grana.BendsMetric"
             description="description"
             id="de.cau.cs.kieler.kiml.evol.bendsMetric"
             name="Bends Metric">
       </analysisProvider>
       <analysisProvider
-            class="de.cau.cs.kieler.kiml.evol.grana.NarrownessMetric"
-            description="description"
-            id="de.cau.cs.kieler.kiml.evol.narrownessMetric"
-            name="Narrowness Metric">
-      </analysisProvider>
-      <analysisProvider
             class="de.cau.cs.kieler.kiml.evol.grana.FlatnessMetric"
             description="description"
             id="de.cau.cs.kieler.kiml.evol.flatnessMetric"
             name="Flatness Metric">
+      </analysisProvider>
+      <analysisProvider
+            class="de.cau.cs.kieler.kiml.evol.grana.NarrownessMetric"
+            description="description"
+            id="de.cau.cs.kieler.kiml.evol.narrownessMetric"
+            name="Narrowness Metric">
       </analysisProvider>
    </extension>
    <extension

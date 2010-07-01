@@ -19,10 +19,11 @@ import de.cau.cs.kieler.kiml.ILayoutListener;
 
 /**
  * A layout listener to get noticed when the layout is done.
- * 
+ *
  * @author bdu
- * 
+ * @deprecated
  */
+@Deprecated
 public abstract class LayoutListener implements ILayoutListener {
 
     /**

@@ -2,12 +2,12 @@
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
+ *
  * Copyright 2010 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- * 
+ *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
@@ -23,8 +23,8 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
+import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.evol.genetic.BooleanGene;
 import de.cau.cs.kieler.kiml.evol.genetic.EnumGene;
 import de.cau.cs.kieler.kiml.evol.genetic.FloatGene;
@@ -42,15 +42,15 @@ import de.cau.cs.kieler.kiml.ui.views.LayoutPropertySource;
 
 /**
  * Utility methods for Evolutionary Meta Layout.
- * 
+ *
  * @author bdu
- * 
+ *
  */
 public final class EvolUtil {
     /**
      * Create a population of the given size, taking initial values from the
      * given {@code LayoutPropertySource}.
-     * 
+     *
      * @param source
      *            where the initial data is taken from.
      * @param size
@@ -58,18 +58,18 @@ public final class EvolUtil {
      * @return population
      */
     public static Population createPopulation(final LayoutPropertySource source, final int size) {
-        Population result = new Population();
+        final Population result = new Population();
         for (int i = 0; i < size; i++) {
-            Genome genome = createGenome(source);
-            Individual ind = new Individual(genome, 0);
+            final Genome genome = createGenome(source);
+            final Individual ind = new Individual(genome, 0);
             result.add(ind);
         }
         return result;
     }
-    
+
     /**
      * Analyzes the given KGraph.
-     * 
+     *
      * @param showProgressBar
      *            indicates whether a progress bar shall be shown
      * @param parentNode
@@ -82,7 +82,8 @@ public final class EvolUtil {
             return 0;
         }
         final String[] metricIds =
-                new String[] { "de.cau.cs.kieler.kiml.evol.bendsMetric",
+                new String[] { "de.cau.cs.kieler.kiml.evol.areaMetric",
+                        "de.cau.cs.kieler.kiml.evol.bendsMetric",
                         "de.cau.cs.kieler.kiml.evol.flatnessMetric",
                         "de.cau.cs.kieler.kiml.evol.narrownessMetric" };
         final AnalysisServices as = AnalysisServices.getInstance();
@@ -94,26 +95,29 @@ public final class EvolUtil {
         final AbstractInfoAnalysis[] metrics =
                 metricsList.toArray(new AbstractInfoAnalysis[metricsList.size()]);
         // arbitrarily chosen coefficients
-        final double[] coeffs = new double[] { .4, .5, .1 };
+        final double[] coeffs = new double[] { .6, .1, .2, .1 };
         final Object[] results = DiagramAnalyser.analyse(parentNode, metrics, showProgressBar);
-        final double bendsResult = Double.parseDouble(results[0].toString()) * coeffs[0];
-        final double flatnessResult = Double.parseDouble(results[1].toString()) * coeffs[1];
-        final double narrownessResult = Double.parseDouble(results[2].toString()) * coeffs[2];
-        System.out.println(bendsResult + "  " + flatnessResult + "  " + narrownessResult);
-        final int newRating = (int) ((bendsResult + flatnessResult + narrownessResult) * 100);
+        final double areaResult = Double.parseDouble(results[0].toString()) * coeffs[0];
+        final double bendsResult = Double.parseDouble(results[1].toString()) * coeffs[1];
+        final double flatnessResult = Double.parseDouble(results[2].toString()) * coeffs[2];
+        final double narrownessResult = Double.parseDouble(results[3].toString()) * coeffs[3];
+        System.out.println(areaResult + "  " + bendsResult + "  " + flatnessResult + "  "
+                + narrownessResult);
+        final int newRating =
+                (int) ((areaResult + bendsResult + flatnessResult + narrownessResult) * 100);
         System.out.println("leaving measureDiagram");
         return newRating;
     }
-    
+
     /**
      * Count the learnable properties of the given list of IPropertyDescriptor.
-     * 
+     *
      * @return number of learnable properties
      */
     private static int countLearnableProperties(final List<IPropertyDescriptor> propertyDescriptors) {
         int result = 0;
-        for (IPropertyDescriptor p : propertyDescriptors) {
-            String id = (String) p.getId();
+        for (final IPropertyDescriptor p : propertyDescriptors) {
+            final String id = (String) p.getId();
             // check property descriptor id
             if (!LayoutOptions.LAYOUT_HINT.equals(id)) {
                 final LayoutOptionData layoutOptionData = LayoutServices.getInstance()
@@ -135,9 +139,9 @@ public final class EvolUtil {
         }
         return result;
     }
-    
+
     /**
-     * 
+     *
      * @param theId
      * @param theValue
      * @return
@@ -152,13 +156,13 @@ public final class EvolUtil {
         final double var;
         switch (type) {
         case BOOLEAN:
-            boolean booleanValue = (Integer.parseInt(theValue.toString()) == 1);
+            final boolean booleanValue = (Integer.parseInt(theValue.toString()) == 1);
             result = new BooleanGene(theId, booleanValue, theMutationProbability);
             System.out.println(result);
             break;
         case ENUM:
             final int choicesCount = layoutOptionData.getChoices().length;
-            Class<? extends Enum<?>> enumClass = LayoutOptions.getEnumClass(theId);
+            final Class<? extends Enum<?>> enumClass = LayoutOptions.getEnumClass(theId);
             Assert.isNotNull(enumClass);
             Assert.isTrue(enumClass.getEnumConstants().length == choicesCount);
             intValue = Integer.valueOf(theValue.toString());
@@ -195,10 +199,10 @@ public final class EvolUtil {
         }
         return result;
     }
-    
+
     /**
      * Create a genome from the given source.
-     * 
+     *
      * @param source
      * @return
      */
@@ -206,28 +210,28 @@ public final class EvolUtil {
         if (source == null) {
             return null;
         }
-        Genome result = new Genome(null);
+        final Genome result = new Genome(null);
         IGene<?> gene = null;
         // get data from property descriptors
-        IPropertyDescriptor[] propertyDescriptors = source.getPropertyDescriptors();
+        final IPropertyDescriptor[] propertyDescriptors = source.getPropertyDescriptors();
         // determine uniformly distributed mutation probability
         double uniformProb = 0.0;
-        int learnableCount = countLearnableProperties(Arrays.asList(propertyDescriptors));
+        final int learnableCount = countLearnableProperties(Arrays.asList(propertyDescriptors));
         if (learnableCount > 0) {
             uniformProb = 1.0 / learnableCount;
         }
-        for (IPropertyDescriptor p : propertyDescriptors) {
-            String id = (String) p.getId();
-            Object value = source.getPropertyValue(id);
+        for (final IPropertyDescriptor p : propertyDescriptors) {
+            final String id = (String) p.getId();
+            final Object value = source.getPropertyValue(id);
             // check property descriptor id
             if (LayoutOptions.LAYOUT_HINT.equals(id)) {
                 // layout hint --> not learnable
-                ILabelProvider labelProvider = p.getLabelProvider();
+                final ILabelProvider labelProvider = p.getLabelProvider();
                 String text;
-                if (value != null && labelProvider != null) {
+                if ((value != null) && (labelProvider != null)) {
                     try {
                         text = labelProvider.getText(value);
-                    } catch (ArrayIndexOutOfBoundsException e) {
+                    } catch (final ArrayIndexOutOfBoundsException e) {
                         text = "*** EXCEPTION";
                     }
                 } else {
@@ -246,7 +250,7 @@ public final class EvolUtil {
         Assert.isTrue(learnableCount == result.size());
         return result;
     }
-    
+
     /** Hidden constructor to avoid instantiation. **/
     private EvolUtil() {
         // nothing
