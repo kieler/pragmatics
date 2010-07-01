@@ -41,7 +41,7 @@ public final class AnalysisServices implements IBundleChangedListener {
 
     /** identifier of the extension point for analysis providers. */
     public static final String EXTP_ID_ANALYSIS_PROVIDERS =
-        "de.cau.cs.kieler.kiml.grana.analysisProviders";
+            "de.cau.cs.kieler.kiml.grana.analysisProviders";
     /** name of the 'analysisProvider' element in the 'analysis providers' extension point. */
     public static final String ELEMENT_ANALYSIS_PROVIDER = "analysisProvider";
     /** name of the 'analysisBundle' element in the 'analysis providers' extension point. */
@@ -68,19 +68,20 @@ public final class AnalysisServices implements IBundleChangedListener {
     /** the singleton instance. */
     private static AnalysisServices instance;
     /** the analysis categories. */
-    private final List<AnalysisCategory> categories = new LinkedList<AnalysisCategory>();
+    private final List<AnalysisCategory> categories =
+            new LinkedList<AnalysisCategory>();
     /** the analysis visualizers. */
     private final List<AbstractAnalysisResultVisualizer> visualizers =
-        new LinkedList<AbstractAnalysisResultVisualizer>();
+            new LinkedList<AbstractAnalysisResultVisualizer>();
     /** the category id mapped on the appropriate category. */
-    private final Map<String, AnalysisCategory> categoryIdMapping
-        = new HashMap<String, AnalysisCategory>();
+    private final Map<String, AnalysisCategory> categoryIdMapping =
+            new HashMap<String, AnalysisCategory>();
     /** the analysis id mapped on the appropriate analysis. */
     private final Map<String, AbstractInfoAnalysis> analysisIdMapping =
-           new HashMap<String, AbstractInfoAnalysis>();
+            new HashMap<String, AbstractInfoAnalysis>();
     /** the visualizer mapped on their priority. */
     private final Map<AbstractAnalysisResultVisualizer, Integer> visualizerPriorityMapping =
-        new HashMap<AbstractAnalysisResultVisualizer, Integer>();
+            new HashMap<AbstractAnalysisResultVisualizer, Integer>();
     /** the default category. */
     private AnalysisCategory defaultCategory = null;
 
@@ -126,12 +127,15 @@ public final class AnalysisServices implements IBundleChangedListener {
     private static void reportError(final String extensionPoint,
             final IConfigurationElement element, final String attribute,
             final Exception exception) {
-        String message = "Extension point " + extensionPoint
-                + ": Invalid entry in attribute '" + attribute
-                + "' of element " + element.getName() + ", contributed by "
-                + element.getContributor().getName();
-        IStatus status = new Status(IStatus.WARNING, GranaPlugin.PLUGIN_ID, 0,
-                message, exception);
+        String message =
+                "Extension point " + extensionPoint
+                        + ": Invalid entry in attribute '" + attribute
+                        + "' of element " + element.getName()
+                        + ", contributed by "
+                        + element.getContributor().getName();
+        IStatus status =
+                new Status(IStatus.WARNING, GranaPlugin.PLUGIN_ID, 0, message,
+                        exception);
         StatusManager.getManager().handle(status);
     }
 
@@ -140,19 +144,21 @@ public final class AnalysisServices implements IBundleChangedListener {
      * point.
      */
     private void loadAnalysisProviderExtension() {
-        IConfigurationElement[] extensions = Platform.getExtensionRegistry()
-                .getConfigurationElementsFor(EXTP_ID_ANALYSIS_PROVIDERS);
+        IConfigurationElement[] extensions =
+                Platform.getExtensionRegistry().getConfigurationElementsFor(
+                        EXTP_ID_ANALYSIS_PROVIDERS);
 
         // to sort the analyses into categories they have to be buffered first
-        List<AbstractInfoAnalysis> analyses = new LinkedList<AbstractInfoAnalysis>();
+        List<AbstractInfoAnalysis> analyses =
+                new LinkedList<AbstractInfoAnalysis>();
 
         for (IConfigurationElement element : extensions) {
             if (ELEMENT_ANALYSIS_CATEGORY.equals(element.getName())) {
                 // initialize a category from the extension point
                 String id = element.getAttribute(ATTRIBUTE_ID);
                 String name = element.getAttribute(ATTRIBUTE_NAME);
-                String description = element
-                        .getAttribute(ATTRIBUTE_DESCRIPTION);
+                String description =
+                        element.getAttribute(ATTRIBUTE_DESCRIPTION);
                 if (id == null || id.length() == 0) {
                     reportError(EXTP_ID_ANALYSIS_PROVIDERS, element,
                             ATTRIBUTE_ID, null);
@@ -163,8 +169,8 @@ public final class AnalysisServices implements IBundleChangedListener {
                     reportError(EXTP_ID_ANALYSIS_PROVIDERS, element,
                             ATTRIBUTE_DESCRIPTION, null);
                 } else {
-                    AnalysisCategory category = new AnalysisCategory(id, name,
-                            description);
+                    AnalysisCategory category =
+                            new AnalysisCategory(id, name, description);
                     categories.add(category);
                     categoryIdMapping.put(id, category);
                 }
@@ -172,15 +178,16 @@ public final class AnalysisServices implements IBundleChangedListener {
             } else if (ELEMENT_ANALYSIS_PROVIDER.equals(element.getName())) {
                 // initialize an analysis from the extension point
                 try {
-                    IAnalysis analysis = (IAnalysis) element
-                            .createExecutableExtension(ATTRIBUTE_CLASS);
+                    IAnalysis analysis =
+                            (IAnalysis) element
+                                    .createExecutableExtension(ATTRIBUTE_CLASS);
                     if (analysis != null) {
                         String id = element.getAttribute(ATTRIBUTE_ID);
                         String name = element.getAttribute(ATTRIBUTE_NAME);
-                        String description = element
-                                .getAttribute(ATTRIBUTE_DESCRIPTION);
-                        String category = element
-                                .getAttribute(ATTRIBUTE_CATEGORY);
+                        String description =
+                                element.getAttribute(ATTRIBUTE_DESCRIPTION);
+                        String category =
+                                element.getAttribute(ATTRIBUTE_CATEGORY);
                         if (id == null || id.length() == 0) {
                             reportError(EXTP_ID_ANALYSIS_PROVIDERS, element,
                                     ATTRIBUTE_ID, null);
@@ -194,8 +201,9 @@ public final class AnalysisServices implements IBundleChangedListener {
                             if (category == null || category.length() == 0) {
                                 category = DEFAULT_CATEGORY_ID;
                             }
-                            InfoAnalysis infoAnalysis = new InfoAnalysis(
-                                    analysis, id, name, description, category);
+                            InfoAnalysis infoAnalysis =
+                                    new InfoAnalysis(analysis, id, name,
+                                            description, category);
                             analyses.add(infoAnalysis);
                             analysisIdMapping.put(id, infoAnalysis);
                         }
@@ -207,12 +215,13 @@ public final class AnalysisServices implements IBundleChangedListener {
             } else if (ELEMENT_ANALYSIS_BUNDLE.equals(element.getName())) {
                 // initialize an analysis bundle from the extension point
                 try {
-                    AbstractAnalysisBundle analysisBundle = (AbstractAnalysisBundle) element
-                            .createExecutableExtension(ATTRIBUTE_CLASS);
+                    AbstractAnalysisBundle analysisBundle =
+                            (AbstractAnalysisBundle) element
+                                    .createExecutableExtension(ATTRIBUTE_CLASS);
                     if (analysisBundle != null) {
                         String name = element.getAttribute(ATTRIBUTE_NAME);
-                        String description = element
-                                .getAttribute(ATTRIBUTE_DESCRIPTION);
+                        String description =
+                                element.getAttribute(ATTRIBUTE_DESCRIPTION);
                         if (name == null) {
                             reportError(EXTP_ID_ANALYSIS_PROVIDERS, element,
                                     ATTRIBUTE_NAME, null);
@@ -232,14 +241,16 @@ public final class AnalysisServices implements IBundleChangedListener {
                     StatusManager.getManager().handle(exception,
                             GranaPlugin.PLUGIN_ID);
                 }
-            } else if (ELEMENT_ANALYSIS_RESULT_VISUALIZER.equals(element.getName())) {
-             // initialize a visualizer from the extension point
+            } else if (ELEMENT_ANALYSIS_RESULT_VISUALIZER.equals(element
+                    .getName())) {
+                // initialize a visualizer from the extension point
                 try {
                     AbstractAnalysisResultVisualizer visualizer =
-                        (AbstractAnalysisResultVisualizer) element
-                            .createExecutableExtension(ATTRIBUTE_CLASS);
+                            (AbstractAnalysisResultVisualizer) element
+                                    .createExecutableExtension(ATTRIBUTE_CLASS);
                     if (visualizer != null) {
-                        String priorityString = element.getAttribute(ATTRIBUTE_PRIORITY);
+                        String priorityString =
+                                element.getAttribute(ATTRIBUTE_PRIORITY);
                         int priority;
                         try {
                             priority = Integer.parseInt(priorityString);
@@ -261,8 +272,8 @@ public final class AnalysisServices implements IBundleChangedListener {
 
         // sort analyses into the categories
         for (AbstractInfoAnalysis analysis : analyses) {
-            AnalysisCategory category = categoryIdMapping.get(analysis
-                    .getCategory());
+            AnalysisCategory category =
+                    categoryIdMapping.get(analysis.getCategory());
             // if the category does not exists take default one
             if (category == null) {
                 category = defaultCategory;
@@ -274,7 +285,7 @@ public final class AnalysisServices implements IBundleChangedListener {
 
         // sort the categories
         Collections.sort(categories, new CategoryComparator());
-        
+
         // sort the visualizers
         Collections.sort(visualizers, new VisualizerComparator());
 
@@ -293,7 +304,7 @@ public final class AnalysisServices implements IBundleChangedListener {
     public List<AnalysisCategory> getCategories() {
         return categories;
     }
-    
+
     /**
      * Returns the visualizers.
      * 
@@ -302,27 +313,29 @@ public final class AnalysisServices implements IBundleChangedListener {
     public List<AbstractAnalysisResultVisualizer> getVisualizers() {
         return visualizers;
     }
-    
+
     /**
      * Returns the category specified by id or null if no such category exists.
      * 
-     * @param id the id
+     * @param id
+     *            the id
      * @return the category or null if it does not exist
      */
     public AnalysisCategory getCategoryById(final String id) {
         return categoryIdMapping.get(id);
     }
-    
+
     /**
      * Returns the analysis specified by id or null if no such analysis exists.
      * 
-     * @param id the id
+     * @param id
+     *            the id
      * @return the analysis or null if it does not exist
      */
     public AbstractInfoAnalysis getAnalysisById(final String id) {
         return analysisIdMapping.get(id);
     }
-    
+
     /**
      * Calls appropriate visualizers for the given result. Returns a string
      * containing html to display the result or null if no visualizer was found
@@ -352,8 +365,8 @@ public final class AnalysisServices implements IBundleChangedListener {
     public void analysisAdded(
             final AbstractAnalysisBundle abstractAnalysisBundle,
             final AbstractInfoAnalysis analysis) {
-        AnalysisCategory category = categoryIdMapping.get(analysis
-                .getCategory());
+        AnalysisCategory category =
+                categoryIdMapping.get(analysis.getCategory());
         // if the category does not exist take default one
         if (category == null) {
             category = defaultCategory;
@@ -369,8 +382,8 @@ public final class AnalysisServices implements IBundleChangedListener {
     public void analysisRemoved(
             final AbstractAnalysisBundle abstractAnalysisBundle,
             final AbstractInfoAnalysis analysis) {
-        AnalysisCategory suppliedCategory = categoryIdMapping.get(analysis
-                .getCategory());
+        AnalysisCategory suppliedCategory =
+                categoryIdMapping.get(analysis.getCategory());
         // if the category does not exists take default one
         if (suppliedCategory == null) {
             suppliedCategory = defaultCategory;
@@ -429,7 +442,7 @@ public final class AnalysisServices implements IBundleChangedListener {
         }
 
     }
-    
+
     /**
      * Helper class for comparing visualizers.
      */
@@ -446,7 +459,7 @@ public final class AnalysisServices implements IBundleChangedListener {
         }
 
     }
-    
+
     /**
      * This class is a wrapper for analyses to attach additional informations
      * received through the extension point.
@@ -455,16 +468,16 @@ public final class AnalysisServices implements IBundleChangedListener {
 
         /** the wrapped analysis. */
         private final IAnalysis wrappedAnalysis;
-        
+
         /** the analysis id. */
         private final String analysisId;
-        
+
         /** the analysis name. */
         private final String analysisName;
-        
+
         /** the analysis description. */
         private final String analysisDescription;
-        
+
         /** the analysis category. */
         private final String analysisCategory;
 
@@ -483,7 +496,8 @@ public final class AnalysisServices implements IBundleChangedListener {
          *            the analysis category
          */
         public InfoAnalysis(final IAnalysis analysis, final String id,
-                final String name, final String description, final String category) {
+                final String name, final String description,
+                final String category) {
             wrappedAnalysis = analysis;
             analysisId = id;
             analysisName = name;
