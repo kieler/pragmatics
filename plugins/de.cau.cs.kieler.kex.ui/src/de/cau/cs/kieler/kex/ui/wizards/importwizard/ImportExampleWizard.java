@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 
 import de.cau.cs.kieler.kex.controller.ExampleManager;
@@ -16,11 +17,15 @@ public class ImportExampleWizard extends Wizard implements IWizard {
 
 	private final IStructuredSelection selection;
 
+	private boolean containsPreAndNextButtons;
+
 	public ImportExampleWizard(IStructuredSelection selection) {
 		super();
 		this.selection = selection;
 		setNeedsProgressMonitor(true);
 		setWindowTitle("Kieler Example Management");
+		containsPreAndNextButtons = false;
+
 		// show();
 	}
 
@@ -29,6 +34,11 @@ public class ImportExampleWizard extends Wizard implements IWizard {
 		// ExampleManager.get().
 
 		return true;
+	}
+
+	@Override
+	public boolean needsPreviousAndNextButtons() {
+		return containsPreAndNextButtons;
 	}
 
 	@Override
@@ -61,6 +71,12 @@ public class ImportExampleWizard extends Wizard implements IWizard {
 			}
 		}
 		// TODO: Errors ueber den Statusmanager verteilen
+	}
+
+	@Override
+	public IWizardPage getNextPage(IWizardPage page) {
+		containsPreAndNextButtons = page.getName().equals("overviewPage");
+		return super.getNextPage(page);
 	}
 
 }
