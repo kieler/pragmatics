@@ -26,9 +26,6 @@ import java.util.List;
  */
 public class BezierSpline {
 
-    // CHECKSTYLEOFF VisibilityModifier
-    // CHECKSTYLEOFF MagicNumber
-
     /**
      * internal storage for all pieces, use LinkedList, as there usually is added an arbitrary
      * number of piecewise curves to the end.
@@ -116,7 +113,10 @@ public class BezierSpline {
             return new KVector[0];
         }
 
+        // we are sure about this size
+        // CHECKSTYLEOFF Magic Numbers
         int size = (curves.size() * 3) - 1;
+        // CHECKSTYLEON Magic Numbers
         KVector[] points = new KVector[size];
 
         int i = 0;
@@ -145,8 +145,8 @@ public class BezierSpline {
     }
 
     /**
-     * returns just the base points, including start and end point.
-     * those are the points REALLY lying on the curve.
+     * returns just the base points, including start and end point. those are the points REALLY
+     * lying on the curve.
      * 
      * @return base points
      */
@@ -223,6 +223,8 @@ public class BezierSpline {
      */
     public class BezierCurve {
 
+        // for easier handling.
+        // CHECKSTYLEOFF VisibilityModifier
         /**
          * start point.
          */
@@ -240,6 +242,7 @@ public class BezierSpline {
          */
         public KVector end;
 
+        // CHECKSTYLEON VisibilityModifier
         /**
          * .
          * 
@@ -266,7 +269,10 @@ public class BezierSpline {
          * @return list with points as {@code KVector}
          */
         public List<KVector> asVectorList() {
+            // we are sure about this size
+            // CHECKSTYLEOFF Magic Numbers
             ArrayList<KVector> list = new ArrayList<KVector>(4);
+            // CHECKSTYLEON Magic Numbers
             list.add(start);
             list.add(fstControlPnt);
             list.add(sndControlPnt);

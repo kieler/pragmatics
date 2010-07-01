@@ -26,8 +26,10 @@ public class KVector {
     public double x;
     /** y coordinate. */
     public double y;
-
     // CHECKSTYLEON VisibilityModifier
+
+    /** one full turn in a circle. */
+    private static final double FULL_CIRCLE = 360;
 
     /**
      * Create vector with default coordinates (0,0).
@@ -59,6 +61,22 @@ public class KVector {
     public KVector(final KVector v) {
         this.x = v.x;
         this.y = v.y;
+    }
+
+    /**
+     * Creates a normalized vector for the passed angle in degree.
+     * 
+     * @param alpha
+     *            angle in [0, 360)
+     */
+    public KVector(final double alpha) {
+        if (alpha < 0 || alpha >= FULL_CIRCLE) {
+            throw new IllegalArgumentException(
+                    "Value for angle has to be within [0, 360)! Given Value: " + alpha);
+        }
+
+        this.x = Math.sin(Math.toRadians(alpha));
+        this.y = Math.cos(Math.toRadians(alpha));
     }
 
     /**
@@ -236,6 +254,28 @@ public class KVector {
         this.x = -this.x;
         this.y = -this.y;
         return this;
+    }
+
+    /**
+     * Returns degree representation of this vector in degree.
+     * 
+     * @return value within [0,360)
+     */
+    public double toDegrees() {
+        KVector temp = this.clone();
+        temp.normalize();
+        double sin = Math.toDegrees(Math.asin(temp.x));
+        double cos = Math.toDegrees(Math.acos(temp.y));
+
+        if (y < 0 && x < 0) {
+            return (FULL_CIRCLE / 2) - sin;
+        } else if (y < 0) {
+            return cos;
+        } else if (x < 0) {
+            return FULL_CIRCLE + sin;
+        } else {
+            return cos;
+        }
     }
 
     /**
