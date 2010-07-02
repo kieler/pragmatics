@@ -110,6 +110,8 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
         getMonitor().begin("Edge routing", 1);
         System.out.println("routeEdges()");
 
+        boxCalculator.initialize(layeredGraph, debugCanvas);
+
         // contains nodes from which long edges are starting
         LinkedList<LEdge> longEdges = new LinkedList<LEdge>();
         LinkedList<LongEdge> realLongEdges = new LinkedList<LongEdge>();
@@ -120,15 +122,18 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
                 node.getPos().x = xpos;
+                boxCalculator.addNode(node);
                 // filter out start points of long edges
                 if (node.getProperty(Properties.NODE_TYPE) != Properties.NodeType.LONG_EDGE) {
                     for (LPort port : node.getPorts(PortType.OUTPUT)) {
                         for (LEdge edge : port.getEdges()) {
                             if (edge.getTarget().getNode().getProperty(Properties.NODE_TYPE) == Properties.NodeType.LONG_EDGE) {
                                 longEdges.add(edge);
+
                                 realLongEdges.add(new LongEdge(edge));
                             } else {
                                 shortEdges.add(edge);
+                                boxCalculator.addEdge(edge);
                             }
                         }
                     }
@@ -143,63 +148,71 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
         }
         layeredGraph.getSize().x = xpos - spacing;
 
-        boxCalculator.initialize(layeredGraph, debugCanvas);
-
         // handle short edges
         for (LEdge edge : shortEdges) {
-            // if (getMonitor().isCanceled()) {
-            // break;
-            // }
-            // LPort start = edge.getSource();
-            // LNode startNode = start.getNode();
-            // LPort end = edge.getTarget();
-            // LNode endNode = end.getNode();
-            //
-            // KVector startVec = new KVector(startNode.getPos().x + start.getPos().x, startNode
-            // .getPos().y
-            // + start.getPos().y);
-            // KVector endVec = new KVector(endNode.getPos().x + end.getPos().x, endNode.getPos().y
-            // + end.getPos().y);
-            //
-            // // it is enough to check one vector, as the angle at the other node is the same
-            // KVector startToEnd = KVector.sub(endVec, startVec);
-            // // System.out.println(startToEnd);
-            // double degrees = startToEnd.toDegrees();
-            // //System.out.println(startToEnd.toDegrees());
-            //
-            // int border = LayeredLayoutProvider.MINIMAL_EDGE_ANGLE;
-            //
-            // boolean topDown = (startVec.y < endVec.y);
-            //
-            // if ((degrees < border || degrees > 180 - border)) {
-            // LinkedList<KVector> pts = new LinkedList<KVector>();
-            // pts.add(startVec);
-            // pts.add(endVec);
-            //
-            // // double heigthdiff = Math.abs(startVec.y - endVec.y);
-            // double widthdiff = Math.abs(startVec.x - endVec.x);
-            //                
-            // // double foo = heigthdiff / widthdiff / 6;
-            //    
-            // // border *= 2;
-            //                
-            // // KVector startTan = new KVector(((topDown) ? border : 180 - border)).scale(1.5);
-            // // KVector endTan = new KVector(((topDown) ? border : 180 - border)).scale(1.5);
-            //
-            // KVector startTan = new KVector(widthdiff ,0);
-            // KVector endTan = new KVector(widthdiff ,0);
-            // ISplineInterpolator splineInterp = new CubicSplineInterpolator();
-            // BezierSpline spline = splineInterp.interpolatePoints(pts, startTan, endTan, false);
-            // for (KVector v : spline.getInnerPoints()) {
-            // edge.getBendPoints().add(new Coord((float) v.x, (float) v.y));
-            // }
-            // }
+            if (getMonitor().isCanceled()) {
+                break;
+            }
+            LPort start = edge.getSource();
+            LNode startNode = start.getNode();
+            LPort end = edge.getTarget();
+            LNode endNode = end.getNode();
+
+            KVector startVec = new KVector(startNode.getPos().x + start.getPos().x, startNode
+                    .getPos().y
+                    + start.getPos().y);
+            KVector endVec = new KVector(endNode.getPos().x + end.getPos().x, endNode.getPos().y
+                    + end.getPos().y);
+
+            // it is enough to check one vector, as the angle at the other node is the same
+            KVector startToEnd = KVector.sub(endVec, startVec);
+            // System.out.println(startToEnd);
+            double degrees = startToEnd.toDegrees();
+            // System.out.println(startToEnd.toDegrees());
+
+            int border = LayeredLayoutProvider.MINIMAL_EDGE_ANGLE;
+
+            boolean topDown = (startVec.y < endVec.y);
+
+            if ((degrees < border || degrees > 180 - border)) {
+                LinkedList<KVector> pts = new LinkedList<KVector>();
+                pts.add(startVec);
+                pts.add(endVec);
+
+                // double heigthdiff = Math.abs(startVec.y - endVec.y);
+                double widthdiff = Math.abs(startVec.x - endVec.x);
+
+                // double foo = heigthdiff / widthdiff / 6;
+
+                // border *= 2;
+
+                // KVector startTan = new KVector(((topDown) ? border : 180 - border)).scale(1.5);
+                // KVector endTan = new KVector(((topDown) ? border : 180 - border)).scale(1.5);
+
+                KVector startTan = new KVector(widthdiff, 0);
+                KVector endTan = new KVector(widthdiff, 0);
+                ISplineInterpolator splineInterp = new CubicSplineInterpolator();
+                BezierSpline spline = splineInterp.interpolatePoints(pts, startTan, endTan, false);
+                for (KVector v : spline.getInnerPoints()) {
+                    edge.getBendPoints().add(new Coord((float) v.x, (float) v.y));
+                }
+                boxCalculator.addEdge(spline);
+            }
 
         }
 
         double cumBoxTime = 0;
         double cumSplineTime = 0;
         int counter = 0;
+
+        // sort the long edges
+        for (LongEdge longEdge : realLongEdges) {
+            if (getMonitor().isCanceled()) {
+                break;
+            }
+
+        }
+
         // handle every long edge
         for (LongEdge longEdge : realLongEdges) {
             if (getMonitor().isCanceled()) {

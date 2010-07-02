@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import de.cau.cs.kieler.core.math.BezierSpline;
 import de.cau.cs.kieler.kiml.ui.util.DebugCanvas;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
+import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 
 /**
@@ -27,6 +28,24 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * @author uru
  */
 public interface IBoxCalculator {
+
+    /**
+     * initialize the box calculator for a given graph.
+     * 
+     * @param graph
+     *            the graph to operate on
+     */
+    void initialize(final LayeredGraph graph);
+
+    /**
+     * initialize the box calculator for a given graph.
+     * 
+     * @param graph
+     *            the graph to operate on
+     * @param debugCanvas
+     *            the canvas to debug, may be null
+     */
+    void initialize(final LayeredGraph graph, final DebugCanvas debugCanvas);
 
     /**
      * compute a box array for a given edge. compute_bboxes computes the space actually taken up by
@@ -70,20 +89,11 @@ public interface IBoxCalculator {
     boolean addEdge(final LEdge edge);
 
     /**
-     * initialize the box calculator for a given graph.
+     * Add a node to the box calculator.
      * 
-     * @param graph
-     *            the graph to operate on
-     * @param debugCanvas
-     *            the canvas to debug, may be null
+     * @param node
+     *            the LNode to add
      */
-    void initialize(final LayeredGraph graph, final DebugCanvas debugCanvas);
+    void addNode(final LNode node);
 
-    /**
-     * initialize the box calculator for a given graph.
-     * 
-     * @param graph
-     *            the graph to operate on
-     */
-    void initialize(final LayeredGraph graph);
 }
