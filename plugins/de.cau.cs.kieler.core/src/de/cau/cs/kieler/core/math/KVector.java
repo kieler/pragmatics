@@ -28,8 +28,8 @@ public class KVector {
     public double y;
     // CHECKSTYLEON VisibilityModifier
 
-    /** one full turn in a circle. */
-    private static final double FULL_CIRCLE = 360;
+    /** one full turn in a circle in degrees (360°). */
+    public static final double FULL_CIRCLE = 360;
 
     /**
      * Create vector with default coordinates (0,0).
