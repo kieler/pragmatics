@@ -110,7 +110,7 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
         getMonitor().begin("Edge routing", 1);
         System.out.println("routeEdges()");
 
-        boxCalculator.initialize(layeredGraph, debugCanvas);
+
 
         // contains nodes from which long edges are starting
         LinkedList<LEdge> longEdges = new LinkedList<LEdge>();
@@ -122,7 +122,6 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
                 node.getPos().x = xpos;
-                boxCalculator.addNode(node);
                 // filter out start points of long edges
                 if (node.getProperty(Properties.NODE_TYPE) != Properties.NodeType.LONG_EDGE) {
                     for (LPort port : node.getPorts(PortType.OUTPUT)) {
@@ -133,7 +132,6 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
                                 realLongEdges.add(new LongEdge(edge));
                             } else {
                                 shortEdges.add(edge);
-                                boxCalculator.addEdge(edge);
                             }
                         }
                     }
@@ -148,6 +146,8 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
         }
         layeredGraph.getSize().x = xpos - spacing;
 
+        boxCalculator.initialize(layeredGraph, debugCanvas);
+        
         // handle short edges
         for (LEdge edge : shortEdges) {
 //            if (getMonitor().isCanceled()) {

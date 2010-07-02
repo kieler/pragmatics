@@ -28,8 +28,10 @@ import de.cau.cs.kieler.kiml.ui.util.DebugCanvas;
 import de.cau.cs.kieler.klay.layered.LayeredLayoutProvider;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
+import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
+import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.modules.IBoxCalculator;
 
@@ -193,6 +195,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
 
         // wander along the edge
         do {
+
             double targetx = currentTarget.getPos().x + currentTarget.getNode().getPos().x;
 
             // only take care of edges that can hit us
@@ -221,7 +224,24 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
             // clear ignored Edges for every new node->nextNode segment
             ignoredEdges.clear();
 
+            drawOnDebug(new Line2D.Double((currentSource.getNode().getPos().x + currentSource
+                    .getPos().x), (currentSource.getNode().getPos().y + currentSource.getPos().y),
+                    (currentTarget.getNode().getPos().x + currentTarget.getPos().x), (currentTarget
+                            .getNode().getPos().y + currentTarget.getPos().y)),
+                    DebugCanvas.Color.YELLOW, false);
+
+            if (currentTarget.getNode().getProperty(Properties.NODE_TYPE) == Properties.NodeType.LONG_EDGE) {
+                drawOnDebug(new Ellipse2D.Float((currentTarget.getNode().getPos().x + currentTarget
+                        .getPos().x - DUMMY_NODE_DEBUG_SIZE / 2),
+                        (currentTarget.getNode().getPos().y + currentTarget.getPos().y - DUMMY_NODE_DEBUG_SIZE / 2),
+                        DUMMY_NODE_DEBUG_SIZE, DUMMY_NODE_DEBUG_SIZE), DebugCanvas.Color.CYAN, true);
+                
+            }
+
             while (reachedx < targetx) {
+//                if (currentTarget.getNode().id == 10) {
+//                    System.out.println("nice");
+//                }
 
                 // when there won't fit two boxes anymore, enlarge current box to be the last one
                 double newBoxWidth = (targetx - reachedx < 2 * defaultboxwidth) ? targetx
@@ -240,7 +260,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                     newHighY = tmp;
                 }
 
-                // put box above center of direct line
+                // put box on center of direct line
                 if (Math.abs(newHighY - newLowY) < minBoxHeight) {
                     double diff = (minBoxHeight - Math.abs(newHighY - newLowY)) / 2;
                     newLowY -= diff;
@@ -298,47 +318,45 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                     newBox.y = 0;
                 }
 
+                drawOnDebug(newBox.clone(), DebugCanvas.Color.GRAY, false);
+
                 // enlarge two boxes independently from each other, one to the top, one to the
                 // bottom
-                Rectangle2D.Double tempBox = new Rectangle2D.Double(reachedx, Math.max(0, newBox.y
-                        + newBox.height), newBoxWidth, newBoxHeight);
-                drawOnDebug(tempBox.clone(), DebugCanvas.Color.ORANGE, true);
+//                Rectangle2D.Double tempBox = new Rectangle2D.Double(reachedx, Math.max(0, newBox.y
+//                        + newBox.height), newBoxWidth, newBoxHeight);
+//                drawOnDebug(tempBox.clone(), DebugCanvas.Color.ORANGE, true);
 
                 // remember on which lines we were starting
-                ignoredEdges.addAll(allIntersectingLines(tempBox, edges));
+                ignoredEdges.addAll(allIntersectingLines(newBox, edges));
 
-                for (Line2D.Double oneEdge : ignoredEdges) {
-                    drawOnDebug(new Line2D.Double(layeredGraph.getSize().x,
-                            layeredGraph.getSize().y, oneEdge.x1 + ((oneEdge.x2 - oneEdge.x1) / 2),
-                            oneEdge.y1 + ((oneEdge.y2 - oneEdge.y1) / 2)), DebugCanvas.Color.RED,
-                            false);
-                }
+                // for (Line2D.Double oneEdge : ignoredEdges) {
+                // drawOnDebug(new Line2D.Double(layeredGraph.getSize().x,
+                // layeredGraph.getSize().y, oneEdge.x1 + ((oneEdge.x2 - oneEdge.x1) / 2),
+                // oneEdge.y1 + ((oneEdge.y2 - oneEdge.y1) / 2)), DebugCanvas.Color.RED,
+                // false);
+                // }
 
                 // enlarge boxes from bottom to top
-                runagainst = intersectsWithAny(tempBox, ignoredEdges, edges, nodes);
-                while (tempBox.y + tempBox.height < layeredGraph.getSize().y && runagainst == null) {
-                    tempBox.height += BOX_RESIZE_STEPSIZE;
-                    runagainst = intersectsWithAny(tempBox, ignoredEdges, edges, nodes);
+                runagainst = intersectsWithAny(newBox, ignoredEdges, edges, nodes);
+                while (newBox.y + newBox.height < layeredGraph.getSize().y && runagainst == null) {
+                    newBox.height += BOX_RESIZE_STEPSIZE;
+                    runagainst = intersectsWithAny(newBox, ignoredEdges, edges, nodes);
                 }
 
                 if (runagainst != null) {
                     // show bad boy
                     drawOnDebug(runagainst, DebugCanvas.Color.RED, true);
                     if (runagainst instanceof Rectangle2D) {
-                        tempBox = floorBox(tempBox, (Rectangle2D.Double) runagainst);
+                        newBox = floorBox(newBox, (Rectangle2D.Double) runagainst);
                     } else { // run against a another edge
                         // one step back
-                        tempBox.height -= 2 * BOX_RESIZE_STEPSIZE;
+                        newBox.height -= 2 * BOX_RESIZE_STEPSIZE;
                     }
                 } else {
-                    tempBox.height = layeredGraph.getSize().y - tempBox.y;                    
+                    newBox.height = layeredGraph.getSize().y - newBox.y;
                 }
 
-                drawOnDebug(tempBox, DebugCanvas.Color.GRAY, false);
-
-                // for debug turn this off to see box positions better
-                newBox.height = Math.max(newBox.height, Math.abs((tempBox.y + tempBox.height)
-                        - newBox.y));
+                drawOnDebug(newBox, DebugCanvas.Color.ORANGE, false);
 
                 // ensure that the new box is intersecting the previous box
                 if (prevBox != null) {
@@ -383,15 +401,6 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                 // and draw the new box
                 drawOnDebug(newBox, DebugCanvas.Color.BLUE, false);
             }
-            drawOnDebug(new Line2D.Double((currentSource.getNode().getPos().x + currentSource
-                    .getPos().x), (currentSource.getNode().getPos().y + currentSource.getPos().y),
-                    (currentTarget.getNode().getPos().x + currentTarget.getPos().x), (currentTarget
-                            .getNode().getPos().y + currentTarget.getPos().y)),
-                    DebugCanvas.Color.YELLOW, false);
-
-            drawOnDebug(new Ellipse2D.Float((currentTarget.getNode().getPos().x + currentTarget
-                    .getPos().x), (currentTarget.getNode().getPos().y + currentTarget.getPos().y),
-                    DUMMY_NODE_DEBUG_SIZE, DUMMY_NODE_DEBUG_SIZE), DebugCanvas.Color.CYAN, true);
 
             currentSource = currentTarget;
             for (LPort iterPort : currentTarget.getNode().getPorts(PortType.OUTPUT)) {
@@ -542,6 +551,22 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
         this.layeredGraph = lg;
         allEdges = new LinkedList<Line2D.Double>();
         allNodes = new LinkedList<Rectangle2D.Double>();
+
+        for (Layer layer : layeredGraph.getLayers()) {
+            for (LNode node : layer.getNodes()) {
+                addNode(node);
+                // filter out start points of long edges
+                if (node.getProperty(Properties.NODE_TYPE) != Properties.NodeType.LONG_EDGE) {
+                    for (LPort port : node.getPorts(PortType.OUTPUT)) {
+                        for (LEdge edge : port.getEdges()) {
+
+                            addEdge(edge);
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
 }
