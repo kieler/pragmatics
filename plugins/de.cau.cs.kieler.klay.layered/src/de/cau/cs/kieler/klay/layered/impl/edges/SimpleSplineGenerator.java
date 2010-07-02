@@ -47,7 +47,7 @@ public class SimpleSplineGenerator extends AbstractAlgorithm implements ISplineG
      * how long may the distance between the fst/snd ctr point and the start/end point be,
      * considering the distance between start and end.
      */
-    private static final int MAX_DISTANCE = 2;
+    private static final double MAX_DISTANCE = 0.75d;
 
     /**
      * {@inheritDoc}
@@ -64,7 +64,9 @@ public class SimpleSplineGenerator extends AbstractAlgorithm implements ISplineG
 
         // as the generated spline can contain loops etc, we try to remove those, by adjusting the
         // control points
-        removeFunnyCycles(spline);
+        if (pArray.size() > 2) {
+            removeFunnyCycles(spline);
+        }
 
         return spline;
     }
@@ -84,7 +86,7 @@ public class SimpleSplineGenerator extends AbstractAlgorithm implements ISplineG
             double distFst = KVector.distance(curve.start, curve.fstControlPnt);
             double distSnd = KVector.distance(curve.end, curve.sndControlPnt);
             // scale fst ctr point and therefore snd of next curve
-            if (distFst > dist / MAX_DISTANCE) {
+            if (distFst > dist * MAX_DISTANCE) {
                 KVector v = KVector.sub(curve.fstControlPnt, curve.start);
                 v.scaleToLength(dist * SMOOTHNESS_FACTOR);
                 curve.fstControlPnt = KVector.add(curve.start, v);
@@ -101,7 +103,7 @@ public class SimpleSplineGenerator extends AbstractAlgorithm implements ISplineG
                 }
             }
             // scale snd ctr point and therefore first of next curve
-            if (distSnd > dist / MAX_DISTANCE) {
+            if (distSnd > dist * MAX_DISTANCE) {
                 KVector v = KVector.sub(curve.sndControlPnt, curve.end);
                 v.scaleToLength(dist * SMOOTHNESS_FACTOR);
                 curve.sndControlPnt = KVector.add(curve.end, v);
@@ -121,6 +123,21 @@ public class SimpleSplineGenerator extends AbstractAlgorithm implements ISplineG
      */
     public BezierSpline generateSpline(final LinkedList<KVector> pArray) {
         return generateSpline(pArray, null, null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public BezierSpline generateShortSpline(final KVector q, final KVector s) {
+
+        // we choose width difference as distance for ctr points, as it showed good results.
+        double widthdiff = Math.abs(q.x - s.x);
+        KVector startTan = new KVector(widthdiff, 0);
+        KVector endTan = new KVector(widthdiff, 0);
+
+        BezierSpline spline = interp.interpolatePoints(new KVector[] { q, s }, startTan, endTan,
+                false);
+        return spline;
     }
 
     /**

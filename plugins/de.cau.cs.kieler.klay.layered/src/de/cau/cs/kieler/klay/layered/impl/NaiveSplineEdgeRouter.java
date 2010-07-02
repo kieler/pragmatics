@@ -19,8 +19,6 @@ import java.util.List;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.BezierSpline;
-import de.cau.cs.kieler.core.math.CubicSplineInterpolator;
-import de.cau.cs.kieler.core.math.ISplineInterpolator;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.LayeredLayoutProvider;
@@ -34,8 +32,10 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.impl.edges.LongEdge;
 import de.cau.cs.kieler.klay.layered.impl.edges.SimpleLabelPlacer;
+import de.cau.cs.kieler.klay.layered.impl.edges.SimpleSplineGenerator;
 import de.cau.cs.kieler.klay.layered.modules.IEdgeRouter;
 import de.cau.cs.kieler.klay.layered.modules.ILabelPlacer;
+import de.cau.cs.kieler.klay.layered.modules.ISplineGenerator;
 
 /**
  * Implements a naive way of routing the edges with splines. Uses the dummy nodes as reference
@@ -50,8 +50,8 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
     /** minimal spacing between objects. */
     private float spacing = LayeredLayoutProvider.DEF_SPACING;
 
-    /** spline interpolator. */
-    private ISplineInterpolator splineInterp = new CubicSplineInterpolator();
+    /** spline generator. */
+    private ISplineGenerator splineGen = new SimpleSplineGenerator();
 
     /** label placer. */
     private ILabelPlacer labelPlacer = new SimpleLabelPlacer();
@@ -88,7 +88,8 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
                 if (node.getProperty(Properties.NODE_TYPE) != Properties.NodeType.LONG_EDGE) {
                     for (LPort port : node.getPorts(PortType.OUTPUT)) {
                         for (LEdge edge : port.getEdges()) {
-                            if (edge.getTarget().getNode().getProperty(Properties.NODE_TYPE) == Properties.NodeType.LONG_EDGE) {
+                            if (edge.getTarget().getNode().getProperty(Properties.NODE_TYPE) 
+                                    == Properties.NodeType.LONG_EDGE) {
                                 longEdges.add(edge);
                                 realLongEdges.add(new LongEdge(edge));
                             } else {
@@ -107,15 +108,15 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
         }
         layeredGraph.getSize().x = xpos - spacing;
 
-        int border = LayeredLayoutProvider.MINIMAL_EDGE_ANGLE;
-        if (border != 0) {
-            // handle short edges
+        // get user defined minimal angle for straigt edges heading in and out nodes.
+        int minimalAngle = LayeredLayoutProvider.MINIMAL_EDGE_ANGLE;
+        // check all short edges
+        if (minimalAngle != 0) {
             for (LEdge edge : shortEdges) {
                 LPort start = edge.getSource();
                 LNode startNode = start.getNode();
                 LPort end = edge.getTarget();
                 LNode endNode = end.getNode();
-
                 KVector startVec = new KVector(startNode.getPos().x + start.getPos().x, startNode
                         .getPos().y
                         + start.getPos().y);
@@ -124,22 +125,11 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
 
                 // it is enough to check one vector, as the angle at the other node is the same
                 KVector startToEnd = KVector.sub(endVec, startVec);
-                // System.out.println(startToEnd);
                 double degrees = startToEnd.toDegrees();
 
-                boolean topDown = (startVec.y < endVec.y);
-
-                if ((degrees < border || degrees > 180 - border)) {
-                    LinkedList<KVector> pts = new LinkedList<KVector>();
-                    pts.add(startVec);
-                    pts.add(endVec);
-
-                    double widthdiff = Math.abs(startVec.x - endVec.x);
-                    KVector startTan = new KVector(widthdiff, 0);
-                    KVector endTan = new KVector(widthdiff, 0);
-
-                    BezierSpline spline = splineInterp.interpolatePoints(pts, startTan, endTan,
-                            false);
+                // if the minimalAngle criteria is not met, create a short spline
+                if ((degrees < minimalAngle || degrees > (KVector.FULL_CIRCLE / 2) - minimalAngle)) {
+                    BezierSpline spline = splineGen.generateShortSpline(startVec, endVec);
                     for (KVector v : spline.getInnerPoints()) {
                         if (getMonitor().isCanceled()) {
                             break;
@@ -158,9 +148,8 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
             KVector startAngle = longEdge.getStartTangent();
             KVector endAngle = longEdge.getEndTangent().negate();
 
-            BezierSpline spline = splineInterp.interpolatePoints(longEdge.getPoints(), startAngle,
-                    endAngle, true);
-
+            BezierSpline spline = splineGen.generateSpline(longEdge.getPoints(), startAngle,
+                    endAngle);
             // apply optimizations for NaiveApproach
             spline = optimizeSpline(spline);
 
@@ -175,6 +164,7 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
             }
 
         }
+
         IKielerProgressMonitor labelMon = getMonitor().subTask(1);
         labelMon.begin("Label placing", 1);
         /**
@@ -241,7 +231,7 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
                     .normalize();
             KVector endTangent = KVector.sub(bendRight, end).normalize().negate();
 
-            return splineInterp.interpolatePoints(newPoints, startTangent, endTangent, true);
+            return splineGen.generateSpline(newPoints, startTangent, endTangent);
 
         } else {
             return spline;
