@@ -47,9 +47,21 @@
       <command
             defaultHandler="de.cau.cs.kieler.kiml.evol.AutoRateAllHandler"
             description="computes automatic rating for all individuals"
-            id="de.cau.cs.kieler.kiml.evol.autoRateAll"
+            id="de.cau.cs.kieler.kiml.evol.command.autoRateAll"
             name="Auto-rate All">
       </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="toolbar:de.cau.cs.kieler.kiml.evol.wildlife">
+         <command
+               commandId="de.cau.cs.kieler.kiml.evol.command.autoRateAll"
+               label="Auto-rate all"
+               style="push"
+               tooltip="Auto-rate all individuals">
+         </command>
+      </menuContribution>
    </extension>
 
 </plugin>

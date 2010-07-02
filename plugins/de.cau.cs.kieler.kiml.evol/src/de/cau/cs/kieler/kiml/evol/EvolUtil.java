@@ -18,9 +18,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
+import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
@@ -38,6 +42,7 @@ import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.AnalysisServices;
 import de.cau.cs.kieler.kiml.grana.ui.DiagramAnalyser;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.views.LayoutPropertySource;
 
 /**
@@ -68,6 +73,36 @@ public final class EvolUtil {
     }
 
     /**
+     * Layout the diagram and measure it.
+     *
+     * @param manager
+     *            a {@code DiagramLayoutManager}
+     * @param editor
+     *            the editor
+     * @return measurement result (rating proposal)
+     */
+    public static int layoutAndMeasure(final DiagramLayoutManager manager, final IEditorPart editor) {
+        if ((editor == null) || (manager == null)) {
+            // we cannot perform the layout.
+            return 0;
+        }
+        // first phase: build the layout graph
+        final KNode layoutGraph = manager.buildLayoutGraph(editor, null, true);
+        // second phase: execute layout algorithms
+        // We need a new monitor each time because the old one
+        // gets closed.
+        final IKielerProgressMonitor monitor =
+                new BasicProgressMonitor(DiagramLayoutManager.MAX_PROGRESS_LEVELS);
+        final IStatus status = manager.layout(monitor, true, false);
+        final KNode layoutGraphAfterLayout = manager.getLayoutGraph();
+        Assert.isTrue(layoutGraph == layoutGraphAfterLayout);
+        System.out.println("after manager.layout. result: " + status.getCode());
+        // do the measurement
+        final int rating = measureDiagram(false, layoutGraphAfterLayout);
+        return rating;
+    }
+
+    /**
      * Analyzes the given KGraph.
      *
      * @param showProgressBar
@@ -95,7 +130,7 @@ public final class EvolUtil {
         final AbstractInfoAnalysis[] metrics =
                 metricsList.toArray(new AbstractInfoAnalysis[metricsList.size()]);
         // arbitrarily chosen coefficients
-        final double[] coeffs = new double[] { .6, .1, .2, .1 };
+        final double[] coeffs = new double[] { .7, .05, .2, .05 };
         final Object[] results = DiagramAnalyser.analyse(parentNode, metrics, showProgressBar);
         final double areaResult = Double.parseDouble(results[0].toString()) * coeffs[0];
         final double bendsResult = Double.parseDouble(results[1].toString()) * coeffs[1];
@@ -104,7 +139,8 @@ public final class EvolUtil {
         System.out.println(areaResult + "  " + bendsResult + "  " + flatnessResult + "  "
                 + narrownessResult);
         final int newRating =
-                (int) ((areaResult + bendsResult + flatnessResult + narrownessResult) * 100);
+                (int) Math
+                        .round(((areaResult + bendsResult + flatnessResult + narrownessResult) * 100));
         System.out.println("leaving measureDiagram");
         return newRating;
     }
