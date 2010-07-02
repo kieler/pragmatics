@@ -201,9 +201,9 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                 if (!(oneEdge.getX2() < reachedx || oneEdge.getX1() > targetx)) {
                     edges.add(oneEdge);
                     // point to a line that matters
-                    drawOnDebug(new Line2D.Double(0, 0, oneEdge.x1
-                            + ((oneEdge.x2 - oneEdge.x1) / 2), oneEdge.y1
-                            + ((oneEdge.y2 - oneEdge.y1) / 2)), DebugCanvas.Color.CYAN, false);
+                    // drawOnDebug(new Line2D.Double(0, 0, oneEdge.x1
+                    // + ((oneEdge.x2 - oneEdge.x1) / 2), oneEdge.y1
+                    // + ((oneEdge.y2 - oneEdge.y1) / 2)), DebugCanvas.Color.CYAN, false);
                 }
             }
 
@@ -213,8 +213,8 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                 if (!(oneNode.getX() + oneNode.getWidth() < reachedx || oneNode.getX() > targetx)) {
                     nodes.add(oneNode);
                     // point to a node that matters
-                    drawOnDebug(new Line2D.Double(0, 0, oneNode.getX(), oneNode.getY()),
-                            DebugCanvas.Color.CYAN, false);
+                    // drawOnDebug(new Line2D.Double(0, 0, oneNode.getX(), oneNode.getY()),
+                    // DebugCanvas.Color.CYAN, false);
                 }
             }
 
@@ -293,6 +293,9 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                         newBox.y += 2 * BOX_RESIZE_STEPSIZE;
                         newBox.height -= 2 * BOX_RESIZE_STEPSIZE;
                     }
+                } else {
+                    newBox.height += newBox.y;
+                    newBox.y = 0;
                 }
 
                 // enlarge two boxes independently from each other, one to the top, one to the
@@ -327,6 +330,8 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                         // one step back
                         tempBox.height -= 2 * BOX_RESIZE_STEPSIZE;
                     }
+                } else {
+                    tempBox.height = layeredGraph.getSize().y - tempBox.y;                    
                 }
 
                 drawOnDebug(tempBox, DebugCanvas.Color.GRAY, false);
