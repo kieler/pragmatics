@@ -15,9 +15,9 @@
 package de.cau.cs.kieler.ksbase.ui.menus;
 
 import java.net.URL;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.Platform;
@@ -41,7 +41,7 @@ import de.cau.cs.kieler.ksbase.ui.test.ModelObjectTester;
  * 
  * @author mim
  * 
-* @kieler.rating 2010-03-22 proposed yellow 
+ * @kieler.rating 2010-03-22 proposed yellow
  */
 public class KSbasEBalloonPopup implements IBalloonContribution {
 
@@ -71,11 +71,13 @@ public class KSbasEBalloonPopup implements IBalloonContribution {
         if (editorSettings.getContributor() != null && transformation != null
                 && transformation.getIcon().length() > 0) {
 
-            Bundle b = Platform.getBundle(editorSettings.getContributor().getName());
+            Bundle b = Platform.getBundle(editorSettings.getContributor()
+                    .getName());
             if (b != null) {
                 URL imageURL = b.getResource(transformation.getIcon());
                 if (imageURL != null) {
-                    return ImageDescriptor.createFromURL(imageURL).createImage();
+                    return ImageDescriptor.createFromURL(imageURL)
+                            .createImage();
                 }
             }
         }
@@ -99,19 +101,20 @@ public class KSbasEBalloonPopup implements IBalloonContribution {
      */
     public void run() {
         if (editorSettings != null && transformation != null) {
-            TransformationUIManager.INSTANCE.createAndExecuteTransformationCommand(editorSettings,
-                    transformation, modelElements);
+            TransformationUIManager.INSTANCE
+                    .createAndExecuteTransformationCommand(editorSettings,
+                            transformation, modelElements);
         }
 
     }
 
     /**
-     * Sets the balloon attributes.
+     * Sets the balloon attributes. *
      * 
      * @param map
      *            A map of key-value pairs.
      */
-    public void setAttributes(final HashMap<String, String> map) {
+    public void init(final Map<String, String> map) {
         String editorId = null;
         String tId = null;
 
@@ -125,10 +128,25 @@ public class KSbasEBalloonPopup implements IBalloonContribution {
             }
         }
         if (editorId != null && tId != null) {
-            editorSettings = TransformationManager.INSTANCE.getEditorSettingsById(editorId);
+            editorSettings = TransformationManager.INSTANCE
+                    .getEditorSettingsById(editorId);
             assert (editorSettings != null);
             transformation = editorSettings.getTransformationById(tId);
         }
+
+    }
+
+    /**
+     * Sets the balloon attributes.
+     * 
+     * @param editPartParam
+     *            The edit part to use.
+     * 
+     */
+    public void init(final EditPart editPartParam) {
+        modelElements = new LinkedList<EObject>();
+        modelElements.add(((View) (editPartParam).getModel()).getElement());
+
     }
 
     /**
@@ -136,22 +154,18 @@ public class KSbasEBalloonPopup implements IBalloonContribution {
      * 
      * FIXME: seperate setter and tester
      * 
-     * @param editPartParam
-     *            The edit part to use.
-     * @return true
-     *            iff the given EditPart is target for the balloon
+     * @return true iff the given EditPart is target for the balloon
      */
-    public boolean setEditPart(final EditPart editPartParam) {
-        modelElements = new LinkedList<EObject>();
-        modelElements.add(((View) (editPartParam).getModel()).getElement());
+    public boolean isValid() {
         // Is valid for transformation ?
         if (transformation != null) {
             // Convert selection to model elements:
             boolean executable = false;
             for (List<String> params : transformation.getParameterList()) {
 
-                if (ModelObjectTester.evaluateTransformation(editorSettings, transformation
-                        .getTransformation(), params.toArray(new String[params.size()]),
+                if (ModelObjectTester.evaluateTransformation(editorSettings,
+                        transformation.getTransformation(),
+                        params.toArray(new String[params.size()]),
                         modelElements, false)) {
                     // Could the transformation be executed?
                     executable = true;
@@ -171,12 +185,15 @@ public class KSbasEBalloonPopup implements IBalloonContribution {
             String validation = transformation.getValidation();
             if (validation != null && validation.length() > 0) {
                 for (String valid : validation.split(",")) {
-                    AbstractTransformation at = editorSettings.getOutPlaceTransformationByName(valid);
+                    AbstractTransformation at = editorSettings
+                            .getOutPlaceTransformationByName(valid);
                     if (at != null) {
                         boolean isValid = false;
                         for (List<String> params : at.getParameterList()) {
-                            if (ModelObjectTester.evaluateTransformation(editorSettings, valid, params
-                                    .toArray(new String[params.size()]), modelElements, true)) {
+                            if (ModelObjectTester.evaluateTransformation(
+                                    editorSettings, valid,
+                                    params.toArray(new String[params.size()]),
+                                    modelElements, true)) {
                                 isValid = true;
                             }
                         }
