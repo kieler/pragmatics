@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.osgi.framework.Version;
 
-
 public class Example {
 
 	/**
@@ -52,6 +51,14 @@ public class Example {
 				+ ((getName() != null) ? ", name= " + getName() : "")
 				+ ",contact=" + getContact() + ", version="
 				+ version.toString() + "]";
+	}
+
+	public boolean contains(String category) {
+		for (ExampleResource exampleResource : getResources()) {
+			if (category.equals(exampleResource.getCategory()))
+				return true;
+		}
+		return false;
 	}
 
 	public String getId() {

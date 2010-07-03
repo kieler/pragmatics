@@ -13,7 +13,7 @@ public class ImportExampleWizard extends Wizard implements IWizard {
 
 	private OverviewPage overviewPage;
 	private ChooseExamplePage chooseExamplePage;
-	// private ImportExamplePage importExamplePage;
+	private ImportExamplePage importExamplePage;
 
 	private final IStructuredSelection selection;
 
@@ -43,8 +43,8 @@ public class ImportExampleWizard extends Wizard implements IWizard {
 
 	@Override
 	public void addPages() {
-		overviewPage = new OverviewPage("overviewPage");
-		addPage(overviewPage);
+		// overviewPage = new OverviewPage("overviewPage");
+		// addPage(overviewPage);
 		chooseExamplePage = new ChooseExamplePage("chooseExamplePage");
 		addPage(chooseExamplePage);
 		// importExamplePage = new ImportExamplePage("importExamplePage",
@@ -75,8 +75,12 @@ public class ImportExampleWizard extends Wizard implements IWizard {
 
 	@Override
 	public IWizardPage getNextPage(IWizardPage page) {
-		containsPreAndNextButtons = page.getName().equals("overviewPage");
+		containsPreAndNextButtons = !page.getName().equals("overviewPage");
 		return super.getNextPage(page);
+	}
+
+	public IStructuredSelection getSelection() {
+		return selection;
 	}
 
 }

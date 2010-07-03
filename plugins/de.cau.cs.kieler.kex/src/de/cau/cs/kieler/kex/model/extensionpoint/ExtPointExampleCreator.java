@@ -87,7 +87,8 @@ public class ExtPointExampleCreator {
 			Object key = ((ExtensionRegistry) reg).getTemporaryUserToken();
 			Bundle bundle = Activator.getDefault().getBundle(
 					"de.cau.cs.kieler.kex");
-			org.eclipse.core.internal.registry.osgi.Activator.getContext();
+			// BundleContext context =
+			// org.eclipse.core.internal.registry.osgi.Activator.getContext();
 			IContributor contributor = ContributorFactoryOSGi
 					.createContributor(bundle);
 			ByteArrayInputStream is = new ByteArrayInputStream(

@@ -18,8 +18,9 @@ public class ExtPointCollectionUtil {
 	// plugin ueberfuehrt werden sollte
 
 	/**
-	 * creates an new Example with properties of given exampleElement
-	 * which should generally comes from extension of extension point.
+	 * creates an new Example with properties of given exampleElement which
+	 * should generally comes from extension of extension point.
+	 * 
 	 * @param exampleElement
 	 * @return
 	 * @throws InvalidRegistryObjectException
@@ -37,21 +38,21 @@ public class ExtPointCollectionUtil {
 		Example example = null;
 		// TODO Versuch: ueber getAttributes elemente holen... also generischer
 		// loesen.
-		//TODO ID null pr�fung
+		// TODO null pruefungen
 		String idAttribute = exampleElement.getAttribute("id");
-		//TODO name null pr�fung
 		String nameAttribute = exampleElement.getAttribute("name");
 		String versionAttribute = exampleElement.getAttribute("version");
-		
-		// TODO eine art versions validator bauen. evtl. kann Version sowas schon
+
+		// TODO eine art versions validator bauen. evtl. kann Version sowas
+		// schon
 		if (versionAttribute != null)
 			// FIXME IllegalArgumentException sehr wahrscheinlich, da das
 			// version feld
 			// ein freier string, min. default besser noch regex.
-			example = new Example(idAttribute,nameAttribute,
-			    Version.parseVersion(versionAttribute));
+			example = new Example(idAttribute, nameAttribute,
+					Version.parseVersion(versionAttribute));
 		else
-			example = new Example(idAttribute,nameAttribute);
+			example = new Example(idAttribute, nameAttribute);
 		example.setDescription(exampleElement.getAttribute("description"));
 		example.setContact(exampleElement.getAttribute("contact"));
 		List<ExampleResource> exampleResources = ExtPointCollectionUtil
@@ -60,34 +61,36 @@ public class ExtPointCollectionUtil {
 		return example;
 	}
 
-  public static List<ExampleResource> filterExampleResources(final
-      IConfigurationElement exampleElement) throws KielerException {
+	public static List<ExampleResource> filterExampleResources(
+			final IConfigurationElement exampleElement) throws KielerException {
 
-      // TODO resource stimmt nicht, muss noch richtig ueberdacht werden.
-      List<ExampleResource> exampleResources = new ArrayList<ExampleResource>();
-    for (IConfigurationElement configElement : exampleElement
-        .getChildren("resource")) {
-      ExampleResource exampleResource = new ExampleResource();
-      exampleResource.setCategory(configElement.getAttribute("category"));
-      exampleResource.addResource(filterResource(configElement));
-      exampleResources.add(exampleResource);
-    }
-    return exampleResources;
-  }
-  
-  private static File filterResource(final IConfigurationElement configElement) {
-    String resourcePath = configElement.getAttribute("resource");
-    if (resourcePath == null || resourcePath.length() < 4) {
-      // throw new KielerModelException(...);
-    }
-    // TODO hier muss sicherlich noch der Projekt Pfad mit angegeben werden.
-    File file = new File(resourcePath);
-    validateFile(file);
-    return file;
-  }
-  
-  private static void validateFile(final File file) {
-	  
-  }
-	
+		// TODO resource stimmt nicht, muss noch richtig ueberdacht werden.
+		List<ExampleResource> exampleResources = new ArrayList<ExampleResource>();
+		for (IConfigurationElement configElement : exampleElement
+				.getChildren("example_resource")) {
+			ExampleResource exampleResource = new ExampleResource();
+			exampleResource.setCategory(configElement.getAttribute("category"));
+			exampleResource.setHeadResource(Boolean.valueOf(configElement
+					.getAttribute("is_head_resource")));
+			exampleResource.addResource(filterResource(configElement));
+			exampleResources.add(exampleResource);
+		}
+		return exampleResources;
+	}
+
+	private static File filterResource(final IConfigurationElement configElement) {
+		String resourcePath = configElement.getAttribute("resource");
+		if (resourcePath == null || resourcePath.length() < 4) {
+			// throw new KielerModelException(...);
+		}
+		// TODO hier muss sicherlich noch der Projekt Pfad mit angegeben werden.
+		File file = new File(resourcePath);
+		validateFile(file);
+		return file;
+	}
+
+	private static void validateFile(final File file) {
+		// TODO to implement
+	}
+
 }

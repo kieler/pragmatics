@@ -5,10 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.Platform;
 
 import de.cau.cs.kieler.kex.model.Example;
@@ -24,9 +21,9 @@ public class ExtPointExampleCollector extends ExampleCollector {
 	// muessten
 	// um die id abzugleichen.
 
-	private Map<String, Example> examplePool;
+	private final Map<String, Example> examplePool;
 
-	private List<String> categoryPool;
+	private final List<String> categoryPool;
 
 	public ExtPointExampleCollector() {
 		categoryPool = new ArrayList<String>();
@@ -37,29 +34,12 @@ public class ExtPointExampleCollector extends ExampleCollector {
 	public void collectCategories(IConfigurationElement categoryElement) {
 		String categoryId = categoryElement.getAttribute("id");
 		if (categoryId == null || categoryId.length() < 4) {
-			// ExceptionHandler
-			// .get()
-			// .add(
-			// new KielerModelException(
-			// "Attribute of context "
-			// + element.getName()
-			// + "is not set or shorter than 4 characters.",
-			// element));
 			// TODO StatusManager als globalen Exceptionhandler
 			// ansprechen...
 		} else {
 			if (!getCategoryPool().contains(categoryId))
 				getCategoryPool().add(categoryId);
 			else {
-				// ExceptionHandler
-				// .get()
-				// .addUnique(
-				// new KielerException(
-				// "Extension: "
-				// + element.getName()
-				// + ", was found after searching with extension id: "
-				// + CONTEXT_EXT_ID));
-				// ERROR Level ueberdenken...
 				// TODO StatusManager ansprechen
 
 			}
@@ -69,15 +49,19 @@ public class ExtPointExampleCollector extends ExampleCollector {
 	/**
 	 * loads examples of extenders.
 	 */
+	@Override
 	public void loadExamples() {
 
 		IConfigurationElement[] configElements = Platform
 				.getExtensionRegistry().getConfigurationElementsFor(KEX_EXT_ID);
-		
-		IExtension[] extensions = Platform.getExtensionRegistry().getExtensions("de.cau.cs.kieler.core.kex.model");
-		
-		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(
-				"de.cau.cs.kieler.kex");
+
+		// Versuche für die Projekt Workspace Ansprechung und so weiter...
+		// IExtension[] extensions =
+		// Platform.getExtensionRegistry().getExtensions("de.cau.cs.kieler.core.kex.model");
+		//
+		// IProject project =
+		// ResourcesPlugin.getWorkspace().getRoot().getProject(
+		// "de.cau.cs.kieler.kex");
 
 		for (IConfigurationElement element : configElements) {
 			try {
@@ -114,6 +98,7 @@ public class ExtPointExampleCollector extends ExampleCollector {
 		}
 	}
 
+	@Override
 	public Map<String, Example> getExamplePool() {
 		return this.examplePool;
 	}
