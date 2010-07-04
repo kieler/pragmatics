@@ -5,11 +5,8 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.internal.wizards.newresource.ResourceMessages;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.ExampleElement;
@@ -20,10 +17,6 @@ public class ExportExampleWizard extends Wizard implements IWizard {
 	private ExamplePage examplePage;
 
 	private final IProject[] localProjects;
-
-	private IWorkbench workbench;
-
-	private IStructuredSelection currentSelection;
 
 	public ExportExampleWizard() {
 		localProjects = ExampleManager.get().getLocalProjects();
@@ -58,13 +51,6 @@ public class ExportExampleWizard extends Wizard implements IWizard {
 			return false;
 		}
 		return true;
-	}
-
-	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
-		this.workbench = workbench;
-		this.currentSelection = currentSelection;
-		setWindowTitle(ResourceMessages.NewFolder_title);
-		setNeedsProgressMonitor(true);
 	}
 
 }

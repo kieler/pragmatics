@@ -17,10 +17,6 @@ public abstract class ExampleCollector {
 	 */
 	public abstract Map<String, Example> getExamplePool();
 
-	public void reload() {
-		loadExamples();
-	}
-
 	public List<String> getExamplesAsStrings() {
 		List<String> examplesAsString = new ArrayList<String>();
 		for (Example example : getExamplePool().values()) {

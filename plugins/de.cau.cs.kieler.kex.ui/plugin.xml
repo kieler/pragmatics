@@ -5,28 +5,39 @@
          point="org.eclipse.ui.actionSets">
       <actionSet
             id="de.cau.cs.kieler.kex.ui.actionSet"
-            label="KEX"
+            label="KIELER Example Management"
             visible="true">
          <menu
                id="kexMenu"
                label="KEX">
             <separator
-                  name="kexGroup">
+                  name="exportGroup">
+            </separator>
+            <separator
+                  name="importGroup">
             </separator>
          </menu>
          <action
-               class="de.cau.cs.kieler.kex.ui.actions.KEXImportAction"
+               class="de.cau.cs.kieler.kex.ui.actions.OverviewAction"
+               id="de.cau.cs.kieler.kex.ui.overview"
+               label="KIELER Example Overview"
+               menubarPath="kexMenu/importGroup"
+               style="push"
+               tooltip="Have a lok at imported examples">
+         </action>
+         <action
+               class="de.cau.cs.kieler.kex.ui.actions.ImportAction"
                id="de.cau.cs.kieler.kex.ui.actions.import"
                label="KIELER Example Import"
-               menubarPath="kexMenu/kexGroup"
+               menubarPath="kexMenu/importGroup"
                style="push"
                tooltip="Import examples to your local workspace">
          </action>
          <action
-               class="de.cau.cs.kieler.kex.ui.actions.KEXExportAction"
+               class="de.cau.cs.kieler.kex.ui.actions.ExportAction"
                id="de.cau.cs.kieler.kex.ui.export"
                label="KIELER Example Export"
-               menubarPath="kexMenu/kexGroup"
+               menubarPath="kexMenu/exportGroup"
                style="push"
                tooltip="Export examples of your local workspace">
          </action>

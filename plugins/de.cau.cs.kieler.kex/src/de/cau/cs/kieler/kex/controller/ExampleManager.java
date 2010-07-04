@@ -1,5 +1,6 @@
 package de.cau.cs.kieler.kex.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +22,8 @@ public class ExampleManager {
 	private final OnlineExampleCollector onlineCollector;
 	private ExtPointExampleCreator extensionCreation;
 
+	private boolean isLoaded;
+
 	// TODO Thesis, begr�nden weshalb hier instance genommen wurde.
 	// da wir den Examplepool nicht jedes mal erneut laden wollen, wenn
 	// wir darauf zugreifen wollen, k�nnen unter anderem viele werden.
@@ -28,15 +31,21 @@ public class ExampleManager {
 
 	private ExampleManager() {
 		this.extensionCollector = new ExtPointExampleCollector();
-		extensionCollector.loadExamples();
 		this.onlineCollector = new OnlineExampleCollector();
-		onlineCollector.loadExamples();
 		try {
 			extensionCreation = new ExtPointExampleCreator();
 		} catch (KielerException e) {
 			// FIXME plugin id sollte nicht null sein.
 			StatusManager.getManager().addLoggedStatus(
 					new Status(Status.ERROR, null, e.getMessage()));
+		}
+	}
+
+	public void load() {
+		if (!this.isLoaded) {
+			this.isLoaded = true;
+			extensionCollector.loadExamples();
+			onlineCollector.loadExamples();
 		}
 	}
 
@@ -51,7 +60,8 @@ public class ExampleManager {
 	 * 
 	 */
 	public void reload() {
-		this.extensionCollector.reload();
+		this.extensionCollector.loadExamples();
+		this.onlineCollector.loadExamples();
 	}
 
 	public Map<String, Example> getExtPointExamples() {
@@ -137,5 +147,19 @@ public class ExampleManager {
 		Example mappedExample = mapToExample(properties);
 		validateExample(mappedExample);
 		extensionCreation.addExtension(projectId, location, mappedExample);
+	}
+
+	public List<Example> getImportedExamples() {
+		// Test Example
+
+		ArrayList<Example> result = new ArrayList<Example>();
+		Example testExample = new Example("ImportedTestExample",
+				"ImportedTestExample");
+		result.add(testExample);
+		return result;
+	}
+
+	public void importExamples(String selectedProject,
+			List<Example> selectedExamples) {
 	}
 }

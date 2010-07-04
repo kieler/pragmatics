@@ -139,5 +139,4 @@ public class ExamplePage extends WizardPage {
 	public String getContact() {
 		return contact.getText();
 	}
-
 }

@@ -64,7 +64,8 @@ public class ExtPointCollectionUtil {
 	public static List<ExampleResource> filterExampleResources(
 			final IConfigurationElement exampleElement) throws KielerException {
 
-		// TODO resource stimmt nicht, muss noch richtig ueberdacht werden.
+		// TODO wie überall versuchen generisch loesen, d.h. getAttributeName()
+		// und dann mittels reflection befüllen.
 		List<ExampleResource> exampleResources = new ArrayList<ExampleResource>();
 		for (IConfigurationElement configElement : exampleElement
 				.getChildren("example_resource")) {
@@ -84,7 +85,8 @@ public class ExtPointCollectionUtil {
 			// throw new KielerModelException(...);
 		}
 		// TODO hier muss sicherlich noch der Projekt Pfad mit angegeben werden.
-		File file = new File(resourcePath);
+		File file = new File(configElement.getNamespaceIdentifier()
+				+ resourcePath);
 		validateFile(file);
 		return file;
 	}
