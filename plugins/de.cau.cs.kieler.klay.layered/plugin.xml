@@ -25,6 +25,9 @@
                option="de.cau.cs.kieler.klay.layered.options.LayeredDebugInfo">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.klay.layered.options.LayeredStraightEdges">
+         </knownOption>
+         <knownOption
                option="de.cau.cs.kieler.klay.layered.options.MinimalAngle">
          </knownOption>
       </layoutProvider>
@@ -38,6 +41,13 @@
             appliesTo="parents"
             id="de.cau.cs.kieler.klay.layered.options.LayeredDebugInfo"
             name="LayeredDebugInfo"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            description="If enabled, Edges with priority &gt; 0 are drawn straight instead of keeping the connected nodes in line."
+            id="de.cau.cs.kieler.klay.layered.options.LayeredStraightEdges"
+            name="LayeredStraightEdges"
             type="boolean">
       </layoutOption>
       <layoutOption

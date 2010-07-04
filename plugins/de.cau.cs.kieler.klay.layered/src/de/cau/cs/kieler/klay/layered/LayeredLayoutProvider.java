@@ -95,6 +95,10 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     /** option defines the minimal angle a shortedge may have. */
     public static final String KLAY_MINIMAL_EDGE_ANGLE = "de.cau.cs.kieler.klay.layered."
             + "options.MinimalAngle";
+    
+    /** option to choose if debug info is shown. */
+    public static final String KLAY_STRAIGHT_EDGES = 
+        "de.cau.cs.kieler.klay.layered.options.LayeredStraightEdges";
 
     /** constructor registering the new enum option. */
     public LayeredLayoutProvider() {
@@ -158,8 +162,12 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
 
         // transform the input graph
         List<LNode> nodes = transformGraph(layoutNode);
-        // create an empty layered graph and perform the actual layout
+        // create an empty layered graph
         LayeredGraph layeredGraph = new LayeredGraph();
+        // Add information for LinearSegmentsNodePlacer
+        Boolean straightEdges = LayoutOptions.getBoolean(parentLayout, KLAY_STRAIGHT_EDGES);
+        layeredGraph.setProperty(Properties.STRAIGHT_EDGES, straightEdges);
+        // perform the actual layout
         doLayout(layeredGraph, nodes, progressMonitor.subTask(1), spacing);
         // apply the layout results to the original graph
         applyLayout(layoutNode, layeredGraph);

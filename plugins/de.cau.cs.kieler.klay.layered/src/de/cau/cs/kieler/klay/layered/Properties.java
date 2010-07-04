@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.layered;
 
 import de.cau.cs.kieler.core.util.Property;
+import de.cau.cs.kieler.klay.layered.impl.LinearSegmentsNodePlacer.Region;
 
 /**
  * Container for priority definitions.
@@ -39,6 +40,12 @@ public final class Properties {
     /** offset for nodes in linear segments. */
     public static final Property<Integer> LINSEG_OFFSET = new Property<Integer>(
             "linsegOffset", 0);
+    /** owning region for node. */
+    public static final Property<Region> REGION = new Property<Region>(
+            "region", null);
+    /** additional information for LinearSegmentsNodePlacer on the layeredGraph. */
+    public static final Property<Boolean> STRAIGHT_EDGES = new Property<Boolean>(
+            "straightEdges", false);
     
     /**
      * Hidden default constructor.

@@ -19,7 +19,6 @@ import java.util.List;
 import de.cau.cs.kieler.core.util.FilteredIterator;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.PortType;
-import de.cau.cs.kieler.klay.layered.impl.LinearSegmentsNodePlacer.Region;
 
 /**
  * A node in a layered graph.
@@ -30,8 +29,6 @@ public class LNode extends LGraphElement {
     
     /** the owning layer. */
     private Layer owner;
-    /** the owning region. */
-    private Region region;
     /** the current position of the node. */
     private Coord pos = new Coord();
     /** the size of the node. */
@@ -105,20 +102,6 @@ public class LNode extends LGraphElement {
         }
         this.owner = layer;
         owner.getNodes().add(this);
-    }
-
-    /**
-     * @param theRegion the theRegion to set
-     */
-    public void setRegion(final Region theRegion) {
-        this.region = theRegion;
-    }
-
-    /**
-     * @return the region
-     */
-    public Region getRegion() {
-        return region;
     }
 
     /**

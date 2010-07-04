@@ -43,7 +43,6 @@ import de.cau.cs.kieler.klay.layered.modules.INodePlacer;
  * @author msp
  */
 public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INodePlacer {
-
     /**
      * A linear segment contains a single regular node or all dummy nodes of a long edge.
      */
@@ -90,32 +89,35 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
         private List<LNode> nodes = new LinkedList<LNode>();
         /** The accumulated force of the contained nodes. */
         private float force = 0;
-        
+
         /** Contructor. */
         public Region() {
             regions.add(this);
         }
-        
+
         /** @return List of Nodes contained in the region */
         public List<LNode> getNodes() {
             return nodes;
         }
-        
-        /** @param other The other Region to be 'unioned' */
+
+        /**
+         * @param other
+         *            The other Region to be 'unioned'
+         */
         public void union(final Region other) {
             // Keep the Region with lower index
             if (regions.indexOf(this) > regions.indexOf(other)) {
                 // Add all nodes of this region to the other region
                 other.getNodes().addAll(this.getNodes());
                 for (LNode node : this.getNodes()) {
-                    node.setRegion(other);
+                    node.setProperty(Properties.REGION, other);
                 }
                 regions.remove(this);
             } else {
                 // Add all nodes of other region to this region
                 this.getNodes().addAll(other.getNodes());
                 for (LNode node : other.getNodes()) {
-                    node.setRegion(this);
+                    node.setProperty(Properties.REGION, this);
                 }
                 regions.remove(other);
             }
@@ -261,7 +263,30 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
     private void fillSegment(final LNode node, final LinearSegment segment) {
         node.id = segment.id;
         segment.nodes.add(node);
-        if (node.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
+
+        // Check if outgoing edge has priority > 0
+        LEdge highestPrioEdge = null;
+        int highestPrio = 0;
+        for (LPort sourcePort : node.getPorts(PortType.OUTPUT)) {
+            for (LEdge targetEdge : sourcePort.getEdges()) {
+                int prio = targetEdge.getProperty(Properties.PRIORITY);
+                if (prio > highestPrio) {
+                    highestPrioEdge = targetEdge;
+                    highestPrio = prio;
+                }
+            }
+        }
+        // At least one of the outgoing edges has priority > 0
+        if (highestPrioEdge != null) {
+            LNode nextNode = highestPrioEdge.getTarget().getNode();
+            // calculate/set offset
+            int offset = (int) Math.round(highestPrioEdge.getSource().getPos().y
+                    - (highestPrioEdge.getTarget().getPos().y)
+                    + node.getProperty(Properties.LINSEG_OFFSET));
+            nextNode.setProperty(Properties.LINSEG_OFFSET, offset);
+            // Fill segment
+            fillSegment(nextNode, segment);
+        } else if (node.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
             for (LPort sourcePort : node.getPorts(PortType.OUTPUT)) {
                 for (LPort targetPort : sourcePort.getConnectedPorts()) {
                     LNode targetNode = targetPort.getNode();
@@ -270,26 +295,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
                     }
                 }
             }
-        } else {
-            // Check if outgoing edge has priority > 0
-            LEdge highestPrioEdge = null;
-            int highestPrio = 0;
-            for (LPort sourcePort : node.getPorts(PortType.OUTPUT)) {
-                for (LEdge targetEdge : sourcePort.getEdges()) {
-                    int prio = targetEdge.getProperty(Properties.PRIORITY);
-                    if (prio > highestPrio) {
-                        highestPrioEdge = targetEdge;
-                        highestPrio = prio;
-                    }
-                }
-            }
-            // At least one of the outgoing edges has priority > 0
-            if (highestPrioEdge != null) {
-                fillSegment(highestPrioEdge.getTarget().getNode(), segment);
-                // TODO calculate offset (Properties.LINSEG_OFFSET)
-            }
         }
-
     }
 
     /**
@@ -298,8 +304,19 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
     private void createUnbalancedPlacement(final LayeredGraph layeredGraph) {
         int[] nodeCount = new int[layeredGraph.getLayers().size()];
         for (LinearSegment segment : linearSegments) {
-            // TODO determine minimal offset of 'segment'
-            
+            // determine minimal offset of 'segment'
+            float minOffset = 0;
+            float maxSize = 0.0f;
+            for (LNode node : segment.getNodes()) {
+                float offset = (float) node.getProperty(Properties.LINSEG_OFFSET);
+                if (offset < minOffset) {
+                    minOffset = offset;
+                }
+                if (node.getSize().y > maxSize) {
+                    maxSize = node.getSize().y;
+                }
+            }
+
             // determine the uppermost placement for the linear segment
             float uppermostPlace = 0.0f;
             int nodeCountSum = 0;
@@ -315,11 +332,18 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
                 newPos += spacing;
             }
             for (LNode node : segment.getNodes()) {
-                // TODO add node offset - minimal offset
+                boolean straightEdges = layeredGraph.getProperty(Properties.STRAIGHT_EDGES);
+                float offset = 0.0f;
+                if (straightEdges) {
+                  // add node offset - minimal offset
+                  offset = (float) node.getProperty(Properties.LINSEG_OFFSET) - minOffset;
+                } else {
+                  offset = maxSize / 2 - node.getSize().y / 2;
+                }
                 Layer layer = node.getLayer();
-                node.getPos().y = newPos;
+                node.getPos().y = newPos + offset;
                 float height = node.getSize().y;
-                layer.getSize().y = newPos + height;
+                layer.getSize().y = newPos + offset + height;
                 layer.getSize().x = Math.max(layer.getSize().x, node.getSize().x);
             }
         }
@@ -332,10 +356,10 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
             Region region = new Region();
             for (LNode node : segment.getNodes()) {
                 region.nodes.add(node);
-                node.setRegion(region);
+                node.setProperty(Properties.REGION, region);
             }
         }
-        
+
         // Iterate the balancing
         boolean ready = false;
         boolean forward = true;
@@ -349,7 +373,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
             for (Region region : regions) {
                 // Reset force for region
                 region.force = 0.0f;
-                
+
                 // Calculate force for every node
                 for (LNode node : region.getNodes()) {
                     float sum = 0.0f;
@@ -358,17 +382,17 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
                     for (LPort port : node.getPorts()) {
                         if (port.getType() == PortType.OUTPUT) {
                             for (LEdge edge : port.getEdges()) {
-                                LPort gegenPort = edge.getTarget();
-                                LNode gegenNode = gegenPort.getNode();
-                                sum += (gegenNode.getPos().y + gegenPort.getPos().y)
+                                LPort otherPort = edge.getTarget();
+                                LNode otherNode = otherPort.getNode();
+                                sum += (otherNode.getPos().y + otherPort.getPos().y)
                                         - (node.getPos().y + port.getPos().y);
                                 numEdges++;
                             }
                         } else if (port.getType() == PortType.INPUT) {
                             for (LEdge edge : port.getEdges()) {
-                                LPort gegenPort = edge.getSource();
-                                LNode gegenNode = gegenPort.getNode();
-                                sum += (gegenNode.getPos().y + gegenPort.getPos().y)
+                                LPort otherPort = edge.getSource();
+                                LNode otherNode = otherPort.getNode();
+                                sum += (otherNode.getPos().y + otherPort.getPos().y)
                                         - (node.getPos().y + port.getPos().y);
                                 numEdges++;
                             }
@@ -391,30 +415,32 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
                         if (node.getIndex() > 0) {
                             // Node is not topmost node
                             LNode neighbor = node.getLayer().getNodes().get(node.getIndex() - 1);
-                            if (node.getRegion() != neighbor.getRegion()
-                                        && neighbor.getPos().y + neighbor.getSize().y + spacing 
-                                        > node.getPos().y + region.force) {
+                            if (node.getProperty(Properties.REGION) 
+                                    != neighbor.getProperty(Properties.REGION)
+                                    && neighbor.getPos().y + neighbor.getSize().y + spacing 
+                                    > node.getPos().y + region.force) {
                                 // Set force on region to the max possible force
-                                region.force = node.getPos().y 
-                                    - (neighbor.getPos().y + neighbor.getSize().y + spacing);
+                                region.force = node.getPos().y
+                                        - (neighbor.getPos().y + neighbor.getSize().y + spacing);
                             }
                         } else {
                             // Node is topmost node
                             if (node.getPos().y + region.force < 0.0f) {
                                 // Node woult like to go out of Frame
-                                region.force = -node.getPos().y; 
+                                region.force = -node.getPos().y;
                             }
                         }
                     } else if (region.force > 0.0f
                             && node.getIndex() < node.getLayer().getNodes().size() - 1) {
                         // Force is directed downward and the node is not lowermost
                         LNode neighbor = node.getLayer().getNodes().get(node.getIndex() + 1);
-                        if (node.getRegion() != neighbor.getRegion()
+                        if (node.getProperty(Properties.REGION) 
+                                != neighbor.getProperty(Properties.REGION)
                                 && node.getPos().y + node.getSize().y + spacing + region.force 
                                 > neighbor.getPos().y) {
                             // Set force on region to the max possible force
                             region.force = neighbor.getPos().y
-                                - (node.getPos().y + node.getSize().y + spacing);
+                                    - (node.getPos().y + node.getSize().y + spacing);
                         }
                     }
                 }
@@ -431,14 +457,16 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
                     if (node.getIndex() < nodes.size() - 1) {
                         // Test if nodes have different regions
                         LNode neighbor = nodes.get(node.getIndex() + 1);
-                        if (node.getRegion() != neighbor.getRegion()) {
+                        if (node.getProperty(Properties.REGION) 
+                                != neighbor.getProperty(Properties.REGION)) {
                             // Test if the nodes are touching
-                            if (node.getPos().y + node.getSize().y + spacing
+                            if (node.getPos().y + node.getSize().y + spacing 
                                     > neighbor.getPos().y - 1.0f) {
                                 // Union the regions of the neighbors
-                                node.getRegion().union(neighbor.getRegion());
+                                node.getProperty(Properties.REGION).union(
+                                        neighbor.getProperty(Properties.REGION));
                                 ready = false;
-                            } 
+                            }
                         }
                     }
                 }
