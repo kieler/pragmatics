@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.ui.views;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -21,15 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.gef.EditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderItemEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.CompartmentEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
@@ -38,14 +28,10 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
 import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.klayoutdata.KOption;
-import de.cau.cs.kieler.kiml.klayoutdata.KStringOption;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.Messages;
-import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
-import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyle;
-import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsFactory;
-import de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsPackage;
+import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
 
@@ -64,240 +50,20 @@ public class LayoutPropertySource implements IPropertySource {
     /** map of layout hint identifiers to their respective indices in the above arrays. */
     private static Map<String, Integer> layoutHintIndexMap;
     
-    /** list of layout option data. */
-    private List<LayoutOptionData> optionDataList;
+    /** the layout inspector for this property source. */
+    private ILayoutInspector layoutInspector;
     /** array of property descriptors for the option data. */
     private IPropertyDescriptor[] propertyDescriptors;
-    /** the layout option style stored in the notation view. */
-    private LayoutOptionStyle optionStyle;
-    /** map of layout option data to KOptions from the layout option style. */
-    private Map<LayoutOptionData, KOption> koptionMap = new HashMap<LayoutOptionData, KOption>();
-    /** layout provider data of the shown edit part. */
-    private LayoutProviderData partProviderData;
-    /** layout provider data of the containing edit part. */
-    private LayoutProviderData containerProviderData;
-    /** the edit part for which options are shown. */
-    private IGraphicalEditPart shownEditPart;
-    /** the edit part that contains the sub-diagram with the shown edit part. */
-    private IGraphicalEditPart containerEditPart;
-    /** the edit part that specifies options for the children of the shown edit part. */
-    private IGraphicalEditPart containmentEditPart;
-    
-    /**
-     * Returns the edit part for which layout options would be shown by this property
-     * source.
-     * 
-     * @param sourceEditPart the source edit part
-     * @return the shown edit part, or {@code null} if there is none
-     */
-    public static final IGraphicalEditPart getShownEditPart(final IGraphicalEditPart sourceEditPart) {
-        if (sourceEditPart instanceof CompartmentEditPart) {
-            return (IGraphicalEditPart) sourceEditPart.getParent();
-        }
-        if (sourceEditPart instanceof ShapeNodeEditPart) {
-            if (KimlUiUtil.isNoLayout(sourceEditPart)
-                    || KimlUiUtil.isNoLayout(sourceEditPart.getParent())) {
-                return null;
-            }
-        }
-        return sourceEditPart;
-    }
-    
-    /**
-     * Creates a layout property source for the given editor and edit part.
-     * 
-     * @param editorPart an editor part
-     * @param editPart an edit part
-     */
-    public LayoutPropertySource(final IEditorPart editorPart, final EditPart editPart) {
-        this(EclipseLayoutServices.getInstance().getManager(editorPart, editPart), editPart);
-    }
 
     /**
      * Creates a layout property source for the given layout manager and edit part.
+     * The layout options of the given inspector are initialized in this constructor.
      * 
-     * @param manager a diagram layout manager
-     * @param editPart an edit part
+     * @param inspector a layout inspector
      */
-    public LayoutPropertySource(final DiagramLayoutManager manager, final EditPart editPart) {
-        if (editPart instanceof IGraphicalEditPart) {
-            // find an appropriate property source and set the layout option targets
-            IGraphicalEditPart geditPart = getShownEditPart((IGraphicalEditPart) editPart);
-            LayoutOptionData.Target partTarget = findTarget(geditPart);
-            // check if the selected edit part is not supported
-            if (partTarget == null) {
-                optionDataList = Collections.emptyList();
-                return;
-            }
-            
-            // get default options from the notation view
-            shownEditPart = geditPart;
-            optionStyle = (LayoutOptionStyle) geditPart.getNotationView().getStyle(
-                    LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
-            String partLayoutHint = getNotationOptions();
-            
-            // create the list of shown layout options
-            createShownOptions(partTarget, partLayoutHint);
-        }
-    }
-    
-    /**
-     * Determines the type of edit part target for the layout options.
-     * 
-     * @param editPart an edit part
-     * @return the edit part target
-     */
-    private LayoutOptionData.Target findTarget(final IGraphicalEditPart editPart) {
-        LayoutOptionData.Target partTarget = null;
-        if (editPart instanceof AbstractBorderItemEditPart) {
-            partTarget = LayoutOptionData.Target.PORTS;
-            containerEditPart = (IGraphicalEditPart) editPart.getParent().getParent();
-        } else if (editPart instanceof ShapeNodeEditPart) {
-            // check whether the node is a parent
-            partTarget = LayoutOptionData.Target.NODES;
-            containerEditPart = (IGraphicalEditPart) editPart.getParent();
-            if (findContainingEditPart(editPart) != null) {
-                containmentEditPart = editPart;
-            }
-        } else if (editPart instanceof ConnectionEditPart) {
-            partTarget = LayoutOptionData.Target.EDGES;
-            containerEditPart = (IGraphicalEditPart) ((ConnectionEditPart) editPart)
-                    .getSource().getParent();
-        } else if (editPart instanceof LabelEditPart) {
-            partTarget = LayoutOptionData.Target.LABELS;
-            containerEditPart = (IGraphicalEditPart) editPart.getParent();
-            if (containerEditPart instanceof ConnectionEditPart) {
-                containerEditPart = (IGraphicalEditPart) ((ConnectionEditPart) containerEditPart)
-                        .getSource().getParent();
-            } else if (containerEditPart instanceof AbstractBorderItemEditPart) {
-                containerEditPart =  (IGraphicalEditPart) containerEditPart.getParent().getParent();
-            } else if (containerEditPart instanceof ShapeNodeEditPart) {
-                containerEditPart = (IGraphicalEditPart) containerEditPart.getParent();
-            }
-        } else if (editPart instanceof DiagramEditPart) {
-            partTarget = LayoutOptionData.Target.PARENTS;
-            containerEditPart = editPart;
-            containmentEditPart = editPart;
-        }
-        if (containerEditPart instanceof CompartmentEditPart) {
-            containerEditPart = (IGraphicalEditPart) containerEditPart.getParent();
-        }
-        return partTarget;
-    }
-    
-    /**
-     * Finds the edit part that contains layoutable children, if there are any. The returned
-     * edit part is either the parent edit part itself or one of its compartments. 
-     * 
-     * @param editPart a node edit part
-     * @return the edit part that contains other node edit parts, or {@code null} if there is none
-     */
-    private IGraphicalEditPart findContainingEditPart(final IGraphicalEditPart editPart) {
-        for (Object child : editPart.getChildren()) {
-            if (child instanceof ShapeNodeEditPart
-                    && !(child instanceof AbstractBorderItemEditPart)
-                    && !KimlUiUtil.isNoLayout((EditPart) child)) {
-                return editPart;
-            } else if (child instanceof CompartmentEditPart
-                    && !KimlUiUtil.isNoLayout((EditPart) child)) {
-                for (Object grandChild : ((CompartmentEditPart) child).getChildren()) {
-                    if (grandChild instanceof ShapeNodeEditPart
-                            && !KimlUiUtil.isNoLayout((EditPart) grandChild)) {
-                        return (IGraphicalEditPart) child;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-    
-    /**
-     * Retrieves the options from the notation view of the selected edit part.
-     * 
-     * @return the layout hint for the selected edit part
-     */
-    private String getNotationOptions() {
-        String partLayoutHint = null;
-        if (optionStyle != null) {
-            for (KOption koption : optionStyle.getOptions()) {
-                if (LayoutOptions.LAYOUT_HINT.equals(koption.getKey())) {
-                    partLayoutHint = ((KStringOption) koption).getValue();
-                }
-                LayoutOptionData optionData = LayoutServices.getInstance()
-                        .getLayoutOptionData(koption.getKey());
-                koptionMap.put(optionData, koption);
-            }
-        }
-        if (partLayoutHint == null) {
-            DiagramEditPart diagramEditPart = KimlUiUtil.getDiagramEditPart(containerEditPart);
-            if (diagramEditPart != null) {
-                KOption koption = KimlUiUtil.getKOption(diagramEditPart,
-                        LayoutOptions.LAYOUT_HINT);
-                if (koption != null && koption.isDefault()) {
-                    partLayoutHint = ((KStringOption) koption).getValue();
-                }
-            }
-        }
-        return partLayoutHint;
-    }
-    
-    /**
-     * Create the layout options to show in the layout view for this property source.
-     * 
-     * @param partTarget the edit part target
-     * @param partLayoutHint the layout hint for the selected edit part
-     */
-    private void createShownOptions(final LayoutOptionData.Target partTarget,
-            final String partLayoutHint) {
-        LayoutServices layoutServices = LayoutServices.getInstance();
-        KOption containerLayoutHintOption = KimlUiUtil.getKOption(
-                (containerEditPart instanceof CompartmentEditPart
-                        ? (IGraphicalEditPart) containerEditPart.getParent() : containerEditPart),
-                LayoutOptions.LAYOUT_HINT);
-        if (containerLayoutHintOption == null) {
-            DiagramEditPart diagramEditPart = KimlUiUtil.getDiagramEditPart(containerEditPart);
-            if (diagramEditPart != null) {
-                KOption koption = KimlUiUtil.getKOption(diagramEditPart,
-                        LayoutOptions.LAYOUT_HINT);
-                if (koption != null && koption.isDefault()) {
-                    containerLayoutHintOption = koption;
-                }
-            }
-        }
-        String containerLayoutHint = containerLayoutHintOption instanceof KStringOption
-                ? ((KStringOption) containerLayoutHintOption).getValue() : null;
-        String containerDiagramType = (String) KimlUiUtil.getOption(containerEditPart,
-                LayoutOptions.DIAGRAM_TYPE);
-        containerProviderData = layoutServices.getLayoutProviderData(
-                containerLayoutHint, containerDiagramType);
-        LayoutViewPart layoutView = LayoutViewPart.findView();
-        if (containerProviderData == null) {
-            optionDataList = Collections.emptyList();
-            if (layoutView != null) {
-                layoutView.setCurrentProviderData(new LayoutProviderData[0]);
-            }
-        } else {
-            optionDataList = layoutServices.getLayoutOptions(containerProviderData, partTarget);
-            if (partTarget == LayoutOptionData.Target.PARENTS) {
-                partProviderData = containerProviderData;
-            } else if (containmentEditPart != null) {
-                String childCompartmentDiagramType = (String) KimlUiUtil.getOption(
-                        containmentEditPart, LayoutOptions.DIAGRAM_TYPE);
-                partProviderData = layoutServices.getLayoutProviderData(
-                        partLayoutHint, childCompartmentDiagramType);
-                optionDataList.addAll(layoutServices.getLayoutOptions(partProviderData,
-                        LayoutOptionData.Target.PARENTS));
-            }
-            if (layoutView != null) {
-                if (partProviderData == containerProviderData) {
-                    layoutView.setCurrentProviderData(new LayoutProviderData[]
-                             {containerProviderData});
-                } else {
-                    layoutView.setCurrentProviderData(new LayoutProviderData[]
-                             {containerProviderData, partProviderData});
-                }
-            }
-        }
+    public LayoutPropertySource(final ILayoutInspector inspector) {
+        inspector.initOptions();
+        this.layoutInspector = inspector;
     }
 
     /**
@@ -308,9 +74,10 @@ public class LayoutPropertySource implements IPropertySource {
             if (layoutHintChoices == null) {
                 createLayoutHintChoices();
             }
-            propertyDescriptors = new IPropertyDescriptor[optionDataList.size()];
+            List<LayoutOptionData> optionData = layoutInspector.getOptionData();
+            propertyDescriptors = new IPropertyDescriptor[optionData.size()];
             for (int i = 0; i < propertyDescriptors.length; i++) {
-                propertyDescriptors[i] = new LayoutPropertyDescriptor(optionDataList.get(i),
+                propertyDescriptors[i] = new LayoutPropertyDescriptor(optionData.get(i),
                         layoutHintChoices, layoutHintValues);
             }
         }
@@ -321,21 +88,26 @@ public class LayoutPropertySource implements IPropertySource {
      * {@inheritDoc}
      */
     public Object getPropertyValue(final Object id) {
-        LayoutServices layoutServices = LayoutServices.getInstance();
+        EclipseLayoutServices layoutServices = EclipseLayoutServices.getInstance();
         LayoutOptionData optionData = layoutServices.getLayoutOptionData((String) id);
-        KOption koption = koptionMap.get(optionData);
+        KOption koption = layoutInspector.getKOption(optionData, false);
         Object value = null;
         if (koption == null) {
             if (LayoutOptions.LAYOUT_HINT.equals(id)) {
-                value = partProviderData.getId();
+                value = layoutInspector.getFocusLayouterData().getId();
             } else {
-                boolean hasChildren = containmentEditPart != null;
+                boolean hasChildren = layoutInspector.getContainerPart() != null;
                 if (optionData.hasTarget(LayoutOptionData.Target.PARENTS)) {
-                    value = KimlUiUtil.getDefault(optionData, partProviderData,
-                            shownEditPart, containmentEditPart, hasChildren);
+                    value = layoutServices.getDefault(optionData,
+                            layoutInspector.getFocusLayouterData(),
+                            layoutInspector.getFocusPart(),
+                            layoutInspector.getFocusPart(), hasChildren);
                 } else {
-                    value = KimlUiUtil.getDefault(optionData, containerProviderData,
-                            shownEditPart, containerEditPart, hasChildren);
+                    value = layoutServices.getDefault(optionData,
+                            layoutInspector.getContainerLayouterData(),
+                            layoutInspector.getFocusPart(),
+                            layoutInspector.getContainerPart(),
+                            hasChildren);
                 }
             }
         } else {
@@ -367,22 +139,13 @@ public class LayoutPropertySource implements IPropertySource {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     public void setPropertyValue(final Object id, final Object thevalue) {
         Runnable modelChange = new Runnable() {
             public void run() {
                 Object value = thevalue;
                 LayoutOptionData optionData = LayoutServices.getInstance()
                         .getLayoutOptionData((String) id);
-                KOption koption = koptionMap.get(optionData);
-                if (koption == null) {
-                    if (optionStyle == null) {
-                        optionStyle = LayoutOptionsFactory.eINSTANCE.createLayoutOptionStyle();
-                        shownEditPart.getNotationView().getStyles().add(optionStyle);
-                    }
-                    koption = KimlUiUtil.addKOption(optionStyle, optionData);
-                    koptionMap.put(optionData, koption);
-                }
+                KOption koption = layoutInspector.getKOption(optionData, true);
                 if (LayoutOptions.LAYOUT_HINT.equals(optionData.getId())) {
                     KimlLayoutUtil.setValue(koption, optionData,
                             layoutHintValues[((Integer) value).intValue()]);
@@ -406,7 +169,7 @@ public class LayoutPropertySource implements IPropertySource {
                 }
             }
         };
-        KimlUiUtil.runModelChange(modelChange, shownEditPart.getEditingDomain(),
+        KimlUiUtil.runModelChange(modelChange, layoutInspector.getEditingDomain(),
                 Messages.getString("kiml.ui.11"));
     }
     
@@ -422,7 +185,7 @@ public class LayoutPropertySource implements IPropertySource {
      */
     public boolean isPropertySet(final Object id) {
         LayoutOptionData optionData = LayoutServices.getInstance().getLayoutOptionData((String) id);
-        KOption koption = koptionMap.get(optionData);
+        KOption koption = layoutInspector.getKOption(optionData, false);
         return koption != null;
     }
 
@@ -432,16 +195,15 @@ public class LayoutPropertySource implements IPropertySource {
     public void resetPropertyValue(final Object id) {
         final LayoutOptionData optionData = LayoutServices.getInstance()
                 .getLayoutOptionData((String) id);
-        final KOption koption = koptionMap.get(optionData);
+        KOption koption = layoutInspector.getKOption(optionData, false);
         if (koption != null) {
             Runnable modelChange = new Runnable() {
                 public void run() {
-                    KimlUiUtil.removeKOption(optionStyle, optionData.getId());
+                    layoutInspector.removeKOption(optionData);
                 }
             };
-            KimlUiUtil.runModelChange(modelChange, shownEditPart.getEditingDomain(),
+            KimlUiUtil.runModelChange(modelChange, layoutInspector.getEditingDomain(),
                     Messages.getString("kiml.ui.12"));
-            koptionMap.remove(optionData);
         }
         if (LayoutOptions.LAYOUT_HINT.equals(optionData.getId())
                 || optionData.getType() == LayoutOptionData.Type.BOOLEAN

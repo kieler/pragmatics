@@ -23,4 +23,4 @@
  * 
  * @generated
  */
-package de.cau.cs.kieler.kiml.ui.layout.layoutoptions;
+package de.cau.cs.kieler.kiml.gmf.layoutoptions;

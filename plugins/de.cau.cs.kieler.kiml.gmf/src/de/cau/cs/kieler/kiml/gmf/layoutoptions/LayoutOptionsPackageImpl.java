@@ -13,7 +13,7 @@
  *
  * $Id$
  */
-package de.cau.cs.kieler.kiml.ui.layout.layoutoptions;
+package de.cau.cs.kieler.kiml.gmf.layoutoptions;
 
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
 
@@ -51,7 +51,7 @@ public class LayoutOptionsPackageImpl extends EPackageImpl implements LayoutOpti
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @see org.eclipse.emf.ecore.EPackage.Registry
-     * @see de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsPackage#eNS_URI
+     * @see de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionsPackage#eNS_URI
      * @see #init()
      * @generated
      */

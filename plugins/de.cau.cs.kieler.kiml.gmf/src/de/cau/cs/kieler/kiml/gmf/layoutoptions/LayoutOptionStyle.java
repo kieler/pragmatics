@@ -13,7 +13,7 @@
  *
  * $Id$
  */
-package de.cau.cs.kieler.kiml.ui.layout.layoutoptions;
+package de.cau.cs.kieler.kiml.gmf.layoutoptions;
 
 import de.cau.cs.kieler.kiml.klayoutdata.KOption;
 
@@ -30,11 +30,11 @@ import org.eclipse.gmf.runtime.notation.Style;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyle#getOptions <em>Options</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionStyle#getOptions <em>Options</em>}</li>
  * </ul>
  * </p>
  *
- * @see de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsPackage#getLayoutOptionStyle()
+ * @see de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionsPackage#getLayoutOptionStyle()
  * @model
  * @generated
  */
@@ -49,7 +49,7 @@ public interface LayoutOptionStyle extends Style, EAnnotation {
      * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Options</em>' containment reference list.
-     * @see de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsPackage#getLayoutOptionStyle_Options()
+     * @see de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionsPackage#getLayoutOptionStyle_Options()
      * @model containment="true"
      * @generated
      */

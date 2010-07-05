@@ -24,13 +24,13 @@ import org.eclipse.draw2d.Polyline;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramRootEditPart;
 import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
+import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
 import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
 
 /**
@@ -100,11 +100,10 @@ public class DebugCanvas {
      *            the drawing mode
      */
     public DebugCanvas(final KNode parentNode, final DrawingMode drawingMode) {
-        DiagramEditPart editPart = KimlUiUtil
-                .getDiagramEditPart(EclipseLayoutServices.getInstance()
-                        .getLastManager().getCurrentEditPart());
-        if (editPart != null) {
-            layer = editPart.getLayer(DiagramRootEditPart.PAGE_BREAKS_LAYER);
+        DiagramLayoutManager layoutManager = EclipseLayoutServices.getInstance().getLastManager();
+        ILayoutInspector inspector = layoutManager.getInspector(layoutManager.getCurrentEditPart());
+        layer = inspector.getDrawingLayer();
+        if (layer != null) {
 
             // calculate the offset
             KNode currentNode = parentNode;

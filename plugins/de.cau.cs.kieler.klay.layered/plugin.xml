@@ -4,7 +4,7 @@
    <extension
          point="de.cau.cs.kieler.kiml.layoutProviders">
       <layoutProvider
-            category="de.cau.cs.kieler.layouter.category"
+            category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.klay.layered.LayeredLayoutProvider"
             id="de.cau.cs.kieler.klay.layered"
             name="KLay Layered"

@@ -5,7 +5,7 @@
          point="de.cau.cs.kieler.kiml.layoutProviders">
       <layoutProvider
             class="de.cau.cs.kieler.klodd.hierarchical.HierarchicalDataflowLayoutProvider"
-            category="de.cau.cs.kieler.layouter.category"
+            category="de.cau.cs.kieler"
             id="de.cau.cs.kieler.klodd.hierarchical"
             name="KLoDD Hierarchical"
             type="de.cau.cs.kieler.layout.types.layered">

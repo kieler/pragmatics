@@ -2,6 +2,14 @@
 <?eclipse version="3.4"?>
 <plugin>
  <extension
+       point="org.eclipse.emf.ecore.generated_package">
+    <package
+          class="de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionsPackage"
+          genModel="model/layoutoptions.genmodel"
+          uri="http://kieler.cs.cau.de/LayoutOptions">
+    </package>
+ </extension>
+ <extension
        point="de.cau.cs.kieler.kiml.ui.layoutManagers">
     <manager
           class="de.cau.cs.kieler.kiml.gmf.GmfDiagramLayoutManager">
@@ -10,7 +18,7 @@
   <extension
        point="org.eclipse.gmf.runtime.diagram.ui.editpolicyProviders">
     <editpolicyProvider
-          class="de.cau.cs.kieler.kiml.ui.layout.LayoutEditPolicyProvider">
+          class="de.cau.cs.kieler.kiml.gmf.LayoutEditPolicyProvider">
        <Priority
              name="Lowest">
        </Priority>

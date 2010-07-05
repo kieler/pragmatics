@@ -13,7 +13,7 @@
  *
  * $Id$
  */
-package de.cau.cs.kieler.kiml.ui.layout.layoutoptions;
+package de.cau.cs.kieler.kiml.gmf.layoutoptions;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;

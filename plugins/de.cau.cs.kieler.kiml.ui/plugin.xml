@@ -12,14 +12,7 @@
           type="org.eclipse.ui.IEditorPart">
     </propertyTester>
  </extension>
- <extension
-       point="org.eclipse.emf.ecore.generated_package">
-    <package
-          class="de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsPackage"
-          genModel="model/layoutoptions.genmodel"
-          uri="http://kieler.cs.cau.de/LayoutOptions">
-    </package>
- </extension>
+
  <extension
        point="org.eclipse.core.runtime.preferences">
     <initializer

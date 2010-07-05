@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.gmf;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -20,6 +22,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.draw2d.ConnectionLocator;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
@@ -37,12 +43,14 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderItemEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.CompartmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramRootEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeCompartmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.figures.ResizableCompartmentFigure;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
+import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramWorkbenchPart;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -64,9 +72,11 @@ import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.ui.IEditorChangeListener;
+import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.layout.ApplyLayoutRequest;
-import de.cau.cs.kieler.kiml.ui.layout.CachedLayout;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.layout.ICachedLayout;
+import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
 
@@ -105,7 +115,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     /** target layout node that is layouted recursively. */
     private KNode ancestryTargetNode;
     /** the cached layout result. */
-    private CachedLayout cachedLayout;
+    private GmfCachedLayout cachedLayout;
     /** the command that applies the transferred layout to the diagram. */
     private Command applyLayoutCommand;
 
@@ -180,6 +190,21 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      * {@inheritDoc}
      */
     @Override
+    public ILayoutInspector getInspector(final EditPart editPart) {
+        if (editPart instanceof IGraphicalEditPart) {
+            return new GmfLayoutInspector((IGraphicalEditPart) editPart);
+        } else if (editPart instanceof DiagramRootEditPart) {
+            return new GmfLayoutInspector((IGraphicalEditPart)
+                    ((DiagramRootEditPart) editPart).getContents());
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public KNode buildLayoutGraph(final IEditorPart editorPart, final EditPart editPart,
             final boolean layoutAncestors) {
         graphElem2EditPartMap.clear();
@@ -219,7 +244,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         }
 
         // find the diagram edit part
-        diagramEditPart = KimlUiUtil.getDiagramEditPart(layoutRootPart);
+        diagramEditPart = GmfLayoutInspector.getDiagramEditPart(layoutRootPart);
 
         layoutGraph = doBuildLayoutGraph();
         return layoutGraph;
@@ -241,7 +266,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         
         // store the layout data into a cache
         if (cacheLayout) {
-            cachedLayout = new CachedLayout(graphElem2EditPartMap.size());
+            cachedLayout = new GmfCachedLayout(graphElem2EditPartMap.size());
             for (Entry<KGraphElement, IGraphicalEditPart> entry : graphElem2EditPartMap.entrySet()) {
                 cachedLayout.addLayout(entry.getValue(), entry.getKey());
             }
@@ -267,6 +292,10 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         
         // execute the command
         commandStack.execute(applyLayoutCommand);
+        // refresh the labels in the diagram
+        
+        // FIXME this workaround should be eliminated
+        refreshDiagram(diagramEditorPart, layoutRootPart);
     }
     
     /**
@@ -281,7 +310,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      * {@inheritDoc}
      */
     @Override
-    protected CachedLayout getCachedLayout() {
+    protected ICachedLayout getCachedLayout() {
         return cachedLayout;
     }
 
@@ -320,7 +349,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         // traverse the children of the layout root part
         buildLayoutGraphRecursively(layoutRootPart, topNode, layoutRootPart);
         // set user defined layout options for the diagram
-        KimlUiUtil.setLayoutOptions(layoutRootPart, shapeLayout, true);
+        GmfLayoutInspector.setLayoutOptions(layoutRootPart, shapeLayout, true);
         // transform all connections in the selected area
         processConnections();
 
@@ -380,7 +409,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 portLayout.setHeight(portBounds.height);
                 hasPorts = true;
                 // set user defined layout options for the port
-                KimlUiUtil.setLayoutOptions(borderItem, portLayout, true);
+                GmfLayoutInspector.setLayoutOptions(borderItem, portLayout, true);
 
                 // store all the connections to process them later
                 addConnections(borderItem);
@@ -475,7 +504,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                             childNodeEditPart);
     
                     // set user defined layout options for the node
-                    KimlUiUtil.setLayoutOptions(childNodeEditPart, nodeLayout, true);
+                    GmfLayoutInspector.setLayoutOptions(childNodeEditPart, nodeLayout, true);
                 }
 
             // process labels of nodes
@@ -662,7 +691,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             targetPoint.setY(lastPoint.y);
 
             // set user defined layout options for the edge
-            KimlUiUtil.setLayoutOptions(connection, edgeLayout, true);
+            GmfLayoutInspector.setLayoutOptions(connection, edgeLayout, true);
 
             // process edge labels
             processLabels(connection, edge, EdgeLabelPlacement.UNDEFINED);
@@ -788,6 +817,48 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             }
             removeFromLayout(child);
         }
+    }
+
+    /**
+     * Refreshes all LabelEditParts in the diagram. This is necessary in order
+     * to prevent Transition labels from vanishing.
+     * 
+     * author: soh FIXME: Someone should look into this. What causes transition
+     * labels to fly out of alignment.
+     * 
+     * @param editor
+     *            the editor
+     * @param editPart
+     *            the root edit part
+     */
+    private static void refreshDiagram(final IEditorPart editor,
+            final EditPart editPart) {
+        Job worker = new Job("Diagram refresh") {
+
+            @Override
+            protected IStatus run(final IProgressMonitor monitor) {
+                if (editor instanceof IDiagramWorkbenchPart) {
+                    EditPart part = editPart;
+
+                    if (part == null) {
+                        part = ((IDiagramWorkbenchPart) editor)
+                                .getDiagramEditPart();
+                    }
+
+                    @SuppressWarnings("unchecked")
+                    Collection<EditPart> editParts = new ArrayList<EditPart>(
+                            part.getViewer().getEditPartRegistry().values());
+
+                    for (EditPart obj : editParts) {
+                        if (obj instanceof LabelEditPart) {
+                            ((LabelEditPart) obj).refresh();
+                        }
+                    }
+                }
+                return new Status(Status.OK, KimlUiPlugin.PLUGIN_ID, "Refresh done");
+            }
+        };
+        worker.schedule(1000);
     }
 
 }

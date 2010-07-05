@@ -13,14 +13,15 @@
  */
 package de.cau.cs.kieler.kiml.ui.views;
 
-import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
-import org.eclipse.gmf.runtime.notation.Diagram;
-import org.eclipse.gmf.runtime.notation.View;
+import org.eclipse.gef.EditPart;
+import org.eclipse.gef.ui.parts.GraphicalEditor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IEditorPart;
 
 import de.cau.cs.kieler.kiml.ui.Messages;
+import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
 /**
@@ -50,46 +51,27 @@ public class RemoveOptionsAction extends Action {
      */
     public void run() {
         IEditorPart editorPart = layoutView.getCurrentEditor();
-        if (editorPart instanceof DiagramEditor) {
-            final DiagramEditor editor = (DiagramEditor) editorPart;
-            // show a dialog to confirm the removal of all layout options
-            String diagramName = editor.getTitle();
-            boolean userResponse = MessageDialog.openQuestion(layoutView.getSite().getShell(),
-                    Messages.getString("kiml.ui.31"), Messages.getString("kiml.ui.32")
-                    + " " + diagramName + "?");
-            if (userResponse) {
-                Runnable runnable = new Runnable() {
-                    public void run() {
-                        removeOptions(editor.getDiagram());
-                    }
-                };
-                KimlUiUtil.runModelChange(runnable, editor.getEditingDomain(),
-                        Messages.getString("kiml.ui.30"));
+        if (editorPart instanceof GraphicalEditor) {
+            GraphicalEditor graphEditor = (GraphicalEditor) editorPart;
+            EditPart diagram = (EditPart) graphEditor.getAdapter(EditPart.class);
+            DiagramLayoutManager manager = layoutView.getCurrentManager();
+            if (diagram != null && manager != null) {
+                // show a dialog to confirm the removal of all layout options
+                String diagramName = graphEditor.getTitle();
+                boolean userResponse = MessageDialog.openQuestion(layoutView.getSite().getShell(),
+                        Messages.getString("kiml.ui.31"), Messages.getString("kiml.ui.32")
+                        + " " + diagramName + "?");
+                if (userResponse) {
+                    final ILayoutInspector inspector = manager.getInspector(diagram);
+                    Runnable runnable = new Runnable() {
+                        public void run() {
+                            inspector.removeAllKOptions();
+                        }
+                    };
+                    KimlUiUtil.runModelChange(runnable, inspector.getEditingDomain(),
+                            Messages.getString("kiml.ui.30"));
+                }
             }
-        }
-    }
-    
-    /**
-     * Removes all layout options from the given notation diagram.
-     * 
-     * @param diagram a diagram from the notation model
-     */
-    private void removeOptions(final Diagram diagram) {
-        for (Object edge : diagram.getPersistedEdges()) {
-            KimlUiUtil.removeOptionStyle((View) edge);
-        }
-        removeChildOptions(diagram);
-    }
-    
-    /**
-     * Removes all layout options from the given node and its children.
-     * 
-     * @param node a node from the notation model
-     */
-    private void removeChildOptions(final View node) {
-        KimlUiUtil.removeOptionStyle(node);
-        for (Object child : node.getPersistedChildren()) {
-            removeChildOptions((View) child);
         }
     }
     

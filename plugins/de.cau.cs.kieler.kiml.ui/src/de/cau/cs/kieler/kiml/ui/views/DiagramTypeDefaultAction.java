@@ -13,11 +13,13 @@
  */
 package de.cau.cs.kieler.kiml.ui.views;
 
+import org.eclipse.gef.EditPart;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.views.properties.IPropertySheetEntry;
 
 import de.cau.cs.kieler.kiml.LayoutOptionData;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
@@ -57,10 +59,13 @@ public class DiagramTypeDefaultAction extends Action {
      */
     @Override
     public void run() {
-        String diagramType = layoutView.getCurrentDiagramType();
-        if (diagramType != null) {
-            for (IPropertySheetEntry entry : layoutView.getSelection()) {
-                setDefault(diagramType, entry);
+        EditPart editPart = layoutView.getCurrentEditPart();
+        if (editPart != null) {
+            String diagramType = (String) KimlUiUtil.getOption(editPart, LayoutOptions.DIAGRAM_TYPE);
+            if (diagramType != null) {
+                for (IPropertySheetEntry entry : layoutView.getSelection()) {
+                    setDefault(diagramType, entry);
+                }
             }
         }
     }

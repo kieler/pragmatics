@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.ui.layout;
+package de.cau.cs.kieler.kiml.gmf;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,11 +31,15 @@ import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
+import de.cau.cs.kieler.kiml.ui.layout.ApplyLayoutRequest;
+import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.layout.ICachedLayout;
 
 /**
  * A cache for results of automatic layout. Can be used to repeatedly apply the
@@ -44,7 +48,7 @@ import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
  * @kieler.rating 2010-01-26 proposed yellow msp
  * @author msp
  */
-public class CachedLayout {
+public class GmfCachedLayout implements ICachedLayout {
     
     /**
      * Data type for entities of the layout cache.
@@ -73,7 +77,7 @@ public class CachedLayout {
      * 
      * @param initialCapacity the initial capacity of the cache
      */
-    public CachedLayout(final int initialCapacity) {
+    public GmfCachedLayout(final int initialCapacity) {
         layoutCache = new ArrayList<LayoutEntity>(initialCapacity);
     }
 
@@ -105,10 +109,7 @@ public class CachedLayout {
     private static final int ANIMATION_SHORTEN = 3;
     
     /**
-     * Applies the cached layout to the given editor part.
-     * 
-     * @param editorPart a diagram editor part
-     * @param animate if true, Draw2D animation is activated
+     * {@inheritDoc}
      */
     public void applyLayout(final IEditorPart editorPart, final boolean animate) {
         MonitoredOperation.runInUI(new Runnable() {
@@ -126,12 +127,9 @@ public class CachedLayout {
     }
     
     /**
-     * Applies the cached layout to the given editor part with a specified progress monitor.
-     * 
-     * @param editorPart a diagram editor part
-     * @return a status indicating success or failure
+     * {@inheritDoc}
      */
-    public IStatus applyLayout(final IEditorPart editorPart) {
+    public void applyLayout(final IEditorPart editorPart) {
         // get a command stack to execute the command
         CommandStack commandStack = null;
         if (editorPart != null) {
@@ -141,8 +139,10 @@ public class CachedLayout {
             }
         }
         if (commandStack == null || !(editorPart instanceof DiagramEditor)) {
-            return new Status(IStatus.ERROR, KimlUiPlugin.PLUGIN_ID,
+            IStatus status = new Status(IStatus.ERROR, KimlUiPlugin.PLUGIN_ID,
                     "The selected editor has no command stack.", null);
+            StatusManager.getManager().handle(status);
+            return;
         }
 
         // create a new request to change the layout
@@ -167,8 +167,6 @@ public class CachedLayout {
         Command applyLayoutCommand = diagramEditPart.getCommand(applyLayoutRequest);
         // execute the command
         commandStack.execute(applyLayoutCommand);
-
-        return new Status(IStatus.OK, KimlUiPlugin.PLUGIN_ID, 0, null, null);
     }
     
     /**

@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.ui.layout;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -25,14 +24,10 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.gef.EditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramWorkbenchPart;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -43,6 +38,8 @@ import de.cau.cs.kieler.kiml.ILayoutListener;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
 import de.cau.cs.kieler.kiml.LayoutServices;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
@@ -169,7 +166,7 @@ public class EclipseLayoutServices extends LayoutServices {
      *     fetched, or {@code null}
      * @return the most suitable diagram layout manager
      */
-    public final DiagramLayoutManager getManager(final IEditorPart editorPart,
+    public DiagramLayoutManager getManager(final IEditorPart editorPart,
             final EditPart editPart) {
         for (DiagramLayoutManager manager : managers) {
             if (manager.supports(editorPart)
@@ -179,6 +176,17 @@ public class EclipseLayoutServices extends LayoutServices {
         }
         return null;
     }
+
+    /**
+     * Retrieve an inspector for the given edit part using the most suitable
+     * layout manager.
+     * 
+     * @param editPart the edit part for which the inspector should be fetched
+     * @return an inspector for the edit part
+     */
+    public ILayoutInspector getInspector(final EditPart editPart) {
+        return getManager(null, editPart).getInspector(editPart);
+    }
     
     /**
      * Returns the last used layout manager instance.
@@ -187,6 +195,89 @@ public class EclipseLayoutServices extends LayoutServices {
      */
     public DiagramLayoutManager getLastManager() {
         return lastManager;
+    }
+    
+    /**
+     * Retrieves the default value for the given layout option.
+     * 
+     * @param optionData a layout option data
+     * @param providerData the active layout provider data
+     * @param editPart the current edit part
+     * @param containerEditPart the edit part that contains the current
+     *      edit part
+     * @param hasChildren indicates whether the given edit part has children
+     *     in the layout graph
+     * @return an object with the default value
+     */
+    public Object getDefault(final LayoutOptionData optionData,
+            final LayoutProviderData providerData, final EditPart editPart,
+            final EditPart containerEditPart, final boolean hasChildren) {
+        Object result = null;
+        
+        if (editPart != null) {
+            // check default option of diagram edit part
+            ILayoutInspector inspector = getInspector(editPart);
+            result = inspector.getDefault(optionData);
+            if (result != null) {
+                return result;
+            }
+            
+            // check default value set for the actual edit part or its model element
+            result = KimlUiUtil.getOption(editPart, optionData.getId());
+            if (result != null) {
+                return result;
+            }
+        }
+
+        if (containerEditPart != null) {
+            // check default option of the diagram type
+            String diagramType = (String) KimlUiUtil.getOption(containerEditPart,
+                    LayoutOptions.DIAGRAM_TYPE);
+            result = getOption(diagramType, optionData.getId());
+            if (result != null) {
+                return result;
+            }
+    
+            // check default value for the container edit part
+            result = KimlUiUtil.getOption(containerEditPart, optionData.getId());
+            if (result != null) {
+                return result;
+            }
+        }
+        
+        // fall back to default value of specific options
+        if (LayoutOptions.FIXED_SIZE.equals(optionData.getId())) {
+            return Boolean.valueOf(!hasChildren);
+        } else if (LayoutOptions.PORT_CONSTRAINTS.equals(optionData.getId())) {
+            if (hasChildren) {
+                return PortConstraints.FREE_PORTS.ordinal();
+            } else {
+                return PortConstraints.FIXED_POS.ordinal();
+            }
+        }
+
+        // fall back to default value of layout provider
+        result = providerData != null ? providerData.getInstance().getDefault(
+                optionData.getId()) : null;
+        if (result != null) {
+            return result;
+        }
+        
+        // fall back to default-default value
+        switch (optionData.getType()) {
+        case STRING:
+            return "";
+        case BOOLEAN:
+            return Boolean.FALSE;
+        case ENUM:
+        case INT:
+            return Integer.valueOf(0);
+        case FLOAT:
+            return Float.valueOf(0.0f);
+        default:
+            // this should never happen
+            return null;
+        }
     }
     
     /**
@@ -228,7 +319,7 @@ public class EclipseLayoutServices extends LayoutServices {
      *            if true, a progress bar is displayed
      * @return the cached layout result
      */
-    public CachedLayout cacheLayout(
+    public ICachedLayout cacheLayout(
             final IEditorPart editorPart, final EditPart editPart,
             final boolean animate, final boolean progressBar) {
         layout(editorPart, editPart, animate, progressBar, true);
@@ -262,54 +353,10 @@ public class EclipseLayoutServices extends LayoutServices {
             lastManager = manager;
             manager.layout(editorPart, editPart, animate, progressBar,
                     layoutAncestors, false);
-            // additionally refresh the diagram, should be eliminated sooner or later
-            refreshDiagram(editorPart, editPart);
         } else {
             throw new UnsupportedOperationException(Messages.getString("kiml.ui.15")
                     + editorPart.getTitle() + ".");
         }
-    }
-
-    /**
-     * Refreshes all LabelEditParts in the diagram. This is necessary in order
-     * to prevent Transition labels from vanishing.
-     * 
-     * author: soh FIXME: Someone should look into this. What causes transition
-     * labels to fly out of alignment.
-     * 
-     * @param editor
-     *            the editor
-     * @param editPart
-     *            the root edit part
-     */
-    private static void refreshDiagram(final IEditorPart editor,
-            final EditPart editPart) {
-        Job worker = new Job("Diagram refresh") {
-
-            @Override
-            protected IStatus run(final IProgressMonitor monitor) {
-                if (editor instanceof IDiagramWorkbenchPart) {
-                    EditPart part = editPart;
-
-                    if (part == null) {
-                        part = ((IDiagramWorkbenchPart) editor)
-                                .getDiagramEditPart();
-                    }
-
-                    @SuppressWarnings("unchecked")
-                    Collection<EditPart> editParts = new ArrayList<EditPart>(
-                            part.getViewer().getEditPartRegistry().values());
-
-                    for (EditPart obj : editParts) {
-                        if (obj instanceof LabelEditPart) {
-                            ((LabelEditPart) obj).refresh();
-                        }
-                    }
-                }
-                return new Status(Status.OK, KimlUiPlugin.PLUGIN_ID, "Refresh done");
-            }
-        };
-        worker.schedule();
     }
 
     /**
@@ -395,13 +442,17 @@ public class EclipseLayoutServices extends LayoutServices {
             final String valueString, final boolean storeDomainModel) {
         Object value = optionData.parseValue(valueString);
         if (value != null) {
-            String className = KimlUiUtil.getClassName(editPart, storeDomainModel);
-            if (className != null) {
-                registry().addOption(className, optionData.getId(), value);
-                registeredElements.add(className);
-                IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
-                preferenceStore.setValue(getPreferenceName(className, optionData.getId()), valueString);
+            ILayoutInspector inspector = getInspector(editPart);
+            String clazzName;
+            if (storeDomainModel) {
+                clazzName = inspector.getFocusModel().eClass().getInstanceTypeName();
+            } else {
+                clazzName = inspector.getFocusPart().getClass().getName();
             }
+            registry().addOption(clazzName, optionData.getId(), value);
+            registeredElements.add(clazzName);
+            IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
+            preferenceStore.setValue(getPreferenceName(clazzName, optionData.getId()), valueString);
         }
     }
     

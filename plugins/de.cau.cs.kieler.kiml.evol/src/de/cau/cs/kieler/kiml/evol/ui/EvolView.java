@@ -386,7 +386,10 @@ public class EvolView extends ViewPart {
         if (editor != null) {
             // TODO: test whether the editor is for KIML
             // FIXME: should share synchronized property source with LayoutView?
-            final LayoutPropertySource propertySource = new LayoutPropertySource(editor, part);
+            DiagramLayoutManager manager = EclipseLayoutServices.getInstance().getManager(
+                    editor, part);
+            final LayoutPropertySource propertySource = new LayoutPropertySource(
+                    manager.getInspector(part));
             final Population sourcePopulation =
                     EvolUtil.createPopulation(propertySource, DEFAULT_INITIAL_POPULATION_SIZE);
             final BasicEvolutionaryAlgorithm alg = new BasicEvolutionaryAlgorithm(sourcePopulation);
@@ -537,7 +540,9 @@ public class EvolView extends ViewPart {
         final IEditorPart editor = getCurrentEditor();
         final IGraphicalEditPart part = (IGraphicalEditPart) getEditPart(editor);
         // TODO: use root edit part
-        final LayoutPropertySource result = new LayoutPropertySource(editor, part);
+        DiagramLayoutManager manager = EclipseLayoutServices.getInstance().getManager(editor, part);
+        final LayoutPropertySource result = new LayoutPropertySource(
+                manager.getInspector(part));
         return result;
     }
 

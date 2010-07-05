@@ -298,6 +298,14 @@ public abstract class DiagramLayoutManager {
      */
     public abstract KNode buildLayoutGraph(IEditorPart editorPart,
             EditPart editPart, boolean layoutAncestors);
+    
+    /**
+     * Returns a layout inspector for the given edit part.
+     * 
+     * @param editPart an edit part
+     * @return a layout inspector for the edit part
+     */
+    public abstract ILayoutInspector getInspector(EditPart editPart);
 
     /**
      * Transfers all layout data from the last created KGraph instance to the
@@ -327,7 +335,7 @@ public abstract class DiagramLayoutManager {
      * 
      * @return the last cached layout
      */
-    protected abstract CachedLayout getCachedLayout();
+    protected abstract ICachedLayout getCachedLayout();
     
     /**
      * Register a listener for change of the active editor or active selection.

@@ -13,7 +13,7 @@
  *
  * $Id$
  */
-package de.cau.cs.kieler.kiml.ui.layout.layoutoptions;
+package de.cau.cs.kieler.kiml.gmf.layoutoptions;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
@@ -32,7 +32,7 @@ import org.eclipse.gmf.runtime.notation.NotationPackage;
  *   <li>and each data type</li>
  * </ul>
  * <!-- end-user-doc -->
- * @see de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsFactory
+ * @see de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionsFactory
  * @model kind="package"
  * @generated
  */
@@ -67,14 +67,14 @@ public interface LayoutOptionsPackage extends EPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    LayoutOptionsPackage eINSTANCE = de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsPackageImpl.init();
+    LayoutOptionsPackage eINSTANCE = de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionsPackageImpl.init();
 
     /**
-     * The meta object id for the '{@link de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyleImpl <em>Layout Option Style</em>}' class.
+     * The meta object id for the '{@link de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionStyleImpl <em>Layout Option Style</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyleImpl
-     * @see de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsPackageImpl#getLayoutOptionStyle()
+     * @see de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionStyleImpl
+     * @see de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionsPackageImpl#getLayoutOptionStyle()
      * @generated
      */
     int LAYOUT_OPTION_STYLE = 0;
@@ -153,21 +153,21 @@ public interface LayoutOptionsPackage extends EPackage {
 
 
     /**
-     * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyle <em>Layout Option Style</em>}'.
+     * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionStyle <em>Layout Option Style</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @return the meta object for class '<em>Layout Option Style</em>'.
-     * @see de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyle
+     * @see de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionStyle
      * @generated
      */
     EClass getLayoutOptionStyle();
 
     /**
-     * Returns the meta object for the containment reference list '{@link de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyle#getOptions <em>Options</em>}'.
+     * Returns the meta object for the containment reference list '{@link de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionStyle#getOptions <em>Options</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @return the meta object for the containment reference list '<em>Options</em>'.
-     * @see de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyle#getOptions()
+     * @see de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionStyle#getOptions()
      * @see #getLayoutOptionStyle()
      * @generated
      */
@@ -196,11 +196,11 @@ public interface LayoutOptionsPackage extends EPackage {
      */
     interface Literals {
         /**
-         * The meta object literal for the '{@link de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyleImpl <em>Layout Option Style</em>}' class.
+         * The meta object literal for the '{@link de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionStyleImpl <em>Layout Option Style</em>}' class.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
-         * @see de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyleImpl
-         * @see de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionsPackageImpl#getLayoutOptionStyle()
+         * @see de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionStyleImpl
+         * @see de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionsPackageImpl#getLayoutOptionStyle()
          * @generated
          */
         EClass LAYOUT_OPTION_STYLE = eINSTANCE.getLayoutOptionStyle();

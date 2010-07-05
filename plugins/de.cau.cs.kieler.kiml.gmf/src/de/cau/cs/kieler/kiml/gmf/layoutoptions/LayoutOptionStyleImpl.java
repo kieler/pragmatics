@@ -13,7 +13,7 @@
  *
  * $Id$
  */
-package de.cau.cs.kieler.kiml.ui.layout.layoutoptions;
+package de.cau.cs.kieler.kiml.gmf.layoutoptions;
 
 import de.cau.cs.kieler.kiml.klayoutdata.KOption;
 
@@ -51,13 +51,13 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyleImpl#getEAnnotations <em>EAnnotations</em>}</li>
- *   <li>{@link de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyleImpl#getSource <em>Source</em>}</li>
- *   <li>{@link de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyleImpl#getDetails <em>Details</em>}</li>
- *   <li>{@link de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyleImpl#getEModelElement <em>EModel Element</em>}</li>
- *   <li>{@link de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyleImpl#getContents <em>Contents</em>}</li>
- *   <li>{@link de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyleImpl#getReferences <em>References</em>}</li>
- *   <li>{@link de.cau.cs.kieler.kiml.ui.layout.layoutoptions.LayoutOptionStyleImpl#getOptions <em>Options</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionStyleImpl#getEAnnotations <em>EAnnotations</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionStyleImpl#getSource <em>Source</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionStyleImpl#getDetails <em>Details</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionStyleImpl#getEModelElement <em>EModel Element</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionStyleImpl#getContents <em>Contents</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionStyleImpl#getReferences <em>References</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionStyleImpl#getOptions <em>Options</em>}</li>
  * </ul>
  * </p>
  *
@@ -466,11 +466,6 @@ public class LayoutOptionStyleImpl extends EObjectImpl implements LayoutOptionSt
      */
     @Override
     public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
-        if (baseClass == EObject.class) {
-            switch (derivedFeatureID) {
-                default: return -1;
-            }
-        }
         if (baseClass == EModelElement.class) {
             switch (derivedFeatureID) {
                 case LayoutOptionsPackage.LAYOUT_OPTION_STYLE__EANNOTATIONS: return EcorePackage.EMODEL_ELEMENT__EANNOTATIONS;
@@ -497,11 +492,6 @@ public class LayoutOptionStyleImpl extends EObjectImpl implements LayoutOptionSt
      */
     @Override
     public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
-        if (baseClass == EObject.class) {
-            switch (baseFeatureID) {
-                default: return -1;
-            }
-        }
         if (baseClass == EModelElement.class) {
             switch (baseFeatureID) {
                 case EcorePackage.EMODEL_ELEMENT__EANNOTATIONS: return LayoutOptionsPackage.LAYOUT_OPTION_STYLE__EANNOTATIONS;

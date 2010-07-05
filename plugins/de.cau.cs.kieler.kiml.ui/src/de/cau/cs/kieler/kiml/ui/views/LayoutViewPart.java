@@ -16,8 +16,8 @@ package de.cau.cs.kieler.kiml.ui.views;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -59,6 +59,7 @@ import de.cau.cs.kieler.kiml.ui.IEditorChangeListener;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
+import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
 /**
@@ -82,8 +83,8 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
     private IEditorPart currentEditor;
     /** the currently used diagram layout manager. */
     private DiagramLayoutManager currentManager;
-    /** the current selection. */
-    private IStructuredSelection currentSelection;
+    /** the last created layout inspector. */
+    private ILayoutInspector lastInspector;
     /** the layout provider data for the currently displayed options. */
     private LayoutProviderData[] currentProviderData;
     
@@ -139,10 +140,13 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
         page.setPropertySourceProvider(new IPropertySourceProvider() {
             public IPropertySource getPropertySource(final Object object) {
                 if (object instanceof EditPart) {
-                    return new LayoutPropertySource(currentManager, (EditPart) object);
-                } else {
-                    return null;
+                    ILayoutInspector inspector = currentManager.getInspector((EditPart) object);
+                    if (inspector != null) {
+                        lastInspector = inspector;
+                        return new LayoutPropertySource(inspector);
+                    }
                 }
+                return null;
             }
         });
         page.setActionBars(getViewSite().getActionBars());
@@ -249,8 +253,7 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
             ISelection selection = event.getSelection();
             if (selection instanceof IStructuredSelection) {
                 page.selectionChanged(currentEditor, selection);
-                currentSelection = (IStructuredSelection) selection;
-                setPartText(currentSelection);
+                setPartText();
             }
         }
     }
@@ -263,10 +266,18 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
             ISelection selection = currentManager.getSelection(currentEditor);
             if (selection instanceof IStructuredSelection) {
                 page.selectionChanged(currentEditor, selection);
-                currentSelection = (IStructuredSelection) selection;
-                setPartText(currentSelection);
+                setPartText();
             }
         }
+    }
+    
+    /**
+     * Returns the currently used diagram layout manager.
+     * 
+     * @return the current layout manager
+     */
+    public DiagramLayoutManager getCurrentManager() {
+        return currentManager;
     }
     
     /**
@@ -301,7 +312,7 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
      */
     private void addPopupActions(final Menu menu) {
         final String applyOptionString = Messages.getString("kiml.ui.10"); //$NON-NLS-1$
-        final IAction applyOptionAction = new ApplyOptionAction(this, applyOptionString);
+        final IAction applyOptionAction = new DiagramDefaultAction(this, applyOptionString);
         final String setDefaultString = Messages.getString("kiml.ui.16"); //$NON-NLS-1$
         final String setAllDefaultString = Messages.getString("kiml.ui.34"); //$NON-NLS-1$
         final IAction editPartDefaultAction = new EditPartDefaultAction(this, setDefaultString, false);
@@ -315,7 +326,7 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
                 for (MenuItem item : menu.getItems()) {
                     if (item.getData() instanceof IContributionItem) {
                         String itemId = ((IContributionItem) item.getData()).getId();
-                        if (ApplyOptionAction.ACTION_ID.equals(itemId)) {
+                        if (DiagramDefaultAction.ACTION_ID.equals(itemId)) {
                             applyOptionItem = item;
                         } else if (EditPartDefaultAction.EDIT_PART_ACTION_ID.equals(itemId)) {
                             editPartDefaultItem = item;
@@ -330,7 +341,7 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
                 if (applyOptionItem == null) {
                     ContributionItem contributionItem = new ActionContributionItem(
                             applyOptionAction);
-                    contributionItem.setId(ApplyOptionAction.ACTION_ID);
+                    contributionItem.setId(DiagramDefaultAction.ACTION_ID);
                     contributionItem.fill(menu, -1);
                 }
                 EditPart editPart = getCurrentEditPart();
@@ -343,7 +354,7 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
                     }
                 } else {
                     // add the "set as default for edit part" action
-                    String editPartName = getReadableName(editPart, false, true);
+                    String editPartName = getReadableName(false, true);
                     if (editPartName != null) {
                         if (editPartDefaultItem == null) {
                             editPartDefaultAction.setText(setDefaultString + " " + editPartName);
@@ -356,7 +367,7 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
                             editPartDefaultItem.setText(setDefaultString + " " + editPartName);
                         }
                         // add the "set as default for model element" action
-                        String modelName = getReadableName(editPart, true, true);
+                        String modelName = getReadableName(true, true);
                         if (modelDefaultItem == null) {
                             modelDefaultAction.setText(setAllDefaultString + " " + modelName);
                             ContributionItem contributionItem = new ActionContributionItem(
@@ -371,7 +382,7 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
                 }
                 // add the "set as default for diagram type" action
                 LayoutServices layoutServices = LayoutServices.getInstance();
-                String diagramType = getCurrentDiagramType();
+                String diagramType = (String) KimlUiUtil.getOption(editPart, LayoutOptions.DIAGRAM_TYPE);
                 if (diagramType == null) {
                     if (diagramTypeDefaultItem != null) {
                         diagramTypeDefaultItem.setEnabled(false);
@@ -400,69 +411,55 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
     }
     
     /**
-     * Builds a readable name for the given edit part.
+     * Builds a readable name for the current focus object.
      * 
-     * @param editPart edit part
      * @param plural if true, the plural form is created
-     * @return a readable name for the edit part, or {@code null} if the edit part
+     * @return a readable name for the edit part, or {@code null} if the focus object
      *     cannot be handled in this context
      */
-    private String getReadableName(final EditPart editPart, final boolean forDomainModel,
-            final boolean plural) {
-        String className = KimlUiUtil.getClassName(editPart, true);
-        if (className == null) {
+    private String getReadableName(final boolean forDomainModel, final boolean plural) {
+        if (lastInspector == null) {
+            return "";
+        }
+        
+        EObject model = lastInspector.getFocusModel();
+        String clazzName = model == null ? null : model.eClass().getInstanceTypeName();
+        if (clazzName == null) {
             if (plural) {
                 return null;
             }
-            className = KimlUiUtil.getClassName(editPart, false);
-            if (className.endsWith("EditPart")) {
-                className = className.substring(0, className.length() - "EditPart".length());
+            EditPart editPart = lastInspector.getFocusPart();
+            clazzName = editPart.getClass().getName();
+            if (clazzName.endsWith("EditPart")) {
+                clazzName = clazzName.substring(0, clazzName.length() - "EditPart".length());
             }
         }
-        int lastDotIndex = className.lastIndexOf('.');
+        int lastDotIndex = clazzName.lastIndexOf('.');
         if (lastDotIndex >= 0) {
-            className = className.substring(lastDotIndex + 1);
+            clazzName = clazzName.substring(lastDotIndex + 1);
         }
         StringBuilder stringBuilder = new StringBuilder();
-        int length = className.length();
-        if (className.endsWith("Impl")) {
+        int length = clazzName.length();
+        if (clazzName.endsWith("Impl")) {
             length -= "Impl".length();
         }
         for (int i = 0; i < length; i++) {
-            char c = className.charAt(i);
+            char c = clazzName.charAt(i);
             if (i > 0 && Character.isUpperCase(c)
-                    && !Character.isUpperCase(className.charAt(i - 1))) {
+                    && !Character.isUpperCase(clazzName.charAt(i - 1))) {
                 stringBuilder.append(' ');
             }
             if (!Character.isDigit(c)) {
                 stringBuilder.append(c);
             }
         }
-        if (plural && !className.endsWith("s")) {
+        if (plural && !clazzName.endsWith("s")) {
             stringBuilder.append('s');
         }
         if (!forDomainModel) {
             stringBuilder.append(" " + Messages.getString("kiml.ui.33"));
         }
         return stringBuilder.toString();
-    }
-    
-    /**
-     * Returns the diagram type identifier for the current selection.
-     * 
-     * @return the identifier of the diagram type for the currently selected object,
-     *     or {@code null} if there is no such diagram type
-     */
-    public String getCurrentDiagramType() {
-        if (currentSelection != null) {
-            Object object = currentSelection.getFirstElement();
-            if (object instanceof EditPart) {
-                String diagramType = (String) KimlUiUtil.getOption((EditPart) object,
-                        LayoutOptions.DIAGRAM_TYPE);
-                return diagramType;
-            }
-        }
-        return null;
     }
 
     /**
@@ -471,11 +468,8 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
      * @return the selected edit part, or {@code null} if there is none
      */
     public EditPart getCurrentEditPart() {
-        if (currentSelection != null) {
-            Object object = currentSelection.getFirstElement();
-            if (object instanceof IGraphicalEditPart) {
-                return LayoutPropertySource.getShownEditPart((IGraphicalEditPart) object);
-            }
+        if (lastInspector != null) {
+            return lastInspector.getFocusPart();
         }
         return null;
     }
@@ -510,18 +504,13 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
 
     /**
      * Sets a text line for the view part.
-     * 
-     * @param selection the current selection
      */
-    private void setPartText(final IStructuredSelection selection) {
-        Object firstElement = selection.getFirstElement();
-        if (firstElement instanceof IGraphicalEditPart) {
-            IGraphicalEditPart editPart = LayoutPropertySource.getShownEditPart(
-                    (IGraphicalEditPart) firstElement);
-            if (editPart != null) {
-                StringBuilder textBuffer = new StringBuilder();
-                textBuffer.append(getReadableName(editPart, true, false));
-                Object model = editPart.getNotationView().getElement();
+    private void setPartText() {
+        if (lastInspector != null) {
+            StringBuilder textBuffer = new StringBuilder();
+            textBuffer.append(getReadableName(true, false));
+            EObject model = lastInspector.getFocusModel();
+            if (model != null) {
                 String name = getProperty(model, "Name");
                 if (name == null) {
                     name = getProperty(model, "Label");
@@ -532,10 +521,8 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
                 if (name != null) {
                     textBuffer.append(" '" + name + "'");
                 }
-                form.setText(textBuffer.toString());
-            } else {
-                form.setText("");
             }
+            form.setText(textBuffer.toString());
         } else {
             form.setText("");
         }
