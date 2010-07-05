@@ -54,7 +54,7 @@ public class BendsMetric implements IAnalysis {
         Float result;
         if (m + bends > 0) {
             result = 1.0f - (float) bends / (float) (m + bends);
-            System.out.println("bends: " + bends + " m: " + m);
+            // System.out.println("bends: " + bends + " m: " + m);
         } else {
             result = 1.0f;
         }

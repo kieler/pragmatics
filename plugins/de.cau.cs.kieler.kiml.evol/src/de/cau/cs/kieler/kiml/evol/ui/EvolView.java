@@ -289,9 +289,9 @@ public class EvolView extends ViewPart {
 
                 for (int pos = 0; pos < pop.size(); pos++) {
 
-                    System.out.println("Position: " + pos);
+                    // System.out.println("Position: " + pos);
                     final Individual ind = pop.get(pos);
-                    System.out.println(ind.toString());
+                    // System.out.println(ind.toString());
 
                     // TODO: synchronize on the layout graph?
                     if (isAffected(ind, target)) {
@@ -386,7 +386,7 @@ public class EvolView extends ViewPart {
         if (editor != null) {
             // TODO: test whether the editor is for KIML
             // FIXME: should share synchronized property source with LayoutView?
-            DiagramLayoutManager manager = EclipseLayoutServices.getInstance().getManager(
+            final DiagramLayoutManager manager = EclipseLayoutServices.getInstance().getManager(
                     editor, part);
             final LayoutPropertySource propertySource = new LayoutPropertySource(
                     manager.getInspector(part));
@@ -411,7 +411,7 @@ public class EvolView extends ViewPart {
      *            whether the layout view shall be refreshed
      */
     private void adoptIndividual(final Individual theIndividual, final boolean wantLayoutViewRefresh) {
-        System.out.println("in adoptIndividual");
+        // System.out.println("in adoptIndividual");
 
         Assert.isLegal(theIndividual != null);
         final Population pop = this.population;
@@ -450,7 +450,7 @@ public class EvolView extends ViewPart {
         if (wantLayoutViewRefresh) {
             MonitoredOperation.runInUI(new LayoutViewRefresher(), false);
         }
-        System.out.println("leaving adoptIndividual");
+        // System.out.println("leaving adoptIndividual");
     }
 
     /**
@@ -543,7 +543,7 @@ public class EvolView extends ViewPart {
         final IEditorPart editor = getCurrentEditor();
         final IGraphicalEditPart part = (IGraphicalEditPart) getEditPart(editor);
         // TODO: use root edit part
-        DiagramLayoutManager manager = EclipseLayoutServices.getInstance().getManager(editor, part);
+        final DiagramLayoutManager manager = EclipseLayoutServices.getInstance().getManager(editor, part);
         final LayoutPropertySource result = new LayoutPropertySource(
                 manager.getInspector(part));
         return result;

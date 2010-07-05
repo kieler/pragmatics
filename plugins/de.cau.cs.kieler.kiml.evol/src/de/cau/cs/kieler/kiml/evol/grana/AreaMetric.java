@@ -51,7 +51,7 @@ public class AreaMetric implements IAnalysis {
         final float xdim = xmax - xmin;
         final float ydim = ymax - ymin;
 
-        Assert.isTrue((xdim >= 1.0f) && (ydim >= 1.0f), "Very small dimension.");
+        Assert.isTrue((xdim >= 0.1f) || (ydim >= 0.1f), "Very small dimension.");
 
         final double area = xdim * ydim;
 

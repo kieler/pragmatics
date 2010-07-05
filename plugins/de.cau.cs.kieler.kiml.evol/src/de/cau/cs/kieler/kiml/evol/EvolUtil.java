@@ -112,7 +112,7 @@ public final class EvolUtil {
      * @return a rating
      */
     public static int measureDiagram(final boolean showProgressBar, final KNode parentNode) {
-        System.out.println("measure diagram");
+        // System.out.println("in measureDiagram");
         if (parentNode == null) {
             return 0;
         }
@@ -136,12 +136,13 @@ public final class EvolUtil {
         final double bendsResult = Double.parseDouble(results[1].toString()) * coeffs[1];
         final double flatnessResult = Double.parseDouble(results[2].toString()) * coeffs[2];
         final double narrownessResult = Double.parseDouble(results[3].toString()) * coeffs[3];
-        System.out.println(areaResult + "  " + bendsResult + "  " + flatnessResult + "  "
-                + narrownessResult);
+        // System.out.println(areaResult + "  " + bendsResult + "  " +
+        // flatnessResult + "  "
+        // + narrownessResult);
         final int newRating =
                 (int) Math
                         .round(((areaResult + bendsResult + flatnessResult + narrownessResult) * 100));
-        System.out.println("leaving measureDiagram");
+        // System.out.println("leaving measureDiagram");
         return newRating;
     }
 
