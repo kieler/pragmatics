@@ -7,8 +7,10 @@ import org.eclipse.jface.action.Action;
  * new generation.
  *
  * @author bdu
+ * @deprecated
  *
  */
+@Deprecated
 public class EvolveAction extends Action {
     public EvolveAction(final EvolView theView) {
         setText("Evolve");

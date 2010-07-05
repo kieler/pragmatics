@@ -45,10 +45,33 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="de.cau.cs.kieler.kiml.evol.AutoRateAllHandler"
+            defaultHandler="de.cau.cs.kieler.kiml.evol.handlers.AutoRateAllHandler"
             description="computes automatic rating for all individuals"
             id="de.cau.cs.kieler.kiml.evol.command.autoRateAll"
             name="Auto-rate All">
+      </command>
+      <command
+            defaultHandler="de.cau.cs.kieler.kiml.evol.handlers.EvolveHandler"
+            description="proceeds to the next generation"
+            id="de.cau.cs.kieler.kiml.evol.evolve"
+            name="Evolve">
+      </command>
+      <command
+            defaultHandler="de.cau.cs.kieler.kiml.evol.handlers.ResetHandler"
+            description="restarts with a new population"
+            id="de.cau.cs.kieler.kiml.evol.reset"
+            name="Reset">
+      </command>
+      <command
+            defaultHandler="de.cau.cs.kieler.kiml.evol.handlers.ChangeRatingHandler"
+            description="changes the rating of the current individual"
+            id="de.cau.cs.kieler.kiml.evol.changeRating"
+            name="Change Rating">
+         <commandParameter
+               id="de.cau.cs.kieler.kiml.evol.amount"
+               name="Amount"
+               optional="false">
+         </commandParameter>
       </command>
    </extension>
    <extension
@@ -60,6 +83,36 @@
                label="Auto-rate all"
                style="push"
                tooltip="Auto-rate all individuals">
+         </command>
+         <command
+               commandId="de.cau.cs.kieler.kiml.evol.evolve"
+               label="Evolve"
+               style="push"
+               tooltip="Proceed to the next generation">
+         </command>
+         <command
+               commandId="de.cau.cs.kieler.kiml.evol.reset"
+               label="Reset"
+               style="push"
+               tooltip="Restart with a new population.">
+         </command>
+         <command
+               commandId="de.cau.cs.kieler.kiml.evol.changeRating"
+               label="Disregard"
+               style="push">
+            <parameter
+                  name="de.cau.cs.kieler.kiml.evol.amount"
+                  value="-30">
+            </parameter>
+         </command>
+         <command
+               commandId="de.cau.cs.kieler.kiml.evol.changeRating"
+               label="Favor"
+               style="push">
+            <parameter
+                  name="de.cau.cs.kieler.kiml.evol.amount"
+                  value="30">
+            </parameter>
          </command>
       </menuContribution>
    </extension>

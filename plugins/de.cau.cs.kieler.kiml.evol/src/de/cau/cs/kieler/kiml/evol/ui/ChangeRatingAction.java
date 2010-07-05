@@ -6,10 +6,11 @@ import de.cau.cs.kieler.kiml.evol.Individual;
 
 /**
  * Action for rating an individual.
- *
+ * 
  * @author bdu
- *
+ * @deprecated
  */
+@Deprecated
 public class ChangeRatingAction extends Action {
 
     public ChangeRatingAction(final EvolView theView, final int theDelta) {

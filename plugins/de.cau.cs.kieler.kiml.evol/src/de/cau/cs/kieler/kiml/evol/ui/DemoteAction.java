@@ -2,10 +2,12 @@ package de.cau.cs.kieler.kiml.evol.ui;
 
 /**
  * Action for giving a negative rating to an individual.
- *
+ * 
  * @author bdu
- *
+ * @deprecated
+ * 
  */
+@Deprecated
 public class DemoteAction extends ChangeRatingAction {
     private static final int AMOUNT = -10;
 

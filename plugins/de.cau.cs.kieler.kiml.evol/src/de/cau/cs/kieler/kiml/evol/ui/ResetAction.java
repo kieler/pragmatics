@@ -4,10 +4,11 @@ import org.eclipse.jface.action.Action;
 
 /**
  * Action for resetting the view.
- *
+ * 
  * @author bdu
- *
+ * @deprecated
  */
+@Deprecated
 public class ResetAction extends Action {
     public ResetAction(final EvolView theView) {
         setText("Reset");

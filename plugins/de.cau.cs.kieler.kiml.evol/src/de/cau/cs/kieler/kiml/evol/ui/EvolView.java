@@ -151,7 +151,7 @@ public class EvolView extends ViewPart {
      * @author bdu
      *
      */
-    private class SelectorTableViewer extends TableViewer {
+    public class SelectorTableViewer extends TableViewer {
         public SelectorTableViewer(final Table table) {
             super(table);
             // TODO Auto-generated constructor stub
@@ -222,7 +222,6 @@ public class EvolView extends ViewPart {
         tv.setLabelProvider(new PopulationTableLabelProvider());
 
         this.tableViewer = tv;
-        createToolBar();
         reset();
         final ISelectionChangedListener listener = new ISelectionChangedListener() {
             public synchronized void selectionChanged(final SelectionChangedEvent event) {
@@ -250,6 +249,7 @@ public class EvolView extends ViewPart {
     public Population getPopulation() {
         return population;
     }
+
     public SelectorTableViewer getTableViewer() {
         return tableViewer;
     }
@@ -326,7 +326,7 @@ public class EvolView extends ViewPart {
     /**
      * Performs a step of the evolutionary algorithm.
      */
-    void evolve() {
+    public void evolve() {
         final BasicEvolutionaryAlgorithm alg = this.evolAlg;
         if (alg == null) {
             return;
@@ -360,7 +360,7 @@ public class EvolView extends ViewPart {
      * @return the current {@code Individual}, or {@code null} if none is
      *         selected.
      */
-    Individual getCurrentIndividual() {
+    public Individual getCurrentIndividual() {
         final Population pop = this.population;
         final int pos = this.position;
         Assert.isTrue((pos >= 0) && (pos < pop.size()), "position out of range");
@@ -377,7 +377,7 @@ public class EvolView extends ViewPart {
     /**
      * Reset the population.
      */
-    void reset() {
+    public void reset() {
         this.position = 0;
 
         final IEditorPart editor = getCurrentEditor();
@@ -455,16 +455,19 @@ public class EvolView extends ViewPart {
 
     /**
      * Creates the tool bar for the view.
+     *
+     * @deprecated
      */
+    @Deprecated
     private void createToolBar() {
         // Get tool bar manager.
         final IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
         // Create some actions and add them to the tool bar manager.
         // toolBarManager.add(new AutorateAllAction(this));
-        toolBarManager.add(new PromoteAction(this));
-        toolBarManager.add(new DemoteAction(this));
-        toolBarManager.add(new EvolveAction(this));
-        toolBarManager.add(new ResetAction(this));
+        // toolBarManager.add(new PromoteAction(this));
+        // toolBarManager.add(new DemoteAction(this));
+        // toolBarManager.add(new EvolveAction(this));
+        // toolBarManager.add(new ResetAction(this));
     }
 
     /**
