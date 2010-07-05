@@ -40,9 +40,9 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.statushandlers.StatusManager;
-import org.graphdrawing.graphml.xmlns.GraphType;
-import org.graphdrawing.graphml.xmlns.XmlnsPackage;
-import org.graphdrawing.graphml.xmlns.util.XmlnsResourceFactoryImpl;
+//import org.graphdrawing.graphml.xmlns.GraphType;
+//import org.graphdrawing.graphml.xmlns.XmlnsPackage;
+//import org.graphdrawing.graphml.xmlns.util.XmlnsResourceFactoryImpl;
 
 import de.cau.cs.kieler.graphs.GraphsPlugin;
 
@@ -163,12 +163,12 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
                 resourceSet.createResource(URI.createURI(file.getLocationURI()
                         .toString()));
 
-        GraphType graphMLGraph = readGraphMLGraph(importFileName);
+        /*GraphType graphMLGraph = readGraphMLGraph(importFileName);
         if (graphMLGraph == null) {
             importPage.setErrorMessage(MESSAGE_INVALID_FILE);
             monitor.done();
             return false;
-        }
+        }*/
 
         emfResource.save(Collections.EMPTY_MAP);
         file.refreshLocal(1, null);
@@ -184,7 +184,7 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
      *            the file name
      * @return the graph
      */
-    private GraphType readGraphMLGraph(String fileName) {
+    /*private GraphType readGraphMLGraph(String fileName) {
         File file = new File(fileName);
         if (file.exists()) {
             ResourceSet resourceSet = new ResourceSetImpl();
@@ -202,7 +202,7 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
         } else {
             return null;
         }
-    }
+    }*/
 
     /**
      * {@inheritDoc}
