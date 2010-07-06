@@ -79,6 +79,21 @@
       <menuContribution
             locationURI="toolbar:de.cau.cs.kieler.kiml.evol.wildlife">
          <command
+               commandId="de.cau.cs.kieler.kiml.evol.evolve"
+               label="Evolve"
+               style="push"
+               tooltip="Proceed to the next generation">
+         </command>
+         <command
+               commandId="de.cau.cs.kieler.kiml.evol.changeRating"
+               label="Favor"
+               style="push">
+            <parameter
+                  name="de.cau.cs.kieler.kiml.evol.amount"
+                  value="30">
+            </parameter>
+         </command>
+         <command
                commandId="de.cau.cs.kieler.kiml.evol.changeRating"
                label="Disregard"
                style="push">
@@ -86,12 +101,6 @@
                   name="de.cau.cs.kieler.kiml.evol.amount"
                   value="-30">
             </parameter>
-         </command>
-         <command
-               commandId="de.cau.cs.kieler.kiml.evol.evolve"
-               label="Evolve"
-               style="push"
-               tooltip="Proceed to the next generation">
          </command>
          <command
                commandId="de.cau.cs.kieler.kiml.evol.command.autoRateAll"
@@ -104,15 +113,6 @@
                label="Reset"
                style="push"
                tooltip="Restart with a new population.">
-         </command>
-         <command
-               commandId="de.cau.cs.kieler.kiml.evol.changeRating"
-               label="Favor"
-               style="push">
-            <parameter
-                  name="de.cau.cs.kieler.kiml.evol.amount"
-                  value="30">
-            </parameter>
          </command>
       </menuContribution>
    </extension>

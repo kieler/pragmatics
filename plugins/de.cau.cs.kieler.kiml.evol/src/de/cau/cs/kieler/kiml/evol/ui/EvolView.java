@@ -192,7 +192,8 @@ public class EvolView extends ViewPart {
     private int position = 0;
     private Population population;
     private IEditorPart lastEditor;
-    private String layoutProviderId;
+    private String layoutProviderId = "";
+
     /**
      * Column width for columns in viewer table.
      */
@@ -230,7 +231,7 @@ public class EvolView extends ViewPart {
                     final Object element = ((IStructuredSelection) selection).getFirstElement();
                     if (element instanceof PopulationTableEntry) {
                         tv.removeSelectionChangedListener(this);
-                        position = ((PopulationTableEntry) element).getIndex();
+                        EvolView.this.position = ((PopulationTableEntry) element).getIndex();
                         onSelectIndividual();
                         System.out.println("after onSelectIndividual");
                         tv.refresh();
@@ -271,33 +272,51 @@ public class EvolView extends ViewPart {
     }
 
     /**
-     * Performs auto-rating on each individual that belongs to the given target.
+     * Performs auto-rating on each individual of the given population that
+     * satisfies the given filter criteria.
      *
-     * @param target
+     * @param thePopulation
+     *            a {@link Population}
+     * @param filter
      *            Indicates which individuals shall be rated.
+     * @param theEditor
+     *            Specifies the editor in which the individuals shall be rated.
+     *            If this is {@code null}, then the most recently used editor is
+     *            used. If this is {@code null} then the current editor is used.
      */
-    public void autorateIndividuals(final TargetIndividuals target) {
-        System.out.println("autorate population");
-        final Population pop = this.population;
+    public void autorateIndividuals(
+            final Population thePopulation, final TargetIndividuals filter,
+            final IEditorPart theEditor) {
+        if (!isValidState()) {
+            return;
+        }
+        final Population pop = thePopulation;
         if ((pop == null) || pop.isEmpty()) {
             return;
         }
-        if (this.lastEditor == null) {
-            this.lastEditor = getCurrentEditor();
+
+        final IEditorPart editor;
+        if (theEditor != null) {
+            editor = theEditor;
+        } else if (this.lastEditor != null) {
+            editor = this.lastEditor;
+        } else {
+            editor = getCurrentEditor();
         }
-        final IEditorPart editor = this.lastEditor;
+        this.lastEditor = editor;
+
         // we don't specify the edit part because we want a manager for
         // the whole diagram
         final DiagramLayoutManager manager =
                 EclipseLayoutServices.getInstance().getManager(editor, null);
+        // loop that performs layout and measurement for each individual.
         final Runnable layoutLoop = new Runnable() {
             public void run() {
                 for (int pos = 0; pos < pop.size(); pos++) {
-                    // System.out.println("Position: " + pos);
                     final Individual ind = pop.get(pos);
-                    // System.out.println(ind.toString());
+
                     // TODO: synchronize on the layout graph?
-                    if (isAffected(ind, target)) {
+                    if (isAffected(ind, filter)) {
                         adoptIndividual(ind, false);
                         // TODO: get a new manager for every iteration?
                         final int rating = EvolUtil.layoutAndMeasure(manager, editor);
@@ -328,6 +347,10 @@ public class EvolView extends ViewPart {
      * Performs a step of the evolutionary algorithm.
      */
     public void evolve() {
+        if (!isValidState()) {
+            return;
+        }
+
         final BasicEvolutionaryAlgorithm alg = this.evolAlg;
         if (alg == null) {
             return;
@@ -342,7 +365,7 @@ public class EvolView extends ViewPart {
         if (position >= lim) {
             position = lim - 1;
         }
-        autorateIndividuals(TargetIndividuals.UNRATED);
+        autorateIndividuals(this.population, TargetIndividuals.UNRATED, null);
         Assert.isTrue(position >= 0);
         getTableViewer().selectRow(position);
         getTableViewer().refresh();
@@ -402,7 +425,7 @@ public class EvolView extends ViewPart {
     }
 
     /**
-     * Adopts layout options from the given {@code Individual}. The given
+     * Adopts layout options from the given {@link Individual}. The given
      * individual must not be {@code null}.
      *
      * @param theIndividual
@@ -411,37 +434,38 @@ public class EvolView extends ViewPart {
      *            whether the layout view shall be refreshed
      */
     private void adoptIndividual(final Individual theIndividual, final boolean wantLayoutViewRefresh) {
-        // System.out.println("in adoptIndividual");
         Assert.isLegal(theIndividual != null);
-        Assert.isTrue(!layoutProviderHasChanged(), "LayoutProvider was changed after reset.");
-        final Population pop = this.population;
-        if ((pop == null) || pop.isEmpty() || (theIndividual == null)) {
+
+        if (!isValidState() || (theIndividual == null)) {
             return;
         }
+
         final LayoutPropertySource source = getLayoutPropertySource();
         System.out.println("adopt " + theIndividual.toString());
         final Genome genome = theIndividual.getGenome();
         final LayoutServices layoutServices = LayoutServices.getInstance();
+
+        // set layout options according to genome
         for (final IGene<?> gene : genome) {
             Assert.isNotNull(gene);
-            final Object theValue = gene.getValue();
+            final Object value = gene.getValue();
             final Object id = gene.getId();
             final LayoutOptionData data = layoutServices.getLayoutOptionData((String) id);
             Assert.isNotNull(data);
             switch (data.getType()) {
             case BOOLEAN:
-                source.setPropertyValue(id, ((Boolean) theValue ? 1 : 0));
+                source.setPropertyValue(id, ((Boolean) value ? 1 : 0));
                 break;
             case ENUM:
                 try {
-                    source.setPropertyValue(id, theValue);
+                    source.setPropertyValue(id, value);
                 } catch (final NullPointerException e) {
                     System.out.println("WARNING: enum property could not be set.");
                     Assert.isTrue(false);
                 }
                 break;
             default:
-                source.setPropertyValue(id, theValue.toString());
+                source.setPropertyValue(id, value.toString());
                 break;
             }
         }
@@ -449,7 +473,6 @@ public class EvolView extends ViewPart {
         if (wantLayoutViewRefresh) {
             MonitoredOperation.runInUI(new LayoutViewRefresher(), false);
         }
-        // System.out.println("leaving adoptIndividual");
     }
 
     /**
@@ -546,33 +569,6 @@ public class EvolView extends ViewPart {
     }
 
     /**
-     * Layout the diagram in the current editor.
-     *
-     * @param showAnimation
-     *            indicates whether the layout shall be animated
-     * @param showProgressBar
-     *            indicates whether a progress bar shall be shown
-     * @deprecated
-     */
-    @Deprecated
-    private void layoutDiagram(final boolean showAnimation, final boolean showProgressBar) {
-        System.out.println("in layoutDiagram");
-        final Population pop = this.population;
-        if (pop != null) {
-            final IEditorPart editor = getCurrentEditor();
-            if (editor == null) {
-                // so we have nothing to layout.
-                return;
-            }
-            // we don't need to specify the edit part because we want to layout
-            // the whole diagram
-            EclipseLayoutServices.getInstance()
-                    .layout(editor, null, showAnimation, showProgressBar);
-        }
-        System.out.println("leaving layoutDiagram");
-    }
-
-    /**
      *
      * @return indicates whether the layout provider has changes since the last
      *         reset.
@@ -583,6 +579,9 @@ public class EvolView extends ViewPart {
         final DiagramLayoutManager manager =
                 EclipseLayoutServices.getInstance().getManager(editor, editPart);
         final String newId = EvolUtil.getLayoutProviderId(manager, editPart);
+        if ((newId == null) || (this.layoutProviderId == null)) {
+            return (newId != null) || (this.layoutProviderId != null);
+        }
         return !this.layoutProviderId.equalsIgnoreCase(newId);
     }
 
@@ -590,11 +589,9 @@ public class EvolView extends ViewPart {
      * Refresh the layout according to selected individual.
      */
     private void onSelectIndividual() {
-        final Population pop = this.population;
-        Assert.isNotNull(pop, "population is null");
-        // Assert.isTrue(population.size() > 0, "zero population");
-        System.out.println("in onSelectIndividual");
-        // System.out.println(pop.toString());
+        if (!isValidState()) {
+            return;
+        }
         final Individual currentIndividual = getCurrentIndividual();
         Assert.isNotNull(currentIndividual);
         adoptIndividual(currentIndividual, true);
@@ -607,17 +604,46 @@ public class EvolView extends ViewPart {
         // the whole diagram.
         final DiagramLayoutManager manager =
                 EclipseLayoutServices.getInstance().getManager(editor, null);
+
         // layoutDiagram(false, false);
         // System.out.println("after layoutDiagram");
         final int rating = EvolUtil.layoutAndMeasure(manager, editor);
         currentIndividual.setRating(rating);
+
         // apply the layout to the diagram
         // XXX it would be more straightforward to call manager.applyLayout()
         // directly, but that method is private
         EclipseLayoutServices.getInstance().layout(editor, null, false, false);
-        // System.out.println("remove layout listener");
-        // registry.removeLayoutListener(listener);
-        // tableViewer.refresh();
+    }
+
+    private boolean isValidState() {
+        final Population pop = this.population;
+        if (pop == null) {
+            System.out.println("Population is not set.");
+            return false;
+        }
+        if (pop.isEmpty()) {
+            System.out.println("Population is empty.");
+            return false;
+        }
+
+        final Individual currentIndividual = getCurrentIndividual();
+        if (currentIndividual == null) {
+            System.out.println("No individual selected.");
+            return false;
+        }
+        final LayoutViewPart layoutViewPart = LayoutViewPart.findView();
+        if (layoutViewPart == null) {
+            System.out.println("LayoutView not found.");
+            return false;
+        }
+        if (layoutProviderHasChanged()) {
+            // need to reset
+            System.out.println("LayoutProvider was changed. Need to reset.");
+            return false;
+        }
+
+        return true;
     }
 
     /**

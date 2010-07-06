@@ -37,7 +37,8 @@ public class AutoRateAllHandler extends AbstractHandler {
                 PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                         .findView(EvolView.ID);
         if (view instanceof EvolView) {
-            ((EvolView) view).autorateIndividuals(TargetIndividuals.ALL);
+            ((EvolView) view).autorateIndividuals(((EvolView) view).getPopulation(),
+                    TargetIndividuals.ALL, null);
         }
         return null;
     }

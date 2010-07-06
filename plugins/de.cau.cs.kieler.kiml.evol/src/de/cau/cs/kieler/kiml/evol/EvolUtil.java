@@ -29,6 +29,7 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
+import de.cau.cs.kieler.kiml.LayoutProviderData;
 import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.evol.genetic.BooleanGene;
 import de.cau.cs.kieler.kiml.evol.genetic.EnumGene;
@@ -115,38 +116,14 @@ public final class EvolUtil {
             final DiagramLayoutManager manager, final EditPart editPart) {
 
         final ILayoutInspector insp = manager.getInspector(editPart);
-        final LayoutPropertySource source = new LayoutPropertySource(insp);
-        final String id = insp.getContainerLayouterData().getId();
-        // // get data from property descriptors
-        // final IPropertyDescriptor[] propertyDescriptors =
-        // source.getPropertyDescriptors();
-        // // find the layout hint
-        // for (final IPropertyDescriptor p : propertyDescriptors) {
-        //
-        // final String id = (String) p.getId();
-        // // check property descriptor id
-        // if (LayoutOptions.LAYOUT_HINT.equals(id)) {
-        // // found layout hint
-        // final Object value = source.getPropertyValue(id);
-        // final ILabelProvider labelProvider = p.getLabelProvider();
-        //
-        // String text;
-        // if ((value != null) && (labelProvider != null)) {
-        // try {
-        // text = labelProvider.getText(value);
-        // } catch (final ArrayIndexOutOfBoundsException e) {
-        // text = "*** EXCEPTION";
-        // }
-        // } else {
-        // text = "???";
-        // }
-        // System.out.println("--- LAYOUT_HINT: " + value + "=" + text);
-        // return (String) value;
-        // }
-        //
-        // }
-        // // layout hint not found
-        return id;
+        insp.initOptions();
+        final LayoutProviderData data = insp.getContainerLayouterData();
+
+        if (data == null) {
+            return null;
+        }
+        final String result = data.getId();
+        return result;
     }
 
     /**
@@ -159,7 +136,6 @@ public final class EvolUtil {
      * @return a rating
      */
     public static int measureDiagram(final boolean showProgressBar, final KNode parentNode) {
-        // System.out.println("in measureDiagram");
         if (parentNode == null) {
             return 0;
         }
@@ -183,13 +159,11 @@ public final class EvolUtil {
         final double bendsResult = Double.parseDouble(results[1].toString()) * coeffs[1];
         final double flatnessResult = Double.parseDouble(results[2].toString()) * coeffs[2];
         final double narrownessResult = Double.parseDouble(results[3].toString()) * coeffs[3];
-        // System.out.println(areaResult + "  " + bendsResult + "  " +
-        // flatnessResult + "  "
-        // + narrownessResult);
+
         final int newRating =
                 (int) Math
                         .round(((areaResult + bendsResult + flatnessResult + narrownessResult) * 100));
-        // System.out.println("leaving measureDiagram");
+
         return newRating;
     }
 
