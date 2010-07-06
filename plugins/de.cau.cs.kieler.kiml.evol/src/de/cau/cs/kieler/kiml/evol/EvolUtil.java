@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.gef.EditPart;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
@@ -43,6 +44,7 @@ import de.cau.cs.kieler.kiml.grana.AnalysisServices;
 import de.cau.cs.kieler.kiml.grana.ui.DiagramAnalyser;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
 import de.cau.cs.kieler.kiml.ui.views.LayoutPropertySource;
 
 /**
@@ -100,6 +102,51 @@ public final class EvolUtil {
         // do the measurement
         final int rating = measureDiagram(false, layoutGraphAfterLayout);
         return rating;
+    }
+
+    /**
+     * @param manager
+     *            a {@link DiagramLayoutManager}
+     * @param editPart
+     *            an {@link EditPart}
+     * @return the id of the layouter, or {@code null} if none can be found.
+     */
+    public static String getLayoutProviderId(
+            final DiagramLayoutManager manager, final EditPart editPart) {
+
+        final ILayoutInspector insp = manager.getInspector(editPart);
+        final LayoutPropertySource source = new LayoutPropertySource(insp);
+        final String id = insp.getContainerLayouterData().getId();
+        // // get data from property descriptors
+        // final IPropertyDescriptor[] propertyDescriptors =
+        // source.getPropertyDescriptors();
+        // // find the layout hint
+        // for (final IPropertyDescriptor p : propertyDescriptors) {
+        //
+        // final String id = (String) p.getId();
+        // // check property descriptor id
+        // if (LayoutOptions.LAYOUT_HINT.equals(id)) {
+        // // found layout hint
+        // final Object value = source.getPropertyValue(id);
+        // final ILabelProvider labelProvider = p.getLabelProvider();
+        //
+        // String text;
+        // if ((value != null) && (labelProvider != null)) {
+        // try {
+        // text = labelProvider.getText(value);
+        // } catch (final ArrayIndexOutOfBoundsException e) {
+        // text = "*** EXCEPTION";
+        // }
+        // } else {
+        // text = "???";
+        // }
+        // System.out.println("--- LAYOUT_HINT: " + value + "=" + text);
+        // return (String) value;
+        // }
+        //
+        // }
+        // // layout hint not found
+        return id;
     }
 
     /**
@@ -241,7 +288,7 @@ public final class EvolUtil {
      * Create a genome from the given source.
      *
      * @param source
-     * @return
+     * @return a genome.
      */
     private static Genome createGenome(final LayoutPropertySource source) {
         if (source == null) {
