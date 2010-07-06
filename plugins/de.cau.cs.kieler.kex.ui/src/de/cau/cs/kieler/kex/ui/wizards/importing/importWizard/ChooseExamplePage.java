@@ -1,5 +1,6 @@
 package de.cau.cs.kieler.kex.ui.wizards.importing.importWizard;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.wizard.WizardPage;
@@ -30,6 +31,7 @@ public class ChooseExamplePage extends WizardPage {
 	private Text exampleDescription;
 
 	private List<Example> selectedExamples;
+	private Tree exampleTree;
 
 	public ChooseExamplePage(String pageName) {
 		super(pageName);
@@ -50,10 +52,10 @@ public class ChooseExamplePage extends WizardPage {
 	}
 
 	private void createTreeElement(Composite composite) {
-		final Tree tree = new Tree(composite, SWT.BORDER);
-		tree.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL
+		exampleTree = new Tree(composite, SWT.BORDER);
+		exampleTree.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL
 				| GridData.GRAB_VERTICAL));
-		tree.addSelectionListener(new SelectionListener() {
+		exampleTree.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				updateElements(e.item);
 			}
@@ -62,7 +64,7 @@ public class ChooseExamplePage extends WizardPage {
 				updateElements(e.item);
 			}
 		});
-		initTree(tree);
+		initTree(exampleTree);
 	}
 
 	private void initTree(Tree tree) {
@@ -180,7 +182,10 @@ public class ChooseExamplePage extends WizardPage {
 	}
 
 	public List<Example> getSelectedExamples() {
-		return this.selectedExamples;
+		List<Example> result = new ArrayList<Example>();
+		for (TreeItem item : exampleTree.getSelection()) {
+			result.add((Example) item.getData("example"));
+		}
+		return result;
 	}
-
 }

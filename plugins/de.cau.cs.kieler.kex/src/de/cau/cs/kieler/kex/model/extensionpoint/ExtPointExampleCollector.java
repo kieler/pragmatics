@@ -54,7 +54,7 @@ public class ExtPointExampleCollector extends ExampleCollector {
 
 		IConfigurationElement[] configElements = Platform
 				.getExtensionRegistry().getConfigurationElementsFor(KEX_EXT_ID);
-
+		// Platform.getUserLocation()
 		// Versuche für die Projekt Workspace Ansprechung und so weiter...
 		// IExtension[] extensions =
 		// Platform.getExtensionRegistry().getExtensions("de.cau.cs.kieler.core.kex.model");

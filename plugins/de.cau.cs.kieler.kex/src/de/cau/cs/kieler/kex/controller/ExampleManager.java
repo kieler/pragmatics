@@ -1,17 +1,26 @@
 package de.cau.cs.kieler.kex.controller;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Version;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.model.Example;
+import de.cau.cs.kieler.kex.model.ExampleResource;
 import de.cau.cs.kieler.kex.model.extensionpoint.ExtPointExampleCollector;
 import de.cau.cs.kieler.kex.model.extensionpoint.ExtPointExampleCreator;
 import de.cau.cs.kieler.kex.model.online.OnlineExampleCollector;
@@ -41,6 +50,8 @@ public class ExampleManager {
 		}
 	}
 
+	// TODO überlegen, ob die load methode in die abstrakte example collector
+	// klasse soll.
 	public void load() {
 		if (!this.isLoaded) {
 			this.isLoaded = true;
@@ -89,16 +100,6 @@ public class ExampleManager {
 	// }
 
 	/**
-	 * lists all projects of instantiating workspace.
-	 * 
-	 * @return
-	 */
-	public IProject[] getLocalProjects() {
-		// TODO in andere model klasse auslagern.
-		return ResourcesPlugin.getWorkspace().getRoot().getProjects();
-	}
-
-	/**
 	 * mapping of properties onto an example.
 	 * 
 	 * @param properties
@@ -107,10 +108,10 @@ public class ExampleManager {
 	 */
 	private Example mapToExample(Map<ExampleElement, Object> properties) {
 		Example result = new Example(
-				(String) properties.get(ExampleElement.ID),
-				(String) properties.get(ExampleElement.NAME),
-				Version.parseVersion((String) properties
-						.get(ExampleElement.VERSION)));
+				(String) properties.get(ExampleElement.ID), (String) properties
+						.get(ExampleElement.NAME), Version
+						.parseVersion((String) properties
+								.get(ExampleElement.VERSION)));
 		result.setDescription((String) properties
 				.get(ExampleElement.DESCRIPTION));
 		result.setContact((String) properties.get(ExampleElement.CONTACT));
@@ -159,7 +160,93 @@ public class ExampleManager {
 		return result;
 	}
 
-	public void importExamples(String selectedProject,
-			List<Example> selectedExamples) {
+	// TODO auch diese hier in eine geeignete klasse auslagern..
+	public void importExamples(IPath selectedResource,
+			List<Example> selectedExamples) throws KielerException {
+		for (Example example : selectedExamples) {
+
+			// TODO auslagern
+			// createHeadFolder()
+
+			List<ExampleResource> resources = example.getResources();
+			// TODO prüfen, ob parameter sinnvoll...
+			// wenn mehrere examples mit gleichem namen laufen, brauchen wir
+			// eine art index
+			// bzw. den identifierer... als datei oder in project properties
+			// oder im namen
+			// TODO geht so nicht, falscher src und dest param.
+			String destFolder = selectedResource.toString()
+					+ /* File.separator */"/" + example.getName();
+			for (ExampleResource exampleResource : resources) {
+				for (File resource : exampleResource.getResources())
+					copyfile(resource.getAbsolutePath(), destFolder + /*
+																	 * File.separator
+																	 */"/"
+							+ resource.getName(), false);
+			}
+		}
+		// for (File file : resources) {
+		// File tmpFile = new File(workspacePath
+		// + File.separator + ((projects.length > 0) ?
+		// projects[0].getName() :
+		// "test")+ File.separator +"test.file");
+		//
+		// if (!tmpFile.exists()){
+		// tmpFile.getParentFile().mkdirs();
+		// try {
+		// tmpFile.createNewFile();
+		// }
+		// catch (IOException e) {
+		// //TODO fehlerhandling ueberlegen
+		// e.printStackTrace();
+		// }
+		// }
+		// }
 	}
+
+	/**
+	 * 
+	 * @param srFile
+	 *            , source file
+	 * @param dtFile
+	 *            , destination file
+	 * @param isUpdated
+	 *            , boolean
+	 */
+	private static void copyfile(String srFile, String dtFile, boolean isUpdated) {
+		try {
+			File f1 = new File(srFile);
+			File f2 = new File(dtFile);
+			InputStream in = new FileInputStream(f1);
+
+			// For Append the file.
+			OutputStream out = new FileOutputStream(f2, isUpdated);
+
+			byte[] buf = new byte[1024];
+			int len;
+			while ((len = in.read(buf)) > 0) {
+				out.write(buf, 0, len);
+			}
+			in.close();
+			out.close();
+			System.out.println("File copied.");
+		} catch (FileNotFoundException ex) {
+			System.out
+					.println(ex.getMessage() + " in the specified directory.");
+			System.exit(0);
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+
+	/**
+	 * lists all projects of instantiating workspace.
+	 * 
+	 * @return
+	 */
+	public IProject[] getLocalProjects() {
+		// TODO in andere model klasse auslagern.
+		return ResourcesPlugin.getWorkspace().getRoot().getProjects();
+	}
+
 }

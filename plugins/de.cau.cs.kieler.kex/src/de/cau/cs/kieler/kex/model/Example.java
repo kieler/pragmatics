@@ -97,4 +97,23 @@ public class Example {
 		this.resources.addAll(exampleResources);
 	}
 
+	public List<String> getExampleCategories() {
+		List<String> categories = new ArrayList<String>();
+		boolean contained = false;
+		for (ExampleResource resource : this.resources) {
+			contained = false;
+			String category = resource.getCategory();
+			for (String element : categories) {
+				if (element.equals(category)) {
+					contained = true;
+					break;
+				}
+			}
+			if (!contained)
+				categories.add(resource.getCategory());
+		}
+		return categories;
+
+	}
+
 }
