@@ -24,8 +24,6 @@ import org.eclipse.draw2d.geometry.Point;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.BezierSpline;
-import de.cau.cs.kieler.core.math.CubicSplineInterpolator;
-import de.cau.cs.kieler.core.math.ISplineInterpolator;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.core.math.BezierSpline.BezierCurve;
@@ -124,7 +122,8 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
                 if (node.getProperty(Properties.NODE_TYPE) != Properties.NodeType.LONG_EDGE) {
                     for (LPort port : node.getPorts(PortType.OUTPUT)) {
                         for (LEdge edge : port.getEdges()) {
-                            if (edge.getTarget().getNode().getProperty(Properties.NODE_TYPE) == Properties.NodeType.LONG_EDGE) {
+                            if (edge.getTarget().getNode().getProperty(Properties.NODE_TYPE) 
+                                    == Properties.NodeType.LONG_EDGE) {
                                 longEdges.add(edge);
 
                                 realLongEdges.add(new LongEdge(edge));
@@ -185,14 +184,6 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
         double cumBoxTime = 0;
         double cumSplineTime = 0;
         int counter = 0;
-
-        // sort the long edges
-        for (LongEdge longEdge : realLongEdges) {
-            if (getMonitor().isCanceled()) {
-                break;
-            }
-
-        }
 
         // handle every long edge
         for (LongEdge longEdge : realLongEdges) {
@@ -425,7 +416,7 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
         // calculate the splitting point
         KVector p = computeLineSplit(boxes, lines, q, s, newBoxes1, newLines1, newBoxes2, newLines2);
 
-        // @ TODO
+        // @ FIXME
         // some cases that shouldn't occur ...
         if (p == null) {
             return;
@@ -445,15 +436,6 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
      * Splits the path (q,s) at the point lying inside the box region, that is the furthest away
      * from the path itself. Splits the boxes and lines at this point.
      * 
-     * @param boxes
-     * @param lines
-     * @param q
-     * @param s
-     * @param newBoxes1
-     * @param newLines1
-     * @param newBoxes2
-     * @param newLines2
-     * @return
      */
     private KVector computeLineSplit(final LinkedList<Rectangle2D.Double> boxes,
             final LinkedList<Line2D.Double> lines, final KVector q, final KVector s,
@@ -462,7 +444,7 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
             final LinkedList<Rectangle2D.Double> newBoxes2,
             final LinkedList<Line2D.Double> newLines2) {
 
-        // @ TODO !! verify this !!
+        // @ FIXME
         // cant be that there's a (0,0) coming back
         // for some reason the method doesnt find ANY line that is away from (q,s) ...
 
@@ -544,12 +526,6 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
     /**
      * checks if the path defined by (q,s) entirely lies inside the passed region and intersects all
      * passed lines.
-     * 
-     * @param boxes
-     * @param lines
-     * @param q
-     * @param s
-     * @return
      */
     private boolean lineFits(final LinkedList<Rectangle2D.Double> boxes,
             final LinkedList<Line2D.Double> lines, final KVector q, final KVector s) {
@@ -577,7 +553,8 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
                 if (!(box == boxes.getLast())) {
                     line = lineIt.next();
                     // we check the line "on the right" of the box
-                    if (!((line.y1 - FITTING_TOLERANCE <= qsYEnd) && (line.y2 + FITTING_TOLERANCE >= qsYEnd))) {
+                    if (!((line.y1 - FITTING_TOLERANCE <= qsYEnd) 
+                            && (line.y2 + FITTING_TOLERANCE >= qsYEnd))) {
                         return false;
                     }
                 }
@@ -591,13 +568,8 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
     /**
      * mode returns a flag to indicate if the curvature is to be increased or decreased. first
      * decreases
-     * 
-     * @param count
-     * @param maxIterations
-     * @return
      */
     private curvature mode(final int count, final int maxIterations) {
-        // @ TODO CHANGE
         // first decrease 1/3 of the time, then 1/3 get old spline and increase for 1/3
         if (count < maxIterations / (2 + 1)) {
             return curvature.decrease;
@@ -608,11 +580,6 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
     /**
      * compute_splinesplit finds the endpoint of a segment on the path that is the furthest from the
      * spline and subdivides the box and path arrays along that point.
-     * 
-     * 
-     * @param spline
-     * @param pArray
-     * @return
      */
     private KVector[][] computeSplineSplit(final BezierSpline spline,
             final LinkedList<Rectangle2D.Double> boxes, final LinkedList<Line2D.Double> lArray,
@@ -728,11 +695,6 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
     /**
      * spline_fits checks if the spline lies entirely inside the region. The spline is sampled along
      * its length and these samples are then clipped as a linear path against the box region.
-     * 
-     * @param spline
-     * @param boxes
-     * @param lines
-     * @return
      */
     private boolean splineFits(final BezierSpline spline,
             final LinkedList<Rectangle2D.Double> boxes, final LinkedList<Line2D.Double> lines) {
@@ -748,11 +710,6 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
      * Maybe try: (spline_fits checks if the spline lies entirely inside the region. The spline is
      * sampled along its length and these samples are then clipped as a linear path against the box
      * region.)
-     * 
-     * @param spline
-     * @param boxes
-     * @param lines
-     * @return
      */
     private boolean splineFits(final BezierSpline spline, final Rectangle2D.Double[] boxes,
             final LinkedList<Line2D.Double> lines) {
