@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2010 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.kaom.graphiti.features;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
@@ -9,13 +22,27 @@ import org.eclipse.graphiti.ui.features.AbstractPasteFeature;
 
 import de.cau.cs.kieler.kaom.Entity;
 
+/**
+ * 
+ * @author atr
+ * Class used to copy the Entity in the clip board to the graphical editor
+ */
 public class PasteEntityFeature extends AbstractPasteFeature {
 
-    public PasteEntityFeature(IFeatureProvider fp) {
+    /**
+     * 
+     * @param fp
+     *  Constructor
+     */
+    public PasteEntityFeature(final IFeatureProvider fp) {
         super(fp);
         // TODO Auto-generated constructor stub
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     public boolean canPaste(final IPasteContext context) {
 
         PictogramElement[] pes = context.getPictogramElements();
@@ -38,8 +65,11 @@ public class PasteEntityFeature extends AbstractPasteFeature {
         }
 
  
-
-    public void paste(IPasteContext context) {
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    public void paste(final IPasteContext context) {
 
         PictogramElement[] pes = context.getPictogramElements();
         Diagram diagram = (Diagram) pes[0];

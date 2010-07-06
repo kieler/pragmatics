@@ -1,11 +1,21 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2010 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.kaom.graphiti.features;
 
-import java.awt.Container;
+
 import de.cau.cs.kieler.kaom.Entity;
-import de.cau.cs.kieler.kaom.Relation;
-
 import java.util.Iterator;
-
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.datatypes.IDimension;
@@ -19,24 +29,36 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Polygon;
 import org.eclipse.graphiti.mm.pictograms.Polyline;
 import org.eclipse.graphiti.mm.pictograms.Rectangle;
-import org.eclipse.graphiti.mm.pictograms.RoundedRectangle;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.mm.pictograms.Text;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 
+/**
+ * 
+ * @author atr
+ * Class used to layout the entity object and adjust its components
+ * after resizing has occurred 
+ */
 public class LayoutEntityFeature extends AbstractLayoutFeature {
 
-    private final int MIN_HEIGHT = 30;
-    private final int MIN_WIDTH = 50;
+    private static final int MIN_HEIGHT = 30;
+    private static final int MIN_WIDTH = 50;
     
-    public LayoutEntityFeature(IFeatureProvider fp) {
+    /**
+     * 
+     * @param fp
+     * Constructor
+     */
+    public LayoutEntityFeature(final IFeatureProvider fp) {
         super(fp);
-        // TODO Auto-generated constructor stub
     }
 
-    public boolean canLayout(ILayoutContext context) {
-        // TODO Auto-generated method stub
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    public boolean canLayout(final ILayoutContext context) {
         PictogramElement pe = context.getPictogramElement();
         if (pe instanceof ContainerShape) {
             EList<EObject> ob = pe.getLink().getBusinessObjects();
@@ -49,8 +71,11 @@ public class LayoutEntityFeature extends AbstractLayoutFeature {
        // return PropertyUtil.isEClassShape(pe);
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     public boolean layout(final ILayoutContext context) {
-        // TODO Auto-generated method stub
         
         boolean changed = false;
         ContainerShape containerShape = (ContainerShape) context.getPictogramElement();
@@ -76,7 +101,7 @@ public class LayoutEntityFeature extends AbstractLayoutFeature {
           //           - AddPortFeature.INVISIBLE_RECTANGLE_WIDTH);
            gaService.setLocationAndSize(rectangle.getGraphicsAlgorithmChildren().get(0), 
                    AddPortFeature.INVISIBLE_RECTANGLE_WIDTH, 
-                   0, containerWidth, rectangle.getHeight()-AddPortFeature.INVISIBLE_RECTANGLE_WIDTH); 
+                   0, containerWidth, rectangle.getHeight() - AddPortFeature.INVISIBLE_RECTANGLE_WIDTH); 
            changed = true;
        }
       
@@ -90,9 +115,8 @@ public class LayoutEntityFeature extends AbstractLayoutFeature {
             if (size.getWidth() != containerWidth) {
                
                if (ga instanceof Polygon) {
-                  
-                } 
-               else if (ga instanceof Polyline) {
+                  System.out.println();
+                } else if (ga instanceof Polyline) {
                    Polyline polyline = (Polyline) ga;
                    Point firstPoint = polyline.getPoints().get(0);
                    Point newfirstPoint = gaService.createPoint(
@@ -105,8 +129,7 @@ public class LayoutEntityFeature extends AbstractLayoutFeature {
                    polyline.getPoints().set(0, newfirstPoint);
                    polyline.getPoints().set(1, newsecondpoint);
                    changed = true;
-               }
-                else if (ga instanceof Text) {
+               } else if (ga instanceof Text) {
                   //  System.out.println("hello i cam here");
                    Text text = (Text) ga;
                    gaService.setLocationAndSize(ga, AddPortFeature.INVISIBLE_RECTANGLE_WIDTH, 

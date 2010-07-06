@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2010 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.kaom.graphiti.features;
 
 import org.eclipse.graphiti.examples.common.SampleUtil;
@@ -9,16 +22,26 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Style;
 
 import de.cau.cs.kieler.kaom.Entity;
+import de.cau.cs.kieler.kaom.graphiti.util.StyleUtil;
 
+/**
+ * 
+ * @author atr
+ * Class used to change the color of the entity
+ */
 public class ChangeColorEntityFeature extends AbstractCustomFeature {
 
     private boolean background;
     
-    
-    public ChangeColorEntityFeature(IFeatureProvider fp, final boolean background) {
+    /**
+     *
+     * @param backgrond . 
+     * @param fp
+     * Constructor.
+     */
+    public ChangeColorEntityFeature(final IFeatureProvider fp, final boolean backgrond) {
         super(fp);
-        // TODO Auto-generated constructor stub
-        this.background = background;
+        this.background = backgrond;
     }
 
     @Override
@@ -57,8 +80,11 @@ public class ChangeColorEntityFeature extends AbstractCustomFeature {
     }
 
  
-    
-    public void execute(ICustomContext context) {
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    public void execute(final ICustomContext context) {
 
         Style style = StyleUtil.getStyleForEClass(getDiagram());
          // let the user choose the new color

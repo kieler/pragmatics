@@ -1,43 +1,67 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2010 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.kaom.graphiti.features;
 
 import java.util.Iterator;
 
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.graphiti.datatypes.IDimension;
+
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.impl.AbstractAddShapeFeature;
-import org.eclipse.graphiti.mm.datatypes.Color;
+
 import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
-import org.eclipse.graphiti.mm.pictograms.Diagram;
+
 import org.eclipse.graphiti.mm.pictograms.Ellipse;
-import org.eclipse.graphiti.mm.pictograms.GraphicsAlgorithm;
-import org.eclipse.graphiti.mm.pictograms.GraphicsAlgorithmContainer;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.mm.pictograms.Polyline;
 import org.eclipse.graphiti.mm.pictograms.Rectangle;
 import org.eclipse.graphiti.mm.pictograms.RoundedRectangle;
-import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.services.IPeCreateService;
-import org.eclipse.graphiti.util.IColorConstant;
 
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Port;
+import de.cau.cs.kieler.kaom.graphiti.util.StyleUtil;
 
-public class AddPortFeature extends AbstractAddShapeFeature{
+/**
+ * 
+ * @author atr
+ *  Class adds a port to the parent entity
+ */
+public class AddPortFeature extends AbstractAddShapeFeature {
     
-    public static final int INVISIBLE_RECTANGLE_WIDTH=6;
+    /**
+     * Port created at a distance.
+     */
+    public static final int INVISIBLE_RECTANGLE_WIDTH = 6;
+    private static final int BOUNDARY_DISTANCE = 10;
     
-    public AddPortFeature(IFeatureProvider fp)
-    {
+    /**
+     * 
+     * @param fp
+     * Constructor
+     */
+    public AddPortFeature(final IFeatureProvider fp) {
         super(fp);
     }
     
-  public PictogramElement add(IAddContext context) {
-        // TODO Auto-generated method stub
+    /**
+     * 
+     * {@inheritDoc}
+     */
+  public PictogramElement add(final IAddContext context) {
      
    ContainerShape containerShape = context.getTargetContainer();
    IPeCreateService peCreateService = Graphiti.getPeCreateService();
@@ -49,25 +73,23 @@ public class AddPortFeature extends AbstractAddShapeFeature{
    float heightPercent;
 
     BoxRelativeAnchor boxAnchor = peCreateService.createBoxRelativeAnchor(containerShape);
-    if (context.getX() < 10) {
+    if (context.getX() < BOUNDARY_DISTANCE) {
      //   widthPercent=(float)8.0/(float)containerShape.getGraphicsAlgorithm().getWidth();
         widthPercent = (float) 0;
-        }
-        else if (Math.abs(context.getX() 
-                - (float) containerShape.getGraphicsAlgorithm().getWidth()) < 10){
+        } else if (Math.abs(context.getX() 
+                - (float) containerShape.getGraphicsAlgorithm().getWidth()) < BOUNDARY_DISTANCE) {
      //   widthPercent=(float)1-((float)8.0/(float)containerShape.getGraphicsAlgorithm().getWidth());
             widthPercent = (float) 1;
-        }
-            else {
+        } else {
                 widthPercent = ((float) context.getX()) 
                 / containerShape.getGraphicsAlgorithm().getWidth();
             }
     
-    if (Math.abs(context.getY() - (float) containerShape.getGraphicsAlgorithm().getHeight()) < 10) {
+    if (Math.abs(context.getY()
+            - (float) containerShape.getGraphicsAlgorithm().getHeight()) < BOUNDARY_DISTANCE) {
      //   heightPercent=(float)1-((float)8.0/(float)containerShape.getGraphicsAlgorithm().getHeight());
         heightPercent = (float) 1;
-    }
-        else {
+    } else {
                 heightPercent = ((float) context.getY()) 
                 / containerShape.getGraphicsAlgorithm().getHeight();
         }
@@ -86,8 +108,7 @@ public class AddPortFeature extends AbstractAddShapeFeature{
         PictogramElement pe = (PictogramElement) containerShape.getLink().getPictogramElement();
       
    
-        if (pe.getGraphicsAlgorithm() instanceof Rectangle)
-        {
+        if (pe.getGraphicsAlgorithm() instanceof Rectangle) {
             Rectangle invisibleRectangle = (Rectangle) pe.getGraphicsAlgorithm();
            // System.out.println("I came here also");
             for (int i = 0; i < invisibleRectangle.getGraphicsAlgorithmChildren().size(); i++) {
@@ -107,7 +128,7 @@ public class AddPortFeature extends AbstractAddShapeFeature{
     Ellipse boxEllipse = gaService.createEllipse(boxAnchor);
     boxEllipse.setFilled(true);
     boxEllipse.setStyle(StyleUtil.getStyleForEClass(getDiagram()));
-    System.out.println("X:" + context.getX() + "Y:" + context.getY());
+ //   System.out.println("X:" + context.getX() + "Y:" + context.getY());
    // gaService.setLocationAndSize(boxEllipse,-8, -4, 8, 8);
    
     final int w = INVISIBLE_RECTANGLE_WIDTH;
@@ -126,16 +147,22 @@ public class AddPortFeature extends AbstractAddShapeFeature{
     return containerShape;
   }
 
-    public boolean canAdd(IAddContext context) {
-        // TODO Auto-generated method stub
+  
+  /**
+   * 
+   * {@inheritDoc}
+   */
+    public boolean canAdd(final IAddContext context) {
         if (context.getNewObject() instanceof Port) {
             if (context.getTargetContainer() instanceof ContainerShape) {
                 ContainerShape containerShape = context.getTargetContainer();
              
                 if (getBusinessObjectForPictogramElement(containerShape) instanceof Entity) {
-                    if (Math.abs(context.getX() - containerShape.getGraphicsAlgorithm().getWidth()) < 10 
-                        || Math.abs(context.getY() - containerShape.getGraphicsAlgorithm().getHeight()) < 10
-                        || context.getX() < 10) {
+                    if (Math.abs(context.getX() 
+                            - containerShape.getGraphicsAlgorithm().getWidth()) < BOUNDARY_DISTANCE 
+                        || Math.abs(context.getY()  
+                                - containerShape.getGraphicsAlgorithm().getHeight()) < BOUNDARY_DISTANCE
+                        || context.getX() < BOUNDARY_DISTANCE) {
                             return true;
                     }
                 }

@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2010 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.kaom.graphiti.features;
 
 import java.util.List;
@@ -10,26 +23,45 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Polygon;
-import org.eclipse.graphiti.mm.pictograms.Rectangle;
-import org.eclipse.graphiti.mm.pictograms.RoundedRectangle;
-import org.eclipse.graphiti.mm.pictograms.Shape;
+//import org.eclipse.graphiti.mm.pictograms.Rectangle;
+//import org.eclipse.graphiti.mm.pictograms.RoundedRectangle;
+//import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.services.IPeCreateService;
 import org.eclipse.graphiti.util.ColorConstant;
+import org.eclipse.graphiti.util.IColorConstant;
 
 import de.cau.cs.kieler.kaom.Entity;
-import de.cau.cs.kieler.kaom.KaomFactory;
+//import de.cau.cs.kieler.kaom.KaomFactory;
 import de.cau.cs.kieler.kaom.Relation;
+import de.cau.cs.kieler.kaom.graphiti.util.StyleUtil;
 import de.cau.cs.kieler.kaom.graphiti.util.TopParentEntity;
 
+/**
+ * 
+ * @author atr
+ * Class adds a new relation object 
+ */
 public class AddRelationFeature extends AbstractAddShapeFeature {
 
+    private static final int[] VERTICES_POSITION = {-9 , 0 , 0, 12 , 9 , 0 , 0 , -12};
+    private static final IColorConstant RELATION_BACKGROUND = new ColorConstant(70, 70, 70);
+    
+    /**
+     * 
+     * @param fp
+     * Constructor
+     */
     public AddRelationFeature(final IFeatureProvider fp) {
         super(fp);
         // TODO Auto-generated constructor stub
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     public PictogramElement add(final IAddContext context) {
         // TODO Auto-generated method stub
      //   KaomFactory kaomFactory=KaomFactory.eINSTANCE;
@@ -51,16 +83,16 @@ public class AddRelationFeature extends AbstractAddShapeFeature {
            //         context.getY() + 12 , context.getX() + 9 , context.getY(),
            //         context.getX(), context.getY() - 12});    
             
-            Polygon polygon = gaService.createPolygon(containerShape, 
-                     new int[]{- 9 , 0 , 0, 12 , 9 , 0 , 0 , - 12});    
+            Polygon polygon = gaService.createPolygon(containerShape, VERTICES_POSITION
+                     );    
             
              //       new int[]{0 , -12 , 9, 0 , 18 , -12 , 9 , - 24});    
             
                     
             polygon.setStyle(StyleUtil.getStyleForEClass(getDiagram()));
-            polygon.setBackground(manageColor(new ColorConstant(70, 70, 70)));
+            polygon.setBackground(manageColor(RELATION_BACKGROUND));
          //   gaService.setLocationAndSize(polygon,context.getX(),context.getY(),70,80);
-            System.out.println("X::" + context.getX() + "Y::" + context.getY());
+        //    System.out.println("X::" + context.getX() + "Y::" + context.getY());
             Graphiti.getGaService()
             .setLocation(containerShape.getGraphicsAlgorithm(), 
                     context.getX(), context.getY(), false);
@@ -71,9 +103,7 @@ public class AddRelationFeature extends AbstractAddShapeFeature {
             
             link(containerShape, relation);
            
-            }
-           
-       else {
+            } else {
             containerShape = context.getTargetContainer();
              //PictogramElement pe=(PictogramElement) parentContainerShape.getGraphicsAlgorithm();
             // parentEntity=(Entity) getBusinessObjectForPictogramElement(pe);
@@ -81,20 +111,21 @@ public class AddRelationFeature extends AbstractAddShapeFeature {
            //  containerShape = peCreateService.createContainerShape(parentContainerShape, true);  
           //   PropertyUtil.setEClassShape(containerShape);
            //  flag = false;
-            ContainerShape childcontainershape = peCreateService.createContainerShape(containerShape, true);   
+            ContainerShape childcontainershape = peCreateService.createContainerShape(
+                    containerShape, true);   
             //  Entity parentEntity = null;
               //Shape shape = peCreateService.createShape(containerShape, true);
             
              // RoundedRectangle polygon=gaService.createRoundedRectangle(containerShape, 5, 5);
-              Polygon polygon = gaService.createPolygon(childcontainershape, 
+              Polygon polygon = gaService.createPolygon(childcontainershape, VERTICES_POSITION);
             //          new int[]{context.getX() - 9 , context.getY() , context.getX(),
             //          context.getY() + 12 , context.getX() + 9 , context.getY(),
             //          context.getX(), context.getY() - 12});        
             
-                      new int[]{- 9 , 0 , 0, 12 , 9 , 0 , 0 , - 12});    
+           //           new int[]{- 9 , 0 , 0, 12 , 9 , 0 , 0 , - 12});    
                       
                       polygon.setStyle(StyleUtil.getStyleForEClass(getDiagram()));
-              polygon.setBackground(manageColor(new ColorConstant(70, 70, 70)));
+              polygon.setBackground(manageColor(RELATION_BACKGROUND));
               Graphiti.getGaService()
               .setLocation(childcontainershape.getGraphicsAlgorithm(), 
                       context.getX(), context.getY(), false);
@@ -126,7 +157,10 @@ public class AddRelationFeature extends AbstractAddShapeFeature {
          return containerShape;
     }
 
-    public boolean canAdd(IAddContext context) {
+    /**
+     * {@inheritDoc}
+     */
+    public boolean canAdd(final IAddContext context) {
         // TODO Auto-generated method stub
         if (context.getNewObject() instanceof Relation) {
             
@@ -138,6 +172,12 @@ public class AddRelationFeature extends AbstractAddShapeFeature {
         return false;
     }
 
+    
+    /**
+     * @param newRelation
+     * @param context
+     * Adds the new RELATION formed to its container ENTITY
+     */
     private void addToDiagram(final Relation newRelation , final IAddContext context) {
         List<EObject> contents = getDiagram().eResource().getContents();
         Entity topEntity = null;
@@ -147,9 +187,8 @@ public class AddRelationFeature extends AbstractAddShapeFeature {
                 topEntity = (Entity) obj;
                  break;
                 }
-            }
-        }
-        else {
+            }       
+        } else {
                     Object ob = getBusinessObjectForPictogramElement(context.getTargetContainer());
                     if (ob instanceof Entity)  {
                         topEntity = (Entity) ob;

@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2010 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.kaom.graphiti.diagram;
 
 import java.util.ArrayList;
@@ -14,7 +27,7 @@ import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.context.IDoubleClickContext;
 import org.eclipse.graphiti.features.context.IPictogramElementContext;
 import org.eclipse.graphiti.features.context.impl.CreateConnectionContext;
-import org.eclipse.graphiti.features.context.impl.CustomContext;
+//import org.eclipse.graphiti.features.context.impl.CustomContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
@@ -28,10 +41,10 @@ import org.eclipse.graphiti.palette.impl.StackEntry;
 import org.eclipse.graphiti.platform.IPlatformImageConstants;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.tb.ContextButtonEntry;
-import org.eclipse.graphiti.tb.ContextEntryHelper;
+//import org.eclipse.graphiti.tb.ContextEntryHelper;
 import org.eclipse.graphiti.tb.ContextMenuEntry;
 import org.eclipse.graphiti.tb.DefaultToolBehaviorProvider;
-import org.eclipse.graphiti.tb.IContextButtonEntry;
+//import org.eclipse.graphiti.tb.IContextButtonEntry;
 import org.eclipse.graphiti.tb.IContextButtonPadData;
 import org.eclipse.graphiti.tb.IContextMenuEntry;
 import org.eclipse.graphiti.tb.IRenderingDecorator;
@@ -40,8 +53,18 @@ import org.eclipse.graphiti.tb.ImageRenderingDecorator;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.graphiti.features.RenameEntityFeature;
 
+/**
+ * 
+ * @author atr
+ * Class provides all the features to control the tool bar
+ */
 public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
 
+    /**
+     * 
+     * @param diagramTypeProvider
+     * Constructor
+     */
     public ToolBehaviourProvider(final IDiagramTypeProvider diagramTypeProvider) {
         super(diagramTypeProvider);
         // TODO Auto-generated constructor stub
@@ -95,8 +118,8 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
        
        setGenericContextButtons(data, pe, CONTEXT_BUTTON_DELETE | CONTEXT_BUTTON_UPDATE);
        
-       CustomContext cc = new CustomContext(new PictogramElement[]{pe});
-       ICustomFeature[] cf = getFeatureProvider().getCustomFeatures(cc);
+      // CustomContext cc = new CustomContext(new PictogramElement[]{pe});
+      // ICustomFeature[] cf = getFeatureProvider().getCustomFeatures(cc);
      /*  if (cf.length >= 1) {
            IContextButtonEntry collapseButton = ContextEntryHelper.
                createCollapseContextButton(true, cf[0], cc);
@@ -110,8 +133,7 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
        Anchor anchor = null;
        if (pe instanceof Anchor) {
            anchor = (Anchor) pe;
-       }
-        else if (pe instanceof AnchorContainer) {
+       } else if (pe instanceof AnchorContainer) {
             anchor = Graphiti.getPeService().getChopboxAnchor((AnchorContainer) pe);
         }
        ccc.setSourceAnchor(anchor);
@@ -204,8 +226,7 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
        ICustomFeature customFeature = new RenameEntityFeature(getFeatureProvider());
        if (customFeature.canExecute(context)) {
            return customFeature;
-       }
-       else {
+       } else {
            return super.getDoubleClickFeature(context);
        }
    }

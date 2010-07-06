@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2010 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.kaom.graphiti.diagram;
 
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
@@ -51,15 +64,20 @@ import de.cau.cs.kieler.kaom.graphiti.features.RenameEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.ResizeEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.UpdateEntityFeature;
 
+/**
+ * 
+ * @author atr
+ * Class which provides(initializes) all the features
+ */
 public class FeatureProvider extends DefaultFeatureProvider {
 
-    
-    public FeatureProvider(IDiagramTypeProvider dtp) {
+    /**
+     * 
+     * @param dtp
+     * Constructor
+     */
+    public FeatureProvider(final IDiagramTypeProvider dtp) {
         super(dtp);
-        // TODO Auto-generated constructor stub
-        if (dtp.getDiagram()==null) 
-            System.out.println("This is not possible");
-    
     }
 
     @Override
@@ -74,14 +92,11 @@ public class FeatureProvider extends DefaultFeatureProvider {
     public IAddFeature getAddFeature(final IAddContext context) {
         if (context.getNewObject() instanceof Entity) {
             return new AddEntityFeature(this);
-        }
-        else if (context.getNewObject() instanceof Link) { 
+        }  else if (context.getNewObject() instanceof Link) { 
             return new AddLinkFeature(this);        
-        }
-        else if (context.getNewObject() instanceof Port) {
+        }  else if (context.getNewObject() instanceof Port) {
             return new AddPortFeature(this);
-        }
-        else if (context.getNewObject() instanceof Relation) {
+        }  else if (context.getNewObject() instanceof Relation) {
             return new AddRelationFeature(this);
         }
     return super.getAddFeature(context);
@@ -108,8 +123,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
         Object ob = getBusinessObjectForPictogramElement(shape);
         if (ob instanceof Entity) {
             return new MoveEntityFeature(this);
-        }
-        else if (ob instanceof Relation) {
+        } else if (ob instanceof Relation) {
             return new MoveRelationFeature(this);
         }
         return super.getMoveShapeFeature(context);

@@ -1,4 +1,17 @@
-package de.cau.cs.kieler.kaom.graphiti.features;
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2010 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
+package de.cau.cs.kieler.kaom.graphiti.util;
 
 import java.util.Collection;
 
@@ -10,6 +23,11 @@ import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.util.ColorConstant;
 import org.eclipse.graphiti.util.IColorConstant;
 
+/**
+ * 
+ * @author atr
+ * Class used to set a common style for all elements
+ */
 public class StyleUtil {
 
     private static final IColorConstant E_CLASS_TEXT_FOREGROUND = new ColorConstant(100, 100, 100);
@@ -20,6 +38,12 @@ public class StyleUtil {
 
    // private static final IColorConstant E_CLASS_BACKGROUND = new ColorConstant(226, 233, 255);
  
+   
+    /**
+     * @return Style
+     * @param diagram
+     * returns style for Entity or else returns null.
+     */
     public static Style getStyleForEClass(final Diagram diagram) {
 
         final String styleId = "E-CLASS";
@@ -41,8 +65,13 @@ public class StyleUtil {
     }
 
  
-
-    public static Style getStyleForEClassText(Diagram diagram) {
+    /**
+     * 
+     * @param diagram .
+     * @return
+     * returns style of Entity or else null
+     */
+    public static Style getStyleForEClassText(final Diagram diagram) {
 
         final String styleId = "E-CLASS-TEXT";
         // this is a child style of the e-class-style
@@ -53,7 +82,7 @@ public class StyleUtil {
             IGaService gaService = Graphiti.getGaService();
             style = gaService.createStyle(diagram, styleId);
             // "overwrites" values from parent style
-            style.setForeground(gaService.manageColor(diagram,E_CLASS_TEXT_FOREGROUND));
+            style.setForeground(gaService.manageColor(diagram, E_CLASS_TEXT_FOREGROUND));
 
         }
 
@@ -63,7 +92,11 @@ public class StyleUtil {
 
      // find the style with a given id in the style-container, can return null
 
-    private static Style findStyle(StyleContainer styleContainer, String id) {
+    /**
+     * @param id
+     * @param styleContainer
+     */
+    private static Style findStyle(final StyleContainer styleContainer, final String id) {
 
         // find and return style
         Collection<Style> styles = styleContainer.getStyles();

@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2010 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.kaom.graphiti.features;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
@@ -9,21 +22,40 @@ import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.KaomFactory;
 import de.cau.cs.kieler.kaom.Port;
 
+/**
+ * 
+ * @author atr
+ * Creates a port object and passes it to the AddPortFeature
+ */
 public class CreatePortFeature extends AbstractCreateFeature {
 
-    public CreatePortFeature(IFeatureProvider fp, String name, String description) {
+    private static final int BOUNDARY_DISTANCE = 10;
+    /**
+
+     * @param fp .
+     * @param name .
+     * @param description .
+     
+     *  Constructor.
+     */
+    public CreatePortFeature(final IFeatureProvider fp , final String name, final String description) {
         super(fp, name, description);
-        // TODO Auto-generated constructor stub
+     
     }
 
-    public boolean canCreate(ICreateContext context) {
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    public boolean canCreate(final ICreateContext context) {
         // TODO Auto-generated method stub
        if (context.getTargetContainer() instanceof ContainerShape) {
            ContainerShape containerShape = context.getTargetContainer();
            if (getBusinessObjectForPictogramElement(containerShape) instanceof Entity) {
-               if (Math.abs(context.getX() - containerShape.getGraphicsAlgorithm().getWidth()) < 10 
-                   || Math.abs(context.getY() - containerShape.getGraphicsAlgorithm().getHeight()) < 10
-                       || context.getX() < 10) {
+               if (Math.abs(context.getX() 
+                       - containerShape.getGraphicsAlgorithm().getWidth()) < BOUNDARY_DISTANCE 
+                   || Math.abs(context.getY() - containerShape.getGraphicsAlgorithm().getHeight()) 
+                   < BOUNDARY_DISTANCE || context.getX() < BOUNDARY_DISTANCE) {
                               
                return true;
                }
@@ -32,7 +64,11 @@ public class CreatePortFeature extends AbstractCreateFeature {
            return false;
     }
 
-    public Object[] create(ICreateContext context) {
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    public Object[] create(final ICreateContext context) {
         // TODO Auto-generated method stub
         Port port = KaomFactory.eINSTANCE.createPort();
         // Add model element to resource.

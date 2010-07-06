@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2010 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.kaom.graphiti.features;
 
 
@@ -17,18 +30,36 @@ import org.eclipse.graphiti.services.IPeCreateService;
 
 
 import de.cau.cs.kieler.kaom.Link;
+import de.cau.cs.kieler.kaom.graphiti.util.StyleUtil;
 
+/**
+ * 
+ * @author atr
+ * Adds a link between the source and the target
+ * Adds the name of the link
+ */
 public class AddLinkFeature extends AbstractAddFeature {
 
-    public AddLinkFeature(IFeatureProvider fp) {
+    private static final double CONNECTION_DECORATOR_LOCATION = 0.5;      
+    private static final int TEXT_LOCATION = 10;      
+    
+    
+    /**
+     * 
+     * @param fp
+     * Constructor
+     */
+    public AddLinkFeature(final IFeatureProvider fp) {
         super(fp);
         // TODO Auto-generated constructor stub
     }
 
-    public PictogramElement add(IAddContext context) {
-        // TODO Auto-generated method stub
-        //return null;
-    //    System.out.println("Helelelelelelellelelelelelelelelellllooooooo");
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    public PictogramElement add(final IAddContext context) {
+      
         IAddConnectionContext addConContext = (IAddConnectionContext) context;
         Link elink = (Link) context.getNewObject();
         IPeCreateService peCreateService = Graphiti.getPeCreateService();
@@ -45,10 +76,10 @@ public class AddLinkFeature extends AbstractAddFeature {
     //    System.out.println("I have come at the last position too78979789");             
  
         ConnectionDecorator textDecorator = 
-            peCreateService.createConnectionDecorator(conn, true, 0.5, true);
+            peCreateService.createConnectionDecorator(conn, true, CONNECTION_DECORATOR_LOCATION, true);
         Text text = gaService.createDefaultText(textDecorator);
         text.setStyle(StyleUtil.getStyleForEClassText((getDiagram())));
-        gaService.setLocation(text, 10, 0);
+        gaService.setLocation(text, TEXT_LOCATION, 0);
         // set reference name in the text decorator
     //    System.out.println("I have come at the last position too");
         Link link = (Link) context.getNewObject();
@@ -56,7 +87,7 @@ public class AddLinkFeature extends AbstractAddFeature {
 
         // add static graphical decorators (composition and navigable)
         ConnectionDecorator cd;
-        cd = peCreateService.createConnectionDecorator(conn, false,1.0, true);
+        cd = peCreateService.createConnectionDecorator(conn, false, 1.0, true);
      //   System.out.println("I have come at the last position too");
         createArrow(cd);
            
@@ -64,9 +95,12 @@ public class AddLinkFeature extends AbstractAddFeature {
                
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     public boolean canAdd(final IAddContext context) {
-        // TODO Auto-generated method stub
-     //   System.out.println("hbdfisd");
+
        if (context instanceof IAddConnectionContext
                && context.getNewObject() instanceof Link) {
            return true;
@@ -74,7 +108,13 @@ public class AddLinkFeature extends AbstractAddFeature {
        return false;
     }
 
-    private Polyline createArrow(GraphicsAlgorithmContainer gaContainer) {
+    /**
+     * 
+     * @param gaContainer
+     * @return
+     * Creates the shape of an arrow
+     */
+    private Polyline createArrow(final GraphicsAlgorithmContainer gaContainer) {
         Polyline polyline = 
             Graphiti.getGaCreateService().createPolyline(gaContainer, 
                     new int[] { -15, 10, 0, 0, -15, -10 });

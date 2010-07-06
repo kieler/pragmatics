@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2010 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.kaom.graphiti.features;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
@@ -7,13 +20,26 @@ import org.eclipse.graphiti.ui.features.AbstractCopyFeature;
 
 import de.cau.cs.kieler.kaom.Entity;
 
+/**
+ * 
+ * @author atr
+ * Class used to copy the Entity to the clip board
+ */
 public class CopyEntityFeature extends AbstractCopyFeature {
 
-    public CopyEntityFeature(IFeatureProvider fp) {
+    /**
+     * @param fp
+     * Constructor.
+     */
+    public CopyEntityFeature(final IFeatureProvider fp) {
         super(fp);
         // TODO Auto-generated constructor stub
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
      public boolean canCopy(final ICopyContext context) {
         final PictogramElement[] pes = context.getPictogramElements();
 
@@ -32,6 +58,10 @@ public class CopyEntityFeature extends AbstractCopyFeature {
         return true;
     }
  
+     /**
+      * 
+      * {@inheritDoc}
+      */
       public void copy(final ICopyContext context) {
 
         PictogramElement[] pes = context.getPictogramElements();

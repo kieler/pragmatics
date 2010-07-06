@@ -1,38 +1,43 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2010 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.kaom.graphiti.diagram;
 
-import java.util.List;
 
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.graphiti.dt.*;
-import org.eclipse.graphiti.mm.pictograms.Diagram;
-import org.eclipse.graphiti.platform.IDiagramEditor;
-import org.eclipse.graphiti.services.Graphiti;
+import org.eclipse.graphiti.dt.AbstractDiagramTypeProvider;
 import org.eclipse.graphiti.tb.IToolBehaviorProvider;
+//import de.cau.cs.kieler.kaom.Entity;
 
-import de.cau.cs.kieler.kaom.Entity;
-import de.cau.cs.kieler.kaom.KaomFactory;
-
-
+/**
+  * @author atr
+  * Class DiagramTypeProvider used to initialize the diagram editor.
+ */
 public class DiagramTypeProvider extends AbstractDiagramTypeProvider {
 
     private  IToolBehaviorProvider[] toolBehaviorProviders;
-    public static Entity topEntity;
-    
+            
+  
+    /**
+     * Constructor to initialize the diagram editor.
+     * Initialize the feature provider
+     */
     public DiagramTypeProvider() {
         super();
         setFeatureProvider(new FeatureProvider(this));
       
-       if (getDiagram() == null) {
-            System.out.println("This is not possible");
-            }
-    /*    List<EObject> contents = getDiagram().eResource().getContents();
-        if(contents==null || contents.size()==0) {
-            topEntity = KaomFactory.eINSTANCE.createEntity();
-            contents.add(topEntity);
-        }
-    }*/
-    }
+     }
     
+          
     @Override
     public boolean isAutoUpdateAtRuntime() {
         return true;
