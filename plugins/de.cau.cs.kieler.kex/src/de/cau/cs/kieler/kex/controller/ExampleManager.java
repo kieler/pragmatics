@@ -1,11 +1,7 @@
 package de.cau.cs.kieler.kex.controller;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -112,10 +108,10 @@ public class ExampleManager {
 	 */
 	private Example mapToExample(Map<ExampleElement, Object> properties) {
 		Example result = new Example(
-				(String) properties.get(ExampleElement.ID),
-				(String) properties.get(ExampleElement.NAME),
-				Version.parseVersion((String) properties
-						.get(ExampleElement.VERSION)));
+				(String) properties.get(ExampleElement.ID), (String) properties
+						.get(ExampleElement.NAME), Version
+						.parseVersion((String) properties
+								.get(ExampleElement.VERSION)));
 		result.setDescription((String) properties
 				.get(ExampleElement.DESCRIPTION));
 		result.setContact((String) properties.get(ExampleElement.CONTACT));
@@ -181,17 +177,18 @@ public class ExampleManager {
 			// src/Hankees.txt
 			String localWorkspaceLocation = Platform.getLocation().toString();
 			String destFolder = localWorkspaceLocation
-					+ selectedResource.toString() + "/";
-
+					+ selectedResource.toString() + "/" + example.getName()
+					+ "/";
+			ExampleManagerUtil.createFolder(destFolder);
 			for (ExampleResource exampleResource : resources) {
 				for (URL resource : exampleResource.getResources()) {
 					try {
 						// TODO Reaktion auf resource = folder... dann muessen
 						// irgendwie auch alle unterdatein genommen werden.
-						// f2.isDirectory()
-						// FIXME hier nicht nur getFile() sondern letztens slash
-						// suchen und ab da an nehmen, dann filename
-						copyfile(resource, destFolder + "Test2", true);
+						String path = resource.getPath();
+						String[] split = path.split("/");
+						ExampleManagerUtil.writeFile(resource, destFolder
+								+ split[split.length - 1], true);
 					} catch (FileNotFoundException e) {
 						throw new KielerException("Can't import example!", e);
 					} catch (IOException e1) {
@@ -200,37 +197,6 @@ public class ExampleManager {
 				}
 			}
 		}
-	}
-
-	/**
-	 * 
-	 * @param sourceUrl
-	 *            , source url
-	 * @param destFile
-	 *            , destination file
-	 * @param overwrite
-	 *            , boolean
-	 * @throws KielerException
-	 * @throws IOException
-	 */
-	private static void copyfile(URL sourceUrl, String destFile,
-			boolean overwrite) throws IOException {
-
-		File f2 = new File(destFile);
-		if (f2.exists() && !overwrite) {
-			return;
-		}
-
-		InputStream is = sourceUrl.openStream();
-		OutputStream os = new FileOutputStream(f2, overwrite);
-		byte[] buf = new byte[1024];
-		int len;
-		while ((len = is.read(buf)) > 0) {
-			os.write(buf, 0, len);
-		}
-		is.close();
-		os.close();
-
 	}
 
 	/**
