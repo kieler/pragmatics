@@ -78,7 +78,8 @@ public final class TransformationUIManager {
      * @param listener
      *            The listener to add
      */
-    public void addTransformationListener(final ITransformationEventListener listener) {
+    public void addTransformationListener(
+            final ITransformationEventListener listener) {
         transformationEventListeners.add(listener);
     }
 
@@ -88,8 +89,18 @@ public final class TransformationUIManager {
      * @param listener
      *            The listener to remove.
      */
-    public void removeTransformationListener(final ITransformationEventListener listener) {
+    public void removeTransformationListener(
+            final ITransformationEventListener listener) {
         transformationEventListeners.remove(listener);
+    }
+
+    /**
+     * Getter for the transformationEventListeners.
+     * 
+     * @return the transformationEventListeners
+     */
+    public LinkedList<ITransformationEventListener> getTransformationEventListeners() {
+        return this.transformationEventListeners;
     }
 
     /**
@@ -107,7 +118,8 @@ public final class TransformationUIManager {
      */
     public void createAndExecuteTransformationCommand(
             final EditorTransformationSettings editorSettings,
-            final KSBasETransformation transformation, final List<EObject> selection) {
+            final KSBasETransformation transformation,
+            final List<EObject> selection) {
         // We need the view management
         if (!RunLogic.getInstance().getState()) {
             RunLogic.getInstance().registerListeners();
@@ -118,15 +130,16 @@ public final class TransformationUIManager {
             te.transformationAboutToExecute(new Object[] {});
         }
 
-        IEditorPart activeEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                .getActivePage().getActiveEditor();
+        IEditorPart activeEditor = PlatformUI.getWorkbench()
+                .getActiveWorkbenchWindow().getActivePage().getActiveEditor();
         EditPart selectedEditPart = null;
         if (selection != null) {
             selectedEditPart = ModelingUtil.getEditPart(selection.get(0));
         } else {
             // retrieve selection:
-            ISelection sel = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                    .getSelectionService().getSelection();
+            ISelection sel = PlatformUI.getWorkbench()
+                    .getActiveWorkbenchWindow().getSelectionService()
+                    .getSelection();
             if (sel instanceof StructuredSelection) {
                 Object selObj = ((StructuredSelection) sel).getFirstElement();
                 if (selObj instanceof EditPart) {
@@ -149,13 +162,18 @@ public final class TransformationUIManager {
         if (selection == null) {
             if (transformation.getParameterList().size() == 0) {
                 KSBasEUIPlugin.getDefault().logError(
-                        "The Transformation " + transformation.getTransformation()
+                        "The Transformation "
+                                + transformation.getTransformation()
                                 + " does not have any parameters");
             } else {
-                for (List<String> parameters : transformation.getParameterList()) {
+                for (List<String> parameters : transformation
+                        .getParameterList()) {
                     selectionMapping = TransformationFrameworkFactory
-                            .getDefaultTransformationFramework().createParameterMapping(null,
-                                    parameters.toArray(new String[parameters.size()]));
+                            .getDefaultTransformationFramework()
+                            .createParameterMapping(
+                                    null,
+                                    parameters.toArray(new String[parameters
+                                            .size()]));
                     if (selectionMapping != null) {
                         break;
                     }
@@ -167,10 +185,11 @@ public final class TransformationUIManager {
             selectionMapping.addAll(selection);
         }
 
-        ExecuteTransformationRequest request = new ExecuteTransformationRequest(activeEditor,
-                transformation.getTransformation(), editorSettings.getTransformationFile(),
-                selectionMapping, editorSettings.getModelPackages(), editorSettings
-                        .getFramework());
+        ExecuteTransformationRequest request = new ExecuteTransformationRequest(
+                activeEditor, transformation.getTransformation(),
+                editorSettings.getTransformationFile(), selectionMapping,
+                editorSettings.getModelPackages(),
+                editorSettings.getFramework());
         Command transformationCommand = selectedEditPart.getCommand(request);
 
         // gets a command stack to execute the command
@@ -180,8 +199,8 @@ public final class TransformationUIManager {
             commandStack = (DiagramCommandStack) adapter;
         }
         if (commandStack == null) {
-            commandStack = new DiagramCommandStack(((DiagramEditor) activeEditor)
-                    .getDiagramEditDomain());
+            commandStack = new DiagramCommandStack(
+                    ((DiagramEditor) activeEditor).getDiagramEditDomain());
         }
         commandStack.execute(transformationCommand);
 
@@ -190,13 +209,15 @@ public final class TransformationUIManager {
         // transformation.
 
         if (activeEditor instanceof IDiagramWorkbenchPart) {
-            EObject obj = ((View) ((IDiagramWorkbenchPart) activeEditor).getDiagramEditPart()
-                    .getModel()).getElement();
+            EObject obj = ((View) ((IDiagramWorkbenchPart) activeEditor)
+                    .getDiagramEditPart().getModel()).getElement();
 
-            List<?> editPolicies = CanonicalEditPolicy.getRegisteredEditPolicies(obj);
+            List<?> editPolicies = CanonicalEditPolicy
+                    .getRegisteredEditPolicies(obj);
             for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
 
-                CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it.next();
+                CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it
+                        .next();
 
                 nextEditPolicy.refresh();
             }

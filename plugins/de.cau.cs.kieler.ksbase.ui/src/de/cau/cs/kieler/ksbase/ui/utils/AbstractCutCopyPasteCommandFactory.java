@@ -49,7 +49,10 @@ import de.cau.cs.kieler.core.model.transformation.ITransformationFramework;
 import de.cau.cs.kieler.core.model.transformation.xtend.XtendTransformationFramework;
 import de.cau.cs.kieler.core.model.util.ModelingUtil;
 import de.cau.cs.kieler.core.ui.handler.ICutCopyPasteCommandFactory;
+import de.cau.cs.kieler.ksbase.ui.TransformationUIManager;
 import de.cau.cs.kieler.ksbase.ui.handler.TransformationCommand;
+import de.cau.cs.kieler.ksbase.ui.listener.ITransformationEventListener;
+import de.cau.cs.kieler.viewmanagement.RunLogic;
 
 /**
  * Creates the cut, copy and paste commands from ksbase.
@@ -151,7 +154,8 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
             DiagramEditor editor = (DiagramEditor) part;
             TransactionalEditingDomain transDomain = editor.getEditingDomain();
 
-            result = new TransformationCommandWithAutoLayout(transDomain, label);
+            result = new TransformationCommandWithAutoLayout(transDomain,
+                    label, editor);
 
             mapParameters(selection, label, filePath, result, editor);
         }
@@ -208,10 +212,9 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
                 List<Object> mappedSelection = FRAMEWORK
                         .createParameterMapping(selection, s);
                 if (mappedSelection != null
-                        && result
-                                .initialize(editor, mappedSelection, label
-                                        .toLowerCase(), filePath, getModel(),
-                                        FRAMEWORK)) {
+                        && result.initialize(editor, mappedSelection,
+                                label.toLowerCase(), filePath, getModel(),
+                                FRAMEWORK)) {
                     break;
                 }
             }
@@ -305,13 +308,24 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
     protected abstract List<String> getModel();
 
     /**
+     * Perform actions before the operation has started.
+     * 
+     * @param monitor
+     *            a progress monitor
+     */
+    protected void performPreOperationActions(final IProgressMonitor monitor) {
+
+    }
+
+    /**
      * Perform actions after the operation has finished.
      * 
      * @param monitor
      *            a progress monitor
      */
-    protected abstract void performPostOperationActions(
-            final IProgressMonitor monitor);
+    protected void performPostOperationActions(final IProgressMonitor monitor) {
+
+    }
 
     /**
      * This transformation command performs an auto layout some time after the
@@ -328,25 +342,41 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
         /** The delay. */
         private static final int DELAY = 500;
 
+        private DiagramEditor editor;
+
         /**
          * Creates a new Transformation command.
          * 
          * @param domain
          * @param labelParam
+         * @param editorParam
          */
         public TransformationCommandWithAutoLayout(
-                final TransactionalEditingDomain domain, final String labelParam) {
+                final TransactionalEditingDomain domain,
+                final String labelParam, final DiagramEditor editorParam) {
             super(domain, labelParam, null);
             this.label = labelParam;
+            this.editor = editorParam;
         }
 
         @Override
         protected CommandResult doExecuteWithResult(
                 final IProgressMonitor monitor, final IAdaptable info)
                 throws ExecutionException {
+            performPreOperationActions(monitor);
+
+            // We need the view management
+            RunLogic.getInstance().registerListeners();
+
+            // Notify event listeners:
+            for (ITransformationEventListener te : TransformationUIManager.INSTANCE
+                    .getTransformationEventListeners()) {
+                te.transformationAboutToExecute(new Object[] {});
+            }
+
             CommandResult res = super.doExecuteWithResult(monitor, info);
             if (label.equalsIgnoreCase("paste")) {
-                WorkerJob job = new WorkerJob();
+                WorkerJob job = new WorkerJob(editor);
                 job.schedule(DELAY);
 
             }
@@ -361,14 +391,18 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
      */
     private class WorkerJob extends Job {
 
+        private DiagramEditor editor;
+
         /**
          * Creates a new AbstractCutCopyPasteCommandFactory.java.
          * 
+         * @param editorParam
          * @param name
          */
-        public WorkerJob() {
-            super("Autolayout");
+        public WorkerJob(final DiagramEditor editorParam) {
+            super("Applying post-'paste' viewmanagement effects.");
             jobInstance = this;
+            this.editor = editorParam;
         }
 
         /**
@@ -376,6 +410,29 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
          */
         @Override
         protected IStatus run(final IProgressMonitor monitor) {
+            EObject obj = ((View) editor.getDiagramEditPart().getModel())
+                    .getElement();
+
+            List<?> editPolicies = CanonicalEditPolicy
+                    .getRegisteredEditPolicies(obj);
+            for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
+
+                CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it
+                        .next();
+
+                nextEditPolicy.refresh();
+            }
+
+            IDiagramGraphicalViewer graphViewer = ((IDiagramWorkbenchPart) editor)
+                    .getDiagramGraphicalViewer();
+            graphViewer.flush();
+
+            // Notify event listeners:
+            for (ITransformationEventListener te : TransformationUIManager.INSTANCE
+                    .getTransformationEventListeners()) {
+                te.transformationExecuted(new Object[] { obj, editor });
+            }
+
             performPostOperationActions(monitor);
             return new Status(IStatus.OK,
                     "de.cau.cs.kieler.synccharts.diagram.custom", "Layout done");

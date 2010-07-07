@@ -16,8 +16,6 @@ package de.cau.cs.kieler.kaom.diagram.custom.commands;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.ui.IEditorPart;
 import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.kaom.Entity;
@@ -25,7 +23,6 @@ import de.cau.cs.kieler.kaom.Link;
 import de.cau.cs.kieler.kaom.Port;
 import de.cau.cs.kieler.kaom.Relation;
 import de.cau.cs.kieler.kaom.diagram.custom.KaomDiagramCustomPlugin;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 import de.cau.cs.kieler.ksbase.ui.utils.AbstractCutCopyPasteCommandFactory;
 
 /**
@@ -52,28 +49,6 @@ public class KaomCutCopyPasteCommandFactory extends
     @Override
     protected Bundle getBundle() {
         return KaomDiagramCustomPlugin.getDefault().getBundle();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void performPostOperationActions(final IProgressMonitor monitor) {
-        KaomDiagramCustomPlugin.getDefault().getDisplay().syncExec(
-                new Runnable() {
-
-                    public void run() {
-                        IEditorPart editorPart = KaomDiagramCustomPlugin
-                                .getDefault().getActiveEditorPart();
-                        if (editorPart != null) {
-                            refreshEditPolicies(editorPart);
-
-                            EclipseLayoutServices.getInstance().layout(
-                                    editorPart, null, true, false);
-                        }
-                    }
-
-                });
     }
 
     /**
