@@ -14,6 +14,15 @@
    </extension>
    <extension
          point="de.cau.cs.kieler.kiml.evol.evolutionData">
+      <data
+            lowerBound="-1"
+            option="de.cau.cs.kieler.kiml.evol.testData"
+            upperBound="5">
+      </data>
+      <data
+            lowerBound="1"
+            option="de.cau.cs.kieler.layout.options.minSpacing">
+      </data>
    </extension>
    <extension
          point="de.cau.cs.kieler.kiml.grana.analysisProviders">

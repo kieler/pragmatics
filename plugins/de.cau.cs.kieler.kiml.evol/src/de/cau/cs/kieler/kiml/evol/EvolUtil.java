@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kiml.evol;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
@@ -114,11 +115,9 @@ public final class EvolUtil {
      */
     public static String getLayoutProviderId(
             final DiagramLayoutManager manager, final EditPart editPart) {
-
         final ILayoutInspector insp = manager.getInspector(editPart);
         insp.initOptions();
         final LayoutProviderData data = insp.getContainerLayouterData();
-
         if (data == null) {
             return null;
         }
@@ -159,11 +158,9 @@ public final class EvolUtil {
         final double bendsResult = Double.parseDouble(results[1].toString()) * coeffs[1];
         final double flatnessResult = Double.parseDouble(results[2].toString()) * coeffs[2];
         final double narrownessResult = Double.parseDouble(results[3].toString()) * coeffs[3];
-
         final int newRating =
                 (int) Math
                         .round(((areaResult + bendsResult + flatnessResult + narrownessResult) * 100));
-
         return newRating;
     }
 
@@ -174,23 +171,26 @@ public final class EvolUtil {
      */
     private static int countLearnableProperties(final List<IPropertyDescriptor> propertyDescriptors) {
         int result = 0;
+        final Set<String> learnables = EvolutionDataUtil.getDefault().getRegisteredElements();
         for (final IPropertyDescriptor p : propertyDescriptors) {
             final String id = (String) p.getId();
             // check property descriptor id
             if (!LayoutOptions.LAYOUT_HINT.equals(id)) {
-                final LayoutOptionData layoutOptionData = LayoutServices.getInstance()
-                        .getLayoutOptionData(id);
+                final LayoutOptionData layoutOptionData =
+                        LayoutServices.getInstance().getLayoutOptionData(id);
                 final Type type = layoutOptionData.getType();
                 switch (type) {
                 case BOOLEAN:
                 case ENUM:
                 case INT:
                 case FLOAT:
-                    // learnable --> count it
-                    result++;
+                    if (learnables.contains(id)) {
+                        // learnable --> count it
+                        result++;
+                    }
                     break;
                 default:
-                    // not learnable --> don't count
+                    // technically not learnable --> don't count
                     break;
                 }
             }
@@ -204,11 +204,11 @@ public final class EvolUtil {
      * @param theValue
      * @return
      */
-    private static IGene<?> createGene(final String theId, final Object theValue,
-            final double theMutationProbability) {
+    private static IGene<?> createGene(
+            final String theId, final Object theValue, final double theMutationProbability) {
         IGene<?> result = null;
-        final LayoutOptionData layoutOptionData = LayoutServices.getInstance().getLayoutOptionData(
-                theId);
+        final LayoutOptionData layoutOptionData =
+                LayoutServices.getInstance().getLayoutOptionData(theId);
         final Type type = layoutOptionData.getType();
         final int intValue;
         final double var;
@@ -239,13 +239,14 @@ public final class EvolUtil {
             // estimate desired variance
             final float verySmall = 1e-3f;
             final double scalingFactor = .1875;
-            var = ((Math.abs(floatValue) < verySmall) ? MutationInfo.DEFAULT_VARIANCE : Math
-                    .abs(floatValue)
-                    * scalingFactor);
+            var =
+                    ((Math.abs(floatValue) < verySmall) ? MutationInfo.DEFAULT_VARIANCE : Math
+                            .abs(floatValue) * scalingFactor);
             if (floatValue > 0.0f) {
                 // we presume we need a strictly positive float gene
-                result = new StrictlyPositiveFloatGene(theId, floatValue, theMutationProbability,
-                        var);
+                result =
+                        new StrictlyPositiveFloatGene(theId, floatValue, theMutationProbability,
+                                var);
             } else {
                 // we use a general float gene
                 result = new FloatGene(theId, floatValue, theMutationProbability, var);
@@ -268,6 +269,10 @@ public final class EvolUtil {
         if (source == null) {
             return null;
         }
+        /**
+         * Get the set of learnable elements that are registered.
+         */
+        final Set<String> learnables = EvolutionDataUtil.getDefault().getRegisteredElements();
         final Genome result = new Genome(null);
         IGene<?> gene = null;
         // get data from property descriptors
@@ -297,11 +302,15 @@ public final class EvolUtil {
                 }
                 System.out.println("--- LAYOUT_HINT: " + value + "=" + text);
             } else {
-                // learnable option
-                gene = createGene(id, value, uniformProb);
-                if (gene != null) {
-                    result.add(gene);
-                    gene = null;
+                // learnable option?
+                if (learnables.contains(id)) {
+                    gene = createGene(id, value, uniformProb);
+                    if (gene != null) {
+                        result.add(gene);
+                        gene = null;
+                    }
+                } else {
+                    System.out.println("Not registered: " + id);
                 }
             }
         }

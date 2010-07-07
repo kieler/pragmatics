@@ -40,7 +40,7 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
         this.offspring = null;
         this.selection = null;
         initialize();
-        System.out.println("Optimal surr:" + sur());
+        System.out.println("Optimal surr:" + surv());
     }
 
     /**
@@ -173,8 +173,8 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
     private static final double SURVIVAL_RATIO = .55;
 
     // To obtain a constant population size, the following condition must hold:
-    // ((POPSIZE * SUR_R + (POPSIZE * SEL_R * CO_R)) * SUR_R) == POP_SIZE
-    private double sur() {
+    // ((POP_SIZE * SURV_R + (POP_SIZE * SEL_R * CRO_R)) * SURV_R) == POP_SIZE
+    private double surv() {
         return (1 / (1 + SELECTION_RATIO * CROSS_OVER_RATIO));
     }
 
