@@ -1,18 +1,18 @@
 package de.cau.cs.kieler.kex.model;
 
-import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ExampleResource {
 
 	private String context;
-	private List<File> resources;
+	private List<URL> resources;
 	private boolean isHeadResource;
 	private String category;
 
 	public ExampleResource() {
-		setResources(new ArrayList<File>());
+		setResources(new ArrayList<URL>());
 	}
 
 	public void setContext(String context) {
@@ -23,16 +23,16 @@ public class ExampleResource {
 		return context;
 	}
 
-	public void setResources(List<File> resources) {
+	public void setResources(List<URL> resources) {
 		this.resources = resources;
 	}
 
-	public void addResource(File file) {
-		this.resources.add(file);
+	public void addResource(URL resourceURL) {
+		this.resources.add(resourceURL);
 	}
 
-	public List<File> getResources() {
-		return resources;
+	public List<URL> getResources() {
+		return this.resources;
 	}
 
 	public void setHeadResource(boolean isHeadResource) {
@@ -43,10 +43,10 @@ public class ExampleResource {
 		return isHeadResource;
 	}
 
-	public String getCategory(){
+	public String getCategory() {
 		return this.category;
 	}
-	
+
 	public void setCategory(String category) {
 		this.category = category;
 	}

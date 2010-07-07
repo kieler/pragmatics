@@ -1,11 +1,13 @@
 package de.cau.cs.kieler.kex.model.extensionpoint;
 
-import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
+import org.eclipse.core.runtime.Platform;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;
 
 import de.cau.cs.kieler.core.KielerException;
@@ -64,34 +66,37 @@ public class ExtPointCollectionUtil {
 	public static List<ExampleResource> filterExampleResources(
 			final IConfigurationElement exampleElement) throws KielerException {
 
-		// TODO wie überall versuchen generisch loesen, d.h. getAttributeName()
-		// und dann mittels reflection befüllen.
+		// TODO wie ï¿½berall versuchen generisch loesen, d.h. getAttributeName()
+		// und dann mittels reflection befï¿½llen.
 		List<ExampleResource> exampleResources = new ArrayList<ExampleResource>();
+		String exampleIdentifier = exampleElement.getNamespaceIdentifier();
 		for (IConfigurationElement configElement : exampleElement
 				.getChildren("example_resource")) {
 			ExampleResource exampleResource = new ExampleResource();
 			exampleResource.setCategory(configElement.getAttribute("category"));
 			exampleResource.setHeadResource(Boolean.valueOf(configElement
 					.getAttribute("is_head_resource")));
-			exampleResource.addResource(filterResource(configElement));
+			exampleResource.addResource(filterResource(exampleIdentifier,
+					configElement));
 			exampleResources.add(exampleResource);
 		}
 		return exampleResources;
 	}
 
-	private static File filterResource(final IConfigurationElement configElement) {
-		String resourcePath = configElement.getAttribute("resource");
-		if (resourcePath == null || resourcePath.length() < 4) {
+	private static URL filterResource(final String exampleIdentifier,
+			final IConfigurationElement configElement) {
+		Bundle bundle = Platform.getBundle(exampleIdentifier);
+		URL resourceURL = bundle.getResource(configElement
+				.getAttribute("resource"));
+
+		if (resourceURL == null || resourceURL.getPath().length() < 4) {
 			// throw new KielerModelException(...);
 		}
-		// TODO hier muss sicherlich noch der Projekt Pfad mit angegeben werden.
-		File file = new File(configElement.getNamespaceIdentifier()
-				+ resourcePath);
-		validateFile(file);
-		return file;
+		validateURL(resourceURL);
+		return resourceURL;
 	}
 
-	private static void validateFile(final File file) {
+	private static void validateURL(final URL resourceURL) {
 		// TODO to implement
 	}
 

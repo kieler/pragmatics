@@ -41,7 +41,6 @@ public class ExtPointExampleCollector extends ExampleCollector {
 				getCategoryPool().add(categoryId);
 			else {
 				// TODO StatusManager ansprechen
-
 			}
 		}
 	}
@@ -55,21 +54,19 @@ public class ExtPointExampleCollector extends ExampleCollector {
 		IConfigurationElement[] configElements = Platform
 				.getExtensionRegistry().getConfigurationElementsFor(KEX_EXT_ID);
 		// Platform.getUserLocation()
-		// Versuche für die Projekt Workspace Ansprechung und so weiter...
+		// Versuche fï¿½r die Projekt Workspace Ansprechung und so weiter...
 		// IExtension[] extensions =
 		// Platform.getExtensionRegistry().getExtensions("de.cau.cs.kieler.core.kex.model");
 		//
-		// IProject project =
-		// ResourcesPlugin.getWorkspace().getRoot().getProject(
-		// "de.cau.cs.kieler.kex");
-
 		for (IConfigurationElement element : configElements) {
 			try {
 				String elementName = element.getName();
 				if ("example".equals(elementName)) {
 					String exampleId = element.getAttribute("id");
-					if (getExamplePool().containsKey(exampleId))
+					if (getExamplePool().containsKey(exampleId)) {
+						// TODO darf eigentlich nicht passieren
 						continue;
+					}
 					Example example = ExtPointCollectionUtil.toExample(element);
 					this.examplePool.put(exampleId, example);
 				} else if ("category".equals(elementName)) {

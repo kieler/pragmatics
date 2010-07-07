@@ -1,12 +1,12 @@
 package de.cau.cs.kieler.kex.controller;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +14,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Version;
@@ -33,9 +34,12 @@ public class ExampleManager {
 
 	private boolean isLoaded;
 
+	// TODO wenn in ui ein editor offen ist, dann macht er den wizard nicht auf.
+
 	// TODO Thesis, begrï¿½nden weshalb hier instance genommen wurde.
 	// da wir den Examplepool nicht jedes mal erneut laden wollen, wenn
 	// wir darauf zugreifen wollen, kï¿½nnen unter anderem viele werden.
+
 	private static ExampleManager instance;
 
 	private ExampleManager() {
@@ -50,7 +54,7 @@ public class ExampleManager {
 		}
 	}
 
-	// TODO überlegen, ob die load methode in die abstrakte example collector
+	// TODO ï¿½berlegen, ob die load methode in die abstrakte example collector
 	// klasse soll.
 	public void load() {
 		if (!this.isLoaded) {
@@ -108,10 +112,10 @@ public class ExampleManager {
 	 */
 	private Example mapToExample(Map<ExampleElement, Object> properties) {
 		Example result = new Example(
-				(String) properties.get(ExampleElement.ID), (String) properties
-						.get(ExampleElement.NAME), Version
-						.parseVersion((String) properties
-								.get(ExampleElement.VERSION)));
+				(String) properties.get(ExampleElement.ID),
+				(String) properties.get(ExampleElement.NAME),
+				Version.parseVersion((String) properties
+						.get(ExampleElement.VERSION)));
 		result.setDescription((String) properties
 				.get(ExampleElement.DESCRIPTION));
 		result.setContact((String) properties.get(ExampleElement.CONTACT));
@@ -169,74 +173,64 @@ public class ExampleManager {
 			// createHeadFolder()
 
 			List<ExampleResource> resources = example.getResources();
-			// TODO prüfen, ob parameter sinnvoll...
+			// TODO prï¿½fen, ob parameter sinnvoll...
 			// wenn mehrere examples mit gleichem namen laufen, brauchen wir
 			// eine art index
 			// bzw. den identifierer... als datei oder in project properties
 			// oder im namen
-			// TODO geht so nicht, falscher src und dest param.
-			String destFolder = selectedResource.toString()
-					+ /* File.separator */"/" + example.getName();
+			// src/Hankees.txt
+			String localWorkspaceLocation = Platform.getLocation().toString();
+			String destFolder = localWorkspaceLocation
+					+ selectedResource.toString() + "/";
+
 			for (ExampleResource exampleResource : resources) {
-				for (File resource : exampleResource.getResources())
-					copyfile(resource.getAbsolutePath(), destFolder + /*
-																	 * File.separator
-																	 */"/"
-							+ resource.getName(), false);
+				for (URL resource : exampleResource.getResources()) {
+					try {
+						// TODO Reaktion auf resource = folder... dann muessen
+						// irgendwie auch alle unterdatein genommen werden.
+						// f2.isDirectory()
+						// FIXME hier nicht nur getFile() sondern letztens slash
+						// suchen und ab da an nehmen, dann filename
+						copyfile(resource, destFolder + "Test2", true);
+					} catch (FileNotFoundException e) {
+						throw new KielerException("Can't import example!", e);
+					} catch (IOException e1) {
+						throw new KielerException("Can't import example!", e1);
+					}
+				}
 			}
 		}
-		// for (File file : resources) {
-		// File tmpFile = new File(workspacePath
-		// + File.separator + ((projects.length > 0) ?
-		// projects[0].getName() :
-		// "test")+ File.separator +"test.file");
-		//
-		// if (!tmpFile.exists()){
-		// tmpFile.getParentFile().mkdirs();
-		// try {
-		// tmpFile.createNewFile();
-		// }
-		// catch (IOException e) {
-		// //TODO fehlerhandling ueberlegen
-		// e.printStackTrace();
-		// }
-		// }
-		// }
 	}
 
 	/**
 	 * 
-	 * @param srFile
-	 *            , source file
-	 * @param dtFile
+	 * @param sourceUrl
+	 *            , source url
+	 * @param destFile
 	 *            , destination file
-	 * @param isUpdated
+	 * @param overwrite
 	 *            , boolean
+	 * @throws KielerException
+	 * @throws IOException
 	 */
-	private static void copyfile(String srFile, String dtFile, boolean isUpdated) {
-		try {
-			File f1 = new File(srFile);
-			File f2 = new File(dtFile);
-			InputStream in = new FileInputStream(f1);
+	private static void copyfile(URL sourceUrl, String destFile,
+			boolean overwrite) throws IOException {
 
-			// For Append the file.
-			OutputStream out = new FileOutputStream(f2, isUpdated);
-
-			byte[] buf = new byte[1024];
-			int len;
-			while ((len = in.read(buf)) > 0) {
-				out.write(buf, 0, len);
-			}
-			in.close();
-			out.close();
-			System.out.println("File copied.");
-		} catch (FileNotFoundException ex) {
-			System.out
-					.println(ex.getMessage() + " in the specified directory.");
-			System.exit(0);
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
+		File f2 = new File(destFile);
+		if (f2.exists() && !overwrite) {
+			return;
 		}
+
+		InputStream is = sourceUrl.openStream();
+		OutputStream os = new FileOutputStream(f2, overwrite);
+		byte[] buf = new byte[1024];
+		int len;
+		while ((len = is.read(buf)) > 0) {
+			os.write(buf, 0, len);
+		}
+		is.close();
+		os.close();
+
 	}
 
 	/**
