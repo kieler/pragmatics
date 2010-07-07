@@ -21,6 +21,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import ptolemy.Moml.MomlPackage;
 import de.cau.cs.kieler.core.KielerException;
+import de.cau.cs.kieler.core.annotations.AnnotationsPackage;
 import de.cau.cs.kieler.core.model.util.XtendTransformationUtil;
 import de.cau.cs.kieler.kaom.KaomPackage;
 
@@ -35,6 +36,7 @@ public class Ptolemy2KaomTransformationHandler extends AbstractHandler implement
         
         EPackage p1 = MomlPackage.eINSTANCE;
         EPackage p2 = KaomPackage.eINSTANCE;
+        EPackage p3 = AnnotationsPackage.eINSTANCE;
         
         Status myStatus = null;
         try {
@@ -49,7 +51,7 @@ public class Ptolemy2KaomTransformationHandler extends AbstractHandler implement
             output = output.trimFileExtension().appendFileExtension("kaom");
                         
             XtendTransformationUtil
-                    .model2ModelTransform(transformation, fun, input, output, p1, p2);
+                    .model2ModelTransform(transformation, fun, input, output, p1, p2, p3);
         } catch (KielerException e) {
             myStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
                     "Failed to transform Ptolemy model into KAOM model.", e);
