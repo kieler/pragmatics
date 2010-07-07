@@ -151,8 +151,10 @@ public final class GraphvizAPI {
             "/usr/local/bin/",
             "/usr/bin/",
             "/bin/" };
-    /** number of milliseconds to wait if no input is available from the Graphviz process. */
-    private static final int PROCESS_INPUT_WAIT = 40;
+    /** starting wait time for polling input from the Graphviz process. */
+    private static final int MIN_INPUT_WAIT = 4;
+    /** maximal wait time for polling input from the Graphviz process. */
+    private static final int MAX_INPUT_WAIT = 500;
     /** maximal number of characters that is read from the Graphviz error output. */
     private static final int MAX_ERROR_OUTPUT = 512;
 
@@ -260,10 +262,15 @@ public final class GraphvizAPI {
             // wait until there is input from Graphviz
             long startTime = System.currentTimeMillis();
             try {
+                long sleepTime = MIN_INPUT_WAIT;
                 while (inputStream.available() == 0
                         && System.currentTimeMillis() - startTime < timeout
                         && !monitor.isCanceled()) {
-                    Thread.sleep(PROCESS_INPUT_WAIT);
+                    Thread.sleep(sleepTime);
+                    // increase sleep time after each step
+                    if (sleepTime < MAX_INPUT_WAIT) {
+                        sleepTime += MIN_INPUT_WAIT;
+                    }
                 }
             } catch (InterruptedException exception) {
                 // ignore exception
