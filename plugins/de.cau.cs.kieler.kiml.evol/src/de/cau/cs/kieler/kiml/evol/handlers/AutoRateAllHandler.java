@@ -16,7 +16,6 @@ package de.cau.cs.kieler.kiml.evol.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.kiml.evol.ui.EvolView;
@@ -29,17 +28,19 @@ import de.cau.cs.kieler.kiml.evol.ui.EvolView.TargetIndividuals;
  */
 public class AutoRateAllHandler extends AbstractHandler {
     /**
-     *
+     * {@inheritDoc}
      */
     public Object execute(final ExecutionEvent event) throws ExecutionException {
 
-        final IViewPart view =
-                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+        final EvolView view =
+                (EvolView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                         .findView(EvolView.ID);
-        if (view instanceof EvolView) {
-            ((EvolView) view).autorateIndividuals(((EvolView) view).getPopulation(),
+        if (view != null) {
+            view.autorateIndividuals(view.getPopulation(),
                     TargetIndividuals.ALL, null);
+            System.out.println("Average rating: " + view.getPopulation().getAverageRating());
         }
+
         return null;
     }
 }

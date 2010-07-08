@@ -153,17 +153,17 @@ public class Individual {
         }
         this.genome = newGenome;
     }
-
+    
     /**
      * Performs a mutation step with the given probability. If a mutation step
      * is performed, this does not necessarily mean that any values are changed.
-     *
+     * 
      * @param prob
      *            Probability for the application of mutation.
-     *
-     * @return true if the mutation step was performed, false if the step was
-     *         skipped.
-     *
+     * 
+     * @return {@code true} if the mutation step was performed, {@code false} if
+     *         the step was skipped.
+     * 
      */
     public boolean mutate(final double prob) {
         if (Math.random() < prob) {
@@ -174,18 +174,6 @@ public class Individual {
         return false;
     }
 
-    // /**
-    // * Returns a copy of this individual. The new individual has an exact
-    // clone
-    // * of the template genome and properties, but a different id and a higher
-    // * generation.
-    // *
-    // * @return A copy of this individual.
-    // */
-    // public Individual clone() {
-    // Individual result = new Individual(this);
-    // return result;
-    // }
     /**
      * Returns a copy of the genome of the individual, or <code>null</code> if
      * no genome is set.

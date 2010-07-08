@@ -107,7 +107,7 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
                 + prob);
         for (final Individual ind : population) {
             if (ind.mutate(prob)) {
-                // individual has mutated --> slowly "forget" its rating
+                // individual has mutated --> rating is outdated
                 ind.fadeRating();
                 System.out.println("-- Mutation performed: " + ind);
             }

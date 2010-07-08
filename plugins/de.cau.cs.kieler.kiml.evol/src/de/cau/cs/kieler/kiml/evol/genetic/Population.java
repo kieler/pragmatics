@@ -36,10 +36,10 @@ public class Population extends ArrayList<Individual> {
     public Population() {
         super();
     }
-    
+
     /**
      * Constructs a new Population instance using the given list of individuals.
-     * 
+     *
      * @param individuals
      *            List of individuals. Must not be {@code null}, otherwise a
      *            {@link NullPointerException} is thrown.
@@ -72,5 +72,21 @@ public class Population extends ArrayList<Individual> {
             result.append("#" + ++i + ": " + ind.toString() + newLine);
         }
         return result.toString();
+    }
+
+    /**
+     *
+     * @return the arithmetic mean of all individual ratings, or
+     *         {@code Double.NaN} if there are no individuals.
+     */
+    public Double getAverageRating() {
+        if (this.isEmpty()) {
+            return Double.NaN;
+        }
+        int ratingSum = 0;
+        for (final Individual ind : this) {
+            ratingSum += ind.getRating();
+        }
+        return (double) (ratingSum / (double) this.size());
     }
 }

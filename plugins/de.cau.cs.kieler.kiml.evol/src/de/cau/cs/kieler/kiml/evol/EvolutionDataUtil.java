@@ -65,6 +65,8 @@ public final class EvolutionDataUtil {
     }
 
     /**
+     * Returns a copy of the registered elements. {@code createEvolutionData()}
+     * must be called before this method, otherwise an exception is thrown.
      *
      * @return a copy of the registered elements.
      */
@@ -81,14 +83,13 @@ public final class EvolutionDataUtil {
         return EvolutionDataUtil.instance;
     }
 
+    /** set of registered evolution data. */
     private HashMap<String, IConfigurationElement> evolutionDataMap;
 
-    /** set of registered evolution data. */
     /**
      * Loads and registers all evolution data entries from the extension point.
      */
     private void loadEvolutionDataExtensions() {
-        // TODO: implement
         this.evolutionDataMap = new HashMap<String, IConfigurationElement>();
         final IConfigurationElement[] extensions =
                 Platform.getExtensionRegistry().getConfigurationElementsFor(

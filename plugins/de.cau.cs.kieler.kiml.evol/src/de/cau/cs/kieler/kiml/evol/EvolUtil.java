@@ -138,6 +138,7 @@ public final class EvolUtil {
         if (parentNode == null) {
             return 0;
         }
+
         final String[] metricIds =
                 new String[] { "de.cau.cs.kieler.kiml.evol.areaMetric",
                         "de.cau.cs.kieler.kiml.evol.bendsMetric",
@@ -199,13 +200,17 @@ public final class EvolUtil {
     }
 
     /**
+     * Creates a gene with the specified value.
      *
      * @param theId
+     *            an identifier
      * @param theValue
-     * @return
+     *            a value
+     * @return a gene
      */
     private static IGene<?> createGene(
             final String theId, final Object theValue, final double theMutationProbability) {
+        // TODO: regard bounds from the evolution data extensions
         IGene<?> result = null;
         final LayoutOptionData layoutOptionData =
                 LayoutServices.getInstance().getLayoutOptionData(theId);
