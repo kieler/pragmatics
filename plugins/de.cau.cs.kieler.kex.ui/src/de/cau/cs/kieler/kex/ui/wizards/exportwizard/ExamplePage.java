@@ -1,6 +1,5 @@
 package de.cau.cs.kieler.kex.ui.wizards.exportwizard;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -8,11 +7,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.dialogs.WizardResourceImportPage;
 
 public class ExamplePage extends WizardPage {
-
-	private WizardResourceImportPage newResourcePage;
 
 	private String projectId;
 
@@ -30,7 +26,7 @@ public class ExamplePage extends WizardPage {
 
 	// TODO localprojects ueber den store laden... falls es keinen mechanismus
 	// gibt
-	public ExamplePage(String pageName, IProject[] localProjects) {
+	public ExamplePage(String pageName) {
 		super(pageName);
 		setTitle("Example Export");
 		setDescription("Please enter example attributes");

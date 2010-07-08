@@ -1,4 +1,4 @@
-package de.cau.cs.kieler.kex.controller;
+package de.cau.cs.kieler.kex.controller.util;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -9,7 +9,7 @@ import java.net.URL;
 
 import de.cau.cs.kieler.core.KielerException;
 
-class ExampleManagerUtil {
+public class ExampleIOUtil {
 
 	/**
 	 * 
@@ -22,8 +22,8 @@ class ExampleManagerUtil {
 	 * @throws KielerException
 	 * @throws IOException
 	 */
-	static void writeFile(URL sourceUrl, String destFile, boolean overwrite)
-			throws IOException {
+	public static void writeFile(URL sourceUrl, String destFile,
+			boolean overwrite) throws IOException {
 		File f2 = new File(destFile);
 		if (f2.exists() && !overwrite) {
 			return;
@@ -47,7 +47,12 @@ class ExampleManagerUtil {
 	 * @param destFolder
 	 *            , pathname of destination folder.
 	 */
-	static void createFolder(String destFolder) {
+	public static void createFolder(String destFolder) {
 		(new File(destFolder)).mkdir();
 	}
+
+	public static boolean isFolder(String path) {
+		return (new File(path)).isDirectory();
+	}
+
 }

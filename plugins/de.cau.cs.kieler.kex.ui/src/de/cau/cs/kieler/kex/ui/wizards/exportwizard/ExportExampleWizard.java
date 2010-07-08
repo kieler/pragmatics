@@ -3,7 +3,6 @@ package de.cau.cs.kieler.kex.ui.wizards.exportwizard;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
@@ -16,16 +15,9 @@ public class ExportExampleWizard extends Wizard implements IWizard {
 
 	private ExamplePage examplePage;
 
-	private final IProject[] localProjects;
-
-	public ExportExampleWizard() {
-		localProjects = ExampleManager.get().getLocalProjects();
-
-	}
-
 	@Override
 	public void addPages() {
-		examplePage = new ExamplePage("examplePage", localProjects);
+		examplePage = new ExamplePage("examplePage");
 		addPage(examplePage);
 	}
 

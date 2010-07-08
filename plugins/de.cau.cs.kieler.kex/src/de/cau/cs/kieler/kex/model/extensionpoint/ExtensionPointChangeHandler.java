@@ -16,10 +16,11 @@ import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IFilter;
 import org.osgi.framework.BundleContext;
 
+@Deprecated
 public class ExtensionPointChangeHandler implements IExtensionChangeHandler {
 
 	private ExtensionTracker tracker;
-	private List<IExecutableExtension> addedExtensions = new ArrayList<IExecutableExtension>();
+	private final List<IExecutableExtension> addedExtensions = new ArrayList<IExecutableExtension>();
 
 	public void start(BundleContext context) throws Exception {
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
@@ -46,10 +47,10 @@ public class ExtensionPointChangeHandler implements IExtensionChangeHandler {
 			// use configuration properties for something
 			// ...
 			try {
-				//TODO hier den richten parameter reinreichen...
+				// TODO hier den richten parameter reinreichen...
 				IExecutableExtension exeExtension = (IExecutableExtension) configs[i]
 						.createExecutableExtension(configs[i].getName());
-				String name = configs[i].getName();
+				// String name = configs[i].getName();
 				// TODO has to be filled
 				// exeExtension.setInitializationData(config, propertyName,
 				// data)
@@ -59,7 +60,7 @@ public class ExtensionPointChangeHandler implements IExtensionChangeHandler {
 				tracker.registerObject(extension, exeExtension,
 						IExtensionTracker.REF_WEAK);
 			} catch (CoreException e) {
-				//TODO kielerexception schmeissen
+				// TODO kielerexception schmeissen
 				e.printStackTrace();
 			}
 		}

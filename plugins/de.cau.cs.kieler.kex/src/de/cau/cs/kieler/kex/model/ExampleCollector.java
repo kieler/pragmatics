@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class ExampleCollector {
-	// TODO ueberlegen, ob example collector als class definiert werden soll
-	// bspw. examplesToString koennte dann darin implementiert sein.
 
 	public abstract void loadExamples();
 
