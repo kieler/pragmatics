@@ -325,6 +325,7 @@ public class EvolView extends ViewPart {
                 }
             }
 
+            // indicates if the given individual is in the target.
             private boolean isAffected(final Individual ind, final TargetIndividuals target) {
                 switch (target) {
                 case ALL:

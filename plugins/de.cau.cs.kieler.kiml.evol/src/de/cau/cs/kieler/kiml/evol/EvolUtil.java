@@ -13,8 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.evol;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -97,12 +97,20 @@ public final class EvolUtil {
         // gets closed.
         final IKielerProgressMonitor monitor =
                 new BasicProgressMonitor(DiagramLayoutManager.MAX_PROGRESS_LEVELS);
+
         final IStatus status = manager.layout(monitor, true, false);
-        final KNode layoutGraphAfterLayout = manager.getLayoutGraph();
-        Assert.isTrue(layoutGraph == layoutGraphAfterLayout);
-        System.out.println("after manager.layout. result: " + status.getCode());
-        // do the measurement
-        final int rating = measureDiagram(false, layoutGraphAfterLayout);
+
+        final int rating;
+        if (status.isOK()) {
+            final KNode layoutGraphAfterLayout = manager.getLayoutGraph();
+            Assert.isTrue(layoutGraph == layoutGraphAfterLayout);
+
+            // do the measurement
+            rating = measureDiagram(false, layoutGraphAfterLayout);
+        } else {
+            // TODO: what to do about the layouting failure?
+            rating = 0;
+        }
         return rating;
     }
 
@@ -134,23 +142,19 @@ public final class EvolUtil {
      *            the KGraph to be analyzed.
      * @return a rating
      */
-    public static int measureDiagram(final boolean showProgressBar, final KNode parentNode) {
+    private static int measureDiagram(final boolean showProgressBar, final KNode parentNode) {
         if (parentNode == null) {
             return 0;
         }
-
-//        final String[] metricIds =
-//                new String[] { "de.cau.cs.kieler.kiml.evol.areaMetric",
-//                        "de.cau.cs.kieler.kiml.evol.bendsMetric",
-//                        "de.cau.cs.kieler.kiml.evol.flatnessMetric",
-//                        "de.cau.cs.kieler.kiml.evol.narrownessMetric" };
-
-        final Set<String> metricIds =
-                EvolutionExtensionsUtil.getInstance().getLayoutMetricsIds();
-
+        // final String[] metricIds =
+        // new String[] { "de.cau.cs.kieler.kiml.evol.areaMetric",
+        // "de.cau.cs.kieler.kiml.evol.bendsMetric",
+        // "de.cau.cs.kieler.kiml.evol.flatnessMetric",
+        // "de.cau.cs.kieler.kiml.evol.narrownessMetric" };
+        final Set<String> metricIds = EvolutionExtensionsUtil.getInstance().getLayoutMetricsIds();
         final AnalysisServices as = AnalysisServices.getInstance();
-        final List<AbstractInfoAnalysis> metricsList = new LinkedList<AbstractInfoAnalysis>();
-
+        final List<AbstractInfoAnalysis> metricsList =
+                new ArrayList<AbstractInfoAnalysis>(metricIds.size());
         // we have the metric ids, now get the metrics
         for (final String metricId : metricIds) {
             final AbstractInfoAnalysis metric = as.getAnalysisById(metricId);
@@ -170,16 +174,14 @@ public final class EvolUtil {
         // Double.parseDouble(results[2].toString()) * coeffs[2];
         // final double narrownessResult =
         // Double.parseDouble(results[3].toString()) * coeffs[3];
-        final double[] scaledResults = new double[metrics.length];
+        // final double[] scaledResults = new double[metrics.length];
         double sum = 0.0;
         for (int i = 0; i < metrics.length; i++) {
             final double scaled = Double.parseDouble(results[i].toString()) * coeffs[i];
-            scaledResults[i] = scaled;
+            // scaledResults[i] = scaled;
             sum += scaled;
         }
-        final int newRating =
-                (int) Math
-.round(((sum) * 100));
+        final int newRating = (int) Math.round((sum * 1000));
         return newRating;
     }
 

@@ -70,7 +70,7 @@ public class Individual {
     public void fadeRating() {
         // TODO: implement more sophisticated fading of ratings
         if (this.rating != 0) {
-            final double scalingFactor = .75;
+            final double scalingFactor = .90;
             this.rating = (int) (this.rating * scalingFactor);
         }
     }
@@ -153,17 +153,17 @@ public class Individual {
         }
         this.genome = newGenome;
     }
-    
+
     /**
      * Performs a mutation step with the given probability. If a mutation step
      * is performed, this does not necessarily mean that any values are changed.
-     * 
+     *
      * @param prob
      *            Probability for the application of mutation.
-     * 
+     *
      * @return {@code true} if the mutation step was performed, {@code false} if
      *         the step was skipped.
-     * 
+     *
      */
     public boolean mutate(final double prob) {
         if (Math.random() < prob) {

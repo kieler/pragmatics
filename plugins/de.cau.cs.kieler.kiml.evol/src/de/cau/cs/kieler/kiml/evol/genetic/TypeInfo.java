@@ -2,12 +2,12 @@
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
+ *
  * Copyright 2010 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- * 
+ *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
@@ -17,15 +17,15 @@ import org.eclipse.core.runtime.Assert;
 
 /**
  * A type info describes the parameters of a type.
- * 
+ *
  * @author bdu
- * 
+ *
  * @param <T>
  */
 public class TypeInfo<T extends Comparable<? super T>> {
     /**
      * Constructor for a type info.
-     * 
+     *
      * @param theDefaultValue
      *            the default value
      * @param theLowerBound
@@ -85,14 +85,16 @@ public class TypeInfo<T extends Comparable<? super T>> {
 
     /**
      * Return true iff the given value is within the valid range.
-     * 
+     *
      * @param theValue
      *            a values
      * @return true iff the given value is within the valid range
      */
     public boolean isValueWithinBounds(final T theValue) {
         final boolean result;
-        result = (lowerBound.compareTo(theValue) <= 0) && (theValue.compareTo(upperBound) <= 0);
+        result =
+                (this.lowerBound.compareTo(theValue) <= 0)
+                        && (theValue.compareTo(this.upperBound) <= 0);
         return result;
     }
 }
