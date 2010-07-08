@@ -43,8 +43,9 @@ public class EvolPlugin extends AbstractUIPlugin {
     public void start(final BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
-        EvolutionDataUtil.createEvolutionData();
-        System.out.println(EvolutionDataUtil.getDefault().getRegisteredElements());
+        EvolutionExtensionsUtil.createExtensionData();
+        System.out.println(EvolutionExtensionsUtil.getInstance().getEvolutionDataIds());
+        System.out.println(EvolutionExtensionsUtil.getInstance().getLayoutMetricsIds());
     }
 
 

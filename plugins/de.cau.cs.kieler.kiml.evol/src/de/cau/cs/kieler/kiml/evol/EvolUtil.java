@@ -139,29 +139,47 @@ public final class EvolUtil {
             return 0;
         }
 
-        final String[] metricIds =
-                new String[] { "de.cau.cs.kieler.kiml.evol.areaMetric",
-                        "de.cau.cs.kieler.kiml.evol.bendsMetric",
-                        "de.cau.cs.kieler.kiml.evol.flatnessMetric",
-                        "de.cau.cs.kieler.kiml.evol.narrownessMetric" };
+//        final String[] metricIds =
+//                new String[] { "de.cau.cs.kieler.kiml.evol.areaMetric",
+//                        "de.cau.cs.kieler.kiml.evol.bendsMetric",
+//                        "de.cau.cs.kieler.kiml.evol.flatnessMetric",
+//                        "de.cau.cs.kieler.kiml.evol.narrownessMetric" };
+
+        final Set<String> metricIds =
+                EvolutionExtensionsUtil.getInstance().getLayoutMetricsIds();
+
         final AnalysisServices as = AnalysisServices.getInstance();
         final List<AbstractInfoAnalysis> metricsList = new LinkedList<AbstractInfoAnalysis>();
+
+        // we have the metric ids, now get the metrics
         for (final String metricId : metricIds) {
             final AbstractInfoAnalysis metric = as.getAnalysisById(metricId);
             metricsList.add(metric);
         }
+        // TODO: cache the metrics
         final AbstractInfoAnalysis[] metrics =
                 metricsList.toArray(new AbstractInfoAnalysis[metricsList.size()]);
         // arbitrarily chosen coefficients
-        final double[] coeffs = new double[] { .7, .05, .2, .05 };
+        final double[] coeffs = new double[] { .08, .02, .2, .7 };
         final Object[] results = DiagramAnalyser.analyse(parentNode, metrics, showProgressBar);
-        final double areaResult = Double.parseDouble(results[0].toString()) * coeffs[0];
-        final double bendsResult = Double.parseDouble(results[1].toString()) * coeffs[1];
-        final double flatnessResult = Double.parseDouble(results[2].toString()) * coeffs[2];
-        final double narrownessResult = Double.parseDouble(results[3].toString()) * coeffs[3];
+        // final double areaResult = Double.parseDouble(results[0].toString()) *
+        // coeffs[0];
+        // final double bendsResult = Double.parseDouble(results[1].toString())
+        // * coeffs[1];
+        // final double flatnessResult =
+        // Double.parseDouble(results[2].toString()) * coeffs[2];
+        // final double narrownessResult =
+        // Double.parseDouble(results[3].toString()) * coeffs[3];
+        final double[] scaledResults = new double[metrics.length];
+        double sum = 0.0;
+        for (int i = 0; i < metrics.length; i++) {
+            final double scaled = Double.parseDouble(results[i].toString()) * coeffs[i];
+            scaledResults[i] = scaled;
+            sum += scaled;
+        }
         final int newRating =
                 (int) Math
-                        .round(((areaResult + bendsResult + flatnessResult + narrownessResult) * 100));
+.round(((sum) * 100));
         return newRating;
     }
 
@@ -172,7 +190,7 @@ public final class EvolUtil {
      */
     private static int countLearnableProperties(final List<IPropertyDescriptor> propertyDescriptors) {
         int result = 0;
-        final Set<String> learnables = EvolutionDataUtil.getDefault().getRegisteredElements();
+        final Set<String> learnables = EvolutionExtensionsUtil.getInstance().getEvolutionDataIds();
         for (final IPropertyDescriptor p : propertyDescriptors) {
             final String id = (String) p.getId();
             // check property descriptor id
@@ -277,7 +295,7 @@ public final class EvolUtil {
         /**
          * Get the set of learnable elements that are registered.
          */
-        final Set<String> learnables = EvolutionDataUtil.getDefault().getRegisteredElements();
+        final Set<String> learnables = EvolutionExtensionsUtil.getInstance().getEvolutionDataIds();
         final Genome result = new Genome(null);
         IGene<?> gene = null;
         // get data from property descriptors
