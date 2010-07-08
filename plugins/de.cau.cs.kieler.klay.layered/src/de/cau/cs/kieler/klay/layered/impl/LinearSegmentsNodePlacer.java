@@ -366,7 +366,6 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
         int finalIterations = 0;
 
         while (!ready || finalIterations > 0) {
-            ready = true;
             finalIterations--;
             // Iterate regions alternating forward or backward
             Collections.reverse(regions);
@@ -451,31 +450,42 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
             }
 
             // Test for touching neighbors
-            for (Layer layer : layeredGraph.getLayers()) {
-                List<LNode> nodes = layer.getNodes();
-                for (LNode node : nodes) {
-                    if (node.getIndex() < nodes.size() - 1) {
-                        // Test if nodes have different regions
-                        LNode neighbor = nodes.get(node.getIndex() + 1);
-                        if (node.getProperty(Properties.REGION) 
-                                != neighbor.getProperty(Properties.REGION)) {
-                            // Test if the nodes are touching
-                            if (node.getPos().y + node.getSize().y + spacing 
-                                    > neighbor.getPos().y - 1.0f) {
-                                // Union the regions of the neighbors
-                                node.getProperty(Properties.REGION).union(
-                                        neighbor.getProperty(Properties.REGION));
-                                ready = false;
-                            }
-                        }
-                    }
-                }
-            }
+            ready = noNewTouchingRegions(layeredGraph);
+            
             if (ready && finalIterations < 0) {
                 finalIterations = 2;
             }
             forward = !forward;
         }
+    }
+
+    /**
+     * @param layeredGraph the layered Graph
+     * @return ready is set to false if there are regions newly touching
+     */
+    private boolean noNewTouchingRegions(final LayeredGraph layeredGraph) {
+        boolean ready = true;
+        for (Layer layer : layeredGraph.getLayers()) {
+            List<LNode> nodes = layer.getNodes();
+            for (LNode node : nodes) {
+                if (node.getIndex() < nodes.size() - 1) {
+                    // Test if nodes have different regions
+                    LNode neighbor = nodes.get(node.getIndex() + 1);
+                    if (node.getProperty(Properties.REGION) 
+                            != neighbor.getProperty(Properties.REGION)) {
+                        // Test if the nodes are touching
+                        if (node.getPos().y + node.getSize().y + spacing 
+                                > neighbor.getPos().y - 1.0f) {
+                            // Union the regions of the neighbors
+                            node.getProperty(Properties.REGION).union(
+                                    neighbor.getProperty(Properties.REGION));
+                            ready = false;
+                        }
+                    }
+                }
+            }
+        }
+        return ready;
     }
 
     /**
