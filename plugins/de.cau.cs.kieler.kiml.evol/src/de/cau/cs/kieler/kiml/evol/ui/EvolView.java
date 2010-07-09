@@ -411,15 +411,18 @@ public class EvolView extends ViewPart {
             // TODO: test whether the editor is for KIML
             final DiagramLayoutManager manager =
                     EclipseLayoutServices.getInstance().getManager(editor, part);
-            final LayoutPropertySource propertySource =
-                    new LayoutPropertySource(manager.getInspector(part));
-            final Population sourcePopulation =
-                    EvolUtil.createPopulation(propertySource, DEFAULT_INITIAL_POPULATION_SIZE);
-            this.layoutProviderId = EvolUtil.getLayoutProviderId(manager, part);
-            final BasicEvolutionaryAlgorithm alg = new BasicEvolutionaryAlgorithm(sourcePopulation);
-            this.evolAlg = alg;
-            alg.step();
-            setInput(alg.getPopulation());
+            if (manager != null) {
+                final LayoutPropertySource propertySource =
+                        new LayoutPropertySource(manager.getInspector(part));
+                final Population sourcePopulation =
+                        EvolUtil.createPopulation(propertySource, DEFAULT_INITIAL_POPULATION_SIZE);
+                this.layoutProviderId = EvolUtil.getLayoutProviderId(manager, part);
+                final BasicEvolutionaryAlgorithm alg =
+                        new BasicEvolutionaryAlgorithm(sourcePopulation);
+                this.evolAlg = alg;
+                alg.step();
+                setInput(alg.getPopulation());
+            }
         }
         this.tableViewer.selectRow(0);
         this.tableViewer.refresh();

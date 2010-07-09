@@ -52,7 +52,9 @@ public class EvolveHandler extends AbstractHandler {
                     view.autorateIndividuals(view.getPopulation(), TargetIndividuals.ALL, null);
                 }
             }
-            System.out.println("Average rating: " + view.getPopulation().getAverageRating());
+            if (view.getPopulation() != null) {
+                System.out.println("Average rating: " + view.getPopulation().getAverageRating());
+            }
         }
         return null;
     }
