@@ -15,7 +15,9 @@ package de.cau.cs.kieler.klay.layered.impl.edges;
 
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
+import java.awt.geom.Line2D.Double;
 import java.awt.geom.Rectangle2D;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
@@ -51,6 +53,9 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
 
     private LinkedList<Rectangle2D.Double> allDummyNodes;
 
+    private HashMap<Object, LinkedList<Line2D.Double>> edgeToLine;
+    private HashMap<Line2D.Double, Object> lineToEdge;
+
     private LayeredGraph layeredGraph;
 
     private static final int EDGE_PRECISION = 4;
@@ -75,11 +80,18 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
             // there's always the start point missing in pts
             int n = EDGE_PRECISION - 1;
             KVector[] pts = KielerMath.calcBezierPoints(curve.asVectorList(), n);
-
-            allEdges.add(new Line2D.Double(start.x, start.y, pts[0].x, pts[0].y));
+            Line2D.Double newEdge = new Line2D.Double(start.x, start.y, pts[0].x, pts[0].y);
+            allEdges.add(newEdge);
+            lineToEdge.put(newEdge, spline);
+            LinkedList<Line2D.Double> list = new LinkedList<Line2D.Double>();
+            list.add(newEdge);
             for (int i = 0; i < n - 1; i++) {
-                allEdges.add(new Line2D.Double(pts[i].x, pts[i].y, pts[i + 1].x, pts[i + 1].y));
+                newEdge = new Line2D.Double(pts[i].x, pts[i].y, pts[i + 1].x, pts[i + 1].y);
+                allEdges.add(newEdge);
+                lineToEdge.put(newEdge, spline);
+                list.add(newEdge);
             }
+            edgeToLine.put(spline, list);
 
         }
         return true;
@@ -89,11 +101,16 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
      * {@inheritDoc}
      */
     public boolean addEdge(final LEdge edge) {
-        allEdges.add(new Line2D.Double(edge.getSource().getNode().getPos().x
+        Line2D.Double newEdge = new Line2D.Double(edge.getSource().getNode().getPos().x
                 + edge.getSource().getPos().x, edge.getSource().getNode().getPos().y
                 + edge.getSource().getPos().y, edge.getTarget().getNode().getPos().x
                 + edge.getTarget().getPos().x, edge.getTarget().getNode().getPos().y
-                + edge.getTarget().getPos().y));
+                + edge.getTarget().getPos().y);
+        allEdges.add(newEdge);
+        lineToEdge.put(newEdge, edge);
+        LinkedList<Line2D.Double> list = new LinkedList<Line2D.Double>();
+        list.add(newEdge);
+        edgeToLine.put(edge, list);
         return true;
     }
 
@@ -243,11 +260,25 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
 
             // clear ignored Edges for every new node->nextNode segment
             ignoredEdges.clear();
-            ignoredEdges.addAll(allIntersectingLines(new Line2D.Double(
-                    (currentSource.getNode().getPos().x + currentSource.getPos().x),
-                    (currentSource.getNode().getPos().y + currentSource.getPos().y),
-                    (currentTarget.getNode().getPos().x + currentTarget.getPos().x),
-                    (currentTarget.getNode().getPos().y + currentTarget.getPos().y)), edges));
+            /*
+             * ignoredEdges.addAll(allIntersectingLines(new Line2D.Double((currentSource.getNode()
+             * .getPos().x + currentSource.getPos().x), (currentSource.getNode().getPos().y +
+             * currentSource.getPos().y), (currentTarget .getNode().getPos().x +
+             * currentTarget.getPos().x), (currentTarget .getNode().getPos().y +
+             * currentTarget.getPos().y)), edges));
+             */
+
+            for (Line2D.Double intLine : allIntersectingLines(new Line2D.Double((currentSource
+                    .getNode().getPos().x + currentSource.getPos().x), (currentSource.getNode()
+                    .getPos().y + currentSource.getPos().y),
+                    (currentTarget.getNode().getPos().x + currentTarget.getPos().x), (currentTarget
+                            .getNode().getPos().y + currentTarget.getPos().y)), edges)) {
+                Object key = lineToEdge.get(intLine);
+                LinkedList<Line2D.Double> list = edgeToLine.get(key);
+                for (Line2D.Double line : list) {
+                    ignoredEdges.add(line);
+                }
+            }
 
             drawOnDebug(
                     new Line2D.Double(
@@ -320,7 +351,13 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
 
                 // remember on which lines we were starting, those might be the ones we can cross /
                 // have to cross
-                ignoredEdges.addAll(allIntersectingLines(newBox, edges));
+                for (Line2D.Double intLine : allIntersectingLines(newBox, edges)) {
+                    Object key = lineToEdge.get(intLine);
+                    LinkedList<Line2D.Double> list = edgeToLine.get(key);
+                    for (Line2D.Double line : list) {
+                        ignoredEdges.add(line);
+                    }
+                }
 
                 // find an lower boundary
                 double lowerBound = 0;
@@ -611,6 +648,8 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
         allEdges = new LinkedList<Line2D.Double>();
         allNodes = new LinkedList<Rectangle2D.Double>();
         allDummyNodes = new LinkedList<Rectangle2D.Double>();
+        edgeToLine = new HashMap<Object, LinkedList<Line2D.Double>>();
+        lineToEdge = new HashMap<Line2D.Double, Object>();
 
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
@@ -623,7 +662,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                     }
                     addNode(node);
                 } else {
-                    System.out.println("Dummy: " + node);
+                    // System.out.println("Dummy: " + node);
                     allDummyNodes.add(new Rectangle2D.Double(node.getPos().x, node.getPos().y, node
                             .getSize().x, node.getSize().y));
                 }
