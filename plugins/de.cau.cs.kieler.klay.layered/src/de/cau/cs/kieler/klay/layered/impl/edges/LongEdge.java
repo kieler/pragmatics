@@ -35,8 +35,12 @@ public class LongEdge {
 
     /** underlying edge. */
     private LEdge edge;
+    /** starting point of this edge. */
+    private KVector startPoint;
     /** start tangent heading to first dummy node. */
     private KVector startTangent;
+    /** end point of this edge. */
+    private KVector endPoint;
     /** end tangent heading to last dummy node. */
     private KVector endTangent;
     /** the real target of this edge. */
@@ -64,6 +68,9 @@ public class LongEdge {
         LNode startNode = start.getNode();
         LPort end = edge.getTarget();
         LNode endNode = end.getNode();
+
+        startPoint = new KVector((startNode.getPos().x + start.getPos().x),
+                (startNode.getPos().y + start.getPos().y));
         startTangent = new KVector((endNode.getPos().x + end.getPos().x)
                 - (startNode.getPos().x + start.getPos().x), (endNode.getPos().y + end.getPos().y)
                 - (startNode.getPos().y + start.getPos().y));
@@ -99,6 +106,8 @@ public class LongEdge {
         startNode = start.getNode();
         end = intermediateEdge.getTarget();
         endNode = end.getNode();
+        endPoint = new KVector((endNode.getPos().x + end.getPos().x), (endNode.getPos().y + end
+                .getPos().y));
         endTangent = new KVector((startNode.getPos().x + start.getPos().x)
                 - (endNode.getPos().x + end.getPos().x), (startNode.getPos().y + start.getPos().y)
                 - (endNode.getPos().y + end.getPos().y));
@@ -144,6 +153,20 @@ public class LongEdge {
      */
     public LinkedList<KVector> getPoints() {
         return points;
+    }
+
+    /**
+     * @return the endPoint
+     */
+    public KVector getEndPoint() {
+        return endPoint;
+    }
+
+    /**
+     * @return the startPoint
+     */
+    public KVector getStartPoint() {
+        return startPoint;
     }
 
     /**
