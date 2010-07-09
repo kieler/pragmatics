@@ -15,7 +15,6 @@ package de.cau.cs.kieler.kiml.evol.genetic;
 
 import org.eclipse.core.runtime.Assert;
 
-import de.cau.cs.kieler.kiml.evol.genetic.MutationInfo.Distribution;
 
 /**
  * 

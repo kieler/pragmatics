@@ -157,7 +157,6 @@ public class EvolView extends ViewPart {
     public class SelectorTableViewer extends TableViewer {
         public SelectorTableViewer(final Table table) {
             super(table);
-            // TODO Auto-generated constructor stub
         }
 
         private void selectRow(final int pos) {
@@ -176,7 +175,7 @@ public class EvolView extends ViewPart {
     /**
      * Initial population size.
      */
-    private static final int DEFAULT_INITIAL_POPULATION_SIZE = 12;
+    private static final int DEFAULT_INITIAL_POPULATION_SIZE = 10;
 
     /**
      *

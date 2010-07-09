@@ -2,6 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="evolutionData" name="Evolution Data" schema="schema/evolutionData.exsd"/>
+   <extension-point id="distribution" name="Distribution" schema="schema/distribution.exsd"/>
    <extension
          point="org.eclipse.ui.views">
       <view
@@ -15,18 +16,23 @@
    <extension
          point="de.cau.cs.kieler.kiml.evol.evolutionData">
       <data
-            lowerBound="-1"
-            option="de.cau.cs.kieler.kiml.evol.testData"
-            upperBound="5">
-      </data>
-      <data
+            distribution="GAUSSIAN"
             lowerBound="1"
+            name="Minimal Spacing"
             option="de.cau.cs.kieler.layout.options.minSpacing">
       </data>
       <data
+            distribution="GAUSSIAN"
             lowerBound="0.001"
+            name="Aspect Ratio"
             option="de.cau.cs.kieler.layout.options.aspectRatio"
             upperBound="1000.0">
+      </data>
+      <data
+            distribution="UNIFORM"
+            enum="de.cau.cs.kieler.kiml.layout.options.LayoutDirection"
+            name="Layout Direction"
+            option="de.cau.cs.kieler.layout.options.layoutDirection">
       </data>
    </extension>
    <extension

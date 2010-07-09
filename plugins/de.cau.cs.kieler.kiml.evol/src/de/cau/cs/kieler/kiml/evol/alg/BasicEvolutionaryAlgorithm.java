@@ -89,6 +89,9 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
     @Override
     protected void initialize() {
         super.initialize();
+        for (int i = 0; i < 20; i++) {
+            mutate();
+        }
         System.out.println("*** initialize");
         System.out.println("  population: " + population);
     }
@@ -167,10 +170,10 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
     private Population population;
     private Population selection;
     private Population offspring;
-    private static final double SELECTION_RATIO = .65;
-    private static final double CROSS_OVER_RATIO = 1.3;
+    private static final double SELECTION_RATIO = .70;
+    private static final double CROSS_OVER_RATIO = 1.2;
     private static final double MUTATION_APPLICATION_PROBABILITY = .6;
-    private static final double SURVIVAL_RATIO = .55;
+    private static final double SURVIVAL_RATIO = .54;
 
     // To obtain a constant population size, the following condition must hold:
     // ((POP_SIZE * SURV_R + (POP_SIZE * SEL_R * CRO_R)) * SURV_R) == POP_SIZE

@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.evol.genetic;
 
-import de.cau.cs.kieler.kiml.evol.genetic.MutationInfo.Distribution;
 
 /**
  * Implementation of a gene with strictly positive float values.

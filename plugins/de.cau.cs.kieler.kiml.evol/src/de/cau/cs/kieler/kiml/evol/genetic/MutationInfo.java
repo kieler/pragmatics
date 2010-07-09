@@ -23,19 +23,6 @@ import org.eclipse.core.runtime.Assert;
  */
 public class MutationInfo {
     /**
-     * Probability distribution to specify how mutated values are generated.
-     * 
-     * @author bdu
-     * 
-     */
-    public enum Distribution {
-        /** Normal distribution (Gaussian). **/
-        GAUSSIAN,
-        /** uniform distribution (does not regard previous values). **/
-        UNIFORM
-    }
-
-    /**
      * Default probability for an enforced genuine mutation.
      */
     public static final double DEFAULT_GENUINE_MUTATION_PROBABILITY = 0.0;

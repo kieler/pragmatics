@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.gef.EditPart;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -108,7 +109,7 @@ public final class EvolUtil {
             // do the measurement
             rating = measureDiagram(false, layoutGraphAfterLayout);
         } else {
-            // TODO: what to do about the layouting failure?
+            // TODO: what to do about the layouting failure? Log it? Abort?
             rating = 0;
         }
         return rating;
@@ -146,11 +147,7 @@ public final class EvolUtil {
         if (parentNode == null) {
             return 0;
         }
-        // final String[] metricIds =
-        // new String[] { "de.cau.cs.kieler.kiml.evol.areaMetric",
-        // "de.cau.cs.kieler.kiml.evol.bendsMetric",
-        // "de.cau.cs.kieler.kiml.evol.flatnessMetric",
-        // "de.cau.cs.kieler.kiml.evol.narrownessMetric" };
+        // get the metric ids
         final Set<String> metricIds = EvolutionExtensionsUtil.getInstance().getLayoutMetricsIds();
         final AnalysisServices as = AnalysisServices.getInstance();
         final List<AbstractInfoAnalysis> metricsList =
@@ -163,17 +160,11 @@ public final class EvolUtil {
         // TODO: cache the metrics
         final AbstractInfoAnalysis[] metrics =
                 metricsList.toArray(new AbstractInfoAnalysis[metricsList.size()]);
-        // arbitrarily chosen coefficients
-        final double[] coeffs = new double[] { .08, .02, .2, .7 };
         final Object[] results = DiagramAnalyser.analyse(parentNode, metrics, showProgressBar);
-        // final double areaResult = Double.parseDouble(results[0].toString()) *
-        // coeffs[0];
-        // final double bendsResult = Double.parseDouble(results[1].toString())
-        // * coeffs[1];
-        // final double flatnessResult =
-        // Double.parseDouble(results[2].toString()) * coeffs[2];
-        // final double narrownessResult =
-        // Double.parseDouble(results[3].toString()) * coeffs[3];
+
+        // XXX: arbitrarily chosen coefficients
+        final double[] coeffs = new double[] { .08, .02, .2, .7 };
+
         // final double[] scaledResults = new double[metrics.length];
         double sum = 0.0;
         for (int i = 0; i < metrics.length; i++) {
@@ -234,6 +225,13 @@ public final class EvolUtil {
         IGene<?> result = null;
         final LayoutOptionData layoutOptionData =
                 LayoutServices.getInstance().getLayoutOptionData(theId);
+        final IConfigurationElement evolutionData =
+                EvolutionExtensionsUtil.getInstance().getEvolutionData(theId);
+
+        final String lowerBound = evolutionData.getAttribute("lowerBound");
+        final String upperBound = evolutionData.getAttribute("upperBound");
+        final String distr = evolutionData.getAttribute("distribution");
+
         final Type type = layoutOptionData.getType();
         final int intValue;
         final double var;

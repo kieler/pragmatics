@@ -3,7 +3,7 @@
 <schema targetNamespace="de.cau.cs.kieler.kiml.evol" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="de.cau.cs.kieler.kiml.evol" id="evolutionData" name="Evolution Data"/>
+         <meta.schema plugin="de.cau.cs.kieler.kiml.evol" id="distribution" name="Distribution"/>
       </appinfo>
       <documentation>
          [Enter description of this extension point.]
@@ -49,43 +49,17 @@
 
    <element name="data">
       <complexType>
-         <attribute name="option" type="string" use="required">
+         <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
                   
                </documentation>
-               <appinfo>
-                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.layoutProviders/layoutOption/@id"/>
-               </appinfo>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
                   
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="lowerBound" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="upperBound" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="distribution" type="string" use="required">
-            <annotation>
-               <documentation>
-                  Probability distribution used for mutation. Possible values are:
-GAUSSIAN
-UNIFORM
                </documentation>
             </annotation>
          </attribute>

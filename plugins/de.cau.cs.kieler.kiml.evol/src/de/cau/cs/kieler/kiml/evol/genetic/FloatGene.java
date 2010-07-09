@@ -17,7 +17,6 @@ import java.util.Random;
 
 import org.eclipse.core.runtime.Assert;
 
-import de.cau.cs.kieler.kiml.evol.genetic.MutationInfo.Distribution;
 
 /**
  * Implementation of IGene for Float values.
