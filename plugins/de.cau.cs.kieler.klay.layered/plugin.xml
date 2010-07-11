@@ -30,6 +30,9 @@
          <knownOption
                option="de.cau.cs.kieler.klay.layered.options.MinimalAngle">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.options.LayeredDistributeNodes">
+         </knownOption>
       </layoutProvider>
       <layoutOption
             appliesTo="parents"
@@ -56,6 +59,13 @@
             id="de.cau.cs.kieler.klay.layered.options.MinimalAngle"
             name="MinimalAngle"
             type="int">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            description="Define if wide nodes should be distributed to several layers."
+            id="de.cau.cs.kieler.klay.layered.options.LayeredDistributeNodes"
+            name="LayeredDistributeNodes"
+            type="boolean">
       </layoutOption>
    </extension>
 

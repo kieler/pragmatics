@@ -13,11 +13,15 @@
  */
 package de.cau.cs.kieler.klay.layered.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.PortType;
+import de.cau.cs.kieler.klay.layered.LayeredLayoutProvider;
+import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -37,13 +41,28 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayerer {
     private LayeredGraph layeredGraph;
     /** map of nodes to their height in the layering. */
     private int[] nodeHeights;
+    /** minimal spacing between objects. */
+    private float spacing = LayeredLayoutProvider.DEF_SPACING;
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void setSpacing(final float theSpacing) {
+        this.spacing = theSpacing;
+    }
     
     /**
      * {@inheritDoc}
      */
     public void layer(final Collection<LNode> nodes, final LayeredGraph thelayeredGraph) {
         getMonitor().begin("Longest path layering", 1);
+
         layeredGraph = thelayeredGraph;
+        
+        if (layeredGraph.getProperty(Properties.DISTRIBUTE_NODES)) {
+            distributeBigNodes(nodes);
+        }
+        
         nodeHeights = new int[nodes.size()];
         int index = 0;
         for (LNode node : nodes) {
@@ -56,8 +75,67 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayerer {
         for (LNode node : nodes) {
             visit(node);
         }
-
         getMonitor().done();
+    }
+    
+    /**
+     * @param nodes Nodes of the Graph
+     */
+    public void distributeBigNodes(final Collection<LNode> nodes) {
+        float avgWidth = 0.0f;
+        // Compute average width of Nodes
+        for (Iterator<LNode> nodeIter = nodes.iterator(); nodeIter.hasNext();) {
+            LNode node = (LNode) nodeIter.next();
+            float width = node.getSize().x;
+            avgWidth += width;
+        }
+        avgWidth /= nodes.size();
+
+        // List of dummy nodes to be inserted in the graph
+        Collection<LNode> addNodes = new ArrayList<LNode>();
+        for (Iterator<LNode> nodeIter = nodes.iterator(); nodeIter.hasNext();) {
+            LNode node = (LNode) nodeIter.next();
+            float width = node.getSize().x;
+            float treshold = (2 * avgWidth) + spacing;
+            int numDummys = 0;
+            while (treshold <= width) {
+                numDummys++;
+                treshold += avgWidth + spacing;
+            } 
+
+            // All nodes in the segment get the same width (temporarily)
+            float newWidth = (width - (numDummys * spacing)) / (numDummys + 1);
+            node.getSize().x = newWidth;
+            
+            for (int d = 0; d < numDummys; d++) {
+                // expand node by one dummynode
+                LNode addNode = new LNode();
+                addNode.getSize().y = node.getSize().y;
+                addNode.getSize().x = newWidth;
+                
+                // Reassign ports
+                Iterator<LPort> portIter = node.getPorts(PortType.OUTPUT).iterator();
+                List<LPort> ports = new ArrayList<LPort>();
+                while (portIter.hasNext()) {
+                    LPort lPort = (LPort) portIter.next();
+                    ports.add(lPort);
+                }
+                for (LPort port : ports) {
+                    port.setNode(addNode);
+                }
+                
+                // Add edge
+                LPort outPort = new LPort(PortType.OUTPUT);
+                LPort inPort = new LPort(PortType.INPUT);
+                outPort.setNode(node);
+                inPort.setNode(addNode);
+                LEdge edge = new LEdge();
+                edge.setSource(outPort);
+                edge.setTarget(inPort);
+                addNodes.add(addNode);
+            }
+        }
+        nodes.addAll(addNodes);
     }
 
     /**

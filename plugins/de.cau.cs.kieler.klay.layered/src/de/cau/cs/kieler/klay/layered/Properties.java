@@ -46,6 +46,9 @@ public final class Properties {
     /** additional information for LinearSegmentsNodePlacer on the layeredGraph. */
     public static final Property<Boolean> STRAIGHT_EDGES = new Property<Boolean>(
             "straightEdges", false);
+    /** additional information for LongestPathLayerer on the layeredGraph. */
+    public static final Property<Boolean> DISTRIBUTE_NODES = new Property<Boolean>(
+            "distributeNodes", false);
     
     /**
      * Hidden default constructor.

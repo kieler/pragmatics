@@ -96,10 +96,14 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     public static final String KLAY_MINIMAL_EDGE_ANGLE = "de.cau.cs.kieler.klay.layered."
             + "options.MinimalAngle";
     
-    /** option to choose if debug info is shown. */
+    /** option to choose if edges with priority > 0 are drawn straight. */
     public static final String KLAY_STRAIGHT_EDGES = 
         "de.cau.cs.kieler.klay.layered.options.LayeredStraightEdges";
 
+    /** option to choose if big nodes should be distributed. */
+    public static final String KLAY_DISTRIBUTE_NODES = 
+        "de.cau.cs.kieler.klay.layered.options.LayeredDistributeNodes";
+    
     /** constructor registering the new enum option. */
     public LayeredLayoutProvider() {
         LayoutOptions.registerEnum(KLAY_EDGE_ROUTING, LayeredEdgeRouting.class);
@@ -167,6 +171,9 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         // Add information for LinearSegmentsNodePlacer
         Boolean straightEdges = LayoutOptions.getBoolean(parentLayout, KLAY_STRAIGHT_EDGES);
         layeredGraph.setProperty(Properties.STRAIGHT_EDGES, straightEdges);
+        // Add information for LinearSegmentsNodePlacer
+        Boolean distributeNodes = LayoutOptions.getBoolean(parentLayout, KLAY_DISTRIBUTE_NODES);
+        layeredGraph.setProperty(Properties.DISTRIBUTE_NODES, distributeNodes);
         // perform the actual layout
         doLayout(layeredGraph, nodes, progressMonitor.subTask(1), spacing);
         // apply the layout results to the original graph

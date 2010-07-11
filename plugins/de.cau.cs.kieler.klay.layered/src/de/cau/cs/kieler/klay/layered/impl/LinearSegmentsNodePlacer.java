@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.LayeredLayoutProvider;
 import de.cau.cs.kieler.klay.layered.Properties;
@@ -154,7 +155,10 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
         // create an unbalanced placement from the sorted segments
         createUnbalancedPlacement(layeredGraph);
         // balance the placement
+        IKielerProgressMonitor monitor = getMonitor().subTask(1);
+        monitor.begin("Balance Placement", 1);
         balancePlacement(layeredGraph);
+        monitor.done();
 
         // set the proper height for the whole graph
         Coord graphSize = layeredGraph.getSize();
@@ -362,100 +366,120 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
 
         // Iterate the balancing
         boolean ready = false;
-        boolean forward = true;
         int finalIterations = 0;
+        int iterations = 0;
 
         while (!ready || finalIterations > 0) {
             finalIterations--;
+            iterations++;
+            
             // Iterate regions alternating forward or backward
             Collections.reverse(regions);
+            
             for (Region region : regions) {
-                // Reset force for region
-                region.force = 0.0f;
-
                 // Calculate force for every node
-                for (LNode node : region.getNodes()) {
-                    float sum = 0.0f;
-                    int numEdges = 0;
-                    // Calculate force for every port/edge
-                    for (LPort port : node.getPorts()) {
-                        if (port.getType() == PortType.OUTPUT) {
-                            for (LEdge edge : port.getEdges()) {
-                                LPort otherPort = edge.getTarget();
-                                LNode otherNode = otherPort.getNode();
-                                sum += (otherNode.getPos().y + otherPort.getPos().y)
-                                        - (node.getPos().y + port.getPos().y);
-                                numEdges++;
-                            }
-                        } else if (port.getType() == PortType.INPUT) {
-                            for (LEdge edge : port.getEdges()) {
-                                LPort otherPort = edge.getSource();
-                                LNode otherNode = otherPort.getNode();
-                                sum += (otherNode.getPos().y + otherPort.getPos().y)
-                                        - (node.getPos().y + port.getPos().y);
-                                numEdges++;
-                            }
-                        }
-                    }
-                    // Avoid division by zero
-                    if (numEdges > 0) {
-                        sum /= numEdges;
-                    } else {
-                        sum = 0.0f;
-                    }
-                    region.force += sum / region.getNodes().size();
-                }
+                calculateForce(region);
 
                 // Test for all nodes, if they can be moved that far.
-                // Test only if the neighbor is of another region.
-                for (LNode node : region.getNodes()) {
-                    if (region.force < 0.0f) {
-                        // Force is directed upward
-                        if (node.getIndex() > 0) {
-                            // Node is not topmost node
-                            LNode neighbor = node.getLayer().getNodes().get(node.getIndex() - 1);
-                            if (node.getProperty(Properties.REGION) 
-                                    != neighbor.getProperty(Properties.REGION)
-                                    && neighbor.getPos().y + neighbor.getSize().y + spacing 
-                                    > node.getPos().y + region.force) {
-                                // Set force on region to the max possible force
-                                region.force = node.getPos().y
-                                        - (neighbor.getPos().y + neighbor.getSize().y + spacing);
-                            }
-                        } else {
-                            // Node is topmost node
-                            if (node.getPos().y + region.force < 0.0f) {
-                                // Node woult like to go out of Frame
-                                region.force = -node.getPos().y;
-                            }
-                        }
-                    } else if (region.force > 0.0f
-                            && node.getIndex() < node.getLayer().getNodes().size() - 1) {
-                        // Force is directed downward and the node is not lowermost
-                        LNode neighbor = node.getLayer().getNodes().get(node.getIndex() + 1);
-                        if (node.getProperty(Properties.REGION) 
-                                != neighbor.getProperty(Properties.REGION)
-                                && node.getPos().y + node.getSize().y + spacing + region.force 
-                                > neighbor.getPos().y) {
-                            // Set force on region to the max possible force
-                            region.force = neighbor.getPos().y
-                                    - (node.getPos().y + node.getSize().y + spacing);
-                        }
-                    }
-                }
+                checkMovability(region);
+                
                 // Move nodes
                 for (LNode node : region.getNodes()) {
                     node.getPos().y += region.force;
                 }
             }
 
-            // Test for touching neighbors
-            ready = noNewTouchingRegions(layeredGraph);
+            // First 2 iterations are not unioning regions
+            if (iterations > 2) {
+                // Test for touching neighbors
+                ready = noNewTouchingRegions(layeredGraph);
+            }
             
+            // If ready, 2 more iterations are performed
             if (ready && finalIterations < 0) {
                 finalIterations = 2;
             }
-            forward = !forward;
+        }
+        System.out.println(iterations + " Iterations");
+    }
+
+    /**
+     * @param region the region whose force to be calculated
+     */
+    private void calculateForce(final Region region) {
+        // Reset force for region
+        region.force = 0.0f;
+        for (LNode node : region.getNodes()) {
+            float sum = 0.0f;
+            int numEdges = 0;
+            // Calculate force for every port/edge
+            for (LPort port : node.getPorts()) {
+                if (port.getType() == PortType.OUTPUT) {
+                    for (LEdge edge : port.getEdges()) {
+                        LPort otherPort = edge.getTarget();
+                        LNode otherNode = otherPort.getNode();
+                        sum += (otherNode.getPos().y + otherPort.getPos().y)
+                                - (node.getPos().y + port.getPos().y);
+                        numEdges++;
+                    }
+                } else if (port.getType() == PortType.INPUT) {
+                    for (LEdge edge : port.getEdges()) {
+                        LPort otherPort = edge.getSource();
+                        LNode otherNode = otherPort.getNode();
+                        sum += (otherNode.getPos().y + otherPort.getPos().y)
+                                - (node.getPos().y + port.getPos().y);
+                        numEdges++;
+                    }
+                }
+            }
+            // Avoid division by zero
+            if (numEdges > 0) {
+                sum /= numEdges;
+            } else {
+                sum = 0.0f;
+            }
+            region.force += sum / region.getNodes().size();
+        }
+    }
+
+    /**
+     * @param region the region to be checked
+     */
+    private void checkMovability(final Region region) {
+        for (LNode node : region.getNodes()) {
+            if (region.force < 0.0f) {
+                // Force is directed upward
+                if (node.getIndex() > 0) {
+                    // Node is not topmost node
+                    LNode neighbor = node.getLayer().getNodes().get(node.getIndex() - 1);
+                    if (node.getProperty(Properties.REGION) 
+                            != neighbor.getProperty(Properties.REGION)
+                            && neighbor.getPos().y + neighbor.getSize().y + spacing 
+                            > node.getPos().y + region.force) {
+                        // Set force on region to the max possible force
+                        region.force = node.getPos().y
+                                - (neighbor.getPos().y + neighbor.getSize().y + spacing);
+                    }
+                } else {
+                    // Node is topmost node
+                    if (node.getPos().y + region.force < 0.0f) {
+                        // Node woult like to go out of Frame
+                        region.force = -node.getPos().y;
+                    }
+                }
+            } else if (region.force > 0.0f
+                    && node.getIndex() < node.getLayer().getNodes().size() - 1) {
+                // Force is directed downward and the node is not lowermost
+                LNode neighbor = node.getLayer().getNodes().get(node.getIndex() + 1);
+                if (node.getProperty(Properties.REGION) 
+                        != neighbor.getProperty(Properties.REGION)
+                        && node.getPos().y + node.getSize().y + spacing + region.force 
+                        > neighbor.getPos().y) {
+                    // Set force on region to the max possible force
+                    region.force = neighbor.getPos().y
+                            - (node.getPos().y + node.getSize().y + spacing);
+                }
+            }
         }
     }
 
