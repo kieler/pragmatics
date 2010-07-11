@@ -43,28 +43,43 @@ import de.cau.cs.kieler.klay.layered.modules.IBoxCalculator;
  */
 public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalculator {
 
-    /** minimal spacing between objects. */
+    /** Minimal spacing between objects. */
     private float spacing = LayeredLayoutProvider.DEF_SPACING;
 
-    // contains nodes from which long edges are starting
+    /** All known Edges inside the current graph. */
     private LinkedList<Line2D.Double> allEdges;
 
+    /** All known Nodes inside the current graph. */
     private LinkedList<Rectangle2D.Double> allNodes;
 
+    /** All known dummy Nodes inside the current graph. */
     private LinkedList<Rectangle2D.Double> allDummyNodes;
 
+    /** Map from any Spline/Edge to it's corresponding Lines. */
     private HashMap<Object, LinkedList<Line2D.Double>> edgeToLine;
+
+    /** Map from any line to it's corresponding Spline/Edge. */
     private HashMap<Line2D.Double, Object> lineToEdge;
 
+    /** The graph to work on. */
     private LayeredGraph layeredGraph;
 
+    /** How many points to calculate when approximating a spline. */
     private static final int EDGE_PRECISION = 4;
 
+    /** How big shall dummy nodes be drawn. */
     private static final float DUMMY_NODE_DEBUG_SIZE = 10;
 
+    /** How big are the steps in which boxes are resized. */
     private static final int BOX_RESIZE_STEPSIZE = 3;
 
-    /** the DebugCanvas to use for debug-drawings. **/
+    /** Minimal width of an box. */
+    private static final int MINIMAL_BOX_WIDTH = 5;
+
+    /** Division factor to calculate box widths. */
+    private static final int BOX_WIDTH_DIVISION_FACTOR = 5;
+
+    /** The DebugCanvas to use for debug-drawings. **/
     private DebugCanvas debugCanvas;
 
     /**
@@ -75,8 +90,6 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
         for (BezierCurve curve : spline.getCurves()) {
             KVector start = curve.start;
 
-            // the EDGE_PRECISION defines how many points are caught ... the more .. the more
-            // precise
             // there's always the start point missing in pts
             int n = EDGE_PRECISION - 1;
             KVector[] pts = KielerMath.calcBezierPoints(curve.asVectorList(), n);
@@ -115,96 +128,13 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
     }
 
     /**
-     * * check for any intersection object.
-     * 
-     * @param box
-     *            the box to check
-     * @param currently
-     *            ignore a given object that intersects on startup
-     * @param edges
-     *            list of edges
-     * @param nodes
-     *            list of nodes
-     * @return the object which intersects
-     */
-    private static Object intersectsWithAny(final Rectangle2D.Double box,
-            final LinkedList<Line2D.Double> ignoredEdges, final LinkedList<Line2D.Double> edges,
-            final LinkedList<Rectangle2D.Double> nodes) {
-        for (Rectangle2D.Double node : nodes) {
-            if (node.intersects(box)) {
-                return node;
-            }
-        }
-        for (Line2D.Double line : edges) {
-            if (!ignoredEdges.contains(line) && line.intersects(box)) {
-
-                return line;
-            }
-        }
-        return null;
-    }
-
-    private static LinkedList<Line2D.Double> allIntersectingLines(final Rectangle2D.Double box,
-            final LinkedList<Line2D.Double> edges) {
-        LinkedList<Line2D.Double> ret = new LinkedList<Line2D.Double>();
-        for (Line2D.Double line : edges) {
-            if (line.intersects(box)) {
-                ret.add(line);
-            }
-        }
-        return ret;
-    }
-
-    private static LinkedList<Line2D.Double> allIntersectingLines(final Line2D.Double crossline,
-            final LinkedList<Line2D.Double> edges) {
-        LinkedList<Line2D.Double> ret = new LinkedList<Line2D.Double>();
-        for (Line2D.Double line : edges) {
-            if (line.intersectsLine(crossline)) {
-                ret.add(line);
-            }
-        }
-        return ret;
-    }
-
-    private static Rectangle2D.Double intersectsWithNode(final Rectangle2D.Double box,
-            final LinkedList<Rectangle2D.Double> nodes) {
-        for (Rectangle2D.Double node : nodes) {
-            if (node.intersects(box)) {
-                return node;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Calculate the coordinate on a line between two nodes.
-     * 
-     * @param src
-     *            the source-node
-     * @param dst
-     *            the destination-node
-     * @param x
-     *            the position you want to know the y-coordinate for
-     * @return the point on the line at position x
-     */
-    private static double pointOnLine(final LPort src, final LPort dst, final double x) {
-        // this is basically the line-equation for this direct path between source and target Ports
-        double starty = (src.getPos().y + src.getNode().getPos().y)
-                + (((dst.getPos().y + dst.getNode().getPos().y) - (src.getPos().y + src.getNode()
-                        .getPos().y)) * (x - (src.getPos().x + src.getNode().getPos().x)))
-                / ((dst.getPos().x + dst.getNode().getPos().x) - (src.getPos().x + src.getNode()
-                        .getPos().x));
-        return starty;
-    }
-
-    /**
      * {@inheritDoc}
      */
     public LinkedList<Rectangle2D.Double> getBoxes(final LEdge edge) {
 
         LPort currentTarget = edge.getTarget();
         LPort currentSource = edge.getSource();
-        int minBoxHeight = Math.max(2 + 2 + 1, (int) spacing / (2 + 2 + 1));
+        int minBoxHeight = Math.max(MINIMAL_BOX_WIDTH, (int) spacing / BOX_WIDTH_DIVISION_FACTOR);
 
         LinkedList<Rectangle2D.Double> globBarray = new LinkedList<Rectangle2D.Double>();
 
@@ -212,19 +142,12 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
             debugCanvas.clear();
         }
 
-        /*
-         * for (Rectangle2D.Double dn : allDummyNodes) { //drawOnDebug(new Line2D.Double(0, 0, dn.x,
-         * dn.y),DebugCanvas.Color.GRAY, false); drawOnDebug( new Ellipse2D.Double( (dn.x -
-         * DUMMY_NODE_DEBUG_SIZE / 2), (dn.y - DUMMY_NODE_DEBUG_SIZE / 2), DUMMY_NODE_DEBUG_SIZE,
-         * DUMMY_NODE_DEBUG_SIZE), DebugCanvas.Color.CYAN, true); }
-         */
-
         int defaultboxwidth = (int) Math.max(2 + 2 + 1, (int) spacing / ((2 + 2 + 1)));
 
         // where are we currently
         float reachedx = (float) currentSource.getPos().x + currentSource.getNode().getPos().x;
 
-        Rectangle2D.Double newBox = null, prevBox = null;
+        Rectangle2D.Double newBox = null, previousBox = null;
 
         LinkedList<Line2D.Double> ignoredEdges = new LinkedList<Line2D.Double>();
         LinkedList<Line2D.Double> edges = new LinkedList<Line2D.Double>();
@@ -232,7 +155,6 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
 
         // wander along the edge
         do {
-
             double targetx = currentTarget.getPos().x + currentTarget.getNode().getPos().x;
 
             // only take care of edges that can hit us
@@ -240,10 +162,6 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
             for (Line2D.Double oneEdge : allEdges) {
                 if (!(oneEdge.getX2() < reachedx || oneEdge.getX1() > targetx)) {
                     edges.add(oneEdge);
-                    // point to a line that matters
-                    // drawOnDebug(new Line2D.Double(0, 0, oneEdge.x1
-                    // + ((oneEdge.x2 - oneEdge.x1) / 2), oneEdge.y1
-                    // + ((oneEdge.y2 - oneEdge.y1) / 2)), DebugCanvas.Color.CYAN, false);
                 }
             }
 
@@ -252,33 +170,14 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
             for (Rectangle2D.Double oneNode : allNodes) {
                 if (!(oneNode.getX() + oneNode.getWidth() < reachedx || oneNode.getX() > targetx)) {
                     nodes.add(oneNode);
-                    // point to a node that matters
-                    // drawOnDebug(new Line2D.Double(0, 0, oneNode.getX(), oneNode.getY()),
-                    // DebugCanvas.Color.CYAN, false);
                 }
             }
 
             // clear ignored Edges for every new node->nextNode segment
             ignoredEdges.clear();
-            /*
-             * ignoredEdges.addAll(allIntersectingLines(new Line2D.Double((currentSource.getNode()
-             * .getPos().x + currentSource.getPos().x), (currentSource.getNode().getPos().y +
-             * currentSource.getPos().y), (currentTarget .getNode().getPos().x +
-             * currentTarget.getPos().x), (currentTarget .getNode().getPos().y +
-             * currentTarget.getPos().y)), edges));
-             */
 
-            for (Line2D.Double intLine : allIntersectingLines(new Line2D.Double((currentSource
-                    .getNode().getPos().x + currentSource.getPos().x), (currentSource.getNode()
-                    .getPos().y + currentSource.getPos().y),
-                    (currentTarget.getNode().getPos().x + currentTarget.getPos().x), (currentTarget
-                            .getNode().getPos().y + currentTarget.getPos().y)), edges)) {
-                Object key = lineToEdge.get(intLine);
-                LinkedList<Line2D.Double> list = edgeToLine.get(key);
-                for (Line2D.Double line : list) {
-                    ignoredEdges.add(line);
-                }
-            }
+            // add all intersecting Lines between current source and target to ignore list
+            addAllIntersectingLines(currentSource, currentTarget, edges, ignoredEdges);
 
             drawOnDebug(
                     new Line2D.Double(
@@ -299,18 +198,12 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
             }
 
             while (reachedx < targetx) {
-                // if (currentTarget.getNode().id == 10) {
-                // System.out.println("nice");
-                // }
-
                 // when there won't fit two boxes anymore, enlarge current box to be the last one
                 double newBoxWidth = (targetx - reachedx < 2 * defaultboxwidth) ? targetx
                         - reachedx : defaultboxwidth;
 
-                // a good starting point for the boxes is ON the direct line between source and
-                // target
+                // a good starting point is ON the direct line between source and target
                 double newLowY = pointOnLine(currentSource, currentTarget, reachedx);
-
                 double newHighY = pointOnLine(currentSource, currentTarget, reachedx + newBoxWidth);
 
                 // box would be upside down? swap...
@@ -337,11 +230,11 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
 
                 // if we are on a node, there has to be a previous box because initial boxsize is
                 // smaller than object spacing
-                if (onNode != null && prevBox != null) {
-                    if (prevBox.y < newBox.y) {
+                if (onNode != null && previousBox != null) {
+                    if (previousBox.y < newBox.y) {
                         newBox = floorBox(newBox, onNode);
                         newBox.y -= newBoxHeight; // reserve space for the other box that comes
-                    } else if (prevBox.y > newBox.y) {
+                    } else if (previousBox.y > newBox.y) {
                         newBox = ceilBox(newBox, onNode);
                     }
                 }
@@ -349,8 +242,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                 // show our initial position
                 drawOnDebug(newBox.clone(), DebugCanvas.Color.GREEN, true);
 
-                // remember on which lines we were starting, those might be the ones we can cross /
-                // have to cross
+                // remember on which lines we were starting... maybe have to cross them
                 for (Line2D.Double intLine : allIntersectingLines(newBox, edges)) {
                     Object key = lineToEdge.get(intLine);
                     LinkedList<Line2D.Double> list = edgeToLine.get(key);
@@ -369,8 +261,6 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                         }
                     }
                 }
-                drawOnDebug(new Line2D.Double(0, lowerBound, layeredGraph.getSize().x, lowerBound),
-                        DebugCanvas.Color.RED, false);
 
                 // enlarge boxes from bottom to top
                 Object runagainst = intersectsWithAny(newBox, ignoredEdges, edges, nodes);
@@ -380,14 +270,11 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                     runagainst = intersectsWithAny(newBox, ignoredEdges, edges, nodes);
                 }
 
-                // there is a node/edge above the box
-                if (runagainst != null) {
-                    // show us the bad boy we ran into
-                    drawOnDebug(runagainst, DebugCanvas.Color.RED, true);
+                if (runagainst != null) { // there is a node/edge above the box
+                    drawOnDebug(runagainst, DebugCanvas.Color.RED, true); // show us the bad boy
                     if (runagainst instanceof Rectangle2D) {
                         newBox = ceilBox(newBox, (Rectangle2D.Double) runagainst);
                     } else { // run against a another edge
-                        // one big step back
                         newBox.y += 2 * BOX_RESIZE_STEPSIZE;
                         newBox.height -= 2 * BOX_RESIZE_STEPSIZE;
                     }
@@ -398,22 +285,8 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
 
                 drawOnDebug(newBox.clone(), DebugCanvas.Color.GRAY, false);
 
-                // enlarge two boxes independently from each other, one to the top, one to the
-                // bottom
-                // Rectangle2D.Double tempBox = new Rectangle2D.Double(reachedx, Math.max(0,
-                // newBox.y
-                // + newBox.height), newBoxWidth, newBoxHeight);
-                // drawOnDebug(tempBox.clone(), DebugCanvas.Color.ORANGE, true);
-
                 // remember on which lines we were starting
                 ignoredEdges.addAll(allIntersectingLines(newBox, edges));
-
-                // for (Line2D.Double oneEdge : ignoredEdges) {
-                // drawOnDebug(new Line2D.Double(layeredGraph.getSize().x,
-                // layeredGraph.getSize().y, oneEdge.x1 + ((oneEdge.x2 - oneEdge.x1) / 2),
-                // oneEdge.y1 + ((oneEdge.y2 - oneEdge.y1) / 2)), DebugCanvas.Color.RED,
-                // false);
-                // }
 
                 // find an upper boundary
                 double upperBound = layeredGraph.getSize().y;
@@ -426,8 +299,6 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                         }
                     }
                 }
-                drawOnDebug(new Line2D.Double(0, upperBound, layeredGraph.getSize().x, upperBound),
-                        DebugCanvas.Color.RED, false);
 
                 // enlarge boxes from bottom to top
                 runagainst = intersectsWithAny(newBox, ignoredEdges, edges, nodes);
@@ -452,15 +323,16 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                 drawOnDebug(newBox, DebugCanvas.Color.ORANGE, false);
 
                 // ensure that the new box is intersecting the previous box
-                if (prevBox != null) {
+                if (previousBox != null) {
                     // the old box is "below" the new Box
-                    if (prevBox.y >= newBox.y + newBox.height) {
-                        newBox.height = prevBox.y + minBoxHeight * 2 - newBox.y;
+                    if (previousBox.y >= newBox.y + newBox.height) {
+                        newBox.height = previousBox.y + minBoxHeight * 2 - newBox.y;
                     }
 
                     // or "over" the new box
-                    if (prevBox.y + prevBox.height <= newBox.y) {
-                        double diff = newBox.y - ((prevBox.y + prevBox.height) - minBoxHeight * 2);
+                    if (previousBox.y + previousBox.height <= newBox.y) {
+                        double diff = newBox.y
+                                - ((previousBox.y + previousBox.height) - minBoxHeight * 2);
                         newBox.y -= diff;
                         newBox.height += diff;
                     }
@@ -488,7 +360,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
 
                 // add the new box
                 globBarray.add(newBox);
-                prevBox = newBox;
+                previousBox = newBox;
                 reachedx += newBox.width;
 
                 // and draw the new box
@@ -518,7 +390,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
      * 
      * @param box
      * @param node
-     * @return
+     * @return the resized box.
      */
     private static Rectangle2D.Double ceilBox(final Rectangle2D.Double box,
             final Rectangle2D.Double node) {
@@ -536,7 +408,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
      * 
      * @param box
      * @param node
-     * @return
+     * @return the resized box.
      */
     private static Rectangle2D.Double floorBox(final Rectangle2D.Double box,
             final Rectangle2D.Double node) {
@@ -666,6 +538,135 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                     allDummyNodes.add(new Rectangle2D.Double(node.getPos().x, node.getPos().y, node
                             .getSize().x, node.getSize().y));
                 }
+            }
+        }
+
+    }
+
+    /**
+     * check for any intersection object.
+     * 
+     * @param box
+     *            the box to check
+     * @param currently
+     *            ignore a given object that intersects on startup
+     * @param edges
+     *            list of edges
+     * @param nodes
+     *            list of nodes
+     * @return the object which intersects
+     */
+    private static Object intersectsWithAny(final Rectangle2D.Double box,
+            final LinkedList<Line2D.Double> ignoredEdges, final LinkedList<Line2D.Double> edges,
+            final LinkedList<Rectangle2D.Double> nodes) {
+        for (Rectangle2D.Double node : nodes) {
+            if (node.intersects(box)) {
+                return node;
+            }
+        }
+        for (Line2D.Double line : edges) {
+            if (!ignoredEdges.contains(line) && line.intersects(box)) {
+
+                return line;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * compute all intersecting edges for a box.
+     * 
+     * @param box
+     *            the box
+     * @param edges
+     *            the edges to check
+     * @return a list with all intersecting edges
+     */
+    private static LinkedList<Line2D.Double> allIntersectingLines(final Rectangle2D.Double box,
+            final LinkedList<Line2D.Double> edges) {
+        LinkedList<Line2D.Double> ret = new LinkedList<Line2D.Double>();
+        for (Line2D.Double line : edges) {
+            if (line.intersects(box)) {
+                ret.add(line);
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * compute all intersecting edges for a line.
+     * 
+     * @param crossline
+     *            the line to check
+     * @param edges
+     *            all edges
+     * @return a list containing all edges that cross
+     */
+    private static LinkedList<Line2D.Double> allIntersectingLines(final Line2D.Double crossline,
+            final LinkedList<Line2D.Double> edges) {
+        LinkedList<Line2D.Double> ret = new LinkedList<Line2D.Double>();
+        for (Line2D.Double line : edges) {
+            if (line.intersectsLine(crossline)) {
+                ret.add(line);
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * checks if a box intersects with a node.
+     * 
+     * @param box
+     *            the box to check
+     * @param nodes
+     *            a list with all nodes
+     * @return the intersecting node, null if none
+     */
+    private static Rectangle2D.Double intersectsWithNode(final Rectangle2D.Double box,
+            final LinkedList<Rectangle2D.Double> nodes) {
+        for (Rectangle2D.Double node : nodes) {
+            if (node.intersects(box)) {
+                return node;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Calculate the coordinate on a line between two nodes.
+     * 
+     * @param src
+     *            the source-node
+     * @param dst
+     *            the destination-node
+     * @param x
+     *            the position you want to know the y-coordinate for
+     * @return the point on the line at position x
+     */
+    private static double pointOnLine(final LPort src, final LPort dst, final double x) {
+        // this is basically the line-equation for this direct path between source and target Ports
+        double starty = (src.getPos().y + src.getNode().getPos().y)
+                + (((dst.getPos().y + dst.getNode().getPos().y) - (src.getPos().y + src.getNode()
+                        .getPos().y)) * (x - (src.getPos().x + src.getNode().getPos().x)))
+                / ((dst.getPos().x + dst.getNode().getPos().x) - (src.getPos().x + src.getNode()
+                        .getPos().x));
+        return starty;
+    }
+
+    /**
+     * Add all intersecting lines on path between source and target to the ignored list.
+     */
+    private void addAllIntersectingLines(final LPort currentSource, final LPort currentTarget,
+            final LinkedList<Line2D.Double> edges, final LinkedList<Line2D.Double> ignoredEdges) {
+        for (Line2D.Double intLine : allIntersectingLines(new Line2D.Double((currentSource
+                .getNode().getPos().x + currentSource.getPos().x), (currentSource.getNode()
+                .getPos().y + currentSource.getPos().y),
+                (currentTarget.getNode().getPos().x + currentTarget.getPos().x), (currentTarget
+                        .getNode().getPos().y + currentTarget.getPos().y)), edges)) {
+            Object key = lineToEdge.get(intLine);
+            LinkedList<Line2D.Double> list = edgeToLine.get(key);
+            for (Line2D.Double line : list) {
+                ignoredEdges.add(line);
             }
         }
 
