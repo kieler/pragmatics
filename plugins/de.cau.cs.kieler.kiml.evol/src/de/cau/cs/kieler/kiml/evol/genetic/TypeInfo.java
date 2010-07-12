@@ -41,15 +41,18 @@ public class TypeInfo<T extends Comparable<? super T>> {
             final T theUpperBound,
             final Class<?> theClass) {
         // arguments must not be null
+
         Assert.isLegal((theDefaultValue != null) && (theLowerBound != null)
                 && (theUpperBound != null));
+
         Assert.isLegal(theLowerBound.compareTo(theUpperBound) <= 0, "lower bound > upper bound");
+
         Assert
                 .isLegal(theLowerBound.compareTo(theDefaultValue) <= 0,
                         "default value < lower bound");
-        Assert
-                .isLegal(theDefaultValue.compareTo(theUpperBound) <= 0,
-                        "default value > upper bound");
+
+        Assert.isLegal(theDefaultValue.compareTo(theUpperBound) <= 0, "default value > upper bound");
+
         this.defaultValue = theDefaultValue;
         this.lowerBound = theLowerBound;
         this.upperBound = theUpperBound;

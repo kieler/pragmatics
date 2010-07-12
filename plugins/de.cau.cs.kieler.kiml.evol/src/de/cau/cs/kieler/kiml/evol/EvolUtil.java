@@ -34,6 +34,7 @@ import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
 import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.evol.genetic.BooleanGene;
+import de.cau.cs.kieler.kiml.evol.genetic.Distribution;
 import de.cau.cs.kieler.kiml.evol.genetic.EnumGene;
 import de.cau.cs.kieler.kiml.evol.genetic.FloatGene;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
@@ -231,8 +232,9 @@ public final class EvolUtil {
 
         final String lowerBound = evolutionData.getAttribute("lowerBound");
         final String upperBound = evolutionData.getAttribute("upperBound");
-        final String distr = evolutionData.getAttribute("distribution");
+        final String distrName = evolutionData.getAttribute("distribution");
 
+        final Distribution distr = Distribution.valueOf(distrName);
         final Type type = layoutOptionData.getType();
         final int intValue;
         final double var;
