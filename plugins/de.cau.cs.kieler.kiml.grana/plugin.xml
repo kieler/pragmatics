@@ -20,6 +20,9 @@
             description="The average node degree of all nodes including hierarchies."
             id="de.cau.cs.kieler.kiml.grana.averageNodeDegree"
             name="Average Node Degree">
+         <analysisDependency
+               analysis="de.cau.cs.kieler.kiml.grana.nodeCount">
+         </analysisDependency>
       </analysisProvider>
       <analysisProvider
             category="de.cau.cs.kieler.kiml.grana.basicAnalyses"
@@ -58,9 +61,9 @@
       </command>
       <command
             categoryId="de.cau.cs.kieler"
-            defaultHandler="de.cau.cs.kieler.kiml.grana.handlers.FastAnalysisHandler"
-            id="de.cau.cs.kieler.kiml.grana.command.fastAnalyse"
-            name="Fast Analyse">
+            defaultHandler="de.cau.cs.kieler.kiml.grana.handlers.ConfigureAnalysesHandler"
+            id="de.cau.cs.kieler.kiml.grana.command.configureAnalyses"
+            name="Configure Analyses">
       </command>
    </extension>
    <extension
@@ -70,8 +73,9 @@
          <command
                commandId="de.cau.cs.kieler.kiml.grana.command.analyse"
                icon="icons/menu16/analyzediagram.gif"
+               id="de.cau.cs.kieler.kiml.grana.menu.analysis"
                label="Analyse"
-               style="push"
+               style="pulldown"
                tooltip="Analyse the current diagram with KIELER">
             <visibleWhen
                   checkEnabled="false">
@@ -84,22 +88,13 @@
                </with>
             </visibleWhen>
          </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:de.cau.cs.kieler.kiml.grana.menu.analysis">
          <command
-               commandId="de.cau.cs.kieler.kiml.grana.command.fastAnalyse"
-               icon="icons/menu16/analyzediagramquick.gif"
-               label="Fast Analyse"
-               style="push"
-               tooltip="Analyse the current diagram with KIELER using the last selected options">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="activeEditor">
-                  <test
-                        forcePluginActivation="false"
-                        property="de.cau.cs.kieler.kiml.ui.activeEditorIsSupported">
-                  </test>
-               </with>
-            </visibleWhen>
+               commandId="de.cau.cs.kieler.kiml.grana.command.configureAnalyses"
+               label="Configure..."
+               style="push">
          </command>
       </menuContribution>
    </extension>

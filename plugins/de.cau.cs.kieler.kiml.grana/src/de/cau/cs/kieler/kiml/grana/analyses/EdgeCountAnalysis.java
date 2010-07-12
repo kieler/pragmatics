@@ -15,6 +15,7 @@ package de.cau.cs.kieler.kiml.grana.analyses;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -31,7 +32,7 @@ public class EdgeCountAnalysis implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode,
+    public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor)
             throws KielerException {
         progressMonitor.begin("Number of Edges analysis", 1);

@@ -52,6 +52,9 @@
 
    <element name="analysisProvider">
       <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="analysisDependency"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -186,6 +189,21 @@
                <documentation>
                   
                </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="analysisDependency">
+      <complexType>
+         <attribute name="analysis" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.grana.analysisProviders/analysisProvider/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>

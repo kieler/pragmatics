@@ -17,45 +17,39 @@ import java.util.List;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
-import de.cau.cs.kieler.kiml.grana.ui.AnalysisResultDialog;
-import de.cau.cs.kieler.kiml.grana.ui.DiagramAnalyser;
+import de.cau.cs.kieler.kiml.grana.AnalysisServices;
+import de.cau.cs.kieler.kiml.grana.ui.AnalysisSelectionDialog;
 
 /**
- * The handler which is responsible to perform the last selected analyses on a
- * graphical diagram.
+ * The handler which is responsible to configure the analyses selection.
  * 
  * @author mri
  */
-public class FastAnalysisHandler extends AbstractAnalysisHandler {
+public class ConfigureAnalysesHandler extends AbstractAnalysisHandler {
 
     /**
      * {@inheritDoc}
      */
     public Object execute(final ExecutionEvent event) throws ExecutionException {
-
-        // get the active editor
-        IEditorPart editorPart = HandlerUtil.getActiveEditor(event);
+        
         // let the user select the analyses
         Shell shell = HandlerUtil.getActiveWorkbenchWindow(event).getShell();
-        List<AbstractInfoAnalysis> result = getLastAnalysesSelection();
-        AbstractInfoAnalysis[] analyses =
-                new AbstractInfoAnalysis[result.size()];
-        result.toArray(analyses);
+        AnalysisSelectionDialog selectionDialog =
+                new AnalysisSelectionDialog(shell, AnalysisServices
+                        .getInstance().getCategories());
+        selectionDialog.setInitialElementSelections(getLastAnalysesSelection());
+        int code = selectionDialog.open();
 
-        // perform the analyses on the active diagram
-        Object[] results =
-                DiagramAnalyser.analyse(editorPart, null, analyses, true);
-
-        AnalysisResultDialog resultDialog =
-                new AnalysisResultDialog(shell, analyses, results);
-        // only show the result dialog if there is something to show
-        if (!resultDialog.isEmpty()) {
-            resultDialog.open();
+        if (code == Dialog.OK) {
+            // get the selected analyses
+            List<AbstractInfoAnalysis> analyses = selectionDialog.getAnalyses();
+            // save the last user selection
+            setLastAnalysesSelection(analyses);
         }
 
         return null;

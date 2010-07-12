@@ -13,6 +13,9 @@
  */
 package de.cau.cs.kieler.kiml.grana.ui;
 
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
@@ -41,10 +44,6 @@ public class AnalysisResultDialog extends Dialog {
     /** the dialogs default height. */
     private static final int DEFAULT_HEIGHT = 600;
 
-    /** the performed analyses. */
-    private AbstractInfoAnalysis[] analyses;
-    /** the results to display. */
-    private Object[] analysisResults;
     /** the html this dialog is displaying. */
     private String html;
     /** is something there to display? */
@@ -61,15 +60,12 @@ public class AnalysisResultDialog extends Dialog {
      *            the analysis results to display
      */
     public AnalysisResultDialog(final Shell parentShell,
-            final AbstractInfoAnalysis[] infoAnalyses, final Object[] results) {
+            final List<AbstractInfoAnalysis> infoAnalyses, final Map<String, Object> results) {
         super(parentShell);
-        analyses = infoAnalyses;
-        analysisResults = results;
         // build the html content
         html = "<HTML><HEAD></HEAD><BODY><TABLE border=0 cellpadding='10'>";
-        for (int i = 0; i < analysisResults.length; ++i) {
-            Object obj = analysisResults[i];
-            AbstractInfoAnalysis analysis = analyses[i];
+        for (AbstractInfoAnalysis analysis : infoAnalyses) {
+            Object obj = results.get(analysis.getID());
             String analysisHtml = AnalysisServices.getInstance().visualizeResult(obj);
             if (analysisHtml != null) {
                 empty = false;

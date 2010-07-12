@@ -14,18 +14,16 @@
 package de.cau.cs.kieler.kiml.grana.handlers;
 
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
-import de.cau.cs.kieler.kiml.grana.AnalysisServices;
 import de.cau.cs.kieler.kiml.grana.ui.AnalysisResultDialog;
-import de.cau.cs.kieler.kiml.grana.ui.AnalysisSelectionDialog;
 import de.cau.cs.kieler.kiml.grana.ui.DiagramAnalyser;
 
 /**
@@ -40,36 +38,21 @@ public class AnalysisHandler extends AbstractAnalysisHandler {
      * {@inheritDoc}
      */
     public Object execute(final ExecutionEvent event) throws ExecutionException {
-        
+       
         // get the active editor
         IEditorPart editorPart = HandlerUtil.getActiveEditor(event);
         // let the user select the analyses
         Shell shell = HandlerUtil.getActiveWorkbenchWindow(event).getShell();
-        AnalysisSelectionDialog selectionDialog =
-                new AnalysisSelectionDialog(shell, AnalysisServices
-                        .getInstance().getCategories());
-        selectionDialog.setInitialElementSelections(getLastAnalysesSelection());
-        int code = selectionDialog.open();
-
-        if (code == Dialog.OK) { // get the selected analyses
-            List<AbstractInfoAnalysis> result = selectionDialog.getAnalyses();
-            AbstractInfoAnalysis[] analyses =
-                    new AbstractInfoAnalysis[result.size()];
-            result.toArray(analyses);
-
-            // save the last user selection
-            setLastAnalysesSelection(result);
-
-            // perform the analyses on the active diagram
-            Object[] results =
-                    DiagramAnalyser.analyse(editorPart, null, analyses, true);
-
-            AnalysisResultDialog resultDialog =
-                    new AnalysisResultDialog(shell, analyses, results);
-            // only show the result dialog if there is something to show
-            if (!resultDialog.isEmpty()) {
-                resultDialog.open();
-            }
+        List<AbstractInfoAnalysis> analyses = getLastAnalysesSelection();
+        // perform the analyses on the active diagram
+        Map<String, Object> results =
+                DiagramAnalyser.analyse(editorPart, null, analyses, true);
+        // prepare the result presentation
+        AnalysisResultDialog resultDialog =
+                new AnalysisResultDialog(shell, analyses, results);
+        // only show the result dialog if there is something to show
+        if (!resultDialog.isEmpty()) {
+            resultDialog.open();
         }
 
         return null;

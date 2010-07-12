@@ -15,6 +15,7 @@ package de.cau.cs.kieler.kiml.grana.analyses;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -32,10 +33,11 @@ public class NodeCountAnalysis implements IAnalysis {
      * {@inheritDoc}
      */
     public Object doAnalysis(final KNode parentNode,
+            final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor)
             throws KielerException {
         progressMonitor.begin("Number of Nodes analysis", 1);
-        
+
         Integer numberOfNodes = 0;
         List<KNode> nodes = new LinkedList<KNode>();
         nodes.add(parentNode);
@@ -47,8 +49,7 @@ public class NodeCountAnalysis implements IAnalysis {
                 nodes.add(childNode);
             }
         }
-
         progressMonitor.done();
-        return numberOfNodes;    }
-
+        return numberOfNodes;
+    }
 }
