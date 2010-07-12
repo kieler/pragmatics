@@ -11,14 +11,12 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.evol;
+package de.cau.cs.kieler.kiml.evol.genetic;
 
 import java.util.Comparator;
 
 import org.eclipse.core.runtime.Assert;
 
-import de.cau.cs.kieler.kiml.evol.genetic.Genome;
-import de.cau.cs.kieler.kiml.evol.genetic.IGene;
 
 // TODO: discuss whether this class should be merged with Genome.
 /**

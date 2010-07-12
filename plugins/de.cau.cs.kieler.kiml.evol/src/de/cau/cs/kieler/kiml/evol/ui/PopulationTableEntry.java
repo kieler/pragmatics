@@ -1,6 +1,6 @@
 package de.cau.cs.kieler.kiml.evol.ui;
 
-import de.cau.cs.kieler.kiml.evol.Individual;
+import de.cau.cs.kieler.kiml.evol.genetic.Individual;
 
 /**
  * A population table entry contains an individual.

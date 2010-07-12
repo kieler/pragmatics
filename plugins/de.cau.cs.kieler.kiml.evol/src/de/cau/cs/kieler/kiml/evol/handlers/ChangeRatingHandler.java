@@ -5,7 +5,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
 
-import de.cau.cs.kieler.kiml.evol.Individual;
+import de.cau.cs.kieler.kiml.evol.genetic.Individual;
 import de.cau.cs.kieler.kiml.evol.ui.EvolView;
 import de.cau.cs.kieler.kiml.evol.ui.EvolView.SelectorTableViewer;
 

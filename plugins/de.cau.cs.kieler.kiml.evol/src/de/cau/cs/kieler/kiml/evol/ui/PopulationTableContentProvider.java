@@ -3,7 +3,7 @@ package de.cau.cs.kieler.kiml.evol.ui;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import de.cau.cs.kieler.kiml.evol.Individual;
+import de.cau.cs.kieler.kiml.evol.genetic.Individual;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 
 /**
