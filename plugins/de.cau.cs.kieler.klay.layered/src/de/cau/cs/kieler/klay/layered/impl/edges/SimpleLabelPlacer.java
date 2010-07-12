@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.layered.impl.edges;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.Coord;
@@ -74,18 +75,16 @@ public class SimpleLabelPlacer extends AbstractAlgorithm implements ILabelPlacer
                                 Coord portPosition = new Coord(edge.getSource().getPos().x,
                                         edge.getSource().getPos().y);
                                 portPosition.add(edge.getSource().getNode().getPos());
-                                float minDistanceDifference = Float.POSITIVE_INFINITY;
+                                double minDistanceDifference = Float.POSITIVE_INFINITY;
                                 Coord middlePoint = null;
                                 for (Coord bPoint : longEdge.getEdge().getBendPoints()) {
-                                    float bPointDistanceA, bPointDistanceB, bPointDifference;
-                                    //euklidean metric
-                                    bPointDistanceA =
-                                            (float) Math.sqrt(Math.pow((source.x - bPoint.x), 2)
-                                            + Math.pow((source.y - bPoint.y), 2));
-                                    bPointDistanceB =
-                                            (float) Math.sqrt(Math.pow((target.x - bPoint.x), 2)
-                                            + Math.pow((target.y - bPoint.y), 2));
-                                    bPointDifference = Math.abs(bPointDistanceA - bPointDistanceB);
+                                    double bPointDifference;
+                                    KVector vectorBPoint = new KVector(bPoint.x, bPoint.y);
+                                    KVector vectorSource = new KVector(source.x, source.y);
+                                    KVector vectorTarget = new KVector(target.x, target.y);
+                                    
+                                    bPointDifference = Math.abs(vectorBPoint.distance(vectorSource)
+                                            - vectorBPoint.distance(vectorTarget));
                                     if (bPointDifference < minDistanceDifference) {
                                         minDistanceDifference = bPointDifference;
                                         middlePoint = bPoint;
