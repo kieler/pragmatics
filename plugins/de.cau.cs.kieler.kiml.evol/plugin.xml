@@ -2,7 +2,6 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="evolutionData" name="Evolution Data" schema="schema/evolutionData.exsd"/>
-   <extension-point id="distribution" name="Distribution" schema="schema/distribution.exsd"/>
    <extension
          point="org.eclipse.ui.views">
       <view
