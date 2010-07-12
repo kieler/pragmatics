@@ -77,7 +77,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
     private static final int MINIMAL_BOX_WIDTH = 5;
 
     /** Division factor to calculate box widths. */
-    private static final int BOX_WIDTH_DIVISION_FACTOR = 5;
+    private static final int BOX_WIDTH_DIVISION_FACTOR = 2;
 
     /** The DebugCanvas to use for debug-drawings. **/
     private DebugCanvas debugCanvas;
@@ -132,6 +132,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
      */
     public LinkedList<Rectangle2D.Double> getBoxes(final LEdge edge) {
 
+        
         LPort currentTarget = edge.getTarget();
         LPort currentSource = edge.getSource();
         int minBoxHeight = Math.max(MINIMAL_BOX_WIDTH, (int) spacing / BOX_WIDTH_DIVISION_FACTOR);
@@ -142,7 +143,10 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
             debugCanvas.clear();
         }
 
-        int defaultboxwidth = (int) Math.max(2 + 2 + 1, (int) spacing / ((2 + 2 + 1)));
+        int defaultboxwidth = (int) Math.max(2 + 2 + 1, (int) spacing / BOX_WIDTH_DIVISION_FACTOR);
+        
+
+        System.out.println(defaultboxwidth + "/" + minBoxHeight);
 
         // where are we currently
         float reachedx = (float) currentSource.getPos().x + currentSource.getNode().getPos().x;
