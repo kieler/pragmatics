@@ -30,20 +30,24 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
-//import org.graphdrawing.graphml.xmlns.GraphType;
-//import org.graphdrawing.graphml.xmlns.XmlnsPackage;
-//import org.graphdrawing.graphml.xmlns.util.XmlnsResourceFactoryImpl;
+import org.graphdrawing.graphml.xmlns.XmlnsPackage;
 
+import de.cau.cs.kieler.core.model.util.XtendTransformationUtil;
+import de.cau.cs.kieler.graphs.GraphsPackage;
 import de.cau.cs.kieler.graphs.GraphsPlugin;
 
 /**
@@ -163,13 +167,6 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
                 resourceSet.createResource(URI.createURI(file.getLocationURI()
                         .toString()));
 
-        /*GraphType graphMLGraph = readGraphMLGraph(importFileName);
-        if (graphMLGraph == null) {
-            importPage.setErrorMessage(MESSAGE_INVALID_FILE);
-            monitor.done();
-            return false;
-        }*/
-
         emfResource.save(Collections.EMPTY_MAP);
         file.refreshLocal(1, null);
 
@@ -177,32 +174,50 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
         return true;
     }
 
-    /**
-     * Returns a graphml graph from the given file name.
-     * 
-     * @param fileName
-     *            the file name
-     * @return the graph
-     */
-    /*private GraphType readGraphMLGraph(String fileName) {
-        File file = new File(fileName);
-        if (file.exists()) {
-            ResourceSet resourceSet = new ResourceSetImpl();
-            resourceSet
-                    .getResourceFactoryRegistry()
-                    .getExtensionToFactoryMap()
-                    .put(Resource.Factory.Registry.DEFAULT_EXTENSION,
-                            new XmlnsResourceFactoryImpl());
-            resourceSet.getPackageRegistry().put(XmlnsPackage.eNS_URI,
-                    XmlnsPackage.eINSTANCE);
-            URI uri = URI.createFileURI(file.getAbsolutePath());
-            Resource resource = resourceSet.getResource(uri, true);
+    private boolean transformGraphMLGraph(String fileName) {
+        /*final String transformation = "transformations/graphml2graphs";
+        final String fun = "transform";
+        URI input = URI.createURI("");
+        URI output = URI.createURI("");
+        
+        EPackage p1 = GraphsPackage.eINSTANCE;
+        EPackage p2 = XmlnsPackage.eINSTANCE;
+        
+        Status myStatus = null;
+        try {
+            // get input model from currently selected file in Explorer
+            ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                    .getSelectionService().getSelection();
+            File file = (File)((TreeSelection)selection).getFirstElement();
+            input = URI.createPlatformResourceURI(file.getFullPath().toString(),true);  
             
-            return null;
-        } else {
-            return null;
-        }
-    }*/
+            // get output model from input model
+            output = URI.createURI(input.toString());
+            output = output.trimFileExtension().appendFileExtension("kaom");
+                        
+            XtendTransformationUtil
+                    .model2ModelTransform(transformation, fun, input, output, p1, p2);
+        } catch (KielerException e) {
+            myStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+                    "Failed to transform Ptolemy model into KAOM model.", e);
+        } catch (NullPointerException npe) {
+            myStatus = new Status(
+                    IStatus.ERROR,
+                    Activator.PLUGIN_ID,
+                    "Failed to transform Ptolemy model into KAOM model. Could not determine input file.",
+                    npe);
+        } catch(ClassCastException cce){
+            myStatus = new Status(
+                    IStatus.WARNING,
+                    Activator.PLUGIN_ID,
+                    "Failed to transform Ptolemy model into KAOM model. Could not determine input file. No file selected.");
+        }finally {
+            if (myStatus != null) {
+                StatusManager.getManager().handle(myStatus, StatusManager.SHOW);
+            }
+        }*/
+        return false;
+    }
 
     /**
      * {@inheritDoc}

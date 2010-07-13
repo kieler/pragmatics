@@ -39,5 +39,14 @@
             name="Graph File">
       </wizard>
    </extension>
+   <extension
+         point="org.eclipse.gmf.runtime.diagram.ui.editpolicyProviders">
+      <editpolicyProvider
+            class="de.cau.cs.kieler.graphs.custom.GraphsDeletionPolicyProvider">
+         <Priority
+               name="Lowest">
+         </Priority>
+      </editpolicyProvider>
+   </extension>
       
 </plugin>
