@@ -20,9 +20,6 @@
             description="The average node degree of all nodes including hierarchies."
             id="de.cau.cs.kieler.kiml.grana.averageNodeDegree"
             name="Average Node Degree">
-         <analysisDependency
-               analysis="de.cau.cs.kieler.kiml.grana.nodeCount">
-         </analysisDependency>
       </analysisProvider>
       <analysisProvider
             category="de.cau.cs.kieler.kiml.grana.basicAnalyses"

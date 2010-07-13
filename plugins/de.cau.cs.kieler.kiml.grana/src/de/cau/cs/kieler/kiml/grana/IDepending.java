@@ -26,18 +26,18 @@ import java.util.List;
  */
 public interface IDepending<T extends Comparable<T>> {
 
-	/**
-	 * Returns the (unique) identifier for this object.
-	 * 
-	 * @return the identifier
-	 */
-	T getID();
+    /**
+     * Returns the (unique) identifier for this object.
+     * 
+     * @return the identifier
+     */
+    T getID();
 
-	/**
-	 * Returns a list of identifiers this object is depending on.
-	 * 
-	 * @return the list of dependency identifiers or null if the object has no
-	 *         dependencies
-	 */
-	List<T> getDependencies();
+    /**
+     * Returns a list of identifiers this object is depending on.
+     * 
+     * @return the list of dependency identifiers or null if the object has no
+     *         dependencies
+     */
+    List<T> getDependencies();
 }

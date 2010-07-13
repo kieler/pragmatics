@@ -25,6 +25,10 @@ import java.util.Stack;
  * A graph structure for expressing and resolving object dependencies.
  * 
  * @author mri
+ * @param <S>
+ *            the identifier type
+ * @param <T>
+ *            the object type
  */
 public class DependencyGraph<S extends Comparable<S>, T extends IDepending<S>> {
 
@@ -60,23 +64,25 @@ public class DependencyGraph<S extends Comparable<S>, T extends IDepending<S>> {
      * 
      * @param object
      *            the object to remove
-     * @result the removed objects
+     * @return the removed objects
      */
     public List<T> remove(final T object) {
-	    if(nodes.containsKey(object.getID())) {
-	        List<Node> removedNodes = removeNodeAndDependencies(nodes.get(object.getID()));
-	        List<T> removedObjects = new LinkedList<T>();
-	        for (Node node : removedNodes) {
-	            removedObjects.add(node.getObject());
-	        }
-	        return removedObjects;
-	    } else {
-	        return new LinkedList<T>();
-	    }
-	}
+        if (nodes.containsKey(object.getID())) {
+            List<Node> removedNodes =
+                    removeNodeAndDependencies(nodes.get(object.getID()));
+            List<T> removedObjects = new LinkedList<T>();
+            for (Node node : removedNodes) {
+                removedObjects.add(node.getObject());
+            }
+            return removedObjects;
+        } else {
+            return new LinkedList<T>();
+        }
+    }
 
     /**
-     * Adds a collection of objects to the graph and tries to resolve dependencies.<br>
+     * Adds a collection of objects to the graph and tries to resolve
+     * dependencies.<br>
      * Returns a list of objects that could not be added cause they had missing
      * dependencies or were part of a cycle.
      * 
@@ -131,9 +137,9 @@ public class DependencyGraph<S extends Comparable<S>, T extends IDepending<S>> {
     }
 
     /**
-     * Returns a sorted list of the objects so that an object that depends on another
-     * object precedes it in the list. Removes objects that are not represented in this
-     * graph.
+     * Returns a sorted list of the objects so that an object that depends on
+     * another object precedes it in the list. Removes objects that are not
+     * represented in this graph.
      * 
      * @param objects
      *            the objects
@@ -208,8 +214,8 @@ public class DependencyGraph<S extends Comparable<S>, T extends IDepending<S>> {
     }
 
     /**
-     * Removes the node from the graph and all nodes that depend on it or another removed
-     * node.
+     * Removes the node from the graph and all nodes that depend on it or
+     * another removed node.
      * 
      * @param node
      *            the node
