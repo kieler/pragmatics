@@ -30,6 +30,8 @@ public class Example {
 
 	private String contact;
 
+	private String namespaceId;
+
 	public Example(String id, String name) {
 		init(id, name, INITVERSION);
 	}
@@ -116,4 +118,11 @@ public class Example {
 
 	}
 
+	public void setNamespaceId(String namespaceId) {
+		this.namespaceId = namespaceId;
+	}
+
+	public String getNamespaceId() {
+		return this.namespaceId;
+	}
 }

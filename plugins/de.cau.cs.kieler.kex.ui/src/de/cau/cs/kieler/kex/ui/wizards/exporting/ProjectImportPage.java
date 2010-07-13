@@ -1,4 +1,4 @@
-package de.cau.cs.kieler.kex.ui.wizards.exportwizard;
+package de.cau.cs.kieler.kex.ui.wizards.exporting;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;

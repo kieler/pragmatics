@@ -32,6 +32,9 @@ public class ImportWizard extends Wizard implements IWizard {
 			// Messagebox ausgabe
 			return false;
 		}
+		// TODO refresh local workspace
+		// it would be best if only folder will refreshed in which the example
+		// has to be added.
 		return true;
 	}
 

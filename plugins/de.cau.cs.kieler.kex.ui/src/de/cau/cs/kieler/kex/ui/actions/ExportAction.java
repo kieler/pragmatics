@@ -7,7 +7,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-import de.cau.cs.kieler.kex.ui.wizards.exportwizard.ExportExampleWizard;
+import de.cau.cs.kieler.kex.ui.wizards.exporting.ExportExampleWizard;
 
 public class ExportAction implements IWorkbenchWindowActionDelegate {
 

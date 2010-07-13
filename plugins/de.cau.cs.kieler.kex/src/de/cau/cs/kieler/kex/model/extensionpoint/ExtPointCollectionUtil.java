@@ -1,8 +1,8 @@
 package de.cau.cs.kieler.kex.model.extensionpoint;
 
-import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -12,6 +12,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;
 
 import de.cau.cs.kieler.core.KielerException;
+import de.cau.cs.kieler.core.KielerModelException;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.ExampleResource;
 
@@ -39,9 +40,6 @@ public class ExtPointCollectionUtil {
 			KielerException {
 
 		Example example = null;
-		// TODO Versuch: ueber getAttributes elemente holen... also generischer
-		// loesen.
-		// TODO null pruefungen
 		String idAttribute = exampleElement.getAttribute("id");
 		String nameAttribute = exampleElement.getAttribute("name");
 		String versionAttribute = exampleElement.getAttribute("version");
@@ -52,26 +50,26 @@ public class ExtPointCollectionUtil {
 			// FIXME IllegalArgumentException sehr wahrscheinlich, da das
 			// version feld
 			// ein freier string, min. default besser noch regex.
-			example = new Example(idAttribute, nameAttribute, Version
-					.parseVersion(versionAttribute));
+			example = new Example(idAttribute, nameAttribute,
+					Version.parseVersion(versionAttribute));
 		else
 			example = new Example(idAttribute, nameAttribute);
 		example.setDescription(exampleElement.getAttribute("description"));
 		example.setContact(exampleElement.getAttribute("contact"));
+		String exNamespaceId = exampleElement.getNamespaceIdentifier();
+		example.setNamespaceId(exNamespaceId);
 		List<ExampleResource> exampleResources = ExtPointCollectionUtil
-				.filterExampleResources(exampleElement);
+				.filterExampleResources(exampleElement, exNamespaceId);
 		example.addResources(exampleResources);
 		return example;
 	}
 
 	public static List<ExampleResource> filterExampleResources(
-			final IConfigurationElement exampleElement) throws KielerException {
+			final IConfigurationElement exampleElement, String exNamespaceId)
+			throws KielerException {
 
-		// TODO wie �berall versuchen generisch loesen, d.h.
-		// getAttributeName()
-		// und dann mittels reflection bef�llen.
 		List<ExampleResource> exampleResources = new ArrayList<ExampleResource>();
-		String exampleIdentifier = exampleElement.getNamespaceIdentifier();
+
 		for (IConfigurationElement configElement : exampleElement
 				.getChildren("example_resource")) {
 			ExampleResource exampleResource = new ExampleResource();
@@ -79,35 +77,42 @@ public class ExtPointCollectionUtil {
 			exampleResource.setHeadResource(Boolean.valueOf(configElement
 					.getAttribute("is_head_resource")));
 
-			addResource(exampleResource, exampleIdentifier, configElement);
+			addResource(exampleResource, exNamespaceId, configElement);
 			exampleResources.add(exampleResource);
 		}
 		return exampleResources;
 	}
 
-	private static void addResource(ExampleResource exampleResource,
-			final String exampleIdentifier,
-			final IConfigurationElement configElement) {
-		Bundle bundle = Platform.getBundle(exampleIdentifier);
-		// it is not possible to use here a file.
-		// needed because of a eclipse bug
+	private static void addResource(ExampleResource exResource,
+			final String exNamespaceId,
+			final IConfigurationElement configElement) throws KielerException {
+		Bundle bundle = Platform.getBundle(exNamespaceId);
 		URL resourceURL = bundle.getResource(configElement
 				.getAttribute("resource"));
 		validateURL(resourceURL);
-		exampleResource.addResource(resourceURL);
+		exResource.addResource(resourceURL);
 
-		// if (file.isDirectory()) {
-		// File[] listFiles = file.listFiles();
-		// createSubStructure(file);
-		// }
+		// searching for subfiles and folders.
+		Enumeration<?> dict = bundle.findEntries(resourceURL.getPath(), null,
+				true);
+		// TODO filter for .svn and .cvs files have to be added
+		// properly you can set this to bundle.findEntries()...
+		// adding subs
+
+		if (dict != null) {
+			while (dict.hasMoreElements()) {
+				URL dictElement = (URL) dict.nextElement();
+				if (!dictElement.getPath().contains(".svn"))
+					exResource.addResource(dictElement);
+			}
+		}
 	}
 
-	private static void createSubStructure(File file) {
-	}
-
-	private static void validateURL(final URL resourceURL) {
+	private static void validateURL(final URL resourceURL)
+			throws KielerException {
 		if (resourceURL == null || resourceURL.getPath().length() < 4) {
-			// throw new KielerModelException(...);
+			throw new KielerModelException("Filtered URL is not valid.",
+					resourceURL);
 		}
 	}
 
