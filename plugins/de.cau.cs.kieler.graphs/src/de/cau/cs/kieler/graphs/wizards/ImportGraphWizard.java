@@ -46,6 +46,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.graphdrawing.graphml.xmlns.XmlnsPackage;
 
+import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.model.util.XtendTransformationUtil;
 import de.cau.cs.kieler.graphs.GraphsPackage;
 import de.cau.cs.kieler.graphs.GraphsPlugin;
@@ -101,7 +102,9 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
             public void run(final IProgressMonitor monitor)
                     throws InvocationTargetException {
                 try {
-                    success = doFinish(importFileName, containerName, fileName, monitor);
+                    success =
+                            doFinish(importFileName, containerName, fileName,
+                                    monitor);
                 } catch (CoreException e) {
                     throw new InvocationTargetException(e);
                 } catch (IOException e) {
@@ -123,13 +126,12 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
             StatusManager.getManager().handle(status, StatusManager.SHOW);
             return false;
         }
-        
+
         return success;
     }
 
     /**
-     * Find the container and create the file if missing or just replace its
-     * contents.
+     * Find the container and create the file if missing or just replace its contents.
      * 
      * @param importFileName
      *            name of the import file
@@ -160,63 +162,54 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
             throw new CoreException(status);
         }
         IContainer container = (IContainer) resource;
-        final IFile file = container.getFile(new Path(fileName));
 
-        ResourceSet resourceSet = new ResourceSetImpl();
-        Resource emfResource =
-                resourceSet.createResource(URI.createURI(file.getLocationURI()
-                        .toString()));
-
-        emfResource.save(Collections.EMPTY_MAP);
-        file.refreshLocal(1, null);
-
-        monitor.done();
-        return true;
-    }
-
-    private boolean transformGraphMLGraph(String fileName) {
-        /*final String transformation = "transformations/graphml2graphs";
+        final String transformation = "transformations/graphml2graphs";
         final String fun = "transform";
         URI input = URI.createURI("");
         URI output = URI.createURI("");
-        
+
         EPackage p1 = GraphsPackage.eINSTANCE;
         EPackage p2 = XmlnsPackage.eINSTANCE;
-        
+
         Status myStatus = null;
         try {
-            // get input model from currently selected file in Explorer
-            ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                    .getSelectionService().getSelection();
-            File file = (File)((TreeSelection)selection).getFirstElement();
-            input = URI.createPlatformResourceURI(file.getFullPath().toString(),true);  
-            
-            // get output model from input model
-            output = URI.createURI(input.toString());
-            output = output.trimFileExtension().appendFileExtension("kaom");
-                        
-            XtendTransformationUtil
-                    .model2ModelTransform(transformation, fun, input, output, p1, p2);
+            input = URI.createURI(importFileName, true);
+            output =
+                    URI.createPlatformResourceURI(
+                            container.getFile(new Path(fileName)).getFullPath()
+                                    .toString(), true);
+            XtendTransformationUtil.model2ModelTransform(transformation, fun,
+                    input, output, p1, p2);
         } catch (KielerException e) {
-            myStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-                    "Failed to transform Ptolemy model into KAOM model.", e);
+            myStatus =
+                    new Status(
+                            IStatus.ERROR,
+                            GraphsPlugin.PLUGIN_ID,
+                            "Failed to transform GraphML model into Graphs model.",
+                            e);
         } catch (NullPointerException npe) {
-            myStatus = new Status(
-                    IStatus.ERROR,
-                    Activator.PLUGIN_ID,
-                    "Failed to transform Ptolemy model into KAOM model. Could not determine input file.",
-                    npe);
-        } catch(ClassCastException cce){
-            myStatus = new Status(
-                    IStatus.WARNING,
-                    Activator.PLUGIN_ID,
-                    "Failed to transform Ptolemy model into KAOM model. Could not determine input file. No file selected.");
-        }finally {
+            myStatus =
+                    new Status(
+                            IStatus.ERROR,
+                            GraphsPlugin.PLUGIN_ID,
+                            "Failed to transform GraphML model into Graphs model. Could not determine input file.",
+                            npe);
+        } catch (ClassCastException cce) {
+            myStatus =
+                    new Status(
+                            IStatus.WARNING,
+                            GraphsPlugin.PLUGIN_ID,
+                            "Failed to transform GraphML model into Graphs model. Could not determine input file.");
+        } finally {
             if (myStatus != null) {
                 StatusManager.getManager().handle(myStatus, StatusManager.SHOW);
             }
-        }*/
-        return false;
+        }
+
+        // file.refreshLocal(1, null);
+
+        monitor.done();
+        return true;
     }
 
     /**

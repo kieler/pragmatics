@@ -1,3 +1,7 @@
 import graphs;
 import xmlns;
 
+create Node transform(DocumentRoot root):
+	this.setIsHypernode(true)
+;
+
