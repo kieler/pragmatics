@@ -132,7 +132,6 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
      */
     public LinkedList<Rectangle2D.Double> getBoxes(final LEdge edge) {
 
-        
         LPort currentTarget = edge.getTarget();
         LPort currentSource = edge.getSource();
         int minBoxHeight = Math.max(MINIMAL_BOX_WIDTH, (int) spacing / BOX_WIDTH_DIVISION_FACTOR);
@@ -144,7 +143,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
         }
 
         int defaultboxwidth = (int) Math.max(2 + 2 + 1, (int) spacing / BOX_WIDTH_DIVISION_FACTOR);
-        
+
         // where are we currently
         float reachedx = (float) currentSource.getPos().x + currentSource.getNode().getPos().x;
 
@@ -528,15 +527,18 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
             for (LNode node : layer.getNodes()) {
                 // filter out start points of long edges
                 if (node.getProperty(Properties.NODE_TYPE) != Properties.NodeType.LONG_EDGE) {
-                    for (LPort port : node.getPorts(PortType.OUTPUT)) {
-                        for (LEdge edge : port.getEdges()) {
-                            //addEdge(edge);
-                        }
-                    }
+                    // for (LPort port : node.getPorts(PortType.OUTPUT)) {
+                    // for (LEdge edge : port.getEdges()) {
+                    // addEdge(edge);
+                    // }
+                    // }
                     addNode(node);
                 } else {
                     allDummyNodes.add(new Rectangle2D.Double(node.getPos().x, node.getPos().y, node
                             .getSize().x, node.getSize().y));
+                    if (node.getPos().y > layeredGraph.getSize().y) {
+                        layeredGraph.getSize().y = node.getPos().y;
+                    }
                 }
             }
         }
