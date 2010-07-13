@@ -145,9 +145,6 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
 
         int defaultboxwidth = (int) Math.max(2 + 2 + 1, (int) spacing / BOX_WIDTH_DIVISION_FACTOR);
         
-
-        System.out.println(defaultboxwidth + "/" + minBoxHeight);
-
         // where are we currently
         float reachedx = (float) currentSource.getPos().x + currentSource.getNode().getPos().x;
 
@@ -533,12 +530,11 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                 if (node.getProperty(Properties.NODE_TYPE) != Properties.NodeType.LONG_EDGE) {
                     for (LPort port : node.getPorts(PortType.OUTPUT)) {
                         for (LEdge edge : port.getEdges()) {
-                            addEdge(edge);
+                            //addEdge(edge);
                         }
                     }
                     addNode(node);
                 } else {
-                    // System.out.println("Dummy: " + node);
                     allDummyNodes.add(new Rectangle2D.Double(node.getPos().x, node.getPos().y, node
                             .getSize().x, node.getSize().y));
                 }
