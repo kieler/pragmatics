@@ -25,7 +25,7 @@ public class ExampleIOUtil {
 	public static void writeFile(URL sourceUrl, String destFile,
 			boolean overwrite) throws IOException {
 		File f2 = new File(destFile);
-		if (f2.exists() && !overwrite) {
+		if (!f2.exists() || !overwrite) {
 			return;
 		}
 

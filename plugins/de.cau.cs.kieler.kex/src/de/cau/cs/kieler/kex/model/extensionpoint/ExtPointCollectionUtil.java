@@ -1,5 +1,6 @@
 package de.cau.cs.kieler.kex.model.extensionpoint;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,8 +52,8 @@ public class ExtPointCollectionUtil {
 			// FIXME IllegalArgumentException sehr wahrscheinlich, da das
 			// version feld
 			// ein freier string, min. default besser noch regex.
-			example = new Example(idAttribute, nameAttribute,
-					Version.parseVersion(versionAttribute));
+			example = new Example(idAttribute, nameAttribute, Version
+					.parseVersion(versionAttribute));
 		else
 			example = new Example(idAttribute, nameAttribute);
 		example.setDescription(exampleElement.getAttribute("description"));
@@ -66,7 +67,8 @@ public class ExtPointCollectionUtil {
 	public static List<ExampleResource> filterExampleResources(
 			final IConfigurationElement exampleElement) throws KielerException {
 
-		// TODO wie �berall versuchen generisch loesen, d.h. getAttributeName()
+		// TODO wie �berall versuchen generisch loesen, d.h.
+		// getAttributeName()
 		// und dann mittels reflection bef�llen.
 		List<ExampleResource> exampleResources = new ArrayList<ExampleResource>();
 		String exampleIdentifier = exampleElement.getNamespaceIdentifier();
@@ -76,28 +78,37 @@ public class ExtPointCollectionUtil {
 			exampleResource.setCategory(configElement.getAttribute("category"));
 			exampleResource.setHeadResource(Boolean.valueOf(configElement
 					.getAttribute("is_head_resource")));
-			exampleResource.addResource(filterResource(exampleIdentifier,
-					configElement));
+
+			addResource(exampleResource, exampleIdentifier, configElement);
 			exampleResources.add(exampleResource);
 		}
 		return exampleResources;
 	}
 
-	private static URL filterResource(final String exampleIdentifier,
+	private static void addResource(ExampleResource exampleResource,
+			final String exampleIdentifier,
 			final IConfigurationElement configElement) {
 		Bundle bundle = Platform.getBundle(exampleIdentifier);
+		// it is not possible to use here a file.
+		// needed because of a eclipse bug
 		URL resourceURL = bundle.getResource(configElement
 				.getAttribute("resource"));
-
-		if (resourceURL == null || resourceURL.getPath().length() < 4) {
-			// throw new KielerModelException(...);
-		}
 		validateURL(resourceURL);
-		return resourceURL;
+		exampleResource.addResource(resourceURL);
+
+		// if (file.isDirectory()) {
+		// File[] listFiles = file.listFiles();
+		// createSubStructure(file);
+		// }
+	}
+
+	private static void createSubStructure(File file) {
 	}
 
 	private static void validateURL(final URL resourceURL) {
-		// TODO to implement
+		if (resourceURL == null || resourceURL.getPath().length() < 4) {
+			// throw new KielerModelException(...);
+		}
 	}
 
 }

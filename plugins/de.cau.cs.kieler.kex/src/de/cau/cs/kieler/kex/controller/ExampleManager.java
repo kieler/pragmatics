@@ -104,7 +104,7 @@ public class ExampleManager {
 	}
 
 	/**
-	 * gives a list of examples which already imported in local workspace
+	 * gives a list of examples which are already imported in local workspace.
 	 * 
 	 * @return
 	 */
