@@ -2,7 +2,6 @@ package de.cau.cs.kieler.graphs.diagram.edit.parts;
 
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Connection;
-import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionNodeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ITreeBranchEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles;
@@ -10,6 +9,7 @@ import org.eclipse.gmf.runtime.notation.View;
 
 import de.cau.cs.kieler.core.ui.figures.SplineConnection;
 import de.cau.cs.kieler.graphs.custom.DirectedConnection;
+import de.cau.cs.kieler.graphs.custom.GraphsConnection;
 import de.cau.cs.kieler.graphs.diagram.edit.policies.Edge3ItemSemanticEditPolicy;
 import de.cau.cs.kieler.graphs.diagram.part.GraphsDiagramEditorPlugin;
 
@@ -17,122 +17,88 @@ import de.cau.cs.kieler.graphs.diagram.part.GraphsDiagramEditorPlugin;
  * @generated
  */
 public class Edge3EditPart extends ConnectionNodeEditPart implements
-        ITreeBranchEditPart {
+		GraphsConnection, ITreeBranchEditPart {
 
-    /**
-     * @generated
-     */
-    public static final int VISUAL_ID = 4003;
+	/**
+	 * @generated
+	 */
+	public static final int VISUAL_ID = 4003;
 
-    /**
-     * @generated
-     */
-    public Edge3EditPart(View view) {
-        super(view);
-    }
+	/**
+	 * @generated
+	 */
+	public Edge3EditPart(View view) {
+		super(view);
+	}
 
-    /**
-     * @generated
-     */
-    protected void createDefaultEditPolicies() {
-        super.createDefaultEditPolicies();
-        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
-                new Edge3ItemSemanticEditPolicy());
-    }
+	/**
+	 * @generated
+	 */
+	protected void createDefaultEditPolicies() {
+		super.createDefaultEditPolicies();
+		installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
+				new Edge3ItemSemanticEditPolicy());
+	}
 
-    /**
-     * @generated
-     */
-    protected boolean addFixedChild(EditPart childEditPart) {
-        return false;
-    }
+	/**
+	 * Creates figure for this edit part.
+	 * 
+	 * Body of this method does not depend on settings in generation model
+	 * so you may safely remove <i>generated</i> tag and modify it.
+	 * 
+	 * @generated
+	 */
 
-    /**
-     * @generated
-     */
-    protected void addChildVisual(EditPart childEditPart, int index) {
-        if (addFixedChild(childEditPart)) {
-            return;
-        }
-        super.addChildVisual(childEditPart, -1);
-    }
+	protected Connection createConnectionFigure() {
+		Connection figure = new DirectedEdgeFigure();
 
-    /**
-     * @generated
-     */
-    protected boolean removeFixedChild(EditPart childEditPart) {
-        return false;
-    }
+		if (figure instanceof SplineConnection) {
+			((SplineConnection) figure).setSplineMode(GraphsDiagramEditorPlugin
+					.getInstance().getPreferenceStore()
+					.getInt(SplineConnection.PREF_SPLINE_MODE));
+		}
+		return figure;
+	}
 
-    /**
-     * @generated
-     */
-    protected void removeChildVisual(EditPart childEditPart) {
-        if (removeFixedChild(childEditPart)) {
-            return;
-        }
-        super.removeChildVisual(childEditPart);
-    }
+	/**
+	 * @generated
+	 */
+	public DirectedEdgeFigure getPrimaryShape() {
+		return (DirectedEdgeFigure) getFigure();
+	}
 
-    /**
-     * Creates figure for this edit part.
-     * 
-     * Body of this method does not depend on settings in generation model
-     * so you may safely remove <i>generated</i> tag and modify it.
-     * 
-     * @generated
-     */
+	/**
+	 * @generated
+	 */
+	public class DirectedEdgeFigure extends DirectedConnection {
 
-    protected Connection createConnectionFigure() {
-        Connection figure = new DirectedEdgeFigure();
+		/**
+		 * @generated
+		 */
+		public DirectedEdgeFigure() {
 
-        if (figure instanceof SplineConnection) {
-            ((SplineConnection) figure).setSplineMode(GraphsDiagramEditorPlugin
-                    .getInstance().getPreferenceStore().getInt(
-                            SplineConnection.PREF_SPLINE_MODE));
-        }
-        return figure;
-    }
+			this.setForegroundColor(ColorConstants.black);
+		}
 
-    /**
-     * @generated
-     */
-    public DirectedEdgeFigure getPrimaryShape() {
-        return (DirectedEdgeFigure) getFigure();
-    }
+		/**
+		 * @generated
+		 */
+		private boolean myUseLocalCoordinates = false;
 
-    /**
-     * @generated
-     */
-    public class DirectedEdgeFigure extends DirectedConnection {
+		/**
+		 * @generated
+		 */
+		protected boolean useLocalCoordinates() {
+			return myUseLocalCoordinates;
+		}
 
-        /**
-         * @generated
-         */
-        public DirectedEdgeFigure() {
+		/**
+		 * @generated
+		 */
+		protected void setUseLocalCoordinates(boolean useLocalCoordinates) {
+			myUseLocalCoordinates = useLocalCoordinates;
+		}
 
-            this.setForegroundColor(ColorConstants.black);
-        }
-
-        /**
-         * @generated
-         */
-        private boolean myUseLocalCoordinates = false;
-
-        /**
-         * @generated
-         */
-        protected boolean useLocalCoordinates() {
-            return myUseLocalCoordinates;
-        }
-
-        /**
-         * @generated
-         */
-        protected void setUseLocalCoordinates(boolean useLocalCoordinates) {
-            myUseLocalCoordinates = useLocalCoordinates;
-        }
-
-    }
+	}
 
 }

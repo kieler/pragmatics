@@ -6,8 +6,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import java.util.LinkedList;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -15,6 +17,7 @@ import org.eclipse.emf.workspace.util.WorkspaceSynchronizer;
 import org.eclipse.gmf.runtime.emf.core.GMFEditingDomainFactory;
 import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.gmf.runtime.notation.Edge;
+import org.eclipse.gmf.runtime.notation.Node;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IMemento;
@@ -45,1195 +48,973 @@ import de.cau.cs.kieler.graphs.diagram.part.Messages;
  */
 public class GraphsNavigatorContentProvider implements ICommonContentProvider {
 
-    /**
-     * @generated
-     */
-    private static final Object[] EMPTY_ARRAY = new Object[0];
+	/**
+	 * @generated
+	 */
+	private static final Object[] EMPTY_ARRAY = new Object[0];
 
-    /**
-     * @generated
-     */
-    private Viewer myViewer;
+	/**
+	 * @generated
+	 */
+	private Viewer myViewer;
 
-    /**
-     * @generated
-     */
-    private AdapterFactoryEditingDomain myEditingDomain;
+	/**
+	 * @generated
+	 */
+	private AdapterFactoryEditingDomain myEditingDomain;
 
-    /**
-     * @generated
-     */
-    private WorkspaceSynchronizer myWorkspaceSynchronizer;
+	/**
+	 * @generated
+	 */
+	private WorkspaceSynchronizer myWorkspaceSynchronizer;
 
-    /**
-     * @generated
-     */
-    private Runnable myViewerRefreshRunnable;
+	/**
+	 * @generated
+	 */
+	private Runnable myViewerRefreshRunnable;
 
-    /**
-     * @generated
-     */
-    public GraphsNavigatorContentProvider() {
-        TransactionalEditingDomain editingDomain =
-                GMFEditingDomainFactory.INSTANCE.createEditingDomain();
-        myEditingDomain = (AdapterFactoryEditingDomain) editingDomain;
-        myEditingDomain.setResourceToReadOnlyMap(new HashMap() {
-            public Object get(Object key) {
-                if (!containsKey(key)) {
-                    put(key, Boolean.TRUE);
-                }
-                return super.get(key);
-            }
-        });
-        myViewerRefreshRunnable = new Runnable() {
-            public void run() {
-                if (myViewer != null) {
-                    myViewer.refresh();
-                }
-            }
-        };
-        myWorkspaceSynchronizer =
-                new WorkspaceSynchronizer(editingDomain,
-                        new WorkspaceSynchronizer.Delegate() {
-                            public void dispose() {
-                            }
+	/**
+	 * @generated
+	 */
+	@SuppressWarnings({ "unchecked", "serial", "rawtypes" })
+	public GraphsNavigatorContentProvider() {
+		TransactionalEditingDomain editingDomain = GMFEditingDomainFactory.INSTANCE
+				.createEditingDomain();
+		myEditingDomain = (AdapterFactoryEditingDomain) editingDomain;
+		myEditingDomain.setResourceToReadOnlyMap(new HashMap() {
+			public Object get(Object key) {
+				if (!containsKey(key)) {
+					put(key, Boolean.TRUE);
+				}
+				return super.get(key);
+			}
+		});
+		myViewerRefreshRunnable = new Runnable() {
+			public void run() {
+				if (myViewer != null) {
+					myViewer.refresh();
+				}
+			}
+		};
+		myWorkspaceSynchronizer = new WorkspaceSynchronizer(editingDomain,
+				new WorkspaceSynchronizer.Delegate() {
+					public void dispose() {
+					}
 
-                            public boolean handleResourceChanged(
-                                    final Resource resource) {
-                                for (Iterator it =
-                                        myEditingDomain.getResourceSet()
-                                                .getResources().iterator(); it
-                                        .hasNext();) {
-                                    Resource nextResource =
-                                            (Resource) it.next();
-                                    nextResource.unload();
-                                }
-                                if (myViewer != null) {
-                                    myViewer.getControl().getDisplay()
-                                            .asyncExec(myViewerRefreshRunnable);
-                                }
-                                return true;
-                            }
+					public boolean handleResourceChanged(final Resource resource) {
+						unloadAllResources();
+						asyncRefresh();
+						return true;
+					}
 
-                            public boolean handleResourceDeleted(
-                                    Resource resource) {
-                                for (Iterator it =
-                                        myEditingDomain.getResourceSet()
-                                                .getResources().iterator(); it
-                                        .hasNext();) {
-                                    Resource nextResource =
-                                            (Resource) it.next();
-                                    nextResource.unload();
-                                }
-                                if (myViewer != null) {
-                                    myViewer.getControl().getDisplay()
-                                            .asyncExec(myViewerRefreshRunnable);
-                                }
-                                return true;
-                            }
+					public boolean handleResourceDeleted(Resource resource) {
+						unloadAllResources();
+						asyncRefresh();
+						return true;
+					}
 
-                            public boolean handleResourceMoved(
-                                    Resource resource, final URI newURI) {
-                                for (Iterator it =
-                                        myEditingDomain.getResourceSet()
-                                                .getResources().iterator(); it
-                                        .hasNext();) {
-                                    Resource nextResource =
-                                            (Resource) it.next();
-                                    nextResource.unload();
-                                }
-                                if (myViewer != null) {
-                                    myViewer.getControl().getDisplay()
-                                            .asyncExec(myViewerRefreshRunnable);
-                                }
-                                return true;
-                            }
-                        });
-    }
+					public boolean handleResourceMoved(Resource resource,
+							final URI newURI) {
+						unloadAllResources();
+						asyncRefresh();
+						return true;
+					}
+				});
+	}
 
-    /**
-     * @generated
-     */
-    public void dispose() {
-        myWorkspaceSynchronizer.dispose();
-        myWorkspaceSynchronizer = null;
-        myViewerRefreshRunnable = null;
-        for (Iterator it =
-                myEditingDomain.getResourceSet().getResources().iterator(); it
-                .hasNext();) {
-            Resource resource = (Resource) it.next();
-            resource.unload();
-        }
-        ((TransactionalEditingDomain) myEditingDomain).dispose();
-        myEditingDomain = null;
-    }
+	/**
+	 * @generated
+	 */
+	public void dispose() {
+		myWorkspaceSynchronizer.dispose();
+		myWorkspaceSynchronizer = null;
+		myViewerRefreshRunnable = null;
+		myViewer = null;
+		unloadAllResources();
+		((TransactionalEditingDomain) myEditingDomain).dispose();
+		myEditingDomain = null;
+	}
 
-    /**
-     * @generated
-     */
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-        myViewer = viewer;
-    }
+	/**
+	 * @generated
+	 */
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		myViewer = viewer;
+	}
 
-    /**
-     * @generated
-     */
-    public Object[] getElements(Object inputElement) {
-        return getChildren(inputElement);
-    }
+	/**
+	 * @generated
+	 */
+	void unloadAllResources() {
+		for (Resource nextResource : myEditingDomain.getResourceSet()
+				.getResources()) {
+			nextResource.unload();
+		}
+	}
 
-    /**
-     * @generated
-     */
-    public void restoreState(IMemento aMemento) {
-    }
+	/**
+	 * @generated
+	 */
+	void asyncRefresh() {
+		if (myViewer != null && !myViewer.getControl().isDisposed()) {
+			myViewer.getControl().getDisplay()
+					.asyncExec(myViewerRefreshRunnable);
+		}
+	}
 
-    /**
-     * @generated
-     */
-    public void saveState(IMemento aMemento) {
-    }
+	/**
+	 * @generated
+	 */
+	public Object[] getElements(Object inputElement) {
+		return getChildren(inputElement);
+	}
 
-    /**
-     * @generated
-     */
-    public void init(ICommonContentExtensionSite aConfig) {
-    }
+	/**
+	 * @generated
+	 */
+	public void restoreState(IMemento aMemento) {
+	}
 
-    /**
-     * @generated
-     */
-    public Object[] getChildren(Object parentElement) {
-        if (parentElement instanceof IFile) {
-            IFile file = (IFile) parentElement;
-            URI fileURI =
-                    URI.createPlatformResourceURI(
-                            file.getFullPath().toString(), true);
-            Resource resource =
-                    myEditingDomain.getResourceSet().getResource(fileURI, true);
-            Collection result = new ArrayList();
-            result.addAll(createNavigatorItems(selectViewsByType(resource
-                    .getContents(), NodeEditPart.MODEL_ID), file, false));
-            return result.toArray();
-        }
+	/**
+	 * @generated
+	 */
+	public void saveState(IMemento aMemento) {
+	}
 
-        if (parentElement instanceof GraphsNavigatorGroup) {
-            GraphsNavigatorGroup group = (GraphsNavigatorGroup) parentElement;
-            return group.getChildren();
-        }
+	/**
+	 * @generated
+	 */
+	public void init(ICommonContentExtensionSite aConfig) {
+	}
 
-        if (parentElement instanceof GraphsNavigatorItem) {
-            GraphsNavigatorItem navigatorItem =
-                    (GraphsNavigatorItem) parentElement;
-            if (navigatorItem.isLeaf() || !isOwnView(navigatorItem.getView())) {
-                return EMPTY_ARRAY;
-            }
-            return getViewChildren(navigatorItem.getView(), parentElement);
-        }
+	/**
+	 * @generated
+	 */
+	public Object[] getChildren(Object parentElement) {
+		if (parentElement instanceof IFile) {
+			IFile file = (IFile) parentElement;
+			URI fileURI = URI.createPlatformResourceURI(file.getFullPath()
+					.toString(), true);
+			Resource resource = myEditingDomain.getResourceSet().getResource(
+					fileURI, true);
+			ArrayList<GraphsNavigatorItem> result = new ArrayList<GraphsNavigatorItem>();
+			ArrayList<View> topViews = new ArrayList<View>(resource
+					.getContents().size());
+			for (EObject o : resource.getContents()) {
+				if (o instanceof View) {
+					topViews.add((View) o);
+				}
+			}
+			result.addAll(createNavigatorItems(
+					selectViewsByType(topViews, NodeEditPart.MODEL_ID), file,
+					false));
+			return result.toArray();
+		}
 
-        return EMPTY_ARRAY;
-    }
+		if (parentElement instanceof GraphsNavigatorGroup) {
+			GraphsNavigatorGroup group = (GraphsNavigatorGroup) parentElement;
+			return group.getChildren();
+		}
 
-    /**
-     * @generated
-     */
-    private Object[] getViewChildren(View view, Object parentElement) {
-        switch (GraphsVisualIDRegistry.getVisualID(view)) {
+		if (parentElement instanceof GraphsNavigatorItem) {
+			GraphsNavigatorItem navigatorItem = (GraphsNavigatorItem) parentElement;
+			if (navigatorItem.isLeaf() || !isOwnView(navigatorItem.getView())) {
+				return EMPTY_ARRAY;
+			}
+			return getViewChildren(navigatorItem.getView(), parentElement);
+		}
 
-        case NodeEditPart.VISUAL_ID: {
-            Collection result = new ArrayList();
-            GraphsNavigatorGroup links =
-                    new GraphsNavigatorGroup(
-                            Messages.NavigatorGroupName_Node_1000_links,
-                            "icons/linksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            Collection connectedViews =
-                    getChildrenByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node2EditPart.VISUAL_ID));
-            result.addAll(createNavigatorItems(connectedViews, parentElement,
-                    false));
-            connectedViews =
-                    getChildrenByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node3EditPart.VISUAL_ID));
-            result.addAll(createNavigatorItems(connectedViews, parentElement,
-                    false));
-            connectedViews =
-                    getDiagramLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(EdgeEditPart.VISUAL_ID));
-            links
-                    .addChildren(createNavigatorItems(connectedViews, links,
-                            false));
-            connectedViews =
-                    getDiagramLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge2EditPart.VISUAL_ID));
-            links
-                    .addChildren(createNavigatorItems(connectedViews, links,
-                            false));
-            connectedViews =
-                    getDiagramLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge3EditPart.VISUAL_ID));
-            links
-                    .addChildren(createNavigatorItems(connectedViews, links,
-                            false));
-            connectedViews =
-                    getDiagramLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge4EditPart.VISUAL_ID));
-            links
-                    .addChildren(createNavigatorItems(connectedViews, links,
-                            false));
-            connectedViews =
-                    getDiagramLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge5EditPart.VISUAL_ID));
-            links
-                    .addChildren(createNavigatorItems(connectedViews, links,
-                            false));
-            connectedViews =
-                    getDiagramLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge6EditPart.VISUAL_ID));
-            links
-                    .addChildren(createNavigatorItems(connectedViews, links,
-                            false));
-            connectedViews =
-                    getDiagramLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge7EditPart.VISUAL_ID));
-            links
-                    .addChildren(createNavigatorItems(connectedViews, links,
-                            false));
-            connectedViews =
-                    getDiagramLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge8EditPart.VISUAL_ID));
-            links
-                    .addChildren(createNavigatorItems(connectedViews, links,
-                            false));
-            if (!links.isEmpty()) {
-                result.add(links);
-            }
-            return result.toArray();
-        }
+		return EMPTY_ARRAY;
+	}
 
-        case Node2EditPart.VISUAL_ID: {
-            Collection result = new ArrayList();
-            GraphsNavigatorGroup incominglinks =
-                    new GraphsNavigatorGroup(
-                            Messages.NavigatorGroupName_Node_2001_incominglinks,
-                            "icons/incomingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            GraphsNavigatorGroup outgoinglinks =
-                    new GraphsNavigatorGroup(
-                            Messages.NavigatorGroupName_Node_2001_outgoinglinks,
-                            "icons/outgoingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            Collection connectedViews =
-                    getChildrenByType(
-                            Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(NodeNodeCompartmentEditPart.VISUAL_ID));
-            connectedViews =
-                    getChildrenByType(connectedViews, GraphsVisualIDRegistry
-                            .getType(Node4EditPart.VISUAL_ID));
-            result.addAll(createNavigatorItems(connectedViews, parentElement,
-                    false));
-            connectedViews =
-                    getChildrenByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(PortEditPart.VISUAL_ID));
-            result.addAll(createNavigatorItems(connectedViews, parentElement,
-                    false));
-            connectedViews =
-                    getChildrenByType(
-                            Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(NodeNodeCompartmentEditPart.VISUAL_ID));
-            connectedViews =
-                    getChildrenByType(connectedViews, GraphsVisualIDRegistry
-                            .getType(Node5EditPart.VISUAL_ID));
-            result.addAll(createNavigatorItems(connectedViews, parentElement,
-                    false));
-            connectedViews =
-                    getIncomingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(EdgeEditPart.VISUAL_ID));
-            incominglinks.addChildren(createNavigatorItems(connectedViews,
-                    incominglinks, true));
-            connectedViews =
-                    getOutgoingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(EdgeEditPart.VISUAL_ID));
-            outgoinglinks.addChildren(createNavigatorItems(connectedViews,
-                    outgoinglinks, true));
-            connectedViews =
-                    getIncomingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge2EditPart.VISUAL_ID));
-            incominglinks.addChildren(createNavigatorItems(connectedViews,
-                    incominglinks, true));
-            connectedViews =
-                    getOutgoingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge2EditPart.VISUAL_ID));
-            outgoinglinks.addChildren(createNavigatorItems(connectedViews,
-                    outgoinglinks, true));
-            connectedViews =
-                    getIncomingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge5EditPart.VISUAL_ID));
-            incominglinks.addChildren(createNavigatorItems(connectedViews,
-                    incominglinks, true));
-            connectedViews =
-                    getIncomingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge6EditPart.VISUAL_ID));
-            incominglinks.addChildren(createNavigatorItems(connectedViews,
-                    incominglinks, true));
-            connectedViews =
-                    getOutgoingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge7EditPart.VISUAL_ID));
-            outgoinglinks.addChildren(createNavigatorItems(connectedViews,
-                    outgoinglinks, true));
-            connectedViews =
-                    getOutgoingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge8EditPart.VISUAL_ID));
-            outgoinglinks.addChildren(createNavigatorItems(connectedViews,
-                    outgoinglinks, true));
-            if (!incominglinks.isEmpty()) {
-                result.add(incominglinks);
-            }
-            if (!outgoinglinks.isEmpty()) {
-                result.add(outgoinglinks);
-            }
-            return result.toArray();
-        }
+	/**
+	 * @generated
+	 */
+	private Object[] getViewChildren(View view, Object parentElement) {
+		switch (GraphsVisualIDRegistry.getVisualID(view)) {
 
-        case Node3EditPart.VISUAL_ID: {
-            Collection result = new ArrayList();
-            GraphsNavigatorGroup incominglinks =
-                    new GraphsNavigatorGroup(
-                            Messages.NavigatorGroupName_Node_2002_incominglinks,
-                            "icons/incomingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            GraphsNavigatorGroup outgoinglinks =
-                    new GraphsNavigatorGroup(
-                            Messages.NavigatorGroupName_Node_2002_outgoinglinks,
-                            "icons/outgoingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            Collection connectedViews =
-                    getIncomingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(EdgeEditPart.VISUAL_ID));
-            incominglinks.addChildren(createNavigatorItems(connectedViews,
-                    incominglinks, true));
-            connectedViews =
-                    getOutgoingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(EdgeEditPart.VISUAL_ID));
-            outgoinglinks.addChildren(createNavigatorItems(connectedViews,
-                    outgoinglinks, true));
-            connectedViews =
-                    getIncomingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge2EditPart.VISUAL_ID));
-            incominglinks.addChildren(createNavigatorItems(connectedViews,
-                    incominglinks, true));
-            connectedViews =
-                    getOutgoingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge2EditPart.VISUAL_ID));
-            outgoinglinks.addChildren(createNavigatorItems(connectedViews,
-                    outgoinglinks, true));
-            connectedViews =
-                    getIncomingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge5EditPart.VISUAL_ID));
-            incominglinks.addChildren(createNavigatorItems(connectedViews,
-                    incominglinks, true));
-            connectedViews =
-                    getIncomingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge6EditPart.VISUAL_ID));
-            incominglinks.addChildren(createNavigatorItems(connectedViews,
-                    incominglinks, true));
-            connectedViews =
-                    getOutgoingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge7EditPart.VISUAL_ID));
-            outgoinglinks.addChildren(createNavigatorItems(connectedViews,
-                    outgoinglinks, true));
-            connectedViews =
-                    getOutgoingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge8EditPart.VISUAL_ID));
-            outgoinglinks.addChildren(createNavigatorItems(connectedViews,
-                    outgoinglinks, true));
-            if (!incominglinks.isEmpty()) {
-                result.add(incominglinks);
-            }
-            if (!outgoinglinks.isEmpty()) {
-                result.add(outgoinglinks);
-            }
-            return result.toArray();
-        }
+		case Edge3EditPart.VISUAL_ID: {
+			LinkedList<GraphsAbstractNavigatorItem> result = new LinkedList<GraphsAbstractNavigatorItem>();
+			Edge sv = (Edge) view;
+			GraphsNavigatorGroup target = new GraphsNavigatorGroup(
+					Messages.NavigatorGroupName_Edge_4003_target,
+					"icons/linkTargetNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+			GraphsNavigatorGroup source = new GraphsNavigatorGroup(
+					Messages.NavigatorGroupName_Edge_4003_source,
+					"icons/linkSourceNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+			Collection<View> connectedViews;
+			connectedViews = getLinksTargetByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(PortEditPart.VISUAL_ID));
+			target.addChildren(createNavigatorItems(connectedViews, target,
+					true));
+			connectedViews = getLinksSourceByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(PortEditPart.VISUAL_ID));
+			source.addChildren(createNavigatorItems(connectedViews, source,
+					true));
+			if (!target.isEmpty()) {
+				result.add(target);
+			}
+			if (!source.isEmpty()) {
+				result.add(source);
+			}
+			return result.toArray();
+		}
 
-        case Node4EditPart.VISUAL_ID: {
-            Collection result = new ArrayList();
-            GraphsNavigatorGroup incominglinks =
-                    new GraphsNavigatorGroup(
-                            Messages.NavigatorGroupName_Node_3001_incominglinks,
-                            "icons/incomingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            GraphsNavigatorGroup outgoinglinks =
-                    new GraphsNavigatorGroup(
-                            Messages.NavigatorGroupName_Node_3001_outgoinglinks,
-                            "icons/outgoingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            Collection connectedViews =
-                    getChildrenByType(
-                            Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(NodeNodeCompartment2EditPart.VISUAL_ID));
-            connectedViews =
-                    getChildrenByType(connectedViews, GraphsVisualIDRegistry
-                            .getType(Node4EditPart.VISUAL_ID));
-            result.addAll(createNavigatorItems(connectedViews, parentElement,
-                    false));
-            connectedViews =
-                    getChildrenByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(PortEditPart.VISUAL_ID));
-            result.addAll(createNavigatorItems(connectedViews, parentElement,
-                    false));
-            connectedViews =
-                    getChildrenByType(
-                            Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(NodeNodeCompartment2EditPart.VISUAL_ID));
-            connectedViews =
-                    getChildrenByType(connectedViews, GraphsVisualIDRegistry
-                            .getType(Node5EditPart.VISUAL_ID));
-            result.addAll(createNavigatorItems(connectedViews, parentElement,
-                    false));
-            connectedViews =
-                    getIncomingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(EdgeEditPart.VISUAL_ID));
-            incominglinks.addChildren(createNavigatorItems(connectedViews,
-                    incominglinks, true));
-            connectedViews =
-                    getOutgoingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(EdgeEditPart.VISUAL_ID));
-            outgoinglinks.addChildren(createNavigatorItems(connectedViews,
-                    outgoinglinks, true));
-            connectedViews =
-                    getIncomingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge2EditPart.VISUAL_ID));
-            incominglinks.addChildren(createNavigatorItems(connectedViews,
-                    incominglinks, true));
-            connectedViews =
-                    getOutgoingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge2EditPart.VISUAL_ID));
-            outgoinglinks.addChildren(createNavigatorItems(connectedViews,
-                    outgoinglinks, true));
-            connectedViews =
-                    getIncomingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge5EditPart.VISUAL_ID));
-            incominglinks.addChildren(createNavigatorItems(connectedViews,
-                    incominglinks, true));
-            connectedViews =
-                    getIncomingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge6EditPart.VISUAL_ID));
-            incominglinks.addChildren(createNavigatorItems(connectedViews,
-                    incominglinks, true));
-            connectedViews =
-                    getOutgoingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge7EditPart.VISUAL_ID));
-            outgoinglinks.addChildren(createNavigatorItems(connectedViews,
-                    outgoinglinks, true));
-            connectedViews =
-                    getOutgoingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge8EditPart.VISUAL_ID));
-            outgoinglinks.addChildren(createNavigatorItems(connectedViews,
-                    outgoinglinks, true));
-            if (!incominglinks.isEmpty()) {
-                result.add(incominglinks);
-            }
-            if (!outgoinglinks.isEmpty()) {
-                result.add(outgoinglinks);
-            }
-            return result.toArray();
-        }
+		case PortEditPart.VISUAL_ID: {
+			LinkedList<GraphsAbstractNavigatorItem> result = new LinkedList<GraphsAbstractNavigatorItem>();
+			Node sv = (Node) view;
+			GraphsNavigatorGroup incominglinks = new GraphsNavigatorGroup(
+					Messages.NavigatorGroupName_Port_3002_incominglinks,
+					"icons/incomingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+			GraphsNavigatorGroup outgoinglinks = new GraphsNavigatorGroup(
+					Messages.NavigatorGroupName_Port_3002_outgoinglinks,
+					"icons/outgoingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+			Collection<View> connectedViews;
+			connectedViews = getIncomingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge3EditPart.VISUAL_ID));
+			incominglinks.addChildren(createNavigatorItems(connectedViews,
+					incominglinks, true));
+			connectedViews = getOutgoingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge3EditPart.VISUAL_ID));
+			outgoinglinks.addChildren(createNavigatorItems(connectedViews,
+					outgoinglinks, true));
+			connectedViews = getIncomingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge4EditPart.VISUAL_ID));
+			incominglinks.addChildren(createNavigatorItems(connectedViews,
+					incominglinks, true));
+			connectedViews = getOutgoingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge4EditPart.VISUAL_ID));
+			outgoinglinks.addChildren(createNavigatorItems(connectedViews,
+					outgoinglinks, true));
+			connectedViews = getOutgoingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge5EditPart.VISUAL_ID));
+			outgoinglinks.addChildren(createNavigatorItems(connectedViews,
+					outgoinglinks, true));
+			connectedViews = getOutgoingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge6EditPart.VISUAL_ID));
+			outgoinglinks.addChildren(createNavigatorItems(connectedViews,
+					outgoinglinks, true));
+			connectedViews = getIncomingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge7EditPart.VISUAL_ID));
+			incominglinks.addChildren(createNavigatorItems(connectedViews,
+					incominglinks, true));
+			connectedViews = getIncomingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge8EditPart.VISUAL_ID));
+			incominglinks.addChildren(createNavigatorItems(connectedViews,
+					incominglinks, true));
+			if (!incominglinks.isEmpty()) {
+				result.add(incominglinks);
+			}
+			if (!outgoinglinks.isEmpty()) {
+				result.add(outgoinglinks);
+			}
+			return result.toArray();
+		}
 
-        case PortEditPart.VISUAL_ID: {
-            Collection result = new ArrayList();
-            GraphsNavigatorGroup incominglinks =
-                    new GraphsNavigatorGroup(
-                            Messages.NavigatorGroupName_Port_3002_incominglinks,
-                            "icons/incomingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            GraphsNavigatorGroup outgoinglinks =
-                    new GraphsNavigatorGroup(
-                            Messages.NavigatorGroupName_Port_3002_outgoinglinks,
-                            "icons/outgoingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            Collection connectedViews =
-                    getIncomingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge3EditPart.VISUAL_ID));
-            incominglinks.addChildren(createNavigatorItems(connectedViews,
-                    incominglinks, true));
-            connectedViews =
-                    getOutgoingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge3EditPart.VISUAL_ID));
-            outgoinglinks.addChildren(createNavigatorItems(connectedViews,
-                    outgoinglinks, true));
-            connectedViews =
-                    getIncomingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge4EditPart.VISUAL_ID));
-            incominglinks.addChildren(createNavigatorItems(connectedViews,
-                    incominglinks, true));
-            connectedViews =
-                    getOutgoingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge4EditPart.VISUAL_ID));
-            outgoinglinks.addChildren(createNavigatorItems(connectedViews,
-                    outgoinglinks, true));
-            connectedViews =
-                    getOutgoingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge5EditPart.VISUAL_ID));
-            outgoinglinks.addChildren(createNavigatorItems(connectedViews,
-                    outgoinglinks, true));
-            connectedViews =
-                    getOutgoingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge6EditPart.VISUAL_ID));
-            outgoinglinks.addChildren(createNavigatorItems(connectedViews,
-                    outgoinglinks, true));
-            connectedViews =
-                    getIncomingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge7EditPart.VISUAL_ID));
-            incominglinks.addChildren(createNavigatorItems(connectedViews,
-                    incominglinks, true));
-            connectedViews =
-                    getIncomingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge8EditPart.VISUAL_ID));
-            incominglinks.addChildren(createNavigatorItems(connectedViews,
-                    incominglinks, true));
-            if (!incominglinks.isEmpty()) {
-                result.add(incominglinks);
-            }
-            if (!outgoinglinks.isEmpty()) {
-                result.add(outgoinglinks);
-            }
-            return result.toArray();
-        }
+		case Node5EditPart.VISUAL_ID: {
+			LinkedList<GraphsAbstractNavigatorItem> result = new LinkedList<GraphsAbstractNavigatorItem>();
+			Node sv = (Node) view;
+			GraphsNavigatorGroup incominglinks = new GraphsNavigatorGroup(
+					Messages.NavigatorGroupName_Node_3003_incominglinks,
+					"icons/incomingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+			GraphsNavigatorGroup outgoinglinks = new GraphsNavigatorGroup(
+					Messages.NavigatorGroupName_Node_3003_outgoinglinks,
+					"icons/outgoingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+			Collection<View> connectedViews;
+			connectedViews = getIncomingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(EdgeEditPart.VISUAL_ID));
+			incominglinks.addChildren(createNavigatorItems(connectedViews,
+					incominglinks, true));
+			connectedViews = getOutgoingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(EdgeEditPart.VISUAL_ID));
+			outgoinglinks.addChildren(createNavigatorItems(connectedViews,
+					outgoinglinks, true));
+			connectedViews = getIncomingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge2EditPart.VISUAL_ID));
+			incominglinks.addChildren(createNavigatorItems(connectedViews,
+					incominglinks, true));
+			connectedViews = getOutgoingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge2EditPart.VISUAL_ID));
+			outgoinglinks.addChildren(createNavigatorItems(connectedViews,
+					outgoinglinks, true));
+			connectedViews = getIncomingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge5EditPart.VISUAL_ID));
+			incominglinks.addChildren(createNavigatorItems(connectedViews,
+					incominglinks, true));
+			connectedViews = getIncomingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge6EditPart.VISUAL_ID));
+			incominglinks.addChildren(createNavigatorItems(connectedViews,
+					incominglinks, true));
+			connectedViews = getOutgoingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge7EditPart.VISUAL_ID));
+			outgoinglinks.addChildren(createNavigatorItems(connectedViews,
+					outgoinglinks, true));
+			connectedViews = getOutgoingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge8EditPart.VISUAL_ID));
+			outgoinglinks.addChildren(createNavigatorItems(connectedViews,
+					outgoinglinks, true));
+			if (!incominglinks.isEmpty()) {
+				result.add(incominglinks);
+			}
+			if (!outgoinglinks.isEmpty()) {
+				result.add(outgoinglinks);
+			}
+			return result.toArray();
+		}
 
-        case Node5EditPart.VISUAL_ID: {
-            Collection result = new ArrayList();
-            GraphsNavigatorGroup incominglinks =
-                    new GraphsNavigatorGroup(
-                            Messages.NavigatorGroupName_Node_3003_incominglinks,
-                            "icons/incomingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            GraphsNavigatorGroup outgoinglinks =
-                    new GraphsNavigatorGroup(
-                            Messages.NavigatorGroupName_Node_3003_outgoinglinks,
-                            "icons/outgoingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            Collection connectedViews =
-                    getIncomingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(EdgeEditPart.VISUAL_ID));
-            incominglinks.addChildren(createNavigatorItems(connectedViews,
-                    incominglinks, true));
-            connectedViews =
-                    getOutgoingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(EdgeEditPart.VISUAL_ID));
-            outgoinglinks.addChildren(createNavigatorItems(connectedViews,
-                    outgoinglinks, true));
-            connectedViews =
-                    getIncomingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge2EditPart.VISUAL_ID));
-            incominglinks.addChildren(createNavigatorItems(connectedViews,
-                    incominglinks, true));
-            connectedViews =
-                    getOutgoingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge2EditPart.VISUAL_ID));
-            outgoinglinks.addChildren(createNavigatorItems(connectedViews,
-                    outgoinglinks, true));
-            connectedViews =
-                    getIncomingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge5EditPart.VISUAL_ID));
-            incominglinks.addChildren(createNavigatorItems(connectedViews,
-                    incominglinks, true));
-            connectedViews =
-                    getIncomingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge6EditPart.VISUAL_ID));
-            incominglinks.addChildren(createNavigatorItems(connectedViews,
-                    incominglinks, true));
-            connectedViews =
-                    getOutgoingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge7EditPart.VISUAL_ID));
-            outgoinglinks.addChildren(createNavigatorItems(connectedViews,
-                    outgoinglinks, true));
-            connectedViews =
-                    getOutgoingLinksByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Edge8EditPart.VISUAL_ID));
-            outgoinglinks.addChildren(createNavigatorItems(connectedViews,
-                    outgoinglinks, true));
-            if (!incominglinks.isEmpty()) {
-                result.add(incominglinks);
-            }
-            if (!outgoinglinks.isEmpty()) {
-                result.add(outgoinglinks);
-            }
-            return result.toArray();
-        }
+		case EdgeEditPart.VISUAL_ID: {
+			LinkedList<GraphsAbstractNavigatorItem> result = new LinkedList<GraphsAbstractNavigatorItem>();
+			Edge sv = (Edge) view;
+			GraphsNavigatorGroup target = new GraphsNavigatorGroup(
+					Messages.NavigatorGroupName_Edge_4001_target,
+					"icons/linkTargetNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+			GraphsNavigatorGroup source = new GraphsNavigatorGroup(
+					Messages.NavigatorGroupName_Edge_4001_source,
+					"icons/linkSourceNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+			Collection<View> connectedViews;
+			connectedViews = getLinksTargetByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node2EditPart.VISUAL_ID));
+			target.addChildren(createNavigatorItems(connectedViews, target,
+					true));
+			connectedViews = getLinksTargetByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node3EditPart.VISUAL_ID));
+			target.addChildren(createNavigatorItems(connectedViews, target,
+					true));
+			connectedViews = getLinksTargetByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node4EditPart.VISUAL_ID));
+			target.addChildren(createNavigatorItems(connectedViews, target,
+					true));
+			connectedViews = getLinksTargetByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node5EditPart.VISUAL_ID));
+			target.addChildren(createNavigatorItems(connectedViews, target,
+					true));
+			connectedViews = getLinksSourceByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node2EditPart.VISUAL_ID));
+			source.addChildren(createNavigatorItems(connectedViews, source,
+					true));
+			connectedViews = getLinksSourceByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node3EditPart.VISUAL_ID));
+			source.addChildren(createNavigatorItems(connectedViews, source,
+					true));
+			connectedViews = getLinksSourceByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node4EditPart.VISUAL_ID));
+			source.addChildren(createNavigatorItems(connectedViews, source,
+					true));
+			connectedViews = getLinksSourceByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node5EditPart.VISUAL_ID));
+			source.addChildren(createNavigatorItems(connectedViews, source,
+					true));
+			if (!target.isEmpty()) {
+				result.add(target);
+			}
+			if (!source.isEmpty()) {
+				result.add(source);
+			}
+			return result.toArray();
+		}
 
-        case EdgeEditPart.VISUAL_ID: {
-            Collection result = new ArrayList();
-            GraphsNavigatorGroup target =
-                    new GraphsNavigatorGroup(
-                            Messages.NavigatorGroupName_Edge_4001_target,
-                            "icons/linkTargetNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            GraphsNavigatorGroup source =
-                    new GraphsNavigatorGroup(
-                            Messages.NavigatorGroupName_Edge_4001_source,
-                            "icons/linkSourceNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            Collection connectedViews =
-                    getLinksTargetByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node2EditPart.VISUAL_ID));
-            target.addChildren(createNavigatorItems(connectedViews, target,
-                    true));
-            connectedViews =
-                    getLinksTargetByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node3EditPart.VISUAL_ID));
-            target.addChildren(createNavigatorItems(connectedViews, target,
-                    true));
-            connectedViews =
-                    getLinksTargetByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node4EditPart.VISUAL_ID));
-            target.addChildren(createNavigatorItems(connectedViews, target,
-                    true));
-            connectedViews =
-                    getLinksTargetByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node5EditPart.VISUAL_ID));
-            target.addChildren(createNavigatorItems(connectedViews, target,
-                    true));
-            connectedViews =
-                    getLinksSourceByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node2EditPart.VISUAL_ID));
-            source.addChildren(createNavigatorItems(connectedViews, source,
-                    true));
-            connectedViews =
-                    getLinksSourceByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node3EditPart.VISUAL_ID));
-            source.addChildren(createNavigatorItems(connectedViews, source,
-                    true));
-            connectedViews =
-                    getLinksSourceByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node4EditPart.VISUAL_ID));
-            source.addChildren(createNavigatorItems(connectedViews, source,
-                    true));
-            connectedViews =
-                    getLinksSourceByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node5EditPart.VISUAL_ID));
-            source.addChildren(createNavigatorItems(connectedViews, source,
-                    true));
-            if (!target.isEmpty()) {
-                result.add(target);
-            }
-            if (!source.isEmpty()) {
-                result.add(source);
-            }
-            return result.toArray();
-        }
+		case Edge5EditPart.VISUAL_ID: {
+			LinkedList<GraphsAbstractNavigatorItem> result = new LinkedList<GraphsAbstractNavigatorItem>();
+			Edge sv = (Edge) view;
+			GraphsNavigatorGroup target = new GraphsNavigatorGroup(
+					Messages.NavigatorGroupName_Edge_4005_target,
+					"icons/linkTargetNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+			GraphsNavigatorGroup source = new GraphsNavigatorGroup(
+					Messages.NavigatorGroupName_Edge_4005_source,
+					"icons/linkSourceNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+			Collection<View> connectedViews;
+			connectedViews = getLinksTargetByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node2EditPart.VISUAL_ID));
+			target.addChildren(createNavigatorItems(connectedViews, target,
+					true));
+			connectedViews = getLinksTargetByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node3EditPart.VISUAL_ID));
+			target.addChildren(createNavigatorItems(connectedViews, target,
+					true));
+			connectedViews = getLinksTargetByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node4EditPart.VISUAL_ID));
+			target.addChildren(createNavigatorItems(connectedViews, target,
+					true));
+			connectedViews = getLinksTargetByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node5EditPart.VISUAL_ID));
+			target.addChildren(createNavigatorItems(connectedViews, target,
+					true));
+			connectedViews = getLinksSourceByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(PortEditPart.VISUAL_ID));
+			source.addChildren(createNavigatorItems(connectedViews, source,
+					true));
+			if (!target.isEmpty()) {
+				result.add(target);
+			}
+			if (!source.isEmpty()) {
+				result.add(source);
+			}
+			return result.toArray();
+		}
 
-        case Edge2EditPart.VISUAL_ID: {
-            Collection result = new ArrayList();
-            GraphsNavigatorGroup target =
-                    new GraphsNavigatorGroup(
-                            Messages.NavigatorGroupName_Edge_4002_target,
-                            "icons/linkTargetNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            GraphsNavigatorGroup source =
-                    new GraphsNavigatorGroup(
-                            Messages.NavigatorGroupName_Edge_4002_source,
-                            "icons/linkSourceNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            Collection connectedViews =
-                    getLinksTargetByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node2EditPart.VISUAL_ID));
-            target.addChildren(createNavigatorItems(connectedViews, target,
-                    true));
-            connectedViews =
-                    getLinksTargetByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node3EditPart.VISUAL_ID));
-            target.addChildren(createNavigatorItems(connectedViews, target,
-                    true));
-            connectedViews =
-                    getLinksTargetByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node4EditPart.VISUAL_ID));
-            target.addChildren(createNavigatorItems(connectedViews, target,
-                    true));
-            connectedViews =
-                    getLinksTargetByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node5EditPart.VISUAL_ID));
-            target.addChildren(createNavigatorItems(connectedViews, target,
-                    true));
-            connectedViews =
-                    getLinksSourceByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node2EditPart.VISUAL_ID));
-            source.addChildren(createNavigatorItems(connectedViews, source,
-                    true));
-            connectedViews =
-                    getLinksSourceByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node3EditPart.VISUAL_ID));
-            source.addChildren(createNavigatorItems(connectedViews, source,
-                    true));
-            connectedViews =
-                    getLinksSourceByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node4EditPart.VISUAL_ID));
-            source.addChildren(createNavigatorItems(connectedViews, source,
-                    true));
-            connectedViews =
-                    getLinksSourceByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node5EditPart.VISUAL_ID));
-            source.addChildren(createNavigatorItems(connectedViews, source,
-                    true));
-            if (!target.isEmpty()) {
-                result.add(target);
-            }
-            if (!source.isEmpty()) {
-                result.add(source);
-            }
-            return result.toArray();
-        }
+		case NodeEditPart.VISUAL_ID: {
+			LinkedList<GraphsAbstractNavigatorItem> result = new LinkedList<GraphsAbstractNavigatorItem>();
+			Diagram sv = (Diagram) view;
+			GraphsNavigatorGroup links = new GraphsNavigatorGroup(
+					Messages.NavigatorGroupName_Node_1000_links,
+					"icons/linksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+			Collection<View> connectedViews;
+			connectedViews = getChildrenByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node2EditPart.VISUAL_ID));
+			result.addAll(createNavigatorItems(connectedViews, parentElement,
+					false));
+			connectedViews = getChildrenByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node3EditPart.VISUAL_ID));
+			result.addAll(createNavigatorItems(connectedViews, parentElement,
+					false));
+			connectedViews = getDiagramLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(EdgeEditPart.VISUAL_ID));
+			links.addChildren(createNavigatorItems(connectedViews, links, false));
+			connectedViews = getDiagramLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge2EditPart.VISUAL_ID));
+			links.addChildren(createNavigatorItems(connectedViews, links, false));
+			connectedViews = getDiagramLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge3EditPart.VISUAL_ID));
+			links.addChildren(createNavigatorItems(connectedViews, links, false));
+			connectedViews = getDiagramLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge4EditPart.VISUAL_ID));
+			links.addChildren(createNavigatorItems(connectedViews, links, false));
+			connectedViews = getDiagramLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge5EditPart.VISUAL_ID));
+			links.addChildren(createNavigatorItems(connectedViews, links, false));
+			connectedViews = getDiagramLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge6EditPart.VISUAL_ID));
+			links.addChildren(createNavigatorItems(connectedViews, links, false));
+			connectedViews = getDiagramLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge7EditPart.VISUAL_ID));
+			links.addChildren(createNavigatorItems(connectedViews, links, false));
+			connectedViews = getDiagramLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge8EditPart.VISUAL_ID));
+			links.addChildren(createNavigatorItems(connectedViews, links, false));
+			if (!links.isEmpty()) {
+				result.add(links);
+			}
+			return result.toArray();
+		}
 
-        case Edge3EditPart.VISUAL_ID: {
-            Collection result = new ArrayList();
-            GraphsNavigatorGroup target =
-                    new GraphsNavigatorGroup(
-                            Messages.NavigatorGroupName_Edge_4003_target,
-                            "icons/linkTargetNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            GraphsNavigatorGroup source =
-                    new GraphsNavigatorGroup(
-                            Messages.NavigatorGroupName_Edge_4003_source,
-                            "icons/linkSourceNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            Collection connectedViews =
-                    getLinksTargetByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(PortEditPart.VISUAL_ID));
-            target.addChildren(createNavigatorItems(connectedViews, target,
-                    true));
-            connectedViews =
-                    getLinksSourceByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(PortEditPart.VISUAL_ID));
-            source.addChildren(createNavigatorItems(connectedViews, source,
-                    true));
-            if (!target.isEmpty()) {
-                result.add(target);
-            }
-            if (!source.isEmpty()) {
-                result.add(source);
-            }
-            return result.toArray();
-        }
+		case Edge6EditPart.VISUAL_ID: {
+			LinkedList<GraphsAbstractNavigatorItem> result = new LinkedList<GraphsAbstractNavigatorItem>();
+			Edge sv = (Edge) view;
+			GraphsNavigatorGroup target = new GraphsNavigatorGroup(
+					Messages.NavigatorGroupName_Edge_4006_target,
+					"icons/linkTargetNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+			GraphsNavigatorGroup source = new GraphsNavigatorGroup(
+					Messages.NavigatorGroupName_Edge_4006_source,
+					"icons/linkSourceNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+			Collection<View> connectedViews;
+			connectedViews = getLinksTargetByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node2EditPart.VISUAL_ID));
+			target.addChildren(createNavigatorItems(connectedViews, target,
+					true));
+			connectedViews = getLinksTargetByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node3EditPart.VISUAL_ID));
+			target.addChildren(createNavigatorItems(connectedViews, target,
+					true));
+			connectedViews = getLinksTargetByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node4EditPart.VISUAL_ID));
+			target.addChildren(createNavigatorItems(connectedViews, target,
+					true));
+			connectedViews = getLinksTargetByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node5EditPart.VISUAL_ID));
+			target.addChildren(createNavigatorItems(connectedViews, target,
+					true));
+			connectedViews = getLinksSourceByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(PortEditPart.VISUAL_ID));
+			source.addChildren(createNavigatorItems(connectedViews, source,
+					true));
+			if (!target.isEmpty()) {
+				result.add(target);
+			}
+			if (!source.isEmpty()) {
+				result.add(source);
+			}
+			return result.toArray();
+		}
 
-        case Edge4EditPart.VISUAL_ID: {
-            Collection result = new ArrayList();
-            GraphsNavigatorGroup target =
-                    new GraphsNavigatorGroup(
-                            Messages.NavigatorGroupName_Edge_4004_target,
-                            "icons/linkTargetNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            GraphsNavigatorGroup source =
-                    new GraphsNavigatorGroup(
-                            Messages.NavigatorGroupName_Edge_4004_source,
-                            "icons/linkSourceNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            Collection connectedViews =
-                    getLinksTargetByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(PortEditPart.VISUAL_ID));
-            target.addChildren(createNavigatorItems(connectedViews, target,
-                    true));
-            connectedViews =
-                    getLinksSourceByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(PortEditPart.VISUAL_ID));
-            source.addChildren(createNavigatorItems(connectedViews, source,
-                    true));
-            if (!target.isEmpty()) {
-                result.add(target);
-            }
-            if (!source.isEmpty()) {
-                result.add(source);
-            }
-            return result.toArray();
-        }
+		case Edge8EditPart.VISUAL_ID: {
+			LinkedList<GraphsAbstractNavigatorItem> result = new LinkedList<GraphsAbstractNavigatorItem>();
+			Edge sv = (Edge) view;
+			GraphsNavigatorGroup target = new GraphsNavigatorGroup(
+					Messages.NavigatorGroupName_Edge_4008_target,
+					"icons/linkTargetNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+			GraphsNavigatorGroup source = new GraphsNavigatorGroup(
+					Messages.NavigatorGroupName_Edge_4008_source,
+					"icons/linkSourceNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+			Collection<View> connectedViews;
+			connectedViews = getLinksTargetByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(PortEditPart.VISUAL_ID));
+			target.addChildren(createNavigatorItems(connectedViews, target,
+					true));
+			connectedViews = getLinksSourceByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node2EditPart.VISUAL_ID));
+			source.addChildren(createNavigatorItems(connectedViews, source,
+					true));
+			connectedViews = getLinksSourceByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node3EditPart.VISUAL_ID));
+			source.addChildren(createNavigatorItems(connectedViews, source,
+					true));
+			connectedViews = getLinksSourceByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node4EditPart.VISUAL_ID));
+			source.addChildren(createNavigatorItems(connectedViews, source,
+					true));
+			connectedViews = getLinksSourceByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node5EditPart.VISUAL_ID));
+			source.addChildren(createNavigatorItems(connectedViews, source,
+					true));
+			if (!target.isEmpty()) {
+				result.add(target);
+			}
+			if (!source.isEmpty()) {
+				result.add(source);
+			}
+			return result.toArray();
+		}
 
-        case Edge5EditPart.VISUAL_ID: {
-            Collection result = new ArrayList();
-            GraphsNavigatorGroup target =
-                    new GraphsNavigatorGroup(
-                            Messages.NavigatorGroupName_Edge_4005_target,
-                            "icons/linkTargetNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            GraphsNavigatorGroup source =
-                    new GraphsNavigatorGroup(
-                            Messages.NavigatorGroupName_Edge_4005_source,
-                            "icons/linkSourceNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            Collection connectedViews =
-                    getLinksTargetByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node2EditPart.VISUAL_ID));
-            target.addChildren(createNavigatorItems(connectedViews, target,
-                    true));
-            connectedViews =
-                    getLinksTargetByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node3EditPart.VISUAL_ID));
-            target.addChildren(createNavigatorItems(connectedViews, target,
-                    true));
-            connectedViews =
-                    getLinksTargetByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node4EditPart.VISUAL_ID));
-            target.addChildren(createNavigatorItems(connectedViews, target,
-                    true));
-            connectedViews =
-                    getLinksTargetByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node5EditPart.VISUAL_ID));
-            target.addChildren(createNavigatorItems(connectedViews, target,
-                    true));
-            connectedViews =
-                    getLinksSourceByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(PortEditPart.VISUAL_ID));
-            source.addChildren(createNavigatorItems(connectedViews, source,
-                    true));
-            if (!target.isEmpty()) {
-                result.add(target);
-            }
-            if (!source.isEmpty()) {
-                result.add(source);
-            }
-            return result.toArray();
-        }
+		case Node2EditPart.VISUAL_ID: {
+			LinkedList<GraphsAbstractNavigatorItem> result = new LinkedList<GraphsAbstractNavigatorItem>();
+			Node sv = (Node) view;
+			GraphsNavigatorGroup incominglinks = new GraphsNavigatorGroup(
+					Messages.NavigatorGroupName_Node_2001_incominglinks,
+					"icons/incomingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+			GraphsNavigatorGroup outgoinglinks = new GraphsNavigatorGroup(
+					Messages.NavigatorGroupName_Node_2001_outgoinglinks,
+					"icons/outgoingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+			Collection<View> connectedViews;
+			connectedViews = getChildrenByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry
+							.getType(NodeNodeCompartmentEditPart.VISUAL_ID));
+			connectedViews = getChildrenByType(connectedViews,
+					GraphsVisualIDRegistry.getType(Node4EditPart.VISUAL_ID));
+			result.addAll(createNavigatorItems(connectedViews, parentElement,
+					false));
+			connectedViews = getChildrenByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(PortEditPart.VISUAL_ID));
+			result.addAll(createNavigatorItems(connectedViews, parentElement,
+					false));
+			connectedViews = getChildrenByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry
+							.getType(NodeNodeCompartmentEditPart.VISUAL_ID));
+			connectedViews = getChildrenByType(connectedViews,
+					GraphsVisualIDRegistry.getType(Node5EditPart.VISUAL_ID));
+			result.addAll(createNavigatorItems(connectedViews, parentElement,
+					false));
+			connectedViews = getIncomingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(EdgeEditPart.VISUAL_ID));
+			incominglinks.addChildren(createNavigatorItems(connectedViews,
+					incominglinks, true));
+			connectedViews = getOutgoingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(EdgeEditPart.VISUAL_ID));
+			outgoinglinks.addChildren(createNavigatorItems(connectedViews,
+					outgoinglinks, true));
+			connectedViews = getIncomingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge2EditPart.VISUAL_ID));
+			incominglinks.addChildren(createNavigatorItems(connectedViews,
+					incominglinks, true));
+			connectedViews = getOutgoingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge2EditPart.VISUAL_ID));
+			outgoinglinks.addChildren(createNavigatorItems(connectedViews,
+					outgoinglinks, true));
+			connectedViews = getIncomingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge5EditPart.VISUAL_ID));
+			incominglinks.addChildren(createNavigatorItems(connectedViews,
+					incominglinks, true));
+			connectedViews = getIncomingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge6EditPart.VISUAL_ID));
+			incominglinks.addChildren(createNavigatorItems(connectedViews,
+					incominglinks, true));
+			connectedViews = getOutgoingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge7EditPart.VISUAL_ID));
+			outgoinglinks.addChildren(createNavigatorItems(connectedViews,
+					outgoinglinks, true));
+			connectedViews = getOutgoingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge8EditPart.VISUAL_ID));
+			outgoinglinks.addChildren(createNavigatorItems(connectedViews,
+					outgoinglinks, true));
+			if (!incominglinks.isEmpty()) {
+				result.add(incominglinks);
+			}
+			if (!outgoinglinks.isEmpty()) {
+				result.add(outgoinglinks);
+			}
+			return result.toArray();
+		}
 
-        case Edge6EditPart.VISUAL_ID: {
-            Collection result = new ArrayList();
-            GraphsNavigatorGroup target =
-                    new GraphsNavigatorGroup(
-                            Messages.NavigatorGroupName_Edge_4006_target,
-                            "icons/linkTargetNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            GraphsNavigatorGroup source =
-                    new GraphsNavigatorGroup(
-                            Messages.NavigatorGroupName_Edge_4006_source,
-                            "icons/linkSourceNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            Collection connectedViews =
-                    getLinksTargetByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node2EditPart.VISUAL_ID));
-            target.addChildren(createNavigatorItems(connectedViews, target,
-                    true));
-            connectedViews =
-                    getLinksTargetByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node3EditPart.VISUAL_ID));
-            target.addChildren(createNavigatorItems(connectedViews, target,
-                    true));
-            connectedViews =
-                    getLinksTargetByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node4EditPart.VISUAL_ID));
-            target.addChildren(createNavigatorItems(connectedViews, target,
-                    true));
-            connectedViews =
-                    getLinksTargetByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node5EditPart.VISUAL_ID));
-            target.addChildren(createNavigatorItems(connectedViews, target,
-                    true));
-            connectedViews =
-                    getLinksSourceByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(PortEditPart.VISUAL_ID));
-            source.addChildren(createNavigatorItems(connectedViews, source,
-                    true));
-            if (!target.isEmpty()) {
-                result.add(target);
-            }
-            if (!source.isEmpty()) {
-                result.add(source);
-            }
-            return result.toArray();
-        }
+		case Edge2EditPart.VISUAL_ID: {
+			LinkedList<GraphsAbstractNavigatorItem> result = new LinkedList<GraphsAbstractNavigatorItem>();
+			Edge sv = (Edge) view;
+			GraphsNavigatorGroup target = new GraphsNavigatorGroup(
+					Messages.NavigatorGroupName_Edge_4002_target,
+					"icons/linkTargetNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+			GraphsNavigatorGroup source = new GraphsNavigatorGroup(
+					Messages.NavigatorGroupName_Edge_4002_source,
+					"icons/linkSourceNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+			Collection<View> connectedViews;
+			connectedViews = getLinksTargetByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node2EditPart.VISUAL_ID));
+			target.addChildren(createNavigatorItems(connectedViews, target,
+					true));
+			connectedViews = getLinksTargetByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node3EditPart.VISUAL_ID));
+			target.addChildren(createNavigatorItems(connectedViews, target,
+					true));
+			connectedViews = getLinksTargetByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node4EditPart.VISUAL_ID));
+			target.addChildren(createNavigatorItems(connectedViews, target,
+					true));
+			connectedViews = getLinksTargetByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node5EditPart.VISUAL_ID));
+			target.addChildren(createNavigatorItems(connectedViews, target,
+					true));
+			connectedViews = getLinksSourceByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node2EditPart.VISUAL_ID));
+			source.addChildren(createNavigatorItems(connectedViews, source,
+					true));
+			connectedViews = getLinksSourceByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node3EditPart.VISUAL_ID));
+			source.addChildren(createNavigatorItems(connectedViews, source,
+					true));
+			connectedViews = getLinksSourceByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node4EditPart.VISUAL_ID));
+			source.addChildren(createNavigatorItems(connectedViews, source,
+					true));
+			connectedViews = getLinksSourceByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node5EditPart.VISUAL_ID));
+			source.addChildren(createNavigatorItems(connectedViews, source,
+					true));
+			if (!target.isEmpty()) {
+				result.add(target);
+			}
+			if (!source.isEmpty()) {
+				result.add(source);
+			}
+			return result.toArray();
+		}
 
-        case Edge7EditPart.VISUAL_ID: {
-            Collection result = new ArrayList();
-            GraphsNavigatorGroup target =
-                    new GraphsNavigatorGroup(
-                            Messages.NavigatorGroupName_Edge_4007_target,
-                            "icons/linkTargetNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            GraphsNavigatorGroup source =
-                    new GraphsNavigatorGroup(
-                            Messages.NavigatorGroupName_Edge_4007_source,
-                            "icons/linkSourceNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            Collection connectedViews =
-                    getLinksTargetByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(PortEditPart.VISUAL_ID));
-            target.addChildren(createNavigatorItems(connectedViews, target,
-                    true));
-            connectedViews =
-                    getLinksSourceByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node2EditPart.VISUAL_ID));
-            source.addChildren(createNavigatorItems(connectedViews, source,
-                    true));
-            connectedViews =
-                    getLinksSourceByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node3EditPart.VISUAL_ID));
-            source.addChildren(createNavigatorItems(connectedViews, source,
-                    true));
-            connectedViews =
-                    getLinksSourceByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node4EditPart.VISUAL_ID));
-            source.addChildren(createNavigatorItems(connectedViews, source,
-                    true));
-            connectedViews =
-                    getLinksSourceByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node5EditPart.VISUAL_ID));
-            source.addChildren(createNavigatorItems(connectedViews, source,
-                    true));
-            if (!target.isEmpty()) {
-                result.add(target);
-            }
-            if (!source.isEmpty()) {
-                result.add(source);
-            }
-            return result.toArray();
-        }
+		case Node3EditPart.VISUAL_ID: {
+			LinkedList<GraphsAbstractNavigatorItem> result = new LinkedList<GraphsAbstractNavigatorItem>();
+			Node sv = (Node) view;
+			GraphsNavigatorGroup incominglinks = new GraphsNavigatorGroup(
+					Messages.NavigatorGroupName_Node_2002_incominglinks,
+					"icons/incomingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+			GraphsNavigatorGroup outgoinglinks = new GraphsNavigatorGroup(
+					Messages.NavigatorGroupName_Node_2002_outgoinglinks,
+					"icons/outgoingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+			Collection<View> connectedViews;
+			connectedViews = getIncomingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(EdgeEditPart.VISUAL_ID));
+			incominglinks.addChildren(createNavigatorItems(connectedViews,
+					incominglinks, true));
+			connectedViews = getOutgoingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(EdgeEditPart.VISUAL_ID));
+			outgoinglinks.addChildren(createNavigatorItems(connectedViews,
+					outgoinglinks, true));
+			connectedViews = getIncomingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge2EditPart.VISUAL_ID));
+			incominglinks.addChildren(createNavigatorItems(connectedViews,
+					incominglinks, true));
+			connectedViews = getOutgoingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge2EditPart.VISUAL_ID));
+			outgoinglinks.addChildren(createNavigatorItems(connectedViews,
+					outgoinglinks, true));
+			connectedViews = getIncomingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge5EditPart.VISUAL_ID));
+			incominglinks.addChildren(createNavigatorItems(connectedViews,
+					incominglinks, true));
+			connectedViews = getIncomingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge6EditPart.VISUAL_ID));
+			incominglinks.addChildren(createNavigatorItems(connectedViews,
+					incominglinks, true));
+			connectedViews = getOutgoingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge7EditPart.VISUAL_ID));
+			outgoinglinks.addChildren(createNavigatorItems(connectedViews,
+					outgoinglinks, true));
+			connectedViews = getOutgoingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge8EditPart.VISUAL_ID));
+			outgoinglinks.addChildren(createNavigatorItems(connectedViews,
+					outgoinglinks, true));
+			if (!incominglinks.isEmpty()) {
+				result.add(incominglinks);
+			}
+			if (!outgoinglinks.isEmpty()) {
+				result.add(outgoinglinks);
+			}
+			return result.toArray();
+		}
 
-        case Edge8EditPart.VISUAL_ID: {
-            Collection result = new ArrayList();
-            GraphsNavigatorGroup target =
-                    new GraphsNavigatorGroup(
-                            Messages.NavigatorGroupName_Edge_4008_target,
-                            "icons/linkTargetNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            GraphsNavigatorGroup source =
-                    new GraphsNavigatorGroup(
-                            Messages.NavigatorGroupName_Edge_4008_source,
-                            "icons/linkSourceNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            Collection connectedViews =
-                    getLinksTargetByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(PortEditPart.VISUAL_ID));
-            target.addChildren(createNavigatorItems(connectedViews, target,
-                    true));
-            connectedViews =
-                    getLinksSourceByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node2EditPart.VISUAL_ID));
-            source.addChildren(createNavigatorItems(connectedViews, source,
-                    true));
-            connectedViews =
-                    getLinksSourceByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node3EditPart.VISUAL_ID));
-            source.addChildren(createNavigatorItems(connectedViews, source,
-                    true));
-            connectedViews =
-                    getLinksSourceByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node4EditPart.VISUAL_ID));
-            source.addChildren(createNavigatorItems(connectedViews, source,
-                    true));
-            connectedViews =
-                    getLinksSourceByType(Collections.singleton(view),
-                            GraphsVisualIDRegistry
-                                    .getType(Node5EditPart.VISUAL_ID));
-            source.addChildren(createNavigatorItems(connectedViews, source,
-                    true));
-            if (!target.isEmpty()) {
-                result.add(target);
-            }
-            if (!source.isEmpty()) {
-                result.add(source);
-            }
-            return result.toArray();
-        }
-        }
-        return EMPTY_ARRAY;
-    }
+		case Node4EditPart.VISUAL_ID: {
+			LinkedList<GraphsAbstractNavigatorItem> result = new LinkedList<GraphsAbstractNavigatorItem>();
+			Node sv = (Node) view;
+			GraphsNavigatorGroup incominglinks = new GraphsNavigatorGroup(
+					Messages.NavigatorGroupName_Node_3001_incominglinks,
+					"icons/incomingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+			GraphsNavigatorGroup outgoinglinks = new GraphsNavigatorGroup(
+					Messages.NavigatorGroupName_Node_3001_outgoinglinks,
+					"icons/outgoingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+			Collection<View> connectedViews;
+			connectedViews = getChildrenByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry
+							.getType(NodeNodeCompartment2EditPart.VISUAL_ID));
+			connectedViews = getChildrenByType(connectedViews,
+					GraphsVisualIDRegistry.getType(Node4EditPart.VISUAL_ID));
+			result.addAll(createNavigatorItems(connectedViews, parentElement,
+					false));
+			connectedViews = getChildrenByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(PortEditPart.VISUAL_ID));
+			result.addAll(createNavigatorItems(connectedViews, parentElement,
+					false));
+			connectedViews = getChildrenByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry
+							.getType(NodeNodeCompartment2EditPart.VISUAL_ID));
+			connectedViews = getChildrenByType(connectedViews,
+					GraphsVisualIDRegistry.getType(Node5EditPart.VISUAL_ID));
+			result.addAll(createNavigatorItems(connectedViews, parentElement,
+					false));
+			connectedViews = getIncomingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(EdgeEditPart.VISUAL_ID));
+			incominglinks.addChildren(createNavigatorItems(connectedViews,
+					incominglinks, true));
+			connectedViews = getOutgoingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(EdgeEditPart.VISUAL_ID));
+			outgoinglinks.addChildren(createNavigatorItems(connectedViews,
+					outgoinglinks, true));
+			connectedViews = getIncomingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge2EditPart.VISUAL_ID));
+			incominglinks.addChildren(createNavigatorItems(connectedViews,
+					incominglinks, true));
+			connectedViews = getOutgoingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge2EditPart.VISUAL_ID));
+			outgoinglinks.addChildren(createNavigatorItems(connectedViews,
+					outgoinglinks, true));
+			connectedViews = getIncomingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge5EditPart.VISUAL_ID));
+			incominglinks.addChildren(createNavigatorItems(connectedViews,
+					incominglinks, true));
+			connectedViews = getIncomingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge6EditPart.VISUAL_ID));
+			incominglinks.addChildren(createNavigatorItems(connectedViews,
+					incominglinks, true));
+			connectedViews = getOutgoingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge7EditPart.VISUAL_ID));
+			outgoinglinks.addChildren(createNavigatorItems(connectedViews,
+					outgoinglinks, true));
+			connectedViews = getOutgoingLinksByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Edge8EditPart.VISUAL_ID));
+			outgoinglinks.addChildren(createNavigatorItems(connectedViews,
+					outgoinglinks, true));
+			if (!incominglinks.isEmpty()) {
+				result.add(incominglinks);
+			}
+			if (!outgoinglinks.isEmpty()) {
+				result.add(outgoinglinks);
+			}
+			return result.toArray();
+		}
 
-    /**
-     * @generated
-     */
-    private Collection getLinksSourceByType(Collection edges, String type) {
-        Collection result = new ArrayList();
-        for (Iterator it = edges.iterator(); it.hasNext();) {
-            Edge nextEdge = (Edge) it.next();
-            View nextEdgeSource = nextEdge.getSource();
-            if (type.equals(nextEdgeSource.getType())
-                    && isOwnView(nextEdgeSource)) {
-                result.add(nextEdgeSource);
-            }
-        }
-        return result;
-    }
+		case Edge4EditPart.VISUAL_ID: {
+			LinkedList<GraphsAbstractNavigatorItem> result = new LinkedList<GraphsAbstractNavigatorItem>();
+			Edge sv = (Edge) view;
+			GraphsNavigatorGroup target = new GraphsNavigatorGroup(
+					Messages.NavigatorGroupName_Edge_4004_target,
+					"icons/linkTargetNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+			GraphsNavigatorGroup source = new GraphsNavigatorGroup(
+					Messages.NavigatorGroupName_Edge_4004_source,
+					"icons/linkSourceNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+			Collection<View> connectedViews;
+			connectedViews = getLinksTargetByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(PortEditPart.VISUAL_ID));
+			target.addChildren(createNavigatorItems(connectedViews, target,
+					true));
+			connectedViews = getLinksSourceByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(PortEditPart.VISUAL_ID));
+			source.addChildren(createNavigatorItems(connectedViews, source,
+					true));
+			if (!target.isEmpty()) {
+				result.add(target);
+			}
+			if (!source.isEmpty()) {
+				result.add(source);
+			}
+			return result.toArray();
+		}
 
-    /**
-     * @generated
-     */
-    private Collection getLinksTargetByType(Collection edges, String type) {
-        Collection result = new ArrayList();
-        for (Iterator it = edges.iterator(); it.hasNext();) {
-            Edge nextEdge = (Edge) it.next();
-            View nextEdgeTarget = nextEdge.getTarget();
-            if (type.equals(nextEdgeTarget.getType())
-                    && isOwnView(nextEdgeTarget)) {
-                result.add(nextEdgeTarget);
-            }
-        }
-        return result;
-    }
+		case Edge7EditPart.VISUAL_ID: {
+			LinkedList<GraphsAbstractNavigatorItem> result = new LinkedList<GraphsAbstractNavigatorItem>();
+			Edge sv = (Edge) view;
+			GraphsNavigatorGroup target = new GraphsNavigatorGroup(
+					Messages.NavigatorGroupName_Edge_4007_target,
+					"icons/linkTargetNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+			GraphsNavigatorGroup source = new GraphsNavigatorGroup(
+					Messages.NavigatorGroupName_Edge_4007_source,
+					"icons/linkSourceNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+			Collection<View> connectedViews;
+			connectedViews = getLinksTargetByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(PortEditPart.VISUAL_ID));
+			target.addChildren(createNavigatorItems(connectedViews, target,
+					true));
+			connectedViews = getLinksSourceByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node2EditPart.VISUAL_ID));
+			source.addChildren(createNavigatorItems(connectedViews, source,
+					true));
+			connectedViews = getLinksSourceByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node3EditPart.VISUAL_ID));
+			source.addChildren(createNavigatorItems(connectedViews, source,
+					true));
+			connectedViews = getLinksSourceByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node4EditPart.VISUAL_ID));
+			source.addChildren(createNavigatorItems(connectedViews, source,
+					true));
+			connectedViews = getLinksSourceByType(Collections.singleton(sv),
+					GraphsVisualIDRegistry.getType(Node5EditPart.VISUAL_ID));
+			source.addChildren(createNavigatorItems(connectedViews, source,
+					true));
+			if (!target.isEmpty()) {
+				result.add(target);
+			}
+			if (!source.isEmpty()) {
+				result.add(source);
+			}
+			return result.toArray();
+		}
+		}
+		return EMPTY_ARRAY;
+	}
 
-    /**
-     * @generated
-     */
-    private Collection getOutgoingLinksByType(Collection nodes, String type) {
-        Collection result = new ArrayList();
-        for (Iterator it = nodes.iterator(); it.hasNext();) {
-            View nextNode = (View) it.next();
-            result.addAll(selectViewsByType(nextNode.getSourceEdges(), type));
-        }
-        return result;
-    }
+	/**
+	 * @generated
+	 */
+	private Collection<View> getLinksSourceByType(Collection<Edge> edges,
+			String type) {
+		LinkedList<View> result = new LinkedList<View>();
+		for (Edge nextEdge : edges) {
+			View nextEdgeSource = nextEdge.getSource();
+			if (type.equals(nextEdgeSource.getType())
+					&& isOwnView(nextEdgeSource)) {
+				result.add(nextEdgeSource);
+			}
+		}
+		return result;
+	}
 
-    /**
-     * @generated
-     */
-    private Collection getIncomingLinksByType(Collection nodes, String type) {
-        Collection result = new ArrayList();
-        for (Iterator it = nodes.iterator(); it.hasNext();) {
-            View nextNode = (View) it.next();
-            result.addAll(selectViewsByType(nextNode.getTargetEdges(), type));
-        }
-        return result;
-    }
+	/**
+	 * @generated
+	 */
+	private Collection<View> getLinksTargetByType(Collection<Edge> edges,
+			String type) {
+		LinkedList<View> result = new LinkedList<View>();
+		for (Edge nextEdge : edges) {
+			View nextEdgeTarget = nextEdge.getTarget();
+			if (type.equals(nextEdgeTarget.getType())
+					&& isOwnView(nextEdgeTarget)) {
+				result.add(nextEdgeTarget);
+			}
+		}
+		return result;
+	}
 
-    /**
-     * @generated
-     */
-    private Collection getChildrenByType(Collection nodes, String type) {
-        Collection result = new ArrayList();
-        for (Iterator it = nodes.iterator(); it.hasNext();) {
-            View nextNode = (View) it.next();
-            result.addAll(selectViewsByType(nextNode.getChildren(), type));
-        }
-        return result;
-    }
+	/**
+	 * @generated
+	 */
+	private Collection<View> getOutgoingLinksByType(
+			Collection<? extends View> nodes, String type) {
+		LinkedList<View> result = new LinkedList<View>();
+		for (View nextNode : nodes) {
+			result.addAll(selectViewsByType(nextNode.getSourceEdges(), type));
+		}
+		return result;
+	}
 
-    /**
-     * @generated
-     */
-    private Collection getDiagramLinksByType(Collection diagrams, String type) {
-        Collection result = new ArrayList();
-        for (Iterator it = diagrams.iterator(); it.hasNext();) {
-            Diagram nextDiagram = (Diagram) it.next();
-            result.addAll(selectViewsByType(nextDiagram.getEdges(), type));
-        }
-        return result;
-    }
+	/**
+	 * @generated
+	 */
+	private Collection<View> getIncomingLinksByType(
+			Collection<? extends View> nodes, String type) {
+		LinkedList<View> result = new LinkedList<View>();
+		for (View nextNode : nodes) {
+			result.addAll(selectViewsByType(nextNode.getTargetEdges(), type));
+		}
+		return result;
+	}
 
-    /**
-     * @generated
-     */
-    private Collection selectViewsByType(Collection views, String type) {
-        Collection result = new ArrayList();
-        for (Iterator it = views.iterator(); it.hasNext();) {
-            View nextView = (View) it.next();
-            if (type.equals(nextView.getType()) && isOwnView(nextView)) {
-                result.add(nextView);
-            }
-        }
-        return result;
-    }
+	/**
+	 * @generated
+	 */
+	private Collection<View> getChildrenByType(
+			Collection<? extends View> nodes, String type) {
+		LinkedList<View> result = new LinkedList<View>();
+		for (View nextNode : nodes) {
+			result.addAll(selectViewsByType(nextNode.getChildren(), type));
+		}
+		return result;
+	}
 
-    /**
-     * @generated
-     */
-    private boolean isOwnView(View view) {
-        return NodeEditPart.MODEL_ID.equals(GraphsVisualIDRegistry
-                .getModelID(view));
-    }
+	/**
+	 * @generated
+	 */
+	private Collection<View> getDiagramLinksByType(
+			Collection<Diagram> diagrams, String type) {
+		ArrayList<View> result = new ArrayList<View>();
+		for (Diagram nextDiagram : diagrams) {
+			result.addAll(selectViewsByType(nextDiagram.getEdges(), type));
+		}
+		return result;
+	}
 
-    /**
-     * @generated
-     */
-    private Collection createNavigatorItems(Collection views, Object parent,
-            boolean isLeafs) {
-        Collection result = new ArrayList();
-        for (Iterator it = views.iterator(); it.hasNext();) {
-            result.add(new GraphsNavigatorItem((View) it.next(), parent,
-                    isLeafs));
-        }
-        return result;
-    }
+	/**
+	 * @generated
+	 */
+	private Collection<View> selectViewsByType(Collection<View> views,
+			String type) {
+		ArrayList<View> result = new ArrayList<View>();
+		for (View nextView : views) {
+			if (type.equals(nextView.getType()) && isOwnView(nextView)) {
+				result.add(nextView);
+			}
+		}
+		return result;
+	}
 
-    /**
-     * @generated
-     */
-    public Object getParent(Object element) {
-        if (element instanceof GraphsAbstractNavigatorItem) {
-            GraphsAbstractNavigatorItem abstractNavigatorItem =
-                    (GraphsAbstractNavigatorItem) element;
-            return abstractNavigatorItem.getParent();
-        }
-        return null;
-    }
+	/**
+	 * @generated
+	 */
+	private boolean isOwnView(View view) {
+		return NodeEditPart.MODEL_ID.equals(GraphsVisualIDRegistry
+				.getModelID(view));
+	}
 
-    /**
-     * @generated
-     */
-    public boolean hasChildren(Object element) {
-        return element instanceof IFile || getChildren(element).length > 0;
-    }
+	/**
+	 * @generated
+	 */
+	private Collection<GraphsNavigatorItem> createNavigatorItems(
+			Collection<View> views, Object parent, boolean isLeafs) {
+		ArrayList<GraphsNavigatorItem> result = new ArrayList<GraphsNavigatorItem>(
+				views.size());
+		for (View nextView : views) {
+			result.add(new GraphsNavigatorItem(nextView, parent, isLeafs));
+		}
+		return result;
+	}
+
+	/**
+	 * @generated
+	 */
+	public Object getParent(Object element) {
+		if (element instanceof GraphsAbstractNavigatorItem) {
+			GraphsAbstractNavigatorItem abstractNavigatorItem = (GraphsAbstractNavigatorItem) element;
+			return abstractNavigatorItem.getParent();
+		}
+		return null;
+	}
+
+	/**
+	 * @generated
+	 */
+	public boolean hasChildren(Object element) {
+		return element instanceof IFile || getChildren(element).length > 0;
+	}
 
 }

@@ -7,179 +7,191 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EParameter;
+import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.ocl.Environment;
 import org.eclipse.ocl.EvaluationEnvironment;
 import org.eclipse.ocl.ParserException;
 import org.eclipse.ocl.Query;
 import org.eclipse.ocl.ecore.EcoreFactory;
+import org.eclipse.ocl.ecore.OCL.Helper;
 import org.eclipse.ocl.expressions.OCLExpression;
 import org.eclipse.ocl.expressions.OperationCallExp;
 import org.eclipse.ocl.expressions.Variable;
 import org.eclipse.ocl.helper.OCLHelper;
+import org.eclipse.ocl.options.ParsingOptions;
 import org.eclipse.ocl.utilities.AbstractVisitor;
 import org.eclipse.ocl.utilities.PredefinedType;
+import de.cau.cs.kieler.graphs.diagram.part.GraphsDiagramEditorPlugin;
 
 /**
  * @generated
  */
 public class GraphsOCLFactory {
 
-    /**
-     * @generated
-     */
-    private GraphsOCLFactory() {
-    }
+	/**
+	 * @generated
+	 */
+	private final GraphsAbstractExpression[] expressions;
 
-    /**
-     * @generated
-     */
-    public static GraphsAbstractExpression getExpression(String body,
-            EClassifier context, Map environment) {
-        return new Expression(body, context, environment);
-    }
+	/**
+	 * @generated
+	 */
+	protected GraphsOCLFactory() {
+		this.expressions = new GraphsAbstractExpression[23];
+	}
 
-    /**
-     * @generated
-     */
-    public static GraphsAbstractExpression getExpression(String body,
-            EClassifier context) {
-        return getExpression(body, context, Collections.EMPTY_MAP);
-    }
+	/**
+	 * @generated
+	 */
+	public static GraphsAbstractExpression getExpression(int index,
+			EClassifier context, Map<String, EClassifier> environment) {
+		GraphsOCLFactory cached = GraphsDiagramEditorPlugin.getInstance()
+				.getGraphsOCLFactory();
+		if (cached == null) {
+			GraphsDiagramEditorPlugin.getInstance().setGraphsOCLFactory(
+					cached = new GraphsOCLFactory());
+		}
+		if (index < 0 || index >= cached.expressions.length) {
+			throw new IllegalArgumentException();
+		}
+		if (cached.expressions[index] == null) {
+			final String[] exprBodies = new String[] {
+					"self.isHypernode = false", //$NON-NLS-1$
+					"self.node.parent->size() > 0", //$NON-NLS-1$
+					"self.isHypernode = true", //$NON-NLS-1$
+					"true", //$NON-NLS-1$
+					"\'Hypernode\'", //$NON-NLS-1$
+					"self.oclAsType(graphs::Edge).isDirected = true and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Node2Node", //$NON-NLS-1$
+					"true", //$NON-NLS-1$
+					"self.oclAsType(graphs::Edge).isDirected = false and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Node2Node", //$NON-NLS-1$
+					"self.oclAsType(graphs::Edge).isDirected = true and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Port2Port", //$NON-NLS-1$
+					"true", //$NON-NLS-1$
+					"graphs::EdgeType::Port2Port", //$NON-NLS-1$
+					"self.oclAsType(graphs::Edge).isDirected = false and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Port2Port", //$NON-NLS-1$
+					"graphs::EdgeType::Port2Port", //$NON-NLS-1$
+					"self.oclAsType(graphs::Edge).isDirected = true and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Port2Node", //$NON-NLS-1$
+					"true", //$NON-NLS-1$
+					"graphs::EdgeType::Port2Node", //$NON-NLS-1$
+					"self.oclAsType(graphs::Edge).isDirected = false and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Port2Node", //$NON-NLS-1$
+					"graphs::EdgeType::Port2Node", //$NON-NLS-1$
+					"self.oclAsType(graphs::Edge).isDirected = true and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Node2Port", //$NON-NLS-1$
+					"true", //$NON-NLS-1$
+					"graphs::EdgeType::Node2Port", //$NON-NLS-1$
+					"self.oclAsType(graphs::Edge).isDirected = false and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Node2Port", //$NON-NLS-1$
+					"graphs::EdgeType::Node2Port", //$NON-NLS-1$
+			};
+			cached.expressions[index] = getExpression(
+					exprBodies[index],
+					context,
+					environment == null ? Collections
+							.<String, EClassifier> emptyMap() : environment);
+		}
+		return cached.expressions[index];
+	}
 
-    /**
-     * @generated
-     */
-    private static class Expression extends GraphsAbstractExpression {
+	/**
+	 * @generated
+	 */
+	public static GraphsAbstractExpression getExpression(String body,
+			EClassifier context, Map<String, EClassifier> environment) {
+		return new Expression(body, context, environment);
+	}
 
-        /**
-         * @generated
-         */
-        private WeakReference queryRef;
+	/**
+	 * @generated
+	 */
+	public static GraphsAbstractExpression getExpression(String body,
+			EClassifier context) {
+		return getExpression(body, context,
+				Collections.<String, EClassifier> emptyMap());
+	}
 
-        /**
-         * @generated
-         */
-        private final org.eclipse.ocl.ecore.OCL oclInstance;
+	/**
+	 * @generated
+	 */
+	private static class Expression extends GraphsAbstractExpression {
 
-        /**
-         * @generated
-         */
-        public Expression(String body, EClassifier context, Map environment) {
-            super(body, context);
-            oclInstance = org.eclipse.ocl.ecore.OCL.newInstance();
-            initCustomEnv(oclInstance.getEnvironment(), environment);
-        }
+		/**
+		 * @generated
+		 */
+		private final org.eclipse.ocl.ecore.OCL oclInstance;
 
-        /**
-         * @generated
-         */
-        protected Query getQuery() {
-            Query oclQuery = null;
-            if (this.queryRef != null) {
-                oclQuery = (Query) this.queryRef.get();
-            }
-            if (oclQuery == null) {
-                OCLHelper oclHelper = oclInstance.createOCLHelper();
-                oclHelper.setContext(context());
-                try {
-                    OCLExpression oclExpression = oclHelper.createQuery(body());
-                    oclQuery = oclInstance.createQuery(oclExpression);
-                    this.queryRef = new WeakReference(oclQuery);
-                    setStatus(IStatus.OK, null, null);
-                } catch (ParserException e) {
-                    setStatus(IStatus.ERROR, e.getMessage(), e);
-                }
-            }
-            return oclQuery;
-        }
+		/**
+		 * @generated
+		 */
+		private org.eclipse.ocl.ecore.OCLExpression oclExpression;
 
-        /**
-         * @generated
-         */
-        protected Object doEvaluate(Object context, Map env) {
-            Query oclQuery = getQuery();
-            if (oclQuery == null) {
-                return null;
-            }
-            EvaluationEnvironment evalEnv = oclQuery.getEvaluationEnvironment();
-            // init environment
-            for (Iterator it = env.entrySet().iterator(); it.hasNext();) {
-                Map.Entry nextEntry = (Map.Entry) it.next();
-                evalEnv.replace((String) nextEntry.getKey(), nextEntry
-                        .getValue());
-            }
-            try {
-                initExtentMap(context);
-                Object result = oclQuery.evaluate(context);
-                return (result != oclInstance.getEnvironment()
-                        .getOCLStandardLibrary().getOclInvalid()) ? result
-                        : null;
-            } finally {
-                evalEnv.clear();
-                oclQuery.getExtentMap().clear();
-            }
-        }
+		/**
+		 * @generated
+		 */
+		public Expression(String body, EClassifier context,
+				Map<String, EClassifier> environment) {
+			super(body, context);
+			oclInstance = org.eclipse.ocl.ecore.OCL.newInstance();
+			initCustomEnv(oclInstance.getEnvironment(), environment);
+			Helper oclHelper = oclInstance.createOCLHelper();
+			oclHelper.setContext(context());
+			try {
+				oclExpression = oclHelper.createQuery(body());
+				setStatus(IStatus.OK, null, null);
+			} catch (ParserException e) {
+				setStatus(IStatus.ERROR, e.getMessage(), e);
+			}
+		}
 
-        /**
-         * @generated
-         */
-        private void initExtentMap(Object context) {
-            if (!getStatus().isOK() || context == null) {
-                return;
-            }
-            final Query queryToInit = getQuery();
-            final Object extentContext = context;
-            queryToInit.getExtentMap().clear();
-            if (queryToInit.queryText() != null
-                    && queryToInit.queryText().indexOf(
-                            PredefinedType.ALL_INSTANCES_NAME) >= 0) {
-                AbstractVisitor visitior = new AbstractVisitor() {
+		/**
+		 * @generated
+		 */
+		@SuppressWarnings("rawtypes")
+		protected Object doEvaluate(Object context, Map env) {
+			if (oclExpression == null) {
+				return null;
+			}
+			// on the first call, both evalEnvironment and extentMap are clear, for later we have finally, below.
+			EvaluationEnvironment<?, ?, ?, ?, ?> evalEnv = oclInstance
+					.getEvaluationEnvironment();
+			// initialize environment
+			for (Object nextKey : env.keySet()) {
+				evalEnv.replace((String) nextKey, env.get(nextKey));
+			}
+			try {
+				Object result = oclInstance.evaluate(context, oclExpression);
+				return oclInstance.isInvalid(result) ? null : result;
+			} finally {
+				evalEnv.clear();
+				oclInstance.setExtentMap(null); // clear allInstances cache, and get the oclInstance ready for the next call
+			}
+		}
 
-                    private boolean usesAllInstances = false;
+		/**
+		 * @generated
+		 */
+		private static void initCustomEnv(
+				Environment<?, EClassifier, ?, ?, ?, EParameter, ?, ?, ?, ?, ?, ?> ecoreEnv,
+				Map<String, EClassifier> environment) {
+			// Use EObject as implicit root class for any object, to allow eContainer() and other EObject operations from OCL expressions
+			ParsingOptions.setOption(ecoreEnv,
+					ParsingOptions.implicitRootClass(ecoreEnv),
+					EcorePackage.eINSTANCE.getEObject());
+			for (String varName : environment.keySet()) {
+				EClassifier varType = environment.get(varName);
+				ecoreEnv.addElement(varName,
+						createVar(ecoreEnv, varName, varType), false);
+			}
+		}
 
-                    public Object visitOperationCallExp(OperationCallExp oc) {
-                        if (!usesAllInstances) {
-                            usesAllInstances =
-                                    PredefinedType.ALL_INSTANCES == oc
-                                            .getOperationCode();
-                            if (usesAllInstances) {
-                                queryToInit
-                                        .getExtentMap()
-                                        .putAll(
-                                                oclInstance
-                                                        .getEvaluationEnvironment()
-                                                        .createExtentMap(
-                                                                extentContext));
-                            }
-                        }
-                        return super.visitOperationCallExp(oc);
-                    }
-                };
-                queryToInit.getExpression().accept(visitior);
-            }
-        }
-
-        /**
-         * @generated
-         */
-        private static void initCustomEnv(Environment ecoreEnv, Map environment) {
-            for (Iterator it = environment.keySet().iterator(); it.hasNext();) {
-                String varName = (String) it.next();
-                EClassifier varType = (EClassifier) environment.get(varName);
-                ecoreEnv.addElement(varName, createVar(ecoreEnv, varName,
-                        varType), false);
-            }
-        }
-
-        /**
-         * @generated
-         */
-        private static Variable createVar(Environment ecoreEnv, String name,
-                EClassifier type) {
-            Variable var = EcoreFactory.eINSTANCE.createVariable();
-            var.setName(name);
-            var.setType(ecoreEnv.getUMLReflection().getOCLType(type));
-            return var;
-        }
-    }
+		/**
+		 * @generated
+		 */
+		private static org.eclipse.ocl.ecore.Variable createVar(
+				Environment<?, EClassifier, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> ecoreEnv,
+				String name, EClassifier type) {
+			org.eclipse.ocl.ecore.Variable var = EcoreFactory.eINSTANCE
+					.createVariable();
+			var.setName(name);
+			var.setType(ecoreEnv.getUMLReflection().getOCLType(type));
+			return var;
+		}
+	}
 }

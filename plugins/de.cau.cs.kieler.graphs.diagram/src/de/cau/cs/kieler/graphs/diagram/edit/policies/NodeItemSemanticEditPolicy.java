@@ -15,54 +15,54 @@ import de.cau.cs.kieler.graphs.diagram.providers.GraphsElementTypes;
  * @generated
  */
 public class NodeItemSemanticEditPolicy extends
-        GraphsBaseItemSemanticEditPolicy {
+		GraphsBaseItemSemanticEditPolicy {
 
-    /**
-     * @generated
-     */
-    public NodeItemSemanticEditPolicy() {
-        super(GraphsElementTypes.Node_1000);
-    }
+	/**
+	 * @generated
+	 */
+	public NodeItemSemanticEditPolicy() {
+		super(GraphsElementTypes.Node_1000);
+	}
 
-    /**
-     * @generated
-     */
-    protected Command getCreateCommand(CreateElementRequest req) {
-        if (GraphsElementTypes.Node_2001 == req.getElementType()) {
-            return getGEFWrapper(new NodeCreateCommand(req));
-        }
-        if (GraphsElementTypes.Node_2002 == req.getElementType()) {
-            return getGEFWrapper(new Node2CreateCommand(req));
-        }
-        return super.getCreateCommand(req);
-    }
+	/**
+	 * @generated
+	 */
+	protected Command getCreateCommand(CreateElementRequest req) {
+		if (GraphsElementTypes.Node_2001 == req.getElementType()) {
+			return getGEFWrapper(new NodeCreateCommand(req));
+		}
+		if (GraphsElementTypes.Node_2002 == req.getElementType()) {
+			return getGEFWrapper(new Node2CreateCommand(req));
+		}
+		return super.getCreateCommand(req);
+	}
 
-    /**
-     * @generated
-     */
-    protected Command getDuplicateCommand(DuplicateElementsRequest req) {
-        TransactionalEditingDomain editingDomain =
-                ((IGraphicalEditPart) getHost()).getEditingDomain();
-        return getGEFWrapper(new DuplicateAnythingCommand(editingDomain, req));
-    }
+	/**
+	 * @generated
+	 */
+	protected Command getDuplicateCommand(DuplicateElementsRequest req) {
+		TransactionalEditingDomain editingDomain = ((IGraphicalEditPart) getHost())
+				.getEditingDomain();
+		return getGEFWrapper(new DuplicateAnythingCommand(editingDomain, req));
+	}
 
-    /**
-     * @generated
-     */
-    private static class DuplicateAnythingCommand extends
-            DuplicateEObjectsCommand {
+	/**
+	 * @generated
+	 */
+	private static class DuplicateAnythingCommand extends
+			DuplicateEObjectsCommand {
 
-        /**
-         * @generated
-         */
-        public DuplicateAnythingCommand(
-                TransactionalEditingDomain editingDomain,
-                DuplicateElementsRequest req) {
-            super(editingDomain, req.getLabel(), req
-                    .getElementsToBeDuplicated(), req
-                    .getAllDuplicatedElementsMap());
-        }
+		/**
+		 * @generated
+		 */
+		public DuplicateAnythingCommand(
+				TransactionalEditingDomain editingDomain,
+				DuplicateElementsRequest req) {
+			super(editingDomain, req.getLabel(), req
+					.getElementsToBeDuplicated(), req
+					.getAllDuplicatedElementsMap());
+		}
 
-    }
+	}
 
 }

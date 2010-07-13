@@ -18,57 +18,57 @@ import de.cau.cs.kieler.graphs.diagram.part.Messages;
  */
 public class NodeNodeCompartment2EditPart extends ShapeCompartmentEditPart {
 
-    /**
-     * @generated
-     */
-    public static final int VISUAL_ID = 7002;
+	/**
+	 * @generated
+	 */
+	public static final int VISUAL_ID = 7002;
 
-    /**
-     * @generated
-     */
-    public NodeNodeCompartment2EditPart(View view) {
-        super(view);
-    }
+	/**
+	 * @generated
+	 */
+	public NodeNodeCompartment2EditPart(View view) {
+		super(view);
+	}
 
-    /**
-     * @generated
-     */
-    public String getCompartmentName() {
-        return Messages.NodeNodeCompartment2EditPart_title;
-    }
+	/**
+	 * @generated
+	 */
+	public String getCompartmentName() {
+		return Messages.NodeNodeCompartment2EditPart_title;
+	}
 
-    /**
-     * @generated
-     */
-    public IFigure createFigure() {
-        ResizableCompartmentFigure result =
-                (ResizableCompartmentFigure) super.createFigure();
-        result.setTitleVisibility(false);
-        return result;
-    }
+	/**
+	 * @generated
+	 */
+	public IFigure createFigure() {
+		ResizableCompartmentFigure result = (ResizableCompartmentFigure) super
+				.createFigure();
+		result.setTitleVisibility(false);
+		return result;
+	}
 
-    /**
-     * @generated
-     */
-    protected void createDefaultEditPolicies() {
-        super.createDefaultEditPolicies();
-        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
-                new NodeNodeCompartment2ItemSemanticEditPolicy());
-        installEditPolicy(EditPolicyRoles.CREATION_ROLE,
-                new CreationEditPolicy());
-        installEditPolicy(EditPolicyRoles.DRAG_DROP_ROLE,
-                new DragDropEditPolicy());
-        installEditPolicy(EditPolicyRoles.CANONICAL_ROLE,
-                new NodeNodeCompartment2CanonicalEditPolicy());
-    }
+	/**
+	 * @generated
+	 */
+	protected void createDefaultEditPolicies() {
+		super.createDefaultEditPolicies();
+		installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
+				new NodeNodeCompartment2ItemSemanticEditPolicy());
+		installEditPolicy(EditPolicyRoles.CREATION_ROLE,
+				new CreationEditPolicy());
+		installEditPolicy(EditPolicyRoles.DRAG_DROP_ROLE,
+				new DragDropEditPolicy());
+		installEditPolicy(EditPolicyRoles.CANONICAL_ROLE,
+				new NodeNodeCompartment2CanonicalEditPolicy());
+	}
 
-    /**
-     * @generated
-     */
-    protected void setRatio(Double ratio) {
-        if (getFigure().getParent().getLayoutManager() instanceof ConstrainedToolbarLayout) {
-            super.setRatio(ratio);
-        }
-    }
+	/**
+	 * @generated
+	 */
+	protected void setRatio(Double ratio) {
+		if (getFigure().getParent().getLayoutManager() instanceof ConstrainedToolbarLayout) {
+			super.setRatio(ratio);
+		}
+	}
 
 }
