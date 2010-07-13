@@ -13,57 +13,46 @@
  */
 package de.cau.cs.kieler.kiml.evol.grana;
 
-import org.eclipse.core.runtime.Assert;
+import java.util.Map;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
 
 /**
  * A layout metric that computes the vertical compactness (flatness) of the
  * given graph layout.
- * 
+ *
  * Does not care for hierarchy. The returned Object is a float value within the
  * range of 0.0 to 1.0, where a higher value means more vertical compactness.
- * 
+ *
  * @author bdu
- * 
+ *
  */
 public class FlatnessMetric implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode, final IKielerProgressMonitor progressMonitor)
+    public Object doAnalysis(
+            final KNode parentNode, final Map<String, Object> results,
+            final IKielerProgressMonitor progressMonitor)
             throws KielerException {
         progressMonitor.begin("Flatness metric analysis", 1);
         final Float result;
-        float xmin = Float.MAX_VALUE;
-        float ymin = Float.MAX_VALUE;
-        float xmax = 0.0f;
-        float ymax = 0.0f;
-        for (final KNode node : parentNode.getChildren()) {
-            final KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(node);
-            final float xpos = nodeLayout.getXpos();
-            final float ypos = nodeLayout.getYpos();
-            Assert.isTrue((xpos >= 0.0f) && (ypos >= 0.0f), "negative node positions");
-            if (xpos > xmax) {
-                xmax = xpos;
-            }
-            if (ypos > ymax) {
-                ymax = ypos;
-            }
-            if (xpos < xmin) {
-                xmin = xpos;
-            }
-            if (ypos < ymin) {
-                ymin = ypos;
-            }
+        final Object dimsResult = results.get("de.cau.cs.kieler.kiml.grana.dimensions");
+        final Pair<Float, Float> dims;
+        final float xdim;
+        final float ydim;
+        if (dimsResult instanceof Pair) {
+            dims = (Pair<Float, Float>) dimsResult;
+            xdim = dims.getFirst();
+            ydim = dims.getSecond();
+        } else {
+            xdim = 0.0f;
+            ydim = 0.0f;
         }
-        final float xdim = xmax - xmin;
-        final float ydim = ymax - ymin;
         final boolean isXdimZero = (xdim == 0.0f);
         final boolean isYdimZero = (ydim == 0.0f);
         if (isXdimZero && isYdimZero) {

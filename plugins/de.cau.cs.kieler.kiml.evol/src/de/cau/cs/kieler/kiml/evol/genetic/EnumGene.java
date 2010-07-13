@@ -2,12 +2,12 @@
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
+ *
  * Copyright 2010 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- * 
+ *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.Assert;
 
 
 /**
- * 
+ *
  * @author bdu
  */
 public final class EnumGene extends IntegerGene {
@@ -30,17 +30,17 @@ public final class EnumGene extends IntegerGene {
         // incompatible template
         return null;
     }
-    
+
     @Override
     public IGene<Integer> newMutation() {
-        IGene<Integer> template = super.newMutation();
-        IGene<Integer> result = new EnumGene(template.getId(), template.getValue(), this.enumClass,
+        final IGene<Integer> template = super.newMutation();
+        final IGene<Integer> result = new EnumGene(template.getId(), template.getValue(), this.enumClass,
                 getMutationInfo().getProbability());
         return result;
     }
 
     /**
-     * 
+     *
      * @param theId
      *            the id
      * @param theValue
@@ -62,40 +62,43 @@ public final class EnumGene extends IntegerGene {
         Assert.isLegal(theEnumClass != null);
         setEnumClass(theEnumClass);
     }
-    
+
     /**
-     * 
+     *
      * @return A string representation if this instance.
      */
     @Override
     public String toString() {
         Assert.isNotNull(this.enumClass);
-        Enum<?>[] constants = this.enumClass.getEnumConstants();
+        final Enum<?>[] constants = this.enumClass.getEnumConstants();
         if (constants == null) {
             return "";
         }
         final int value = getValue();
-        Assert.isTrue(value >= 0 && value < constants.length);
+        Assert.isTrue((value >= 0) && (value < constants.length));
         final String result = constants[value].toString();
         return result;
     }
 
     /**
      * Determines the number of possible choices in the given enumeration.
-     * 
+     *
      * @param theEnumClass
      *            an enumeration class
      * @return number of choices in the given enumeration.
      */
     private static int choicesCount(final Class<? extends Enum<?>> theEnumClass) {
         Assert.isLegal(theEnumClass != null);
+        if (theEnumClass == null) {
+            return 0;
+        }
         return theEnumClass.getEnumConstants().length;
     }
-    
+
     private void setEnumClass(final Class<? extends Enum<?>> theEnumClass) {
         this.enumClass = theEnumClass;
     }
-    
+
     // private fields
     private Class<? extends Enum<?>> enumClass;
 }

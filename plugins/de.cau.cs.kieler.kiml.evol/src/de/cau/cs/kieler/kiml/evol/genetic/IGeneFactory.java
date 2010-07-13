@@ -36,4 +36,13 @@ public interface IGeneFactory {
     IGene<?> createGene(
             final Object theId, final Object theValue, final TypeInfo<?> theTypeInfo,
             final MutationInfo theMutationInfo);
+
+    /**
+     *
+     * @param theId
+     * @param theValue
+     * @param theMutationProb
+     * @return
+     */
+    IGene<?> createGene(final Object theId, final Object theValue, final double theMutationProb);
 }

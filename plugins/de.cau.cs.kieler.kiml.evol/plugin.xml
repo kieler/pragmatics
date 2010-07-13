@@ -43,10 +43,19 @@
    <extension
          point="de.cau.cs.kieler.kiml.grana.analysisProviders">
       <analysisProvider
+            class="de.cau.cs.kieler.kiml.evol.grana.DimensionsAnalysis"
+            description="measures the horizontal and vertical dimensions of the given graph drawing"
+            id="de.cau.cs.kieler.kiml.grana.dimensions"
+            name="Dimensions">
+      </analysisProvider>
+      <analysisProvider
             class="de.cau.cs.kieler.kiml.evol.grana.AreaMetric"
             description="description"
             id="de.cau.cs.kieler.kiml.evol.areaMetric"
             name="Area Metric">
+         <analysisDependency
+               analysis="de.cau.cs.kieler.kiml.grana.dimensions">
+         </analysisDependency>
       </analysisProvider>
       <analysisProvider
             class="de.cau.cs.kieler.kiml.evol.grana.BendsMetric"
@@ -59,12 +68,18 @@
             description="description"
             id="de.cau.cs.kieler.kiml.evol.flatnessMetric"
             name="Flatness Metric">
+         <analysisDependency
+               analysis="de.cau.cs.kieler.kiml.grana.dimensions">
+         </analysisDependency>
       </analysisProvider>
       <analysisProvider
             class="de.cau.cs.kieler.kiml.evol.grana.NarrownessMetric"
             description="description"
             id="de.cau.cs.kieler.kiml.evol.narrownessMetric"
             name="Narrowness Metric">
+         <analysisDependency
+               analysis="de.cau.cs.kieler.kiml.grana.dimensions">
+         </analysisDependency>
       </analysisProvider>
    </extension>
    <extension

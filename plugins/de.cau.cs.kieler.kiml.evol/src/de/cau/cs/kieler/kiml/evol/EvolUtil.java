@@ -15,7 +15,10 @@ package de.cau.cs.kieler.kiml.evol;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
@@ -39,11 +42,13 @@ import de.cau.cs.kieler.kiml.evol.genetic.EnumGene;
 import de.cau.cs.kieler.kiml.evol.genetic.FloatGene;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.IGene;
+import de.cau.cs.kieler.kiml.evol.genetic.IGeneFactory;
 import de.cau.cs.kieler.kiml.evol.genetic.Individual;
 import de.cau.cs.kieler.kiml.evol.genetic.IntegerGene;
 import de.cau.cs.kieler.kiml.evol.genetic.MutationInfo;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 import de.cau.cs.kieler.kiml.evol.genetic.StrictlyPositiveFloatGene;
+import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo;
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.AnalysisServices;
 import de.cau.cs.kieler.kiml.grana.ui.DiagramAnalyser;
@@ -160,20 +165,24 @@ public final class EvolUtil {
             metricsList.add(metric);
         }
         // TODO: cache the metrics
-        final AbstractInfoAnalysis[] metrics =
-                metricsList.toArray(new AbstractInfoAnalysis[metricsList.size()]);
-        final Object[] results = DiagramAnalyser.analyse(parentNode, metrics, showProgressBar);
+        final Map<String, Object> results =
+                DiagramAnalyser.analyse(parentNode, metricsList, showProgressBar);
 
         // XXX: arbitrarily chosen coefficients
-        final double[] coeffs = new double[] { .08, .02, .2, .7 };
+        final Deque<Double> coeffsQueue = new LinkedList<Double>();
+        for (final double d : new double[] { .08, .02, .2, .7 }) {
+            coeffsQueue.add(d);
+        }
 
         // final double[] scaledResults = new double[metrics.length];
         double sum = 0.0;
-        for (int i = 0; i < metrics.length; i++) {
-            final double scaled = Double.parseDouble(results[i].toString()) * coeffs[i];
+        for (final AbstractInfoAnalysis metric : metricsList) {
+            final String metricResult = results.get(metric.getID()).toString();
+            final double scaled = Double.parseDouble(metricResult) * coeffsQueue.remove();
             // scaledResults[i] = scaled;
             sum += scaled;
         }
+
         final int newRating = (int) Math.round((sum * 1000));
         return newRating;
     }
@@ -208,79 +217,6 @@ public final class EvolUtil {
                     break;
                 }
             }
-        }
-        return result;
-    }
-
-    /**
-     * Creates a gene with the specified value.
-     *
-     * @param theId
-     *            an identifier
-     * @param theValue
-     *            a value
-     * @return a gene
-     */
-    private static IGene<?> createGene(
-            final String theId, final Object theValue, final double theMutationProbability) {
-        // TODO: regard bounds from the evolution data extensions
-        IGene<?> result = null;
-        final LayoutOptionData layoutOptionData =
-                LayoutServices.getInstance().getLayoutOptionData(theId);
-        final IConfigurationElement evolutionData =
-                EvolutionExtensionsUtil.getInstance().getEvolutionData(theId);
-
-        final String lowerBound = evolutionData.getAttribute("lowerBound");
-        final String upperBound = evolutionData.getAttribute("upperBound");
-        final String distrName = evolutionData.getAttribute("distribution");
-
-        final Distribution distr = Distribution.valueOf(distrName);
-        final Type type = layoutOptionData.getType();
-        final int intValue;
-        final double var;
-        switch (type) {
-        case BOOLEAN:
-            final boolean booleanValue = (Integer.parseInt(theValue.toString()) == 1);
-            result = new BooleanGene(theId, booleanValue, theMutationProbability);
-            System.out.println(result);
-            break;
-        case ENUM:
-            final int choicesCount = layoutOptionData.getChoices().length;
-            final Class<? extends Enum<?>> enumClass = LayoutOptions.getEnumClass(theId);
-            Assert.isNotNull(enumClass);
-            Assert.isTrue(enumClass.getEnumConstants().length == choicesCount);
-            intValue = Integer.valueOf(theValue.toString());
-            result = new EnumGene(theId, intValue, enumClass, theMutationProbability);
-            System.out.println("Enum " + enumClass.getSimpleName() + "(" + choicesCount + "): "
-                    + intValue);
-            break;
-        case INT:
-            intValue = Integer.parseInt((String) theValue);
-            var = MutationInfo.DEFAULT_VARIANCE;
-            result = new IntegerGene(theId, intValue, theMutationProbability, var);
-            System.out.println(result);
-            break;
-        case FLOAT:
-            final float floatValue = (Float.parseFloat((String) theValue));
-            // estimate desired variance
-            final float verySmall = 1e-3f;
-            final double scalingFactor = .1875;
-            var =
-                    ((Math.abs(floatValue) < verySmall) ? MutationInfo.DEFAULT_VARIANCE : Math
-                            .abs(floatValue) * scalingFactor);
-            if (floatValue > 0.0f) {
-                // we presume we need a strictly positive float gene
-                result =
-                        new StrictlyPositiveFloatGene(theId, floatValue, theMutationProbability,
-                                var);
-            } else {
-                // we use a general float gene
-                result = new FloatGene(theId, floatValue, theMutationProbability, var);
-            }
-            System.out.println(result);
-            break;
-        default:
-            break;
         }
         return result;
     }
@@ -330,7 +266,8 @@ public final class EvolUtil {
             } else {
                 // learnable option?
                 if (learnables.contains(id)) {
-                    gene = createGene(id, value, uniformProb);
+                    final GeneFactory gf = new GeneFactory();
+                    gene = gf.createGene(id, value, uniformProb);
                     if (gene != null) {
                         result.add(gene);
                         gene = null;
@@ -347,5 +284,97 @@ public final class EvolUtil {
     /** Hidden constructor to avoid instantiation. **/
     private EvolUtil() {
         // nothing
+    }
+
+    /**
+     *
+     * @author bdu
+     *
+     */
+    private static class GeneFactory implements IGeneFactory {
+
+        public IGene<?> createGene(
+                final Object theId, final Object theValue, final TypeInfo<?> theTypeInfo,
+                final MutationInfo theMutationInfo) {
+            // TODO: implements
+            return null;
+        }
+        
+        /**
+         * Creates a gene with the specified value.
+         * 
+         * @param theId
+         *            an identifier
+         * @param theValue
+         *            a value
+         * @param theMutationProbability
+         *            the mutation probability
+         * @return a gene
+         */
+        public IGene<?> createGene(
+                final Object theId, final Object theValue, final double theMutationProbability) {
+            // TODO: regard bounds from the evolution data extensions
+            IGene<?> result = null;
+            final LayoutOptionData layoutOptionData =
+                    LayoutServices.getInstance().getLayoutOptionData((String) theId);
+            final IConfigurationElement evolutionData =
+                    EvolutionExtensionsUtil.getInstance().getEvolutionData((String) theId);
+
+            final String lowerBound = evolutionData.getAttribute("lowerBound");
+            final String upperBound = evolutionData.getAttribute("upperBound");
+            final String distrName = evolutionData.getAttribute("distribution");
+            final String variance = evolutionData.getAttribute("variance");
+            final Distribution distr = Distribution.valueOf(distrName);
+            final Type type = layoutOptionData.getType();
+            final int intValue;
+            final double var;
+            switch (type) {
+            case BOOLEAN:
+                final boolean booleanValue = (Integer.parseInt(theValue.toString()) == 1);
+                result = new BooleanGene(theId, booleanValue, theMutationProbability);
+                System.out.println(result);
+                break;
+            case ENUM:
+                final int choicesCount = layoutOptionData.getChoices().length;
+                final Class<? extends Enum<?>> enumClass =
+                        LayoutOptions.getEnumClass((String) theId);
+                Assert.isNotNull(enumClass);
+                Assert.isTrue(enumClass.getEnumConstants().length == choicesCount);
+                intValue = Integer.valueOf(theValue.toString());
+                result = new EnumGene(theId, intValue, enumClass, theMutationProbability);
+                System.out.println("Enum " + enumClass.getSimpleName() + "(" + choicesCount + "): "
+                        + intValue);
+                break;
+            case INT:
+                intValue = Integer.parseInt((String) theValue);
+                var = MutationInfo.DEFAULT_VARIANCE;
+                result = new IntegerGene(theId, intValue, theMutationProbability, var);
+                System.out.println(result);
+                break;
+            case FLOAT:
+                final float floatValue = (Float.parseFloat((String) theValue));
+                // estimate desired variance
+                final float verySmall = 1e-3f;
+                final double scalingFactor = .1875;
+                var =
+                        ((Math.abs(floatValue) < verySmall) ? MutationInfo.DEFAULT_VARIANCE : Math
+                                .abs(floatValue) * scalingFactor);
+                if (floatValue > 0.0f) {
+                    // we presume we need a strictly positive float gene
+                    result =
+                            new StrictlyPositiveFloatGene(theId, floatValue,
+                                    theMutationProbability, var);
+                } else {
+                    // we use a general float gene
+                    result = new FloatGene(theId, floatValue, theMutationProbability, var);
+                }
+                System.out.println(result);
+                break;
+            default:
+                break;
+            }
+            return result;
+        }
+
     }
 }

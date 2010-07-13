@@ -2,12 +2,12 @@
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
+ *
  * Copyright 2010 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- * 
+ *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
@@ -17,9 +17,9 @@ import org.eclipse.core.runtime.Assert;
 
 /**
  * This class comprises the mutation parameters.
- * 
+ *
  * @author bdu
- * 
+ *
  */
 public class MutationInfo {
     /**
@@ -39,7 +39,7 @@ public class MutationInfo {
 
     /**
      * Constructor for a mutation info.
-     * 
+     *
      * @param prob
      *            the probability that a mutation occurs.
      * @param distr
@@ -51,7 +51,7 @@ public class MutationInfo {
 
     /**
      * Constructor for a mutation info.
-     * 
+     *
      * @param prob
      *            the probability that a mutation occurs.
      * @param var
@@ -65,7 +65,7 @@ public class MutationInfo {
 
     /**
      * Constructor for a mutation info.
-     * 
+     *
      * @param prob
      *            the probability that a mutation occurs.
      * @param var
@@ -99,11 +99,11 @@ public class MutationInfo {
     private final double genuineMutationProbability;
 
     private final double probability;
-
+    // TODO: encapsulate distribution-related parameters
     private final double variance;
 
     /**
-     * 
+     *
      * @return the distribution.
      */
     public Distribution getDistr() {
@@ -112,7 +112,7 @@ public class MutationInfo {
     }
 
     /**
-     * 
+     *
      * @return the genuine mutation probability.
      */
     public double getGenuineMutationProbability() {
@@ -120,7 +120,7 @@ public class MutationInfo {
     }
 
     /**
-     * 
+     *
      * @return the mutation application probability.
      */
     public double getProbability() {
@@ -128,7 +128,7 @@ public class MutationInfo {
     }
 
     /**
-     * 
+     *
      * @return the mutation variance.
      */
     public double getVariance() {

@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.evol.grana;
 
+import java.util.Map;
+
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
@@ -32,9 +34,9 @@ public class BendsMetric implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode,
-            final IKielerProgressMonitor progressMonitor)
-            throws KielerException {
+    public Object doAnalysis(
+            final KNode parentNode, final Map<String, Object> results,
+            final IKielerProgressMonitor progressMonitor) throws KielerException {
         progressMonitor.begin("Bend metric analysis", 1);
 
         // count the number of edges and bend points
@@ -61,5 +63,6 @@ public class BendsMetric implements IAnalysis {
 
         return result;
     }
+
 
 }
