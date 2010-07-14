@@ -9,12 +9,12 @@ import de.cau.cs.kieler.graphs.diagram.part.GraphsDiagramEditorPlugin;
  */
 public class DiagramPrintingPreferencePage extends PrintingPreferencePage {
 
-	/**
-	 * @generated
-	 */
-	public DiagramPrintingPreferencePage() {
-		setPreferenceStore(GraphsDiagramEditorPlugin.getInstance()
-				.getPreferenceStore());
-	}
+    /**
+     * @generated
+     */
+    public DiagramPrintingPreferencePage() {
+        setPreferenceStore(GraphsDiagramEditorPlugin.getInstance()
+                .getPreferenceStore());
+    }
 
 }

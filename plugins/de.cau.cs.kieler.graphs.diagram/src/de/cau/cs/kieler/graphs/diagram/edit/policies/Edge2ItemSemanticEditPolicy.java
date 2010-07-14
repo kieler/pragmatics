@@ -10,20 +10,20 @@ import de.cau.cs.kieler.graphs.diagram.providers.GraphsElementTypes;
  * @generated
  */
 public class Edge2ItemSemanticEditPolicy extends
-		GraphsBaseItemSemanticEditPolicy {
+        GraphsBaseItemSemanticEditPolicy {
 
-	/**
-	 * @generated
-	 */
-	public Edge2ItemSemanticEditPolicy() {
-		super(GraphsElementTypes.Edge_4002);
-	}
+    /**
+     * @generated
+     */
+    public Edge2ItemSemanticEditPolicy() {
+        super(GraphsElementTypes.Edge_4002);
+    }
 
-	/**
-	 * @generated
-	 */
-	protected Command getDestroyElementCommand(DestroyElementRequest req) {
-		return getGEFWrapper(new DestroyElementCommand(req));
-	}
+    /**
+     * @generated
+     */
+    protected Command getDestroyElementCommand(DestroyElementRequest req) {
+        return getGEFWrapper(new DestroyElementCommand(req));
+    }
 
 }

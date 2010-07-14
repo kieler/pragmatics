@@ -21,81 +21,81 @@ import de.cau.cs.kieler.graphs.diagram.edit.policies.NodeItemSemanticEditPolicy;
  */
 public class NodeEditPart extends DiagramEditPart {
 
-	/**
-	 * @generated
-	 */
-	public final static String MODEL_ID = "Graphs"; //$NON-NLS-1$
+    /**
+     * @generated
+     */
+    public final static String MODEL_ID = "Graphs"; //$NON-NLS-1$
 
-	/**
-	 * @generated
-	 */
-	public static final int VISUAL_ID = 1000;
+    /**
+     * @generated
+     */
+    public static final int VISUAL_ID = 1000;
 
-	/**
-	 * @generated
-	 */
-	public NodeEditPart(View view) {
-		super(view);
-	}
+    /**
+     * @generated
+     */
+    public NodeEditPart(View view) {
+        super(view);
+    }
 
-	/**
-	 * @generated
-	 */
-	protected void createDefaultEditPolicies() {
-		super.createDefaultEditPolicies();
-		installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
-				new NodeItemSemanticEditPolicy());
-		installEditPolicy(EditPolicyRoles.CANONICAL_ROLE,
-				new NodeCanonicalEditPolicy());
-		// removeEditPolicy(org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles.POPUPBAR_ROLE);
-	}
+    /**
+     * @generated
+     */
+    protected void createDefaultEditPolicies() {
+        super.createDefaultEditPolicies();
+        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
+                new NodeItemSemanticEditPolicy());
+        installEditPolicy(EditPolicyRoles.CANONICAL_ROLE,
+                new NodeCanonicalEditPolicy());
+        // removeEditPolicy(org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles.POPUPBAR_ROLE);
+    }
 
-	/**
-	 * @generated
-	 */
-	/*package-local*/static class NodeLabelDragPolicy extends
-			NonResizableEditPolicy {
+    /**
+     * @generated
+     */
+    /*package-local*/static class NodeLabelDragPolicy extends
+            NonResizableEditPolicy {
 
-		/**
-		 * @generated
-		 */
-		@SuppressWarnings("rawtypes")
-		protected List createSelectionHandles() {
-			MoveHandle h = new MoveHandle((GraphicalEditPart) getHost());
-			h.setBorder(null);
-			return Collections.singletonList(h);
-		}
+        /**
+         * @generated
+         */
+        @SuppressWarnings("rawtypes")
+        protected List createSelectionHandles() {
+            MoveHandle h = new MoveHandle((GraphicalEditPart) getHost());
+            h.setBorder(null);
+            return Collections.singletonList(h);
+        }
 
-		/**
-		 * @generated
-		 */
-		public Command getCommand(Request request) {
-			return null;
-		}
+        /**
+         * @generated
+         */
+        public Command getCommand(Request request) {
+            return null;
+        }
 
-		/**
-		 * @generated
-		 */
-		public boolean understandsRequest(Request request) {
-			return false;
-		}
-	}
+        /**
+         * @generated
+         */
+        public boolean understandsRequest(Request request) {
+            return false;
+        }
+    }
 
-	/**
-	 * @generated
-	 */
-	/*package-local*/static class LinkLabelDragPolicy extends
-			NonResizableLabelEditPolicy {
+    /**
+     * @generated
+     */
+    /*package-local*/static class LinkLabelDragPolicy extends
+            NonResizableLabelEditPolicy {
 
-		/**
-		 * @generated
-		 */
-		@SuppressWarnings("rawtypes")
-		protected List createSelectionHandles() {
-			MoveHandle mh = new MoveHandle((GraphicalEditPart) getHost());
-			mh.setBorder(null);
-			return Collections.singletonList(mh);
-		}
-	}
+        /**
+         * @generated
+         */
+        @SuppressWarnings("rawtypes")
+        protected List createSelectionHandles() {
+            MoveHandle mh = new MoveHandle((GraphicalEditPart) getHost());
+            mh.setBorder(null);
+            return Collections.singletonList(mh);
+        }
+    }
 
 }

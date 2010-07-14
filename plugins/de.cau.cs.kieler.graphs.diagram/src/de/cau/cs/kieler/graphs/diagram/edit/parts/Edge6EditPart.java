@@ -16,88 +16,88 @@ import de.cau.cs.kieler.graphs.diagram.part.GraphsDiagramEditorPlugin;
  * @generated
  */
 public class Edge6EditPart extends ConnectionNodeEditPart implements
-		GraphsConnection, ITreeBranchEditPart {
+        GraphsConnection, ITreeBranchEditPart {
 
-	/**
-	 * @generated
-	 */
-	public static final int VISUAL_ID = 4006;
+    /**
+     * @generated
+     */
+    public static final int VISUAL_ID = 4006;
 
-	/**
-	 * @generated
-	 */
-	public Edge6EditPart(View view) {
-		super(view);
-	}
+    /**
+     * @generated
+     */
+    public Edge6EditPart(View view) {
+        super(view);
+    }
 
-	/**
-	 * @generated
-	 */
-	protected void createDefaultEditPolicies() {
-		super.createDefaultEditPolicies();
-		installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
-				new Edge6ItemSemanticEditPolicy());
-	}
+    /**
+     * @generated
+     */
+    protected void createDefaultEditPolicies() {
+        super.createDefaultEditPolicies();
+        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
+                new Edge6ItemSemanticEditPolicy());
+    }
 
-	/**
-	 * Creates figure for this edit part.
-	 * 
-	 * Body of this method does not depend on settings in generation model
-	 * so you may safely remove <i>generated</i> tag and modify it.
-	 * 
-	 * @generated
-	 */
+    /**
+     * Creates figure for this edit part.
+     * 
+     * Body of this method does not depend on settings in generation model
+     * so you may safely remove <i>generated</i> tag and modify it.
+     * 
+     * @generated
+     */
 
-	protected Connection createConnectionFigure() {
-		Connection figure = new UndirectedEdgeFigure();
+    protected Connection createConnectionFigure() {
+        Connection figure = new UndirectedEdgeFigure();
 
-		if (figure instanceof SplineConnection) {
-			((SplineConnection) figure).setSplineMode(GraphsDiagramEditorPlugin
-					.getInstance().getPreferenceStore()
-					.getInt(SplineConnection.PREF_SPLINE_MODE));
-		}
-		return figure;
-	}
+        if (figure instanceof SplineConnection) {
+            ((SplineConnection) figure).setSplineMode(GraphsDiagramEditorPlugin
+                    .getInstance().getPreferenceStore()
+                    .getInt(SplineConnection.PREF_SPLINE_MODE));
+        }
+        return figure;
+    }
 
-	/**
-	 * @generated
-	 */
-	public UndirectedEdgeFigure getPrimaryShape() {
-		return (UndirectedEdgeFigure) getFigure();
-	}
+    /**
+     * @generated
+     */
+    public UndirectedEdgeFigure getPrimaryShape() {
+        return (UndirectedEdgeFigure) getFigure();
+    }
 
-	/**
-	 * @generated
-	 */
-	public class UndirectedEdgeFigure extends SplineConnection {
+    /**
+     * @generated
+     */
+    public class UndirectedEdgeFigure extends SplineConnection {
 
-		/**
-		 * @generated
-		 */
-		public UndirectedEdgeFigure() {
+        /**
+         * @generated
+         */
+        public UndirectedEdgeFigure() {
 
-			this.setForegroundColor(ColorConstants.black);
-		}
+            this.setForegroundColor(ColorConstants.black);
+        }
 
-		/**
-		 * @generated
-		 */
-		private boolean myUseLocalCoordinates = false;
+        /**
+         * @generated
+         */
+        private boolean myUseLocalCoordinates = false;
 
-		/**
-		 * @generated
-		 */
-		protected boolean useLocalCoordinates() {
-			return myUseLocalCoordinates;
-		}
+        /**
+         * @generated
+         */
+        protected boolean useLocalCoordinates() {
+            return myUseLocalCoordinates;
+        }
 
-		/**
-		 * @generated
-		 */
-		protected void setUseLocalCoordinates(boolean useLocalCoordinates) {
-			myUseLocalCoordinates = useLocalCoordinates;
-		}
+        /**
+         * @generated
+         */
+        protected void setUseLocalCoordinates(boolean useLocalCoordinates) {
+            myUseLocalCoordinates = useLocalCoordinates;
+        }
 
-	}
+    }
 
 }

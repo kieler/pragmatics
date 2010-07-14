@@ -9,20 +9,20 @@ import de.cau.cs.kieler.graphs.diagram.part.GraphsVisualIDRegistry;
  */
 public class GraphsNavigatorSorter extends ViewerSorter {
 
-	/**
-	 * @generated
-	 */
-	private static final int GROUP_CATEGORY = 7004;
+    /**
+     * @generated
+     */
+    private static final int GROUP_CATEGORY = 7004;
 
-	/**
-	 * @generated
-	 */
-	public int category(Object element) {
-		if (element instanceof GraphsNavigatorItem) {
-			GraphsNavigatorItem item = (GraphsNavigatorItem) element;
-			return GraphsVisualIDRegistry.getVisualID(item.getView());
-		}
-		return GROUP_CATEGORY;
-	}
+    /**
+     * @generated
+     */
+    public int category(Object element) {
+        if (element instanceof GraphsNavigatorItem) {
+            GraphsNavigatorItem item = (GraphsNavigatorItem) element;
+            return GraphsVisualIDRegistry.getVisualID(item.getView());
+        }
+        return GROUP_CATEGORY;
+    }
 
 }
