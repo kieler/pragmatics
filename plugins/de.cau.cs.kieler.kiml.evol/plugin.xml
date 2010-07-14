@@ -28,6 +28,13 @@
             option="de.cau.cs.kieler.layout.options.borderSpacing">
       </data>
       <data
+            distribution="GAUSSIAN"
+            lowerBound="0"
+            name="Force Scaling Factor"
+            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.forceScalingFactor"
+            upperBound="1000">
+      </data>
+      <data
             distribution="UNIFORM"
             enum="de.cau.cs.kieler.kiml.layout.options.LayoutDirection"
             name="Layout Direction"
@@ -35,9 +42,55 @@
       </data>
       <data
             distribution="GAUSSIAN"
+            lowerBound="0.0"
+            name="Min CC Distance"
+            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.minDistCC"
+            upperBound="1.0e7">
+      </data>
+      <data
+            distribution="GAUSSIAN"
             lowerBound="1"
             name="Minimal Spacing"
             option="de.cau.cs.kieler.layout.options.minSpacing">
+      </data>
+      <data
+            distribution="UNIFORM"
+            name="Quality vs. Speed"
+            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.qualityVsSpeed">
+      </data>
+      <data
+            distribution="GAUSSIAN"
+            lowerBound="0"
+            name="Repulsive Forces Strength"
+            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.repForcesStrength"
+            upperBound="10000">
+      </data>
+      <data
+            distribution="GAUSSIAN"
+            lowerBound="0"
+            name="Steps for rotating components"
+            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.stepsForRotatingComponents"
+            upperBound="1000">
+      </data>
+      <data
+            distribution="GAUSSIAN"
+            lowerBound="0.0"
+            name="Stop Criteria Threshold"
+            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.threshold"
+            upperBound="10.0">
+      </data>
+      <data
+            distribution="GAUSSIAN"
+            lowerBound="0.0"
+            name="Spring Strength"
+            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.springStrength"
+            upperBound="1.0e7">
+      </data>
+      <data
+            distribution="GAUSSIAN"
+            lowerBound="0.1"
+            name="Unit Edge Length"
+            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.unitEdgeLength">
       </data>
    </extension>
    <extension

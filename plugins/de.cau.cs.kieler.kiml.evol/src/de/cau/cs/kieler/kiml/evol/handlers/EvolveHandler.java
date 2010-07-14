@@ -35,7 +35,7 @@ public class EvolveHandler extends AbstractHandler {
     /**
      * Auto-rate all individuals after how many steps?
      */
-    private static final int STEPS_PER_AUTO_RATING = 3;
+    private static final int STEPS_PER_AUTO_RATING = 1;
 
     /**
      * {@inheritDoc}
@@ -47,7 +47,8 @@ public class EvolveHandler extends AbstractHandler {
         if (view != null) {
             for (int i = 0; i < NUMBER_OF_STEPS; i++) {
                 view.evolve();
-                final boolean wantAutoRating = (((i + 1) % STEPS_PER_AUTO_RATING) == 0);
+                final boolean wantAutoRating;
+                wantAutoRating = (((i + 1) % STEPS_PER_AUTO_RATING) == 0);
                 if (wantAutoRating) {
                     view.autorateIndividuals(view.getPopulation(), TargetIndividuals.ALL, null);
                 }
