@@ -57,7 +57,8 @@ public class Individual {
      *            better rating.
      */
     public void setRating(final int theRating) {
-        System.out.println("Assign rating " + theRating + " to individual" + ": " + toString());
+        // System.out.println("Assign rating " + theRating + " to individual" +
+        // ": " + toString());
         this.rating = theRating;
     }
 

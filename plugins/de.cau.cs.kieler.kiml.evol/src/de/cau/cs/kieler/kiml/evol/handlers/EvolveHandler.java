@@ -12,9 +12,11 @@
  * See the file epl-v10.html for the license text.
  */
 package de.cau.cs.kieler.kiml.evol.handlers;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.kiml.evol.ui.EvolView;
@@ -31,11 +33,13 @@ public class EvolveHandler extends AbstractHandler {
     /**
      * Number of evolution steps.
      */
-    private static final int NUMBER_OF_STEPS = 9;
+    private static final int NUMBER_OF_STEPS = 5;
     /**
      * Auto-rate all individuals after how many steps?
      */
     private static final int STEPS_PER_AUTO_RATING = 1;
+    private static final double MIN_INCREASE = 0.005;
+    private static final int ENOUGH = 100;
 
     /**
      * {@inheritDoc}
@@ -44,19 +48,42 @@ public class EvolveHandler extends AbstractHandler {
         final EvolView view =
                 (EvolView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                         .findView(EvolView.ID);
-        if (view != null) {
-            for (int i = 0; i < NUMBER_OF_STEPS; i++) {
-                view.evolve();
-                final boolean wantAutoRating;
-                wantAutoRating = (((i + 1) % STEPS_PER_AUTO_RATING) == 0);
-                if (wantAutoRating) {
-                    view.autorateIndividuals(view.getPopulation(), TargetIndividuals.ALL, null);
+        if ((view != null) && (view.getPopulation() != null)) {
+            int steady = 0;
+            do {
+                final Double before = view.getPopulation().getAverageRating();
+                System.out.println("Average rating before: " + before);
+                for (int i = 0; i < NUMBER_OF_STEPS; i++) {
+                    view.evolve();
+                    final boolean wantAutoRating;
+                    wantAutoRating = wantAutoRatingForStep(i, STEPS_PER_AUTO_RATING);
+                    if (wantAutoRating) {
+                        view.autorateIndividuals(view.getPopulation(), TargetIndividuals.ALL, null);
+                    }
                 }
-            }
-            if (view.getPopulation() != null) {
-                System.out.println("Average rating: " + view.getPopulation().getAverageRating());
-            }
+                Assert.isNotNull(view.getPopulation());
+                final Double after = view.getPopulation().getAverageRating();
+                final Double relDiff = (after - before) / after;
+                System.out.println("Average rating now: " + after);
+                System.out.println("rel. Diff (%): " + relDiff * 100);
+                if (relDiff < MIN_INCREASE) {
+                    steady++;
+                    System.out.println("Steady: " + steady);
+                } else {
+                    if (steady > 0) {
+                        steady--;
+                    }
+                    System.out.println(relDiff);
+                }
+            } while (steady < ENOUGH);
         }
         return null;
+    }
+
+    private boolean wantAutoRatingForStep(final int i, final int p) {
+        if (p == 1) {
+            return true;
+        }
+        return (((i + 1) % p) == 0);
     }
 }
