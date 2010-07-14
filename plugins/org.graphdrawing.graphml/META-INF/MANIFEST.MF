@@ -7,9 +7,9 @@ Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.graphdrawing.graphml.xmlns,
- org.graphdrawing.graphml.xmlns.impl,
- org.graphdrawing.graphml.xmlns.util,
+Export-Package: org.graphdrawing.graphml,
+ org.graphdrawing.graphml.impl,
+ org.graphdrawing.graphml.util,
  org.w3._1999.xlink,
  org.w3._1999.xlink.impl,
  org.w3._1999.xlink.util

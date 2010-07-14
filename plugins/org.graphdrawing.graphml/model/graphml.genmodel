@@ -5,8 +5,8 @@
     modelPluginID="org.graphdrawing.graphml" modelName="Graphml" importerID="org.eclipse.xsd.ecore.importer"
     complianceLevel="5.0" copyrightFields="false">
   <foreignModel>graphml.xsd</foreignModel>
-  <genPackages prefix="Xmlns" basePackage="org.graphdrawing.graphml" resource="XML"
-      disposableProviderFactory="true" ecorePackage="xmlns.ecore#/">
+  <genPackages prefix="GraphML" basePackage="org.graphdrawing" resource="XML" disposableProviderFactory="true"
+      ecorePackage="xmlns.ecore#/">
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="xmlns.ecore#//EndpointTypeType">
       <genEnumLiterals ecoreEnumLiteral="xmlns.ecore#//EndpointTypeType/in"/>
       <genEnumLiterals ecoreEnumLiteral="xmlns.ecore#//EndpointTypeType/out"/>

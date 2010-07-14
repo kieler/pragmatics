@@ -4,7 +4,7 @@
  *
  * $Id$
  */
-package org.w3._1999.xlink;
+package org.graphdrawing.graphml;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,145 +14,128 @@ import org.eclipse.emf.common.util.Enumerator;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the literals of the enumeration '<em><b>Type Type</b></em>',
+ * A representation of the literals of the enumeration '<em><b>Graph Order Type</b></em>',
  * and utility methods for working with them.
  * <!-- end-user-doc -->
- * @see org.w3._1999.xlink.XlinkPackage#getTypeType()
- * @model extendedMetaData="name='type_._type'"
+ * <!-- begin-model-doc -->
+ * 
+ *       Simple type for the parse.order attribute of &lt;graph&gt;.
+ *       graph.order.type is final, that is, it may not be extended
+ *                           or restricted.
+ *       graph.order.type is a restriction of xs:NMTOKEN
+ *       Allowed values: free, nodesfirst, adjacencylist.
+ *     
+ * <!-- end-model-doc -->
+ * @see org.graphdrawing.graphml.GraphMLPackage#getGraphOrderType()
+ * @model extendedMetaData="name='graph.order.type'"
  * @generated
  */
-public enum TypeType implements Enumerator {
+public enum GraphOrderType implements Enumerator {
     /**
-     * The '<em><b>Simple</b></em>' literal object.
+     * The '<em><b>Free</b></em>' literal object.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #SIMPLE_VALUE
+     * @see #FREE_VALUE
      * @generated
      * @ordered
      */
-    SIMPLE(0, "simple", "simple"),
+    FREE(0, "free", "free"),
 
     /**
-     * The '<em><b>Extended</b></em>' literal object.
+     * The '<em><b>Nodesfirst</b></em>' literal object.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #EXTENDED_VALUE
+     * @see #NODESFIRST_VALUE
      * @generated
      * @ordered
      */
-    EXTENDED(1, "extended", "extended"),
+    NODESFIRST(1, "nodesfirst", "nodesfirst"),
 
     /**
-     * The '<em><b>Locator</b></em>' literal object.
+     * The '<em><b>Adjacencylist</b></em>' literal object.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #LOCATOR_VALUE
+     * @see #ADJACENCYLIST_VALUE
      * @generated
      * @ordered
      */
-    LOCATOR(2, "locator", "locator"),
+    ADJACENCYLIST(2, "adjacencylist", "adjacencylist");
 
     /**
-     * The '<em><b>Arc</b></em>' literal object.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #ARC_VALUE
-     * @generated
-     * @ordered
-     */
-    ARC(3, "arc", "arc");
-
-    /**
-     * The '<em><b>Simple</b></em>' literal value.
+     * The '<em><b>Free</b></em>' literal value.
      * <!-- begin-user-doc -->
      * <p>
-     * If the meaning of '<em><b>Simple</b></em>' literal object isn't clear,
+     * If the meaning of '<em><b>Free</b></em>' literal object isn't clear,
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * @see #SIMPLE
-     * @model name="simple"
+     * @see #FREE
+     * @model name="free"
      * @generated
      * @ordered
      */
-    public static final int SIMPLE_VALUE = 0;
+    public static final int FREE_VALUE = 0;
 
     /**
-     * The '<em><b>Extended</b></em>' literal value.
+     * The '<em><b>Nodesfirst</b></em>' literal value.
      * <!-- begin-user-doc -->
      * <p>
-     * If the meaning of '<em><b>Extended</b></em>' literal object isn't clear,
+     * If the meaning of '<em><b>Nodesfirst</b></em>' literal object isn't clear,
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * @see #EXTENDED
-     * @model name="extended"
+     * @see #NODESFIRST
+     * @model name="nodesfirst"
      * @generated
      * @ordered
      */
-    public static final int EXTENDED_VALUE = 1;
+    public static final int NODESFIRST_VALUE = 1;
 
     /**
-     * The '<em><b>Locator</b></em>' literal value.
+     * The '<em><b>Adjacencylist</b></em>' literal value.
      * <!-- begin-user-doc -->
      * <p>
-     * If the meaning of '<em><b>Locator</b></em>' literal object isn't clear,
+     * If the meaning of '<em><b>Adjacencylist</b></em>' literal object isn't clear,
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * @see #LOCATOR
-     * @model name="locator"
+     * @see #ADJACENCYLIST
+     * @model name="adjacencylist"
      * @generated
      * @ordered
      */
-    public static final int LOCATOR_VALUE = 2;
+    public static final int ADJACENCYLIST_VALUE = 2;
 
     /**
-     * The '<em><b>Arc</b></em>' literal value.
-     * <!-- begin-user-doc -->
-     * <p>
-     * If the meaning of '<em><b>Arc</b></em>' literal object isn't clear,
-     * there really should be more of a description here...
-     * </p>
-     * <!-- end-user-doc -->
-     * @see #ARC
-     * @model name="arc"
-     * @generated
-     * @ordered
-     */
-    public static final int ARC_VALUE = 3;
-
-    /**
-     * An array of all the '<em><b>Type Type</b></em>' enumerators.
+     * An array of all the '<em><b>Graph Order Type</b></em>' enumerators.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    private static final TypeType[] VALUES_ARRAY =
-        new TypeType[] {
-            SIMPLE,
-            EXTENDED,
-            LOCATOR,
-            ARC,
+    private static final GraphOrderType[] VALUES_ARRAY =
+        new GraphOrderType[] {
+            FREE,
+            NODESFIRST,
+            ADJACENCYLIST,
         };
 
     /**
-     * A public read-only list of all the '<em><b>Type Type</b></em>' enumerators.
+     * A public read-only list of all the '<em><b>Graph Order Type</b></em>' enumerators.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    public static final List<TypeType> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
+    public static final List<GraphOrderType> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
 
     /**
-     * Returns the '<em><b>Type Type</b></em>' literal with the specified literal value.
+     * Returns the '<em><b>Graph Order Type</b></em>' literal with the specified literal value.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    public static TypeType get(String literal) {
+    public static GraphOrderType get(String literal) {
         for (int i = 0; i < VALUES_ARRAY.length; ++i) {
-            TypeType result = VALUES_ARRAY[i];
+            GraphOrderType result = VALUES_ARRAY[i];
             if (result.toString().equals(literal)) {
                 return result;
             }
@@ -161,14 +144,14 @@ public enum TypeType implements Enumerator {
     }
 
     /**
-     * Returns the '<em><b>Type Type</b></em>' literal with the specified name.
+     * Returns the '<em><b>Graph Order Type</b></em>' literal with the specified name.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    public static TypeType getByName(String name) {
+    public static GraphOrderType getByName(String name) {
         for (int i = 0; i < VALUES_ARRAY.length; ++i) {
-            TypeType result = VALUES_ARRAY[i];
+            GraphOrderType result = VALUES_ARRAY[i];
             if (result.getName().equals(name)) {
                 return result;
             }
@@ -177,17 +160,16 @@ public enum TypeType implements Enumerator {
     }
 
     /**
-     * Returns the '<em><b>Type Type</b></em>' literal with the specified integer value.
+     * Returns the '<em><b>Graph Order Type</b></em>' literal with the specified integer value.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    public static TypeType get(int value) {
+    public static GraphOrderType get(int value) {
         switch (value) {
-            case SIMPLE_VALUE: return SIMPLE;
-            case EXTENDED_VALUE: return EXTENDED;
-            case LOCATOR_VALUE: return LOCATOR;
-            case ARC_VALUE: return ARC;
+            case FREE_VALUE: return FREE;
+            case NODESFIRST_VALUE: return NODESFIRST;
+            case ADJACENCYLIST_VALUE: return ADJACENCYLIST;
         }
         return null;
     }
@@ -219,7 +201,7 @@ public enum TypeType implements Enumerator {
      * <!-- end-user-doc -->
      * @generated
      */
-    private TypeType(int value, String name, String literal) {
+    private GraphOrderType(int value, String name, String literal) {
         this.value = value;
         this.name = name;
         this.literal = literal;
@@ -263,4 +245,4 @@ public enum TypeType implements Enumerator {
         return literal;
     }
     
-} //TypeType
+} //GraphOrderType

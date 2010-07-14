@@ -1,7 +1,10 @@
 import graphs;
-import xmlns;
+import graphml;
 
-create Node transform(DocumentRoot root):
+extension org::eclipse::xtend::util::stdlib::io;
+
+create Node transform(Object obj):
+	info(obj.metaType.toString()) ->
 	this.setIsHypernode(true)
 ;
 

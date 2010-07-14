@@ -4,7 +4,7 @@
  *
  * $Id$
  */
-package org.w3._1999.xlink;
+package org.graphdrawing.graphml;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,145 +14,126 @@ import org.eclipse.emf.common.util.Enumerator;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the literals of the enumeration '<em><b>Type Type</b></em>',
+ * A representation of the literals of the enumeration '<em><b>Endpoint Type Type</b></em>',
  * and utility methods for working with them.
  * <!-- end-user-doc -->
- * @see org.w3._1999.xlink.XlinkPackage#getTypeType()
- * @model extendedMetaData="name='type_._type'"
+ * <!-- begin-model-doc -->
+ * 
+ *       Simple type for the type attribute of &lt;endpoint&gt;.
+ *       endpoint.type.type is a restriction of xs:NMTOKEN
+ *       Allowed values: in, out, undir.
+ *     
+ * <!-- end-model-doc -->
+ * @see org.graphdrawing.graphml.GraphMLPackage#getEndpointTypeType()
+ * @model extendedMetaData="name='endpoint.type.type'"
  * @generated
  */
-public enum TypeType implements Enumerator {
+public enum EndpointTypeType implements Enumerator {
     /**
-     * The '<em><b>Simple</b></em>' literal object.
+     * The '<em><b>In</b></em>' literal object.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #SIMPLE_VALUE
+     * @see #IN_VALUE
      * @generated
      * @ordered
      */
-    SIMPLE(0, "simple", "simple"),
+    IN(0, "in", "in"),
 
     /**
-     * The '<em><b>Extended</b></em>' literal object.
+     * The '<em><b>Out</b></em>' literal object.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #EXTENDED_VALUE
+     * @see #OUT_VALUE
      * @generated
      * @ordered
      */
-    EXTENDED(1, "extended", "extended"),
+    OUT(1, "out", "out"),
 
     /**
-     * The '<em><b>Locator</b></em>' literal object.
+     * The '<em><b>Undir</b></em>' literal object.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #LOCATOR_VALUE
+     * @see #UNDIR_VALUE
      * @generated
      * @ordered
      */
-    LOCATOR(2, "locator", "locator"),
+    UNDIR(2, "undir", "undir");
 
     /**
-     * The '<em><b>Arc</b></em>' literal object.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #ARC_VALUE
-     * @generated
-     * @ordered
-     */
-    ARC(3, "arc", "arc");
-
-    /**
-     * The '<em><b>Simple</b></em>' literal value.
+     * The '<em><b>In</b></em>' literal value.
      * <!-- begin-user-doc -->
      * <p>
-     * If the meaning of '<em><b>Simple</b></em>' literal object isn't clear,
+     * If the meaning of '<em><b>In</b></em>' literal object isn't clear,
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * @see #SIMPLE
-     * @model name="simple"
+     * @see #IN
+     * @model name="in"
      * @generated
      * @ordered
      */
-    public static final int SIMPLE_VALUE = 0;
+    public static final int IN_VALUE = 0;
 
     /**
-     * The '<em><b>Extended</b></em>' literal value.
+     * The '<em><b>Out</b></em>' literal value.
      * <!-- begin-user-doc -->
      * <p>
-     * If the meaning of '<em><b>Extended</b></em>' literal object isn't clear,
+     * If the meaning of '<em><b>Out</b></em>' literal object isn't clear,
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * @see #EXTENDED
-     * @model name="extended"
+     * @see #OUT
+     * @model name="out"
      * @generated
      * @ordered
      */
-    public static final int EXTENDED_VALUE = 1;
+    public static final int OUT_VALUE = 1;
 
     /**
-     * The '<em><b>Locator</b></em>' literal value.
+     * The '<em><b>Undir</b></em>' literal value.
      * <!-- begin-user-doc -->
      * <p>
-     * If the meaning of '<em><b>Locator</b></em>' literal object isn't clear,
+     * If the meaning of '<em><b>Undir</b></em>' literal object isn't clear,
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * @see #LOCATOR
-     * @model name="locator"
+     * @see #UNDIR
+     * @model name="undir"
      * @generated
      * @ordered
      */
-    public static final int LOCATOR_VALUE = 2;
+    public static final int UNDIR_VALUE = 2;
 
     /**
-     * The '<em><b>Arc</b></em>' literal value.
-     * <!-- begin-user-doc -->
-     * <p>
-     * If the meaning of '<em><b>Arc</b></em>' literal object isn't clear,
-     * there really should be more of a description here...
-     * </p>
-     * <!-- end-user-doc -->
-     * @see #ARC
-     * @model name="arc"
-     * @generated
-     * @ordered
-     */
-    public static final int ARC_VALUE = 3;
-
-    /**
-     * An array of all the '<em><b>Type Type</b></em>' enumerators.
+     * An array of all the '<em><b>Endpoint Type Type</b></em>' enumerators.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    private static final TypeType[] VALUES_ARRAY =
-        new TypeType[] {
-            SIMPLE,
-            EXTENDED,
-            LOCATOR,
-            ARC,
+    private static final EndpointTypeType[] VALUES_ARRAY =
+        new EndpointTypeType[] {
+            IN,
+            OUT,
+            UNDIR,
         };
 
     /**
-     * A public read-only list of all the '<em><b>Type Type</b></em>' enumerators.
+     * A public read-only list of all the '<em><b>Endpoint Type Type</b></em>' enumerators.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    public static final List<TypeType> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
+    public static final List<EndpointTypeType> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
 
     /**
-     * Returns the '<em><b>Type Type</b></em>' literal with the specified literal value.
+     * Returns the '<em><b>Endpoint Type Type</b></em>' literal with the specified literal value.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    public static TypeType get(String literal) {
+    public static EndpointTypeType get(String literal) {
         for (int i = 0; i < VALUES_ARRAY.length; ++i) {
-            TypeType result = VALUES_ARRAY[i];
+            EndpointTypeType result = VALUES_ARRAY[i];
             if (result.toString().equals(literal)) {
                 return result;
             }
@@ -161,14 +142,14 @@ public enum TypeType implements Enumerator {
     }
 
     /**
-     * Returns the '<em><b>Type Type</b></em>' literal with the specified name.
+     * Returns the '<em><b>Endpoint Type Type</b></em>' literal with the specified name.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    public static TypeType getByName(String name) {
+    public static EndpointTypeType getByName(String name) {
         for (int i = 0; i < VALUES_ARRAY.length; ++i) {
-            TypeType result = VALUES_ARRAY[i];
+            EndpointTypeType result = VALUES_ARRAY[i];
             if (result.getName().equals(name)) {
                 return result;
             }
@@ -177,17 +158,16 @@ public enum TypeType implements Enumerator {
     }
 
     /**
-     * Returns the '<em><b>Type Type</b></em>' literal with the specified integer value.
+     * Returns the '<em><b>Endpoint Type Type</b></em>' literal with the specified integer value.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    public static TypeType get(int value) {
+    public static EndpointTypeType get(int value) {
         switch (value) {
-            case SIMPLE_VALUE: return SIMPLE;
-            case EXTENDED_VALUE: return EXTENDED;
-            case LOCATOR_VALUE: return LOCATOR;
-            case ARC_VALUE: return ARC;
+            case IN_VALUE: return IN;
+            case OUT_VALUE: return OUT;
+            case UNDIR_VALUE: return UNDIR;
         }
         return null;
     }
@@ -219,7 +199,7 @@ public enum TypeType implements Enumerator {
      * <!-- end-user-doc -->
      * @generated
      */
-    private TypeType(int value, String name, String literal) {
+    private EndpointTypeType(int value, String name, String literal) {
         this.value = value;
         this.name = name;
         this.literal = literal;
@@ -263,4 +243,4 @@ public enum TypeType implements Enumerator {
         return literal;
     }
     
-} //TypeType
+} //EndpointTypeType

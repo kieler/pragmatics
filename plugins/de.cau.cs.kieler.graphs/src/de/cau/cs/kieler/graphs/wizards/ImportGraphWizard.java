@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
+import java.util.HashMap;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -44,7 +45,9 @@ import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
-import org.graphdrawing.graphml.xmlns.XmlnsPackage;
+import org.graphdrawing.graphml.GraphMLPackage;
+import org.graphdrawing.graphml.util.GraphMLResourceFactoryImpl;
+import org.graphdrawing.graphml.util.GraphMLXMLProcessor;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.model.util.XtendTransformationUtil;
@@ -150,7 +153,6 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
     private boolean doFinish(final String importFileName,
             final String containerName, final String fileName,
             final IProgressMonitor monitor) throws IOException, CoreException {
-        // create a sample file
         monitor.beginTask("Creating File" + fileName, 2);
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
         IResource resource = root.findMember(new Path(containerName));
@@ -169,15 +171,35 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
         URI output = URI.createURI("");
 
         EPackage p1 = GraphsPackage.eINSTANCE;
-        EPackage p2 = XmlnsPackage.eINSTANCE;
-
+        EPackage p2 = GraphMLPackage.eINSTANCE;
+        
+        
         Status myStatus = null;
         try {
-            input = URI.createURI(importFileName, true);
+            input = URI.createFileURI(importFileName);
             output =
                     URI.createPlatformResourceURI(
                             container.getFile(new Path(fileName)).getFullPath()
                                     .toString(), true);
+            
+            // Create a resource set.
+            //ResourceSet resourceSet = new ResourceSetImpl();
+
+            // Demand load the resource for this file.
+            //Resource res = resourceSet.getResource(input, true);
+
+            GraphMLResourceFactoryImpl factory = new GraphMLResourceFactoryImpl();
+            Resource res = factory.createResource(input);
+            
+            System.out.println("whatever " + res.getContents().get(0).getClass());
+            
+            // Print the contents of the resource to System.out.
+            try
+            {
+              res.save(System.out, Collections.EMPTY_MAP);
+            }
+            catch (IOException e) {}
+            
             XtendTransformationUtil.model2ModelTransform(transformation, fun,
                     input, output, p1, p2);
         } catch (KielerException e) {
@@ -205,9 +227,7 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
                 StatusManager.getManager().handle(myStatus, StatusManager.SHOW);
             }
         }
-
         // file.refreshLocal(1, null);
-
         monitor.done();
         return true;
     }
