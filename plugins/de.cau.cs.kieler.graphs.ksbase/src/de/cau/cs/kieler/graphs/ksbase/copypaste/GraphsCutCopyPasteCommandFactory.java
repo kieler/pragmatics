@@ -16,11 +16,14 @@ package de.cau.cs.kieler.graphs.ksbase.copypaste;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.gmf.runtime.common.core.command.ICommand;
+import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramWorkbenchPart;
 import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.graphs.Edge;
-import de.cau.cs.kieler.graphs.GraphsPlugin;
 import de.cau.cs.kieler.graphs.Node;
+import de.cau.cs.kieler.graphs.ksbase.GraphsKsbasePlugin;
 import de.cau.cs.kieler.ksbase.ui.utils.AbstractCutCopyPasteCommandFactory;
 
 /**
@@ -29,40 +32,43 @@ import de.cau.cs.kieler.ksbase.ui.utils.AbstractCutCopyPasteCommandFactory;
  * @author mri
  */
 public class GraphsCutCopyPasteCommandFactory extends
-		AbstractCutCopyPasteCommandFactory {
-	
-	/** the transformation file. */
-	private static final String TRANSFORMATION_FILE = "/transformations/copyPaste.ext";
-	
+        AbstractCutCopyPasteCommandFactory {
+
+    /** the transformation file. */
+    private static final String TRANSFORMATION_FILE =
+            "/transformations/copyPaste.ext";
+
     /** the base packages of the underlying meta model. */
-    private static final String[] MODEL = { "de.cau.cs.kieler.graphs.GraphsPackage" };
-	
+    private static final String[] MODEL = {
+            "de.cau.cs.kieler.graphs.GraphsPackage",
+            "de.cau.cs.kieler.core.kgraph.KGraphPackage" };
+
     /** the supported types. */
     private static final Class<?>[] TYPES = { Node.class, Edge.class };
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected String getFile() {
-		return TRANSFORMATION_FILE;
-	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected Bundle getBundle() {
-		return GraphsPlugin.getDefault().getBundle();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getFile() {
+        return TRANSFORMATION_FILE;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected Class<?>[] getTypes() {
-		return TYPES;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Bundle getBundle() {
+        return GraphsKsbasePlugin.getDefault().getBundle();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Class<?>[] getTypes() {
+        return TYPES;
+    }
 
     /**
      * {@inheritDoc}
@@ -74,5 +80,11 @@ public class GraphsCutCopyPasteCommandFactory extends
             modelsList.add(s);
         }
         return modelsList;
+    }
+
+    @Override
+    public ICommand buildCopyCommand(IDiagramWorkbenchPart part,
+            List<EObject> selection) {
+        return super.buildCopyCommand(part, selection);
     }
 }

@@ -1,171 +1,72 @@
 import graphs;
-//import utilities;
+import kgraph;
+
+extension org::eclipse::xtend::util::stdlib::io;
 
 //Sets the object that should be selected after the transformation is executed
 Void setSelection(Object object):
  JAVA de.cau.cs.kieler.ksbase.ui.utils.TransformationUtils.setPostTransformationSelection(java.lang.Object)
 ;
 
+String getFileNameOfActiveEditor():
+ JAVA de.cau.cs.kieler.ksbase.ui.utils.TransformationUtils.getFileNameOfActiveEditor()
+;
+
+/////////////////////////
+// Copy, cut and Paste //
+/////////////////////////
+
 // Java escapes
 
-// copy an object or a list of objects to clipboard
-Object copyObjectToClipboard(Object object):
+// copy methods
+Void copyObjectToClipboard(Object object):
  JAVA de.cau.cs.kieler.graphs.ksbase.copypaste.Utils.objectToClipboard(java.lang.Object)
 ;
 
-// clone an eObject
-Object ecoreCopy(Object object):
- JAVA de.cau.cs.kieler.graphs.ksbase.copypaste.Utils.ecoreCopy(java.lang.Object)
+Void cutObject(Object object):
+ JAVA de.cau.cs.kieler.graphs.ksbase.copypaste.Utils.cutObject(java.lang.Object)
 ;
-
-/////////
-// CUT //
-/////////
 
 // Cut
 Void cut(Object obj):
- copyInternal(obj) ->
- cutInternal(obj)
+ cutObject(obj)
 ;
-
-// dummy method for matching
-Void cutInternal(Object obj):
- null
-;
-
-// remove the node from its parent node
-Void cutInternal(Node node):
- node.parent.children.remove(node)
-;
-
-// remove the edge from its source and target
-Void cutInternal(Edge edge):
- edge.setSource(null) ->
- edge.setTarget(null)
-;
-
-// entry point for lists, decide which method to call
-Void cutInternal(List[Object] list):
- let nodes = list.select(e|e.metaType == Node):
- let edges = list.select(e|e.metaType == Edge):
- (if (!nodes.isEmpty) then (
-    cutInternalNodeList(nodes)
- ) else (
-    cutInternalEdgeList(edges)
-    )
- )
-;
-
-// remove each node
-Void cutInternalNodeList(List[Node] nodes):
- nodes.cutInternal()
-;
-
-// remove each edge
-Void cutInternalEdgeList(List[Edge] edges):
- edges.cutInternal()
-;
-
-//////////
-// COPY //
-//////////
 
 // Copy
 Void copy(Object obj):
- copyInternal(obj)
+ copyObjectToClipboard(obj)
 ;
 
-// dummy for matching
-Void copyInternal(Object obj):
- null
+// Paste
+
+// paste methods
+Node getNodeFromClipboard():
+ JAVA de.cau.cs.kieler.graphs.ksbase.copypaste.Utils.getNodeFromClipboard()
 ;
 
-// special case for nodes, clone only self loop edges
-Void copyInternal(Node node):
- let copy = (Node) copyObjectToClipboard(node):
- cloneEdges(node, copy)
+Edge getEdgeFromClipboard():
+ JAVA de.cau.cs.kieler.graphs.ksbase.copypaste.Utils.getEdgeFromClipboard()
 ;
 
-// copy a edge to clipboard
-Void copyInternal(Edge edge):
- copyObjectToClipboard(edge)
+List[Edge] getEdgesFromClipboard():
+ JAVA de.cau.cs.kieler.graphs.ksbase.copypaste.Utils.getEdgesFromClipboard()
 ;
 
-// clone all selfloop edges on a node
-Void cloneEdges(Node original, Node copy):
- let origOutgoing = original.outgoingEdges:
- let copyOutgoing = copy.outgoingEdges:
- let selfLoops = ((List[Edge])(origOutgoing.select(e|e.target == original))):
- copy.outgoingEdges.removeAll(copyOutgoing) ->
- selfLoops.addCopyTo(copy)
-;
-
-// copy an edge and add it to a node
-Void addCopyTo(Edge edge, Node node):
- let copy = (Edge) ecoreCopy(edge):
- copy.setTarget(node) ->
- node.outgoingEdges.add(copy)
-;
-
-// select which nodes to copy to clipboard to avoid having
-// nodes more than once in the clipboard due to containment in macro
-// node
-Void copyInternalNodeList(List[Node] list):
- let toClone = list.select(e|e.parent == null 
-                || !list.contains(e.parent)):
- copyObjectToClipboard(toClone)
-;
-
-// copy all edges to clipboard
-Void copyInternalEdgeList(List[Edge] list):
- copyObjectToClipboard(list)
-;
-
-// entry point for list, decide which option to take
-// on mixed the selections Nodes have the highest priority then edges
-Void copyInternal(List[Object] list):
- let nodes = list.select(e|e.metaType == Node):
- let edges = list.select(e|e.metaType == Edge):
- (if (!nodes.isEmpty) then (copyInternalNodeList(nodes)) else (
- (if (!edges.isEmpty) then (copyInternalEdgeList(edges)) else (
- null
- ))
- ))
-;
-
-///////////
-// PASTE //
-///////////
-
-// get an object or a list of objects from clipboard
-Object getObjectFromClipboard():
- JAVA de.cau.cs.kieler.graphs.ksbase.copypaste.Utils.getObjectFromClipboard()
-;
-
-// determine whether or not the clipboard is empty
-Boolean isClipboardEmpty():
- JAVA de.cau.cs.kieler.graphs.ksbase.copypaste.Utils.isClipboardEmpty()
-;
-
-// check for the type of a list
-Boolean isNodeList(List[Object] list):
- let head = list.get(0):
- head.metaType == Node
-;
-Boolean isEdgeList(List[Object] list):
- let head = list.get(0):
- head.metaType == Edge
+List[Node] getNodesFromClipboard():
+ JAVA de.cau.cs.kieler.graphs.ksbase.copypaste.Utils.getNodesFromClipboard()
 ;
 
 // delegator to the different list pastes
 Void paste(List[Object] objects):
- (if (!isClipboardEmpty()) then 
-  (if (isNodeList(objects)) then
-   (pasteNodeList(objects))
-   else
-    (if (isEdgeList(objects)) then pasteEdgeList(objects)
+ let head = objects.get(0):
+ (head.metaType == Node ?
+  pasteNodeList(objects)
+  :
+   (head.metaType == Edge ?
+    pasteEdgeList(objects)
+    :
+    null
    )
- )
  )
 ;
 
@@ -173,24 +74,44 @@ Void paste(List[Object] objects):
 // Single Node is target //
 ///////////////////////////
 
-// paste into state
+// Paste into node
 Void paste(Node target):
- if (!isClipboardEmpty()) then pasteInternal(target, getObjectFromClipboard())
+ tryPastingNodeIntoNode(target)
 ;
 
-Void pasteInternal(Node dummy, Object noop):
-	null
+// try node in node
+Void tryPastingNodeIntoNode(Node target):
+ let node = getNodeFromClipboard():
+ (node != null ? 
+  target.children.add(node)
+ : 
+  tryPastingNodesIntoNode(target))
 ;
 
-Void pasteInternal(Node target, Node node):
-  if (!target.isHypernode) then target.children.add(node)
+// try nodes into node
+Void tryPastingNodesIntoNode(Node target):
+ let nodes = getNodesFromClipboard():
+ (nodes != null ?
+  pasteNodesIntoNode(nodes, target)
+ : 
+  tryPastingEdgeIntoNode(target))
 ;
 
-Void pasteInternal(Node target, Edge edge):
-  pasteEdgeIntoNode(target, edge)
+Void pasteNodesIntoNode(List[Node] nodes, Node target):
+ target.children.addAll(nodes)
 ;
 
-// create two dummy nodes and connect them with the edge
+// try pasting a edge into a node by creating two dummy nodes
+Void tryPastingEdgeIntoNode(Node target):
+ let trans = getEdgeFromClipboard():
+ (trans != null ?
+  pasteEdgeIntoNode(target, trans)
+  :
+  tryPastingEdgesIntoNode(target)
+  )
+;
+
+// create two dummy nodes in node and connect with edge
 Void pasteEdgeIntoNode(Node target, Edge edge):
  let srcDummy = new Node :
  let destDummy = new Node :
@@ -200,19 +121,23 @@ Void pasteEdgeIntoNode(Node target, Edge edge):
  edge.setTarget(destDummy)
 ;
 
-// paste multiple nodes into one target node
-Void pasteInternalNodes(Node target, List[Node] nodes):
- if (!target.isHypernode) then target.children.addAll(nodes)
+// create two dummy nodes and paste all edges between them
+Void tryPastingEdgesIntoNode(Node target):
+ let transList = getEdgesFromClipboard():
+ (transList != null ?
+  pasteEdgesIntoNode(target, transList)
+  :
+  null)
 ;
 
-// create two dummy nodes and connect them with all edges
-Void pasteInternalEdges(Node target, List[Edge] edges):
+// create two dummy nodes and paste all edges between them
+Void pasteEdgesIntoNode(Node target, List[Edge] edgeList):
  let srcDummy = new Node :
  let destDummy = new Node :
  target.children.add(srcDummy) ->
  target.children.add(destDummy) ->
- edges.setSource(srcDummy) ->
- edges.setTarget(destDummy)
+ edgeList.setSource(srcDummy) ->
+ edgeList.setTarget(destDummy)
 ;
 
 ////////////////////////////////
@@ -220,71 +145,150 @@ Void pasteInternalEdges(Node target, List[Edge] edges):
 ////////////////////////////////
 
 // paste into a list of nodes
-Void pasteNodeList(List[Node] nodes):
- let clipBoard = getObjectFromClipboard():
- pasteNodeList(nodes, clipBoard)
+Void pasteNodeList(List[Node] targets):
+ tryPastingNodeIntoNodes(targets)
 ;
 
-Void pasteNodeList(List[Node] dummy, Object noop):
- null
+// add node in clipboard to each node
+Void tryPastingNodeIntoNodes(List[Node] targets):
+ let node = getNodeFromClipboard():
+ (node != null ?
+  targets.addNodeInClipboardToNode()
+  :
+  tryPastingNodesIntoNodes(targets)
+  )
 ;
 
-// add node to each target node
-Void pasteNodeList(List[Node] targets, Node node):
-	targets.pasteInternal(node)
+// add the node from clipboard to each node
+Void addNodeInClipboardToNode(Node target):
+ let node = getNodeFromClipboard():
+ target.children.add(node)
 ;
 
-// add edge to each target node
-Void pasteNodeList(List[Node] targets, Edge edge):
-	targets.pasteInternal(edge)
+Void tryPastingNodesIntoNodes(List[Node] targets):
+ let nodes = getNodesFromClipboard():
+ (nodes != null ?
+  targets.addNodesFromClipboardToNode()
+  :
+  tryPastingEdgeIntoNodes(targets)
+ )
 ;
 
-Void pasteNodeList(List[Node] targets, List[Object] list):
-	if (isNodeList(list)) then pasteNodeListNodes(targets, list)
-	else (if (isEdgeList(list)) then pasteNodeListEdges(targets, list))
+// add all nodes in clipboard to target node
+Void addNodesFromClipboardToNode(Node target):
+ let nodes = getNodesFromClipboard():
+ target.children.addAll(nodes)
 ;
 
-// add list of nodes to each target node
-Void pasteNodeListNodes(List[Node] targets, List[Node] nodes):
-	targets.pasteInternalNodes(nodes)
+// create dummy nodes with edge and paste into each target
+Void tryPastingEdgeIntoNodes(List[Node] targets):
+ let trans = getEdgeFromClipboard():
+ (trans != null ?
+  targets.pasteEdgeFromClipboardIntoNode()
+ :
+  tryPastingEdgesIntoNodes(targets)
+ )
 ;
 
-// add list of edges to each target node
-Void pasteNodeListEdges(List[Node] targets, List[Edge] edges):
-	targets.pasteInternalEdges(edges)
+// create dummy nodes with edge and add to node
+Void pasteEdgeFromClipboardIntoNode(Node target):
+ let edge = getEdgeFromClipboard():
+ let srcDummy = new Node:
+ let destDummy = new Node:
+ edge.setSource(srcDummy) ->
+ edge.setTarget(destDummy) ->
+ target.children.add(srcDummy) ->
+ target.children.add(destDummy)
+;
+
+// create two nodes in each node with all edges
+Void tryPastingEdgesIntoNodes(List[Node] targets):
+ let transList = getEdgesFromClipboard():
+ (transList != null ?
+  targets.pasteEdgesFromClipboardIntoNode()
+ :
+  null
+ )
+;
+
+// create two nodes in node and connect with all edges
+Void pasteEdgesFromClipboardIntoNode(Node target):
+ let edgeList = getEdgesFromClipboard():
+ let srcDummy = new Node:
+ let destDummy = new Node:
+ target.children.add(srcDummy) ->
+ target.children.add(destDummy) ->
+ srcDummy.outgoingEdges.addAll(edgeList) ->
+ edgeList.setTarget(destDummy)
 ;
 
 ///////////////////////////
 // Single Edge is target //
 ///////////////////////////
 
-// replace the selected edge with the clipboard
+// replace the selected edge with the one in clipboard
 Void paste(Edge target):
- if (!isClipboardEmpty()) then pasteInternal(target, getObjectFromClipboard())
+ tryPastingEdgeOnEdge(target)
 ;
 
-Void pasteInternal(Edge dummy, Object noop):
-	null
+// replace an edge with another one
+Void tryPastingEdgeOnEdge(Edge target):
+ let edge = getEdgeFromClipboard():
+ let source = target.source:
+ let dest = target.target:
+ (edge != null ?
+  (edge.setSource(source) ->
+  edge.setTarget(dest) ->
+  source.outgoingEdges.remove(target) ->
+  setSelection(edge))
+  :
+  tryPastingEdgesOnEdge(target)
+ )
+;
+
+// replace an edge with many others
+Void tryPastingEdgesOnEdge(Edge target):
+ let edgeList = getEdgesFromClipboard():
+ let source = target.source:
+ let dest = target.target:
+ (edgeList != null ?
+  (source.outgoingEdges.remove(target) ->
+   edgeList.connectNodes(source, dest))
+  :
+  tryPastingNodeOnEdge(target)
+ )
+;
+
+// connect two nodes with an edge
+Void connectNodes(Edge edge, KNode source, KNode target):
+ source.outgoingEdges.add(edge) ->
+ edge.setTarget(target)
 ;
 
 // insert a node into an edge
-Void pasteInternal(Edge target, Node node):
-  pasteNodeOnEdge(target, node, (Node)target.source)
+Void tryPastingNodeOnEdge(Edge target):
+ let node = getNodeFromClipboard():
+ (node != null ?
+  pasteNodeOnEdge(target, node, target.source)
+ :
+  tryPastingNodesOnEdge(target)
+ )
 ;
 
-// insert a node into an edge
-Void pasteNodeOnEdge(Edge target, Node newNode, Node edgeSource):
+// insert a node into a edge
+Void pasteNodeOnEdge(Edge target, Node newNode, KNode edgeKeeper):
  let source = target.source:
  let dest = target.target:
  let dummyEdge = new Edge:
- (edgeSource == source ?
+ (target.isDirected ? dummyEdge.setIsDirected(true) : dummyEdge.setIsDirected(false)) ->
+ (edgeKeeper == source ?
   (source.parent.children.add(newNode) ->
    dummyEdge.setSource(newNode) ->
-   dummyEdge.setSource(dest) ->
+   dummyEdge.setTarget(dest) ->
    target.setTarget(newNode)
   )
   :
-  (edgeSource == dest ?
+  (edgeKeeper == dest ?
    (source.parent.children.add(newNode) ->
     dummyEdge.setSource(source) ->
     dummyEdge.setTarget(newNode) ->
@@ -296,39 +300,21 @@ Void pasteNodeOnEdge(Edge target, Node newNode, Node edgeSource):
   )
 ;
 
-// replace an edge with another one
-Void pasteInternal(Edge target, Edge edge):
- let source = target.source:
- let dest = target.target:
-  edge.setSource(source) ->
-  edge.setTarget(dest) ->
-  source.outgoingEdges.remove(target)
+// try pasting nodes on edge by encapsulating
+Void tryPastingNodesOnEdge(Edge target):
+ let nodes = getNodesFromClipboard():
+ (nodes != null ?
+  pasteNodesOnEdge(target, nodes, target.source)
+ :
+  null
+ )
 ;
 
-Void pasteInternalNodes(Edge target, List[Node] nodes):
- pasteNodesOnEdge(target, nodes, (Node)target.source)
-;
-
-// encapsulate nodes in a node and paste on edge
-Void pasteNodesOnEdge(Edge target, List[Node] nodes, Node edgeSource):
+// encapsulate nodes in node and paste on edge
+Void pasteNodesOnEdge(Edge target, List[Node] nodes, KNode transKeeper):
  let node = new Node:
  node.children.addAll(nodes) ->
- pasteNodeOnEdge(target, node, edgeSource)
-;
-
-Void pasteInternalEdges(Edge target, List[Edge] edges):
-	pasteEdgesOnEdge(target, edges)
-;
-
-// replace an edge with multiple other edges
-Void pasteEdgesOnEdge(Edge target, List[Edge] edges):
-	edges.pasteEdgesOnEdgeHelper(target) ->
-	target.source.outgoingEdges.remove(target)
-;
-
-Void pasteEdgesOnEdgeHelper(Edge edge, Edge original):
-	edge.setSource(original.source) ->
-	edge.setTarget(original.target)
+ pasteNodeOnEdge(target, node, transKeeper)
 ;
 
 ////////////////////////////////
@@ -337,25 +323,22 @@ Void pasteEdgesOnEdgeHelper(Edge edge, Edge original):
 
 // paste into a list of edges
 Void pasteEdgeList(List[Edge] targets):
- let clipboard = getObjectFromClipboard():
- pasteEdgeList(targets, clipboard)
+ tryPastingEdgeOnEdges(targets)
 ;
 
-Void pasteEdgeList(List[Edge] targets, Object noop):
- null
+// try replacing each edge with a copy of the one in clipboard
+Void tryPastingEdgeOnEdges(List[Edge] targets):
+ let edge = getEdgeFromClipboard():
+ (edge != null ?
+  targets.replaceWithEdge()
+  :
+  tryPastingEdgesOnEdges(targets)
+ )
 ;
 
-// insert node into each edge
-Void pasteEdgeList(List[Edge] targets, Node node):
- targets.pasteInternal(node)
-;
-
-Void pasteEdgeList(List[Edge] targets, Edge edge):
- targets.replaceWithEdge(edge)
-;
-
-// replace an edge with a given one
-Void replaceWithEdge(Edge target, Edge edge):
+// replace a edge with the one in clipboard
+Void replaceWithEdge(Edge target):
+ let edge = getEdgeFromClipboard():
  let source = target.source:
  let dest = target.target:
  source.outgoingEdges.remove(target) ->
@@ -363,19 +346,92 @@ Void replaceWithEdge(Edge target, Edge edge):
  edge.setSource(source)
 ;
 
-Void pasteEdgeList(List[Edge] targets, List[Object] list):
- if (isNodeList(list)) then pasteEdgeListNodes(targets, list)
- else (if (isEdgeList(list)) then pasteEdgeListEdges(targets, list)
+// try replacing each edge with a copy of all the ones in clipboard
+Void tryPastingEdgesOnEdges(List[Edge] targets):
+ let edgeList = getEdgesFromClipboard():
+ (edgeList != null ?
+  targets.replaceWithEdges()
+  :
+  tryPastingNodeOnEdges(targets)
  )
 ;
 
-Void pasteEdgeListNodes(List[Edge] targets, List[Node] nodes):
- targets.pasteInternalNodes(nodes)
+// replace a edge with the one in clipboard
+Void replaceWithEdges(Edge target):
+ let edgeList = getEdgesFromClipboard():
+ let source = target.source:
+ let dest = target.target:
+ source.outgoingEdges.remove(target) ->
+ edgeList.setTarget(dest) ->
+ edgeList.setSource(source)
 ;
 
-// replace all target edges with given edges
-Void pasteEdgeListEdges(List[Edge] targets, List[Edge] edges):
- targets.pasteInternalEdges(edges)
+// try insert the node in each edge
+Void tryPastingNodeOnEdges(List[Edge] targets):
+ let node = getNodeFromClipboard():
+ (node != null ?
+  targets.pasteNodeInClipboardIntoEdge()
+ :
+  tryPastingNodesOnEdges(targets)
+ )
 ;
 
+// insert the node into the edge
+Void pasteNodeInClipboardIntoEdge(Edge target):
+ let node = getNodeFromClipboard():
+ pasteNodeOnEdge(target, node, target.source)
+;
 
+// try inserting all nodes in clipboard into each edge
+Void tryPastingNodesOnEdges(List[Edge] targets):
+ let nodes = getNodesFromClipboard():
+ (nodes != null ?
+  targets.pasteNodesInClipboardIntoEdge()
+ :
+  null
+ )
+;
+
+// encapsulate states and insert into transition
+Void pasteNodesInClipboardIntoEdge(Edge target):
+ let nodes = getNodesFromClipboard():
+ let dummyNode = new Node:
+ dummyNode.children.addAll(nodes) ->
+ pasteNodeOnEdge(target, dummyNode, target.source)
+;
+
+///////////////////
+// Mixed targets //
+///////////////////
+
+// *** Node and Edge selected ***
+
+// a node and an edge selected in any order
+Void paste(Edge edge, Node node):
+ paste(node, edge)
+;
+
+// a node and an edge selected in any order
+Void paste(Node node, Edge edge):
+ tryPastingNodeOntoNodeEdge(node, edge)
+;
+
+// insert a node into the edge with the selected node as keeper
+Void tryPastingNodeOntoNodeEdge(Node node, Edge edge):
+ let clipboardNode = getNodeFromClipboard():
+ (clipboardNode != null ?
+  pasteNodeOnEdge(edge, clipboardNode, node)
+ :
+  tryPastingNodesOntoNodeEdge(node, edge)
+ )
+;
+
+// insert states into a transition by encapsulating
+Void tryPastingNodesOntoNodeEdge(Node node, Edge edge):
+ let nodes = getNodesFromClipboard():
+ (nodes != null ?
+  pasteNodesOnEdge(edge, nodes, node)
+ :
+  null
+ )
+;

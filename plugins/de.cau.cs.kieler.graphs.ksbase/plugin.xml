@@ -83,4 +83,29 @@
 			</package>
 		</configuration>
 	</extension>
+ <extension
+       point="org.eclipse.gmf.runtime.common.ui.services.action.globalActionHandlerProviders">
+    <GlobalActionHandlerProvider
+          class="de.cau.cs.kieler.graphs.ksbase.copypaste.GraphsCutCopyPasteHandlerProvider"
+          id="de.cau.cs.kieler.graphs.ksbase.CutCopyPasteHandler">
+       <Priority
+             name="Lowest">
+       </Priority>
+       <ViewId
+             id="de.cau.cs.kieler.graphs.diagram.part.GraphsDiagramEditorID">
+          <ElementType
+                class="org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart">
+             <GlobalActionId
+                   actionId="paste">
+             </GlobalActionId>
+             <GlobalActionId
+                   actionId="copy">
+             </GlobalActionId>
+             <GlobalActionId
+                   actionId="cut">
+             </GlobalActionId>
+          </ElementType>
+       </ViewId>
+    </GlobalActionHandlerProvider>
+ </extension>
 </plugin>
