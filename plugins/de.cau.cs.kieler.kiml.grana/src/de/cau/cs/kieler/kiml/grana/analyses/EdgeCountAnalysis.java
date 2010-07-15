@@ -44,9 +44,8 @@ public class EdgeCountAnalysis implements IAnalysis {
             // pop first element
             KNode node = nodes.remove(0);
             numberOfEdges += node.getOutgoingEdges().size();
-            for (KNode childNode : node.getChildren()) {
-                nodes.add(childNode);
-            }
+            
+            nodes.addAll(node.getChildren());
         }
 
         progressMonitor.done();

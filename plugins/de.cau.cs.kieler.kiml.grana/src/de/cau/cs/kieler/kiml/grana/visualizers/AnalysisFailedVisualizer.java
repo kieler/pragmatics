@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.kiml.grana.visualizers;
 
 import de.cau.cs.kieler.kiml.grana.AbstractAnalysisResultVisualizer;
-import de.cau.cs.kieler.kiml.grana.AnalysisCanceled;
 import de.cau.cs.kieler.kiml.grana.AnalysisFailed;
 
 /**
@@ -35,12 +34,18 @@ public class AnalysisFailedVisualizer extends AbstractAnalysisResultVisualizer {
      * {@inheritDoc}
      */
     public String visualize(final Object result) {
-        if (result instanceof AnalysisCanceled) {
-            return "<font color='orange'>" + result.toString() + "</font>";
-        } else if (result instanceof AnalysisFailed) {
-            return "<font color='red'>" + result.toString() + "</font>";
+        if (result instanceof AnalysisFailed) {
+            AnalysisFailed analysisFailed = (AnalysisFailed) result;
+            switch (analysisFailed.getType()) {
+            case Dependency:
+                return "<font color='blue'>" + result.toString() + "</font>";
+            case Canceled:
+                return "<font color='orange'>" + result.toString() + "</font>";
+            case Failed:
+            default:
+                return "<font color='red'>" + result.toString() + "</font>";
+            }
         }
-        return result.toString();
+        return null;
     }
-
 }

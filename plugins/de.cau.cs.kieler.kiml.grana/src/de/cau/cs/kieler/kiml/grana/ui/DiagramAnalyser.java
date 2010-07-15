@@ -31,7 +31,6 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
-import de.cau.cs.kieler.kiml.grana.AnalysisCanceled;
 import de.cau.cs.kieler.kiml.grana.AnalysisFailed;
 import de.cau.cs.kieler.kiml.grana.AnalysisServices;
 import de.cau.cs.kieler.kiml.grana.plugin.GranaPlugin;
@@ -202,7 +201,7 @@ public final class DiagramAnalyser {
     public static Map<String, Object> analyse(final KNode parentNode,
             final List<AbstractInfoAnalysis> analyses, final boolean progressBar) {
         final List<AbstractInfoAnalysis> analysesSequence =
-            AnalysisServices.getInstance().getExecutionOrder(analyses);
+                AnalysisServices.getInstance().getExecutionOrder(analyses);
         currentGraph = parentNode;
         lastResult = null;
         // perform analysis with a progress bar
@@ -215,7 +214,8 @@ public final class DiagramAnalyser {
                             IKielerProgressMonitor kmonitor =
                                     new KielerProgressMonitor(monitor,
                                             MAX_PROGRESS_LEVELS);
-                            kmonitor.begin("Begin analyses", analysesSequence.size());
+                            kmonitor.begin("Begin analyses",
+                                    analysesSequence.size());
                             lastResult = doAnalyses(kmonitor, analysesSequence);
                             kmonitor.done();
                             if (kmonitor.isCanceled()) {
@@ -255,7 +255,8 @@ public final class DiagramAnalyser {
         for (AbstractInfoAnalysis analysis : analyses) {
             try {
                 if (monitor.isCanceled()) {
-                    results.put(analysis.getID(), new AnalysisCanceled());
+                    results.put(analysis.getID(), new AnalysisFailed(
+                            AnalysisFailed.Type.Canceled));
                 } else {
                     results.put(
                             analysis.getID(),
@@ -263,7 +264,8 @@ public final class DiagramAnalyser {
                                     monitor.subTask(1)));
                 }
             } catch (KielerException e) {
-                results.put(analysis.getID(), new AnalysisFailed());
+                results.put(analysis.getID(), new AnalysisFailed(
+                        AnalysisFailed.Type.Failed));
             }
         }
         return results;

@@ -18,10 +18,10 @@
       </annotation>
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
-            <element ref="analysisProvider"/>
-            <element ref="analysisBundle"/>
-            <element ref="analysisCategory"/>
-            <element ref="analysisResultVisualizer"/>
+            <element ref="provider"/>
+            <element ref="bundle"/>
+            <element ref="category"/>
+            <element ref="resultVisualizer"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -50,10 +50,10 @@
       </complexType>
    </element>
 
-   <element name="analysisProvider">
+   <element name="provider">
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
-            <element ref="analysisDependency"/>
+            <element ref="dependency"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -98,14 +98,14 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.grana.analysisProviders/analysisCategory/@id"/>
+                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.grana.analysisProviders/category/@id"/>
                </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
-   <element name="analysisBundle">
+   <element name="bundle">
       <complexType>
          <attribute name="name" type="string" use="required">
             <annotation>
@@ -140,7 +140,7 @@
       </complexType>
    </element>
 
-   <element name="analysisCategory">
+   <element name="category">
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -172,7 +172,7 @@
       </complexType>
    </element>
 
-   <element name="analysisResultVisualizer">
+   <element name="resultVisualizer">
       <complexType>
          <attribute name="class" type="string" use="required">
             <annotation>
@@ -194,7 +194,7 @@
       </complexType>
    </element>
 
-   <element name="analysisDependency">
+   <element name="dependency">
       <complexType>
          <attribute name="analysis" type="string" use="required">
             <annotation>
@@ -202,7 +202,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.grana.analysisProviders/analysisProvider/@id"/>
+                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.grana.analysisProviders/provider/@id"/>
                </appinfo>
             </annotation>
          </attribute>

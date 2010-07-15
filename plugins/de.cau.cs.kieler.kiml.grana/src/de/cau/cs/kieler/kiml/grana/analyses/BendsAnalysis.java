@@ -19,36 +19,43 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
+import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
 
 /**
- * A graph analysis that computes the number of nodes in the given graph.
+ * A graph analysis that counts the number of bendpoints.
  * 
  * @author mri
  */
-public class NodeCountAnalysis implements IAnalysis {
+public class BendsAnalysis implements IAnalysis {
 
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode,
-            final Map<String, Object> results,
-            final IKielerProgressMonitor progressMonitor)
-            throws KielerException {
-        progressMonitor.begin("Number of Nodes analysis", 1);
+    public Object doAnalysis(KNode parentNode, Map<String, Object> results,
+            IKielerProgressMonitor progressMonitor) throws KielerException {
+        progressMonitor.begin("Number of Bends analysis", 1);
 
-        Integer numberOfNodes = 0;
+        Integer numberOfBends = 0;
         List<KNode> nodes = new LinkedList<KNode>();
         nodes.add(parentNode);
         while (nodes.size() > 0) {
             // pop first element
             KNode node = nodes.remove(0);
-            numberOfNodes += node.getChildren().size();
-
-            nodes.addAll(node.getChildren());
+            for (KEdge edge : node.getOutgoingEdges()) {
+                KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(edge);
+                numberOfBends += edgeLayout.getBendPoints().size();
+            }
+            for (KNode childNode : node.getChildren()) {
+                nodes.add(childNode);
+            }
         }
+
         progressMonitor.done();
-        return numberOfNodes;
+        return numberOfBends;
     }
+
 }

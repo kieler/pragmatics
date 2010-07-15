@@ -4,49 +4,75 @@
    <extension-point id="analysisProviders" name="AnalysisProviders" schema="schema/analysisProviders.exsd"/>
    <extension
          point="de.cau.cs.kieler.kiml.grana.analysisProviders">
-      <analysisCategory
+      <category
             description="This is the default category."
             id="de.cau.cs.kieler.kiml.grana.defaultCategory"
             name="Other">
-      </analysisCategory>
-      <analysisCategory
+      </category>
+      <category
             description="Basic graph analyses."
             id="de.cau.cs.kieler.kiml.grana.basicAnalyses"
             name="Basic Analyses">
-      </analysisCategory>
-      <analysisProvider
+      </category>
+      <category
+            description="Analyses that analyse the graph drawing."
+            id="de.cau.cs.kieler.kiml.grana.drawingsCategory"
+            name="Drawing Analyses">
+      </category>
+      <provider
             category="de.cau.cs.kieler.kiml.grana.basicAnalyses"
             class="de.cau.cs.kieler.kiml.grana.analyses.NodeDegreeAnalysis"
-            description="The average node degree of all nodes including hierarchies."
+            description="The minimum, average and maximum node degree of all nodes including hierarchies."
             id="de.cau.cs.kieler.kiml.grana.averageNodeDegree"
-            name="Average Node Degree">
-      </analysisProvider>
-      <analysisProvider
+            name="Node Degree">
+      </provider>
+      <provider
             category="de.cau.cs.kieler.kiml.grana.basicAnalyses"
             class="de.cau.cs.kieler.kiml.grana.analyses.EdgeCountAnalysis"
             description="The number of edges including hierarchies."
             id="de.cau.cs.kieler.kiml.grana.edgeCount"
             name="Edge Count">
-      </analysisProvider>
-      <analysisProvider
+      </provider>
+      <provider
             category="de.cau.cs.kieler.kiml.grana.basicAnalyses"
             class="de.cau.cs.kieler.kiml.grana.analyses.NodeCountAnalysis"
             description="The number of nodes including hierarchies."
             id="de.cau.cs.kieler.kiml.grana.nodeCount"
             name="Node Count">
-      </analysisProvider>
-      <analysisResultVisualizer
+      </provider>
+      <provider
+            category="de.cau.cs.kieler.kiml.grana.drawingsCategory"
+            class="de.cau.cs.kieler.kiml.grana.analyses.BendsAnalysis"
+            description="The number of bendpoints in the graph including hierarchies."
+            id="de.cau.cs.kieler.kiml.grana.bendpointCount"
+            name="Number of Bends">
+      </provider>
+      <provider
+            category="de.cau.cs.kieler.kiml.grana.drawingsCategory"
+            class="de.cau.cs.kieler.kiml.grana.analyses.EdgeLengthAnalysis"
+            description="The minimum, average and maximum edge length."
+            id="de.cau.cs.kieler.kiml.grana.edgeLength"
+            name="Edge Length">
+      </provider>
+      <provider
+            category="de.cau.cs.kieler.kiml.grana.drawingsCategory"
+            class="de.cau.cs.kieler.kiml.grana.analyses.EdgeCrossingsAnalysis"
+            description="The number of edge crossings including hierarchies."
+            id="de.cau.cs.kieler.kiml.grana.edgeCrossings"
+            name="Number of Edge Crossings">
+      </provider>
+      <resultVisualizer
             class="de.cau.cs.kieler.kiml.grana.visualizers.ToStringVisualizer"
             priority="1">
-      </analysisResultVisualizer>
-      <analysisResultVisualizer
+      </resultVisualizer>
+      <resultVisualizer
             class="de.cau.cs.kieler.kiml.grana.visualizers.MinAvgMaxResultVisualizer"
             priority="10">
-      </analysisResultVisualizer>
-      <analysisResultVisualizer
+      </resultVisualizer>
+      <resultVisualizer
             class="de.cau.cs.kieler.kiml.grana.visualizers.AnalysisFailedVisualizer"
             priority="10">
-      </analysisResultVisualizer>
+      </resultVisualizer>
    </extension>
    <extension
          point="org.eclipse.ui.commands">

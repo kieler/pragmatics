@@ -23,6 +23,9 @@ import de.cau.cs.kieler.kiml.grana.AbstractAnalysisResultVisualizer;
  */
 public class ToStringVisualizer extends AbstractAnalysisResultVisualizer {
 
+    /** the message that is displayed on a null result. */
+    private static final String MESSAGE_NULL_RESULT = "No result";
+
     /**
      * {@inheritDoc}
      */
@@ -34,6 +37,9 @@ public class ToStringVisualizer extends AbstractAnalysisResultVisualizer {
      * {@inheritDoc}
      */
     public String visualize(final Object result) {
+        if (result == null) {
+           return MESSAGE_NULL_RESULT; 
+        }
         return result.toString();
     }
 

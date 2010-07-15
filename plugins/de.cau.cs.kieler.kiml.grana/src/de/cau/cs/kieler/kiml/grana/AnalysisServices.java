@@ -42,18 +42,27 @@ public final class AnalysisServices implements IBundleChangedListener {
     /** identifier of the extension point for analysis providers. */
     public static final String EXTP_ID_ANALYSIS_PROVIDERS =
             "de.cau.cs.kieler.kiml.grana.analysisProviders";
-    /** name of the 'analysisProvider' element in the 'analysis providers' extension point. */
-    public static final String ELEMENT_ANALYSIS_PROVIDER = "analysisProvider";
+    /**
+     * name of the 'analysisProvider' element in the 'analysis providers' extension point.
+     */
+    public static final String ELEMENT_ANALYSIS_PROVIDER = "provider";
     /** name of the 'analysisBundle' element in the 'analysis providers' extension point. */
-    public static final String ELEMENT_ANALYSIS_BUNDLE = "analysisBundle";
-    /** name of the 'analysisCategory' element in the 'analysis providers' extension point. */
-    public static final String ELEMENT_ANALYSIS_CATEGORY = "analysisCategory";
-    /** name of the 'analysisResultVisualizer' element in the 'analysis providers' extension point. */
+    public static final String ELEMENT_ANALYSIS_BUNDLE = "bundle";
+    /**
+     * name of the 'analysisCategory' element in the 'analysis providers' extension point.
+     */
+    public static final String ELEMENT_ANALYSIS_CATEGORY = "category";
+    /**
+     * name of the 'analysisResultVisualizer' element in the 'analysis providers'
+     * extension point.
+     */
     public static final String ELEMENT_ANALYSIS_RESULT_VISUALIZER =
-            "analysisResultVisualizer";
-    /** name of the 'analysisDependency' element in the 'analysis providers' extension point. */
-    public static final String ELEMENT_ANALYSIS_DEPENDENCY =
-            "analysisDependency";
+            "resultVisualizer";
+    /**
+     * name of the 'analysisDependency' element in the 'analysis providers' extension
+     * point.
+     */
+    public static final String ELEMENT_ANALYSIS_DEPENDENCY = "dependency";
     /** name of the 'analysis' attribute in the extension points. */
     public static final String ATTRIBUTE_ANALYSIS = "analysis";
     /** name of the 'category' attribute in the extension points. */
@@ -299,6 +308,15 @@ public final class AnalysisServices implements IBundleChangedListener {
         analyses.removeAll(unresolvedAnalyses);
         for (AbstractInfoAnalysis analysis : unresolvedAnalyses) {
             analysisIdMapping.remove(analysis.getID());
+            // display a warning
+            String message =
+                    "Analysis "
+                            + analysis.getID()
+                            + " is missing a dependency or is part of a dependency cycle.";
+            IStatus status =
+                    new Status(IStatus.WARNING, GranaPlugin.PLUGIN_ID, 0,
+                            message, null);
+            StatusManager.getManager().handle(status);
         }
         // get the default category
         defaultCategory = categoryIdMapping.get(DEFAULT_CATEGORY_ID);
