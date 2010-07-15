@@ -13,14 +13,14 @@
    <extension point="org.eclipse.emf.ecore.generated_package">
       <package
             uri="http://graphml.graphdrawing.org/xmlns"
-            class="org.graphdrawing.graphml.xmlns.XmlnsPackage"
+            class="org.graphdrawing.graphml.GraphMLPackage"
             genModel="model/graphml.genmodel"/>
    </extension>
 
    <extension point="org.eclipse.emf.ecore.extension_parser">
       <parser
-            type="xmlns"
-            class="org.graphdrawing.graphml.xmlns.util.XmlnsResourceFactoryImpl"/>
+            type="graphml"
+            class="org.graphdrawing.graphml.util.GraphMLResourceFactoryImpl"/>
    </extension>
 
    <extension point="org.eclipse.emf.ecore.generated_package">
