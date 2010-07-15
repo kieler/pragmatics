@@ -161,6 +161,7 @@ public final class EvolUtil {
         // we have the metric ids, now get the metrics
         for (final String metricId : metricIds) {
             final AbstractInfoAnalysis metric = as.getAnalysisById(metricId);
+            Assert.isNotNull(metric, "Could not find analysis: " + metricId);
             metricsList.add(metric);
         }
         // TODO: cache the metrics

@@ -50,6 +50,7 @@ public class FlatnessMetric implements IAnalysis {
             xdim = dims.getFirst();
             ydim = dims.getSecond();
         } else {
+            // this should not happen
             xdim = 0.0f;
             ydim = 0.0f;
         }

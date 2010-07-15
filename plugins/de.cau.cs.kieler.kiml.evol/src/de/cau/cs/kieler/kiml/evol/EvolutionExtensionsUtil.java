@@ -21,6 +21,8 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
+import de.cau.cs.kieler.kiml.grana.AnalysisServices;
+
 /**
  * This class is responsible for reading the evolution extensions.
  *
@@ -30,12 +32,9 @@ import org.eclipse.core.runtime.Platform;
 public final class EvolutionExtensionsUtil {
     /** identifier of the extension point for evolution data. */
     private static final String EXTP_ID_EVOLUTION_DATA = "de.cau.cs.kieler.kiml.evol.evolutionData";
-    /** identifier of the extension point for metrics. */
-    private static final String EXTP_ID_LAYOUT_METRIC =
-            "de.cau.cs.kieler.kiml.grana.analysisProviders";
 
     private static final String ELEMENT_DATA = "data";
-    private static final String ELEMENT_ANALYSIS_PROVIDER = "analysisProvider";
+
     /**
      * The shared instance.
      */
@@ -156,10 +155,11 @@ EXTP_ID_EVOLUTION_DATA);
     private void loadLayoutMetricsExtensions() {
         this.layoutMetricsMap = new HashMap<String, IConfigurationElement>();
         final IConfigurationElement[] extensions =
-                Platform.getExtensionRegistry().getConfigurationElementsFor(EXTP_ID_LAYOUT_METRIC);
+                Platform.getExtensionRegistry().getConfigurationElementsFor(
+                        AnalysisServices.EXTP_ID_ANALYSIS_PROVIDERS);
         for (final IConfigurationElement element : extensions) {
             System.out.println(element.getName());
-            if (ELEMENT_ANALYSIS_PROVIDER.equals(element.getName())) {
+            if (AnalysisServices.ELEMENT_ANALYSIS_PROVIDER.equals(element.getName())) {
                 final String id = element.getAttribute("id");
                 // XXX ugly hack to get rid of the non-normalized analyses
                 if (id.toLowerCase().contains("metric")) {

@@ -303,11 +303,11 @@ public class EvolView extends ViewPart {
         }
         this.lastEditor = editor;
 
-        // we don't specify the edit part because we want a manager for
-        // the whole diagram
+        // We don't specify the edit part because we want a manager for
+        // the whole diagram.
         final DiagramLayoutManager manager =
                 EclipseLayoutServices.getInstance().getManager(editor, null);
-        // loop that performs layout and measurement for each individual.
+        // A loop that performs layout and measurement for each individual.
         final Runnable layoutLoop = new Runnable() {
             public void run() {
                 for (int pos = 0; pos < pop.size(); pos++) {
@@ -323,7 +323,7 @@ public class EvolView extends ViewPart {
                 }
             }
 
-            // indicates if the given individual is in the target.
+            // Indicates whether the given individual is in the target.
             private boolean isAffected(final Genome ind, final TargetIndividuals target) {
                 switch (target) {
                 case ALL:
@@ -332,12 +332,12 @@ public class EvolView extends ViewPart {
                     return (ind.hasRating());
                 case UNRATED:
                     return (!ind.hasRating());
-                default: // this case should never happen
+                default: // This case should never happen.
                     return false;
                 }
             }
         };
-        // the current diagram gets layouted and measured.
+        // The current diagram gets layouted and measured.
         MonitoredOperation.runInUI(layoutLoop, true);
         this.tableViewer.refresh();
     }
