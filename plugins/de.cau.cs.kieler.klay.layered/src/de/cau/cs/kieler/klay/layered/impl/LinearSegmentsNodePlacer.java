@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered.impl;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -203,13 +202,13 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
                 }
             }
         }
-        linearSegments = segmentList.toArray(new LinearSegment[segmentList.size()]);
+        LinearSegment[] segments = segmentList.toArray(new LinearSegment[segmentList.size()]);
 
         // create and initialize segment ordering graph
         @SuppressWarnings("unchecked")
-        List<LinearSegment>[] outgoing = new List[linearSegments.length];
-        int[] incomingCount = new int[linearSegments.length];
-        for (int i = 0; i < linearSegments.length; i++) {
+        List<LinearSegment>[] outgoing = new List[segments.length];
+        int[] incomingCount = new int[segments.length];
+        for (int i = 0; i < segments.length; i++) {
             outgoing[i] = new LinkedList<LinearSegment>();
         }
 
@@ -219,7 +218,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
             LNode node1 = nodeIter.next();
             while (nodeIter.hasNext()) {
                 LNode node2 = nodeIter.next();
-                LinearSegment segment2 = linearSegments[node2.id];
+                LinearSegment segment2 = segments[node2.id];
                 outgoing[node1.id].add(segment2);
                 incomingCount[node2.id]++;
                 node1 = node2;
@@ -229,12 +228,12 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
         // find a topological ordering of the segment ordering graph
         int nextRank = 0;
         List<LinearSegment> noIncoming = new LinkedList<LinearSegment>();
-        for (int i = 0; i < linearSegments.length; i++) {
+        for (int i = 0; i < segments.length; i++) {
             if (incomingCount[i] == 0) {
-                noIncoming.add(linearSegments[i]);
+                noIncoming.add(segments[i]);
             }
         }
-        int[] newRanks = new int[linearSegments.length];
+        int[] newRanks = new int[segments.length];
         while (!noIncoming.isEmpty()) {
             LinearSegment segment = noIncoming.remove(0);
             newRanks[segment.id] = nextRank++;
@@ -248,11 +247,11 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
         }
 
         // apply the new ordering to the array of linear segments
-        for (int i = 0; i < linearSegments.length; i++) {
+        linearSegments = new LinearSegment[segments.length];
+        for (int i = 0; i < segments.length; i++) {
             assert outgoing[i].isEmpty();
-            linearSegments[i].id = newRanks[i];
+            linearSegments[newRanks[i]] = segments[i];
         }
-        Arrays.sort(linearSegments);
         return linearSegments;
     }
 
@@ -307,6 +306,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
      */
     private void createUnbalancedPlacement(final LayeredGraph layeredGraph) {
         int[] nodeCount = new int[layeredGraph.getLayers().size()];
+        boolean straightEdges = layeredGraph.getProperty(Properties.STRAIGHT_EDGES);
         for (LinearSegment segment : linearSegments) {
             // determine minimal offset of 'segment'
             float minOffset = 0;
@@ -336,7 +336,6 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
                 newPos += spacing;
             }
             for (LNode node : segment.getNodes()) {
-                boolean straightEdges = layeredGraph.getProperty(Properties.STRAIGHT_EDGES);
                 float offset = 0.0f;
                 if (straightEdges) {
                   // add node offset - minimal offset

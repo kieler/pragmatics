@@ -289,7 +289,9 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         for (KNode child : layoutNode.getChildren()) {
             for (KEdge kedge : child.getOutgoingEdges()) {
                 KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
-                if (kedge.getTarget().getParent() == child.getParent()) {
+                // exclude edges that pass hierarchy bounds and self-loops
+                if (kedge.getTarget().getParent() == child.getParent()
+                        && kedge.getSource() != kedge.getTarget()) {
                     LNode sourceNode = (LNode) elemMap.get(child);
                     LPort sourcePort = (LPort) elemMap.get(kedge.getSourcePort());
                     LNode targetNode = (LNode) elemMap.get(kedge.getTarget());
