@@ -40,19 +40,26 @@ public class SimpleLabelPlacer extends AbstractAlgorithm implements ILabelPlacer
      */
     public void placeLabels(final LayeredGraph thelayeredGraph) {
         
+        //Iterate over all layers
         for (Layer layer : thelayeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
                 for (LPort port : node.getPorts()) {
                     for (LEdge edge : port.getEdges()) {
                         for (LLabel label : edge.getLabels()) {
+                            
                             LongEdge longEdge = null;
+                            //Check whether edge is spline or short edge
                             if (edge.getTarget().getNode().getProperty(Properties.NODE_TYPE)
                                     == Properties.NodeType.LONG_EDGE) {
                                 longEdge = new LongEdge(edge);
                                 longEdge.initialize();
                             }
+                            
+                            //Get source port position
                             Coord source = new Coord(edge.getSource().getPos().x, edge.getSource()
                                     .getPos().y);
+                            
+                            //Get target port position, distinguish between short edge or spline target
                             Coord target;
                             if (longEdge == null) {
                                 target = new Coord(edge.getTarget().getPos().x, edge.getTarget()
@@ -61,17 +68,26 @@ public class SimpleLabelPlacer extends AbstractAlgorithm implements ILabelPlacer
                                 target = new Coord(longEdge.getTarget().getPos().x, longEdge
                                         .getTarget().getPos().y);
                             }
+                            
+                            //Get source port absolute position
                             source = source.add(edge.getSource().getNode().getPos());
+                            
+                            //Get target port absolute position
                             if (longEdge == null) {
                                 target = target.add(edge.getTarget().getNode().getPos());
                             } else {
                                 target = target.add(longEdge.getTarget().getNode().getPos());
                             }
+                            
+                            //Compute new horizontal position for label
                             label.getPos().x = Math.abs(source.x - target.x) / 2;
+                            
+                            //Compute new vertcial position for label
                             if (longEdge == null) {
                                 label.getPos().y = (target.y - source.y) / 2;
                             } else {
-                                //find bendpoint with max distance to source AND target node
+                                //Or compute label position on a spline by using bend points
+                                //Therefore, find bendpoint with max distance to source AND target node
                                 Coord portPosition = new Coord(edge.getSource().getPos().x,
                                         edge.getSource().getPos().y);
                                 portPosition.add(edge.getSource().getNode().getPos());
@@ -93,6 +109,8 @@ public class SimpleLabelPlacer extends AbstractAlgorithm implements ILabelPlacer
                                 label.getPos().x = middlePoint.x - portPosition.x;
                                 label.getPos().y = middlePoint.y - portPosition.y;
                             }
+                            
+                            //Move label horizontally to put the middle of the label on the computed spot
                             label.getPos().x -= label.getSize().x / 2;
                         }
                     }

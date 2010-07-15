@@ -135,6 +135,8 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
                 }
             }
             xpos += layer.getSize().x + spacing;
+            
+            //make space for long labels
             LLabel longestLabelHere = labelPlacer.longestLabel(layer);
             if (!consideredLabelsInLayerSize.contains(longestLabelHere)) {
                 xpos += longestLabelHere.getSize().x;
