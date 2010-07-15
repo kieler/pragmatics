@@ -16,14 +16,13 @@ package de.cau.cs.kieler.kiml.evol.genetic;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
- * A population is a list of individuals.
- *
+ * A population is a list of individuals (genomes).
+ * 
  * @author bdu
- *
+ * 
  */
-public class Population extends ArrayList<Individual> {
+public class Population extends ArrayList<Genome> {
     /**
      *
      */
@@ -43,7 +42,7 @@ public class Population extends ArrayList<Individual> {
      *            List of individuals. Must not be {@code null}, otherwise a
      *            {@link NullPointerException} is thrown.
      */
-    public Population(final List<Individual> individuals) {
+    public Population(final List<Genome> individuals) {
         this.addAll(individuals);
     }
 
@@ -53,8 +52,8 @@ public class Population extends ArrayList<Individual> {
      * @return an individual that is in the list, or {@code null}, if the list
      *         is empty.
      */
-    public Individual pick() {
-        Individual result = null;
+    public Genome pick() {
+        Genome result = null;
         if (size() > 0) {
             final int pos = (int) (Math.random() * size());
             result = get(pos);
@@ -67,7 +66,7 @@ public class Population extends ArrayList<Individual> {
         final String newLine = System.getProperty("line.separator");
         final StringBuilder result = new StringBuilder();
         int i = 0;
-        for (final Individual ind : this) {
+        for (final Genome ind : this) {
             result.append("#" + ++i + ": " + ind.toString() + newLine);
         }
         return result.toString();
@@ -83,7 +82,7 @@ public class Population extends ArrayList<Individual> {
             return Double.NaN;
         }
         int ratingSum = 0;
-        for (final Individual ind : this) {
+        for (final Genome ind : this) {
             ratingSum += ind.getRating();
         }
         return (double) (ratingSum / (double) this.size());

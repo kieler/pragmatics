@@ -17,7 +17,6 @@ package de.cau.cs.kieler.kiml.evol.alg;
 import java.util.Arrays;
 
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
-import de.cau.cs.kieler.kiml.evol.genetic.Individual;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 
 /**
@@ -63,15 +62,13 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
             offspring = new Population();
             System.out.println(" -- generate " + crossOvers + " out of " + selection.size());
             for (int i = 0; i < crossOvers; i++) {
-                final Individual parent1 = selection.pick();
-                final Individual parent2 = selection.pick();
-                final Genome genome1 = parent1.getGenome();
-                final Genome genome2 = parent2.getGenome();
+                final Genome parent1 = selection.pick();
+                final Genome parent2 = selection.pick();
                 // it is not ensured that both parents are different
-                final Genome newGenome = genome1.newRecombination(genome2);
+                final Genome newGenome = parent1.newRecombination(parent2);
                 System.out.println(" -- cross over of " + parent1);
                 System.out.println("              and " + parent2);
-                offspring.add(new Individual(newGenome, getGeneration()));
+                offspring.add(new Genome(newGenome, getGeneration()));
             }
             // add offspring to survivors
             population.addAll(0, offspring);
@@ -108,13 +105,19 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
         final double prob = MUTATION_APPLICATION_PROBABILITY;
         System.out.println(" -- mutate all " + population.size() + ", each with probability of "
                 + prob);
-        for (final Individual ind : population) {
-            if (ind.mutate(prob)) {
+        final Population mutations = new Population();
+        for (final Genome ind : population) {
+            final Genome mutation = ind.mutate(prob);
+            if (mutation != null) {
                 // individual has mutated --> rating is outdated
-                ind.fadeRating();
+                mutation.fadeRating();
+                mutations.add(mutation);
                 System.out.println("-- Mutation performed: " + ind);
+            } else {
+                mutations.add(ind);
             }
         }
+        population = new Population(mutations);
     }
 
     @Override
@@ -122,9 +125,9 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
         System.out.println("*** select");
         selection = new Population();
         final int count = population.size();
-        final Individual[] individuals = new Individual[count];
+        final Genome[] individuals = new Genome[count];
         population.toArray(individuals);
-        Arrays.sort(individuals, Individual.DESCENDING_RATING_COMPARATOR);
+        Arrays.sort(individuals, Genome.DESCENDING_RATING_COMPARATOR);
         // only some are allowed to generate offspring
 
         final int min = MIN_SELECT;
@@ -132,7 +135,7 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
         final int select = ((proposal > min) ? proposal : min);
 
         System.out.println(" -- select " + select + " of " + count);
-        for (final Individual ind : individuals) {
+        for (final Genome ind : individuals) {
             if (selection.size() < select) {
                 selection.add(ind);
                 System.out.println(" -- select: " + ind);
@@ -146,16 +149,16 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
     protected void survive() {
         System.out.println("*** survive");
         final int count = population.size();
-        final Individual[] individuals = new Individual[count];
+        final Genome[] individuals = new Genome[count];
         population.toArray(individuals);
-        Arrays.sort(individuals, Individual.DESCENDING_RATING_COMPARATOR);
+        Arrays.sort(individuals, Genome.DESCENDING_RATING_COMPARATOR);
         // only some survive
         final int min = MIN_SURVIVORS;
         final int proposal = (int) Math.round((count * SURVIVAL_RATIO));
         final int lim = ((proposal < min) ? min : proposal);
         final Population survivors = new Population();
         System.out.println(" -- keep " + lim + " of " + count);
-        for (final Individual ind : individuals) {
+        for (final Genome ind : individuals) {
             if (survivors.size() < lim) {
                 survivors.add(ind);
                 System.out.println(" -- keep: " + ind.toString());

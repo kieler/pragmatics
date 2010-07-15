@@ -43,7 +43,6 @@ import de.cau.cs.kieler.kiml.evol.genetic.FloatGene;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.IGene;
 import de.cau.cs.kieler.kiml.evol.genetic.IGeneFactory;
-import de.cau.cs.kieler.kiml.evol.genetic.Individual;
 import de.cau.cs.kieler.kiml.evol.genetic.IntegerGene;
 import de.cau.cs.kieler.kiml.evol.genetic.MutationInfo;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
@@ -78,7 +77,7 @@ public final class EvolUtil {
         final Population result = new Population();
         for (int i = 0; i < size; i++) {
             final Genome genome = createGenome(source);
-            final Individual ind = new Individual(genome, 0);
+            final Genome ind = new Genome(genome, 0);
             result.add(ind);
         }
         return result;
@@ -235,7 +234,7 @@ public final class EvolUtil {
          * Get the set of learnable elements that are registered.
          */
         final Set<String> learnables = EvolutionExtensionsUtil.getInstance().getEvolutionDataIds();
-        final Genome result = new Genome(null);
+        final Genome result = new Genome();
         IGene<?> gene = null;
         // get data from property descriptors
         final IPropertyDescriptor[] propertyDescriptors = source.getPropertyDescriptors();
@@ -299,10 +298,10 @@ public final class EvolUtil {
             // TODO: implements
             return null;
         }
-        
+
         /**
          * Creates a gene with the specified value.
-         * 
+         *
          * @param theId
          *            an identifier
          * @param theValue

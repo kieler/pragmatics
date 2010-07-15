@@ -45,7 +45,6 @@ import de.cau.cs.kieler.kiml.evol.EvolUtil;
 import de.cau.cs.kieler.kiml.evol.alg.BasicEvolutionaryAlgorithm;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.IGene;
-import de.cau.cs.kieler.kiml.evol.genetic.Individual;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
@@ -135,8 +134,8 @@ public class EvolView extends ViewPart {
             case 0:
                 return ((PopulationTableEntry) element).getId();
             case 1:
-                final Individual individual = ((PopulationTableEntry) element).getIndividual();
-                return (individual.getGenome().size() + " genes, rating: " + individual.getRating());
+                final Genome individual = ((PopulationTableEntry) element).getIndividual();
+                return (individual.size() + " genes, rating: " + individual.getRating());
             default: // do nothing
                 return null;
             }
@@ -312,7 +311,7 @@ public class EvolView extends ViewPart {
         final Runnable layoutLoop = new Runnable() {
             public void run() {
                 for (int pos = 0; pos < pop.size(); pos++) {
-                    final Individual ind = pop.get(pos);
+                    final Genome ind = pop.get(pos);
 
                     // TODO: synchronize on the layout graph?
                     if (isAffected(ind, filter)) {
@@ -325,7 +324,7 @@ public class EvolView extends ViewPart {
             }
 
             // indicates if the given individual is in the target.
-            private boolean isAffected(final Individual ind, final TargetIndividuals target) {
+            private boolean isAffected(final Genome ind, final TargetIndividuals target) {
                 switch (target) {
                 case ALL:
                     return true;
@@ -384,7 +383,7 @@ public class EvolView extends ViewPart {
      * @return the current {@code Individual}, or {@code null} if none is
      *         selected.
      */
-    public Individual getCurrentIndividual() {
+    public Genome getCurrentIndividual() {
         final Population pop = this.population;
         final int pos = this.position;
         Assert.isTrue((pos >= 0) && (pos < pop.size()), "position out of range");
@@ -436,7 +435,7 @@ public class EvolView extends ViewPart {
      * @param wantLayoutViewRefresh
      *            whether the layout view shall be refreshed
      */
-    private void adoptIndividual(final Individual theIndividual, final boolean wantLayoutViewRefresh) {
+    private void adoptIndividual(final Genome theIndividual, final boolean wantLayoutViewRefresh) {
         Assert.isLegal(theIndividual != null);
 
         if (!isValidState() || (theIndividual == null)) {
@@ -445,11 +444,11 @@ public class EvolView extends ViewPart {
 
         final LayoutPropertySource source = getLayoutPropertySource();
         System.out.println("adopt " + theIndividual.toString());
-        final Genome genome = theIndividual.getGenome();
+
         final LayoutServices layoutServices = LayoutServices.getInstance();
 
         // set layout options according to genome
-        for (final IGene<?> gene : genome) {
+        for (final IGene<?> gene : theIndividual) {
             Assert.isNotNull(gene);
             final Object value = gene.getValue();
             final Object id = gene.getId();
@@ -490,7 +489,7 @@ public class EvolView extends ViewPart {
         }
         int result = -1;
         for (int i = 0; i < pop.size(); i++) {
-            final Individual ind = pop.get(i);
+            final Genome ind = pop.get(i);
             if (!ind.hasRating()) {
                 result = i;
                 break;
@@ -595,7 +594,7 @@ public class EvolView extends ViewPart {
         if (!isValidState()) {
             return;
         }
-        final Individual currentIndividual = getCurrentIndividual();
+        final Genome currentIndividual = getCurrentIndividual();
         Assert.isNotNull(currentIndividual);
         adoptIndividual(currentIndividual, true);
         final IEditorPart editor = getCurrentEditor();
@@ -630,7 +629,7 @@ public class EvolView extends ViewPart {
             return false;
         }
 
-        final Individual currentIndividual = getCurrentIndividual();
+        final Genome currentIndividual = getCurrentIndividual();
         if (currentIndividual == null) {
             System.out.println("No individual selected.");
             return false;

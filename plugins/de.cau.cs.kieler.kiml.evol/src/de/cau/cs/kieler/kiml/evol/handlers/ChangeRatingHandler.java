@@ -5,7 +5,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
 
-import de.cau.cs.kieler.kiml.evol.genetic.Individual;
+import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.ui.EvolView;
 import de.cau.cs.kieler.kiml.evol.ui.EvolView.SelectorTableViewer;
 
@@ -25,7 +25,7 @@ public class ChangeRatingHandler extends AbstractHandler {
                         .findView(EvolView.ID);
         if (view instanceof EvolView) {
             if (((EvolView) view).getPopulation() != null) {
-                final Individual ind = ((EvolView) view).getCurrentIndividual();
+                final Genome ind = ((EvolView) view).getCurrentIndividual();
                 final int rating = ind.getRating() + delta;
                 ind.setRating(rating);
                 final SelectorTableViewer tv = ((EvolView) view).getTableViewer();

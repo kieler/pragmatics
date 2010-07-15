@@ -3,7 +3,7 @@ package de.cau.cs.kieler.kiml.evol.ui;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import de.cau.cs.kieler.kiml.evol.genetic.Individual;
+import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 
 /**
@@ -26,7 +26,7 @@ public class PopulationTableContentProvider implements IStructuredContentProvide
         inputPopulation = (Population) inputElement;
         final PopulationTableEntry[] result = new PopulationTableEntry[inputPopulation.size()];
         int i = 0;
-        for (final Individual individual : inputPopulation) {
+        for (final Genome individual : inputPopulation) {
             result[i] = new PopulationTableEntry();
             result[i].setIndividual(individual);
             result[i].setIndex(i);
