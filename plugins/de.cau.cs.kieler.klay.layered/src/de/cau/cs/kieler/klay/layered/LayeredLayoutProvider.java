@@ -32,6 +32,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.kiml.ui.util.DebugCanvas;
 import de.cau.cs.kieler.kiml.ui.util.DebugCanvas.DrawingMode;
@@ -258,12 +259,14 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         Map<KGraphElement, LGraphElement> elemMap = new HashMap<KGraphElement, LGraphElement>();
         for (KNode child : layoutNode.getChildren()) {
             KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(child);
+            PortConstraints portConstraints = LayoutOptions.getEnum(nodeLayout, PortConstraints.class);
             LNode newNode = new LNode(child, child.getLabel().getText());
             newNode.getSize().x = nodeLayout.getWidth();
             newNode.getSize().y = nodeLayout.getHeight();
             layeredNodes.add(newNode);
             elemMap.put(child, newNode);
             for (KPort kport : child.getPorts()) {
+                KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(kport);
                 PortType type = PortType.UNDEFINED;
                 int outBalance = 0;
                 for (KEdge edge : kport.getEdges()) {
@@ -280,8 +283,16 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
                     type = PortType.INPUT;
                 }
                 LPort newPort = new LPort(type, kport, kport.getLabel().getText());
+                newPort.getPos().x = portLayout.getXpos();
+                newPort.getPos().y = portLayout.getYpos();
                 newPort.setNode(newNode);
                 elemMap.put(kport, newPort);
+                if (portConstraints != PortConstraints.UNDEFINED) {
+                    newPort.setSide(KimlLayoutUtil.calcPortSide(kport));
+                }
+            }
+            if (portConstraints != PortConstraints.UNDEFINED) {
+                newNode.setProperty(Properties.PORT_CONS, portConstraints);
             }
         }
 
@@ -299,10 +310,18 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
                     if (sourcePort == null) {
                         sourcePort = new LPort(PortType.OUTPUT);
                         sourcePort.setNode(sourceNode);
+                    } else if (sourcePort.getType() != PortType.OUTPUT) {
+                        // ignore ports with incoming as well as outgoing edges
+                        LayoutOptions.setBoolean(edgeLayout, LayoutOptions.NO_LAYOUT, true);
+                        continue;
                     }
                     if (targetPort == null) {
                         targetPort = new LPort(PortType.INPUT);
                         targetPort.setNode(targetNode);
+                    } else if (targetPort.getType() != PortType.INPUT) {
+                        // ignore ports with incoming as well as outgoing edges
+                        LayoutOptions.setBoolean(edgeLayout, LayoutOptions.NO_LAYOUT, true);
+                        continue;
                     }
                     LEdge newEdge = new LEdge(kedge);
                     newEdge.setSource(sourcePort);

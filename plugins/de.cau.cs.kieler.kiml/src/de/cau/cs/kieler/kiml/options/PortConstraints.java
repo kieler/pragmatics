@@ -24,7 +24,7 @@ public enum PortConstraints {
     /** undefined constraints. */
     UNDEFINED,
     /** all ports are free. */
-    FREE_PORTS,
+    FREE,
     /** the side is fixed for each port. */
     FIXED_SIDE,
     /** the side is fixed for each port, and the order of ports

@@ -69,7 +69,7 @@ public class LayerSweepCrossingReducer extends AbstractAlgorithm implements ICro
 
         Layer firstLayer = layeredGraph.getLayers().get(firstLayerIx);
         Layer lastLayer = layeredGraph.getLayers().get(lastLayerIx);
-        if (externalConstraints != PortConstraints.FREE_PORTS) {
+        if (externalConstraints != PortConstraints.FREE) {
             // sort input and output ports by their relative position
             if (firstLayer.getRank() == 0) {
                 firstLayer.sortByPorts(false);

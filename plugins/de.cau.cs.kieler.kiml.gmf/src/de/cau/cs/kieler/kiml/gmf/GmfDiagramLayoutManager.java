@@ -565,7 +565,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         // set default port constraints option
         if (hasPorts) {
             if (hasChildNodes || hasChildCompartments) {
-                LayoutOptions.setEnum(nodeLayout, PortConstraints.FREE_PORTS);
+                LayoutOptions.setEnum(nodeLayout, PortConstraints.FREE);
             } else {
                 LayoutOptions.setEnum(nodeLayout, PortConstraints.FIXED_POS);
             }

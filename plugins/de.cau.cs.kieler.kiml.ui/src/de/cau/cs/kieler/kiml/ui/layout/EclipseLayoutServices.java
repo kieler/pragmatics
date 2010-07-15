@@ -250,7 +250,7 @@ public class EclipseLayoutServices extends LayoutServices {
             return Boolean.valueOf(!hasChildren);
         } else if (LayoutOptions.PORT_CONSTRAINTS.equals(optionData.getId())) {
             if (hasChildren) {
-                return PortConstraints.FREE_PORTS.ordinal();
+                return PortConstraints.FREE.ordinal();
             } else {
                 return PortConstraints.FIXED_POS.ordinal();
             }

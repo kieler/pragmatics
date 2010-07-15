@@ -55,7 +55,7 @@ public class BarycenterCrossingReducer extends AbstractAlgorithm implements ISin
         for (LayerElement element : layer.getElements()) {
             PortConstraints portConstraints = element.getPortConstraints();
             if (portConstraints == PortConstraints.FIXED_SIDE
-                    || portConstraints == PortConstraints.FREE_PORTS) {
+                    || portConstraints == PortConstraints.FREE) {
                 // ports are not fixed, find an order for the ports
                 Map<KPort, List<Integer>> portRanks = element.getConnectionRanksByPort(forward);
                 Map<KPort, Double> abstractPortRanks = new HashMap<KPort, Double>();
@@ -104,7 +104,7 @@ public class BarycenterCrossingReducer extends AbstractAlgorithm implements ISin
         for (LayerElement element : layer.getElements()) {
             PortConstraints portConstraints = element.getPortConstraints();
             if (portConstraints == PortConstraints.FIXED_SIDE
-                    || portConstraints == PortConstraints.FREE_PORTS) {
+                    || portConstraints == PortConstraints.FREE) {
                 // ports are not fixed, find an order for the ports
                 Map<KPort, List<Integer>> forwardRanks = element.getConnectionRanksByPort(true);
                 Map<KPort, List<Integer>> backwardsRanks = element.getConnectionRanksByPort(false);

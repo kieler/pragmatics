@@ -19,7 +19,10 @@ import java.util.List;
 import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.kiml.options.PortConstraints;
+import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.PortType;
+import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
@@ -108,8 +111,11 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
                 portId++;
             }
             if (portCount > 0) {
-                // TODO make this dependent on the type of port constraints
-                sortPorts(node, portBarycenters, forward);
+                PortConstraints constraints = node.getProperty(Properties.PORT_CONS);
+                if (constraints == PortConstraints.FREE
+                        || constraints == PortConstraints.FIXED_SIDE) {
+                    sortPorts(node, portBarycenters, forward);
+                }
                 nodeBarycenters[nodeId] = nodeSum / portCount;
             }
             nodeId++;
@@ -127,18 +133,36 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
      *     are assumed to be input ports and the others to be output ports; else the
      *     contrary is assumed
      */
-    void sortPorts(final LNode node, final float[] posValues, final boolean input) {
+    private void sortPorts(final LNode node, final float[] posValues, final boolean input) {
+        if (node.getProperty(Properties.PORT_CONS) == PortConstraints.FREE) {
+            // set input ports left, output ports right
+            for (LPort port : node.getPorts()) {
+                switch (port.getType()) {
+                case INPUT:
+                    port.setSide(PortSide.WEST);
+                    break;
+                case OUTPUT:
+                    port.setSide(PortSide.EAST);
+                }
+            }
+        }
         Collections.sort(node.getPorts(), new Comparator<LPort>() {
             public int compare(final LPort port1, final LPort port2) {
-                float bary1 = posValues[port1.id], bary2 = posValues[port2.id];
-                if (bary1 >= 0 && bary2 >= 0) {
-                    return Float.compare(bary1, bary2);
-                } else if (bary1 >= 0) {
-                    return input ? -1 : 1;
-                } else if (bary2 >= 0) {
-                    return input ? 1 : -1;
+                PortSide side1 = port1.getSide();
+                PortSide side2 = port2.getSide();
+                if (side1 != side2) {
+                    return side1.ordinal() - side2.ordinal();
                 } else {
-                    return port1.id - port2.id;
+                    float bary1 = posValues[port1.id], bary2 = posValues[port2.id];
+                    if (bary1 >= 0 && bary2 >= 0) {
+                        return Float.compare(bary1, bary2);
+                    } else if (bary1 >= 0) {
+                        return input ? -1 : 1;
+                    } else if (bary2 >= 0) {
+                        return input ? 1 : -1;
+                    } else {
+                        return port1.id - port2.id;
+                    }
                 }
             }
         });
@@ -154,7 +178,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
      * @param layer layer whose nodes shall be sorted
      * @param posValues array of position values
      */
-    void sortNodes(final Layer layer, final float[] posValues) {
+    private void sortNodes(final Layer layer, final float[] posValues) {
         List<LNode> nodes = layer.getNodes();
         // determine placements for nodes with undefined position value
         final double[] filteredValues = new double[nodes.size()];

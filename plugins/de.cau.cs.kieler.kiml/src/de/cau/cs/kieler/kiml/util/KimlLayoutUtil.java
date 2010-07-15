@@ -274,6 +274,10 @@ public final class KimlLayoutUtil {
     public static PortSide calcPortSide(final KPort port) {
         KShapeLayout nodeLayout = getShapeLayout(port.getNode());
         KShapeLayout portLayout = getShapeLayout(port);
+        PortSide portSide = LayoutOptions.getEnum(portLayout, PortSide.class);
+        if (portSide != PortSide.UNDEFINED) {
+            return portSide;
+        }
         // determine port placement from port position
         float nodeWidth = nodeLayout.getWidth();
         float nodeHeight = nodeLayout.getHeight();
@@ -432,7 +436,7 @@ public final class KimlLayoutUtil {
     public static void fillPortInfo(final KNode node, final LayoutDirection layoutDirection) {
         KLayoutData layoutData = getShapeLayout(node);
         PortConstraints portConstraints = LayoutOptions.getEnum(layoutData, PortConstraints.class);
-        if (portConstraints == PortConstraints.FREE_PORTS) {
+        if (portConstraints == PortConstraints.FREE) {
             // set port sides according to layout direction
             switch (layoutDirection) {
             case DOWN:

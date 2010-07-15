@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.layered;
 
 import de.cau.cs.kieler.core.util.Property;
+import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.klay.layered.impl.LinearSegmentsNodePlacer.Region;
 
 /**
@@ -29,7 +30,7 @@ public final class Properties {
         NORMAL,
         /** a dummy node created to split a long edge. */
         LONG_EDGE;
-    }    
+    }
 
     /** priority of elements. */
     public static final Property<Integer> PRIORITY = new Property<Integer>(
@@ -37,6 +38,9 @@ public final class Properties {
     /** node type. */
     public static final Property<NodeType> NODE_TYPE = new Property<NodeType>(
             "nodeType", NodeType.NORMAL);
+    /** port constraints. */
+    public static final Property<PortConstraints> PORT_CONS = new Property<PortConstraints>(
+            "portConstraints", PortConstraints.FREE);
     /** offset for nodes in linear segments. */
     public static final Property<Integer> LINSEG_OFFSET = new Property<Integer>(
             "linsegOffset", 0);
