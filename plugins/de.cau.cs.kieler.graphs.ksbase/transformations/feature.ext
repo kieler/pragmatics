@@ -1,5 +1,18 @@
 import graphs;
 
+Integer getIntFromUser(String userMessage, Integer defaultValue):
+	JAVA de.cau.cs.kieler.ksbase.util.UserDialogUtil.getUserInt(java.lang.String, java.lang.Integer)
+;
+
+Integer getPositiveIntFromUser(String userMessage, Integer defaultValue, Integer min):
+	let n = getIntFromUser(userMessage, defaultValue):
+	if n < min then min else n
+;
+
+Integer getPositiveIntFromUser(String userMessage, Integer defaultValue):
+	getPositiveIntFromUser(userMessage, defaultValue, 1)
+;
+
 //Adds a successor to the given node
 Void addSuccessor(Node source): 
 	let target = new Node:
@@ -92,6 +105,77 @@ Void connectUndirectedReverse(Node target, Node source):
 	edge.setTarget(target) ->
 	setSelection(edge)
 ;
+
+//Adds a clique to the graph
+Void addClique(Node parent):
+	let n = getPositiveIntFromUser("Please enter a positive number for the number of nodes:", 5):
+	let nodes = getNumberOfNodes(n):
+	parent.children.addAll(nodes) ->
+	connectAll(nodes)
+;
+
+Void connectAll(List[Node] nodes):
+	if nodes.size > 0
+	then (
+		let node = nodes.get(0):
+		nodes.remove(node) ->
+		nodes.connectUndirected(node) ->
+		connectAll(nodes)
+	) else null
+;
+
+//Adds a tree to the graph
+Void addTree(Node parent):
+	let n = getPositiveIntFromUser("Please enter a positive number for the number of layers:", 3):
+	let k = getPositiveIntFromUser("Please enter a positive number for the number of children per node:", 2):
+	let root = new Node:
+	parent.children.add(root) ->
+	addLayer(root, parent, n - 1, k)
+;
+
+Void addLayer(Node node, Node parent, Integer n, Integer k):
+	if n > 0
+	then (
+		let nodes = getNumberOfNodes(k):
+		parent.children.addAll(nodes) ->
+		nodes.connectUndirectedReverse(node) ->
+		nodes.addLayer(parent, n - 1, k)
+	) else null
+;
+
+//Adds the Cn to the graph
+Void addCircle(Node parent):
+	let n = getPositiveIntFromUser("Please enter a positive number for the number of nodes:", 6, 3):
+	let node = new Node:
+	parent.children.add(node) ->
+	buildCircle(node, node, parent, n - 1)
+;
+
+Void buildCircle(Node node, Node end, Node parent, Integer n):
+	if n > 0
+	then (
+		let newNode = new Node:
+		parent.children.add(newNode) ->
+		connectUndirected(node, newNode) ->
+		buildCircle(newNode, end, parent, n - 1)
+	) else (
+		connectUndirected(node, end)
+	)
+;
+
+List[Node] getNumberOfNodes(Integer n):
+	let nodes = (List[Node]){}:
+	addNumberOfNodes(nodes, n) ->
+	nodes
+;
+
+Void addNumberOfNodes(List[Node] nodes, Integer n):
+	if n > 0 then (let node = new Node:
+		nodes.add(node) ->
+		addNumberOfNodes(nodes, n - 1))
+	else null
+;
+
 
 //Checks if the node is the root node
 Boolean isNoRootNode(Node node): 
