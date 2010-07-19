@@ -32,18 +32,23 @@ public class Example {
 
 	private String namespaceId;
 
-	public Example(String id, String name) {
-		init(id, name, INITVERSION);
+	private ImportType importType;
+
+	public Example(String id, String name, ImportType importType) {
+		init(id, name, INITVERSION, importType);
 	}
 
-	public Example(String id, String name, Version version) {
-		init(id, name, version);
+	public Example(String id, String name, Version version,
+			ImportType importType) {
+		init(id, name, version, importType);
 	}
 
-	private void init(String id, String name, Version version) {
+	private void init(String id, String name, Version version,
+			ImportType importType) {
 		this.id = id;
 		this.name = name;
 		this.version = version;
+		this.importType = importType;
 		resources = new ArrayList<ExampleResource>();
 	}
 

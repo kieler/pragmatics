@@ -15,6 +15,7 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.KielerModelException;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.ExampleResource;
+import de.cau.cs.kieler.kex.model.ImportType;
 
 public class ExtPointCollectionUtil {
 
@@ -50,10 +51,11 @@ public class ExtPointCollectionUtil {
 			// FIXME IllegalArgumentException sehr wahrscheinlich, da das
 			// version feld
 			// ein freier string, min. default besser noch regex.
-			example = new Example(idAttribute, nameAttribute,
-					Version.parseVersion(versionAttribute));
+			example = new Example(idAttribute, nameAttribute, Version
+					.parseVersion(versionAttribute), ImportType.EXTENSIONPOINT);
 		else
-			example = new Example(idAttribute, nameAttribute);
+			example = new Example(idAttribute, nameAttribute,
+					ImportType.EXTENSIONPOINT);
 		example.setDescription(exampleElement.getAttribute("description"));
 		example.setContact(exampleElement.getAttribute("contact"));
 		String exNamespaceId = exampleElement.getNamespaceIdentifier();

@@ -2,6 +2,6 @@ package de.cau.cs.kieler.kex.controller;
 
 public enum ExampleElement {
 
-	ID, NAME, DESCRIPTION, VERSION, LOCATION, PROJECTID, CONTACT;
+	ID, NAME, DESCRIPTION, VERSION, LOCATION, PROJECTID, CONTACT, IMPORTTYPE;
 
 }

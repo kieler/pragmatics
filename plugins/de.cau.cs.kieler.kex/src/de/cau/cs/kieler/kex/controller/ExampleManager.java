@@ -12,6 +12,7 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.util.ExampleExportUtil;
 import de.cau.cs.kieler.kex.controller.util.ExampleImportUtil;
 import de.cau.cs.kieler.kex.model.Example;
+import de.cau.cs.kieler.kex.model.ImportType;
 import de.cau.cs.kieler.kex.model.extensionpoint.ExtPointExampleCollector;
 import de.cau.cs.kieler.kex.model.extensionpoint.ExtPointExampleCreator;
 import de.cau.cs.kieler.kex.model.online.OnlineExampleCollector;
@@ -113,7 +114,7 @@ public class ExampleManager {
 		// Test Example
 		ArrayList<Example> result = new ArrayList<Example>();
 		Example testExample = new Example("ImportedTestExample",
-				"ImportedTestExample");
+				"ImportedTestExample", ImportType.EXTENSIONPOINT);
 		result.add(testExample);
 		return result;
 	}
