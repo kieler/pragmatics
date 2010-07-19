@@ -40,6 +40,7 @@ public class BendsMetric implements IAnalysis {
         progressMonitor.begin("Bend metric analysis", 1);
 
         // count the number of edges and bend points
+        // TODO: load numbers from bend count analysis
         int m = 0;
         int bends = 0;
         for (final KNode node : parentNode.getChildren()) {

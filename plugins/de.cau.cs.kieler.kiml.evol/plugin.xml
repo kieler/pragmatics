@@ -146,6 +146,9 @@
             description="description"
             id="de.cau.cs.kieler.kiml.evol.bendsMetric"
             name="Bends Metric">
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.bendpointCount">
+         </dependency>
       </provider>
       <provider
             category="de.cau.cs.kieler.kiml.grana.drawingsCategory"
@@ -170,6 +173,21 @@
             name="Narrowness Metric">
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.dimensions">
+         </dependency>
+      </provider>
+      <provider
+            class="de.cau.cs.kieler.kiml.evol.grana.EdgeCrossingsMetric"
+            description="description"
+            id="de.cau.cs.kieler.kiml.evol.edgeCrossingsMetric"
+            name="Edge Crossings Metric">
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.bendpointCount">
+         </dependency>
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.edgeCount">
+         </dependency>
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.edgeCrossings">
          </dependency>
       </provider>
    </extension>
