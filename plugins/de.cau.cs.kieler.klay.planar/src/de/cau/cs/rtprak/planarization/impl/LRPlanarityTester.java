@@ -1232,10 +1232,14 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * @param edge
      *            the edge to determine its type related to the specified node
      * @return the type of the edge
+     * @throws InconsistentGraphModelException
+     *             if the edge is not connected with the edge
      * 
-     * @see de.cau.cs.rtprak.planarization.ba.LRPlanarityTester.Type Type
+     * @see de.cau.cs.rtprak.planarization.LRPlanarityTester.Type Type
      */
-    private Type getEdgeType(final INode node, final IEdge edge) {
+    private Type getEdgeType(final INode node, final IEdge edge)
+            throws InconsistentGraphModelException {
+
         if (edge.getSource().equals(edge.getTarget())) {
             return Type.SELFLOOP;
         }
@@ -1245,7 +1249,8 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
         if (dfsTarget[edge.getID()].equals(node)) {
             return dfsTargetType[edge.getID()];
         }
-        return null;
+        throw new InconsistentGraphModelException(
+                "Attempted to get adjacent node from unconnected edge");
     }
 
     /**
@@ -1256,8 +1261,10 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * 
      * @param node
      *            the node to determine the targetSide of all incoming edges adjacent to this node
+     * @throws InconsistentGraphModelException
+     *             if the adjacency list is not consistent
      */
-    private void determineDfsTargetSides(final INode node) {
+    private void determineDfsTargetSides(final INode node) throws InconsistentGraphModelException {
 
         HashSet<IEdge> traversedTrees = new HashSet<IEdge>();
         for (IEdge edge : node.getAllEdges()) {
@@ -1285,8 +1292,14 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * 
      * @param node
      *            the node to normalize its adjacency list
+     * @throws InconsistentGraphModelException
+     *             if the adjacency list is not consistent with the connected edges
      */
-    private void normalize(final INode node) {
+    private void normalize(final INode node) throws InconsistentGraphModelException {
+        // TODO I think, I do not need it. Determining the dfsTargetSide also works without
+        // normalizing the adjList.
+        // -> find incTree and from there on, all edges up to the targetTree have a -1 as their
+        // side.
 
         if (node.getAdjacentEdgeCount() > 1 && parentEdge[node.getID()] != null) {
             ListIterator<IEdge> iterator = node.getEdgeList().listIterator();
