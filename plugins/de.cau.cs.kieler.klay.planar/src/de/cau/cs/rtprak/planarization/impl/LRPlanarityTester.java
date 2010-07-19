@@ -259,6 +259,7 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
     // TODO maybe data structure needs graphType "PORTS"
     // TODO maybe every edge has to know its position in adjList itself (stored in an extra
     // attribute)
+    // TODO self-loops
 
     // ====================== Methods =====================================
 
@@ -1178,8 +1179,7 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
                 if (current == null) {
                     pair.getSecond().setFirst(null);
                 }
-            }
-            if (intervalSide == -1) {
+            } else if (intervalSide == -1) {
                 current = pair.getFirst().getSecond();
                 while (current != null && lowpt[current.getID()] > lowpt[edge.getID()]) {
                     conflicting.add(current);
@@ -1202,8 +1202,7 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
                     pair.getSecond().setSecond(null);
                     pair.getSecond().setFirst(null);
 
-                }
-                if (intervalSide == -1) {
+                } else if (intervalSide == -1) {
                     current = pair.getFirst().getSecond();
                     while (current != null) {
                         conflicting.add(current);
