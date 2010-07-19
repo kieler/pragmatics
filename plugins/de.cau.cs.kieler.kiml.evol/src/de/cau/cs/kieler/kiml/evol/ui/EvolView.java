@@ -199,7 +199,7 @@ public class EvolView extends ViewPart {
     /**
      * Identifier for the EvolView.
      */
-    public static final String ID = "de.cau.cs.kieler.kiml.evol.wildlife";
+    public static final String ID = "de.cau.cs.kieler.kiml.evol.evolView";
 
     // individual property settings
     @Override

@@ -208,7 +208,7 @@
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
-            locationURI="toolbar:de.cau.cs.kieler.kiml.evol.wildlife">
+            locationURI="toolbar:de.cau.cs.kieler.kiml.evol.evolView">
          <command
                commandId="de.cau.cs.kieler.kiml.evol.evolve"
                label="Evolve"
