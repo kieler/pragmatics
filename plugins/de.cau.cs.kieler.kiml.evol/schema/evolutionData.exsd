@@ -6,7 +6,7 @@
          <meta.schema plugin="de.cau.cs.kieler.kiml.evol" id="evolutionData" name="Evolution Data"/>
       </appinfo>
       <documentation>
-         [Enter description of this extension point.]
+         This extension point allows one to specify which layout options can be learnt by an evolutionary algorithm. It provides additional information (meta evolution) on how the layout option shall be mutated.
       </documentation>
    </annotation>
 

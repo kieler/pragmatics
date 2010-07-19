@@ -38,8 +38,20 @@ public class EvolveHandler extends AbstractHandler {
      * Auto-rate all individuals after how many steps?
      */
     private static final int STEPS_PER_AUTO_RATING = 1;
+    /**
+     * Percentual increase still considered as non-steady.
+     */
     private static final double MIN_INCREASE = 0.005;
-    private static final int ENOUGH = 100;
+
+    /**
+     * After this number of steady steps, the execution is stopped.
+     */
+    private static final int STEADY_STEPS = 100;
+    /**
+     * Total maximum steps. Execution is stopped in any case after this number
+     * of steps.
+     */
+    private static final int MAX_STEPS = 10;
 
     /**
      * {@inheritDoc}
@@ -48,8 +60,10 @@ public class EvolveHandler extends AbstractHandler {
         final EvolView view =
                 (EvolView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                         .findView(EvolView.ID);
+
         if ((view != null) && (view.getPopulation() != null)) {
             int steady = 0;
+            int steps = 0;
             do {
                 final Double before = view.getPopulation().getAverageRating();
                 System.out.println("Average rating before: " + before);
@@ -60,6 +74,7 @@ public class EvolveHandler extends AbstractHandler {
                     if (wantAutoRating) {
                         view.autorateIndividuals(view.getPopulation(), TargetIndividuals.ALL, null);
                     }
+                    steps++;
                 }
                 Assert.isNotNull(view.getPopulation());
                 final Double after = view.getPopulation().getAverageRating();
@@ -75,7 +90,7 @@ public class EvolveHandler extends AbstractHandler {
                     }
                     System.out.println(relDiff);
                 }
-            } while (steady < ENOUGH);
+            } while ((steady < STEADY_STEPS) && (steps < MAX_STEPS));
         }
         return null;
     }

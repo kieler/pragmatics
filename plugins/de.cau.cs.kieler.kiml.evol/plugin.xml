@@ -5,6 +5,7 @@
    <extension
          point="org.eclipse.ui.views">
       <view
+            allowMultiple="false"
             class="de.cau.cs.kieler.kiml.evol.ui.EvolView"
             icon="icons/gazelle.png"
             id="de.cau.cs.kieler.kiml.evol.wildlife"
@@ -103,7 +104,7 @@
       <data
             distribution="GAUSSIAN"
             lowerBound="0"
-            name="Steps for rotating components"
+            name="Steps for Rotating Components"
             option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.stepsForRotatingComponents"
             upperBound="1000">
       </data>
