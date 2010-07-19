@@ -6,21 +6,12 @@ import java.util.List;
 
 public class ExampleResource {
 
-	private String context;
 	private List<URL> resources;
 	private boolean isHeadResource;
 	private String category;
 
 	public ExampleResource() {
 		setResources(new ArrayList<URL>());
-	}
-
-	public void setContext(String context) {
-		this.context = context;
-	}
-
-	public String getContext() {
-		return context;
 	}
 
 	public void setResources(List<URL> resources) {
