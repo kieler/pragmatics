@@ -530,8 +530,7 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      */
     private void orientationDFS(final INode v) throws InconsistentGraphModelException {
 
-        // TODO this whole port stuff should only be determined, if graph (or just the node itself)
-        // has port constrained edges
+        // TODO this whole port stuff should only be determined, if graph has port constrained edges
 
         IEdge uv = parentEdge[v.getID()];
         for (IEdge vw : v.getAllEdges()) {
@@ -547,11 +546,17 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
             lowpt2[vw.getID()] = height[v.getID()];
             if (height[w.getID()] == -1) {
                 // vw is tree edge
+                currentTree[v.getID()] = vw;
+                dfsSourceType[vw.getID()] = Type.OUTTREE;
+                dfsTargetType[vw.getID()] = Type.INCTREE;
                 parentEdge[w.getID()] = vw;
                 height[w.getID()] = height[v.getID()] + 1;
                 orientationDFS(w);
             } else {
                 // vw is back edge
+                dfsTargetTree[vw.getID()] = currentTree[w.getID()];
+                dfsSourceType[vw.getID()] = Type.OUTBACK;
+                dfsTargetType[vw.getID()] = Type.INCBACK;
                 lowpt[vw.getID()] = height[w.getID()];
             }
             // determine nesting depth
@@ -1246,7 +1251,8 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
     /**
      * TODO Determines the dfsTargetSide of all incoming edges adjacent to this node. Note, that the
      * {@code dfsTargetSide} of all back edges returning to the root is always {@code 1}, since a
-     * side cannot be defined precisely for that node.
+     * side cannot be defined precisely for that node. Tree edges already have dfsTargetSide = 0,
+     * since the attribute is initialized with this value.
      * 
      * @param node
      *            the node to determine the targetSide of all incoming edges adjacent to this node
@@ -1266,8 +1272,6 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
                     // tree edge still to traverse -> edge is on left side
                     dfsTargetSide[edge.getID()] = -1;
                 }
-            } else if (type.equals(Type.INCTREE)) {
-                dfsTargetSide[edge.getID()] = 0;
             }
         }
     }
