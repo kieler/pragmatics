@@ -154,7 +154,7 @@ public final class EvolUtil {
             return 0;
         }
         // get the metric ids
-        final Set<String> metricIds = EvolutionExtensionsUtil.getInstance().getLayoutMetricsIds();
+        final Set<String> metricIds = EvolutionService.getInstance().getLayoutMetricsIds();
         final AnalysisServices as = AnalysisServices.getInstance();
         final List<AbstractInfoAnalysis> metricsList =
                 new ArrayList<AbstractInfoAnalysis>(metricIds.size());
@@ -194,7 +194,7 @@ public final class EvolUtil {
      */
     private static int countLearnableProperties(final List<IPropertyDescriptor> propertyDescriptors) {
         int result = 0;
-        final Set<String> learnables = EvolutionExtensionsUtil.getInstance().getEvolutionDataIds();
+        final Set<String> learnables = EvolutionService.getInstance().getEvolutionDataIds();
         for (final IPropertyDescriptor p : propertyDescriptors) {
             final String id = (String) p.getId();
             // check property descriptor id
@@ -234,7 +234,7 @@ public final class EvolUtil {
         /**
          * Get the set of learnable elements that are registered.
          */
-        final Set<String> learnables = EvolutionExtensionsUtil.getInstance().getEvolutionDataIds();
+        final Set<String> learnables = EvolutionService.getInstance().getEvolutionDataIds();
         final Genome result = new Genome();
         IGene<?> gene = null;
         // get data from property descriptors
@@ -318,7 +318,7 @@ public final class EvolUtil {
             final LayoutOptionData layoutOptionData =
                     LayoutServices.getInstance().getLayoutOptionData((String) theId);
             final IConfigurationElement evolutionData =
-                    EvolutionExtensionsUtil.getInstance().getEvolutionData((String) theId);
+                    EvolutionService.getInstance().getEvolutionData((String) theId);
 
             final String lowerBound = evolutionData.getAttribute("lowerBound");
             final String upperBound = evolutionData.getAttribute("upperBound");

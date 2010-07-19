@@ -6,10 +6,11 @@
          point="org.eclipse.ui.views">
       <view
             allowMultiple="false"
+            category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.kiml.evol.ui.EvolView"
             icon="icons/gazelle.png"
-            id="de.cau.cs.kieler.kiml.evol.wildlife"
-            name="WildLife"
+            id="de.cau.cs.kieler.kiml.evol.evolView"
+            name="Evolution"
             restorable="true">
       </view>
    </extension>

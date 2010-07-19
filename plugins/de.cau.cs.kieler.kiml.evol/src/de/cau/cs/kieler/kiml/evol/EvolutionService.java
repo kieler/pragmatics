@@ -29,7 +29,7 @@ import de.cau.cs.kieler.kiml.grana.AnalysisServices;
  * @author bdu
  *
  */
-public final class EvolutionExtensionsUtil {
+public final class EvolutionService {
     /** identifier of the extension point for evolution data. */
     private static final String EXTP_ID_EVOLUTION_DATA = "de.cau.cs.kieler.kiml.evol.evolutionData";
 
@@ -38,14 +38,14 @@ public final class EvolutionExtensionsUtil {
     /**
      * The shared instance.
      */
-    private static EvolutionExtensionsUtil instance;
+    private static EvolutionService instance;
 
     /**
      * Builds the extension data.
      */
     public static void createExtensionData() {
         // create instance of the evolution data holder class
-        instance = new EvolutionExtensionsUtil();
+        instance = new EvolutionService();
         // build data for the extension points
         instance.loadEvolutionDataExtensions();
         instance.loadLayoutMetricsExtensions();
@@ -57,7 +57,7 @@ public final class EvolutionExtensionsUtil {
      *
      * @return the singleton instance
      */
-    public static EvolutionExtensionsUtil getInstance() {
+    public static EvolutionService getInstance() {
         Assert.isNotNull(instance);
         return instance;
     }
@@ -66,7 +66,7 @@ public final class EvolutionExtensionsUtil {
      * The default constructor is hidden to prevent others from instantiating
      * this class.
      */
-    private EvolutionExtensionsUtil() {
+    private EvolutionService() {
         // nothing
     }
 

@@ -59,13 +59,6 @@
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="name" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="lowerBound" type="string">
             <annotation>
                <documentation>
