@@ -36,6 +36,10 @@
       </data>
       <data
             distribution="UNIFORM"
+            option="de.cau.cs.kieler.layout.options.edgeRouting">
+      </data>
+      <data
+            distribution="UNIFORM"
             name="Expand Nodes"
             option="de.cau.cs.kieler.layout.options.expandNodes">
       </data>
@@ -157,6 +161,12 @@
             distribution="UNIFORM"
             name="Use Cool Temperature"
             option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.coolTemperature">            
+      </data>
+      <data
+            distribution="GAUSSIAN"
+            lowerBound="0.0"
+            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.coolValue"
+            upperBound="1.0e7">
       </data>
    </extension>
    <extension

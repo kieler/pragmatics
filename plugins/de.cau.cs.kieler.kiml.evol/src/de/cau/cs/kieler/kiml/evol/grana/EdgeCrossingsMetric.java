@@ -44,10 +44,23 @@ public class EdgeCrossingsMetric implements IAnalysis {
         final int crossingsCount = (Integer) crossingsResult;
 
         final int edgesAuxCount = edgesCount + bendsCount;
-        // FIXME: this is an overestimate. Substract # of impossible crossings.
-        final int maxCrossingsCount = (edgesAuxCount * (edgesAuxCount - 1)) / 2;
 
-        result = (float) ((double) crossingsCount / maxCrossingsCount);
+        int sum = 0;
+        for (final KNode node : parentNode.getChildren()) {
+            final int degree = node.getOutgoingEdges().size() + node.getIncomingEdges().size();
+            sum += degree * (degree - 1);
+            // FIXME: this only works for highest level?
+            // TODO: consider bend points as pseudo nodes
+        }
+
+        final int impossibleCrossingsCount = sum / 2;
+        final int maxCrossingsCount =
+                (edgesAuxCount * (edgesAuxCount - 1)) / 2 - impossibleCrossingsCount;
+        if (maxCrossingsCount > 0) {
+            result = 1.0f - (float) ((double) crossingsCount / maxCrossingsCount);
+        } else {
+            result = 1.0f;
+        }
 
         return result;
 
