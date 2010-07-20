@@ -120,13 +120,16 @@ public class GmfLayoutInspector implements ILayoutInspector {
                 layoutServices.getOptions(diagramType));
         
         // get default layout options for the edit part and its domain model
-        String clazzName = editPart.getNotationView().getElement().eClass().getInstanceTypeName();
-        for (Entry<String, Object> entry : layoutServices.getOptions(clazzName).entrySet()) {
-            if (entry.getValue() != null) {
-                options.put(entry.getKey(), entry.getValue());
+        EObject element = editPart.getNotationView().getElement();
+        if (element != null) {
+            String clazzName = element.eClass().getInstanceTypeName();
+            for (Entry<String, Object> entry : layoutServices.getOptions(clazzName).entrySet()) {
+                if (entry.getValue() != null) {
+                    options.put(entry.getKey(), entry.getValue());
+                }
             }
         }
-        clazzName = editPart.getClass().getName();
+        String clazzName = editPart.getClass().getName();
         for (Entry<String, Object> entry : layoutServices.getOptions(clazzName).entrySet()) {
             if (entry.getValue() != null) {
                 options.put(entry.getKey(), entry.getValue());

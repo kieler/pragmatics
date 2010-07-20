@@ -358,6 +358,9 @@ public class GraphvizLayouter {
         // configure initial placement of nodes
         if (command.equals(NEATO_COMMAND) || command.equals(FDP_COMMAND)) {
             int seed = LayoutOptions.getInt(parentLayout, LayoutOptions.RANDOM_SEED);
+            if (seed == Integer.MIN_VALUE) {
+                seed = 1;
+            }
             graphAttrs.add(createAttribute(GraphvizAPI.ATTR_START, "random" + seed));
         }
         graph.getStatements().add(graphAttrStatement);
