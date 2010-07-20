@@ -31,7 +31,6 @@ import de.cau.cs.kieler.core.ui.util.SplineUtilities;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.kiml.ui.util.DebugCanvas;
 import de.cau.cs.kieler.klay.layered.Properties;
-import de.cau.cs.kieler.klay.layered.graph.Coord;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -166,7 +165,7 @@ public class ComplexSplineEdgeRouter extends AbstractAlgorithm implements IEdgeR
                         if (getMonitor().isCanceled()) {
                             break;
                         }
-                        edge.getBendPoints().add(new Coord((float) v.x, (float) v.y));
+                        edge.getBendPoints().add(v);
                     }
                     boxCalculator.addEdge(spline);
                 } else {
@@ -223,7 +222,7 @@ public class ComplexSplineEdgeRouter extends AbstractAlgorithm implements IEdgeR
             if (globSpline != null) {
                 // add calculated bend points
                 for (KVector v : globSpline.getInnerPoints()) {
-                    longEdge.getEdge().getBendPoints().add(new Coord((float) v.x, (float) v.y));
+                    longEdge.getEdge().getBendPoints().add(v);
                 }
                 boxCalculator.addEdge(globSpline);
             }

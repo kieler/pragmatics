@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.Properties;
@@ -34,9 +35,9 @@ import de.cau.cs.kieler.klay.layered.Properties;
 public class LayeredGraph extends LGraphElement {
 
     /** the total size of the drawing, without offset. */
-    private Coord size = new Coord();
+    private KVector size = new KVector();
     /** the offset to be added to all positions. */
-    private Coord offset = new Coord();
+    private KVector offset = new KVector();
     /** the layers of the layered graph. */
     private List<Layer> layers = new LinkedList<Layer>();
     
@@ -54,7 +55,7 @@ public class LayeredGraph extends LGraphElement {
      * 
      * @return the size of the layered graph
      */
-    public Coord getSize() {
+    public KVector getSize() {
         return size;
     }
 
@@ -64,7 +65,7 @@ public class LayeredGraph extends LGraphElement {
      * 
      * @return the offset of the layered graph
      */
-    public Coord getOffset() {
+    public KVector getOffset() {
         return offset;
     }
 
@@ -142,15 +143,15 @@ public class LayeredGraph extends LGraphElement {
                             westCount++;
                         }
                     }
-                    Coord nodeSize = node.getSize();
-                    float northDelta = nodeSize.x / northCount;
-                    float northX = northDelta;
-                    float eastDelta = nodeSize.y / eastCount;
-                    float eastY = eastDelta;
-                    float southDelta = nodeSize.x / southCount;
-                    float southX = nodeSize.x - southDelta;
-                    float westDelta = nodeSize.y / westCount;
-                    float westY = nodeSize.y - westDelta;
+                    KVector nodeSize = node.getSize();
+                    double northDelta = nodeSize.x / northCount;
+                    double northX = northDelta;
+                    double eastDelta = nodeSize.y / eastCount;
+                    double eastY = eastDelta;
+                    double southDelta = nodeSize.x / southCount;
+                    double southX = nodeSize.x - southDelta;
+                    double westDelta = nodeSize.y / westCount;
+                    double westY = nodeSize.y - westDelta;
                     for (LPort port : node.getPorts()) {
                         switch (port.getSide()) {
                         case NORTH:

@@ -74,11 +74,11 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayerer {
      * @param nodes Nodes of the Graph
      */
     public void distributeBigNodes(final Collection<LNode> nodes) {
-        float minWidth = Float.MAX_VALUE;
+        double minWidth = Float.MAX_VALUE;
         // Compute minimal width of Nodes
         for (Iterator<LNode> nodeIter = nodes.iterator(); nodeIter.hasNext();) {
             LNode node = (LNode) nodeIter.next();
-            float width = node.getSize().x;
+            double width = node.getSize().x;
             if (width < minWidth) {
                 minWidth = width;
             }
@@ -88,8 +88,8 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayerer {
         Collection<LNode> addNodes = new ArrayList<LNode>();
         for (Iterator<LNode> nodeIter = nodes.iterator(); nodeIter.hasNext();) {
             LNode node = (LNode) nodeIter.next();
-            float width = node.getSize().x;
-            float treshold = (2 * minWidth) + spacing;
+            double width = node.getSize().x;
+            double treshold = (2 * minWidth) + spacing;
             int numDummys = 0;
             while (treshold <= width) {
                 numDummys++;
@@ -97,7 +97,7 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayerer {
             } 
 
             // All nodes in the segment get the same width (temporarily)
-            float newWidth = (width - (numDummys * spacing)) / (numDummys + 1);
+            double newWidth = (width - (numDummys * spacing)) / (numDummys + 1);
             node.getSize().x = newWidth;
             
             for (int d = 0; d < numDummys; d++) {

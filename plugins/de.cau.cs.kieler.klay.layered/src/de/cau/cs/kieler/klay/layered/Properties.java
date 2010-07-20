@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered;
 
-import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.util.Property;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.klay.layered.impl.LinearSegmentsNodePlacer.Region;

@@ -14,10 +14,10 @@
 package de.cau.cs.kieler.klay.layered.impl;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.Properties.NodeType;
-import de.cau.cs.kieler.klay.layered.graph.Coord;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -46,10 +46,10 @@ public class PolylineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter
                 if (node.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
                     LEdge edge = (LEdge) node.getProperty(Properties.ORIGIN);
                     if (isEndnode(node, PortType.INPUT)) {
-                        edge.getBendPoints().add(new Coord(xpos, node.getPos().y));
+                        edge.getBendPoints().add(new KVector(xpos, node.getPos().y));
                     }
                     if (isEndnode(node, PortType.OUTPUT)) {
-                        edge.getBendPoints().add(new Coord(xpos + layer.getSize().x,
+                        edge.getBendPoints().add(new KVector(xpos + layer.getSize().x,
                                 node.getPos().y));
                     }
                 }

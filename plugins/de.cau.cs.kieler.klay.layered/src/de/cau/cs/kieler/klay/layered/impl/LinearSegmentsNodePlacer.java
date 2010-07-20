@@ -20,10 +20,10 @@ import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.Properties.NodeType;
-import de.cau.cs.kieler.klay.layered.graph.Coord;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -87,7 +87,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
         /** The nodes that forms the region. */
         private List<LNode> nodes = new LinkedList<LNode>();
         /** The accumulated force of the contained nodes. */
-        private float force = 0;
+        private double force = 0;
 
         /** Constructor. */
         public Region() {
@@ -146,7 +146,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
         monitor.done();
 
         // set the proper height for the whole graph
-        Coord graphSize = layeredGraph.getSize();
+        KVector graphSize = layeredGraph.getSize();
         for (Layer layer : layeredGraph.getLayers()) {
             graphSize.y = Math.max(graphSize.y, layer.getSize().y);
         }
@@ -297,7 +297,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
         for (LinearSegment segment : linearSegments) {
             // determine minimal offset of 'segment'
             float minOffset = 0;
-            float maxSize = 0.0f;
+            double maxSize = 0.0f;
             for (LNode node : segment.getNodes()) {
                 float offset = (float) node.getProperty(Properties.LINSEG_OFFSET);
                 if (offset < minOffset) {
@@ -309,7 +309,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
             }
 
             // determine the uppermost placement for the linear segment
-            float uppermostPlace = 0.0f;
+            double uppermostPlace = 0.0f;
             int nodeCountSum = 0;
             for (LNode node : segment.getNodes()) {
                 uppermostPlace = Math.max(uppermostPlace, node.getLayer().getSize().y);
@@ -318,22 +318,21 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
                 nodeCount[layerIndex]++;
             }
             // apply the uppermost placement to all elements
-            float newPos = uppermostPlace;
+            double newPos = uppermostPlace;
             if (nodeCountSum > 0) {
                 newPos += spacing;
             }
             for (LNode node : segment.getNodes()) {
-                float offset = 0.0f;
+                double offset = 0.0f;
                 if (straightEdges) {
                   // add node offset - minimal offset
-                  offset = (float) node.getProperty(Properties.LINSEG_OFFSET) - minOffset;
+                  offset = node.getProperty(Properties.LINSEG_OFFSET) - minOffset;
                 } else {
                   offset = maxSize / 2 - node.getSize().y / 2;
                 }
                 Layer layer = node.getLayer();
                 node.getPos().y = newPos + offset;
-                float height = node.getSize().y;
-                layer.getSize().y = newPos + offset + height;
+                layer.getSize().y = newPos + offset + node.getSize().y;
                 layer.getSize().x = Math.max(layer.getSize().x, node.getSize().x);
             }
         }

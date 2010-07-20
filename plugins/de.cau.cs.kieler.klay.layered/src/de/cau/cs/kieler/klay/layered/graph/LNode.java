@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klay.layered.graph;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.util.FilteredIterator;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.PortType;
@@ -30,9 +31,9 @@ public class LNode extends LGraphElement {
     /** the owning layer. */
     private Layer owner;
     /** the current position of the node. */
-    private Coord pos = new Coord();
+    private KVector pos = new KVector();
     /** the size of the node. */
-    private Coord size = new Coord();
+    private KVector size = new KVector();
     /** the ports of the node. */
     private List<LPort> ports = new LinkedList<LPort>();
     /** name of the node. */
@@ -96,7 +97,7 @@ public class LNode extends LGraphElement {
      * 
      * @return the position
      */
-    public Coord getPos() {
+    public KVector getPos() {
         return pos;
     }
 
@@ -105,7 +106,7 @@ public class LNode extends LGraphElement {
      * 
      * @return the size
      */
-    public Coord getSize() {
+    public KVector getSize() {
         return size;
     }
 

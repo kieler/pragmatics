@@ -142,7 +142,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
         int defaultboxwidth = (int) Math.max(2 + 2 + 1, (int) spacing / BOX_WIDTH_DIVISION_FACTOR);
 
         // where are we currently
-        float reachedx = (float) currentSource.getPos().x + currentSource.getNode().getPos().x;
+        double reachedx = currentSource.getPos().x + currentSource.getNode().getPos().x;
 
         Rectangle2D.Double newBox = null, previousBox = null;
 
@@ -187,7 +187,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
             if (currentTarget.getNode().getProperty(Properties.NODE_TYPE)
                     == Properties.NodeType.LONG_EDGE) {
                 drawOnDebug(
-                        new Ellipse2D.Float(
+                        new Ellipse2D.Double(
                                 (currentTarget.getNode().getPos().x + currentTarget.getPos().x
                                         - DUMMY_NODE_DEBUG_SIZE / 2),
                                 (currentTarget.getNode().getPos().y + currentTarget.getPos().y

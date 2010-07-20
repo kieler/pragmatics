@@ -22,7 +22,6 @@ import de.cau.cs.kieler.core.math.BezierSpline;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.Properties;
-import de.cau.cs.kieler.klay.layered.graph.Coord;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -135,7 +134,7 @@ public class SimpleSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRo
                         if (getMonitor().isCanceled()) {
                             break;
                         }
-                        edge.getBendPoints().add(new Coord((float) v.x, (float) v.y));
+                        edge.getBendPoints().add(v);
                     }
                 }
 
@@ -160,7 +159,7 @@ public class SimpleSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRo
                     if (getMonitor().isCanceled()) {
                         break;
                     }
-                    longEdge.getEdge().getBendPoints().add(new Coord((float) v.x, (float) v.y));
+                    longEdge.getEdge().getBendPoints().add(v);
                 }
             }
 

@@ -16,6 +16,8 @@ package de.cau.cs.kieler.klay.layered.graph;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.cau.cs.kieler.core.math.KVector;
+
 /**
  * A layer in a layered graph. A layer contains a list of nodes, which are
  * drawn in one column.
@@ -28,7 +30,7 @@ public class Layer extends LGraphElement {
     private LayeredGraph owner;
 
     /** the size of the layer as drawn horizontally. */
-    private Coord size = new Coord();
+    private KVector size = new KVector();
     /** the nodes of the layer. */
     private List<LNode> nodes = new LinkedList<LNode>();
     
@@ -55,7 +57,7 @@ public class Layer extends LGraphElement {
      * 
      * @return the size of the layer
      */
-    public Coord getSize() {
+    public KVector getSize() {
         return size;
     }
 

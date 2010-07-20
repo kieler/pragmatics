@@ -17,7 +17,6 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.Properties;
-import de.cau.cs.kieler.klay.layered.graph.Coord;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -56,16 +55,16 @@ public class SimpleLabelPlacer extends AbstractAlgorithm implements ILabelPlacer
                             }
                             
                             //Get source port position
-                            Coord source = new Coord(edge.getSource().getPos().x, edge.getSource()
+                            KVector source = new KVector(edge.getSource().getPos().x, edge.getSource()
                                     .getPos().y);
                             
                             //Get target port position, distinguish between short edge or spline target
-                            Coord target;
+                            KVector target;
                             if (longEdge == null) {
-                                target = new Coord(edge.getTarget().getPos().x, edge.getTarget()
+                                target = new KVector(edge.getTarget().getPos().x, edge.getTarget()
                                         .getPos().y);
                             } else {
-                                target = new Coord(longEdge.getTarget().getPos().x, longEdge
+                                target = new KVector(longEdge.getTarget().getPos().x, longEdge
                                         .getTarget().getPos().y);
                             }
                             
@@ -88,12 +87,12 @@ public class SimpleLabelPlacer extends AbstractAlgorithm implements ILabelPlacer
                             } else {
                                 //Or compute label position on a spline by using bend points
                                 //Therefore, find bendpoint with max distance to source AND target node
-                                Coord portPosition = new Coord(edge.getSource().getPos().x,
+                                KVector portPosition = new KVector(edge.getSource().getPos().x,
                                         edge.getSource().getPos().y);
                                 portPosition.add(edge.getSource().getNode().getPos());
                                 double minDistanceDifference = Float.POSITIVE_INFINITY;
-                                Coord middlePoint = null;
-                                for (Coord bPoint : longEdge.getEdge().getBendPoints()) {
+                                KVector middlePoint = null;
+                                for (KVector bPoint : longEdge.getEdge().getBendPoints()) {
                                     double bPointDifference;
                                     KVector vectorBPoint = new KVector(bPoint.x, bPoint.y);
                                     KVector vectorSource = new KVector(source.x, source.y);

@@ -23,6 +23,7 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
@@ -32,7 +33,6 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
-import de.cau.cs.kieler.klay.layered.graph.Coord;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
@@ -165,7 +165,7 @@ public class KGraphImporter implements IGraphImporter {
                     newEdge.setTarget(targetPort);
                     for (KLabel label : kedge.getLabels()) {
                         KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
-                        Coord labelSize = new Coord(labelLayout.getWidth(), labelLayout.getHeight());
+                        KVector labelSize = new KVector(labelLayout.getWidth(), labelLayout.getHeight());
                         LLabel newLabel = new LLabel(label.getText());
                         newLabel.getSize().add(labelSize);
                         newEdge.getLabels().add(newLabel);
@@ -195,7 +195,7 @@ public class KGraphImporter implements IGraphImporter {
         if (Float.isNaN(borderSpacing) || borderSpacing < 0) {
             borderSpacing = Properties.DEF_SPACING;
         }
-        Coord offset = new Coord(borderSpacing + layeredGraph.getOffset().x, borderSpacing
+        KVector offset = new KVector(borderSpacing + layeredGraph.getOffset().x, borderSpacing
                 + layeredGraph.getOffset().y);
 
         // process the nodes
@@ -205,8 +205,8 @@ public class KGraphImporter implements IGraphImporter {
                 if (origin instanceof KNode) {
                     KNode knode = (KNode) origin;
                     KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(knode);
-                    nodeLayout.setXpos(lnode.getPos().x + offset.x);
-                    nodeLayout.setYpos(lnode.getPos().y + offset.y);
+                    nodeLayout.setXpos((float) (lnode.getPos().x + offset.x));
+                    nodeLayout.setYpos((float) (lnode.getPos().y + offset.y));
                 }
                 for (LPort port : lnode.getPorts(PortType.OUTPUT)) {
                     for (LEdge edge : port.getEdges()) {
@@ -235,12 +235,12 @@ public class KGraphImporter implements IGraphImporter {
                             for (LLabel label : ledge.getLabels()) {
                                 KLabel klabel = (KLabel) label.getProperty(Properties.ORIGIN);
                                 KShapeLayout klabelLayout = KimlLayoutUtil.getShapeLayout(klabel);
-                                Coord labelPos = new Coord(ledge.getSource().getPos().x, ledge
+                                KVector labelPos = new KVector(ledge.getSource().getPos().x, ledge
                                         .getSource().getPos().y);
                                 labelPos.add(ledge.getSource().getNode().getPos());
                                 labelPos.add(label.getPos());
-                                klabelLayout.setXpos(labelPos.x + offset.x);
-                                klabelLayout.setYpos(labelPos.y + offset.y);
+                                klabelLayout.setXpos((float) (labelPos.x + offset.x));
+                                klabelLayout.setYpos((float) (labelPos.y + offset.y));
                             }
                         }
                     }
@@ -274,7 +274,7 @@ public class KGraphImporter implements IGraphImporter {
             List<KPoint> bendPoints = edgeLayout.getBendPoints();
             bendPoints.clear();
             for (LEdge ledge : edgeList) {
-                for (Coord lpoint : ledge.getBendPoints()) {
+                for (KVector lpoint : ledge.getBendPoints()) {
                     KPoint newPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
                     applyLayout(newPoint, lpoint, offset);
                     if (ledge.getProperty(Properties.REVERSED)) {
@@ -291,8 +291,8 @@ public class KGraphImporter implements IGraphImporter {
         }
 
         // set up the parent node
-        parentLayout.setWidth(layeredGraph.getSize().x + 2 * borderSpacing);
-        parentLayout.setHeight(layeredGraph.getSize().y + 2 * borderSpacing);
+        parentLayout.setWidth((float) layeredGraph.getSize().x + 2 * borderSpacing);
+        parentLayout.setHeight((float) layeredGraph.getSize().y + 2 * borderSpacing);
         LayoutOptions.setBoolean(parentLayout, LayoutOptions.FIXED_SIZE, true);
     }
 
@@ -304,9 +304,9 @@ public class KGraphImporter implements IGraphImporter {
      * @param lpoint
      *            point from which coordinates are read
      */
-    private void applyLayout(final KPoint kpoint, final Coord lpoint, final Coord offset) {
-        kpoint.setX(lpoint.x + offset.x);
-        kpoint.setY(lpoint.y + offset.y);
+    private void applyLayout(final KPoint kpoint, final KVector lpoint, final KVector offset) {
+        kpoint.setX((float) (lpoint.x + offset.x));
+        kpoint.setY((float) (lpoint.y + offset.y));
     }
     
 }
