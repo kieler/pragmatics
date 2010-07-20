@@ -100,4 +100,8 @@ public class TypeInfo<T extends Comparable<? super T>> {
                         && (theValue.compareTo(this.upperBound) <= 0);
         return result;
     }
+
+    public Class<?> getTypeClass() {
+        return clazz;
+    }
 }

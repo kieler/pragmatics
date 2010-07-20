@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kiml.evol;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +49,7 @@ import de.cau.cs.kieler.kiml.evol.genetic.MutationInfo;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 import de.cau.cs.kieler.kiml.evol.genetic.StrictlyPositiveFloatGene;
 import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo;
+import de.cau.cs.kieler.kiml.evol.genetic.UniversalGene;
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.AnalysisServices;
 import de.cau.cs.kieler.kiml.grana.ui.DiagramAnalyser;
@@ -104,16 +106,24 @@ public final class EvolUtil {
         // gets closed.
         final IKielerProgressMonitor monitor =
                 new BasicProgressMonitor(DiagramLayoutManager.MAX_PROGRESS_LEVELS);
-
         final IStatus status = manager.layout(monitor, true, false);
-
         final int rating;
         if (status.isOK()) {
             final KNode layoutGraphAfterLayout = manager.getLayoutGraph();
             Assert.isTrue(layoutGraph == layoutGraphAfterLayout);
-
+            // get the metric ids
+            final Set<String> metricIds = EvolutionService.getInstance().getLayoutMetricsIds();
+            // XXX: arbitrarily chosen coefficients
+            final Deque<Double> coeffsQueue = new LinkedList<Double>();
+            for (final double d : new double[] { .08, .02, .1, .5, .3 }) {
+                coeffsQueue.add(d);
+            }
+            final Map<String, Double> coeffsMap = new HashMap<String, Double>(metricIds.size());
+            for (final String metricId : metricIds) {
+                coeffsMap.put(metricId, coeffsQueue.remove());
+            }
             // do the measurement
-            rating = measureDiagram(false, layoutGraphAfterLayout);
+            rating = measureDiagram(false, layoutGraphAfterLayout, coeffsMap);
         } else {
             // TODO: what to do about the layouting failure? Log it? Abort?
             rating = 0;
@@ -147,9 +157,13 @@ public final class EvolUtil {
      *            indicates whether a progress bar shall be shown
      * @param parentNode
      *            the KGraph to be analyzed.
+     * @param coefficientsMap
+     *            a map containing a coefficient for each metric id.
      * @return a rating
      */
-    private static int measureDiagram(final boolean showProgressBar, final KNode parentNode) {
+    private static int measureDiagram(
+            final boolean showProgressBar, final KNode parentNode,
+            final Map<String, Double> coefficientsMap) {
         if (parentNode == null) {
             return 0;
         }
@@ -167,28 +181,70 @@ public final class EvolUtil {
         // TODO: cache the metrics
         final Map<String, Object> results =
                 DiagramAnalyser.analyse(parentNode, metricsList, showProgressBar);
-
-        // XXX: arbitrarily chosen coefficients
-        final Deque<Double> coeffsQueue = new LinkedList<Double>();
-        for (final double d : new double[] { .08, .02, .2, .7 }) {
-            coeffsQueue.add(d);
-        }
-
         // final double[] scaledResults = new double[metrics.length];
         double sum = 0.0;
         for (final AbstractInfoAnalysis metric : metricsList) {
             final String metricResult = results.get(metric.getID()).toString();
-            final double scaled = Double.parseDouble(metricResult) * coeffsQueue.remove();
+            final double coeff = coefficientsMap.get(metric.getID());
+            final double scaled = Double.parseDouble(metricResult) * coeff;
             // scaledResults[i] = scaled;
             sum += scaled;
         }
-
         final int newRating = (int) Math.round((sum * 1000));
         return newRating;
     }
+    
+    /**
+     * Adopts layout options from the given {@link Individual} into the given
+     * {@link LayoutPropertySource}. The individual must not be {@code null}.
+     * 
+     * @param theIndividual
+     *            the individual
+     * @param source
+     *            the layout property source
+     */
+    public static void adoptIndividual(final Genome theIndividual, final LayoutPropertySource source) {
+        Assert.isLegal(theIndividual != null);
+
+        if (theIndividual == null) {
+            return;
+        }
+
+        System.out.println("adopt " + theIndividual.toString());
+        final LayoutServices layoutServices = LayoutServices.getInstance();
+        // set layout options according to genome
+        for (final IGene<?> gene : theIndividual) {
+            Assert.isNotNull(gene);
+            final Object value = gene.getValue();
+            final Object id = gene.getId();
+            final LayoutOptionData data = layoutServices.getLayoutOptionData((String) id);
+            Assert.isNotNull(data);
+            switch (data.getType()) {
+            case BOOLEAN:
+                if (value instanceof Boolean) {
+                    source.setPropertyValue(id, ((Boolean) value ? 1 : 0));
+                } else {
+                    source.setPropertyValue(id, Math.round((Float) value));
+                }
+                break;
+            case ENUM:
+                try {
+                    source.setPropertyValue(id, value);
+                } catch (final NullPointerException e) {
+                    System.out.println("WARNING: enum property could not be set.");
+                    Assert.isTrue(false);
+                }
+                break;
+            default:
+                source.setPropertyValue(id, value.toString());
+                break;
+            }
+        }
+    }
 
     /**
-     * Count the learnable properties of the given list of IPropertyDescriptor.
+     * Count the learnable properties of the given list of IPropertyDescriptor
+     * objects.
      *
      * @return number of learnable properties
      */
@@ -236,9 +292,10 @@ public final class EvolUtil {
          */
         final Set<String> learnables = EvolutionService.getInstance().getEvolutionDataIds();
         final Genome result = new Genome();
-        IGene<?> gene = null;
+
         // get data from property descriptors
         final IPropertyDescriptor[] propertyDescriptors = source.getPropertyDescriptors();
+
         // determine uniformly distributed mutation probability
         double uniformProb = 0.0;
         final int learnableCount = countLearnableProperties(Arrays.asList(propertyDescriptors));
@@ -246,6 +303,7 @@ public final class EvolUtil {
             uniformProb = 1.0 / learnableCount;
         }
         for (final IPropertyDescriptor p : propertyDescriptors) {
+
             final String id = (String) p.getId();
             final Object value = source.getPropertyValue(id);
             // check property descriptor id
@@ -267,11 +325,9 @@ public final class EvolUtil {
                 // learnable option?
                 if (learnables.contains(id)) {
                     final GeneFactory gf = new GeneFactory();
-                    gene = gf.createGene(id, value, uniformProb);
-                    if (gene != null) {
-                        result.add(gene);
-                        gene = null;
-                    }
+                    final IGene<?> gene = gf.newGene(id, value, uniformProb);
+                    Assert.isNotNull(gene, "Failed to create gene for " + id);
+                    result.add(gene);
                 } else {
                     System.out.println("Not registered: " + id);
                 }
@@ -287,16 +343,16 @@ public final class EvolUtil {
     }
 
     /**
+     * A factory for genes.
      *
      * @author bdu
      *
      */
     private static class GeneFactory implements IGeneFactory {
-
-        public IGene<?> createGene(
+        public IGene<?> newGene(
                 final Object theId, final Object theValue, final TypeInfo<?> theTypeInfo,
                 final MutationInfo theMutationInfo) {
-            // TODO: implements
+            // TODO: implement
             return null;
         }
 
@@ -311,7 +367,7 @@ public final class EvolUtil {
          *            the mutation probability
          * @return a gene
          */
-        public IGene<?> createGene(
+        public IGene<?> newGene(
                 final Object theId, final Object theValue, final double theMutationProbability) {
             // TODO: regard bounds from the evolution data extensions
             IGene<?> result = null;
@@ -319,43 +375,50 @@ public final class EvolUtil {
                     LayoutServices.getInstance().getLayoutOptionData((String) theId);
             final IConfigurationElement evolutionData =
                     EvolutionService.getInstance().getEvolutionData((String) theId);
-
             final String lowerBound = evolutionData.getAttribute("lowerBound");
             final String upperBound = evolutionData.getAttribute("upperBound");
             final String distrName = evolutionData.getAttribute("distribution");
             final String variance = evolutionData.getAttribute("variance");
             final Distribution distr = Distribution.valueOf(distrName);
             final Type type = layoutOptionData.getType();
-            final int intValue;
             final double var;
             switch (type) {
-            case BOOLEAN:
+            case BOOLEAN: {
                 final boolean booleanValue = (Integer.parseInt(theValue.toString()) == 1);
-                result = new BooleanGene(theId, booleanValue, theMutationProbability);
+                // result = new BooleanGene(theId, booleanValue,
+                // theMutationProbability);
+                final Float floatValue = (booleanValue ? 1.0f : 0.0f);
+                result =
+                        new UniversalGene(theId, floatValue, BooleanGene.UNIVERSAL_TYPE_INFO,
+                                new MutationInfo(theMutationProbability, distr));
                 System.out.println(result);
+            }
                 break;
-            case ENUM:
+            case ENUM: {
                 final int choicesCount = layoutOptionData.getChoices().length;
                 final Class<? extends Enum<?>> enumClass =
                         LayoutOptions.getEnumClass((String) theId);
                 Assert.isNotNull(enumClass);
                 Assert.isTrue(enumClass.getEnumConstants().length == choicesCount);
-                intValue = Integer.valueOf(theValue.toString());
+                final int intValue = Integer.valueOf(theValue.toString());
                 result = new EnumGene(theId, intValue, enumClass, theMutationProbability);
                 System.out.println("Enum " + enumClass.getSimpleName() + "(" + choicesCount + "): "
                         + intValue);
+            }
                 break;
-            case INT:
-                intValue = Integer.parseInt((String) theValue);
+            case INT: {
+                final int intValue = Integer.parseInt((String) theValue);
                 var = MutationInfo.DEFAULT_VARIANCE;
                 result = new IntegerGene(theId, intValue, theMutationProbability, var);
                 System.out.println(result);
+            }
                 break;
-            case FLOAT:
+            case FLOAT: {
                 final float floatValue = (Float.parseFloat((String) theValue));
                 // estimate desired variance
                 final float verySmall = 1e-3f;
                 final double scalingFactor = .1875;
+
                 var =
                         ((Math.abs(floatValue) < verySmall) ? MutationInfo.DEFAULT_VARIANCE : Math
                                 .abs(floatValue) * scalingFactor);
@@ -369,12 +432,12 @@ public final class EvolUtil {
                     result = new FloatGene(theId, floatValue, theMutationProbability, var);
                 }
                 System.out.println(result);
+            }
                 break;
             default:
                 break;
             }
             return result;
         }
-
     }
 }

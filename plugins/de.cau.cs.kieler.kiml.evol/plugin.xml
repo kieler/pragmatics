@@ -30,6 +30,16 @@
             option="de.cau.cs.kieler.layout.options.borderSpacing">
       </data>
       <data
+            distribution="UNIFORM"
+            name="Costs"
+            option="de.cau.cs.kieler.kiml.ogdf.option.davidsonHarel.costs">
+      </data>
+      <data
+            distribution="UNIFORM"
+            name="Expand Nodes"
+            option="de.cau.cs.kieler.layout.options.expandNodes">
+      </data>
+      <data
             distribution="GAUSSIAN"
             lowerBound="0"
             name="Fine Tuning Iterations"
@@ -62,6 +72,30 @@
             name="Min CC Distance"
             option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.minDistCC"
             upperBound="1.0e7">
+      </data>
+      <data
+            distribution="GAUSSIAN"
+            lowerBound="0"
+            option="de.cau.cs.kieler.kiml.ogdf.option.minDistCC"
+            upperBound="1e7">
+      </data>
+      <data
+            distribution="GAUSSIAN"
+            lowerBound="0"
+            option="de.cau.cs.kieler.kiml.ogdf.option.minDistCircle"
+            upperBound="1e7">
+      </data>
+      <data
+            distribution="GAUSSIAN"
+            lowerBound="0"
+            option="de.cau.cs.kieler.kiml.ogdf.option.minDistLevel"
+            upperBound="1e7">
+      </data>
+      <data
+            distribution="GAUSSIAN"
+            lowerBound="0"
+            option="de.cau.cs.kieler.kiml.ogdf.option.minDistSibling"
+            upperBound="1e7">
       </data>
       <data
             distribution="GAUSSIAN"
@@ -128,6 +162,11 @@
             lowerBound="0.1"
             name="Unit Edge Length"
             option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.unitEdgeLength">
+      </data>
+      <data
+            distribution="UNIFORM"
+            name="Use Cool Temperature"
+            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.coolTemperature">            
       </data>
    </extension>
    <extension
@@ -253,12 +292,14 @@
          </command>
          <command
                commandId="de.cau.cs.kieler.kiml.evol.command.autoRateAll"
+               icon="icons/autorate.png"
                label="Auto-rate all"
                style="push"
                tooltip="Auto-rate all individuals">
          </command>
          <command
                commandId="de.cau.cs.kieler.kiml.evol.reset"
+               icon="icons/reset.png"
                label="Reset"
                style="push"
                tooltip="Restart with a new population.">

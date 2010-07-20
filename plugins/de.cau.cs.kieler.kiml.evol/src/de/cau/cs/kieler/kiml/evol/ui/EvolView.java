@@ -38,13 +38,10 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
-import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.EvolUtil;
 import de.cau.cs.kieler.kiml.evol.alg.BasicEvolutionaryAlgorithm;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
-import de.cau.cs.kieler.kiml.evol.genetic.IGene;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
@@ -154,6 +151,12 @@ public class EvolView extends ViewPart {
      *
      */
     public class SelectorTableViewer extends TableViewer {
+        /**
+         * Creates a TableViewer for the given table.
+         *
+         * @param table
+         *            a table
+         */
         public SelectorTableViewer(final Table table) {
             super(table);
         }
@@ -195,7 +198,7 @@ public class EvolView extends ViewPart {
     /**
      * Column width for columns in viewer table.
      */
-    private static final int DEFAULT_COLUMN_WIDTH = 140;
+    private static final int DEFAULT_COLUMN_WIDTH = 150;
     /**
      * Identifier for the EvolView.
      */
@@ -315,7 +318,7 @@ public class EvolView extends ViewPart {
 
                     // TODO: synchronize on the layout graph?
                     if (isAffected(ind, filter)) {
-                        adoptIndividual(ind, false);
+                        adoptIndividual(ind);
                         // TODO: get a new manager for every iteration?
                         final int rating = EvolUtil.layoutAndMeasure(manager, editor);
                         ind.setRating(rating);
@@ -340,6 +343,13 @@ public class EvolView extends ViewPart {
         // The current diagram gets layouted and measured.
         MonitoredOperation.runInUI(layoutLoop, true);
         this.tableViewer.refresh();
+    }
+
+    private void adoptIndividual(final Genome ind) {
+        if (!isValidState()) {
+            return;
+        }
+        EvolUtil.adoptIndividual(ind, getLayoutPropertySource());
     }
 
     /**
@@ -426,56 +436,6 @@ public class EvolView extends ViewPart {
         this.tableViewer.refresh();
     }
 
-    /**
-     * Adopts layout options from the given {@link Individual}. The given
-     * individual must not be {@code null}.
-     *
-     * @param theIndividual
-     *            the individual
-     * @param wantLayoutViewRefresh
-     *            whether the layout view shall be refreshed
-     */
-    private void adoptIndividual(final Genome theIndividual, final boolean wantLayoutViewRefresh) {
-        Assert.isLegal(theIndividual != null);
-
-        if (!isValidState() || (theIndividual == null)) {
-            return;
-        }
-
-        final LayoutPropertySource source = getLayoutPropertySource();
-        System.out.println("adopt " + theIndividual.toString());
-
-        final LayoutServices layoutServices = LayoutServices.getInstance();
-
-        // set layout options according to genome
-        for (final IGene<?> gene : theIndividual) {
-            Assert.isNotNull(gene);
-            final Object value = gene.getValue();
-            final Object id = gene.getId();
-            final LayoutOptionData data = layoutServices.getLayoutOptionData((String) id);
-            Assert.isNotNull(data);
-            switch (data.getType()) {
-            case BOOLEAN:
-                source.setPropertyValue(id, ((Boolean) value ? 1 : 0));
-                break;
-            case ENUM:
-                try {
-                    source.setPropertyValue(id, value);
-                } catch (final NullPointerException e) {
-                    System.out.println("WARNING: enum property could not be set.");
-                    Assert.isTrue(false);
-                }
-                break;
-            default:
-                source.setPropertyValue(id, value.toString());
-                break;
-            }
-        }
-        // refresh layout view?
-        if (wantLayoutViewRefresh) {
-            MonitoredOperation.runInUI(new LayoutViewRefresher(), false);
-        }
-    }
 
     /**
      * Return position of first unrated individual in the list.
@@ -596,7 +556,9 @@ public class EvolView extends ViewPart {
         }
         final Genome currentIndividual = getCurrentIndividual();
         Assert.isNotNull(currentIndividual);
-        adoptIndividual(currentIndividual, true);
+        adoptIndividual(currentIndividual);
+        // refresh layout view
+        MonitoredOperation.runInUI(new LayoutViewRefresher(), false);
         final IEditorPart editor = getCurrentEditor();
         if (editor == null) {
             // we have nothing to layout.

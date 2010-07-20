@@ -206,7 +206,7 @@ public class Genome extends ArrayList<IGene<?>> {
      */
     public Genome mutate(final double prob) {
         if (Math.random() < prob) {
-            return mutate();
+            return createMutation();
         }
         System.out.println("-- skipped mutation for " + toString());
         return null;
@@ -267,7 +267,7 @@ public class Genome extends ArrayList<IGene<?>> {
      * Mutate the genes of the individual. Every gene is asked to provide a
      * mutated version of itself.
      */
-    private Genome mutate() {
+    private Genome createMutation() {
         final Genome newGenome = new Genome();
         for (final IGene<?> gene : this) {
             Assert.isNotNull(gene);

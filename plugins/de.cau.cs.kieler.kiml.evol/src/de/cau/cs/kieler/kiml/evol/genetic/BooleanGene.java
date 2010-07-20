@@ -2,12 +2,12 @@
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
+ *
  * Copyright 2010 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- * 
+ *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
@@ -20,14 +20,14 @@ import org.eclipse.core.runtime.Assert;
 
 /**
  * Implementation of IGene for Boolean values.
- * 
+ *
  * @author bdu
- * 
+ *
  */
 public final class BooleanGene extends AbstractGene<Boolean> {
     /**
      * Returns a copy of the given template instance.
-     * 
+     *
      * @param template
      *            an instance
      * @return copy of the template
@@ -40,19 +40,19 @@ public final class BooleanGene extends AbstractGene<Boolean> {
         // incompatible template
         return null;
     }
-    
+
     /**
      * Return a new IGene that has a changed value with a certain probability.
-     * 
+     *
      * @return new IGene with possibly mutated value.
      */
     public IGene<Boolean> newMutation() {
-        IGene<Boolean> result = newMutation(getMutationInfo());
+        final IGene<Boolean> result = newMutation(getMutationInfo());
         return result;
     }
 
     /**
-     * 
+     *
      * @param theId
      *            the id for the gene
      * @param theValue
@@ -68,9 +68,9 @@ public final class BooleanGene extends AbstractGene<Boolean> {
                 MutationInfo.DEFAULT_VARIANCE, PROBABILITY_FOR_GENUINE_MUTATION,
                 Distribution.UNIFORM));
     }
-    
+
     /**
-     * 
+     *
      * @return a string representation of this object.
      */
     @Override
@@ -82,7 +82,7 @@ public final class BooleanGene extends AbstractGene<Boolean> {
      * Mutates the boolean value. The mutation details are specified in
      * <code>theMutationInfo</code>. The parameter
      * <code>probGenuineMutation</code>
-     * 
+     *
      * @param prob
      *            Probability that a mutation occurs.
      * @param probGenuineMutation
@@ -91,7 +91,7 @@ public final class BooleanGene extends AbstractGene<Boolean> {
      */
     private IGene<Boolean> newMutation(final MutationInfo theMutationInfo) {
         Assert.isLegal(theMutationInfo != null);
-        Random r = getRandomGenerator();
+        final Random r = getRandomGenerator();
         Assert.isNotNull(r);
         Assert.isNotNull(getTypeInfo());
         final boolean value = getValue();
@@ -102,18 +102,18 @@ public final class BooleanGene extends AbstractGene<Boolean> {
         Assert.isTrue(distr == Distribution.UNIFORM);
         if (r.nextDouble() < prob) {
             if (r.nextDouble() < probGenuineMutation) {
-                // assign a random boolean value (may be the same as before)
-                newValue = (r.nextDouble() < PROBABILITY_FOR_TRUE);
-            } else {
                 // enforce genuine mutation
                 newValue = !value;
+            } else {
+                // assign a random boolean value (may be the same as before)
+                newValue = (r.nextDouble() < PROBABILITY_FOR_TRUE);
             }
         }
         return new BooleanGene(getId(), newValue, getTypeInfo(), theMutationInfo);
     }
-    
+
     /**
-     * 
+     *
      * @param theId
      *            the id
      * @param theValue
@@ -130,7 +130,7 @@ public final class BooleanGene extends AbstractGene<Boolean> {
             final MutationInfo theMutationInfo) {
         super(theId, theValue, theTypeInfo, theMutationInfo);
     }
-    
+
 
     // /**
     // * Constructor for an instance of BooleanGene with default type info and
@@ -147,9 +147,12 @@ public final class BooleanGene extends AbstractGene<Boolean> {
     // MutationInfo.DEFAULT_VARIANCE, PROBABILITY_FOR_GENUINE_MUTATION,
     // Distribution.UNIFORM));
     // }
-    
-    private static final double PROBABILITY_FOR_TRUE = 0.5;
+
+    static final double PROBABILITY_FOR_TRUE = 0.5;
     private static final double PROBABILITY_FOR_GENUINE_MUTATION = 0.0;
     private static final TypeInfo<Boolean> DEFAULT_TYPE_INFO = new TypeInfo<Boolean>(Boolean.FALSE,
             Boolean.FALSE, Boolean.TRUE, Boolean.class);
+
+    public static final TypeInfo<Float> UNIVERSAL_TYPE_INFO = new TypeInfo<Float>(0.0f, 0.0f, 1.0f,
+            Boolean.class);
 }

@@ -33,16 +33,20 @@ public interface IGeneFactory {
      *            mutation info
      * @return the constructed gene
      */
-    IGene<?> createGene(
+    IGene<?> newGene(
             final Object theId, final Object theValue, final TypeInfo<?> theTypeInfo,
             final MutationInfo theMutationInfo);
 
     /**
-     *
+     * Creates a gene.
+     * 
      * @param theId
+     *            id
      * @param theValue
+     *            value
      * @param theMutationProb
-     * @return
+     *            mutation prob.
+     * @return the constructed gene
      */
-    IGene<?> createGene(final Object theId, final Object theValue, final double theMutationProb);
+    IGene<?> newGene(final Object theId, final Object theValue, final double theMutationProb);
 }
