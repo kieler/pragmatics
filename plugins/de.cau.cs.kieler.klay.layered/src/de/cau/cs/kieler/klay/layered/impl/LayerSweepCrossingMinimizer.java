@@ -125,7 +125,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
     
     /**
      * Sort the ports of the given node by their position values. Input ports
-     * are sorted before output ports.
+     * are sorted after output ports.
      * 
      * @param node node whose ports shall be sorted
      * @param posValues array of position values
@@ -157,9 +157,9 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
                     if (bary1 >= 0 && bary2 >= 0) {
                         return Float.compare(bary1, bary2);
                     } else if (bary1 >= 0) {
-                        return input ? -1 : 1;
-                    } else if (bary2 >= 0) {
                         return input ? 1 : -1;
+                    } else if (bary2 >= 0) {
+                        return input ? -1 : 1;
                     } else {
                         return port1.id - port2.id;
                     }
@@ -167,9 +167,6 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
             }
         });
     }
-    
-    /** number of surrounding position values to consider for nodes with undefined position value. */
-    private static final int POSVAL_AVG_RADIUS = 1;
     
     /**
      * Sort the nodes of the given layer. A heuristic tries to find appropriate position values
@@ -182,26 +179,32 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
         List<LNode> nodes = layer.getNodes();
         // determine placements for nodes with undefined position value
         final double[] filteredValues = new double[nodes.size()];
-        float lastValue = 0.0f;
         for (int index = 0; index < posValues.length; index++) {
             float value = posValues[index];
-            if (value < 0.0) {
-                int definedRanks = 0;
-                float sum = 0.0f;
-                for (int i = index - POSVAL_AVG_RADIUS; i <= index + POSVAL_AVG_RADIUS; i++) {
-                    if (i >= 0 && i < posValues.length && posValues[i] >= 0.0) {
-                        sum += posValues[i];
-                        definedRanks++;
-                    }
-                }
-                if (definedRanks > 0) {
-                    filteredValues[index] = sum / definedRanks;
-                } else {
-                    filteredValues[index] = lastValue;
-                }
-            } else {
+            if (value >= 0.0) {
                 filteredValues[index] = value;
-                lastValue = value;
+            } else {
+                int definedRanks = 0, il = index, ir = index;
+                float sum = 0.0f;
+                do {
+                    if (il >= 0) {
+                        il--;
+                        if (il < 0) {
+                            definedRanks++;
+                        } else if (posValues[il] >= 0.0) {
+                            sum += posValues[il];
+                            definedRanks++;
+                        }
+                    }
+                    if (ir < posValues.length) {
+                        ir++;
+                        if (ir < posValues.length && posValues[ir] >= 0.0) {
+                            sum += posValues[ir];
+                            definedRanks++;
+                        }
+                    }
+                } while (definedRanks == 0);
+                filteredValues[index] = sum / definedRanks;
             }
         }
 

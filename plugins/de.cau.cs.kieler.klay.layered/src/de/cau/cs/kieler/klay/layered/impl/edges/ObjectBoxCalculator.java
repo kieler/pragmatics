@@ -15,7 +15,6 @@ package de.cau.cs.kieler.klay.layered.impl.edges;
 
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
-import java.awt.geom.Line2D.Double;
 import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -27,10 +26,8 @@ import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.core.math.BezierSpline.BezierCurve;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.kiml.ui.util.DebugCanvas;
-import de.cau.cs.kieler.klay.layered.LayeredLayoutProvider;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
-import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
@@ -44,7 +41,7 @@ import de.cau.cs.kieler.klay.layered.modules.IBoxCalculator;
 public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalculator {
 
     /** Minimal spacing between objects. */
-    private float spacing = LayeredLayoutProvider.DEF_SPACING;
+    private float spacing;
 
     /** All known Edges inside the current graph. */
     private LinkedList<Line2D.Double> allEdges;
@@ -81,7 +78,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
 
     /** The DebugCanvas to use for debug-drawings. **/
     private DebugCanvas debugCanvas;
-
+    
     /**
      * {@inheritDoc}
      */
@@ -187,11 +184,14 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                             (currentTarget.getNode().getPos().y + currentTarget.getPos().y)),
                     DebugCanvas.Color.YELLOW, false);
 
-            if (currentTarget.getNode().getProperty(Properties.NODE_TYPE) == Properties.NodeType.LONG_EDGE) {
+            if (currentTarget.getNode().getProperty(Properties.NODE_TYPE)
+                    == Properties.NodeType.LONG_EDGE) {
                 drawOnDebug(
                         new Ellipse2D.Float(
-                                (currentTarget.getNode().getPos().x + currentTarget.getPos().x - DUMMY_NODE_DEBUG_SIZE / 2),
-                                (currentTarget.getNode().getPos().y + currentTarget.getPos().y - DUMMY_NODE_DEBUG_SIZE / 2),
+                                (currentTarget.getNode().getPos().x + currentTarget.getPos().x
+                                        - DUMMY_NODE_DEBUG_SIZE / 2),
+                                (currentTarget.getNode().getPos().y + currentTarget.getPos().y
+                                        - DUMMY_NODE_DEBUG_SIZE / 2),
                                 DUMMY_NODE_DEBUG_SIZE, DUMMY_NODE_DEBUG_SIZE),
                         DebugCanvas.Color.CYAN, true);
 
@@ -378,7 +378,8 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                 break;
             }
 
-        } while (currentSource.getNode().getProperty(Properties.NODE_TYPE) == Properties.NodeType.LONG_EDGE);
+        } while (currentSource.getNode().getProperty(Properties.NODE_TYPE)
+                == Properties.NodeType.LONG_EDGE);
         if (debugCanvas != null) {
             debugCanvas.drawBuffer();
         }
@@ -516,6 +517,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
      * {@inheritDoc}
      */
     public void initialize(final LayeredGraph lg) {
+        spacing = lg.getProperty(Properties.OBJ_SPACING);
         layeredGraph = lg;
         allEdges = new LinkedList<Line2D.Double>();
         allNodes = new LinkedList<Rectangle2D.Double>();

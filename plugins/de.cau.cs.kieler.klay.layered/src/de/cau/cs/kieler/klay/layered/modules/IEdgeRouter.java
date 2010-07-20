@@ -39,11 +39,4 @@ public interface IEdgeRouter extends IAlgorithm {
      */
     void routeEdges(LayeredGraph layeredGraph);
     
-    /**
-     * Set the node and edge spacing for routing.
-     * 
-     * @param spacing the spacing value
-     */
-    void setSpacing(float spacing);
-    
 }

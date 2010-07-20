@@ -19,52 +19,53 @@
                option="de.cau.cs.kieler.layout.options.priority">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.layered.options.LayeredEdgeRouting">
+               option="de.cau.cs.kieler.klay.layered.edgeRouting">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.layered.options.LayeredDebugInfo">
+               option="de.cau.cs.kieler.klay.layered.debugInfo">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.layered.options.LayeredStraightEdges">
+               option="de.cau.cs.kieler.klay.layered.straightEdges">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.layered.options.MinimalAngle">
+               option="de.cau.cs.kieler.klay.layered.minimalAngle">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.layered.options.LayeredDistributeNodes">
+               option="de.cau.cs.kieler.klay.layered.distributeNodes">
          </knownOption>
       </layoutProvider>
       <layoutOption
             appliesTo="parents"
-            id="de.cau.cs.kieler.klay.layered.options.LayeredEdgeRouting"
-            name="LayeredEdgeRouting"
+            description="Style of edge routing"
+            id="de.cau.cs.kieler.klay.layered.edgeRouting"
+            name="Edge Routing"
             type="enum">
       </layoutOption>
       <layoutOption
             appliesTo="parents"
-            id="de.cau.cs.kieler.klay.layered.options.LayeredDebugInfo"
-            name="LayeredDebugInfo"
+            id="de.cau.cs.kieler.klay.layered.debugInfo"
+            name="Debug Info"
             type="boolean">
       </layoutOption>
       <layoutOption
             appliesTo="parents"
-            description="If enabled, Edges with priority &gt; 0 are drawn straight instead of keeping the connected nodes in line."
-            id="de.cau.cs.kieler.klay.layered.options.LayeredStraightEdges"
-            name="LayeredStraightEdges"
+            description="If enabled, edges with priority &gt; 0 are drawn straight instead of keeping the connected nodes in line.ne."
+            id="de.cau.cs.kieler.klay.layered.straightEdges"
+            name="Straight Edges"
             type="boolean">
       </layoutOption>
       <layoutOption
             appliesTo="parents"
-            description="Defines the minimal angle short edges may have."
-            id="de.cau.cs.kieler.klay.layered.options.MinimalAngle"
-            name="MinimalAngle"
+            description="Defines the minimal angle that short edges may have."
+            id="de.cau.cs.kieler.klay.layered.minimalAngle"
+            name="Minimal Angle"
             type="int">
       </layoutOption>
       <layoutOption
             appliesTo="parents"
-            description="Define if wide nodes should be distributed to several layers."
-            id="de.cau.cs.kieler.klay.layered.options.LayeredDistributeNodes"
-            name="LayeredDistributeNodes"
+            description="Whether wide nodes should be distributed to several layers"
+            id="de.cau.cs.kieler.klay.layered.distributeNodes"
+            name="Distribute Nodes"
             type="boolean">
       </layoutOption>
    </extension>

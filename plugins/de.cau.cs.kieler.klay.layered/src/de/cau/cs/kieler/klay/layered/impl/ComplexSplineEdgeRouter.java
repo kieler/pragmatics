@@ -30,7 +30,6 @@ import de.cau.cs.kieler.core.math.BezierSpline.BezierCurve;
 import de.cau.cs.kieler.core.ui.util.SplineUtilities;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.kiml.ui.util.DebugCanvas;
-import de.cau.cs.kieler.klay.layered.LayeredLayoutProvider;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.Coord;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -55,10 +54,10 @@ import de.cau.cs.kieler.klay.layered.modules.ISplineGenerator.curvature;
  * @author car
  * @author uru
  */
-public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
+public class ComplexSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
 
     /** minimal spacing between objects. */
-    private float spacing = LayeredLayoutProvider.DEF_SPACING;
+    private float spacing;
     /** Box Calculator. */
     // private IBoxCalculator boxCalculator = new BuffereImgBoxCalculator();
     private IBoxCalculator boxCalculator = new ObjectBoxCalculator();
@@ -89,15 +88,9 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
     /**
      * {@inheritDoc}
      */
-    public void setSpacing(final float theSpacing) {
-        this.spacing = theSpacing;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public void routeEdges(final LayeredGraph layeredGraph, final DebugCanvas theDebugCanvas) {
-        this.debugCanvas = theDebugCanvas;
+        debugCanvas = theDebugCanvas;
+        spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         routeEdges(layeredGraph);
     }
 
@@ -148,7 +141,7 @@ public class SplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
         boxCalculator.initialize(layeredGraph, debugCanvas);
 
         // get user defined minimal angle for straigt edges heading in and out nodes.
-        int minimalAngle = LayeredLayoutProvider.MINIMAL_EDGE_ANGLE;
+        int minimalAngle = layeredGraph.getProperty(Properties.MINIMAL_EDGE_ANGLE);
         // check all short edges
         if (minimalAngle != 0) {
             for (LEdge edge : shortEdges) {

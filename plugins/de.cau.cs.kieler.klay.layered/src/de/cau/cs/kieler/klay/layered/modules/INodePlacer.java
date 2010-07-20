@@ -40,12 +40,5 @@ public interface INodePlacer extends IAlgorithm {
      * @param layeredGraph a layered graph
      */
     void placeNodes(LayeredGraph layeredGraph);
-    
-    /**
-     * Set the node spacing for placement.
-     * 
-     * @param spacing the spacing value
-     */
-    void setSpacing(float spacing);
 
 }

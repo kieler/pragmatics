@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered;
 
+import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.util.Property;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.klay.layered.impl.LinearSegmentsNodePlacer.Region;
@@ -31,7 +32,15 @@ public final class Properties {
         /** a dummy node created to split a long edge. */
         LONG_EDGE;
     }
+    
+    /** default value for object spacing. */
+    public static final float DEF_SPACING = 20.0f;
 
+    /** the original object from which a graph element was created. */
+    public static final Property<KGraphElement> ORIGIN = new Property<KGraphElement>("origin");
+    /** minimal spacing between objects. */
+    public static final Property<Float> OBJ_SPACING = new Property<Float>(
+            "objectSpacing", DEF_SPACING);
     /** priority of elements. */
     public static final Property<Integer> PRIORITY = new Property<Integer>(
             "priority", 0);
@@ -53,6 +62,9 @@ public final class Properties {
     /** additional information for LongestPathLayerer on the layeredGraph. */
     public static final Property<Boolean> DISTRIBUTE_NODES = new Property<Boolean>(
             "distributeNodes", false);
+    /** minimal edge angle. */
+    public static final Property<Integer> MINIMAL_EDGE_ANGLE = new Property<Integer>(
+            "minEdgeAngle", 0);
     
     /**
      * Hidden default constructor.

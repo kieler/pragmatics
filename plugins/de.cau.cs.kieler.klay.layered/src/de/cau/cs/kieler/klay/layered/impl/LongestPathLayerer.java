@@ -20,7 +20,6 @@ import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.PortType;
-import de.cau.cs.kieler.klay.layered.LayeredLayoutProvider;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -42,22 +41,15 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayerer {
     /** map of nodes to their height in the layering. */
     private int[] nodeHeights;
     /** minimal spacing between objects. */
-    private float spacing = LayeredLayoutProvider.DEF_SPACING;
-    
-    /**
-     * {@inheritDoc}
-     */
-    public void setSpacing(final float theSpacing) {
-        this.spacing = theSpacing;
-    }
+    private float spacing;
     
     /**
      * {@inheritDoc}
      */
     public void layer(final Collection<LNode> nodes, final LayeredGraph thelayeredGraph) {
         getMonitor().begin("Longest path layering", 1);
-
         layeredGraph = thelayeredGraph;
+        spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         
         if (layeredGraph.getProperty(Properties.DISTRIBUTE_NODES)) {
             distributeBigNodes(nodes);

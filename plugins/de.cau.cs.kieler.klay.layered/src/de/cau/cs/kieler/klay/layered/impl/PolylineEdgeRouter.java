@@ -15,7 +15,6 @@ package de.cau.cs.kieler.klay.layered.impl;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.PortType;
-import de.cau.cs.kieler.klay.layered.LayeredLayoutProvider;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.Properties.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.Coord;
@@ -33,20 +32,12 @@ import de.cau.cs.kieler.klay.layered.modules.IEdgeRouter;
  */
 public class PolylineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
     
-    /** minimal spacing between objects. */
-    private float spacing = LayeredLayoutProvider.DEF_SPACING;
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setSpacing(final float theSpacing) {
-        this.spacing = theSpacing;
-    }
-    
     /**
      * {@inheritDoc}
      */
     public void routeEdges(final LayeredGraph layeredGraph) {
+        float spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
+        
         // set horizontal positioning for each layer and add bend points
         float xpos = 0.0f;
         for (Layer layer : layeredGraph.getLayers()) {

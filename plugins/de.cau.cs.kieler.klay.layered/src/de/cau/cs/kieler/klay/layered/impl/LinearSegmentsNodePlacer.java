@@ -21,7 +21,6 @@ import java.util.List;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.PortType;
-import de.cau.cs.kieler.klay.layered.LayeredLayoutProvider;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.Properties.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.Coord;
@@ -125,7 +124,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
     }
 
     /** minimal spacing between objects. */
-    private float spacing = LayeredLayoutProvider.DEF_SPACING;
+    private float spacing;
     /** array of sorted linear segments. */
     private LinearSegment[] linearSegments;
     /** List of regions. */
@@ -134,15 +133,9 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
     /**
      * {@inheritDoc}
      */
-    public void setSpacing(final float theSpacing) {
-        this.spacing = theSpacing;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public void placeNodes(final LayeredGraph layeredGraph) {
         getMonitor().begin("Linear segments node placement", 1);
+        spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
 
         // this.lastElements = new LayerElement[layeredGraph.getLayers().size()
         // + layeredGraph.getLayers().get(0).getRank()];

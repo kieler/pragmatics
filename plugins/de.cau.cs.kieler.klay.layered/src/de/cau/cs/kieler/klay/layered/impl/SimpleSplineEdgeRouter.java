@@ -21,7 +21,6 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.BezierSpline;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.PortType;
-import de.cau.cs.kieler.klay.layered.LayeredLayoutProvider;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.Coord;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -45,10 +44,10 @@ import de.cau.cs.kieler.klay.layered.modules.ISplineGenerator;
  * @author uru
  * 
  */
-public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
+public class SimpleSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
 
     /** minimal spacing between objects. */
-    private float spacing = LayeredLayoutProvider.DEF_SPACING;
+    private float spacing;
 
     /** spline generator. */
     private ISplineGenerator splineGen = new SimpleSplineGenerator();
@@ -74,6 +73,8 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
      * {@inheritDoc}
      */
     public void routeEdges(final LayeredGraph layeredGraph) {
+        spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
+        
         // contains nodes from which long edges are starting
         LinkedList<LEdge> longEdges = new LinkedList<LEdge>();
         LinkedList<LongEdge> realLongEdges = new LinkedList<LongEdge>();
@@ -109,7 +110,7 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
         layeredGraph.getSize().x = xpos - spacing;
 
         // get user defined minimal angle for straigt edges heading in and out nodes.
-        int minimalAngle = LayeredLayoutProvider.MINIMAL_EDGE_ANGLE;
+        int minimalAngle = layeredGraph.getProperty(Properties.MINIMAL_EDGE_ANGLE);
         // check all short edges
         if (minimalAngle != 0) {
             for (LEdge edge : shortEdges) {
@@ -260,13 +261,6 @@ public class NaiveSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRou
             }
         }
         return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setSpacing(final float theSpacing) {
-        this.spacing = theSpacing;
     }
 
 }

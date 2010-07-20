@@ -11,10 +11,10 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.layered.options;
+package de.cau.cs.kieler.klay.layered;
 
 /**
- * Definition of layered edge routing styles.
+ * Definition of edge routing styles for the layered layouter.
  * 
  * @author uru
  */
@@ -23,9 +23,11 @@ public enum LayeredEdgeRouting {
     /** polyline edge routing. */
     POLYLINE,
     /** orthogonal edge routing. */
-    NAIVE_SPLINES,
-    /** splines edge routing. */
-    BOX_SPLINES;
+    ORTHOGONAL,
+    /** simple splines computed from dummy nodes. */
+    SIMPLE_SPLINES,
+    /** complex splines computed using the boxing approach. */
+    COMPLEX_SPLINES;
 
     /**
      * Returns the enumeration value related to the given ordinal.
@@ -37,4 +39,5 @@ public enum LayeredEdgeRouting {
     public static LayeredEdgeRouting valueOf(final int i) {
         return values()[i];
     }
+    
 }
