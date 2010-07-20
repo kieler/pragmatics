@@ -15,6 +15,8 @@ package de.cau.cs.kieler.kiml.evol.grana;
 
 import java.util.Map;
 
+import org.eclipse.core.runtime.Assert;
+
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
@@ -24,10 +26,11 @@ import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
 
 /**
- * Calculates a metric for the number of bends in the graph.
- * Does not care for hierarchies.
+ * Calculates a metric for the number of bends in the graph. Does not care for
+ * hierarchies.
  *
  * @author mri
+ * @author bdu
  */
 public class BendsMetric implements IAnalysis {
 
@@ -39,25 +42,32 @@ public class BendsMetric implements IAnalysis {
             final IKielerProgressMonitor progressMonitor) throws KielerException {
         progressMonitor.begin("Bend metric analysis", 1);
 
+        // load numbers from bend count analysis
+        final Object edgesResult = results.get("de.cau.cs.kieler.kiml.grana.edgeCount");
+        final Object bendsResult = results.get("de.cau.cs.kieler.kiml.grana.bendpointCount");
+        final int edgesCount = (Integer) edgesResult;
+        final int bendsCount = (Integer) bendsResult;
+
         // count the number of edges and bend points
-        // TODO: load numbers from bend count analysis
         int m = 0;
         int bends = 0;
         for (final KNode node : parentNode.getChildren()) {
             for (final KEdge edge : node.getOutgoingEdges()) {
-                ++m;
+                m++;
                 final KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(edge);
                 bends += edgeLayout.getBendPoints().size();
             }
         }
 
+        Assert.isTrue(edgesCount == m);
+        Assert.isTrue(bendsCount == bends);
+
         progressMonitor.done();
 
         // normalize
         Float result;
-        if (m + bends > 0) {
-            result = 1.0f - (float) bends / (float) (m + bends);
-            // System.out.println("bends: " + bends + " m: " + m);
+        if (edgesCount + bendsCount > 0) {
+            result = 1.0f - (float) bendsCount / (float) (edgesCount + bendsCount);
         } else {
             result = 1.0f;
         }
