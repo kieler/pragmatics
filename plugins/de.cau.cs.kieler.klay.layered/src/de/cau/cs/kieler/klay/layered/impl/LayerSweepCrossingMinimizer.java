@@ -124,8 +124,8 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
     }
     
     /**
-     * Sort the ports of the given node by their position values. Input ports
-     * are sorted after output ports.
+     * Sort the ports of the given node by their sides, position values, and input
+     * or output status.
      * 
      * @param node node whose ports shall be sorted
      * @param posValues array of position values
@@ -151,15 +151,28 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
                 PortSide side1 = port1.getSide();
                 PortSide side2 = port2.getSide();
                 if (side1 != side2) {
+                    // sort according to the node side 
                     return side1.ordinal() - side2.ordinal();
                 } else {
                     float bary1 = posValues[port1.id], bary2 = posValues[port2.id];
+                    // input ports are counter-clockwise, output ports are clockwise
                     if (bary1 >= 0 && bary2 >= 0) {
-                        return Float.compare(bary1, bary2);
+                        return input ? Float.compare(bary2, bary1)
+                                : Float.compare(bary1, bary2);
+                    // north side: first inputs, then outputs; other sides: reverse
                     } else if (bary1 >= 0) {
-                        return input ? 1 : -1;
+                        if (side1 == PortSide.NORTH) {
+                            return input ? -1 : 1;
+                        } else {
+                            return input ? 1 : -1;
+                        }
                     } else if (bary2 >= 0) {
-                        return input ? -1 : 1;
+                        if (side2 == PortSide.NORTH) {
+                            return input ? 1 : -1;
+                        } else {
+                            return input ? -1 : 1;
+                        }
+                    // take the previous ordering
                     } else {
                         return port1.id - port2.id;
                     }

@@ -26,31 +26,10 @@ public class LEdge extends LGraphElement {
 
     /** the bend points. */
     private List<Coord> bendPoints = new LinkedList<Coord>();
-    /** the original object from which the edge was created. */
-    private Object origin;
     /** the source and target ports. */
     private LPort source, target;
-    /** indicates whether this is a reversed edge. */
-    private boolean reversed = false;
     /** labels assigned to this edge. */
     private List<LLabel> labels = new LinkedList<LLabel>();
-
-    /**
-     * Creates an edge.
-     * 
-     * @param theorigin
-     *            the original object for the edge
-     */
-    public LEdge(final Object theorigin) {
-        this.origin = theorigin;
-    }
-
-    /**
-     * Creates an edge.
-     */
-    public LEdge() {
-        this(null);
-    }
 
     /**
      * {@inheritDoc}
@@ -125,40 +104,11 @@ public class LEdge extends LGraphElement {
     }
 
     /**
-     * Returns the original object from which the edge was created.
-     * 
-     * @return the original object
-     */
-    public Object getOrigin() {
-        return origin;
-    }
-
-    /**
      * 
      * @return all labels
      */
     public List<LLabel> getLabels() {
         return this.labels;
-    }
-
-    /**
-     * Indicates whether this edge has been reversed. This can happen during the cycle breaking
-     * phase.
-     * 
-     * @return the reversed status
-     */
-    public boolean isReversed() {
-        return reversed;
-    }
-
-    /**
-     * Sets the reversed status.
-     * 
-     * @param thereversed
-     *            the reversed status to set
-     */
-    public void setReversed(final boolean thereversed) {
-        this.reversed = thereversed;
     }
 
 }

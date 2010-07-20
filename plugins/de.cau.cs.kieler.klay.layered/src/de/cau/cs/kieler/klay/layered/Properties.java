@@ -37,7 +37,7 @@ public final class Properties {
     public static final float DEF_SPACING = 20.0f;
 
     /** the original object from which a graph element was created. */
-    public static final Property<KGraphElement> ORIGIN = new Property<KGraphElement>("origin");
+    public static final Property<Object> ORIGIN = new Property<Object>("origin");
     /** minimal spacing between objects. */
     public static final Property<Float> OBJ_SPACING = new Property<Float>(
             "objectSpacing", DEF_SPACING);
@@ -65,6 +65,9 @@ public final class Properties {
     /** minimal edge angle. */
     public static final Property<Integer> MINIMAL_EDGE_ANGLE = new Property<Integer>(
             "minEdgeAngle", 0);
+    /** flag for reversed edges. */
+    public static final Property<Boolean> REVERSED = new Property<Boolean>(
+            "reversed", false);
     
     /**
      * Hidden default constructor.

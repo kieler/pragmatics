@@ -18,6 +18,7 @@ import java.util.LinkedList;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.PortType;
+import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -143,7 +144,7 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ICycleBreak
                         edge.setTarget(source);
                         edge.getSource().setType(PortType.OUTPUT);
                         edge.getTarget().setType(PortType.INPUT);
-                        edge.setReversed(true);
+                        edge.setProperty(Properties.REVERSED, true);
                     }
                 }                
             }

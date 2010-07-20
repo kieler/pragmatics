@@ -124,7 +124,7 @@ public class SimpleLabelPlacer extends AbstractAlgorithm implements ILabelPlacer
      * {@inheritDoc}
      */
     public LLabel longestLabel(final Layer thelayer) {
-        LLabel longest = new LLabel(null, "");
+        LLabel longest = new LLabel("");
         for (LNode node : thelayer.getNodes()) {
             for (LPort port : node.getPorts()) {
                 for (LEdge edge : port.getEdges()) {

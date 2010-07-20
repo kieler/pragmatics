@@ -44,7 +44,7 @@ public class PolylineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter
             for (LNode node : layer.getNodes()) {
                 node.getPos().x = xpos;
                 if (node.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
-                    LEdge edge = (LEdge) node.getOrigin();
+                    LEdge edge = (LEdge) node.getProperty(Properties.ORIGIN);
                     if (isEndnode(node, PortType.INPUT)) {
                         edge.getBendPoints().add(new Coord(xpos, node.getPos().y));
                     }

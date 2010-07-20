@@ -14,14 +14,12 @@
 package de.cau.cs.kieler.klay.layered.graph;
 
 /**
+ * A label in the layered graph structure.
  * 
  * @author jjc
- *
  */
 public class LLabel extends LGraphElement {
 
-    /** the original object from which the edge was created. */
-    private Object origin;
     /** the current position of the label. */
     private Coord pos = new Coord();
     /** the size of the label. */
@@ -32,28 +30,17 @@ public class LLabel extends LGraphElement {
     /**
      * Creates a label.
      * 
-     * @param theorigin the original object for the label
      * @param thetext text of the label
      */
-    public LLabel(final Object theorigin, final String thetext) {
-        this.origin = theorigin;
+    public LLabel(final String thetext) {
         this.text = thetext;
     }
     
     /**
-     * Creates a label.
+     * Creates a label with empty text.
      */
     public LLabel() {
-        this(null, "");
-    }
-    
-    /**
-     * Returns the original object from which the label was created.
-     * 
-     * @return the original object
-     */
-    public Object getOrigin() {
-        return origin;
+        this("");
     }
     
     /**
@@ -82,4 +69,5 @@ public class LLabel extends LGraphElement {
     public String getText() {
         return text;
     }
+    
 }

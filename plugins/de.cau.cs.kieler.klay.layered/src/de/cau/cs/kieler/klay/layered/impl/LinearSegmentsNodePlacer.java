@@ -89,19 +89,18 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
         /** The accumulated force of the contained nodes. */
         private float force = 0;
 
-        /** Contructor. */
+        /** Constructor. */
         public Region() {
             regions.add(this);
         }
 
-        /** @return List of Nodes contained in the region */
+        /** @return list of nodes contained in the region */
         public List<LNode> getNodes() {
             return nodes;
         }
 
         /**
-         * @param other
-         *            The other Region to be 'unioned'
+         * @param other the other region to be unified
          */
         public void union(final Region other) {
             // Keep the Region with lower index
@@ -123,8 +122,6 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
         }
     }
 
-    /** minimal spacing between objects. */
-    private float spacing;
     /** array of sorted linear segments. */
     private LinearSegment[] linearSegments;
     /** List of regions. */
@@ -135,13 +132,9 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
      */
     public void placeNodes(final LayeredGraph layeredGraph) {
         getMonitor().begin("Linear segments node placement", 1);
-        spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
-
-        // this.lastElements = new LayerElement[layeredGraph.getLayers().size()
-        // + layeredGraph.getLayers().get(0).getRank()];
 
         // arrange port positions
-        arrangePorts(layeredGraph);
+        layeredGraph.arrangePorts();
         // sort the linear segments of the layered graph
         sortLinearSegments(layeredGraph);
         // create an unbalanced placement from the sorted segments
@@ -298,6 +291,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
      * Creates an unbalanced placement for the sorted linear segments.
      */
     private void createUnbalancedPlacement(final LayeredGraph layeredGraph) {
+        float spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         int[] nodeCount = new int[layeredGraph.getLayers().size()];
         boolean straightEdges = layeredGraph.getProperty(Properties.STRAIGHT_EDGES);
         for (LinearSegment segment : linearSegments) {
@@ -345,7 +339,13 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
         }
     }
 
+    /**
+     * Balance the initial placement by force-based movement of regions.
+     * 
+     * @param layeredGraph a layered graph
+     */
     private void balancePlacement(final LayeredGraph layeredGraph) {
+        float spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         // Initialize Regions = Linear segments
         for (int s = 0; s < linearSegments.length; s++) {
             LinearSegment segment = linearSegments[s];
@@ -373,7 +373,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
                 calculateForce(region);
 
                 // Test for all nodes, if they can be moved that far.
-                checkMovability(region);
+                checkMovability(region, spacing);
                 
                 // Move nodes
                 for (LNode node : region.getNodes()) {
@@ -435,9 +435,11 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
     }
 
     /**
+     * 
      * @param region the region to be checked
+     * @param spacing the object spacing
      */
-    private void checkMovability(final Region region) {
+    private void checkMovability(final Region region, final float spacing) {
         for (LNode node : region.getNodes()) {
             if (region.force < 0.0f) {
                 // Force is directed upward
@@ -476,11 +478,13 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
     }
 
     /**
-     * @param layeredGraph the layered Graph
+     * 
+     * @param layeredGraph the layered graph
      * @return ready is set to false if there are regions newly touching
      */
     private boolean noNewTouchingRegions(final LayeredGraph layeredGraph) {
         boolean ready = true;
+        float spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         for (Layer layer : layeredGraph.getLayers()) {
             List<LNode> nodes = layer.getNodes();
             for (LNode node : nodes) {
@@ -502,41 +506,6 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
             }
         }
         return ready;
-    }
-
-    /**
-     * Arrange the ports of all nodes in the layered graph.
-     * 
-     * @param layeredGraph
-     *            a layered graph
-     */
-    private void arrangePorts(final LayeredGraph layeredGraph) {
-        for (Layer layer : layeredGraph.getLayers()) {
-            for (LNode node : layer.getNodes()) {
-                int inputCount = 1, outputCount = 1;
-                for (LPort port : node.getPorts()) {
-                    if (port.getType() == PortType.INPUT) {
-                        inputCount++;
-                    } else {
-                        outputCount++;
-                    }
-                }
-                float inputDelta = node.getSize().y / inputCount;
-                float outputDelta = node.getSize().y / outputCount;
-                float inputY = inputDelta, outputY = outputDelta;
-                for (LPort port : node.getPorts()) {
-                    if (port.getType() == PortType.INPUT) {
-                        port.getPos().x = 0;
-                        port.getPos().y = inputY;
-                        inputY += inputDelta;
-                    } else {
-                        port.getPos().x = node.getSize().x;
-                        port.getPos().y = outputY;
-                        outputY += outputDelta;
-                    }
-                }
-            }
-        }
     }
 
 }

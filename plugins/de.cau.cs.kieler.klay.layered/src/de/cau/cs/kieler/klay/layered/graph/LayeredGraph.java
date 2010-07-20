@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.Properties;
 
@@ -95,7 +96,8 @@ public class LayeredGraph extends LGraphElement {
                         int targetIndex = targetPort.getNode().getLayer().getIndex();
                         if (targetIndex != layerIter.nextIndex()) {
                             Layer nextLayer = layerIter.next();
-                            LNode dummyNode = new LNode(edge);
+                            LNode dummyNode = new LNode();
+                            dummyNode.setProperty(Properties.ORIGIN, edge);
                             dummyNode.setProperty(Properties.NODE_TYPE,
                                     Properties.NodeType.LONG_EDGE);
                             dummyNode.setLayer(nextLayer);
@@ -104,12 +106,72 @@ public class LayeredGraph extends LGraphElement {
                             LPort dummyOutput = new LPort(PortType.OUTPUT);
                             dummyOutput.setNode(dummyNode);
                             edge.setTarget(dummyInput);
-                            LEdge dummyEdge = new LEdge(edge.getOrigin());
+                            LEdge dummyEdge = new LEdge();
                             dummyEdge.copyProperties(edge);
-                            dummyEdge.setReversed(edge.isReversed());
                             dummyEdge.setSource(dummyOutput);
                             dummyEdge.setTarget(targetPort);
                             layerIter.previous();
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Arrange the ports of all nodes in the layered graph.
+     */
+    public void arrangePorts() {
+        for (Layer layer : layers) {
+            for (LNode node : layer.getNodes()) {
+                PortConstraints constraints = node.getProperty(Properties.PORT_CONS);
+                if (constraints != PortConstraints.FIXED_POS) {
+                    int northCount = 1, eastCount = 1, southCount = 1, westCount = 1;
+                    for (LPort port : node.getPorts()) {
+                        switch (port.getSide()) {
+                        case NORTH:
+                            northCount++;
+                            break;
+                        case EAST:
+                            eastCount++;
+                            break;
+                        case SOUTH:
+                            southCount++;
+                            break;
+                        default:
+                            westCount++;
+                        }
+                    }
+                    Coord nodeSize = node.getSize();
+                    float northDelta = nodeSize.x / northCount;
+                    float northX = northDelta;
+                    float eastDelta = nodeSize.y / eastCount;
+                    float eastY = eastDelta;
+                    float southDelta = nodeSize.x / southCount;
+                    float southX = nodeSize.x - southDelta;
+                    float westDelta = nodeSize.y / westCount;
+                    float westY = nodeSize.y - westDelta;
+                    for (LPort port : node.getPorts()) {
+                        switch (port.getSide()) {
+                        case NORTH:
+                            port.getPos().x = northX;
+                            port.getPos().y = 0;
+                            northX += northDelta;
+                            break;
+                        case EAST:
+                            port.getPos().x = nodeSize.x;
+                            port.getPos().y = eastY;
+                            eastY += eastDelta;
+                            break;
+                        case SOUTH:
+                            port.getPos().x = southX;
+                            port.getPos().y = nodeSize.y;
+                            southX -= southDelta;
+                            break;
+                        default:
+                            port.getPos().x = 0;
+                            port.getPos().y = nodeSize.y - westY;
+                            westY -= westDelta;
                         }
                     }
                 }

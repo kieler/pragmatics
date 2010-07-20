@@ -45,8 +45,6 @@ public class LPort extends LGraphElement {
     private PortSide side = PortSide.UNDEFINED;
     /** the current position of the port. */
     private Coord pos = new Coord();
-    /** the original object from which the port was created. */
-    private Object origin;
     /** the edges connected to the port. */
     private List<LEdge> edges = new LinkedList<LEdge>();
     /** name of the port. */
@@ -94,23 +92,11 @@ public class LPort extends LGraphElement {
      * Creates a port.
      * 
      * @param thetype the type of port
-     * @param theorigin the original object for the port, or {@code null}
      * @param thename name of the port, or {@code null}
      */
-    public LPort(final PortType thetype, final Object theorigin, final String thename) {
+    public LPort(final PortType thetype, final String thename) {
         this.type = thetype;
-        this.origin = theorigin;
         this.name = thename;
-    }
-    
-    /**
-     * Creates a port.
-     * 
-     * @param thetype the type of port
-     * @param theorigin the original object for the port, or {@code null}
-     */
-    public LPort(final PortType thetype, final Object theorigin) {
-        this(thetype, theorigin, null);
     }
     
     /**
@@ -119,14 +105,14 @@ public class LPort extends LGraphElement {
      * @param thetype the type of port
      */
     public LPort(final PortType thetype) {
-        this(thetype, null, null);
+        this(thetype, null);
     }
     
     /**
      * Creates a port.
      */
     public LPort() {
-        this(PortType.UNDEFINED, null, null);
+        this(PortType.UNDEFINED, null);
     }
 
     /**
@@ -210,15 +196,6 @@ public class LPort extends LGraphElement {
      */
     public Coord getPos() {
         return pos;
-    }
-
-    /**
-     * Returns the original object from which the port was created.
-     * 
-     * @return the original object
-     */
-    public Object getOrigin() {
-        return origin;
     }
 
     /**

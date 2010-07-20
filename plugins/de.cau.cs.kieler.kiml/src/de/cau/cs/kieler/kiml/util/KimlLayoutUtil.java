@@ -348,16 +348,15 @@ public final class KimlLayoutUtil {
         }
         return PortSide.UNDEFINED;
     }
-
+    
     /**
-     * Sets port ranks for all ports of the given node according to their
-     * relative positions.
+     * Returns a sorted list of the ports of the given node.
      * 
-     * @param node node for which port ranks shall be set
+     * @param node a node
+     * @return sorted list of ports
      */
-    public static void calcPortRanks(final KNode node) {
-        // sort the ports according to their positions
-        KPort[] ports = node.getPorts().toArray(new KPort[0]);
+    public static KPort[] getSortedPorts(final KNode node) {
+        KPort[] ports = node.getPorts().toArray(new KPort[node.getPorts().size()]);
         Arrays.sort(ports, new Comparator<KPort>() {
             public int compare(final KPort port1, final KPort port2) {
                 KShapeLayout port1Layout = getShapeLayout(port1);
@@ -419,7 +418,19 @@ public final class KimlLayoutUtil {
                 return result;
             }
         });
+        
+        return ports;
+    }
 
+    /**
+     * Sets port ranks for all ports of the given node according to their
+     * relative positions.
+     * 
+     * @param node node for which port ranks shall be set
+     */
+    public static void calcPortRanks(final KNode node) {
+        // sort the ports according to their positions
+        KPort[] ports = getSortedPorts(node);
         // assign ranks according to the new order
         for (int i = 0; i < ports.length; i++) {
             LayoutOptions.setInt(getShapeLayout(ports[i]), LayoutOptions.PORT_RANK, i);

@@ -33,8 +33,6 @@ public class LNode extends LGraphElement {
     private Coord pos = new Coord();
     /** the size of the node. */
     private Coord size = new Coord();
-    /** the original object from which this node was created. */
-    private Object origin;
     /** the ports of the node. */
     private List<LPort> ports = new LinkedList<LPort>();
     /** name of the node. */
@@ -43,28 +41,17 @@ public class LNode extends LGraphElement {
     /**
      * Creates a layer node.
      * 
-     * @param theorigin the original object for the node, or {@code null}
      * @param thename name of the node, or {@code null}
      */
-    public LNode(final Object theorigin, final String thename) {
-        this.origin = theorigin;
+    public LNode(final String thename) {
         this.name = thename;
-    }
-    
-    /**
-     * Creates a layer node.
-     * 
-     * @param theorigin the original object for the node, or {@code null}
-     */
-    public LNode(final Object theorigin) {
-        this(theorigin, null);
     }
     
     /**
      * Creates a layer node.
      */
     public LNode() {
-        this(null, null);
+        this(null);
     }
 
     /**
@@ -120,15 +107,6 @@ public class LNode extends LGraphElement {
      */
     public Coord getSize() {
         return size;
-    }
-
-    /**
-     * Returns the original object from which the node was created.
-     * 
-     * @return the original object
-     */
-    public Object getOrigin() {
-        return origin;
     }
 
     /**
