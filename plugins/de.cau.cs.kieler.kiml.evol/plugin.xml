@@ -68,47 +68,37 @@
       </data>
       <data
             distribution="GAUSSIAN"
-            lowerBound="0.0"
-            name="Min CC Distance"
-            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.minDistCC"
+            lowerBound="1.0"
+            name="Min Dist CC"
+            option="de.cau.cs.kieler.kiml.ogdf.option.minDistCC"
             upperBound="1.0e7">
       </data>
       <data
             distribution="GAUSSIAN"
-            lowerBound="0"
-            option="de.cau.cs.kieler.kiml.ogdf.option.minDistCC"
-            upperBound="1e7">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="0"
+            lowerBound="1.0"
+            name = "Min. Dist. Circle"
             option="de.cau.cs.kieler.kiml.ogdf.option.minDistCircle"
-            upperBound="1e7">
+            upperBound="1.0e7">
       </data>
       <data
             distribution="GAUSSIAN"
-            lowerBound="0"
+            lowerBound="1.0"
+            name = "Min. Dist. Level"
             option="de.cau.cs.kieler.kiml.ogdf.option.minDistLevel"
-            upperBound="1e7">
+            upperBound="1.0e7">
       </data>
       <data
             distribution="GAUSSIAN"
-            lowerBound="0"
+            lowerBound="1.0"
             option="de.cau.cs.kieler.kiml.ogdf.option.minDistSibling"
-            upperBound="1e7">
+            upperBound="1.0e7">
       </data>
       <data
             distribution="GAUSSIAN"
-            lowerBound="1"
-            name="Minimal Spacing"
-            option="de.cau.cs.kieler.layout.options.minSpacing">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="0"
+            lowerBound="0.0"
             name="Object Spacing"
             option="de.cau.cs.kieler.layout.options.minSpacing"
-            upperBound="1e7">
+            upperBound="1.0e7">
       </data>
       <data
             distribution="GAUSSIAN"
@@ -122,7 +112,7 @@
             lowerBound="0.0"
             name="Post Strength of Repulsive Forces"
             option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.postStrengthOfRepForces"
-            upperBound="1e7">
+            upperBound="1.0e7">
       </data>
       <data
             distribution="UNIFORM"
@@ -268,12 +258,14 @@
             locationURI="toolbar:de.cau.cs.kieler.kiml.evol.evolView">
          <command
                commandId="de.cau.cs.kieler.kiml.evol.evolve"
+               icon="icons/evolve.png"
                label="Evolve"
                style="push"
                tooltip="Proceed to the next generation">
          </command>
          <command
                commandId="de.cau.cs.kieler.kiml.evol.changeRating"
+               icon="icons/thumbsup.png"
                label="Favor"
                style="push">
             <parameter
@@ -283,6 +275,7 @@
          </command>
          <command
                commandId="de.cau.cs.kieler.kiml.evol.changeRating"
+               icon="icons/thumbsdn.png"
                label="Disregard"
                style="push">
             <parameter

@@ -47,7 +47,6 @@ import de.cau.cs.kieler.kiml.evol.genetic.IGeneFactory;
 import de.cau.cs.kieler.kiml.evol.genetic.IntegerGene;
 import de.cau.cs.kieler.kiml.evol.genetic.MutationInfo;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
-import de.cau.cs.kieler.kiml.evol.genetic.StrictlyPositiveFloatGene;
 import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo;
 import de.cau.cs.kieler.kiml.evol.genetic.UniversalGene;
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
@@ -193,11 +192,11 @@ public final class EvolUtil {
         final int newRating = (int) Math.round((sum * 1000));
         return newRating;
     }
-    
+
     /**
      * Adopts layout options from the given {@link Individual} into the given
      * {@link LayoutPropertySource}. The individual must not be {@code null}.
-     * 
+     *
      * @param theIndividual
      *            the individual
      * @param source
@@ -375,13 +374,13 @@ public final class EvolUtil {
                     LayoutServices.getInstance().getLayoutOptionData((String) theId);
             final IConfigurationElement evolutionData =
                     EvolutionService.getInstance().getEvolutionData((String) theId);
-            final String lowerBound = evolutionData.getAttribute("lowerBound");
-            final String upperBound = evolutionData.getAttribute("upperBound");
+            final String lowerBoundAttr = evolutionData.getAttribute("lowerBound");
+            final String upperBoundAttr = evolutionData.getAttribute("upperBound");
             final String distrName = evolutionData.getAttribute("distribution");
             final String variance = evolutionData.getAttribute("variance");
             final Distribution distr = Distribution.valueOf(distrName);
             final Type type = layoutOptionData.getType();
-            final double var;
+
             switch (type) {
             case BOOLEAN: {
                 final boolean booleanValue = (Integer.parseInt(theValue.toString()) == 1);
@@ -408,29 +407,42 @@ public final class EvolUtil {
                 break;
             case INT: {
                 final int intValue = Integer.parseInt((String) theValue);
-                var = MutationInfo.DEFAULT_VARIANCE;
+                final double var = MutationInfo.DEFAULT_VARIANCE;
                 result = new IntegerGene(theId, intValue, theMutationProbability, var);
                 System.out.println(result);
             }
                 break;
             case FLOAT: {
                 final float floatValue = (Float.parseFloat((String) theValue));
-                // estimate desired variance
-                final float verySmall = 1e-3f;
-                final double scalingFactor = .1875;
+                final float lowerBound = (Float.parseFloat(lowerBoundAttr + ""));
+                final float upperBound =
+                        ((upperBoundAttr == null) ? Float.POSITIVE_INFINITY : (Float
+                                .parseFloat(upperBoundAttr + "")));
 
-                var =
+                // threshold to prevent very small variances
+                final float verySmall = 1e-3f;
+
+                // the absolute value is scaled by this factor to get the
+                // variance
+                final double scalingFactor = .20;
+
+                // estimate desired variance from the absolute value
+                final double var =
                         ((Math.abs(floatValue) < verySmall) ? MutationInfo.DEFAULT_VARIANCE : Math
                                 .abs(floatValue) * scalingFactor);
-                if (floatValue > 0.0f) {
+                if (lowerBound >= 0.0f) {
                     // we presume we need a strictly positive float gene
-                    result =
-                            new StrictlyPositiveFloatGene(theId, floatValue,
-                                    theMutationProbability, var);
+                    // result =
+                    // new StrictlyPositiveFloatGene(theId, floatValue,
+                    // theMutationProbability, var);
                 } else {
                     // we use a general float gene
-                    result = new FloatGene(theId, floatValue, theMutationProbability, var);
+                    // result = new FloatGene(theId, floatValue,
+                    // theMutationProbability, var);
                 }
+                result =
+                        new UniversalGene(theId, floatValue, FloatGene.UNIVERSAL_TYPE_INFO,
+                                new MutationInfo(theMutationProbability, distr));
                 System.out.println(result);
             }
                 break;

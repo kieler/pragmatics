@@ -39,47 +39,20 @@ public class Genome extends ArrayList<IGene<?>> {
      */
     public static final Comparator<Genome> DESCENDING_RATING_COMPARATOR = new Comparator<Genome>() {
         public int compare(final Genome ind0, final Genome ind1) {
-                    if (ind0.getRating() == ind1.getRating()) {
+                    if (ind0.getUserRating() == ind1.getUserRating()) {
                         return 0;
-                    } else if (ind0.getRating() < ind1.getRating()) {
+                    } else if (ind0.getUserRating() < ind1.getUserRating()) {
                         return 1;
                     }
                     return -1;
                 }
             };
 
-    // return a recombination of the given genomes.
-    private static Genome newRecombination(final Genome... genomes) {
-        Genome result = new Genome();
-        if (genomes.length == 1) {
-            result = new Genome(genomes[0]);
-        } else {
-            final int size = genomes[0].size();
-            // iterate genes
-            for (int g = 0; g < size; g++) {
-                final LinkedList<IGene<?>> geneList = new LinkedList<IGene<?>>();
-                int gm = 0;
-                for (final Genome genome : genomes) {
-                    if (gm++ > 0) {
-                        Assert.isTrue(genome.size() == size);
-                        geneList.add(genome.get(g));
-                    }
-                }
-                final IGene[] otherGenes = geneList.toArray(new IGene[geneList.size()]);
-                final IGene<?> oldGene = genomes[0].get(g);
-                final IGene<?> newGene = oldGene.recombineWith(otherGenes);
-                result.add(newGene);
-            }
-        }
-        return result;
-    }
-
     /**
      * Constructs an empty genome.
      */
     public Genome() {
         super();
-        this.id = Integer.toHexString(hashCode());
         this.generation = 0;
     }
 
@@ -119,11 +92,6 @@ public class Genome extends ArrayList<IGene<?>> {
      *
      */
     public Genome(final String theId, final Genome theGenome, final int theGeneration) {
-        if (theId == null) {
-            this.id = Integer.toHexString(hashCode());
-        } else {
-            this.id = theId;
-        }
         // this.genome = new Genome(theGenome);
 
         Assert.isLegal(theGenome != null);
@@ -138,22 +106,15 @@ public class Genome extends ArrayList<IGene<?>> {
         System.out.println("Created individual " + toString());
     }
 
-    // private fields
-    private final int generation;
-
-    private String id;
-
-    private int rating;
-
     /**
      * Downscales the rating. This makes the rating less relevant without
      * discarding it completely. This can be used for outdated ratings.
      */
-    public void fadeRating() {
+    public void fadeUserRating() {
         // TODO: implement more sophisticated fading of ratings
-        if (this.rating != 0) {
+        if (this.userRating != 0) {
             final double scalingFactor = .90;
-            this.rating = (int) (this.rating * scalingFactor);
+            this.userRating = (int) (this.userRating * scalingFactor);
         }
     }
 
@@ -181,16 +142,16 @@ public class Genome extends ArrayList<IGene<?>> {
      * @return the user-defined rating. A higher value means a better rating.
      *         The value may be negative.
      */
-    public int getRating() {
-        return this.rating;
+    public int getUserRating() {
+        return this.userRating;
     }
 
     /**
      *
      * @return {@code true} if this individual has been rated.
      */
-    public boolean hasRating() {
-        return (this.rating != 0);
+    public boolean hasUserRating() {
+        return (this.userRating != 0);
     }
 
     /**
@@ -204,9 +165,9 @@ public class Genome extends ArrayList<IGene<?>> {
      *         the step was skipped.
      *
      */
-    public Genome mutate(final double prob) {
+    public Genome newMutation(final double prob) {
         if (Math.random() < prob) {
-            return createMutation();
+            return newMutation();
         }
         System.out.println("-- skipped mutation for " + toString());
         return null;
@@ -231,23 +192,12 @@ public class Genome extends ArrayList<IGene<?>> {
      *            An integer value (may be negative). A higher value means a
      *            better rating.
      */
-    public void setRating(final int theRating) {
+    public void setUserRating(final int theRating) {
         // System.out.println("Assign rating " + theRating + " to individual" +
         // ": " + toString());
-        this.rating = theRating;
+        this.userRating = theRating;
     }
-    // /**
-    // * Returns a copy of the genome of the individual, or <code>null</code> if
-    // * no genome is set.
-    // *
-    // * @return a copy of the genome (may be <code>null</code>).
-    // */
-    // public Genome getGenome() {
-    // if (this.genome != null) {
-    // return new Genome(this);
-    // }
-    // return null;
-    // }
+
     @Override
     public String toString() {
         final StringBuilder result = new StringBuilder();
@@ -255,7 +205,7 @@ public class Genome extends ArrayList<IGene<?>> {
         result.append(".");
         result.append(getId());
         result.append(" (");
-        result.append(this.rating);
+        result.append(this.userRating);
         result.append(")");
         for (final IGene<?> gene : this) {
             result.append(" - ");
@@ -263,11 +213,12 @@ public class Genome extends ArrayList<IGene<?>> {
         }
         return result.toString();
     }
+
     /**
      * Mutate the genes of the individual. Every gene is asked to provide a
      * mutated version of itself.
      */
-    private Genome createMutation() {
+    private Genome newMutation() {
         final Genome newGenome = new Genome();
         for (final IGene<?> gene : this) {
             Assert.isNotNull(gene);
@@ -275,8 +226,39 @@ public class Genome extends ArrayList<IGene<?>> {
             Assert.isNotNull(newGene, "Invalid mutation of " + gene);
             newGenome.add(newGene);
         }
-        newGenome.setRating(this.rating);
+        newGenome.setUserRating(this.userRating);
         return newGenome;
     }
+
+    // return a recombination of the given genomes.
+    private static Genome newRecombination(final Genome... genomes) {
+        Genome result = new Genome();
+        if (genomes.length == 1) {
+            result = new Genome(genomes[0]);
+        } else {
+            final int size = genomes[0].size();
+            // iterate genes
+            for (int g = 0; g < size; g++) {
+                final LinkedList<IGene<?>> geneList = new LinkedList<IGene<?>>();
+                int gm = 0;
+                for (final Genome genome : genomes) {
+                    if (gm++ > 0) {
+                        Assert.isTrue(genome.size() == size);
+                        geneList.add(genome.get(g));
+                    }
+                }
+                final IGene[] otherGenes = geneList.toArray(new IGene[geneList.size()]);
+                final IGene<?> oldGene = genomes[0].get(g);
+                final IGene<?> newGene = oldGene.recombineWith(otherGenes);
+                result.add(newGene);
+            }
+        }
+        return result;
+    }
+
+    // private fields
+    private final int generation;
+    private int userRating;
+    private int automaticRating;
 
 }

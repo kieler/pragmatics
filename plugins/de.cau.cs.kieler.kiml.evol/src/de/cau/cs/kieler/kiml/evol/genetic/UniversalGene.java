@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ *
+ * Copyright 2010 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ *
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.kiml.evol.genetic;
 
 import java.util.Random;
@@ -53,16 +66,19 @@ public class UniversalGene extends AbstractGene<Float> {
         final IGene<Float> result = newMutation(getMutationInfo());
         return result;
     }
-    
+
     /**
      * Mutates the value. The mutation details are specified in
      * <code>theMutationInfo</code>.
-     * 
+     *
      * @return a new IGeneData with the mutated value.
      */
     private IGene<Float> newMutation(final MutationInfo theMutationInfo) {
-        if (this.getTypeInfo().getTypeClass() == Boolean.class) {
+        final Class<?> clazz = getTypeInfo().getTypeClass();
+        if (clazz == Boolean.class) {
             return new BooleanMutator().newMutation(this, theMutationInfo);
+        } else if (clazz == Float.class) {
+            return new FloatMutator().newMutation(this, theMutationInfo);
         }
         return null;
     }
@@ -124,6 +140,37 @@ public class UniversalGene extends AbstractGene<Float> {
     }
 
     /**
+     * A gene factory that creates float mutations.
+     *
+     * @author bdu
+     *
+     */
+    private class FloatMutator implements IMutator {
+        public IGene<Float> newMutation(
+                final IGene<Float> theTemplate, final MutationInfo theMutationInfo) {
+            Assert.isLegal(getMutationInfo() != null);
+            Assert.isNotNull(getTypeInfo());
+            final Random r = getRandomGenerator();
+            final double prob = getMutationInfo().getProbability();
+            final double var = getMutationInfo().getVariance();
+            final Distribution distr = getMutationInfo().getDistr();
+            Assert.isTrue(distr == Distribution.GAUSSIAN);
+            final TypeInfo<Float> typeInfo = getTypeInfo();
+            final float value = getValue();
+            float newValue = value;
+            if (Math.random() < prob) {
+                // produce a new value within the valid bounds.
+                do {
+                    final double gauss = r.nextGaussian() * Math.sqrt(var);
+                    // TODO: regard genuineMutationProbability
+                    newValue = (float) (value + gauss);
+                } while (!typeInfo.isValueWithinBounds(newValue));
+            }
+            return new FloatGene(getId(), newValue, getTypeInfo(), getMutationInfo());
+        }
+    }
+
+    /**
      *
      * @return an integer representation of the value.
      */
@@ -136,9 +183,10 @@ public class UniversalGene extends AbstractGene<Float> {
      * @return a boolean representation of the value.
      */
     public Boolean getBoolValue() {
-        final double epsilon = 1e-5;
         final double diff = 1.0 - Math.abs(getValue());
-        return ((Math.pow(diff, 2) < epsilon));
+        return ((Math.pow(diff, 2) < EPSILON));
     }
+
+    private static final double EPSILON = 1.0e-5;
 
 }

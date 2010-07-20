@@ -40,8 +40,8 @@ public class TypeInfo<T extends Comparable<? super T>> {
             final T theLowerBound,
             final T theUpperBound,
             final Class<?> theClass) {
-        // arguments must not be null
 
+        // arguments must not be null
         Assert.isLegal((theDefaultValue != null) && (theLowerBound != null)
                 && (theUpperBound != null));
 
@@ -58,11 +58,6 @@ public class TypeInfo<T extends Comparable<? super T>> {
         this.upperBound = theUpperBound;
         this.clazz = theClass;
     }
-
-    private final T defaultValue;
-    private final T lowerBound;
-    private final T upperBound;
-    private final Class<?> clazz; // not used
 
     // TODO: "degenericalize" this class and use clazz for casting the value
     /**
@@ -101,7 +96,17 @@ public class TypeInfo<T extends Comparable<? super T>> {
         return result;
     }
 
+    /**
+     *
+     * @return the class of the value.
+     */
     public Class<?> getTypeClass() {
-        return clazz;
+        return this.clazz;
     }
+
+    // private fields
+    private final T defaultValue;
+    private final T lowerBound;
+    private final T upperBound;
+    private final Class<?> clazz; // not used
 }

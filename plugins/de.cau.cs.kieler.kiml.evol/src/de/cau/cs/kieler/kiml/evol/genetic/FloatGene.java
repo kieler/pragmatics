@@ -2,12 +2,12 @@
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
+ *
  * Copyright 2010 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- * 
+ *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
@@ -20,13 +20,13 @@ import org.eclipse.core.runtime.Assert;
 
 /**
  * Implementation of IGene for Float values.
- * 
+ *
  * @author bdu
- * 
+ *
  */
 public class FloatGene extends AbstractGene<Float> {
     /**
-     * 
+     *
      * @param theId
      *            the id
      * @param theValue
@@ -44,10 +44,10 @@ public class FloatGene extends AbstractGene<Float> {
         this(theId, theValue, DEFAULT_TYPE_INFO, new MutationInfo(theMutationProbability,
                 theMutationVariance, Distribution.GAUSSIAN));
     }
-    
+
     /**
      * Create a new IGene that with a certain probability has a changed value.
-     * 
+     *
      * @return new IGene with possibly mutated value.
      */
     public IGene<Float> newMutation() {
@@ -58,7 +58,7 @@ public class FloatGene extends AbstractGene<Float> {
         final double var = getMutationInfo().getVariance();
         final Distribution distr = getMutationInfo().getDistr();
         Assert.isTrue(distr == Distribution.GAUSSIAN);
-        final TypeInfo<Float> typeInfo = getTypeInfo();        
+        final TypeInfo<Float> typeInfo = getTypeInfo();
         final float value = getValue();
         float newValue = value;
         if (Math.random() < prob) {
@@ -71,47 +71,47 @@ public class FloatGene extends AbstractGene<Float> {
         }
         return new FloatGene(getId(), newValue, getTypeInfo(), getMutationInfo());
     }
-    
+
     /**
      * Returns a copy of the given template instance.
-     * 
+     *
      * @param template
      *            an instance
      * @return copy of the template
      */
-    public IGene<Float> newInstance(final AbstractGene<Float> template) {        
+    public IGene<Float> newInstance(final AbstractGene<Float> template) {
         if (template instanceof FloatGene) {
             return new FloatGene(template.getId(), template.getValue(), template.getTypeInfo(),
-                    template.getMutationInfo());    
+                    template.getMutationInfo());
         }
         // incompatible template
         return null;
     }
-    
+
     @Override
     public IGene<Float> recombineWith(final IGene<Float>... genes) {
         // return average of genes and this gene
         Float sum = 0.0f;
-        for (IGene<Float> gene : genes) {
+        for (final IGene<Float> gene : genes) {
             sum += gene.getValue();
         }
         sum += getValue();
-        int count = genes.length + 1;
-        float value = sum / count;
+        final int count = genes.length + 1;
+        final float value = sum / count;
         // XXX must ensure that the value is not out of bounds
         Assert.isTrue(getTypeInfo().isValueWithinBounds(value));
-        IGene<Float> result = new FloatGene(getId(), value, getTypeInfo(), getMutationInfo());
+        final IGene<Float> result = new FloatGene(getId(), value, getTypeInfo(), getMutationInfo());
         return result;
     }
-    
+
     @Override
     public String toString() {
         return (Math.signum(getValue()) <= 0 ? "-" : "+") + getValue() + "f";
     }
-    
+
     /**
      * Constructor for a float gene.
-     * @param theId the id 
+     * @param theId the id
      * @param theValue the value
      * @param theTypeInfo the type info
      * @param theMutationInfo the mutation info
@@ -123,12 +123,16 @@ public class FloatGene extends AbstractGene<Float> {
             final MutationInfo theMutationInfo) {
         super(theId, theValue, theTypeInfo, theMutationInfo);
     }
-    
+
     /**
      * Default type info for a float gene.
      */
     private static final TypeInfo<Float> DEFAULT_TYPE_INFO = new TypeInfo<Float>(.0f,
             Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, Float.class);
-    
-    
+
+    /**
+     * Universal type info for a float gene.
+     */
+    public static final TypeInfo<Float> UNIVERSAL_TYPE_INFO = DEFAULT_TYPE_INFO;
+
 }

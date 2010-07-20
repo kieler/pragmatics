@@ -132,7 +132,7 @@ public class EvolView extends ViewPart {
                 return ((PopulationTableEntry) element).getId();
             case 1:
                 final Genome individual = ((PopulationTableEntry) element).getIndividual();
-                return (individual.size() + " genes, rating: " + individual.getRating());
+                return (individual.size() + " genes, rating: " + individual.getUserRating());
             default: // do nothing
                 return null;
             }
@@ -321,7 +321,7 @@ public class EvolView extends ViewPart {
                         adoptIndividual(ind);
                         // TODO: get a new manager for every iteration?
                         final int rating = EvolUtil.layoutAndMeasure(manager, editor);
-                        ind.setRating(rating);
+                        ind.setUserRating(rating);
                     }
                 }
             }
@@ -332,9 +332,9 @@ public class EvolView extends ViewPart {
                 case ALL:
                     return true;
                 case RATED:
-                    return (ind.hasRating());
+                    return (ind.hasUserRating());
                 case UNRATED:
-                    return (!ind.hasRating());
+                    return (!ind.hasUserRating());
                 default: // This case should never happen.
                     return false;
                 }
@@ -368,15 +368,15 @@ public class EvolView extends ViewPart {
         setInput(alg.getPopulation());
         final int firstUnrated = firstUnrated();
         if (firstUnrated > -1) {
-            position = firstUnrated;
+            this.position = firstUnrated;
         }
         final int lim = getPopulation().size();
-        if (position >= lim) {
-            position = lim - 1;
+        if (this.position >= lim) {
+            this.position = lim - 1;
         }
         autorateIndividuals(this.population, TargetIndividuals.UNRATED, null);
-        Assert.isTrue(position >= 0);
-        getTableViewer().selectRow(position);
+        Assert.isTrue(this.position >= 0);
+        getTableViewer().selectRow(this.position);
         getTableViewer().refresh();
         onSelectIndividual();
         // BasicNetwork b = new BasicNetwork();
@@ -450,7 +450,7 @@ public class EvolView extends ViewPart {
         int result = -1;
         for (int i = 0; i < pop.size(); i++) {
             final Genome ind = pop.get(i);
-            if (!ind.hasRating()) {
+            if (!ind.hasUserRating()) {
                 result = i;
                 break;
             }
@@ -572,7 +572,7 @@ public class EvolView extends ViewPart {
         // layoutDiagram(false, false);
         // System.out.println("after layoutDiagram");
         final int rating = EvolUtil.layoutAndMeasure(manager, editor);
-        currentIndividual.setRating(rating);
+        // currentIndividual.setRating(rating);
 
         // apply the layout to the diagram
         // XXX it would be more straightforward to call manager.applyLayout()

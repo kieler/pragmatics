@@ -107,10 +107,10 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
                 + prob);
         final Population mutations = new Population();
         for (final Genome ind : population) {
-            final Genome mutation = ind.mutate(prob);
+            final Genome mutation = ind.newMutation(prob);
             if (mutation != null) {
                 // individual has mutated --> rating is outdated
-                mutation.fadeRating();
+                mutation.fadeUserRating();
                 mutations.add(mutation);
                 System.out.println("-- Mutation performed: " + ind);
             } else {

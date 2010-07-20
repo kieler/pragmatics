@@ -42,13 +42,14 @@ public class BendsMetric implements IAnalysis {
             final IKielerProgressMonitor progressMonitor) throws KielerException {
         progressMonitor.begin("Bend metric analysis", 1);
 
-        // load numbers from bend count analysis
+        // load numbers from analyses
         final Object edgesResult = results.get("de.cau.cs.kieler.kiml.grana.edgeCount");
         final Object bendsResult = results.get("de.cau.cs.kieler.kiml.grana.bendpointCount");
         final int edgesCount = (Integer) edgesResult;
         final int bendsCount = (Integer) bendsResult;
 
         // count the number of edges and bend points
+        // TODO: this is superfluous since the needed values are loaded.
         int m = 0;
         int bends = 0;
         for (final KNode node : parentNode.getChildren()) {

@@ -83,7 +83,7 @@ public class Population extends ArrayList<Genome> {
         }
         int ratingSum = 0;
         for (final Genome ind : this) {
-            ratingSum += ind.getRating();
+            ratingSum += ind.getUserRating();
         }
         return (double) (ratingSum / (double) this.size());
     }
