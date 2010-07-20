@@ -68,7 +68,7 @@
 				</transformation>
 				<transformation
           icon="icons/obj16/toggleHyper.gif"
-          keyboardShortcut="M1+R Z"
+          keyboardShortcut="M1+R QX"
           name="Toggle Node/Hypernode"
           transformation="toggleNodeHyper"
           transformationId="de.cau.cs.kieler.graphs.ksbase.toggleNodeHyper"
