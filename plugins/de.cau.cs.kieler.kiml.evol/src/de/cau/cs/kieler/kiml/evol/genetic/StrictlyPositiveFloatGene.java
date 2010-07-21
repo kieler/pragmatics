@@ -2,24 +2,24 @@
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
+ *
  * Copyright 2010 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- * 
+ *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
 package de.cau.cs.kieler.kiml.evol.genetic;
 
-
 /**
  * Implementation of a gene with strictly positive float values.
  * 
  * @author bdu
- * 
+ * @deprecated
  */
+@Deprecated
 public class StrictlyPositiveFloatGene extends FloatGene {
     @Override
     public IGene<Float> newMutation() {
@@ -32,7 +32,7 @@ public class StrictlyPositiveFloatGene extends FloatGene {
 
     @Override
     public IGene<Float> recombineWith(final IGene<Float>... otherGenes) {
-        for (IGene<Float> gene : otherGenes) {
+        for (final IGene<Float> gene : otherGenes) {
             if (!(gene instanceof StrictlyPositiveFloatGene)) {
                 // cannot recombine incompatible genes
                 return null;
@@ -57,7 +57,7 @@ public class StrictlyPositiveFloatGene extends FloatGene {
 
     /**
      * Constructor for a StrictlyPositiveFloatGene.
-     * 
+     *
      * @param theId
      *            the id
      * @param theValue
@@ -88,5 +88,5 @@ public class StrictlyPositiveFloatGene extends FloatGene {
      * Type info for a strictly positive float gene.
      */
     private static final TypeInfo<Float> TYPE_INFO = new TypeInfo<Float>(1.0f, Float.MIN_VALUE,
-            Float.MAX_VALUE, Float.class);
+            Float.MAX_VALUE, FloatGene.STRICTLY_POSITIVE_FLOAT_FORMATTER, Float.class);
 }

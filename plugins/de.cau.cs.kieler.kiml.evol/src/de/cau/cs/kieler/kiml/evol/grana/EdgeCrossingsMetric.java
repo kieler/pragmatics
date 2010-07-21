@@ -49,7 +49,7 @@ public class EdgeCrossingsMetric implements IAnalysis {
         for (final KNode node : parentNode.getChildren()) {
             final int degree = node.getOutgoingEdges().size() + node.getIncomingEdges().size();
             sum += degree * (degree - 1);
-            // FIXME: this only works for highest level?
+            // FIXME: this only works for highest level, not for hierarchies
             // TODO: consider bend points as pseudo nodes
         }
 

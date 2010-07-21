@@ -352,7 +352,8 @@ public final class EvolUtil {
                 final Object theId, final Object theValue, final TypeInfo<?> theTypeInfo,
                 final MutationInfo theMutationInfo) {
             // TODO: implement
-            return null;
+            final IGene<?> result = null;
+            return result;
         }
 
         /**
@@ -435,14 +436,18 @@ public final class EvolUtil {
                     // result =
                     // new StrictlyPositiveFloatGene(theId, floatValue,
                     // theMutationProbability, var);
+                    result =
+                            new UniversalGene(theId, floatValue,
+                                    FloatGene.STRICTLY_POSITIVE_TYPE_INFO, new MutationInfo(
+                                            theMutationProbability, distr));
                 } else {
                     // we use a general float gene
                     // result = new FloatGene(theId, floatValue,
                     // theMutationProbability, var);
-                }
-                result =
+                    result =
                         new UniversalGene(theId, floatValue, FloatGene.UNIVERSAL_TYPE_INFO,
                                 new MutationInfo(theMutationProbability, distr));
+                }
                 System.out.println(result);
             }
                 break;

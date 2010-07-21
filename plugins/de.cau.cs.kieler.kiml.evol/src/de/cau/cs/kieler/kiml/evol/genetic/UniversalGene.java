@@ -25,7 +25,11 @@ import org.eclipse.core.runtime.Assert;
 public class UniversalGene extends AbstractGene<Float> {
     @Override
     public String toString() {
-        return this.getId() + ": " + this.getValue();
+        String result = getTypeInfo().getValueFormatter().getString(this);
+        if (result == null) {
+            result = this.getId() + ": " + this.getValue();
+        }
+        return result;
     }
 
     /**

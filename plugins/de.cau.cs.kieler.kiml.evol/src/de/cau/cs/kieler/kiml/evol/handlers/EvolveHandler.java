@@ -75,21 +75,22 @@ public class EvolveHandler extends AbstractHandler {
                         view.autorateIndividuals(view.getPopulation(), TargetIndividuals.ALL, null);
                     }
                     steps++;
-                }
-                Assert.isNotNull(view.getPopulation());
-                final Double after = view.getPopulation().getAverageRating();
-                final Double relDiff = (after - before) / after;
-                System.out.println("Average rating now: " + after);
-                System.out.println("rel. Diff (%): " + relDiff * 100);
-                if (relDiff < MIN_INCREASE) {
-                    steady++;
-                    System.out.println("Steady: " + steady);
-                } else {
-                    if (steady > 0) {
-                        steady--;
+                    Assert.isNotNull(view.getPopulation());
+                    final Double after = view.getPopulation().getAverageRating();
+                    final Double relDiff = (after - before) / after;
+                    System.out.println("Average rating now: " + after);
+                    System.out.println("rel. Diff (%): " + relDiff * 100);
+                    if (relDiff < MIN_INCREASE) {
+                        steady++;
+                        System.out.println("Steady: " + steady);
+                    } else {
+                        if (steady > 0) {
+                            steady--;
+                        }
+                        System.out.println(relDiff);
                     }
-                    System.out.println(relDiff);
                 }
+
             } while ((steady < STEADY_STEPS) && (steps < MAX_STEPS));
         }
         return null;

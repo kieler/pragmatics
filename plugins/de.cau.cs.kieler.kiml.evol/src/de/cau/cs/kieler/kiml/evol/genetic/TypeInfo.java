@@ -39,11 +39,12 @@ public class TypeInfo<T extends Comparable<? super T>> {
             final T theDefaultValue,
             final T theLowerBound,
             final T theUpperBound,
+            final IValueFormatter theFormatter,
             final Class<?> theClass) {
 
         // arguments must not be null
         Assert.isLegal((theDefaultValue != null) && (theLowerBound != null)
-                && (theUpperBound != null));
+                && (theUpperBound != null) && (theFormatter != null));
 
         Assert.isLegal(theLowerBound.compareTo(theUpperBound) <= 0, "lower bound > upper bound");
 
@@ -56,6 +57,7 @@ public class TypeInfo<T extends Comparable<? super T>> {
         this.defaultValue = theDefaultValue;
         this.lowerBound = theLowerBound;
         this.upperBound = theUpperBound;
+        this.valueFormatter = theFormatter;
         this.clazz = theClass;
     }
 
@@ -104,9 +106,14 @@ public class TypeInfo<T extends Comparable<? super T>> {
         return this.clazz;
     }
 
+    public IValueFormatter getValueFormatter() {
+        return this.valueFormatter;
+    }
+
     // private fields
     private final T defaultValue;
     private final T lowerBound;
     private final T upperBound;
-    private final Class<?> clazz; // not used
+    private final IValueFormatter valueFormatter;
+    private final Class<?> clazz;
 }

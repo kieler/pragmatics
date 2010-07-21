@@ -56,6 +56,7 @@ public final class EnumGene extends IntegerGene {
             final Class<? extends Enum<?>> theEnumClass,
             final double theMutationProbability) {
         super(theId, theValue, new TypeInfo<Integer>(0, 0, choicesCount(theEnumClass) - 1,
+ null,
                 Integer.class),
         // TODO: use enum class?
                 new MutationInfo(theMutationProbability, Distribution.UNIFORM));

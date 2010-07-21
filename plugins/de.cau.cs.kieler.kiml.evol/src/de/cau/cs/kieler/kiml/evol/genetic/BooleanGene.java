@@ -150,9 +150,20 @@ public final class BooleanGene extends AbstractGene<Boolean> {
 
     static final double PROBABILITY_FOR_TRUE = 0.5;
     private static final double PROBABILITY_FOR_GENUINE_MUTATION = 0.0;
+
+    private static final IValueFormatter BOOLEAN_FORMATTER = new IValueFormatter() {
+        public String getString(final Object o) {
+            if (o instanceof Boolean) {
+                return o.toString();
+            } else if (o instanceof UniversalGene) {
+                return ((UniversalGene) o).getBoolValue().toString();
+            }
+            return null;
+        }
+    };
     private static final TypeInfo<Boolean> DEFAULT_TYPE_INFO = new TypeInfo<Boolean>(Boolean.FALSE,
-            Boolean.FALSE, Boolean.TRUE, Boolean.class);
+            Boolean.FALSE, Boolean.TRUE, BOOLEAN_FORMATTER, Boolean.class);
 
     public static final TypeInfo<Float> UNIVERSAL_TYPE_INFO = new TypeInfo<Float>(0.0f, 0.0f, 1.0f,
-            Boolean.class);
+            BOOLEAN_FORMATTER, Boolean.class);
 }

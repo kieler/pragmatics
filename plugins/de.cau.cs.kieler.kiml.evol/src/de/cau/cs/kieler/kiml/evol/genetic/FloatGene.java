@@ -17,10 +17,9 @@ import java.util.Random;
 
 import org.eclipse.core.runtime.Assert;
 
-
 /**
  * Implementation of IGene for Float values.
- *
+ * 
  * @author bdu
  *
  */
@@ -106,7 +105,8 @@ public class FloatGene extends AbstractGene<Float> {
 
     @Override
     public String toString() {
-        return (Math.signum(getValue()) <= 0 ? "-" : "+") + getValue() + "f";
+        // return (Math.signum(getValue()) <= 0 ? "-" : "+") + getValue() + "f";
+        return getTypeInfo().getValueFormatter().getString(getValue());
     }
 
     /**
@@ -124,15 +124,41 @@ public class FloatGene extends AbstractGene<Float> {
         super(theId, theValue, theTypeInfo, theMutationInfo);
     }
 
-    /**
-     * Default type info for a float gene.
-     */
-    private static final TypeInfo<Float> DEFAULT_TYPE_INFO = new TypeInfo<Float>(.0f,
-            Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, Float.class);
+    public static final IValueFormatter FLOAT_FORMATTER = new IValueFormatter() {
+        public String getString(final Object o) {
+            if (o instanceof Float) {
+                return (Math.signum((Float) o) <= 0 ? "-" : "+") + o + "f";
+            }
+            return null;
+        }
+    };
 
+    public static final IValueFormatter STRICTLY_POSITIVE_FLOAT_FORMATTER = new IValueFormatter() {
+        public String getString(final Object o) {
+            if (o instanceof Float) {
+                return o + "f";
+            } else if (o instanceof UniversalGene) {
+                return ((UniversalGene) o).getValue() + "f";
+            }
+            return null;
+        }
+    };
     /**
      * Universal type info for a float gene.
      */
-    public static final TypeInfo<Float> UNIVERSAL_TYPE_INFO = DEFAULT_TYPE_INFO;
+    public static final TypeInfo<Float> UNIVERSAL_TYPE_INFO = new TypeInfo<Float>(.0f,
+            Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, FLOAT_FORMATTER, Float.class);
+
+    /**
+     * Universal type info for a strictly positive float gene.
+     */
+    public static final TypeInfo<Float> STRICTLY_POSITIVE_TYPE_INFO = new TypeInfo<Float>(1.0f,
+            Float.MIN_VALUE,
+ Float.POSITIVE_INFINITY, STRICTLY_POSITIVE_FLOAT_FORMATTER, Float.class);
+
+    /**
+     * Default type info for a float gene.
+     */
+    private static final TypeInfo<Float> DEFAULT_TYPE_INFO = UNIVERSAL_TYPE_INFO;
 
 }
