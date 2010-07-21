@@ -18,6 +18,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
+import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
 
 /**
  * Preference initializer for the KIML plugins.
@@ -35,6 +36,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
         
         preferenceStore.setDefault(EclipseLayoutServices.PREF_OBLIQUE_ROUTE, true);
+        preferenceStore.setDefault(LayoutViewPart.PREF_CATEGORIES, true);
     }
 
 }

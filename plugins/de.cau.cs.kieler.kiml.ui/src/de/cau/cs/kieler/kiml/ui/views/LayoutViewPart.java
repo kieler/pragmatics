@@ -23,6 +23,7 @@ import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -37,6 +38,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPage;
@@ -56,6 +58,7 @@ import de.cau.cs.kieler.kiml.LayoutProviderData;
 import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.IEditorChangeListener;
+import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
@@ -72,6 +75,8 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
 
     /** the view identifier. */
     public static final String VIEW_ID = "de.cau.cs.kieler.kiml.views.layout";
+    /** preference identifier for enabling categories. */
+    public static final String PREF_CATEGORIES = "view.categories";
     
     /** the form container for the property sheet page. */
     private ScrolledForm form;
@@ -149,9 +154,17 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
                 return null;
             }
         });
-        page.setActionBars(getViewSite().getActionBars());
+        IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
+        IActionBars actionBars = getViewSite().getActionBars();
+        page.setActionBars(actionBars);
+        ActionContributionItem categoriesItem = (ActionContributionItem) actionBars
+                .getToolBarManager().find("categories");
+        if (categoriesItem != null) {
+            categoriesItem.getAction().setChecked(preferenceStore.getBoolean(PREF_CATEGORIES));
+            categoriesItem.getAction().run();
+        }
         addPopupActions(page.getControl().getMenu());
-        IMenuManager menuManager = getViewSite().getActionBars().getMenuManager();
+        IMenuManager menuManager = actionBars.getMenuManager();
         menuManager.add(new RemoveOptionsAction(this, Messages.getString("kiml.ui.30")));
         
         IWorkbenchWindow workbenchWindow = getSite().getWorkbenchWindow();
@@ -203,6 +216,14 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
      */
     @Override
     public void dispose() {
+        // store the current status of the categories button
+        ActionContributionItem categoriesItem = (ActionContributionItem) getViewSite()
+                .getActionBars().getToolBarManager().find("categories");
+        if (categoriesItem != null) {
+            KimlUiPlugin.getDefault().getPreferenceStore().setValue(PREF_CATEGORIES,
+                    categoriesItem.getAction().isChecked());
+        }
+        // dispose the view part
         super.dispose();
         getSite().getWorkbenchWindow().getPartService().removePartListener(partListener);
         if (currentManager != null) {
