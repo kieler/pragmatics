@@ -35,10 +35,10 @@ public abstract class AbstractLayoutProvider {
      * Initialize the layout provider with the given parameter. The default
      * implementation does nothing.
      * 
-     * @param parameter a string used to parameterize the layout provider
-     *            instance
+     * @param parameter a string used to parameterize the layout provider instance
+     * @throws KielerException if the provider has received a wrong parameter
      */
-    public void initialize(final String parameter) {
+    public void initialize(final String parameter) throws KielerException {
     }
 
     /**

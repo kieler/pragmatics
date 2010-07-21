@@ -196,9 +196,11 @@ public class GmfLayoutInspector implements ILayoutInspector {
                 if (!onlyDefault || option.isDefault()) {
                     LayoutOptionData optionData = layoutServices.getLayoutOptionData(
                             option.getKey());
-                    Object value = KimlLayoutUtil.getValue(option, optionData);
-                    if (value != null) {
-                        options.put(option.getKey(), value);
+                    if (optionData != null) {
+                        Object value = KimlLayoutUtil.getValue(option, optionData);
+                        if (value != null) {
+                            options.put(option.getKey(), value);
+                        }
                     }
                 }
             }
@@ -395,7 +397,9 @@ public class GmfLayoutInspector implements ILayoutInspector {
                 }
                 LayoutOptionData optionData = LayoutServices.getInstance()
                         .getLayoutOptionData(koption.getKey());
-                koptionMap.put(optionData, koption);
+                if (optionData != null) {
+                    koptionMap.put(optionData, koption);
+                }
             }
         }
         if (partLayoutHint == null) {

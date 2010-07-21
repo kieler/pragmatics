@@ -55,16 +55,23 @@ public class OgdfLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void initialize(final String parameter) {
-        switch (LayoutAlgorithm.valueOf(parameter)) {
-        case SUGIYAMA:
-            layoutAlgorithm = new SugiyamaLayouter();
-            break;
-        case UMLPLANARIZATION:
-            layoutAlgorithm = new PlanarizationLayouter();
-            break;
-        default:
-            layoutAlgorithm = null;
+    public void initialize(final String parameter) throws KielerException {
+        if (parameter == null) {
+            throw new KielerException("Could not initialize OGDF layouter.");
+        }
+        try {
+            switch (LayoutAlgorithm.valueOf(parameter)) {
+            case SUGIYAMA:
+                layoutAlgorithm = new SugiyamaLayouter();
+                break;
+            case UMLPLANARIZATION:
+                layoutAlgorithm = new PlanarizationLayouter();
+                break;
+            default:
+                layoutAlgorithm = null;
+            }
+        } catch (IllegalArgumentException exception) {
+            throw new KielerException("Could not initialize OGDF layouter.", exception);
         }
     }
 

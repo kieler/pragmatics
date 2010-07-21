@@ -32,6 +32,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.ILayoutListener;
@@ -556,39 +557,47 @@ public class EclipseLayoutServices extends LayoutServices {
                         if (providerData.getName() == null || providerData.getName().length() == 0) {
                             providerData.setName(DEFAULT_PROVIDER_NAME);
                         }
-                        layoutProvider.initialize(element.getAttribute(ATTRIBUTE_PARAMETER));
-                        providerData.setType(element.getAttribute(ATTRIBUTE_TYPE));
-                        if (providerData.getType() == null) {
-                            providerData.setType("");
-                        }
-                        providerData.setCategory(element.getAttribute(ATTRIBUTE_CATEGORY));
-                        if (providerData.getCategory() == null) {
-                            providerData.setCategory("");
-                        }
-                        for (IConfigurationElement child : element.getChildren()) {
-                            if (ELEMENT_KNOWN_OPTION.equals(child.getName())) {
-                                String option = child.getAttribute(ATTRIBUTE_OPTION);
-                                if (option != null && option.length() > 0) {
-                                    providerData.setOption(option, true);
-                                } else {
-                                    reportError(EXTP_ID_LAYOUT_PROVIDERS, child, ATTRIBUTE_OPTION, null);
-                                }
-                            } else if (ELEMENT_SUPPORTED_DIAGRAM.equals(child.getName())) {
-                                String type = child.getAttribute(ATTRIBUTE_TYPE);
-                                if (type == null || type.length() == 0) {
-                                    reportError(EXTP_ID_LAYOUT_PROVIDERS, child, ATTRIBUTE_TYPE, null);
-                                } else {
-                                    String priority = child.getAttribute(ATTRIBUTE_PRIORITY);
-                                    try {
-                                        providerData.setDiagramSupport(type, Integer.parseInt(priority));
-                                    } catch (NumberFormatException exception) {
-                                        reportError(EXTP_ID_LAYOUT_PROVIDERS, child, ATTRIBUTE_PRIORITY,
-                                                exception);
+                        try {
+                            layoutProvider.initialize(element.getAttribute(ATTRIBUTE_PARAMETER));
+                            providerData.setType(element.getAttribute(ATTRIBUTE_TYPE));
+                            if (providerData.getType() == null) {
+                                providerData.setType("");
+                            }
+                            providerData.setCategory(element.getAttribute(ATTRIBUTE_CATEGORY));
+                            if (providerData.getCategory() == null) {
+                                providerData.setCategory("");
+                            }
+                            for (IConfigurationElement child : element.getChildren()) {
+                                if (ELEMENT_KNOWN_OPTION.equals(child.getName())) {
+                                    String option = child.getAttribute(ATTRIBUTE_OPTION);
+                                    if (option != null && option.length() > 0) {
+                                        providerData.setOption(option, true);
+                                    } else {
+                                        reportError(EXTP_ID_LAYOUT_PROVIDERS, child,
+                                                ATTRIBUTE_OPTION, null);
+                                    }
+                                } else if (ELEMENT_SUPPORTED_DIAGRAM.equals(child.getName())) {
+                                    String type = child.getAttribute(ATTRIBUTE_TYPE);
+                                    if (type == null || type.length() == 0) {
+                                        reportError(EXTP_ID_LAYOUT_PROVIDERS, child,
+                                                ATTRIBUTE_TYPE, null);
+                                    } else {
+                                        String priority = child.getAttribute(ATTRIBUTE_PRIORITY);
+                                        try {
+                                            providerData.setDiagramSupport(type,
+                                                    Integer.parseInt(priority));
+                                        } catch (NumberFormatException exception) {
+                                            reportError(EXTP_ID_LAYOUT_PROVIDERS, child,
+                                                    ATTRIBUTE_PRIORITY, exception);
+                                        }
                                     }
                                 }
                             }
+                            registry().addLayoutProvider(providerData);
+                        } catch (KielerException exception) {
+                            reportError(EXTP_ID_LAYOUT_PROVIDERS, element,
+                                    ATTRIBUTE_PARAMETER, exception);
                         }
-                        registry().addLayoutProvider(providerData);
                     }
                 } catch (CoreException exception) {
                     StatusManager.getManager().handle(exception, KimlUiPlugin.PLUGIN_ID);
