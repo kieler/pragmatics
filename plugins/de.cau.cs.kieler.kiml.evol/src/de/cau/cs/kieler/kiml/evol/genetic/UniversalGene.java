@@ -23,6 +23,55 @@ import org.eclipse.core.runtime.Assert;
  *
  */
 public class UniversalGene extends AbstractGene<Float> {
+    public static final IValueFormatter BOOLEAN_FORMATTER = new IValueFormatter() {
+        public String getString(final Object o) {
+            if (o instanceof Boolean) {
+                return o.toString();
+            } else if (o instanceof UniversalGene) {
+                return ((UniversalGene) o).getBoolValue().toString();
+            }
+            return null;
+        }
+    };
+    public static final IValueFormatter STRICTLY_POSITIVE_FLOAT_FORMATTER = new IValueFormatter() {
+        public String getString(final Object o) {
+            if (o instanceof Float) {
+                return o + "f";
+            } else if (o instanceof UniversalGene) {
+                return ((UniversalGene) o).getValue() + "f";
+            }
+            return null;
+        }
+    };
+    public static final IValueFormatter FLOAT_FORMATTER = new IValueFormatter() {
+        public String getString(final Object o) {
+            if (o instanceof Float) {
+                return (Math.signum((Float) o) <= 0 ? "-" : "+") + o + "f";
+            }
+            return null;
+        }
+    };
+
+    /**
+     * Type info for a boolean gene.
+     */
+    public static final TypeInfo<Float> BOOLEAN_TYPE_INFO = new TypeInfo<Float>(0.0f, 0.0f, 1.0f,
+            BOOLEAN_FORMATTER, Boolean.class);
+
+    /**
+     * Universal type info for a strictly positive float gene.
+     */
+    public static final TypeInfo<Float> STRICTLY_POSITIVE_FLOAT_TYPE_INFO = new TypeInfo<Float>(
+            1.0f,
+            Float.MIN_VALUE, Float.POSITIVE_INFINITY, STRICTLY_POSITIVE_FLOAT_FORMATTER,
+            Float.class);
+
+    /**
+     * Universal type info for a float gene.
+     */
+    public static final TypeInfo<Float> FLOAT_TYPE_INFO = new TypeInfo<Float>(.0f,
+            Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, FLOAT_FORMATTER, Float.class);
+
     @Override
     public String toString() {
         String result = getTypeInfo().getValueFormatter().getString(this);

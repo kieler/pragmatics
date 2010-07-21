@@ -34,8 +34,9 @@ public final class EnumGene extends IntegerGene {
     @Override
     public IGene<Integer> newMutation() {
         final IGene<Integer> template = super.newMutation();
-        final IGene<Integer> result = new EnumGene(template.getId(), template.getValue(), this.enumClass,
-                getMutationInfo().getProbability());
+        final IGene<Integer> result =
+                new EnumGene(template.getId(), template.getValue(), this.enumClass,
+                        getMutationInfo().getProbability());
         return result;
     }
 
@@ -56,7 +57,7 @@ public final class EnumGene extends IntegerGene {
             final Class<? extends Enum<?>> theEnumClass,
             final double theMutationProbability) {
         super(theId, theValue, new TypeInfo<Integer>(0, 0, choicesCount(theEnumClass) - 1,
- null,
+                ENUM_FORMATTER,
                 Integer.class),
         // TODO: use enum class?
                 new MutationInfo(theMutationProbability, Distribution.UNIFORM));
@@ -102,5 +103,26 @@ public final class EnumGene extends IntegerGene {
 
     // private fields
     private Class<? extends Enum<?>> enumClass;
+
+    private static final IValueFormatter ENUM_FORMATTER = new IValueFormatter() {
+        public String getString(final Object o) {
+            if (o instanceof EnumGene) {
+                Assert.isNotNull(((EnumGene) o).enumClass);
+                final Enum<?>[] constants = ((EnumGene) o).enumClass.getEnumConstants();
+                if (constants == null) {
+                    return "";
+                }
+                final int value = ((EnumGene) o).getValue();
+                Assert.isTrue((value >= 0) && (value < constants.length));
+                final String result = constants[value].toString();
+                return result;
+            } else if (o instanceof UniversalGene) {
+                // TODO: get enum string
+                final Integer intValue = ((UniversalGene) o).getIntValue();
+                return intValue.toString();
+            }
+            return null;
+        }
+    };
 }
 

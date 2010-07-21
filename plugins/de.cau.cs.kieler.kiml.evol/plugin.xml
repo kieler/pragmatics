@@ -243,6 +243,16 @@
             description="proceeds to the next generation"
             id="de.cau.cs.kieler.kiml.evol.evolve"
             name="Evolve">
+         <commandParameter
+               id="de.cau.cs.kieler.kiml.evol.steps"
+               name="Steps"
+               optional="true">
+         </commandParameter>
+         <commandParameter
+               id="de.cau.cs.kieler.kiml.evol.stepsBeforeAutoRating"
+               name="Steps before Auto-rating"
+               optional="true">
+         </commandParameter>
       </command>
       <command
             defaultHandler="de.cau.cs.kieler.kiml.evol.handlers.ResetHandler"
@@ -269,9 +279,28 @@
          <command
                commandId="de.cau.cs.kieler.kiml.evol.evolve"
                icon="icons/evolve.png"
-               label="Evolve"
+               label="Evolve 1"
                style="push"
                tooltip="Proceed to the next generation">
+            <parameter
+                  name="de.cau.cs.kieler.kiml.evol.steps"
+                  value="1">
+            </parameter>
+         </command>
+         <command
+               commandId="de.cau.cs.kieler.kiml.evol.evolve"
+               icon="icons/evolve.png"
+               label="Evolve"
+               style="push"
+               tooltip="Proceed to the next generation repeatedly">
+            <parameter
+                  name="de.cau.cs.kieler.kiml.evol.steps"
+                  value="12">
+            </parameter>
+            <parameter
+                  name="de.cau.cs.kieler.kiml.evol.stepsBeforeAutoRating"
+                  value="1">
+            </parameter>
          </command>
          <command
                commandId="de.cau.cs.kieler.kiml.evol.changeRating"

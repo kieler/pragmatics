@@ -37,13 +37,12 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
 import de.cau.cs.kieler.kiml.LayoutServices;
-import de.cau.cs.kieler.kiml.evol.genetic.BooleanGene;
 import de.cau.cs.kieler.kiml.evol.genetic.Distribution;
 import de.cau.cs.kieler.kiml.evol.genetic.EnumGene;
-import de.cau.cs.kieler.kiml.evol.genetic.FloatGene;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.IGene;
 import de.cau.cs.kieler.kiml.evol.genetic.IGeneFactory;
+import de.cau.cs.kieler.kiml.evol.genetic.IValueFormatter;
 import de.cau.cs.kieler.kiml.evol.genetic.IntegerGene;
 import de.cau.cs.kieler.kiml.evol.genetic.MutationInfo;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
@@ -125,6 +124,7 @@ public final class EvolUtil {
             rating = measureDiagram(false, layoutGraphAfterLayout, coeffsMap);
         } else {
             // TODO: what to do about the layouting failure? Log it? Abort?
+            System.out.println(status.getMessage());
             rating = 0;
         }
         return rating;
@@ -352,7 +352,9 @@ public final class EvolUtil {
                 final Object theId, final Object theValue, final TypeInfo<?> theTypeInfo,
                 final MutationInfo theMutationInfo) {
             // TODO: implement
-            final IGene<?> result = null;
+            final IGene<?> result =
+                    new UniversalGene(theId, (Float) theValue, (TypeInfo<Float>) theTypeInfo,
+                            theMutationInfo);
             return result;
         }
 
@@ -378,22 +380,23 @@ public final class EvolUtil {
             final String lowerBoundAttr = evolutionData.getAttribute("lowerBound");
             final String upperBoundAttr = evolutionData.getAttribute("upperBound");
             final String distrName = evolutionData.getAttribute("distribution");
-            final String variance = evolutionData.getAttribute("variance");
+            final String varianceAttr = evolutionData.getAttribute("variance");
             final Distribution distr = Distribution.valueOf(distrName);
-            final Type type = layoutOptionData.getType();
+            final Type layoutOptionDataType = layoutOptionData.getType();
 
-            switch (type) {
+            switch (layoutOptionDataType) {
             case BOOLEAN: {
                 final boolean booleanValue = (Integer.parseInt(theValue.toString()) == 1);
                 // result = new BooleanGene(theId, booleanValue,
                 // theMutationProbability);
                 final Float floatValue = (booleanValue ? 1.0f : 0.0f);
                 result =
-                        new UniversalGene(theId, floatValue, BooleanGene.UNIVERSAL_TYPE_INFO,
+                        new UniversalGene(theId, floatValue, UniversalGene.BOOLEAN_TYPE_INFO,
                                 new MutationInfo(theMutationProbability, distr));
                 System.out.println(result);
-            }
                 break;
+            }
+
             case ENUM: {
                 final int choicesCount = layoutOptionData.getChoices().length;
                 final Class<? extends Enum<?>> enumClass =
@@ -404,51 +407,60 @@ public final class EvolUtil {
                 result = new EnumGene(theId, intValue, enumClass, theMutationProbability);
                 System.out.println("Enum " + enumClass.getSimpleName() + "(" + choicesCount + "): "
                         + intValue);
-            }
                 break;
+            }
             case INT: {
                 final int intValue = Integer.parseInt((String) theValue);
                 final double var = MutationInfo.DEFAULT_VARIANCE;
                 result = new IntegerGene(theId, intValue, theMutationProbability, var);
-                System.out.println(result);
-            }
+                System.out.println(theId + ": " + result);
                 break;
+            }
             case FLOAT: {
                 final float floatValue = (Float.parseFloat((String) theValue));
-                final float lowerBound = (Float.parseFloat(lowerBoundAttr + ""));
+                final float lowerBound =
+                        (lowerBoundAttr == null ? Float.NEGATIVE_INFINITY : (Float
+                                .parseFloat(lowerBoundAttr)));
                 final float upperBound =
                         ((upperBoundAttr == null) ? Float.POSITIVE_INFINITY : (Float
-                                .parseFloat(upperBoundAttr + "")));
+                                .parseFloat(upperBoundAttr)));
 
-                // threshold to prevent very small variances
-                final float verySmall = 1e-3f;
 
-                // the absolute value is scaled by this factor to get the
-                // variance
-                final double scalingFactor = .20;
+                final double var;
+                if (varianceAttr == null) {
+                    // threshold to prevent very small variances
+                    final float verySmall = 1e-3f;
 
-                // estimate desired variance from the absolute value
-                final double var =
-                        ((Math.abs(floatValue) < verySmall) ? MutationInfo.DEFAULT_VARIANCE : Math
-                                .abs(floatValue) * scalingFactor);
+                    // the absolute value is scaled by this factor
+                    // to get the default variance
+                    final double scalingFactor = .20;
+                    // estimate desired variance from the absolute value
+                    var =
+                            ((Math.abs(floatValue) < verySmall) ? MutationInfo.DEFAULT_VARIANCE
+                                    : scalingFactor * Math.abs(floatValue));
+
+                } else {
+                    var = Double.parseDouble(varianceAttr);
+                }
+
+                final TypeInfo<Float> typeInfo;
+                final IValueFormatter formatter;
                 if (lowerBound >= 0.0f) {
-                    // we presume we need a strictly positive float gene
-                    // result =
-                    // new StrictlyPositiveFloatGene(theId, floatValue,
-                    // theMutationProbability, var);
-                    result =
-                            new UniversalGene(theId, floatValue,
-                                    FloatGene.STRICTLY_POSITIVE_TYPE_INFO, new MutationInfo(
-                                            theMutationProbability, distr));
+                    // we need a strictly positive float gene
+                    formatter = UniversalGene.STRICTLY_POSITIVE_FLOAT_FORMATTER;
+
                 } else {
                     // we use a general float gene
-                    // result = new FloatGene(theId, floatValue,
-                    // theMutationProbability, var);
-                    result =
-                        new UniversalGene(theId, floatValue, FloatGene.UNIVERSAL_TYPE_INFO,
-                                new MutationInfo(theMutationProbability, distr));
+                    formatter = UniversalGene.FLOAT_FORMATTER;
                 }
-                System.out.println(result);
+
+                typeInfo =
+                        new TypeInfo<Float>(floatValue, lowerBound, upperBound, formatter,
+                                Float.class);
+                result =
+                        new UniversalGene(theId, floatValue, typeInfo, new MutationInfo(
+                                theMutationProbability, var, distr));
+                System.out.println(theId + ": " + result);
             }
                 break;
             default:

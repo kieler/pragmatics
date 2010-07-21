@@ -37,7 +37,7 @@ public class EvolveHandler extends AbstractHandler {
     /**
      * Auto-rate all individuals after how many steps?
      */
-    private static final int STEPS_PER_AUTO_RATING = 1;
+    private static final int STEPS_PER_AUTO_RATING = 5;
     /**
      * Percentual increase still considered as non-steady.
      */
@@ -51,7 +51,7 @@ public class EvolveHandler extends AbstractHandler {
      * Total maximum steps. Execution is stopped in any case after this number
      * of steps.
      */
-    private static final int MAX_STEPS = 10;
+    private static final int MAX_STEPS = 20;
 
     /**
      * {@inheritDoc}
@@ -62,15 +62,25 @@ public class EvolveHandler extends AbstractHandler {
                         .findView(EvolView.ID);
 
         if ((view != null) && (view.getPopulation() != null)) {
+            final String maxStepsAttr = event.getParameter("de.cau.cs.kieler.kiml.evol.steps");
+            final int maxSteps =
+                    (maxStepsAttr == null ? MAX_STEPS : Integer.parseInt(maxStepsAttr));
+
+            final String stepsBeforeAutoRatingAttr =
+                    event.getParameter("de.cau.cs.kieler.kiml.evol.stepsBeforeAutoRating");
+
+            final int stepsBeforeAutoRating =
+                    (stepsBeforeAutoRatingAttr == null ? STEPS_PER_AUTO_RATING : Integer
+                            .parseInt(stepsBeforeAutoRatingAttr));
             int steady = 0;
             int steps = 0;
             do {
                 final Double before = view.getPopulation().getAverageRating();
                 System.out.println("Average rating before: " + before);
-                for (int i = 0; i < NUMBER_OF_STEPS; i++) {
+                for (int i = 0; (i < NUMBER_OF_STEPS) && (steps < maxSteps); i++) {
                     view.evolve();
                     final boolean wantAutoRating;
-                    wantAutoRating = wantAutoRatingForStep(i, STEPS_PER_AUTO_RATING);
+                    wantAutoRating = wantAutoRatingForStep(i, stepsBeforeAutoRating);
                     if (wantAutoRating) {
                         view.autorateIndividuals(view.getPopulation(), TargetIndividuals.ALL, null);
                     }
@@ -91,7 +101,7 @@ public class EvolveHandler extends AbstractHandler {
                     }
                 }
 
-            } while ((steady < STEADY_STEPS) && (steps < MAX_STEPS));
+            } while ((steady < STEADY_STEPS) && (steps < maxSteps));
         }
         return null;
     }

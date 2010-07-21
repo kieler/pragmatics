@@ -17,13 +17,13 @@ import java.util.Random;
 
 import org.eclipse.core.runtime.Assert;
 
-
 /**
  * Implementation of IGene for Boolean values.
  *
  * @author bdu
- *
+ * @deprecated
  */
+@Deprecated
 public final class BooleanGene extends AbstractGene<Boolean> {
     /**
      * Returns a copy of the given template instance.
@@ -80,8 +80,7 @@ public final class BooleanGene extends AbstractGene<Boolean> {
 
     /**
      * Mutates the boolean value. The mutation details are specified in
-     * <code>theMutationInfo</code>. The parameter
-     * <code>probGenuineMutation</code>
+     * <code>theMutationInfo</code>.
      *
      * @param prob
      *            Probability that a mutation occurs.
@@ -131,23 +130,6 @@ public final class BooleanGene extends AbstractGene<Boolean> {
         super(theId, theValue, theTypeInfo, theMutationInfo);
     }
 
-
-    // /**
-    // * Constructor for an instance of BooleanGene with default type info and
-    // * default mutation parameters.
-    // *
-    // * @param theId
-    // * the id
-    // * @param theValue
-    // * the value
-    // */
-    // private BooleanGene(final Object theId, final boolean theValue) {
-    // this(theId, theValue, DEFAULT_TYPE_INFO, new
-    // MutationInfo(MutationInfo.DEFAULT_PROBABILITY,
-    // MutationInfo.DEFAULT_VARIANCE, PROBABILITY_FOR_GENUINE_MUTATION,
-    // Distribution.UNIFORM));
-    // }
-
     static final double PROBABILITY_FOR_TRUE = 0.5;
     private static final double PROBABILITY_FOR_GENUINE_MUTATION = 0.0;
 
@@ -164,6 +146,4 @@ public final class BooleanGene extends AbstractGene<Boolean> {
     private static final TypeInfo<Boolean> DEFAULT_TYPE_INFO = new TypeInfo<Boolean>(Boolean.FALSE,
             Boolean.FALSE, Boolean.TRUE, BOOLEAN_FORMATTER, Boolean.class);
 
-    public static final TypeInfo<Float> UNIVERSAL_TYPE_INFO = new TypeInfo<Float>(0.0f, 0.0f, 1.0f,
-            BOOLEAN_FORMATTER, Boolean.class);
 }
