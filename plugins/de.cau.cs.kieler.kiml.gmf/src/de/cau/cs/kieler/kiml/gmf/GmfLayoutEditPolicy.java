@@ -274,10 +274,8 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         // calculate direct new location of the label
         KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(klabel);
         ConnectionEditPart connectionEditPart = (ConnectionEditPart) labelEditPart.getParent();
-        IFigure sourceFigure = ((GraphicalEditPart) connectionEditPart.getSource())
-                .getFigure();
-        Point newLocation = new Point(labelLayout.getXpos(),
-                labelLayout.getYpos());
+        IFigure sourceFigure = ((GraphicalEditPart) connectionEditPart.getSource()).getFigure();
+        Point newLocation = new Point(labelLayout.getXpos(), labelLayout.getYpos());
         sourceFigure.translateToAbsolute(newLocation);
         newLocation.scale(1 / zoomLevel);
         Rectangle targetBounds = labelEditPart.getFigure().getBounds();

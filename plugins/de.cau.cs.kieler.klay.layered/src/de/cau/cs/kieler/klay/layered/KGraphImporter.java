@@ -25,6 +25,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -163,11 +164,12 @@ public class KGraphImporter implements IGraphImporter {
                     newEdge.setProperty(Properties.ORIGIN, kedge);
                     newEdge.setSource(sourcePort);
                     newEdge.setTarget(targetPort);
-                    for (KLabel label : kedge.getLabels()) {
-                        KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
-                        KVector labelSize = new KVector(labelLayout.getWidth(), labelLayout.getHeight());
-                        LLabel newLabel = new LLabel(label.getText());
-                        newLabel.getSize().add(labelSize);
+                    for (KLabel klabel : kedge.getLabels()) {
+                        KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(klabel);
+                        LLabel newLabel = new LLabel(klabel.getText());
+                        newLabel.getSize().x = labelLayout.getWidth();
+                        newLabel.getSize().y = labelLayout.getHeight();
+                        newLabel.setProperty(Properties.ORIGIN, klabel);
                         newEdge.getLabels().add(newLabel);
                     }
                     // set properties of the new edge
@@ -291,8 +293,11 @@ public class KGraphImporter implements IGraphImporter {
         }
 
         // set up the parent node
-        parentLayout.setWidth((float) layeredGraph.getSize().x + 2 * borderSpacing);
-        parentLayout.setHeight((float) layeredGraph.getSize().y + 2 * borderSpacing);
+        KInsets insets = LayoutOptions.getObject(parentLayout, KInsets.class);
+        parentLayout.setWidth((float) layeredGraph.getSize().x + 2 * borderSpacing
+                + insets.getLeft() + insets.getRight());
+        parentLayout.setHeight((float) layeredGraph.getSize().y + 2 * borderSpacing
+                + insets.getTop() + insets.getBottom());
         LayoutOptions.setBoolean(parentLayout, LayoutOptions.FIXED_SIZE, true);
     }
 
