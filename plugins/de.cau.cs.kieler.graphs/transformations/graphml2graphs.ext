@@ -4,7 +4,19 @@ import graphml;
 extension org::eclipse::xtend::util::stdlib::io;
 
 create Node transform(Object obj):
-	info(obj.metaType.toString()) ->
-	this.setIsHypernode(true)
+	info(obj.metaType.toString())
+;
+
+Node transform(DocumentRoot documentRoot):
+	transform(documentRoot.graph)
+;
+
+create Node transform(GraphType g):
+	g.node.addNode(this)
+;
+
+Void addNode(NodeType graphmlNode, Node node):
+	let newNode = new Node:
+	node.children.add(newNode)
 ;
 

@@ -1,4 +1,4 @@
-package de.cau.cs.kieler.graphs.wizards;
+package de.cau.cs.kieler.graphs.util;
 
 import java.util.LinkedList;
 import java.util.List;

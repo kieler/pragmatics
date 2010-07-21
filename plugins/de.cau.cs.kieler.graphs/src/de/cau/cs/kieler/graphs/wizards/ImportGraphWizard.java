@@ -173,7 +173,6 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
         EPackage p1 = GraphsPackage.eINSTANCE;
         EPackage p2 = GraphMLPackage.eINSTANCE;
         
-        
         Status myStatus = null;
         try {
             input = URI.createFileURI(importFileName);
@@ -182,23 +181,17 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
                             container.getFile(new Path(fileName)).getFullPath()
                                     .toString(), true);
             
-            // Create a resource set.
             //ResourceSet resourceSet = new ResourceSetImpl();
-
-            // Demand load the resource for this file.
-            //Resource res = resourceSet.getResource(input, true);
-
-            GraphMLResourceFactoryImpl factory = new GraphMLResourceFactoryImpl();
-            Resource res = factory.createResource(input);
+            // resourceSet.getPackageRegistry().put(null,pkg);
+            //resourceSet.getResourceFactoryRegistry().
+            //  getExtensionToFactoryMap().put("graphml",new GraphMLResourceFactoryImpl());
+            //Resource res = resourceSet.createResource(input);
+            //res.load(new HashMap(5));
             
-            System.out.println("whatever " + res.getContents().get(0).getClass());
+            //System.out.println("whatever " + res.getContents().get(0).getClass());
             
             // Print the contents of the resource to System.out.
-            try
-            {
-              res.save(System.out, Collections.EMPTY_MAP);
-            }
-            catch (IOException e) {}
+            //res.save(System.out, Collections.EMPTY_MAP);
             
             XtendTransformationUtil.model2ModelTransform(transformation, fun,
                     input, output, p1, p2);

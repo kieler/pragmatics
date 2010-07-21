@@ -41,6 +41,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.graphs.GraphsPlugin;
 import de.cau.cs.kieler.graphs.Node;
+import de.cau.cs.kieler.graphs.util.RandomGraphGenerator;
 
 /**
  * A wizard for random graph models. Its role is to create a new file resource
