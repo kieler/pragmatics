@@ -1,9 +1,0 @@
-<project name="Clean Diagram Code" default="clean" basedir=".">
-	<target name="clean">
-		<delete>
-			<fileset dir="src">
-				<include name="**/*.java" />
-			</fileset>
-		</delete>
-	</target>
-</project>
