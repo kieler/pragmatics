@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.cau.cs.kieler.graphs"
-      label="Graphs Editor"
+      id="de.cau.cs.kieler.core.model"
+      label="KIELER Modeling Core"
       version="0.1.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel">
 
-   <description>
-      A generic graph editor for graph algorithm engineering.
+   <description url="http://informatik.uni-kiel.de/rtsys/kieler">
+      Core functionality used in the KIELER project for advanced modeling.
    </description>
 
    <copyright>
@@ -218,63 +218,74 @@ litigation.
    </url>
 
    <requires>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.ui.ide" version="3.5.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.core.expressions"/>
-      <import plugin="org.eclipse.jface"/>
-      <import plugin="org.eclipse.ui.views"/>
-      <import plugin="org.eclipse.ui.navigator"/>
-      <import plugin="org.eclipse.ui.navigator.resources"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.ui.views.properties.tabbed" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.editors" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.ide" version="3.5.0" match="greaterOrEqual"/>
       <import feature="de.cau.cs.kieler.core" version="0.2.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.draw2d" version="3.5.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.emf" version="2.5.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.emf.ecore" version="2.5.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.emf.ecore.edit" version="2.5.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.emf.edit" version="2.5.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.emf.edit.ui" version="2.5.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.emf.mwe.core" version="1.0.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.emf.mwe2.runtime.sdk" version="1.0.0"/>
       <import feature="org.eclipse.gef" version="3.5.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.gmf" version="1.3.0"/>
-      <import feature="org.eclipse.ocl" version="1.3.0" match="greaterOrEqual"/>
-      <import feature="de.cau.cs.kieler.core.model" version="0.1.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.gmf.runtime.notation" version="1.4.0.v20100512-1416-377-8s73533D5715B5F"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.core.expressions" version="3.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.resources" version="3.5.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.gmf.runtime.sdk" version="1.3.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.xpand" version="1.0.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.xtend" version="1.0.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.xtext.runtime" version="1.0.0"/>
+      <import feature="org.eclipse.xtext.ui" version="1.0.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.xtend.typesystem.emf" version="1.0.0"/>
    </requires>
 
    <plugin
-         id="de.cau.cs.kieler.graphs"
+         id="de.cau.cs.kieler.core.model"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.graphs.diagram"
+         id="de.cau.cs.kieler.core.annotations"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.core.kgraph.edit"
+         id="de.cau.cs.kieler.core.annotations.edit"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.graphs.edit"
+         id="de.cau.cs.kieler.core.annotations.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.graphs.ksbase"
+         id="de.cau.cs.kieler.core.expressions"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.graphdrawing.graphml"
+         id="de.cau.cs.kieler.core.expressions.edit"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.core.expressions.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
