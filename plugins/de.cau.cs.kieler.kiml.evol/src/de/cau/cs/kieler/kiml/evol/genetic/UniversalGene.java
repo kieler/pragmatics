@@ -162,6 +162,8 @@ public class UniversalGene extends AbstractGene<Float> {
      *
      */
     private class BooleanMutator implements IMutator {
+        private static final double PROBABILITY_FOR_TRUE = 0.5;
+
         public IGene<Float> newMutation(
                 final IGene<Float> template, final MutationInfo theMutationInfo) {
             Assert.isNotNull(theMutationInfo);
@@ -183,7 +185,7 @@ public class UniversalGene extends AbstractGene<Float> {
                     newValue = (getBoolValue() ? 0.0f : 1.0f);
                 } else {
                     // assign a random boolean value (may be the same as before)
-                    newValue = (r.nextDouble() < BooleanGene.PROBABILITY_FOR_TRUE ? 1.0f : 0.0f);
+                    newValue = (r.nextDouble() < PROBABILITY_FOR_TRUE ? 1.0f : 0.0f);
                 }
             } else {
                 newValue = template.getValue();
@@ -219,7 +221,7 @@ public class UniversalGene extends AbstractGene<Float> {
                     newValue = (float) (value + gauss);
                 } while (!typeInfo.isValueWithinBounds(newValue));
             }
-            return new FloatGene(getId(), newValue, getTypeInfo(), getMutationInfo());
+            return new UniversalGene(getId(), newValue, getTypeInfo(), getMutationInfo());
         }
     }
 

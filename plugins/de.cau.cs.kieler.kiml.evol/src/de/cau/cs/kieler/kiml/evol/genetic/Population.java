@@ -18,9 +18,9 @@ import java.util.List;
 
 /**
  * A population is a list of individuals (genomes).
- * 
+ *
  * @author bdu
- * 
+ *
  */
 public class Population extends ArrayList<Genome> {
     /**
@@ -57,6 +57,16 @@ public class Population extends ArrayList<Genome> {
         if (size() > 0) {
             final int pos = (int) (Math.random() * size());
             result = get(pos);
+        }
+        return result;
+    }
+
+    public Population select(final IItemFilter<Genome> filter) {
+        final Population result = new Population();
+        for (final Genome g : this) {
+            if (filter.isMatch(g)) {
+                result.add(g);
+            }
         }
         return result;
     }

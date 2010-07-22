@@ -26,13 +26,20 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.gef.EditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
@@ -53,8 +60,10 @@ import de.cau.cs.kieler.kiml.grana.AnalysisServices;
 import de.cau.cs.kieler.kiml.grana.ui.DiagramAnalyser;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
 import de.cau.cs.kieler.kiml.ui.views.LayoutPropertySource;
+import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
 
 /**
  * Utility methods for Evolutionary Meta Layout.
@@ -113,7 +122,7 @@ public final class EvolUtil {
             final Set<String> metricIds = EvolutionService.getInstance().getLayoutMetricsIds();
             // XXX: arbitrarily chosen coefficients
             final Deque<Double> coeffsQueue = new LinkedList<Double>();
-            for (final double d : new double[] { .08, .02, .1, .5, .3 }) {
+            for (final double d : new double[] { .2, .2, .2, .2, .2 }) {
                 coeffsQueue.add(d);
             }
             final Map<String, Double> coeffsMap = new HashMap<String, Double>(metricIds.size());
@@ -189,7 +198,7 @@ public final class EvolUtil {
             // scaledResults[i] = scaled;
             sum += scaled;
         }
-        final int newRating = (int) Math.round((sum * 1000));
+        final int newRating = (int) Math.round((sum * 10000));
         return newRating;
     }
 
@@ -230,7 +239,7 @@ public final class EvolUtil {
                 try {
                     source.setPropertyValue(id, value);
                 } catch (final NullPointerException e) {
-                    System.out.println("WARNING: enum property could not be set.");
+                    System.out.println("WARNING: enum property could not be set: " + id);
                     Assert.isTrue(false);
                 }
                 break;
@@ -239,6 +248,113 @@ public final class EvolUtil {
                 break;
             }
         }
+    }
+
+    /**
+     * Layouts the given individuals in the given editor and calculates
+     * automatic ratings for them.
+     *
+     * @param pop
+     *            List of individuals
+     * @param filter
+     * @param editor
+     *            the editor where the individuals shall be layouted.
+     */
+    public static void autoRateIndividuals(
+final Population pop, final IEditorPart editor) {
+        // We don't specify the edit part because we want a manager for
+        // the whole diagram.
+        final DiagramLayoutManager manager =
+                EclipseLayoutServices.getInstance().getManager(editor, null);
+        // A loop that performs layout and measurement for each individual.
+        final Runnable layoutLoop = new Runnable() {
+            public void run() {
+                for (int pos = 0; pos < pop.size(); pos++) {
+                    final Genome ind = pop.get(pos);
+                    // TODO: synchronize on the layout graph?
+
+                        adoptIndividual(ind, getLayoutPropertySource());
+                        // TODO: get a new manager for every iteration?
+                        final int rating = EvolUtil.layoutAndMeasure(manager, editor);
+                        ind.setUserRating(rating);
+
+                }
+            }
+        };
+        // The current diagram gets layouted and measured.
+        MonitoredOperation.runInUI(layoutLoop, true);
+    }
+
+    /**
+     *
+     * @return a {@link LayoutPropertySource} for the current editor.
+     */
+    public static LayoutPropertySource getLayoutPropertySource() {
+        final IEditorPart editor = getCurrentEditor();
+        final IGraphicalEditPart part = (IGraphicalEditPart) getEditPart(editor);
+        final LayoutPropertySource result = getLayoutPropertySource(editor, part);
+        return result;
+    }
+
+    /**
+     *
+     * @param editor
+     *            an {@link IEditorPart}
+     * @param part
+     *            an {@link EditPart}
+     * @return a {@link LayoutPropertySource} for the given editor and edit
+     *         part.
+     */
+    private static LayoutPropertySource getLayoutPropertySource(
+            final IEditorPart editor, final EditPart part) {
+        // TODO: use root edit part
+        final DiagramLayoutManager manager =
+                EclipseLayoutServices.getInstance().getManager(editor, part);
+        final LayoutPropertySource result = new LayoutPropertySource(manager.getInspector(part));
+        return result;
+    }
+
+    /**
+     * Returns the current editor.
+     *
+     * @return the current editor or {@code null} if none exists.
+     */
+    public static IEditorPart getCurrentEditor() {
+        // TODO: cache editor and assert that it is not replaced?
+        final LayoutViewPart layoutViewPart = LayoutViewPart.findView();
+        if (layoutViewPart == null) {
+            final IWorkbench workbench = PlatformUI.getWorkbench();
+            final IWorkbenchPage page = workbench.getActiveWorkbenchWindow().getActivePage();
+            if (page != null) {
+                return page.getActiveEditor();
+            }
+            return null;
+        }
+        final IEditorPart result = layoutViewPart.getCurrentEditor();
+        return result;
+    }
+
+    /**
+     * Returns the current edit part.
+     *
+     * @return the current edit part or {@code null} if none exists.
+     */
+    public static EditPart getEditPart(final IEditorPart editor) {
+        EditPart result = null;
+        if (editor != null) {
+            final ISelection selection =
+                    editor.getEditorSite().getSelectionProvider().getSelection();
+            Object element = null;
+            if (selection != null) {
+                if (selection instanceof StructuredSelection) {
+                    element = ((StructuredSelection) selection).getFirstElement();
+                    if (element instanceof IGraphicalEditPart) {
+                        result = (IGraphicalEditPart) element;
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     /**

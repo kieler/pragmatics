@@ -92,7 +92,6 @@ public class Genome extends ArrayList<IGene<?>> {
      *
      */
     public Genome(final String theId, final Genome theGenome, final int theGeneration) {
-        // this.genome = new Genome(theGenome);
 
         Assert.isLegal(theGenome != null);
         if (theGenome != null) {
@@ -104,6 +103,11 @@ public class Genome extends ArrayList<IGene<?>> {
         }
         this.generation = theGeneration;
         System.out.println("Created individual " + toString());
+    }
+
+    public Genome(final int theGeneration) {
+        super();
+        this.generation = theGeneration;
     }
 
     /**
@@ -219,7 +223,7 @@ public class Genome extends ArrayList<IGene<?>> {
      * mutated version of itself.
      */
     private Genome newMutation() {
-        final Genome newGenome = new Genome();
+        final Genome newGenome = new Genome(this.generation);
         for (final IGene<?> gene : this) {
             Assert.isNotNull(gene);
             final IGene<?> newGene = gene.newMutation();
@@ -227,6 +231,7 @@ public class Genome extends ArrayList<IGene<?>> {
             newGenome.add(newGene);
         }
         newGenome.setUserRating(this.userRating);
+
         return newGenome;
     }
 

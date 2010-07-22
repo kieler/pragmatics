@@ -15,14 +15,12 @@ package de.cau.cs.kieler.kiml.evol.ui;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.gef.EditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -31,9 +29,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -42,6 +37,7 @@ import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.EvolUtil;
 import de.cau.cs.kieler.kiml.evol.alg.BasicEvolutionaryAlgorithm;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
+import de.cau.cs.kieler.kiml.evol.genetic.IItemFilter;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
@@ -83,7 +79,7 @@ public class EvolView extends ViewPart {
             final LayoutViewPart layoutView = LayoutViewPart.findView();
             if (layoutView != null) {
                 try {
-                    Thread.sleep(300);
+                    Thread.sleep(200);
                 } catch (final InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -302,56 +298,52 @@ public class EvolView extends ViewPart {
         } else if (this.lastEditor != null) {
             editor = this.lastEditor;
         } else {
-            editor = getCurrentEditor();
+            editor = EvolUtil.getCurrentEditor();
         }
         this.lastEditor = editor;
 
-        // We don't specify the edit part because we want a manager for
-        // the whole diagram.
-        final DiagramLayoutManager manager =
-                EclipseLayoutServices.getInstance().getManager(editor, null);
-        // A loop that performs layout and measurement for each individual.
-        final Runnable layoutLoop = new Runnable() {
-            public void run() {
-                for (int pos = 0; pos < pop.size(); pos++) {
-                    final Genome ind = pop.get(pos);
-
-                    // TODO: synchronize on the layout graph?
-                    if (isAffected(ind, filter)) {
-                        adoptIndividual(ind);
-                        // TODO: get a new manager for every iteration?
-                        final int rating = EvolUtil.layoutAndMeasure(manager, editor);
-                        ind.setUserRating(rating);
-                    }
-                }
-            }
-
-            // Indicates whether the given individual is in the target.
-            private boolean isAffected(final Genome ind, final TargetIndividuals target) {
-                switch (target) {
-                case ALL:
-                    return true;
-                case RATED:
-                    return (ind.hasUserRating());
-                case UNRATED:
-                    return (!ind.hasUserRating());
-                default: // This case should never happen.
-                    return false;
-                }
-            }
-        };
-        // The current diagram gets layouted and measured.
-        MonitoredOperation.runInUI(layoutLoop, true);
+        final Population selection;
+        switch (filter) {
+        case ALL:
+            selection = pop;
+            break;
+        case RATED:
+            selection = pop.select(new RatedFilter());
+            break;
+        case UNRATED:
+            selection = pop.select(new UnratedFilter());
+            break;
+        default:
+            selection = null;
+            break;
+        }
+        EvolUtil.autoRateIndividuals(selection, editor);
         this.tableViewer.refresh();
     }
 
-    private void adoptIndividual(final Genome ind) {
-        if (!isValidState()) {
-            return;
+    /**
+     * Filter for unrated individuals.
+     * 
+     * @author bdu
+     * 
+     */
+    private static class UnratedFilter implements IItemFilter<Genome> {
+        public boolean isMatch(final Genome item) {
+            return (!item.hasUserRating());
         }
-        EvolUtil.adoptIndividual(ind, getLayoutPropertySource());
     }
 
+    /**
+     * Filter for rated individuals.
+     * 
+     * @author bdu
+     * 
+     */
+    private static class RatedFilter implements IItemFilter<Genome> {
+        public boolean isMatch(final Genome item) {
+            return (item.hasUserRating());
+        }
+    }
     /**
      * Performs a step of the evolutionary algorithm.
      */
@@ -412,8 +404,8 @@ public class EvolView extends ViewPart {
      */
     public void reset() {
         this.position = 0;
-        final IEditorPart editor = getCurrentEditor();
-        final EditPart part = getEditPart(editor);
+        final IEditorPart editor = EvolUtil.getCurrentEditor();
+        final EditPart part = EvolUtil.getEditPart(editor);
         this.lastEditor = editor;
         if (editor != null) {
             // TODO: test whether the editor is for KIML
@@ -458,77 +450,6 @@ public class EvolView extends ViewPart {
         return result;
     }
 
-    /**
-     * Returns the current editor.
-     *
-     * @return the current editor or {@code null} if none exists.
-     */
-    private IEditorPart getCurrentEditor() {
-        // TODO: cache editor and assert that it is not replaced?
-        final LayoutViewPart layoutViewPart = LayoutViewPart.findView();
-        if (layoutViewPart == null) {
-            final IWorkbench workbench = PlatformUI.getWorkbench();
-            final IWorkbenchPage page = workbench.getActiveWorkbenchWindow().getActivePage();
-            if (page != null) {
-                return page.getActiveEditor();
-            }
-            return null;
-        }
-        final IEditorPart result = layoutViewPart.getCurrentEditor();
-        return result;
-    }
-
-    /**
-     * Returns the current edit part.
-     *
-     * @return the current edit part or {@code null} if none exists.
-     */
-    private EditPart getEditPart(final IEditorPart editor) {
-        EditPart result = null;
-        if (editor != null) {
-            final ISelection selection =
-                    editor.getEditorSite().getSelectionProvider().getSelection();
-            Object element = null;
-            if (selection != null) {
-                if (selection instanceof StructuredSelection) {
-                    element = ((StructuredSelection) selection).getFirstElement();
-                    if (element instanceof IGraphicalEditPart) {
-                        result = (IGraphicalEditPart) element;
-                    }
-                }
-            }
-        }
-        return result;
-    }
-
-    /**
-     *
-     * @return a {@link LayoutPropertySource} for the current editor.
-     */
-    private LayoutPropertySource getLayoutPropertySource() {
-        final IEditorPart editor = getCurrentEditor();
-        final IGraphicalEditPart part = (IGraphicalEditPart) getEditPart(editor);
-        final LayoutPropertySource result = getLayoutPropertySource(editor, part);
-        return result;
-    }
-
-    /**
-     *
-     * @param editor
-     *            an {@link IEditorPart}
-     * @param part
-     *            an {@link EditPart}
-     * @return a {@link LayoutPropertySource} for the given editor and edit
-     *         part.
-     */
-    private LayoutPropertySource getLayoutPropertySource(
-            final IEditorPart editor, final EditPart part) {
-        // TODO: use root edit part
-        final DiagramLayoutManager manager =
-                EclipseLayoutServices.getInstance().getManager(editor, part);
-        final LayoutPropertySource result = new LayoutPropertySource(manager.getInspector(part));
-        return result;
-    }
 
     /**
      *
@@ -536,8 +457,8 @@ public class EvolView extends ViewPart {
      *         reset.
      */
     private boolean layoutProviderHasChanged() {
-        final IEditorPart editor = getCurrentEditor();
-        final EditPart editPart = getEditPart(editor);
+        final IEditorPart editor = EvolUtil.getCurrentEditor();
+        final EditPart editPart = EvolUtil.getEditPart(editor);
         final DiagramLayoutManager manager =
                 EclipseLayoutServices.getInstance().getManager(editor, editPart);
         final String newId = EvolUtil.getLayoutProviderId(manager, editPart);
@@ -556,10 +477,12 @@ public class EvolView extends ViewPart {
         }
         final Genome currentIndividual = getCurrentIndividual();
         Assert.isNotNull(currentIndividual);
-        adoptIndividual(currentIndividual);
+        final LayoutPropertySource source = EvolUtil.getLayoutPropertySource();
+        EvolUtil.adoptIndividual(currentIndividual, source);
+
         // refresh layout view
         MonitoredOperation.runInUI(new LayoutViewRefresher(), false);
-        final IEditorPart editor = getCurrentEditor();
+        final IEditorPart editor = EvolUtil.getCurrentEditor();
         if (editor == null) {
             // we have nothing to layout.
             return;
@@ -572,7 +495,10 @@ public class EvolView extends ViewPart {
         // layoutDiagram(false, false);
         // System.out.println("after layoutDiagram");
         final int rating = EvolUtil.layoutAndMeasure(manager, editor);
-        // currentIndividual.setRating(rating);
+
+        if (!currentIndividual.hasUserRating()) {
+            currentIndividual.setUserRating(rating);
+        }
 
         // apply the layout to the diagram
         // XXX it would be more straightforward to call manager.applyLayout()

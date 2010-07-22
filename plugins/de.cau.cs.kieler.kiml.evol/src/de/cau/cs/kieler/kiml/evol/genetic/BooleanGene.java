@@ -130,7 +130,7 @@ public final class BooleanGene extends AbstractGene<Boolean> {
         super(theId, theValue, theTypeInfo, theMutationInfo);
     }
 
-    static final double PROBABILITY_FOR_TRUE = 0.5;
+    private static final double PROBABILITY_FOR_TRUE = 0.5;
     private static final double PROBABILITY_FOR_GENUINE_MUTATION = 0.0;
 
     private static final IValueFormatter BOOLEAN_FORMATTER = new IValueFormatter() {
