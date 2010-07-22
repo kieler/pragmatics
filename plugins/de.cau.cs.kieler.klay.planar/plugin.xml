@@ -4,17 +4,17 @@
    <extension
          point="de.cau.cs.kieler.kiml.layoutProviders">
       <layoutProvider
-            class="de.cau.cs.rtprak.planarization.OrthogonalLayoutProvider"
-            id="de.cau.cs.rtprak.planarization.layouter.orthogonal"
+            class="de.cau.cs.kieler.klay.planar.OrthogonalLayoutProvider"
+            id="de.cau.cs.kieler.klay.planar.layouter.orthogonal"
             name="Orthogonal Layouter">
          <knownOption
-               option="de.cau.cs.rtprak.planarization.options.planarTestingAlgorithm">
+               option="de.cau.cs.kieler.klay.planar.options.planarTestingAlgorithm">
          </knownOption>
       </layoutProvider>
       <layoutOption
             appliesTo="parents"
             description="Defines which algorithm to use for planar testing."
-            id="de.cau.cs.rtprak.planarization.options.planarTestingAlgorithm"
+            id="de.cau.cs.kieler.klay.planar.options.planarTestingAlgorithm"
             name="Planar Testing Algorithm"
             type="enum">
       </layoutOption>
@@ -23,9 +23,9 @@
          point="de.cau.cs.kieler.kiml.grana.analysisProviders">
       <provider
             category="de.cau.cs.kieler.kiml.grana.basicAnalyses"
-            class="de.cau.cs.rtprak.planarization.PlanarityAnalysis"
+            class="de.cau.cs.kieler.klay.planar.PlanarityAnalysis"
             description="Check if a graph is planar, i.e. if a embedding for the graph exists, so that there are no crossing edges."
-            id="de.cau.cs.rtprak.planarization.analysis.planarity"
+            id="de.cau.cs.kieler.klay.planar.analysis.planarity"
             name="Planarity Analysis">
       </provider>
    </extension>
