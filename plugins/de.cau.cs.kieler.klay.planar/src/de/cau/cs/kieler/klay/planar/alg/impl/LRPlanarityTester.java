@@ -689,7 +689,7 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
                         }
                         if (q.getFirst().getFirst() != null && q.getFirst().getSecond() != null) {
                             // not planar: remove crossing edges
-                            crossingEdges.addAll(removeConflicts(q, null));
+                            crossingEdges.addAll(removeConflicts(q, null, 0));
                             isPlanar = false;
                             if (!mode) {
                                 return;
@@ -723,7 +723,7 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
                         }
                         if (conflicting(q.getSecond(), vw)) {
                             // not planar: remove crossing edges
-                            crossingEdges.addAll(removeConflicts(q, vw));
+                            crossingEdges.addAll(removeConflicts(q, vw, 0));
                             isPlanar = false;
                             if (!mode) {
                                 return;
@@ -993,12 +993,26 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      *            delete all edges conflicting with the input edge from
      * @param edge
      *            the edge to determine all interval edges to delete or {@code null}
+     * @param iSide
+     *            the side to consider for edge removal. If {@code intervalSide = -1}, then
+     *            conflicting edges will be removed from the left interval of the conflict pair. If
+     *            {@code side = 1}, then conflicting edges will only be removed from the right
+     *            interval. Otherwise, if {@code side = 0}, edges will be deleted from the side,
+     *            where less edges have to be removed in order to avoid edge crossings.
      * @return a LinkedList containing all deleted edges
+     * 
+     * @throws IllegalArgumentException
+     *             if {@code iSide} is not element of {{@code -1, 0, 1}
      * 
      * @see de.cau.cs.kieler.core.util.Pair Pair
      */
     private LinkedList<IEdge> removeConflicts(
-            final Pair<Pair<IEdge, IEdge>, Pair<IEdge, IEdge>> pair, final IEdge edge) {
+            final Pair<Pair<IEdge, IEdge>, Pair<IEdge, IEdge>> pair, final IEdge edge,
+            final int iSide) {
+
+        if (iSide > 1 || iSide < -1) {
+            throw new IllegalArgumentException("Input argument iSide is neigher -1, 0 nor 1.");
+        }
 
         LinkedList<IEdge> left = new LinkedList<IEdge>();
         LinkedList<IEdge> right = new LinkedList<IEdge>();
@@ -1027,7 +1041,7 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
             }
         }
         // remove edges
-        if (right.size() < left.size()) {
+        if (right.size() < left.size() && iSide != -1) {
             pair.getSecond().setSecond(currentRight);
             if (currentRight == null) {
                 pair.getSecond().setFirst(null);
@@ -1186,17 +1200,14 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
 
         IEdge edge = initialRef[v.getID()];
         while (edge != null) {
-            // add outgoing tree edges to "trees". HashMaps only adds an object, if it is not
-            // already contained
+            // convert list of edges belonging to outgoing subtrees
             if (!trees.containsKey(relatedTree[edge.getID()])) {
                 trees.put(relatedTree[edge.getID()], edge);
+                cEdges.put(edge, new HashSet<IEdge>());
             }
             edge = ref[edge.getID()];
         }
-        for (IEdge e : trees.keySet()) {
-            cEdges.put(e, new HashSet<IEdge>());
-        }
-
+        // check planarity
         for (IEdge e : v.getAllEdges()) {
             if (!(mode || isPlanar)) {
                 // graph already turned out to be non-planar
@@ -1242,6 +1253,7 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
                                 isPlanar = false;
                                 this.crossingEdges.add(e);
                                 crossing.add(e);
+                                continue;
                             } else {
                                 HashSet<IEdge> update = cEdges.get(open);
                                 update.add(relatedTree[e.getID()]);
@@ -1249,13 +1261,14 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
                             }
                         }
                     }
+                    prevTree = e;
                 }
             } else if (dfsSource[e.getID()].equals(v)) {
                 // outgoing back edge
                 if (nestingDepth[e.getID()] * dfsTargetSide[e.getID()] < outback) {
                     crossingEdges.add(e);
+                    crossing.add(e);
                     isPlanar = false;
-                    continue;
                 } else {
                     outback = nestingDepth[e.getID()] * dfsTargetSide[e.getID()];
                 }
@@ -1263,87 +1276,6 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
                 // else: incoming tree edge: do nothing
             }
         }
-    }
-
-    /**
-     * Helper method for the planarity test with port constraints. TODO returns all edges to delete.
-     * If side is not -1 or 1, no edge will be deleted, i.e. the returned linked list will be empty.
-     * 
-     * @param pair
-     *            the conflict pair to delete the specified interval from or the conflict pair to
-     *            delete all edges conflicting with the input edge on the specified side from
-     * @param edge
-     *            the edge to determine all interval edges to delete or {@code null}
-     * @param intervalSide
-     *            the side to consider for edge removal. If {@code intervalSide = -1}, then
-     *            conflicting edges will be removed from the left interval of the conflict pair. If
-     *            {@code side = 1}, then conflicting edges will only be removed from the right
-     *            interval.
-     * @return a LinkedList containing all removed edges
-     * 
-     * @throws IllegalArgumentException
-     *             if {@code intervalSide} is not element if {@code -1, 1} .
-     * 
-     * @see de.cau.cs.kieler.core.util.Pair Pair
-     */
-    private LinkedList<IEdge> removeConflicts(
-            final Pair<Pair<IEdge, IEdge>, Pair<IEdge, IEdge>> pair, final IEdge edge,
-            final int intervalSide) {
-
-        LinkedList<IEdge> conflicting = new LinkedList<IEdge>();
-        IEdge current = null;
-
-        if (edge != null) {
-            // remove all edges in the interval conflicting with the input edge
-            if (intervalSide == 1) {
-                current = pair.getSecond().getSecond();
-                while (current != null && lowpt[current.getID()] > lowpt[edge.getID()]) {
-                    conflicting.add(current);
-                    current = ref[current.getID()];
-                }
-                pair.getSecond().setSecond(current);
-                if (current == null) {
-                    pair.getSecond().setFirst(null);
-                }
-            } else if (intervalSide == -1) {
-                current = pair.getFirst().getSecond();
-                while (current != null && lowpt[current.getID()] > lowpt[edge.getID()]) {
-                    conflicting.add(current);
-                    current = ref[current.getID()];
-                }
-                pair.getFirst().setSecond(current);
-                if (current == null) {
-                    pair.getFirst().setFirst(null);
-                }
-            } else {
-                throw new IllegalArgumentException(
-                        "Input argument IntervalSide is not element of {-1, 1}");
-            }
-        } else {
-            // remove all edges in the interval
-            if (intervalSide == 1) {
-                current = pair.getSecond().getSecond();
-                while (current != null) {
-                    conflicting.add(current);
-                    current = ref[current.getID()];
-                }
-                pair.getSecond().setSecond(null);
-                pair.getSecond().setFirst(null);
-
-            } else if (intervalSide == -1) {
-                current = pair.getFirst().getSecond();
-                while (current != null) {
-                    conflicting.add(current);
-                    current = ref[current.getID()];
-                }
-                pair.getFirst().setSecond(null);
-                pair.getFirst().setFirst(null);
-            } else {
-                throw new IllegalArgumentException(
-                        "Input argument IntervalSide is not element of {-1, 1}");
-            }
-        }
-        return conflicting;
     }
 
     /**
@@ -1363,11 +1295,13 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
         for (IEdge edge : node.getAllEdges()) {
             if (dfsSource[edge.getID()].equals(node)
                     && edge.equals(parentEdge[dfsTarget[edge.getID()].getID()])) {
+                // outgoing tree edge
                 traversedTrees.add(edge);
             } else if (dfsTarget[edge.getID()].equals(node)
                     && !edge.equals(parentEdge[node.getID()])) {
+                // incoming back edge
                 if (traversedTrees.contains(relatedTree[edge.getID()])) {
-                    // tree edge already backtracking -> edge is on right side
+                    // tree edge already traversed -> edge is on right side
                     dfsTargetSide[edge.getID()] = 1;
                 } else {
                     // tree edge still to traverse -> edge is on left side
@@ -1601,6 +1535,87 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
                 }
             }
         }
+    }
+
+    /**
+     * Helper method for the planarity test with port constraints. TODO returns all edges to delete.
+     * If side is not -1 or 1, no edge will be deleted, i.e. the returned linked list will be empty.
+     * 
+     * @param pair
+     *            the conflict pair to delete the specified interval from or the conflict pair to
+     *            delete all edges conflicting with the input edge on the specified side from
+     * @param edge
+     *            the edge to determine all interval edges to delete or {@code null}
+     * @param intervalSide
+     *            the side to consider for edge removal. If {@code intervalSide = -1}, then
+     *            conflicting edges will be removed from the left interval of the conflict pair. If
+     *            {@code side = 1}, then conflicting edges will only be removed from the right
+     *            interval.
+     * @return a LinkedList containing all removed edges
+     * 
+     * @throws IllegalArgumentException
+     *             if {@code intervalSide} is not element if {@code -1, 1} .
+     * 
+     * @see de.cau.cs.kieler.core.util.Pair Pair
+     */
+    private LinkedList<IEdge> removeConflicts2(
+            final Pair<Pair<IEdge, IEdge>, Pair<IEdge, IEdge>> pair, final IEdge edge,
+            final int intervalSide) {
+
+        LinkedList<IEdge> conflicting = new LinkedList<IEdge>();
+        IEdge current = null;
+
+        if (edge != null) {
+            // remove all edges in the interval conflicting with the input edge
+            if (intervalSide == 1) {
+                current = pair.getSecond().getSecond();
+                while (current != null && lowpt[current.getID()] > lowpt[edge.getID()]) {
+                    conflicting.add(current);
+                    current = ref[current.getID()];
+                }
+                pair.getSecond().setSecond(current);
+                if (current == null) {
+                    pair.getSecond().setFirst(null);
+                }
+            } else if (intervalSide == -1) {
+                current = pair.getFirst().getSecond();
+                while (current != null && lowpt[current.getID()] > lowpt[edge.getID()]) {
+                    conflicting.add(current);
+                    current = ref[current.getID()];
+                }
+                pair.getFirst().setSecond(current);
+                if (current == null) {
+                    pair.getFirst().setFirst(null);
+                }
+            } else {
+                throw new IllegalArgumentException(
+                        "Input argument IntervalSide is not element of {-1, 1}");
+            }
+        } else {
+            // remove all edges in the interval
+            if (intervalSide == 1) {
+                current = pair.getSecond().getSecond();
+                while (current != null) {
+                    conflicting.add(current);
+                    current = ref[current.getID()];
+                }
+                pair.getSecond().setSecond(null);
+                pair.getSecond().setFirst(null);
+
+            } else if (intervalSide == -1) {
+                current = pair.getFirst().getSecond();
+                while (current != null) {
+                    conflicting.add(current);
+                    current = ref[current.getID()];
+                }
+                pair.getFirst().setSecond(null);
+                pair.getFirst().setFirst(null);
+            } else {
+                throw new IllegalArgumentException(
+                        "Input argument IntervalSide is not element of {-1, 1}");
+            }
+        }
+        return conflicting;
     }
 
 }
