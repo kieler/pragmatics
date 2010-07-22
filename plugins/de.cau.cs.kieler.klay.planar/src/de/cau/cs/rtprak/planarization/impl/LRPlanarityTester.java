@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -230,9 +229,9 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
     private int index = 0;
 
     /**
-     * A list of all outgoing tree edges of a node.
+     * A list of all leftmost edges in the planar embedding belonging to an outgoing subtree.
      */
-    private ArrayList<LinkedList<IEdge>> outtree;
+    private ArrayList<LinkedList<IEdge>> outgoingTrees;
 
     // ====================== Constructor =====================================
 
@@ -247,7 +246,6 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
 
     // TODO data structure needs nodeType "PORTS"
     // TODO maybe data structure needs graphType "PORTS"
-    // TODO self-loops
 
     // ====================== Methods =====================================
 
@@ -319,7 +317,16 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
         } else {
             Collections.fill(stackBottom, null);
         }
-        // incEdgeIdGiver = 1;
+        if (outgoingTrees == null || numNodes > outgoingTrees.size()) {
+            outgoingTrees = new ArrayList<LinkedList<IEdge>>(numNodes);
+            for (int i = 0; i < numEdges; i++) {
+                outgoingTrees.add(new LinkedList<IEdge>());
+            }
+        } else {
+            for (LinkedList<IEdge> list : outgoingTrees) {
+                list.clear();
+            }
+        }
 
         if (mode) {
             if (initialRef == null || numNodes > initialRef.length) {
@@ -542,6 +549,7 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
                 // vw is tree edge
                 currentTree[v.getID()] = vw;
                 parentEdge[w.getID()] = vw;
+                relatedTree[vw.getID()] = vw;
                 height[w.getID()] = height[v.getID()] + 1;
                 orientationDFS(w);
             } else {
@@ -1150,60 +1158,82 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * @throws InconsistentGraphModelException
      */
     private void checkAdjacencyList(final INode v) throws InconsistentGraphModelException {
-        // TODO check, if adjList is in correct order
+
         if (v.getAdjacentEdgeCount() <= 2) {
             return;
         }
+        // indicated, which tree has been interrupted by which other tree edge
+        // or null, if not interrupted at all
+        HashMap<IEdge, IEdge> interrupted = new HashMap<IEdge, IEdge>();
+        HashMap<IEdge, IEdge> trees = new HashMap<IEdge, IEdge>();
+        LinkedList<IEdge> selfLoops = new LinkedList<IEdge>();
+        HashSet<IEdge> crossing = new HashSet<IEdge>(v.getAdjacentEdgeCount());
         IEdge first = null;
-        EdgeType prev = null;
+        // previously traversed, non-self-loop edge
+        IEdge prev = null;
         boolean selfLoop = false;
         int outback = Integer.MIN_VALUE;
-        int incback = Integer.MIN_VALUE;
-        HashMap<IEdge, Integer> order = new HashMap<IEdge, Integer>();
-        HashMap<IEdge, Boolean> interrupted = new HashMap<IEdge, Boolean>();
-        // TODO create edgesLeft as attribute
-        HashMap<IEdge, Integer> edgesLeft = new HashMap<IEdge, Integer>();
-        LinkedList<IEdge> selfloops = new LinkedList<IEdge>();
 
-        LinkedHashSet<IEdge> selfLoops = new LinkedHashSet<IEdge>();
-        for (IEdge edge : v.getAllEdges()) {
-            if (first == null) {
-                // first edge in adjacency list
-                first = edge;
-                if (edge.getSource().equals(edge.getTarget())) {
-                    // self-loop
-                    selfLoops.add(edge);
-                    selfLoop = true;
-                }
-                continue;
-            } else if (dfsSource[edge.getID()].equals(v)) {
-                if (edge.equals(parentEdge[dfsTarget[edge.getID()].getID()])) {
+        IEdge edge = initialRef[v.getID()];
+        while (edge != null) {
+            // add outgoing tree edges to "trees". HashMaps only add an object, if it is not already
+            // contained
+            if (!trees.containsKey(relatedTree[edge.getID()])) {
+                trees.put(relatedTree[edge.getID()], edge);
+            }
+            edge = ref[edge.getID()];
+        }
+        for (IEdge e : trees.keySet()) {
+            interrupted.put(e, null);
+        }
+
+        for (IEdge e : v.getAllEdges()) {
+            if (dfsSource[e.getID()].equals(v)) {
+                if (e.equals(parentEdge[dfsTarget[e.getID()].getID()])) {
                     // outgoing tree edge
-                    if (order.containsKey(edge)) {
-                        if (order.get(edge) < dfsIndex[edge.getID()]) {
-                            order.put(edge, dfsIndex[edge.getID()]);
-
-                        } else {
-                            // crossing edge
-                            // WARNING: here I delete an outgoing tree edge!
-                            isPlanar = false;
-                            crossingEdges.add(edge);
+                    IEdge next = trees.get(e);
+                    if (next.equals(e)) {
+                        next = ref[next.getID()];
+                        while (next != null && crossing.contains(next)) {
+                            next = ref[next.getID()];
                         }
+                        trees.put(e, next);
+                        prev = e;
                     } else {
-                        // TODO
+                        crossing.add(e);
+                        crossingEdges.add(e);
+                        isPlanar = false;
+                        continue;
                     }
                 }
                 // outgoing back edge
-                if (nestingDepth[edge.getID()] * dfsTargetSide[edge.getID()] < outback) {
-                    crossingEdges.add(edge);
+                if (nestingDepth[e.getID()] * dfsTargetSide[e.getID()] < outback) {
+                    crossingEdges.add(e);
                     isPlanar = false;
                     continue;
                 } else {
-                    outback = nestingDepth[edge.getID()] * dfsTargetSide[edge.getID()];
+                    outback = nestingDepth[e.getID()] * dfsTargetSide[e.getID()];
+                    prev = e;
                 }
-            } else if (dfsTarget[edge.getID()].equals(v)) {
+            } else if (dfsTarget[e.getID()].equals(v)) {
                 // incoming back edge
+                IEdge next = trees.get(e);
+                if (next.equals(e)) {
+                    next = ref[next.getID()];
+                    while (next != null && crossing.contains(next)) {
+                        next = ref[next.getID()];
+                    }
+                    trees.put(e, next);
+                    prev = e;
+                } else {
+                    crossing.add(e);
+                    crossingEdges.add(e);
+                    isPlanar = false;
+                    continue;
+                }
             }
+            // TODO check for interruptions
+            // TODO self-loops
             // else: incoming tree edge: do nothing
 
             selfLoop = false;
@@ -1536,6 +1566,51 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
         }
         throw new InconsistentGraphModelException(
                 "Attempted to get adjacent node from unconnected edge");
+    }
+
+    private void embeddingDFS2(final INode v) {
+
+        for (IEdge vw : v.getAllEdges()) {
+            if (vw.getSource().equals(vw.getTarget()) || !dfsSource[vw.getID()].equals(v)) {
+                // vw is incoming edge or self-loop
+                continue;
+            }
+            INode w = dfsTarget[vw.getID()];
+            if (vw.equals(parentEdge[w.getID()])) {
+                // vw is tree edge
+                if (initialRef[v.getID()] == null) {
+                    initialRef[v.getID()] = vw;
+                }
+                if (rightRef[v.getID()] != null) {
+                    // determine rightmost adjacent edge of previously backtracking subtree
+                    IEdge rightmost = rightRef[v.getID()];
+                    while (ref[rightmost.getID()] != null) {
+                        rightmost = ref[rightmost.getID()];
+                    }
+                    leftRef[v.getID()] = rightmost;
+                    ref[rightmost.getID()] = vw;
+                }
+                rightRef[v.getID()] = vw;
+                embeddingDFS(w);
+            } else {
+                // vw is back edge
+                if (side[vw.getID()] == 1) {
+                    // place vw directly after rightRef[w]
+                    ref[vw.getID()] = ref[rightRef[w.getID()].getID()];
+                    ref[rightRef[w.getID()].getID()] = vw;
+                } else {
+                    // place vw directly after leftRef[w]
+                    if (leftRef[w.getID()] == null) {
+                        // vw belongs to leftmost outgoing tree edge
+                        ref[vw.getID()] = initialRef[w.getID()];
+                        initialRef[w.getID()] = vw;
+                    } else {
+                        ref[vw.getID()] = ref[leftRef[w.getID()].getID()];
+                        ref[leftRef[w.getID()].getID()] = vw;
+                    }
+                }
+            }
+        }
     }
 
 }
