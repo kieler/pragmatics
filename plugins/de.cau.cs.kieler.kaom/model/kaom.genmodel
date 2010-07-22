@@ -4,7 +4,7 @@
     xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" copyrightText="KIELER - Kiel Integrated Environment for Layout Eclipse RichClient&#xA;&#xA;http://www.informatik.uni-kiel.de/rtsys/kieler/&#xA;&#xA;Copyright 2009 by&#xA;+ Christian-Albrechts-University of Kiel&#xA;  + Department of Computer Science&#xA;    + Real-Time and Embedded Systems Group&#xA;&#xA;This code is provided under the terms of the Eclipse Public License (EPL).&#xA;See the file epl-v10.html for the license text."
     modelDirectory="/de.cau.cs.kieler.kaom/src" modelPluginID="de.cau.cs.kieler.kaom"
     modelName="Kaom" importerID="org.eclipse.emf.importer.ecore" complianceLevel="5.0"
-    copyrightFields="false" language="" usedGenPackages="platform:/plugin/org.eclipse.emf.ecore/model/Ecore.genmodel#//ecore">
+    copyrightFields="false" usedGenPackages="../../de.cau.cs.kieler.core.annotations/model/annotations.genmodel#//annotations platform:/plugin/org.eclipse.emf.ecore/model/Ecore.genmodel#//ecore">
   <foreignModel>kaom.ecore</foreignModel>
   <genPackages prefix="Kaom" basePackage="de.cau.cs.kieler" disposableProviderFactory="true"
       ecorePackage="kaom.ecore#/">
@@ -21,35 +21,10 @@
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference kaom.ecore#//Link/target"/>
     </genClasses>
     <genClasses image="false" ecoreClass="kaom.ecore#//Linkable">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference kaom.ecore#//Linkable/outgoingLinks"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference kaom.ecore#//Linkable/incomingLinks"/>
-    </genClasses>
-  </genPackages>
-  <genPackages prefix="Annotations" basePackage="de.cau.cs.kieler" ecorePackage="../../de.cau.cs.kieler.core.annotations/model/annotations.ecore#/">
-    <genClasses image="false" ecoreClass="../../de.cau.cs.kieler.core.annotations/model/annotations.ecore#//NamedObject">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ../../de.cau.cs.kieler.core.annotations/model/annotations.ecore#//NamedObject/name"/>
-    </genClasses>
-    <genClasses image="false" ecoreClass="../../de.cau.cs.kieler.core.annotations/model/annotations.ecore#//Annotatable">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference ../../de.cau.cs.kieler.core.annotations/model/annotations.ecore#//Annotatable/annotations"/>
-      <genOperations ecoreOperation="../../de.cau.cs.kieler.core.annotations/model/annotations.ecore#//Annotatable/getAnnotation">
-        <genParameters ecoreParameter="../../de.cau.cs.kieler.core.annotations/model/annotations.ecore#//Annotatable/getAnnotation/key"/>
-      </genOperations>
-    </genClasses>
-    <genClasses ecoreClass="../../de.cau.cs.kieler.core.annotations/model/annotations.ecore#//Annotation"/>
-    <genClasses ecoreClass="../../de.cau.cs.kieler.core.annotations/model/annotations.ecore#//StringAnnotation">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ../../de.cau.cs.kieler.core.annotations/model/annotations.ecore#//StringAnnotation/value"/>
-    </genClasses>
-    <genClasses ecoreClass="../../de.cau.cs.kieler.core.annotations/model/annotations.ecore#//ReferenceAnnotation">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ../../de.cau.cs.kieler.core.annotations/model/annotations.ecore#//ReferenceAnnotation/object"/>
-    </genClasses>
-    <genClasses ecoreClass="../../de.cau.cs.kieler.core.annotations/model/annotations.ecore#//BooleanAnnotation">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ../../de.cau.cs.kieler.core.annotations/model/annotations.ecore#//BooleanAnnotation/value"/>
-    </genClasses>
-    <genClasses ecoreClass="../../de.cau.cs.kieler.core.annotations/model/annotations.ecore#//IntAnnotation">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ../../de.cau.cs.kieler.core.annotations/model/annotations.ecore#//IntAnnotation/value"/>
-    </genClasses>
-    <genClasses ecoreClass="../../de.cau.cs.kieler.core.annotations/model/annotations.ecore#//FloatAnnotation">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ../../de.cau.cs.kieler.core.annotations/model/annotations.ecore#//FloatAnnotation/value"/>
+      <genFeatures property="None" notify="false" createChild="false" propertySortChoices="true"
+          ecoreFeature="ecore:EReference kaom.ecore#//Linkable/outgoingLinks"/>
+      <genFeatures property="None" notify="false" createChild="false" propertySortChoices="true"
+          ecoreFeature="ecore:EReference kaom.ecore#//Linkable/incomingLinks"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

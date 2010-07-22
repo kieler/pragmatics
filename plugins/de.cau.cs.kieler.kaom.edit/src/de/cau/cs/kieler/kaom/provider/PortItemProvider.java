@@ -72,54 +72,8 @@ public class PortItemProvider
         if (itemPropertyDescriptors == null) {
             super.getPropertyDescriptors(object);
 
-            addOutgoingLinksPropertyDescriptor(object);
-            addIncomingLinksPropertyDescriptor(object);
         }
         return itemPropertyDescriptors;
-    }
-
-    /**
-     * This adds a property descriptor for the Outgoing Links feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected void addOutgoingLinksPropertyDescriptor(Object object) {
-        itemPropertyDescriptors.add
-            (createItemPropertyDescriptor
-                (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-                 getResourceLocator(),
-                 getString("_UI_Linkable_outgoingLinks_feature"),
-                 getString("_UI_PropertyDescriptor_description", "_UI_Linkable_outgoingLinks_feature", "_UI_Linkable_type"),
-                 KaomPackage.Literals.LINKABLE__OUTGOING_LINKS,
-                 true,
-                 false,
-                 true,
-                 null,
-                 null,
-                 null));
-    }
-
-    /**
-     * This adds a property descriptor for the Incoming Links feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected void addIncomingLinksPropertyDescriptor(Object object) {
-        itemPropertyDescriptors.add
-            (createItemPropertyDescriptor
-                (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-                 getResourceLocator(),
-                 getString("_UI_Linkable_incomingLinks_feature"),
-                 getString("_UI_PropertyDescriptor_description", "_UI_Linkable_incomingLinks_feature", "_UI_Linkable_type"),
-                 KaomPackage.Literals.LINKABLE__INCOMING_LINKS,
-                 true,
-                 false,
-                 true,
-                 null,
-                 null,
-                 null));
     }
 
     /**

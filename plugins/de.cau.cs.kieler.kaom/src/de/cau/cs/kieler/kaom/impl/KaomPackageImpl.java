@@ -123,18 +123,13 @@ public class KaomPackageImpl extends EPackageImpl implements KaomPackage {
         isInited = true;
 
         // Initialize simple dependencies
-        EcorePackage.eINSTANCE.eClass();
-
-        // Obtain or create and register interdependencies
-        AnnotationsPackageImpl theAnnotationsPackage = (AnnotationsPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(AnnotationsPackage.eNS_URI) instanceof AnnotationsPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(AnnotationsPackage.eNS_URI) : AnnotationsPackage.eINSTANCE);
+        AnnotationsPackage.eINSTANCE.eClass();
 
         // Create package meta-data objects
         theKaomPackage.createPackageContents();
-        theAnnotationsPackage.createPackageContents();
 
         // Initialize created meta-data
         theKaomPackage.initializePackageContents();
-        theAnnotationsPackage.initializePackageContents();
 
         // Mark meta-data to indicate it can't be changed
         theKaomPackage.freeze();

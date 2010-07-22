@@ -9,11 +9,10 @@ import de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorPlugin;
  */
 public class DiagramRulersAndGridPreferencePage extends RulerGridPreferencePage {
 
-	/**
-	 * @generated
-	 */
-	public DiagramRulersAndGridPreferencePage() {
-		setPreferenceStore(KaomDiagramEditorPlugin.getInstance()
-				.getPreferenceStore());
-	}
+    /**
+     * @generated
+     */
+    public DiagramRulersAndGridPreferencePage() {
+        setPreferenceStore(KaomDiagramEditorPlugin.getInstance().getPreferenceStore());
+    }
 }

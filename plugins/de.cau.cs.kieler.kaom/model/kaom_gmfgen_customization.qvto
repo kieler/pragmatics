@@ -7,7 +7,7 @@ main() {
 	
 	// we want to use custom codegen templates which are required for
 	// certain special features
-	model.dynamicTemplates :=true;
+	model.dynamicTemplates := true;
 	model.templateDirectory := "de.cau.cs.kieler.kaom/gmf-templates";
 	model.sameFileForDiagramAndModel := false;
 	

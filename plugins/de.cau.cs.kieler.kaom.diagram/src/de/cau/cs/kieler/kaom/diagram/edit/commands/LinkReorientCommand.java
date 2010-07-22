@@ -18,145 +18,144 @@ import de.cau.cs.kieler.kaom.diagram.edit.policies.KaomBaseItemSemanticEditPolic
  */
 public class LinkReorientCommand extends EditElementCommand {
 
-	/**
-	 * @generated
-	 */
-	private final int reorientDirection;
+    /**
+     * @generated
+     */
+    private final int reorientDirection;
 
-	/**
-	 * @generated
-	 */
-	private final EObject oldEnd;
+    /**
+     * @generated
+     */
+    private final EObject oldEnd;
 
-	/**
-	 * @generated
-	 */
-	private final EObject newEnd;
+    /**
+     * @generated
+     */
+    private final EObject newEnd;
 
-	/**
-	 * @generated
-	 */
-	public LinkReorientCommand(ReorientRelationshipRequest request) {
-		super(request.getLabel(), request.getRelationship(), request);
-		reorientDirection = request.getDirection();
-		oldEnd = request.getOldRelationshipEnd();
-		newEnd = request.getNewRelationshipEnd();
-	}
+    /**
+     * @generated
+     */
+    public LinkReorientCommand(ReorientRelationshipRequest request) {
+        super(request.getLabel(), request.getRelationship(), request);
+        reorientDirection = request.getDirection();
+        oldEnd = request.getOldRelationshipEnd();
+        newEnd = request.getNewRelationshipEnd();
+    }
 
-	/**
-	 * @generated
-	 */
-	public boolean canExecute() {
-		if (false == getElementToEdit() instanceof Link) {
-			return false;
-		}
-		if (reorientDirection == ReorientRelationshipRequest.REORIENT_SOURCE) {
-			return canReorientSource();
-		}
-		if (reorientDirection == ReorientRelationshipRequest.REORIENT_TARGET) {
-			return canReorientTarget();
-		}
-		return false;
-	}
+    /**
+     * @generated
+     */
+    public boolean canExecute() {
+        if (false == getElementToEdit() instanceof Link) {
+            return false;
+        }
+        if (reorientDirection == ReorientRelationshipRequest.REORIENT_SOURCE) {
+            return canReorientSource();
+        }
+        if (reorientDirection == ReorientRelationshipRequest.REORIENT_TARGET) {
+            return canReorientTarget();
+        }
+        return false;
+    }
 
-	/**
-	 * @generated
-	 */
-	protected boolean canReorientSource() {
-		if (!(oldEnd instanceof Linkable && newEnd instanceof Linkable)) {
-			return false;
-		}
-		Linkable target = getLink().getTarget();
-		if (!(getLink().eContainer() instanceof Entity)) {
-			return false;
-		}
-		Entity container = (Entity) getLink().eContainer();
-		return KaomBaseItemSemanticEditPolicy.LinkConstraints
-				.canExistLink_4001(container, getNewSource(), target);
-	}
+    /**
+     * @generated
+     */
+    protected boolean canReorientSource() {
+        if (!(oldEnd instanceof Linkable && newEnd instanceof Linkable)) {
+            return false;
+        }
+        Linkable target = getLink().getTarget();
+        if (!(getLink().eContainer() instanceof Entity)) {
+            return false;
+        }
+        Entity container = (Entity) getLink().eContainer();
+        return KaomBaseItemSemanticEditPolicy.getLinkConstraints().canExistLink_4001(container,
+                getLink(), getNewSource(), target);
+    }
 
-	/**
-	 * @generated
-	 */
-	protected boolean canReorientTarget() {
-		if (!(oldEnd instanceof Linkable && newEnd instanceof Linkable)) {
-			return false;
-		}
-		Linkable source = getLink().getSource();
-		if (!(getLink().eContainer() instanceof Entity)) {
-			return false;
-		}
-		Entity container = (Entity) getLink().eContainer();
-		return KaomBaseItemSemanticEditPolicy.LinkConstraints
-				.canExistLink_4001(container, source, getNewTarget());
-	}
+    /**
+     * @generated
+     */
+    protected boolean canReorientTarget() {
+        if (!(oldEnd instanceof Linkable && newEnd instanceof Linkable)) {
+            return false;
+        }
+        Linkable source = getLink().getSource();
+        if (!(getLink().eContainer() instanceof Entity)) {
+            return false;
+        }
+        Entity container = (Entity) getLink().eContainer();
+        return KaomBaseItemSemanticEditPolicy.getLinkConstraints().canExistLink_4001(container,
+                getLink(), source, getNewTarget());
+    }
 
-	/**
-	 * @generated
-	 */
-	protected CommandResult doExecuteWithResult(IProgressMonitor monitor,
-			IAdaptable info) throws ExecutionException {
-		if (!canExecute()) {
-			throw new ExecutionException(
-					"Invalid arguments in reorient link command"); //$NON-NLS-1$
-		}
-		if (reorientDirection == ReorientRelationshipRequest.REORIENT_SOURCE) {
-			return reorientSource();
-		}
-		if (reorientDirection == ReorientRelationshipRequest.REORIENT_TARGET) {
-			return reorientTarget();
-		}
-		throw new IllegalStateException();
-	}
+    /**
+     * @generated
+     */
+    protected CommandResult doExecuteWithResult(IProgressMonitor monitor, IAdaptable info)
+            throws ExecutionException {
+        if (!canExecute()) {
+            throw new ExecutionException("Invalid arguments in reorient link command"); //$NON-NLS-1$
+        }
+        if (reorientDirection == ReorientRelationshipRequest.REORIENT_SOURCE) {
+            return reorientSource();
+        }
+        if (reorientDirection == ReorientRelationshipRequest.REORIENT_TARGET) {
+            return reorientTarget();
+        }
+        throw new IllegalStateException();
+    }
 
-	/**
-	 * @generated
-	 */
-	protected CommandResult reorientSource() throws ExecutionException {
-		getLink().setSource(getNewSource());
-		return CommandResult.newOKCommandResult(getLink());
-	}
+    /**
+     * @generated
+     */
+    protected CommandResult reorientSource() throws ExecutionException {
+        getLink().setSource(getNewSource());
+        return CommandResult.newOKCommandResult(getLink());
+    }
 
-	/**
-	 * @generated
-	 */
-	protected CommandResult reorientTarget() throws ExecutionException {
-		getLink().setTarget(getNewTarget());
-		return CommandResult.newOKCommandResult(getLink());
-	}
+    /**
+     * @generated
+     */
+    protected CommandResult reorientTarget() throws ExecutionException {
+        getLink().setTarget(getNewTarget());
+        return CommandResult.newOKCommandResult(getLink());
+    }
 
-	/**
-	 * @generated
-	 */
-	protected Link getLink() {
-		return (Link) getElementToEdit();
-	}
+    /**
+     * @generated
+     */
+    protected Link getLink() {
+        return (Link) getElementToEdit();
+    }
 
-	/**
-	 * @generated
-	 */
-	protected Linkable getOldSource() {
-		return (Linkable) oldEnd;
-	}
+    /**
+     * @generated
+     */
+    protected Linkable getOldSource() {
+        return (Linkable) oldEnd;
+    }
 
-	/**
-	 * @generated
-	 */
-	protected Linkable getNewSource() {
-		return (Linkable) newEnd;
-	}
+    /**
+     * @generated
+     */
+    protected Linkable getNewSource() {
+        return (Linkable) newEnd;
+    }
 
-	/**
-	 * @generated
-	 */
-	protected Linkable getOldTarget() {
-		return (Linkable) oldEnd;
-	}
+    /**
+     * @generated
+     */
+    protected Linkable getOldTarget() {
+        return (Linkable) oldEnd;
+    }
 
-	/**
-	 * @generated
-	 */
-	protected Linkable getNewTarget() {
-		return (Linkable) newEnd;
-	}
+    /**
+     * @generated
+     */
+    protected Linkable getNewTarget() {
+        return (Linkable) newEnd;
+    }
 }

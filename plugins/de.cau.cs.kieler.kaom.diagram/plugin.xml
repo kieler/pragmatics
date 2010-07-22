@@ -102,18 +102,8 @@
             </ElementType>
          </ViewId>
       </GlobalActionHandlerProvider>
-      <GlobalActionHandlerProvider
-            class="org.eclipse.gmf.runtime.diagram.ui.render.providers.DiagramUIRenderGlobalActionHandlerProvider"
-            id="KaomRender">
-         <Priority name="Lowest"/>
-         <ViewId id="de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorID">
-            <ElementType class="org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart">
-               <GlobalActionId actionId="cut"/>
-               <GlobalActionId actionId="copy"/>
-               <GlobalActionId actionId="paste"/>
-            </ElementType>
-         </ViewId>
-      </GlobalActionHandlerProvider>
+
+      
    </extension>
 
 
@@ -127,6 +117,7 @@
       <page
             id="de.cau.cs.kieler.kaom.diagram.general"
             name="%prefpage.de.cau.cs.kieler.kaom.diagram.general"
+            category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.kaom.diagram.preferences.DiagramGeneralPreferencePage">
       </page>
       <page

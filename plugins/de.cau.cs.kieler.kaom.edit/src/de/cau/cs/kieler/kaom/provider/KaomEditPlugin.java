@@ -15,6 +15,7 @@
  */
 package de.cau.cs.kieler.kaom.provider;
 
+import de.cau.cs.kieler.core.annotations.provider.AnnotationsEditPlugin;
 import org.eclipse.emf.common.EMFPlugin;
 
 import org.eclipse.emf.common.util.ResourceLocator;
@@ -53,6 +54,7 @@ public final class KaomEditPlugin extends EMFPlugin {
     public KaomEditPlugin() {
         super
           (new ResourceLocator [] {
+             AnnotationsEditPlugin.INSTANCE,
              EcoreEditPlugin.INSTANCE,
            });
     }

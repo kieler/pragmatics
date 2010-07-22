@@ -2,6 +2,7 @@ package de.cau.cs.kieler.kaom.diagram.edit.parts;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.draw2d.ColorConstants;
@@ -43,347 +44,301 @@ import de.cau.cs.kieler.kaom.diagram.providers.KaomElementTypes;
  */
 public class RelationEditPart extends AbstractBorderedShapeEditPart {
 
-	/**
-	 * @generated
-	 */
-	public static final int VISUAL_ID = 2002;
+    /**
+     * @generated
+     */
+    public static final int VISUAL_ID = 2002;
 
-	/**
-	 * @generated
-	 */
-	protected IFigure contentPane;
+    /**
+     * @generated
+     */
+    protected IFigure contentPane;
 
-	/**
-	 * @generated
-	 */
-	protected IFigure primaryShape;
+    /**
+     * @generated
+     */
+    protected IFigure primaryShape;
 
-	/**
-	 * @generated
-	 */
-	public RelationEditPart(View view) {
-		super(view);
-	}
+    /**
+     * @generated
+     */
+    public RelationEditPart(View view) {
+        super(view);
+    }
 
-	/**
-	 * @generated
-	 */
-	protected void createDefaultEditPolicies() {
-		super.createDefaultEditPolicies();
-		installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
-				new RelationItemSemanticEditPolicy());
-		installEditPolicy(EditPolicy.LAYOUT_ROLE, createLayoutEditPolicy());
-		// XXX need an SCR to runtime to have another abstract superclass that would let children add reasonable editpolicies
-		// removeEditPolicy(org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles.CONNECTION_HANDLES_ROLE);
-	}
+    /**
+     * @generated
+     */
+    protected void createDefaultEditPolicies() {
+        super.createDefaultEditPolicies();
+        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE, new RelationItemSemanticEditPolicy());
+        installEditPolicy(EditPolicy.LAYOUT_ROLE, createLayoutEditPolicy());
+        // XXX need an SCR to runtime to have another abstract superclass that would let children add reasonable editpolicies
+        // removeEditPolicy(org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles.CONNECTION_HANDLES_ROLE);
+    }
 
-	/**
-	 * @generated
-	 */
-	protected LayoutEditPolicy createLayoutEditPolicy() {
-		LayoutEditPolicy lep = new LayoutEditPolicy() {
+    /**
+     * @generated
+     */
+    protected LayoutEditPolicy createLayoutEditPolicy() {
+        org.eclipse.gmf.runtime.diagram.ui.editpolicies.LayoutEditPolicy lep = new org.eclipse.gmf.runtime.diagram.ui.editpolicies.LayoutEditPolicy() {
 
-			protected EditPolicy createChildEditPolicy(EditPart child) {
-				View childView = (View) child.getModel();
-				switch (KaomVisualIDRegistry.getVisualID(childView)) {
-				case RelationNameEditPart.VISUAL_ID:
-					return new BorderItemSelectionEditPolicy() {
+            protected EditPolicy createChildEditPolicy(EditPart child) {
+                View childView = (View) child.getModel();
+                switch (KaomVisualIDRegistry.getVisualID(childView)) {
+                case RelationNameEditPart.VISUAL_ID:
+                    return new BorderItemSelectionEditPolicy() {
 
-						protected List createSelectionHandles() {
-							MoveHandle mh = new MoveHandle(
-									(GraphicalEditPart) getHost());
-							mh.setBorder(null);
-							return Collections.singletonList(mh);
-						}
-					};
-				}
-				EditPolicy result = child
-						.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
-				if (result == null) {
-					result = new NonResizableEditPolicy();
-				}
-				return result;
-			}
+                        protected List createSelectionHandles() {
+                            MoveHandle mh = new MoveHandle((GraphicalEditPart) getHost());
+                            mh.setBorder(null);
+                            return Collections.singletonList(mh);
+                        }
+                    };
+                }
+                EditPolicy result = child.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
+                if (result == null) {
+                    result = new NonResizableEditPolicy();
+                }
+                return result;
+            }
 
-			protected Command getMoveChildrenCommand(Request request) {
-				return null;
-			}
+            protected Command getMoveChildrenCommand(Request request) {
+                return null;
+            }
 
-			protected Command getCreateCommand(CreateRequest request) {
-				return null;
-			}
-		};
-		return lep;
-	}
+            protected Command getCreateCommand(CreateRequest request) {
+                return null;
+            }
+        };
+        return lep;
+    }
 
-	/**
-	 * @generated
-	 */
-	protected IFigure createNodeShape() {
-		RelationFigure figure = new RelationFigure();
-		return primaryShape = figure;
-	}
+    /**
+     * @generated
+     */
+    protected IFigure createNodeShape() {
+        return primaryShape = new RelationFigure();
+    }
 
-	/**
-	 * @generated
-	 */
-	public RelationFigure getPrimaryShape() {
-		return (RelationFigure) primaryShape;
-	}
+    /**
+     * @generated
+     */
+    public RelationFigure getPrimaryShape() {
+        return (RelationFigure) primaryShape;
+    }
 
-	/**
-	 * @generated
-	 */
-	protected void addBorderItem(IFigure borderItemContainer,
-			IBorderItemEditPart borderItemEditPart) {
-		if (borderItemEditPart instanceof RelationNameEditPart) {
-			BorderItemLocator locator = new BorderItemLocator(getMainFigure(),
-					PositionConstants.SOUTH);
-			locator.setBorderItemOffset(new Dimension(-20, -20));
-			borderItemContainer.add(borderItemEditPart.getFigure(), locator);
-		} else {
-			super.addBorderItem(borderItemContainer, borderItemEditPart);
-		}
-	}
+    /**
+     * @generated
+     */
+    protected void addBorderItem(IFigure borderItemContainer, IBorderItemEditPart borderItemEditPart) {
+        if (borderItemEditPart instanceof RelationNameEditPart) {
+            BorderItemLocator locator = new BorderItemLocator(getMainFigure(), PositionConstants.SOUTH);
+            locator.setBorderItemOffset(new Dimension(-20, -20));
+            borderItemContainer.add(borderItemEditPart.getFigure(), locator);
+        } else {
+            super.addBorderItem(borderItemContainer, borderItemEditPart);
+        }
+    }
 
-	/**
-	 * @generated
-	 */
-	protected NodeFigure createNodePlate() {
-		DefaultSizeNodeFigure result = new DefaultSizeNodeFigure(10, 10);
-		return result;
-	}
+    /**
+     * @generated
+     */
+    protected NodeFigure createNodePlate() {
+        DefaultSizeNodeFigure result = new DefaultSizeNodeFigure(10, 10);
+        return result;
+    }
 
-	/**
-	 * @generated
-	 */
-	public EditPolicy getPrimaryDragEditPolicy() {
-		EditPolicy result = super.getPrimaryDragEditPolicy();
-		if (result instanceof ResizableEditPolicy) {
-			ResizableEditPolicy ep = (ResizableEditPolicy) result;
-			ep.setResizeDirections(PositionConstants.NONE);
-		}
-		return result;
-	}
+    /**
+     * @generated
+     */
+    public EditPolicy getPrimaryDragEditPolicy() {
+        EditPolicy result = super.getPrimaryDragEditPolicy();
+        if (result instanceof ResizableEditPolicy) {
+            ResizableEditPolicy ep = (ResizableEditPolicy) result;
+            ep.setResizeDirections(PositionConstants.NONE);
+        }
+        return result;
+    }
 
-	/**
-	 * Creates figure for this edit part.
-	 * 
-	 * Body of this method does not depend on settings in generation model
-	 * so you may safely remove <i>generated</i> tag and modify it.
-	 * 
-	 * @generated
-	 */
-	protected NodeFigure createMainFigure() {
-		NodeFigure figure = createNodePlate();
-		figure.setLayoutManager(new StackLayout());
-		IFigure shape = createNodeShape();
-		figure.add(shape);
-		contentPane = setupContentPane(shape);
-		return figure;
-	}
+    /**
+     * Creates figure for this edit part.
+     * 
+     * Body of this method does not depend on settings in generation model
+     * so you may safely remove <i>generated</i> tag and modify it.
+     * 
+     * @generated
+     */
+    protected NodeFigure createMainFigure() {
+        NodeFigure figure = createNodePlate();
+        figure.setLayoutManager(new StackLayout());
+        IFigure shape = createNodeShape();
+        figure.add(shape);
+        contentPane = setupContentPane(shape);
+        return figure;
+    }
 
-	/**
-	 * Default implementation treats passed figure as content pane.
-	 * Respects layout one may have set for generated figure.
-	 * @param nodeShape instance of generated figure class
-	 * @generated
-	 */
-	protected IFigure setupContentPane(IFigure nodeShape) {
-		return nodeShape; // use nodeShape itself as contentPane
-	}
+    /**
+     * Default implementation treats passed figure as content pane.
+     * Respects layout one may have set for generated figure.
+     * @param nodeShape instance of generated figure class
+     * @generated
+     */
+    protected IFigure setupContentPane(IFigure nodeShape) {
+        return nodeShape; // use nodeShape itself as contentPane
+    }
 
-	/**
-	 * @generated
-	 */
-	public IFigure getContentPane() {
-		if (contentPane != null) {
-			return contentPane;
-		}
-		return super.getContentPane();
-	}
+    /**
+     * @generated
+     */
+    public IFigure getContentPane() {
+        if (contentPane != null) {
+            return contentPane;
+        }
+        return super.getContentPane();
+    }
 
-	/**
-	 * @generated
-	 */
-	protected void setForegroundColor(Color color) {
-		if (primaryShape != null) {
-			primaryShape.setForegroundColor(color);
-		}
-	}
+    /**
+     * @generated
+     */
+    protected void setForegroundColor(Color color) {
+        if (primaryShape != null) {
+            primaryShape.setForegroundColor(color);
+        }
+    }
 
-	/**
-	 * @generated
-	 */
-	protected void setBackgroundColor(Color color) {
-		if (primaryShape != null) {
-			primaryShape.setBackgroundColor(color);
-		}
-	}
+    /**
+     * @generated
+     */
+    protected void setBackgroundColor(Color color) {
+        if (primaryShape != null) {
+            primaryShape.setBackgroundColor(color);
+        }
+    }
 
-	/**
-	 * @generated
-	 */
-	protected void setLineWidth(int width) {
-		if (primaryShape instanceof Shape) {
-			((Shape) primaryShape).setLineWidth(width);
-		}
-	}
+    /**
+     * @generated
+     */
+    protected void setLineWidth(int width) {
+        if (primaryShape instanceof Shape) {
+            ((Shape) primaryShape).setLineWidth(width);
+        }
+    }
 
-	/**
-	 * @generated
-	 */
-	protected void setLineType(int style) {
-		if (primaryShape instanceof Shape) {
-			((Shape) primaryShape).setLineStyle(style);
-		}
-	}
+    /**
+     * @generated
+     */
+    protected void setLineType(int style) {
+        if (primaryShape instanceof Shape) {
+            ((Shape) primaryShape).setLineStyle(style);
+        }
+    }
 
-	/**
-	 * @generated
-	 */
-	public EditPart getPrimaryChildEditPart() {
-		return getChildBySemanticHint(KaomVisualIDRegistry
-				.getType(RelationNameEditPart.VISUAL_ID));
-	}
+    /**
+     * @generated
+     */
+    public EditPart getPrimaryChildEditPart() {
+        return getChildBySemanticHint(KaomVisualIDRegistry.getType(RelationNameEditPart.VISUAL_ID));
+    }
 
-	/**
-	 * @generated
-	 */
-	public List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/getMARelTypesOnSource() {
-		List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
-		types.add(KaomElementTypes.Link_4001);
-		return types;
-	}
+    /**
+     * @generated
+     */
+    public List<IElementType> getMARelTypesOnSource() {
+        ArrayList<IElementType> types = new ArrayList<IElementType>(1);
+        types.add(KaomElementTypes.Link_4001);
+        return types;
+    }
 
-	/**
-	 * @generated
-	 */
-	public List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/getMARelTypesOnSourceAndTarget(
-			IGraphicalEditPart targetEditPart) {
-		List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
-		if (targetEditPart instanceof Entity2EditPart) {
-			types.add(KaomElementTypes.Link_4001);
-		}
-		if (targetEditPart instanceof de.cau.cs.kieler.kaom.diagram.edit.parts.RelationEditPart) {
-			types.add(KaomElementTypes.Link_4001);
-		}
-		if (targetEditPart instanceof PortEditPart) {
-			types.add(KaomElementTypes.Link_4001);
-		}
-		if (targetEditPart instanceof Entity3EditPart) {
-			types.add(KaomElementTypes.Link_4001);
-		}
-		if (targetEditPart instanceof Relation2EditPart) {
-			types.add(KaomElementTypes.Link_4001);
-		}
-		return types;
-	}
+    /**
+     * @generated
+     */
+    public List<IElementType> getMARelTypesOnSourceAndTarget(IGraphicalEditPart targetEditPart) {
+        LinkedList<IElementType> types = new LinkedList<IElementType>();
+        if (targetEditPart instanceof Entity2EditPart) {
+            types.add(KaomElementTypes.Link_4001);
+        }
+        if (targetEditPart instanceof de.cau.cs.kieler.kaom.diagram.edit.parts.RelationEditPart) {
+            types.add(KaomElementTypes.Link_4001);
+        }
+        if (targetEditPart instanceof PortEditPart) {
+            types.add(KaomElementTypes.Link_4001);
+        }
+        if (targetEditPart instanceof Entity3EditPart) {
+            types.add(KaomElementTypes.Link_4001);
+        }
+        if (targetEditPart instanceof Relation2EditPart) {
+            types.add(KaomElementTypes.Link_4001);
+        }
+        return types;
+    }
 
-	/**
-	 * @generated
-	 */
-	public List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/getMATypesForTarget(
-			IElementType relationshipType) {
-		List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
-		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.Entity_2001);
-		}
-		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.Relation_2002);
-		}
-		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.Port_3001);
-		}
-		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.Entity_3002);
-		}
-		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.Relation_3003);
-		}
-		return types;
-	}
+    /**
+     * @generated
+     */
+    public List<IElementType> getMATypesForTarget(IElementType relationshipType) {
+        LinkedList<IElementType> types = new LinkedList<IElementType>();
+        if (relationshipType == KaomElementTypes.Link_4001) {
+            types.add(KaomElementTypes.Entity_2001);
+            types.add(KaomElementTypes.Relation_2002);
+            types.add(KaomElementTypes.Port_3001);
+            types.add(KaomElementTypes.Entity_3002);
+            types.add(KaomElementTypes.Relation_3003);
+        }
+        return types;
+    }
 
-	/**
-	 * @generated
-	 */
-	public List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/getMARelTypesOnTarget() {
-		List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
-		types.add(KaomElementTypes.Link_4001);
-		return types;
-	}
+    /**
+     * @generated
+     */
+    public List<IElementType> getMARelTypesOnTarget() {
+        ArrayList<IElementType> types = new ArrayList<IElementType>(1);
+        types.add(KaomElementTypes.Link_4001);
+        return types;
+    }
 
-	/**
-	 * @generated
-	 */
-	public List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/getMATypesForSource(
-			IElementType relationshipType) {
-		List/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/types = new ArrayList/*<org.eclipse.gmf.runtime.emf.type.core.IElementType>*/();
-		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.Entity_2001);
-		}
-		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.Relation_2002);
-		}
-		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.Port_3001);
-		}
-		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.Entity_3002);
-		}
-		if (relationshipType == KaomElementTypes.Link_4001) {
-			types.add(KaomElementTypes.Relation_3003);
-		}
-		return types;
-	}
+    /**
+     * @generated
+     */
+    public List<IElementType> getMATypesForSource(IElementType relationshipType) {
+        LinkedList<IElementType> types = new LinkedList<IElementType>();
+        if (relationshipType == KaomElementTypes.Link_4001) {
+            types.add(KaomElementTypes.Entity_2001);
+            types.add(KaomElementTypes.Relation_2002);
+            types.add(KaomElementTypes.Port_3001);
+            types.add(KaomElementTypes.Entity_3002);
+            types.add(KaomElementTypes.Relation_3003);
+        }
+        return types;
+    }
 
-	/**
-	 * @generated
-	 */
-	public class RelationFigure extends DiamondFigure {
+    /**
+     * @generated
+     */
+    public class RelationFigure extends DiamondFigure {
 
-		/**
-		 * @generated
-		 */
-		private WrappingLabel fFigureRelationNameLabel;
+        /**
+         * @generated
+         */
+        private WrappingLabel fFigureRelationNameLabel;
 
-		/**
-		 * @generated
-		 */
-		public RelationFigure() {
+        /**
+         * @generated
+         */
+        public RelationFigure() {
 
-			this.setForegroundColor(ColorConstants.black);
-			this.setBackgroundColor(ColorConstants.black);
-			this.setPreferredSize(new Dimension(getMapMode().DPtoLP(10),
-					getMapMode().DPtoLP(10)));
-		}
+            this.setForegroundColor(ColorConstants.black);
+            this.setBackgroundColor(ColorConstants.black);
+            this.setPreferredSize(new Dimension(getMapMode().DPtoLP(10), getMapMode().DPtoLP(10)));
+        }
 
-		/**
-		 * @generated
-		 */
-		private boolean myUseLocalCoordinates = false;
+        /**
+         * @generated
+         */
+        public WrappingLabel getFigureRelationNameLabel() {
+            return fFigureRelationNameLabel;
+        }
 
-		/**
-		 * @generated
-		 */
-		protected boolean useLocalCoordinates() {
-			return myUseLocalCoordinates;
-		}
-
-		/**
-		 * @generated
-		 */
-		protected void setUseLocalCoordinates(boolean useLocalCoordinates) {
-			myUseLocalCoordinates = useLocalCoordinates;
-		}
-
-		/**
-		 * @generated
-		 */
-		public WrappingLabel getFigureRelationNameLabel() {
-			return fFigureRelationNameLabel;
-		}
-
-	}
+    }
 
 }

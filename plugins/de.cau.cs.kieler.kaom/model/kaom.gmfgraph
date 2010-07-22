@@ -144,7 +144,7 @@
       name="PortNode"
       figure="PortFigure"
       resizeConstraint="NONE"
-      affixedParentSide="NSEW"/>
+      affixedParentSide="WEST"/>
   <nodes
       name="RelationNode"
       figure="RelationFigure"
