@@ -49,10 +49,10 @@ import de.cau.cs.kieler.klay.planar.graph.impl.PGraph;
  * "Das Links Rechts Planaritätskriterium" (seminar paper, German, downloadable from:
  * {@linkplain www.inf.uni-konstanz.de/algo/lehre/ws08/projekt/ausarbeitungen/kaiser.pdf}).
  * 
- * @see de.cau.cs.rtprak.planarization.IPlanarityTester IPlanarityTester
- * @see de.cau.cs.rtprak.planarization.graph.impl.IGraph IGraph
- * @see de.cau.cs.rtprak.planarization.graph.impl.INode INode
- * @see de.cau.cs.rtprak.planarization.graph.impl.IEdge IEdge
+ * @see de.cau.cs.kieler.klay.planar.alg.IPlanarityTester IPlanarityTester
+ * @see de.cau.cs.kieler.klay.planar.graph.IGraph IGraph
+ * @see de.cau.cs.kieler.klay.planar.graph.INode INode
+ * @see de.cau.cs.kieler.klay.planar.graph.IEdge IEdge
  * 
  * @author pdo
  */
@@ -363,11 +363,11 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * @throws InconsistentGraphModelException
      *             if the input graph is not consistent
      * 
-     * @see de.cau.cs.rtprak.planarization.OrthogonalLayoutProvider OrthogonalLayoutProvider
-     * @see de.cau.cs.rtprak.planarization.IPlanarityTester IPlanarityTester
-     * @see de.cau.cs.rtprak.planarization.graph.IGraph IGraph
-     * @see de.cau.cs.rtprak.planarization.graph.INode INode
-     * @see de.cau.cs.rtprak.planarization.graph.IEdge IEdge
+     * @see de.cau.cs.kieler.klay.planar.OrthogonalLayoutProvider OrthogonalLayoutProvider
+     * @see de.cau.cs.kieler.klay.planar.alg.IPlanarityTester IPlanarityTester
+     * @see de.cau.cs.kieler.klay.planar.graph.IGraph IGraph
+     * @see de.cau.cs.kieler.klay.planar.graph.INode INode
+     * @see de.cau.cs.kieler.klay.planar.graph.IEdge IEdge
      */
     public boolean testPlanarity(final IGraph iGraph) throws InconsistentGraphModelException {
 
@@ -426,11 +426,11 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * @throws InconsistentGraphModelException
      *             if {@code iGraph} is {@code null} or not consistent
      * 
-     * @see de.cau.cs.rtprak.planarization.OrthogonalLayoutProvider OrthogonalLayoutProvider
-     * @see de.cau.cs.rtprak.planarization.IPlanarityTester IPlanarityTester
-     * @see de.cau.cs.rtprak.planarization.graph.IGraph IGraph
-     * @see de.cau.cs.rtprak.planarization.graph.INode INode
-     * @see de.cau.cs.rtprak.planarization.graph.IEdge IEdge
+     * @see de.cau.cs.kieler.klay.planar.OrthogonalLayoutProvider OrthogonalLayoutProvider
+     * @see de.cau.cs.kieler.klay.planar.alg.IPlanarityTester IPlanarityTester
+     * @see de.cau.cs.kieler.klay.planar.graph.IGraph IGraph
+     * @see de.cau.cs.kieler.klay.planar.graph.INode INode
+     * @see de.cau.cs.kieler.klay.planar.graph.IEdge IEdge
      * @see de.cau.cs.kieler.core.util.Pair Pair
      */
     public List<Pair<INode, INode>> planarSubgraph(final IGraph iGraph)
