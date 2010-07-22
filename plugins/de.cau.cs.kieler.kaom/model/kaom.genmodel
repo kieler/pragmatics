@@ -17,8 +17,10 @@
     <genClasses ecoreClass="kaom.ecore#//Port"/>
     <genClasses ecoreClass="kaom.ecore#//Relation"/>
     <genClasses ecoreClass="kaom.ecore#//Link">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference kaom.ecore#//Link/source"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference kaom.ecore#//Link/target"/>
+      <genFeatures property="None" notify="false" createChild="false" propertySortChoices="true"
+          ecoreFeature="ecore:EReference kaom.ecore#//Link/source"/>
+      <genFeatures property="None" notify="false" createChild="false" propertySortChoices="true"
+          ecoreFeature="ecore:EReference kaom.ecore#//Link/target"/>
     </genClasses>
     <genClasses image="false" ecoreClass="kaom.ecore#//Linkable">
       <genFeatures property="None" notify="false" createChild="false" propertySortChoices="true"
