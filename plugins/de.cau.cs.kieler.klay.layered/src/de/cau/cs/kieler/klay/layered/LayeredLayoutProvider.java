@@ -31,6 +31,7 @@ import de.cau.cs.kieler.klay.layered.impl.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.impl.LayerSweepCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.impl.LinearSegmentsNodePlacer;
 import de.cau.cs.kieler.klay.layered.impl.LongestPathLayerer;
+import de.cau.cs.kieler.klay.layered.impl.OrthogonalEdgeRouter;
 import de.cau.cs.kieler.klay.layered.impl.SimpleSplineEdgeRouter;
 import de.cau.cs.kieler.klay.layered.impl.PolylineEdgeRouter;
 import de.cau.cs.kieler.klay.layered.impl.ComplexSplineEdgeRouter;
@@ -89,6 +90,11 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         // check which EdgeRouter to use
         LayeredEdgeRouting routing = LayoutOptions.getEnum(parentLayout, LayeredEdgeRouting.class);
         switch (routing) {
+        case ORTHOGONAL:
+            if (!(edgeRouter instanceof OrthogonalEdgeRouter)) {
+                edgeRouter = new OrthogonalEdgeRouter();
+            }
+            break;
         case SIMPLE_SPLINES:
             if (!(edgeRouter instanceof SimpleSplineEdgeRouter)) {
                 edgeRouter = new SimpleSplineEdgeRouter();
