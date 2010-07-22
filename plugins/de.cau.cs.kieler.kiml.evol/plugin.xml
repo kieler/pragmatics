@@ -278,7 +278,7 @@
             locationURI="toolbar:de.cau.cs.kieler.kiml.evol.evolView">
          <command
                commandId="de.cau.cs.kieler.kiml.evol.evolve"
-               icon="icons/evolve.png"
+               icon="icons/step16.png"
                label="Evolve 1"
                style="push"
                tooltip="Proceed to the next generation">
@@ -289,7 +289,7 @@
          </command>
          <command
                commandId="de.cau.cs.kieler.kiml.evol.evolve"
-               icon="icons/evolve.png"
+               icon="icons/evolve16.png"
                label="Evolve"
                style="push"
                tooltip="Proceed to the next generation repeatedly">
@@ -304,7 +304,7 @@
          </command>
          <command
                commandId="de.cau.cs.kieler.kiml.evol.changeRating"
-               icon="icons/thumbsup.png"
+               icon="icons/thumbsup16.png"
                label="Favor"
                style="push">
             <parameter
@@ -314,7 +314,7 @@
          </command>
          <command
                commandId="de.cau.cs.kieler.kiml.evol.changeRating"
-               icon="icons/thumbsdn.png"
+               icon="icons/thumbsdn16.png"
                label="Disregard"
                style="push">
             <parameter
@@ -324,14 +324,14 @@
          </command>
          <command
                commandId="de.cau.cs.kieler.kiml.evol.command.autoRateAll"
-               icon="icons/autorate.png"
+               icon="icons/autorate16.png"
                label="Auto-rate all"
                style="push"
                tooltip="Auto-rate all individuals">
          </command>
          <command
                commandId="de.cau.cs.kieler.kiml.evol.reset"
-               icon="icons/reset.png"
+               icon="icons/reset16.png"
                label="Reset"
                style="push"
                tooltip="Restart with a new population.">
