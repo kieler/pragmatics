@@ -13,6 +13,9 @@
  */
 package de.cau.cs.rtprak.planarization.graph;
 
+import de.cau.cs.kieler.core.kgraph.KGraphElement;
+import de.cau.cs.kieler.core.util.Property;
+
 /**
  * Interface for a basic graph data structure. The purpose of this basic structure is to be used in
  * general graph theory algorithms. It does not provide any information concerning the drawing of a
@@ -24,13 +27,15 @@ package de.cau.cs.rtprak.planarization.graph;
  */
 public interface IGraph extends INode {
 
-    // ======================== Data Identifiers ===================================================
+    // ======================== Properties =========================================================
 
-    /** Data Identifier: Converts an {@code IGraphElement} to a {@code KGraphElement}. */
-    String TOKGRAPH = "IGraphToKGraph";
+    /** Property to convert an {@code IGraphElement} to its corresponding {@code KGraphElement}. */
+    Property<KGraphElement> TOKGRAPH = new Property<KGraphElement>(
+            "de.cau.cs.kieler.klay.planar.properties.tokgraph");
 
-    /** Data Identifier: Converts an {@code IGraphElement} to its element in the dual graph. */
-    String TODUALGRAPH = "IGraphToDualGraph";
+    /** Property to get the element in the dual graph for any {@code IGraphElement}. */
+    Property<IGraphElement> TODUALGRAPH = new Property<IGraphElement>(
+            "de.cau.cs.kieler.klay.planar.properties.todualgraph");
 
     // ======================== Graph ==============================================================
 

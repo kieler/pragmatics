@@ -135,7 +135,7 @@ public class PGraph extends PNode implements IGraph, Serializable {
                 node = new PNode(this.nodeIndex++, this, NodeType.NORMAL);
             }
             this.nodes.add(node);
-            node.addData(IGraph.TOKGRAPH, knode);
+            node.setProperty(IGraph.TOKGRAPH, knode);
             map.put(knode, node);
         }
 
@@ -152,7 +152,7 @@ public class PGraph extends PNode implements IGraph, Serializable {
                 this.edges.add(edge);
                 source.linkEdge(edge);
                 target.linkEdge(edge);
-                edge.addData(IGraph.TOKGRAPH, kedge);
+                edge.setProperty(IGraph.TOKGRAPH, kedge);
             }
         }
 
@@ -246,14 +246,14 @@ public class PGraph extends PNode implements IGraph, Serializable {
         for (IFace face : this.faces) {
             PNode node = (PNode) dual.addNode();
             node.setID(face.getID());
-            face.addData(IGraph.TODUALGRAPH, node);
+            ((PFace) face).setProperty(IGraph.TODUALGRAPH, node);
             map.put(face, node);
         }
         // Build the edges based on the neighboring faces
         for (IEdge edge : this.edges) {
             if (this.faces.size() > 1) {
                 IEdge e = dual.addEdge(map.get(edge.getLeftFace()), map.get(edge.getRightFace()));
-                edge.addData(IGraph.TODUALGRAPH, e);
+                ((PEdge) edge).setProperty(IGraph.TODUALGRAPH, e);
             }
         }
         return dual;

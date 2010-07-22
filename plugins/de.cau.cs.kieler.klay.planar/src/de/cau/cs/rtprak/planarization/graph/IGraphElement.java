@@ -13,7 +13,6 @@
  */
 package de.cau.cs.rtprak.planarization.graph;
 
-import de.cau.cs.kieler.core.util.Pair;
 
 /**
  * A generic element in the interface for a general graph data structure.
@@ -41,48 +40,5 @@ public interface IGraphElement {
      * @return the parent graph of the element
      */
     IGraph getParent();
-
-    /**
-     * Attach data to the graph element. This gives the possibility to attach any kind of data to
-     * the graph element. The data is identified by an id string. Adding data with an already
-     * existing id will overwrite the previous data with the same id.
-     * 
-     * @param <T>
-     *            the type of the data object
-     * @param id
-     *            the unique id string of the data
-     * @param item
-     *            the data to add to the element
-     */
-    <T> void addData(String id, T item);
-
-    /**
-     * Get data from the graph element. This retrieves any previously stored data on the element,
-     * that is identified by the given id string.
-     * 
-     * @param <T>
-     *            the type of the data object
-     * @param id
-     *            the unique id string of the data
-     * @return the data stored on the element
-     */
-    <T> T getData(String id);
-
-    /**
-     * Get all the data attached to the graph element. This returns an iterable over pairs
-     * containing the identifiers of the data on the one hand, and the data objects on the other
-     * hand.
-     * 
-     * @return iterable over pairs of identifier and data
-     */
-    Iterable<Pair<String, Object>> getData();
-
-    /**
-     * Copies all data on the given element to this element.
-     * 
-     * @param element
-     *            the element to copy from
-     */
-    void copyData(IGraphElement element);
 
 }

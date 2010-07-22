@@ -26,6 +26,7 @@ import de.cau.cs.rtprak.planarization.graph.IFace;
 import de.cau.cs.rtprak.planarization.graph.IGraph;
 import de.cau.cs.rtprak.planarization.graph.INode;
 import de.cau.cs.rtprak.planarization.graph.InconsistentGraphModelException;
+import de.cau.cs.rtprak.planarization.graph.impl.PFace;
 
 /**
  * Inserts an edge in a planar graph by building the dual graph. In this graph shortest path is
@@ -79,12 +80,14 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
             for (IFace sourceFace : sourceFaces) {
                 facePath.clear();
 
-                dualStartNode = sourceFace.getData(graph.TODUALGRAPH);
+                // TODO unsafe cast - change data structure to use interface
+                dualStartNode = (INode) ((PFace) sourceFace).getProperty(IGraph.TODUALGRAPH);
 
                 // run BFS for all possible target faces
                 for (IFace itargetFace : targetFaces) {
 
-                    dualTargetNode = itargetFace.getData(graph.TODUALGRAPH);
+                    // TODO unsafe cast - change data structure to use interface
+                    dualTargetNode = (INode) ((PFace) itargetFace).getProperty(IGraph.TODUALGRAPH);
 
                     parent = bfs(dualStartNode, dualTargetNode, dualGraph);
 

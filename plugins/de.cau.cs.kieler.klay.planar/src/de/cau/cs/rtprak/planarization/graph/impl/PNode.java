@@ -289,7 +289,11 @@ public class PNode extends PGraphElement implements INode, Serializable {
 
         if (!(this.getParent() instanceof PGraph)) {
             throw new InconsistentGraphModelException(
-                    "Attempted to get Face in graph of incompatible type.");
+                    "Attempted to merge nodes in graph of incompatible type.");
+        }
+        if (!(node instanceof PNode)) {
+            throw new InconsistentGraphModelException(
+                    "Attempted to merge node of incompatible type.");
         }
         LinkedList<IEdge> edgelist = new LinkedList<IEdge>();
         for (IEdge edge : node.getAllEdges()) {
@@ -303,7 +307,7 @@ public class PNode extends PGraphElement implements INode, Serializable {
             edge.move(node, this, append);
         }
         this.getParent().removeNode(node);
-        this.copyData(node);
+        this.copyProperties((PNode) node);
         ((PGraph) this.getParent()).setChangedFaces();
     }
 

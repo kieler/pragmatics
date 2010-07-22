@@ -13,10 +13,7 @@
  */
 package de.cau.cs.rtprak.planarization.graph.impl;
 
-import java.util.HashMap;
-import java.util.Iterator;
-
-import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.core.util.PropertyHolder;
 import de.cau.cs.rtprak.planarization.graph.IGraph;
 import de.cau.cs.rtprak.planarization.graph.IGraphElement;
 
@@ -27,7 +24,7 @@ import de.cau.cs.rtprak.planarization.graph.IGraphElement;
  * 
  * @author ocl
  */
-public abstract class PGraphElement implements IGraphElement {
+public abstract class PGraphElement extends PropertyHolder implements IGraphElement {
 
     // ======================== Attributes =========================================================
 
@@ -36,9 +33,6 @@ public abstract class PGraphElement implements IGraphElement {
 
     /** The parent graph this element belongs to. */
     private IGraph parent;
-
-    /** The map containing the attached data items to the element. */
-    private HashMap<String, Object> data;
 
     // ======================== Constructor ========================================================
 
@@ -53,7 +47,6 @@ public abstract class PGraphElement implements IGraphElement {
     public PGraphElement(final int id, final IGraph p) {
         this.identifier = id;
         this.parent = p;
-        this.data = new HashMap<String, Object>();
     }
 
     // ======================== Getters and Setters ================================================
@@ -80,59 +73,6 @@ public abstract class PGraphElement implements IGraphElement {
      */
     public IGraph getParent() {
         return this.parent;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Iterable<Pair<String, Object>> getData() {
-        // Create anonymous iterator
-        return new Iterable<Pair<String, Object>>() {
-            public Iterator<Pair<String, Object>> iterator() {
-                return new Iterator<Pair<String, Object>>() {
-                    private final Iterator<String> ids = data.keySet().iterator();
-
-                    public boolean hasNext() {
-                        return ids.hasNext();
-                    }
-
-                    public Pair<String, Object> next() {
-                        String id = ids.next();
-                        Object item = data.get(id);
-                        return new Pair<String, Object>(id, item);
-                    }
-
-                    public void remove() {
-                        ids.remove();
-                    }
-                };
-            }
-        };
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public <T> T getData(final String id) {
-        // TODO is this possible without unchecked cast?
-        T item = (T) this.data.get(id);
-        return item;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public <T> void addData(final String id, final T item) {
-        this.data.put(id, item);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void copyData(final IGraphElement element) {
-        for (Pair<String, Object> pair : element.getData()) {
-            this.addData(pair.getFirst(), pair.getSecond());
-        }
     }
 
     // ======================== Miscellaneous Functions ============================================
