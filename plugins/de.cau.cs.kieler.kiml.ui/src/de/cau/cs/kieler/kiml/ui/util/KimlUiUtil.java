@@ -13,7 +13,9 @@
  */
 package de.cau.cs.kieler.kiml.ui.util;
 
+import org.eclipse.draw2d.Connection;
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
@@ -48,9 +50,34 @@ public final class KimlUiUtil {
      * @return the absolute bounds
      */
     public static Rectangle getAbsoluteBounds(final IFigure figure) {
-        Rectangle bounds = new Rectangle(figure.getBounds());
+        Rectangle bounds = new Rectangle(figure.getBounds()) {
+            static final long serialVersionUID = 1;
+            @Override
+            public void performScale(final double factor) {
+                // don't perform any scaling to avoid distortion by the zoom level
+            }
+        };
         figure.translateToAbsolute(bounds);
         return bounds;
+    }
+    
+    /**
+     * Calculates an absolute position for one of the bend points of the given connection.
+     * 
+     * @param connection a connection figure
+     * @param index the index in the point list
+     * @return the absolute point
+     */
+    public static Point getAbsolutePoint(final Connection connection, final int index) {
+        Point point = new Point(connection.getPoints().getPoint(index)) {
+            static final long serialVersionUID = 1;
+            @Override
+            public void performScale(final double factor) {
+                // don't perform any scaling to avoid distortion by the zoom level
+            }
+        };
+        connection.translateToAbsolute(point);
+        return point;
     }
     
     /**

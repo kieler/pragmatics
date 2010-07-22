@@ -37,10 +37,8 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.gef.EditPart;
-import org.eclipse.gef.RootEditPart;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CommandStack;
-import org.eclipse.gef.editparts.ScalableFreeformRootEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderItemEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.CompartmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
@@ -120,8 +118,6 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     private GmfCachedLayout cachedLayout;
     /** the command that applies the transferred layout to the diagram. */
     private Command applyLayoutCommand;
-    /** factor to multiply on all coordinates to compensate the zoom level. */
-    private float zoomFactor;
 
     /**
      * {@inheritDoc}
@@ -249,12 +245,6 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 
         // find the diagram edit part
         diagramEditPart = GmfLayoutInspector.getDiagramEditPart(layoutRootPart);
-        zoomFactor = 1.0f;
-        RootEditPart rootEditPart = diagramEditPart.getRoot();
-        if (rootEditPart instanceof ScalableFreeformRootEditPart) {
-            zoomFactor /= (float) ((ScalableFreeformRootEditPart) rootEditPart)
-                    .getZoomManager().getZoom();
-        }
 
         layoutGraph = doBuildLayoutGraph();
         return layoutGraph;
@@ -414,10 +404,10 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(port);
                 Rectangle portBounds = KimlUiUtil.getAbsoluteBounds(borderItem.getFigure());
                 Rectangle nodeBounds = KimlUiUtil.getAbsoluteBounds(currentEditPart.getFigure());
-                portLayout.setXpos((portBounds.x - nodeBounds.x) * zoomFactor);
-                portLayout.setYpos((portBounds.y - nodeBounds.y) * zoomFactor);
-                portLayout.setWidth(portBounds.width * zoomFactor);
-                portLayout.setHeight(portBounds.height * zoomFactor);
+                portLayout.setXpos(portBounds.x - nodeBounds.x);
+                portLayout.setYpos(portBounds.y - nodeBounds.y);
+                portLayout.setWidth(portBounds.width);
+                portLayout.setHeight(portBounds.height);
                 hasPorts = true;
                 // set user defined layout options for the port
                 GmfLayoutInspector.setLayoutOptions(borderItem, portLayout, true);
@@ -441,10 +431,10 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                             // set the port label's layout
                             KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(portLabel);
                             Rectangle labelBounds = KimlUiUtil.getAbsoluteBounds(labelFigure);
-                            labelLayout.setXpos((labelBounds.x - portBounds.x) * zoomFactor);
-                            labelLayout.setYpos((labelBounds.y - portBounds.y) * zoomFactor);
-                            labelLayout.setWidth(labelFigure.getPreferredSize().width * zoomFactor);
-                            labelLayout.setHeight(labelFigure.getPreferredSize().height * zoomFactor);
+                            labelLayout.setXpos(labelBounds.x - portBounds.x);
+                            labelLayout.setYpos(labelBounds.y - portBounds.y);
+                            labelLayout.setWidth(labelFigure.getPreferredSize().width);
+                            labelLayout.setHeight(labelFigure.getPreferredSize().height);
                         }
                     }
                 }
@@ -483,10 +473,10 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     Rectangle childBounds = KimlUiUtil.getAbsoluteBounds(nodeFigure);
                     Rectangle containerBounds = KimlUiUtil.getAbsoluteBounds(nodeFigure.getParent());
                     KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(childLayoutNode);
-                    nodeLayout.setXpos((childBounds.x - containerBounds.x) * zoomFactor);
-                    nodeLayout.setYpos((childBounds.y - containerBounds.y) * zoomFactor);
-                    nodeLayout.setHeight(childBounds.height * zoomFactor);
-                    nodeLayout.setWidth(childBounds.width * zoomFactor);
+                    nodeLayout.setXpos(childBounds.x - containerBounds.x);
+                    nodeLayout.setYpos(childBounds.y - containerBounds.y);
+                    nodeLayout.setHeight(childBounds.height);
+                    nodeLayout.setWidth(childBounds.width);
                     Dimension minSize = nodeFigure.getMinimumSize();
                     LayoutOptions.setFloat(nodeLayout, LayoutOptions.MIN_WIDTH, minSize.width);
                     LayoutOptions.setFloat(nodeLayout, LayoutOptions.MIN_HEIGHT, minSize.height);
@@ -496,8 +486,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                         Rectangle parentBounds = KimlUiUtil.getAbsoluteBounds(parentFigure);
                         insets = LayoutOptions.getObject(KimlLayoutUtil.getShapeLayout(
                                 parentLayoutNode), KInsets.class);
-                        insets.setLeft((containerBounds.x - parentBounds.x) * zoomFactor);
-                        insets.setTop((containerBounds.y - parentBounds.y) * zoomFactor);
+                        insets.setLeft(containerBounds.x - parentBounds.x);
+                        insets.setTop(containerBounds.y - parentBounds.y);
                         insets.setRight(insets.getLeft());
                         insets.setBottom(insets.getLeft());
                     }
@@ -641,8 +631,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             Rectangle sourceParentBounds = KimlUiUtil.getAbsoluteBounds(sourceParent.getFigure());
             KInsets insets = LayoutOptions.getObject(KimlLayoutUtil.getShapeLayout(
                     sourceNode.getParent()), KInsets.class);
-            float offsetx = sourceParentBounds.x * zoomFactor + insets.getLeft();
-            float offsety = sourceParentBounds.y * zoomFactor + insets.getTop();
+            float offsetx = sourceParentBounds.x + insets.getLeft();
+            float offsety = sourceParentBounds.y + insets.getTop();
 
             if (!isOppositeEdge) {
                 // find a proper target node and target port
@@ -683,24 +673,18 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 Connection figure = connection.getConnectionFigure();
                 PointList pointList = figure.getPoints();
                 KPoint sourcePoint = edgeLayout.getSourcePoint();
-                Point firstPoint = pointList.getFirstPoint();
-                figure.translateToAbsolute(firstPoint);
-                firstPoint.scale(zoomFactor);
+                Point firstPoint = KimlUiUtil.getAbsolutePoint(figure, 0);
                 sourcePoint.setX(firstPoint.x - offsetx);
                 sourcePoint.setY(firstPoint.y - offsety);
                 for (int i = 1; i < pointList.size() - 1; i++) {
-                    Point point = pointList.getPoint(i);
-                    figure.translateToAbsolute(point);
-                    point.scale(zoomFactor);
+                    Point point = KimlUiUtil.getAbsolutePoint(figure, i);
                     KPoint kpoint = KLayoutDataFactory.eINSTANCE.createKPoint();
                     kpoint.setX(point.x - offsetx);
                     kpoint.setY(point.y - offsety);
                     edgeLayout.getBendPoints().add(kpoint);
                 }
                 KPoint targetPoint = edgeLayout.getTargetPoint();
-                Point lastPoint = pointList.getLastPoint();
-                figure.translateToAbsolute(lastPoint);
-                lastPoint.scale(zoomFactor);
+                Point lastPoint = KimlUiUtil.getAbsolutePoint(figure, pointList.size() - 1);
                 targetPoint.setX(lastPoint.x - offsetx);
                 targetPoint.setY(lastPoint.y - offsety);
     
@@ -735,7 +719,6 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 LabelEditPart labelEditPart = (LabelEditPart) obj;
                 IFigure labelFigure = labelEditPart.getFigure();
                 Rectangle labelBounds = KimlUiUtil.getAbsoluteBounds(labelFigure);
-                labelBounds.scale(zoomFactor);
                 String labelText = null;
                 Font font = null;
                 Dimension iconBounds = null;
