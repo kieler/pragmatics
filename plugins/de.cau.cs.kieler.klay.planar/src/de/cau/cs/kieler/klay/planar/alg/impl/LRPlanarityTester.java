@@ -227,8 +227,6 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
 
     private boolean[] backtracking;
 
-    private int index = 0;
-
     /**
      * A list of all leftmost edges in the planar embedding belonging to an outgoing subtree.
      */
@@ -394,7 +392,6 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
         for (INode node : iGraph.getNodes()) {
             sortAdjacencyList(node);
         }
-
         // test planarity
         for (INode root : roots) {
             testingDFS(root, false);
@@ -469,7 +466,6 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
             for (INode root : roots) {
                 testingDFS(root, true);
             }
-
             // delete crossing edges
             deletedCrossing.addAll(crossingEdges);
             System.out.print("CrossingEdgeCount: " + crossingEdges.size() + "\n");
@@ -1196,84 +1192,91 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
         HashSet<IEdge> crossing = new HashSet<IEdge>(v.getAdjacentEdgeCount());
         // previously traversed, non-self-loop edge
         IEdge prevTree = null;
-        int outback = Integer.MIN_VALUE;
+        int curHeight = Integer.MIN_VALUE;
 
-        IEdge edge = initialRef[v.getID()];
-        while (edge != null) {
+        IEdge lEdge = initialRef[v.getID()];
+        IEdge lPre = null;
+        while (lEdge != null) {
             // convert list of edges belonging to outgoing subtrees
-            if (!trees.containsKey(relatedTree[edge.getID()])) {
-                trees.put(relatedTree[edge.getID()], edge);
-                cEdges.put(edge, new HashSet<IEdge>());
+            if (!trees.containsKey(relatedTree[lEdge.getID()])) {
+                trees.put(relatedTree[lEdge.getID()], lEdge);
+                cEdges.put(relatedTree[lEdge.getID()], new HashSet<IEdge>());
             }
-            edge = ref[edge.getID()];
+            if (relatedTree[lEdge.getID()] != relatedTree[ref[lEdge.getID()].getID()]) {
+                // next edge belongs to different subtree
+                lPre = lEdge;
+                lEdge = ref[lEdge.getID()];
+                ref[lPre.getID()] = null;
+            } else {
+                lEdge = ref[lEdge.getID()];
+            }
         }
         // check planarity
-        for (IEdge e : v.getAllEdges()) {
+        for (IEdge edge : v.getAllEdges()) {
             if (!(mode || isPlanar)) {
                 // graph already turned out to be non-planar
                 return;
             }
-            if (e.getSource().equals(e.getTarget())) {
+            if (edge.getSource().equals(edge.getTarget())) {
                 // self-loop
-                if (selfLoops.contains(e)) {
+                if (selfLoops.contains(edge)) {
                     // TODO: Self.loops. Should be almost compatible with the subtree stuff
                 } else {
-                    selfLoops.add(e);
+                    selfLoops.add(edge);
                 }
                 continue;
-            } else if ((e.equals(parentEdge[dfsTarget[e.getID()].getID()]) && dfsSource[e.getID()]
-                    .equals(v))
-                    || dfsTarget[e.getID()].equals(v) && parentEdge[v.getID()] != e) {
+            } else if ((edge.equals(parentEdge[dfsTarget[edge.getID()].getID()]) && dfsSource[edge
+                    .getID()].equals(v))
+                    || (dfsTarget[edge.getID()].equals(v) && parentEdge[v.getID()] != edge)) {
                 // TODO check this subsection! Might contain programming errors
-                // outgoing tree edge or incoming back edge
-                IEdge plannedNext = trees.get(relatedTree[e.getID()]);
-                if (plannedNext.equals(e)) {
+                // e is outgoing tree edge or incoming back edge
+                IEdge plannedNext = trees.get(relatedTree[edge.getID()]);
+                if (plannedNext.equals(edge)) {
                     plannedNext = ref[plannedNext.getID()];
                     while (plannedNext != null && crossing.contains(plannedNext)) {
                         plannedNext = ref[plannedNext.getID()];
                     }
-                    trees.put(relatedTree[e.getID()], plannedNext);
-                    prevTree = relatedTree[e.getID()];
+                    trees.put(relatedTree[edge.getID()], plannedNext);
+                    prevTree = relatedTree[edge.getID()];
                 } else {
-                    crossing.add(e);
-                    crossingEdges.add(e);
+                    crossing.add(edge);
+                    crossingEdges.add(edge);
                     isPlanar = false;
                     continue;
                 }
-                if (prevTree != relatedTree[e.getID()]) {
+                if (prevTree != relatedTree[edge.getID()]) {
                     // other subtree
-                    HashSet<IEdge> thisTree = cEdges.get(relatedTree[e.getID()]);
+                    HashSet<IEdge> ownOpen = cEdges.get(relatedTree[edge.getID()]);
                     for (IEdge open : cEdges.keySet()) {
                         // the next edge of the subtree
-                        IEdge prevnext = trees.get(open);
-                        if (prevnext != null) {
+                        if (trees.get(open) != null) {
                             // subtree is open
-                            if (thisTree.contains(open)) {
+                            if (ownOpen.contains(open)) {
                                 // crossing edge
                                 isPlanar = false;
-                                this.crossingEdges.add(e);
-                                crossing.add(e);
+                                this.crossingEdges.add(edge);
+                                crossing.add(edge);
                                 continue;
                             } else {
                                 HashSet<IEdge> update = cEdges.get(open);
-                                update.add(relatedTree[e.getID()]);
+                                update.add(relatedTree[edge.getID()]);
                                 cEdges.put(open, update);
                             }
                         }
                     }
-                    prevTree = e;
+                    prevTree = edge;
                 }
-            } else if (dfsSource[e.getID()].equals(v)) {
-                // outgoing back edge
-                if (nestingDepth[e.getID()] * dfsTargetSide[e.getID()] < outback) {
-                    crossingEdges.add(e);
-                    crossing.add(e);
+            } else if (dfsSource[edge.getID()].equals(v)) {
+                // e is outgoing back edge
+                if (nestingDepth[edge.getID()] * dfsTargetSide[edge.getID()] < curHeight) {
+                    crossingEdges.add(edge);
+                    crossing.add(edge);
                     isPlanar = false;
                 } else {
-                    outback = nestingDepth[e.getID()] * dfsTargetSide[e.getID()];
+                    curHeight = nestingDepth[edge.getID()] * dfsTargetSide[edge.getID()];
                 }
                 // TODO self-loops
-                // else: incoming tree edge: do nothing
+                // else: e is incoming tree edge: do nothing
             }
         }
     }
@@ -1316,7 +1319,9 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * adjacency list, i.e. it moves all edges up to, but not including, the incoming tree edge from
      * the front to the end of the list. After termination, the first element of the node's
      * adjacency list will be its incoming tree edge. If the node is a root, its adjacency list will
-     * not be changed (i.e. a call of this method has no effect in this case).
+     * not be changed (i.e. a call of this method has no effect in this case). Note, that, if the
+     * input node is a root of a connected component, the first edge of its adjacency list is always
+     * an outgoing tree edge.
      * 
      * @param node
      *            the node to normalize its adjacency list
@@ -1455,7 +1460,7 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
 
     }
 
-    // +++++++++++++++++++++++ Graveyard +++++++++++++++++++++++++++++++++++++
+    // +++++++++++++++++++++++ not needed any more +++++++++++++++++++++++++++++++++++++
 
     // ====================== Enumerator =====================================
 
@@ -1514,6 +1519,8 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
                 "Attempted to get adjacent node from unconnected edge");
     }
 
+    private int index;
+
     private void determineDFSIndex(final INode v) {
         for (IEdge vw : v.getAllEdges()) {
             if (vw.getSource().equals(vw.getTarget()) || !dfsSource[vw.getID()].equals(v)) {
@@ -1538,8 +1545,8 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
     }
 
     /**
-     * Helper method for the planarity test with port constraints. TODO returns all edges to delete.
-     * If side is not -1 or 1, no edge will be deleted, i.e. the returned linked list will be empty.
+     * Helper method for the planarity test with port constraints. returns all edges to delete. If
+     * side is not -1 or 1, no edge will be deleted, i.e. the returned linked list will be empty.
      * 
      * @param pair
      *            the conflict pair to delete the specified interval from or the conflict pair to
