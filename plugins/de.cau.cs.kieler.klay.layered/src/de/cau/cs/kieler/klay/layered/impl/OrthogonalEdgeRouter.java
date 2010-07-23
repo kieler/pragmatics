@@ -41,8 +41,10 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
      * A hypernode used for routing a hyperedge.
      */
     private static class HyperNode {
+        /** mark value used for cycle breaking. */
+        private int mark;
         /** the rank determines the horizontal distance to the preceding layer. */
-        private int rank = 0;
+        private int rank;
         /** vertical starting position of this hypernode. */
         private double start = Double.NaN;
         /** vertical ending position of this hypernode. */
@@ -53,10 +55,12 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
         private List<Double> targetPosis = new LinkedList<Double>();
         /** list of outgoing dependencies. */
         private List<Dependency> outgoing = new LinkedList<Dependency>();
-        /** number of incoming dependencies in the dependency graph. */
-        private int incomingCount = 0;
-        /** visit marker for cycle breaking. */
-        private int visit = -1;
+        /** sum of the weights of outgoing dependencies. */
+        private int outweight;
+        /** list of incoming dependencies. */
+        private List<Dependency> incoming = new LinkedList<Dependency>();
+        /** sum of the weights of incoming depencencies. */
+        private int inweight;
         
         /**
          * Adds the positions of the given port and all connected ports.
@@ -99,20 +103,27 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
      * A dependency between two hypernodes.
      */
     private static final class Dependency {
+        /** the source hypernode of this dependency. */
+        private HyperNode source;
         /** the target hypernode of this dependency. */
         private HyperNode target;
         /** the weight of this dependency. */
         private int weight;
         
         /**
-         * Creates a dependency to the given target.
+         * Creates a dependency from the given source to the given target.
          * 
+         * @param thesource the dependency source
          * @param thetarget the dependency target
          * @param theweight weight of the dependency
          */
-        private Dependency(final HyperNode thetarget, final int theweight) {
+        private Dependency(final HyperNode thesource, final HyperNode thetarget,
+                final int theweight) {
             this.target = thetarget;
+            this.source = thesource;
             this.weight = theweight;
+            source.outgoing.add(this);
+            target.incoming.add(this);
         }
     }
     
@@ -164,29 +175,27 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
                 new HyperNode[hyperNodeMap.values().size()]);
         for (HyperNode hyperNode1 : hyperNodes) {
             for (HyperNode hyperNode2 : hyperNodes) {
-                int depValue = calcDependency(hyperNode1, hyperNode2, conflictThreshold);
-                if (depValue < 0) {
-                    // create dependency from first hypernode to second one
-                } else if (depValue > 0) {
-                    // create dependency from second hypernode to first one
-                }
+                createDependency(hyperNode1, hyperNode2, conflictThreshold);
             }
         }
+        
+        // break cycles
+        breakCycles(hyperNodes);
+        
+        // assign ranks to the hypernodes
         
         int rankCount = 0;
         return rankCount;
     }
 
     /**
-     * Calculate the weight of a possible dependency between two hypernodes.
-     * If the weight is 0, then no dependency is created. 
+     * Create a dependency between the two given hypernodes, if one is needed. 
      * 
      * @param hn1 first hypernode
      * @param hn2 second hypernode
      * @param minDiff the minimal difference between horizontal line segments to avoid a conflict
-     * @return the weight of the 
      */
-    private static int calcDependency(final HyperNode hn1, final HyperNode hn2,
+    private static void createDependency(final HyperNode hn1, final HyperNode hn2,
             final double minDiff) {
         // compare number of conflicts for both variants
         int conflicts1 = countConflicts(hn1.targetPosis, hn2.sourcePosis, minDiff);
@@ -196,7 +205,20 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
                 + countCrossings(hn2.sourcePosis, hn1.start, hn1.end);
         int crossings2 = countCrossings(hn2.targetPosis, hn1.start, hn1.end)
                 + countCrossings(hn1.sourcePosis, hn2.start, hn2.end);
-        return CONFLICT_PENALTY * (conflicts1 - conflicts2) + crossings1 - crossings2;
+        
+        int depValue1 = CONFLICT_PENALTY * conflicts1 + crossings1;
+        int depValue2 = CONFLICT_PENALTY * conflicts2 + crossings2;
+        if (depValue1 < depValue2) {
+            // create dependency from first hypernode to second one
+            new Dependency(hn1, hn2, depValue2 - depValue1);
+        } else if (depValue1 > depValue2) {
+            // create dependency from second hypernode to first one
+            new Dependency(hn2, hn1, depValue1 - depValue2);
+        } else if (depValue1 > 0 && depValue2 > 0) {
+            // create two dependencies with zero weight
+            new Dependency(hn1, hn2, 0);
+            new Dependency(hn2, hn1, 0);
+        }
     }
     
     /**
@@ -250,6 +272,118 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
             }
         }
         return crossings;
+    }
+    
+    /**
+     * Breaks all cycles in the given hypernode structure by removing some dependencies.
+     * 
+     * @param nodes list of hypernodes
+     */
+    private static void breakCycles(final HyperNode[] nodes) {
+        LinkedList<HyperNode> sources = new LinkedList<HyperNode>();
+        LinkedList<HyperNode> sinks = new LinkedList<HyperNode>();
+        // initialize values for the algorithm
+        int nextRight = -1, nextLeft = 1, index = 0;
+        for (HyperNode node : nodes) {
+            int inweight = 0, outweight = 0;
+            for (Dependency dependency : node.outgoing) {
+                outweight += dependency.weight;
+            }
+            for (Dependency dependency : node.incoming) {
+                inweight += dependency.weight;
+            }
+            node.inweight = inweight;
+            node.outweight = outweight;
+            if (outweight == 0) {
+                sinks.add(node);
+            } else if (inweight == 0) {
+                sources.add(node);
+            }
+            index++;
+        }
+    
+        // assign marks to all nodes
+        int unprocessedNodes = nodes.length;
+        while (unprocessedNodes > 0) {
+            while (!sinks.isEmpty()) {
+                HyperNode sink = sinks.removeFirst();
+                sink.mark = nextRight--;
+                updateNeighbors(sink, sources, sinks);
+                unprocessedNodes--;
+            }
+            while (!sources.isEmpty()) {
+                HyperNode source = sources.removeFirst();
+                source.mark = nextLeft++;
+                updateNeighbors(source, sources, sinks);
+                unprocessedNodes--;
+            }
+            if (unprocessedNodes != 0) {
+                int maxOutflow = Integer.MIN_VALUE;
+                HyperNode maxNode = null;
+                for (HyperNode node : nodes) {
+                    if (node.mark == 0) {
+                        int outflow = node.outweight - node.inweight;
+                        if (outflow > maxOutflow) {
+                            maxOutflow = outflow;
+                            maxNode = node;
+                        }
+                    }
+                }
+                maxNode.mark = nextLeft++;
+                updateNeighbors(maxNode, sources, sinks);
+                unprocessedNodes--;
+            }
+        }
+    
+        // shift negative ranks
+        int shiftBase = nodes.length + 1;
+        for (HyperNode node : nodes) {
+            if (node.mark < 0) {
+                node.mark += shiftBase;
+            }
+        }
+    
+        // remove edges that point left
+        index = 0;
+        for (HyperNode node : nodes) {
+            for (Dependency dependency : node.outgoing) {
+                if (node.mark > dependency.target.mark) {
+                    node.outgoing.remove(dependency);
+                    dependency.target.incoming.remove(dependency);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Updates in-weight and out-weight values of the neighbors of the given node,
+     * simulating its removal from the graph. The sources and sinks lists are
+     * also updated.
+     * 
+     * @param node node for which neighbors are updated
+     * @param sources list of sources
+     * @param sinks list of sinks
+     */
+    private static void updateNeighbors(final HyperNode node, final LinkedList<HyperNode> sources,
+            final LinkedList<HyperNode> sinks) {
+        // process following nodes
+        for (Dependency dep : node.outgoing) {
+            if (dep.target.mark == 0) {
+                dep.target.inweight -= dep.weight + 1;
+                if (dep.target.inweight == 0 && dep.target.outweight != 0) {
+                    sources.add(dep.target);
+                }
+            }
+        }
+        // process preceding nodes
+        for (Dependency dep : node.incoming) {
+            if (dep.source.mark == 0) {
+                dep.source.outweight -= dep.weight + 1;
+                if (dep.source.outweight == 0 && dep.source.inweight != 0) {
+                    sinks.add(dep.source);
+                }
+            }
+        }
     }
 
 }

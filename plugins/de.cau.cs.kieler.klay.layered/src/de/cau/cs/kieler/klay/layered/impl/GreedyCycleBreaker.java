@@ -72,10 +72,15 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ICycleBreak
         for (LNode node : nodes) {
             node.id = index;
             for (LPort port : node.getPorts()) {
+                int weight = 0;
+                for (LEdge edge : port.getEdges()) {
+                    int priority = edge.getProperty(Properties.PRIORITY);
+                    weight += priority + 1;
+                }
                 if (port.getType() == PortType.OUTPUT) {
-                    outdeg[index] += port.getEdges().size();
+                    outdeg[index] += weight;
                 } else {
-                    indeg[index] += port.getEdges().size();
+                    indeg[index] += weight;
                 }
             }
             if (outdeg[index] == 0) {
@@ -163,17 +168,19 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ICycleBreak
      */
     private void updateNeighbors(final LNode node) {
         for (LPort port : node.getPorts()) {
-            for (LPort connectedPort : port.getConnectedPorts()) {
+            for (LEdge edge : port.getEdges()) {
+                LPort connectedPort = edge.getSource() == port ? edge.getTarget() : edge.getSource();
                 LNode endpoint = connectedPort.getNode();
+                int priority = edge.getProperty(Properties.PRIORITY);
                 int index = endpoint.id;
                 if (mark[index] == 0) {
                     if (port.getType() == PortType.OUTPUT) {
-                        indeg[index]--;
+                        indeg[index] -= priority + 1;
                         if (indeg[index] == 0 && outdeg[index] != 0) {
                             sources.add(endpoint);
                         }
                     } else {
-                        outdeg[index]--;
+                        outdeg[index] -= priority + 1;
                         if (outdeg[index] == 0 && indeg[index] != 0) {
                             sinks.add(endpoint);
                         }
