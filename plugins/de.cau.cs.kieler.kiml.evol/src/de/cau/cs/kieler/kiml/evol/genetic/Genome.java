@@ -67,8 +67,7 @@ public class Genome extends ArrayList<IGene<?>> {
     }
 
     /**
-     * Constructor for an Individual with the given genome and the given
-     * generation.
+     * Copy constructor for a genome with the given generation.
      *
      * @param theGenome
      *            initial genome for the individual.
@@ -105,6 +104,12 @@ public class Genome extends ArrayList<IGene<?>> {
         System.out.println("Created individual " + toString());
     }
 
+    /**
+     * Constructor for a genome with the given generation.
+     *
+     * @param theGeneration
+     *            the generation
+     */
     public Genome(final int theGeneration) {
         super();
         this.generation = theGeneration;
@@ -238,8 +243,10 @@ public class Genome extends ArrayList<IGene<?>> {
     // return a recombination of the given genomes.
     private static Genome newRecombination(final Genome... genomes) {
         Genome result = new Genome();
+        final Genome oldGenome = genomes[0];
         if (genomes.length == 1) {
-            result = new Genome(genomes[0]);
+            result = new Genome(oldGenome);
+            result.setUserRating(oldGenome.getUserRating());
         } else {
             final int size = genomes[0].size();
             // iterate genes
@@ -253,10 +260,16 @@ public class Genome extends ArrayList<IGene<?>> {
                     }
                 }
                 final IGene[] otherGenes = geneList.toArray(new IGene[geneList.size()]);
-                final IGene<?> oldGene = genomes[0].get(g);
+                final IGene<?> oldGene = oldGenome.get(g);
                 final IGene<?> newGene = oldGene.recombineWith(otherGenes);
                 result.add(newGene);
             }
+            int ratingSum = 0;
+            for (final Genome genome : genomes) {
+                ratingSum += genome.getUserRating();
+            }
+            final int average = Math.round(ratingSum / (float) genomes.length);
+            result.setUserRating(average);
         }
         return result;
     }

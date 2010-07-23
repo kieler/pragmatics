@@ -58,18 +58,22 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
         if (!selection.isEmpty()) {
             final int proposal = (int) Math.round(selection.size() * CROSS_OVER_RATIO);
             final int min = MIN_CROSS_OVERS;
-            final int crossOvers = ((proposal < min) ? min : proposal);
+            final int max = MAX_CROSS_OVERS;
+            final int crossOvers = ((proposal < min) ? min : (proposal > max) ? max : proposal);
             offspring = new Population();
             System.out.println(" -- generate " + crossOvers + " out of " + selection.size());
+
             for (int i = 0; i < crossOvers; i++) {
                 final Genome parent1 = selection.pick();
                 final Genome parent2 = selection.pick();
+
                 // it is not ensured that both parents are different
                 final Genome newGenome = parent1.newRecombination(parent2);
                 System.out.println(" -- cross over of " + parent1);
                 System.out.println("              and " + parent2);
                 offspring.add(new Genome(newGenome, getGeneration()));
             }
+
             // add offspring to survivors
             population.addAll(0, offspring);
         } else {
@@ -86,6 +90,7 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
     @Override
     protected void initialize() {
         super.initialize();
+        // obtain more diversity by performing some mutations
         for (int i = 0; i < 20; i++) {
             mutate();
         }
@@ -128,11 +133,12 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
         final Genome[] individuals = new Genome[count];
         population.toArray(individuals);
         Arrays.sort(individuals, Genome.DESCENDING_RATING_COMPARATOR);
-        // only some are allowed to generate offspring
 
+        // only some are allowed to generate offspring
         final int min = MIN_SELECT;
+        final int max = MAX_SELECT;
         final int proposal = (int) Math.round(individuals.length * SELECTION_RATIO);
-        final int select = ((proposal > min) ? proposal : min);
+        final int select = ((proposal < min) ? min : (proposal > max ? max : proposal));
 
         System.out.println(" -- select " + select + " of " + count);
         for (final Genome ind : individuals) {
@@ -154,12 +160,13 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
         Arrays.sort(individuals, Genome.DESCENDING_RATING_COMPARATOR);
         // only some survive
         final int min = MIN_SURVIVORS;
+        final int max = MAX_SURVIVORS;
         final int proposal = (int) Math.round((count * SURVIVAL_RATIO));
-        final int lim = ((proposal < min) ? min : proposal);
+        final int keep = ((proposal < min) ? min : (proposal > max ? max : proposal));
         final Population survivors = new Population();
-        System.out.println(" -- keep " + lim + " of " + count);
+        System.out.println(" -- keep " + keep + " of " + count);
         for (final Genome ind : individuals) {
-            if (survivors.size() < lim) {
+            if (survivors.size() < keep) {
                 survivors.add(ind);
                 System.out.println(" -- keep: " + ind.toString());
             } else {
@@ -187,4 +194,7 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
     private static final int MIN_SELECT = 2;
     private static final int MIN_CROSS_OVERS = 1;
     private static final int MIN_SURVIVORS = 5;
+    private static final int MAX_SELECT = 1000;
+    private static final int MAX_CROSS_OVERS = 1000;
+    private static final int MAX_SURVIVORS = 1000;
 }

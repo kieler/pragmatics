@@ -273,10 +273,20 @@ final Population pop, final IEditorPart editor) {
                     final Genome ind = pop.get(pos);
                     // TODO: synchronize on the layout graph?
 
-                        adoptIndividual(ind, getLayoutPropertySource());
-                        // TODO: get a new manager for every iteration?
-                        final int rating = EvolUtil.layoutAndMeasure(manager, editor);
-                        ind.setUserRating(rating);
+                    adoptIndividual(ind, getLayoutPropertySource());
+                    // TODO: get a new manager for every iteration?
+                    final int rating = EvolUtil.layoutAndMeasure(manager, editor);
+                    if (ind.hasUserRating()) {
+                        final int oldRating = ind.getUserRating();
+                        if (oldRating < rating) {
+                            System.out.println("Ind. under-rated (" + oldRating + " -> " + rating
+                                    + ")");
+                        } else if (oldRating > rating) {
+                            System.out.println("Ind. was over-rated (" + oldRating + " -> "
+                                    + rating + ")");
+                        }
+                    }
+                    ind.setUserRating(rating);
 
                 }
             }

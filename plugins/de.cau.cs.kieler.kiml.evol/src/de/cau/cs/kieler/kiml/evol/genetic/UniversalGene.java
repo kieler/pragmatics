@@ -221,7 +221,7 @@ public class UniversalGene extends AbstractGene<Float> {
                     newValue = (float) (value + gauss);
                 } while (!typeInfo.isValueWithinBounds(newValue));
             }
-            return new UniversalGene(getId(), newValue, getTypeInfo(), getMutationInfo());
+            return new UniversalGene(getId(), newValue, typeInfo, getMutationInfo());
         }
     }
 
