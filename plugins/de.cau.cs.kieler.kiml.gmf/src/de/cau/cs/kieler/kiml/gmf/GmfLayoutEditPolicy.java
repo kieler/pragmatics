@@ -410,6 +410,9 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         } else if (points.size() >= 2) {
             // this is an edge...
             int index = PointListUtilities.findNearestLineSegIndexOfPoint(points, refPoint);
+            if (index <= 0) {
+                index = 1;
+            }
             LineSeg segment = (LineSeg) PointListUtilities.getLineSegments(points).get(index - 1);
             Point normalOffset = null;
             if (segment != null) {

@@ -31,6 +31,7 @@ import org.eclipse.draw2d.ConnectionLocator;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.draw2d.geometry.Insets;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.draw2d.geometry.Rectangle;
@@ -373,7 +374,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             final KNode parentLayoutNode, final IGraphicalEditPart currentEditPart) {
         boolean hasChildNodes = false, hasChildCompartments = false,
                 hasPorts = false, isCollapsed = false;
-        KInsets insets = null;
+        KInsets kinsets = null;
         IFigure parentFigure = parentEditPart.getFigure();
         
         // set the target of layout ancestry if it was found
@@ -482,14 +483,14 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     LayoutOptions.setFloat(nodeLayout, LayoutOptions.MIN_HEIGHT, minSize.height);
                     
                     // set insets if not yet defined
-                    if (insets == null) {
-                        Rectangle parentBounds = KimlUiUtil.getAbsoluteBounds(parentFigure);
-                        insets = LayoutOptions.getObject(KimlLayoutUtil.getShapeLayout(
+                    if (kinsets == null) {
+                        kinsets = LayoutOptions.getObject(KimlLayoutUtil.getShapeLayout(
                                 parentLayoutNode), KInsets.class);
-                        insets.setLeft(containerBounds.x - parentBounds.x);
-                        insets.setTop(containerBounds.y - parentBounds.y);
-                        insets.setRight(insets.getLeft());
-                        insets.setBottom(insets.getLeft());
+                        Insets insets = KimlUiUtil.calcInsets(parentFigure, nodeFigure);
+                        kinsets.setLeft(insets.left);
+                        kinsets.setTop(insets.top);
+                        kinsets.setRight(insets.right);
+                        kinsets.setBottom(insets.bottom);
                     }
     
                     parentLayoutNode.getChildren().add(childLayoutNode);
