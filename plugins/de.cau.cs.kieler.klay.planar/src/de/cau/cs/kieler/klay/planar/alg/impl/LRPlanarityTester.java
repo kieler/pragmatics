@@ -31,6 +31,7 @@ import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.INode;
 import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
+import de.cau.cs.kieler.klay.planar.graph.INode.NodeType;
 import de.cau.cs.kieler.klay.planar.graph.impl.PGraph;
 
 /**
@@ -118,24 +119,33 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
 
     /**
      * The outgoing tree edge of each node, that leads into the DFS-subtree currently being
-     * backtracking in {@code orientationDFS()}. If the specified node is a leaf node, this
-     * attribute will be {@code null}.
+     * traversed in {@code orientationDFS()}. If the specified node is a leaf node, this attribute
+     * will be {@code null}.
      */
     private IEdge[] relatedTree;
 
     /**
-     * The side of the port, that is connected to the {@code dfsTarget} of each edge. If {@code
-     * dfsTargetSide} = {@code -1}, then the port is placed on the left side of the spanning tree.
-     * If {@code dfsTargetSide} = {@code 1}, then the port is placed on the right side of the
-     * spanning tree or if {@code dfsTargetSide} = {@code 0}, then the port is connected to the
-     * {@code dfsTarget} of a tree edge itself.
+     * The side of the port that is connected to the {@code dfsSource} of each edge. If {@code
+     * sourceSide} = {@code -1}, then the port is placed on the left side of the spanning tree. If
+     * {@code sourceSide} = {@code 1}, then the port is placed on the right side or if {@code
+     * sourceSide} = {@code 0}, then the port is connected to the {@code dfsSource} of a tree edge
+     * itself.
      */
-    private int[] dfsTargetSide;
+    private int[] sourceSide;
 
     /**
-     * The currently backtracking outgoing tree edge of every node in {@code orientationDFS()} or
-     * {@code null}, if the node does not have an outgoing tree edge (i.e. is a leaf) or none of its
-     * outgoing tree edges has been backtracking thus far.
+     * The side of the port that is connected to the {@code dfsTarget} of each edge. If {@code
+     * targetSide} = {@code -1}, then the port is placed on the left side of the spanning tree. If
+     * {@code targetSide} = {@code 1}, then the port is placed on the right side or if {@code
+     * targetSide} = {@code 0}, then the port is connected to the {@code dfsTarget} of a tree edge
+     * itself.
+     */
+    private int[] targetSide;
+
+    /**
+     * The currently traversed outgoing tree edge of every node in {@code orientationDFS()}
+     * respectively {@code null}, if either the node does not have an outgoing tree edge (i.e. is a
+     * leaf) or none of its outgoing tree edges has been traversed thus far.
      */
     private IEdge[] currentTree;
 
@@ -209,10 +219,6 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      */
     private IEdge[] initialRef;
 
-    /**
-     * The dfsIndex of each incoming back edge resp. outgoing tree edge in the adjacency list of
-     * their adjacent node.
-     */
     private int[] leftLeftPos;
 
     private int[] rightLeftPos;
@@ -221,16 +227,16 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
 
     private int[] rightRightPos;
 
-    private int[] dfsIndex;
-
     private int[] edgeClass;
 
-    private boolean[] backtracking;
+    private boolean[] isLeaf;
 
     /**
-     * A list of all leftmost edges in the planar embedding belonging to an outgoing subtree.
+     * Indicates, whether {@code testingDFS()} is currently backtracking, resp. has already been
+     * backtracked over a specified node. This attribute will be {@code true}, if so, or {@code
+     * false} otherwise.
      */
-    private ArrayList<LinkedList<IEdge>> outgoingTrees;
+    private boolean[] backtracking;
 
     // ====================== Constructor =====================================
 
@@ -282,8 +288,10 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
             dfsSource = new INode[numEdges];
             dfsTarget = new INode[numEdges];
             relatedTree = new IEdge[numEdges];
-            dfsTargetSide = new int[numEdges];
-            Arrays.fill(dfsTargetSide, 0);
+            sourceSide = new int[numEdges];
+            targetSide = new int[numEdges];
+            Arrays.fill(sourceSide, 0);
+            Arrays.fill(targetSide, 0);
             lowpt = new int[numEdges];
             lowpt2 = new int[numEdges];
             nestingDepth = new int[numEdges];
@@ -295,7 +303,8 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
         } else {
             Arrays.fill(dfsSource, null);
             Arrays.fill(relatedTree, null);
-            Arrays.fill(dfsTargetSide, 0);
+            Arrays.fill(sourceSide, 0);
+            Arrays.fill(targetSide, 0);
             Arrays.fill(side, 1);
             Arrays.fill(ref, null);
             Arrays.fill(dfsIndex, -1);
@@ -536,12 +545,8 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
 
         IEdge uv = parentEdge[v.getID()];
         for (IEdge vw : v.getAllEdges()) {
-            if (dfsSource[vw.getID()] != null) {
-                // vw has already been visited
-                continue;
-            }
-            if (vw.getSource().equals(vw.getTarget())) {
-                // vw is self-loop
+            if (dfsSource[vw.getID()] != null || vw.getSource().equals(vw.getTarget())) {
+                // vw has already been visited or is self-loop
                 continue;
             }
             // orient vw in DFS
@@ -1088,7 +1093,7 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
             for (int i = 0; i < numberOfBuckets; i++) {
                 buckets.add(new LinkedList<IEdge>());
             }
-            // sort
+            // sort0
             for (IEdge edge : node.getAllEdges()) {
                 buckets.get(nestingDepth[edge.getID()] - minNesting).add(edge);
             }
@@ -1170,15 +1175,17 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
     }
 
     /**
-     * only works, if self-loops are not interrupted by incoming tree edge and are placed directly
-     * next to each other.
+     * Helper method for the planarity test with port constraints. only works, if self-loops are not
+     * interrupted by incoming tree edge and are placed directly next to each other.
      * 
      * @param v
+     *            the node to check its adjacency list for edge crossings caused by its edge order
      * @param mode
      *            if {@code true}, this method will determine all crossing edges (designed for
      *            planar subgraph determination). Otherwise, this method will terminate after the
      *            first crossing edge has been found (simple planarity testing)
      * @throws InconsistentGraphModelException
+     *             if an adjacency list turned out to be inconsistent with its adjacent edges
      */
     private void checkAdjacencyList(final INode v, final boolean mode)
             throws InconsistentGraphModelException {
@@ -1189,7 +1196,7 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
         HashMap<IEdge, IEdge> trees = new HashMap<IEdge, IEdge>();
         LinkedHashMap<IEdge, HashSet<IEdge>> cEdges = new LinkedHashMap<IEdge, HashSet<IEdge>>();
         HashSet<IEdge> selfLoops = new HashSet<IEdge>();
-        HashSet<IEdge> crossing = new HashSet<IEdge>(v.getAdjacentEdgeCount());
+        HashSet<IEdge> detected = new HashSet<IEdge>(v.getAdjacentEdgeCount());
         // previously traversed, non-self-loop edge
         IEdge prevTree = null;
         int curHeight = Integer.MIN_VALUE;
@@ -1220,7 +1227,9 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
             if (edge.getSource().equals(edge.getTarget())) {
                 // self-loop
                 if (selfLoops.contains(edge)) {
-                    // TODO: Self.loops. Should be almost compatible with the subtree stuff
+                    // TODO Self.loops. Should be almost compatible with the subtree stuff
+                    // TODO improve it, so that only increasing IDs are compared and not specific
+                    // plannednext edges
                 } else {
                     selfLoops.add(edge);
                 }
@@ -1233,19 +1242,18 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
                 IEdge plannedNext = trees.get(relatedTree[edge.getID()]);
                 if (plannedNext.equals(edge)) {
                     plannedNext = ref[plannedNext.getID()];
-                    while (plannedNext != null && crossing.contains(plannedNext)) {
+                    while (plannedNext != null && detected.contains(plannedNext)) {
                         plannedNext = ref[plannedNext.getID()];
                     }
                     trees.put(relatedTree[edge.getID()], plannedNext);
-                    prevTree = relatedTree[edge.getID()];
                 } else {
-                    crossing.add(edge);
+                    detected.add(edge);
                     crossingEdges.add(edge);
                     isPlanar = false;
                     continue;
                 }
                 if (prevTree != relatedTree[edge.getID()]) {
-                    // other subtree
+                    // other subtree than before
                     HashSet<IEdge> ownOpen = cEdges.get(relatedTree[edge.getID()]);
                     for (IEdge open : cEdges.keySet()) {
                         // the next edge of the subtree
@@ -1255,7 +1263,7 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
                                 // crossing edge
                                 isPlanar = false;
                                 this.crossingEdges.add(edge);
-                                crossing.add(edge);
+                                detected.add(edge);
                                 continue;
                             } else {
                                 HashSet<IEdge> update = cEdges.get(open);
@@ -1264,51 +1272,95 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
                             }
                         }
                     }
-                    prevTree = edge;
+                    prevTree = relatedTree[edge.getID()];
                 }
             } else if (dfsSource[edge.getID()].equals(v)) {
                 // e is outgoing back edge
-                if (nestingDepth[edge.getID()] * dfsTargetSide[edge.getID()] < curHeight) {
+                if (nestingDepth[edge.getID()] * targetSide[edge.getID()] < curHeight) {
                     crossingEdges.add(edge);
-                    crossing.add(edge);
+                    detected.add(edge);
                     isPlanar = false;
                 } else {
-                    curHeight = nestingDepth[edge.getID()] * dfsTargetSide[edge.getID()];
+                    for (IEdge open : cEdges.keySet()) {
+                        if (trees.get(open) != null) {
+                            // some subtree is open -> not planar
+                            crossingEdges.add(edge);
+                            detected.add(edge);
+                            isPlanar = false;
+                            continue;
+                        }
+                    }
+                    // TODO update this. TargetSide is not used for this any more (at least it
+                    // should not)
+                    curHeight = nestingDepth[edge.getID()] * targetSide[edge.getID()];
                 }
-                // TODO self-loops
-                // else: e is incoming tree edge: do nothing
             }
+            // else: e is incoming tree edge: do nothing
+            trees.clear();
+            cEdges.clear();
+            detected.clear();
         }
     }
 
     /**
-     * TODO Determines the dfsTargetSide of all incoming edges adjacent to this node. Note, that the
-     * {@code dfsTargetSide} of all back edges returning to the root is always {@code 1}, since a
-     * side cannot be defined precisely for that node. Tree edges already have dfsTargetSide = 0,
-     * since the attribute is initialized with this value.
+     * TODO Determines the targetSide of all incoming edges adjacent to this node. Note, that the
+     * {@code targetSide} of all back edges returning to the root is always {@code 1}, since a side
+     * cannot be defined precisely for that node. Tree edges already have targetSide = 0, since the
+     * attribute is initialized with this value. IMPORTANT: ORIENTIONDFS() has to be called before
+     * executing this function, since currentTree is used here!
      * 
      * @param node
      *            the node to determine the targetSide of all incoming edges adjacent to this node
      * @throws InconsistentGraphModelException
      *             if the adjacency list is not consistent
      */
-    private void determineDfsTargetSides(final INode node) throws InconsistentGraphModelException {
+    private void determineDFSSides(final INode node) throws InconsistentGraphModelException {
 
         HashSet<IEdge> traversedTrees = new HashSet<IEdge>();
-        for (IEdge edge : node.getAllEdges()) {
-            if (dfsSource[edge.getID()].equals(node)
-                    && edge.equals(parentEdge[dfsTarget[edge.getID()].getID()])) {
-                // outgoing tree edge
-                traversedTrees.add(edge);
-            } else if (dfsTarget[edge.getID()].equals(node)
-                    && !edge.equals(parentEdge[node.getID()])) {
-                // incoming back edge
-                if (traversedTrees.contains(relatedTree[edge.getID()])) {
-                    // tree edge already traversed -> edge is on right side
-                    dfsTargetSide[edge.getID()] = 1;
-                } else {
-                    // tree edge still to traverse -> edge is on left side
-                    dfsTargetSide[edge.getID()] = -1;
+        if (currentTree[node.getID()] != null && parentEdge[node.getID()] != null) {
+            // node is not a root or leaf
+            for (IEdge edge : node.getAllEdges()) {
+                if (edge.getTarget().equals(edge.getSource())) {
+                    // edge is self-loop
+                    continue;
+                }
+                if (dfsSource[edge.getID()].equals(node)) {
+                    if (edge.equals(parentEdge[dfsTarget[edge.getID()].getID()])) {
+                        // outgoing tree edge
+                        traversedTrees.add(edge);
+                    } else {
+                        // outgoing back edge
+                        if (traversedTrees.isEmpty()) {
+                            // all edges up to the first outgoing subtree are on left side, all
+                            // other on right side
+                            sourceSide[edge.getID()] = -1;
+                        } else {
+                            sourceSide[edge.getID()] = 1;
+                        }
+                        if (parentEdge[dfsTarget[edge.getID()].getID()] == null) {
+                            // edge returns to a root node: put all edges on same side
+                            targetSide[edge.getID()] = 1;
+                        }
+                    }
+                } else if (dfsTarget[edge.getID()].equals(node)
+                        && !edge.equals(parentEdge[node.getID()])) {
+                    // incoming back edge
+                    if (traversedTrees.contains(relatedTree[edge.getID()])) {
+                        // tree edge already traversed -> edge is on right side
+                        targetSide[edge.getID()] = 1;
+                    } else {
+                        // tree edge still to traverse -> edge is on left side
+                        targetSide[edge.getID()] = -1;
+                    }
+                    if (currentTree[dfsSource[edge.getID()].getID()] == null) {
+                        // edge returns from a leaf: put all edges on one side
+                        if (node.getType() == NodeType.NORMAL) {
+                            sourceSide[edge.getID()] = 1;
+                        } else {
+                            // virtual nodes do not need port constraints
+                            sourceSide[edge.getID()] = targetSide[edge.getID()];
+                        }
+                    }
                 }
             }
         }
@@ -1330,18 +1382,32 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      */
     private void normalize(final INode node) throws InconsistentGraphModelException {
 
-        if (node.getAdjacentEdgeCount() > 1 && parentEdge[node.getID()] != null) {
-            // node is not a root
+        if (node.getAdjacentEdgeCount() > 1) {
             ListIterator<IEdge> iterator = node.getEdgeList().listIterator();
             LinkedList<IEdge> front = new LinkedList<IEdge>();
-            while (iterator.hasNext()) {
-                IEdge edge = iterator.next();
-                if (!edge.equals(parentEdge[node.getID()])) {
-                    // edge is not the incoming tree edge
-                    front.addLast(edge);
-                    iterator.remove();
-                } else {
-                    break;
+            if (parentEdge[node.getID()] != null) {
+                // node is not a root
+                while (iterator.hasNext()) {
+                    IEdge edge = iterator.next();
+                    if (!edge.equals(parentEdge[node.getID()])) {
+                        // edge is not the incoming tree edge
+                        front.addLast(edge);
+                        iterator.remove();
+                    } else {
+                        break;
+                    }
+                }
+            } else {
+                // node is a root
+                while (iterator.hasNext()) {
+                    IEdge edge = iterator.next();
+                    if (dfsTarget[edge.getID()].equals(node)) {
+                        // edge is not an outgoing tree edge
+                        front.addLast(edge);
+                        iterator.remove();
+                    } else {
+                        break;
+                    }
                 }
             }
             // add removed edges to the end
@@ -1519,6 +1585,17 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
                 "Attempted to get adjacent node from unconnected edge");
     }
 
+    /**
+     * A list of all leftmost edges in the planar embedding belonging to an outgoing subtree.
+     */
+    private ArrayList<LinkedList<IEdge>> outgoingTrees;
+
+    /**
+     * The dfsIndex of each incoming back edge resp. outgoing tree edge in the adjacency list of
+     * their adjacent node.
+     */
+    private int[] dfsIndex;
+
     private int index;
 
     private void determineDFSIndex(final INode v) {
@@ -1533,7 +1610,7 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
                 dfsIndex[vw.getID()] = index++;
                 determineDFSIndex(w);
             } else {
-                if (dfsTargetSide[vw.getID()] == -1) {
+                if (targetSide[vw.getID()] == -1) {
                     dfsIndex[vw.getID()] = -index;
                     index++;
                 } else {
