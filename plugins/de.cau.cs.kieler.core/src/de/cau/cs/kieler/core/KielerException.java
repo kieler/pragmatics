@@ -39,7 +39,7 @@ public class KielerException extends Exception {
      * @param message readable exception message
      * @param cause exception that caused this exception
      */
-    public KielerException(final String message, final Exception cause) {
+    public KielerException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
