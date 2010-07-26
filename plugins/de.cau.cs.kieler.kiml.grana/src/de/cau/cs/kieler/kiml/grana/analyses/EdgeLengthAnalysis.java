@@ -28,8 +28,9 @@ import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
 
 /**
- * A graph analysis that computes the minimum, average and maximum edge length. It assumes
- * that the edge bend points describe polylines (splines are not supported).
+ * A graph analysis that computes the minimum, average and maximum edge length.
+ * It assumes that the edge bend points describe polylines (splines are not
+ * supported).
  * 
  * @author mri
  */
@@ -38,10 +39,11 @@ public class EdgeLengthAnalysis implements IAnalysis {
     /**
      * Computes the length of the given edge.
      * 
-     * @param edge the edge
+     * @param edge
+     *            the edge
      * @return the length
      */
-    private float computeEdgeLength(KEdge edge) {
+    private float computeEdgeLength(final KEdge edge) {
         KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(edge);
         float edgeLength = 0;
         KPoint current = edgeLayout.getSourcePoint();
@@ -53,15 +55,17 @@ public class EdgeLengthAnalysis implements IAnalysis {
         }
         float deltaX = current.getX() - edgeLayout.getTargetPoint().getX();
         float deltaY = current.getY() - edgeLayout.getTargetPoint().getY();
-        edgeLength += Math.sqrt(deltaX * deltaX + deltaY * deltaY); 
+        edgeLength += Math.sqrt(deltaX * deltaX + deltaY * deltaY);
         return edgeLength;
     }
-    
+
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(KNode parentNode, Map<String, Object> results,
-            IKielerProgressMonitor progressMonitor) throws KielerException {
+    public Object doAnalysis(final KNode parentNode,
+            final Map<String, Object> results,
+            final IKielerProgressMonitor progressMonitor)
+            throws KielerException {
         progressMonitor.begin("Edge Length analysis", 1);
 
         int numberOfEdges = 0;
@@ -91,11 +95,10 @@ public class EdgeLengthAnalysis implements IAnalysis {
         }
 
         progressMonitor.done();
-        
+
         if (numberOfEdges > 0) {
             return new MinAvgMaxResult<Float, Float>(minEdgeLength,
-                    overallEdgeLength / (float) numberOfEdges,
-                    maxEdgeLength);
+                    overallEdgeLength / (float) numberOfEdges, maxEdgeLength);
         } else {
             return new MinAvgMaxResult<Integer, Float>(0, 0.0f, 0);
         }

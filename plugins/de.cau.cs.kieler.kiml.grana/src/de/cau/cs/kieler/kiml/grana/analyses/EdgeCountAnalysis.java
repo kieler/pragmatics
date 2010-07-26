@@ -36,7 +36,6 @@ public class EdgeCountAnalysis implements IAnalysis {
             final IKielerProgressMonitor progressMonitor)
             throws KielerException {
         progressMonitor.begin("Number of Edges analysis", 1);
-        
         Integer numberOfEdges = 0;
         List<KNode> nodes = new LinkedList<KNode>();
         nodes.add(parentNode);

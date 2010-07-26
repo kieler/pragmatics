@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.gef.EditPart;
 import org.eclipse.ui.IEditorPart;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -263,7 +262,7 @@ public final class DiagramAnalyser {
                             analysis.doAnalysis(currentGraph, results,
                                     monitor.subTask(1)));
                 }
-            } catch (KielerException e) {
+            } catch (Exception e) {
                 results.put(analysis.getID(), new AnalysisFailed(
                         AnalysisFailed.Type.Failed));
             }

@@ -24,7 +24,7 @@ import de.cau.cs.kieler.kiml.grana.AnalysisServices;
 import de.cau.cs.kieler.kiml.grana.plugin.GranaPlugin;
 
 /**
- * The base class for hanlders that perform an analysis of any kind.
+ * The base class for handlers that perform an analysis of any kind.
  * 
  * @author mri
  */

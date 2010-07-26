@@ -35,8 +35,10 @@ public class BendsAnalysis implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(KNode parentNode, Map<String, Object> results,
-            IKielerProgressMonitor progressMonitor) throws KielerException {
+    public Object doAnalysis(final KNode parentNode,
+            final Map<String, Object> results,
+            final IKielerProgressMonitor progressMonitor)
+            throws KielerException {
         progressMonitor.begin("Number of Bends analysis", 1);
 
         Integer numberOfBends = 0;

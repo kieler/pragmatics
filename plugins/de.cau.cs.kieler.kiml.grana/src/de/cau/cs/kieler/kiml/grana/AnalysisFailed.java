@@ -47,7 +47,7 @@ public class AnalysisFailed {
      * @param theType
      *            the type
      */
-    public AnalysisFailed(Type theType) {
+    public AnalysisFailed(final Type theType) {
         type = theType;
     }
 

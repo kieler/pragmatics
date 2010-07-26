@@ -28,8 +28,8 @@ import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
 
 /**
- * A graph analysis that computes the number of edge crossings. It assumes that the edge
- * bend points describe polylines (splines are not supported).
+ * A graph analysis that computes the number of edge crossings. It assumes that
+ * the edge bend points describe polylines (splines are not supported).
  * 
  * @author mri
  */
@@ -70,8 +70,8 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
     }
 
     /**
-     * Computes the number of crossings between edges from the first and edges from the
-     * second node.
+     * Computes the number of crossings between edges from the first and edges
+     * from the second node.
      * 
      * @param node1
      *            the first node
@@ -98,26 +98,25 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
                         }
                         // target point has to be handled separately
                         KPoint q2 = edge2Layout.getTargetPoint();
-                        {
-                            numberOfCrossings +=
-                                    hasIntersection(p1, p2, q1, q2) ? 1 : 0;
-                        }
+
+                        numberOfCrossings +=
+                                hasIntersection(p1, p2, q1, q2) ? 1 : 0;
+
                         p1 = p2;
                     }
                     // target point has to be handled separately
                     KPoint p2 = edge1Layout.getTargetPoint();
-                    {
-                        KPoint q1 = edge2Layout.getSourcePoint();
-                        for (KPoint q2 : edge2Layout.getBendPoints()) {
-                            numberOfCrossings +=
-                                    hasIntersection(p1, p2, q1, q2) ? 1 : 0;
-                            q1 = q2;
-                        }
-                        // target point has to be handled separately
-                        KPoint q2 = edge2Layout.getTargetPoint();
+
+                    KPoint q1 = edge2Layout.getSourcePoint();
+                    for (KPoint q2 : edge2Layout.getBendPoints()) {
                         numberOfCrossings +=
                                 hasIntersection(p1, p2, q1, q2) ? 1 : 0;
+                        q1 = q2;
                     }
+                    // target point has to be handled separately
+                    KPoint q2 = edge2Layout.getTargetPoint();
+                    numberOfCrossings +=
+                            hasIntersection(p1, p2, q1, q2) ? 1 : 0;
                 }
             }
         }
@@ -127,8 +126,10 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(KNode parentNode, Map<String, Object> results,
-            IKielerProgressMonitor progressMonitor) throws KielerException {
+    public Object doAnalysis(final KNode parentNode,
+            final Map<String, Object> results,
+            final IKielerProgressMonitor progressMonitor)
+            throws KielerException {
 
         int numberOfCrossings = 0;
         List<KNode> nodes = new LinkedList<KNode>();
@@ -136,7 +137,8 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
         while (nodes.size() > 0) {
             // pop first element
             KNode node = nodes.remove(0);
-            // compute intersections of all edge segements with all other edge segments on
+            // compute intersections of all edge segements with all other edge
+            // segments on
             // the same hierarchy
             Queue<KNode> children = new LinkedList<KNode>(node.getChildren());
             while (!children.isEmpty()) {
