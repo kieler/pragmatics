@@ -72,6 +72,7 @@ public class SimpleSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRo
      * {@inheritDoc}
      */
     public void routeEdges(final LayeredGraph layeredGraph) {
+        getMonitor().begin("Simple spline routing", 1);
         spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         
         // contains nodes from which long edges are starting

@@ -391,7 +391,6 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
                 finalIterations = 2;
             }
         }
-        System.out.println(iterations + " Iterations");
     }
 
     /**

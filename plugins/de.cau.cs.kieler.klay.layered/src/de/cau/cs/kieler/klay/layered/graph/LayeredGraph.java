@@ -171,7 +171,7 @@ public class LayeredGraph extends LGraphElement {
                             break;
                         default:
                             port.getPos().x = 0;
-                            port.getPos().y = nodeSize.y - westY;
+                            port.getPos().y = westY;
                             westY -= westDelta;
                         }
                     }

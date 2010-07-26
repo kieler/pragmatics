@@ -97,8 +97,7 @@ public class ComplexSplineEdgeRouter extends AbstractAlgorithm implements IEdgeR
      * {@inheritDoc}
      */
     public void routeEdges(final LayeredGraph layeredGraph) {
-        getMonitor().begin("Edge routing", 1);
-        System.out.println("routeEdges()");
+        getMonitor().begin("Complex spline routing", 1);
 
         // contains nodes from which long edges are starting
         LinkedList<LEdge> longEdges = new LinkedList<LEdge>();
@@ -660,10 +659,7 @@ public class ComplexSplineEdgeRouter extends AbstractAlgorithm implements IEdgeR
             }
         }
 
-        if (detPos == -1) {
-            System.out.println("ERROR!!!!");
-            // shouldnt occur!
-        }
+        assert detPos != -1;
 
         // create two new point arrays
         KVector[][] pts = new KVector[2][];

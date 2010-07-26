@@ -36,6 +36,7 @@ public class PolylineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter
      * {@inheritDoc}
      */
     public void routeEdges(final LayeredGraph layeredGraph) {
+        getMonitor().begin("Polyline edge routing", 1);
         float spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         
         // set horizontal positioning for each layer and add bend points
@@ -57,6 +58,7 @@ public class PolylineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter
             xpos += layer.getSize().x + spacing;
         }
         layeredGraph.getSize().x = xpos - spacing;
+        getMonitor().done();
     }
     
     /**

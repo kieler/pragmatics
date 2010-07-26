@@ -76,16 +76,14 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
     public void minimizeCrossings(final Layer fixedLayer, final Layer freeLayer,
             final boolean forward) {
         // set the port ranks for the fixed layer
-        int portId = 0;
-        for (LNode node : fixedLayer.getNodes()) {
-            for (LPort port : node.getPorts()) {
-                port.id = portId;
-                portId++;
-            }
+        if (forward) { 
+            assignForwardRanks(fixedLayer);
+        } else {
+            assignBackwardRanks(fixedLayer);
         }
         
         float[] nodeBarycenters = new float[freeLayer.getNodes().size()];
-        int nodeId = 0;
+        int nodeId = 0, portId;
         for (LNode node : freeLayer.getNodes()) {
             node.id = nodeId;
             nodeBarycenters[nodeId] = -1;
@@ -121,6 +119,40 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
             nodeId++;
         }
         sortNodes(freeLayer, nodeBarycenters);
+    }
+    
+    /**
+     * Assigns ranks to all ports in the given layer, assuming that a forward sweep is
+     * being done. This means that ports are considered as output ports.
+     * 
+     * @param layer a layer
+     */
+    private void assignForwardRanks(final Layer layer) {
+        int portId = 0;
+        for (LNode node : layer.getNodes()) {
+            for (LPort port : node.getPorts()) {
+                port.id = portId;
+                portId++;
+            }
+        }
+    }
+    
+    /**
+     * Assigns ranks to all ports in the given layer, assuming that a backwards sweep is
+     * being done. This means that ports are considered as input ports.
+     * 
+     * @param layer a layer
+     */
+    private void assignBackwardRanks(final Layer layer) {
+        int portId = 0;
+        for (LNode node : layer.getNodes()) {
+            ListIterator<LPort> portIter = node.getPorts().listIterator(node.getPorts().size());
+            while (portIter.hasPrevious()) {
+                LPort port = portIter.previous();
+                port.id = portId;
+                portId++;
+            }
+        }
     }
     
     /**

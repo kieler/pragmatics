@@ -17,11 +17,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.Properties;
+import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
@@ -41,6 +44,8 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
      * A hypernode used for routing a hyperedge.
      */
     private static class HyperNode {
+        /** ports represented by this hypernode. */
+        private List<LPort> ports = new LinkedList<LPort>();
         /** mark value used for cycle breaking. */
         private int mark;
         /** the rank determines the horizontal distance to the preceding layer. */
@@ -71,6 +76,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
         void addPortPosis(final LPort port, final Map<LPort, HyperNode> hyperNodeMap,
                 final boolean isTargetLayer) {
             hyperNodeMap.put(port, this);
+            ports.add(port);
             double pos = port.getNode().getPos().y + port.getPos().y;
             // set new start position
             if (Double.isNaN(start)) {
@@ -86,9 +92,9 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
             }
             // add the new port position to the respective list
             if (isTargetLayer) {
-                targetPosis.add(pos);
+                insertSorted(targetPosis, pos);
             } else {
-                sourcePosis.add(pos);
+                insertSorted(sourcePosis, pos);
             }
             // add connected ports
             for (LPort otherPort : port.getConnectedPorts()) {
@@ -96,6 +102,14 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
                     addPortPosis(otherPort, hyperNodeMap, !isTargetLayer);
                 }
             }
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return "hn[" + mark + "]";
         }
     }
 
@@ -125,6 +139,14 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
             source.outgoing.add(this);
             target.incoming.add(this);
         }
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return source + "->" + target;
+        }
     }
     
     /** factor for edge spacing used to determine the conflict threshold. */
@@ -139,42 +161,56 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
      * {@inheritDoc}
      */
     public void routeEdges(final LayeredGraph layeredGraph) {
+        getMonitor().begin("Orthogonal edge routing", 1);
         edgeSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         conflictThreshold = CONFL_THRESH_FACTOR * edgeSpacing;
         
         float xpos = 0.0f;
         for (Layer layer : layeredGraph.getLayers()) {
-            int slotsCount = routeEdges(layer);
-            xpos += layer.getSize().x + slotsCount * edgeSpacing;
+            for (LNode node : layer.getNodes()) {
+                node.getPos().x = xpos;
+            }
+            xpos += layer.getSize().x + edgeSpacing;
+            int slotsCount = routeEdges(layer, xpos);
+            xpos += slotsCount * edgeSpacing;
         }
         
         layeredGraph.getSize().x = xpos;
+        getMonitor().done();
     }
+    
+    /** denominator for edge spacing to determine when an edge shall be drawn without bends. */
+    private static final int STRAIGHT_TOLERANCE = 256;
     
     /**
      * Route the edges from one layer to the next one.
      * 
      * @param layer the source layer
+     * @param xpos the horizontal position where edges shall be routed
      * @return the number of routing slots for this layer
      */
-    private int routeEdges(final Layer layer) {
+    private int routeEdges(final Layer layer, final double xpos) {
         // create hypernodes for the ports of the source layer and the target layer
         Map<LPort, HyperNode> hyperNodeMap = new HashMap<LPort, HyperNode>();
+        List<HyperNode> hyperNodes = new LinkedList<HyperNode>();
         for (LNode node : layer.getNodes()) {
             for (LPort port : node.getPorts(PortType.OUTPUT)) {
                 HyperNode hyperNode = hyperNodeMap.get(port);
                 if (hyperNode == null) {
                     hyperNode = new HyperNode();
+                    hyperNodes.add(hyperNode);
                     hyperNode.addPortPosis(port, hyperNodeMap, false);
                 }
             }
         }
         
         // create dependencies for the hypernode ordering graph
-        HyperNode[] hyperNodes = hyperNodeMap.values().toArray(
-                new HyperNode[hyperNodeMap.values().size()]);
-        for (HyperNode hyperNode1 : hyperNodes) {
-            for (HyperNode hyperNode2 : hyperNodes) {
+        ListIterator<HyperNode> iter1 = hyperNodes.listIterator();
+        while (iter1.hasNext()) {
+            HyperNode hyperNode1 = iter1.next();
+            ListIterator<HyperNode> iter2 = hyperNodes.listIterator(iter1.nextIndex());
+            while (iter2.hasNext()) {
+                HyperNode hyperNode2 = iter2.next();
                 createDependency(hyperNode1, hyperNode2, conflictThreshold);
             }
         }
@@ -183,9 +219,30 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
         breakCycles(hyperNodes);
         
         // assign ranks to the hypernodes
+        topolNumb(hyperNodes);
         
-        int rankCount = 0;
-        return rankCount;
+        // set bend points with appropriate coordinates
+        int rankCount = -1;
+        for (HyperNode node : hyperNodes) {
+            rankCount = Math.max(rankCount, node.rank);
+            double x = xpos + node.rank * edgeSpacing;
+            for (LPort port : node.ports) {
+                double sourcey = port.getNode().getPos().y + port.getPos().y;
+                if (port.getType() == PortType.OUTPUT) {
+                    for (LEdge edge : port.getEdges()) {
+                        double targety = edge.getTarget().getNode().getPos().y
+                                + edge.getTarget().getPos().y;
+                        if (Math.abs(sourcey - targety) > edgeSpacing / STRAIGHT_TOLERANCE) {
+                            KVector point1 = new KVector(x, sourcey);
+                            edge.getBendPoints().add(point1);
+                            KVector point2 = new KVector(x, targety);
+                            edge.getBendPoints().add(point2);
+                        }
+                    }
+                }
+            }
+        }
+        return rankCount + 1;
     }
 
     /**
@@ -215,9 +272,9 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
             // create dependency from second hypernode to first one
             new Dependency(hn2, hn1, depValue1 - depValue2);
         } else if (depValue1 > 0 && depValue2 > 0) {
-            // create two dependencies with zero weight
-            new Dependency(hn1, hn2, 0);
-            new Dependency(hn2, hn1, 0);
+            // create two dependencies with equal weight
+            new Dependency(hn1, hn2, 1);
+            new Dependency(hn2, hn1, 1);
         }
     }
     
@@ -279,11 +336,10 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
      * 
      * @param nodes list of hypernodes
      */
-    private static void breakCycles(final HyperNode[] nodes) {
+    private static void breakCycles(final List<HyperNode> nodes) {
         LinkedList<HyperNode> sources = new LinkedList<HyperNode>();
         LinkedList<HyperNode> sinks = new LinkedList<HyperNode>();
         // initialize values for the algorithm
-        int nextRight = -1, nextLeft = 1, index = 0;
         for (HyperNode node : nodes) {
             int inweight = 0, outweight = 0;
             for (Dependency dependency : node.outgoing) {
@@ -299,11 +355,10 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
             } else if (inweight == 0) {
                 sources.add(node);
             }
-            index++;
         }
     
         // assign marks to all nodes
-        int unprocessedNodes = nodes.length;
+        int unprocessedNodes = nodes.size(), nextRight = -1, nextLeft = 1;
         while (unprocessedNodes > 0) {
             while (!sinks.isEmpty()) {
                 HyperNode sink = sinks.removeFirst();
@@ -336,7 +391,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
         }
     
         // shift negative ranks
-        int shiftBase = nodes.length + 1;
+        int shiftBase = nodes.size() + 1;
         for (HyperNode node : nodes) {
             if (node.mark < 0) {
                 node.mark += shiftBase;
@@ -344,11 +399,12 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
         }
     
         // remove edges that point left
-        index = 0;
         for (HyperNode node : nodes) {
-            for (Dependency dependency : node.outgoing) {
+            ListIterator<Dependency> depIter = node.outgoing.listIterator();
+            while (depIter.hasNext()) {
+                Dependency dependency = depIter.next();
                 if (node.mark > dependency.target.mark) {
-                    node.outgoing.remove(dependency);
+                    depIter.remove();
                     dependency.target.incoming.remove(dependency);
                 }
             }
@@ -384,6 +440,54 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
                 }
             }
         }
+    }
+    
+    /**
+     * Perform a topological numbering of the given hypernodes.
+     * 
+     * @param nodes list of hypernodes
+     */
+    private static void topolNumb(final List<HyperNode> nodes) {
+        // determine sources and incoming count
+        List<HyperNode> sources = new LinkedList<HyperNode>();
+        for (HyperNode node : nodes) {
+            node.inweight = node.incoming.size();
+            if (node.inweight == 0) {
+                sources.add(node);
+            }
+        }
+        // assign ranks using topological numbering
+        while (!sources.isEmpty()) {
+            HyperNode node = sources.remove(0);
+            for (Dependency dep : node.outgoing) {
+                HyperNode target = dep.target;
+                target.rank = Math.max(target.rank, node.rank + 1);
+                target.inweight--;
+                if (target.inweight == 0) {
+                    sources.add(dep.target);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Inserts a given value into a sorted list.
+     * 
+     * @param list sorted list
+     * @param value value to insert
+     */
+    private static void insertSorted(final List<Double> list, final double value) {
+        ListIterator<Double> listIter = list.listIterator();
+        while (listIter.hasNext()) {
+            double next = listIter.next().floatValue();
+            if (next == value) {
+                return;
+            } else if (next > value) {
+                listIter.previous();
+                break;
+            }
+        }
+        listIter.add(Double.valueOf(value));
     }
 
 }
