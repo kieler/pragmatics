@@ -71,9 +71,8 @@ public class Edge7ReorientCommand extends EditElementCommand {
             return false;
         }
         KNode container = (KNode) getLink().eContainer();
-        return GraphsBaseItemSemanticEditPolicy
-                .getLinkConstraints()
-                .canExistEdge_4007(container, getLink(), getNewSource(), target);
+        return GraphsBaseItemSemanticEditPolicy.getLinkConstraints().canExistEdge_4007(container,
+            getLink(), getNewSource(), target);
     }
 
     /**
@@ -88,19 +87,17 @@ public class Edge7ReorientCommand extends EditElementCommand {
             return false;
         }
         KNode container = (KNode) getLink().eContainer();
-        return GraphsBaseItemSemanticEditPolicy
-                .getLinkConstraints()
-                .canExistEdge_4007(container, getLink(), source, getNewTarget());
+        return GraphsBaseItemSemanticEditPolicy.getLinkConstraints().canExistEdge_4007(container,
+            getLink(), source, getNewTarget());
     }
 
     /**
      * @generated
      */
-    protected CommandResult doExecuteWithResult(IProgressMonitor monitor,
-            IAdaptable info) throws ExecutionException {
+    protected CommandResult doExecuteWithResult(IProgressMonitor monitor, IAdaptable info)
+        throws ExecutionException {
         if (!canExecute()) {
-            throw new ExecutionException(
-                    "Invalid arguments in reorient link command"); //$NON-NLS-1$
+            throw new ExecutionException("Invalid arguments in reorient link command"); //$NON-NLS-1$
         }
         if (reorientDirection == ReorientRelationshipRequest.REORIENT_SOURCE) {
             return reorientSource();

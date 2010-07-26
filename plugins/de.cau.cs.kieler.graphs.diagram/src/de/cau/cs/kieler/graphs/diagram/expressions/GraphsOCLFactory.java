@@ -44,51 +44,44 @@ public class GraphsOCLFactory {
     /**
      * @generated
      */
-    public static GraphsAbstractExpression getExpression(int index,
-            EClassifier context, Map<String, EClassifier> environment) {
-        GraphsOCLFactory cached =
-                GraphsDiagramEditorPlugin.getInstance().getGraphsOCLFactory();
+    public static GraphsAbstractExpression getExpression(int index, EClassifier context,
+        Map<String, EClassifier> environment) {
+        GraphsOCLFactory cached = GraphsDiagramEditorPlugin.getInstance().getGraphsOCLFactory();
         if (cached == null) {
             GraphsDiagramEditorPlugin.getInstance().setGraphsOCLFactory(
-                    cached = new GraphsOCLFactory());
+                cached = new GraphsOCLFactory());
         }
         if (index < 0 || index >= cached.expressions.length) {
             throw new IllegalArgumentException();
         }
         if (cached.expressions[index] == null) {
-            final String[] exprBodies =
-                    new String[] {
-                            "self.isHypernode = false", //$NON-NLS-1$
-                            "self.node.parent->size() > 0", //$NON-NLS-1$
-                            "self.isHypernode = true", //$NON-NLS-1$
-                            "true", //$NON-NLS-1$
-                            "\'Hypernode\'", //$NON-NLS-1$
-                            "self.oclAsType(graphs::Edge).isDirected = true and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Node2Node", //$NON-NLS-1$
-                            "true", //$NON-NLS-1$
-                            "self.oclAsType(graphs::Edge).isDirected = false and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Node2Node", //$NON-NLS-1$
-                            "self.oclAsType(graphs::Edge).isDirected = true and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Port2Port", //$NON-NLS-1$
-                            "true", //$NON-NLS-1$
-                            "graphs::EdgeType::Port2Port", //$NON-NLS-1$
-                            "self.oclAsType(graphs::Edge).isDirected = false and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Port2Port", //$NON-NLS-1$
-                            "graphs::EdgeType::Port2Port", //$NON-NLS-1$
-                            "self.oclAsType(graphs::Edge).isDirected = true and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Port2Node", //$NON-NLS-1$
-                            "true", //$NON-NLS-1$
-                            "graphs::EdgeType::Port2Node", //$NON-NLS-1$
-                            "self.oclAsType(graphs::Edge).isDirected = false and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Port2Node", //$NON-NLS-1$
-                            "graphs::EdgeType::Port2Node", //$NON-NLS-1$
-                            "self.oclAsType(graphs::Edge).isDirected = true and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Node2Port", //$NON-NLS-1$
-                            "true", //$NON-NLS-1$
-                            "graphs::EdgeType::Node2Port", //$NON-NLS-1$
-                            "self.oclAsType(graphs::Edge).isDirected = false and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Node2Port", //$NON-NLS-1$
-                            "graphs::EdgeType::Node2Port", //$NON-NLS-1$
-                    };
-            cached.expressions[index] =
-                    getExpression(
-                            exprBodies[index],
-                            context,
-                            environment == null ? Collections
-                                    .<String, EClassifier> emptyMap()
-                                    : environment);
+            final String[] exprBodies = new String[] {
+                    "self.isHypernode = false", //$NON-NLS-1$
+                    "self.node.parent->size() > 0", //$NON-NLS-1$
+                    "self.isHypernode = true", //$NON-NLS-1$
+                    "true", //$NON-NLS-1$
+                    "\'Hypernode\'", //$NON-NLS-1$
+                    "self.oclAsType(graphs::Edge).isDirected = true and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Node2Node", //$NON-NLS-1$
+                    "true", //$NON-NLS-1$
+                    "self.oclAsType(graphs::Edge).isDirected = false and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Node2Node", //$NON-NLS-1$
+                    "self.oclAsType(graphs::Edge).isDirected = true and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Port2Port", //$NON-NLS-1$
+                    "true", //$NON-NLS-1$
+                    "graphs::EdgeType::Port2Port", //$NON-NLS-1$
+                    "self.oclAsType(graphs::Edge).isDirected = false and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Port2Port", //$NON-NLS-1$
+                    "graphs::EdgeType::Port2Port", //$NON-NLS-1$
+                    "self.oclAsType(graphs::Edge).isDirected = true and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Port2Node", //$NON-NLS-1$
+                    "true", //$NON-NLS-1$
+                    "graphs::EdgeType::Port2Node", //$NON-NLS-1$
+                    "self.oclAsType(graphs::Edge).isDirected = false and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Port2Node", //$NON-NLS-1$
+                    "graphs::EdgeType::Port2Node", //$NON-NLS-1$
+                    "self.oclAsType(graphs::Edge).isDirected = true and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Node2Port", //$NON-NLS-1$
+                    "true", //$NON-NLS-1$
+                    "graphs::EdgeType::Node2Port", //$NON-NLS-1$
+                    "self.oclAsType(graphs::Edge).isDirected = false and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Node2Port", //$NON-NLS-1$
+                    "graphs::EdgeType::Node2Port", //$NON-NLS-1$
+            };
+            cached.expressions[index] = getExpression(exprBodies[index], context,
+                environment == null ? Collections.<String, EClassifier> emptyMap() : environment);
         }
         return cached.expressions[index];
     }
@@ -96,18 +89,16 @@ public class GraphsOCLFactory {
     /**
      * @generated
      */
-    public static GraphsAbstractExpression getExpression(String body,
-            EClassifier context, Map<String, EClassifier> environment) {
+    public static GraphsAbstractExpression getExpression(String body, EClassifier context,
+        Map<String, EClassifier> environment) {
         return new Expression(body, context, environment);
     }
 
     /**
      * @generated
      */
-    public static GraphsAbstractExpression getExpression(String body,
-            EClassifier context) {
-        return getExpression(body, context,
-                Collections.<String, EClassifier> emptyMap());
+    public static GraphsAbstractExpression getExpression(String body, EClassifier context) {
+        return getExpression(body, context, Collections.<String, EClassifier> emptyMap());
     }
 
     /**
@@ -128,8 +119,7 @@ public class GraphsOCLFactory {
         /**
          * @generated
          */
-        public Expression(String body, EClassifier context,
-                Map<String, EClassifier> environment) {
+        public Expression(String body, EClassifier context, Map<String, EClassifier> environment) {
             super(body, context);
             oclInstance = org.eclipse.ocl.ecore.OCL.newInstance();
             initCustomEnv(oclInstance.getEnvironment(), environment);
@@ -152,8 +142,7 @@ public class GraphsOCLFactory {
                 return null;
             }
             // on the first call, both evalEnvironment and extentMap are clear, for later we have finally, below.
-            EvaluationEnvironment<?, ?, ?, ?, ?> evalEnv =
-                    oclInstance.getEvaluationEnvironment();
+            EvaluationEnvironment<?, ?, ?, ?, ?> evalEnv = oclInstance.getEvaluationEnvironment();
             // initialize environment
             for (Object nextKey : env.keySet()) {
                 evalEnv.replace((String) nextKey, env.get(nextKey));
@@ -171,16 +160,14 @@ public class GraphsOCLFactory {
          * @generated
          */
         private static void initCustomEnv(
-                Environment<?, EClassifier, ?, ?, ?, EParameter, ?, ?, ?, ?, ?, ?> ecoreEnv,
-                Map<String, EClassifier> environment) {
+            Environment<?, EClassifier, ?, ?, ?, EParameter, ?, ?, ?, ?, ?, ?> ecoreEnv,
+            Map<String, EClassifier> environment) {
             // Use EObject as implicit root class for any object, to allow eContainer() and other EObject operations from OCL expressions
-            ParsingOptions.setOption(ecoreEnv,
-                    ParsingOptions.implicitRootClass(ecoreEnv),
-                    EcorePackage.eINSTANCE.getEObject());
+            ParsingOptions.setOption(ecoreEnv, ParsingOptions.implicitRootClass(ecoreEnv),
+                EcorePackage.eINSTANCE.getEObject());
             for (String varName : environment.keySet()) {
                 EClassifier varType = environment.get(varName);
-                ecoreEnv.addElement(varName,
-                        createVar(ecoreEnv, varName, varType), false);
+                ecoreEnv.addElement(varName, createVar(ecoreEnv, varName, varType), false);
             }
         }
 
@@ -188,10 +175,9 @@ public class GraphsOCLFactory {
          * @generated
          */
         private static org.eclipse.ocl.ecore.Variable createVar(
-                Environment<?, EClassifier, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> ecoreEnv,
-                String name, EClassifier type) {
-            org.eclipse.ocl.ecore.Variable var =
-                    EcoreFactory.eINSTANCE.createVariable();
+            Environment<?, EClassifier, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> ecoreEnv, String name,
+            EClassifier type) {
+            org.eclipse.ocl.ecore.Variable var = EcoreFactory.eINSTANCE.createVariable();
             var.setName(name);
             var.setType(ecoreEnv.getUMLReflection().getOCLType(type));
             return var;

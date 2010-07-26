@@ -17,35 +17,29 @@ public class GraphsDomainNavigatorItem extends PlatformObject {
      * @generated
      */
     static {
-        final Class[] supportedTypes =
-                new Class[] { EObject.class, IPropertySource.class };
-        Platform.getAdapterManager().registerAdapters(
-                new IAdapterFactory() {
+        final Class[] supportedTypes = new Class[] { EObject.class, IPropertySource.class };
+        Platform.getAdapterManager().registerAdapters(new IAdapterFactory() {
 
-                    public Object getAdapter(Object adaptableObject,
-                            Class adapterType) {
-                        if (adaptableObject instanceof de.cau.cs.kieler.graphs.diagram.navigator.GraphsDomainNavigatorItem) {
-                            de.cau.cs.kieler.graphs.diagram.navigator.GraphsDomainNavigatorItem domainNavigatorItem =
-                                    (de.cau.cs.kieler.graphs.diagram.navigator.GraphsDomainNavigatorItem) adaptableObject;
-                            EObject eObject = domainNavigatorItem.getEObject();
-                            if (adapterType == EObject.class) {
-                                return eObject;
-                            }
-                            if (adapterType == IPropertySource.class) {
-                                return domainNavigatorItem
-                                        .getPropertySourceProvider()
-                                        .getPropertySource(eObject);
-                            }
-                        }
-
-                        return null;
+            public Object getAdapter(Object adaptableObject, Class adapterType) {
+                if (adaptableObject instanceof de.cau.cs.kieler.graphs.diagram.navigator.GraphsDomainNavigatorItem) {
+                    de.cau.cs.kieler.graphs.diagram.navigator.GraphsDomainNavigatorItem domainNavigatorItem = (de.cau.cs.kieler.graphs.diagram.navigator.GraphsDomainNavigatorItem) adaptableObject;
+                    EObject eObject = domainNavigatorItem.getEObject();
+                    if (adapterType == EObject.class) {
+                        return eObject;
                     }
-
-                    public Class[] getAdapterList() {
-                        return supportedTypes;
+                    if (adapterType == IPropertySource.class) {
+                        return domainNavigatorItem.getPropertySourceProvider().getPropertySource(
+                            eObject);
                     }
-                },
-                de.cau.cs.kieler.graphs.diagram.navigator.GraphsDomainNavigatorItem.class);
+                }
+
+                return null;
+            }
+
+            public Class[] getAdapterList() {
+                return supportedTypes;
+            }
+        }, de.cau.cs.kieler.graphs.diagram.navigator.GraphsDomainNavigatorItem.class);
     }
 
     /**
@@ -67,7 +61,7 @@ public class GraphsDomainNavigatorItem extends PlatformObject {
      * @generated
      */
     public GraphsDomainNavigatorItem(EObject eObject, Object parent,
-            IPropertySourceProvider propertySourceProvider) {
+        IPropertySourceProvider propertySourceProvider) {
         myParent = parent;
         myEObject = eObject;
         myPropertySourceProvider = propertySourceProvider;
@@ -100,10 +94,11 @@ public class GraphsDomainNavigatorItem extends PlatformObject {
     public boolean equals(Object obj) {
         if (obj instanceof de.cau.cs.kieler.graphs.diagram.navigator.GraphsDomainNavigatorItem) {
             return EcoreUtil
-                    .getURI(getEObject())
-                    .equals(EcoreUtil
-                            .getURI(((de.cau.cs.kieler.graphs.diagram.navigator.GraphsDomainNavigatorItem) obj)
-                                    .getEObject()));
+                .getURI(getEObject())
+                .equals(
+                    EcoreUtil
+                        .getURI(((de.cau.cs.kieler.graphs.diagram.navigator.GraphsDomainNavigatorItem) obj)
+                            .getEObject()));
         }
         return super.equals(obj);
     }

@@ -43,8 +43,7 @@ import de.cau.cs.kieler.graphs.diagram.providers.GraphsElementTypes;
 /**
  * @generated
  */
-public class Node4EditPart extends AbstractBorderedShapeEditPart implements
-        GraphsNode {
+public class Node4EditPart extends AbstractBorderedShapeEditPart implements GraphsNode {
 
     /**
      * @generated
@@ -72,15 +71,11 @@ public class Node4EditPart extends AbstractBorderedShapeEditPart implements
      * @generated
      */
     protected void createDefaultEditPolicies() {
-        installEditPolicy(EditPolicyRoles.CREATION_ROLE,
-                new CreationEditPolicy());
+        installEditPolicy(EditPolicyRoles.CREATION_ROLE, new CreationEditPolicy());
         super.createDefaultEditPolicies();
-        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
-                new Node4ItemSemanticEditPolicy());
-        installEditPolicy(EditPolicyRoles.DRAG_DROP_ROLE,
-                new DragDropEditPolicy());
-        installEditPolicy(EditPolicyRoles.CANONICAL_ROLE,
-                new Node4CanonicalEditPolicy());
+        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE, new Node4ItemSemanticEditPolicy());
+        installEditPolicy(EditPolicyRoles.DRAG_DROP_ROLE, new DragDropEditPolicy());
+        installEditPolicy(EditPolicyRoles.CANONICAL_ROLE, new Node4CanonicalEditPolicy());
         installEditPolicy(EditPolicy.LAYOUT_ROLE, createLayoutEditPolicy());
         // XXX need an SCR to runtime to have another abstract superclass that would let children add reasonable editpolicies
         // removeEditPolicy(org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles.CONNECTION_HANDLES_ROLE);
@@ -90,31 +85,29 @@ public class Node4EditPart extends AbstractBorderedShapeEditPart implements
      * @generated
      */
     protected LayoutEditPolicy createLayoutEditPolicy() {
-        org.eclipse.gmf.runtime.diagram.ui.editpolicies.LayoutEditPolicy lep =
-                new org.eclipse.gmf.runtime.diagram.ui.editpolicies.LayoutEditPolicy() {
+        org.eclipse.gmf.runtime.diagram.ui.editpolicies.LayoutEditPolicy lep = new org.eclipse.gmf.runtime.diagram.ui.editpolicies.LayoutEditPolicy() {
 
-                    protected EditPolicy createChildEditPolicy(EditPart child) {
-                        View childView = (View) child.getModel();
-                        switch (GraphsVisualIDRegistry.getVisualID(childView)) {
-                        case PortEditPart.VISUAL_ID:
-                            return new BorderItemSelectionEditPolicy();
-                        }
-                        EditPolicy result =
-                                child.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
-                        if (result == null) {
-                            result = new NonResizableEditPolicy();
-                        }
-                        return result;
-                    }
+            protected EditPolicy createChildEditPolicy(EditPart child) {
+                View childView = (View) child.getModel();
+                switch (GraphsVisualIDRegistry.getVisualID(childView)) {
+                case PortEditPart.VISUAL_ID:
+                    return new BorderItemSelectionEditPolicy();
+                }
+                EditPolicy result = child.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
+                if (result == null) {
+                    result = new NonResizableEditPolicy();
+                }
+                return result;
+            }
 
-                    protected Command getMoveChildrenCommand(Request request) {
-                        return null;
-                    }
+            protected Command getMoveChildrenCommand(Request request) {
+                return null;
+            }
 
-                    protected Command getCreateCommand(CreateRequest request) {
-                        return null;
-                    }
-                };
+            protected Command getCreateCommand(CreateRequest request) {
+                return null;
+            }
+        };
         return lep;
     }
 
@@ -138,15 +131,14 @@ public class Node4EditPart extends AbstractBorderedShapeEditPart implements
     protected boolean addFixedChild(EditPart childEditPart) {
         if (childEditPart instanceof NodeNodeLabel2EditPart) {
             ((NodeNodeLabel2EditPart) childEditPart).setLabel(getPrimaryShape()
-                    .getFigureNodeLabelFigure());
+                .getFigureNodeLabelFigure());
             return true;
         }
         if (childEditPart instanceof PortEditPart) {
-            BorderItemLocator locator =
-                    new BorderItemLocator(getMainFigure(),
-                            PositionConstants.NONE);
+            BorderItemLocator locator = new BorderItemLocator(getMainFigure(),
+                PositionConstants.NONE);
             getBorderedFigure().getBorderItemContainer().add(
-                    ((PortEditPart) childEditPart).getFigure(), locator);
+                ((PortEditPart) childEditPart).getFigure(), locator);
             return true;
         }
         return false;
@@ -161,7 +153,7 @@ public class Node4EditPart extends AbstractBorderedShapeEditPart implements
         }
         if (childEditPart instanceof PortEditPart) {
             getBorderedFigure().getBorderItemContainer().remove(
-                    ((PortEditPart) childEditPart).getFigure());
+                ((PortEditPart) childEditPart).getFigure());
             return true;
         }
         return false;
@@ -214,8 +206,7 @@ public class Node4EditPart extends AbstractBorderedShapeEditPart implements
      * @generated
      */
     protected org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure createMainFigure() {
-        org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure figure =
-                createNodePlate();
+        org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure figure = createNodePlate();
         figure.setLayoutManager(new StackLayout());
         IFigure shape = createNodeShape();
         figure.add(shape);
@@ -289,7 +280,7 @@ public class Node4EditPart extends AbstractBorderedShapeEditPart implements
      */
     public EditPart getPrimaryChildEditPart() {
         return getChildBySemanticHint(GraphsVisualIDRegistry
-                .getType(NodeNodeLabel2EditPart.VISUAL_ID));
+            .getType(NodeNodeLabel2EditPart.VISUAL_ID));
     }
 
     /**
@@ -307,8 +298,7 @@ public class Node4EditPart extends AbstractBorderedShapeEditPart implements
     /**
      * @generated
      */
-    public List<IElementType> getMARelTypesOnSourceAndTarget(
-            IGraphicalEditPart targetEditPart) {
+    public List<IElementType> getMARelTypesOnSourceAndTarget(IGraphicalEditPart targetEditPart) {
         LinkedList<IElementType> types = new LinkedList<IElementType>();
         if (targetEditPart instanceof Node2EditPart) {
             types.add(GraphsElementTypes.Edge_4001);
@@ -420,15 +410,13 @@ public class Node4EditPart extends AbstractBorderedShapeEditPart implements
 
             this.setLayoutManager(layoutThis);
 
-            this.setCornerDimensions(new Dimension(getMapMode().DPtoLP(16),
-                    getMapMode().DPtoLP(16)));
+            this.setCornerDimensions(new Dimension(getMapMode().DPtoLP(16), getMapMode().DPtoLP(16)));
             this.setLineWidth(1);
             this.setForegroundColor(THIS_FORE);
             this.setBackgroundColor(THIS_BACK);
 
-            this.setBorder(new MarginBorder(getMapMode().DPtoLP(5),
-                    getMapMode().DPtoLP(5), getMapMode().DPtoLP(5),
-                    getMapMode().DPtoLP(5)));
+            this.setBorder(new MarginBorder(getMapMode().DPtoLP(5), getMapMode().DPtoLP(5),
+                getMapMode().DPtoLP(5), getMapMode().DPtoLP(5)));
             createContents();
         }
 

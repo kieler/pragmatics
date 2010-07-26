@@ -9,8 +9,7 @@ import de.cau.cs.kieler.graphs.diagram.providers.GraphsElementTypes;
 /**
  * @generated
  */
-public class EdgeItemSemanticEditPolicy extends
-        GraphsBaseItemSemanticEditPolicy {
+public class EdgeItemSemanticEditPolicy extends GraphsBaseItemSemanticEditPolicy {
 
     /**
      * @generated

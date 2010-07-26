@@ -41,8 +41,7 @@ public class NodeNodeCompartment2EditPart extends ShapeCompartmentEditPart {
      * @generated
      */
     public IFigure createFigure() {
-        ResizableCompartmentFigure result =
-                (ResizableCompartmentFigure) super.createFigure();
+        ResizableCompartmentFigure result = (ResizableCompartmentFigure) super.createFigure();
         result.setTitleVisibility(false);
         return result;
     }
@@ -53,13 +52,11 @@ public class NodeNodeCompartment2EditPart extends ShapeCompartmentEditPart {
     protected void createDefaultEditPolicies() {
         super.createDefaultEditPolicies();
         installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
-                new NodeNodeCompartment2ItemSemanticEditPolicy());
-        installEditPolicy(EditPolicyRoles.CREATION_ROLE,
-                new CreationEditPolicy());
-        installEditPolicy(EditPolicyRoles.DRAG_DROP_ROLE,
-                new DragDropEditPolicy());
+            new NodeNodeCompartment2ItemSemanticEditPolicy());
+        installEditPolicy(EditPolicyRoles.CREATION_ROLE, new CreationEditPolicy());
+        installEditPolicy(EditPolicyRoles.DRAG_DROP_ROLE, new DragDropEditPolicy());
         installEditPolicy(EditPolicyRoles.CANONICAL_ROLE,
-                new NodeNodeCompartment2CanonicalEditPolicy());
+            new NodeNodeCompartment2CanonicalEditPolicy());
     }
 
     /**

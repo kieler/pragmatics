@@ -37,8 +37,7 @@ import de.cau.cs.kieler.graphs.diagram.providers.GraphsElementTypes;
 /**
  * @generated
  */
-public class PortItemSemanticEditPolicy extends
-        GraphsBaseItemSemanticEditPolicy {
+public class PortItemSemanticEditPolicy extends GraphsBaseItemSemanticEditPolicy {
 
     /**
      * @generated
@@ -52,39 +51,35 @@ public class PortItemSemanticEditPolicy extends
      */
     protected Command getDestroyElementCommand(DestroyElementRequest req) {
         View view = (View) getHost().getModel();
-        CompositeTransactionalCommand cmd =
-                new CompositeTransactionalCommand(getEditingDomain(), null);
+        CompositeTransactionalCommand cmd = new CompositeTransactionalCommand(getEditingDomain(),
+            null);
         cmd.setTransactionNestingEnabled(false);
         for (Iterator<?> it = view.getTargetEdges().iterator(); it.hasNext();) {
             Edge incomingLink = (Edge) it.next();
             if (GraphsVisualIDRegistry.getVisualID(incomingLink) == Edge3EditPart.VISUAL_ID) {
-                DestroyElementRequest r =
-                        new DestroyElementRequest(incomingLink.getElement(),
-                                false);
+                DestroyElementRequest r = new DestroyElementRequest(incomingLink.getElement(),
+                    false);
                 cmd.add(new DestroyElementCommand(r));
                 cmd.add(new DeleteCommand(getEditingDomain(), incomingLink));
                 continue;
             }
             if (GraphsVisualIDRegistry.getVisualID(incomingLink) == Edge4EditPart.VISUAL_ID) {
-                DestroyElementRequest r =
-                        new DestroyElementRequest(incomingLink.getElement(),
-                                false);
+                DestroyElementRequest r = new DestroyElementRequest(incomingLink.getElement(),
+                    false);
                 cmd.add(new DestroyElementCommand(r));
                 cmd.add(new DeleteCommand(getEditingDomain(), incomingLink));
                 continue;
             }
             if (GraphsVisualIDRegistry.getVisualID(incomingLink) == Edge7EditPart.VISUAL_ID) {
-                DestroyElementRequest r =
-                        new DestroyElementRequest(incomingLink.getElement(),
-                                false);
+                DestroyElementRequest r = new DestroyElementRequest(incomingLink.getElement(),
+                    false);
                 cmd.add(new DestroyElementCommand(r));
                 cmd.add(new DeleteCommand(getEditingDomain(), incomingLink));
                 continue;
             }
             if (GraphsVisualIDRegistry.getVisualID(incomingLink) == Edge8EditPart.VISUAL_ID) {
-                DestroyElementRequest r =
-                        new DestroyElementRequest(incomingLink.getElement(),
-                                false);
+                DestroyElementRequest r = new DestroyElementRequest(incomingLink.getElement(),
+                    false);
                 cmd.add(new DestroyElementCommand(r));
                 cmd.add(new DeleteCommand(getEditingDomain(), incomingLink));
                 continue;
@@ -93,33 +88,29 @@ public class PortItemSemanticEditPolicy extends
         for (Iterator<?> it = view.getSourceEdges().iterator(); it.hasNext();) {
             Edge outgoingLink = (Edge) it.next();
             if (GraphsVisualIDRegistry.getVisualID(outgoingLink) == Edge3EditPart.VISUAL_ID) {
-                DestroyElementRequest r =
-                        new DestroyElementRequest(outgoingLink.getElement(),
-                                false);
+                DestroyElementRequest r = new DestroyElementRequest(outgoingLink.getElement(),
+                    false);
                 cmd.add(new DestroyElementCommand(r));
                 cmd.add(new DeleteCommand(getEditingDomain(), outgoingLink));
                 continue;
             }
             if (GraphsVisualIDRegistry.getVisualID(outgoingLink) == Edge4EditPart.VISUAL_ID) {
-                DestroyElementRequest r =
-                        new DestroyElementRequest(outgoingLink.getElement(),
-                                false);
+                DestroyElementRequest r = new DestroyElementRequest(outgoingLink.getElement(),
+                    false);
                 cmd.add(new DestroyElementCommand(r));
                 cmd.add(new DeleteCommand(getEditingDomain(), outgoingLink));
                 continue;
             }
             if (GraphsVisualIDRegistry.getVisualID(outgoingLink) == Edge5EditPart.VISUAL_ID) {
-                DestroyElementRequest r =
-                        new DestroyElementRequest(outgoingLink.getElement(),
-                                false);
+                DestroyElementRequest r = new DestroyElementRequest(outgoingLink.getElement(),
+                    false);
                 cmd.add(new DestroyElementCommand(r));
                 cmd.add(new DeleteCommand(getEditingDomain(), outgoingLink));
                 continue;
             }
             if (GraphsVisualIDRegistry.getVisualID(outgoingLink) == Edge6EditPart.VISUAL_ID) {
-                DestroyElementRequest r =
-                        new DestroyElementRequest(outgoingLink.getElement(),
-                                false);
+                DestroyElementRequest r = new DestroyElementRequest(outgoingLink.getElement(),
+                    false);
                 cmd.add(new DestroyElementCommand(r));
                 cmd.add(new DeleteCommand(getEditingDomain(), outgoingLink));
                 continue;
@@ -141,33 +132,26 @@ public class PortItemSemanticEditPolicy extends
      * @generated
      */
     protected Command getCreateRelationshipCommand(CreateRelationshipRequest req) {
-        Command command =
-                req.getTarget() == null ? getStartCreateRelationshipCommand(req)
-                        : getCompleteCreateRelationshipCommand(req);
-        return command != null ? command : super
-                .getCreateRelationshipCommand(req);
+        Command command = req.getTarget() == null ? getStartCreateRelationshipCommand(req)
+            : getCompleteCreateRelationshipCommand(req);
+        return command != null ? command : super.getCreateRelationshipCommand(req);
     }
 
     /**
      * @generated
      */
-    protected Command getStartCreateRelationshipCommand(
-            CreateRelationshipRequest req) {
+    protected Command getStartCreateRelationshipCommand(CreateRelationshipRequest req) {
         if (GraphsElementTypes.Edge_4003 == req.getElementType()) {
-            return getGEFWrapper(new Edge3CreateCommand(req, req.getSource(),
-                    req.getTarget()));
+            return getGEFWrapper(new Edge3CreateCommand(req, req.getSource(), req.getTarget()));
         }
         if (GraphsElementTypes.Edge_4004 == req.getElementType()) {
-            return getGEFWrapper(new Edge4CreateCommand(req, req.getSource(),
-                    req.getTarget()));
+            return getGEFWrapper(new Edge4CreateCommand(req, req.getSource(), req.getTarget()));
         }
         if (GraphsElementTypes.Edge_4005 == req.getElementType()) {
-            return getGEFWrapper(new Edge5CreateCommand(req, req.getSource(),
-                    req.getTarget()));
+            return getGEFWrapper(new Edge5CreateCommand(req, req.getSource(), req.getTarget()));
         }
         if (GraphsElementTypes.Edge_4006 == req.getElementType()) {
-            return getGEFWrapper(new Edge6CreateCommand(req, req.getSource(),
-                    req.getTarget()));
+            return getGEFWrapper(new Edge6CreateCommand(req, req.getSource(), req.getTarget()));
         }
         if (GraphsElementTypes.Edge_4007 == req.getElementType()) {
             return null;
@@ -181,15 +165,12 @@ public class PortItemSemanticEditPolicy extends
     /**
      * @generated
      */
-    protected Command getCompleteCreateRelationshipCommand(
-            CreateRelationshipRequest req) {
+    protected Command getCompleteCreateRelationshipCommand(CreateRelationshipRequest req) {
         if (GraphsElementTypes.Edge_4003 == req.getElementType()) {
-            return getGEFWrapper(new Edge3CreateCommand(req, req.getSource(),
-                    req.getTarget()));
+            return getGEFWrapper(new Edge3CreateCommand(req, req.getSource(), req.getTarget()));
         }
         if (GraphsElementTypes.Edge_4004 == req.getElementType()) {
-            return getGEFWrapper(new Edge4CreateCommand(req, req.getSource(),
-                    req.getTarget()));
+            return getGEFWrapper(new Edge4CreateCommand(req, req.getSource(), req.getTarget()));
         }
         if (GraphsElementTypes.Edge_4005 == req.getElementType()) {
             return null;
@@ -198,12 +179,10 @@ public class PortItemSemanticEditPolicy extends
             return null;
         }
         if (GraphsElementTypes.Edge_4007 == req.getElementType()) {
-            return getGEFWrapper(new Edge7CreateCommand(req, req.getSource(),
-                    req.getTarget()));
+            return getGEFWrapper(new Edge7CreateCommand(req, req.getSource(), req.getTarget()));
         }
         if (GraphsElementTypes.Edge_4008 == req.getElementType()) {
-            return getGEFWrapper(new Edge8CreateCommand(req, req.getSource(),
-                    req.getTarget()));
+            return getGEFWrapper(new Edge8CreateCommand(req, req.getSource(), req.getTarget()));
         }
         return null;
     }
@@ -214,8 +193,7 @@ public class PortItemSemanticEditPolicy extends
      * 
      * @generated
      */
-    protected Command getReorientRelationshipCommand(
-            ReorientRelationshipRequest req) {
+    protected Command getReorientRelationshipCommand(ReorientRelationshipRequest req) {
         switch (getVisualID(req)) {
         case Edge3EditPart.VISUAL_ID:
             return getGEFWrapper(new Edge3ReorientCommand(req));
