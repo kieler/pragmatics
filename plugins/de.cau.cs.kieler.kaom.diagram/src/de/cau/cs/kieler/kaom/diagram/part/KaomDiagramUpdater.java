@@ -314,7 +314,7 @@ public class KaomDiagramUpdater {
     public static List<KaomLinkDescriptor> getEntity_2001IncomingLinks(View view) {
         Entity modelElement = (Entity) view.getElement();
         Map<EObject, Collection<EStructuralFeature.Setting>> crossReferences = EcoreUtil.CrossReferencer
-                .find(view.eResource().getResourceSet().getResources());
+            .find(view.eResource().getResourceSet().getResources());
         LinkedList<KaomLinkDescriptor> result = new LinkedList<KaomLinkDescriptor>();
         result.addAll(getIncomingTypeModelFacetLinks_Link_4001(modelElement, crossReferences));
         return result;
@@ -326,7 +326,7 @@ public class KaomDiagramUpdater {
     public static List<KaomLinkDescriptor> getRelation_2002IncomingLinks(View view) {
         Relation modelElement = (Relation) view.getElement();
         Map<EObject, Collection<EStructuralFeature.Setting>> crossReferences = EcoreUtil.CrossReferencer
-                .find(view.eResource().getResourceSet().getResources());
+            .find(view.eResource().getResourceSet().getResources());
         LinkedList<KaomLinkDescriptor> result = new LinkedList<KaomLinkDescriptor>();
         result.addAll(getIncomingTypeModelFacetLinks_Link_4001(modelElement, crossReferences));
         return result;
@@ -338,7 +338,7 @@ public class KaomDiagramUpdater {
     public static List<KaomLinkDescriptor> getPort_3001IncomingLinks(View view) {
         Port modelElement = (Port) view.getElement();
         Map<EObject, Collection<EStructuralFeature.Setting>> crossReferences = EcoreUtil.CrossReferencer
-                .find(view.eResource().getResourceSet().getResources());
+            .find(view.eResource().getResourceSet().getResources());
         LinkedList<KaomLinkDescriptor> result = new LinkedList<KaomLinkDescriptor>();
         result.addAll(getIncomingTypeModelFacetLinks_Link_4001(modelElement, crossReferences));
         return result;
@@ -350,7 +350,7 @@ public class KaomDiagramUpdater {
     public static List<KaomLinkDescriptor> getEntity_3002IncomingLinks(View view) {
         Entity modelElement = (Entity) view.getElement();
         Map<EObject, Collection<EStructuralFeature.Setting>> crossReferences = EcoreUtil.CrossReferencer
-                .find(view.eResource().getResourceSet().getResources());
+            .find(view.eResource().getResourceSet().getResources());
         LinkedList<KaomLinkDescriptor> result = new LinkedList<KaomLinkDescriptor>();
         result.addAll(getIncomingTypeModelFacetLinks_Link_4001(modelElement, crossReferences));
         return result;
@@ -362,7 +362,7 @@ public class KaomDiagramUpdater {
     public static List<KaomLinkDescriptor> getRelation_3003IncomingLinks(View view) {
         Relation modelElement = (Relation) view.getElement();
         Map<EObject, Collection<EStructuralFeature.Setting>> crossReferences = EcoreUtil.CrossReferencer
-                .find(view.eResource().getResourceSet().getResources());
+            .find(view.eResource().getResourceSet().getResources());
         LinkedList<KaomLinkDescriptor> result = new LinkedList<KaomLinkDescriptor>();
         result.addAll(getIncomingTypeModelFacetLinks_Link_4001(modelElement, crossReferences));
         return result;
@@ -436,7 +436,7 @@ public class KaomDiagramUpdater {
      * @generated
      */
     private static Collection<KaomLinkDescriptor> getContainedTypeModelFacetLinks_Link_4001(
-            Entity container) {
+        Entity container) {
         LinkedList<KaomLinkDescriptor> result = new LinkedList<KaomLinkDescriptor>();
         for (Iterator<?> links = container.getChildLinks().iterator(); links.hasNext();) {
             EObject linkObject = (EObject) links.next();
@@ -450,7 +450,7 @@ public class KaomDiagramUpdater {
             Linkable dst = link.getTarget();
             Linkable src = link.getSource();
             result.add(new KaomLinkDescriptor(src, dst, link, KaomElementTypes.Link_4001,
-                    LinkEditPart.VISUAL_ID));
+                LinkEditPart.VISUAL_ID));
         }
         return result;
     }
@@ -459,12 +459,12 @@ public class KaomDiagramUpdater {
      * @generated
      */
     private static Collection<KaomLinkDescriptor> getIncomingTypeModelFacetLinks_Link_4001(
-            Linkable target, Map<EObject, Collection<EStructuralFeature.Setting>> crossReferences) {
+        Linkable target, Map<EObject, Collection<EStructuralFeature.Setting>> crossReferences) {
         LinkedList<KaomLinkDescriptor> result = new LinkedList<KaomLinkDescriptor>();
         Collection<EStructuralFeature.Setting> settings = crossReferences.get(target);
         for (EStructuralFeature.Setting setting : settings) {
             if (setting.getEStructuralFeature() != KaomPackage.eINSTANCE.getLink_Target()
-                    || false == setting.getEObject() instanceof Link) {
+                || false == setting.getEObject() instanceof Link) {
                 continue;
             }
             Link link = (Link) setting.getEObject();
@@ -473,7 +473,7 @@ public class KaomDiagramUpdater {
             }
             Linkable src = link.getSource();
             result.add(new KaomLinkDescriptor(src, target, link, KaomElementTypes.Link_4001,
-                    LinkEditPart.VISUAL_ID));
+                LinkEditPart.VISUAL_ID));
         }
         return result;
     }
@@ -482,13 +482,13 @@ public class KaomDiagramUpdater {
      * @generated
      */
     private static Collection<KaomLinkDescriptor> getOutgoingTypeModelFacetLinks_Link_4001(
-            Linkable source) {
+        Linkable source) {
         Entity container = null;
         // Find container element for the link.
         // Climb up by containment hierarchy starting from the source
         // and return the first element that is instance of the container class.
         for (EObject element = source; element != null && container == null; element = element
-                .eContainer()) {
+            .eContainer()) {
             if (element instanceof Entity) {
                 container = (Entity) element;
             }
@@ -512,7 +512,7 @@ public class KaomDiagramUpdater {
                 continue;
             }
             result.add(new KaomLinkDescriptor(src, dst, link, KaomElementTypes.Link_4001,
-                    LinkEditPart.VISUAL_ID));
+                LinkEditPart.VISUAL_ID));
         }
         return result;
     }

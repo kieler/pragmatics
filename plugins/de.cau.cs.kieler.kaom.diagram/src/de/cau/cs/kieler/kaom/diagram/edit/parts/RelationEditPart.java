@@ -133,7 +133,8 @@ public class RelationEditPart extends AbstractBorderedShapeEditPart {
      */
     protected void addBorderItem(IFigure borderItemContainer, IBorderItemEditPart borderItemEditPart) {
         if (borderItemEditPart instanceof RelationNameEditPart) {
-            BorderItemLocator locator = new BorderItemLocator(getMainFigure(), PositionConstants.SOUTH);
+            BorderItemLocator locator = new BorderItemLocator(getMainFigure(),
+                PositionConstants.SOUTH);
             locator.setBorderItemOffset(new Dimension(-20, -20));
             borderItemContainer.add(borderItemEditPart.getFigure(), locator);
         } else {

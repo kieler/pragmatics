@@ -100,8 +100,8 @@ public class KaomBaseItemSemanticEditPolicy extends SemanticEditPolicy {
         semanticCommand = getEditHelperCommand(completedRequest, semanticCommand);
         if (completedRequest instanceof DestroyRequest) {
             DestroyRequest destroyRequest = (DestroyRequest) completedRequest;
-            return shouldProceed(destroyRequest) ? addDeleteViewCommand(semanticCommand, destroyRequest)
-                    : null;
+            return shouldProceed(destroyRequest) ? addDeleteViewCommand(semanticCommand,
+                destroyRequest) : null;
         }
         return semanticCommand;
     }
@@ -110,8 +110,8 @@ public class KaomBaseItemSemanticEditPolicy extends SemanticEditPolicy {
      * @generated
      */
     protected Command addDeleteViewCommand(Command mainCommand, DestroyRequest completedRequest) {
-        Command deleteViewCommand = getGEFWrapper(new DeleteCommand(getEditingDomain(), (View) getHost()
-                .getModel()));
+        Command deleteViewCommand = getGEFWrapper(new DeleteCommand(getEditingDomain(),
+            (View) getHost().getModel()));
         return mainCommand == null ? deleteViewCommand : mainCommand.chain(deleteViewCommand);
     }
 
@@ -121,7 +121,7 @@ public class KaomBaseItemSemanticEditPolicy extends SemanticEditPolicy {
     private Command getEditHelperCommand(IEditCommandRequest request, Command editPolicyCommand) {
         if (editPolicyCommand != null) {
             ICommand command = editPolicyCommand instanceof ICommandProxy ? ((ICommandProxy) editPolicyCommand)
-                    .getICommand() : new CommandProxy(editPolicyCommand);
+                .getICommand() : new CommandProxy(editPolicyCommand);
             request.setParameter(KaomBaseEditHelper.EDIT_POLICY_COMMAND, command);
         }
         IElementType requestContextElementType = getContextElementType(request);
@@ -132,7 +132,7 @@ public class KaomBaseItemSemanticEditPolicy extends SemanticEditPolicy {
         if (command != null) {
             if (!(command instanceof CompositeTransactionalCommand)) {
                 command = new CompositeTransactionalCommand(getEditingDomain(), command.getLabel())
-                        .compose(command);
+                    .compose(command);
             }
             return new ICommandProxy(command);
         }
@@ -143,7 +143,8 @@ public class KaomBaseItemSemanticEditPolicy extends SemanticEditPolicy {
      * @generated
      */
     private IElementType getContextElementType(IEditCommandRequest request) {
-        IElementType requestContextElementType = KaomElementTypes.getElementType(getVisualID(request));
+        IElementType requestContextElementType = KaomElementTypes
+            .getElementType(getVisualID(request));
         return requestContextElementType != null ? requestContextElementType : myElementType;
     }
 
@@ -243,7 +244,8 @@ public class KaomBaseItemSemanticEditPolicy extends SemanticEditPolicy {
     /**
      * @generated
      */
-    protected Command getReorientReferenceRelationshipCommand(ReorientReferenceRelationshipRequest req) {
+    protected Command getReorientReferenceRelationshipCommand(
+        ReorientReferenceRelationshipRequest req) {
         return UnexecutableCommand.INSTANCE;
     }
 
@@ -290,7 +292,8 @@ public class KaomBaseItemSemanticEditPolicy extends SemanticEditPolicy {
     public static LinkConstraints getLinkConstraints() {
         LinkConstraints cached = KaomDiagramEditorPlugin.getInstance().getLinkConstraints();
         if (cached == null) {
-            KaomDiagramEditorPlugin.getInstance().setLinkConstraints(cached = new LinkConstraints());
+            KaomDiagramEditorPlugin.getInstance()
+                .setLinkConstraints(cached = new LinkConstraints());
         }
         return cached;
     }
@@ -318,7 +321,7 @@ public class KaomBaseItemSemanticEditPolicy extends SemanticEditPolicy {
          * @generated
          */
         public boolean canExistLink_4001(Entity container, Link linkInstance, Linkable source,
-                Linkable target) {
+            Linkable target) {
             return true;
         }
     }

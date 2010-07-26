@@ -38,7 +38,8 @@ public class KaomParserProvider extends AbstractProvider implements IParserProvi
      */
     private IParser getEntityName_5004Parser() {
         if (entityName_5004Parser == null) {
-            EAttribute[] features = new EAttribute[] {AnnotationsPackage.eINSTANCE.getNamedObject_Name()};
+            EAttribute[] features = new EAttribute[] { AnnotationsPackage.eINSTANCE
+                .getNamedObject_Name() };
             MessageFormatParser parser = new MessageFormatParser(features);
             entityName_5004Parser = parser;
         }
@@ -55,7 +56,8 @@ public class KaomParserProvider extends AbstractProvider implements IParserProvi
      */
     private IParser getRelationName_5005Parser() {
         if (relationName_5005Parser == null) {
-            EAttribute[] features = new EAttribute[] {AnnotationsPackage.eINSTANCE.getNamedObject_Name()};
+            EAttribute[] features = new EAttribute[] { AnnotationsPackage.eINSTANCE
+                .getNamedObject_Name() };
             MessageFormatParser parser = new MessageFormatParser(features);
             relationName_5005Parser = parser;
         }
@@ -72,7 +74,8 @@ public class KaomParserProvider extends AbstractProvider implements IParserProvi
      */
     private IParser getPortName_5001Parser() {
         if (portName_5001Parser == null) {
-            EAttribute[] features = new EAttribute[] {AnnotationsPackage.eINSTANCE.getNamedObject_Name()};
+            EAttribute[] features = new EAttribute[] { AnnotationsPackage.eINSTANCE
+                .getNamedObject_Name() };
             MessageFormatParser parser = new MessageFormatParser(features);
             portName_5001Parser = parser;
         }
@@ -89,7 +92,8 @@ public class KaomParserProvider extends AbstractProvider implements IParserProvi
      */
     private IParser getEntityName_5003Parser() {
         if (entityName_5003Parser == null) {
-            EAttribute[] features = new EAttribute[] {AnnotationsPackage.eINSTANCE.getNamedObject_Name()};
+            EAttribute[] features = new EAttribute[] { AnnotationsPackage.eINSTANCE
+                .getNamedObject_Name() };
             MessageFormatParser parser = new MessageFormatParser(features);
             entityName_5003Parser = parser;
         }
@@ -106,7 +110,8 @@ public class KaomParserProvider extends AbstractProvider implements IParserProvi
      */
     private IParser getRelationName_5002Parser() {
         if (relationName_5002Parser == null) {
-            EAttribute[] features = new EAttribute[] {AnnotationsPackage.eINSTANCE.getNamedObject_Name()};
+            EAttribute[] features = new EAttribute[] { AnnotationsPackage.eINSTANCE
+                .getNamedObject_Name() };
             MessageFormatParser parser = new MessageFormatParser(features);
             relationName_5002Parser = parser;
         }
@@ -123,7 +128,8 @@ public class KaomParserProvider extends AbstractProvider implements IParserProvi
      */
     private IParser getLinkName_6001Parser() {
         if (linkName_6001Parser == null) {
-            EAttribute[] features = new EAttribute[] {AnnotationsPackage.eINSTANCE.getNamedObject_Name()};
+            EAttribute[] features = new EAttribute[] { AnnotationsPackage.eINSTANCE
+                .getNamedObject_Name() };
             MessageFormatParser parser = new MessageFormatParser(features);
             linkName_6001Parser = parser;
         }

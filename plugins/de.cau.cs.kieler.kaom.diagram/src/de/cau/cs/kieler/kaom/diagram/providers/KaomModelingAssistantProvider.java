@@ -41,7 +41,8 @@ public class KaomModelingAssistantProvider extends ModelingAssistantProvider {
      * @generated
      */
     public List getTypesForPopupBar(IAdaptable host) {
-        IGraphicalEditPart editPart = (IGraphicalEditPart) host.getAdapter(IGraphicalEditPart.class);
+        IGraphicalEditPart editPart = (IGraphicalEditPart) host
+            .getAdapter(IGraphicalEditPart.class);
         if (editPart instanceof EntityEditPart) {
             ArrayList<IElementType> types = new ArrayList<IElementType>(2);
             types.add(KaomElementTypes.Entity_2001);
@@ -78,7 +79,7 @@ public class KaomModelingAssistantProvider extends ModelingAssistantProvider {
      */
     public List getRelTypesOnSource(IAdaptable source) {
         IGraphicalEditPart sourceEditPart = (IGraphicalEditPart) source
-                .getAdapter(IGraphicalEditPart.class);
+            .getAdapter(IGraphicalEditPart.class);
         if (sourceEditPart instanceof Entity2EditPart) {
             return ((Entity2EditPart) sourceEditPart).getMARelTypesOnSource();
         }
@@ -102,7 +103,7 @@ public class KaomModelingAssistantProvider extends ModelingAssistantProvider {
      */
     public List getRelTypesOnTarget(IAdaptable target) {
         IGraphicalEditPart targetEditPart = (IGraphicalEditPart) target
-                .getAdapter(IGraphicalEditPart.class);
+            .getAdapter(IGraphicalEditPart.class);
         if (targetEditPart instanceof Entity2EditPart) {
             return ((Entity2EditPart) targetEditPart).getMARelTypesOnTarget();
         }
@@ -126,23 +127,27 @@ public class KaomModelingAssistantProvider extends ModelingAssistantProvider {
      */
     public List getRelTypesOnSourceAndTarget(IAdaptable source, IAdaptable target) {
         IGraphicalEditPart sourceEditPart = (IGraphicalEditPart) source
-                .getAdapter(IGraphicalEditPart.class);
+            .getAdapter(IGraphicalEditPart.class);
         IGraphicalEditPart targetEditPart = (IGraphicalEditPart) target
-                .getAdapter(IGraphicalEditPart.class);
+            .getAdapter(IGraphicalEditPart.class);
         if (sourceEditPart instanceof Entity2EditPart) {
-            return ((Entity2EditPart) sourceEditPart).getMARelTypesOnSourceAndTarget(targetEditPart);
+            return ((Entity2EditPart) sourceEditPart)
+                .getMARelTypesOnSourceAndTarget(targetEditPart);
         }
         if (sourceEditPart instanceof RelationEditPart) {
-            return ((RelationEditPart) sourceEditPart).getMARelTypesOnSourceAndTarget(targetEditPart);
+            return ((RelationEditPart) sourceEditPart)
+                .getMARelTypesOnSourceAndTarget(targetEditPart);
         }
         if (sourceEditPart instanceof PortEditPart) {
             return ((PortEditPart) sourceEditPart).getMARelTypesOnSourceAndTarget(targetEditPart);
         }
         if (sourceEditPart instanceof Entity3EditPart) {
-            return ((Entity3EditPart) sourceEditPart).getMARelTypesOnSourceAndTarget(targetEditPart);
+            return ((Entity3EditPart) sourceEditPart)
+                .getMARelTypesOnSourceAndTarget(targetEditPart);
         }
         if (sourceEditPart instanceof Relation2EditPart) {
-            return ((Relation2EditPart) sourceEditPart).getMARelTypesOnSourceAndTarget(targetEditPart);
+            return ((Relation2EditPart) sourceEditPart)
+                .getMARelTypesOnSourceAndTarget(targetEditPart);
         }
         return Collections.EMPTY_LIST;
     }
@@ -152,7 +157,7 @@ public class KaomModelingAssistantProvider extends ModelingAssistantProvider {
      */
     public List getTypesForSource(IAdaptable target, IElementType relationshipType) {
         IGraphicalEditPart targetEditPart = (IGraphicalEditPart) target
-                .getAdapter(IGraphicalEditPart.class);
+            .getAdapter(IGraphicalEditPart.class);
         if (targetEditPart instanceof Entity2EditPart) {
             return ((Entity2EditPart) targetEditPart).getMATypesForSource(relationshipType);
         }
@@ -176,7 +181,7 @@ public class KaomModelingAssistantProvider extends ModelingAssistantProvider {
      */
     public List getTypesForTarget(IAdaptable source, IElementType relationshipType) {
         IGraphicalEditPart sourceEditPart = (IGraphicalEditPart) source
-                .getAdapter(IGraphicalEditPart.class);
+            .getAdapter(IGraphicalEditPart.class);
         if (sourceEditPart instanceof Entity2EditPart) {
             return ((Entity2EditPart) sourceEditPart).getMATypesForTarget(relationshipType);
         }
@@ -216,7 +221,8 @@ public class KaomModelingAssistantProvider extends ModelingAssistantProvider {
         if (types.isEmpty()) {
             return null;
         }
-        IGraphicalEditPart editPart = (IGraphicalEditPart) host.getAdapter(IGraphicalEditPart.class);
+        IGraphicalEditPart editPart = (IGraphicalEditPart) host
+            .getAdapter(IGraphicalEditPart.class);
         if (editPart == null) {
             return null;
         }
@@ -248,7 +254,7 @@ public class KaomModelingAssistantProvider extends ModelingAssistantProvider {
     protected EObject selectElement(EObject[] elements) {
         Shell shell = Display.getCurrent().getActiveShell();
         ILabelProvider labelProvider = new AdapterFactoryLabelProvider(KaomDiagramEditorPlugin
-                .getInstance().getItemProvidersAdapterFactory());
+            .getInstance().getItemProvidersAdapterFactory());
         ElementListSelectionDialog dialog = new ElementListSelectionDialog(shell, labelProvider);
         dialog.setMessage(Messages.KaomModelingAssistantProviderMessage);
         dialog.setTitle(Messages.KaomModelingAssistantProviderTitle);

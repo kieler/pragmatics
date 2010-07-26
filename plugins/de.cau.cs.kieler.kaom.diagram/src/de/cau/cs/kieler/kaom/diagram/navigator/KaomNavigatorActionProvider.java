@@ -143,7 +143,8 @@ public class KaomNavigatorActionProvider extends CommonActionProvider {
             try {
                 page.openEditor(editorInput, KaomDiagramEditor.ID);
             } catch (PartInitException e) {
-                KaomDiagramEditorPlugin.getInstance().logError("Exception while openning diagram", e); //$NON-NLS-1$
+                KaomDiagramEditorPlugin.getInstance().logError(
+                    "Exception while openning diagram", e); //$NON-NLS-1$
             }
         }
 
@@ -162,7 +163,7 @@ public class KaomNavigatorActionProvider extends CommonActionProvider {
             }
             URI uri = EcoreUtil.getURI(diagram);
             String editorName = uri.lastSegment() + '#'
-                    + diagram.eResource().getContents().indexOf(diagram);
+                + diagram.eResource().getContents().indexOf(diagram);
             IEditorInput editorInput = new URIEditorInput(uri, editorName);
             return editorInput;
         }

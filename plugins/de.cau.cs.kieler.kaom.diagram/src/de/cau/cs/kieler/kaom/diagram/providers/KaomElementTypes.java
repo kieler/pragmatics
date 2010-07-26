@@ -116,7 +116,7 @@ public class KaomElementTypes {
             EClass eClass = (EClass) element;
             if (!eClass.isAbstract()) {
                 return KaomDiagramEditorPlugin.getInstance().getItemImageDescriptor(
-                        eClass.getEPackage().getEFactoryInstance().create(eClass));
+                    eClass.getEPackage().getEFactoryInstance().create(eClass));
             }
         }
         // TODO : support structural features

@@ -55,16 +55,16 @@ public class KaomNewDiagramFileWizard extends Wizard {
      * @generated
      */
     public KaomNewDiagramFileWizard(URI domainModelURI, EObject diagramRoot,
-            TransactionalEditingDomain editingDomain) {
+        TransactionalEditingDomain editingDomain) {
         assert domainModelURI != null : "Domain model uri must be specified"; //$NON-NLS-1$
         assert diagramRoot != null : "Doagram root element must be specified"; //$NON-NLS-1$
         assert editingDomain != null : "Editing domain must be specified"; //$NON-NLS-1$
 
         myFileCreationPage = new WizardNewFileCreationPage(
-                Messages.KaomNewDiagramFileWizard_CreationPageName, StructuredSelection.EMPTY);
+            Messages.KaomNewDiagramFileWizard_CreationPageName, StructuredSelection.EMPTY);
         myFileCreationPage.setTitle(Messages.KaomNewDiagramFileWizard_CreationPageTitle);
         myFileCreationPage.setDescription(NLS.bind(
-                Messages.KaomNewDiagramFileWizard_CreationPageDescription, EntityEditPart.MODEL_ID));
+            Messages.KaomNewDiagramFileWizard_CreationPageDescription, EntityEditPart.MODEL_ID));
         IPath filePath;
         String fileName = URI.decode(domainModelURI.trimFileExtension().lastSegment());
         if (domainModelURI.isPlatformResource()) {
@@ -77,14 +77,14 @@ public class KaomNewDiagramFileWizard extends Wizard {
         }
         myFileCreationPage.setContainerFullPath(filePath);
         myFileCreationPage.setFileName(KaomDiagramEditorUtil.getUniqueFileName(filePath, fileName,
-                "kaod")); //$NON-NLS-1$
+            "kaod")); //$NON-NLS-1$
 
         diagramRootElementSelectionPage = new DiagramRootElementSelectionPage(
-                Messages.KaomNewDiagramFileWizard_RootSelectionPageName);
+            Messages.KaomNewDiagramFileWizard_RootSelectionPageName);
         diagramRootElementSelectionPage
-                .setTitle(Messages.KaomNewDiagramFileWizard_RootSelectionPageTitle);
+            .setTitle(Messages.KaomNewDiagramFileWizard_RootSelectionPageTitle);
         diagramRootElementSelectionPage
-                .setDescription(Messages.KaomNewDiagramFileWizard_RootSelectionPageDescription);
+            .setDescription(Messages.KaomNewDiagramFileWizard_RootSelectionPageDescription);
         diagramRootElementSelectionPage.setModelElement(diagramRoot);
 
         myEditingDomain = editingDomain;
@@ -106,37 +106,38 @@ public class KaomNewDiagramFileWizard extends Wizard {
         IFile diagramFile = myFileCreationPage.createNewFile();
         KaomDiagramEditorUtil.setCharset(diagramFile);
         affectedFiles.add(diagramFile);
-        URI diagramModelURI = URI.createPlatformResourceURI(diagramFile.getFullPath().toString(), true);
+        URI diagramModelURI = URI.createPlatformResourceURI(diagramFile.getFullPath().toString(),
+            true);
         ResourceSet resourceSet = myEditingDomain.getResourceSet();
         final Resource diagramResource = resourceSet.createResource(diagramModelURI);
         AbstractTransactionalCommand command = new AbstractTransactionalCommand(myEditingDomain,
-                Messages.KaomNewDiagramFileWizard_InitDiagramCommand, affectedFiles) {
+            Messages.KaomNewDiagramFileWizard_InitDiagramCommand, affectedFiles) {
 
             protected CommandResult doExecuteWithResult(IProgressMonitor monitor, IAdaptable info)
-                    throws ExecutionException {
-                int diagramVID = KaomVisualIDRegistry.getDiagramVisualID(diagramRootElementSelectionPage
-                        .getModelElement());
+                throws ExecutionException {
+                int diagramVID = KaomVisualIDRegistry
+                    .getDiagramVisualID(diagramRootElementSelectionPage.getModelElement());
                 if (diagramVID != EntityEditPart.VISUAL_ID) {
                     return CommandResult
-                            .newErrorCommandResult(Messages.KaomNewDiagramFileWizard_IncorrectRootError);
+                        .newErrorCommandResult(Messages.KaomNewDiagramFileWizard_IncorrectRootError);
                 }
                 Diagram diagram = ViewService.createDiagram(
-                        diagramRootElementSelectionPage.getModelElement(), EntityEditPart.MODEL_ID,
-                        KaomDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT);
+                    diagramRootElementSelectionPage.getModelElement(), EntityEditPart.MODEL_ID,
+                    KaomDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT);
                 diagramResource.getContents().add(diagram);
                 return CommandResult.newOKCommandResult();
             }
         };
         try {
-            OperationHistoryFactory.getOperationHistory().execute(command, new NullProgressMonitor(),
-                    null);
+            OperationHistoryFactory.getOperationHistory().execute(command,
+                new NullProgressMonitor(), null);
             diagramResource.save(KaomDiagramEditorUtil.getSaveOptions());
             KaomDiagramEditorUtil.openDiagram(diagramResource);
         } catch (ExecutionException e) {
             KaomDiagramEditorPlugin.getInstance().logError("Unable to create model and diagram", e); //$NON-NLS-1$
         } catch (IOException ex) {
             KaomDiagramEditorPlugin.getInstance().logError(
-                    "Save operation failed for: " + diagramModelURI, ex); //$NON-NLS-1$
+                "Save operation failed for: " + diagramModelURI, ex); //$NON-NLS-1$
         } catch (PartInitException ex) {
             KaomDiagramEditorPlugin.getInstance().logError("Unable to open editor", ex); //$NON-NLS-1$
         }
@@ -171,10 +172,10 @@ public class KaomNewDiagramFileWizard extends Wizard {
                 return false;
             }
             boolean result = ViewService.getInstance().provides(
-                    new CreateDiagramViewOperation(new EObjectAdapter(selectedModelElement),
-                            EntityEditPart.MODEL_ID, KaomDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT));
+                new CreateDiagramViewOperation(new EObjectAdapter(selectedModelElement),
+                    EntityEditPart.MODEL_ID, KaomDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT));
             setErrorMessage(result ? null
-                    : Messages.KaomNewDiagramFileWizard_RootSelectionPageInvalidSelectionMessage);
+                : Messages.KaomNewDiagramFileWizard_RootSelectionPageInvalidSelectionMessage);
             return result;
         }
     }

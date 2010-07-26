@@ -92,7 +92,7 @@ public class KaomCreationWizard extends Wizard implements INewWizard {
         this.selection = selection;
         setWindowTitle(Messages.KaomCreationWizardTitle);
         setDefaultPageImageDescriptor(KaomDiagramEditorPlugin
-                .getBundledImageDescriptor("icons/wizban/NewKaomWizard.gif")); //$NON-NLS-1$
+            .getBundledImageDescriptor("icons/wizban/NewKaomWizard.gif")); //$NON-NLS-1$
         setNeedsProgressMonitor(true);
     }
 
@@ -100,9 +100,11 @@ public class KaomCreationWizard extends Wizard implements INewWizard {
      * @generated
      */
     public void addPages() {
-        diagramModelFilePage = new KaomCreationWizardPage("DiagramModelFile", getSelection(), "kaod"); //$NON-NLS-1$ //$NON-NLS-2$
+        diagramModelFilePage = new KaomCreationWizardPage(
+            "DiagramModelFile", getSelection(), "kaod"); //$NON-NLS-1$ //$NON-NLS-2$
         diagramModelFilePage.setTitle(Messages.KaomCreationWizard_DiagramModelFilePageTitle);
-        diagramModelFilePage.setDescription(Messages.KaomCreationWizard_DiagramModelFilePageDescription);
+        diagramModelFilePage
+            .setDescription(Messages.KaomCreationWizard_DiagramModelFilePageDescription);
         addPage(diagramModelFilePage);
 
         domainModelFilePage = new KaomCreationWizardPage("DomainModelFile", getSelection(), "kaom") { //$NON-NLS-1$ //$NON-NLS-2$
@@ -112,13 +114,14 @@ public class KaomCreationWizard extends Wizard implements INewWizard {
                     String fileName = diagramModelFilePage.getFileName();
                     fileName = fileName.substring(0, fileName.length() - ".kaod".length()); //$NON-NLS-1$
                     setFileName(KaomDiagramEditorUtil.getUniqueFileName(getContainerFullPath(),
-                            fileName, "kaom")); //$NON-NLS-1$
+                        fileName, "kaom")); //$NON-NLS-1$
                 }
                 super.setVisible(visible);
             }
         };
         domainModelFilePage.setTitle(Messages.KaomCreationWizard_DomainModelFilePageTitle);
-        domainModelFilePage.setDescription(Messages.KaomCreationWizard_DomainModelFilePageDescription);
+        domainModelFilePage
+            .setDescription(Messages.KaomCreationWizard_DomainModelFilePageDescription);
         addPage(domainModelFilePage);
     }
 
@@ -128,15 +131,16 @@ public class KaomCreationWizard extends Wizard implements INewWizard {
     public boolean performFinish() {
         IRunnableWithProgress op = new WorkspaceModifyOperation(null) {
 
-            protected void execute(IProgressMonitor monitor) throws CoreException, InterruptedException {
+            protected void execute(IProgressMonitor monitor) throws CoreException,
+                InterruptedException {
                 diagram = KaomDiagramEditorUtil.createDiagram(diagramModelFilePage.getURI(),
-                        domainModelFilePage.getURI(), monitor);
+                    domainModelFilePage.getURI(), monitor);
                 if (isOpenNewlyCreatedDiagramEditor() && diagram != null) {
                     try {
                         KaomDiagramEditorUtil.openDiagram(diagram);
                     } catch (PartInitException e) {
                         ErrorDialog.openError(getContainer().getShell(),
-                                Messages.KaomCreationWizardOpenEditorError, null, e.getStatus());
+                            Messages.KaomCreationWizardOpenEditorError, null, e.getStatus());
                     }
                 }
             }
@@ -148,11 +152,11 @@ public class KaomCreationWizard extends Wizard implements INewWizard {
         } catch (InvocationTargetException e) {
             if (e.getTargetException() instanceof CoreException) {
                 ErrorDialog.openError(getContainer().getShell(),
-                        Messages.KaomCreationWizardCreationError, null,
-                        ((CoreException) e.getTargetException()).getStatus());
+                    Messages.KaomCreationWizardCreationError, null,
+                    ((CoreException) e.getTargetException()).getStatus());
             } else {
                 KaomDiagramEditorPlugin.getInstance().logError(
-                        "Error creating diagram", e.getTargetException()); //$NON-NLS-1$
+                    "Error creating diagram", e.getTargetException()); //$NON-NLS-1$
             }
             return false;
         }

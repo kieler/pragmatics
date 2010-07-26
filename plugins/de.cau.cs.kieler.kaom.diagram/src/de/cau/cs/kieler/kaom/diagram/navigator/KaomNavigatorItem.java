@@ -15,13 +15,14 @@ public class KaomNavigatorItem extends KaomAbstractNavigatorItem {
      * @generated
      */
     static {
-        final Class[] supportedTypes = new Class[] {View.class, EObject.class};
+        final Class[] supportedTypes = new Class[] { View.class, EObject.class };
         Platform.getAdapterManager().registerAdapters(new IAdapterFactory() {
 
             public Object getAdapter(Object adaptableObject, Class adapterType) {
                 if (adaptableObject instanceof de.cau.cs.kieler.kaom.diagram.navigator.KaomNavigatorItem
-                        && (adapterType == View.class || adapterType == EObject.class)) {
-                    return ((de.cau.cs.kieler.kaom.diagram.navigator.KaomNavigatorItem) adaptableObject).getView();
+                    && (adapterType == View.class || adapterType == EObject.class)) {
+                    return ((de.cau.cs.kieler.kaom.diagram.navigator.KaomNavigatorItem) adaptableObject)
+                        .getView();
                 }
                 return null;
             }
@@ -71,8 +72,8 @@ public class KaomNavigatorItem extends KaomAbstractNavigatorItem {
     public boolean equals(Object obj) {
         if (obj instanceof de.cau.cs.kieler.kaom.diagram.navigator.KaomNavigatorItem) {
             return EcoreUtil.getURI(getView()).equals(
-                    EcoreUtil.getURI(((de.cau.cs.kieler.kaom.diagram.navigator.KaomNavigatorItem) obj)
-                            .getView()));
+                EcoreUtil.getURI(((de.cau.cs.kieler.kaom.diagram.navigator.KaomNavigatorItem) obj)
+                    .getView()));
         }
         return super.equals(obj);
     }

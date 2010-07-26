@@ -72,7 +72,7 @@ public class LinkReorientCommand extends EditElementCommand {
         }
         Entity container = (Entity) getLink().eContainer();
         return KaomBaseItemSemanticEditPolicy.getLinkConstraints().canExistLink_4001(container,
-                getLink(), getNewSource(), target);
+            getLink(), getNewSource(), target);
     }
 
     /**
@@ -88,14 +88,14 @@ public class LinkReorientCommand extends EditElementCommand {
         }
         Entity container = (Entity) getLink().eContainer();
         return KaomBaseItemSemanticEditPolicy.getLinkConstraints().canExistLink_4001(container,
-                getLink(), source, getNewTarget());
+            getLink(), source, getNewTarget());
     }
 
     /**
      * @generated
      */
     protected CommandResult doExecuteWithResult(IProgressMonitor monitor, IAdaptable info)
-            throws ExecutionException {
+        throws ExecutionException {
         if (!canExecute()) {
             throw new ExecutionException("Invalid arguments in reorient link command"); //$NON-NLS-1$
         }

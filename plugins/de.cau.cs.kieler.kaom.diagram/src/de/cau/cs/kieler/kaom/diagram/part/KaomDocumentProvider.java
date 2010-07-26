@@ -58,24 +58,26 @@ import org.eclipse.ui.part.FileEditorInput;
 /**
  * @generated
  */
-public class KaomDocumentProvider extends AbstractDocumentProvider implements IDiagramDocumentProvider {
+public class KaomDocumentProvider extends AbstractDocumentProvider implements
+    IDiagramDocumentProvider {
 
     /**
      * @generated
      */
     protected ElementInfo createElementInfo(Object element) throws CoreException {
-        if (false == element instanceof FileEditorInput && false == element instanceof URIEditorInput) {
+        if (false == element instanceof FileEditorInput
+            && false == element instanceof URIEditorInput) {
             throw new CoreException(
-                    new Status(
-                            IStatus.ERROR,
-                            KaomDiagramEditorPlugin.ID,
-                            0,
-                            NLS.bind(
-                                    Messages.KaomDocumentProvider_IncorrectInputError,
-                                    new Object[] {
-                                            element,
-                                            "org.eclipse.ui.part.FileEditorInput", "org.eclipse.emf.common.ui.URIEditorInput"}), //$NON-NLS-1$ //$NON-NLS-2$ 
-                            null));
+                new Status(
+                    IStatus.ERROR,
+                    KaomDiagramEditorPlugin.ID,
+                    0,
+                    NLS.bind(
+                        Messages.KaomDocumentProvider_IncorrectInputError,
+                        new Object[] {
+                                element,
+                                "org.eclipse.ui.part.FileEditorInput", "org.eclipse.emf.common.ui.URIEditorInput" }), //$NON-NLS-1$ //$NON-NLS-2$ 
+                    null));
         }
         IEditorInput editorInput = (IEditorInput) element;
         IDiagramDocument document = (IDiagramDocument) createDocument(editorInput);
@@ -90,18 +92,19 @@ public class KaomDocumentProvider extends AbstractDocumentProvider implements ID
      * @generated
      */
     protected IDocument createDocument(Object element) throws CoreException {
-        if (false == element instanceof FileEditorInput && false == element instanceof URIEditorInput) {
+        if (false == element instanceof FileEditorInput
+            && false == element instanceof URIEditorInput) {
             throw new CoreException(
-                    new Status(
-                            IStatus.ERROR,
-                            KaomDiagramEditorPlugin.ID,
-                            0,
-                            NLS.bind(
-                                    Messages.KaomDocumentProvider_IncorrectInputError,
-                                    new Object[] {
-                                            element,
-                                            "org.eclipse.ui.part.FileEditorInput", "org.eclipse.emf.common.ui.URIEditorInput"}), //$NON-NLS-1$ //$NON-NLS-2$ 
-                            null));
+                new Status(
+                    IStatus.ERROR,
+                    KaomDiagramEditorPlugin.ID,
+                    0,
+                    NLS.bind(
+                        Messages.KaomDocumentProvider_IncorrectInputError,
+                        new Object[] {
+                                element,
+                                "org.eclipse.ui.part.FileEditorInput", "org.eclipse.emf.common.ui.URIEditorInput" }), //$NON-NLS-1$ //$NON-NLS-2$ 
+                    null));
         }
         IDocument document = createEmptyDocument();
         setDocumentContent(document, (IEditorInput) element);
@@ -155,13 +158,14 @@ public class KaomDocumentProvider extends AbstractDocumentProvider implements ID
      */
     private TransactionalEditingDomain createEditingDomain() {
         TransactionalEditingDomain editingDomain = DiagramEditingDomainFactory.getInstance()
-                .createEditingDomain();
+            .createEditingDomain();
         editingDomain.setID("de.cau.cs.kieler.kaom.diagram.EditingDomain"); //$NON-NLS-1$
         final NotificationFilter diagramResourceModifiedFilter = NotificationFilter
-                .createNotifierFilter(editingDomain.getResourceSet())
-                .and(NotificationFilter.createEventTypeFilter(Notification.ADD))
-                .and(NotificationFilter.createFeatureFilter(ResourceSet.class,
-                        ResourceSet.RESOURCE_SET__RESOURCES));
+            .createNotifierFilter(editingDomain.getResourceSet())
+            .and(NotificationFilter.createEventTypeFilter(Notification.ADD))
+            .and(
+                NotificationFilter.createFeatureFilter(ResourceSet.class,
+                    ResourceSet.RESOURCE_SET__RESOURCES));
         editingDomain.getResourceSet().eAdapters().add(new Adapter() {
 
             private Notifier myTarger;
@@ -195,7 +199,8 @@ public class KaomDocumentProvider extends AbstractDocumentProvider implements ID
     /**
      * @generated
      */
-    protected void setDocumentContent(IDocument document, IEditorInput element) throws CoreException {
+    protected void setDocumentContent(IDocument document, IEditorInput element)
+        throws CoreException {
         IDiagramDocument diagramDocument = (IDiagramDocument) document;
         TransactionalEditingDomain domain = diagramDocument.getEditingDomain();
         if (element instanceof FileEditorInput) {
@@ -243,23 +248,24 @@ public class KaomDocumentProvider extends AbstractDocumentProvider implements ID
                     thrownExcp = (CoreException) e;
                 } else {
                     String msg = e.getLocalizedMessage();
-                    thrownExcp = new CoreException(new Status(IStatus.ERROR, KaomDiagramEditorPlugin.ID,
-                            0, msg != null ? msg : Messages.KaomDocumentProvider_DiagramLoadingError, e));
+                    thrownExcp = new CoreException(new Status(IStatus.ERROR,
+                        KaomDiagramEditorPlugin.ID, 0, msg != null ? msg
+                            : Messages.KaomDocumentProvider_DiagramLoadingError, e));
                 }
                 throw thrownExcp;
             }
         } else {
             throw new CoreException(
-                    new Status(
-                            IStatus.ERROR,
-                            KaomDiagramEditorPlugin.ID,
-                            0,
-                            NLS.bind(
-                                    Messages.KaomDocumentProvider_IncorrectInputError,
-                                    new Object[] {
-                                            element,
-                                            "org.eclipse.ui.part.FileEditorInput", "org.eclipse.emf.common.ui.URIEditorInput"}), //$NON-NLS-1$ //$NON-NLS-2$ 
-                            null));
+                new Status(
+                    IStatus.ERROR,
+                    KaomDiagramEditorPlugin.ID,
+                    0,
+                    NLS.bind(
+                        Messages.KaomDocumentProvider_IncorrectInputError,
+                        new Object[] {
+                                element,
+                                "org.eclipse.ui.part.FileEditorInput", "org.eclipse.emf.common.ui.URIEditorInput" }), //$NON-NLS-1$ //$NON-NLS-2$ 
+                    null));
         }
     }
 
@@ -284,7 +290,7 @@ public class KaomDocumentProvider extends AbstractDocumentProvider implements ID
             if (diagramResource != null) {
                 IFile file = WorkspaceSynchronizer.getFile(diagramResource);
                 return file == null || file.getLocation() == null
-                        || !file.getLocation().toFile().exists();
+                    || !file.getLocation().toFile().exists();
             }
         }
         return super.isDeleted(element);
@@ -323,8 +329,8 @@ public class KaomDocumentProvider extends AbstractDocumentProvider implements ID
                 }
             }
             ResourcesPlugin.getWorkspace().validateEdit(
-                    (IFile[]) files2Validate.toArray(new IFile[files2Validate.size()]),
-                    computationContext);
+                (IFile[]) files2Validate.toArray(new IFile[files2Validate.size()]),
+                computationContext);
         }
 
         super.doValidateState(element, computationContext);
@@ -341,7 +347,7 @@ public class KaomDocumentProvider extends AbstractDocumentProvider implements ID
                     updateCache(element);
                 } catch (CoreException ex) {
                     KaomDiagramEditorPlugin.getInstance().logError(
-                            Messages.KaomDocumentProvider_isModifiable, ex);
+                        Messages.KaomDocumentProvider_isModifiable, ex);
                     // Error message to log was initially taken from org.eclipse.gmf.runtime.diagram.ui.resources.editor.ide.internal.l10n.EditorMessages.StorageDocumentProvider_isModifiable
                 }
             }
@@ -366,7 +372,7 @@ public class KaomDocumentProvider extends AbstractDocumentProvider implements ID
                     updateCache(element);
                 } catch (CoreException ex) {
                     KaomDiagramEditorPlugin.getInstance().logError(
-                            Messages.KaomDocumentProvider_isModifiable, ex);
+                        Messages.KaomDocumentProvider_isModifiable, ex);
                     // Error message to log was initially taken from org.eclipse.gmf.runtime.diagram.ui.resources.editor.ide.internal.l10n.EditorMessages.StorageDocumentProvider_isModifiable
                 }
             }
@@ -432,7 +438,8 @@ public class KaomDocumentProvider extends AbstractDocumentProvider implements ID
                     rules.add(ResourcesPlugin.getWorkspace().getRuleFactory().modifyRule(file));
                 }
             }
-            return new MultiRule((ISchedulingRule[]) rules.toArray(new ISchedulingRule[rules.size()]));
+            return new MultiRule(
+                (ISchedulingRule[]) rules.toArray(new ISchedulingRule[rules.size()]));
         }
         return null;
     }
@@ -451,7 +458,8 @@ public class KaomDocumentProvider extends AbstractDocumentProvider implements ID
                     rules.add(computeSchedulingRule(file));
                 }
             }
-            return new MultiRule((ISchedulingRule[]) rules.toArray(new ISchedulingRule[rules.size()]));
+            return new MultiRule(
+                (ISchedulingRule[]) rules.toArray(new ISchedulingRule[rules.size()]));
         }
         return null;
     }
@@ -470,7 +478,8 @@ public class KaomDocumentProvider extends AbstractDocumentProvider implements ID
                     rules.add(ResourcesPlugin.getWorkspace().getRuleFactory().refreshRule(file));
                 }
             }
-            return new MultiRule((ISchedulingRule[]) rules.toArray(new ISchedulingRule[rules.size()]));
+            return new MultiRule(
+                (ISchedulingRule[]) rules.toArray(new ISchedulingRule[rules.size()]));
         }
         return null;
     }
@@ -490,7 +499,7 @@ public class KaomDocumentProvider extends AbstractDocumentProvider implements ID
                 }
             }
             return ResourcesPlugin.getWorkspace().getRuleFactory()
-                    .validateEditRule((IFile[]) files.toArray(new IFile[files.size()]));
+                .validateEditRule((IFile[]) files.toArray(new IFile[files.size()]));
         }
         return null;
     }
@@ -536,31 +545,32 @@ public class KaomDocumentProvider extends AbstractDocumentProvider implements ID
      * @generated
      */
     protected void doSaveDocument(IProgressMonitor monitor, Object element, IDocument document,
-            boolean overwrite) throws CoreException {
+        boolean overwrite) throws CoreException {
         ResourceSetInfo info = getResourceSetInfo(element);
         if (info != null) {
             if (!overwrite && !info.isSynchronized()) {
                 throw new CoreException(new Status(IStatus.ERROR, KaomDiagramEditorPlugin.ID,
-                        IResourceStatus.OUT_OF_SYNC_LOCAL,
-                        Messages.KaomDocumentProvider_UnsynchronizedFileSaveError, null));
+                    IResourceStatus.OUT_OF_SYNC_LOCAL,
+                    Messages.KaomDocumentProvider_UnsynchronizedFileSaveError, null));
             }
             info.stopResourceListening();
             fireElementStateChanging(element);
             try {
-                monitor.beginTask(Messages.KaomDocumentProvider_SaveDiagramTask, info.getResourceSet()
-                        .getResources().size() + 1); //"Saving diagram"
+                monitor.beginTask(Messages.KaomDocumentProvider_SaveDiagramTask, info
+                    .getResourceSet().getResources().size() + 1); //"Saving diagram"
                 for (Iterator<Resource> it = info.getLoadedResourcesIterator(); it.hasNext();) {
                     Resource nextResource = it.next();
-                    monitor.setTaskName(NLS.bind(Messages.KaomDocumentProvider_SaveNextResourceTask,
-                            nextResource.getURI()));
-                    if (nextResource.isLoaded() && !info.getEditingDomain().isReadOnly(nextResource)) {
+                    monitor.setTaskName(NLS.bind(
+                        Messages.KaomDocumentProvider_SaveNextResourceTask, nextResource.getURI()));
+                    if (nextResource.isLoaded()
+                        && !info.getEditingDomain().isReadOnly(nextResource)) {
                         try {
                             nextResource.save(KaomDiagramEditorUtil.getSaveOptions());
                         } catch (IOException e) {
                             fireElementStateChangeFailed(element);
                             throw new CoreException(new Status(IStatus.ERROR,
-                                    KaomDiagramEditorPlugin.ID, EditorStatusCodes.RESOURCE_FAILURE,
-                                    e.getLocalizedMessage(), null));
+                                KaomDiagramEditorPlugin.ID, EditorStatusCodes.RESOURCE_FAILURE,
+                                e.getLocalizedMessage(), null));
                         }
                     }
                     monitor.worked(1);
@@ -579,42 +589,43 @@ public class KaomDocumentProvider extends AbstractDocumentProvider implements ID
             if (element instanceof FileEditorInput) {
                 IFile newFile = ((FileEditorInput) element).getFile();
                 affectedFiles = Collections.singletonList(newFile);
-                newResoruceURI = URI.createPlatformResourceURI(newFile.getFullPath().toString(), true);
+                newResoruceURI = URI.createPlatformResourceURI(newFile.getFullPath().toString(),
+                    true);
             } else if (element instanceof URIEditorInput) {
                 newResoruceURI = ((URIEditorInput) element).getURI();
             } else {
                 fireElementStateChangeFailed(element);
                 throw new CoreException(
-                        new Status(
-                                IStatus.ERROR,
-                                KaomDiagramEditorPlugin.ID,
-                                0,
-                                NLS.bind(
-                                        Messages.KaomDocumentProvider_IncorrectInputError,
-                                        new Object[] {
-                                                element,
-                                                "org.eclipse.ui.part.FileEditorInput", "org.eclipse.emf.common.ui.URIEditorInput"}), //$NON-NLS-1$ //$NON-NLS-2$ 
-                                null));
+                    new Status(
+                        IStatus.ERROR,
+                        KaomDiagramEditorPlugin.ID,
+                        0,
+                        NLS.bind(
+                            Messages.KaomDocumentProvider_IncorrectInputError,
+                            new Object[] {
+                                    element,
+                                    "org.eclipse.ui.part.FileEditorInput", "org.eclipse.emf.common.ui.URIEditorInput" }), //$NON-NLS-1$ //$NON-NLS-2$ 
+                        null));
             }
             if (false == document instanceof IDiagramDocument) {
                 fireElementStateChangeFailed(element);
                 throw new CoreException(
-                        new Status(
-                                IStatus.ERROR,
-                                KaomDiagramEditorPlugin.ID,
-                                0,
-                                "Incorrect document used: " + document + " instead of org.eclipse.gmf.runtime.diagram.ui.resources.editor.document.IDiagramDocument", null)); //$NON-NLS-1$ //$NON-NLS-2$
+                    new Status(
+                        IStatus.ERROR,
+                        KaomDiagramEditorPlugin.ID,
+                        0,
+                        "Incorrect document used: " + document + " instead of org.eclipse.gmf.runtime.diagram.ui.resources.editor.document.IDiagramDocument", null)); //$NON-NLS-1$ //$NON-NLS-2$
             }
             IDiagramDocument diagramDocument = (IDiagramDocument) document;
             final Resource newResource = diagramDocument.getEditingDomain().getResourceSet()
-                    .createResource(newResoruceURI);
+                .createResource(newResoruceURI);
             final Diagram diagramCopy = (Diagram) EcoreUtil.copy(diagramDocument.getDiagram());
             try {
                 new AbstractTransactionalCommand(diagramDocument.getEditingDomain(), NLS.bind(
-                        Messages.KaomDocumentProvider_SaveAsOperation, diagramCopy.getName()),
-                        affectedFiles) {
-                    protected CommandResult doExecuteWithResult(IProgressMonitor monitor, IAdaptable info)
-                            throws ExecutionException {
+                    Messages.KaomDocumentProvider_SaveAsOperation, diagramCopy.getName()),
+                    affectedFiles) {
+                    protected CommandResult doExecuteWithResult(IProgressMonitor monitor,
+                        IAdaptable info) throws ExecutionException {
                         newResource.getContents().add(diagramCopy);
                         return CommandResult.newOKCommandResult();
                     }
@@ -623,11 +634,11 @@ public class KaomDocumentProvider extends AbstractDocumentProvider implements ID
             } catch (ExecutionException e) {
                 fireElementStateChangeFailed(element);
                 throw new CoreException(new Status(IStatus.ERROR, KaomDiagramEditorPlugin.ID, 0,
-                        e.getLocalizedMessage(), null));
+                    e.getLocalizedMessage(), null));
             } catch (IOException e) {
                 fireElementStateChangeFailed(element);
                 throw new CoreException(new Status(IStatus.ERROR, KaomDiagramEditorPlugin.ID, 0,
-                        e.getLocalizedMessage(), null));
+                    e.getLocalizedMessage(), null));
             }
             newResource.unload();
         }
@@ -637,14 +648,14 @@ public class KaomDocumentProvider extends AbstractDocumentProvider implements ID
      * @generated
      */
     protected void handleElementChanged(ResourceSetInfo info, Resource changedResource,
-            IProgressMonitor monitor) {
+        IProgressMonitor monitor) {
         IFile file = WorkspaceSynchronizer.getFile(changedResource);
         if (file != null) {
             try {
                 file.refreshLocal(IResource.DEPTH_INFINITE, monitor);
             } catch (CoreException ex) {
                 KaomDiagramEditorPlugin.getInstance().logError(
-                        Messages.KaomDocumentProvider_handleElementContentChanged, ex);
+                    Messages.KaomDocumentProvider_handleElementContentChanged, ex);
                 // Error message to log was initially taken from org.eclipse.gmf.runtime.diagram.ui.resources.editor.ide.internal.l10n.EditorMessages.FileDocumentProvider_handleElementContentChanged
             }
         }
@@ -671,7 +682,7 @@ public class KaomDocumentProvider extends AbstractDocumentProvider implements ID
     protected void handleElementMoved(IEditorInput input, URI uri) {
         if (input instanceof FileEditorInput) {
             IFile newFile = ResourcesPlugin.getWorkspace().getRoot()
-                    .getFile(new Path(URI.decode(uri.path())).removeFirstSegments(1));
+                .getFile(new Path(URI.decode(uri.path())).removeFirstSegments(1));
             fireElementMoved(input, newFile == null ? null : new FileEditorInput(newFile));
             return;
         }
@@ -683,7 +694,7 @@ public class KaomDocumentProvider extends AbstractDocumentProvider implements ID
      * @generated
      */
     public IEditorInput createInputWithEditingDomain(IEditorInput editorInput,
-            TransactionalEditingDomain domain) {
+        TransactionalEditingDomain domain) {
         return editorInput;
     }
 
@@ -855,7 +866,8 @@ public class KaomDocumentProvider extends AbstractDocumentProvider implements ID
          * @generated
          */
         public final void startResourceListening() {
-            mySynchronizer = new WorkspaceSynchronizer(getEditingDomain(), new SynchronizerDelegate());
+            mySynchronizer = new WorkspaceSynchronizer(getEditingDomain(),
+                new SynchronizerDelegate());
         }
 
         /**
@@ -994,10 +1006,11 @@ public class KaomDocumentProvider extends AbstractDocumentProvider implements ID
         public ResourceSetModificationListener(ResourceSetInfo info) {
             myInfo = info;
             myModifiedFilter = NotificationFilter
-                    .createEventTypeFilter(Notification.SET)
-                    .or(NotificationFilter.createEventTypeFilter(Notification.UNSET))
-                    .and(NotificationFilter.createFeatureFilter(Resource.class,
-                            Resource.RESOURCE__IS_MODIFIED));
+                .createEventTypeFilter(Notification.SET)
+                .or(NotificationFilter.createEventTypeFilter(Notification.UNSET))
+                .and(
+                    NotificationFilter.createFeatureFilter(Resource.class,
+                        Resource.RESOURCE__IS_MODIFIED));
         }
 
         /**
@@ -1013,7 +1026,7 @@ public class KaomDocumentProvider extends AbstractDocumentProvider implements ID
                     if (resource.isLoaded()) {
                         boolean modified = false;
                         for (Iterator/*<org.eclipse.emf.ecore.resource.Resource>*/it = myInfo
-                                .getLoadedResourcesIterator(); it.hasNext() && !modified;) {
+                            .getLoadedResourcesIterator(); it.hasNext() && !modified;) {
                             Resource nextResource = (Resource) it.next();
                             if (nextResource.isLoaded()) {
                                 modified = nextResource.isModified();

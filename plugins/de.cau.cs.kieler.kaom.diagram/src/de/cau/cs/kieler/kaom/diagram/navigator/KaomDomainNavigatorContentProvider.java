@@ -61,9 +61,9 @@ public class KaomDomainNavigatorContentProvider implements ICommonContentProvide
      */
     public KaomDomainNavigatorContentProvider() {
         myAdapterFctoryContentProvier = new AdapterFactoryContentProvider(KaomDiagramEditorPlugin
-                .getInstance().getItemProvidersAdapterFactory());
+            .getInstance().getItemProvidersAdapterFactory());
         TransactionalEditingDomain editingDomain = GMFEditingDomainFactory.INSTANCE
-                .createEditingDomain();
+            .createEditingDomain();
         myEditingDomain = (AdapterFactoryEditingDomain) editingDomain;
         myEditingDomain.setResourceToReadOnlyMap(new HashMap() {
             public Object get(Object key) {
@@ -81,28 +81,28 @@ public class KaomDomainNavigatorContentProvider implements ICommonContentProvide
             }
         };
         myWorkspaceSynchronizer = new WorkspaceSynchronizer(editingDomain,
-                new WorkspaceSynchronizer.Delegate() {
-                    public void dispose() {
-                    }
+            new WorkspaceSynchronizer.Delegate() {
+                public void dispose() {
+                }
 
-                    public boolean handleResourceChanged(final Resource resource) {
-                        unloadAllResources();
-                        asyncRefresh();
-                        return true;
-                    }
+                public boolean handleResourceChanged(final Resource resource) {
+                    unloadAllResources();
+                    asyncRefresh();
+                    return true;
+                }
 
-                    public boolean handleResourceDeleted(Resource resource) {
-                        unloadAllResources();
-                        asyncRefresh();
-                        return true;
-                    }
+                public boolean handleResourceDeleted(Resource resource) {
+                    unloadAllResources();
+                    asyncRefresh();
+                    return true;
+                }
 
-                    public boolean handleResourceMoved(Resource resource, final URI newURI) {
-                        unloadAllResources();
-                        asyncRefresh();
-                        return true;
-                    }
-                });
+                public boolean handleResourceMoved(Resource resource, final URI newURI) {
+                    unloadAllResources();
+                    asyncRefresh();
+                    return true;
+                }
+            });
     }
 
     /**
@@ -181,8 +181,8 @@ public class KaomDomainNavigatorContentProvider implements ICommonContentProvide
 
         if (parentElement instanceof KaomDomainNavigatorItem) {
             return wrapEObjects(
-                    myAdapterFctoryContentProvier.getChildren(((KaomDomainNavigatorItem) parentElement)
-                            .getEObject()), parentElement);
+                myAdapterFctoryContentProvier.getChildren(((KaomDomainNavigatorItem) parentElement)
+                    .getEObject()), parentElement);
         }
         return EMPTY_ARRAY;
     }
@@ -195,7 +195,7 @@ public class KaomDomainNavigatorContentProvider implements ICommonContentProvide
         for (int i = 0; i < objects.length; i++) {
             if (objects[i] instanceof EObject) {
                 result.add(new KaomDomainNavigatorItem((EObject) objects[i], parentElement,
-                        myAdapterFctoryContentProvier));
+                    myAdapterFctoryContentProvier));
             }
         }
         return result.toArray();

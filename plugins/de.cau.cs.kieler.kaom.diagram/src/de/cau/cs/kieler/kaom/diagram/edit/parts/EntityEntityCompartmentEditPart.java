@@ -55,11 +55,11 @@ public class EntityEntityCompartmentEditPart extends ShapeCompartmentEditPart {
         super.createDefaultEditPolicies();
         installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE, new ResizableCompartmentEditPolicy());
         installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
-                new EntityEntityCompartmentItemSemanticEditPolicy());
+            new EntityEntityCompartmentItemSemanticEditPolicy());
         installEditPolicy(EditPolicyRoles.CREATION_ROLE, new CreationEditPolicy());
         installEditPolicy(EditPolicyRoles.DRAG_DROP_ROLE, new DragDropEditPolicy());
         installEditPolicy(EditPolicyRoles.CANONICAL_ROLE,
-                new EntityEntityCompartmentCanonicalEditPolicy());
+            new EntityEntityCompartmentCanonicalEditPolicy());
     }
 
     /**

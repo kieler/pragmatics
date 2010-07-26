@@ -99,7 +99,7 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
      */
     protected boolean provides(CreateDiagramViewOperation op) {
         return EntityEditPart.MODEL_ID.equals(op.getSemanticHint())
-                && KaomVisualIDRegistry.getDiagramVisualID(getSemanticElement(op.getSemanticAdapter())) != -1;
+            && KaomVisualIDRegistry.getDiagramVisualID(getSemanticElement(op.getSemanticAdapter())) != -1;
     }
 
     /**
@@ -124,7 +124,7 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
             visualID = KaomVisualIDRegistry.getVisualID(op.getSemanticHint());
             if (elementType != null) {
                 if (!KaomElementTypes.isKnownElementType(elementType)
-                        || (!(elementType instanceof IHintedType))) {
+                    || (!(elementType instanceof IHintedType))) {
                     return false; // foreign element type
                 }
                 String elementTypeHint = ((IHintedType) elementType).getSemanticHint();
@@ -132,13 +132,13 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
                     return false; // if semantic hint is specified it should be the same as in element type
                 }
                 if (domainElement != null
-                        && visualID != KaomVisualIDRegistry.getNodeVisualID(op.getContainerView(),
-                                domainElement)) {
+                    && visualID != KaomVisualIDRegistry.getNodeVisualID(op.getContainerView(),
+                        domainElement)) {
                     return false; // visual id for node EClass should match visual id from element type
                 }
             } else {
                 if (!EntityEditPart.MODEL_ID.equals(KaomVisualIDRegistry.getModelID(op
-                        .getContainerView()))) {
+                    .getContainerView()))) {
                     return false; // foreign diagram
                 }
                 switch (visualID) {
@@ -148,8 +148,8 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
                 case RelationEditPart.VISUAL_ID:
                 case Entity3EditPart.VISUAL_ID:
                     if (domainElement == null
-                            || visualID != KaomVisualIDRegistry.getNodeVisualID(op.getContainerView(),
-                                    domainElement)) {
+                        || visualID != KaomVisualIDRegistry.getNodeVisualID(op.getContainerView(),
+                            domainElement)) {
                         return false; // visual id in semantic hint should match visual id for domain element
                     }
                     break;
@@ -159,8 +159,8 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
             }
         }
         return Entity2EditPart.VISUAL_ID == visualID || RelationEditPart.VISUAL_ID == visualID
-                || PortEditPart.VISUAL_ID == visualID || Entity3EditPart.VISUAL_ID == visualID
-                || Relation2EditPart.VISUAL_ID == visualID;
+            || PortEditPart.VISUAL_ID == visualID || Entity3EditPart.VISUAL_ID == visualID
+            || Relation2EditPart.VISUAL_ID == visualID;
     }
 
     /**
@@ -168,18 +168,19 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
      */
     protected boolean provides(CreateEdgeViewOperation op) {
         IElementType elementType = getSemanticElementType(op.getSemanticAdapter());
-        if (!KaomElementTypes.isKnownElementType(elementType) || (!(elementType instanceof IHintedType))) {
+        if (!KaomElementTypes.isKnownElementType(elementType)
+            || (!(elementType instanceof IHintedType))) {
             return false; // foreign element type
         }
         String elementTypeHint = ((IHintedType) elementType).getSemanticHint();
         if (elementTypeHint == null
-                || (op.getSemanticHint() != null && !elementTypeHint.equals(op.getSemanticHint()))) {
+            || (op.getSemanticHint() != null && !elementTypeHint.equals(op.getSemanticHint()))) {
             return false; // our hint is visual id and must be specified, and it should be the same as in element type
         }
         int visualID = KaomVisualIDRegistry.getVisualID(elementTypeHint);
         EObject domainElement = getSemanticElement(op.getSemanticAdapter());
         if (domainElement != null
-                && visualID != KaomVisualIDRegistry.getLinkWithClassVisualID(domainElement)) {
+            && visualID != KaomVisualIDRegistry.getLinkWithClassVisualID(domainElement)) {
             return false; // visual id for link EClass should match visual id from element type
         }
         return true;
@@ -189,7 +190,7 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
      * @generated
      */
     public Diagram createDiagram(IAdaptable semanticAdapter, String diagramKind,
-            PreferencesHint preferencesHint) {
+        PreferencesHint preferencesHint) {
         Diagram diagram = NotationFactory.eINSTANCE.createDiagram();
         diagram.getStyles().add(NotationFactory.eINSTANCE.createDiagramStyle());
         diagram.setType(EntityEditPart.MODEL_ID);
@@ -202,7 +203,7 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
      * @generated
      */
     public Node createNode(IAdaptable semanticAdapter, View containerView, String semanticHint,
-            int index, boolean persisted, PreferencesHint preferencesHint) {
+        int index, boolean persisted, PreferencesHint preferencesHint) {
         final EObject domainElement = getSemanticElement(semanticAdapter);
         final int visualID;
         if (semanticHint == null) {
@@ -212,15 +213,19 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
         }
         switch (visualID) {
         case Entity2EditPart.VISUAL_ID:
-            return createEntity_2001(domainElement, containerView, index, persisted, preferencesHint);
+            return createEntity_2001(domainElement, containerView, index, persisted,
+                preferencesHint);
         case RelationEditPart.VISUAL_ID:
-            return createRelation_2002(domainElement, containerView, index, persisted, preferencesHint);
+            return createRelation_2002(domainElement, containerView, index, persisted,
+                preferencesHint);
         case PortEditPart.VISUAL_ID:
             return createPort_3001(domainElement, containerView, index, persisted, preferencesHint);
         case Entity3EditPart.VISUAL_ID:
-            return createEntity_3002(domainElement, containerView, index, persisted, preferencesHint);
+            return createEntity_3002(domainElement, containerView, index, persisted,
+                preferencesHint);
         case Relation2EditPart.VISUAL_ID:
-            return createRelation_3003(domainElement, containerView, index, persisted, preferencesHint);
+            return createRelation_3003(domainElement, containerView, index, persisted,
+                preferencesHint);
         }
         // can't happen, provided #provides(CreateNodeViewOperation) is correct
         return null;
@@ -230,13 +235,13 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
      * @generated
      */
     public Edge createEdge(IAdaptable semanticAdapter, View containerView, String semanticHint,
-            int index, boolean persisted, PreferencesHint preferencesHint) {
+        int index, boolean persisted, PreferencesHint preferencesHint) {
         IElementType elementType = getSemanticElementType(semanticAdapter);
         String elementTypeHint = ((IHintedType) elementType).getSemanticHint();
         switch (KaomVisualIDRegistry.getVisualID(elementTypeHint)) {
         case LinkEditPart.VISUAL_ID:
-            return createLink_4001(getSemanticElement(semanticAdapter), containerView, index, persisted,
-                    preferencesHint);
+            return createLink_4001(getSemanticElement(semanticAdapter), containerView, index,
+                persisted, preferencesHint);
         }
         // can never happen, provided #provides(CreateEdgeViewOperation) is correct
         return null;
@@ -246,7 +251,7 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
      * @generated
      */
     public Node createEntity_2001(EObject domainElement, View containerView, int index,
-            boolean persisted, PreferencesHint preferencesHint) {
+        boolean persisted, PreferencesHint preferencesHint) {
         Node node = NotationFactory.eINSTANCE.createNode();
         node.getStyles().add(NotationFactory.eINSTANCE.createDescriptionStyle());
         node.getStyles().add(NotationFactory.eINSTANCE.createFontStyle());
@@ -260,18 +265,20 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
         FontStyle nodeFontStyle = (FontStyle) node.getStyle(NotationPackage.Literals.FONT_STYLE);
         if (nodeFontStyle != null) {
             FontData fontData = PreferenceConverter.getFontData(prefStore,
-                    IPreferenceConstants.PREF_DEFAULT_FONT);
+                IPreferenceConstants.PREF_DEFAULT_FONT);
             nodeFontStyle.setFontName(fontData.getName());
             nodeFontStyle.setFontHeight(fontData.getHeight());
             nodeFontStyle.setBold((fontData.getStyle() & SWT.BOLD) != 0);
             nodeFontStyle.setItalic((fontData.getStyle() & SWT.ITALIC) != 0);
             org.eclipse.swt.graphics.RGB fontRGB = PreferenceConverter.getColor(prefStore,
-                    IPreferenceConstants.PREF_FONT_COLOR);
+                IPreferenceConstants.PREF_FONT_COLOR);
             nodeFontStyle.setFontColor(FigureUtilities.RGBToInteger(fontRGB).intValue());
         }
-        Node label5004 = createLabel(node, KaomVisualIDRegistry.getType(EntityNameEditPart.VISUAL_ID));
-        createCompartment(node, KaomVisualIDRegistry.getType(EntityEntityCompartmentEditPart.VISUAL_ID),
-                true, false, false, false);
+        Node label5004 = createLabel(node,
+            KaomVisualIDRegistry.getType(EntityNameEditPart.VISUAL_ID));
+        createCompartment(node,
+            KaomVisualIDRegistry.getType(EntityEntityCompartmentEditPart.VISUAL_ID), true, false,
+            false, false);
         return node;
     }
 
@@ -279,7 +286,7 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
      * @generated
      */
     public Node createRelation_2002(EObject domainElement, View containerView, int index,
-            boolean persisted, PreferencesHint preferencesHint) {
+        boolean persisted, PreferencesHint preferencesHint) {
         Node node = NotationFactory.eINSTANCE.createNode();
         node.getStyles().add(NotationFactory.eINSTANCE.createDescriptionStyle());
         node.getStyles().add(NotationFactory.eINSTANCE.createFontStyle());
@@ -293,16 +300,17 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
         FontStyle nodeFontStyle = (FontStyle) node.getStyle(NotationPackage.Literals.FONT_STYLE);
         if (nodeFontStyle != null) {
             FontData fontData = PreferenceConverter.getFontData(prefStore,
-                    IPreferenceConstants.PREF_DEFAULT_FONT);
+                IPreferenceConstants.PREF_DEFAULT_FONT);
             nodeFontStyle.setFontName(fontData.getName());
             nodeFontStyle.setFontHeight(fontData.getHeight());
             nodeFontStyle.setBold((fontData.getStyle() & SWT.BOLD) != 0);
             nodeFontStyle.setItalic((fontData.getStyle() & SWT.ITALIC) != 0);
             org.eclipse.swt.graphics.RGB fontRGB = PreferenceConverter.getColor(prefStore,
-                    IPreferenceConstants.PREF_FONT_COLOR);
+                IPreferenceConstants.PREF_FONT_COLOR);
             nodeFontStyle.setFontColor(FigureUtilities.RGBToInteger(fontRGB).intValue());
         }
-        Node label5005 = createLabel(node, KaomVisualIDRegistry.getType(RelationNameEditPart.VISUAL_ID));
+        Node label5005 = createLabel(node,
+            KaomVisualIDRegistry.getType(RelationNameEditPart.VISUAL_ID));
         label5005.setLayoutConstraint(NotationFactory.eINSTANCE.createLocation());
         Location location5005 = (Location) label5005.getLayoutConstraint();
         location5005.setX(0);
@@ -313,8 +321,8 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
     /**
      * @generated
      */
-    public Node createPort_3001(EObject domainElement, View containerView, int index, boolean persisted,
-            PreferencesHint preferencesHint) {
+    public Node createPort_3001(EObject domainElement, View containerView, int index,
+        boolean persisted, PreferencesHint preferencesHint) {
         Node node = NotationFactory.eINSTANCE.createNode();
         node.getStyles().add(NotationFactory.eINSTANCE.createDescriptionStyle());
         node.getStyles().add(NotationFactory.eINSTANCE.createFontStyle());
@@ -327,13 +335,13 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
         FontStyle nodeFontStyle = (FontStyle) node.getStyle(NotationPackage.Literals.FONT_STYLE);
         if (nodeFontStyle != null) {
             FontData fontData = PreferenceConverter.getFontData(prefStore,
-                    IPreferenceConstants.PREF_DEFAULT_FONT);
+                IPreferenceConstants.PREF_DEFAULT_FONT);
             nodeFontStyle.setFontName(fontData.getName());
             nodeFontStyle.setFontHeight(fontData.getHeight());
             nodeFontStyle.setBold((fontData.getStyle() & SWT.BOLD) != 0);
             nodeFontStyle.setItalic((fontData.getStyle() & SWT.ITALIC) != 0);
             org.eclipse.swt.graphics.RGB fontRGB = PreferenceConverter.getColor(prefStore,
-                    IPreferenceConstants.PREF_FONT_COLOR);
+                IPreferenceConstants.PREF_FONT_COLOR);
             nodeFontStyle.setFontColor(FigureUtilities.RGBToInteger(fontRGB).intValue());
         }
         Node label5001 = createLabel(node, KaomVisualIDRegistry.getType(PortNameEditPart.VISUAL_ID));
@@ -348,7 +356,7 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
      * @generated
      */
     public Node createEntity_3002(EObject domainElement, View containerView, int index,
-            boolean persisted, PreferencesHint preferencesHint) {
+        boolean persisted, PreferencesHint preferencesHint) {
         Node node = NotationFactory.eINSTANCE.createNode();
         node.getStyles().add(NotationFactory.eINSTANCE.createDescriptionStyle());
         node.getStyles().add(NotationFactory.eINSTANCE.createFontStyle());
@@ -361,19 +369,20 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
         FontStyle nodeFontStyle = (FontStyle) node.getStyle(NotationPackage.Literals.FONT_STYLE);
         if (nodeFontStyle != null) {
             FontData fontData = PreferenceConverter.getFontData(prefStore,
-                    IPreferenceConstants.PREF_DEFAULT_FONT);
+                IPreferenceConstants.PREF_DEFAULT_FONT);
             nodeFontStyle.setFontName(fontData.getName());
             nodeFontStyle.setFontHeight(fontData.getHeight());
             nodeFontStyle.setBold((fontData.getStyle() & SWT.BOLD) != 0);
             nodeFontStyle.setItalic((fontData.getStyle() & SWT.ITALIC) != 0);
             org.eclipse.swt.graphics.RGB fontRGB = PreferenceConverter.getColor(prefStore,
-                    IPreferenceConstants.PREF_FONT_COLOR);
+                IPreferenceConstants.PREF_FONT_COLOR);
             nodeFontStyle.setFontColor(FigureUtilities.RGBToInteger(fontRGB).intValue());
         }
-        Node label5003 = createLabel(node, KaomVisualIDRegistry.getType(EntityName2EditPart.VISUAL_ID));
+        Node label5003 = createLabel(node,
+            KaomVisualIDRegistry.getType(EntityName2EditPart.VISUAL_ID));
         createCompartment(node,
-                KaomVisualIDRegistry.getType(EntityEntityCompartment2EditPart.VISUAL_ID), true, false,
-                false, false);
+            KaomVisualIDRegistry.getType(EntityEntityCompartment2EditPart.VISUAL_ID), true, false,
+            false, false);
         return node;
     }
 
@@ -381,7 +390,7 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
      * @generated
      */
     public Node createRelation_3003(EObject domainElement, View containerView, int index,
-            boolean persisted, PreferencesHint preferencesHint) {
+        boolean persisted, PreferencesHint preferencesHint) {
         Node node = NotationFactory.eINSTANCE.createNode();
         node.getStyles().add(NotationFactory.eINSTANCE.createDescriptionStyle());
         node.getStyles().add(NotationFactory.eINSTANCE.createFontStyle());
@@ -394,16 +403,17 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
         FontStyle nodeFontStyle = (FontStyle) node.getStyle(NotationPackage.Literals.FONT_STYLE);
         if (nodeFontStyle != null) {
             FontData fontData = PreferenceConverter.getFontData(prefStore,
-                    IPreferenceConstants.PREF_DEFAULT_FONT);
+                IPreferenceConstants.PREF_DEFAULT_FONT);
             nodeFontStyle.setFontName(fontData.getName());
             nodeFontStyle.setFontHeight(fontData.getHeight());
             nodeFontStyle.setBold((fontData.getStyle() & SWT.BOLD) != 0);
             nodeFontStyle.setItalic((fontData.getStyle() & SWT.ITALIC) != 0);
             org.eclipse.swt.graphics.RGB fontRGB = PreferenceConverter.getColor(prefStore,
-                    IPreferenceConstants.PREF_FONT_COLOR);
+                IPreferenceConstants.PREF_FONT_COLOR);
             nodeFontStyle.setFontColor(FigureUtilities.RGBToInteger(fontRGB).intValue());
         }
-        Node label5002 = createLabel(node, KaomVisualIDRegistry.getType(RelationName2EditPart.VISUAL_ID));
+        Node label5002 = createLabel(node,
+            KaomVisualIDRegistry.getType(RelationName2EditPart.VISUAL_ID));
         label5002.setLayoutConstraint(NotationFactory.eINSTANCE.createLocation());
         Location location5002 = (Location) label5002.getLayoutConstraint();
         location5002.setX(0);
@@ -414,8 +424,8 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
     /**
      * @generated
      */
-    public Edge createLink_4001(EObject domainElement, View containerView, int index, boolean persisted,
-            PreferencesHint preferencesHint) {
+    public Edge createLink_4001(EObject domainElement, View containerView, int index,
+        boolean persisted, PreferencesHint preferencesHint) {
         Edge edge = NotationFactory.eINSTANCE.createEdge();
         edge.getStyles().add(NotationFactory.eINSTANCE.createRoutingStyle());
         edge.getStyles().add(NotationFactory.eINSTANCE.createFontStyle());
@@ -433,19 +443,19 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
         FontStyle edgeFontStyle = (FontStyle) edge.getStyle(NotationPackage.Literals.FONT_STYLE);
         if (edgeFontStyle != null) {
             FontData fontData = PreferenceConverter.getFontData(prefStore,
-                    IPreferenceConstants.PREF_DEFAULT_FONT);
+                IPreferenceConstants.PREF_DEFAULT_FONT);
             edgeFontStyle.setFontName(fontData.getName());
             edgeFontStyle.setFontHeight(fontData.getHeight());
             edgeFontStyle.setBold((fontData.getStyle() & SWT.BOLD) != 0);
             edgeFontStyle.setItalic((fontData.getStyle() & SWT.ITALIC) != 0);
             org.eclipse.swt.graphics.RGB fontRGB = PreferenceConverter.getColor(prefStore,
-                    IPreferenceConstants.PREF_FONT_COLOR);
+                IPreferenceConstants.PREF_FONT_COLOR);
             edgeFontStyle.setFontColor(FigureUtilities.RGBToInteger(fontRGB).intValue());
         }
         Routing routing = Routing.get(prefStore.getInt(IPreferenceConstants.PREF_LINE_STYLE));
         if (routing != null) {
             ViewUtil.setStructuralFeatureValue(edge,
-                    NotationPackage.eINSTANCE.getRoutingStyle_Routing(), routing);
+                NotationPackage.eINSTANCE.getRoutingStyle_Routing(), routing);
         }
         Node label6001 = createLabel(edge, KaomVisualIDRegistry.getType(LinkNameEditPart.VISUAL_ID));
         label6001.setLayoutConstraint(NotationFactory.eINSTANCE.createLocation());
@@ -481,7 +491,7 @@ public class KaomViewProvider extends AbstractProvider implements IViewProvider 
      * @generated
      */
     private Node createCompartment(View owner, String hint, boolean canCollapse, boolean hasTitle,
-            boolean canSort, boolean canFilter) {
+        boolean canSort, boolean canFilter) {
         //SemanticListCompartment rv = NotationFactory.eINSTANCE.createSemanticListCompartment();
         //rv.setShowTitle(showTitle);
         //rv.setCollapsed(isCollapsed);

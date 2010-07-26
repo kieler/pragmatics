@@ -49,7 +49,7 @@ public class KaomPaletteFactory {
         types.add(KaomElementTypes.Entity_2001);
         types.add(KaomElementTypes.Entity_3002);
         NodeToolEntry entry = new NodeToolEntry(Messages.Entity1CreationTool_title,
-                Messages.Entity1CreationTool_desc, types);
+            Messages.Entity1CreationTool_desc, types);
         entry.setId("createEntity1CreationTool"); //$NON-NLS-1$
         entry.setSmallIcon(KaomElementTypes.getImageDescriptor(KaomElementTypes.Entity_2001));
         entry.setLargeIcon(entry.getSmallIcon());
@@ -61,7 +61,7 @@ public class KaomPaletteFactory {
      */
     private ToolEntry createPort2CreationTool() {
         NodeToolEntry entry = new NodeToolEntry(Messages.Port2CreationTool_title,
-                Messages.Port2CreationTool_desc, Collections.singletonList(KaomElementTypes.Port_3001));
+            Messages.Port2CreationTool_desc, Collections.singletonList(KaomElementTypes.Port_3001));
         entry.setId("createPort2CreationTool"); //$NON-NLS-1$
         entry.setSmallIcon(KaomElementTypes.getImageDescriptor(KaomElementTypes.Port_3001));
         entry.setLargeIcon(entry.getSmallIcon());
@@ -76,7 +76,7 @@ public class KaomPaletteFactory {
         types.add(KaomElementTypes.Relation_3003);
         types.add(KaomElementTypes.Relation_2002);
         NodeToolEntry entry = new NodeToolEntry(Messages.Relation3CreationTool_title,
-                Messages.Relation3CreationTool_desc, types);
+            Messages.Relation3CreationTool_desc, types);
         entry.setId("createRelation3CreationTool"); //$NON-NLS-1$
         entry.setSmallIcon(KaomElementTypes.getImageDescriptor(KaomElementTypes.Relation_3003));
         entry.setLargeIcon(entry.getSmallIcon());
@@ -88,7 +88,7 @@ public class KaomPaletteFactory {
      */
     private ToolEntry createLink4CreationTool() {
         LinkToolEntry entry = new LinkToolEntry(Messages.Link4CreationTool_title,
-                Messages.Link4CreationTool_desc, Collections.singletonList(KaomElementTypes.Link_4001));
+            Messages.Link4CreationTool_desc, Collections.singletonList(KaomElementTypes.Link_4001));
         entry.setId("createLink4CreationTool"); //$NON-NLS-1$
         entry.setSmallIcon(KaomElementTypes.getImageDescriptor(KaomElementTypes.Link_4001));
         entry.setLargeIcon(entry.getSmallIcon());

@@ -129,13 +129,15 @@ public class Entity2EditPart extends AbstractBorderedShapeEditPart {
      */
     protected boolean addFixedChild(EditPart childEditPart) {
         if (childEditPart instanceof EntityNameEditPart) {
-            ((EntityNameEditPart) childEditPart).setLabel(getPrimaryShape().getFigureEntityNameLabel());
+            ((EntityNameEditPart) childEditPart).setLabel(getPrimaryShape()
+                .getFigureEntityNameLabel());
             return true;
         }
         if (childEditPart instanceof PortEditPart) {
-            BorderItemLocator locator = new BorderItemLocator(getMainFigure(), PositionConstants.WEST);
-            getBorderedFigure().getBorderItemContainer().add(((PortEditPart) childEditPart).getFigure(),
-                    locator);
+            BorderItemLocator locator = new BorderItemLocator(getMainFigure(),
+                PositionConstants.WEST);
+            getBorderedFigure().getBorderItemContainer().add(
+                ((PortEditPart) childEditPart).getFigure(), locator);
             return true;
         }
         return false;
@@ -150,7 +152,7 @@ public class Entity2EditPart extends AbstractBorderedShapeEditPart {
         }
         if (childEditPart instanceof PortEditPart) {
             getBorderedFigure().getBorderItemContainer().remove(
-                    ((PortEditPart) childEditPart).getFigure());
+                ((PortEditPart) childEditPart).getFigure());
             return true;
         }
         return false;
@@ -366,8 +368,8 @@ public class Entity2EditPart extends AbstractBorderedShapeEditPart {
         public EntityFigure() {
             this.setForegroundColor(ColorConstants.black);
             this.setBackgroundColor(ColorConstants.white);
-            this.setBorder(new MarginBorder(getMapMode().DPtoLP(5), getMapMode().DPtoLP(5), getMapMode()
-                    .DPtoLP(5), getMapMode().DPtoLP(5)));
+            this.setBorder(new MarginBorder(getMapMode().DPtoLP(5), getMapMode().DPtoLP(5),
+                getMapMode().DPtoLP(5), getMapMode().DPtoLP(5)));
             createContents();
         }
 

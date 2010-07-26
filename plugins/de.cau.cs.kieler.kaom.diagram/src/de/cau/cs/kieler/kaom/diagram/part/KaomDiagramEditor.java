@@ -103,7 +103,7 @@ public class KaomDiagramEditor extends DiagramDocumentEditor implements IGotoMar
         if (type == IShowInTargetList.class) {
             return new IShowInTargetList() {
                 public String[] getShowInTargetIds() {
-                    return new String[] {ProjectExplorer.VIEW_ID};
+                    return new String[] { ProjectExplorer.VIEW_ID };
                 }
             };
         }
@@ -125,7 +125,7 @@ public class KaomDiagramEditor extends DiagramDocumentEditor implements IGotoMar
      */
     public TransactionalEditingDomain getEditingDomain() {
         IDocument document = getEditorInput() != null ? getDocumentProvider().getDocument(
-                getEditorInput()) : null;
+            getEditorInput()) : null;
         if (document instanceof IDiagramDocument) {
             return ((IDiagramDocument) document).getEditingDomain();
         }
@@ -171,7 +171,8 @@ public class KaomDiagramEditor extends DiagramDocumentEditor implements IGotoMar
         Shell shell = getSite().getShell();
         IEditorInput input = getEditorInput();
         SaveAsDialog dialog = new SaveAsDialog(shell);
-        IFile original = input instanceof IFileEditorInput ? ((IFileEditorInput) input).getFile() : null;
+        IFile original = input instanceof IFileEditorInput ? ((IFileEditorInput) input).getFile()
+            : null;
         if (original != null) {
             dialog.setOriginalFile(original);
         }
@@ -182,7 +183,8 @@ public class KaomDiagramEditor extends DiagramDocumentEditor implements IGotoMar
             return;
         }
         if (provider.isDeleted(input) && original != null) {
-            String message = NLS.bind(Messages.KaomDiagramEditor_SavingDeletedFile, original.getName());
+            String message = NLS.bind(Messages.KaomDiagramEditor_SavingDeletedFile,
+                original.getName());
             dialog.setErrorMessage(null);
             dialog.setMessage(message, IMessageProvider.WARNING);
         }
@@ -203,13 +205,14 @@ public class KaomDiagramEditor extends DiagramDocumentEditor implements IGotoMar
         IFile file = workspaceRoot.getFile(filePath);
         final IEditorInput newInput = new FileEditorInput(file);
         // Check if the editor is already open
-        IEditorMatchingStrategy matchingStrategy = getEditorDescriptor().getEditorMatchingStrategy();
+        IEditorMatchingStrategy matchingStrategy = getEditorDescriptor()
+            .getEditorMatchingStrategy();
         IEditorReference[] editorRefs = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                .getActivePage().getEditorReferences();
+            .getActivePage().getEditorReferences();
         for (int i = 0; i < editorRefs.length; i++) {
             if (matchingStrategy.matches(editorRefs[i], newInput)) {
                 MessageDialog.openWarning(shell, Messages.KaomDiagramEditor_SaveAsErrorTitle,
-                        Messages.KaomDiagramEditor_SaveAsErrorMessage);
+                    Messages.KaomDiagramEditor_SaveAsErrorMessage);
                 return;
             }
         }
@@ -217,13 +220,13 @@ public class KaomDiagramEditor extends DiagramDocumentEditor implements IGotoMar
         try {
             provider.aboutToChange(newInput);
             getDocumentProvider(newInput).saveDocument(progressMonitor, newInput,
-                    getDocumentProvider().getDocument(getEditorInput()), true);
+                getDocumentProvider().getDocument(getEditorInput()), true);
             success = true;
         } catch (CoreException x) {
             IStatus status = x.getStatus();
             if (status == null || status.getSeverity() != IStatus.CANCEL) {
                 ErrorDialog.openError(shell, Messages.KaomDiagramEditor_SaveErrorTitle,
-                        Messages.KaomDiagramEditor_SaveErrorMessage, x.getStatus());
+                    Messages.KaomDiagramEditor_SaveErrorMessage, x.getStatus());
             }
         } finally {
             provider.changed(newInput);
@@ -266,10 +269,10 @@ public class KaomDiagramEditor extends DiagramDocumentEditor implements IGotoMar
     protected void configureGraphicalViewer() {
         super.configureGraphicalViewer();
         DiagramEditorContextMenuProvider provider = new DiagramEditorContextMenuProvider(this,
-                getDiagramGraphicalViewer());
+            getDiagramGraphicalViewer());
         getDiagramGraphicalViewer().setContextMenu(provider);
         getSite().registerContextMenu(ActionIds.DIAGRAM_EDITOR_CONTEXT_MENU, provider,
-                getDiagramGraphicalViewer());
+            getDiagramGraphicalViewer());
     }
 
 }

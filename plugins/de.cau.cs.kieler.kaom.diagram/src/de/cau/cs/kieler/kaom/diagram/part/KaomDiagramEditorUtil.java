@@ -66,7 +66,7 @@ public class KaomDiagramEditorUtil {
         HashMap<String, Object> saveOptions = new HashMap<String, Object>();
         saveOptions.put(XMLResource.OPTION_ENCODING, "UTF-8"); //$NON-NLS-1$
         saveOptions.put(Resource.OPTION_SAVE_ONLY_IF_CHANGED,
-                Resource.OPTION_SAVE_ONLY_IF_CHANGED_MEMORY_BUFFER);
+            Resource.OPTION_SAVE_ONLY_IF_CHANGED_MEMORY_BUFFER);
         return saveOptions;
     }
 
@@ -76,11 +76,12 @@ public class KaomDiagramEditorUtil {
     public static boolean openDiagram(Resource diagram) throws PartInitException {
         String path = diagram.getURI().toPlatformString(true);
         IResource workspaceResource = ResourcesPlugin.getWorkspace().getRoot()
-                .findMember(new Path(path));
+            .findMember(new Path(path));
         if (workspaceResource instanceof IFile) {
-            IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+            IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                .getActivePage();
             return null != page.openEditor(new FileEditorInput((IFile) workspaceResource),
-                    KaomDiagramEditor.ID);
+                KaomDiagramEditor.ID);
         }
         return false;
     }
@@ -96,14 +97,15 @@ public class KaomDiagramEditorUtil {
             file.setCharset("UTF-8", new NullProgressMonitor()); //$NON-NLS-1$
         } catch (CoreException e) {
             KaomDiagramEditorPlugin.getInstance().logError(
-                    "Unable to set charset for file " + file.getFullPath(), e); //$NON-NLS-1$
+                "Unable to set charset for file " + file.getFullPath(), e); //$NON-NLS-1$
         }
     }
 
     /**
      * @generated
      */
-    public static String getUniqueFileName(IPath containerFullPath, String fileName, String extension) {
+    public static String getUniqueFileName(IPath containerFullPath, String fileName,
+        String extension) {
         if (containerFullPath == null) {
             containerFullPath = new Path(""); //$NON-NLS-1$
         }
@@ -133,7 +135,8 @@ public class KaomDiagramEditorUtil {
      * @generated
      */
     public static void runWizard(Shell shell, Wizard wizard, String settingsKey) {
-        IDialogSettings pluginDialogSettings = KaomDiagramEditorPlugin.getInstance().getDialogSettings();
+        IDialogSettings pluginDialogSettings = KaomDiagramEditorPlugin.getInstance()
+            .getDialogSettings();
         IDialogSettings wizardDialogSettings = pluginDialogSettings.getSection(settingsKey);
         if (wizardDialogSettings == null) {
             wizardDialogSettings = pluginDialogSettings.addNewSection(settingsKey);
@@ -149,22 +152,23 @@ public class KaomDiagramEditorUtil {
      * This method should be called within a workspace modify operation since it creates resources.
      * @generated
      */
-    public static Resource createDiagram(URI diagramURI, URI modelURI, IProgressMonitor progressMonitor) {
+    public static Resource createDiagram(URI diagramURI, URI modelURI,
+        IProgressMonitor progressMonitor) {
         TransactionalEditingDomain editingDomain = GMFEditingDomainFactory.INSTANCE
-                .createEditingDomain();
+            .createEditingDomain();
         progressMonitor.beginTask(Messages.KaomDiagramEditorUtil_CreateDiagramProgressTask, 3);
         final Resource diagramResource = editingDomain.getResourceSet().createResource(diagramURI);
         final Resource modelResource = editingDomain.getResourceSet().createResource(modelURI);
         final String diagramName = diagramURI.lastSegment();
         AbstractTransactionalCommand command = new AbstractTransactionalCommand(editingDomain,
-                Messages.KaomDiagramEditorUtil_CreateDiagramCommandLabel, Collections.EMPTY_LIST) {
+            Messages.KaomDiagramEditorUtil_CreateDiagramCommandLabel, Collections.EMPTY_LIST) {
             protected CommandResult doExecuteWithResult(IProgressMonitor monitor, IAdaptable info)
-                    throws ExecutionException {
+                throws ExecutionException {
                 Entity model = createInitialModel();
                 attachModelToResource(model, modelResource);
 
                 Diagram diagram = ViewService.createDiagram(model, EntityEditPart.MODEL_ID,
-                        KaomDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT);
+                    KaomDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT);
                 if (diagram != null) {
                     diagramResource.getContents().add(diagram);
                     diagram.setName(diagramName);
@@ -173,20 +177,20 @@ public class KaomDiagramEditorUtil {
 
                 try {
                     modelResource.save(de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorUtil
-                            .getSaveOptions());
+                        .getSaveOptions());
                     diagramResource.save(de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorUtil
-                            .getSaveOptions());
+                        .getSaveOptions());
                 } catch (IOException e) {
 
                     KaomDiagramEditorPlugin.getInstance().logError(
-                            "Unable to store model and diagram resources", e); //$NON-NLS-1$
+                        "Unable to store model and diagram resources", e); //$NON-NLS-1$
                 }
                 return CommandResult.newOKCommandResult();
             }
         };
         try {
             OperationHistoryFactory.getOperationHistory().execute(command,
-                    new SubProgressMonitor(progressMonitor, 1), null);
+                new SubProgressMonitor(progressMonitor, 1), null);
         } catch (ExecutionException e) {
             KaomDiagramEditorPlugin.getInstance().logError("Unable to create model and diagram", e); //$NON-NLS-1$
         }
@@ -219,7 +223,7 @@ public class KaomDiagramEditorUtil {
      * @generated
      */
     public static void selectElementsInDiagram(IDiagramWorkbenchPart diagramPart,
-            List<EditPart> editParts) {
+        List<EditPart> editParts) {
         diagramPart.getDiagramGraphicalViewer().deselectAll();
 
         EditPart firstPrimary = null;
@@ -232,7 +236,7 @@ public class KaomDiagramEditorUtil {
 
         if (!editParts.isEmpty()) {
             diagramPart.getDiagramGraphicalViewer().reveal(
-                    firstPrimary != null ? firstPrimary : (EditPart) editParts.get(0));
+                firstPrimary != null ? firstPrimary : (EditPart) editParts.get(0));
         }
     }
 
@@ -240,7 +244,7 @@ public class KaomDiagramEditorUtil {
      * @generated
      */
     private static int findElementsInDiagramByID(DiagramEditPart diagramPart, EObject element,
-            List<EditPart> editPartCollector) {
+        List<EditPart> editPartCollector) {
         IDiagramGraphicalViewer viewer = (IDiagramGraphicalViewer) diagramPart.getViewer();
         final int intialNumOfEditParts = editPartCollector.size();
 
@@ -255,7 +259,7 @@ public class KaomDiagramEditorUtil {
         String elementID = EMFCoreUtil.getProxyID(element);
         @SuppressWarnings("unchecked")
         List<EditPart> associatedParts = viewer.findEditPartsForElement(elementID,
-                IGraphicalEditPart.class);
+            IGraphicalEditPart.class);
         // perform the possible hierarchy disjoint -> take the top-most parts only
         for (EditPart nextPart : associatedParts) {
             EditPart parentPart = nextPart.getParent();
@@ -273,7 +277,7 @@ public class KaomDiagramEditorUtil {
             } else {
                 if (element.eContainer() != null) {
                     return findElementsInDiagramByID(diagramPart, element.eContainer(),
-                            editPartCollector);
+                        editPartCollector);
                 }
             }
         }
@@ -284,7 +288,7 @@ public class KaomDiagramEditorUtil {
      * @generated
      */
     public static View findView(DiagramEditPart diagramEditPart, EObject targetElement,
-            LazyElement2ViewMap lazyElement2ViewMap) {
+        LazyElement2ViewMap lazyElement2ViewMap) {
         boolean hasStructuralURI = false;
         if (targetElement.eResource() instanceof XMLResource) {
             hasStructuralURI = ((XMLResource) targetElement.eResource()).getID(targetElement) == null;
@@ -353,14 +357,14 @@ public class KaomDiagramEditorUtil {
         /**
          * @generated
          */
-        private static boolean buildElement2ViewMap(View parentView, Map<EObject, View> element2ViewMap,
-                Set<? extends EObject> elements) {
+        private static boolean buildElement2ViewMap(View parentView,
+            Map<EObject, View> element2ViewMap, Set<? extends EObject> elements) {
             if (elements.size() == element2ViewMap.size()) {
                 return true;
             }
 
             if (parentView.isSetElement() && !element2ViewMap.containsKey(parentView.getElement())
-                    && elements.contains(parentView.getElement())) {
+                && elements.contains(parentView.getElement())) {
                 element2ViewMap.put(parentView.getElement(), parentView);
                 if (elements.size() == element2ViewMap.size()) {
                     return true;

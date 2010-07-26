@@ -45,7 +45,8 @@ public class KaomNavigatorLinkHelper implements ILinkHelper {
             }
         }
         URI uri = EcoreUtil.getURI(diagram);
-        String editorName = uri.lastSegment() + '#' + diagram.eResource().getContents().indexOf(diagram);
+        String editorName = uri.lastSegment() + '#'
+            + diagram.eResource().getContents().indexOf(diagram);
         IEditorInput editorInput = new URIEditorInput(uri, editorName);
         return editorInput;
     }
@@ -55,7 +56,7 @@ public class KaomNavigatorLinkHelper implements ILinkHelper {
      */
     public IStructuredSelection findSelection(IEditorInput anInput) {
         IDiagramDocument document = KaomDiagramEditorPlugin.getInstance().getDocumentProvider()
-                .getDiagramDocument(anInput);
+            .getDiagramDocument(anInput);
         if (document == null) {
             return StructuredSelection.EMPTY;
         }
@@ -80,7 +81,7 @@ public class KaomNavigatorLinkHelper implements ILinkHelper {
         }
 
         KaomAbstractNavigatorItem abstractNavigatorItem = (KaomAbstractNavigatorItem) aSelection
-                .getFirstElement();
+            .getFirstElement();
         View navigatorView = null;
         if (abstractNavigatorItem instanceof KaomNavigatorItem) {
             navigatorView = ((KaomNavigatorItem) abstractNavigatorItem).getView();
@@ -101,16 +102,17 @@ public class KaomNavigatorLinkHelper implements ILinkHelper {
         aPage.bringToTop(editor);
         if (editor instanceof DiagramEditor) {
             DiagramEditor diagramEditor = (DiagramEditor) editor;
-            ResourceSet diagramEditorResourceSet = diagramEditor.getEditingDomain().getResourceSet();
-            EObject selectedView = diagramEditorResourceSet.getEObject(EcoreUtil.getURI(navigatorView),
-                    true);
+            ResourceSet diagramEditorResourceSet = diagramEditor.getEditingDomain()
+                .getResourceSet();
+            EObject selectedView = diagramEditorResourceSet.getEObject(
+                EcoreUtil.getURI(navigatorView), true);
             if (selectedView == null) {
                 return;
             }
             GraphicalViewer graphicalViewer = (GraphicalViewer) diagramEditor
-                    .getAdapter(GraphicalViewer.class);
+                .getAdapter(GraphicalViewer.class);
             EditPart selectedEditPart = (EditPart) graphicalViewer.getEditPartRegistry().get(
-                    selectedView);
+                selectedView);
             if (selectedEditPart != null) {
                 graphicalViewer.select(selectedEditPart);
             }

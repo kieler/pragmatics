@@ -36,12 +36,14 @@ public class Relation2ItemSemanticEditPolicy extends KaomBaseItemSemanticEditPol
      */
     protected Command getDestroyElementCommand(DestroyElementRequest req) {
         View view = (View) getHost().getModel();
-        CompositeTransactionalCommand cmd = new CompositeTransactionalCommand(getEditingDomain(), null);
+        CompositeTransactionalCommand cmd = new CompositeTransactionalCommand(getEditingDomain(),
+            null);
         cmd.setTransactionNestingEnabled(false);
         for (Iterator<?> it = view.getTargetEdges().iterator(); it.hasNext();) {
             Edge incomingLink = (Edge) it.next();
             if (KaomVisualIDRegistry.getVisualID(incomingLink) == LinkEditPart.VISUAL_ID) {
-                DestroyElementRequest r = new DestroyElementRequest(incomingLink.getElement(), false);
+                DestroyElementRequest r = new DestroyElementRequest(incomingLink.getElement(),
+                    false);
                 cmd.add(new DestroyElementCommand(r));
                 cmd.add(new DeleteCommand(getEditingDomain(), incomingLink));
                 continue;
@@ -50,7 +52,8 @@ public class Relation2ItemSemanticEditPolicy extends KaomBaseItemSemanticEditPol
         for (Iterator<?> it = view.getSourceEdges().iterator(); it.hasNext();) {
             Edge outgoingLink = (Edge) it.next();
             if (KaomVisualIDRegistry.getVisualID(outgoingLink) == LinkEditPart.VISUAL_ID) {
-                DestroyElementRequest r = new DestroyElementRequest(outgoingLink.getElement(), false);
+                DestroyElementRequest r = new DestroyElementRequest(outgoingLink.getElement(),
+                    false);
                 cmd.add(new DestroyElementCommand(r));
                 cmd.add(new DeleteCommand(getEditingDomain(), outgoingLink));
                 continue;
@@ -73,7 +76,7 @@ public class Relation2ItemSemanticEditPolicy extends KaomBaseItemSemanticEditPol
      */
     protected Command getCreateRelationshipCommand(CreateRelationshipRequest req) {
         Command command = req.getTarget() == null ? getStartCreateRelationshipCommand(req)
-                : getCompleteCreateRelationshipCommand(req);
+            : getCompleteCreateRelationshipCommand(req);
         return command != null ? command : super.getCreateRelationshipCommand(req);
     }
 

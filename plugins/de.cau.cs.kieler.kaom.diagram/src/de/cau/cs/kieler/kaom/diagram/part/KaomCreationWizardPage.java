@@ -21,7 +21,8 @@ public class KaomCreationWizardPage extends WizardNewFileCreationPage {
     /**
      * @generated
      */
-    public KaomCreationWizardPage(String pageName, IStructuredSelection selection, String fileExtension) {
+    public KaomCreationWizardPage(String pageName, IStructuredSelection selection,
+        String fileExtension) {
         super(pageName, selection);
         this.fileExtension = fileExtension;
     }
@@ -63,7 +64,7 @@ public class KaomCreationWizardPage extends WizardNewFileCreationPage {
     public void createControl(Composite parent) {
         super.createControl(parent);
         setFileName(KaomDiagramEditorUtil.getUniqueFileName(getContainerFullPath(), getFileName(),
-                getExtension()));
+            getExtension()));
         setPageComplete(validatePage());
     }
 

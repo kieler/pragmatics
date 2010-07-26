@@ -53,7 +53,7 @@ import de.cau.cs.kieler.kaom.diagram.providers.KaomParserProvider;
  * @generated
  */
 public class RelationNameEditPart extends LabelEditPart implements ITextAwareEditPart,
-        IBorderItemEditPart {
+    IBorderItemEditPart {
 
     /**
      * @generated
@@ -85,9 +85,9 @@ public class RelationNameEditPart extends LabelEditPart implements ITextAwareEdi
      */
     static {
         registerSnapBackPosition(
-                KaomVisualIDRegistry
-                        .getType(de.cau.cs.kieler.kaom.diagram.edit.parts.RelationNameEditPart.VISUAL_ID),
-                new Point(0, 0));
+            KaomVisualIDRegistry
+                .getType(de.cau.cs.kieler.kaom.diagram.edit.parts.RelationNameEditPart.VISUAL_ID),
+            new Point(0, 0));
     }
 
     /**
@@ -123,13 +123,13 @@ public class RelationNameEditPart extends LabelEditPart implements ITextAwareEdi
      */
     public void refreshBounds() {
         int x = ((Integer) getStructuralFeatureValue(NotationPackage.eINSTANCE.getLocation_X()))
-                .intValue();
+            .intValue();
         int y = ((Integer) getStructuralFeatureValue(NotationPackage.eINSTANCE.getLocation_Y()))
-                .intValue();
+            .intValue();
         int width = ((Integer) getStructuralFeatureValue(NotationPackage.eINSTANCE.getSize_Width()))
-                .intValue();
-        int height = ((Integer) getStructuralFeatureValue(NotationPackage.eINSTANCE.getSize_Height()))
-                .intValue();
+            .intValue();
+        int height = ((Integer) getStructuralFeatureValue(NotationPackage.eINSTANCE
+            .getSize_Height())).intValue();
         getBorderItemLocator().setConstraint(new Rectangle(x, y, width, height));
     }
 
@@ -225,7 +225,7 @@ public class RelationNameEditPart extends LabelEditPart implements ITextAwareEdi
         EObject parserElement = getParserElement();
         if (parserElement != null && getParser() != null) {
             text = getParser().getPrintString(new EObjectAdapter(parserElement),
-                    getParserOptions().intValue());
+                getParserOptions().intValue());
         }
         if (text == null || text.length() == 0) {
             text = defaultText;
@@ -256,7 +256,7 @@ public class RelationNameEditPart extends LabelEditPart implements ITextAwareEdi
             return ""; //$NON-NLS-1$
         }
         return getParser().getEditString(new EObjectAdapter(getParserElement()),
-                getParserOptions().intValue());
+            getParserOptions().intValue());
     }
 
     /**
@@ -277,15 +277,16 @@ public class RelationNameEditPart extends LabelEditPart implements ITextAwareEdi
                     final EObject element = getParserElement();
                     final IParser parser = getParser();
                     try {
-                        IParserEditStatus valid = (IParserEditStatus) getEditingDomain().runExclusive(
-                                new RunnableWithResult.Impl<IParserEditStatus>() {
+                        IParserEditStatus valid = (IParserEditStatus) getEditingDomain()
+                            .runExclusive(new RunnableWithResult.Impl<IParserEditStatus>() {
 
-                                    public void run() {
-                                        setResult(parser.isValidEditString(new EObjectAdapter(element),
-                                                (String) value));
-                                    }
-                                });
-                        return valid.getCode() == ParserEditStatus.EDITABLE ? null : valid.getMessage();
+                                public void run() {
+                                    setResult(parser.isValidEditString(new EObjectAdapter(element),
+                                        (String) value));
+                                }
+                            });
+                        return valid.getCode() == ParserEditStatus.EDITABLE ? null : valid
+                            .getMessage();
                     } catch (InterruptedException ie) {
                         ie.printStackTrace();
                     }
@@ -320,11 +321,11 @@ public class RelationNameEditPart extends LabelEditPart implements ITextAwareEdi
     public IParser getParser() {
         if (parser == null) {
             parser = KaomParserProvider
-                    .getParser(
-                            KaomElementTypes.Relation_2002,
-                            getParserElement(),
-                            KaomVisualIDRegistry
-                                    .getType(de.cau.cs.kieler.kaom.diagram.edit.parts.RelationNameEditPart.VISUAL_ID));
+                .getParser(
+                    KaomElementTypes.Relation_2002,
+                    getParserElement(),
+                    KaomVisualIDRegistry
+                        .getType(de.cau.cs.kieler.kaom.diagram.edit.parts.RelationNameEditPart.VISUAL_ID));
         }
         return parser;
     }
@@ -335,8 +336,8 @@ public class RelationNameEditPart extends LabelEditPart implements ITextAwareEdi
     protected DirectEditManager getManager() {
         if (manager == null) {
             setManager(new TextDirectEditManager(this,
-                    TextDirectEditManager.getTextCellEditorClass(this),
-                    KaomEditPartFactory.getTextCellEditorLocator(this)));
+                TextDirectEditManager.getTextCellEditorClass(this),
+                KaomEditPartFactory.getTextCellEditorLocator(this)));
         }
         return manager;
     }
@@ -386,12 +387,12 @@ public class RelationNameEditPart extends LabelEditPart implements ITextAwareEdi
                 public void run() {
                     if (isActive() && isEditable()) {
                         if (theRequest.getExtendedData().get(
-                                RequestConstants.REQ_DIRECTEDIT_EXTENDEDDATA_INITIAL_CHAR) instanceof Character) {
+                            RequestConstants.REQ_DIRECTEDIT_EXTENDEDDATA_INITIAL_CHAR) instanceof Character) {
                             Character initialChar = (Character) theRequest.getExtendedData().get(
-                                    RequestConstants.REQ_DIRECTEDIT_EXTENDEDDATA_INITIAL_CHAR);
+                                RequestConstants.REQ_DIRECTEDIT_EXTENDEDDATA_INITIAL_CHAR);
                             performDirectEdit(initialChar.charValue());
                         } else if ((theRequest instanceof DirectEditRequest)
-                                && (getEditText().equals(getLabelText()))) {
+                            && (getEditText().equals(getLabelText()))) {
                             DirectEditRequest editRequest = (DirectEditRequest) theRequest;
                             performDirectEdit(editRequest.getLocation());
                         } else {
@@ -438,7 +439,7 @@ public class RelationNameEditPart extends LabelEditPart implements ITextAwareEdi
      */
     protected void refreshUnderline() {
         FontStyle style = (FontStyle) getFontStyleOwnerView().getStyle(
-                NotationPackage.eINSTANCE.getFontStyle());
+            NotationPackage.eINSTANCE.getFontStyle());
         if (style != null && getFigure() instanceof WrappingLabel) {
             ((WrappingLabel) getFigure()).setTextUnderline(style.isUnderline());
         }
@@ -449,7 +450,7 @@ public class RelationNameEditPart extends LabelEditPart implements ITextAwareEdi
      */
     protected void refreshStrikeThrough() {
         FontStyle style = (FontStyle) getFontStyleOwnerView().getStyle(
-                NotationPackage.eINSTANCE.getFontStyle());
+            NotationPackage.eINSTANCE.getFontStyle());
         if (style != null && getFigure() instanceof WrappingLabel) {
             ((WrappingLabel) getFigure()).setTextStrikeThrough(style.isStrikeThrough());
         }
@@ -460,11 +461,11 @@ public class RelationNameEditPart extends LabelEditPart implements ITextAwareEdi
      */
     protected void refreshFont() {
         FontStyle style = (FontStyle) getFontStyleOwnerView().getStyle(
-                NotationPackage.eINSTANCE.getFontStyle());
+            NotationPackage.eINSTANCE.getFontStyle());
         if (style != null) {
             FontData fontData = new FontData(style.getFontName(), style.getFontHeight(),
-                    (style.isBold() ? SWT.BOLD : SWT.NORMAL)
-                            | (style.isItalic() ? SWT.ITALIC : SWT.NORMAL));
+                (style.isBold() ? SWT.BOLD : SWT.NORMAL)
+                    | (style.isItalic() ? SWT.ITALIC : SWT.NORMAL));
             setFont(fontData);
         }
     }
@@ -482,7 +483,8 @@ public class RelationNameEditPart extends LabelEditPart implements ITextAwareEdi
     protected void addSemanticListeners() {
         if (getParser() instanceof ISemanticParser) {
             EObject element = resolveSemanticElement();
-            parserElements = ((ISemanticParser) getParser()).getSemanticElementsBeingParsed(element);
+            parserElements = ((ISemanticParser) getParser())
+                .getSemanticElementsBeingParsed(element);
             for (int i = 0; i < parserElements.size(); i++) {
                 addListenerFilter("SemanticModel" + i, this, (EObject) parserElements.get(i)); //$NON-NLS-1$
             }
@@ -539,13 +541,13 @@ public class RelationNameEditPart extends LabelEditPart implements ITextAwareEdi
         } else if (NotationPackage.eINSTANCE.getFontStyle_StrikeThrough().equals(feature)) {
             refreshStrikeThrough();
         } else if (NotationPackage.eINSTANCE.getFontStyle_FontHeight().equals(feature)
-                || NotationPackage.eINSTANCE.getFontStyle_FontName().equals(feature)
-                || NotationPackage.eINSTANCE.getFontStyle_Bold().equals(feature)
-                || NotationPackage.eINSTANCE.getFontStyle_Italic().equals(feature)) {
+            || NotationPackage.eINSTANCE.getFontStyle_FontName().equals(feature)
+            || NotationPackage.eINSTANCE.getFontStyle_Bold().equals(feature)
+            || NotationPackage.eINSTANCE.getFontStyle_Italic().equals(feature)) {
             refreshFont();
         } else {
             if (getParser() != null
-                    && getParser().isAffectingEvent(event, getParserOptions().intValue())) {
+                && getParser().isAffectingEvent(event, getParserOptions().intValue())) {
                 refreshLabel();
             }
             if (getParser() instanceof ISemanticParser) {
