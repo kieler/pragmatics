@@ -22,10 +22,8 @@ import java.util.List;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.OperationHistoryFactory;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -41,14 +39,11 @@ import org.eclipse.gmf.runtime.diagram.core.services.ViewService;
 import org.eclipse.gmf.runtime.emf.commands.core.command.AbstractTransactionalCommand;
 import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 import de.cau.cs.kieler.core.ui.commands.ReInitDiagramCommand;
+import de.cau.cs.kieler.core.ui.util.EditorUtils;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityEditPart;
 import de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorPlugin;
 import de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorUtil;
@@ -82,17 +77,18 @@ public class ReInitKaomDiagramCommand extends ReInitDiagramCommand {
      *            the partner files
      */
     @Override
-    protected void performPostOperationAction(final IPath path,
-            final List<IPath> partners) {
+    protected void performPostOperationAction(final IFile path,
+            final List<IFile> partners) {
         WorkbenchJob job = new WorkbenchJob("") {
 
             @Override
             public IStatus runInUIThread(final IProgressMonitor monitor) {
                 // perform auto layout
-                IEditorPart editor = getActiveEditor();
+                IEditorPart editor = EditorUtils.getLastActiveEditor();
                 EditPart part = null;
                 if (editor != null) {
-                    EclipseLayoutServices.getInstance().layout(editor, part, false, true);
+                    EclipseLayoutServices.getInstance().layout(editor, part,
+                            false, true);
                 }
                 return new Status(IStatus.OK,
                         "de.cau.cs.kieler.synccharts.diagram.custom", "Done");
@@ -100,26 +96,6 @@ public class ReInitKaomDiagramCommand extends ReInitDiagramCommand {
         };
 
         job.schedule(AUTO_LAYOUT_DELAY);
-    }
-
-    /**
-     * Get the active editor for the page.
-     * 
-     * @return the active editor.
-     */
-    private IEditorPart getActiveEditor() {
-        IEditorPart result = null;
-        IWorkbench workbench = PlatformUI.getWorkbench();
-        if (workbench != null) {
-            IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-            if (window != null) {
-                IWorkbenchPage page = window.getActivePage();
-                if (page != null) {
-                    result = page.getActiveEditor();
-                }
-            }
-        }
-        return result;
     }
 
     /**
@@ -135,13 +111,12 @@ public class ReInitKaomDiagramCommand extends ReInitDiagramCommand {
      */
     @Override
     protected boolean createNewDiagram(final EObject diagramRoot,
-            final TransactionalEditingDomain editingDomain, final IPath kidsPath) {
+            final TransactionalEditingDomain editingDomain,
+            final IFile diagramFile) {
         List<IFile> affectedFiles = new LinkedList<IFile>();
         refreshWorkspace();
 
         // get the destination file
-        IFile diagramFile = ResourcesPlugin.getWorkspace().getRoot().getFile(
-                kidsPath);
         refreshWorkspace();
 
         if (!diagramFile.exists()) {
