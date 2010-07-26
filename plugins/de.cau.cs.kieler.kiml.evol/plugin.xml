@@ -90,6 +90,12 @@
       </data>
       <data
             distribution="GAUSSIAN"
+            lowerBound="0"
+            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.maxIterFactor"
+            upperBound="20000">
+      </data>
+      <data
+            distribution="GAUSSIAN"
             lowerBound="1.0"
             name="Min Dist CC"
             option="de.cau.cs.kieler.kiml.ogdf.option.minDistCC"
@@ -239,6 +245,27 @@
          </dependency>
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.edgeCrossings">
+         </dependency>
+      </provider>
+      <provider
+            class="de.cau.cs.kieler.kiml.evol.WeightedAggregation"
+            description="Returns the weighted sum of the metrics."
+            id="de.cau.cs.kieler.kiml.evol.weightedAggregation"
+            name="Weighted Aggregation">
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.evol.areaMetric">
+         </dependency>
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.evol.bendsMetric">
+         </dependency>
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.evol.edgeCrossingsMetric">
+         </dependency>
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.evol.flatnessMetric">
+         </dependency>
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.evol.narrownessMetric">
          </dependency>
       </provider>
    </extension>

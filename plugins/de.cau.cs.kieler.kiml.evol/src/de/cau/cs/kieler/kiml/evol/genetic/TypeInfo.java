@@ -32,6 +32,8 @@ public class TypeInfo<T extends Comparable<? super T>> {
      *            the lower bound
      * @param theUpperBound
      *            the upper bound
+     * @param theFormatter
+     *            a value formatter
      * @param theClass
      *            the class of the value
      */
@@ -106,6 +108,10 @@ public class TypeInfo<T extends Comparable<? super T>> {
         return this.clazz;
     }
 
+    /**
+     *
+     * @return the value formatter
+     */
     public IValueFormatter getValueFormatter() {
         return this.valueFormatter;
     }

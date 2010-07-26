@@ -158,7 +158,6 @@ EXTP_ID_EVOLUTION_DATA);
                 Platform.getExtensionRegistry().getConfigurationElementsFor(
                         AnalysisServices.EXTP_ID_ANALYSIS_PROVIDERS);
         for (final IConfigurationElement element : extensions) {
-            System.out.println(element.getName());
             if (AnalysisServices.ELEMENT_ANALYSIS_PROVIDER.equals(element.getName())) {
                 final String id = element.getAttribute("id");
                 // XXX ugly hack to get rid of the non-normalized analyses

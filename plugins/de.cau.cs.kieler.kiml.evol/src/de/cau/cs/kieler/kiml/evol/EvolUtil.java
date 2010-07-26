@@ -191,14 +191,21 @@ public final class EvolUtil {
                 DiagramAnalyser.analyse(parentNode, metricsList, showProgressBar);
         // final double[] scaledResults = new double[metrics.length];
         double sum = 0.0;
+        double scaledSum = 0;
         for (final AbstractInfoAnalysis metric : metricsList) {
             final String metricResult = results.get(metric.getID()).toString();
             final double coeff = coefficientsMap.get(metric.getID());
-            final double scaled = Double.parseDouble(metricResult) * coeff;
+            final double val = Double.parseDouble(metricResult);
+            final double scaled = val * coeff;
             // scaledResults[i] = scaled;
-            sum += scaled;
+            scaledSum += scaled;
+            sum += val;
+            System.out.print(val + " ");
         }
-        final int newRating = (int) Math.round((sum * 10000));
+        System.out.println();
+        System.out.println("Difference from uniform scaling: "
+                + Math.abs(scaledSum - (sum / metricsList.size())));
+        final int newRating = (int) Math.round((scaledSum * 10000));
         return newRating;
     }
 
@@ -345,8 +352,10 @@ final Population pop, final IEditorPart editor) {
     }
 
     /**
-     * Returns the current edit part.
+     * Returns the current edit part of the given editor.
      *
+     * @param editor
+     *            an editor
      * @return the current edit part or {@code null} if none exists.
      */
     public static EditPart getEditPart(final IEditorPart editor) {
@@ -551,22 +560,23 @@ final Population pop, final IEditorPart editor) {
                         ((upperBoundAttr == null) ? Float.POSITIVE_INFINITY : (Float
                                 .parseFloat(upperBoundAttr)));
 
+                final double variance;
+                if (varianceAttr != null) {
+                    variance = Double.parseDouble(varianceAttr);
 
-                final double var;
-                if (varianceAttr == null) {
+                } else {
                     // threshold to prevent very small variances
                     final float verySmall = 1e-3f;
 
-                    // the absolute value is scaled by this factor
-                    // to get the default variance
-                    final double scalingFactor = .20;
                     // estimate desired variance from the absolute value
-                    var =
-                            ((Math.abs(floatValue) < verySmall) ? MutationInfo.DEFAULT_VARIANCE
-                                    : scalingFactor * Math.abs(floatValue));
-
-                } else {
-                    var = Double.parseDouble(varianceAttr);
+                    if ((Math.abs(floatValue) < verySmall)) {
+                        variance = MutationInfo.DEFAULT_VARIANCE;
+                    } else {
+                        // the absolute value is scaled by this factor
+                        // to get the default variance
+                        final double scalingFactor = .20;
+                        variance = scalingFactor * Math.abs(floatValue);
+                    }
                 }
 
                 final TypeInfo<Float> typeInfo;
@@ -585,7 +595,7 @@ final Population pop, final IEditorPart editor) {
                                 Float.class);
                 result =
                         new UniversalGene(theId, floatValue, typeInfo, new MutationInfo(
-                                theMutationProbability, var, distr));
+                                theMutationProbability, variance, distr));
                 System.out.println(theId + ": " + result);
             }
                 break;

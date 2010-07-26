@@ -101,7 +101,10 @@ public class IntegerGene extends AbstractGene<Integer> {
         return getTypeInfo().getValueFormatter().getString(getValue());
     }
 
-    public static final IValueFormatter INTEGER_PRINTER = new IValueFormatter() {
+    /**
+     * Formatter for integer values.
+     */
+    public static final IValueFormatter INTEGER_FORMATTER = new IValueFormatter() {
         public String getString(final Object o) {
             if (o instanceof Integer) {
                 return o.toString();
@@ -155,5 +158,5 @@ public class IntegerGene extends AbstractGene<Integer> {
      * Default type info for an Integer gene.
      */
     private static final TypeInfo<Integer> DEFAULT_TYPE_INFO = new TypeInfo<Integer>(0,
-            Integer.MIN_VALUE, Integer.MAX_VALUE, INTEGER_PRINTER, Integer.class);
+            Integer.MIN_VALUE, Integer.MAX_VALUE, INTEGER_FORMATTER, Integer.class);
 }
