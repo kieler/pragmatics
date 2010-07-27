@@ -95,7 +95,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
     private Map<PictogramElement, KGraphElement> editPart2GraphElemMap
     = new HashMap<PictogramElement, KGraphElement>();
     
-    Map<Connection, KEdge> reference2EdgeMap = new HashMap<Connection, KEdge>();
+    private Map<Connection, KEdge> reference2EdgeMap = new HashMap<Connection, KEdge>();
     
     private Map<PictogramElement, int[]> GraphElemHeightWidth
     = new HashMap<PictogramElement, int[]>();  
@@ -198,20 +198,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                 if (list.get(i) instanceof ContainerShape) {
                     ContainerShape cs = (ContainerShape) list.get(i);
                     GraphicsAlgorithm containerGa = cs.getGraphicsAlgorithm();
-
-                    
-//                    if (containerGa instanceof Polygon) {
-//                        KNode relation = KimlLayoutUtil.createInitializedNode();
-//                        editPart2GraphElemMap.put(cs , relation);
-//                        relation.setParent(topNode);
-//                        KShapeLayout shapeLayout = KimlLayoutUtil.getShapeLayout(topNode);
-//                        shapeLayout.setXpos(cs.getGraphicsAlgorithm().getX());
-//                        shapeLayout.setYpos(cs.getGraphicsAlgorithm().getY());
-//                        shapeLayout.setHeight(cs.getGraphicsAlgorithm().getHeight());
-//                        shapeLayout.setWidth(cs.getGraphicsAlgorithm().getWidth());
-//                        
-//                    } else if (cs instanceof RoundedRectangle 
-//                            || containerGa.getPictogramElement() instanceof Rectangle) {
+         
                      
                         KNode childnode = KimlLayoutUtil.createInitializedNode();
                         returnstate = false; 
@@ -244,8 +231,6 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                                 editPart2GraphElemMap.put(childAnchors.get(j), port);
                                 port.setNode(topNode);
                                 KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(port);
-                                // Rectangle portBounds = borderItem.getFigure().getBounds();
-                    //  KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(parentLayoutNode);
                                 portLayout.setXpos(childAnchors.get(j).getGraphicsAlgorithm().getX());
                                 portLayout.setYpos(childAnchors.get(j).getGraphicsAlgorithm().getY());
                                 portLayout.setWidth(childAnchors.get(j)
@@ -267,9 +252,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                                 }
                                 
                             }
-                        //  hasPorts = true;
-                        // set user defined layout options for the port
-                      //  GmfLayoutInspector.setLayoutOptions(borderItem, portLayout, true);
+                       
                     }
                 }
             }
@@ -326,70 +309,28 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
              if (olddimension[0] != pelem.getGraphicsAlgorithm().getHeight() 
                      || olddimension[1] != pelem.getGraphicsAlgorithm().getWidth()) {
                  
-        /*     EList<GraphicsAlgorithm> listgrapAlgoChild = 
-                 pelem.getGraphicsAlgorithm().getGraphicsAlgorithmChildren();
+                     
+             
+          diagramEditor.getDiagramTypeProvider().getFeatureProvider()
+              .layoutIfPossible(new LayoutContext(pelem));
             
-                 int heightIncr = pelem.getGraphicsAlgorithm().getHeight() - olddimension[0];
-                 int widthIncr = pelem.getGraphicsAlgorithm().getWidth() - olddimension[1];
-                
-                 for (int i = 0; i < listgrapAlgoChild.size(); i++) {
-                   listgrapAlgoChild.get(i).setHeight(listgrapAlgoChild.get(i).getHeight() + heightIncr);
-                   listgrapAlgoChild.get(i).setWidth(listgrapAlgoChild.get(i).getWidth() + widthIncr);
                  
                  }
-                EList<Shape> listchild = ((ContainerShape) pelem).getChildren();
-                if (pelem instanceof Diagram) {
-                    listchild = ((Diagram) pelem).getChildren();
-                    } else if (pelem instanceof ContainerShape) {
-                                        
-                        listchild = ((ContainerShape) pelem).getChildren();
-                    }
-                
-                for(int i = 0; i < listchild.size() ; i++)
-                {
-               //     if (!(listchild.get(i) instanceof ContainerShape)) {
-              //          if (listchild.get(i).getGraphicsAlgorithm().getHeight()!=null)
-                            
-                        
-                    
-               // }
-                   
-                
-             }
-             */
-                 
-        //  ILayoutFeature layoutFeature = diagramEditor.getDiagramTypeProvider().
-         //     getFeatureProvider().getLayoutFeature(new LayoutContext(pelem));
-                 
-          diagramEditor.getDiagramTypeProvider().getFeatureProvider().layoutIfPossible(new LayoutContext(pelem));
-         // layoutFeature.       
-                 
-                 }
-             
-          
-             
-                 }
-             
-                } 
-         }  
+         }
+      } 
+    }  
                   
                   
-                  System.out.println("size;;;;;;;:"+reference2EdgeMap.size());
+                 
                   for (Map.Entry<Connection, KEdge> entryLink 
                           : reference2EdgeMap.entrySet()) {
                       KEdge edge = entryLink.getValue();
                       Connection conn = entryLink.getKey();
                       
                       KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(edge);
-                      //((FreeFormConnection)connection).getStart().
                        EList<org.eclipse.graphiti.mm.datatypes.Point> pointList = 
                            ((FreeFormConnection) conn).getBendpoints();
-                    /*   KPoint sourcePoint = edgeLayout.getSourcePoint();
-                       Point firstPoint = pointList.getFirstPoint();
-                       sourcePoint.setX(firstPoint.x);
-                       sourcePoint.setY(firstPoint.y);
-                                        
-                      */ 
+                  
                        pointList.clear();
                        
                        EList<KPoint> points = edgeLayout.getBendPoints();
@@ -407,26 +348,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                   
             } 
         }, editingDomain, "Automatic Layout");
-        // TODO Auto-generated method stub
-        // get a command stack to execute the command
-      /*  CommandStack commandStack = null;
-        if (diagramEditorPart != null) {
-            Object adapter = diagramEditorPart.getAdapter(CommandStack.class);
-            if (adapter instanceof CommandStack) {
-                commandStack = (CommandStack) adapter;
-            }
-        }
-        if (commandStack == null) {
-            commandStack = layoutRootPart.getDiagramEditDomain().getDiagramCommandStack();
-        }
-        
-        // execute the command
-        commandStack.execute(applyLayoutCommand);
-        // refresh the labels in the diagram
-        
-        // FIXME this workaround should be eliminated
-        refreshDiagram(diagramEditorPart, layoutRootPart);
-    */ }
+       }
     
     private void printout()  {
         for (Map.Entry<PictogramElement, KGraphElement> entry 
@@ -487,23 +409,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
     }
     
    
-    /**
-     * Adds all target connections and connected connections to the list of connections
-     * that must be processed later.
-     * 
-     * @param editPart an edit part
-     */
-   /*   private void addConnections(final PictogramElement editPart) {
-        for (Object targetConn : editPart.getTargetConnections()) {
-            if (targetConn instanceof ConnectionEditPart) {
-                ConnectionEditPart connectionEditPart = (ConnectionEditPart) targetConn;
-                connections.add(connectionEditPart);
-                addConnections(connectionEditPart);
-            }
-        }
-    }
-*/
-    /**
+     /**
      * Creates new edges and takes care of the labels for each connection
      * identified in the {@code buildLayoutGraphRecursively} method.
      */
@@ -634,7 +540,6 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                 kpoint.setX(pointList.get(i).getX());
                 kpoint.setY(pointList.get(i).getY());
                 edgeLayout.getBendPoints().add(kpoint);
-                System.out.println("I:"+i+"X:"+pointList.get(i).getX()+"Y:"+pointList.get(i).getY());
             }
             /*
             KPoint targetPoint = edgeLayout.getTargetPoint();
@@ -650,87 +555,12 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
             //   }
 
          // process edge labels
-            processLabels(connection,edge,EdgeLabelPlacement.UNDEFINED);
+          //  processLabels(connection, edge,EdgeLabelPlacement.UNDEFINED);
         }  
     
-    System.out.println("size b4 ;;;;;;" + reference2EdgeMap.size());
+   
     
     }
     
-    private void processLabels(final Connection conn, final KEdge edge, 
-            final EdgeLabelPlacement placement) {
-        
-        EList<ConnectionDecorator> connDecorator = conn.getConnectionDecorators();
-        for (int i = 0; i < connDecorator.size(); i++) {
-            if (connDecorator.get(i).getGraphicsAlgorithm() instanceof Text) {
-                
-            }
-        }
-       /* for (Object obj : connection.getChildren()) {
-            if (obj instanceof LabelEditPart) {
-                LabelEditPart labelEditPart = (LabelEditPart) obj;
-                IFigure labelFigure = labelEditPart.getFigure();
-                Rectangle labelBounds = labelFigure.getBounds();
-                String labelText = null;
-                Font font = null;
-                Dimension iconBounds = null;
-                if (labelFigure instanceof WrappingLabel) {
-                    WrappingLabel wrappingLabel = (WrappingLabel) labelFigure;
-                    labelText = wrappingLabel.getText();
-                    if (wrappingLabel.getIcon() != null) {
-                        iconBounds = new Dimension();
-                        iconBounds.width = wrappingLabel.getIcon().getBounds().width
-                            + wrappingLabel.getIconTextGap();
-                        iconBounds.height = wrappingLabel.getIcon().getBounds().height;
-                        labelText = "O " + labelText;
-                    }
-                    font = wrappingLabel.getFont();
-                } else if (labelFigure instanceof Label) {
-                    Label label = (Label) labelFigure;
-                    labelText = label.getText();
-                    if (label.getIcon() != null) {
-                        iconBounds = label.getIconBounds().getSize();
-                        iconBounds.width += label.getIconTextGap();
-                        labelText = "O " + labelText;
-                    }
-                    font = label.getFont();
-                }
-                if (labelText != null && labelText.length() > 0) {
-                    KLabel label = KimlLayoutUtil.createInitializedLabel(edge);
-                    KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
-                    if (placement == EdgeLabelPlacement.UNDEFINED) {
-                        switch (labelEditPart.getKeyPoint()) {
-                        case ConnectionLocator.SOURCE:
-                            LayoutOptions.setEnum(labelLayout, EdgeLabelPlacement.HEAD);
-                            break;
-                        case ConnectionLocator.MIDDLE:
-                            LayoutOptions.setEnum(labelLayout, EdgeLabelPlacement.CENTER);
-                            break;
-                        case ConnectionLocator.TARGET:
-                            LayoutOptions.setEnum(labelLayout, EdgeLabelPlacement.TAIL);
-                            break;
-                        }
-                    } else {
-                        LayoutOptions.setEnum(labelLayout, placement);
-                    }
-                    LayoutOptions.setString(labelLayout, LayoutOptions.FONT_NAME,
-                            font.getFontData()[0].getName());
-                    LayoutOptions.setInt(labelLayout, LayoutOptions.FONT_SIZE,
-                            font.getFontData()[0].getHeight());
-                    labelLayout.setXpos(labelBounds.x);
-                    labelLayout.setYpos(labelBounds.y);
-                    if (iconBounds != null) {
-                        labelLayout.setWidth(labelBounds.width + iconBounds.width);
-                    }
-                    labelLayout.setWidth(labelBounds.width);
-                    labelLayout.setHeight(labelBounds.height);
-                    label.setText(labelText);
-                    edge.getLabels().add(label);
-                    graphElem2EditPartMap.put(label, labelEditPart);
-                }
-            }
-        }
-        */
-    }
-    
+       
 }
