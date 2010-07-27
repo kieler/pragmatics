@@ -32,18 +32,25 @@ import de.cau.cs.kieler.klay.layered.modules.IEdgeRouter;
  */
 public class PolylineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
     
+    /** maximal number of edges for which the default node spacing is taken. */
+    private static final int MAX_EDGES = 3;
+    
     /**
      * {@inheritDoc}
      */
     public void routeEdges(final LayeredGraph layeredGraph) {
         getMonitor().begin("Polyline edge routing", 1);
-        float spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
+        float defspacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         
         // set horizontal positioning for each layer and add bend points
-        float xpos = 0.0f;
+        double xpos = 0.0, spacing = 0.0;
         for (Layer layer : layeredGraph.getLayers()) {
+            layer.placeNodes(xpos);
+            int edgeCount = 0;
             for (LNode node : layer.getNodes()) {
-                node.getPos().x = xpos;
+                for (LPort port : node.getPorts(PortType.OUTPUT)) {
+                    edgeCount += port.getEdges().size();
+                }
                 if (node.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
                     LEdge edge = (LEdge) node.getProperty(Properties.ORIGIN);
                     if (isEndnode(node, PortType.INPUT)) {
@@ -55,6 +62,9 @@ public class PolylineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter
                     }
                 }
             }
+            // determine placement of next layer based on the number of edges
+            spacing = edgeCount <= MAX_EDGES ? defspacing
+                       : defspacing * Math.sqrt(edgeCount);
             xpos += layer.getSize().x + spacing;
         }
         layeredGraph.getSize().x = xpos - spacing;

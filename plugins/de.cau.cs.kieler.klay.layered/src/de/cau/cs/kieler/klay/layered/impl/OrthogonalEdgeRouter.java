@@ -167,9 +167,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
         
         float xpos = 0.0f;
         for (Layer layer : layeredGraph.getLayers()) {
-            for (LNode node : layer.getNodes()) {
-                node.getPos().x = xpos;
-            }
+            layer.placeNodes(xpos);
             xpos += layer.getSize().x + edgeSpacing;
             int slotsCount = routeEdges(layer, xpos);
             xpos += slotsCount * edgeSpacing;

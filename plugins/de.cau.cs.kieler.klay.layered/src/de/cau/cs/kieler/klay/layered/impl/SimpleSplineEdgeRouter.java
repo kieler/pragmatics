@@ -79,12 +79,12 @@ public class SimpleSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRo
         LinkedList<LEdge> longEdges = new LinkedList<LEdge>();
         LinkedList<LongEdge> realLongEdges = new LinkedList<LongEdge>();
         LinkedList<LEdge> shortEdges = new LinkedList<LEdge>();
-        // set horizontal positioning for each layer and add bend points
-        float xpos = 0.0f;
+        // set horizontal positioning for each layer
+        double xpos = 0.0f;
         List<LLabel> consideredLabelsInLayerSize = new LinkedList<LLabel>();
         for (Layer layer : layeredGraph.getLayers()) {
+            layer.placeNodes(xpos);
             for (LNode node : layer.getNodes()) {
-                node.getPos().x = xpos;
                 // filter out start points of long edges
                 if (node.getProperty(Properties.NODE_TYPE) != Properties.NodeType.LONG_EDGE) {
                     for (LPort port : node.getPorts(PortType.OUTPUT)) {

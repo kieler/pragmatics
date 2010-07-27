@@ -91,5 +91,36 @@ public class Layer extends LGraphElement {
     public int getIndex() {
         return owner.getLayers().indexOf(this);
     }
+    
+    /**
+     * Determines a horizontal placement for all nodes of this layer. The size
+     * of the layer is assumed to be already set to the maximal width of the
+     * contained nodes.
+     * 
+     * @param xpos horizontal offset for layer placement
+     */
+    public void placeNodes(final double xpos) {
+        for (LNode node : nodes) {
+            // determine the number of input and output ports for the node
+            int inports = 0, outports = 0;
+            for (LPort port : node.getPorts()) {
+                switch (port.getType()) {
+                case INPUT:
+                    inports++;
+                    break;
+                case OUTPUT:
+                    outports++;
+                    break;
+                }
+            }
+            // calculate node placement based on the port numbers
+            double room = size.x - node.getSize().x;
+            if (inports + outports == 0) {
+                node.getPos().x = xpos + room / 2;
+            } else {
+                node.getPos().x = xpos + room * outports / (inports + outports);
+            }
+        }
+    }
 
 }
