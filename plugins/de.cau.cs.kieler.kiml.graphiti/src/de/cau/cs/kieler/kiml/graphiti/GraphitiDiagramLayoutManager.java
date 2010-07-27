@@ -53,7 +53,7 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.mm.pictograms.Text;
 import org.eclipse.graphiti.mm.pictograms.impl.RectangleImpl;
 import org.eclipse.graphiti.services.Graphiti;
-import org.eclipse.graphiti.ui.internal.editor.DiagramEditor;
+import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.graphiti.ui.internal.parts.IPictogramElementEditPart;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.graphics.Font;
@@ -289,7 +289,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
     @Override
     protected void applyLayout() {
       printout();
-        TransactionalEditingDomain editingDomain = diagramEditor.getTransactionalEditingDomain();
+        TransactionalEditingDomain editingDomain = diagramEditor.getEditingDomain();
         KimlUiUtil.runModelChange(new Runnable() {
             public void run() {
                 // TODO Auto-generated method stub

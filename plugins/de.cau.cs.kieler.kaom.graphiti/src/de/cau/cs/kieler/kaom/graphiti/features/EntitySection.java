@@ -17,7 +17,7 @@ package de.cau.cs.kieler.kaom.graphiti.features;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
-import org.eclipse.graphiti.ui.internal.editor.DiagramEditor;
+import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.graphiti.ui.platform.GFPropertySection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -64,7 +64,7 @@ public class EntitySection extends GFPropertySection implements ITabbedPropertyC
                      
                     DiagramEditor diagramEditor = (DiagramEditor) getDiagramEditor();
                     TransactionalEditingDomain editingDomain = 
-                        diagramEditor.getTransactionalEditingDomain();
+                        diagramEditor.getEditingDomain();
                
                      KimlUiUtil.runModelChange(new Runnable() {
                      public void run() {
