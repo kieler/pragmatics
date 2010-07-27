@@ -80,7 +80,7 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
 
    @Override
    public GraphicsAlgorithm[] getSelectionArea(final PictogramElement pe) {
-     
+     // TODO comment
        IFeatureProvider featureProvider = getFeatureProvider();
        Object obj = featureProvider.getBusinessObjectForPictogramElement(pe);
        if (obj instanceof Entity) {
@@ -95,6 +95,7 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
    
    @Override
    public GraphicsAlgorithm getSelectionGraphicsAlgorithm(final PictogramElement pe) {
+       // TODO comment
        IFeatureProvider featureProvider = getFeatureProvider();
        Object obj = featureProvider.getBusinessObjectForPictogramElement(pe);
        

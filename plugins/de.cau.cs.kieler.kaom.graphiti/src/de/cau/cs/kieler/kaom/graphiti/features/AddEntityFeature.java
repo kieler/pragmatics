@@ -85,9 +85,7 @@ public class AddEntityFeature extends AbstractAddShapeFeature {
   
         // TODO Auto-generated method stub
         Diagram targetdiagram;
-        KaomFactory kaomFactory = KaomFactory.eINSTANCE;
-        Entity entity = kaomFactory.createEntity();
-        entity = (Entity) context.getNewObject();  
+        Entity entity = (Entity) context.getNewObject();  
         ContainerShape containerShape;
    //    Entity parentEntity = null;
         IPeCreateService peCreateService = Graphiti.getPeCreateService();
