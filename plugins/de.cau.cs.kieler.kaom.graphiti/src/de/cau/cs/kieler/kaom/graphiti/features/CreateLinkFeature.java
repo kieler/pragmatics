@@ -19,6 +19,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.graphiti.examples.common.SampleUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
@@ -30,6 +31,7 @@ import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.KaomFactory;
 import de.cau.cs.kieler.kaom.Link;
 import de.cau.cs.kieler.kaom.Linkable;
+import de.cau.cs.kieler.kaom.graphiti.diagram.ImageProvider;
 /**
  * 
  * @author atr
@@ -114,6 +116,9 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
     public Connection create(final ICreateConnectionContext context) {
      //   System.out.println("I cam here222222222222222222!!!!!");
         Connection newConnection = null;
+    
+               
+        
      /*   Entity target=null,source=null;
         if(getBusinessObjectForPictogramElement(context.getSourcePictogramElement()) instanceof Entity)
         { 
@@ -190,7 +195,13 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
 
         KaomFactory kaomFactory = KaomFactory.eINSTANCE;
         Link link = kaomFactory.createLink();
-        link.setName("new Link");
+        
+        String newClassName = SampleUtil.askString("Name of the link", "Enter link name", "");
+        if (newClassName == null || newClassName.trim().length() == 0) {
+           return null;
+        }
+           link.setName(newClassName);
+      //  link.setName("new Link");
         
       /*
         if (source instanceof Entity) {
@@ -336,6 +347,11 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
             }             
         */
         }
-        
+
+    @Override
+    public String getCreateImageId() {
+        return ImageProvider.IMAGE_LINK;
+}
+    
 }
 

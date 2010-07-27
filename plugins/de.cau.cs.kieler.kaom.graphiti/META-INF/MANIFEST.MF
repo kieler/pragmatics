@@ -11,9 +11,16 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.graphiti.mm,
  org.eclipse.graphiti,
  de.cau.cs.kieler.kaom;bundle-version="0.1.0",
- de.cau.cs.kieler.core.annotations;bundle-version="0.1.0"
+ de.cau.cs.kieler.core.annotations;bundle-version="0.1.0",
+ org.eclipse.ui.views.properties.tabbed
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Import-Package: de.cau.cs.kieler.kaom,
+ de.cau.cs.kieler.kiml.ui.util,
+ de.cau.cs.kieler.kiml.util,
+ org.eclipse.emf.edit.domain,
+ org.eclipse.emf.transaction,
+ org.eclipse.gef.ui.parts,
  org.eclipse.graphiti,
- org.eclipse.graphiti.examples.common
+ org.eclipse.graphiti.examples.common,
+ org.eclipse.ui.ide

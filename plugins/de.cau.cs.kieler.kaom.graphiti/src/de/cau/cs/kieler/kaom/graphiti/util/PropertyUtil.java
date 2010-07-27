@@ -28,13 +28,6 @@ public class PropertyUtil {
     public static final String SHAPE_VALUE_E_CLASS = "e-class";
  
     /**
-     * Constructor.
-     */
-    PropertyUtil() {
-        
-    }
-    
-    /**
      * 
      * @param pe
      *Sets the shape of the Entity

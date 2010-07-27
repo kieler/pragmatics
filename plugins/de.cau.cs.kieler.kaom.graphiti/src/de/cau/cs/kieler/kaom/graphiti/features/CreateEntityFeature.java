@@ -21,6 +21,7 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.KaomFactory;
+import de.cau.cs.kieler.kaom.graphiti.diagram.ImageProvider;
 
 /**
  * 
@@ -38,6 +39,7 @@ public class CreateEntityFeature extends AbstractCreateFeature {
         super(fp, "Entity", "Create Entity");
     }
 
+    
     /**
      * 
      * {@inheritDoc}
@@ -55,20 +57,18 @@ public class CreateEntityFeature extends AbstractCreateFeature {
      * {@inheritDoc}
      */
     public Object[] create(final ICreateContext context) {
-     
-     //   String newClassName = SampleUtil.askString(TITLE, USER_QUESTION, "");
-     //   if (newClassName == null || newClassName.trim().length() == 0) {
-     //       return null;
-
-     //   }
-
-
+ 
         // create EClass
         Entity newEntity = KaomFactory.eINSTANCE.createEntity();
            addGraphicalRepresentation(context, newEntity);
         getFeatureProvider().getDirectEditingInfo().setActive(true);
         
         return new Object[] { newEntity };
+    }
+    
+    @Override
+    public String getCreateImageId() {
+        return ImageProvider.IMAGE_ENTITY;
     }
     
 }  

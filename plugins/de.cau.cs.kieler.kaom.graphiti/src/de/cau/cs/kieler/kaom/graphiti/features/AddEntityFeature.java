@@ -18,6 +18,7 @@ package de.cau.cs.kieler.kaom.graphiti.features;
 //import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.IDirectEditingInfo;
 import org.eclipse.graphiti.features.IFeatureProvider;
@@ -31,6 +32,7 @@ import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.impl.AbstractAddShapeFeature;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.graphiti.mm.pictograms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.pictograms.Orientation;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Polyline;
@@ -216,6 +218,12 @@ public class AddEntityFeature extends AbstractAddShapeFeature {
            
            layoutPictogramElement(containerShape);
            containerShape.setActive(true);
+           
+           
+           EList<GraphicsAlgorithm> list = 
+               getDiagram().getGraphicsAlgorithm().getGraphicsAlgorithmChildren();
+
+           
            return containerShape;
     
     }
@@ -268,6 +276,8 @@ public class AddEntityFeature extends AbstractAddShapeFeature {
       
         topEntity.getChildEntities().add(newEntity);
     }
+    
+    
     
 
 }

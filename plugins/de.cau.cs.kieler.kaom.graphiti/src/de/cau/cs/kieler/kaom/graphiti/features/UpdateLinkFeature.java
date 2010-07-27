@@ -13,96 +13,57 @@
  */
 package de.cau.cs.kieler.kaom.graphiti.features;
 
-
-
-
-//import java.util.Iterator;
-
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IReason;
+import org.eclipse.graphiti.features.context.IContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.AbstractUpdateFeature;
 import org.eclipse.graphiti.features.impl.Reason;
+import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.mm.pictograms.Text;
 
 import de.cau.cs.kieler.kaom.Entity;
+import de.cau.cs.kieler.kaom.Link;
+import de.cau.cs.kieler.kaom.Relation;
 
 /**
- * 
  * @author atr
- * Update any changes made to Entity
+ *
  */
-public class UpdateEntityFeature extends AbstractUpdateFeature {
+public class UpdateLinkFeature extends AbstractUpdateFeature {
 
     /**
-     * 
      * @param fp
-     * Constructor
      */
-    public UpdateEntityFeature(final IFeatureProvider fp) {
+    public UpdateLinkFeature(final IFeatureProvider fp) {
         super(fp);
-        // TODO Auto-generated constructor stub
-    }
+     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     public boolean canUpdate(final IUpdateContext context) {
-        // TODO Auto-generated method stub
-       Object obj = getBusinessObjectForPictogramElement(context.getPictogramElement());
-       System.out.println("HeelKELKmnlekmnlkmncklmksldm");
-       return (obj instanceof Entity);
+        Object obj = getBusinessObjectForPictogramElement(context.getPictogramElement());
+        System.out.println("Heeellelelelelelellelelelelellllllllllllllllll");
+        return (obj instanceof Link);
     }
 
     /**
-     * 
-     * {@inheritDoc}
-     */
-    public boolean update(final IUpdateContext context) {
-        // TODO Auto-generated method stub
-        String businessName = null;
-        PictogramElement pictogramElement = context.getPictogramElement();
-        Object obj = getBusinessObjectForPictogramElement(pictogramElement);
-        if (obj instanceof Entity) {
-           businessName = ((Entity) obj).getName();
-        }
-        if (pictogramElement instanceof ContainerShape) {
-            ContainerShape cs = (ContainerShape)  pictogramElement;
-      //      for(Iterator iter = cs.getChildren().iterator();iter.hasNext())
-            for (int i = 0; i < cs.getChildren().size(); i++) {
-                Shape shape = (Shape) cs.getChildren().get(i);
-     
-                if (shape.getGraphicsAlgorithm() instanceof Text) {
-                    ((Text) shape.getGraphicsAlgorithm()).setValue(businessName);
-                    
-                    return true;
-                }
-            }
-               
-        }
-                        
-        return false;
-    }
-
-   
-    /**
-     * 
      * {@inheritDoc}
      */
     public IReason updateNeeded(final IUpdateContext context) {
         // TODO Auto-generated method stub
         String pictogramName = null;
         PictogramElement pictogramElement = context.getPictogramElement();
-        if (pictogramElement instanceof ContainerShape) {
-                ContainerShape cs = (ContainerShape) pictogramElement;
-                for (int i = 0; i < cs.getChildren().size(); i++) {
-                    Shape shape = (Shape) cs.getChildren().get(i);                    
-                    if (shape.getGraphicsAlgorithm() instanceof Text) {
-                        Text text = (Text) shape.getGraphicsAlgorithm();
+        if (pictogramElement instanceof Connection) {
+                Connection con = (Connection) pictogramElement;
+                for (int i = 0; i < con.getConnectionDecorators().size(); i++) {
+                                        
+                    if (con.getConnectionDecorators().get(i).getGraphicsAlgorithm() instanceof Text) {
+                        Text text = (Text) con.getConnectionDecorators().get(i).getGraphicsAlgorithm();
                         pictogramName = text.getValue();
                    //    System.out.println("The pictogram name is " + pictogramName);
                     }
@@ -111,8 +72,8 @@ public class UpdateEntityFeature extends AbstractUpdateFeature {
             
             String businessName = null;
             Object obj = getBusinessObjectForPictogramElement(pictogramElement);
-            if (obj instanceof Entity) {
-                businessName = ((Entity) obj).getName();
+            if (obj instanceof Link) {
+                businessName = ((Link) obj).getName();
             }
             
             boolean updateRequired = false;
@@ -125,9 +86,35 @@ public class UpdateEntityFeature extends AbstractUpdateFeature {
             } else {
                 return Reason.createFalseReason();
                 }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean update(final IUpdateContext context) {
+        String businessName = null;
+        PictogramElement pictogramElement = context.getPictogramElement();
+        Object obj = getBusinessObjectForPictogramElement(pictogramElement);
+        if (obj instanceof Link) {
+           businessName = ((Link) obj).getName();
+        }
+        if (pictogramElement instanceof Connection) {
+            Connection cs = (Connection)  pictogramElement;
+      //      for(Iterator iter = cs.getChildren().iterator();iter.hasNext())
+            for (int i = 0; i < cs.getConnectionDecorators().size(); i++) {
+              
+     
+                if (cs.getConnectionDecorators().get(i).getGraphicsAlgorithm() instanceof Text) {
+                    ((Text) cs.getConnectionDecorators().get(i)
+                            .getGraphicsAlgorithm()).setValue(businessName);
+                    return true;
+                }
             }
+               
+        }
+                        
+        return false;
+    }
 
-  
+   
 }
-
-

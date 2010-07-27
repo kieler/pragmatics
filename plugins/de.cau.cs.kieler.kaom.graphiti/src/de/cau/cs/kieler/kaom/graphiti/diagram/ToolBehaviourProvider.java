@@ -34,6 +34,7 @@ import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
 import org.eclipse.graphiti.mm.pictograms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.palette.IPaletteCompartmentEntry;
+import org.eclipse.graphiti.palette.IToolEntry;
 import org.eclipse.graphiti.palette.impl.ConnectionCreationToolEntry;
 import org.eclipse.graphiti.palette.impl.ObjectCreationToolEntry;
 import org.eclipse.graphiti.palette.impl.PaletteCompartmentEntry;
@@ -186,7 +187,8 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
        IPaletteCompartmentEntry[] superCompartments = super.getPaletteCompartments();
        for (int i = 0; i < superCompartments.length; i++) {
            ret.add(superCompartments[i]);
-           }
+                    }
+       
        
        PaletteCompartmentEntry compartmentEntry = new PaletteCompartmentEntry("Stacked", null);
        ret.add(compartmentEntry);

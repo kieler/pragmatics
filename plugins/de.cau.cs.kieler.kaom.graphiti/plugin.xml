@@ -30,5 +30,36 @@
             id="de.cau.cs.kieler.kaom.graphiti.imageProvider1">
       </imageProvider>
    </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
+      <propertyContributor
+            contributorId="de.cau.cs.kieler.kaom.graphiti.diagramType1.PropertyContributor">
+         <propertyCategory
+               category="Graphiti"></propertyCategory>
+      </propertyContributor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertySections">
+      <propertySections
+            contributorId="de.cau.cs.kieler.kaom.graphiti.diagramType1.PropertyContributor">
+         <propertySection
+               class="de.cau.cs.kieler.kaom.graphiti.features.EntitySection"
+               filter="de.cau.cs.kieler.kaom.graphiti.features.EntityFilter"
+               id="graphiti.main.tab.emfclass"
+               tab="graphiti.main.tab">
+         </propertySection>
+      </propertySections>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
+      <propertyTabs
+            contributorId="de.cau.cs.kieler.kaom.graphiti.diagramType1.PropertyContributor">
+         <propertyTab
+               category="Graphiti"
+               id="graphiti.main.tab"
+               label="Main">
+         </propertyTab>
+      </propertyTabs>
+   </extension>
 
 </plugin>

@@ -21,6 +21,7 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.KaomFactory;
 import de.cau.cs.kieler.kaom.Port;
+import de.cau.cs.kieler.kaom.graphiti.diagram.ImageProvider;
 
 /**
  * 
@@ -85,5 +86,10 @@ public class CreatePortFeature extends AbstractCreateFeature {
         
         return new Object[] { port };
     }
+    
+    @Override
+    public String getCreateImageId() {
+        return ImageProvider.IMAGE_PORT;
+}
 
 }

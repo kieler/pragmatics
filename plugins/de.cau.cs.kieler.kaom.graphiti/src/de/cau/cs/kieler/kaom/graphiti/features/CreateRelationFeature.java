@@ -21,6 +21,7 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 
 import de.cau.cs.kieler.kaom.KaomFactory;
 import de.cau.cs.kieler.kaom.Relation;
+import de.cau.cs.kieler.kaom.graphiti.diagram.ImageProvider;
 
 /**
  * 
@@ -79,5 +80,10 @@ public class CreateRelationFeature extends AbstractCreateFeature {
                        
         return new Object[] { relation };
     }
+    
+    @Override
+    public String getCreateImageId() {
+        return ImageProvider.IMAGE_RELATION;
+}
 
 }
