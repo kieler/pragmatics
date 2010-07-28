@@ -73,6 +73,22 @@ import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
  */
 public final class EvolUtil {
     /**
+     * Creates a population of the default size, taking initial values from the
+     * given {@code LayoutPropertySource}.
+     *
+     * @param propertySource
+     *            where the initial data is taken from.
+     * @return the new population
+     */
+    public static Population createPopulation(final LayoutPropertySource propertySource) {
+        final int size =
+                EvolPlugin.getDefault().getPreferenceStore()
+                        .getInt(EvolPlugin.PREF_POPULATION_SIZE);
+
+        return createPopulation(propertySource, size);
+    }
+
+    /**
      * Create a population of the given size, taking initial values from the
      * given {@code LayoutPropertySource}.
      *
@@ -91,6 +107,7 @@ public final class EvolUtil {
         }
         return result;
     }
+
 
     /**
      * Layout the diagram and measure it.
@@ -338,17 +355,28 @@ final Population pop, final IEditorPart editor) {
      */
     public static IEditorPart getCurrentEditor() {
         // TODO: cache editor and assert that it is not replaced?
+
+        // Try to get the editor that is tracked by the layout view.
         final LayoutViewPart layoutViewPart = LayoutViewPart.findView();
-        if (layoutViewPart == null) {
-            final IWorkbench workbench = PlatformUI.getWorkbench();
-            final IWorkbenchPage page = workbench.getActiveWorkbenchWindow().getActivePage();
-            if (page != null) {
-                return page.getActiveEditor();
+        if (layoutViewPart != null) {
+            final IEditorPart editor = layoutViewPart.getCurrentEditor();
+            if (editor != null) {
+                return editor;
             }
-            return null;
         }
-        final IEditorPart result = layoutViewPart.getCurrentEditor();
-        return result;
+
+        // Try to get the active editor of the workbench.
+        final IWorkbench workbench = PlatformUI.getWorkbench();
+        final IWorkbenchPage page = workbench.getActiveWorkbenchWindow().getActivePage();
+        if (page != null) {
+            final IEditorPart editor = page.getActiveEditor();
+            if (editor != null) {
+                return editor;
+            }
+        }
+
+        // No active editor could be found.
+        return null;
     }
 
     /**
@@ -605,4 +633,5 @@ final Population pop, final IEditorPart editor) {
             return result;
         }
     }
+
 }

@@ -13,10 +13,14 @@
  */
 package de.cau.cs.kieler.kiml.evol;
 
-import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.IntegerFieldEditor;
+import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -26,37 +30,16 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
  * @author bdu
  *
  */
-public class EvolPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+public class EvolPreferencePage extends FieldEditorPreferencePage
+        implements
+            IWorkbenchPreferencePage {
 
     /**
-     * Creates a new preference page with no title and no image.
+     * Creates a new preference page.
      */
     public EvolPreferencePage() {
-        // TODO Auto-generated constructor stub
-    }
-
-    /**
-     * Creates a new preference page with the given title and no image.
-     *
-     * @param title
-     *            the title of this preference page
-     */
-    public EvolPreferencePage(final String title) {
-        super(title);
-        // TODO Auto-generated constructor stub
-    }
-
-    /**
-     * Creates a new preference page with the given title and image.
-     *
-     * @param title
-     *            the title of this preference page
-     * @param image
-     *            the image for this preference page, or {@code null} if none
-     */
-    public EvolPreferencePage(final String title, final ImageDescriptor image) {
-        super(title, image);
-        // TODO Auto-generated constructor stub
+        super("this_title_seems_to_be_ignored", null, FLAT);
+        setDescription("Preferences for Evolutionary Meta Layout.");
     }
 
     /**
@@ -67,8 +50,21 @@ public class EvolPreferencePage extends PreferencePage implements IWorkbenchPref
     }
 
     @Override
-    protected Control createContents(final Composite parent) {
-        // TODO Auto-generated method stub
-        return null;
+    protected void createFieldEditors() {
+        final Composite parent = getFieldEditorParent();
+        // evolution parameters
+        final Group algorithmGroup = new Group(parent, SWT.NONE);
+        algorithmGroup.setText("Evolution parameters");
+        final IntegerFieldEditor popSizeEditor =
+                new IntegerFieldEditor(EvolPlugin.PREF_POPULATION_SIZE, "Population size:",
+                        algorithmGroup, 30);
+        popSizeEditor.setValidateStrategy(StringFieldEditor.VALIDATE_ON_FOCUS_LOST);
+        popSizeEditor.setValidRange(1, Integer.MAX_VALUE);
+        addField(popSizeEditor);
+
+        algorithmGroup.setLayout(new GridLayout(NUM_COLUMNS, false));
+        parent.setLayout(new FillLayout());
     }
+
+    private static final int NUM_COLUMNS = 3;
 }

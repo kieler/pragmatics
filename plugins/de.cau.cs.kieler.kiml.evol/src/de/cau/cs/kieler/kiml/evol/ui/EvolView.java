@@ -171,11 +171,6 @@ public class EvolView extends ViewPart {
     }
 
     /**
-     * Initial population size.
-     */
-    private static final int DEFAULT_INITIAL_POPULATION_SIZE = 10;
-
-    /**
      *
      */
     public EvolView() {
@@ -323,9 +318,9 @@ public class EvolView extends ViewPart {
 
     /**
      * Filter for unrated individuals.
-     * 
+     *
      * @author bdu
-     * 
+     *
      */
     private static class UnratedFilter implements IItemFilter<Genome> {
         public boolean isMatch(final Genome item) {
@@ -335,9 +330,9 @@ public class EvolView extends ViewPart {
 
     /**
      * Filter for rated individuals.
-     * 
+     *
      * @author bdu
-     * 
+     *
      */
     private static class RatedFilter implements IItemFilter<Genome> {
         public boolean isMatch(final Genome item) {
@@ -415,7 +410,7 @@ public class EvolView extends ViewPart {
                 final LayoutPropertySource propertySource =
                         new LayoutPropertySource(manager.getInspector(part));
                 final Population sourcePopulation =
-                        EvolUtil.createPopulation(propertySource, DEFAULT_INITIAL_POPULATION_SIZE);
+ EvolUtil.createPopulation(propertySource);
                 this.layoutProviderId = EvolUtil.getLayoutProviderId(manager, part);
                 final BasicEvolutionaryAlgorithm alg =
                         new BasicEvolutionaryAlgorithm(sourcePopulation);

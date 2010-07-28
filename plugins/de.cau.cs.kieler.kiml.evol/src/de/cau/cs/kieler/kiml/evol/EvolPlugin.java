@@ -26,8 +26,21 @@ public class EvolPlugin extends AbstractUIPlugin {
      * The plug-in ID.
      */
     public static final String PLUGIN_ID = "de.cau.cs.kieler.kiml.evol";
+
+    // preference constants and default values
+    /**
+     * Preference constant for population size.
+     */
+    public static final String PREF_POPULATION_SIZE = "de.cau.cs.kieler.kiml.evol.populationSize";
+
+    /**
+     * Default value for population size.
+     */
+    public static final int DEF_POPULATION_SIZE = 12;
+
     // The shared instance
     private static EvolPlugin plugin;
+
 
     /**
      * The constructor.

@@ -248,7 +248,7 @@
          </dependency>
       </provider>
       <provider
-            class="de.cau.cs.kieler.kiml.evol.WeightedAggregation"
+            class="de.cau.cs.kieler.kiml.evol.grana.WeightedAggregation"
             description="Returns the weighted sum of the metrics."
             id="de.cau.cs.kieler.kiml.evol.weightedAggregation"
             name="Weighted Aggregation">
@@ -385,6 +385,12 @@
             id="de.cau.cs.kieler.kiml.evol.preferences.evol"
             name="KIML Evolutionary">
       </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="de.cau.cs.kieler.kiml.evol.EvolPreferenceInitializer">
+      </initializer>
    </extension>
 
 </plugin>
