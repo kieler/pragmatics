@@ -217,7 +217,7 @@ public final class EvolUtil {
             // scaledResults[i] = scaled;
             scaledSum += scaled;
             sum += val;
-            System.out.print(val + " ");
+            System.out.println(metric.getID() + ": " + val + " ");
         }
         System.out.println();
         System.out.println("Difference from uniform scaling: "

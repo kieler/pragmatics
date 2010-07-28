@@ -46,7 +46,7 @@ public class WeightedAggregation implements IAnalysis {
                 if (val instanceof Float) {
                     sum += (Float) val;
                     count++;
-                    System.out.print(val + " ");
+                    System.out.println(entry.getKey() + ": " + val + " ");
                 }
             }
         }
