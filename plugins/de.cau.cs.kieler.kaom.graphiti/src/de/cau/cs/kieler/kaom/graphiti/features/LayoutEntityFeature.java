@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kaom.graphiti.features;
 
-
 import de.cau.cs.kieler.kaom.Entity;
 import java.util.Iterator;
 import org.eclipse.emf.common.util.EList;
@@ -36,19 +35,18 @@ import org.eclipse.graphiti.services.IGaService;
 
 /**
  * 
- * @author atr
- * Class used to layout the entity object and adjust its components
- * after resizing has occurred 
+ * @author atr Class used to layout the entity object and adjust its components after resizing has
+ *         occurred
  */
 public class LayoutEntityFeature extends AbstractLayoutFeature {
 
     private static final int MIN_HEIGHT = 30;
     private static final int MIN_WIDTH = 50;
-    
+
     /**
      * 
      * @param fp
-     * Constructor
+     *            Constructor
      */
     public LayoutEntityFeature(final IFeatureProvider fp) {
         super(fp);
@@ -64,11 +62,9 @@ public class LayoutEntityFeature extends AbstractLayoutFeature {
             EList<EObject> ob = pe.getLink().getBusinessObjects();
             return ob.size() == 1 && (ob.get(0) instanceof Entity);
         }
-        
+
         return false;
-      
-      //  System.out.println("Value:"+PropertyUtil.isEClassShape(pe));
-       // return PropertyUtil.isEClassShape(pe);
+
     }
 
     /**
@@ -76,70 +72,65 @@ public class LayoutEntityFeature extends AbstractLayoutFeature {
      * {@inheritDoc}
      */
     public boolean layout(final ILayoutContext context) {
-        
+
         boolean changed = false;
         ContainerShape containerShape = (ContainerShape) context.getPictogramElement();
         GraphicsAlgorithm containerGa = containerShape.getGraphicsAlgorithm();
         IGaService gaService = Graphiti.getGaService();
-        
+
         if (containerGa.getHeight() < MIN_HEIGHT) {
             containerGa.setHeight(MIN_HEIGHT);
             changed = true;
         }
-        
+
         if (containerGa.getWidth() < MIN_WIDTH) {
             containerGa.setWidth(MIN_WIDTH);
             changed = true;
         }
-        
+
         int containerWidth = containerGa.getWidth() - 2 * AddPortFeature.INVISIBLE_RECTANGLE_WIDTH;
-       if (containerGa instanceof Rectangle) {
-         
-           Rectangle rectangle = (Rectangle) containerGa;
-         //  rectangle.getGraphicsAlgorithmChildren().get(0).setWidth(containerWidth);
-         //  rectangle.getGraphicsAlgorithmChildren().get(0).setHeight(containerGa.getHeight()
-          //           - AddPortFeature.INVISIBLE_RECTANGLE_WIDTH);
-           gaService.setLocationAndSize(rectangle.getGraphicsAlgorithmChildren().get(0), 
-                   AddPortFeature.INVISIBLE_RECTANGLE_WIDTH, 
-                   0, containerWidth, rectangle.getHeight() - AddPortFeature.INVISIBLE_RECTANGLE_WIDTH); 
-           changed = true;
-       }
-      
-        
+        if (containerGa instanceof Rectangle) {
+
+            Rectangle rectangle = (Rectangle) containerGa;
+            gaService.setLocationAndSize(rectangle.getGraphicsAlgorithmChildren().get(0),
+                    AddPortFeature.INVISIBLE_RECTANGLE_WIDTH, 0, containerWidth,
+                    rectangle.getHeight() - AddPortFeature.INVISIBLE_RECTANGLE_WIDTH);
+            changed = true;
+        }
+
         Iterator iter = containerShape.getChildren().iterator();
         while (iter.hasNext()) {
             Shape shape = (Shape) iter.next();
             GraphicsAlgorithm ga = shape.getGraphicsAlgorithm();
-            
+
             IDimension size = gaService.calculateSize(ga);
             if (size.getWidth() != containerWidth) {
-               
-               if (ga instanceof Polygon) {
-                  System.out.println();
+
+                if (ga instanceof Polygon) {
+                    System.out.println();
                 } else if (ga instanceof Polyline) {
-                   Polyline polyline = (Polyline) ga;
-                   Point firstPoint = polyline.getPoints().get(0);
-                   Point newfirstPoint = gaService.createPoint(
-                           AddPortFeature.INVISIBLE_RECTANGLE_WIDTH, 
-                           firstPoint.getY());                    
-                   Point secondpoint = polyline.getPoints().get(1);
-                   Point newsecondpoint = gaService.createPoint(
-                           AddPortFeature.INVISIBLE_RECTANGLE_WIDTH + containerWidth, 
-                           secondpoint.getY());
-                   polyline.getPoints().set(0, newfirstPoint);
-                   polyline.getPoints().set(1, newsecondpoint);
-                   changed = true;
-               } else if (ga instanceof Text) {
-                  //  System.out.println("hello i cam here");
-                   Text text = (Text) ga;
-                   gaService.setLocationAndSize(ga, AddPortFeature.INVISIBLE_RECTANGLE_WIDTH, 
-                           text.getY(), containerWidth, text.getHeight()); //, avoidNegativeCoordinates)
-                   changed = true;
-                   }
-                
+                    Polyline polyline = (Polyline) ga;
+                    Point firstPoint = polyline.getPoints().get(0);
+                    Point newfirstPoint = gaService.createPoint(
+                            AddPortFeature.INVISIBLE_RECTANGLE_WIDTH, firstPoint.getY());
+                    Point secondpoint = polyline.getPoints().get(1);
+                    Point newsecondpoint = gaService.createPoint(
+                            AddPortFeature.INVISIBLE_RECTANGLE_WIDTH + containerWidth,
+                            secondpoint.getY());
+                    polyline.getPoints().set(0, newfirstPoint);
+                    polyline.getPoints().set(1, newsecondpoint);
+                    changed = true;
+                } else if (ga instanceof Text) {
+                    Text text = (Text) ga;
+                    gaService.setLocationAndSize(ga, AddPortFeature.INVISIBLE_RECTANGLE_WIDTH,
+                            text.getY(), containerWidth, text.getHeight()); // ,
+                                                                            // avoidNegativeCoordinates)
+                    changed = true;
+                }
+
             }
         }
-         return changed;       
-     }
+        return changed;
+    }
 
 }

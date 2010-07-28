@@ -22,14 +22,13 @@ import de.cau.cs.kieler.kaom.Entity;
 
 /**
  * 
- * @author atr
- * Class used to copy the Entity to the clip board
+ * @author atr Class used to copy the Entity to the clip board
  */
 public class CopyEntityFeature extends AbstractCopyFeature {
 
     /**
      * @param fp
-     * Constructor.
+     *            Constructor.
      */
     public CopyEntityFeature(final IFeatureProvider fp) {
         super(fp);
@@ -40,14 +39,13 @@ public class CopyEntityFeature extends AbstractCopyFeature {
      * 
      * {@inheritDoc}
      */
-     public boolean canCopy(final ICopyContext context) {
+    public boolean canCopy(final ICopyContext context) {
         final PictogramElement[] pes = context.getPictogramElements();
 
-        if (pes == null || pes.length == 0) {  // nothing selected
+        if (pes == null || pes.length == 0) { // nothing selected
             return false;
         }
 
-       
         // return true, if all selected elements are a EClasses
         for (PictogramElement pe : pes) {
             final Object bo = getBusinessObjectForPictogramElement(pe);
@@ -57,12 +55,12 @@ public class CopyEntityFeature extends AbstractCopyFeature {
         }
         return true;
     }
- 
-     /**
-      * 
-      * {@inheritDoc}
-      */
-      public void copy(final ICopyContext context) {
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    public void copy(final ICopyContext context) {
 
         PictogramElement[] pes = context.getPictogramElements();
         Object[] bos = new Object[pes.length];
@@ -72,9 +70,8 @@ public class CopyEntityFeature extends AbstractCopyFeature {
             bos[i] = getBusinessObjectForPictogramElement(pe);
         }
 
-         putToClipboard(bos);
+        putToClipboard(bos);
 
     }
 
 }
-

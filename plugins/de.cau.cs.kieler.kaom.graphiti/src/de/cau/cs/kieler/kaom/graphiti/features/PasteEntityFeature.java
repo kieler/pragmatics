@@ -24,19 +24,17 @@ import de.cau.cs.kieler.kaom.Entity;
 
 /**
  * 
- * @author atr
- * Class used to copy the Entity in the clip board to the graphical editor
+ * @author atr Class used to copy the Entity in the clip board to the graphical editor
  */
 public class PasteEntityFeature extends AbstractPasteFeature {
 
     /**
      * 
      * @param fp
-     *  Constructor
+     *            Constructor
      */
     public PasteEntityFeature(final IFeatureProvider fp) {
         super(fp);
-        // TODO Auto-generated constructor stub
     }
 
     /**
@@ -48,23 +46,21 @@ public class PasteEntityFeature extends AbstractPasteFeature {
         PictogramElement[] pes = context.getPictogramElements();
         if (pes.length != 1 || !(pes[0] instanceof Diagram)) {
             return false;
-            }
+        }
 
- 
         Object[] fromClipboard = getFromClipboard();
         if (fromClipboard == null || fromClipboard.length == 0) {
             return false;
-            }
+        }
         for (Object object : fromClipboard) {
             if (!(object instanceof Entity)) {
                 return false;
-                }
-
             }
-        return true;
-        }
 
- 
+        }
+        return true;
+    }
+
     /**
      * 
      * {@inheritDoc}
@@ -77,11 +73,9 @@ public class PasteEntityFeature extends AbstractPasteFeature {
 
         for (Object object : objects) {
             AddContext ac = new AddContext();
-            ac.setLocation(0, 0); // for simplicity paste at (0, 0)
+            ac.setLocation(0, 0);
             ac.setTargetContainer(diagram);
             addGraphicalRepresentation(ac, object);
         }
     }
 }
-
-

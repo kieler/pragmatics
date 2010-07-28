@@ -14,35 +14,35 @@
 package de.cau.cs.kieler.kaom.graphiti.features;
 
 import org.eclipse.graphiti.examples.common.SampleUtil;
-import de.cau.cs.kieler.kaom.Entity;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
+import de.cau.cs.kieler.kaom.Link;
+
 /**
+ * @author atr
  * 
- * @author atr Class used to rename the entity
  */
-public class RenameEntityFeature extends AbstractCustomFeature {
+public class RenameLinkFeature extends AbstractCustomFeature {
 
     /**
-     * 
      * @param fp
      *            Constructor.
      */
-    public RenameEntityFeature(final IFeatureProvider fp) {
+    public RenameLinkFeature(final IFeatureProvider fp) {
         super(fp);
     }
 
     @Override
     public String getName() {
-        return "Rename Entity";
+        return "Rename Link";
     }
 
     @Override
     public String getDescription() {
-        return "Change the name of the Entity";
+        return "Change the name of the Link";
     }
 
     @Override
@@ -51,7 +51,7 @@ public class RenameEntityFeature extends AbstractCustomFeature {
         PictogramElement[] pes = context.getPictogramElements();
         if (pes != null && pes.length == 1) {
             Object bo = getBusinessObjectForPictogramElement(pes[0]);
-            if (bo instanceof Entity) {
+            if (bo instanceof Link) {
                 ret = true;
             }
         }
@@ -66,13 +66,13 @@ public class RenameEntityFeature extends AbstractCustomFeature {
         PictogramElement[] pes = context.getPictogramElements();
         if (pes != null && pes.length == 1) {
             Object bo = getBusinessObjectForPictogramElement(pes[0]);
-            if (bo instanceof Entity) {
-                Entity entity = (Entity) bo;
-                String currentName = entity.getName();
+            if (bo instanceof Link) {
+                Link link = (Link) bo;
+                String currentName = link.getName();
                 String newName = SampleUtil.askString(getName(), getDescription(), currentName);
 
                 if (newName != null) {
-                    entity.setName(newName);
+                    link.setName(newName);
                 }
 
             }

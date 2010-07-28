@@ -5,35 +5,37 @@
          point="org.eclipse.graphiti.ui.diagramTypeProviders">
       <diagramTypeProvider
             class="de.cau.cs.kieler.kaom.graphiti.diagram.DiagramTypeProvider"
-            id="de.cau.cs.kieler.kaom.graphiti.diagramTypeProvider1"
-            name="de.cau.cs.kieler.kaom.graphiti.diagramTypeProvider1">
+            description="Graphiti diagram editor for Kaom Model"
+            id="de.cau.cs.kieler.kaom.graphiti.diagramTypeProvider"
+            name="Kaom model diagram Type Provider">
          <diagramType
-               id="de.cau.cs.kieler.kaom.graphiti.diagramType1">
+               id="de.cau.cs.kieler.kaom.graphiti.diagramType">
          </diagramType>
          <imageProvider
-               id="de.cau.cs.kieler.kaom.graphiti.imageProvider1">
+               id="de.cau.cs.kieler.kaom.graphiti.imageProvider">
          </imageProvider>
       </diagramTypeProvider>
    </extension>
    <extension
          point="org.eclipse.graphiti.ui.diagramTypes">
       <diagramType
-            id="de.cau.cs.kieler.kaom.graphiti.diagramType1"
-            name="de.cau.cs.kieler.kaom.graphiti.diagramType1"
-            type="de.cau.cs.kieler.kaom.graphiti.diagramType1">
+            description="This is the graphiti diagram of the Kaom model"
+            id="de.cau.cs.kieler.kaom.graphiti.diagramType"
+            name="Kaom model diagram"
+            type="Kaommodel">
       </diagramType>
    </extension>
    <extension
          point="org.eclipse.graphiti.ui.imageProviders">
       <imageProvider
             class="de.cau.cs.kieler.kaom.graphiti.diagram.ImageProvider"
-            id="de.cau.cs.kieler.kaom.graphiti.imageProvider1">
+            id="de.cau.cs.kieler.kaom.graphiti.imageProvider">
       </imageProvider>
    </extension>
    <extension
          point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
       <propertyContributor
-            contributorId="de.cau.cs.kieler.kaom.graphiti.diagramType1.PropertyContributor">
+            contributorId="Kaommodel.PropertyContributor">
          <propertyCategory
                category="Graphiti"></propertyCategory>
       </propertyContributor>
@@ -41,7 +43,7 @@
    <extension
          point="org.eclipse.ui.views.properties.tabbed.propertySections">
       <propertySections
-            contributorId="de.cau.cs.kieler.kaom.graphiti.diagramType1.PropertyContributor">
+            contributorId="Kaommodel.PropertyContributor">
          <propertySection
                class="de.cau.cs.kieler.kaom.graphiti.features.EntitySection"
                filter="de.cau.cs.kieler.kaom.graphiti.features.EntityFilter"
@@ -53,7 +55,7 @@
    <extension
          point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
       <propertyTabs
-            contributorId="de.cau.cs.kieler.kaom.graphiti.diagramType1.PropertyContributor">
+            contributorId="Kaommodel.PropertyContributor">
          <propertyTab
                category="Graphiti"
                id="graphiti.main.tab"

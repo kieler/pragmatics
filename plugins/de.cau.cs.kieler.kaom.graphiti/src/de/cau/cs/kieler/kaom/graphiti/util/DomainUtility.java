@@ -26,7 +26,7 @@ import de.cau.cs.kieler.kaom.KaomFactory;
  * @author atr
  * Checks and creates a top entity
  */
-public class TopParentEntity {
+public class DomainUtility {
     
     
     private static Entity parentEntity = null;

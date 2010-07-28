@@ -22,51 +22,46 @@ import de.cau.cs.kieler.kaom.Entity;
 
 /**
  * @author atr
- *
+ * 
  */
 public class MovePortFeature extends DefaultMoveShapeFeature {
 
-    
     private static final int BOUNDARY_DISTANCE = 10;
+
     /**
      * @param fp
+     *                  Constructor.
      */
-    public MovePortFeature(IFeatureProvider fp) {
+    public MovePortFeature(final IFeatureProvider fp) {
         super(fp);
-        // TODO Auto-generated constructor stub
     }
-    
-    
-    
+
     @Override
     public boolean canMoveShape(final IMoveShapeContext context) {
         boolean canMove = context.getSourceContainer() != null;
         if (canMove) {
             if (context.getTargetContainer() instanceof ContainerShape) {
                 ContainerShape containerShape = context.getTargetContainer();
-             
+
                 if (getBusinessObjectForPictogramElement(containerShape) instanceof Entity) {
                     if (Math.abs(context.getX() 
-                            - containerShape.getGraphicsAlgorithm().getWidth()) < BOUNDARY_DISTANCE 
-                        || Math.abs(context.getY()  
-                                - containerShape.getGraphicsAlgorithm().getHeight()) < BOUNDARY_DISTANCE
-                        || context.getX() < BOUNDARY_DISTANCE) {
-                        System.out.println("JU I cma heeeeerreeee");    
+                            - containerShape.getGraphicsAlgorithm().getWidth()) < BOUNDARY_DISTANCE
+                            || Math.abs(context.getY()
+                              - containerShape.getGraphicsAlgorithm().getHeight()) < BOUNDARY_DISTANCE
+                            || context.getX() < BOUNDARY_DISTANCE) {
                         return true;
-                            
+
                     }
                 }
             }
         }
-    return false;
+        return false;
     }
 
     @Override
     protected void internalMove(final IMoveShapeContext context) {
-       super.internalMove(context);
-       
-        
-    }
+        super.internalMove(context);
 
+    }
 
 }

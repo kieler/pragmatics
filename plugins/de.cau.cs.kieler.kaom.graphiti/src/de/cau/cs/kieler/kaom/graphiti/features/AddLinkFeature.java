@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.kaom.graphiti.features;
 
-
+import org.eclipse.graphiti.features.IDirectEditingInfo;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddConnectionContext;
 import org.eclipse.graphiti.features.context.IAddContext;
@@ -28,30 +28,27 @@ import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.services.IPeCreateService;
 
-
 import de.cau.cs.kieler.kaom.Link;
 import de.cau.cs.kieler.kaom.graphiti.util.StyleUtil;
 
 /**
  * 
- * @author atr
- * Adds a link between the source and the target
- * Adds the name of the link
+ * @author atr 
+ * Adds a link between the source and the target Adds the name of the link.
  */
 public class AddLinkFeature extends AbstractAddFeature {
 
-    private static final double CONNECTION_DECORATOR_LOCATION = 0.5;      
-    private static final int TEXT_LOCATION = 10;      
-    
-    
+    private static final double CONNECTION_DECORATOR_LOCATION = 0.5;
+    private static final int TEXT_LOCATION = 10;
+
     /**
      * 
      * @param fp
-     * Constructor
+     *            Constructor
      */
     public AddLinkFeature(final IFeatureProvider fp) {
         super(fp);
-        // TODO Auto-generated constructor stub
+        
     }
 
     /**
@@ -59,40 +56,43 @@ public class AddLinkFeature extends AbstractAddFeature {
      * {@inheritDoc}
      */
     public PictogramElement add(final IAddContext context) {
-      
+
         IAddConnectionContext addConContext = (IAddConnectionContext) context;
         Link elink = (Link) context.getNewObject();
         IPeCreateService peCreateService = Graphiti.getPeCreateService();
-       
+
         Connection conn = peCreateService.createFreeFormConnection(getDiagram());
         conn.setStart(addConContext.getSourceAnchor());
         conn.setEnd(addConContext.getTargetAnchor());
         IGaService gaService = Graphiti.getGaService();
         Polyline polyline = gaService.createPolyline(conn);
         polyline.setStyle(StyleUtil.getStyleForEClass(getDiagram()));
-    //    System.out.println("I have come at the last position too");             
-        
+      
         link(conn, elink);
-    //    System.out.println("I have come at the last position too78979789");             
- 
-        ConnectionDecorator textDecorator = 
-            peCreateService.createConnectionDecorator(conn, true, CONNECTION_DECORATOR_LOCATION, true);
+       
+        ConnectionDecorator textDecorator = peCreateService.createConnectionDecorator(conn, true,
+                CONNECTION_DECORATOR_LOCATION, true);
         Text text = gaService.createDefaultText(textDecorator);
         text.setStyle(StyleUtil.getStyleForEClassText((getDiagram())));
         gaService.setLocation(text, TEXT_LOCATION, 0);
-        // set reference name in the text decorator
-    //    System.out.println("I have come at the last position too");
-        Link link = (Link) context.getNewObject();
-        text.setValue(link.getName());
-
+     
         // add static graphical decorators (composition and navigable)
         ConnectionDecorator cd;
         cd = peCreateService.createConnectionDecorator(conn, false, 1.0, true);
-     //   System.out.println("I have come at the last position too");
         createArrow(cd);
-           
+
+        // provide information to support direct-editing directly
+        // after object creation (must be activated additionally)
+
+        IDirectEditingInfo directEditingInfo = getFeatureProvider().getDirectEditingInfo();
+        // set container shape for direct editing after object creation
+        directEditingInfo.setMainPictogramElement(conn);
+        // set shape and graphics algorithm where the editor for
+        // direct editing shall be opened after object creation
+        directEditingInfo.setPictogramElement(textDecorator);
+        directEditingInfo.setGraphicsAlgorithm(text);
         return conn;
-               
+
     }
 
     /**
@@ -101,26 +101,23 @@ public class AddLinkFeature extends AbstractAddFeature {
      */
     public boolean canAdd(final IAddContext context) {
 
-       if (context instanceof IAddConnectionContext
-               && context.getNewObject() instanceof Link) {
-           return true;
-       }
-       return false;
+        if (context instanceof IAddConnectionContext && context.getNewObject() instanceof Link) {
+            return true;
+        }
+        return false;
     }
 
     /**
      * 
      * @param gaContainer
-     * @return
-     * Creates the shape of an arrow
+     * @return Creates the shape of an arrow
      */
     private Polyline createArrow(final GraphicsAlgorithmContainer gaContainer) {
-        Polyline polyline = 
-            Graphiti.getGaCreateService().createPolyline(gaContainer, 
-                    new int[] { -15, 10, 0, 0, -15, -10 });
+        Polyline polyline = Graphiti.getGaCreateService().createPolyline(gaContainer,
+                new int[] { -15, 10, 0, 0, -15, -10 });
         polyline.setStyle(StyleUtil.getStyleForEClass(getDiagram()));
-  //      System.out.println("I have come at the last position too");
+        // System.out.println("I have come at the last position too");
         return polyline;
-}
-    
+    }
+
 }

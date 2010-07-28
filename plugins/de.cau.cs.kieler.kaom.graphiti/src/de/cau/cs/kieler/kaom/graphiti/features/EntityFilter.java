@@ -25,32 +25,29 @@ import de.cau.cs.kieler.kaom.Relation;
 
 /**
  * @author atr
- *
+ * 
  */
 public class EntityFilter extends AbstractPropertySectionFilter {
 
-   
     /**
      * {@inheritDoc}
      */
     @Override
     protected boolean accept(final PictogramElement pictogramElement) {
-        System.out.println("I came hereqweqweqwrqwerwerwetr!!!");
-        EObject eObject = Graphiti.getLinkService()
-            .getBusinessObjectForLinkedPictogramElement(pictogramElement);
-     
-        
-      if (eObject instanceof Entity) {
+
+        EObject eObject = Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(
+                pictogramElement);
+
+        if (eObject instanceof Entity) {
             return true;
-       } else if (eObject instanceof Link) {
-           return true;
-       } else if (eObject instanceof Port) {
-           return true;
-       } else if (eObject instanceof Relation) {
-           return true;
-       }
+        } else if (eObject instanceof Link) {
+            return true;
+        } else if (eObject instanceof Port) {
+            return true;
+        } else if (eObject instanceof Relation) {
+            return true;
+        }
         return false;
     }
-    
 
 }

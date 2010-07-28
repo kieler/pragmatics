@@ -36,26 +36,24 @@ import de.cau.cs.kieler.kaom.Entity;
 //import de.cau.cs.kieler.kaom.KaomFactory;
 import de.cau.cs.kieler.kaom.Relation;
 import de.cau.cs.kieler.kaom.graphiti.util.StyleUtil;
-import de.cau.cs.kieler.kaom.graphiti.util.TopParentEntity;
+import de.cau.cs.kieler.kaom.graphiti.util.DomainUtility;
 
 /**
  * 
- * @author atr
- * Class adds a new relation object 
+ * @author atr Class adds a new relation object
  */
 public class AddRelationFeature extends AbstractAddShapeFeature {
 
-    private static final int[] VERTICES_POSITION = {-9 , 0 , 0, 12 , 9 , 0 , 0 , -12};
+    private static final int[] VERTICES_POSITION = { -9, 0, 0, 12, 9, 0, 0, -12 };
     private static final IColorConstant RELATION_BACKGROUND = new ColorConstant(70, 70, 70);
-    
+
     /**
      * 
      * @param fp
-     * Constructor
+     *            Constructor.
      */
     public AddRelationFeature(final IFeatureProvider fp) {
         super(fp);
-        // TODO Auto-generated constructor stub
     }
 
     /**
@@ -63,107 +61,57 @@ public class AddRelationFeature extends AbstractAddShapeFeature {
      * {@inheritDoc}
      */
     public PictogramElement add(final IAddContext context) {
-        // TODO Auto-generated method stub
-     //   KaomFactory kaomFactory=KaomFactory.eINSTANCE;
-       
-     //   Relation relation=kaomFactory.createRelation();
-       Relation relation = (Relation) context.getNewObject();
+        Relation relation = (Relation) context.getNewObject();
         IPeCreateService peCreateService = Graphiti.getPeCreateService();
         Diagram targetDiagram;
         ContainerShape containerShape;
         IGaService gaService = Graphiti.getGaService();
         if (context.getTargetContainer() instanceof Diagram) {
             targetDiagram = (Diagram) context.getTargetContainer();
-            containerShape = peCreateService.createContainerShape(targetDiagram, true); 
-           // PropertyUtil.setEClassShape(containerShape);
-          //  flag = true;
-            
-           // Polygon polygon = gaService.createPolygon(containerShape, 
-           //         new int[]{context.getX() - 9 , context.getY() , context.getX(),
-           //         context.getY() + 12 , context.getX() + 9 , context.getY(),
-           //         context.getX(), context.getY() - 12});    
-            
-            Polygon polygon = gaService.createPolygon(containerShape, VERTICES_POSITION
-                     );    
-            
-             //       new int[]{0 , -12 , 9, 0 , 18 , -12 , 9 , - 24});    
-            
-                    
+            containerShape = peCreateService.createContainerShape(targetDiagram, true);
+
+            Polygon polygon = gaService.createPolygon(containerShape, VERTICES_POSITION);
+
             polygon.setStyle(StyleUtil.getStyleForEClass(getDiagram()));
             polygon.setBackground(manageColor(RELATION_BACKGROUND));
-         //   gaService.setLocationAndSize(polygon,context.getX(),context.getY(),70,80);
-        //    System.out.println("X::" + context.getX() + "Y::" + context.getY());
-            Graphiti.getGaService()
-            .setLocation(containerShape.getGraphicsAlgorithm(), 
+            Graphiti.getGaService().setLocation(containerShape.getGraphicsAlgorithm(),
                     context.getX(), context.getY(), false);
-           
-            addToDiagram(relation, context);
-       
-            peCreateService.createChopboxAnchor(containerShape);          
-            
-            link(containerShape, relation);
-           
-            } else {
-            containerShape = context.getTargetContainer();
-             //PictogramElement pe=(PictogramElement) parentContainerShape.getGraphicsAlgorithm();
-            // parentEntity=(Entity) getBusinessObjectForPictogramElement(pe);
-          //   parentEntity = (Entity) getBusinessObjectForPictogramElement(parentContainerShape);
-           //  containerShape = peCreateService.createContainerShape(parentContainerShape, true);  
-          //   PropertyUtil.setEClassShape(containerShape);
-           //  flag = false;
-            ContainerShape childcontainershape = peCreateService.createContainerShape(
-                    containerShape, true);   
-            //  Entity parentEntity = null;
-              //Shape shape = peCreateService.createShape(containerShape, true);
-            
-             // RoundedRectangle polygon=gaService.createRoundedRectangle(containerShape, 5, 5);
-              Polygon polygon = gaService.createPolygon(childcontainershape, VERTICES_POSITION);
-            //          new int[]{context.getX() - 9 , context.getY() , context.getX(),
-            //          context.getY() + 12 , context.getX() + 9 , context.getY(),
-            //          context.getX(), context.getY() - 12});        
-            
-           //           new int[]{- 9 , 0 , 0, 12 , 9 , 0 , 0 , - 12});    
-                      
-                      polygon.setStyle(StyleUtil.getStyleForEClass(getDiagram()));
-              polygon.setBackground(manageColor(RELATION_BACKGROUND));
-              Graphiti.getGaService()
-              .setLocation(childcontainershape.getGraphicsAlgorithm(), 
-                      context.getX(), context.getY(), false);
 
-             
-              addToDiagram(relation, context);
-         
-              peCreateService.createChopboxAnchor(childcontainershape);          
-              
-               link(childcontainershape, relation);
-               
-       }
-        
-        
-        
-   /*     Shape shape = peCreateService.createShape(containerShape, true);   
-      //  Entity parentEntity = null;
-        //Shape shape = peCreateService.createShape(containerShape, true);
-      
-       // RoundedRectangle polygon=gaService.createRoundedRectangle(containerShape, 5, 5);
-        Polygon polygon = gaService.createPolygon(shape, 
-                new int[]{context.getX() - 9 , context.getY() , context.getX(),
-                context.getY() + 12 , context.getX() + 9 , context.getY(),
-                context.getX(), context.getY() - 12});        
-       
-         
-      //   layoutPictogramElement(containerShape);        */       
-       
-         return containerShape;
+            addToDiagram(relation, context);
+
+            peCreateService.createChopboxAnchor(containerShape);
+
+            link(containerShape, relation);
+
+        } else {
+            containerShape = context.getTargetContainer();
+            ContainerShape childcontainershape = peCreateService.createContainerShape(
+                    containerShape, true);
+            Polygon polygon = gaService.createPolygon(childcontainershape, VERTICES_POSITION);
+
+            polygon.setStyle(StyleUtil.getStyleForEClass(getDiagram()));
+            polygon.setBackground(manageColor(RELATION_BACKGROUND));
+            Graphiti.getGaService().setLocation(childcontainershape.getGraphicsAlgorithm(),
+                    context.getX(), context.getY(), false);
+
+            addToDiagram(relation, context);
+
+            peCreateService.createChopboxAnchor(childcontainershape);
+
+            link(childcontainershape, relation);
+
+        }
+
+        return containerShape;
     }
 
     /**
      * {@inheritDoc}
      */
     public boolean canAdd(final IAddContext context) {
-        // TODO Auto-generated method stub
+        
         if (context.getNewObject() instanceof Relation) {
-            
+
             if (context.getTargetContainer() instanceof ContainerShape
                     || context.getTargetContainer() instanceof Diagram) {
                 return true;
@@ -172,34 +120,33 @@ public class AddRelationFeature extends AbstractAddShapeFeature {
         return false;
     }
 
-    
     /**
      * @param newRelation
      * @param context
-     * Adds the new RELATION formed to its container ENTITY
+     *            Adds the new RELATION formed to its container ENTITY
      */
-    private void addToDiagram(final Relation newRelation , final IAddContext context) {
+    private void addToDiagram(final Relation newRelation, final IAddContext context) {
         List<EObject> contents = getDiagram().eResource().getContents();
         Entity topEntity = null;
         if (context.getTargetContainer() instanceof Diagram) {
-        for (EObject obj : contents) {
-            if (obj instanceof Entity) {
-                topEntity = (Entity) obj;
-                 break;
+            for (EObject obj : contents) {
+                if (obj instanceof Entity) {
+                    topEntity = (Entity) obj;
+                    break;
                 }
-            }       
+            }
         } else {
-                    Object ob = getBusinessObjectForPictogramElement(context.getTargetContainer());
-                    if (ob instanceof Entity)  {
-                        topEntity = (Entity) ob;
-                      }
-               
-                    }         
-        
+            Object ob = getBusinessObjectForPictogramElement(context.getTargetContainer());
+            if (ob instanceof Entity) {
+                topEntity = (Entity) ob;
+            }
+
+        }
+
         if (topEntity == null) {
-                topEntity = TopParentEntity.createParentEntity(getDiagram());
-              }
-       
+            topEntity = DomainUtility.createParentEntity(getDiagram());
+        }
+
         topEntity.getChildRelations().add(newRelation);
     }
 

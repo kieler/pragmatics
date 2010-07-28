@@ -25,22 +25,23 @@ import de.cau.cs.kieler.kaom.graphiti.diagram.ImageProvider;
 
 /**
  * 
- * @author atr
- * Creates a relation object and passes it to the AddRelationFeature
+ * @author atr Creates a relation object and passes it to the AddRelationFeature
  */
 public class CreateRelationFeature extends AbstractCreateFeature {
 
     /**
-    
-     * @param fp .
-     * @param name .
-     * @param description .
-     * Constructor .
+     * 
+     * @param fp
+     *            .
+     * @param name
+     *            .
+     * @param description
+     *            . Constructor .
      */
-    public CreateRelationFeature(final IFeatureProvider fp, final String name, 
+    public CreateRelationFeature(final IFeatureProvider fp, final String name,
             final String description) {
         super(fp, name, description);
-    
+
     }
 
     /**
@@ -48,42 +49,33 @@ public class CreateRelationFeature extends AbstractCreateFeature {
      * {@inheritDoc}
      */
     public boolean canCreate(final ICreateContext context) {
-      
-            if (context.getTargetContainer() instanceof ContainerShape 
-                    || context.getTargetContainer() instanceof Diagram) {
-                
-                return true;
-    }
-        
+
+        if (context.getTargetContainer() instanceof ContainerShape
+                || context.getTargetContainer() instanceof Diagram) {
+
+            return true;
+        }
+
         return false;
     }
-    
 
     /**
      * 
      * {@inheritDoc}
      */
     public Object[] create(final ICreateContext context) {
-       
+
         KaomFactory kaomFactory = KaomFactory.eINSTANCE;
-        
         Relation relation = kaomFactory.createRelation();
-        // Add model element to resource.
-        // We add the model element to the resource of the diagram for
-        // simplicity's sake. Normally, a customer would use its own
-        // model persistence layer for storing the business model separately.
-        //  getDiagram().eResource().getContents().add(relation);
-        // newEntity.setName(newClassName);
- 
-        // do the add
+
         addGraphicalRepresentation(context, relation);
-                       
+
         return new Object[] { relation };
     }
-    
+
     @Override
     public String getCreateImageId() {
         return ImageProvider.IMAGE_RELATION;
-}
+    }
 
 }

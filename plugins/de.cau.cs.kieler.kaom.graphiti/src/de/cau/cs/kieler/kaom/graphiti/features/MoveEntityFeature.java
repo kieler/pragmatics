@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kaom.graphiti.features;
 
-
 import java.util.Collection;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IMoveShapeContext;
@@ -26,40 +25,38 @@ import org.eclipse.graphiti.services.Graphiti;
 
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Relation;
-import de.cau.cs.kieler.kaom.graphiti.util.TopParentEntity;
+import de.cau.cs.kieler.kaom.graphiti.util.DomainUtility;
 
 /**
  * 
- * @author atr
- * Class used to move the entity and adjust the XML code accordingly
+ * @author atr Class used to move the entity and adjust the XML code accordingly
  */
 public class MoveEntityFeature extends DefaultMoveShapeFeature {
 
     /**
      * 
      * @param fp
-     * Constructor
+     *            Constructor
      */
     public MoveEntityFeature(final IFeatureProvider fp) {
         super(fp);
-        // TODO Auto-generated constructor stub
     }
 
     @Override
     public boolean canMoveShape(final IMoveShapeContext context) {
         boolean canMove = context.getSourceContainer() != null;
-        if (canMove 
+        if (canMove
                 && !(getBusinessObjectForPictogramElement(context.getTargetContainer()) 
-                    instanceof Relation)) {
+                        instanceof Relation)) {
             canMove = true;
+        }
+        return canMove;
     }
-       return canMove;
-    }
-    
+
     @Override
     protected void internalMove(final IMoveShapeContext context) {
         if (!getUserDecision()) {
-                return;
+            return;
         }
         Shape shapeToMove = context.getShape();
         ContainerShape oldContainerShape = context.getSourceContainer();
@@ -69,55 +66,48 @@ public class MoveEntityFeature extends DefaultMoveShapeFeature {
         int y = context.getY();
 
         if (oldContainerShape != newContainerShape) {
-               
+
             if (context.getSourceContainer() instanceof Diagram) {
-                oldParentEntity = TopParentEntity.getParentEntity();   
+                oldParentEntity = DomainUtility.getParentEntity();
             } else {
-               oldParentEntity = 
-                    (Entity) getBusinessObjectForPictogramElement(oldContainerShape);
-            } 
-            
+                oldParentEntity = (Entity) getBusinessObjectForPictogramElement(oldContainerShape);
+            }
+
             if (context.getTargetContainer() instanceof Diagram) {
-                  newParentEntity = TopParentEntity.getParentEntity();
-               } else {
-                  newParentEntity = 
-                    (Entity) getBusinessObjectForPictogramElement(newContainerShape);
-              }
-                
-                Entity en = (Entity) getBusinessObjectForPictogramElement(shapeToMove);           
-              
-                // remember selection, because it is lost when temporarily removing the shapes.
-                PictogramElement[] currentSelection = getDiagramEditor().getSelectedPictogramElements();
-                // the following is a workaround due to an MMR bug
-                if (oldContainerShape != null) {
-                        Collection<Shape> children = oldContainerShape.getChildren();
-                        if (children != null) {
-                             children.remove(shapeToMove);
-                             if (oldParentEntity != null) {
-                             oldParentEntity.getChildEntities().remove(en);
-                             }
-                        }
-                }
+                newParentEntity = DomainUtility.getParentEntity();
+            } else {
+                newParentEntity = (Entity) getBusinessObjectForPictogramElement(newContainerShape);
+            }
 
-                shapeToMove.setContainer(newContainerShape);
-                if (newParentEntity != null) {
+            Entity en = (Entity) getBusinessObjectForPictogramElement(shapeToMove);
+
+            PictogramElement[] currentSelection = getDiagramEditor().getSelectedPictogramElements();
+            if (oldContainerShape != null) {
+                Collection<Shape> children = oldContainerShape.getChildren();
+                if (children != null) {
+                    children.remove(shapeToMove);
+                    if (oldParentEntity != null) {
+                        oldParentEntity.getChildEntities().remove(en);
+                    }
+                }
+            }
+
+            shapeToMove.setContainer(newContainerShape);
+            if (newParentEntity != null) {
                 newParentEntity.getChildEntities().add(en);
-                }
-                if (shapeToMove.getGraphicsAlgorithm() != null) {
-                        Graphiti.getGaService().setLocation(
-                                shapeToMove.getGraphicsAlgorithm(), x, y, avoidNegativeCoordinates());
-                }
-                // restore selection
-                getDiagramEditor().setPictogramElementsForSelection(currentSelection);
+            }
+            if (shapeToMove.getGraphicsAlgorithm() != null) {
+                Graphiti.getGaService().setLocation(shapeToMove.getGraphicsAlgorithm(), x, y,
+                        avoidNegativeCoordinates());
+            }
+            // restore selection
+            getDiagramEditor().setPictogramElementsForSelection(currentSelection);
         } else { // move within the same container
-                if (shapeToMove.getGraphicsAlgorithm() != null) {
-                        Graphiti.getGaService().setLocation(
-                                shapeToMove.getGraphicsAlgorithm(), x, y, avoidNegativeCoordinates());
-                }
+            if (shapeToMove.getGraphicsAlgorithm() != null) {
+                Graphiti.getGaService().setLocation(shapeToMove.getGraphicsAlgorithm(), x, y,
+                        avoidNegativeCoordinates());
+            }
         }
-}
+    }
 
-
-    
-    
 }

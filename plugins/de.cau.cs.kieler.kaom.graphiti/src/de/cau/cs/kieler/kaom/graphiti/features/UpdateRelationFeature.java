@@ -18,21 +18,21 @@ import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.AbstractUpdateFeature;
 
-import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Relation;
 
 /**
  * @author atr
- *
+ * 
  */
 public class UpdateRelationFeature extends AbstractUpdateFeature {
 
     /**
      * @param fp
+     *            Constructor.
      */
     public UpdateRelationFeature(final IFeatureProvider fp) {
         super(fp);
-       }
+    }
 
     /**
      * {@inheritDoc}
@@ -46,7 +46,6 @@ public class UpdateRelationFeature extends AbstractUpdateFeature {
      * {@inheritDoc}
      */
     public IReason updateNeeded(final IUpdateContext context) {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -54,7 +53,6 @@ public class UpdateRelationFeature extends AbstractUpdateFeature {
      * {@inheritDoc}
      */
     public boolean update(final IUpdateContext context) {
-        // TODO Auto-generated method stub
         return true;
     }
 

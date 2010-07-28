@@ -23,6 +23,9 @@ import org.eclipse.graphiti.services.Graphiti;
  */
 public class PropertyUtil {
    
+    /*
+     * The 
+     */
     public static final String SHAPE_KEY = "shape-id";
  
     public static final String SHAPE_VALUE_E_CLASS = "e-class";

@@ -61,7 +61,7 @@ public class CreateEntityFeature extends AbstractCreateFeature {
         // create EClass
         Entity newEntity = KaomFactory.eINSTANCE.createEntity();
            addGraphicalRepresentation(context, newEntity);
-        getFeatureProvider().getDirectEditingInfo().setActive(true);
+      getFeatureProvider().getDirectEditingInfo().setActive(true);
         
         return new Object[] { newEntity };
     }

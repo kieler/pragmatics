@@ -22,26 +22,23 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
 
 /**
  * 
- * @author atr
- * Class used to resize the Entity
+ * @author atr Class used to resize the Entity
  */
 public class ResizeEntityFeature extends DefaultResizeShapeFeature {
 
     /**
      * 
      * @param fp
-     * Constructor
+     *            Constructor.
      */
     public ResizeEntityFeature(final IFeatureProvider fp) {
         super(fp);
-        // TODO Auto-generated constructor stub
     }
-    
+
     @Override
     public boolean canResizeShape(final IResizeShapeContext context) {
         boolean canResize = super.canResizeShape(context);
-      //  boolean correctResize=PropertyUtil.isEClassShape(context.getPictogramElement());
-        if (canResize) {
+       if (canResize) {
             Shape shape = context.getShape();
             Object obj = getBusinessObjectForPictogramElement(shape);
             if (obj instanceof Entity) {
@@ -51,11 +48,8 @@ public class ResizeEntityFeature extends DefaultResizeShapeFeature {
                 }
             }
         }
-        
+
         return canResize;
     }
 
-  
-    
-    
 }

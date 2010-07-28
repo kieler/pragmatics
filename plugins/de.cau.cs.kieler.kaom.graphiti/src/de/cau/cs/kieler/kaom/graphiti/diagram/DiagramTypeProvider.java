@@ -13,31 +13,27 @@
  */
 package de.cau.cs.kieler.kaom.graphiti.diagram;
 
-
 import org.eclipse.graphiti.dt.AbstractDiagramTypeProvider;
 import org.eclipse.graphiti.tb.IToolBehaviorProvider;
+
 //import de.cau.cs.kieler.kaom.Entity;
 
 /**
-  * @author atr
-  * Class DiagramTypeProvider used to initialize the diagram editor.
+ * @author atr Class DiagramTypeProvider used to initialize the diagram editor.
  */
 public class DiagramTypeProvider extends AbstractDiagramTypeProvider {
 
-    private  IToolBehaviorProvider[] toolBehaviorProviders;
-            
-  
+    private IToolBehaviorProvider[] toolBehaviorProviders;
+
     /**
-     * Constructor to initialize the diagram editor.
-     * Initialize the feature provider
+     * Constructor to initialize the diagram editor. Initialize the feature provider
      */
     public DiagramTypeProvider() {
         super();
         setFeatureProvider(new FeatureProvider(this));
-      
-     }
-    
-          
+
+    }
+
     @Override
     public boolean isAutoUpdateAtRuntime() {
         return true;
@@ -47,18 +43,14 @@ public class DiagramTypeProvider extends AbstractDiagramTypeProvider {
     public boolean isAutoUpdateAtStartup() {
         return true;
     }
-    
-    
+
     @Override
     public IToolBehaviorProvider[] getAvailableToolBehaviorProviders() {
         if (toolBehaviorProviders == null) {
-            toolBehaviorProviders = new IToolBehaviorProvider[] { new ToolBehaviourProvider(
-                    this) };
+            toolBehaviorProviders = new IToolBehaviorProvider[] { new ToolBehaviourProvider(this) };
         }
         return toolBehaviorProviders;
 
     }
-    
-            
 
 }

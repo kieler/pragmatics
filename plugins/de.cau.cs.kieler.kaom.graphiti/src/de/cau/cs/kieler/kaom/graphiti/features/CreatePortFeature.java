@@ -25,23 +25,26 @@ import de.cau.cs.kieler.kaom.graphiti.diagram.ImageProvider;
 
 /**
  * 
- * @author atr
- * Creates a port object and passes it to the AddPortFeature
+ * @author atr Creates a port object and passes it to the AddPortFeature
  */
 public class CreatePortFeature extends AbstractCreateFeature {
 
     private static final int BOUNDARY_DISTANCE = 10;
-    /**
 
-     * @param fp .
-     * @param name .
-     * @param description .
-     
-     *  Constructor.
+    /**
+     * 
+     * @param fp
+     *            .
+     * @param name
+     *            .
+     * @param description
+     *            .
+     * 
+     *            Constructor.
      */
-    public CreatePortFeature(final IFeatureProvider fp , final String name, final String description) {
+    public CreatePortFeature(final IFeatureProvider fp, final String name, final String description) {
         super(fp, name, description);
-     
+
     }
 
     /**
@@ -49,20 +52,21 @@ public class CreatePortFeature extends AbstractCreateFeature {
      * {@inheritDoc}
      */
     public boolean canCreate(final ICreateContext context) {
-        // TODO Auto-generated method stub
-       if (context.getTargetContainer() instanceof ContainerShape) {
-           ContainerShape containerShape = context.getTargetContainer();
-           if (getBusinessObjectForPictogramElement(containerShape) instanceof Entity) {
-               if (Math.abs(context.getX() 
-                       - containerShape.getGraphicsAlgorithm().getWidth()) < BOUNDARY_DISTANCE 
-                   || Math.abs(context.getY() - containerShape.getGraphicsAlgorithm().getHeight()) 
-                   < BOUNDARY_DISTANCE || context.getX() < BOUNDARY_DISTANCE) {
-                              
-               return true;
-               }
+
+        if (context.getTargetContainer() instanceof ContainerShape) {
+            ContainerShape containerShape = context.getTargetContainer();
+            if (getBusinessObjectForPictogramElement(containerShape) instanceof Entity) {
+                if (Math.abs(context.getX() - containerShape.getGraphicsAlgorithm().getWidth())
+                        < BOUNDARY_DISTANCE
+                        || Math.abs(context.getY()
+                                - containerShape.getGraphicsAlgorithm().getHeight()) < BOUNDARY_DISTANCE
+                        || context.getX() < BOUNDARY_DISTANCE) {
+
+                    return true;
+                }
             }
-       }
-           return false;
+        }
+        return false;
     }
 
     /**
@@ -70,26 +74,17 @@ public class CreatePortFeature extends AbstractCreateFeature {
      * {@inheritDoc}
      */
     public Object[] create(final ICreateContext context) {
-        // TODO Auto-generated method stub
+
         Port port = KaomFactory.eINSTANCE.createPort();
-        // Add model element to resource.
-        // We add the model element to the resource of the diagram for
-        // simplicity's sake. Normally, a customer would use its own
-        // model persistence layer for storing the business model separately.
-        //getDiagram().eResource().getContents().add(port);
-       // newEntity.setName(newClassName);
- 
-        // do the add
+
         addGraphicalRepresentation(context, port);
- 
-     //   getFeatureProvider().getDirectEditingInfo().setActive(true);     
-        
+
         return new Object[] { port };
     }
-    
+
     @Override
     public String getCreateImageId() {
         return ImageProvider.IMAGE_PORT;
-}
+    }
 
 }
