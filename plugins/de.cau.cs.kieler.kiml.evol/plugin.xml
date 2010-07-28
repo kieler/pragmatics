@@ -65,6 +65,12 @@
       </data>
       <data
             distribution="GAUSSIAN"
+            lowerBound="1"
+            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.fixedIterations"
+            upperBound="20000">
+      </data>
+      <data
+            distribution="GAUSSIAN"
             lowerBound="0"
             name="Force Scaling Factor"
             option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.forceScalingFactor"
@@ -149,6 +155,12 @@
       </data>
       <data
             distribution="GAUSSIAN"
+            lowerBound="1"
+            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.minGraphSize"
+            upperBound="10000">
+      </data>
+      <data
+            distribution="GAUSSIAN"
             lowerBound="0"
             name="Repulsive Forces Strength"
             option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.repForcesStrength"
@@ -185,6 +197,18 @@
             distribution="UNIFORM"
             name="Use Cool Temperature"
             option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.coolTemperature">            
+      </data>
+      <data
+            distribution="GAUSSIAN"
+            lowerBound="0"
+            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.randomTries"
+            upperBound="20000">
+      </data>
+      <data
+            distribution="GAUSSIAN"
+            lowerBound="1"
+            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.frGridQuotient"
+            upperBound="20000">
       </data>
    </extension>
    <extension
