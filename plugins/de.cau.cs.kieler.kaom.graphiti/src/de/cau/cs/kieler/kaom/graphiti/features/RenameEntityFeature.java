@@ -22,7 +22,7 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
 /**
  * 
- * @author atr Class used to rename the entity
+ * @author atr Class used to rename the entity.
  */
 public class RenameEntityFeature extends AbstractCustomFeature {
 
@@ -35,16 +35,28 @@ public class RenameEntityFeature extends AbstractCustomFeature {
         super(fp);
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return "Rename Entity";
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public String getDescription() {
         return "Change the name of the Entity";
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public boolean canExecute(final ICustomContext context) {
         boolean ret = false;

@@ -78,6 +78,7 @@ public class LayoutEntityFeature extends AbstractLayoutFeature {
         GraphicsAlgorithm containerGa = containerShape.getGraphicsAlgorithm();
         IGaService gaService = Graphiti.getGaService();
 
+        
         if (containerGa.getHeight() < MIN_HEIGHT) {
             containerGa.setHeight(MIN_HEIGHT);
             changed = true;
@@ -88,16 +89,22 @@ public class LayoutEntityFeature extends AbstractLayoutFeature {
             changed = true;
         }
 
+        //Container width initially of the invisible rectangle now
+        //adjusted to the width of the normal inner rectangle
+      
         int containerWidth = containerGa.getWidth() - 2 * AddPortFeature.INVISIBLE_RECTANGLE_WIDTH;
         if (containerGa instanceof Rectangle) {
 
             Rectangle rectangle = (Rectangle) containerGa;
+         
+            //normal rectangle position adjusted
             gaService.setLocationAndSize(rectangle.getGraphicsAlgorithmChildren().get(0),
                     AddPortFeature.INVISIBLE_RECTANGLE_WIDTH, 0, containerWidth,
                     rectangle.getHeight() - AddPortFeature.INVISIBLE_RECTANGLE_WIDTH);
             changed = true;
         }
 
+        //Position of each child shape of the rectangle adjusted
         Iterator iter = containerShape.getChildren().iterator();
         while (iter.hasNext()) {
             Shape shape = (Shape) iter.next();
@@ -123,8 +130,7 @@ public class LayoutEntityFeature extends AbstractLayoutFeature {
                 } else if (ga instanceof Text) {
                     Text text = (Text) ga;
                     gaService.setLocationAndSize(ga, AddPortFeature.INVISIBLE_RECTANGLE_WIDTH,
-                            text.getY(), containerWidth, text.getHeight()); // ,
-                                                                            // avoidNegativeCoordinates)
+                            text.getY(), containerWidth, text.getHeight()); 
                     changed = true;
                 }
 

@@ -16,7 +16,6 @@ package de.cau.cs.kieler.kaom.graphiti.diagram;
 import org.eclipse.graphiti.dt.AbstractDiagramTypeProvider;
 import org.eclipse.graphiti.tb.IToolBehaviorProvider;
 
-//import de.cau.cs.kieler.kaom.Entity;
 
 /**
  * @author atr Class DiagramTypeProvider used to initialize the diagram editor.
@@ -34,16 +33,27 @@ public class DiagramTypeProvider extends AbstractDiagramTypeProvider {
 
     }
 
+    /**
+     * {@inheritDoc} Used to turn autoUpdate ON at the time of Runtime.
+     */
     @Override
     public boolean isAutoUpdateAtRuntime() {
         return true;
     }
 
+    /**
+     * 
+     * {@inheritDoc} Used to turn autoUpdate ON at the time of StartUp.
+     */
     @Override
     public boolean isAutoUpdateAtStartup() {
         return true;
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public IToolBehaviorProvider[] getAvailableToolBehaviorProviders() {
         if (toolBehaviorProviders == null) {

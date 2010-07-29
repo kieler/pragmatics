@@ -46,12 +46,6 @@ import org.eclipse.graphiti.services.IPeCreateService;
  */
 public class AddEntityFeature extends AbstractAddShapeFeature {
 
-    // private static final IColorConstant Entity_Text_Foreground=new ColorConstant(100,100,100);
-    // private static final IColorConstant Entity_Foreground = new ColorConstant(40,55,180);
-    // private static final IColorConstant Entity_Background= new ColorConstant(255,255,150);
-
-    // public static boolean topEntityFlag;
-
     private static final int MIN_WIDTH = 100;
     private static final int MIN_HEIGHT = 50;
     private static final int RECTANGLE_CURVE = 5;
@@ -77,14 +71,8 @@ public class AddEntityFeature extends AbstractAddShapeFeature {
         IPeCreateService peCreateService = Graphiti.getPeCreateService();
 
         addToDiagram(entity, context);
-        /*
-         * if (context.getTargetContainer() instanceof Diagram) { targetdiagram = (Diagram)
-         * context.getTargetContainer(); containerShape =
-         * peCreateService.createContainerShape(targetdiagram, true);
-         * PropertyUtil.setEClassShape(containerShape);
-         * 
-         * } else
-         */{
+
+        {
             ContainerShape parentContainerShape = context.getTargetContainer();
             containerShape = peCreateService.createContainerShape(parentContainerShape, true);
             PropertyUtil.setEClassShape(containerShape);
@@ -95,6 +83,7 @@ public class AddEntityFeature extends AbstractAddShapeFeature {
         int height = context.getHeight() <= 0 ? MIN_HEIGHT : context.getHeight();
         IGaService gaService = Graphiti.getGaService();
         {
+            // InvisibleRectangle created so that port can be placed on the boundary edges
             Rectangle invisibleRectangle = gaService.createInvisibleRectangle(containerShape);
 
             gaService.setLocationAndSize(invisibleRectangle, context.getX(), context.getY(), width
@@ -102,6 +91,7 @@ public class AddEntityFeature extends AbstractAddShapeFeature {
                     + AddPortFeature.INVISIBLE_RECTANGLE_WIDTH);
 
             {
+                // Rounded rectangle added to invisible rectangle
                 RoundedRectangle roundedRectangle = gaService.createRoundedRectangle(
                         invisibleRectangle, RECTANGLE_CURVE, RECTANGLE_CURVE);
                 gaService.setLocationAndSize(roundedRectangle, BOUNDARY_DISTANCE, 0, width, height);

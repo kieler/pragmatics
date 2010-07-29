@@ -29,12 +29,12 @@ import de.cau.cs.kieler.kaom.Entity;
 
 /**
  * @author atr
- * 
+ * Class used to move the Port
  */
 public class MoveAnchorFeature extends DefaultMoveAnchorFeature {
 
     private static final int BOUNDARY_DISTANCE = 10;
-
+    private static final int ADJUSTMENT_FACTOR = 10;
     /**
      * @param fp
      *                  Constructor.
@@ -44,6 +44,10 @@ public class MoveAnchorFeature extends DefaultMoveAnchorFeature {
 
     }
 
+   /**
+    * 
+    * {@inheritDoc}
+    */
     @Override
     public boolean canMoveAnchor(final IMoveAnchorContext context) {
 
@@ -53,10 +57,10 @@ public class MoveAnchorFeature extends DefaultMoveAnchorFeature {
             if (getBusinessObjectForPictogramElement(containerShape) instanceof Entity) {
                
                 if (Math.abs(context.getX() - containerShape.getGraphicsAlgorithm()
-                        .getWidth()) < (BOUNDARY_DISTANCE + 10)
+                        .getWidth()) < (BOUNDARY_DISTANCE + ADJUSTMENT_FACTOR)
                         || Math.abs(context.getY()
                          - containerShape.getGraphicsAlgorithm().getHeight()) 
-                         < (BOUNDARY_DISTANCE + 10)
+                         < (BOUNDARY_DISTANCE + ADJUSTMENT_FACTOR)
                         || context.getX() < (BOUNDARY_DISTANCE)) {
                     return true;
                 }
@@ -66,6 +70,10 @@ public class MoveAnchorFeature extends DefaultMoveAnchorFeature {
 
     }
 
+    /**
+     * Used to move the Port.
+     * {@inheritDoc}
+     */
     @Override
     protected void moveAnchor(final Anchor anchor, final int posX, final int posY) {
         int x = (posX < 0) ? 0 : posX;
@@ -95,15 +103,21 @@ public class MoveAnchorFeature extends DefaultMoveAnchorFeature {
             int height = sizeOfGraphicsAlgorithm.getHeight();
 
             float widthPercent, heightPercent;
+            
+            //percentage set according to the X and Y position of the Port
+            //Either the width or the height percent has to be 1 or 0 
+            
             if (posX < BOUNDARY_DISTANCE) {
                 widthPercent = (float) 0;
-            } else if (Math.abs(posX - (float) width) < BOUNDARY_DISTANCE + 10) {
+            } else if (Math.abs(posX - (float) width) < BOUNDARY_DISTANCE
+                    + ADJUSTMENT_FACTOR) {
                 widthPercent = (float) 1;
             } else {
                 widthPercent = ((float) posX) / width;
             }
 
-            if (Math.abs(posY - (float) height) < BOUNDARY_DISTANCE + 10) {
+            if (Math.abs(posY - (float) height) < BOUNDARY_DISTANCE
+                    + ADJUSTMENT_FACTOR) {
                 heightPercent = (float) 1;
             } else {
                 heightPercent = ((float) posY) / height;

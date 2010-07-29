@@ -13,7 +13,9 @@
  */
 
 /**
- * Package contains the utils required by the classes. 
+ * Package contains the features which are added to the featureProvider.
+ * Each feature generally extends an abstract or default feature.
+ * Each feature class has a method like canMove,canCreate which checks if the operation is posible
  * like Style,colour,toplevel entity 
  */
 package de.cau.cs.kieler.kaom.graphiti.features;

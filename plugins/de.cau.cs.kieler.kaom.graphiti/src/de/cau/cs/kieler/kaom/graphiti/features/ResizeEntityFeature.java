@@ -35,6 +35,10 @@ public class ResizeEntityFeature extends DefaultResizeShapeFeature {
         super(fp);
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public boolean canResizeShape(final IResizeShapeContext context) {
         boolean canResize = super.canResizeShape(context);

@@ -48,7 +48,7 @@ public class AddPortFeature extends AbstractAddShapeFeature {
     /**
      * 
      * @param fp
-     *            Constructor
+     *            Constructor.
      */
     public AddPortFeature(final IFeatureProvider fp) {
         super(fp);
@@ -103,7 +103,6 @@ public class AddPortFeature extends AbstractAddShapeFeature {
 
                 if (ga instanceof RoundedRectangle) {
                     boxAnchor.setReferencedGraphicsAlgorithm((RoundedRectangle) ga);
-                    // System.out.println("Hello I cam here!!");
                 }
             }
         }
@@ -132,10 +131,12 @@ public class AddPortFeature extends AbstractAddShapeFeature {
                 ContainerShape containerShape = context.getTargetContainer();
 
                 if (getBusinessObjectForPictogramElement(containerShape) instanceof Entity) {
-                    if (Math.abs(context.getX() - containerShape.getGraphicsAlgorithm().getWidth()) 
-                            < BOUNDARY_DISTANCE || Math.abs(context.getY()
+                    if (Math.abs(context.getX() - containerShape.getGraphicsAlgorithm().getWidth())
+                            < BOUNDARY_DISTANCE
+                            || Math.abs(context.getY()
                                     - containerShape.getGraphicsAlgorithm().getHeight()) 
-                                    < BOUNDARY_DISTANCE || context.getX() < BOUNDARY_DISTANCE) {
+                                    < BOUNDARY_DISTANCE
+                            || context.getX() < BOUNDARY_DISTANCE) {
                         return true;
                     }
                 }

@@ -18,7 +18,6 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.graphiti.examples.common.SampleUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
@@ -34,7 +33,7 @@ import de.cau.cs.kieler.kaom.graphiti.diagram.ImageProvider;
 
 /**
  * 
- * @author atr Creates a link object and passes this object to AddLinkFeature class
+ * @author atr Creates a link object and passes this object to AddLinkFeature class.
  */
 public class CreateLinkFeature extends AbstractCreateConnectionFeature {
 
@@ -42,29 +41,18 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
      * 
      * @param fp
      * 
-     *            Constructor
+     *            Constructor.
      */
-    public CreateLinkFeature(final IFeatureProvider fp)// , String name, String description) {
-    {
-        super(fp, "Link", "Create Link"); // name, description);
+    public CreateLinkFeature(final IFeatureProvider fp) {
+        super(fp, "Link", "Create Link");
     }
 
     /**
      * 
-     * {@inheritDoc}
+     * {@inheritDoc} Checks if the source and target elements are Linkable.
      */
     public boolean canCreate(final ICreateConnectionContext context) {
-        /*
-         * Entity target=null,source=null;
-         * if(getBusinessObjectForPictogramElement(context.getSourcePictogramElement()) instanceof
-         * Entity) { if(getBusinessObjectForPictogramElement( context.getTargetPictogramElement())
-         * instanceof Entity) { target
-         * =(Entity)getBusinessObjectForPictogramElement(context.getTargetPictogramElement());
-         * source
-         * =(Entity)getBusinessObjectForPictogramElement(context.getSourcePictogramElement()); } }
-         * else { target=getEntity(context.getSourceAnchor());
-         * source=getEntity(context.getTargetAnchor()); }
-         */
+
         Object source = null, target = null;
         source = getObject(context.getSourceAnchor());
         target = getObject(context.getTargetAnchor());
@@ -79,6 +67,7 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
 
     /**
      * {@inheritDoc}
+     * 
      */
     public boolean canStartConnection(final ICreateConnectionContext context) {
 
@@ -92,23 +81,11 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc} Creates a new connection object .
      */
     public Connection create(final ICreateConnectionContext context) {
 
         Connection newConnection = null;
-
-        /*
-         * Entity target=null,source=null;
-         * if(getBusinessObjectForPictogramElement(context.getSourcePictogramElement()) instanceof
-         * Entity) { if(getBusinessObjectForPictogramElement( context.getTargetPictogramElement())
-         * instanceof Entity) { target
-         * =(Entity)getBusinessObjectForPictogramElement(context.getTargetPictogramElement());
-         * source
-         * =(Entity)getBusinessObjectForPictogramElement(context.getSourcePictogramElement()); } }
-         * else { target=getEntity(context.getSourceAnchor());
-         * source=getEntity(context.getTargetAnchor()); }
-         */
 
         Object source = null, target = null;
 
@@ -151,7 +128,7 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
 
     /**
      * 
-     * Creates a EReference between two EClasses.
+     * Creates a Link between two Linkable Objects.
      */
 
     private Link createLink(final Object source, final Object target) {
@@ -159,14 +136,6 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
         KaomFactory kaomFactory = KaomFactory.eINSTANCE;
         Link link = kaomFactory.createLink();
 
-      
-       // String newClassName = SampleUtil.askString("Name of the link", "Enter link name", "");
-     //   if (newClassName != null) {
-     //       if (newClassName.trim().length() != 0) {
-
-     //           link.setName(newClassName);
-    //        }
-    //    }
         if (source instanceof Linkable) {
 
             Linkable linkableSource = (Linkable) source;
@@ -201,7 +170,6 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
      */
 
     private void addToDiagram(final Link newLink, final Object source, final Object target) {
-        // boolean flag = false;
         List<EObject> contents = getDiagram().eResource().getContents();
         Entity topEntity = null;
         for (EObject obj : contents) {
@@ -214,6 +182,10 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
 
     }
 
+    /**
+     * Gets the image for the link.
+     * {@inheritDoc}
+     */
     @Override
     public String getCreateImageId() {
         return ImageProvider.IMAGE_LINK;

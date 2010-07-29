@@ -39,7 +39,7 @@ public class DirectEditEntityFeature extends AbstractDirectEditingFeature {
     }
 
     /**
-     * 
+     * Used to select the UI to be shown where editing will take place.
      * {@inheritDoc}
      */
     public int getEditingType() {
@@ -58,7 +58,7 @@ public class DirectEditEntityFeature extends AbstractDirectEditingFeature {
     }
 
     /**
-     * 
+     * Sets the new value written.
      * {@inheritDoc}
      */
     public void setValue(final String value, final IDirectEditingContext context) {
@@ -72,6 +72,10 @@ public class DirectEditEntityFeature extends AbstractDirectEditingFeature {
         updatePictogramElement(((Shape) pe).getContainer());
     }
 
+    /**
+     * Used to keep a check on the new value entered.
+     * {@inheritDoc}
+     */
     @Override
     public String checkValueValid(final String value, final IDirectEditingContext context) {
         if (value.length() < 1) {

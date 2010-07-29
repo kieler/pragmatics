@@ -67,6 +67,7 @@ public class AddRelationFeature extends AbstractAddShapeFeature {
         ContainerShape containerShape;
         IGaService gaService = Graphiti.getGaService();
         if (context.getTargetContainer() instanceof Diagram) {
+        //Target Container is the diagram
             targetDiagram = (Diagram) context.getTargetContainer();
             containerShape = peCreateService.createContainerShape(targetDiagram, true);
 
@@ -84,6 +85,7 @@ public class AddRelationFeature extends AbstractAddShapeFeature {
             link(containerShape, relation);
 
         } else {
+            //Target Container is an Entity
             containerShape = context.getTargetContainer();
             ContainerShape childcontainershape = peCreateService.createContainerShape(
                     containerShape, true);

@@ -38,19 +38,9 @@ public class DomainUtility {
      * creates and returns the parent Entity
      */
     public static Entity createParentEntity(final Diagram diag) {
-        if (diag == null) {
-            System.out.println("This is not possible");
-            }
-        if (parentEntity == null) {
+      if (parentEntity == null) {
         List<EObject> contents = diag.eResource().getContents();
-      /*  for (EObject obj : contents) {
-            if (obj instanceof Entity) {
-                parentEntity = (Entity) obj;
-             //   topEntityFlag = false;
-                break;
-            }
-        }*/
-     //   if(parentEntity==null) {
+     
             parentEntity = KaomFactory.eINSTANCE.createEntity();
             contents.add(parentEntity);
            

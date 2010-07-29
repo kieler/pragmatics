@@ -38,7 +38,7 @@ public class PasteEntityFeature extends AbstractPasteFeature {
     }
 
     /**
-     * 
+     * Gets the element form the clip board and pastes it on the diagram.
      * {@inheritDoc}
      */
     public boolean canPaste(final IPasteContext context) {

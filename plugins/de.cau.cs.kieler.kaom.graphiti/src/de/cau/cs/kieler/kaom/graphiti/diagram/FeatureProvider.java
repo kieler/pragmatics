@@ -45,7 +45,6 @@ import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
-import org.eclipse.graphiti.ui.features.DefaultDeleteFeature;
 import org.eclipse.graphiti.ui.features.DefaultFeatureProvider;
 
 import de.cau.cs.kieler.kaom.Entity;
@@ -84,12 +83,16 @@ public class FeatureProvider extends DefaultFeatureProvider {
     /**
      * 
      * @param dtp
-     *            Constructor
+     *            Constructor.
      */
     public FeatureProvider(final IDiagramTypeProvider dtp) {
         super(dtp);
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public ICreateFeature[] getCreateFeatures() {
 
@@ -98,6 +101,10 @@ public class FeatureProvider extends DefaultFeatureProvider {
                 new CreateRelationFeature(this, "Relation", "Create Relation") };
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public IAddFeature getAddFeature(final IAddContext context) {
         if (context.getNewObject() instanceof Entity) {
@@ -113,6 +120,10 @@ public class FeatureProvider extends DefaultFeatureProvider {
 
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public IUpdateFeature getUpdateFeature(final IUpdateContext context) {
         if (context.getPictogramElement() instanceof ContainerShape) {
@@ -130,22 +141,27 @@ public class FeatureProvider extends DefaultFeatureProvider {
         return super.getUpdateFeature(context);
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public IMoveShapeFeature getMoveShapeFeature(final IMoveShapeContext context) {
         Shape shape = context.getShape();
         Object ob = getBusinessObjectForPictogramElement(shape);
         if (ob instanceof Entity) {
-
             return new MoveEntityFeature(this);
-
         } else if (ob instanceof Relation) {
-
             return new MoveRelationFeature(this);
         }
         return super.getMoveShapeFeature(context);
 
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public IMoveAnchorFeature getMoveAnchorFeature(final IMoveAnchorContext context) {
         if (getBusinessObjectForPictogramElement(context.getAnchor()) instanceof Port) {
@@ -154,6 +170,10 @@ public class FeatureProvider extends DefaultFeatureProvider {
         return super.getMoveAnchorFeature(context);
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public IResizeShapeFeature getResizeShapeFeature(final IResizeShapeContext context) {
         Shape shape = context.getShape();
@@ -165,6 +185,10 @@ public class FeatureProvider extends DefaultFeatureProvider {
 
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public ILayoutFeature getLayoutFeature(final ILayoutContext context) {
         PictogramElement pe = context.getPictogramElement();
@@ -175,61 +199,86 @@ public class FeatureProvider extends DefaultFeatureProvider {
         return super.getLayoutFeature(context);
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public ICustomFeature[] getCustomFeatures(final ICustomContext context) {
         return new ICustomFeature[] { new RenameEntityFeature(this),
                 new ChangeColorEntityFeature(this, true), new ChangeColorEntityFeature(this, false) };
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public IDirectEditingFeature getDirectEditingFeature(final IDirectEditingContext context) {
         PictogramElement pe = context.getPictogramElement();
         Object ob = getBusinessObjectForPictogramElement(pe);
-        System.out.println("I have come hereeeeee atleast !!!!!!!!!!!!!!111111111");
+
         if (ob instanceof Entity) {
-            System.out.println("I have come here 44444444");
             return new DirectEditEntityFeature(this);
         } else if (ob instanceof Link) {
-            System.out.println("I have come here 333333333");
             return new DirectEditLinkFeature(this);
         }
         return super.getDirectEditingFeature(context);
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public ICopyFeature getCopyFeature(final ICopyContext context) {
         return new CopyEntityFeature(this);
 
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public IPasteFeature getPasteFeature(final IPasteContext context) {
         return new PasteEntityFeature(this);
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public ICreateConnectionFeature[] getCreateConnectionFeatures() {
-       
+
         return new ICreateConnectionFeature[] { new CreateLinkFeature(this) }; // ,"Link","Create Link")
                                                                                // };
 
     }
-    
-     @Override 
-     public IFeature[] getDragAndDropFeatures(final IPictogramElementContext context) {
-     if (context.getPictogramElement() instanceof Anchor)  { 
-     return getCreateConnectionFeatures();
-     }
-     return null;    
-     
-     }
-     
-     @Override
-     public IDeleteFeature getDeleteFeature(IDeleteContext context) {
-             IDeleteFeature ret = null;
-             ret = new DeleteFeature(this);
-             return ret;
-     }
-    
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public IFeature[] getDragAndDropFeatures(final IPictogramElementContext context) {
+        if (context.getPictogramElement() instanceof Anchor) {
+            return getCreateConnectionFeatures();
+        }
+        return null;
+
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public IDeleteFeature getDeleteFeature(final IDeleteContext context) {
+        IDeleteFeature ret = null;
+        ret = new DeleteFeature(this);
+        return ret;
+    }
 
 }

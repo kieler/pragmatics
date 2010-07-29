@@ -27,7 +27,7 @@ import de.cau.cs.kieler.kaom.Link;
 
 /**
  * @author atr
- * 
+ * Updates any changes made to a Link
  */
 public class UpdateLinkFeature extends AbstractUpdateFeature {
 
@@ -48,6 +48,7 @@ public class UpdateLinkFeature extends AbstractUpdateFeature {
     }
 
     /**
+     * Checks if the name has been modified and returns a reason accordingly.
      * {@inheritDoc}
      */
     public IReason updateNeeded(final IUpdateContext context) {
@@ -83,6 +84,7 @@ public class UpdateLinkFeature extends AbstractUpdateFeature {
     }
 
     /**
+     * Updates the link.
      * {@inheritDoc}
      */
     public boolean update(final IUpdateContext context) {
@@ -92,6 +94,8 @@ public class UpdateLinkFeature extends AbstractUpdateFeature {
         if (obj instanceof Link) {
             businessName = ((Link) obj).getName();
         }
+        
+        //sets the text to the businessname
         if (pictogramElement instanceof Connection) {
             Connection cs = (Connection) pictogramElement;
             for (ConnectionDecorator cd : cs.getConnectionDecorators()) {

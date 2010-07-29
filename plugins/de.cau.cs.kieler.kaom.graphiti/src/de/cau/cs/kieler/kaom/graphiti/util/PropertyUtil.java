@@ -23,11 +23,14 @@ import org.eclipse.graphiti.services.Graphiti;
  */
 public class PropertyUtil {
    
-    /*
-     * The 
+    /**
+     * Reference to Shape Key.
      */
     public static final String SHAPE_KEY = "shape-id";
  
+    /**
+     * Reference to Shape Value.
+     */
     public static final String SHAPE_VALUE_E_CLASS = "e-class";
  
     /**

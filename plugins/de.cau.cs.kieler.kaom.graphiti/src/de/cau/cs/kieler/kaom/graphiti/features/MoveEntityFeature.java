@@ -42,6 +42,10 @@ public class MoveEntityFeature extends DefaultMoveShapeFeature {
         super(fp);
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public boolean canMoveShape(final IMoveShapeContext context) {
         boolean canMove = context.getSourceContainer() != null;
@@ -53,6 +57,10 @@ public class MoveEntityFeature extends DefaultMoveShapeFeature {
         return canMove;
     }
 
+    /**
+     * Method used to move the entity and also adjust the XML code accordingly.
+     *  {@inheritDoc}
+     */
     @Override
     protected void internalMove(final IMoveShapeContext context) {
         if (!getUserDecision()) {
@@ -67,12 +75,16 @@ public class MoveEntityFeature extends DefaultMoveShapeFeature {
 
         if (oldContainerShape != newContainerShape) {
 
+            // check if the source container is the diagram and get the parent Entity
+            // in which this element is contained
             if (context.getSourceContainer() instanceof Diagram) {
                 oldParentEntity = DomainUtility.getParentEntity();
             } else {
                 oldParentEntity = (Entity) getBusinessObjectForPictogramElement(oldContainerShape);
             }
 
+            // check if the target container is the diagram and get the parent Entity
+            // in which this element is contained
             if (context.getTargetContainer() instanceof Diagram) {
                 newParentEntity = DomainUtility.getParentEntity();
             } else {
@@ -81,6 +93,7 @@ public class MoveEntityFeature extends DefaultMoveShapeFeature {
 
             Entity en = (Entity) getBusinessObjectForPictogramElement(shapeToMove);
 
+            // removes the element from the diagram and the XML code
             PictogramElement[] currentSelection = getDiagramEditor().getSelectedPictogramElements();
             if (oldContainerShape != null) {
                 Collection<Shape> children = oldContainerShape.getChildren();
@@ -92,6 +105,7 @@ public class MoveEntityFeature extends DefaultMoveShapeFeature {
                 }
             }
 
+            // Adds the element to the diagram and the XML code
             shapeToMove.setContainer(newContainerShape);
             if (newParentEntity != null) {
                 newParentEntity.getChildEntities().add(en);

@@ -23,7 +23,7 @@ import de.cau.cs.kieler.kaom.Link;
 
 /**
  * @author atr
- * 
+ * Class used to rename the link.
  */
 public class RenameLinkFeature extends AbstractCustomFeature {
 
@@ -35,16 +35,28 @@ public class RenameLinkFeature extends AbstractCustomFeature {
         super(fp);
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return "Rename Link";
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public String getDescription() {
         return "Change the name of the Link";
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public boolean canExecute(final ICustomContext context) {
         boolean ret = false;

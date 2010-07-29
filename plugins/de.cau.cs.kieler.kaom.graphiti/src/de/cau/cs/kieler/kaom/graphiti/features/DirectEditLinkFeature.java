@@ -25,7 +25,7 @@ import de.cau.cs.kieler.kaom.Link;
 
 /**
  * @author atr
- * 
+ * Class used to enable direct edit of the name of the link
  */
 public class DirectEditLinkFeature extends AbstractDirectEditingFeature {
 
@@ -38,6 +38,7 @@ public class DirectEditLinkFeature extends AbstractDirectEditingFeature {
     }
 
     /**
+     *  Used to select the UI to be shown where editing will take place.
      * {@inheritDoc}
      */
     public int getEditingType() {
@@ -54,6 +55,7 @@ public class DirectEditLinkFeature extends AbstractDirectEditingFeature {
     }
 
     /**
+     * Sets the new value written.
      * {@inheritDoc}
      */
     public void setValue(final String value, final IDirectEditingContext context) {
@@ -66,6 +68,10 @@ public class DirectEditLinkFeature extends AbstractDirectEditingFeature {
         updatePictogramElement(((ConnectionDecorator) pe).getContainer());
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public boolean canDirectEdit(final IDirectEditingContext context) {
         PictogramElement pe = context.getPictogramElement();
@@ -81,6 +87,10 @@ public class DirectEditLinkFeature extends AbstractDirectEditingFeature {
 
     }
     
+    /**
+     * Used to keep a check on the new value entered.
+     * {@inheritDoc}
+     */
     @Override
     public String checkValueValid(final String value, final IDirectEditingContext context) {
         if (value.length() < 1) {

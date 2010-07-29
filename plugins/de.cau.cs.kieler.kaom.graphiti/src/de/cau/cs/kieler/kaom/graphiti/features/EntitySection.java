@@ -33,35 +33,30 @@ import de.cau.cs.kieler.core.annotations.NamedObject;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
 /**
- * @author atr
- * 
+ * @author atr Class used to construct the property view.
  */
 public class EntitySection extends GFPropertySection implements ITabbedPropertyConstants {
 
     private Text nameText;
 
+    // Listener used when focus is lost from the text field
+    // it updates the name of the element selected
     private FocusListener listener = new FocusListener() {
 
         public void focusGained(final FocusEvent e) {
-
         }
 
         public void focusLost(final FocusEvent e) {
-
             PictogramElement pe = getSelectedPictogramElement();
-
             if (pe != null) {
-
                 Object bo = Graphiti.getLinkService()
                         .getBusinessObjectForLinkedPictogramElement(pe);
                 if (bo instanceof NamedObject) {
-
                     DiagramEditor diagramEditor = (DiagramEditor) getDiagramEditor();
                     TransactionalEditingDomain editingDomain = diagramEditor.getEditingDomain();
 
                     KimlUiUtil.runModelChange(new Runnable() {
                         public void run() {
-
                             Object bo = Graphiti.getLinkService()
                                     .getBusinessObjectForLinkedPictogramElement(
                                             getSelectedPictogramElement());
@@ -73,7 +68,6 @@ public class EntitySection extends GFPropertySection implements ITabbedPropertyC
                                 if (bo instanceof NamedObject) {
                                     ((NamedObject) bo).setName(name);
                                 }
-
                             }
                         }
                     }, editingDomain, "Automatic Layout");
@@ -83,6 +77,9 @@ public class EntitySection extends GFPropertySection implements ITabbedPropertyC
         }
     };
 
+    /**
+     * Used to create controls and add them to the property view {@inheritDoc}
+     */
     @Override
     public void createControls(final Composite parent,
             final TabbedPropertySheetPage tabbedPropertySheetPage) {
@@ -97,6 +94,8 @@ public class EntitySection extends GFPropertySection implements ITabbedPropertyC
         data.left = new FormAttachment(0, STANDARD_LABEL_WIDTH);
         data.right = new FormAttachment(100, 0);
         data.top = new FormAttachment(0, VSPACE);
+
+        // Layouts the nameText field and adds the listener
         nameText.setLayoutData(data);
         nameText.addFocusListener(listener);
         CLabel valueLabel = factory.createCLabel(composite, "Name:");
@@ -109,6 +108,10 @@ public class EntitySection extends GFPropertySection implements ITabbedPropertyC
 
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public void refresh() {
 

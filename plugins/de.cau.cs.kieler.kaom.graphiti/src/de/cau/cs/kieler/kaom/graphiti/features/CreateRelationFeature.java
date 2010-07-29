@@ -25,7 +25,7 @@ import de.cau.cs.kieler.kaom.graphiti.diagram.ImageProvider;
 
 /**
  * 
- * @author atr Creates a relation object and passes it to the AddRelationFeature
+ * @author atr Creates a relation object and passes it to the AddRelationFeature.
  */
 public class CreateRelationFeature extends AbstractCreateFeature {
 
@@ -60,8 +60,7 @@ public class CreateRelationFeature extends AbstractCreateFeature {
     }
 
     /**
-     * 
-     * {@inheritDoc}
+     * Creates a relation object. {@inheritDoc}
      */
     public Object[] create(final ICreateContext context) {
 
@@ -73,6 +72,9 @@ public class CreateRelationFeature extends AbstractCreateFeature {
         return new Object[] { relation };
     }
 
+    /**
+     * Gets the image for the Relation. {@inheritDoc}
+     */
     @Override
     public String getCreateImageId() {
         return ImageProvider.IMAGE_RELATION;

@@ -60,6 +60,7 @@ public class UpdateEntityFeature extends AbstractUpdateFeature {
         if (obj instanceof Entity) {
             businessName = ((Entity) obj).getName();
         }
+        //updating the name of the pictogram element
         if (pictogramElement instanceof ContainerShape) {
             ContainerShape cs = (ContainerShape) pictogramElement;
             for (Shape shape : cs.getChildren()) {
@@ -79,6 +80,7 @@ public class UpdateEntityFeature extends AbstractUpdateFeature {
     /**
      * 
      * {@inheritDoc}
+     * Checks if the name has been modified and returns a reason accordingly.
      */
     public IReason updateNeeded(final IUpdateContext context) {
         String pictogramName = null;

@@ -32,7 +32,7 @@ public class CopyEntityFeature extends AbstractCopyFeature {
      */
     public CopyEntityFeature(final IFeatureProvider fp) {
         super(fp);
-        // TODO Auto-generated constructor stub
+        
     }
 
     /**

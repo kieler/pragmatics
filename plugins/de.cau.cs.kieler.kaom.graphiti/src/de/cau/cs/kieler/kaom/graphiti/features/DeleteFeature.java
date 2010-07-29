@@ -23,25 +23,28 @@ import org.eclipse.graphiti.ui.features.DefaultDeleteFeature;
 
 /**
  * @author atr
- *
+ * Class is called to delete any element added in the diagram
  */
-public class DeleteFeature extends DefaultDeleteFeature{
+public class DeleteFeature extends DefaultDeleteFeature {
 
     /**
-     * @param fp
+     * @param fp .
      */
-    public DeleteFeature(IFeatureProvider fp) {
+    public DeleteFeature(final IFeatureProvider fp) {
         super(fp);
     }
     
+    /**
+     * This method is called when the delete button is pressed
+     * It basically removes the element selected both from the diagram and
+     * from the domain model.
+     * {@inheritDoc}
+     */
     @Override
-    public void delete(IDeleteContext context) {
+    public void delete(final IDeleteContext context) {
     PictogramElement pe = context.getPictogramElement();
     Object[] businessObjectsForPictogramElement = getAllBusinessObjectsForPictogramElement(pe);
-    if (businessObjectsForPictogramElement != null && businessObjectsForPictogramElement.length > 0) {
-           
-    }
-
+   
     preDelete(context);
 
     IRemoveContext rc = new RemoveContext(pe);

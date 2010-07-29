@@ -44,18 +44,31 @@ public class ChangeColorEntityFeature extends AbstractCustomFeature {
         this.background = backgrond;
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         String colorType = background ? "&background" : "&foreground";
         return "Change " + colorType + " color";
     }
 
+    
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public String getDescription() {
         String colorType = background ? "background" : "foreground";
         return "Change the " + colorType + " color";
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public boolean canExecute(final ICustomContext context) {
         PictogramElement[] pes = context.getPictogramElements();
@@ -63,12 +76,8 @@ public class ChangeColorEntityFeature extends AbstractCustomFeature {
             return false;
         }
 
-        // return true, if all elements are EClasses
-        // note, that in execute() the selected elements are not even accessed,
-        // so theoretically it would be possible that canExecute() always
-        // returns true. But for usability reasons it is better to check
-        // if the selected elements are EClasses.
-
+        // return true, if all elements are Entities
+        
         for (PictogramElement pe : pes) {
 
             final Object bo = getBusinessObjectForPictogramElement(pe);

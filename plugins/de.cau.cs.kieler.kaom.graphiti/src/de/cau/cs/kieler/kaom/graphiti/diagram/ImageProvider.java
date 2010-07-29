@@ -25,17 +25,35 @@ public class ImageProvider extends AbstractImageProvider {
      * Prefix gives the directory where the image is located.
      */
     protected static final String PREFIX = "de.cau.cs.kieler.kaom.graphiti";
-    // protected static final String PREF = "de.cau.cs.kieler.kaom.edit";
     /**
      * Prefix gives the reference to the image.
      */
     public static final String IMAGE_EREFERENCE = PREFIX + "ereference";
-
+   
+    /**
+     * References to image Entity.
+     */
     public static final String IMAGE_ENTITY = PREFIX + "Entity";
+   
+    /**
+     * References to image Port.
+     */
     public static final String IMAGE_PORT = PREFIX + "Port";
+   
+    /**
+     * References to image Link.
+     */
     public static final String IMAGE_LINK = PREFIX + "Link";
+    
+    /**
+     * References to image Relation.
+     */
     public static final String IMAGE_RELATION = PREFIX + "Relation";
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     protected void addAvailableImages() {
         

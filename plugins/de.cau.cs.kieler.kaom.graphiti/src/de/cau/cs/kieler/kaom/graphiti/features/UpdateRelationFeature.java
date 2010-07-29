@@ -22,7 +22,7 @@ import de.cau.cs.kieler.kaom.Relation;
 
 /**
  * @author atr
- * 
+ * Updates any changes made to a Relation
  */
 public class UpdateRelationFeature extends AbstractUpdateFeature {
 

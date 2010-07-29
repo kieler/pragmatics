@@ -45,6 +45,10 @@ public class MoveRelationFeature extends DefaultMoveShapeFeature {
 
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public boolean canMoveShape(final IMoveShapeContext context) {
         boolean canMove = context.getSourceContainer() != null;
@@ -54,6 +58,10 @@ public class MoveRelationFeature extends DefaultMoveShapeFeature {
         return canMove;
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     protected void internalMove(final IMoveShapeContext context) {
         if (!getUserDecision()) {
@@ -73,7 +81,7 @@ public class MoveRelationFeature extends DefaultMoveShapeFeature {
                         avoidNegativeCoordinates());
             }
         } else {
-
+            // move when source is the diagram and target is a containerShape
             if (context.getSourceContainer() instanceof Diagram
                     && context.getTargetContainer() instanceof ContainerShape) {
 
@@ -89,8 +97,10 @@ public class MoveRelationFeature extends DefaultMoveShapeFeature {
                         oldParentEntity.getChildRelations().remove(relation);
                     }
                 }
+
             } else if (context.getSourceContainer() instanceof ContainerShape
                     && context.getTargetContainer() instanceof Diagram) {
+                // move when target is the diagram and source is a containerShape
 
                 Relation relation = (Relation) getBusinessObjectForPictogramElement(shapeToMove);
                 oldContainerShape = context.getSourceContainer();
@@ -125,6 +135,7 @@ public class MoveRelationFeature extends DefaultMoveShapeFeature {
 
             Relation relation = (Relation) getBusinessObjectForPictogramElement(shapeToMove);
 
+            // removes from the container and the parent Entity
             if (oldContainerShape != null) {
                 Collection<Shape> children = oldContainerShape.getChildren();
                 if (children != null) {
@@ -135,6 +146,7 @@ public class MoveRelationFeature extends DefaultMoveShapeFeature {
                 }
             }
 
+            // Adds to the required container and the parent Entity
             shapeToMove.setContainer(newContainerShape);
             if (newParentEntity != null) {
                 newParentEntity.getChildRelations().add(relation);

@@ -65,6 +65,10 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
 
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     protected boolean isContextMenuApplicable(final IFeature feature) {
         boolean ret = (feature instanceof ICustomFeature);
@@ -72,9 +76,14 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
 
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public GraphicsAlgorithm[] getSelectionArea(final PictogramElement pe) {
-        // TODO comment
+        // This method basically selects the inner pictogram element ie the rounded rectangle
+        // inside the outside invisible rectangle
         IFeatureProvider featureProvider = getFeatureProvider();
         Object obj = featureProvider.getBusinessObjectForPictogramElement(pe);
         if (obj instanceof Entity) {
@@ -87,9 +96,14 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
         return super.getSelectionArea(pe);
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public GraphicsAlgorithm getSelectionGraphicsAlgorithm(final PictogramElement pe) {
-        // TODO comment
+        // This method is used to select the Graphics Algorithm of the above selected inner Pictogram
+        // Element
         IFeatureProvider featureProvider = getFeatureProvider();
         Object obj = featureProvider.getBusinessObjectForPictogramElement(pe);
 
@@ -107,6 +121,10 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
 
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public IContextButtonPadData getContextButtonPadData(final IPictogramElementContext context) {
         IContextButtonPadData data = super.getContextButtonPadData(context);
@@ -142,6 +160,10 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
 
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public IContextMenuEntry[] getContextMenu(final IContext context) {
         ContextMenuEntry subMenu = new ContextMenuEntry(null, context);
@@ -165,6 +187,10 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
         return ret;
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public IPaletteCompartmentEntry[] getPaletteCompartments() {
 
@@ -174,6 +200,7 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
             ret.add(superCompartment);
         }
 
+        // Code used to create stacked palette compartments
         /*
          * PaletteCompartmentEntry compartmentEntry = new PaletteCompartmentEntry("Stacked", null);
          * ret.add(compartmentEntry); StackEntry stackEntry = new StackEntry("EObject", "EObject",
@@ -202,15 +229,17 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
 
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public ICustomFeature getDoubleClickFeature(final IDoubleClickContext context) {
         ICustomFeature customFeature = null;
-        System.out.println("Helllo i have come here");
         if (context.getInnerPictogramElement() instanceof ContainerShape) {
             customFeature = new RenameEntityFeature(getFeatureProvider());
         } else if (context.getInnerGraphicsAlgorithm() instanceof ConnectionDecorator) {
-            System.out.println("I came here actually i cam here");
-            customFeature = new RenameLinkFeature(getFeatureProvider());
+           customFeature = new RenameLinkFeature(getFeatureProvider());
         }
         if (customFeature != null) {
             if (customFeature.canExecute(context)) {
@@ -221,6 +250,10 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
         
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public IRenderingDecorator[] getRenderingDecorators(final PictogramElement pe) {
         IFeatureProvider featureProvider = getFeatureProvider();

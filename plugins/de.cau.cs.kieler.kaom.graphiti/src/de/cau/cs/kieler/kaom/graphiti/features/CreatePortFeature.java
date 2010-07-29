@@ -48,7 +48,8 @@ public class CreatePortFeature extends AbstractCreateFeature {
     }
 
     /**
-     * 
+     * Checks if the port can be created.
+     * Note : Port can be created only on the edges of the entity.
      * {@inheritDoc}
      */
     public boolean canCreate(final ICreateContext context) {
@@ -57,8 +58,7 @@ public class CreatePortFeature extends AbstractCreateFeature {
             ContainerShape containerShape = context.getTargetContainer();
             if (getBusinessObjectForPictogramElement(containerShape) instanceof Entity) {
                 if (Math.abs(context.getX() - containerShape.getGraphicsAlgorithm().getWidth())
-                        < BOUNDARY_DISTANCE
-                        || Math.abs(context.getY()
+                        < BOUNDARY_DISTANCE || Math.abs(context.getY()
                                 - containerShape.getGraphicsAlgorithm().getHeight()) < BOUNDARY_DISTANCE
                         || context.getX() < BOUNDARY_DISTANCE) {
 
@@ -70,7 +70,7 @@ public class CreatePortFeature extends AbstractCreateFeature {
     }
 
     /**
-     * 
+     * Creates a port.
      * {@inheritDoc}
      */
     public Object[] create(final ICreateContext context) {
@@ -82,6 +82,10 @@ public class CreatePortFeature extends AbstractCreateFeature {
         return new Object[] { port };
     }
 
+    /**
+     * Gets the image for the port.
+     * {@inheritDoc}
+     */
     @Override
     public String getCreateImageId() {
         return ImageProvider.IMAGE_PORT;

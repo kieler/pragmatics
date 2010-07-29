@@ -48,7 +48,7 @@ public class AddLinkFeature extends AbstractAddFeature {
      */
     public AddLinkFeature(final IFeatureProvider fp) {
         super(fp);
-        
+
     }
 
     /**
@@ -67,15 +67,15 @@ public class AddLinkFeature extends AbstractAddFeature {
         IGaService gaService = Graphiti.getGaService();
         Polyline polyline = gaService.createPolyline(conn);
         polyline.setStyle(StyleUtil.getStyleForEClass(getDiagram()));
-      
+
         link(conn, elink);
-       
+
         ConnectionDecorator textDecorator = peCreateService.createConnectionDecorator(conn, true,
                 CONNECTION_DECORATOR_LOCATION, true);
         Text text = gaService.createDefaultText(textDecorator);
         text.setStyle(StyleUtil.getStyleForEClassText((getDiagram())));
         gaService.setLocation(text, TEXT_LOCATION, 0);
-     
+
         // add static graphical decorators (composition and navigable)
         ConnectionDecorator cd;
         cd = peCreateService.createConnectionDecorator(conn, false, 1.0, true);
@@ -116,7 +116,6 @@ public class AddLinkFeature extends AbstractAddFeature {
         Polyline polyline = Graphiti.getGaCreateService().createPolyline(gaContainer,
                 new int[] { -15, 10, 0, 0, -15, -10 });
         polyline.setStyle(StyleUtil.getStyleForEClass(getDiagram()));
-        // System.out.println("I have come at the last position too");
         return polyline;
     }
 

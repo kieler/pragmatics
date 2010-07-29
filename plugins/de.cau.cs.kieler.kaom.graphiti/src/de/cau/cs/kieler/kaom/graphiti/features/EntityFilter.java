@@ -25,11 +25,12 @@ import de.cau.cs.kieler.kaom.Relation;
 
 /**
  * @author atr
- * 
+ * This class is used in order to show the property view of the selected element.
  */
 public class EntityFilter extends AbstractPropertySectionFilter {
 
     /**
+     * used to filter out the elements whose property view has to be enabled.
      * {@inheritDoc}
      */
     @Override
