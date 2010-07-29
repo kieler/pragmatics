@@ -46,7 +46,7 @@ public class EvolPlugin extends AbstractUIPlugin {
      * The constructor.
      */
     public EvolPlugin() {
-        // intentionally left empty.
+        // Intentionally left empty.
     }
 
     /**

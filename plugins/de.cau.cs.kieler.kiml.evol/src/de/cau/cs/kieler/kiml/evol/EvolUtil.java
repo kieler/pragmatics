@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
@@ -33,6 +34,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
@@ -108,7 +110,6 @@ public final class EvolUtil {
         return result;
     }
 
-
     /**
      * Layout the diagram and measure it.
      *
@@ -123,8 +124,10 @@ public final class EvolUtil {
             // we cannot perform the layout.
             return 0;
         }
+
         // first phase: build the layout graph
         final KNode layoutGraph = manager.buildLayoutGraph(editor, null, true);
+
         // second phase: execute layout algorithms
         // We need a new monitor each time because the old one
         // gets closed.
@@ -135,8 +138,10 @@ public final class EvolUtil {
         if (status.isOK()) {
             final KNode layoutGraphAfterLayout = manager.getLayoutGraph();
             Assert.isTrue(layoutGraph == layoutGraphAfterLayout);
+
             // get the metric ids
             final Set<String> metricIds = EvolutionService.getInstance().getLayoutMetricsIds();
+
             // XXX: arbitrarily chosen coefficients
             final Deque<Double> coeffsQueue = new LinkedList<Double>();
             for (final double d : new double[] { .2, .2, .2, .2, .2 }) {
@@ -146,6 +151,7 @@ public final class EvolUtil {
             for (final String metricId : metricIds) {
                 coeffsMap.put(metricId, coeffsQueue.remove());
             }
+
             // do the measurement
             rating = measureDiagram(false, layoutGraphAfterLayout, coeffsMap);
         } else {
@@ -227,15 +233,28 @@ public final class EvolUtil {
     }
 
     /**
-     * Adopts layout options from the given {@link Individual} into the given
-     * {@link LayoutPropertySource}. The individual must not be {@code null}.
+     * Adopts layout options from the given {@link Genome} into a
+     * {@link LayoutPropertySource} for the current editor.
      *
      * @param theIndividual
+     *            the {@link Genome}. Must not be {@code null}.
+     */
+    public static void adoptIndividual(final Genome theIndividual) {
+        final LayoutPropertySource source = getLayoutPropertySource();
+        adoptIndividual(theIndividual, source);
+    }
+    
+    /**
+     * Adopts layout options from the given {@link Genome} into the given
+     * {@link LayoutPropertySource}. The individual must not be {@code null}.
+     * 
+     * @param theIndividual
      *            the individual
-     * @param source
+     * @param propertySource
      *            the layout property source
      */
-    public static void adoptIndividual(final Genome theIndividual, final LayoutPropertySource source) {
+    private static void adoptIndividual(
+            final Genome theIndividual, final LayoutPropertySource propertySource) {
         Assert.isLegal(theIndividual != null);
 
         if (theIndividual == null) {
@@ -254,76 +273,181 @@ public final class EvolUtil {
             switch (data.getType()) {
             case BOOLEAN:
                 if (value instanceof Boolean) {
-                    source.setPropertyValue(id, ((Boolean) value ? 1 : 0));
+                    propertySource.setPropertyValue(id, ((Boolean) value ? 1 : 0));
                 } else {
-                    source.setPropertyValue(id, Math.round((Float) value));
+                    propertySource.setPropertyValue(id, Math.round((Float) value));
                 }
                 break;
             case ENUM:
                 try {
-                    source.setPropertyValue(id, value);
+                    propertySource.setPropertyValue(id, value);
                 } catch (final NullPointerException e) {
                     System.out.println("WARNING: enum property could not be set: " + id);
                     Assert.isTrue(false);
                 }
                 break;
             default:
-                source.setPropertyValue(id, value.toString());
+                propertySource.setPropertyValue(id, value.toString());
                 break;
             }
         }
     }
+
+    // /**
+    // * Performs auto-rating on each individual of the given population that
+    // * satisfies the given filter criteria.
+    // *
+    // * @param thePopulation
+    // *
+    // * @param filter
+    // * Indicates which individuals shall be rated.
+    // * @param theEditor
+    // * Specifies the editor in which the individuals shall be rated.
+    // * If this is {@code null}, then the most recently used editor is
+    // * used. If this is {@code null} then the current editor is used.
+    // * @param monitor
+    // * a progress monitor. May be {@code null}.
+    // */
+    // private static void autorateIndividuals(
+    // final Population thePopulation, final TargetIndividuals filter,
+    // final IEditorPart theEditor, final IProgressMonitor monitor) {
+    //
+    // final Population pop = thePopulation;
+    // if ((pop == null) || pop.isEmpty()) {
+    // return;
+    // }
+    //
+    // final IEditorPart editor;
+    // if (theEditor != null) {
+    // editor = theEditor;
+    // } else {
+    // editor = getCurrentEditor();
+    // }
+    //
+    // final Population selection;
+    // switch (filter) {
+    // case ALL:
+    // selection = pop;
+    // break;
+    // case RATED:
+    // selection = pop.select(Population.RATED_FILTER);
+    // break;
+    // case UNRATED:
+    // selection = pop.select(Population.UNRATED_FILTER);
+    // break;
+    // default:
+    // selection = null;
+    // break;
+    // }
+    // autoRateIndividuals(selection, editor, monitor);
+    //
+    // }
 
     /**
      * Layouts the given individuals in the given editor and calculates
      * automatic ratings for them.
      *
      * @param pop
-     *            List of individuals
-     * @param filter
+     *            a {@link Population} (list of individuals)
      * @param editor
-     *            the editor where the individuals shall be layouted.
+     *            Specifies the editor in which the individuals shall be
+     *            layouted.
+     * @param monitor
+     *            a progress monitor. May be {@code null}.
      */
     public static void autoRateIndividuals(
-final Population pop, final IEditorPart editor) {
+            final Population pop, final IEditorPart editor, final IProgressMonitor monitor) {
         // We don't specify the edit part because we want a manager for
         // the whole diagram.
         final DiagramLayoutManager manager =
                 EclipseLayoutServices.getInstance().getManager(editor, null);
-        // A loop that performs layout and measurement for each individual.
-        final Runnable layoutLoop = new Runnable() {
+        if (manager == null) {
+            return;
+        }
+
+        /**
+         *
+         * @author bdu
+         *
+         */
+        class SourceGetter implements Runnable {
+            private LayoutPropertySource source;
+
             public void run() {
-                for (int pos = 0; pos < pop.size(); pos++) {
-                    final Genome ind = pop.get(pos);
-                    // TODO: synchronize on the layout graph?
+                this.source = getLayoutPropertySource();
+            }
 
-                    adoptIndividual(ind, getLayoutPropertySource());
-                    // TODO: get a new manager for every iteration?
-                    final int rating = EvolUtil.layoutAndMeasure(manager, editor);
-                    if (ind.hasUserRating()) {
-                        final int oldRating = ind.getUserRating();
-                        if (oldRating < rating) {
-                            System.out.println("Ind. under-rated (" + oldRating + " -> " + rating
-                                    + ")");
-                        } else if (oldRating > rating) {
-                            System.out.println("Ind. was over-rated (" + oldRating + " -> "
-                                    + rating + ")");
-                        }
-                    }
-                    ind.setUserRating(rating);
+            public LayoutPropertySource getSource() {
+                return this.source;
+            }
+        }
 
+        final SourceGetter sourceGetterRunnable = new SourceGetter();
+        MonitoredOperation.runInUI(sourceGetterRunnable, true);
+        final LayoutPropertySource source = sourceGetterRunnable.getSource();
+
+        // // A loop that performs layout and measurement for each individual.
+        // final Runnable layoutLoopRunnable = new Runnable() {
+        // public void run() {
+        // // later
+        //
+        // }
+        // };
+
+        try {
+            Thread.sleep(100);
+        } catch (final InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // The current diagram gets layouted and measured for each individual.
+        for (int pos = 0; pos < pop.size(); pos++) {
+            final Genome ind = pop.get(pos);
+            // TODO: synchronize on the layout graph?
+
+            adoptIndividual(ind, source);
+
+            // TODO: get a new manager for every iteration?
+            final int rating = EvolUtil.layoutAndMeasure(manager, editor);
+            if (ind.hasUserRating()) {
+                final int oldRating = ind.getUserRating();
+                if (oldRating < rating) {
+                    System.out.println("Ind. under-rated (" + oldRating + " -> " + rating + ")");
+                } else if (oldRating > rating) {
+                    System.out.println("Ind. was over-rated (" + oldRating + " -> " + rating + ")");
                 }
             }
-        };
-        // The current diagram gets layouted and measured.
-        MonitoredOperation.runInUI(layoutLoop, true);
+
+            ind.setUserRating(rating);
+
+            if (monitor != null) {
+                monitor.worked(1);
+            }
+            try {
+                Thread.sleep(100);
+            } catch (final InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            Thread.sleep(300);
+        } catch (final InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // TODO: let the EvolView refresh its tableViewer
+        // evolView.getTableViewer.refresh();
+
+        // TODO: set lastEditor for EvolView
+        // evolView.setLastEditor(editor);
     }
 
     /**
      *
      * @return a {@link LayoutPropertySource} for the current editor.
      */
-    public static LayoutPropertySource getLayoutPropertySource() {
+    private static LayoutPropertySource getLayoutPropertySource() {
         final IEditorPart editor = getCurrentEditor();
         final IGraphicalEditPart part = (IGraphicalEditPart) getEditPart(editor);
         final LayoutPropertySource result = getLayoutPropertySource(editor, part);
@@ -344,6 +468,10 @@ final Population pop, final IEditorPart editor) {
         // TODO: use root edit part
         final DiagramLayoutManager manager =
                 EclipseLayoutServices.getInstance().getManager(editor, part);
+        if (manager == null) {
+            return null;
+        }
+
         final LayoutPropertySource result = new LayoutPropertySource(manager.getInspector(part));
         return result;
     }
@@ -367,12 +495,17 @@ final Population pop, final IEditorPart editor) {
 
         // Try to get the active editor of the workbench.
         final IWorkbench workbench = PlatformUI.getWorkbench();
-        final IWorkbenchPage page = workbench.getActiveWorkbenchWindow().getActivePage();
-        if (page != null) {
-            final IEditorPart editor = page.getActiveEditor();
-            if (editor != null) {
-                return editor;
-            }
+        final IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+        if (window == null) {
+            return null;
+        }
+        final IWorkbenchPage page = window.getActivePage();
+        if (page == null) {
+            return null;
+        }
+        final IEditorPart editor = page.getActiveEditor();
+        if (editor != null) {
+            return editor;
         }
 
         // No active editor could be found.
@@ -511,10 +644,21 @@ final Population pop, final IEditorPart editor) {
      *
      */
     private static class GeneFactory implements IGeneFactory {
+        // the absolute value is scaled by this factor
+        // to get the default variance
+        private static final double VARIANCE_SCALING_FACTOR = .20;
+
+        /**
+         * Creates a new {@link GeneFactory}.
+         */
+        public GeneFactory() {
+            // nothing to do here
+        }
+
         public IGene<?> newGene(
                 final Object theId, final Object theValue, final TypeInfo<?> theTypeInfo,
                 final MutationInfo theMutationInfo) {
-            // TODO: implement
+
             final IGene<?> result =
                     new UniversalGene(theId, (Float) theValue, (TypeInfo<Float>) theTypeInfo,
                             theMutationInfo);
@@ -559,7 +703,7 @@ final Population pop, final IEditorPart editor) {
                 result =
                         new UniversalGene(theId, floatValue, UniversalGene.BOOLEAN_TYPE_INFO,
                                 new MutationInfo(theMutationProbability, distr));
-                System.out.println(result);
+                System.out.println(theId + ": " + result);
                 break;
             }
 
@@ -575,6 +719,7 @@ final Population pop, final IEditorPart editor) {
                         + intValue);
                 break;
             }
+
             case INT: {
                 final int intValue = Integer.parseInt((String) theValue);
                 final double var = MutationInfo.DEFAULT_VARIANCE;
@@ -582,6 +727,7 @@ final Population pop, final IEditorPart editor) {
                 System.out.println(theId + ": " + result);
                 break;
             }
+
             case FLOAT: {
                 final float floatValue = (Float.parseFloat((String) theValue));
                 final float lowerBound =
@@ -603,10 +749,7 @@ final Population pop, final IEditorPart editor) {
                     if ((Math.abs(floatValue) < verySmall)) {
                         variance = MutationInfo.DEFAULT_VARIANCE;
                     } else {
-                        // the absolute value is scaled by this factor
-                        // to get the default variance
-                        final double scalingFactor = .20;
-                        variance = scalingFactor * Math.abs(floatValue);
+                        variance = Math.abs(floatValue) * VARIANCE_SCALING_FACTOR;
                     }
                 }
 

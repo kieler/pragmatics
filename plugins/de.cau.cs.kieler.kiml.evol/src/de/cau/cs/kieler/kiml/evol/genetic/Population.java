@@ -22,11 +22,30 @@ import java.util.List;
  * @author bdu
  *
  */
-public class Population extends ArrayList<Genome> {
+public class Population extends ArrayList<Genome> implements Filterable<Population, Genome> {
+
     /**
      *
      */
     private static final long serialVersionUID = -5511104369758838181L;
+
+    /**
+     * Filter for rated individuals.
+     */
+    public static final IItemFilter<Genome> RATED_FILTER = new IItemFilter<Genome>() {
+        public boolean isMatch(final Genome item) {
+            return (item.hasUserRating());
+        }
+    };
+
+    /**
+     * Filter for unrated individuals.
+     */
+    public static final IItemFilter<Genome> UNRATED_FILTER = new IItemFilter<Genome>() {
+        public boolean isMatch(final Genome item) {
+            return (!item.hasUserRating());
+        }
+    };
 
     /**
      * Constructs an empty population.
@@ -47,6 +66,22 @@ public class Population extends ArrayList<Genome> {
     }
 
     /**
+     *
+     * @return the arithmetic mean of all individual ratings, or
+     *         {@code Double.NaN} if there are no individuals.
+     */
+    public Double getAverageRating() {
+        if (this.isEmpty()) {
+            return Double.NaN;
+        }
+        int ratingSum = 0;
+        for (final Genome ind : this) {
+            ratingSum += ind.getUserRating();
+        }
+        return (double) (ratingSum / (double) this.size());
+    }
+
+    /**
      * Randomly chooses one of the individuals in the list.
      *
      * @return an individual that is in the list, or {@code null}, if the list
@@ -61,6 +96,13 @@ public class Population extends ArrayList<Genome> {
         return result;
     }
 
+    /**
+     *
+     * @param filter
+     *            an {@link IItemFilter} for {@link Genome} objects
+     * @return a new list containing the {@link Genome} objects that pass the
+     *         filter.
+     */
     public Population select(final IItemFilter<Genome> filter) {
         final Population result = new Population();
         for (final Genome g : this) {
@@ -80,21 +122,5 @@ public class Population extends ArrayList<Genome> {
             result.append("#" + ++i + ": " + ind.toString() + newLine);
         }
         return result.toString();
-    }
-
-    /**
-     *
-     * @return the arithmetic mean of all individual ratings, or
-     *         {@code Double.NaN} if there are no individuals.
-     */
-    public Double getAverageRating() {
-        if (this.isEmpty()) {
-            return Double.NaN;
-        }
-        int ratingSum = 0;
-        for (final Genome ind : this) {
-            ratingSum += ind.getUserRating();
-        }
-        return (double) (ratingSum / (double) this.size());
     }
 }

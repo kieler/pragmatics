@@ -18,9 +18,9 @@ import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
  * Preference initializer for the KIML Evolutionary Plugin.
- * 
+ *
  * @author bdu
- * 
+ *
  */
 public class EvolPreferenceInitializer extends AbstractPreferenceInitializer {
 
@@ -28,7 +28,7 @@ public class EvolPreferenceInitializer extends AbstractPreferenceInitializer {
     public void initializeDefaultPreferences() {
         final IPreferenceStore store = EvolPlugin.getDefault().getPreferenceStore();
 
-        // set default values for preferences
+        // Set default values for preferences.
         store.setDefault(EvolPlugin.PREF_POPULATION_SIZE, EvolPlugin.DEF_POPULATION_SIZE);
     }
 }

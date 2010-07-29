@@ -37,7 +37,6 @@ import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.EvolUtil;
 import de.cau.cs.kieler.kiml.evol.alg.BasicEvolutionaryAlgorithm;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
-import de.cau.cs.kieler.kiml.evol.genetic.IItemFilter;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
@@ -74,6 +73,13 @@ public class EvolView extends ViewPart {
      *
      */
     private static class LayoutViewRefresher implements Runnable {
+        /**
+         *
+         */
+        public LayoutViewRefresher() {
+            // nothing to do here.
+        }
+
         public void run() {
             System.out.println("layoutView refresh start.");
             final LayoutViewPart layoutView = LayoutViewPart.findView();
@@ -90,7 +96,7 @@ public class EvolView extends ViewPart {
     }
 
     /**
-     * provides labels for LayoutSet table.
+     * Provides labels for LayoutSet table.
      *
      * @author bdu
      *
@@ -100,6 +106,13 @@ public class EvolView extends ViewPart {
                 EvolPlugin.PLUGIN_ID, "icons/current.png").createImage();
         private final Image defaultImage = AbstractUIPlugin.imageDescriptorFromPlugin(
                 EvolPlugin.PLUGIN_ID, "icons/default.png").createImage();
+
+        /**
+         * Creates a new {@link PopulationTableLabelProvider}.
+         */
+        public PopulationTableLabelProvider() {
+            // Nothing to do here.
+        }
 
         @Override
         public void dispose() {
@@ -157,7 +170,7 @@ public class EvolView extends ViewPart {
             super(table);
         }
 
-        private void selectRow(final int pos) {
+        void selectRow(final int pos) {
             if (getPopulation() == null) {
                 return;
             }
@@ -185,6 +198,7 @@ public class EvolView extends ViewPart {
     private Population population;
     private IEditorPart lastEditor;
     private String layoutProviderId = "";
+    // TODO: source evolAlg and population out into a model object
 
     /**
      * Column width for columns in viewer table.
@@ -251,6 +265,13 @@ public class EvolView extends ViewPart {
     }
 
     /**
+     * @return the last editor that was used
+     */
+    public IEditorPart getLastEditor() {
+        return this.lastEditor;
+    }
+
+    /**
      *
      * @return the table viewer
      */
@@ -263,82 +284,6 @@ public class EvolView extends ViewPart {
         this.tableViewer.getControl().setFocus();
     }
 
-    /**
-     * Performs auto-rating on each individual of the given population that
-     * satisfies the given filter criteria.
-     *
-     * @param thePopulation
-     *            a {@link Population}
-     * @param filter
-     *            Indicates which individuals shall be rated.
-     * @param theEditor
-     *            Specifies the editor in which the individuals shall be rated.
-     *            If this is {@code null}, then the most recently used editor is
-     *            used. If this is {@code null} then the current editor is used.
-     */
-    public void autorateIndividuals(
-            final Population thePopulation, final TargetIndividuals filter,
-            final IEditorPart theEditor) {
-        if (!isValidState()) {
-            return;
-        }
-        final Population pop = thePopulation;
-        if ((pop == null) || pop.isEmpty()) {
-            return;
-        }
-
-        final IEditorPart editor;
-        if (theEditor != null) {
-            editor = theEditor;
-        } else if (this.lastEditor != null) {
-            editor = this.lastEditor;
-        } else {
-            editor = EvolUtil.getCurrentEditor();
-        }
-        this.lastEditor = editor;
-
-        final Population selection;
-        switch (filter) {
-        case ALL:
-            selection = pop;
-            break;
-        case RATED:
-            selection = pop.select(new RatedFilter());
-            break;
-        case UNRATED:
-            selection = pop.select(new UnratedFilter());
-            break;
-        default:
-            selection = null;
-            break;
-        }
-        EvolUtil.autoRateIndividuals(selection, editor);
-        this.tableViewer.refresh();
-    }
-
-    /**
-     * Filter for unrated individuals.
-     *
-     * @author bdu
-     *
-     */
-    private static class UnratedFilter implements IItemFilter<Genome> {
-        public boolean isMatch(final Genome item) {
-            return (!item.hasUserRating());
-        }
-    }
-
-    /**
-     * Filter for rated individuals.
-     *
-     * @author bdu
-     *
-     */
-    private static class RatedFilter implements IItemFilter<Genome> {
-        public boolean isMatch(final Genome item) {
-            return (item.hasUserRating());
-        }
-    }
     /**
      * Performs a step of the evolutionary algorithm.
      */
@@ -361,7 +306,7 @@ public class EvolView extends ViewPart {
         if (this.position >= lim) {
             this.position = lim - 1;
         }
-        autorateIndividuals(this.population, TargetIndividuals.UNRATED, null);
+        EvolUtil.autoRateIndividuals(this.population.select(Population.UNRATED_FILTER), null, null);
         Assert.isTrue(this.position >= 0);
         getTableViewer().selectRow(this.position);
         getTableViewer().refresh();
@@ -401,7 +346,8 @@ public class EvolView extends ViewPart {
         this.position = 0;
         final IEditorPart editor = EvolUtil.getCurrentEditor();
         final EditPart part = EvolUtil.getEditPart(editor);
-        this.lastEditor = editor;
+        this.setLastEditor(editor);
+
         if (editor != null) {
             // TODO: test whether the editor is for KIML
             final DiagramLayoutManager manager =
@@ -409,8 +355,7 @@ public class EvolView extends ViewPart {
             if (manager != null) {
                 final LayoutPropertySource propertySource =
                         new LayoutPropertySource(manager.getInspector(part));
-                final Population sourcePopulation =
- EvolUtil.createPopulation(propertySource);
+                final Population sourcePopulation = EvolUtil.createPopulation(propertySource);
                 this.layoutProviderId = EvolUtil.getLayoutProviderId(manager, part);
                 final BasicEvolutionaryAlgorithm alg =
                         new BasicEvolutionaryAlgorithm(sourcePopulation);
@@ -423,6 +368,13 @@ public class EvolView extends ViewPart {
         this.tableViewer.refresh();
     }
 
+    /**
+     * @param editor
+     */
+    private void setLastEditor(final IEditorPart editor) {
+        this.lastEditor = editor;
+
+    }
 
     /**
      * Return position of first unrated individual in the list.
@@ -466,20 +418,21 @@ public class EvolView extends ViewPart {
     /**
      * Refresh the layout according to selected individual.
      */
-    private void onSelectIndividual() {
+    void onSelectIndividual() {
         if (!isValidState()) {
             return;
         }
         final Genome currentIndividual = getCurrentIndividual();
         Assert.isNotNull(currentIndividual);
-        final LayoutPropertySource source = EvolUtil.getLayoutPropertySource();
-        EvolUtil.adoptIndividual(currentIndividual, source);
 
-        // refresh layout view
+        // Use the options encoded by the current individual.
+        EvolUtil.adoptIndividual(currentIndividual);
+
+        // Refresh layout view
         MonitoredOperation.runInUI(new LayoutViewRefresher(), false);
         final IEditorPart editor = EvolUtil.getCurrentEditor();
         if (editor == null) {
-            // we have nothing to layout.
+            // We have nothing to layout.
             return;
         }
         // We don't specify the edit part because we want a manager for
@@ -495,7 +448,7 @@ public class EvolView extends ViewPart {
             currentIndividual.setUserRating(rating);
         }
 
-        // apply the layout to the diagram
+        // Apply the layout to the diagram.
         // XXX it would be more straightforward to call manager.applyLayout()
         // directly, but that method is private
         EclipseLayoutServices.getInstance().layout(editor, null, false, false);
@@ -507,6 +460,7 @@ public class EvolView extends ViewPart {
             System.out.println("Population is not set.");
             return false;
         }
+
         if (pop.isEmpty()) {
             System.out.println("Population is empty.");
             return false;
@@ -517,11 +471,13 @@ public class EvolView extends ViewPart {
             System.out.println("No individual selected.");
             return false;
         }
+
         final LayoutViewPart layoutViewPart = LayoutViewPart.findView();
         if (layoutViewPart == null) {
             System.out.println("LayoutView not found.");
             return false;
         }
+
         if (layoutProviderHasChanged()) {
             // need to reset
             System.out.println("LayoutProvider was changed. Need to reset.");

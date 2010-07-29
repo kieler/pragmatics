@@ -16,17 +16,88 @@ package de.cau.cs.kieler.kiml.evol.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 
+import de.cau.cs.kieler.kiml.evol.EvolPlugin;
+import de.cau.cs.kieler.kiml.evol.EvolUtil;
+import de.cau.cs.kieler.kiml.evol.genetic.Population;
 import de.cau.cs.kieler.kiml.evol.ui.EvolView;
-import de.cau.cs.kieler.kiml.evol.ui.EvolView.TargetIndividuals;
 
 /**
+ * Handler for auto-rating all individuals.
  *
  * @author bdu
  *
  */
 public class AutoRateAllHandler extends AbstractHandler {
+    /**
+     * A job that does the auto-rating.
+     *
+     * @author bdu
+     *
+     */
+    public static final class AutoRateAllJob extends Job {
+        /**
+         * The population to be rated.
+         */
+        private final Population population;
+        private final IEditorPart editor;
+
+        /**
+         * @param name
+         * @param pop
+         * @param theEditor
+         */
+        AutoRateAllJob(final String name, final Population pop, final IEditorPart theEditor) {
+            super(name);
+            Assert.isLegal(pop != null);
+            this.population = pop;
+            this.editor = theEditor;
+        }
+
+        @Override
+        protected IStatus run(final IProgressMonitor monitor) {
+            try {
+                Thread.sleep(500);
+
+                monitor.beginTask("Performing Auto-rating", this.population.size() + 1);
+
+                Thread.sleep(500);
+                monitor.subTask("Determining Individual Rating");
+
+                // do the rating
+                EvolUtil.autoRateIndividuals(this.population, this.editor,
+                        monitor);
+
+                if (monitor.isCanceled()) {
+                    return new Status(IStatus.CANCEL, EvolPlugin.PLUGIN_ID,
+                            "The auto-rating was cancelled.");
+                }
+
+                Thread.sleep(200);
+                monitor.subTask("Determining the average rating");
+
+                System.out.println("Average rating: " + this.population.getAverageRating());
+                monitor.worked(1);
+
+
+                return new Status(IStatus.INFO, EvolPlugin.PLUGIN_ID, 0, "OK", null);
+
+            } catch (final Exception exception) {
+                return new Status(IStatus.ERROR, EvolPlugin.PLUGIN_ID,
+                        "The auto-rating has failed.", exception);
+            } finally {
+                monitor.done();
+            }
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -35,10 +106,41 @@ public class AutoRateAllHandler extends AbstractHandler {
         final EvolView view =
                 (EvolView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                         .findView(EvolView.ID);
+
         if (view != null) {
-            view.autorateIndividuals(view.getPopulation(),
-                    TargetIndividuals.ALL, null);
-            System.out.println("Average rating: " + view.getPopulation().getAverageRating());
+            final Population pop = view.getPopulation();
+            final int size = pop.size();
+
+            final IEditorPart editor;
+            if (view.getLastEditor() != null) {
+                editor = view.getLastEditor();
+            } else {
+                // Let the auto-rating determine the editor.
+                editor = null;
+            }
+
+            // Create a job for auto-rating.
+            final Job autoRateAllJob = new AutoRateAllJob("auto-rating", pop, editor);
+
+            // Process the job.
+            final IProgressMonitor monitor = Job.getJobManager().createProgressGroup();
+            autoRateAllJob.setProgressGroup(monitor, size + 1);
+            autoRateAllJob.setPriority(Job.SHORT);
+            autoRateAllJob.setUser(true);
+            autoRateAllJob.schedule();
+
+            try {
+                Thread.sleep(500);
+            } catch (final InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            view.getTableViewer().refresh();
+
+
+        } else {
+            throw new ExecutionException("The Evolution View could not be found.");
         }
 
         return null;

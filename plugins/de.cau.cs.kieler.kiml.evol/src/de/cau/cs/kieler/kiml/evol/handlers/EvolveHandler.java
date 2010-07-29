@@ -19,8 +19,8 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.ui.PlatformUI;
 
+import de.cau.cs.kieler.kiml.evol.EvolUtil;
 import de.cau.cs.kieler.kiml.evol.ui.EvolView;
-import de.cau.cs.kieler.kiml.evol.ui.EvolView.TargetIndividuals;
 
 /**
  * Command for performing {@code NUMBER_OF_STEPS} steps of the evolutionary
@@ -82,7 +82,7 @@ public class EvolveHandler extends AbstractHandler {
                     final boolean wantAutoRating;
                     wantAutoRating = wantAutoRatingForStep(i, stepsBeforeAutoRating);
                     if (wantAutoRating) {
-                        view.autorateIndividuals(view.getPopulation(), TargetIndividuals.ALL, null);
+                        EvolUtil.autoRateIndividuals(view.getPopulation(), null, null);
                     }
                     steps++;
                     Assert.isNotNull(view.getPopulation());
