@@ -293,109 +293,10 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
         }
 
         /**
-         * Move the face iterator to the next active node on the external face.
-         * 
-         * @param check
-         *            the node used for activity checks
-         * @return the next active node
-         */
-        public INode nextActive(final INode check) {
-            do {
-                this.next();
-            } while (!this.isActive(check));
-            return this.node;
-        }
-
-        /**
          * {@inheritDoc}
          */
         public void remove() {
             throw new UnsupportedOperationException();
-        }
-
-        // -------------------------- Activity Checks ----------------------------------------------
-
-        /**
-         * Check if the current node is externally active concerning {@code check}. A node is
-         * externally active concerning another node, if its least ancestor has a lower DFI than the
-         * other node, or the lowpoint of his first child in the list is lower than the DFI of the
-         * other node. Virtual roots are never externally active.
-         * 
-         * @param check
-         *            the node to check against
-         * @return true if the node is externally active
-         */
-        public boolean isExternallyActive(final INode check) {
-            if (this.node.getType() == NodeType.OTHER) {
-                return false;
-            }
-            if (ancestor[this.node.getID()] < dfi[check.getID()]) {
-                return true;
-            }
-            Iterator<INode> iterator = separatedChildren[this.node.getID()].iterator();
-            if (iterator.hasNext() && lowpoint[iterator.next().getID()] < dfi[check.getID()]) {
-                return true;
-            }
-            return false;
-        }
-
-        /**
-         * Check if the current node is internally active concerning the {@code check}. A node is
-         * internally active, if it is not externally active, but pertinent.
-         * 
-         * @param check
-         *            the node to check against
-         * @return true if the node is internally active
-         */
-        public boolean isInternallyActive(final INode check) {
-            return (this.isPertinent(check)) && !(this.isExternallyActive(check));
-        }
-
-        /**
-         * Check if the current node is (internally or externally) active.
-         * 
-         * @param check
-         *            the node to check against
-         * @return true if the node is active
-         */
-        public boolean isActive(final INode check) {
-            return (this.isExternallyActive(check)) || (this.isPertinent(check));
-        }
-
-        /**
-         * Check if the current node is pertinent concerning {@code check}. A node is pertinent if
-         * it has either its back edge flag set to the check node, or his list of pertinent roots is
-         * not empty. Virtual roots are never pertinent.
-         * 
-         * @param check
-         *            the node to check against
-         * @return true if the node is pertinent
-         */
-        public boolean isPertinent(final INode check) {
-            // Virtual roots are never pertinent
-            if (this.node.getType() == NodeType.OTHER) {
-                return false;
-            }
-            // Node has backedge to check node
-            if (backedgeFlag[this.node.getID()] > 0) {
-                return true;
-            }
-            // Node has pertinent roots
-            for (INode root : pertinentRoots[this.node.getID()]) {
-                if (pertinentRoots[root.getID()].getFirst() == check) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        // -------------------------- Miscellaneous Functions --------------------------------------
-
-        @Override
-        public FaceIterator clone() {
-            FaceIterator fi = new FaceIterator(this.start, this.direction);
-            fi.setNode(this.node);
-            return fi;
         }
 
     }
@@ -819,7 +720,7 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
                     this.extSuccessorCW[iIter] = root;
                 }
 
-            } else if (iter.isPertinent(node)) {
+            } else if (this.isPertinent(iter.getNode(), node)) {
                 // Found a new pertinent biconnected component, jump there
                 merge.push(iter);
 
@@ -831,20 +732,29 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
                     }
                 }
 
-                FaceIterator left = temp.clone();
-                left.setDirection(FaceIterator.CW);
-                left.nextActive(node);
-                FaceIterator right = temp.clone();
-                right.setDirection(FaceIterator.CCW);
-                right.nextActive(node);
+                FaceIterator left = new FaceIterator(root, FaceIterator.CW);
+                left.setNode(temp.getNode());
+                do {
+                    left.next();
+                } while (!isPertinent(left.getNode(), node)
+                        && !isExternallyActive(left.getNode(), node));
 
-                if (left.isInternallyActive(node)) {
+                FaceIterator right = new FaceIterator(root, FaceIterator.CCW);
+                right.setNode(temp.getNode());
+                do {
+                    right.next();
+                } while (!isPertinent(right.getNode(), node)
+                        && !isExternallyActive(right.getNode(), node));
+
+                if (this.isPertinent(left.getNode(), node)
+                        && !this.isExternallyActive(left.getNode(), node)) {
                     iter = left;
                     temp.setDirection(FaceIterator.CCW);
-                } else if (right.isInternallyActive(node)) {
+                } else if (this.isPertinent(right.getNode(), node)
+                        && !this.isExternallyActive(right.getNode(), node)) {
                     iter = right;
                     temp.setDirection(FaceIterator.CW);
-                } else if (left.isPertinent(node)) {
+                } else if (this.isPertinent(left.getNode(), node)) {
                     iter = left;
                     temp.setDirection(FaceIterator.CCW);
                 } else {
@@ -854,7 +764,8 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
 
                 merge.push(temp);
 
-            } else if (!iter.isActive(node)) {
+            } else if (!this.isPertinent(iter.getNode(), root)
+                    && !this.isExternallyActive(iter.getNode(), node)) {
                 // Traverse to next vertex
                 iter.next();
 
@@ -949,6 +860,61 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
                 this.extSuccessorCCW[nodeCW.getID()] = rootCCW;
             }
         }
+    }
+
+    /**
+     * Check if a node is pertinent concerning a check node. A node is pertinent if it has either
+     * its back edge flag set to the check node, or his list of pertinent roots is not empty.
+     * Virtual roots are never pertinent.
+     * 
+     * @param node
+     *            the node to check
+     * @param check
+     *            the node to check against
+     * @return true if the node is pertinent
+     */
+    private boolean isPertinent(final INode node, final INode check) {
+        // Virtual roots are never pertinent
+        if (node.getType() == NodeType.OTHER) {
+            return false;
+        }
+        // Node has backedge to check node
+        if (backedgeFlag[node.getID()] > 0) {
+            return true;
+        }
+        // Node has pertinent roots
+        for (INode root : pertinentRoots[node.getID()]) {
+            if (pertinentRoots[root.getID()].getFirst() == check) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if a node is externally active concerning a check node. A node is externally active
+     * concerning another node, if its least ancestor has a lower DFI than the other node, or the
+     * lowpoint of his first child in the list is lower than the DFI of the other node. Virtual
+     * roots are never externally active.
+     * 
+     * @param node
+     *            the node to check
+     * @param check
+     *            the node to check against
+     * @return true if the node is externally active
+     */
+    private boolean isExternallyActive(final INode node, final INode check) {
+        if (node.getType() == NodeType.OTHER) {
+            return false;
+        }
+        if (ancestor[node.getID()] < dfi[check.getID()]) {
+            return true;
+        }
+        Iterator<INode> iterator = separatedChildren[node.getID()].iterator();
+        if (iterator.hasNext() && lowpoint[iterator.next().getID()] < dfi[check.getID()]) {
+            return true;
+        }
+        return false;
     }
 
     /**
