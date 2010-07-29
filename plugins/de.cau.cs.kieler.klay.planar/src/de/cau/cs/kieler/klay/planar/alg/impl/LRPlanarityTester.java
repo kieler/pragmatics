@@ -17,18 +17,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Stack;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.alg.IPlanarityTester;
+import de.cau.cs.kieler.klay.planar.graph.IAdjacencyList;
+import de.cau.cs.kieler.klay.planar.graph.IAdjacencyListComponent;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.INode;
+import de.cau.cs.kieler.klay.planar.graph.IPort;
 import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
+import de.cau.cs.kieler.klay.planar.graph.IAdjacencyList.AdjacencyListType;
+import de.cau.cs.kieler.klay.planar.util.IFunction;
 
 /**
  * The main class for the LRPlanarity (left-right-planarity) unit of the planarization plug-in. It
@@ -426,7 +431,7 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
         // convert crossingEdges to match return type
         LinkedList<Pair<INode, INode>> removedEdges = new LinkedList<Pair<INode, INode>>();
         for (IEdge edge : deletedCrossing) {
-            removedEdges.add(new Pair<INode, INode>(edge.getSource(), edge.getTarget()));
+            removedEdges.add(new Pair<INode, INode>(edge.getSourceNode(), edge.getTargetNode()));
         }
 
         getMonitor().done();
@@ -452,13 +457,13 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
     private void orientationDFS(final INode v) throws InconsistentGraphModelException {
 
         IEdge uv = parentEdge[v.getID()];
-        for (IEdge vw : v.getAllEdges()) {
-            if (dfsSource[vw.getID()] != null || vw.getSource().equals(vw.getTarget())) {
+        for (IEdge vw : v.getAdjacencyList().edges()) {
+            if (dfsSource[vw.getID()] != null || vw.getSourceNode().equals(vw.getTargetNode())) {
                 // vw has already been visited or is self-loop
                 continue;
             }
             // orient vw in DFS
-            INode w = v.getAdjacentNode(vw);
+            INode w = v.getAdjacencyList().getAdjacentNode(vw);
             dfsSource[vw.getID()] = v;
             dfsTarget[vw.getID()] = w;
             lowpt[vw.getID()] = height[v.getID()];
@@ -550,9 +555,9 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
 
         IEdge uv = parentEdge[v.getID()];
         IEdge vw1 = null;
-        for (IEdge vw : v.getAllEdges()) {
+        for (IEdge vw : v.getAdjacencyList().edges()) {
             // adjacent edges of v are already ordered by nesting depth
-            if (vw.getSource().equals(vw.getTarget()) || dfsTarget[vw.getID()].equals(v)) {
+            if (vw.getSourceNode().equals(vw.getTargetNode()) || dfsTarget[vw.getID()].equals(v)) {
                 // vw is incoming edge or self-loop
                 continue;
             }
@@ -742,8 +747,8 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      */
     private void embeddingDFS(final INode v) {
 
-        for (IEdge vw : v.getAllEdges()) {
-            if (vw.getSource().equals(vw.getTarget()) || !dfsSource[vw.getID()].equals(v)) {
+        for (IEdge vw : v.getAdjacencyList().edges()) {
+            if (vw.getSourceNode().equals(vw.getTargetNode()) || !dfsSource[vw.getID()].equals(v)) {
                 // vw is incoming edge or self-loop
                 continue;
             }
@@ -955,45 +960,35 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
     }
 
     /**
-     * Helper method for the planarity test. It sorts the adjacency list of the specified node (i.e.
-     * {@code node.getEdgeList()}) according to a non-decreasing nesting depth. Its adjacency list
-     * will be completely cleared and rebuilt during sorting. Since this algorithm pursues the
-     * bucket sort strategy, it guarantees a linear execution time to the number of adjacent edges.
+     * Helper method for the planarity test. It sorts the adjacency list of the specified node
+     * according to a non-decreasing nesting depth. Nested adjacency list will be sorted by the
+     * average nesting depth.
      * 
      * @param node
      *            the node to sort its adjacency list
      */
     private void sortAdjacencyList(final INode node) {
-
-        if (node.getEdgeList().size() > 1) {
-            int minNesting = nestingDepth[node.getEdgeList().get(0).getID()];
-            int maxNesting = minNesting;
-            // determine highest and lowest nesting depth
-            for (IEdge edge : node.getAllEdges()) {
-                if (nestingDepth[edge.getID()] < minNesting) {
-                    minNesting = nestingDepth[edge.getID()];
-                } else if (nestingDepth[edge.getID()] > maxNesting) {
-                    maxNesting = nestingDepth[edge.getID()];
+        // TODO changes by ocl: check if this is OK
+        node.getAdjacencyList().sort(new IFunction<IAdjacencyListComponent, Integer>() {
+            public Integer evaluate(final IAdjacencyListComponent element) {
+                if (element instanceof IPort) {
+                    if (((IPort) element).isEmpty()) {
+                        return 0;
+                    }
+                    return nestingDepth[((IPort) element).getEdge().getID()];
+                } else if (element instanceof IAdjacencyList) {
+                    int num = 0;
+                    int total = 0;
+                    for (IAdjacencyListComponent item : ((IAdjacencyList) element).sublists()) {
+                        total += this.evaluate(item);
+                        num++;
+                    }
+                    return total / num;
+                } else {
+                    return 0;
                 }
             }
-            // create buckets
-            int numberOfBuckets = maxNesting - minNesting + 1;
-            ArrayList<LinkedList<IEdge>> buckets = new ArrayList<LinkedList<IEdge>>(numberOfBuckets);
-            for (int i = 0; i < numberOfBuckets; i++) {
-                buckets.add(new LinkedList<IEdge>());
-            }
-            // sort
-            for (IEdge edge : node.getAllEdges()) {
-                buckets.get(nestingDepth[edge.getID()] - minNesting).add(edge);
-            }
-            node.getEdgeList().clear();
-            for (LinkedList<IEdge> bucket : buckets) {
-                if (!bucket.isEmpty()) {
-                    node.getEdgeList().addAll(bucket);
-                }
-            }
-
-        }
+        });
     }
 
     /**
@@ -1009,58 +1004,81 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * 
      * @param node
      *            the node to merge its determined edge orders
+     * @throws InconsistentGraphModelException
+     *             in the graph is not consistent
      */
-    private void mergeEmbedding(final INode node) {
+    private void mergeEmbedding(final INode node) throws InconsistentGraphModelException {
+        // TODO modified by ocl, check if this is OK
 
-        List<IEdge> adjList = node.getEdgeList();
-        if (adjList.size() > 1) {
-            HashSet<IEdge> selfLoops = new HashSet<IEdge>();
-            IEdge incTreeEdge = null;
-            boolean outTreeEdgeTraversed = false;
-            ListIterator<IEdge> iterator = adjList.listIterator();
-            // remove all incoming edges and self-loops from adjacency list
-            while (iterator.hasNext()) {
-                IEdge edge = iterator.next();
-                if (edge.getSource().equals(edge.getTarget())) {
-                    // edge is self-loop
-                    if (!selfLoops.contains(edge)) {
-                        selfLoops.add(edge);
-                    }
-                    iterator.remove();
-                } else if (!dfsSource[edge.getID()].equals(node)) {
-                    // edge is incoming edge
-                    if (edge.equals(parentEdge[node.getID()])) {
-                        // edge is incoming tree edge
-                        incTreeEdge = edge;
-                    }
-                    iterator.remove();
-                } else if (edge.equals(parentEdge[dfsTarget[edge.getID()].getID()])) {
-                    // edge is outgoing tree edge
-                    if (!outTreeEdgeTraversed) {
-                        // leftmost tree edge found:
-                        // insert all incoming back edges and outgoing tree edges here
-                        iterator.remove();
-                        IEdge toAdd = initialRef[node.getID()];
-                        while (toAdd != null) {
-                            iterator.add(toAdd);
-                            toAdd = ref[toAdd.getID()];
-                        }
-                        outTreeEdgeTraversed = true;
-                    } else {
-                        iterator.remove();
-                    }
-                }
+        // Nothing needs to be done for small lists
+        if (node.getAdjacencyList().getEdgeCount() <= 1) {
+            return;
+        }
+
+        // Modifying the adjacency list works only without embedding constraints!
+        // TODO may also work for GROUP, but requires additional work
+        if (node.getAdjacencyList().getType() != AdjacencyListType.FREE) {
+            throw new UnsupportedOperationException();
+        }
+
+        IPort treeEdge = null;
+        HashSet<IEdge> loops = new HashSet<IEdge>();
+        LinkedHashSet<IPort> rest = new LinkedHashSet<IPort>();
+        boolean insertionPoint = false;
+        for (IPort port : node.getAdjacencyList().ports()) {
+            if (port.isEmpty()) {
+                continue;
             }
-            // re-insert incoming tree edge and self-loops
-            iterator = adjList.listIterator();
-            if (incTreeEdge != null) {
-                iterator.add(incTreeEdge);
-            }
-            for (IEdge loop : selfLoops) {
-                iterator.add(loop);
-                iterator.add(loop);
+            IEdge edge = port.getEdge();
+
+            if (port.getEdge().getSourceNode() == port.getEdge().getTargetNode()) {
+                // Remember self loops
+                loops.add(edge);
+
+            } else if (!(node == dfsSource[edge.getID()]) && (edge == parentEdge[node.getID()])) {
+                // Remember incoming tree edge
+                treeEdge = port;
+
+            } else if ((edge == parentEdge[dfsTarget[edge.getID()].getID()]) && !insertionPoint) {
+                // Mark leftmost outgoing tree edge as insertion point
+                insertionPoint = true;
+
+            } else if (insertionPoint) {
+                // Remember all edges after the insertion point
+                rest.add(port);
             }
         }
-    }
 
+        // Move self loops to the beginning of the list
+        for (IEdge loop : loops) {
+            loop.move(loop.getSourcePort(), node.getAdjacencyList().addPort(false));
+            loop.move(loop.getTargetPort(), node.getAdjacencyList().addPort(false));
+        }
+
+        // Move incoming tree edge to beginning of the list
+        if (treeEdge != null) {
+            treeEdge.getEdge().move(treeEdge, node.getAdjacencyList().addPort(false));
+        }
+
+        // Move outgoing back edges and incoming tree edges to the end of the list
+        IEdge toAdd = initialRef[node.getID()];
+        while (toAdd != null) {
+            IPort port = null;
+            if (toAdd.getSourceNode() == node) {
+                port = toAdd.getSourcePort();
+            } else if (toAdd.getTargetNode() == node) {
+                port = toAdd.getTargetPort();
+            } else {
+                throw new InconsistentGraphModelException("Inconsistent graph detected");
+            }
+            rest.remove(port);
+            toAdd.move(port, node.getAdjacencyList().addPort(true));
+            toAdd = ref[toAdd.getID()];
+        }
+
+        // Move all edges after insertion point to the end of the list
+        for (IPort port : rest) {
+            port.getEdge().move(port, node.getAdjacencyList().addPort(true));
+        }
+    }
 }

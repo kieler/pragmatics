@@ -595,7 +595,7 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
      */
     private void findRoots(final INode node) {
         this.visited[node.getID()] = node;
-        for (INode child : node.getAdjacentNodes()) {
+        for (INode child : node.getAdjacencyList().adjacentNodes()) {
             if (this.visited[child.getID()] == null) {
                 this.findRoots(child);
             }
@@ -666,8 +666,8 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
         }
 
         // Recurse over all adjacent nodes
-        for (IEdge edge : node.getAllEdges()) {
-            INode childNode = node.getAdjacentNode(edge);
+        for (IEdge edge : node.getAdjacencyList().edges()) {
+            INode childNode = node.getAdjacencyList().getAdjacentNode(edge);
             int iChild = childNode.getID();
 
             if (childNode == node) {
@@ -905,7 +905,7 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
             // Flipping
             if (root.getDirection() == node.getDirection()) {
                 // Invert the adjacency list of the root node and mark bicomp as flipped
-                root.getNode().reverseAdjacencyList();
+                root.getNode().getAdjacencyList().mirror();
                 int iChild = this.children[iRoot].getFirst().getID();
                 this.flipped[iChild] = !this.flipped[iChild];
 
@@ -979,7 +979,7 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
 
         // Reverse adjacency list if necessary
         if (s) {
-            current.reverseAdjacencyList();
+            current.getAdjacencyList().mirror();
         }
 
         // Recurse over all tree children

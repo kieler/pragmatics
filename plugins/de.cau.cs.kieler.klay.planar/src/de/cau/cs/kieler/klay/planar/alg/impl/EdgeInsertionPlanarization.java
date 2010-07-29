@@ -172,7 +172,7 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
     private HashSet<IFace> findSurroundingFaces(final INode node)
             throws InconsistentGraphModelException {
         HashSet<IFace> faces = new HashSet<IFace>();
-        for (IEdge edge : node.getAllEdges()) {
+        for (IEdge edge : node.getAdjacencyList().edges()) {
             faces.add(edge.getLeftFace());
             faces.add(edge.getRightFace());
 
@@ -195,7 +195,9 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
 
         IEdge preNewEdge = findFirstFaceEdge(edge, node);
         List<IEdge> edges = new LinkedList<IEdge>();
-        edges.addAll(node.getEdgeList());
+        for (IEdge e : node.getAdjacencyList().edges()) {
+            edges.add(e);
+        }
         int index = 0;
         for (IEdge iedge : edges) {
             if (iedge == preNewEdge) {
@@ -227,7 +229,7 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
     private IEdge findFirstFaceEdge(final IEdge iedge, final INode node)
             throws InconsistentGraphModelException {
         IFace face = iedge.getLeftFace();
-        for (IEdge edge : node.getAllEdges()) {
+        for (IEdge edge : node.getAdjacencyList().edges()) {
             if (edge.getRightFace() == face || edge.getLeftFace() == face) {
                 return edge;
             }
@@ -329,8 +331,10 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
      * @param graph
      *            , the given graph
      * @return parent , array with the parents from root to all nodes
+     * @throws InconsistentGraphModelException
      */
-    private int[] bfs(final INode root, final INode target, final IGraph graph) {
+    private int[] bfs(final INode root, final INode target, final IGraph graph)
+            throws InconsistentGraphModelException {
         int size = graph.getNodeCount();
         int rootID = root.getID();
         int targetID = target.getID();
@@ -365,10 +369,10 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
             }
 
             // find all neighbors and put them in an array
-            INode[] neighbors = new INode[currentNode.getAdjacentEdgeCount()];
+            INode[] neighbors = new INode[currentNode.getAdjacencyList().getEdgeCount()];
             int neighborCounter = 0;
 
-            for (INode neighborNode : currentNode.getAdjacentNodes()) {
+            for (INode neighborNode : currentNode.getAdjacencyList().adjacentNodes()) {
                 neighbors[neighborCounter] = neighborNode;
                 neighborCounter++;
             }

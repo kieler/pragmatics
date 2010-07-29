@@ -26,9 +26,16 @@ import java.util.Collection;
 public interface IEdge extends IGraphElement {
 
     /**
+     * Check if the edge is a directed or an undirected edge.
+     * 
+     * @return true if the edge is directed, false if undirected
+     */
+    boolean isDirected();
+
+    /**
      * Get the {@code INode}s that are connected by this edge. This will return a {@code Collection}
      * containing at most two {@code INode}s, specifically the source and the target node of this
-     * edge This method is provided because in some cases (especially in undirected graphs) it may
+     * edge. This method is provided because in some cases (especially in undirected graphs) it may
      * be convenient to get the nodes of an edge without specifying if the node is source or target.
      * 
      * @return a {@code Collection} containing the nodes this edge connects
@@ -41,15 +48,39 @@ public interface IEdge extends IGraphElement {
      * 
      * @return the source node
      */
-    INode getSource();
+    INode getSourceNode();
+
+    /**
+     * Get the {@code IPort} in which this edge originates. In undirected graphs, one of the two
+     * connected {@code IPort}s is returned.
+     * 
+     * @return the source port
+     */
+    IPort getSourcePort();
 
     /**
      * Get the {@code INode} this edge points to. In undirected graphs, the {@code INode} that is
-     * not returned by {@code getSource()} is returned.
+     * not returned by {@code getSourceNode()} is returned.
      * 
      * @return the target node
      */
-    INode getTarget();
+    INode getTargetNode();
+
+    /**
+     * Get the {@code IPort} this edge points to. In undirected graphs, the {@code Port} that is not
+     * returned by {@code getSourcePort()} is returned.
+     * 
+     * @return the target port
+     */
+    IPort getTargetPort();
+
+    /**
+     * Get the {@code IFace}s that are formed by this edge. This will return a {@code Collection}
+     * containing at most two {@code IFace}s, specifically the left and right face of this edge.
+     * 
+     * @return a {@code Collection} containing the faces formed by this edge
+     */
+    Collection<IFace> getFaces();
 
     /**
      * Get the {@code IFace} on the right side of this edge.
@@ -98,13 +129,21 @@ public interface IEdge extends IGraphElement {
      * @param append
      *            true to append the edge to the adjacency list, false to prepend
      * @throws InconsistentGraphModelException
-     *             if the node {@code from} is not part of the graph
-     * 
-     * @param from
-     * @param to
-     * @param append
-     * @throws InconsistentGraphModelException
+     *             if either of the nodes are not part of the graph
      */
     void move(INode from, INode to, boolean append) throws InconsistentGraphModelException;
+
+    /**
+     * Move the edge from one port to another. This will remove the edge from the one port, and will
+     * add itself to the other port. The source and target of the edge will be set accordingly.
+     * 
+     * @param from
+     *            the port from which this edge will be moved
+     * @param to
+     *            the port to which this edge will be moved
+     * @throws InconsistentGraphModelException
+     *             if either of the ports are not part of the graph
+     */
+    void move(IPort from, IPort to) throws InconsistentGraphModelException;
 
 }

@@ -13,9 +13,6 @@
  */
 package de.cau.cs.kieler.klay.planar.graph;
 
-import java.util.Comparator;
-import java.util.List;
-
 /**
  * A node in the interface for a general graph data structure.
  * 
@@ -25,8 +22,6 @@ import java.util.List;
  * @author ocl
  */
 public interface INode extends IGraphElement {
-
-    // ======================== Node Types =========================================================
 
     /**
      * An enum that defines the general type of a node. Most graph nodes will be {@code NORMAL}
@@ -68,107 +63,12 @@ public interface INode extends IGraphElement {
      */
     NodeType getType();
 
-    // ======================== Adjacency List =====================================================
-
     /**
-     * Get all edges that are connected to this node. This returns an {@code Iterable} object
-     * containing all edges that are connected to this node. This contains outgoing edges as well as
-     * incoming edges, so this method should preferably used in undirected graphs.
+     * Get the object representing the adjacency list of this node.
      * 
-     * @return all edges
+     * @return the adjacency list object
      */
-    Iterable<IEdge> getAllEdges();
-
-    /**
-     * Get all edges that point to this node. This returns an {@code Iterable} object containing all
-     * edges whose target node is this node, therefore being 'incoming' edges to this node.
-     * 
-     * @return all incoming edges
-     */
-    Iterable<IEdge> getIncomingEdges();
-
-    /**
-     * Get all edges that originate in this node. This returns an {@code Iterable} object containing
-     * all edges whose source node is this node, therefore being 'outgoing' edges from this node.
-     * 
-     * @return all outgoing edges
-     */
-    Iterable<IEdge> getOutgoingEdges();
-
-    /**
-     * Get the number of edges connected to this node.
-     * 
-     * @return the number of edges
-     */
-    int getAdjacentEdgeCount();
-
-    /**
-     * Get the list of all edges connected to this node. This method exists additionally to {@code
-     * getEdges()}, to be able to modify the adjacency list of a node directly (e.g. sort, revert).
-     * Note that this method should be used with care, since it may cause graph inconsistencies if
-     * edges are added or deleted from the list.
-     * 
-     * @return the list of edges
-     */
-    List<IEdge> getEdgeList();
-
-    /**
-     * Get all adjacent nodes. This returns an {@code Iterable} object containing all node that are
-     * directly connected to this node by an edge.
-     * 
-     * @return all adjacent nodes of this node
-     */
-    Iterable<INode> getAdjacentNodes();
-
-    /**
-     * Check if a node is adjacent to this node.
-     * 
-     * @param node
-     *            the node to check for
-     * @return true if the node {@code n} is adjacent to this node
-     */
-    boolean isAdjacent(INode node);
-
-    /**
-     * Get an adjacent node specified by the connecting edge. This returns the node directly
-     * adjacent to this node that is connected to this node by the given edge {@code e}.
-     * 
-     * @param edge
-     *            the edge that connects the nodes
-     * @return the adjacent node of this node regarding edge {@code e}
-     * @throws InconsistentGraphModelException
-     *             if the given edge {@code e} is not connected to this node
-     */
-    INode getAdjacentNode(IEdge edge) throws InconsistentGraphModelException;
-
-    /**
-     * Get the edge to an adjacent node. This returns the edge that connects this node with the
-     * given node {@code n}.
-     * 
-     * @param node
-     *            the adjacent node
-     * @return the edge that connects this node to {@code n}
-     * @throws InconsistentGraphModelException
-     *             if the given node {@code n} is not adjacent to this node
-     */
-    IEdge getEdge(INode node) throws InconsistentGraphModelException;
-
-    // ======================== Modify Adjacency List ==============================================
-
-    /**
-     * Reverse the order of the adjacency list of this node.
-     */
-    void reverseAdjacencyList();
-
-    /**
-     * Sort the adjacency list using a comparator.
-     * 
-     * @param comp
-     *            the comparator to use for sorting
-     */
-    void sortAdjacencyList(Comparator<IEdge> comp);
-
-    // ======================== Miscellaneous Functions ============================================
+    IAdjacencyList getAdjacencyList();
 
     /**
      * Merge the node with another node. This will merge two nodes in the graph. All edges of the
