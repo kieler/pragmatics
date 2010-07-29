@@ -62,6 +62,7 @@ public class BendsMetric implements IAnalysis {
 
         Assert.isTrue(edgesCount == m);
         Assert.isTrue(bendsCount == bends);
+        System.out.println("edges: " + edgesCount + " bends: " + bendsCount);
 
         progressMonitor.done();
 

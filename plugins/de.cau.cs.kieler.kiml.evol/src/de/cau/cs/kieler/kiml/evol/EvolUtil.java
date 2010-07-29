@@ -534,17 +534,20 @@ final Population pop, final IEditorPart editor) {
          */
         public IGene<?> newGene(
                 final Object theId, final Object theValue, final double theMutationProbability) {
-            // TODO: regard bounds from the evolution data extensions
+
             IGene<?> result = null;
-            final LayoutOptionData layoutOptionData =
-                    LayoutServices.getInstance().getLayoutOptionData((String) theId);
+
             final IConfigurationElement evolutionData =
                     EvolutionService.getInstance().getEvolutionData((String) theId);
             final String lowerBoundAttr = evolutionData.getAttribute("lowerBound");
             final String upperBoundAttr = evolutionData.getAttribute("upperBound");
-            final String distrName = evolutionData.getAttribute("distribution");
+            final String distrNameAttr = evolutionData.getAttribute("distribution");
             final String varianceAttr = evolutionData.getAttribute("variance");
-            final Distribution distr = Distribution.valueOf(distrName);
+
+            final Distribution distr = Distribution.valueOf(distrNameAttr);
+
+            final LayoutOptionData layoutOptionData =
+                    LayoutServices.getInstance().getLayoutOptionData((String) theId);
             final Type layoutOptionDataType = layoutOptionData.getType();
 
             switch (layoutOptionDataType) {
@@ -625,8 +628,9 @@ final Population pop, final IEditorPart editor) {
                         new UniversalGene(theId, floatValue, typeInfo, new MutationInfo(
                                 theMutationProbability, variance, distr));
                 System.out.println(theId + ": " + result);
-            }
                 break;
+            }
+
             default:
                 break;
             }

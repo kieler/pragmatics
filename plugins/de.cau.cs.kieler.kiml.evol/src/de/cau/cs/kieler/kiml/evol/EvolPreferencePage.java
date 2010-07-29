@@ -62,6 +62,7 @@ public class EvolPreferencePage extends FieldEditorPreferencePage
         popSizeEditor.setValidRange(1, Integer.MAX_VALUE);
         addField(popSizeEditor);
 
+        // layout
         algorithmGroup.setLayout(new GridLayout(NUM_COLUMNS, false));
         parent.setLayout(new FillLayout());
     }
