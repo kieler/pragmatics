@@ -28,6 +28,9 @@ import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.INode;
 import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
 import de.cau.cs.kieler.klay.planar.graph.INode.NodeType;
+import de.cau.cs.kieler.klay.planar.util.ManuallyIterable;
+import de.cau.cs.kieler.klay.planar.util.ManuallyIterable.Direction;
+import de.cau.cs.kieler.klay.planar.util.ManuallyIterable.ManualIterator;
 
 /**
  * An algorithm for planar testing by John M. Boyer and Wendy J. Myrvold. Based on the paper "On the
@@ -67,6 +70,9 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
 
     /** The list of roots of DFS trees in the graph. */
     private LinkedList<INode> dfsRoots;
+
+    /** The external face of the graph. */
+    private ManuallyIterable<INode> externalFace;
 
     /** Set to remember to-be-removed edges temporarily. */
     private HashSet<IEdge> tempEdges;
@@ -110,20 +116,6 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
      * true concerning the root node, if the value of the visited flag is equal to the root node.
      */
     private INode[] visited;
-
-    /**
-     * The clockwise external successor of every node. This is the direct successor on the external
-     * face of a node in clockwise direction. This is used to traverse the external face of a
-     * biconnected component.
-     */
-    private INode[] extSuccessorCW;
-
-    /**
-     * The counterclockwise external successor of every node. This is the direct successor on the
-     * external face of a node in counter- clockwise direction. This is used to traverse the
-     * external face of a biconnected component.
-     */
-    private INode[] extSuccessorCCW;
 
     /**
      * The parent node of every node. The parent node is the parent in the DFS tree, it is also the
@@ -170,136 +162,6 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
      * processed node).
      */
     private LinkedList<INode>[] pertinentRoots;
-
-    // ======================== Helper Classes =====================================================
-
-    /**
-     * A helper class for traversing the external face of a biconnected component. This class
-     * combines a node on the external face with a direction, and can then be used to traverse the
-     * external face of a biconnected component in that direction. This class is also able to
-     * determine the activity of the traversed node.
-     * 
-     * @author ocl
-     */
-    private class FaceIterator implements Iterator<INode>, Cloneable {
-
-        // -------------------------- Constants ----------------------------------------------------
-
-        /** A constant for clockwise direction. */
-        public static final boolean CW = true;
-
-        /** A constant for counterclockwise direction. */
-        public static final boolean CCW = false;
-
-        // -------------------------- Attributes ---------------------------------------------------
-
-        /** The first node on the external face. */
-        private INode start;
-
-        /** The current node on the external face. */
-        private INode node;
-
-        /** The direction in which the face is traversed. */
-        private boolean direction;
-
-        // -------------------------- Constructor --------------------------------------------------
-
-        /**
-         * Create a new face iterator to traverse an external face.
-         * 
-         * @param n
-         *            the starting node for traversal
-         * @param dir
-         *            the direction of the traversal
-         */
-        public FaceIterator(final INode n, final boolean dir) {
-            this.start = n;
-            this.node = n;
-            this.direction = dir;
-        }
-
-        // ----------------------- Getters and Setters ------------------------
-
-        /**
-         * Get the node that is currently traversed.
-         * 
-         * @return the current node
-         */
-        public INode getNode() {
-            return this.node;
-        }
-
-        /**
-         * Set the current node of the face runner manually.
-         * 
-         * @param n
-         *            the current node
-         */
-        public void setNode(final INode n) {
-            this.node = n;
-        }
-
-        /**
-         * Get the next node on the external face. This operation does not change the iterator.
-         * 
-         * @return the next node
-         */
-        private INode getNext() {
-            int iNode = this.node.getID();
-            return this.direction ? extSuccessorCW[iNode] : extSuccessorCCW[iNode];
-        }
-
-        /**
-         * Get the direction of the face runner.
-         * 
-         * @return the direction
-         */
-        public boolean getDirection() {
-            return this.direction;
-        }
-
-        /**
-         * Set the direction of the face runner manually.
-         * 
-         * @param dir
-         *            the direction
-         */
-        public void setDirection(final boolean dir) {
-            this.direction = dir;
-        }
-
-        // -------------------------- Iterator Functions -------------------------------------------
-
-        /**
-         * Check if the face iterator has reached the start node. Note that this will only check if
-         * the currently traversed node is the start node. So this will return false if the iterator
-         * has not yet moved to another node. Also, it is possible to continue iterating over the
-         * external face after the start node is reached.
-         * 
-         * @return false if the current node is the start node
-         */
-        public boolean hasNext() {
-            return (this.node != this.start) && (this.getNext() != null);
-        }
-
-        /**
-         * Move the face iterator to the next node on the external face.
-         * 
-         * @return the next node
-         */
-        public INode next() {
-            this.node = this.getNext();
-            return this.node;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-
-    }
 
     // ======================== Constructor ========================================================
 
@@ -390,6 +252,7 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
         this.reversedNodes.clear();
         this.dfsRoots.clear();
         this.tempEdges.clear();
+        this.externalFace = new ManuallyIterable<INode>(this.graph.getNodeCount());
 
         // Initialize all node properties
         // Reserve enough space for nodes and virtual node
@@ -401,8 +264,6 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
         this.ancestor = new int[size];
         this.backedgeFlag = new int[size];
         this.visited = new INode[size];
-        this.extSuccessorCW = new INode[size];
-        this.extSuccessorCCW = new INode[size];
         this.parent = new INode[size];
         this.children = new LinkedList[size];
         this.separatedChildren = new LinkedHashSet[size];
@@ -464,8 +325,8 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
 
             // Embed back edges
             for (INode root : this.roots[iNode]) {
-                if (this.walkdown(root, FaceIterator.CW)) {
-                    this.walkdown(root, FaceIterator.CCW);
+                if (this.walkdown(root, Direction.FWD)) {
+                    this.walkdown(root, Direction.REV);
                 }
             }
 
@@ -533,14 +394,14 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
         this.dfi[iNode] = index;
         this.lowpoint[iNode] = index;
         this.ancestor[iNode] = index;
-        this.extSuccessorCW[iNode] = node;
-        this.extSuccessorCCW[iNode] = node;
         this.parent[iNode] = parentNode;
         this.separatedChildren[iNode] = new LinkedHashSet<INode>();
         this.children[iNode] = new LinkedList<INode>();
         this.neighbors[iNode] = new LinkedList<INode>();
         this.roots[iNode] = new LinkedHashSet<INode>();
         this.pertinentRoots[iNode] = new LinkedList<INode>();
+        this.externalFace.setSuccessor(node, node, Direction.FWD);
+        this.externalFace.setSuccessor(node, node, Direction.REV);
 
         // Add a virtual root node as image of the parent node
         INode bicomp = null;
@@ -551,19 +412,20 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
             this.dfi[iBicomp] = this.dfi[iParent];
             this.lowpoint[iBicomp] = this.lowpoint[iParent];
             this.ancestor[iBicomp] = this.ancestor[iParent];
-            this.extSuccessorCW[iBicomp] = node;
-            this.extSuccessorCCW[iBicomp] = node;
             this.parent[iBicomp] = parentNode;
             this.children[iBicomp] = new LinkedList<INode>();
             this.neighbors[iBicomp] = new LinkedList<INode>();
             this.roots[iBicomp] = new LinkedHashSet<INode>();
             this.pertinentRoots[iBicomp] = new LinkedList<INode>();
 
-            this.extSuccessorCW[iNode] = bicomp;
-            this.extSuccessorCCW[iNode] = bicomp;
             this.children[iParent].add(node);
             this.children[iBicomp].addFirst(node);
             this.roots[iParent].add(bicomp);
+
+            this.externalFace.setSuccessor(node, bicomp, Direction.FWD);
+            this.externalFace.setSuccessor(node, bicomp, Direction.REV);
+            this.externalFace.setSuccessor(bicomp, node, Direction.FWD);
+            this.externalFace.setSuccessor(bicomp, node, Direction.REV);
         }
 
         // Recurse over all adjacent nodes
@@ -628,15 +490,15 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
 
         // Set up the two traversal classes
         this.backedgeFlag[childNode.getID()]++;
-        FaceIterator left = new FaceIterator(node, FaceIterator.CW);
-        left.setNode(childNode);
-        FaceIterator right = new FaceIterator(node, FaceIterator.CCW);
-        right.setNode(childNode);
+        ManualIterator<INode> left = this.externalFace.iterator(node, Direction.FWD);
+        left.setCurrent(childNode);
+        ManualIterator<INode> right = this.externalFace.iterator(node, Direction.REV);
+        right.setCurrent(childNode);
 
         // Iterate over external face
         while (left.hasNext()) {
-            int iLeft = left.getNode().getID();
-            int iRight = right.getNode().getID();
+            int iLeft = left.getCurrent().getID();
+            int iRight = right.getCurrent().getID();
 
             // Break on already visited nodes
             if (this.visited[iLeft] == node || this.visited[iRight] == node) {
@@ -647,10 +509,10 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
 
             // Check if we found a root node
             INode n = null;
-            if (left.getNode().getType() == NodeType.OTHER) {
-                n = left.getNode();
-            } else if (right.getNode().getType() == NodeType.OTHER) {
-                n = right.getNode();
+            if (left.getCurrent().getType() == NodeType.OTHER) {
+                n = left.getCurrent();
+            } else if (right.getCurrent().getType() == NodeType.OTHER) {
+                n = right.getCurrent();
             }
 
             // Add root nodes to pertinent nodes list
@@ -664,8 +526,8 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
                     }
                     this.pertinentRoots[n.getID()].addFirst(node);
                 }
-                left.setNode(parentNode);
-                right.setNode(parentNode);
+                left.setCurrent(parentNode);
+                right.setCurrent(parentNode);
 
             } else {
                 left.next();
@@ -688,84 +550,91 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
      * 
      * @param root
      *            the root node of the traversed graph section
+     * @param direction
+     *            the direction of the face traversal
      * @return true if the embedding was successful
      * @throws InconsistentGraphModelException
      *             if the graph is inconsistent
      */
-    private boolean walkdown(final INode root, final boolean direction)
+    private boolean walkdown(final INode root, final Direction direction)
             throws InconsistentGraphModelException {
 
-        LinkedList<FaceIterator> merge = new LinkedList<FaceIterator>();
+        LinkedList<ManualIterator<INode>> merge = new LinkedList<ManualIterator<INode>>();
         INode node = this.parent[root.getID()];
 
         // Traverse external face of biconnected component
-        FaceIterator iter = new FaceIterator(root, direction);
+        ManualIterator<INode> iter = this.externalFace.iterator(root, direction);
         iter.next();
         while (iter.hasNext()) {
-            int iIter = iter.getNode().getID();
+            int iIter = iter.getCurrent().getID();
 
             // Back edge node found, merge
             if (this.backedgeFlag[iIter] > 0) {
                 this.mergeBicomp(merge);
                 iter.setDirection(direction);
                 while (this.backedgeFlag[iIter] > 0) {
-                    this.graph.addEdge(root, !direction, iter.getNode(), iter.getDirection());
+                    if (direction == Direction.FWD && iter.getDirection() == Direction.FWD) {
+                        this.graph.addEdge(root, false, iter.getCurrent(), true);
+                    } else if (direction == Direction.FWD && iter.getDirection() == Direction.REV) {
+                        this.graph.addEdge(root, false, iter.getCurrent(), false);
+                    } else if (direction == Direction.REV && iter.getDirection() == Direction.FWD) {
+                        this.graph.addEdge(root, true, iter.getCurrent(), true);
+                    } else if (direction == Direction.REV && iter.getDirection() == Direction.REV) {
+                        this.graph.addEdge(root, true, iter.getCurrent(), false);
+                    }
                     this.backedgeFlag[iIter]--;
                 }
-                if (iter.getDirection()) {
-                    this.extSuccessorCW[root.getID()] = iter.getNode();
-                    this.extSuccessorCCW[iIter] = root;
-                } else {
-                    this.extSuccessorCCW[root.getID()] = iter.getNode();
-                    this.extSuccessorCW[iIter] = root;
-                }
+                Direction dir = iter.getDirection();
+                Direction opp = (dir == Direction.FWD) ? Direction.REV : Direction.FWD;
+                this.externalFace.setSuccessor(root, iter.getCurrent(), dir);
+                this.externalFace.setSuccessor(iter.getCurrent(), root, opp);
 
-            } else if (this.isPertinent(iter.getNode(), node)) {
+            } else if (this.isPertinent(iter.getCurrent(), node)) {
                 // Found a new pertinent biconnected component, jump there
                 merge.push(iter);
 
-                FaceIterator temp = new FaceIterator(root, FaceIterator.CW);
+                ManualIterator<INode> temp = this.externalFace.iterator(root, Direction.FWD);
                 for (INode r : this.pertinentRoots[iIter]) {
                     if (this.pertinentRoots[r.getID()].getFirst() == node) {
-                        temp.setNode(r);
+                        temp.setCurrent(r);
                         break;
                     }
                 }
 
-                FaceIterator left = new FaceIterator(root, FaceIterator.CW);
-                left.setNode(temp.getNode());
+                ManualIterator<INode> left = this.externalFace.iterator(root, Direction.FWD);
+                left.setCurrent(temp.getCurrent());
                 do {
                     left.next();
-                } while (!isPertinent(left.getNode(), node)
-                        && !isExternallyActive(left.getNode(), node));
+                } while (!isPertinent(left.getCurrent(), node)
+                        && !isExternallyActive(left.getCurrent(), node));
 
-                FaceIterator right = new FaceIterator(root, FaceIterator.CCW);
-                right.setNode(temp.getNode());
+                ManualIterator<INode> right = this.externalFace.iterator(root, Direction.REV);
+                right.setCurrent(temp.getCurrent());
                 do {
                     right.next();
-                } while (!isPertinent(right.getNode(), node)
-                        && !isExternallyActive(right.getNode(), node));
+                } while (!isPertinent(right.getCurrent(), node)
+                        && !isExternallyActive(right.getCurrent(), node));
 
-                if (this.isPertinent(left.getNode(), node)
-                        && !this.isExternallyActive(left.getNode(), node)) {
+                if (this.isPertinent(left.getCurrent(), node)
+                        && !this.isExternallyActive(left.getCurrent(), node)) {
                     iter = left;
-                    temp.setDirection(FaceIterator.CCW);
-                } else if (this.isPertinent(right.getNode(), node)
-                        && !this.isExternallyActive(right.getNode(), node)) {
+                    temp.setDirection(Direction.REV);
+                } else if (this.isPertinent(right.getCurrent(), node)
+                        && !this.isExternallyActive(right.getCurrent(), node)) {
                     iter = right;
-                    temp.setDirection(FaceIterator.CW);
-                } else if (this.isPertinent(left.getNode(), node)) {
+                    temp.setDirection(Direction.FWD);
+                } else if (this.isPertinent(left.getCurrent(), node)) {
                     iter = left;
-                    temp.setDirection(FaceIterator.CCW);
+                    temp.setDirection(Direction.REV);
                 } else {
                     iter = right;
-                    temp.setDirection(FaceIterator.CW);
+                    temp.setDirection(Direction.FWD);
                 }
 
                 merge.push(temp);
 
-            } else if (!this.isPertinent(iter.getNode(), root)
-                    && !this.isExternallyActive(iter.getNode(), node)) {
+            } else if (!this.isPertinent(iter.getCurrent(), root)
+                    && !this.isExternallyActive(iter.getCurrent(), node)) {
                 // Traverse to next vertex
                 iter.next();
 
@@ -774,13 +643,10 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
                 int iChild = this.children[root.getID()].getFirst().getID();
                 int iParent = this.parent[root.getID()].getID();
                 if (this.lowpoint[iChild] < this.dfi[iParent] && merge.isEmpty()) {
-                    if (iter.getDirection()) {
-                        this.extSuccessorCW[root.getID()] = iter.getNode();
-                        this.extSuccessorCCW[iIter] = root;
-                    } else {
-                        this.extSuccessorCCW[root.getID()] = iter.getNode();
-                        this.extSuccessorCW[iIter] = root;
-                    }
+                    Direction dir = iter.getDirection();
+                    Direction opp = (dir == Direction.FWD) ? Direction.REV : Direction.FWD;
+                    this.externalFace.setSuccessor(root, iter.getCurrent(), dir);
+                    this.externalFace.setSuccessor(iter.getCurrent(), root, opp);
                 }
                 break;
             }
@@ -798,67 +664,62 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
      * 
      * @param stack
      *            the merge stack
-     * @param direction
-     *            the direction in which the backedge will be embedded
      * @throws InconsistentGraphModelException
      *             if the edges in the graph are not correctly linked
      */
-    private void mergeBicomp(final LinkedList<FaceIterator> stack)
+    private void mergeBicomp(final LinkedList<ManualIterator<INode>> stack)
             throws InconsistentGraphModelException {
         while (!stack.isEmpty()) {
             // The virtual root of node
-            FaceIterator root = stack.pop();
-            int iRoot = root.getNode().getID();
+            ManualIterator<INode> root = stack.pop();
+            int iRoot = root.getCurrent().getID();
             // The pertinent node on the external face
-            FaceIterator node = stack.pop();
-            int iNode = node.getNode().getID();
+            ManualIterator<INode> node = stack.pop();
+            int iNode = node.getCurrent().getID();
 
             // Flipping
             if (root.getDirection() == node.getDirection()) {
                 // Invert the adjacency list of the root node and mark bicomp as flipped
-                root.getNode().getAdjacencyList().mirror();
+                root.getCurrent().getAdjacencyList().mirror();
                 int iChild = this.children[iRoot].getFirst().getID();
                 this.flipped[iChild] = !this.flipped[iChild];
 
                 // Swap external successors on the whole external face
-                FaceIterator flip = new FaceIterator(root.getNode(), FaceIterator.CW);
+                ManualIterator<INode> flip = this.externalFace.iterator(root.getCurrent(),
+                        Direction.FWD);
 
                 do {
-                    int i = flip.getNode().getID();
+                    INode current = flip.getCurrent();
                     flip.next();
-                    INode temp = this.extSuccessorCW[i];
-                    this.extSuccessorCW[i] = this.extSuccessorCCW[i];
-                    this.extSuccessorCCW[i] = temp;
-
+                    INode successor = this.externalFace.getSuccessor(current, Direction.FWD);
+                    INode predecessor = this.externalFace.getSuccessor(current, Direction.REV);
+                    this.externalFace.setSuccessor(current, predecessor, Direction.FWD);
+                    this.externalFace.setSuccessor(current, successor, Direction.REV);
                 } while (flip.hasNext());
             }
 
             // Remove virtual root from graph
-            node.getNode().merge(root.getNode(), node.getDirection());
+            node.getCurrent().merge(root.getCurrent(), (node.getDirection() == Direction.FWD));
             this.separatedChildren[iNode].remove(this.children[iRoot].getFirst());
-            this.roots[iNode].remove(root.getNode());
+            this.roots[iNode].remove(root.getCurrent());
             for (Iterator<INode> rs = this.pertinentRoots[iNode].iterator(); rs.hasNext();) {
-                if (rs.next() == root.getNode()) {
+                if (rs.next() == root.getCurrent()) {
                     rs.remove();
                 }
             }
 
             // Re-link external successors
-            INode rootCW = this.extSuccessorCW[iRoot];
-            INode rootCCW = this.extSuccessorCCW[iRoot];
-            INode nodeCW = this.extSuccessorCW[iNode];
-            INode nodeCCW = this.extSuccessorCCW[iNode];
-            if (node.getDirection()) {
-                this.extSuccessorCCW[iNode] = rootCCW;
-                this.extSuccessorCW[rootCCW.getID()] = node.getNode();
-                this.extSuccessorCCW[rootCW.getID()] = nodeCCW;
-                this.extSuccessorCW[nodeCCW.getID()] = rootCW;
-            } else {
-                this.extSuccessorCW[iNode] = rootCW;
-                this.extSuccessorCCW[rootCW.getID()] = node.getNode();
-                this.extSuccessorCW[rootCCW.getID()] = nodeCW;
-                this.extSuccessorCCW[nodeCW.getID()] = rootCCW;
-            }
+            Direction dir = node.getDirection();
+            Direction opp = (dir == Direction.FWD) ? Direction.REV : Direction.FWD;
+
+            INode nodeOpp = this.externalFace.getSuccessor(node.getCurrent(), opp);
+            INode rootDir = this.externalFace.getSuccessor(root.getCurrent(), dir);
+            INode rootOpp = this.externalFace.getSuccessor(root.getCurrent(), opp);
+
+            this.externalFace.setSuccessor(rootOpp, node.getCurrent(), dir);
+            this.externalFace.setSuccessor(node.getCurrent(), rootOpp, opp);
+            this.externalFace.setSuccessor(nodeOpp, rootDir, dir);
+            this.externalFace.setSuccessor(rootDir, nodeOpp, opp);
         }
     }
 
