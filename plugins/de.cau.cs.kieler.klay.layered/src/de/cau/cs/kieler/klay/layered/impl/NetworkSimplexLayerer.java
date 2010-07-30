@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.layered.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -38,7 +39,14 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     // ====================== Attributes ======================================
 
     /** the layered graph all methods in this class operate on. */
-    private LayeredGraph graph;
+    private LayeredGraph layerGraph;
+
+    /**
+     * A collection containing all nodes in the graph to layer.
+     * 
+     * @see java.util.Collection Collection
+     */
+    private Collection<LNode> layerNodes;
 
     /**
      * The height of all nodes in the layered graph and therefore, it determines which layer they
@@ -48,7 +56,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
 
     /** the minimal spacing between objects. */
     private float spacing;
-    
+
     /** The cut value of every edge. */
     private int[] cutvalue;
 
@@ -81,16 +89,53 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * @param numEdges
      *            the number of edges in the graph
      */
-    private void initialize(final int numNodes, final int numEdges) {
-        // TODO
+    private void initialize(final Collection<LNode> nodes, final Collection<LEdge> edges) {
+        
+        // re-index nodes and edges
+        int counter = 0;
+        for (LNode node : nodes) {
+            node.id = counter;
+        }
+        counter = 0;
+        for (LEdge edge : edges) {
+            edge.id = counter;
+        }
+        
+        // initialize node attributes
+        if (height == null || height.length < nodes.size()) {
+            height = new int[nodes.size()];
+        } else {
+            Arrays.fill(height, -1);
+        }
+        
+        // initialize edge attributes
+        if (cutvalue == null || cutvalue.length < edges.size()) {
+            cutvalue = new int[edges.size()];
+        }
+         
+        longestPath = 0;
     }
 
+    
     /**
      * {@inheritDoc}
      */
     public void layer(final Collection<LNode> nodes, final LayeredGraph layeredGraph) {
-        // TODO Auto-generated method stub
 
+        // initialize attributes
+        layerGraph = layeredGraph;
+        layerNodes = nodes;
+        initialize(nodes, getEdges(nodes));
+
+        // determine feasible tree
+        feasibleTree();
+        LEdge e = null;
+        while ((e = leaveEdge()) != null) {
+            // current layering is not optimal
+            exchange(e, enterEdge());
+        }
+        normalize();
+        balance();
     }
 
     private void feasibleTree() {
@@ -145,4 +190,18 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         // TODO
     }
 
+    
+    
+    private Collection<LEdge> getEdges(final Collection<LNode> nodes) {
+        
+        LinkedList<LEdge> edges = new LinkedList<LEdge>();
+        for (LNode node : nodes) {
+            for (LPort port : node.getPorts(PortType.OUTPUT)) {
+                edges.addAll(port.getEdges());
+            }
+        }
+        return edges;
+    }
+
+    
 }
