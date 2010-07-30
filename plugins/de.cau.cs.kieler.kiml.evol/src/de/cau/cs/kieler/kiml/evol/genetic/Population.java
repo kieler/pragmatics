@@ -22,7 +22,7 @@ import java.util.List;
  * @author bdu
  *
  */
-public class Population extends ArrayList<Genome> implements Filterable<Population, Genome> {
+public class Population extends ArrayList<Genome> implements IFilterable<Population, Genome> {
 
     /**
      *
@@ -95,13 +95,13 @@ public class Population extends ArrayList<Genome> implements Filterable<Populati
         }
         return result;
     }
-
+    
     /**
-     *
+     * 
      * @param filter
      *            an {@link IItemFilter} for {@link Genome} objects
-     * @return a new list containing the {@link Genome} objects that pass the
-     *         filter.
+     * @return a new {@link Population} containing the {@link Genome} objects
+     *         that pass the filter.
      */
     public Population select(final IItemFilter<Genome> filter) {
         final Population result = new Population();

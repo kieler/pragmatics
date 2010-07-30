@@ -89,14 +89,14 @@ public class FloatGene extends AbstractGene<Float> {
     }
 
     @Override
-    public IGene<Float> recombineWith(final IGene<Float>... genes) {
-        // return average of genes and this gene
+    public IGene<Float> recombineWith(final IGene<Float>... otherGenes) {
+        // return average of other genes and this gene
         Float sum = 0.0f;
-        for (final IGene<Float> gene : genes) {
+        for (final IGene<Float> gene : otherGenes) {
             sum += gene.getValue();
         }
         sum += getValue();
-        final int count = genes.length + 1;
+        final int count = otherGenes.length + 1;
         final float value = sum / count;
         // XXX must ensure that the value is not out of bounds
         Assert.isTrue(getTypeInfo().isValueWithinBounds(value));
@@ -124,7 +124,7 @@ public class FloatGene extends AbstractGene<Float> {
         super(theId, theValue, theTypeInfo, theMutationInfo);
     }
 
-    public static final IValueFormatter FLOAT_FORMATTER = new IValueFormatter() {
+    private static final IValueFormatter FLOAT_FORMATTER = new IValueFormatter() {
         public String getString(final Object o) {
             if (o instanceof Float) {
                 return (Math.signum((Float) o) <= 0 ? "-" : "+") + o + "f";

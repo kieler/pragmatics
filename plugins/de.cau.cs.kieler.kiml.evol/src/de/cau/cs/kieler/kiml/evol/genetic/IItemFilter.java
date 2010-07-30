@@ -15,7 +15,7 @@ package de.cau.cs.kieler.kiml.evol.genetic;
 
 /**
  * This interface can be used to implement a custom filter for lists that
- * implement {@link Filterable}.
+ * implement {@link IFilterable}.
  *
  * @author bdu
  *

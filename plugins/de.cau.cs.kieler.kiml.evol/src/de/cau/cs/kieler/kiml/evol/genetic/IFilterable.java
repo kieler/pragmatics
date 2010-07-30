@@ -16,26 +16,26 @@
  */
 package de.cau.cs.kieler.kiml.evol.genetic;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
- * An interface for lists that can filter their content.
+ * An interface for collections that can filter their content.
  * 
- * @param <ListType>
- *            a list type
+ * @param <CollectionType>
+ *            a collection type
  * @param <T>
- *            the type of elements in the list
+ *            the type of elements in the collection
  * @author bdu
  * 
  */
-public interface Filterable<ListType extends List<T>, T> {
+public interface IFilterable<CollectionType extends Collection<T>, T> {
     /**
-     * Filters the list by the given filter.
+     * Filters the collection by the given filter.
      *
      * @param filter
      *            an {@link IItemFilter}
-     * @return a new list that contains all the items of the list that pass the
-     *         given filter.
+     * @return a copy of the collection that contains only the items that pass
+     *         the given filter.
      */
-    ListType select(final IItemFilter<T> filter);
+    CollectionType select(final IItemFilter<T> filter);
 }

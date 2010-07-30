@@ -23,6 +23,9 @@ import org.eclipse.core.runtime.Assert;
  *
  */
 public class UniversalGene extends AbstractGene<Float> {
+    /**
+     * Default formatter for boolean values.
+     */
     public static final IValueFormatter BOOLEAN_FORMATTER = new IValueFormatter() {
         public String getString(final Object o) {
             if (o instanceof Boolean) {
@@ -33,6 +36,10 @@ public class UniversalGene extends AbstractGene<Float> {
             return null;
         }
     };
+
+    /**
+     * Default formatter for strictly positive float values.
+     */
     public static final IValueFormatter STRICTLY_POSITIVE_FLOAT_FORMATTER = new IValueFormatter() {
         public String getString(final Object o) {
             if (o instanceof Float) {
@@ -43,6 +50,10 @@ public class UniversalGene extends AbstractGene<Float> {
             return null;
         }
     };
+
+    /**
+     * Default formatter for float values.
+     */
     public static final IValueFormatter FLOAT_FORMATTER = new IValueFormatter() {
         public String getString(final Object o) {
             if (o instanceof Float) {
@@ -163,6 +174,13 @@ public class UniversalGene extends AbstractGene<Float> {
      */
     private class BooleanMutator implements IMutator {
         private static final double PROBABILITY_FOR_TRUE = 0.5;
+        
+        /**
+         * Creates a {@link BooleanMutator} instance.
+         */
+        public BooleanMutator() {
+            // Nothing to do here.
+        }
 
         public IGene<Float> newMutation(
                 final IGene<Float> template, final MutationInfo theMutationInfo) {
@@ -201,6 +219,13 @@ public class UniversalGene extends AbstractGene<Float> {
      *
      */
     private class FloatMutator implements IMutator {
+        /**
+         * Creates a {@link FloatMutator} instance.
+         */
+        public FloatMutator() {
+            // Nothing to do here.
+        }
+
         public IGene<Float> newMutation(
                 final IGene<Float> theTemplate, final MutationInfo theMutationInfo) {
             Assert.isLegal(getMutationInfo() != null);
