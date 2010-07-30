@@ -30,7 +30,7 @@ public class DiagramTypeProvider extends AbstractDiagramTypeProvider {
     public DiagramTypeProvider() {
         super();
         setFeatureProvider(new FeatureProvider(this));
-
+        
     }
 
     /**
