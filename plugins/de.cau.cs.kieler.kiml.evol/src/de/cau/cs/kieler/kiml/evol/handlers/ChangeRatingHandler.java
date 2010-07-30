@@ -41,7 +41,7 @@ public class ChangeRatingHandler extends AbstractHandler {
                         .findView(EvolView.ID);
         if (view instanceof EvolView) {
             if (((EvolView) view).getPopulation() != null) {
-                final Genome ind = ((EvolView) view).getCurrentIndividual();
+                final Genome ind = ((EvolView) view).getEvolModel().getCurrentIndividual();
                 final int rating = ind.getUserRating() + delta;
                 ind.setUserRating(rating);
                 final SelectorTableViewer tv = ((EvolView) view).getTableViewer();

@@ -47,6 +47,10 @@ public class AutoRateAllHandler extends AbstractHandler {
          * The population to be rated.
          */
         private final Population population;
+
+        /**
+         * The editor in which the individuals shall be layouted.
+         */
         private final IEditorPart editor;
 
         /**
@@ -64,16 +68,15 @@ public class AutoRateAllHandler extends AbstractHandler {
         @Override
         protected IStatus run(final IProgressMonitor monitor) {
             try {
-                Thread.sleep(500);
+                Thread.sleep(300);
 
                 monitor.beginTask("Performing Auto-rating", this.population.size() + 1);
 
-                Thread.sleep(500);
+                Thread.sleep(300);
                 monitor.subTask("Determining Individual Rating");
 
-                // do the rating
-                EvolUtil.autoRateIndividuals(this.population, this.editor,
-                        monitor);
+                // Do the rating.
+                EvolUtil.autoRateIndividuals(this.population, this.editor, monitor);
 
                 if (monitor.isCanceled()) {
                     return new Status(IStatus.CANCEL, EvolPlugin.PLUGIN_ID,
@@ -85,7 +88,6 @@ public class AutoRateAllHandler extends AbstractHandler {
 
                 System.out.println("Average rating: " + this.population.getAverageRating());
                 monitor.worked(1);
-
 
                 return new Status(IStatus.INFO, EvolPlugin.PLUGIN_ID, 0, "OK", null);
 
@@ -109,35 +111,27 @@ public class AutoRateAllHandler extends AbstractHandler {
 
         if (view != null) {
             final Population pop = view.getPopulation();
-            final int size = pop.size();
 
-            final IEditorPart editor;
-            if (view.getLastEditor() != null) {
-                editor = view.getLastEditor();
-            } else {
-                // Let the auto-rating determine the editor.
-                editor = null;
-            }
+            final IEditorPart editor = view.getEvolModel().getLastEditor();
 
             // Create a job for auto-rating.
             final Job autoRateAllJob = new AutoRateAllJob("auto-rating", pop, editor);
 
             // Process the job.
             final IProgressMonitor monitor = Job.getJobManager().createProgressGroup();
+            final int size = pop.size();
             autoRateAllJob.setProgressGroup(monitor, size + 1);
             autoRateAllJob.setPriority(Job.SHORT);
             autoRateAllJob.setUser(true);
             autoRateAllJob.schedule();
 
             try {
-                Thread.sleep(500);
+                Thread.sleep(300);
             } catch (final InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
 
             view.getTableViewer().refresh();
-
 
         } else {
             throw new ExecutionException("The Evolution View could not be found.");

@@ -13,6 +13,9 @@
  */
 package de.cau.cs.kieler.kiml.evol.ui;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.gef.EditPart;
 import org.eclipse.jface.viewers.ISelection;
@@ -40,7 +43,6 @@ import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
-import de.cau.cs.kieler.kiml.ui.views.LayoutPropertySource;
 import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
 
 /**
@@ -51,11 +53,41 @@ import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
  */
 public class EvolView extends ViewPart {
     /**
+     * A table viewer with selectable rows.
+     *
+     * @author bdu
+     *
+     */
+    public class SelectorTableViewer extends TableViewer {
+        /**
+         * Creates a TableViewer for the given table.
+         *
+         * @param table
+         *            a table
+         */
+        public SelectorTableViewer(final Table table) {
+            super(table);
+        }
+
+        void selectRow(final int pos) {
+            if (getPopulation() == null) {
+                return;
+            }
+            Assert.isTrue((pos >= 0) && (pos <= getPopulation().size()), "position out of range");
+            Display.getCurrent().syncExec(new Runnable() {
+                public void run() {
+                    SelectorTableViewer.this.doSelect(new int[] { pos });
+                }
+            });
+        }
+    }
+
+    /**
      * Determines which individuals of a population shall be affected by an
      * operation.
      *
      * @author bdu
-     *
+     * @deprecated
      */
     public enum TargetIndividuals {
         /** Affect all individuals. */
@@ -85,7 +117,7 @@ public class EvolView extends ViewPart {
             final LayoutViewPart layoutView = LayoutViewPart.findView();
             if (layoutView != null) {
                 try {
-                    Thread.sleep(200);
+                    Thread.sleep(100);
                 } catch (final InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -102,17 +134,18 @@ public class EvolView extends ViewPart {
      *
      */
     private class PopulationTableLabelProvider extends LabelProvider implements ITableLabelProvider {
-        private final Image currentImage = AbstractUIPlugin.imageDescriptorFromPlugin(
-                EvolPlugin.PLUGIN_ID, "icons/current.png").createImage();
-        private final Image defaultImage = AbstractUIPlugin.imageDescriptorFromPlugin(
-                EvolPlugin.PLUGIN_ID, "icons/default.png").createImage();
-
         /**
          * Creates a new {@link PopulationTableLabelProvider}.
          */
         public PopulationTableLabelProvider() {
             // Nothing to do here.
         }
+
+        private final Image currentImage = AbstractUIPlugin.imageDescriptorFromPlugin(
+                EvolPlugin.PLUGIN_ID, "icons/current.png").createImage();
+
+        private final Image defaultImage = AbstractUIPlugin.imageDescriptorFromPlugin(
+                EvolPlugin.PLUGIN_ID, "icons/default.png").createImage();
 
         @Override
         public void dispose() {
@@ -123,8 +156,9 @@ public class EvolView extends ViewPart {
         public Image getColumnImage(final Object element, final int columnIndex) {
             switch (columnIndex) {
             case 0:
+                final int pos = EvolView.this.getEvolModel().getPosition();
                 if ((element instanceof PopulationTableEntry)
-                        && (((PopulationTableEntry) element).getIndex() == EvolView.this.position)) {
+                        && (((PopulationTableEntry) element).getIndex() == pos)) {
                     return this.currentImage;
                 }
                 return this.defaultImage;
@@ -154,34 +188,9 @@ public class EvolView extends ViewPart {
     }
 
     /**
-     * A table viewer with selectable rows.
-     *
-     * @author bdu
-     *
+     * Identifier for the EvolView.
      */
-    public class SelectorTableViewer extends TableViewer {
-        /**
-         * Creates a TableViewer for the given table.
-         *
-         * @param table
-         *            a table
-         */
-        public SelectorTableViewer(final Table table) {
-            super(table);
-        }
-
-        void selectRow(final int pos) {
-            if (getPopulation() == null) {
-                return;
-            }
-            Assert.isTrue((pos >= 0) && (pos <= getPopulation().size()), "position out of range");
-            Display.getCurrent().syncExec(new Runnable() {
-                public void run() {
-                    getTableViewer().doSelect(new int[] { pos });
-                }
-            });
-        }
-    }
+    public static final String ID = "de.cau.cs.kieler.kiml.evol.evolView";
 
     /**
      *
@@ -193,21 +202,12 @@ public class EvolView extends ViewPart {
 
     // private fields
     private SelectorTableViewer tableViewer;
-    private BasicEvolutionaryAlgorithm evolAlg;
-    private int position = 0;
-    private Population population;
-    private IEditorPart lastEditor;
-    private String layoutProviderId = "";
-    // TODO: source evolAlg and population out into a model object
+    private final EvolModel evolModel = new EvolModel();
 
     /**
      * Column width for columns in viewer table.
      */
     private static final int DEFAULT_COLUMN_WIDTH = 150;
-    /**
-     * Identifier for the EvolView.
-     */
-    public static final String ID = "de.cau.cs.kieler.kiml.evol.evolView";
 
     // individual property settings
     @Override
@@ -228,7 +228,10 @@ public class EvolView extends ViewPart {
         tv.setLabelProvider(new PopulationTableLabelProvider());
         this.tableViewer = tv;
         reset();
+
         final ISelectionChangedListener listener = new ISelectionChangedListener() {
+            private Object oldElement;
+
             public synchronized void selectionChanged(final SelectionChangedEvent event) {
                 final ISelection selection = event.getSelection();
                 System.out.println("selectionChanged");
@@ -237,12 +240,20 @@ public class EvolView extends ViewPart {
                     final Object element = ((IStructuredSelection) selection).getFirstElement();
                     if (element instanceof PopulationTableEntry) {
                         tv.removeSelectionChangedListener(this);
-                        EvolView.this.position = ((PopulationTableEntry) element).getIndex();
+                        EvolView.this.getEvolModel().setPosition(
+                                ((PopulationTableEntry) element).getIndex());
                         onSelectIndividual();
                         System.out.println("after onSelectIndividual");
-                        tv.refresh();
+
+                        if (this.oldElement != null) {
+                            tv.update(this.oldElement, null);
+                        } else {
+                            tv.refresh();
+                        }
+                        tv.update(element, null);
                         tv.addPostSelectionChangedListener(this);
                         System.out.println();
+                        this.oldElement = element;
                     }
                 } else {
                     System.out.println("empty or null selection");
@@ -253,64 +264,30 @@ public class EvolView extends ViewPart {
     }
 
     /**
-     *
-     * @return a shallow copy of the current population.
-     */
-    public Population getPopulation() {
-        final Population pop = this.population;
-        if (pop == null) {
-            return null;
-        }
-        return new Population(pop);
-    }
-
-    /**
-     * @return the last editor that was used
-     */
-    public IEditorPart getLastEditor() {
-        return this.lastEditor;
-    }
-
-    /**
-     *
-     * @return the table viewer
-     */
-    public SelectorTableViewer getTableViewer() {
-        return this.tableViewer;
-    }
-
-    @Override
-    public void setFocus() {
-        this.tableViewer.getControl().setFocus();
-    }
-
-    /**
      * Performs a step of the evolutionary algorithm.
      */
     public void evolve() {
-        if (!isValidState()) {
+        if (!this.evolModel.isValid()) {
             return;
         }
 
-        final BasicEvolutionaryAlgorithm alg = this.evolAlg;
-        if (alg == null) {
-            return;
-        }
-        alg.step();
-        setInput(alg.getPopulation());
-        final int firstUnrated = firstUnrated();
-        if (firstUnrated > -1) {
-            this.position = firstUnrated;
-        }
-        final int lim = getPopulation().size();
-        if (this.position >= lim) {
-            this.position = lim - 1;
-        }
-        EvolUtil.autoRateIndividuals(this.population.select(Population.UNRATED_FILTER), null, null);
-        Assert.isTrue(this.position >= 0);
-        getTableViewer().selectRow(this.position);
+        final BasicEvolutionaryAlgorithm alg = this.evolModel.getEvolAlg();
+
+        Assert.isNotNull(alg);
+
+        this.evolModel.step();
+
+        this.evolModel.selectInterestingIndividual();
+
+        setInput(this.evolModel.getPopulation());
+
+        EvolUtil.autoRateIndividuals(getPopulation().select(Population.UNRATED_FILTER), null, null);
+
+        Assert.isTrue(this.evolModel.getPosition() >= 0);
+        getTableViewer().selectRow(this.evolModel.getPosition());
         getTableViewer().refresh();
         onSelectIndividual();
+
         // BasicNetwork b = new BasicNetwork();
         // b.addLayer(new BasicLayer(2));
         // b.addLayer(new BasicLayer(3));
@@ -321,170 +298,120 @@ public class EvolView extends ViewPart {
     }
 
     /**
-     *
-     * @return the current {@code Individual}, or {@code null} if none is
-     *         selected.
+     * @return the evolution model that is displayed in the view.
      */
-    public Genome getCurrentIndividual() {
-        final Population pop = this.population;
-        final int pos = this.position;
-        Assert.isTrue((pos >= 0) && (pos < pop.size()), "position out of range");
-        if ((pop == null) || pop.isEmpty()) {
+    public EvolModel getEvolModel() {
+        return this.evolModel;
+    }
+
+    /**
+     *
+     * @return a shallow copy of the current population.
+     */
+    public Population getPopulation() {
+        final Population pop = this.evolModel.getPopulation();
+        if (pop == null) {
             return null;
         }
-        // ensure that the position is within the valid range
-        if ((pos >= pop.size()) || (pos < 0)) {
-            return null;
-        }
-        return pop.get(pos);
+        return new Population(pop);
+    }
+
+    /**
+     *
+     * @return the table viewer
+     */
+    public SelectorTableViewer getTableViewer() {
+        return this.tableViewer;
     }
 
     /**
      * Reset the population and restart the algorithm.
      */
     public void reset() {
-        this.position = 0;
-        final IEditorPart editor = EvolUtil.getCurrentEditor();
-        final EditPart part = EvolUtil.getEditPart(editor);
-        this.setLastEditor(editor);
+        this.evolModel.reset();
 
-        if (editor != null) {
-            // TODO: test whether the editor is for KIML
-            final DiagramLayoutManager manager =
-                    EclipseLayoutServices.getInstance().getManager(editor, part);
-            if (manager != null) {
-                final LayoutPropertySource propertySource =
-                        new LayoutPropertySource(manager.getInspector(part));
-                final Population sourcePopulation = EvolUtil.createPopulation(propertySource);
-                this.layoutProviderId = EvolUtil.getLayoutProviderId(manager, part);
-                final BasicEvolutionaryAlgorithm alg =
-                        new BasicEvolutionaryAlgorithm(sourcePopulation);
-                this.evolAlg = alg;
-                alg.step();
-                setInput(alg.getPopulation());
-            }
+        if (EvolUtil.getCurrentEditor() != null) {
+            setInput(this.evolModel.getPopulation());
         }
+
         this.tableViewer.selectRow(0);
         this.tableViewer.refresh();
     }
 
-    /**
-     * @param editor
-     */
-    private void setLastEditor(final IEditorPart editor) {
-        this.lastEditor = editor;
-
-    }
-
-    /**
-     * Return position of first unrated individual in the list.
-     *
-     * @return {@code -1} if no unrated individual exists.
-     */
-    private int firstUnrated() {
-        final Population pop = this.population;
-        if (pop == null) {
-            return -1;
-        }
-        int result = -1;
-        for (int i = 0; i < pop.size(); i++) {
-            final Genome ind = pop.get(i);
-            if (!ind.hasUserRating()) {
-                result = i;
-                break;
-            }
-        }
-        return result;
-    }
-
-
-    /**
-     *
-     * @return indicates whether the layout provider has changes since the last
-     *         reset.
-     */
-    private boolean layoutProviderHasChanged() {
-        final IEditorPart editor = EvolUtil.getCurrentEditor();
-        final EditPart editPart = EvolUtil.getEditPart(editor);
-        final DiagramLayoutManager manager =
-                EclipseLayoutServices.getInstance().getManager(editor, editPart);
-        final String newId = EvolUtil.getLayoutProviderId(manager, editPart);
-        if ((newId == null) || (this.layoutProviderId == null)) {
-            return (newId != null) || (this.layoutProviderId != null);
-        }
-        return !this.layoutProviderId.equalsIgnoreCase(newId);
+    @Override
+    public void setFocus() {
+        this.tableViewer.getControl().setFocus();
     }
 
     /**
      * Refresh the layout according to selected individual.
      */
     void onSelectIndividual() {
-        if (!isValidState()) {
+        if (!this.evolModel.isValid()) {
             return;
         }
-        final Genome currentIndividual = getCurrentIndividual();
+
+        // Get the current individual from the model.
+        final Genome currentIndividual = this.evolModel.getCurrentIndividual();
         Assert.isNotNull(currentIndividual);
 
-        // Use the options encoded by the current individual.
-        EvolUtil.adoptIndividual(currentIndividual);
+        // Get the expected layout provider id.
+        final String expectedLayoutProviderId = this.evolModel.getLayoutProviderId();
 
-        // Refresh layout view
-        MonitoredOperation.runInUI(new LayoutViewRefresher(), false);
-        final IEditorPart editor = EvolUtil.getCurrentEditor();
-        if (editor == null) {
-            // We have nothing to layout.
-            return;
-        }
-        // We don't specify the edit part because we want a manager for
-        // the whole diagram.
-        final DiagramLayoutManager manager =
-                EclipseLayoutServices.getInstance().getManager(editor, null);
+        // Get the current editor.
+        final IEditorPart currentEditor = EvolUtil.getCurrentEditor();
 
-        // layoutDiagram(false, false);
-        // System.out.println("after layoutDiagram");
-        final int rating = EvolUtil.layoutAndMeasure(manager, editor);
+        final boolean wantAllEditors = true;
 
-        if (!currentIndividual.hasUserRating()) {
-            currentIndividual.setUserRating(rating);
+        final Collection<IEditorPart> editors;
+        if (wantAllEditors) {
+            editors = EvolUtil.getEditors();
+        } else {
+            editors = new ArrayList<IEditorPart>(1);
+            if (currentEditor != null) {
+                editors.add(currentEditor);
+            }
         }
 
-        // Apply the layout to the diagram.
-        // XXX it would be more straightforward to call manager.applyLayout()
-        // directly, but that method is private
-        EclipseLayoutServices.getInstance().layout(editor, null, false, false);
-    }
+        // do the layout in all the selected editors
+        for (final IEditorPart editor : editors) {
+            System.out.println("Editor: " + editor.getTitle());
 
-    private boolean isValidState() {
-        final Population pop = this.population;
-        if (pop == null) {
-            System.out.println("Population is not set.");
-            return false;
+            final EditPart editPart = EvolUtil.getEditPart(editor);
+
+            // See which layout provider suits for the editor.
+            final String layoutProviderId = EvolUtil.getLayoutProviderId(editor, editPart);
+
+            if (!expectedLayoutProviderId.equalsIgnoreCase(layoutProviderId)) {
+                // The editor is not compatible to the current population.
+                // --> skip it
+                System.out.println("Cannot adopt to " + layoutProviderId);
+                continue;
+            }
+
+            // Use the options that are encoded in the individual.
+            EvolUtil.adoptIndividual(currentIndividual, editor);
+
+            // Refresh the layout view.
+            MonitoredOperation.runInUI(new LayoutViewRefresher(), false);
+
+            // We don't specify the edit part because we want a manager for
+            // the whole diagram.
+            final DiagramLayoutManager manager =
+                    EclipseLayoutServices.getInstance().getManager(editor, null);
+
+            final int rating = EvolUtil.layoutAndMeasure(manager, editor);
+
+            if ((editor == currentEditor) && !currentIndividual.hasUserRating()) {
+                currentIndividual.setUserRating(rating);
+            }
+
+            // Apply the layout to the diagram.
+            // XXX it would be more straightforward to call
+            // manager.applyLayout()
+            // directly, but that method is private
+            EclipseLayoutServices.getInstance().layout(editor, null, false, false);
         }
-
-        if (pop.isEmpty()) {
-            System.out.println("Population is empty.");
-            return false;
-        }
-
-        final Genome currentIndividual = getCurrentIndividual();
-        if (currentIndividual == null) {
-            System.out.println("No individual selected.");
-            return false;
-        }
-
-        final LayoutViewPart layoutViewPart = LayoutViewPart.findView();
-        if (layoutViewPart == null) {
-            System.out.println("LayoutView not found.");
-            return false;
-        }
-
-        if (layoutProviderHasChanged()) {
-            // need to reset
-            System.out.println("LayoutProvider was changed. Need to reset.");
-            return false;
-        }
-
-        return true;
     }
 
     /**
@@ -494,14 +421,20 @@ public class EvolView extends ViewPart {
      *            new source population
      */
     private void setInput(final Population thePopulation) {
-        if ((thePopulation != null) && (thePopulation != this.population)) {
-            this.population = thePopulation;
+        if ((thePopulation != null)) {
+            // this.evolModel.setPopulation(thePopulation);
+
+            final Population modelPop = this.evolModel.getPopulation();
+
+            Assert.isTrue((thePopulation.equals(modelPop)));
+
             final Runnable runnable = new Runnable() {
                 public void run() {
-                    EvolView.this.tableViewer.setInput(thePopulation);
+                    EvolView.this.getTableViewer().setInput(thePopulation);
                 }
             };
             runnable.run();
         }
     }
+
 }
