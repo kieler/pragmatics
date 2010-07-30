@@ -60,22 +60,22 @@ public class Genome extends ArrayList<IGene<?>> {
      * Copy constructor for a genome.
      *
      * @param genome
-     *            template genome. Must not be {@code null}.
+     *            template genome; must not be {@code null}
      */
     public Genome(final Genome genome) {
-        this(genome, genome.generation);
+        this(null, genome, genome.generation);
     }
 
     /**
      * Copy constructor for a genome with the given generation.
      *
      * @param theGenome
-     *            initial genome for the individual.
+     *            template genome; must not be {@code null}
      * @param theGeneration
      *            the generation
      *
      */
-    public Genome(final Genome theGenome, final int theGeneration) {
+    private Genome(final Genome theGenome, final int theGeneration) {
         this(null, theGenome, theGeneration);
     }
 

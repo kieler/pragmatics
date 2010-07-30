@@ -15,24 +15,28 @@ package de.cau.cs.kieler.kiml.evol.grana;
 
 import java.util.Map;
 
-import org.eclipse.core.runtime.Assert;
-
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
 
 /**
- * Calculates a metric for the number of bends in the graph. Does not care for
- * hierarchies.
+ * Calculates a metric for the number of bends in the graph. This depends on
+ * Grana edgeCount and Grana bendpointCount that care for hierarchies.
  *
  * @author mri
  * @author bdu
  */
 public class BendsMetric implements IAnalysis {
+
+    /**
+     *
+     */
+    private static final String GRANA_BENDPOINT_COUNT = "de.cau.cs.kieler.kiml.grana.bendpointCount";
+    /**
+     *
+     */
+    private static final String GRANA_EDGE_COUNT = "de.cau.cs.kieler.kiml.grana.edgeCount";
 
     /**
      * {@inheritDoc}
@@ -43,25 +47,11 @@ public class BendsMetric implements IAnalysis {
         progressMonitor.begin("Bend metric analysis", 1);
 
         // load numbers from analyses
-        final Object edgesResult = results.get("de.cau.cs.kieler.kiml.grana.edgeCount");
-        final Object bendsResult = results.get("de.cau.cs.kieler.kiml.grana.bendpointCount");
+        final Object edgesResult = results.get(GRANA_EDGE_COUNT);
+        final Object bendsResult = results.get(GRANA_BENDPOINT_COUNT);
         final int edgesCount = (Integer) edgesResult;
         final int bendsCount = (Integer) bendsResult;
 
-        // count the number of edges and bend points
-        // TODO: this is superfluous since the needed values are loaded.
-        int m = 0;
-        int bends = 0;
-        for (final KNode node : parentNode.getChildren()) {
-            for (final KEdge edge : node.getOutgoingEdges()) {
-                m++;
-                final KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(edge);
-                bends += edgeLayout.getBendPoints().size();
-            }
-        }
-
-        Assert.isTrue(edgesCount == m);
-        Assert.isTrue(bendsCount == bends);
         System.out.println("edges: " + edgesCount + " bends: " + bendsCount);
 
         progressMonitor.done();

@@ -49,7 +49,7 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
      * @return a shallow copy of the population
      */
     public Population getPopulation() {
-        return new Population(population);
+        return new Population(this.population);
     }
 
     @Override
@@ -71,7 +71,7 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
                 final Genome newGenome = parent1.newRecombination(parent2);
                 System.out.println(" -- cross over of " + parent1);
                 System.out.println("              and " + parent2);
-                offspring.add(new Genome(newGenome, getGeneration()));
+                offspring.add(new Genome(null, newGenome, getGeneration()));
             }
 
             // add offspring to survivors
@@ -158,6 +158,7 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
         final Genome[] individuals = new Genome[count];
         population.toArray(individuals);
         Arrays.sort(individuals, Genome.DESCENDING_RATING_COMPARATOR);
+
         // only some survive
         final int min = MIN_SURVIVORS;
         final int max = MAX_SURVIVORS;

@@ -45,7 +45,7 @@ public class FlatnessMetric implements IAnalysis {
         final Pair<Float, Float> dims;
         final float xdim;
         final float ydim;
-        if (dimsResult instanceof Pair) {
+        if (dimsResult instanceof Pair<?, ?>) {
             dims = (Pair<Float, Float>) dimsResult;
             xdim = dims.getFirst();
             ydim = dims.getSecond();
