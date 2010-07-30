@@ -26,13 +26,13 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.alg.IPlanarityTester;
 import de.cau.cs.kieler.klay.planar.graph.IAdjacencyList;
+import de.cau.cs.kieler.klay.planar.graph.IAdjacencyList.AdjacencyListType;
 import de.cau.cs.kieler.klay.planar.graph.IAdjacencyListComponent;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.INode;
 import de.cau.cs.kieler.klay.planar.graph.IPort;
 import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
-import de.cau.cs.kieler.klay.planar.graph.IAdjacencyList.AdjacencyListType;
 import de.cau.cs.kieler.klay.planar.util.IFunction;
 
 /**
@@ -67,9 +67,10 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
 
     /**
      * The edges of the input graph, whose addition will cause non-planarity (i.e. the edges of the
-     * input graph, that are not part of the planar subgraph of G determined by {@code
-     * planarSubgraph()}). Note, that these edges are only those, that have been identified during
-     * current iteration. A list of all crossing edges is saved in {@code planarSubgraph()} itself.
+     * input graph, that are not part of the planar subgraph of G determined by
+     * {@code planarSubgraph()}). Note, that these edges are only those, that have been identified
+     * during current iteration. A list of all crossing edges is saved in {@code planarSubgraph()}
+     * itself.
      */
     private LinkedList<IEdge> crossingEdges;
 
@@ -366,9 +367,7 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
 
         // determine planar subgraph: remove all crossing edges
         LinkedList<IEdge> deletedCrossing = new LinkedList<IEdge>();
-        int iterations = -1;
         do {
-            iterations++;
             isPlanar = true;
 
             // - orientation phase -
@@ -392,7 +391,6 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
 
             // delete crossing edges
             deletedCrossing.addAll(crossingEdges);
-            System.out.print("CrossingEdgeCount: " + crossingEdges.size() + "\n");
             for (IEdge edge : crossingEdges) {
                 iGraph.removeEdge(edge);
             }
@@ -409,7 +407,6 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
                 conflicts.clear();
             }
         } while (!isPlanar);
-        System.out.print("iterations: " + iterations + "\n");
 
         // - embedding phase -
         // determine sign of each edge and update nesting depth accordingly
@@ -446,8 +443,8 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * to a lower node in the DFS-tree). Furthermore, it determines lowpoints, respectively
      * next-to-lowest lowpoints (indicate the lowest / next-to-lowest return point of each node) and
      * nesting depth (define, which edges in the adjacency list are the outermost in a planar
-     * drawing (if the graph is planar) and therefore have to be traversed first in {@code
-     * testingDFS()}).
+     * drawing (if the graph is planar) and therefore have to be traversed first in
+     * {@code testingDFS()}).
      * 
      * @param v
      *            the root of the current DFS-subtree
@@ -503,8 +500,8 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * true}, this method will identify all edges, that cause edge crossings (and therefore
      * determines a planar subgraph). If {@code false}, it will only run until one crossing edge is
      * identified (planarity testing). Independently of the chosen mode, all edges that turned out
-     * to violate the left-right-criterion during method execution will be added to {@code
-     * crossingEdges} and {@code isPlanar} is set to {@code false}.
+     * to violate the left-right-criterion during method execution will be added to
+     * {@code crossingEdges} and {@code isPlanar} is set to {@code false}.
      * 
      * This method traverses the graph by a modified depth-first trying to merge all constraints
      * (indicate, whether two or more edges have to be drawn on the same or different sides of the
@@ -968,7 +965,7 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      *            the node to sort its adjacency list
      */
     private void sortAdjacencyList(final INode node) {
-        // TODO changes by ocl: check if this is OK
+
         node.getAdjacencyList().sort(new IFunction<IAdjacencyListComponent, Integer>() {
             public Integer evaluate(final IAdjacencyListComponent element) {
                 if (element instanceof IPort) {
@@ -1008,7 +1005,6 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      *             in the graph is not consistent
      */
     private void mergeEmbedding(final INode node) throws InconsistentGraphModelException {
-        // TODO modified by ocl, check if this is OK
 
         // Nothing needs to be done for small lists
         if (node.getAdjacencyList().getEdgeCount() <= 1) {
