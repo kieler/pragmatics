@@ -45,7 +45,8 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
 
     /**
      * The layer each node is currently assigned to. Note that during layerer execution, the lowest
-     * layer is not always the zeroth layer. 
+     * layer is not necessary the zeroth layer. To fulfill this characteristic, a final call of
+     * {@code normalize()} has to be performed.
      */
     private int[] layer;
 
@@ -57,7 +58,6 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
 
     private LinkedHashSet<LEdge> nonTreeEdges;
 
-    // TODO initialize
     private LinkedList<LNode> roots;
 
     private LinkedList<LNode> sinks;
@@ -69,16 +69,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     /** The cut value of every edge. */
     private int[] cutvalue;
 
-    private int[] minimalSpan;
-
-    // TODO DO I really need this?
-    private int[] currentSpan;
-
-    /**
-     * The longest path in the graph from a root node to a sink. Therefore, it defines, how many
-     * layers are at least necessary to layer the entire graph, which is {@code longestPath + 1}.
-     */
-    private int longestPath;
+    private int[] tightness;
 
     // ====================== Constructor =====================================
 
@@ -111,26 +102,27 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         // re-index nodes and edges
         int counter = 0;
         for (LNode node : nodes) {
-            node.id = counter;
+            node.id = counter++;
         }
         counter = 0;
         for (LEdge edge : edges) {
-            edge.id = counter;
+            edge.id = counter++;
         }
-
         // initialize node attributes
         if (layer == null || layer.length < numNodes) {
             layer = new int[numNodes];
             revLayer = new int[numNodes];
+            Arrays.fill(revLayer, numNodes);
             treeNode = new boolean[numNodes];
             treeEdges = new LinkedHashSet<LEdge>(numNodes);
             nonTreeEdges = new LinkedHashSet<LEdge>(numNodes);
         } else {
+            Arrays.fill(layer, 0);
+            Arrays.fill(revLayer, numNodes);
             Arrays.fill(treeNode, false);
             treeEdges.clear();
             nonTreeEdges.clear();
         }
-
         if (roots == null) {
             roots = new LinkedList<LNode>();
             sinks = new LinkedList<LNode>();
@@ -138,20 +130,16 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             roots.clear();
             sinks.clear();
         }
-
         // initialize edge attributes
         if (cutvalue == null || cutvalue.length < numEdges) {
             cutvalue = new int[numEdges];
-            minimalSpan = new int[numEdges];
-            currentSpan = new int[numEdges];
+            tightness = new int[numEdges];
             inDegree = new int[numEdges];
             outDegree = new int[numEdges];
         } else {
             Arrays.fill(inDegree, 0);
             Arrays.fill(outDegree, 0);
         }
-
-        longestPath = 0;
     }
 
     /**
@@ -188,46 +176,48 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         // TODO
     }
 
-    private void initLayer() {
+    private void initLayering() {
 
-        Arrays.fill(layer, 0);
         for (LNode node : roots) {
             layerDFS(node, false);
-        }
-        // determine length of longest path
-        for (LNode node : sinks) {
-            longestPath = Math.max(longestPath, layer[node.id]);
         }
         // TODO first optimization : pull roots closer to its adjacent nodes, if possible
     }
 
-    private void determineSlack() {
+    private LEdge tightTree() {
 
-        Arrays.fill(revLayer, longestPath);
-        // TODO
-    }
-
-    private int tightTree() {
-        // TODO
-        return 0;
-    }
-
-    private LEdge minimalSlack() {
+        LEdge minimalSlack = null;
         // TODO
         return null;
     }
 
-    private void initCutvalues() {
+    private void tightness() {
+        // TODO determine minimal span of all edges
+    }
+
+    private void cutvalues() {
         // TODO
     }
 
+    private void moveLeafs() {
+
+        for (LNode node : roots) {
+            layer[node.id] += minimalSpan(node, PortType.OUTPUT) - 1;
+        }
+        for (LNode node : sinks) {
+            layer[node.id] -= minimalSpan(node, PortType.INPUT) - 1;
+        }
+    }
+
+    // TODO update treeNode attribute whenever the tree changes
+
     /**
-     * Helper method for the network simplex layerer. It returns a tree edge with minimal cut value
-     * or {@code null}, if no such edge exists, meaning that the current layer assignment of all
-     * nodes is optimal. Note, that this method returns any edge with a negative cut value. A
-     * special preference concerning the edge with the lowest cut value will not be made.
+     * Helper method for the network simplex layerer. It returns a tree edge with a negative cut
+     * value or {@code null}, if no such edge exists, meaning that the current layer assignment of
+     * all nodes is optimal. Note, that this method returns any edge with a negative cut value. A
+     * special preference to an edge with lowest value will not be given.
      * 
-     * @return a tree edge with minimal cut value or {@code null}, if no such edge exists
+     * @return a tree edge with negative cut value or {@code null}, if no such edge exists
      */
     private LEdge leaveEdge() {
 
@@ -293,12 +283,14 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
 
         LinkedList<LEdge> edges = new LinkedList<LEdge>();
         for (LNode node : nodes) {
-            for (LPort port : node.getPorts(PortType.OUTPUT)) {
-                edges.addAll(port.getEdges());
-                outDegree[node.id] += port.getEdges().size();
-            }
-            for (LPort port : node.getPorts(PortType.INPUT)) {
-                inDegree[node.id] += port.getEdges().size();
+            for (LPort port : node.getPorts()) {
+                if (port.getType() == PortType.OUTPUT) {
+                    edges.addAll(port.getEdges());
+                    outDegree[node.id] += port.getEdges().size();
+                } else if (port.getType() == PortType.INPUT) {
+                    inDegree[node.id] += port.getEdges().size();
+                }
+                // undefined ports are neglected
             }
             if (outDegree[node.id] == 0) {
                 sinks.add(node);
@@ -310,6 +302,17 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         return edges;
     }
 
+    /**
+     * Helper method for the network simplex layerer. It determines an (initial) feasible layering
+     * for the given graph by traversing it by a modified depth-first-search arranging the nodes to
+     * the layer representing their height in the DFS-tree. Dependently of the chosen mode indicated
+     * by {@code reverse}, this method traverses the graph beginning from either its root nodes, if
+     * {@code reverse = false}, or sinks, if {@code reverse = true}, which means that all nodes will
+     * be placed as close as possible to either the root or sink nodes.
+     * 
+     * @param node
+     * @param reverse
+     */
     private void layerDFS(final LNode node, final boolean reverse) {
 
         LNode target = null;
@@ -332,6 +335,29 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
                 }
             }
         }
+    }
+
+    /**
+     * Helper method for the network simplex layerer. It determines the length of the currently
+     * shortest incoming respectively outgoing edge of the input node.
+     * 
+     * @param node
+     * @param direction
+     * @return
+     */
+    private int minimalSpan(final LNode node, final PortType direction) {
+
+        int minSpan = Integer.MAX_VALUE;
+        int currentSpan;
+        for (LPort port : node.getPorts(direction)) {
+            for (LEdge edge : port.getEdges()) {
+                currentSpan = layer[edge.getTarget().id] - layer[edge.getSource().id];
+                if (currentSpan < minSpan) {
+                    minSpan = currentSpan;
+                }
+            }
+        }
+        return minSpan;
     }
 
 }
