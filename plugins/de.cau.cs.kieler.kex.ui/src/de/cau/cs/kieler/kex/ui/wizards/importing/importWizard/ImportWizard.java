@@ -16,6 +16,9 @@ public class ImportWizard extends Wizard implements IWizard {
 
 	public ImportWizard(IStructuredSelection selection) {
 		super();
+
+		// TODO nullpointer exception falls selection null!
+
 		this.selection = selection;
 		setNeedsProgressMonitor(true);
 		setWindowTitle("Kieler Example Import");

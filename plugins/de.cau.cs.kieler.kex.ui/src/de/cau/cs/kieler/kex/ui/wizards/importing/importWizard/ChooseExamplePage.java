@@ -33,6 +33,8 @@ public class ChooseExamplePage extends WizardPage {
 	private List<Example> selectedExamples;
 	private Tree exampleTree;
 
+	private static final String EXAMPLE_DATA_KEY = "example";
+
 	public ChooseExamplePage(String pageName) {
 		super(pageName);
 		setTitle("Import Example");
@@ -135,8 +137,7 @@ public class ChooseExamplePage extends WizardPage {
 	private void updateElements(Widget widget) {
 		TreeItem selected = (TreeItem) widget;
 		if (selected.getParentItem() != null) {
-			// FIXME constante draus machen.
-			Object data = selected.getData("example");
+			Object data = selected.getData(EXAMPLE_DATA_KEY);
 			if (data instanceof Example) {
 				Example selectedExample = (Example) data;
 				getExampleId().setText(selectedExample.getId());

@@ -22,6 +22,8 @@ public class OverviewPage extends WizardPage {
 	private Button deleteExample;
 	private Table addedExamples;
 
+	private static final int tableColumnWidth = 200;
+
 	public OverviewPage(String pageName) {
 		super(pageName);
 		setTitle("Examples Overview");
@@ -42,8 +44,8 @@ public class OverviewPage extends WizardPage {
 		TableColumn tc2 = new TableColumn(addedExamples, SWT.CENTER);
 		tc1.setText("Project");
 		tc2.setText("Example");
-		tc1.setWidth(200);
-		tc2.setWidth(200);
+		tc1.setWidth(tableColumnWidth);
+		tc2.setWidth(tableColumnWidth);
 		List<Example> examples = ExampleManager.get().getImportedExamples();
 		for (int i = 0; i < 100; i++) {
 			for (Example example : examples) {

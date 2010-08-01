@@ -101,7 +101,11 @@ public class ExampleManager {
 		Example mappedExample = ExampleExportUtil.mapToExample(properties);
 		ExampleExportUtil.validateExample(mappedExample, extensionCollector,
 				onlineCollector);
-		extensionCreation.addExtension(projectId, location, mappedExample);
+		// TODO ExtensionPoint zugriff geht so leider nicht, da man zur laufzeit
+		// nicht in die plugin.xml schreiben darf,
+		// dies muss per hand geschehen...
+		// extensionCreation.addExtension(projectId, location, mappedExample);
+
 	}
 
 	/**
