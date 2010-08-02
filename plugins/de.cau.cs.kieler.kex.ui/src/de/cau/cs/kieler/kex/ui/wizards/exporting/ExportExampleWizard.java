@@ -27,7 +27,7 @@ public class ExportExampleWizard extends Wizard implements IWizard {
 		// TODO exampleResource mit einbinden...
 		Map<ExampleElement, Object> result = new HashMap<ExampleElement, Object>();
 		result.put(ExampleElement.PROJECTID, examplePage.getProjectId());
-		result.put(ExampleElement.LOCATION, examplePage.getLocation());
+		result.put(ExampleElement.DEST_LOCATION, examplePage.getLocation());
 		result.put(ExampleElement.ID, examplePage.getId());
 		result.put(ExampleElement.NAME, examplePage.getExampleName());
 		// result.put(ExampleElement.DESCRIPTION,

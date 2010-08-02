@@ -1,6 +1,19 @@
-Todos...
+///////////////////////////////////////////////////
+
+exporting 
+plugin.xml filtern 
+->gegeben soll sein die projectId, die muesste man ermitteln koennen,
+
+der konkrete folder in den das example extrahiert werden soll
+
+das example, welches aus den existierenden projekt generiert werden muss
 
 
+
+
+
+
+//////////////////////////////////////////////////////
 erklaeren warum interner eclipse mechanismus nicht geht
 
 

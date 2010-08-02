@@ -95,12 +95,20 @@ public class ExampleManager {
 
 	public void exportExample(Map<ExampleElement, Object> properties)
 			throws KielerException {
+		// TODO implementiernen der project id.
 		String projectId = (String) properties.get(ExampleElement.PROJECTID);
-		String location = (String) properties.get(ExampleElement.LOCATION);
-		ExampleExportUtil.validateLocation(projectId, location);
+
+		// just a test
+		projectId = "testpro";
+		// TODO implementiernen der location.
+		String destLocation = (String) properties
+				.get(ExampleElement.DEST_LOCATION);
+		// just a test
+		destLocation = "/home/pkl/testFolder";
 		Example mappedExample = ExampleExportUtil.mapToExample(properties);
 		ExampleExportUtil.checkDuplicate(mappedExample, extensionCollector,
 				onlineCollector);
+		extensionCreation.addExtension(projectId, destLocation, mappedExample);
 	}
 
 	/**

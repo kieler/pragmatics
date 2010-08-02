@@ -23,7 +23,9 @@ class PluginXMLHandler {
 	private static final String PLUGIN_XML = "plugin.xml";
 
 	private File filterPluginXML(final String location) {
-		// TODO filter mechanismus bauen...
+		// TODO filter mechanismus bauen... abfangen falls mehrere gefunden
+		// wurden... fehlermeldung zurueckgeben
+
 		File pluginXML = new File(PLUGIN_XML);
 		return pluginXML;
 

@@ -33,11 +33,6 @@ public class ExampleExportUtil {
 		return result;
 	}
 
-	public static void validateLocation(String projectId, String location)
-			throws KielerException {
-		// TODO to implement.S
-	}
-
 	/**
 	 * 
 	 * @param example

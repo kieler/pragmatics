@@ -1,6 +1,8 @@
 package de.cau.cs.kieler.kex.model.extensionpoint;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -25,42 +27,45 @@ public class ExtPointExampleCreator {
 	// vlt. sollte man lieber die saxparser factory in einer init() methode
 	// aufnehmen, diese dann aufrufen und eine exception werfen lassen...
 	public ExtPointExampleCreator() throws KielerException {
-		new PluginXMLHandler();
+		xmlHandler = new PluginXMLHandler();
 	}
 
-	public void addExtension(String projectId, String destLocation,
+	public void addExtension(final String projectId, final String destLocation,
 			Example example) throws KielerException {
 		File destFile = new File(destLocation);
 		IProject sourceProject = ResourcesPlugin.getWorkspace().getRoot()
 				.getProject(projectId);
 		validateProject(sourceProject, destFile);
-		xmlHandler.addExtension(projectId, destLocation, example);
-		// createExampleResources(location, resource)
+		xmlHandler.addExtension(sourceProject.getName(), destFile.getPath(),
+				example);
+		createExampleResources(destFile, example.getResources());
 	}
 
 	/**
-	 * creates example files to given project path
+	 * creates example files to given location
 	 */
-	public void createExampleResources(String location, ExampleResource resource) {
-		// String workspacePath = ResourcesPlugin.getWorkspace().getRoot()
-		// .getLocation().toString();
-		// List<File> resources = resource.getResources();
-		// for (File file : resources) {
-		// File tmpFile = new File(workspacePath
-		// + File.separator + ((projects.length > 0) ? projects[0].getName() :
-		// "test")+ File.separator +"test.file");
-		//
-		// if (!tmpFile.exists()){
-		// tmpFile.getParentFile().mkdirs();
-		// try {
-		// tmpFile.createNewFile();
-		// }
-		// catch (IOException e) {
-		// //TODO fehlerhandling ueberlegen
-		// e.printStackTrace();
-		// }
-		// }
-		// }
+	private void createExampleResources(File destFile,
+			List<ExampleResource> resources) {
+		String workspacePath = ResourcesPlugin.getWorkspace().getRoot()
+				.getLocation().toString();
+		for (ExampleResource resource : resources) {
+			// TODO muss das eine URL sein... geht da nicht auch ein path string
+			// oder file...
+			// for(URL url : resource.getResources())
+
+			// Just a Test
+			String loc = workspacePath + File.separator + "test";
+			File tmpFile = new File(loc);
+			if (!tmpFile.exists()) {
+				tmpFile.getParentFile().mkdirs();
+				try {
+					tmpFile.createNewFile();
+				} catch (IOException e) {
+					// TODO fehlerhandling ueberlegen
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	public void validateProject(final IProject sourceProject,
