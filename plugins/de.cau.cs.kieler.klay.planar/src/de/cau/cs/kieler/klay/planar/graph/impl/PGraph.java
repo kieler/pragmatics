@@ -17,15 +17,14 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.klay.planar.graph.IAdjacencyList;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IFace;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.INode;
-import de.cau.cs.kieler.klay.planar.graph.IPort;
 import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
 
 /**
@@ -124,7 +123,9 @@ public class PGraph extends PNode implements IGraph, Serializable {
      */
     PGraph(final int id, final PGraph parent, final KNode kgraph)
             throws InconsistentGraphModelException {
-        // TODO check for hyper nodes and directed/undirected edges
+        // TODO check for hyper nodes
+        // TODO check for directed/undirected edges
+        // TODO check for embedding constraints (ports)
         this(id, parent);
         HashMap<KNode, PNode> map = new HashMap<KNode, PNode>(kgraph.getChildren().size() * 2);
 
@@ -150,7 +151,9 @@ public class PGraph extends PNode implements IGraph, Serializable {
                 }
                 PNode source = map.get(kedge.getSource());
                 PNode target = map.get(kedge.getTarget());
-                PEdge edge = new PEdge(this.edgeIndex++, this, source, false, target, false, true);
+                PEdge edge = new PEdge(this.edgeIndex++, this, source, target, true);
+                source.linkEdge(edge, true);
+                target.linkEdge(edge, true);
                 this.edges.add(edge);
                 edge.setProperty(IGraph.TOKGRAPH, kedge);
             }
@@ -292,7 +295,7 @@ public class PGraph extends PNode implements IGraph, Serializable {
         if (!this.edges.contains(edge)) {
             throw new InconsistentGraphModelException("Attempted to remove non-existent edge.");
         }
-        if (!(edge.getSourceNode() instanceof PNode && edge.getTargetNode() instanceof PNode)) {
+        if (!(edge.getSource() instanceof PNode && edge.getTarget() instanceof PNode)) {
             throw new InconsistentGraphModelException(
                     "Attempted to add node on edge of incompatible type.");
         }
@@ -304,12 +307,29 @@ public class PGraph extends PNode implements IGraph, Serializable {
             this.generateFaces();
         }
 
-        IPort target = edge.getTargetPort();
+        // Remember target node
+        INode target = edge.getTarget();
+
+        // Remember all edges in target adjacency list after the edge
+        LinkedList<IEdge> move = new LinkedList<IEdge>();
+        boolean found = false;
+        for (IEdge e : target.adjacentEdges()) {
+            if (found) {
+                move.addLast(e);
+            } else if (e == edge) {
+                found = true;
+            }
+        }
 
         // Create node, move edge and create new edge
         PNode node = (PNode) this.addNode(type);
-        edge.move(target, node.getAdjacencyList().addPort());
-        PEdge newedge = (PEdge) this.addEdge(node.getAdjacencyList().addPort(), target);
+        edge.move(target, node);
+        PEdge newedge = (PEdge) this.addEdge(node, true, target, true, edge.isDirected());
+
+        // Move remembered edges to end of adjacency list (so new edge is at correct position)
+        for (IEdge e : move) {
+            e.move(target, target, true);
+        }
 
         // Update references in faces
         this.changedFaces = false;
@@ -335,26 +355,21 @@ public class PGraph extends PNode implements IGraph, Serializable {
         this.nodes.remove(node);
 
         // Remove all edges
-        IAdjacencyList list = node.getAdjacencyList();
-        for (Iterator<IPort> ports = list.ports().iterator(); ports.hasNext();) {
-            IPort port = ports.next();
-            if (port.isEmpty()) {
-                continue;
-            }
-            IEdge e = port.getEdge();
+        for (Iterator<IEdge> es = node.adjacentEdges().iterator(); es.hasNext();) {
+            IEdge edge = es.next();
 
             // Check for graph consistency (again)
-            if (!this.edges.contains(e)) {
+            if (!this.edges.contains(edge)) {
                 throw new InconsistentGraphModelException("Attempted to remove non-existent edge.");
             }
-            if (!(list.getAdjacentNode(e) instanceof PNode)) {
+            if (!(node.getAdjacentNode(edge) instanceof PNode)) {
                 throw new InconsistentGraphModelException(
                         "Attempted to remove edge of incompatible type.");
             }
 
-            ((PAdjacencyList) list).unlinkEdge(e);
-            ((PAdjacencyList) list.getAdjacentNode(e).getAdjacencyList()).unlinkEdge(e);
-            this.edges.remove(e);
+            ((PNode) node.getAdjacentNode(edge)).unlinkEdge(edge);
+            this.edges.remove(edge);
+            es.remove();
         }
         this.changedFaces = true;
     }
@@ -431,36 +446,12 @@ public class PGraph extends PNode implements IGraph, Serializable {
                     "Attempted to connect nodes of incompatible type.");
         }
 
-        IEdge e = new PEdge(this.edgeIndex++, this, source, appendSource, target, appendTarget,
-                directed);
-        this.edges.add(e);
+        IEdge edge = new PEdge(this.edgeIndex++, this, source, target, directed);
+        ((PNode) source).linkEdge(edge, appendSource);
+        ((PNode) target).linkEdge(edge, appendTarget);
+        this.edges.add(edge);
         this.changedFaces = true;
-        return e;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public IEdge addEdge(final IPort source, final IPort target)
-            throws InconsistentGraphModelException {
-        return this.addEdge(source, target, true);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public IEdge addEdge(final IPort source, final IPort target, final boolean directed)
-            throws InconsistentGraphModelException {
-        // Check for graph consistency
-        if (!this.nodes.contains(source.getNode()) || !this.nodes.contains(target.getNode())) {
-            throw new InconsistentGraphModelException(
-                    "Attempted to link non-existent nodes by an edge.");
-        }
-
-        IEdge e = new PEdge(this.edgeIndex++, this, source, target, directed);
-        this.edges.add(e);
-        this.changedFaces = true;
-        return e;
+        return edge;
     }
 
     /**
@@ -471,15 +462,14 @@ public class PGraph extends PNode implements IGraph, Serializable {
         if (!this.edges.contains(edge)) {
             throw new InconsistentGraphModelException("Attempted to remove non-existent edge.");
         }
-        if (!(edge.getSourceNode().getAdjacencyList() instanceof PAdjacencyList && edge
-                .getTargetNode().getAdjacencyList() instanceof PAdjacencyList)) {
+        if (!(edge.getSource() instanceof PNode && edge.getTarget() instanceof PNode)) {
             throw new InconsistentGraphModelException(
                     "Attempted to remove edge of incompatible type.");
         }
         // Remove edge and references
         this.edges.remove(edge);
-        ((PAdjacencyList) edge.getSourceNode().getAdjacencyList()).unlinkEdge(edge);
-        ((PAdjacencyList) edge.getTargetNode().getAdjacencyList()).unlinkEdge(edge);
+        ((PNode) edge.getSource()).unlinkEdge(edge);
+        ((PNode) edge.getTarget()).unlinkEdge(edge);
         this.changedFaces = true;
     }
 
@@ -552,7 +542,7 @@ public class PGraph extends PNode implements IGraph, Serializable {
                 PFace face = new PFace(this.faceIndex++, this);
                 this.faces.add(face);
 
-                INode start = edge.getSourceNode();
+                INode start = edge.getSource();
                 INode nextNode = start;
                 IEdge nextEdge = edge;
 
@@ -563,9 +553,9 @@ public class PGraph extends PNode implements IGraph, Serializable {
                 }
 
                 do {
-                    if (nextNode == nextEdge.getSourceNode()) {
+                    if (nextNode == nextEdge.getSource()) {
                         ((PEdge) nextEdge).setLeftFace(face);
-                    } else if (nextNode == nextEdge.getTargetNode()) {
+                    } else if (nextNode == nextEdge.getTarget()) {
                         ((PEdge) nextEdge).setRightFace(face);
                     }
 
@@ -575,7 +565,7 @@ public class PGraph extends PNode implements IGraph, Serializable {
                         face.addEdge(nextEdge);
                     }
 
-                    nextNode = nextNode.getAdjacencyList().getAdjacentNode(nextEdge);
+                    nextNode = nextNode.getAdjacentNode(nextEdge);
                     nextEdge = getNextClockwiseEdge(nextNode, nextEdge);
                 } while (nextNode != start);
 
@@ -586,7 +576,7 @@ public class PGraph extends PNode implements IGraph, Serializable {
                 PFace face = new PFace(this.faceIndex++, this);
                 this.faces.add(face);
 
-                INode start = edge.getSourceNode();
+                INode start = edge.getSource();
                 INode nextNode = start;
                 IEdge nextEdge = edge;
 
@@ -597,9 +587,9 @@ public class PGraph extends PNode implements IGraph, Serializable {
                 }
 
                 do {
-                    if (nextNode == nextEdge.getSourceNode()) {
+                    if (nextNode == nextEdge.getSource()) {
                         ((PEdge) nextEdge).setRightFace(face);
-                    } else if (nextNode == nextEdge.getTargetNode()) {
+                    } else if (nextNode == nextEdge.getTarget()) {
                         ((PEdge) nextEdge).setLeftFace(face);
                     }
 
@@ -609,7 +599,7 @@ public class PGraph extends PNode implements IGraph, Serializable {
                         face.addEdge(nextEdge);
                     }
 
-                    nextNode = nextNode.getAdjacencyList().getAdjacentNode(nextEdge);
+                    nextNode = nextNode.getAdjacentNode(nextEdge);
                     nextEdge = getNextCClockwiseEdge(nextNode, nextEdge);
 
                 } while (nextNode != start);
@@ -627,7 +617,7 @@ public class PGraph extends PNode implements IGraph, Serializable {
      * @return the next edge
      */
     private IEdge getNextClockwiseEdge(final INode node, final IEdge edge) {
-        Iterator<IEdge> iter = node.getAdjacencyList().edges().iterator();
+        Iterator<IEdge> iter = node.adjacentEdges().iterator();
         IEdge current = null;
         while (iter.hasNext() && current != edge) {
             current = iter.next();
@@ -637,7 +627,7 @@ public class PGraph extends PNode implements IGraph, Serializable {
             return iter.next();
         } else {
             // Reached the last node, get the first
-            return node.getAdjacencyList().edges().iterator().next();
+            return node.adjacentEdges().iterator().next();
         }
     }
 
@@ -651,7 +641,7 @@ public class PGraph extends PNode implements IGraph, Serializable {
      * @return the previous edge
      */
     private IEdge getNextCClockwiseEdge(final INode node, final IEdge edge) {
-        Iterator<IEdge> iter = node.getAdjacencyList().edges().iterator();
+        Iterator<IEdge> iter = node.adjacentEdges().iterator();
         IEdge current = null;
         IEdge previous = null;
         while (iter.hasNext() && current != edge) {

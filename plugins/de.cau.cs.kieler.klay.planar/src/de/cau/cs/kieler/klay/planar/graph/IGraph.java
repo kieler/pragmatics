@@ -197,14 +197,14 @@ public interface IGraph extends INode {
      *            true to append the edge to the source node, false to prepend the edge
      * @param target
      *            the target node of the edge
-     * @param appondTarget
+     * @param appendTarget
      *            true to append the edge to the target node, false to prepend the edge
      * @return the edge that was just added
      * @throws InconsistentGraphModelException
      *             if the graph does not contain the source node or target node of the edge, or if
      *             there are no free ports to host the edge
      */
-    IEdge addEdge(INode source, boolean appendSource, INode target, boolean appondTarget)
+    IEdge addEdge(INode source, boolean appendSource, INode target, boolean appendTarget)
             throws InconsistentGraphModelException;
 
     /**
@@ -221,7 +221,7 @@ public interface IGraph extends INode {
      *            true to append the edge to the source node, false to prepend the edge
      * @param target
      *            the target node of the edge
-     * @param appondTarget
+     * @param appendTarget
      *            true to append the edge to the target node, false to prepend the edge
      * @param directed
      *            specifies if the edge is directed or undirected
@@ -230,43 +230,8 @@ public interface IGraph extends INode {
      *             if the graph does not contain the source node or target node of the edge, or if
      *             there are no free ports to host the edge
      */
-    IEdge addEdge(INode source, boolean appendSource, INode target, boolean appondTarget,
+    IEdge addEdge(INode source, boolean appendSource, INode target, boolean appendTarget,
             boolean directed) throws InconsistentGraphModelException;
-
-    /**
-     * Add a directed edge to the graph. A new, directed edge will be inserted into the graph,
-     * connecting the two ports {@code source} and {@code target}. This checks if the two given
-     * ports are actually part of the graph and throws an exception otherwise. The newly created
-     * edge object is returned for further use.
-     * 
-     * @param source
-     *            the source port of the edge
-     * @param target
-     *            the target port of the edge
-     * @return the edge that was just added
-     * @throws InconsistentGraphModelException
-     *             if the graph does not contain the source port or target port of the edge
-     */
-    IEdge addEdge(IPort source, IPort target) throws InconsistentGraphModelException;
-
-    /**
-     * Add an edge to the graph. A new edge will be inserted into the graph, connecting the two
-     * ports {@code source} and {@code target}. The graph can be either directed or undirected. This
-     * checks if the two given ports are actually part of the graph and throws an exception
-     * otherwise. The newly created edge object is returned for further use.
-     * 
-     * @param source
-     *            the source port of the edge
-     * @param target
-     *            the target port of the edge
-     * @param directed
-     *            specifies if the edge is directed or undirected
-     * @return the edge that was just added
-     * @throws InconsistentGraphModelException
-     *             if the graph does not contain the source port or target port of the edge
-     */
-    IEdge addEdge(IPort source, IPort target, boolean directed)
-            throws InconsistentGraphModelException;
 
     /**
      * Remove an edge from the graph. The edge will be removed together will all references to the

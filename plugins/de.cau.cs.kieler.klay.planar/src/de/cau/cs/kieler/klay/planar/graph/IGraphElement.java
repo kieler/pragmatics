@@ -13,12 +13,10 @@
  */
 package de.cau.cs.kieler.klay.planar.graph;
 
-
 /**
  * A generic element in the interface for a general graph data structure.
  * 
  * @see de.cau.cs.kieler.klay.planar.graph.IGraph {@code IGraph}
- * @see de.cau.cs.kieler.klay.planar.graph.IGraphElement {@code IGraphElement}
  * 
  * @author ocl
  */

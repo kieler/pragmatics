@@ -48,15 +48,7 @@ public interface IEdge extends IGraphElement {
      * 
      * @return the source node
      */
-    INode getSourceNode();
-
-    /**
-     * Get the {@code IPort} in which this edge originates. In undirected graphs, one of the two
-     * connected {@code IPort}s is returned.
-     * 
-     * @return the source port
-     */
-    IPort getSourcePort();
+    INode getSource();
 
     /**
      * Get the {@code INode} this edge points to. In undirected graphs, the {@code INode} that is
@@ -64,15 +56,7 @@ public interface IEdge extends IGraphElement {
      * 
      * @return the target node
      */
-    INode getTargetNode();
-
-    /**
-     * Get the {@code IPort} this edge points to. In undirected graphs, the {@code Port} that is not
-     * returned by {@code getSourcePort()} is returned.
-     * 
-     * @return the target port
-     */
-    IPort getTargetPort();
+    INode getTarget();
 
     /**
      * Get the {@code IFace}s that are formed by this edge. This will return a {@code Collection}
@@ -132,18 +116,5 @@ public interface IEdge extends IGraphElement {
      *             if either of the nodes are not part of the graph
      */
     void move(INode from, INode to, boolean append) throws InconsistentGraphModelException;
-
-    /**
-     * Move the edge from one port to another. This will remove the edge from the one port, and will
-     * add itself to the other port. The source and target of the edge will be set accordingly.
-     * 
-     * @param from
-     *            the port from which this edge will be moved
-     * @param to
-     *            the port to which this edge will be moved
-     * @throws InconsistentGraphModelException
-     *             if either of the ports are not part of the graph
-     */
-    void move(IPort from, IPort to) throws InconsistentGraphModelException;
 
 }

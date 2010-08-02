@@ -25,13 +25,9 @@ import java.util.Stack;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.alg.IPlanarityTester;
-import de.cau.cs.kieler.klay.planar.graph.IAdjacencyList;
-import de.cau.cs.kieler.klay.planar.graph.IAdjacencyList.AdjacencyListType;
-import de.cau.cs.kieler.klay.planar.graph.IAdjacencyListComponent;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.INode;
-import de.cau.cs.kieler.klay.planar.graph.IPort;
 import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
 import de.cau.cs.kieler.klay.planar.util.IFunction;
 
@@ -67,10 +63,9 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
 
     /**
      * The edges of the input graph, whose addition will cause non-planarity (i.e. the edges of the
-     * input graph, that are not part of the planar subgraph of G determined by
-     * {@code planarSubgraph()}). Note, that these edges are only those, that have been identified
-     * during current iteration. A list of all crossing edges is saved in {@code planarSubgraph()}
-     * itself.
+     * input graph, that are not part of the planar subgraph of G determined by {@code
+     * planarSubgraph()}). Note, that these edges are only those, that have been identified during
+     * current iteration. A list of all crossing edges is saved in {@code planarSubgraph()} itself.
      */
     private LinkedList<IEdge> crossingEdges;
 
@@ -428,7 +423,7 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
         // convert crossingEdges to match return type
         LinkedList<Pair<INode, INode>> removedEdges = new LinkedList<Pair<INode, INode>>();
         for (IEdge edge : deletedCrossing) {
-            removedEdges.add(new Pair<INode, INode>(edge.getSourceNode(), edge.getTargetNode()));
+            removedEdges.add(new Pair<INode, INode>(edge.getSource(), edge.getTarget()));
         }
 
         getMonitor().done();
@@ -443,8 +438,8 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * to a lower node in the DFS-tree). Furthermore, it determines lowpoints, respectively
      * next-to-lowest lowpoints (indicate the lowest / next-to-lowest return point of each node) and
      * nesting depth (define, which edges in the adjacency list are the outermost in a planar
-     * drawing (if the graph is planar) and therefore have to be traversed first in
-     * {@code testingDFS()}).
+     * drawing (if the graph is planar) and therefore have to be traversed first in {@code
+     * testingDFS()}).
      * 
      * @param v
      *            the root of the current DFS-subtree
@@ -454,13 +449,13 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
     private void orientationDFS(final INode v) throws InconsistentGraphModelException {
 
         IEdge uv = parentEdge[v.getID()];
-        for (IEdge vw : v.getAdjacencyList().edges()) {
-            if (dfsSource[vw.getID()] != null || vw.getSourceNode().equals(vw.getTargetNode())) {
+        for (IEdge vw : v.adjacentEdges()) {
+            if (dfsSource[vw.getID()] != null || vw.getSource().equals(vw.getTarget())) {
                 // vw has already been visited or is self-loop
                 continue;
             }
             // orient vw in DFS
-            INode w = v.getAdjacencyList().getAdjacentNode(vw);
+            INode w = v.getAdjacentNode(vw);
             dfsSource[vw.getID()] = v;
             dfsTarget[vw.getID()] = w;
             lowpt[vw.getID()] = height[v.getID()];
@@ -500,8 +495,8 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * true}, this method will identify all edges, that cause edge crossings (and therefore
      * determines a planar subgraph). If {@code false}, it will only run until one crossing edge is
      * identified (planarity testing). Independently of the chosen mode, all edges that turned out
-     * to violate the left-right-criterion during method execution will be added to
-     * {@code crossingEdges} and {@code isPlanar} is set to {@code false}.
+     * to violate the left-right-criterion during method execution will be added to {@code
+     * crossingEdges} and {@code isPlanar} is set to {@code false}.
      * 
      * This method traverses the graph by a modified depth-first trying to merge all constraints
      * (indicate, whether two or more edges have to be drawn on the same or different sides of the
@@ -552,9 +547,9 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
 
         IEdge uv = parentEdge[v.getID()];
         IEdge vw1 = null;
-        for (IEdge vw : v.getAdjacencyList().edges()) {
+        for (IEdge vw : v.adjacentEdges()) {
             // adjacent edges of v are already ordered by nesting depth
-            if (vw.getSourceNode().equals(vw.getTargetNode()) || dfsTarget[vw.getID()].equals(v)) {
+            if (vw.getSource().equals(vw.getTarget()) || dfsTarget[vw.getID()].equals(v)) {
                 // vw is incoming edge or self-loop
                 continue;
             }
@@ -744,8 +739,8 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      */
     private void embeddingDFS(final INode v) {
 
-        for (IEdge vw : v.getAdjacencyList().edges()) {
-            if (vw.getSourceNode().equals(vw.getTargetNode()) || !dfsSource[vw.getID()].equals(v)) {
+        for (IEdge vw : v.adjacentEdges()) {
+            if (vw.getSource().equals(vw.getTarget()) || !dfsSource[vw.getID()].equals(v)) {
                 // vw is incoming edge or self-loop
                 continue;
             }
@@ -965,25 +960,9 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      *            the node to sort its adjacency list
      */
     private void sortAdjacencyList(final INode node) {
-
-        node.getAdjacencyList().sort(new IFunction<IAdjacencyListComponent, Integer>() {
-            public Integer evaluate(final IAdjacencyListComponent element) {
-                if (element instanceof IPort) {
-                    if (((IPort) element).isEmpty()) {
-                        return 0;
-                    }
-                    return nestingDepth[((IPort) element).getEdge().getID()];
-                } else if (element instanceof IAdjacencyList) {
-                    int num = 0;
-                    int total = 0;
-                    for (IAdjacencyListComponent item : ((IAdjacencyList) element).sublists()) {
-                        total += this.evaluate(item);
-                        num++;
-                    }
-                    return total / num;
-                } else {
-                    return 0;
-                }
+        node.sort(new IFunction<IEdge, Integer>() {
+            public Integer evaluate(final IEdge element) {
+                return nestingDepth[element.getID()];
             }
         });
     }
@@ -1007,33 +986,22 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
     private void mergeEmbedding(final INode node) throws InconsistentGraphModelException {
 
         // Nothing needs to be done for small lists
-        if (node.getAdjacencyList().getEdgeCount() <= 1) {
+        if (node.getAdjacentEdgeCount() <= 1) {
             return;
         }
 
-        // Modifying the adjacency list works only without embedding constraints!
-        // TODO may also work for GROUP, but requires additional work
-        if (node.getAdjacencyList().getType() != AdjacencyListType.FREE) {
-            throw new UnsupportedOperationException();
-        }
-
-        IPort treeEdge = null;
+        IEdge treeEdge = null;
         HashSet<IEdge> loops = new HashSet<IEdge>();
-        LinkedHashSet<IPort> rest = new LinkedHashSet<IPort>();
+        LinkedHashSet<IEdge> rest = new LinkedHashSet<IEdge>();
         boolean insertionPoint = false;
-        for (IPort port : node.getAdjacencyList().ports()) {
-            if (port.isEmpty()) {
-                continue;
-            }
-            IEdge edge = port.getEdge();
-
-            if (port.getEdge().getSourceNode() == port.getEdge().getTargetNode()) {
+        for (IEdge edge : node.adjacentEdges()) {
+            if (edge.getSource() == edge.getTarget()) {
                 // Remember self loops
                 loops.add(edge);
 
             } else if (!(node == dfsSource[edge.getID()]) && (edge == parentEdge[node.getID()])) {
                 // Remember incoming tree edge
-                treeEdge = port;
+                treeEdge = edge;
 
             } else if ((edge == parentEdge[dfsTarget[edge.getID()].getID()]) && !insertionPoint) {
                 // Mark leftmost outgoing tree edge as insertion point
@@ -1041,40 +1009,32 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
 
             } else if (insertionPoint) {
                 // Remember all edges after the insertion point
-                rest.add(port);
+                rest.add(edge);
             }
         }
 
         // Move self loops to the beginning of the list
         for (IEdge loop : loops) {
-            loop.move(loop.getSourcePort(), node.getAdjacencyList().addPort(false));
-            loop.move(loop.getTargetPort(), node.getAdjacencyList().addPort(false));
+            loop.move(loop.getSource(), node, false);
+            loop.move(loop.getTarget(), node, false);
         }
 
         // Move incoming tree edge to beginning of the list
         if (treeEdge != null) {
-            treeEdge.getEdge().move(treeEdge, node.getAdjacencyList().addPort(false));
+            treeEdge.move(node, node, false);
         }
 
         // Move outgoing back edges and incoming tree edges to the end of the list
         IEdge toAdd = initialRef[node.getID()];
         while (toAdd != null) {
-            IPort port = null;
-            if (toAdd.getSourceNode() == node) {
-                port = toAdd.getSourcePort();
-            } else if (toAdd.getTargetNode() == node) {
-                port = toAdd.getTargetPort();
-            } else {
-                throw new InconsistentGraphModelException("Inconsistent graph detected");
-            }
-            rest.remove(port);
-            toAdd.move(port, node.getAdjacencyList().addPort(true));
+            toAdd.move(node, node, true);
+            rest.remove(toAdd);
             toAdd = ref[toAdd.getID()];
         }
 
         // Move all edges after insertion point to the end of the list
-        for (IPort port : rest) {
-            port.getEdge().move(port, node.getAdjacencyList().addPort(true));
+        for (IEdge edge : rest) {
+            edge.move(node, node, true);
         }
     }
 }
