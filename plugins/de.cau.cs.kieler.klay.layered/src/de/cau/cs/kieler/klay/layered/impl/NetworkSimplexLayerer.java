@@ -28,7 +28,15 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.modules.ILayerer;
 
 /**
- * @author pdo TODO
+ * The main class of the network simplex layerer component. It offers an algorithm to determine an
+ * optimal layering of all nodes in the graph concerning a minimal length of all edges by using the
+ * network simplex algorithm described in
+ * {@literal Emden R. Gansner, Eleftherios Koutsofios, Stephen
+ * C. North, Kiem-Phong Vo: "A Technique for Drawing Directed Graphs", AT&T Bell Laboratories}.
+ * 
+ * @see de.cau.cs.kieler.klay.layered.modules.ILayerer ILayerer
+ * 
+ * @author pdo
  */
 public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer {
 
@@ -165,7 +173,17 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     }
 
     /**
-     * {@inheritDoc} TODO.
+     * The main method of the network simplex layerer. It determines an optimal layering of all
+     * nodes in the graph concerning a minimal length of all edges by using the network simplex
+     * algorithm described in {@literal Emden R. Gansner, Eleftherios Koutsofios, Stephen
+     * C. North, Kiem-Phong Vo: "A Technique for Drawing Directed Graphs", AT&T Bell Laboratories}.
+     * 
+     * @param nodes
+     *            a {@link Collection} of all nodes of the graph to layer
+     * @param layeredGraph
+     *            an initially empty layered graph which is filled with layers
+     * 
+     * @see de.cau.cs.kieler.klay.layered.modules.ILayerer ILayerer
      */
     public void layer(final Collection<LNode> nodes, final LayeredGraph layeredGraph) {
 
@@ -186,7 +204,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         LEdge e = null;
         while ((e = leaveEdge()) != null) {
             // current layering is not optimal
-            exchange(e, enterEdge());
+            exchange(e, enterEdge(e));
         }
         normalize();
         balance();
@@ -218,7 +236,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
 
         initLayering();
         while (tightTreeDFS(layerNodes.iterator().next()) < layerNodes.size()) {
-            // not all nodes have been found by traversing tight edges only
+            // not all nodes have been found
             LEdge e = minimalSlack();
             int delta = layer[e.getTarget().getNode().id] - layer[e.getSource().getNode().id]
                     - tightness[e.id];
@@ -268,11 +286,14 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     }
 
     /**
-     * Helper method for the network simplex layerer. TODO
+     * Helper method for the network simplex layerer. It determines a DFS-subtree of the graph by
+     * traversing tight edges only (i.e. edges whose current length matches their minimal length in
+     * the layering) and returns the number of nodes reachable through this tree. If their number is
+     * equal to the total number of nodes in the graph, a tight spanning tree has been determined.
      * 
      * @param node
      *            the root of the DFS-subtree
-     * @return the number of nodes in the tight tree
+     * @return the number of nodes in the determined tight DFS-tree
      */
     private int tightTreeDFS(final LNode node) {
 
@@ -324,6 +345,15 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         return minSlackEdge;
     }
 
+    /**
+     * Helper method for the network simplex layerer. It determines the cut value of each tree edge,
+     * which is defined as follows: If the edge is deleted, the spanning tree breaks into two
+     * connected components, the head component containing the target node of the edge and the tail
+     * component containing the source node of the edge. The cut value is the sum of the weight
+     * (i.e. the length in general) of all edges going from the tail to the head component,
+     * including the tree edge, minus the sum of the weights of all edges from the head to the tail
+     * component.
+     */
     private void cutvalues() {
         // TODO
     }
@@ -367,16 +397,81 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         return null;
     }
 
-    private LEdge enterEdge() {
-        // TODO
-        return null;
+    /**
+     * Helper method for the network simplex layerer. It determines an non-tree edge to replace the
+     * given tree edge in the spanning tree. All edges going from the head component to the tail
+     * component of the edge will be considered. The edge with a minimal amount of slack (i.e. the
+     * minimal difference between its current to its minimal length) will be returned.
+     * 
+     * @param the
+     *            tree edge to determine a non-tree edge to replace with
+     * @return a non-tree edge with a minimal amount of slack to replace the given edge
+     * @throws IllegalArgumentException
+     *             if the input edge is not a tree edge
+     */
+    private LEdge enterEdge(final LEdge edge) {
+
+        if (!treeEdge[edge.id]) {
+            throw new IllegalArgumentException("The input edge is not a tree edge.");
+        }
+
+        LEdge replace = null;
+        int repSlack = Integer.MAX_VALUE;
+        int slack;
+        LNode source = null;
+        LNode target = null;
+        for (LEdge cons : layerEdges) {
+            source = cons.getSource().getNode();
+            target = cons.getTarget().getNode();
+            if (isInHead(source, edge) && !isInHead(target, edge)) {
+                // edge is to consider
+                slack = layer[cons.getTarget().getNode().id] - layer[cons.getSource().getNode().id]
+                        - tightness[cons.id];
+                if (replace == null) {
+                    replace = cons;
+                    repSlack = slack;
+                } else {
+                    if (slack < repSlack) {
+                        repSlack = slack;
+                        replace = cons;
+                    }
+                }
+            }
+        }
+        return replace;
     }
 
+    /**
+     * Helper method for the network simplex layerer. It exchanges the tree-edge {@code leave} by
+     * the non-tree edge {@code enter} and updates all values based on the tree (i.e. performs a new
+     * postorder DFS-traversal and updates the cut values).
+     * 
+     * @param leave
+     *            the tree-edge to be replaced
+     * @param enter
+     *            the non-tree edge to replace the tree edge
+     * @throws IllegalArgumentException
+     *             if either {@code leave} is no tree edge or {@code enter} is a tree edge already
+     * 
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#postorderTraversal(LNode)
+     *      postorderTraversal()
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#cutvalues() cutvalues()
+     */
     private void exchange(final LEdge leave, final LEdge enter) {
 
-        // TODO update tree
-        // TODO postOrderTraversal
-        // TODO update cut values
+        if (!treeEdge[leave.id]) {
+            throw new IllegalArgumentException("Given leave edge is no tree edge.");
+        }
+        if (treeEdge[enter.id]) {
+            throw new IllegalArgumentException("Given enter edge is a tree edge already.");
+        }
+
+        // update tree
+        treeEdge[leave.id] = false;
+        treeEdge[enter.id] = true;
+        // update values
+        postorderTraversal(layerNodes.iterator().next());
+        cutvalues();
     }
 
     /**
