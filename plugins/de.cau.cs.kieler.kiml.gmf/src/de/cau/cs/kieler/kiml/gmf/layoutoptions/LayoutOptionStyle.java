@@ -38,7 +38,7 @@ import org.eclipse.gmf.runtime.notation.Style;
  * @model
  * @generated
  */
-public interface LayoutOptionStyle extends Style, EAnnotation {
+public interface LayoutOptionStyle extends Style {
     /**
      * Returns the value of the '<em><b>Options</b></em>' containment reference list.
      * The list contents are of type {@link de.cau.cs.kieler.kiml.klayoutdata.KOption}.

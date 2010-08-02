@@ -180,7 +180,6 @@ public class LayoutOptionsPackageImpl extends EPackageImpl implements LayoutOpti
 
         // Obtain other dependent packages
         NotationPackage theNotationPackage = (NotationPackage)EPackage.Registry.INSTANCE.getEPackage(NotationPackage.eNS_URI);
-        EcorePackage theEcorePackage = (EcorePackage)EPackage.Registry.INSTANCE.getEPackage(EcorePackage.eNS_URI);
         KLayoutDataPackage theKLayoutDataPackage = (KLayoutDataPackage)EPackage.Registry.INSTANCE.getEPackage(KLayoutDataPackage.eNS_URI);
 
         // Create type parameters
@@ -189,7 +188,6 @@ public class LayoutOptionsPackageImpl extends EPackageImpl implements LayoutOpti
 
         // Add supertypes to classes
         layoutOptionStyleEClass.getESuperTypes().add(theNotationPackage.getStyle());
-        layoutOptionStyleEClass.getESuperTypes().add(theEcorePackage.getEAnnotation());
 
         // Initialize classes and features; add operations and parameters
         initEClass(layoutOptionStyleEClass, LayoutOptionStyle.class, "LayoutOptionStyle", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
