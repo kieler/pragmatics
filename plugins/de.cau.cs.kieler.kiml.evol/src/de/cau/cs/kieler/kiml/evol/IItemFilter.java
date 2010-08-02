@@ -11,7 +11,8 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.evol.genetic;
+package de.cau.cs.kieler.kiml.evol;
+
 
 /**
  * This interface can be used to implement a custom filter for lists that

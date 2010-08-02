@@ -14,9 +14,10 @@
 /**
  *
  */
-package de.cau.cs.kieler.kiml.evol.genetic;
+package de.cau.cs.kieler.kiml.evol;
 
 import java.util.Collection;
+
 
 /**
  * An interface for collections that can filter their content.

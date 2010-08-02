@@ -113,17 +113,10 @@ public class EvolView extends ViewPart {
         }
 
         public void run() {
-            System.out.println("layoutView refresh start.");
             final LayoutViewPart layoutView = LayoutViewPart.findView();
             if (layoutView != null) {
-                try {
-                    Thread.sleep(100);
-                } catch (final InterruptedException e) {
-                    e.printStackTrace();
-                }
                 layoutView.refresh(); // async!
             }
-            System.out.println("layoutView refresh called.");
         }
     }
 

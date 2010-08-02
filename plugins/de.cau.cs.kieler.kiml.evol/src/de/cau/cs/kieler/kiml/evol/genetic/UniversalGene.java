@@ -64,6 +64,22 @@ public class UniversalGene extends AbstractGene<Float> {
     };
 
     /**
+     * Default formatter for integer values.
+     */
+    public static final IValueFormatter INTEGER_FORMATTER = new IValueFormatter() {
+
+        public String getString(final Object o) {
+            if (o instanceof Integer) {
+                return ((Integer) o).toString();
+            } else if (o instanceof UniversalGene) {
+                return (Math.round(((UniversalGene) o).getValue()) + "");
+            }
+
+            return null;
+        }
+    };
+
+    /**
      * Type info for a boolean gene.
      */
     public static final TypeInfo<Float> BOOLEAN_TYPE_INFO = new TypeInfo<Float>(0.0f, 0.0f, 1.0f,
@@ -174,7 +190,7 @@ public class UniversalGene extends AbstractGene<Float> {
      */
     private class BooleanMutator implements IMutator {
         private static final double PROBABILITY_FOR_TRUE = 0.5;
-        
+
         /**
          * Creates a {@link BooleanMutator} instance.
          */
