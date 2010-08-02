@@ -58,6 +58,11 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      */
     private int[] layer;
 
+    /**
+     * The layer each node is assigned to in the reverse traversal of the graph in
+     * {@code layeringDFS()}. Note that this determined layering is only needed to compute the
+     * minimal span of each edge in the layering. It will not be reused later.
+     */
     private int[] revLayer;
 
     /**
@@ -72,10 +77,19 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      */
     private boolean[] treeEdge;
 
+    /** The postorder traversal ID of each node determined by {@code postorderTraversal()}. */
     private int[] lim;
 
+    /**
+     * The lowest postorder traversal ID reachable through a node lower in the traversal tree
+     * determined by {@code postorderTraversal}.
+     */
     private int[] low;
 
+    /**
+     * The current postorder traversal number used by {@code postorderTraversal()} used to assign an
+     * unique traversal ID to each node.
+     */
     private int postOrder;
 
     /**
@@ -90,13 +104,20 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      */
     private LinkedList<LNode> sinks;
 
-    /** The number of all incoming edges incident on each node. */
+    /** The number of all incoming edges incident to each node. */
     private int[] inDegree;
 
-    /** The number of all outgoing edges incident on each node. */
+    /** The number of all outgoing edges incident to each node. */
     private int[] outDegree;
 
-    /** The cut value of every edge. */
+    /**
+     * The cut value of every edge, which is defined as follows: If the edge is deleted, the
+     * spanning tree breaks into two connected components, the head component containing the target
+     * node of the edge and the tail component containing the source node of the edge. The cut value
+     * is the sum of the weight (i.e. the length in general) of all edges going from the tail to the
+     * head component, including the tree edge, minus the sum of the weights of all edges from the
+     * head to the tail component..
+     */
     private int[] cutvalue;
 
     /** The minimal span of each edge in the layered graph. */
@@ -470,6 +491,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         treeEdge[leave.id] = false;
         treeEdge[enter.id] = true;
         // update values
+        postOrder = 1;
         postorderTraversal(layerNodes.iterator().next());
         cutvalues();
     }
@@ -536,17 +558,19 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
 
     /**
      * Helper method for the network simplex layerer. It determines an (initial) feasible layering
-     * for the given graph by traversing it by a modified depth-first-search arranging the nodes to
-     * the layer representing their height in the DFS-tree. Dependently of the chosen mode indicated
-     * by {@code reverse}, this method traverses the graph beginning from either its root nodes, if
-     * {@code reverse = false}, or sinks, if {@code reverse = true}, which means that all nodes will
-     * be placed as close as possible to either the source or sink nodes.
-     * 
-     * FIXME incorrect description of what this method actually does
+     * for the graph by traversing it by a modified depth-first-search arranging the nodes to the
+     * layer representing their height in a DFS-tree with the input node as its root. Dependently of
+     * the chosen mode indicated by {@code reverse}, this method traverses incoming edges (if
+     * {@code reverse = false}), or outgoing edges, if {@code reverse = true}, only. Therefore, this
+     * method should only be called with source nodes as argument in the first-mentioned case and
+     * only with sink nodes in the latter case.
      * 
      * @param node
      *            the root of the DFS-subtree
      * @param reverse
+     *            the traversal direction of the depth-first-search. If {@code reverse = false}),
+     *            this method only traverses incoming edges. Otherwise, if {@code reverse = true},
+     *            only outgoing edges will be traversed
      */
     private void layeringDFS(final LNode node, final boolean reverse) {
 
