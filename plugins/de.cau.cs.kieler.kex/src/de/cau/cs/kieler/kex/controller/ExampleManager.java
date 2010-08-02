@@ -99,13 +99,8 @@ public class ExampleManager {
 		String location = (String) properties.get(ExampleElement.LOCATION);
 		ExampleExportUtil.validateLocation(projectId, location);
 		Example mappedExample = ExampleExportUtil.mapToExample(properties);
-		ExampleExportUtil.validateExample(mappedExample, extensionCollector,
+		ExampleExportUtil.checkDuplicate(mappedExample, extensionCollector,
 				onlineCollector);
-		// TODO ExtensionPoint zugriff geht so leider nicht, da man zur laufzeit
-		// nicht in die plugin.xml schreiben darf,
-		// dies muss per hand geschehen...
-		// extensionCreation.addExtension(projectId, location, mappedExample);
-
 	}
 
 	/**
@@ -115,6 +110,7 @@ public class ExampleManager {
 	 */
 	public List<Example> getImportedExamples() {
 		// TODO implement
+
 		// Test Example
 		ArrayList<Example> result = new ArrayList<Example>();
 		Example testExample = new Example("ImportedTestExample",

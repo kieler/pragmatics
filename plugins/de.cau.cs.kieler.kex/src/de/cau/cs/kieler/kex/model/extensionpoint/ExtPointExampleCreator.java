@@ -6,6 +6,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import de.cau.cs.kieler.core.KielerException;
+import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.ExampleResource;
 
 /**
@@ -15,7 +16,7 @@ import de.cau.cs.kieler.kex.model.ExampleResource;
  * @author pkl
  * 
  */
-@SuppressWarnings("restriction")
+
 public class ExtPointExampleCreator {
 
 	PluginXMLHandler xmlHandler;
@@ -27,69 +28,15 @@ public class ExtPointExampleCreator {
 		new PluginXMLHandler();
 	}
 
-	// public void addExtension(String projectId, String location, Example
-	// example)
-	// throws KielerException {
-	// // validateProject(projectId, location);
-	// // xmlHandler.addExtension(projectId, location, example);
-	// StringBuffer sb = new StringBuffer();
-	// sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-	// sb.append("<?eclipse version=\"3.4\"?>");
-	// sb.append("<plugin>");
-	// sb.append("<extension point=\"de.cau.cs.kieler.kex\"");
-	// sb.append("<category id=\"creationTest\">");
-	// sb.append("</category>");
-	// sb.append("<example ");
-	// sb.append("contact=\"pkl@informatik.uni-kiel.de\"");
-	// sb.append("description=\"creationTest\"");
-	// sb.append("id=\"de.cau.cs.kieler.kex.creationtest\"");
-	// sb.append("name=\"Creation Test\"");
-	// sb.append("version=\"1.0\">");
-	// sb.append("<example_resource ");
-	// sb.append("category=\"creationTest=\"");
-	// sb.append("is_head_resource=\"true\"");
-	// sb.append("resource=\"dataflow/Flight.dataflow_diagram\">");
-	// sb.append("</example_resource>");
-	// sb.append("</example>");
-	// sb.append("</extension>");
-	// sb.append("</plugin>");
-	//
-	// addExtension(sb.toString());
-	// // try {
-	// // // new
-	// //
-	// ExtensionPointChangeHandler().start(org.eclipse.core.internal.registry.osgi.Activator.getContext());
-	// // } catch (Exception e) {
-	// // // bla bla bla
-	// // // TODO Auto-generated catch block
-	// // e.printStackTrace();
-	// // }
-	//
-	// }
-
-	/**
-	 * common way, but does not work.
-	 * 
-	 * @param sb
-	 */
-	// private void addExtension(String sb) {
-	// try {
-	// // use Eclipse Dynamic Extension API
-	// IExtensionRegistry reg = RegistryFactory.getRegistry();
-	// Object key = ((ExtensionRegistry) reg).getTemporaryUserToken();
-	// Bundle bundle = Activator.getDefault().getBundle(
-	// "de.cau.cs.kieler.kex");
-	// // BundleContext context =
-	// // org.eclipse.core.internal.registry.osgi.Activator.getContext();
-	// IContributor contributor = ContributorFactoryOSGi
-	// .createContributor(bundle);
-	// ByteArrayInputStream is = new ByteArrayInputStream(
-	// (sb.toString()).getBytes("UTF-8"));
-	// reg.addContribution(is, contributor, true, null, null, key);
-	// } catch (UnsupportedEncodingException e) {
-	// e.printStackTrace();
-	// }
-	// }
+	public void addExtension(String projectId, String destLocation,
+			Example example) throws KielerException {
+		File destFile = new File(destLocation);
+		IProject sourceProject = ResourcesPlugin.getWorkspace().getRoot()
+				.getProject(projectId);
+		validateProject(sourceProject, destFile);
+		xmlHandler.addExtension(projectId, destLocation, example);
+		// createExampleResources(location, resource)
+	}
 
 	/**
 	 * creates example files to given project path
@@ -116,18 +63,18 @@ public class ExtPointExampleCreator {
 		// }
 	}
 
-	public void validateProject(String projectId, String location)
-			throws KielerException {
-		File file = new File(location);
-		if (!file.exists()) {
-			throw new KielerException("There is no file for given location:"
-					+ location);
-		}
-		IProject project = ResourcesPlugin.getWorkspace().getRoot()
-				.getProject(projectId);
-		if (project == null)
+	public void validateProject(final IProject sourceProject,
+			final File destFile) throws KielerException {
+
+		if (sourceProject == null)
 			throw new KielerException(
-					"There is no project for given project id:" + projectId);
+					"There is no project for given project path:"
+							+ sourceProject.getFullPath());
+
+		if (!destFile.exists()) {
+			throw new KielerException("There is no file for given location:"
+					+ destFile.getPath());
+		}
 	}
 
 }

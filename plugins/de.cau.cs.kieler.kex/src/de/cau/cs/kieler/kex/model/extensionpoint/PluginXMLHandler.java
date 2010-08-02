@@ -40,12 +40,18 @@ class PluginXMLHandler {
 		try {
 			// FIXME mit projectId wird das nicht gehen, brauche externen
 			// pfad...
-			File file = filterPluginXML(projectId);
+			File file = filterPluginXML(location);
 			parsedXML = parserPluginXML(file);
-			extendPluginXML(parsedXML);
+			// TODO think about a exampleName.meta for informations of example
+			// instead of this example here.
+			extendPluginXML(parsedXML, example);
 			// TODO plugin.xml erweitern... mit geparstem file
 		} catch (ParserConfigurationException e) {
-
+			// TODO KexConstants einfuehren, d.h. eigene Klasse und diese
+			// meldungen hier drin sammeln. (siehe visor constants)
+			String msg = "Error appears while parsing plugin.xml of project: "
+					+ projectId;
+			throw new KielerException(msg, e);
 		} catch (SAXException e) {
 			String msg = "Error appears while parsing plugin.xml of project: "
 					+ projectId;
@@ -57,9 +63,9 @@ class PluginXMLHandler {
 		}
 	}
 
-	private void extendPluginXML(Document pluginXML) {
+	private void extendPluginXML(Document pluginXML, final Example example) {
 		// parsedXML nun nutzen und aufloesen...
-		// TODO Beispiel für doc zugriff nun erweitern...
+		// TODO Beispiel fï¿½r doc zugriff nun erweitern...
 		// NodeList nl = node.getChildNodes();
 		//
 		// for (int i = 0, cnt = nl.getLength(); i < cnt; i++) {

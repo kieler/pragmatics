@@ -21,14 +21,15 @@ public class ExampleExportUtil {
 	 */
 	public static Example mapToExample(Map<ExampleElement, Object> properties) {
 		Example result = new Example(
-				(String) properties.get(ExampleElement.ID), (String) properties
-						.get(ExampleElement.NAME), Version
-						.parseVersion((String) properties
-								.get(ExampleElement.VERSION)),
+				(String) properties.get(ExampleElement.ID),
+				(String) properties.get(ExampleElement.NAME),
+				Version.parseVersion((String) properties
+						.get(ExampleElement.VERSION)),
 				(ImportType) properties.get(ExampleElement.IMPORTTYPE));
 		result.setDescription((String) properties
 				.get(ExampleElement.DESCRIPTION));
 		result.setContact((String) properties.get(ExampleElement.CONTACT));
+		// TODO resource krams fehlt hier noch.
 		return result;
 	}
 
@@ -42,7 +43,7 @@ public class ExampleExportUtil {
 	 * @param example
 	 * @throws KielerException
 	 */
-	public static void validateExample(Example example,
+	public static void checkDuplicate(Example example,
 			ExampleCollector... collectors) throws KielerException {
 		if (example.getId() == null)
 			throw new KielerException("ID of an example could not be null.");
