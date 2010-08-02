@@ -28,7 +28,7 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.modules.ILayerer;
 
 /**
- * @author pdo
+ * @author pdo TODO
  */
 public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer {
 
@@ -64,9 +64,9 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      */
     private boolean[] treeEdge;
 
-    private int[] travNumber;
+    private int[] lim;
 
-    private int[] lowestTrav;
+    private int[] low;
 
     private int postOrder;
 
@@ -137,8 +137,8 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             revLayer = new int[numNodes];
             Arrays.fill(revLayer, numNodes);
             treeNode = new boolean[numNodes];
-            travNumber = new int[numNodes];
-            lowestTrav = new int[numNodes];
+            lim = new int[numNodes];
+            low = new int[numNodes];
         } else {
             Arrays.fill(layer, 0);
             Arrays.fill(revLayer, numNodes);
@@ -165,7 +165,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc} TODO.
      */
     public void layer(final Collection<LNode> nodes, final LayeredGraph layeredGraph) {
 
@@ -200,14 +200,19 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     }
 
     /**
-     * Helper method for the network simplex layerer. It determines an initial tight spanning tree
-     * of the graph. To do so, an initial feasible tree is being computed first. If all tree edges
-     * contained are tight (i.e. their minimal length corresponds with their actual length), a tight
-     * tree has already been found. If not, this method iteratively determines a non-tree edge with
-     * a minimal amount of slack (i.e. the difference between its current and minimal length), all
-     * tree edges are being shifted to shorten the edge to its minimal size and all now tight edges
-     * connecting a non-tree node with the tree are added to the spanning tree. A concluding
-     * computation of the edge's initial cut values takes place.
+     * Helper method for the network simplex layerer. It determines an initial feasible (and tight)
+     * spanning tree of the graph. To do so, an initial feasible tree is being computed. If all tree
+     * edges contained are tight (i.e. their minimal length corresponds with their actual length), a
+     * tight tree has already been found. If not, this method iteratively determines a non-tree edge
+     * incident to the tree with a minimal amount of slack (i.e. the edge with the lowest difference
+     * between its current and minimal length) and shifts all tree edges accordingly to shorten that
+     * edge to its minimal size. That edge has become tight and will be added to the spanning tree
+     * together with all tight edges leading to non-tree nodes as well. If all nodes of the graph
+     * are contained in the spanning tree, a tight tree has been found. and a concluding computation
+     * of each edge's initial cut value takes place.
+     * 
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#tightTreeDFS(LNode)
+     *      tightTreeDFS()
      */
     private void feasibleTree() {
 
@@ -234,10 +239,14 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     /**
      * Helper method for the network simplex layerer. It determines an initial layering of all nodes
      * in the graph. The graph will be traversed by a depth-first-search assigning all nodes to
-     * layer equivalent to its height in the thereby defined DFS-tree. The minimal length of each
-     * node in the graph will be determined and as a first optimization, all leafs of the graph
-     * (i.e. sink and source nodes) will be assigned to a layer as close to their adjacent nodes as
-     * possible.
+     * layers equivalent to its height in the thereby defined DFS-tree. Furthermore, the minimal
+     * length of each node in the graph will be determined and, as a first optimization, all leafs
+     * of the graph (i.e. sink and source nodes) will be assigned to a layer as close to their
+     * adjacent nodes as possible.
+     * 
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#layeringDFS(LNode, boolean)
+     *      layeringDFS()
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#shiftLeafs() shiftLeafs()
      */
     private void initLayering() {
 
@@ -259,7 +268,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     }
 
     /**
-     * Helper method for the network simplex layerer.
+     * Helper method for the network simplex layerer. TODO
      * 
      * @param node
      *            the root of the DFS-subtree
@@ -289,8 +298,8 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
 
     /**
      * Helper method for the network simplex layerer. It returns the non-tree edge incident on the
-     * tree with a minimal amount of slack (i.e. the lowest difference between its current and
-     * minimal length) or {@code null}, if no such edge exists.
+     * tree with a minimal amount of slack (i.e. an edge with the lowest difference between its
+     * current and minimal length) or {@code null}, if no such edge exists.
      * 
      * @return a non-tree edge incident on the tree with a minimal amount of slack or {@code null},
      *         if no such edge exists
@@ -321,9 +330,10 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
 
     /**
      * Helper method for the network simplex layerer. It shifts all leafs (i.e. source or sink
-     * nodes) as close to their adjacent nodes as possible. Note, that this method is originally not
-     * part of the network simplex method. It just serves as a first optimization here to minimize
-     * the number of (partially more expensive) iterations necessary in the main algorithm.
+     * nodes) as close to their adjacent nodes as possible (i.e. the layering remains feasible).
+     * Note, that this method is originally not part of the network simplex method. It serves as a
+     * first optimization to minimize the number of (partially more expensive) iterations necessary
+     * in the main algorithm.
      */
     private void shiftLeafs() {
 
@@ -365,6 +375,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     private void exchange(final LEdge leave, final LEdge enter) {
 
         // TODO update tree
+        // TODO postOrderTraversal
         // TODO update cut values
     }
 
@@ -393,15 +404,17 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     }
 
     /**
-     * Helper method for the network simplex layerer. It determines all edges connecting the nodes
-     * in the graph and returns them as a {@code Collection}. Furthermore, it determines the number
-     * of incoming and outgoing edges of each node ({@code inDegree}, respectively {@code outDegree}
-     * ) and identifies all sinks and source nodes in the graph and adds them to {@code sinks},
-     * respectively {@code sources}.
+     * Helper method for the network simplex layerer. It determines all edges in the graph (i.e. all
+     * edges linking two nodes of {@code layerNodes}) and returns them as a {@code Collection}.
+     * Furthermore, it determines the number of incoming and outgoing edges of each node (
+     * {@code inDegree}, respectively {@code outDegree}) and identifies all sinks and source nodes
+     * in the graph and adds them to {@code sinks}, respectively {@code sources}.
      * 
      * @param nodes
-     *            a {@link Collection} containing all nodes of the graph
-     * @return a {@link Collection} containing all edges of the graph
+     *            a {@code Collection} containing all nodes of the graph
+     * @return a {@code Collection} containing all edges of the graph
+     * 
+     * @see java.util.Collection Collection
      */
     private Collection<LEdge> getEdges(final Collection<LNode> nodes) {
 
@@ -470,9 +483,9 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      *            the node to determine the length of its shortest incident edge
      * @param orientation
      *            the orientation of the incident edges. If {@code orientation = PortType.INPUT},
-     *            only incoming edges will be considered. If {@code orientation = PortType.OUTPUT},
-     *            only outgoing edges will be considered for the determination of the shortest edge
-     *            length.
+     *            only incoming edges will be considered or, if
+     *            {@code orientation = PortType.OUTPUT}, only outgoing edges will be considered for
+     *            the determination of the shortest edge length.
      * @return the minimal length all edges of the specified edge type incident to the input node or
      *         {@code -1}, if no such edge is incident
      */
@@ -497,13 +510,13 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
 
     /**
      * Helper method for the network simplex layerer. It returns the the port that is connected to
-     * the opposite side of the specified edge relative to the input port.
+     * the opposite side of the specified edge from the viewpoint of the given port.
      * 
      * @param port
      *            the port to get the opposite port from
      * @param edge
-     *            the edge that connects both the input port and the returned opposite port
-     * @return the port, that is connected to the opposite side of the edge.
+     *            the edge to consider when determining the opposite port
+     * @return the opposite port from the viewpoint of the given port
      * 
      * @throws IllegalArgumentException
      *             if the input port is not connected to the specified edge
@@ -526,7 +539,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      *            the node to put into the layered graph
      */
     private void putNode(final LNode node) {
-        
+
         List<Layer> layers = layerGraph.getLayers();
         for (int i = layers.size(); i < layer[node.id]; i++) {
             layers.add(0, new Layer(layerGraph));
@@ -535,10 +548,16 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     }
 
     /**
+     * Helper method for the network simplex layerer. It performs a postorder DFS-traversal of the
+     * graph beginning with the first node in the Collection of all graph nodes. Each node will be
+     * assigned a unique traversal number, which will be stored in {@code lim}. Furthermore, the
+     * lowest postorder traversal number of any descending edge in the traversal of the input node
+     * will be computed and stored in {@code low}, which will also be the return value of this
+     * method.
      * 
      * @param node
-     *            the node of the DFS-subtree
-     * @return the lowest postorder traversal number of any descending edge in the
+     *            the root of the DFS-subtree
+     * @return the lowest postorder of the input node traversal number of any descending edge in the
      *         depth-first-search
      */
     private int postorderTraversal(final LNode node) {
@@ -552,9 +571,44 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
                 }
             }
         }
-        travNumber[node.id] = postOrder;
-        lowestTrav[node.id] = Math.min(lowest, postOrder++);
-        return lowestTrav[node.id];
+        lim[node.id] = postOrder;
+        low[node.id] = Math.min(lowest, postOrder++);
+        return low[node.id];
+    }
+
+    /**
+     * Helper method for the the network simplex layerer. It determines, whether an node is part of
+     * the head component of the given edge defined as follows: If the input edge is deleted, the
+     * spanning tree breaks into to connected components. The head component is that component,
+     * which contains the edge's target node, and the tail component is the component, which
+     * contains the edge's source node. Note that a node either belongs to the head or tail
+     * component. A third possibility does not exist. Therefore, if the node is not part of the head
+     * component, it must be part of the tail component and vice versa.
+     * 
+     * @param node
+     *            the node to determine, whether it belongs to the edges head (or tail) component
+     * @param edge
+     *            the edge to determine, whether the node is in the head (or tail) component
+     * @return {@code true}, if node is in the head component or {@code false}, if the node is in
+     *         the tail component of the edge
+     */
+    private boolean isInHead(final LNode node, final LEdge edge) {
+
+        LNode source = edge.getSource().getNode();
+        if (lim[source.id] < lim[edge.getTarget().getNode().id]) {
+            // root is in the head component
+            if (low[source.id] <= lim[node.id] && lim[node.id] <= lim[source.id]) {
+                return false;
+            }
+            return true;
+        } else {
+            // root is in the tail component
+            if (low[source.id] >= lim[node.id] && lim[node.id] >= lim[source.id]) {
+                return false;
+            }
+            return true;
+        }
+
     }
 
 }
