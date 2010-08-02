@@ -71,8 +71,12 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
         if (editorPart instanceof IMultiDiagramEditor) {
             final IMultiDiagramEditor diagramEditor = (IMultiDiagramEditor) editorPart;
             IPropertyListener tabListener = new IPropertyListener() {
+                private IEditorPart currentEditor = diagramEditor.getActiveEditor();
                 public void propertyChanged(final Object source, final int propId) {
+                    internalRemoveListener(editorListener);
                     editorListener.editorChanged();
+                    currentEditor = diagramEditor.getActiveEditor();
+                    internalAddListener(currentEditor, editorListener);
                 }
             };
             diagramEditor.addPropertyListener(tabListener);
@@ -89,6 +93,17 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
             super.addChangeListener(editorPart, editorListener);
         }
     }
+    
+    /**
+     * Calls the superclass method to add a change listener.
+     * 
+     * @param editorPart a diagram editor
+     * @param editorListener an editor change listener
+     */
+    private void internalAddListener(final IEditorPart editorPart,
+            final IEditorChangeListener editorListener) {
+        super.addChangeListener(editorPart, editorListener);
+    }
 
     /**
      * {@inheritDoc}
@@ -102,6 +117,15 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
                 pair.getFirst().removePropertyListener(pair.getSecond());
             }
         }
+        super.removeChangeListener(editorListener);
+    }
+    
+    /**
+     * Calls the superclass method to remove a change listener.
+     * 
+     * @param editorListener an editor change listener
+     */
+    private void internalRemoveListener(final IEditorChangeListener editorListener) {
         super.removeChangeListener(editorListener);
     }
 
