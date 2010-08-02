@@ -55,7 +55,6 @@ import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.IGene;
 import de.cau.cs.kieler.kiml.evol.genetic.IGeneFactory;
 import de.cau.cs.kieler.kiml.evol.genetic.IValueFormatter;
-import de.cau.cs.kieler.kiml.evol.genetic.IntegerGene;
 import de.cau.cs.kieler.kiml.evol.genetic.MutationInfo;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo;
@@ -134,8 +133,6 @@ public final class EvolUtil {
             switch (layoutOptionDataType) {
             case BOOLEAN: {
                 final boolean booleanValue = (Integer.parseInt(theValue.toString()) == 1);
-                // result = new BooleanGene(theId, booleanValue,
-                // theMutationProbability);
                 final Float floatValue = (booleanValue ? 1.0f : 0.0f);
                 result =
                         new UniversalGene(theId, floatValue, UniversalGene.BOOLEAN_TYPE_INFO,
@@ -158,9 +155,37 @@ public final class EvolUtil {
             }
 
             case INT: {
-                final int intValue = Integer.parseInt((String) theValue);
-                final double var = MutationInfo.DEFAULT_VARIANCE;
-                result = new IntegerGene(theId, intValue, theMutationProbability, var);
+                final Integer intValue = Integer.parseInt((String) theValue);
+
+                final double variance;
+                if (varianceAttr != null) {
+                    variance = Double.parseDouble(varianceAttr);
+                } else {
+                    // estimate desired variance from the absolute value
+                    variance = Math.abs(intValue) * VARIANCE_SCALING_FACTOR;
+                }
+
+                final Integer lowerBound =
+                        ((lowerBoundAttr == null) ? Integer.MIN_VALUE : (Integer
+                                .parseInt(lowerBoundAttr)));
+
+                final Integer upperBound =
+                        ((upperBoundAttr == null) ? Integer.MAX_VALUE : (Integer
+                                .parseInt(upperBoundAttr)));
+
+                final IValueFormatter formatter = UniversalGene.INTEGER_FORMATTER;
+
+                final TypeInfo<Float> typeInfo =
+                        new TypeInfo<Float>(intValue.floatValue(), lowerBound.floatValue(),
+                                upperBound.floatValue(), formatter,
+                                Integer.class);
+
+                // result = new IntegerGene(theId, intValue,
+                // theMutationProbability, var);
+
+                result =
+                        new UniversalGene(theId, intValue.floatValue(), typeInfo, new MutationInfo(
+                                theMutationProbability, variance, distr));
                 System.out.println(theId + ": " + result);
                 break;
             }
@@ -190,7 +215,6 @@ public final class EvolUtil {
                     }
                 }
 
-                final TypeInfo<Float> typeInfo;
                 final IValueFormatter formatter;
                 if (lowerBound >= 0.0f) {
                     // we need a strictly positive float gene
@@ -201,7 +225,7 @@ public final class EvolUtil {
                     formatter = UniversalGene.FLOAT_FORMATTER;
                 }
 
-                typeInfo =
+                final TypeInfo<Float> typeInfo =
                         new TypeInfo<Float>(floatValue, lowerBound, upperBound, formatter,
                                 Float.class);
                 result =
@@ -265,6 +289,7 @@ public final class EvolUtil {
 
         // set layout options according to genome
         for (final IGene<?> gene : theIndividual) {
+
             Assert.isNotNull(gene);
             final Object value = gene.getValue();
             final Object id = gene.getId();
@@ -337,7 +362,7 @@ public final class EvolUtil {
         final LayoutPropertySource source = sourceGetterRunnable.getSource();
 
         try {
-            Thread.sleep(100);
+            Thread.sleep(50);
         } catch (final InterruptedException e) {
             e.printStackTrace();
         }
@@ -351,6 +376,8 @@ public final class EvolUtil {
 
             // TODO: get a new manager for every iteration?
             final int rating = EvolUtil.layoutAndMeasure(manager, editor);
+
+            // compare new rating to previous one
             if (ind.hasUserRating()) {
                 final int oldRating = ind.getUserRating();
                 if (oldRating < rating) {
@@ -366,14 +393,14 @@ public final class EvolUtil {
                 monitor.worked(1);
             }
             try {
-                Thread.sleep(100);
+                Thread.sleep(50);
             } catch (final InterruptedException e) {
                 e.printStackTrace();
             }
         }
 
         try {
-            Thread.sleep(300);
+            Thread.sleep(200);
         } catch (final InterruptedException e) {
             e.printStackTrace();
         }
@@ -400,18 +427,6 @@ public final class EvolUtil {
 
         return createPopulation(propertySource, size);
     }
-
-    // /**
-    // * Adopts layout options from the given {@link Genome} into a
-    // * {@link LayoutPropertySource} for the current editor.
-    // *
-    // * @param theIndividual
-    // * the {@link Genome}; must not be {@code null}.
-    // */
-    // private static void adoptIndividual(final Genome theIndividual) {
-    // final LayoutPropertySource source = getLayoutPropertySource();
-    // adoptIndividual(theIndividual, source);
-    // }
 
     /**
      * Create a population of the given size, taking initial values from the
@@ -610,7 +625,7 @@ public final class EvolUtil {
 
             // XXX: arbitrarily chosen coefficients
             final Deque<Double> coeffsQueue = new LinkedList<Double>();
-            for (final double d : new double[] { .2, .2, .2, .2, .2 }) {
+            for (final double d : normalize(1, 1, 1, 1, 1)) {
                 coeffsQueue.add(d);
             }
             final Map<String, Double> coeffsMap = new HashMap<String, Double>(metricIds.size());
@@ -626,6 +641,30 @@ public final class EvolUtil {
             rating = 0;
         }
         return rating;
+    }
+
+    /**
+     * Scale the given double values so that their sum equals one.
+     *
+     * @param values
+     *            a non-empty array of doubles
+     * @return a list of the scaled values in the same order.
+     */
+    private static List<Double> normalize(final double... values) {
+
+        double sum = 0.0;
+        for (final double val : values) {
+            sum += val;
+        }
+        final double factor = 1.0 / sum;
+
+        final int length = values.length;
+        final List<Double> result = new ArrayList<Double>(length);
+        for (final double val : values) {
+            result.add(val * factor);
+        }
+
+        return result;
     }
 
     /**
