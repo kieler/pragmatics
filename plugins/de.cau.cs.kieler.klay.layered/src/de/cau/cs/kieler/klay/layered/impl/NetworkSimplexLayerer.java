@@ -161,6 +161,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             Arrays.fill(inDegree, 0);
             Arrays.fill(outDegree, 0);
         }
+        postOrder = 1;
     }
 
     /**
@@ -178,7 +179,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         layerGraph = layeredGraph;
         layerNodes = nodes;
         layerEdges = getEdges(nodes);
-        initialize(nodes, layerEdges);
+        initialize(layerNodes, layerEdges);
 
         // determine feasible tree
         feasibleTree();
@@ -214,7 +215,8 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         while (tightTreeDFS(layerNodes.iterator().next()) < layerNodes.size()) {
             // not all nodes have been found by traversing tight edges only
             LEdge e = minimalSlack();
-            int delta = layer[e.getTarget().id] - layer[e.getSource().id] - tightness[e.id];
+            int delta = layer[e.getTarget().getNode().id] - layer[e.getSource().getNode().id]
+                    - tightness[e.id];
             if (treeNode[e.getSource().getNode().id]) {
                 delta = -delta;
             }
@@ -224,12 +226,22 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
                 }
             }
         }
+        postorderTraversal(layerNodes.iterator().next());
         cutvalues();
 
     }
 
+    /**
+     * Helper method for the network simplex layerer. It determines an initial layering of all nodes
+     * in the graph. The graph will be traversed by a depth-first-search assigning all nodes to
+     * layer equivalent to its height in the thereby defined DFS-tree. The minimal length of each
+     * node in the graph will be determined and as a first optimization, all leafs of the graph
+     * (i.e. sink and source nodes) will be assigned to a layer as close to their adjacent nodes as
+     * possible.
+     */
     private void initLayering() {
 
+        // determine initial layering
         for (LNode node : sources) {
             layeringDFS(node, false);
         }
@@ -239,10 +251,10 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         }
         for (LEdge edge : layerEdges) {
             tightness[edge.id] = Math.min(layer[edge.getTarget().getNode().id]
-                    - layer[edge.getSource().getNode().id], revLayer[edge.getTarget().id]
-                    - revLayer[edge.getSource().id]);
+                    - layer[edge.getSource().getNode().id], revLayer[edge.getTarget().getNode().id]
+                    - revLayer[edge.getSource().getNode().id]);
         }
-        // first optimization : pull sources and sinks closer to its adjacent nodes, if possible
+        // pull sources and sinks closer to its adjacent nodes (first optimization)
         shiftLeafs();
     }
 
@@ -250,12 +262,12 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * Helper method for the network simplex layerer.
      * 
      * @param node
-     *            the root of the current DFS-subtree
-     * @return
+     *            the root of the DFS-subtree
+     * @return the number of nodes in the tight tree
      */
     private int tightTreeDFS(final LNode node) {
 
-        int nodeCount = 0;
+        int nodeCount = 1;
         treeNode[node.id] = true;
         LNode opposite = null;
         for (LPort port : node.getPorts()) {
@@ -382,7 +394,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
 
     /**
      * Helper method for the network simplex layerer. It determines all edges connecting the nodes
-     * in the graph and returns them as a {@code LinkedList}. Furthermore, it determines the number
+     * in the graph and returns them as a {@code Collection}. Furthermore, it determines the number
      * of incoming and outgoing edges of each node ({@code inDegree}, respectively {@code outDegree}
      * ) and identifies all sinks and source nodes in the graph and adds them to {@code sinks},
      * respectively {@code sources}.
@@ -402,7 +414,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
                 } else if (port.getType() == PortType.INPUT) {
                     inDegree[node.id] += port.getEdges().size();
                 }
-                // undefined ports are neglected
+                // ports of type "UNDEFINED" are neglected
             }
             if (outDegree[node.id] == 0) {
                 sinks.add(node);
@@ -435,7 +447,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             for (LPort port : node.getPorts(PortType.INPUT)) {
                 for (LEdge edge : port.getEdges()) {
                     target = edge.getSource().getNode();
-                    layer[target.id] = Math.min(layer[target.id], layer[node.id] - 1);
+                    revLayer[target.id] = Math.min(revLayer[target.id], revLayer[node.id] - 1);
                     layeringDFS(target, reverse);
                 }
             }
@@ -459,9 +471,10 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * @param orientation
      *            the orientation of the incident edges. If {@code orientation = PortType.INPUT},
      *            only incoming edges will be considered. If {@code orientation = PortType.OUTPUT},
-     *            only outgoing edges will be considered.
-     * @return the minimal length all edges of the specified edge type incident on the input node or
-     *         {@code -1}, if no such edge is incident to the node
+     *            only outgoing edges will be considered for the determination of the shortest edge
+     *            length.
+     * @return the minimal length all edges of the specified edge type incident to the input node or
+     *         {@code -1}, if no such edge is incident
      */
     private int minimalSpan(final LNode node, final PortType orientation) {
 
@@ -469,8 +482,8 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         int currentSpan;
         for (LPort port : node.getPorts(orientation)) {
             for (LEdge edge : port.getEdges()) {
-                currentSpan = Math.abs(layer[edge.getTarget().getNode().id]
-                        - layer[edge.getSource().getNode().id]);
+                currentSpan = layer[edge.getTarget().getNode().id]
+                        - layer[edge.getSource().getNode().id];
                 if (currentSpan < minSpan) {
                     minSpan = currentSpan;
                 }
@@ -513,6 +526,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      *            the node to put into the layered graph
      */
     private void putNode(final LNode node) {
+        
         List<Layer> layers = layerGraph.getLayers();
         for (int i = layers.size(); i < layer[node.id]; i++) {
             layers.add(0, new Layer(layerGraph));
@@ -539,7 +553,8 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             }
         }
         travNumber[node.id] = postOrder;
-        return Math.min(lowest, postOrder++);
+        lowestTrav[node.id] = Math.min(lowest, postOrder++);
+        return lowestTrav[node.id];
     }
 
 }
