@@ -1,0 +1,59 @@
+Todos...
+
+
+erklaeren warum interner eclipse mechanismus nicht geht
+
+da nur dynamische dinge geladen werden koennen...
+
+	public void addExtension(String projectId, String location, Example example)
+			throws KielerException {
+		// StringBuffer sb = new StringBuffer();
+		// sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		// sb.append("<?eclipse version=\"3.4\"?>");
+		// sb.append("<plugin>");
+		// sb.append("<extension point=\"de.cau.cs.kieler.kex\"");
+		// sb.append("<category id=\"creationTest\">");
+		// sb.append("</category>");
+		// sb.append("<example ");
+		// sb.append("contact=\"pkl@informatik.uni-kiel.de\"");
+		// sb.append("description=\"creationTest\"");
+		// sb.append("id=\"de.cau.cs.kieler.kex.creationtest\"");
+		// sb.append("name=\"Creation Test\"");
+		// sb.append("version=\"1.0\">");
+		// sb.append("<example_resource ");
+		// sb.append("category=\"creationTest=\"");
+		// sb.append("is_head_resource=\"true\"");
+		// sb.append("resource=\"dataflow/Flight.dataflow_diagram\">");
+		// sb.append("</example_resource>");
+		// sb.append("</example>");
+		// sb.append("</extension>");
+		// sb.append("</plugin>");
+
+		// addExtension(sb.toString());
+
+	}
+
+	/**
+	 * common way, but does not work.
+	 * 
+	 * @param sb
+	 */
+	// private void addExtension(String sb) {
+	// try {
+	// // use Eclipse Dynamic Extension API
+	// IExtensionRegistry reg = RegistryFactory.getRegistry();
+	// Object key = ((ExtensionRegistry) reg).getTemporaryUserToken();
+	// Bundle bundle = Activator.getDefault().getBundle(
+	// "de.cau.cs.kieler.kex");
+	// // BundleContext context =
+	// // org.eclipse.core.internal.registry.osgi.Activator.getContext();
+	// IContributor contributor = ContributorFactoryOSGi
+	// .createContributor(bundle);
+	// ByteArrayInputStream is = new ByteArrayInputStream(
+	// (sb.toString()).getBytes("UTF-8"));
+	// reg.addContribution(is, contributor, true, null, null, key);
+	// } catch (UnsupportedEncodingException e) {
+	// e.printStackTrace();
+	// }
+	// } 
+
