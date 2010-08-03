@@ -48,13 +48,7 @@ public interface INode extends IGraphElement {
          * Compound nodes. Compound nodes are nodes that again represent graphs. They contain nodes
          * and edges themselves, and may even contain other compound nodes.
          */
-        COMPOUND,
-
-        /**
-         * Algorithm-specific dummy or virtual nodes. Various graph algorithm temporarily insert
-         * dummy nodes for different calculations.
-         */
-        OTHER
+        COMPOUND
     }
 
     // ======================== Getters and Setters ================================================

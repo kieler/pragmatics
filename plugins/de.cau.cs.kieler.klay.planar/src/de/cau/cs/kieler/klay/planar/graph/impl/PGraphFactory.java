@@ -48,6 +48,49 @@ public class PGraphFactory implements IGraphFactory {
     /**
      * {@inheritDoc}
      */
+    public IGraph createFullGraph(final int nodes) throws InconsistentGraphModelException {
+        IGraph graph = new PGraph();
+        INode[] nodeArray = new INode[nodes];
+
+        // Create nodes
+        for (int i = 0; i < nodes; i++) {
+            nodeArray[i] = graph.addNode();
+        }
+
+        // Create edges
+        for (int i = 0; i < nodes; i++) {
+            for (int j = 0; j < i; j++) {
+                graph.addEdge(nodeArray[i], nodeArray[j]);
+            }
+        }
+        return graph;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public IGraph createRandomGraph(final int nodes, final int edges)
+            throws InconsistentGraphModelException {
+        IGraph graph = new PGraph();
+        INode[] nodeArray = new INode[nodes];
+
+        // Create nodes
+        for (int i = 0; i < nodes; i++) {
+            nodeArray[i] = graph.addNode();
+        }
+
+        // Create edges
+        for (int i = 0; i < edges; i++) {
+            int i1 = (int) Math.floor(Math.random() * nodes);
+            int i2 = (int) Math.floor(Math.random() * nodes);
+            graph.addEdge(nodeArray[i1], nodeArray[i2]);
+        }
+        return graph;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public IGraph createGraphFromKGraph(final KNode kgraph) throws InconsistentGraphModelException {
         // TODO check for hyper nodes
         // TODO check for directed/undirected edges

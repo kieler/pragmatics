@@ -36,6 +36,31 @@ public interface IGraphFactory {
     IGraph createEmptyGraph();
 
     /**
+     * Create a full graph. In a full graph, every node is connected to every other node via an
+     * edge.
+     * 
+     * @param nodes
+     *            the number of nodes in the graph
+     * @return a full graph with the given number of nodes
+     * @throws InconsistentGraphModelException
+     *             if any inconsistencies occur
+     */
+    IGraph createFullGraph(int nodes) throws InconsistentGraphModelException;
+
+    /**
+     * Create a random graph with a given number of nodes and edges.
+     * 
+     * @param nodes
+     *            the number of nodes in the random graph
+     * @param edges
+     *            the number of edges in the random graph
+     * @return a random graph
+     * @throws InconsistentGraphModelException
+     *             if any inconsistencies occur
+     */
+    IGraph createRandomGraph(int nodes, int edges) throws InconsistentGraphModelException;
+
+    /**
      * Create a graph from a {@code KGraph} instance.
      * 
      * @param kgraph

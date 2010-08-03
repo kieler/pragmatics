@@ -27,7 +27,6 @@ import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.INode;
 import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
-import de.cau.cs.kieler.klay.planar.graph.INode.NodeType;
 import de.cau.cs.kieler.klay.planar.util.ManuallyIterable;
 import de.cau.cs.kieler.klay.planar.util.ManuallyIterable.Direction;
 import de.cau.cs.kieler.klay.planar.util.ManuallyIterable.ManualIterator;
@@ -90,6 +89,12 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
      * edges and one back edge.
      */
     private int[] lowpoint;
+
+    /**
+     * Virtual state of every node. Defines if a node is a virtual root node (algorithm-specific
+     * dummy node) or not.
+     */
+    private boolean[] isVirtual;
 
     /**
      * The sign of every node. Whenever a biconnected component is flipped, the sign of its root
@@ -259,6 +264,7 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
         this.graph.reindex();
         int size = (2 * this.graph.getNodeCount()) + 1;
         this.dfi = new int[size];
+        this.isVirtual = new boolean[size];
         this.flipped = new boolean[size];
         this.lowpoint = new int[size];
         this.ancestor = new int[size];
@@ -394,6 +400,7 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
         this.dfi[iNode] = index;
         this.lowpoint[iNode] = index;
         this.ancestor[iNode] = index;
+        this.isVirtual[iNode] = false;
         this.parent[iNode] = parentNode;
         this.separatedChildren[iNode] = new LinkedHashSet<INode>();
         this.children[iNode] = new LinkedList<INode>();
@@ -406,12 +413,13 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
         // Add a virtual root node as image of the parent node
         INode bicomp = null;
         if (parentNode != null) {
-            bicomp = this.graph.addNode(NodeType.OTHER);
+            bicomp = this.graph.addNode();
             int iParent = parentNode.getID();
             int iBicomp = bicomp.getID();
             this.dfi[iBicomp] = this.dfi[iParent];
             this.lowpoint[iBicomp] = this.lowpoint[iParent];
             this.ancestor[iBicomp] = this.ancestor[iParent];
+            this.isVirtual[iBicomp] = true;
             this.parent[iBicomp] = parentNode;
             this.children[iBicomp] = new LinkedList<INode>();
             this.neighbors[iBicomp] = new LinkedList<INode>();
@@ -509,9 +517,9 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
 
             // Check if we found a root node
             INode n = null;
-            if (left.getCurrent().getType() == NodeType.OTHER) {
+            if (this.isVirtual[left.getCurrent().getID()]) {
                 n = left.getCurrent();
-            } else if (right.getCurrent().getType() == NodeType.OTHER) {
+            } else if (this.isVirtual[right.getCurrent().getID()]) {
                 n = right.getCurrent();
             }
 
@@ -736,7 +744,7 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
      */
     private boolean isPertinent(final INode node, final INode check) {
         // Virtual roots are never pertinent
-        if (node.getType() == NodeType.OTHER) {
+        if (this.isVirtual[node.getID()]) {
             return false;
         }
         // Node has backedge to check node
@@ -765,7 +773,7 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
      * @return true if the node is externally active
      */
     private boolean isExternallyActive(final INode node, final INode check) {
-        if (node.getType() == NodeType.OTHER) {
+        if (this.isVirtual[node.getID()]) {
             return false;
         }
         if (ancestor[node.getID()] < dfi[check.getID()]) {
