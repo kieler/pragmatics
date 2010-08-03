@@ -51,8 +51,9 @@ public class ExtPointCollectionUtil {
 			// FIXME IllegalArgumentException sehr wahrscheinlich, da das
 			// version feld
 			// ein freier string, min. default besser noch regex.
-			example = new Example(idAttribute, nameAttribute, Version
-					.parseVersion(versionAttribute), ImportType.EXTENSIONPOINT);
+			example = new Example(idAttribute, nameAttribute,
+					Version.parseVersion(versionAttribute),
+					ImportType.EXTENSIONPOINT);
 		else
 			example = new Example(idAttribute, nameAttribute,
 					ImportType.EXTENSIONPOINT);
@@ -69,16 +70,13 @@ public class ExtPointCollectionUtil {
 	public static List<ExampleResource> filterExampleResources(
 			final IConfigurationElement exampleElement, String exNamespaceId)
 			throws KielerException {
-
 		List<ExampleResource> exampleResources = new ArrayList<ExampleResource>();
-
 		for (IConfigurationElement configElement : exampleElement
 				.getChildren("example_resource")) {
 			ExampleResource exampleResource = new ExampleResource();
 			exampleResource.setCategory(configElement.getAttribute("category"));
 			exampleResource.setHeadResource(Boolean.valueOf(configElement
 					.getAttribute("is_head_resource")));
-
 			addResource(exampleResource, exNamespaceId, configElement);
 			exampleResources.add(exampleResource);
 		}
@@ -104,7 +102,11 @@ public class ExtPointCollectionUtil {
 		if (dict != null) {
 			while (dict.hasMoreElements()) {
 				URL dictElement = (URL) dict.nextElement();
-				if (!dictElement.getPath().contains(".svn"))
+				// TODO ausnahme liste draus machen, eigene klasse mit ausnahmen
+				// und die dann alle abprüfen,
+				// damit noch ausnahmen hinzugefügt, bzw. entfernt werden können
+				if (!dictElement.getPath().contains(".svn")
+						&& !dictElement.getPath().contains(".cvs"))
 					exResource.addResource(dictElement);
 			}
 		}

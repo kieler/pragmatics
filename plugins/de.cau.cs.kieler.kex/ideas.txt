@@ -3,6 +3,9 @@
 exporting 
 plugin.xml filtern 
 ->gegeben soll sein die projectId, die muesste man ermitteln koennen,
+-> kriegen wir nicht raus, da wir nicht mit bundels herumhantieren sondern direkt auf der platte arbeiten,
+aber wir können versuchen java projekte zu identifizieren.
+
 
 der konkrete folder in den das example extrahiert werden soll
 
@@ -25,40 +28,12 @@ erklaeren warum interner eclipse mechanismus nicht geht
 
 da nur dynamische dinge geladen werden koennen...
 
-	public void addExtension(String projectId, String location, Example example)
-			throws KielerException {
-		// StringBuffer sb = new StringBuffer();
-		// sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		// sb.append("<?eclipse version=\"3.4\"?>");
-		// sb.append("<plugin>");
-		// sb.append("<extension point=\"de.cau.cs.kieler.kex\"");
-		// sb.append("<category id=\"creationTest\">");
-		// sb.append("</category>");
-		// sb.append("<example ");
-		// sb.append("contact=\"pkl@informatik.uni-kiel.de\"");
-		// sb.append("description=\"creationTest\"");
-		// sb.append("id=\"de.cau.cs.kieler.kex.creationtest\"");
-		// sb.append("name=\"Creation Test\"");
-		// sb.append("version=\"1.0\">");
-		// sb.append("<example_resource ");
-		// sb.append("category=\"creationTest=\"");
-		// sb.append("is_head_resource=\"true\"");
-		// sb.append("resource=\"dataflow/Flight.dataflow_diagram\">");
-		// sb.append("</example_resource>");
-		// sb.append("</example>");
-		// sb.append("</extension>");
-		// sb.append("</plugin>");
-
-		// addExtension(sb.toString());
-
-	}
-
 	/**
 	 * common way, but does not work.
 	 * 
 	 * @param sb
 	 */
-	// private void addExtension(String sb) {
+	// private void addExtension(String pluginContent) {
 	// try {
 	// // use Eclipse Dynamic Extension API
 	// IExtensionRegistry reg = RegistryFactory.getRegistry();
@@ -76,4 +51,17 @@ da nur dynamische dinge geladen werden koennen...
 	// e.printStackTrace();
 	// }
 	// } 
+
+////////////////////////////////////////////////////////////
+
+beim import muessen die examples über den bundle mechanismus geladen werden, da wir ja nur die gebauten 
+KIELER Dateien zu Verfügung stehen haben, d.h. nur die deployten version, darin kommen wir nicht einfach
+über java io an die daten des workspaces heran.
+
+hingegen beim export schon, wir können nicht direkt in die dateien von oben reinschreiben da das problem
+des Tokens besteht, welches früher schon erörtert wurde.
+Hier müssen wir also auf die platte gehen und die daten in bestimmte dinge hineinschreiben,
+zu beachten ist, dass auch hier nur pluginprojekte akzeptiert werden, da wir die example informationen in
+der plugin.xml hinterlegen und somit die interne struktur gestalten.
+
 

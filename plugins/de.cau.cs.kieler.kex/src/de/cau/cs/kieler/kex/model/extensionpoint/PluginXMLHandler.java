@@ -31,7 +31,20 @@ class PluginXMLHandler {
 
 	}
 
-	public Document parserPluginXML(File file) throws SAXException,
+	/**
+	 * parses the given file.
+	 * 
+	 * @param file
+	 *            , which will be parsed
+	 * @return Document, parsed document
+	 * @throws SAXException
+	 *             , could be thrown by DOM framework
+	 * @throws IOException
+	 *             , could be thrown by DOM framework
+	 * @throws ParserConfigurationException
+	 *             , could be thrown by DOM framework
+	 */
+	private Document parserPluginXML(final File file) throws SAXException,
 			IOException, ParserConfigurationException {
 		return DocumentBuilderFactory.newInstance().newDocumentBuilder()
 				.parse(file);

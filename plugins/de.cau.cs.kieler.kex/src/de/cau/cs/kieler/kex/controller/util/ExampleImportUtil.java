@@ -84,8 +84,8 @@ public class ExampleImportUtil {
 	 * @throws KielerException
 	 * @throws IOException
 	 */
-	private static void writeFile(URL sourceUrl, String destFile,
-			boolean overwrite) throws IOException {
+	private static void writeFile(final URL sourceUrl, final String destFile,
+			final boolean overwrite) throws IOException {
 		File f2 = new File(destFile);
 		// update test...
 		if (f2.exists() && !overwrite) {
@@ -110,7 +110,7 @@ public class ExampleImportUtil {
 	 * @param destFolder
 	 *            , pathname of destination folder.
 	 */
-	private static void createFolder(String destFolder) {
+	private static void createFolder(final String destFolder) {
 		(new File(destFolder)).mkdir();
 	}
 

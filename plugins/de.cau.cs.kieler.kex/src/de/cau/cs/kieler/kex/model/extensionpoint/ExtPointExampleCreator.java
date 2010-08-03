@@ -49,12 +49,12 @@ public class ExtPointExampleCreator {
 		String workspacePath = ResourcesPlugin.getWorkspace().getRoot()
 				.getLocation().toString();
 		for (ExampleResource resource : resources) {
-			// TODO muss das eine URL sein... geht da nicht auch ein path string
-			// oder file...
+			// TODO muss das eine URL sein... geht da nicht auch ein
+			// path, string oder file...
 			// for(URL url : resource.getResources())
-
 			// Just a Test
 			String loc = workspacePath + File.separator + "test";
+
 			File tmpFile = new File(loc);
 			if (!tmpFile.exists()) {
 				tmpFile.getParentFile().mkdirs();
