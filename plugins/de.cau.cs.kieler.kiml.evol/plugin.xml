@@ -32,53 +32,6 @@
       <data
             distribution="GAUSSIAN"
             lowerBound="0.0"
-            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.coolValue"
-            upperBound="1.0e7">
-      </data>
-      <data
-            distribution="UNIFORM"
-            name="Costs"
-            option="de.cau.cs.kieler.kiml.ogdf.option.davidsonHarel.costs">
-      </data>
-      <data
-            distribution="UNIFORM"
-            option="de.cau.cs.kieler.layout.options.edgeRouting">
-      </data>
-      <data
-            distribution="UNIFORM"
-            name="Expand Nodes"
-            option="de.cau.cs.kieler.layout.options.expandNodes">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="0"
-            name="Fine Tuning Iterations"
-            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.fineTuningIterations"
-            upperBound="10000">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="0.0"
-            name="Fine Tuning Scalar"
-            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.fineTuneScalar"
-            upperBound="100">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="1"
-            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.fixedIterations"
-            upperBound="20000">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="0"
-            name="Force Scaling Factor"
-            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.forceScalingFactor"
-            upperBound="1000">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="0.0"
             option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance"
             upperBound="1.0e7">
       </data>
@@ -140,6 +93,12 @@
             name="Post Spring Strength"
             option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.postSpringStrength"
             upperBound="1.0e7">
+      </data>
+      <data
+            distribution="GAUSSIAN"
+            lowerBound="1"
+            option="de.cau.cs.kieler.kiml.ogdf.option.iterations"
+            upperBound="20000">
       </data>
       <data
             distribution="GAUSSIAN"
@@ -209,6 +168,57 @@
             lowerBound="1"
             option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.frGridQuotient"
             upperBound="20000">
+      </data>
+      <data
+            distribution="GAUSSIAN"
+            lowerBound="0.0"
+            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.coolValue"
+            upperBound="1.0e7">
+      </data>
+      <data
+            distribution="UNIFORM"
+            name="Costs"
+            option="de.cau.cs.kieler.kiml.ogdf.option.davidsonHarel.costs">
+      </data>
+      <data
+            distribution="UNIFORM"
+            option="de.cau.cs.kieler.layout.options.edgeRouting">
+      </data>
+      <data
+            distribution="UNIFORM"
+            name="Expand Nodes"
+            option="de.cau.cs.kieler.layout.options.expandNodes">
+      </data>
+      <data
+            distribution="GAUSSIAN"
+            lowerBound="0"
+            name="Fine Tuning Iterations"
+            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.fineTuningIterations"
+            upperBound="10000">
+      </data>
+      <data
+            distribution="GAUSSIAN"
+            lowerBound="0.0"
+            name="Fine Tuning Scalar"
+            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.fineTuneScalar"
+            upperBound="100">
+      </data>
+      <data
+            distribution="UNIFORM"
+            option="de.cau.cs.kieler.kiml.ogdf.option.davidsonHarel.speed">
+      </data>
+      <data
+            distribution="GAUSSIAN"
+            lowerBound="1"
+            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.fixedIterations"
+            upperBound="20000">
+      </data>
+      <data
+            distribution="GAUSSIAN"
+            lowerBound="0"
+            name="Force Scaling Factor"
+            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.forceScalingFactor"
+            upperBound="1000">
       </data>
    </extension>
    <extension
