@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.planar.graph;
 
 import java.io.File;
+import java.io.IOException;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
 
@@ -51,7 +52,11 @@ public interface IGraphFactory {
      * @param dimacs
      *            the file containing the graph info
      * @return a graph based on the DIMACS file
+     * @throws IOException
+     *             if problems during file reading occur
+     * @throws InconsistentGraphModelException
+     *             if the graph in the description file is not valid
      */
-    IGraph createGraphFromDIMACS(File dimacs);
+    IGraph createGraphFromDIMACS(File dimacs) throws IOException, InconsistentGraphModelException;
 
 }

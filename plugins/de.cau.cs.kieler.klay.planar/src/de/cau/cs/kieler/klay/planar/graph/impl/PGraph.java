@@ -69,7 +69,7 @@ class PGraph extends PNode implements IGraph, Serializable {
     /**
      * Default Constructor. Creates an empty graph.
      */
-    public PGraph() {
+    PGraph() {
         this(-1, (PGraph) null);
     }
 

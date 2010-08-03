@@ -13,7 +13,10 @@
  */
 package de.cau.cs.kieler.klay.planar.graph.impl;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
@@ -87,9 +90,46 @@ public class PGraphFactory implements IGraphFactory {
     /**
      * {@inheritDoc}
      */
-    public IGraph createGraphFromDIMACS(final File dimacs) {
-        // TODO Auto-generated method stub
-        return null;
+    public IGraph createGraphFromDIMACS(final File dimacs) throws IOException,
+            InconsistentGraphModelException {
+        BufferedReader input = new BufferedReader(new FileReader(dimacs));
+        IGraph graph = new PGraph();
+        INode[] nodes = null;
+
+        String line = input.readLine();
+        while (line != null) {
+            String[] items = line.trim().split("\\s+");
+            switch (items[0].charAt(0)) {
+            case 'c': // Skip comment line
+                continue;
+
+            case 'p': // Problem line contains number of nodes
+                int n = Integer.parseInt(items[2]);
+                nodes = new INode[n];
+                for (int i = 0; i < n; i++) {
+                    nodes[i] = graph.addNode();
+                }
+                break;
+
+            case 'e': // Edge line contains edge description
+                if (nodes == null) {
+                    throw new InconsistentGraphModelException(
+                            "DIMACS file does not describe a valid graph.");
+                }
+                int n1 = Integer.parseInt(items[1]);
+                int n2 = Integer.parseInt(items[2]);
+                graph.addEdge(nodes[n1], nodes[n2], false);
+                break;
+
+            default:
+                throw new InconsistentGraphModelException(
+                        "DIMACS file does not describe a valid graph.");
+            }
+
+            line = input.readLine();
+        }
+        input.close();
+        return graph;
     }
 
 }
