@@ -83,22 +83,6 @@ public class EvolView extends ViewPart {
     }
 
     /**
-     * Determines which individuals of a population shall be affected by an
-     * operation.
-     *
-     * @author bdu
-     * @deprecated
-     */
-    public enum TargetIndividuals {
-        /** Affect all individuals. */
-        ALL,
-        /** Affect only unrated individuals. */
-        UNRATED,
-        /** Affect only rated individuals. */
-        RATED
-    }
-
-    /**
      * Refresher for the layout view.
      *
      * @author bdu
@@ -115,6 +99,11 @@ public class EvolView extends ViewPart {
         public void run() {
             final LayoutViewPart layoutView = LayoutViewPart.findView();
             if (layoutView != null) {
+                try {
+                    Thread.sleep(200);
+                } catch (final InterruptedException exception) {
+                    exception.printStackTrace();
+                }
                 layoutView.refresh(); // async!
             }
         }
@@ -302,6 +291,9 @@ public class EvolView extends ViewPart {
      * @return a shallow copy of the current population.
      */
     public Population getPopulation() {
+        if (this.evolModel == null) {
+            return null;
+        }
         final Population pop = this.evolModel.getPopulation();
         if (pop == null) {
             return null;

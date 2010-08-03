@@ -311,6 +311,13 @@ public final class EvolUtil {
                     Assert.isTrue(false);
                 }
                 break;
+            case INT:
+                if (value instanceof Integer) {
+                    thePropertySource.setPropertyValue(id, value);
+                } else {
+                    thePropertySource.setPropertyValue(id, gene.toString());
+                }
+                break;
             default:
                 thePropertySource.setPropertyValue(id, value.toString());
                 break;
@@ -392,15 +399,10 @@ public final class EvolUtil {
             if (monitor != null) {
                 monitor.worked(1);
             }
-            try {
-                Thread.sleep(50);
-            } catch (final InterruptedException e) {
-                e.printStackTrace();
-            }
         }
 
         try {
-            Thread.sleep(200);
+            Thread.sleep(100);
         } catch (final InterruptedException e) {
             e.printStackTrace();
         }

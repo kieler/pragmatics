@@ -68,11 +68,11 @@ public class AutoRateAllHandler extends AbstractHandler {
         @Override
         protected IStatus run(final IProgressMonitor monitor) {
             try {
-                Thread.sleep(300);
+                Thread.sleep(200);
 
                 monitor.beginTask("Performing Auto-rating", this.population.size() + 1);
 
-                Thread.sleep(300);
+                Thread.sleep(100);
                 monitor.subTask("Determining Individual Rating");
 
                 // Do the rating.
@@ -83,7 +83,7 @@ public class AutoRateAllHandler extends AbstractHandler {
                             "The auto-rating was cancelled.");
                 }
 
-                Thread.sleep(200);
+                Thread.sleep(100);
                 monitor.subTask("Determining the average rating");
 
                 System.out.println("Average rating: " + this.population.getAverageRating());

@@ -17,13 +17,13 @@ import java.util.Random;
 
 import org.eclipse.core.runtime.Assert;
 
-
 /**
  * Use this gene for integer data.
- *
+ * 
  * @author bdu
- *
+ * @deprecated
  */
+@Deprecated
 public class IntegerGene extends AbstractGene<Integer> {
     /**
      *

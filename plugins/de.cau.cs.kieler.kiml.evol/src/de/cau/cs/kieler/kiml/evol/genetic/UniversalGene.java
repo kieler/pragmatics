@@ -89,8 +89,7 @@ public class UniversalGene extends AbstractGene<Float> {
      * Universal type info for a strictly positive float gene.
      */
     public static final TypeInfo<Float> STRICTLY_POSITIVE_FLOAT_TYPE_INFO = new TypeInfo<Float>(
-            1.0f,
-            Float.MIN_VALUE, Float.POSITIVE_INFINITY, STRICTLY_POSITIVE_FLOAT_FORMATTER,
+            1.0f, Float.MIN_VALUE, Float.POSITIVE_INFINITY, STRICTLY_POSITIVE_FLOAT_FORMATTER,
             Float.class);
 
     /**
@@ -159,6 +158,8 @@ public class UniversalGene extends AbstractGene<Float> {
             return new BooleanMutator().newMutation(this, theMutationInfo);
         } else if (clazz == Float.class) {
             return new FloatMutator().newMutation(this, theMutationInfo);
+        } else if (clazz == Integer.class) {
+            return new IntegerMutator().newMutation(this, theMutationInfo);
         }
         return null;
     }
@@ -169,17 +170,16 @@ public class UniversalGene extends AbstractGene<Float> {
      * @author bdu
      *
      */
-    private interface IMutator {
+    private static interface IMutator {
         /**
          *
-         * @param theTemplate
-         *            the template
-         * @param theMutationInfo
-         *            the mutation info
+         * @param template
+         *            the template; may not be {@code null}
+         * @param mutationInfo
+         *            the mutation info; may not be {@code null}
          * @return a new gene
          */
-        IGene<Float> newMutation(
-                final IGene<Float> theTemplate, final MutationInfo theMutationInfo);
+        IGene<Float> newMutation(final UniversalGene template, final MutationInfo mutationInfo);
     }
 
     /**
@@ -188,7 +188,7 @@ public class UniversalGene extends AbstractGene<Float> {
      * @author bdu
      *
      */
-    private class BooleanMutator implements IMutator {
+    private static class BooleanMutator implements IMutator {
         private static final double PROBABILITY_FOR_TRUE = 0.5;
 
         /**
@@ -199,24 +199,31 @@ public class UniversalGene extends AbstractGene<Float> {
         }
 
         public IGene<Float> newMutation(
-                final IGene<Float> template, final MutationInfo theMutationInfo) {
-            Assert.isNotNull(theMutationInfo);
-            Assert.isNotNull(getTypeInfo());
+                final UniversalGene template, final MutationInfo mutationInfo) {
+            Assert.isLegal(template != null);
+            Assert.isLegal(mutationInfo != null);
 
-            final Random r = getRandomGenerator();
+            if ((template == null) || (mutationInfo == null)) {
+                return null;
+            }
+
+            final TypeInfo<Float> typeInfo = template.getTypeInfo();
+            Assert.isNotNull(typeInfo);
+
+            final Random r = template.getRandomGenerator();
             Assert.isNotNull(r);
 
             // get mutation parameters
-            final double prob = theMutationInfo.getProbability();
-            final double probGenuineMutation = theMutationInfo.getGenuineMutationProbability();
-            final Distribution distr = theMutationInfo.getDistr();
+            final double prob = mutationInfo.getProbability();
+            final double probGenuineMutation = mutationInfo.getGenuineMutationProbability();
+            final Distribution distr = mutationInfo.getDistr();
             Assert.isTrue(distr == Distribution.UNIFORM);
 
             final Float newValue;
             if (r.nextDouble() < prob) {
                 if (r.nextDouble() < probGenuineMutation) {
                     // enforce genuine mutation
-                    newValue = (getBoolValue() ? 0.0f : 1.0f);
+                    newValue = (template.getBoolValue() ? 0.0f : 1.0f);
                 } else {
                     // assign a random boolean value (may be the same as before)
                     newValue = (r.nextDouble() < PROBABILITY_FOR_TRUE ? 1.0f : 0.0f);
@@ -224,7 +231,7 @@ public class UniversalGene extends AbstractGene<Float> {
             } else {
                 newValue = template.getValue();
             }
-            return new UniversalGene(getId(), newValue, getTypeInfo(), theMutationInfo);
+            return new UniversalGene(template.getId(), newValue, typeInfo, mutationInfo);
         }
     }
 
@@ -234,7 +241,7 @@ public class UniversalGene extends AbstractGene<Float> {
      * @author bdu
      *
      */
-    private class FloatMutator implements IMutator {
+    private static class FloatMutator implements IMutator {
         /**
          * Creates a {@link FloatMutator} instance.
          */
@@ -243,16 +250,26 @@ public class UniversalGene extends AbstractGene<Float> {
         }
 
         public IGene<Float> newMutation(
-                final IGene<Float> theTemplate, final MutationInfo theMutationInfo) {
-            Assert.isLegal(getMutationInfo() != null);
-            Assert.isNotNull(getTypeInfo());
-            final Random r = getRandomGenerator();
-            final double prob = getMutationInfo().getProbability();
-            final double var = getMutationInfo().getVariance();
-            final Distribution distr = getMutationInfo().getDistr();
+                final UniversalGene template, final MutationInfo mutationInfo) {
+            Assert.isLegal(template != null);
+            Assert.isLegal(mutationInfo != null);
+
+            if ((template == null) || (mutationInfo == null)) {
+                return null;
+            }
+
+            final Random r = template.getRandomGenerator();
+            Assert.isNotNull(r);
+
+            final TypeInfo<Float> typeInfo = template.getTypeInfo();
+            Assert.isNotNull(typeInfo);
+
+            final double prob = mutationInfo.getProbability();
+            final double var = mutationInfo.getVariance();
+            final Distribution distr = mutationInfo.getDistr();
             Assert.isTrue(distr == Distribution.GAUSSIAN);
-            final TypeInfo<Float> typeInfo = getTypeInfo();
-            final float value = getValue();
+
+            final float value = template.getValue();
             float newValue = value;
             if (Math.random() < prob) {
                 // produce a new value within the valid bounds.
@@ -262,7 +279,72 @@ public class UniversalGene extends AbstractGene<Float> {
                     newValue = (float) (value + gauss);
                 } while (!typeInfo.isValueWithinBounds(newValue));
             }
-            return new UniversalGene(getId(), newValue, typeInfo, getMutationInfo());
+            return new UniversalGene(template.getId(), newValue, typeInfo, mutationInfo);
+        }
+    }
+
+    /**
+     * A gene factory that creates integer mutations.
+     *
+     * @author bdu
+     *
+     */
+    private static class IntegerMutator implements IMutator {
+
+        /**
+         * Creates a new {@link IntegerMutator} instance.
+         *
+         */
+        public IntegerMutator() {
+            // Nothing to do here.
+        }
+
+        public IGene<Float> newMutation(
+                final UniversalGene template, final MutationInfo mutationInfo) {
+            Assert.isLegal(template != null);
+            Assert.isLegal(mutationInfo != null);
+
+            if ((template == null) || (mutationInfo == null)) {
+                return null;
+            }
+
+            final TypeInfo<Float> typeInfo = template.getTypeInfo();
+            Assert.isNotNull(typeInfo);
+
+            final Random r = template.getRandomGenerator();
+            Assert.isNotNull(r);
+
+            final double prob = mutationInfo.getProbability();
+            final double var = mutationInfo.getVariance();
+            final Distribution distr = mutationInfo.getDistr();
+            final Integer lowerBound = typeInfo.getLowerBound().intValue();
+            final Integer upperBound = typeInfo.getUpperBound().intValue();
+            final Integer defaultValue = typeInfo.getDefaultValue().intValue();
+            final Integer value = template.getValue().intValue();
+            Integer newInt = value;
+            if (r.nextDouble() < prob) {
+                // TODO: regard genuineMutationProbability
+                switch (distr) {
+                case GAUSSIAN:
+                    do {
+                        // produce a new value within the valid bounds.
+                        final double gauss = r.nextGaussian() * Math.sqrt(var);
+                        final double newValue = (value + gauss);
+                        newInt = (int) Math.round(newValue);
+                    } while (!typeInfo.isValueWithinBounds((float) newInt));
+                    break;
+                case UNIFORM:
+                    newInt =
+                            (r.nextInt((upperBound.intValue() - lowerBound.intValue() + 1)) + lowerBound
+                                    .intValue());
+                    break;
+                default:
+                    // execution should never reach this line.
+                    Assert.isTrue(false);
+                    newInt = defaultValue;
+                }
+            }
+            return new UniversalGene(template.getId(), newInt.floatValue(), typeInfo, mutationInfo);
         }
     }
 
