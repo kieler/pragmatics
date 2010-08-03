@@ -63,7 +63,7 @@ osx32: JAVA_LIB = -framework JavaVM
 osx32: $(LIB_DIR)/$$@/lib$(LIB).jnilib $?
 
 # run this target on calendar
-osx64: CC = g++ -m64
+osx64: CC = g++ -fPIC -m64
 osx64: JAVA_INC = -I/System/Library/Frameworks/JavaVM.framework/Headers
 osx64: LOPTS = -dynamiclib -static-libgcc -static-libstdc++ -mmacosx-version-min=10.5
 osx64: LIBS =
