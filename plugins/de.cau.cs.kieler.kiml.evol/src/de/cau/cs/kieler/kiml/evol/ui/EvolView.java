@@ -13,11 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.evol.ui;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.gef.EditPart;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -31,7 +27,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -41,8 +36,6 @@ import de.cau.cs.kieler.kiml.evol.EvolUtil;
 import de.cau.cs.kieler.kiml.evol.alg.BasicEvolutionaryAlgorithm;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
-import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
 
 /**
@@ -313,6 +306,8 @@ public class EvolView extends ViewPart {
      * Reset the population and restart the algorithm.
      */
     public void reset() {
+        Assert.isNotNull(this.evolModel);
+
         this.evolModel.reset();
 
         if (EvolUtil.getCurrentEditor() != null) {
@@ -332,6 +327,8 @@ public class EvolView extends ViewPart {
      * Refresh the layout according to selected individual.
      */
     void onSelectIndividual() {
+        Assert.isNotNull(this.evolModel);
+
         if (!this.evolModel.isValid()) {
             return;
         }
@@ -342,61 +339,13 @@ public class EvolView extends ViewPart {
 
         // Get the expected layout provider id.
         final String expectedLayoutProviderId = this.evolModel.getLayoutProviderId();
+        Assert.isNotNull(expectedLayoutProviderId);
 
-        // Get the current editor.
-        final IEditorPart currentEditor = EvolUtil.getCurrentEditor();
+        // Adopt and layout the current individual.
+        EvolUtil.applyIndividual(currentIndividual, expectedLayoutProviderId);
 
-        final boolean wantAllEditors = true;
-
-        final Collection<IEditorPart> editors;
-        if (wantAllEditors) {
-            editors = EvolUtil.getEditors();
-        } else {
-            editors = new ArrayList<IEditorPart>(1);
-            if (currentEditor != null) {
-                editors.add(currentEditor);
-            }
-        }
-
-        // do the layout in all the selected editors
-        for (final IEditorPart editor : editors) {
-            System.out.println("Editor: " + editor.getTitle());
-
-            final EditPart editPart = EvolUtil.getEditPart(editor);
-
-            // See which layout provider suits for the editor.
-            final String layoutProviderId = EvolUtil.getLayoutProviderId(editor, editPart);
-
-            if (!expectedLayoutProviderId.equalsIgnoreCase(layoutProviderId)) {
-                // The editor is not compatible to the current population.
-                // --> skip it
-                System.out.println("Cannot adopt to " + layoutProviderId);
-                continue;
-            }
-
-            // Use the options that are encoded in the individual.
-            EvolUtil.adoptIndividual(currentIndividual, editor);
-
-            // Refresh the layout view.
-            MonitoredOperation.runInUI(new LayoutViewRefresher(), false);
-
-            // We don't specify the edit part because we want a manager for
-            // the whole diagram.
-            final DiagramLayoutManager manager =
-                    EclipseLayoutServices.getInstance().getManager(editor, null);
-
-            final int rating = EvolUtil.layoutAndMeasure(manager, editor);
-
-            if ((editor == currentEditor) && !currentIndividual.hasUserRating()) {
-                currentIndividual.setUserRating(rating);
-            }
-
-            // Apply the layout to the diagram.
-            // XXX it would be more straightforward to call
-            // manager.applyLayout()
-            // directly, but that method is private
-            EclipseLayoutServices.getInstance().layout(editor, null, false, false);
-        }
+        // Refresh the layout view.
+        MonitoredOperation.runInUI(new LayoutViewRefresher(), false);
     }
 
     /**
@@ -406,8 +355,9 @@ public class EvolView extends ViewPart {
      *            new source population
      */
     private void setInput(final Population thePopulation) {
+        Assert.isNotNull(this.evolModel);
+
         if ((thePopulation != null)) {
-            // this.evolModel.setPopulation(thePopulation);
 
             final Population modelPop = this.evolModel.getPopulation();
 

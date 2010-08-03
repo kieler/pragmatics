@@ -42,16 +42,12 @@ public final class EvolModel {
     public EvolModel() {
         this.position = 0;
         this.layoutProviderId = null;
-        // this.population = new Population();
     }
 
     // private fields
     private BasicEvolutionaryAlgorithm evolAlg;
     private IEditorPart lastEditor;
     private int position;
-
-    // private Population population;
-
     private String layoutProviderId;
 
     /**

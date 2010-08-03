@@ -15,6 +15,7 @@ package de.cau.cs.kieler.kiml.evol;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -177,8 +178,7 @@ public final class EvolUtil {
 
                 final TypeInfo<Float> typeInfo =
                         new TypeInfo<Float>(intValue.floatValue(), lowerBound.floatValue(),
-                                upperBound.floatValue(), formatter,
-                                Integer.class);
+                                upperBound.floatValue(), formatter, Integer.class);
 
                 // result = new IntegerGene(theId, intValue,
                 // theMutationProbability, var);
@@ -251,77 +251,69 @@ public final class EvolUtil {
             return result;
         }
     }
-
+    
     /**
-     * Adopts layout options from the given {@link Genome} into the given
-     * {@link IEditorPart}.
-     *
-     * @param theIndividual
-     *            the {@link Genome}; must not be {@code null}
-     * @param theEditor
-     *            the {@link IEditorPart}
+     * Adopt, layout and measure the given individual.
+     * 
+     * @param individual
+     *            a {@link Genome}
+     * @param expectedLayoutProviderId
+     *            the expected layout provider id
+     * 
      */
-    public static void adoptIndividual(final Genome theIndividual, final IEditorPart theEditor) {
-        final LayoutPropertySource propertySource = EvolUtil.getLayoutPropertySource(theEditor);
-        adoptIndividual(theIndividual, propertySource);
-    }
+    public static void applyIndividual(
+            final Genome individual, final String expectedLayoutProviderId) {
+        // Get the current editor (may be null).
+        final IEditorPart currentEditor = getCurrentEditor();
 
-    /**
-     * Adopts layout options from the given {@link Genome} into the given
-     * {@link LayoutPropertySource}.
-     *
-     * @param theIndividual
-     *            the {@link Genome}; must not be {@code null}
-     * @param thePropertySource
-     *            the layout property source; must not be {@code null}
-     */
-    private static void adoptIndividual(
-            final Genome theIndividual, final LayoutPropertySource thePropertySource) {
-        Assert.isLegal(theIndividual != null);
-        Assert.isLegal(thePropertySource != null);
+        final boolean wantAllEditors = true;
 
-        if ((theIndividual == null) || (thePropertySource == null)) {
-            return;
+        final Collection<IEditorPart> editors;
+        if (wantAllEditors) {
+            editors = getEditors();
+        } else {
+            editors = new ArrayList<IEditorPart>(1);
+            if (currentEditor != null) {
+                editors.add(currentEditor);
+            }
         }
 
-        System.out.println("adopt " + theIndividual.toString());
-        final LayoutServices layoutServices = LayoutServices.getInstance();
+        // Do the layout in all the selected editors.
+        for (final IEditorPart editor : editors) {
+            System.out.println("Editor: " + editor.getTitle());
 
-        // set layout options according to genome
-        for (final IGene<?> gene : theIndividual) {
+            final EditPart editPart = getEditPart(editor);
 
-            Assert.isNotNull(gene);
-            final Object value = gene.getValue();
-            final Object id = gene.getId();
-            final LayoutOptionData data = layoutServices.getLayoutOptionData((String) id);
-            Assert.isNotNull(data);
-            switch (data.getType()) {
-            case BOOLEAN:
-                if (value instanceof Boolean) {
-                    thePropertySource.setPropertyValue(id, ((Boolean) value ? 1 : 0));
-                } else {
-                    thePropertySource.setPropertyValue(id, Math.round((Float) value));
-                }
-                break;
-            case ENUM:
-                try {
-                    thePropertySource.setPropertyValue(id, value);
-                } catch (final NullPointerException e) {
-                    System.out.println("WARNING: enum property could not be set: " + id);
-                    Assert.isTrue(false);
-                }
-                break;
-            case INT:
-                if (value instanceof Integer) {
-                    thePropertySource.setPropertyValue(id, value);
-                } else {
-                    thePropertySource.setPropertyValue(id, gene.toString());
-                }
-                break;
-            default:
-                thePropertySource.setPropertyValue(id, value.toString());
-                break;
+            // See which layout provider suits for the editor.
+            final String layoutProviderId = getLayoutProviderId(editor, editPart);
+
+            if (!expectedLayoutProviderId.equalsIgnoreCase(layoutProviderId)) {
+                // The editor is not compatible to the current population.
+                // --> skip it
+                System.out.println("Cannot adopt to " + layoutProviderId);
+                continue;
             }
+
+            // Use the options that are encoded in the individual.
+            EvolUtil.adoptIndividual(individual, editor);
+
+            // We don't specify the edit part because we want a manager for
+            // the whole diagram.
+            final DiagramLayoutManager manager =
+                    EclipseLayoutServices.getInstance().getManager(editor, null);
+
+            final int rating = EvolUtil.layoutAndMeasure(manager, editor);
+
+            // Update the rating.
+            if ((editor == currentEditor) && !individual.hasUserRating()) {
+                individual.setUserRating(rating);
+            }
+
+            // Apply the layout to the diagram.
+            // XXX it would be more straightforward to call
+            // manager.applyLayout()
+            // directly, but that method is private
+            EclipseLayoutServices.getInstance().layout(editor, null, false, false);
         }
     }
 
@@ -571,29 +563,6 @@ public final class EvolUtil {
     }
 
     /**
-     * Finds a layout provider for the given manager and the given edit part.
-     *
-     * @param manager
-     *            a {@link DiagramLayoutManager}
-     * @param editPart
-     *            an {@link EditPart}
-     * @return the id of the layouter, or {@code null} if none can be found.
-     */
-    private static String getLayoutProviderId(
-            final DiagramLayoutManager manager, final EditPart editPart) {
-        final ILayoutInspector inspector = manager.getInspector(editPart);
-        if (inspector == null) {
-            return null;
-        }
-        inspector.initOptions();
-        final LayoutProviderData data = inspector.getContainerLayouterData();
-        if (data == null) {
-            return null;
-        }
-        return data.getId();
-    }
-
-    /**
      * Layout the diagram and measure it.
      *
      * @param manager
@@ -646,27 +615,76 @@ public final class EvolUtil {
     }
 
     /**
-     * Scale the given double values so that their sum equals one.
+     * Adopts layout options from the given {@link Genome} into the given
+     * {@link IEditorPart}.
      *
-     * @param values
-     *            a non-empty array of doubles
-     * @return a list of the scaled values in the same order.
+     * @param theIndividual
+     *            the {@link Genome}; must not be {@code null}
+     * @param theEditor
+     *            the {@link IEditorPart}
      */
-    private static List<Double> normalize(final double... values) {
+    private static void adoptIndividual(final Genome theIndividual, final IEditorPart theEditor) {
+        final LayoutPropertySource propertySource = EvolUtil.getLayoutPropertySource(theEditor);
+        adoptIndividual(theIndividual, propertySource);
+    }
 
-        double sum = 0.0;
-        for (final double val : values) {
-            sum += val;
+    /**
+     * Adopts layout options from the given {@link Genome} into the given
+     * {@link LayoutPropertySource}.
+     *
+     * @param theIndividual
+     *            the {@link Genome}; must not be {@code null}
+     * @param thePropertySource
+     *            the layout property source; must not be {@code null}
+     */
+    private static void adoptIndividual(
+            final Genome theIndividual, final LayoutPropertySource thePropertySource) {
+        Assert.isLegal(theIndividual != null);
+        Assert.isLegal(thePropertySource != null);
+
+        if ((theIndividual == null) || (thePropertySource == null)) {
+            return;
         }
-        final double factor = 1.0 / sum;
 
-        final int length = values.length;
-        final List<Double> result = new ArrayList<Double>(length);
-        for (final double val : values) {
-            result.add(val * factor);
+        System.out.println("adopt " + theIndividual.toString());
+        final LayoutServices layoutServices = LayoutServices.getInstance();
+
+        // set layout options according to genome
+        for (final IGene<?> gene : theIndividual) {
+
+            Assert.isNotNull(gene);
+            final Object value = gene.getValue();
+            final Object id = gene.getId();
+            final LayoutOptionData data = layoutServices.getLayoutOptionData((String) id);
+            Assert.isNotNull(data);
+            switch (data.getType()) {
+            case BOOLEAN:
+                if (value instanceof Boolean) {
+                    thePropertySource.setPropertyValue(id, ((Boolean) value ? 1 : 0));
+                } else {
+                    thePropertySource.setPropertyValue(id, Math.round((Float) value));
+                }
+                break;
+            case ENUM:
+                try {
+                    thePropertySource.setPropertyValue(id, value);
+                } catch (final NullPointerException e) {
+                    System.out.println("WARNING: enum property could not be set: " + id);
+                    Assert.isTrue(false);
+                }
+                break;
+            case INT:
+                if (value instanceof Integer) {
+                    thePropertySource.setPropertyValue(id, value);
+                } else {
+                    thePropertySource.setPropertyValue(id, gene.toString());
+                }
+                break;
+            default:
+                thePropertySource.setPropertyValue(id, value.toString());
+                break;
+            }
         }
-
-        return result;
     }
 
     /**
@@ -807,6 +825,29 @@ public final class EvolUtil {
     }
 
     /**
+     * Finds a layout provider for the given manager and the given edit part.
+     *
+     * @param manager
+     *            a {@link DiagramLayoutManager}
+     * @param editPart
+     *            an {@link EditPart}
+     * @return the id of the layouter, or {@code null} if none can be found.
+     */
+    private static String getLayoutProviderId(
+            final DiagramLayoutManager manager, final EditPart editPart) {
+        final ILayoutInspector inspector = manager.getInspector(editPart);
+        if (inspector == null) {
+            return null;
+        }
+        inspector.initOptions();
+        final LayoutProviderData data = inspector.getContainerLayouterData();
+        if (data == null) {
+            return null;
+        }
+        return data.getId();
+    }
+
+    /**
      * Analyzes the given KGraph.
      *
      * @param showProgressBar
@@ -864,6 +905,30 @@ public final class EvolUtil {
                 + Math.abs(scaledSum - (sum / metricsList.size())));
         final int newRating = (int) Math.round((scaledSum * 10000));
         return newRating;
+    }
+
+    /**
+     * Scale the given double values so that their sum equals one.
+     *
+     * @param values
+     *            a non-empty array of doubles
+     * @return a list of the scaled values in the same order.
+     */
+    private static List<Double> normalize(final double... values) {
+
+        double sum = 0.0;
+        for (final double val : values) {
+            sum += val;
+        }
+        final double factor = 1.0 / sum;
+
+        final int length = values.length;
+        final List<Double> result = new ArrayList<Double>(length);
+        for (final double val : values) {
+            result.add(val * factor);
+        }
+
+        return result;
     }
 
     /** Hidden constructor to avoid instantiation. **/

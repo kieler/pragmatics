@@ -13,6 +13,9 @@
  */
 package de.cau.cs.kieler.kiml.evol.alg;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Abstract implementation of an evolutionary algorithm. Implementations of
  * evolutionary algorithms shall inherit from this class.
@@ -23,13 +26,35 @@ package de.cau.cs.kieler.kiml.evol.alg;
  */
 public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
 
+    private final List<IEvolutionListener> listeners = new LinkedList<IEvolutionListener>();
+
+    /**
+     * Adds an evolution listener.
+     *
+     * @param listener
+     *            the listener to add
+     */
+    public void addListener(final IEvolutionListener listener) {
+        this.listeners.add(listener);
+    }
+
+    /**
+     * Removes the specified evolution listener.
+     *
+     * @param listener
+     *            the listener to remove
+     */
+    public void removeListener(final IEvolutionListener listener) {
+        this.listeners.remove(listener);
+    }
+
     /**
      * Returns the generation.
      *
      * @return the generation
      */
     public int getGeneration() {
-        return generation;
+        return this.generation;
     }
 
     /**
@@ -37,14 +62,14 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
      * until some stop criterion is satisfied.
      */
     public void run() {
-        if (!isInitialized) {
+        if (!this.isInitialized) {
             initialize();
             determineFitness();
             while (!isDone()) {
                 step();
                 // TODO: pause here for stepwise execution
             }
-            isInitialized = false;
+            this.isInitialized = false;
         }
     }
 
@@ -53,11 +78,12 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
      * The algorithm must be initialized before by calling {@code initialize()}.
      */
     public final void step() {
-        if (isInitialized && !isDone()) {
-            if (generation > 0) {
+        beforeStep();
+        if (this.isInitialized && !isDone()) {
+            if (this.generation > 0) {
                 survive();
             }
-            generation++;
+            this.generation++;
             select();
             crossOver();
             mutate();
@@ -66,6 +92,26 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
             // do nothing
             System.out.println("Cannot perform step.");
         }
+        afterStep();
+    }
+
+    /**
+     * Inform the listeners about a completed step.
+     */
+    private void afterStep() {
+        for (final IEvolutionListener listener : this.listeners) {
+            listener.afterStep();
+        }
+    }
+
+    /**
+     * Inform the listeners about an upcoming step.
+     */
+    private void beforeStep() {
+        for (final IEvolutionListener listener : this.listeners) {
+            listener.beforeStep();
+        }
+
     }
 
     /**
@@ -82,11 +128,11 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
      * exactly once before using {@code step()}.
      **/
     protected void initialize() {
-        if (isInitialized) {
+        if (this.isInitialized) {
             System.out.println("Warning: Algorithm already initialized.");
         } else {
-            generation = 0;
-            isInitialized = true;
+            this.generation = 0;
+            this.isInitialized = true;
         }
     }
 
