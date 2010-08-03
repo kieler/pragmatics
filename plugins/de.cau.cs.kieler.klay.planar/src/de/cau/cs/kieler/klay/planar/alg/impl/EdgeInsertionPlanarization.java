@@ -26,7 +26,6 @@ import de.cau.cs.kieler.klay.planar.graph.IFace;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.INode;
 import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
-import de.cau.cs.kieler.klay.planar.graph.impl.PFace;
 
 /**
  * Inserts an edge in a planar graph by building the dual graph. In this graph shortest path is
@@ -80,14 +79,12 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
             for (IFace sourceFace : sourceFaces) {
                 facePath.clear();
 
-                // TODO unsafe cast - change data structure to use interface
-                dualStartNode = (INode) ((PFace) sourceFace).getProperty(IGraph.TODUALGRAPH);
+                dualStartNode = (INode) sourceFace.getProperty(IGraph.TODUALGRAPH);
 
                 // run BFS for all possible target faces
                 for (IFace itargetFace : targetFaces) {
 
-                    // TODO unsafe cast - change data structure to use interface
-                    dualTargetNode = (INode) ((PFace) itargetFace).getProperty(IGraph.TODUALGRAPH);
+                    dualTargetNode = (INode) itargetFace.getProperty(IGraph.TODUALGRAPH);
 
                     parent = bfs(dualStartNode, dualTargetNode, dualGraph);
 

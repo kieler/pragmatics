@@ -30,9 +30,10 @@ import de.cau.cs.kieler.klay.planar.alg.impl.BoyerMyrvoldPlanarityTester;
 import de.cau.cs.kieler.klay.planar.alg.impl.EdgeInsertionPlanarization;
 import de.cau.cs.kieler.klay.planar.alg.impl.LRPlanarityTester;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
+import de.cau.cs.kieler.klay.planar.graph.IGraphFactory;
 import de.cau.cs.kieler.klay.planar.graph.INode;
 import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
-import de.cau.cs.kieler.klay.planar.graph.impl.PGraph;
+import de.cau.cs.kieler.klay.planar.graph.impl.PGraphFactory;
 
 /**
  * Layout provider for an orthogonal layout.
@@ -77,6 +78,9 @@ public class OrthogonalLayoutProvider extends AbstractLayoutProvider {
 
     // ======================== Attributes =========================================================
 
+    /** Graph factory. */
+    private IGraphFactory factory = new PGraphFactory();
+
     /** Algorithm for planar testing. */
     private IPlanarityTester tester = new BoyerMyrvoldPlanarityTester();
 
@@ -119,8 +123,10 @@ public class OrthogonalLayoutProvider extends AbstractLayoutProvider {
         }
 
         try {
+            IGraph graph;
+
             // KGraph -> PGraph conversion
-            IGraph graph = new PGraph(layoutNode);
+            graph = this.factory.createGraphFromKGraph(layoutNode);
 
             // Step 1: Planarity Testing
             List<Pair<INode, INode>> edges = this.tester.planarSubgraph(graph);

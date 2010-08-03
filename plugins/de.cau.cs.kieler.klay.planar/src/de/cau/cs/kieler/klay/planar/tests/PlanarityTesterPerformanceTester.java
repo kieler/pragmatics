@@ -19,7 +19,7 @@ import de.cau.cs.kieler.klay.planar.alg.impl.LRPlanarityTester;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.INode;
 import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
-import de.cau.cs.kieler.klay.planar.graph.impl.PGraph;
+import de.cau.cs.kieler.klay.planar.graph.impl.PGraphFactory;
 
 /**
  * A small class to test the performance of planarity testing algorithms.
@@ -114,7 +114,7 @@ public class PlanarityTesterPerformanceTester {
      *             if any inconsistencies occur
      */
     public IGraph randomGraph(final int n, final int m) throws InconsistentGraphModelException {
-        IGraph graph = new PGraph();
+        IGraph graph = new PGraphFactory().createEmptyGraph();
         INode[] nodes = new INode[n];
 
         for (int i = 0; i < n; i++) {

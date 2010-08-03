@@ -22,8 +22,9 @@ import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.klay.planar.alg.IPlanarityTester;
 import de.cau.cs.kieler.klay.planar.alg.impl.BoyerMyrvoldPlanarityTester;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
+import de.cau.cs.kieler.klay.planar.graph.IGraphFactory;
 import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
-import de.cau.cs.kieler.klay.planar.graph.impl.PGraph;
+import de.cau.cs.kieler.klay.planar.graph.impl.PGraphFactory;
 
 /**
  * A graph analysis, that uses planarity testing algorithms to check if a graph is planar.
@@ -33,6 +34,9 @@ import de.cau.cs.kieler.klay.planar.graph.impl.PGraph;
 public class PlanarityAnalysis implements IAnalysis {
 
     // ======================== Attributes =========================================================
+
+    /** Graph factory. */
+    private IGraphFactory factory = new PGraphFactory();
 
     /** Algorithm for planar testing. */
     private IPlanarityTester tester = new BoyerMyrvoldPlanarityTester();
@@ -49,7 +53,7 @@ public class PlanarityAnalysis implements IAnalysis {
 
         try {
             // KGraph -> PGraph conversion
-            IGraph graph = new PGraph(parentNode);
+            IGraph graph = this.factory.createGraphFromKGraph(parentNode);
 
             // Planarity Testing
             planar = this.tester.testPlanarity(graph);

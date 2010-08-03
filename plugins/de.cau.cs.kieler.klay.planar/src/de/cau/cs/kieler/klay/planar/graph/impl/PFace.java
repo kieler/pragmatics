@@ -29,8 +29,7 @@ import de.cau.cs.kieler.klay.planar.graph.INode;
  * @author cku
  * @author ocl
  */
-public class PFace extends PGraphElement implements IFace, Serializable {
-    // TODO the class is still public because an algorithm needs an unsafe cast :(
+class PFace extends PGraphElement implements IFace, Serializable {
 
     /** Generated Version UID for Serialization. */
     private static final long serialVersionUID = 595562864080000947L;

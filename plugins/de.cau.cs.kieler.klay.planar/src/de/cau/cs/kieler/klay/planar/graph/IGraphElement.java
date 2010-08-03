@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.klay.planar.graph;
 
+import de.cau.cs.kieler.klay.planar.util.IPropertyHolder;
+
 /**
  * A generic element in the interface for a general graph data structure.
  * 
@@ -20,7 +22,7 @@ package de.cau.cs.kieler.klay.planar.graph;
  * 
  * @author ocl
  */
-public interface IGraphElement {
+public interface IGraphElement extends IPropertyHolder {
 
     /**
      * Get an ID of the element. IDs should be unique between all elements of the same type in the

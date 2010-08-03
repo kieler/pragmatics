@@ -7,16 +7,18 @@ import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.alg.IPlanarizer;
 import de.cau.cs.kieler.klay.planar.alg.impl.EdgeInsertionPlanarization;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
+import de.cau.cs.kieler.klay.planar.graph.IGraphFactory;
 import de.cau.cs.kieler.klay.planar.graph.INode;
 import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
-import de.cau.cs.kieler.klay.planar.graph.impl.PGraph;
+import de.cau.cs.kieler.klay.planar.graph.impl.PGraphFactory;
 
 public class EdgeInsertionTestClass {
 
     public static void main(String[] args) throws InconsistentGraphModelException {
         // build test graph
-        IGraph testGraph = new PGraph();
-        IGraph testGraph2 = new PGraph();
+        IGraphFactory factory = new PGraphFactory();
+        IGraph testGraph = factory.createEmptyGraph();
+        IGraph testGraph2 = factory.createEmptyGraph();
 
         INode nodeZero = testGraph.addNode();
         INode nodeOne = testGraph.addNode();

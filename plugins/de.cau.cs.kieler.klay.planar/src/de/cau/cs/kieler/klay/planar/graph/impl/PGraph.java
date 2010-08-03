@@ -19,8 +19,6 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IFace;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
@@ -38,7 +36,7 @@ import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
  * @author pdo
  * @author cku
  */
-public class PGraph extends PNode implements IGraph, Serializable {
+class PGraph extends PNode implements IGraph, Serializable {
 
     /** Generated Version UID for Serialization. */
     private static final long serialVersionUID = -7340177117233615855L;
@@ -92,75 +90,6 @@ public class PGraph extends PNode implements IGraph, Serializable {
         this.nodeIndex = 0;
         this.edgeIndex = 0;
         this.faceIndex = 0;
-    }
-
-    /**
-     * Creates a new graph based on a {@code KGraph}.
-     * 
-     * @param kgraph
-     *            the {@code KGraph}
-     * @throws InconsistentGraphModelException
-     *             if the given graph is not consistent
-     */
-    public PGraph(final KNode kgraph) throws InconsistentGraphModelException {
-        this(-1, (PGraph) null, kgraph);
-    }
-
-    /**
-     * Creates a new graph based on a {@code KGraph} as a compound node of graph {@code p}. All
-     * edges and nodes in the new graph gets data with the identifier {@code TOKGRAPH} assigned,
-     * that holds the corresponding {@code KGraphElement} of the node or edge. Using this data, the
-     * graph can easily be reverted to the {@code KGraph} it originates from.
-     * 
-     * @param id
-     *            the id assigned to the graph
-     * @param parent
-     *            the parent graph containing the compound node
-     * @param kgraph
-     *            the {@code KGraph}
-     * @throws InconsistentGraphModelException
-     *             if the given graph is not consistent
-     */
-    PGraph(final int id, final PGraph parent, final KNode kgraph)
-            throws InconsistentGraphModelException {
-        // TODO check for hyper nodes
-        // TODO check for directed/undirected edges
-        // TODO check for embedding constraints (ports)
-        this(id, parent);
-        HashMap<KNode, PNode> map = new HashMap<KNode, PNode>(kgraph.getChildren().size() * 2);
-
-        // Adding Nodes
-        for (KNode knode : kgraph.getChildren()) {
-            PNode node = null;
-            if (knode.getChildren().size() > 0) {
-                node = new PGraph(this.nodeIndex++, this, knode);
-            } else {
-                node = new PNode(this.nodeIndex++, this, NodeType.NORMAL);
-            }
-            this.nodes.add(node);
-            node.setProperty(IGraph.TOKGRAPH, knode);
-            map.put(knode, node);
-        }
-
-        // Adding Edges
-        for (KNode knode : kgraph.getChildren()) {
-            for (KEdge kedge : knode.getOutgoingEdges()) {
-                if (!map.containsKey(kedge.getSource()) || !map.containsKey(kedge.getTarget())) {
-                    throw new InconsistentGraphModelException(
-                            "Attempted to link non-existent nodes by an edge.");
-                }
-                PNode source = map.get(kedge.getSource());
-                PNode target = map.get(kedge.getTarget());
-                PEdge edge = new PEdge(this.edgeIndex++, this, source, target, true);
-                source.linkEdge(edge, true);
-                target.linkEdge(edge, true);
-                this.edges.add(edge);
-                edge.setProperty(IGraph.TOKGRAPH, kedge);
-            }
-        }
-
-        // Adding Faces
-        this.generateFaces();
     }
 
     // ======================== Graph ==============================================================

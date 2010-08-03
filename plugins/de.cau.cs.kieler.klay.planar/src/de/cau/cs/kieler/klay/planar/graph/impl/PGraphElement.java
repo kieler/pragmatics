@@ -25,7 +25,6 @@ import de.cau.cs.kieler.klay.planar.graph.IGraphElement;
  * @author ocl
  */
 abstract class PGraphElement extends PropertyHolder implements IGraphElement {
-    // TODO move property holder stuff to interfaces
 
     // ======================== Attributes =========================================================
 
