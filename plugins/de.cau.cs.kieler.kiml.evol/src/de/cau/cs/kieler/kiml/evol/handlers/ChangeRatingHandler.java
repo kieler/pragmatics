@@ -40,12 +40,13 @@ public class ChangeRatingHandler extends AbstractHandler {
                 PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                         .findView(EvolView.ID);
         if (view instanceof EvolView) {
-            if (((EvolView) view).getPopulation() != null) {
-                final Genome ind = ((EvolView) view).getEvolModel().getCurrentIndividual();
+            final EvolView evolView = (EvolView) view;
+            if (evolView.getPopulation() != null) {
+                final Genome ind = evolView.getEvolModel().getCurrentIndividual();
                 final int rating = ind.getUserRating() + delta;
                 ind.setUserRating(rating);
-                final SelectorTableViewer tv = ((EvolView) view).getTableViewer();
-                tv.refresh();
+                final SelectorTableViewer tv = evolView.getTableViewer();
+                evolView.refresh(true);
             }
         }
         return null;

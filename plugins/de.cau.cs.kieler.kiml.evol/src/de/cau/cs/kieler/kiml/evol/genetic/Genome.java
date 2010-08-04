@@ -202,8 +202,7 @@ public class Genome extends ArrayList<IGene<?>> {
      *            better rating.
      */
     public void setUserRating(final int theRating) {
-        // System.out.println("Assign rating " + theRating + " to individual" +
-        // ": " + toString());
+        System.out.println("Assign rating " + theRating + " to individual" + ": " + toString());
         this.userRating = theRating;
     }
 

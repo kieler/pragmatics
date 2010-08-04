@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 
@@ -36,6 +37,44 @@ import de.cau.cs.kieler.kiml.evol.ui.EvolView;
  *
  */
 public class AutoRateAllHandler extends AbstractHandler {
+    /**
+     * @author bdu
+     *
+     */
+    private static final class EvolutionViewRefreshJob extends Job {
+        public EvolView getView() {
+            return this.view;
+        }
+
+        /**
+         *
+         */
+        private final EvolView view;
+
+        /**
+         * Creates a new {@link EvolutionViewRefreshJob} instance.
+         *
+         * @param theName
+         * @param theView
+         */
+        public EvolutionViewRefreshJob(final String theName, final EvolView theView) {
+            super(theName);
+            this.view = theView;
+        }
+
+        @Override
+        protected IStatus run(final IProgressMonitor theMonitor) {
+            Display.getDefault().asyncExec(new Runnable() {
+                public void run() {
+                    final EvolView evolView = EvolutionViewRefreshJob.this.getView();
+                    evolView.getTableViewer().refresh();
+                    evolView.refresh(false);
+                }
+            });
+            return new Status(IStatus.INFO, EvolPlugin.PLUGIN_ID, 0, "OK", null);
+        }
+    }
+
     /**
      * A job that does the auto-rating.
      *
@@ -68,7 +107,7 @@ public class AutoRateAllHandler extends AbstractHandler {
         @Override
         protected IStatus run(final IProgressMonitor monitor) {
             try {
-                Thread.sleep(200);
+                Thread.sleep(100);
 
                 monitor.beginTask("Performing Auto-rating", this.population.size() + 1);
 
@@ -121,17 +160,16 @@ public class AutoRateAllHandler extends AbstractHandler {
             final IProgressMonitor monitor = Job.getJobManager().createProgressGroup();
             final int size = pop.size();
             autoRateAllJob.setProgressGroup(monitor, size + 1);
-            autoRateAllJob.setPriority(Job.SHORT);
+            autoRateAllJob.setPriority(Job.INTERACTIVE);
             autoRateAllJob.setUser(true);
             autoRateAllJob.schedule();
 
-            try {
-                Thread.sleep(300);
-            } catch (final InterruptedException e) {
-                e.printStackTrace();
-            }
+            final Job refreshJob =
+                    new EvolutionViewRefreshJob("Refresh table viewer", view);
 
-            view.getTableViewer().refresh();
+            refreshJob.setUser(false);
+            refreshJob.setPriority(Job.DECORATE);
+            refreshJob.schedule(900);
 
         } else {
             throw new ExecutionException("The Evolution View could not be found.");

@@ -33,7 +33,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.EvolUtil;
-import de.cau.cs.kieler.kiml.evol.alg.BasicEvolutionaryAlgorithm;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
@@ -62,6 +61,9 @@ public class EvolView extends ViewPart {
             super(table);
         }
 
+        /**
+         * @param pos
+         */
         void selectRow(final int pos) {
             if (getPopulation() == null) {
                 return;
@@ -69,9 +71,47 @@ public class EvolView extends ViewPart {
             Assert.isTrue((pos >= 0) && (pos <= getPopulation().size()), "position out of range");
             Display.getCurrent().syncExec(new Runnable() {
                 public void run() {
-                    SelectorTableViewer.this.doSelect(new int[] { pos });
+                    final int[] indices = new int[] { pos };
+                    // SelectorTableViewer.this.doSelect(indices);
+                    SelectorTableViewer.this.doSetSelection(indices);
                 }
             });
+        }
+
+        /**
+         * @param pos
+         * @return
+         */
+        public Object selectRowAndGetElement(final int pos) {
+            selectRow(pos);
+            return getSelectedElement();
+        }
+
+        /**
+         * @return
+         */
+        private Object getSelectedElement() {
+            final IStructuredSelection selection = (IStructuredSelection) this.getSelection();
+            final Object element = selection.getFirstElement();
+            return element;
+        }
+
+    }
+
+    /**
+     * Refreshes the view.
+     */
+    public void refresh(final boolean onlyCurrent) {
+
+        if (!onlyCurrent) {
+            this.tableViewer.refresh();
+        }
+
+        final int pos = this.getEvolModel().getPosition();
+        final Object element = this.tableViewer.selectRowAndGetElement(pos);
+
+        if (element != null) {
+            this.tableViewer.update(element, null);
         }
     }
 
@@ -93,7 +133,7 @@ public class EvolView extends ViewPart {
             final LayoutViewPart layoutView = LayoutViewPart.findView();
             if (layoutView != null) {
                 try {
-                    Thread.sleep(200);
+                    Thread.sleep(100);
                 } catch (final InterruptedException exception) {
                     exception.printStackTrace();
                 }
@@ -215,14 +255,26 @@ public class EvolView extends ViewPart {
                     final Object element = ((IStructuredSelection) selection).getFirstElement();
                     if (element instanceof PopulationTableEntry) {
                         tv.removeSelectionChangedListener(this);
-                        EvolView.this.getEvolModel().setPosition(
-                                ((PopulationTableEntry) element).getIndex());
+
+                        final int oldPos = EvolView.this.getEvolModel().getPosition();
+
+                        final int newPos = ((PopulationTableEntry) element).getIndex();
+                        EvolView.this.getEvolModel().setPosition(newPos);
+
+                        // Refresh the layout according to the selected
+                        // individual.
                         onSelectIndividual();
                         System.out.println("after onSelectIndividual");
+                        System.out.println(oldPos + " -> " + newPos);
 
                         if (this.oldElement != null) {
+                            System.out.println("updating row");
                             tv.update(this.oldElement, null);
+                            final Object oldElement1 = tv.getElementAt(oldPos);
+                            tv.update(oldElement1, null);
+
                         } else {
+                            System.out.println("refreshing view");
                             tv.refresh();
                         }
                         tv.update(element, null);
@@ -246,10 +298,6 @@ public class EvolView extends ViewPart {
             return;
         }
 
-        final BasicEvolutionaryAlgorithm alg = this.evolModel.getEvolAlg();
-
-        Assert.isNotNull(alg);
-
         this.evolModel.step();
 
         this.evolModel.selectInterestingIndividual();
@@ -259,8 +307,11 @@ public class EvolView extends ViewPart {
         EvolUtil.autoRateIndividuals(getPopulation().select(Population.UNRATED_FILTER), null, null);
 
         Assert.isTrue(this.evolModel.getPosition() >= 0);
-        getTableViewer().selectRow(this.evolModel.getPosition());
-        getTableViewer().refresh();
+        // getTableViewer().selectRow(this.evolModel.getPosition());
+        // getTableViewer().refresh();
+        refresh(true);
+
+        // Refresh the layout according to the selected individual.
         onSelectIndividual();
 
         // BasicNetwork b = new BasicNetwork();

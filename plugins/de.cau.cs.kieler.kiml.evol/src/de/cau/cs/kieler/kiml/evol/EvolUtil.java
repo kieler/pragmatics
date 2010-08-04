@@ -251,15 +251,15 @@ public final class EvolUtil {
             return result;
         }
     }
-    
+
     /**
      * Adopt, layout and measure the given individual.
-     * 
+     *
      * @param individual
      *            a {@link Genome}
      * @param expectedLayoutProviderId
      *            the expected layout provider id
-     * 
+     *
      */
     public static void applyIndividual(
             final Genome individual, final String expectedLayoutProviderId) {
@@ -373,7 +373,6 @@ public final class EvolUtil {
 
             adoptIndividual(ind, source);
 
-            // TODO: get a new manager for every iteration?
             final int rating = EvolUtil.layoutAndMeasure(manager, editor);
 
             // compare new rating to previous one
@@ -898,11 +897,11 @@ public final class EvolUtil {
             // scaledResults[i] = scaled;
             scaledSum += scaled;
             sum += val;
-            System.out.println(metric.getID() + ": " + val + " ");
+            // System.out.println(metric.getID() + ": " + val + " ");
         }
-        System.out.println();
-        System.out.println("Difference from uniform scaling: "
-                + Math.abs(scaledSum - (sum / metricsList.size())));
+        // System.out.println();
+        // System.out.println("Difference from uniform scaling: "
+        // + Math.abs(scaledSum - (sum / metricsList.size())));
         final int newRating = (int) Math.round((scaledSum * 10000));
         return newRating;
     }

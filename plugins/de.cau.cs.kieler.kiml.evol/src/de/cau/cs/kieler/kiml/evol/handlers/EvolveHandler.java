@@ -17,8 +17,15 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 
+import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.EvolUtil;
 import de.cau.cs.kieler.kiml.evol.ui.EvolView;
 
@@ -30,6 +37,40 @@ import de.cau.cs.kieler.kiml.evol.ui.EvolView;
  *
  */
 public class EvolveHandler extends AbstractHandler {
+    private static final class EvolutionViewRefreshJob extends Job {
+        public EvolView getView() {
+            return this.view;
+        }
+
+        /**
+         *
+         */
+        private final EvolView view;
+
+        /**
+         * Creates a new {@link EvolutionViewRefreshJob} instance.
+         *
+         * @param theName
+         * @param theView
+         */
+        public EvolutionViewRefreshJob(final String theName, final EvolView theView) {
+            super(theName);
+            this.view = theView;
+        }
+
+        @Override
+        protected IStatus run(final IProgressMonitor theMonitor) {
+            Display.getDefault().asyncExec(new Runnable() {
+                public void run() {
+                    final EvolView evolView = EvolutionViewRefreshJob.this.getView();
+                    evolView.getTableViewer().refresh();
+                    evolView.refresh(false);
+                }
+            });
+            return new Status(IStatus.INFO, EvolPlugin.PLUGIN_ID, 0, "OK", null);
+        }
+    }
+
     /**
      * Number of evolution steps.
      */
@@ -82,10 +123,14 @@ public class EvolveHandler extends AbstractHandler {
                     final boolean wantAutoRating;
                     wantAutoRating = wantAutoRatingForStep(i, stepsBeforeAutoRating);
                     if (wantAutoRating) {
-                        EvolUtil.autoRateIndividuals(view.getPopulation(), null, null);
+                        final IEditorPart editor = EvolUtil.getCurrentEditor();
+                        Assert.isNotNull(editor);
+                        EvolUtil.autoRateIndividuals(view.getPopulation(), editor, null);
+                        System.out.println(view.getPopulation());
                     }
                     steps++;
                     Assert.isNotNull(view.getPopulation());
+
                     final Double after = view.getPopulation().getAverageRating();
                     final Double relDiff = (after - before) / after;
                     System.out.println("Average rating now: " + after);
@@ -102,6 +147,14 @@ public class EvolveHandler extends AbstractHandler {
                 }
 
             } while ((steady < STEADY_STEPS) && (steps < maxSteps));
+
+
+            final Job refreshJob = new EvolutionViewRefreshJob("Refresh table viewer", view);
+
+            refreshJob.setUser(false);
+            refreshJob.setPriority(Job.DECORATE);
+            refreshJob.schedule(500);
+
         }
         return null;
     }
