@@ -78,13 +78,13 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     private boolean[] treeEdge;
 
     /** The postorder traversal ID of each node determined by {@code postorderTraversal()}. */
-    private int[] lim;
+    private int[] poID;
 
     /**
-     * The lowest postorder traversal ID reachable through a node lower in the traversal tree
-     * determined by {@code postorderTraversal}.
+     * The lowest postorder traversal ID of each nodes reachable through a node lower in the
+     * traversal tree determined by {@code postorderTraversal}.
      */
-    private int[] low;
+    private int[] lowestPoID;
 
     /**
      * The current postorder traversal number used by {@code postorderTraversal()} used to assign an
@@ -111,12 +111,12 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     private int[] outDegree;
 
     /**
-     * The cut value of every edge, which is defined as follows: If the edge is deleted, the
-     * spanning tree breaks into two connected components, the head component containing the target
-     * node of the edge and the tail component containing the source node of the edge. The cut value
-     * is the sum of the weight (i.e. the length in general) of all edges going from the tail to the
-     * head component, including the tree edge, minus the sum of the weights of all edges from the
-     * head to the tail component..
+     * The cut value of every edge defined as follows: If the edge is deleted, the spanning tree
+     * breaks into two connected components, the head component containing the target node of the
+     * edge and the tail component containing the source node of the edge. The cut value is the sum
+     * of the weight (here {@code 1}) of all edges going from the tail to the head component,
+     * including the tree edge, minus the sum of the weights of all edges from the head to the tail
+     * component.
      */
     private int[] cutvalue;
 
@@ -138,8 +138,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * Helper method for the network simplex layerer. It instantiates all necessary attributes of
      * this class and initializes them with their default values. If the attributes already exist
      * (i.e. they were created by a previous function call) and if their size fits for the nodes of
-     * the current graph, then the old instances will be reused as far as possible to save memory
-     * space.
+     * the current graph, then the old instances will be reused as far as possible.
      * 
      * @param nodes
      *            the nodes in the graph
@@ -166,8 +165,8 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             revLayer = new int[numNodes];
             Arrays.fill(revLayer, numNodes);
             treeNode = new boolean[numNodes];
-            lim = new int[numNodes];
-            low = new int[numNodes];
+            poID = new int[numNodes];
+            lowestPoID = new int[numNodes];
         } else {
             Arrays.fill(layer, 0);
             Arrays.fill(revLayer, numNodes);
@@ -193,11 +192,11 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         postOrder = 1;
     }
 
-    /**
+/**
      * The main method of the network simplex layerer. It determines an optimal layering of all
      * nodes in the graph concerning a minimal length of all edges by using the network simplex
      * algorithm described in {@literal Emden R. Gansner, Eleftherios Koutsofios, Stephen
-     * C. North, Kiem-Phong Vo: "A Technique for Drawing Directed Graphs", AT&T Bell Laboratories}.
+     * C. North, Kiem-Phong Vo: "A Technique for Drawing Directed Graphs", AT&T Bell Laboratories.
      * 
      * @param nodes
      *            a {@link Collection} of all nodes of the graph to layer
@@ -244,11 +243,11 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * edges contained are tight (i.e. their minimal length corresponds with their actual length), a
      * tight tree has already been found. If not, this method iteratively determines a non-tree edge
      * incident to the tree with a minimal amount of slack (i.e. the edge with the lowest difference
-     * between its current and minimal length) and shifts all tree edges accordingly to shorten that
-     * edge to its minimal size. That edge has become tight and will be added to the spanning tree
+     * between its current and minimal length) and shifts all tree edges accordingly to shorten this
+     * edge to its minimal size. The edge has become tight and will be added to the spanning tree
      * together with all tight edges leading to non-tree nodes as well. If all nodes of the graph
-     * are contained in the spanning tree, a tight tree has been found. and a concluding computation
-     * of each edge's initial cut value takes place.
+     * are contained in the spanning tree, a tight tree has been found. A concluding computation of
+     * each edge's initial cut value takes place.
      * 
      * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#tightTreeDFS(LNode)
      *      tightTreeDFS()
@@ -271,7 +270,8 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             }
         }
         postorderTraversal(layerNodes.iterator().next());
-        cutvalues();
+        naiveCutvalues();
+        // TODO change it back
 
     }
 
@@ -309,8 +309,8 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     /**
      * Helper method for the network simplex layerer. It determines a DFS-subtree of the graph by
      * traversing tight edges only (i.e. edges whose current length matches their minimal length in
-     * the layering) and returns the number of nodes reachable through this tree. If their number is
-     * equal to the total number of nodes in the graph, a tight spanning tree has been determined.
+     * the layering) and returns the number of nodes in this. If this number is equal to the total
+     * number of nodes in the graph, a tight spanning tree has been determined.
      * 
      * @param node
      *            the root of the DFS-subtree
@@ -328,8 +328,9 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
                     // edge is a tree edge already
                     nodeCount += tightTreeDFS(opposite);
                 } else if (!treeNode[opposite.id]
-                        && (tightness[edge.id] == layer[edge.getTarget().getNode().id]
-                                - layer[edge.getSource().getNode().id])) {
+                        && tightness[edge.id] == layer[edge.getTarget().getNode().id]
+                                - layer[edge.getSource().getNode().id]) {
+                    // non-tree edge and edge is tight
                     treeEdge[edge.id] = true;
                     nodeCount += tightTreeDFS(node);
                 }
@@ -353,7 +354,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         int curSlack;
         for (LEdge edge : layerEdges) {
             if (!treeEdge[edge.id]
-                    && (treeNode[edge.getSource().id] || treeNode[edge.getTarget().id])) {
+                    && (treeNode[edge.getSource().id] ^ treeNode[edge.getTarget().id])) {
                 // edge is non-tree edge and incident on the tree
                 curSlack = layer[edge.getTarget().getNode().id]
                         - layer[edge.getSource().getNode().id] - tightness[edge.id];
@@ -370,13 +371,36 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * Helper method for the network simplex layerer. It determines the cut value of each tree edge,
      * which is defined as follows: If the edge is deleted, the spanning tree breaks into two
      * connected components, the head component containing the target node of the edge and the tail
-     * component containing the source node of the edge. The cut value is the sum of the weight
-     * (i.e. the length in general) of all edges going from the tail to the head component,
-     * including the tree edge, minus the sum of the weights of all edges from the head to the tail
-     * component.
+     * component containing the source node of the edge. The cut value is the sum of the weight of
+     * all edges going from the tail to the head component, including the tree edge itself, minus
+     * the sum of the weights of all edges from the head to the tail component.
      */
     private void cutvalues() {
         // TODO
+    }
+
+    /**
+     * A naive implementation of a cut value determination with a performance of O(|E|^2). For
+     * testing only.
+     */
+    private void naiveCutvalues() {
+
+        boolean source;
+        boolean target;
+        for (LEdge edge : layerEdges) {
+            cutvalue[edge.id]++;
+            for (LEdge cur : layerEdges) {
+                if (!treeEdge[cur.id]) {
+                    source = isInHead(cur.getSource().getNode(), edge);
+                    target = isInHead(cur.getTarget().getNode(), edge);
+                    if (target && !source) {
+                        cutvalue[edge.id]++;
+                    } else if (source && !target) {
+                        cutvalue[edge.id]--;
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -448,14 +472,9 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
                 // edge is to consider
                 slack = layer[cons.getTarget().getNode().id] - layer[cons.getSource().getNode().id]
                         - tightness[cons.id];
-                if (replace == null) {
-                    replace = cons;
+                if (slack < repSlack) {
                     repSlack = slack;
-                } else {
-                    if (slack < repSlack) {
-                        repSlack = slack;
-                        replace = cons;
-                    }
+                    replace = cons;
                 }
             }
         }
@@ -493,13 +512,15 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         // update values
         postOrder = 1;
         postorderTraversal(layerNodes.iterator().next());
-        cutvalues();
+        naiveCutvalues();
+        // TODO change it back
     }
 
     /**
      * Helper method for the network simplex layerer. It normalizes the layering, i.e. determines
-     * the lowest layer assigned to a node and shifts all nodes layers up or down accordingly. After
-     * termination, the lowest layer assigned to a node will be zeroth (and therefore first) layer.
+     * the lowest layer assigned to a node and shifts all nodes up or down in the layers
+     * accordingly. After termination, the lowest layer assigned to a node will be zeroth (and
+     * therefore first) layer.
      */
     private void normalize() {
 
@@ -544,7 +565,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
                 } else if (port.getType() == PortType.INPUT) {
                     inDegree[node.id] += port.getEdges().size();
                 }
-                // ports of type "UNDEFINED" are neglected
+                // ports of type "UNDEFINED" are neglected and should not occur
             }
             if (outDegree[node.id] == 0) {
                 sinks.add(node);
@@ -602,7 +623,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      *            the node to determine the length of its shortest incident edge
      * @param orientation
      *            the orientation of the incident edges. If {@code orientation = PortType.INPUT},
-     *            only incoming edges will be considered or, if
+     *            only incoming edges will be considered, and if
      *            {@code orientation = PortType.OUTPUT}, only outgoing edges will be considered for
      *            the determination of the shortest edge length.
      * @return the minimal length all edges of the specified edge type incident to the input node or
@@ -628,8 +649,8 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     }
 
     /**
-     * Helper method for the network simplex layerer. It returns the the port that is connected to
-     * the opposite side of the specified edge from the viewpoint of the given port.
+     * Helper method for the network simplex layerer. It returns the port that is connected to the
+     * opposite side of the specified edge from the viewpoint of the input port.
      * 
      * @param port
      *            the port to get the opposite port from
@@ -638,7 +659,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * @return the opposite port from the viewpoint of the given port
      * 
      * @throws IllegalArgumentException
-     *             if the input port is not connected to the specified edge
+     *             if the input port is not connected to the input edge
      */
     private LPort getOpposite(final LPort port, final LEdge edge) {
 
@@ -647,7 +668,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         } else if (edge.getTarget().equals(port)) {
             return edge.getSource();
         }
-        throw new IllegalArgumentException("Input port is not connected to the specified edge.");
+        throw new IllegalArgumentException("Input port is not connected to the input edge.");
     }
 
     /**
@@ -669,15 +690,13 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     /**
      * Helper method for the network simplex layerer. It performs a postorder DFS-traversal of the
      * graph beginning with the first node in the Collection of all graph nodes. Each node will be
-     * assigned a unique traversal number, which will be stored in {@code lim}. Furthermore, the
-     * lowest postorder traversal number of any descending edge in the traversal of the input node
-     * will be computed and stored in {@code low}, which will also be the return value of this
-     * method.
+     * assigned a unique traversal ID, which will be stored in {@code poID}. Furthermore, the lowest
+     * postorder traversal ID of any node in a descending path relative to the input node will be
+     * computed and stored in {@code lowestPoID}, which is also the return value of this method.
      * 
      * @param node
      *            the root of the DFS-subtree
-     * @return the lowest postorder of the input node traversal number of any descending edge in the
-     *         depth-first-search
+     * @return the lowest post-order ID of any descending edge in the depth-first-search
      */
     private int postorderTraversal(final LNode node) {
 
@@ -690,9 +709,9 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
                 }
             }
         }
-        lim[node.id] = postOrder;
-        low[node.id] = Math.min(lowest, postOrder++);
-        return low[node.id];
+        poID[node.id] = postOrder;
+        lowestPoID[node.id] = Math.min(lowest, postOrder++);
+        return lowestPoID[node.id];
     }
 
     /**
@@ -714,20 +733,18 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     private boolean isInHead(final LNode node, final LEdge edge) {
 
         LNode source = edge.getSource().getNode();
-        if (lim[source.id] < lim[edge.getTarget().getNode().id]) {
+        if (poID[source.id] < poID[edge.getTarget().getNode().id]) {
             // root is in the head component
-            if (low[source.id] <= lim[node.id] && lim[node.id] <= lim[source.id]) {
-                return false;
-            }
-            return true;
-        } else {
-            // root is in the tail component
-            if (low[source.id] >= lim[node.id] && lim[node.id] >= lim[source.id]) {
+            if (lowestPoID[source.id] <= poID[node.id] && poID[node.id] <= poID[source.id]) {
                 return false;
             }
             return true;
         }
-
+        // root is in the tail component
+        if (lowestPoID[source.id] >= poID[node.id] && poID[node.id] >= poID[source.id]) {
+            return false;
+        }
+        return true;
     }
 
 }
