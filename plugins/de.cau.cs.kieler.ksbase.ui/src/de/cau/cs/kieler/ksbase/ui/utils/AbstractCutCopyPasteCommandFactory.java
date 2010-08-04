@@ -43,7 +43,7 @@ import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramGraphicalViewer;
 import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramWorkbenchPart;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.statushandlers.StatusManager;
+import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.core.model.transformation.ITransformationFramework;
@@ -61,8 +61,7 @@ import de.cau.cs.kieler.viewmanagement.RunLogic;
  * @author soh
  * @kieler.rating 2010-06-15 yellow msp, cmot
  */
-public abstract class AbstractCutCopyPasteCommandFactory implements
-        ICutCopyPasteCommandFactory {
+public abstract class AbstractCutCopyPasteCommandFactory implements ICutCopyPasteCommandFactory {
 
     /** The transformation FRAMEWORK. */
     private static final ITransformationFramework FRAMEWORK = new XtendTransformationFramework();
@@ -76,42 +75,34 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
     /**
      * Build a new copy command.
      * 
-     * @param part
-     *            the editor
-     * @param selection
-     *            the selection
+     * @param part the editor
+     * @param selection the selection
      * @return the command
      */
-    public ICommand buildCopyCommand(final IDiagramWorkbenchPart part,
-            final List<EObject> selection) {
+    public ICommand buildCopyCommand(final IDiagramWorkbenchPart part, final List<EObject> selection) {
         return buildCommand(part, selection, "Copy");
     }
 
     /**
      * Build a new cut command.
      * 
-     * @param part
-     *            the editor
-     * @param selection
-     *            the selection
+     * @param part the editor
+     * @param selection the selection
      * @return the command
      */
-    public ICommand buildCutCommand(final IDiagramWorkbenchPart part,
-            final List<EObject> selection) {
+    public ICommand buildCutCommand(final IDiagramWorkbenchPart part, final List<EObject> selection) {
         return buildCommand(part, selection, "Cut");
     }
 
     /**
      * Build a new paste command.
      * 
-     * @param part
-     *            the editor
-     * @param selection
-     *            the selection
+     * @param part the editor
+     * @param selection the selection
      * @return the command
      */
     public ICommand buildPasteCommand(final IDiagramWorkbenchPart part,
-            final List<EObject> selection) {
+        final List<EObject> selection) {
         return buildCommand(part, selection, "Paste");
     }
 
@@ -132,16 +123,13 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
     /**
      * Build a command.
      * 
-     * @param part
-     *            the editor
-     * @param selection
-     *            the selection
-     * @param label
-     *            the label and name of the transformation
+     * @param part the editor
+     * @param selection the selection
+     * @param label the label and name of the transformation
      * @return the command
      */
-    private ICommand buildCommand(final IDiagramWorkbenchPart part,
-            final List<EObject> selection, final String label) {
+    private ICommand buildCommand(final IDiagramWorkbenchPart part, final List<EObject> selection,
+        final String label) {
         lastSelection = selection;
 
         /* The path of the transformation file. */
@@ -155,8 +143,7 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
             DiagramEditor editor = (DiagramEditor) part;
             TransactionalEditingDomain transDomain = editor.getEditingDomain();
 
-            result = new TransformationCommandWithAutoLayout(transDomain,
-                    label, editor);
+            result = new TransformationCommandWithAutoLayout(transDomain, label, editor);
 
             mapParameters(selection, label, filePath, result, editor);
         }
@@ -170,10 +157,9 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
      * @param result
      * @param editor
      */
-    private void mapParameters(final List<EObject> selection,
-            final String label, final String filePath,
-            final TransformationCommandWithAutoLayout result,
-            final DiagramEditor editor) {
+    private void mapParameters(final List<EObject> selection, final String label,
+        final String filePath, final TransformationCommandWithAutoLayout result,
+        final DiagramEditor editor) {
         if (selection.size() > 1) {
 
             Class<?>[] types = getTypes();
@@ -202,28 +188,24 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
             }
 
             if (label.equals("Paste")) {
-                possibleMappings.add(pureMapping.toArray(new String[pureMapping
-                        .size()]));
+                possibleMappings.add(pureMapping.toArray(new String[pureMapping.size()]));
             } else {
                 String[] array = { "List[Object]" };
                 possibleMappings.add(array);
             }
 
             for (String[] s : possibleMappings) {
-                List<Object> mappedSelection = FRAMEWORK
-                        .createParameterMapping(selection, s);
+                List<Object> mappedSelection = FRAMEWORK.createParameterMapping(selection, s);
                 if (mappedSelection != null
-                        && result.initialize(editor, mappedSelection,
-                                label.toLowerCase(), filePath, getModel(),
-                                FRAMEWORK)) {
+                    && result.initialize(editor, mappedSelection, label.toLowerCase(), filePath,
+                        getModel(), FRAMEWORK)) {
                     break;
                 }
             }
         } else {
             List<Object> list = new LinkedList<Object>();
             list.add(selection.get(0));
-            result.initialize(editor, list, label.toLowerCase(), filePath,
-                    getModel(), FRAMEWORK);
+            result.initialize(editor, list, label.toLowerCase(), filePath, getModel(), FRAMEWORK);
         }
     }
 
@@ -301,8 +283,7 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
     protected abstract Class<?>[] getTypes();
 
     /**
-     * Get the path to the model package. e.g.:
-     * de.cau.cs.kieler.synccharts.SyncchartsPackage
+     * Get the path to the model package. e.g.: de.cau.cs.kieler.synccharts.SyncchartsPackage
      * 
      * @return the model package
      */
@@ -311,8 +292,7 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
     /**
      * Perform actions before the operation has started.
      * 
-     * @param monitor
-     *            a progress monitor
+     * @param monitor a progress monitor
      */
     protected void performPreOperationActions(final IProgressMonitor monitor) {
 
@@ -321,21 +301,18 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
     /**
      * Perform actions after the operation has finished.
      * 
-     * @param monitor
-     *            a progress monitor
+     * @param monitor a progress monitor
      */
     protected void performPostOperationActions(final IProgressMonitor monitor) {
 
     }
 
     /**
-     * This transformation command performs an auto layout some time after the
-     * last transformation.
+     * This transformation command performs an auto layout some time after the last transformation.
      * 
      * @author soh
      */
-    private class TransformationCommandWithAutoLayout extends
-            TransformationCommand {
+    private class TransformationCommandWithAutoLayout extends TransformationCommand {
 
         /** The label. */
         private final String label;
@@ -352,18 +329,16 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
          * @param labelParam
          * @param editorParam
          */
-        public TransformationCommandWithAutoLayout(
-                final TransactionalEditingDomain domain,
-                final String labelParam, final DiagramEditor editorParam) {
+        public TransformationCommandWithAutoLayout(final TransactionalEditingDomain domain,
+            final String labelParam, final DiagramEditor editorParam) {
             super(domain, labelParam, null);
             this.label = labelParam;
             this.editor = editorParam;
         }
 
         @Override
-        protected CommandResult doExecuteWithResult(
-                final IProgressMonitor monitor, final IAdaptable info)
-                throws ExecutionException {
+        protected CommandResult doExecuteWithResult(final IProgressMonitor monitor,
+            final IAdaptable info) throws ExecutionException {
             performPreOperationActions(monitor);
 
             // We need the view management
@@ -371,7 +346,7 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
 
             // Notify event listeners:
             for (ITransformationEventListener te : TransformationUIManager.INSTANCE
-                    .getTransformationEventListeners()) {
+                .getTransformationEventListeners()) {
                 te.transformationAboutToExecute(new Object[] {});
             }
 
@@ -411,46 +386,55 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
          */
         @Override
         protected IStatus run(final IProgressMonitor monitor) {
-            EObject obj = ((View) editor.getDiagramEditPart().getModel())
-                    .getElement();
+            Throwable myException = null;
+            EObject obj = ((View) editor.getDiagramEditPart().getModel()).getElement();
+            // haf: small try-catch blocks to avoid that the control flow gets interrupted
             try {
-                List<?> editPolicies = CanonicalEditPolicy
-                        .getRegisteredEditPolicies(obj);
+                List<?> editPolicies = CanonicalEditPolicy.getRegisteredEditPolicies(obj);
                 for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
 
-                    CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it
-                            .next();
+                    CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it.next();
 
                     nextEditPolicy.refresh();
                 }
+            } catch (Exception e) {
+                myException = e;
+            }
 
-                IDiagramGraphicalViewer graphViewer = ((IDiagramWorkbenchPart) editor)
-                        .getDiagramGraphicalViewer();
-                graphViewer.flush();
-            } catch (RuntimeException e0) {
-                IStatus status = new Status(IStatus.WARNING,
-                        "de.cau.cs.kieler.ksbase.ui", e0.getMessage(), e0);
-                StatusManager.getManager().handle(status, StatusManager.SHOW);
-                throw e0;
+            try {
+                // haf: this has to be done in UI thread, because the Trigger Listener might
+                // call UI methods. This would yield an invalid thread access
+                PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+                    public void run() {
+                        IDiagramGraphicalViewer graphViewer = ((IDiagramWorkbenchPart) editor)
+                            .getDiagramGraphicalViewer();
+                        graphViewer.flush();
+                    }
+                });
+            } catch (Exception e) {
+                myException = e;
             }
 
             // Notify event listeners:
             for (ITransformationEventListener te : TransformationUIManager.INSTANCE
-                    .getTransformationEventListeners()) {
+                .getTransformationEventListeners()) {
                 te.transformationExecuted(new Object[] { obj, editor });
             }
 
             performPostOperationActions(monitor);
-            return new Status(IStatus.OK, "de.cau.cs.kieler.ksbase.ui",
-                    "Post paste operations finished");
+
+            if (myException == null) {
+                return new Status(IStatus.OK, "de.cau.cs.kieler.ksbase", "Layout done");
+            }
+            String message = "Error during paste. " + myException.getMessage();
+            return new Status(IStatus.ERROR, "de.cau.cs.kieler.ksbase", message, myException);
         }
     }
 
     /**
      * Refresh the edit policies.
      * 
-     * @param editorPart
-     *            the editor
+     * @param editorPart the editor
      */
     protected void refreshEditPolicies(final IEditorPart editorPart) {
         if (editorPart instanceof IDiagramWorkbenchPart) {
@@ -460,8 +444,7 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
                     refreshPolicy(sel);
                 }
                 // commit changes to view
-                IDiagramGraphicalViewer graphViewer = part
-                        .getDiagramGraphicalViewer();
+                IDiagramGraphicalViewer graphViewer = part.getDiagramGraphicalViewer();
                 graphViewer.flush();
             }
         }
@@ -471,14 +454,12 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
     /**
      * Refresh the edit policy on the given element.
      * 
-     * @param sel
-     *            the element
+     * @param sel the element
      */
     private void refreshPolicy(final EObject sel) {
         EditPart editPart = ModelingUtil.getEditPart(sel);
         // get all registered edit parts in order to get transitions as well
-        Collection<?> parts = editPart.getViewer().getEditPartRegistry()
-                .values();
+        Collection<?> parts = editPart.getViewer().getEditPartRegistry().values();
 
         // results list
         List<CanonicalEditPolicy> policies = new LinkedList<CanonicalEditPolicy>();
@@ -491,11 +472,9 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
                     EObject eObject = ((View) model).getElement();
 
                     // get policy for the semantic element
-                    List<?> editPolicies = CanonicalEditPolicy
-                            .getRegisteredEditPolicies(eObject);
+                    List<?> editPolicies = CanonicalEditPolicy.getRegisteredEditPolicies(eObject);
                     for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
-                        CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it
-                                .next();
+                        CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it.next();
                         policies.add(nextEditPolicy);
 
                     }
