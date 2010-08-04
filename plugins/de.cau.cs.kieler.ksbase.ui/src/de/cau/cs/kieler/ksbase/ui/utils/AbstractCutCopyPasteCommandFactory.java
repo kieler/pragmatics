@@ -43,6 +43,7 @@ import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramGraphicalViewer;
 import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramWorkbenchPart;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.core.model.transformation.ITransformationFramework;
@@ -412,20 +413,26 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
         protected IStatus run(final IProgressMonitor monitor) {
             EObject obj = ((View) editor.getDiagramEditPart().getModel())
                     .getElement();
+            try {
+                List<?> editPolicies = CanonicalEditPolicy
+                        .getRegisteredEditPolicies(obj);
+                for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
 
-            List<?> editPolicies = CanonicalEditPolicy
-                    .getRegisteredEditPolicies(obj);
-            for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
+                    CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it
+                            .next();
 
-                CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it
-                        .next();
+                    nextEditPolicy.refresh();
+                }
 
-                nextEditPolicy.refresh();
+                IDiagramGraphicalViewer graphViewer = ((IDiagramWorkbenchPart) editor)
+                        .getDiagramGraphicalViewer();
+                graphViewer.flush();
+            } catch (RuntimeException e0) {
+                IStatus status = new Status(IStatus.WARNING,
+                        "de.cau.cs.kieler.ksbase.ui", e0.getMessage(), e0);
+                StatusManager.getManager().handle(status, StatusManager.SHOW);
+                throw e0;
             }
-
-            IDiagramGraphicalViewer graphViewer = ((IDiagramWorkbenchPart) editor)
-                    .getDiagramGraphicalViewer();
-            graphViewer.flush();
 
             // Notify event listeners:
             for (ITransformationEventListener te : TransformationUIManager.INSTANCE
