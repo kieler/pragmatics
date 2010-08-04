@@ -335,7 +335,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
                                     - layer[edge.getSource().getNode().id]) {
                         // edge is a tight non-tree edge
                         treeEdge[edge.id] = true;
-                        nodeCount += tightTreeDFS(node);
+                        nodeCount += tightTreeDFS(opposite);
                     }
                 }
             }
