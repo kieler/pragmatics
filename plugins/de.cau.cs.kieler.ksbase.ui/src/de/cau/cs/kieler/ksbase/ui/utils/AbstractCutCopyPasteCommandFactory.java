@@ -434,8 +434,8 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
             }
 
             performPostOperationActions(monitor);
-            return new Status(IStatus.OK,
-                    "de.cau.cs.kieler.synccharts.diagram.custom", "Layout done");
+            return new Status(IStatus.OK, "de.cau.cs.kieler.ksbase.ui",
+                    "Post paste operations finished");
         }
     }
 
