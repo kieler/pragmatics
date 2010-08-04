@@ -126,7 +126,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     private int[] cutvalue;
 
     /** The minimal span of each edge in the layered graph. */
-    private int[] tightness;
+    private int[] minSpan;
 
     // ====================== Constructor =====================================
 
@@ -155,12 +155,8 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         int numNodes = nodes.size();
         int numEdges = edges.size();
 
-        // re-index nodes and edges
+        // re-index edges, nodes have been re-indexed in getEdges() already
         int counter = 0;
-        for (LNode node : nodes) {
-            node.id = counter++;
-        }
-        counter = 0;
         for (LEdge edge : edges) {
             edge.id = counter++;
         }
@@ -180,7 +176,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         // initialize edge attributes
         if (cutvalue == null || cutvalue.length < numEdges) {
             cutvalue = new int[numEdges];
-            tightness = new int[numEdges];
+            minSpan = new int[numEdges];
             treeEdge = new boolean[numEdges];
             visited = new boolean[numEdges];
         } else {
@@ -189,6 +185,8 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         }
         postOrder = 1;
     }
+
+    // TODO tree might consists of multiple connected components
 
 /**
      * The main method of the network simplex layerer. It determines an optimal layering of all
@@ -261,7 +259,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
                     + "\n");
             // FIXME e is null here. Why?
             int delta = layer[e.getTarget().getNode().id] - layer[e.getSource().getNode().id]
-                    - tightness[e.id];
+                    - minSpan[e.id];
             if (treeNode[e.getSource().getNode().id]) {
                 delta = -delta;
             }
@@ -301,7 +299,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             layeringDFS(node, true);
         }
         for (LEdge edge : layerEdges) {
-            tightness[edge.id] = Math.min(layer[edge.getTarget().getNode().id]
+            minSpan[edge.id] = Math.min(layer[edge.getTarget().getNode().id]
                     - layer[edge.getSource().getNode().id], revLayer[edge.getTarget().getNode().id]
                     - revLayer[edge.getSource().getNode().id]);
         }
@@ -326,18 +324,17 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         LNode opposite = null;
         for (LPort port : node.getPorts()) {
             for (LEdge edge : port.getEdges()) {
-                opposite = getOpposite(port, edge).getNode();
                 if (!visited[edge.id]) {
+                    visited[edge.id] = true;
+                    opposite = getOpposite(port, edge).getNode();
                     if (treeEdge[edge.id]) {
                         // edge is a tree edge already
-                        visited[edge.id] = true;
                         nodeCount += tightTreeDFS(opposite);
                     } else if (!treeNode[opposite.id]
-                            && tightness[edge.id] == layer[edge.getTarget().getNode().id]
+                            && minSpan[edge.id] == layer[edge.getTarget().getNode().id]
                                     - layer[edge.getSource().getNode().id]) {
                         // edge is a tight non-tree edge
                         treeEdge[edge.id] = true;
-                        visited[edge.id] = true;
                         nodeCount += tightTreeDFS(node);
                     }
                 }
@@ -349,7 +346,8 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     /**
      * Helper method for the network simplex layerer. It returns the non-tree edge incident on the
      * tree with a minimal amount of slack (i.e. an edge with the lowest difference between its
-     * current and minimal length) or {@code null}, if no such edge exists.
+     * current and minimal length) or {@code null}, if no such edge exists. Note, that the returned
+     * edge's slack is never {@code 0}, since otherwise, the edge would be a tree-edge.
      * 
      * @return a non-tree edge incident on the tree with a minimal amount of slack or {@code null},
      *         if no such edge exists
@@ -360,12 +358,10 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         LEdge minSlackEdge = null;
         int curSlack;
         for (LEdge edge : layerEdges) {
-            if (!treeEdge[edge.id]
-                    && (treeNode[edge.getSource().getNode().id] ^ treeNode[edge.getTarget()
-                            .getNode().id])) {
+            if (treeNode[edge.getSource().getNode().id] ^ treeNode[edge.getTarget().getNode().id]) {
                 // edge is non-tree edge and incident on the tree
                 curSlack = layer[edge.getTarget().getNode().id]
-                        - layer[edge.getSource().getNode().id] - tightness[edge.id];
+                        - layer[edge.getSource().getNode().id] - minSpan[edge.id];
                 if (curSlack < minSlack) {
                     minSlack = curSlack;
                     minSlackEdge = edge;
@@ -479,7 +475,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             if (isInHead(source, edge) && !isInHead(target, edge)) {
                 // edge is to consider
                 slack = layer[cons.getTarget().getNode().id] - layer[cons.getSource().getNode().id]
-                        - tightness[cons.id];
+                        - minSpan[cons.id];
                 if (slack < repSlack) {
                     repSlack = slack;
                     replace = cons;
@@ -581,8 +577,10 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             sinks.clear();
         }
         // determine edges
+        int index = 0;
         LinkedList<LEdge> edges = new LinkedList<LEdge>();
         for (LNode node : nodes) {
+            node.id = index++;
             for (LPort port : node.getPorts()) {
                 if (port.getType() == PortType.OUTPUT) {
                     edges.addAll(port.getEdges());
@@ -590,6 +588,9 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
                 } else if (port.getType() == PortType.INPUT) {
                     inDegree[node.id] += port.getEdges().size();
                 }
+                // TODO / FIXME what about undirected edges? how are they handled in the data
+                // structure?
+                // e.g. print out edge size and compare it with drawing in editor.
                 // ports of type "UNDEFINED" are neglected and should not occur
             }
             if (outDegree[node.id] == 0) {
@@ -656,19 +657,20 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      */
     private int minimalSpan(final LNode node, final PortType orientation) {
 
-        int minSpan = Integer.MAX_VALUE;
+        int minimalSpan = Integer.MAX_VALUE;
         int currentSpan;
         for (LPort port : node.getPorts(orientation)) {
+            // TODO do ports with both incoming and outgoing edges occur?
             for (LEdge edge : port.getEdges()) {
                 currentSpan = layer[edge.getTarget().getNode().id]
                         - layer[edge.getSource().getNode().id];
-                if (currentSpan < minSpan) {
-                    minSpan = currentSpan;
+                if (currentSpan < minimalSpan) {
+                    minimalSpan = currentSpan;
                 }
             }
         }
-        if (minSpan < Integer.MAX_VALUE) {
-            return minSpan;
+        if (minimalSpan < Integer.MAX_VALUE) {
+            return minimalSpan;
         }
         return -1;
     }
