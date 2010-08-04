@@ -181,12 +181,6 @@ using namespace ogdf;
 extern "C" {
 #endif
 
-JNIEXPORT jlong JNICALL Java_net_ogdf_lib_Ogdf_test
-  (JNIEnv *, jclass) {
-	printf("Hallo test!");
-	return 21312344;
-}
-
 // the current graph
 Graph* graph = 0;
 GraphAttributes* graphAttributes = 0;
