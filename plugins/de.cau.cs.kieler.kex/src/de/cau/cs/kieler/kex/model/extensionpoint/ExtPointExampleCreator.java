@@ -33,11 +33,16 @@ public class ExtPointExampleCreator {
 	public void addExtension(final String projectId, final String destLocation,
 			Example example) throws KielerException {
 		File destFile = new File(destLocation);
+		if (!destFile.exists()) {
+			throw new KielerException(
+					"There is no file at destination location:" + destLocation);
+		}
 		IProject sourceProject = ResourcesPlugin.getWorkspace().getRoot()
 				.getProject(projectId);
-		validateProject(sourceProject, destFile);
-		xmlHandler.addExtension(sourceProject.getName(), destFile.getPath(),
-				example);
+		if (sourceProject == null)
+			throw new KielerException("There is no project for given project:"
+					+ projectId);
+		xmlHandler.addExtension(sourceProject.getName(), destFile, example);
 		createExampleResources(destFile, example.getResources());
 	}
 
@@ -65,20 +70,6 @@ public class ExtPointExampleCreator {
 					e.printStackTrace();
 				}
 			}
-		}
-	}
-
-	public void validateProject(final IProject sourceProject,
-			final File destFile) throws KielerException {
-
-		if (sourceProject == null)
-			throw new KielerException(
-					"There is no project for given project path:"
-							+ sourceProject.getFullPath());
-
-		if (!destFile.exists()) {
-			throw new KielerException("There is no file for given location:"
-					+ destFile.getPath());
 		}
 	}
 

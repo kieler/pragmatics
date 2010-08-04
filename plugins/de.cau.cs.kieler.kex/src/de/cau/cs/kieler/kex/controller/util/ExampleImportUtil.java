@@ -92,6 +92,8 @@ public class ExampleImportUtil {
 			return;
 		}
 
+		// TODO Mechanismus nochmal genau anschauen und verstehen.
+
 		InputStream is = sourceUrl.openStream();
 		OutputStream os = new FileOutputStream(f2, overwrite);
 		byte[] buf = new byte[1024];
