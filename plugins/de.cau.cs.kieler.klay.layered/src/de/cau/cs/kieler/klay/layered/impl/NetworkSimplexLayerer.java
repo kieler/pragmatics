@@ -172,22 +172,13 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             Arrays.fill(revLayer, numNodes);
             Arrays.fill(treeNode, false);
         }
-        if (sources == null) {
-            sources = new LinkedList<LNode>();
-            sinks = new LinkedList<LNode>();
-        } else {
-            sources.clear();
-            sinks.clear();
-        }
         // initialize edge attributes
         if (cutvalue == null || cutvalue.length < numEdges) {
             cutvalue = new int[numEdges];
             tightness = new int[numEdges];
-            inDegree = new int[numEdges];
-            outDegree = new int[numEdges];
+            treeEdge = new boolean[numEdges];
         } else {
-            Arrays.fill(inDegree, 0);
-            Arrays.fill(outDegree, 0);
+            Arrays.fill(treeEdge, false);
         }
         postOrder = 1;
     }
@@ -212,7 +203,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             getMonitor().done();
             return;
         }
-
+        
         // initialize attributes
         layerGraph = layeredGraph;
         layerNodes = nodes;
@@ -325,6 +316,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             for (LEdge edge : port.getEdges()) {
                 opposite = getOpposite(port, edge).getNode();
                 if (treeEdge[edge.id]) {
+                    // FIXME infinite loop here: an edge just visited will be visited again and again
                     // edge is a tree edge already
                     nodeCount += tightTreeDFS(opposite);
                 } else if (!treeNode[opposite.id]
@@ -556,6 +548,22 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      */
     private Collection<LEdge> getEdges(final Collection<LNode> nodes) {
 
+        // initialize required attributes
+        if (inDegree == null || inDegree.length < nodes.size())  {
+            inDegree = new int[nodes.size()];
+            outDegree = new int[nodes.size()];
+        } else {
+            Arrays.fill(inDegree, 0);
+            Arrays.fill(outDegree, 0);
+        }
+        if (sources == null) {
+            sources = new LinkedList<LNode>();
+            sinks = new LinkedList<LNode>();
+        } else {
+            sources.clear();
+            sinks.clear();
+        }
+        // determine edges
         LinkedList<LEdge> edges = new LinkedList<LEdge>();
         for (LNode node : nodes) {
             for (LPort port : node.getPorts()) {

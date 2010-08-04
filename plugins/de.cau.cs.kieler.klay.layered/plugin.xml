@@ -19,6 +19,9 @@
                option="de.cau.cs.kieler.layout.options.priority">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.klay.layered.nodeLayering">
+         </knownOption>
+         <knownOption
                option="de.cau.cs.kieler.klay.layered.edgeRouting">
          </knownOption>
          <knownOption
@@ -70,6 +73,13 @@
             id="de.cau.cs.kieler.klay.layered.distributeNodes"
             name="Distribute Nodes"
             type="boolean">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            description="Style of the node layering"
+            id="de.cau.cs.kieler.klay.layered.nodeLayering"
+            name="Node Layering"
+            type="enum">
       </layoutOption>
    </extension>
 

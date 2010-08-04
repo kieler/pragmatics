@@ -31,6 +31,7 @@ import de.cau.cs.kieler.klay.layered.impl.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.impl.LayerSweepCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.impl.LinearSegmentsNodePlacer;
 import de.cau.cs.kieler.klay.layered.impl.LongestPathLayerer;
+import de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer;
 import de.cau.cs.kieler.klay.layered.impl.OrthogonalEdgeRouter;
 import de.cau.cs.kieler.klay.layered.impl.SimpleSplineEdgeRouter;
 import de.cau.cs.kieler.klay.layered.impl.PolylineEdgeRouter;
@@ -50,6 +51,8 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
 
     /** Option to choose edge router. */
     public static final String OPT_EDGE_ROUTING = "de.cau.cs.kieler.klay.layered.edgeRouting";
+    /** Option to choose node layering. */
+    public static final String OPT_NODE_LAYERING = "de.cau.cs.kieler.klay.layered.nodeLayering";
     /** option to choose if debug info is shown. */
     public static final String OPT_DEBUG_INFO = "de.cau.cs.kieler.klay.layered.debugInfo";
     /** option defines the minimal angle a short edge may have. */
@@ -62,7 +65,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     /** phase 1: cycle breaking module. */
     private ICycleBreaker cycleBreaker = new GreedyCycleBreaker();
     /** phase 2: layering module. */
-    private ILayerer layerer = new LongestPathLayerer();
+    private ILayerer layerer;
     /** phase 3: crossing minimization module. */
     private ICrossingMinimizer crossingMinimizer = new LayerSweepCrossingMinimizer();
     /** phase 4: node placement module. */
@@ -76,6 +79,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     /** constructor registering the new enum option. */
     public LayeredLayoutProvider() {
         LayoutOptions.registerEnum(OPT_EDGE_ROUTING, LayeredEdgeRouting.class);
+        LayoutOptions.registerEnum(OPT_NODE_LAYERING, LayeredNodeLayering.class);
     }
 
     /**
@@ -111,6 +115,21 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             break;
         }
 
+     // check which nodeLayouter to use
+        LayeredNodeLayering placing = LayoutOptions.getEnum(parentLayout, LayeredNodeLayering.class);
+        switch (placing) {
+        case LONGEST_PATH:
+            if (!(layerer instanceof LongestPathLayerer)) {
+                layerer = new LongestPathLayerer();
+            }
+            break;
+        default:
+            if (!(layerer instanceof NetworkSimplexLayerer)) {
+                layerer = new NetworkSimplexLayerer();
+            }
+            break;
+        }
+        
         // debug mode
         Boolean debug = LayoutOptions.getBoolean(parentLayout, OPT_DEBUG_INFO);
         if (debug) {
@@ -213,6 +232,8 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             return 0;
         } else if (OPT_EDGE_ROUTING.equals(optionId)) {
             return LayeredEdgeRouting.POLYLINE;
+        } else if (OPT_NODE_LAYERING.equals(optionId)) {
+            return LayeredNodeLayering.NETWORK_SIMPLEX;
         } else {
             return super.getDefault(optionId);
         }
