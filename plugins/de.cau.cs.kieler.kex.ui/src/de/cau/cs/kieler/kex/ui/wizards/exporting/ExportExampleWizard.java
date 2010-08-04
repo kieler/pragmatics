@@ -6,6 +6,7 @@ import java.util.Map;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.swt.SWT;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.ExampleElement;
@@ -38,8 +39,8 @@ public class ExportExampleWizard extends Wizard implements IWizard {
 		try {
 			ExampleManager.get().exportExample(result);
 		} catch (KielerException e) {
-			MessageDialog.openError(getShell(),
-					"Error while exporting example.", e.getMessage());
+			MessageDialog.open(MessageDialog.INFORMATION, getShell(),
+					"Error while exporting example.", e.getMessage(), SWT.NONE);
 			return false;
 		}
 		return true;
