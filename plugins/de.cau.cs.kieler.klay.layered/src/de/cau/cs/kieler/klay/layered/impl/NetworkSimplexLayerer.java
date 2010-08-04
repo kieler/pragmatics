@@ -77,6 +77,11 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      */
     private boolean[] treeEdge;
 
+    /**
+     * A flag indicating whether a specified edge has been visited during DFS-traversal.
+     */
+    private boolean[] visited;
+
     /** The postorder traversal ID of each node determined by {@code postorderTraversal()}. */
     private int[] poID;
 
@@ -177,8 +182,10 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             cutvalue = new int[numEdges];
             tightness = new int[numEdges];
             treeEdge = new boolean[numEdges];
+            visited = new boolean[numEdges];
         } else {
             Arrays.fill(treeEdge, false);
+            Arrays.fill(visited, false);
         }
         postOrder = 1;
     }
@@ -203,7 +210,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             getMonitor().done();
             return;
         }
-        
+
         // initialize attributes
         layerGraph = layeredGraph;
         layerNodes = nodes;
@@ -246,9 +253,13 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     private void feasibleTree() {
 
         initLayering();
-        while (tightTreeDFS(layerNodes.iterator().next()) < layerNodes.size()) {
+        int a;
+        while ((a = tightTreeDFS(layerNodes.iterator().next())) < layerNodes.size()) {
             // not all nodes have been found
             LEdge e = minimalSlack();
+            System.out.println("\n\n tightTreeNodes = " + a + " ,minSlackEdge = " + (e == null)
+                    + "\n");
+            // FIXME e is null here. Why?
             int delta = layer[e.getTarget().getNode().id] - layer[e.getSource().getNode().id]
                     - tightness[e.id];
             if (treeNode[e.getSource().getNode().id]) {
@@ -259,6 +270,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
                     layer[node.id] += delta;
                 }
             }
+            Arrays.fill(visited, false);
         }
         postorderTraversal(layerNodes.iterator().next());
         naiveCutvalues();
@@ -315,16 +327,19 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         for (LPort port : node.getPorts()) {
             for (LEdge edge : port.getEdges()) {
                 opposite = getOpposite(port, edge).getNode();
-                if (treeEdge[edge.id]) {
-                    // FIXME infinite loop here: an edge just visited will be visited again and again
-                    // edge is a tree edge already
-                    nodeCount += tightTreeDFS(opposite);
-                } else if (!treeNode[opposite.id]
-                        && tightness[edge.id] == layer[edge.getTarget().getNode().id]
-                                - layer[edge.getSource().getNode().id]) {
-                    // non-tree edge and edge is tight
-                    treeEdge[edge.id] = true;
-                    nodeCount += tightTreeDFS(node);
+                if (!visited[edge.id]) {
+                    if (treeEdge[edge.id]) {
+                        // edge is a tree edge already
+                        visited[edge.id] = true;
+                        nodeCount += tightTreeDFS(opposite);
+                    } else if (!treeNode[opposite.id]
+                            && tightness[edge.id] == layer[edge.getTarget().getNode().id]
+                                    - layer[edge.getSource().getNode().id]) {
+                        // edge is a tight non-tree edge
+                        treeEdge[edge.id] = true;
+                        visited[edge.id] = true;
+                        nodeCount += tightTreeDFS(node);
+                    }
                 }
             }
         }
@@ -346,7 +361,8 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         int curSlack;
         for (LEdge edge : layerEdges) {
             if (!treeEdge[edge.id]
-                    && (treeNode[edge.getSource().id] ^ treeNode[edge.getTarget().id])) {
+                    && (treeNode[edge.getSource().getNode().id] ^ treeNode[edge.getTarget()
+                            .getNode().id])) {
                 // edge is non-tree edge and incident on the tree
                 curSlack = layer[edge.getTarget().getNode().id]
                         - layer[edge.getSource().getNode().id] - tightness[edge.id];
@@ -503,6 +519,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         treeEdge[enter.id] = true;
         // update values
         postOrder = 1;
+        Arrays.fill(visited, false);
         postorderTraversal(layerNodes.iterator().next());
         naiveCutvalues();
         // TODO change it back
@@ -549,7 +566,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     private Collection<LEdge> getEdges(final Collection<LNode> nodes) {
 
         // initialize required attributes
-        if (inDegree == null || inDegree.length < nodes.size())  {
+        if (inDegree == null || inDegree.length < nodes.size()) {
             inDegree = new int[nodes.size()];
             outDegree = new int[nodes.size()];
         } else {
@@ -711,7 +728,8 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         int lowest = Integer.MAX_VALUE;
         for (LPort port : node.getPorts()) {
             for (LEdge edge : port.getEdges()) {
-                if (treeEdge[edge.id]) {
+                if (treeEdge[edge.id] && !visited[edge.id]) {
+                    visited[edge.id] = true;
                     lowest = Math
                             .min(lowest, postorderTraversal(getOpposite(port, edge).getNode()));
                 }
