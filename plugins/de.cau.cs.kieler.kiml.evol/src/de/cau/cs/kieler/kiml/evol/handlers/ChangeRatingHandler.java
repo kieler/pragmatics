@@ -20,7 +20,6 @@ import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.ui.EvolView;
-import de.cau.cs.kieler.kiml.evol.ui.EvolView.SelectorTableViewer;
 
 /**
  * Command for changing the rating of an individual.
@@ -45,7 +44,7 @@ public class ChangeRatingHandler extends AbstractHandler {
                 final Genome ind = evolView.getEvolModel().getCurrentIndividual();
                 final int rating = ind.getUserRating() + delta;
                 ind.setUserRating(rating);
-                final SelectorTableViewer tv = evolView.getTableViewer();
+                // final SelectorTableViewer tv = evolView.getTableViewer();
                 evolView.refresh(true);
             }
         }

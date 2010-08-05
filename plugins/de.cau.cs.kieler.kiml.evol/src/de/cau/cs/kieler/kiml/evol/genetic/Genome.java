@@ -203,6 +203,16 @@ public class Genome extends ArrayList<IGene<?>> {
      */
     public void setUserRating(final int theRating) {
         System.out.println("Assign rating " + theRating + " to individual" + ": " + toString());
+        // compare new rating to previous one
+        if (hasUserRating()) {
+            final int oldRating = getUserRating();
+            if (oldRating < theRating) {
+                System.out.println("Ind. was under-rated (" + oldRating + " -> " + theRating + ")");
+            } else if (oldRating > theRating) {
+                System.out.println("Ind. was over-rated (" + oldRating + " -> " + theRating + ")");
+            }
+        }
+
         this.userRating = theRating;
     }
 

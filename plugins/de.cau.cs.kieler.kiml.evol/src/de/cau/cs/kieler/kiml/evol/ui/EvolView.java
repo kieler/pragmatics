@@ -17,21 +17,16 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
-import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.EvolUtil;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
@@ -132,73 +127,8 @@ public class EvolView extends ViewPart {
         public void run() {
             final LayoutViewPart layoutView = LayoutViewPart.findView();
             if (layoutView != null) {
-                try {
-                    Thread.sleep(100);
-                } catch (final InterruptedException exception) {
-                    exception.printStackTrace();
-                }
                 layoutView.refresh(); // async!
             }
-        }
-    }
-
-    /**
-     * Provides labels for LayoutSet table.
-     *
-     * @author bdu
-     *
-     */
-    private class PopulationTableLabelProvider extends LabelProvider implements ITableLabelProvider {
-        /**
-         * Creates a new {@link PopulationTableLabelProvider}.
-         */
-        public PopulationTableLabelProvider() {
-            // Nothing to do here.
-        }
-
-        private final Image currentImage = AbstractUIPlugin.imageDescriptorFromPlugin(
-                EvolPlugin.PLUGIN_ID, "icons/current.png").createImage();
-
-        private final Image defaultImage = AbstractUIPlugin.imageDescriptorFromPlugin(
-                EvolPlugin.PLUGIN_ID, "icons/default.png").createImage();
-
-        @Override
-        public void dispose() {
-            this.currentImage.dispose();
-            this.defaultImage.dispose();
-        }
-
-        public Image getColumnImage(final Object element, final int columnIndex) {
-            switch (columnIndex) {
-            case 0:
-                final int pos = EvolView.this.getEvolModel().getPosition();
-                if ((element instanceof PopulationTableEntry)
-                        && (((PopulationTableEntry) element).getIndex() == pos)) {
-                    return this.currentImage;
-                }
-                return this.defaultImage;
-            default:
-                return null;
-            }
-        }
-
-        // TODO: use CellLabelProviders
-        public String getColumnText(final Object element, final int columnIndex) {
-            //
-            switch (columnIndex) {
-            case 0:
-                return ((PopulationTableEntry) element).getId();
-            case 1:
-                final Genome individual = ((PopulationTableEntry) element).getIndividual();
-                return (individual.size() + " genes, rating: " + individual.getUserRating());
-            default: // do nothing
-                return null;
-            }
-        }
-
-        @Override
-        public boolean isLabelProperty(final Object element, final String property) {
-            return false;
         }
     }
 
@@ -240,7 +170,7 @@ public class EvolView extends ViewPart {
         column2.setWidth(DEFAULT_COLUMN_WIDTH);
         final SelectorTableViewer tv = new SelectorTableViewer(table);
         tv.setContentProvider(new PopulationTableContentProvider());
-        tv.setLabelProvider(new PopulationTableLabelProvider());
+        tv.setLabelProvider(new PopulationTableLabelProvider(this));
         this.tableViewer = tv;
         reset();
 
@@ -250,40 +180,46 @@ public class EvolView extends ViewPart {
             public synchronized void selectionChanged(final SelectionChangedEvent event) {
                 final ISelection selection = event.getSelection();
                 System.out.println("selectionChanged");
-                if ((selection != null) && (!selection.isEmpty())
-                        && (selection instanceof IStructuredSelection)) {
-                    final Object element = ((IStructuredSelection) selection).getFirstElement();
-                    if (element instanceof PopulationTableEntry) {
-                        tv.removeSelectionChangedListener(this);
 
-                        final int oldPos = EvolView.this.getEvolModel().getPosition();
+                if ((selection == null) || (selection.isEmpty())
+                        || !(selection instanceof IStructuredSelection)) {
+                    System.out.println("empty or null selection");
+                    return;
+                }
 
-                        final int newPos = ((PopulationTableEntry) element).getIndex();
-                        EvolView.this.getEvolModel().setPosition(newPos);
+                final Object element = ((IStructuredSelection) selection).getFirstElement();
+                if (element instanceof PopulationTableEntry) {
+                    tv.removeSelectionChangedListener(this);
 
-                        // Refresh the layout according to the selected
-                        // individual.
-                        onSelectIndividual();
-                        System.out.println("after onSelectIndividual");
-                        System.out.println(oldPos + " -> " + newPos);
+                    final int oldPos = EvolView.this.getEvolModel().getPosition();
 
-                        if (this.oldElement != null) {
-                            System.out.println("updating row");
-                            tv.update(this.oldElement, null);
-                            final Object oldElement1 = tv.getElementAt(oldPos);
-                            tv.update(oldElement1, null);
-
-                        } else {
-                            System.out.println("refreshing view");
-                            tv.refresh();
+                    final int newPos = ((PopulationTableEntry) element).getIndex();
+                    EvolView.this.getEvolModel().setPosition(newPos);
+                    MonitoredOperation.runInUI(new Runnable() {
+                        public void run() {
+                            tv.update(element, null);
                         }
-                        tv.update(element, null);
-                        tv.addPostSelectionChangedListener(this);
-                        System.out.println();
+                    }, true);
+
+                    // Refresh the layout according to the selected individual.
+                    onSelectIndividual();
+                    System.out.println("after onSelectIndividual");
+                    System.out.println(oldPos + " -> " + newPos);
+
+                    if (this.oldElement == null) {
                         this.oldElement = element;
                     }
-                } else {
-                    System.out.println("empty or null selection");
+
+                    System.out.println("updating row");
+                    tv.update(this.oldElement, null);
+                    final Object oldElement1 = tv.getElementAt(oldPos);
+                    tv.update(oldElement1, null);
+
+                    tv.update(element, null);
+
+                    tv.addPostSelectionChangedListener(this);
+                    System.out.println();
+                    this.oldElement = element;
                 }
             }
         };
@@ -304,7 +240,8 @@ public class EvolView extends ViewPart {
 
         setInput(this.evolModel.getPopulation());
 
-        EvolUtil.autoRateIndividuals(getPopulation().select(Population.UNRATED_FILTER), null, null);
+        EvolUtil.autoRateIndividuals(getPopulation().select(Population.UNRATED_FILTER),
+                EvolUtil.getCurrentEditor(), null);
 
         Assert.isTrue(this.evolModel.getPosition() >= 0);
         // getTableViewer().selectRow(this.evolModel.getPosition());

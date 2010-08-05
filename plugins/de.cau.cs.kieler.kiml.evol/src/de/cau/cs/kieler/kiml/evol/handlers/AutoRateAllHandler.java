@@ -41,36 +41,44 @@ public class AutoRateAllHandler extends AbstractHandler {
      * @author bdu
      *
      */
-    private static final class EvolutionViewRefreshJob extends Job {
-        public EvolView getView() {
-            return this.view;
-        }
-
+    private static final class RefreshEvolutionViewJob extends Job {
         /**
          *
          */
         private final EvolView view;
 
         /**
-         * Creates a new {@link EvolutionViewRefreshJob} instance.
+         * Creates a new {@link RefreshEvolutionViewJob} instance.
          *
          * @param theName
+         * @param theMonitor
          * @param theView
          */
-        public EvolutionViewRefreshJob(final String theName, final EvolView theView) {
+        RefreshEvolutionViewJob(final String theName, final EvolView theView) {
             super(theName);
             this.view = theView;
         }
 
+        /**
+         * @return the evolution view
+         */
+        protected EvolView getView() {
+            return this.view;
+        }
+
         @Override
-        protected IStatus run(final IProgressMonitor theMonitor) {
+        protected IStatus run(final IProgressMonitor monitor) {
+
+            monitor.subTask("Refreshing the evolution view");
             Display.getDefault().asyncExec(new Runnable() {
                 public void run() {
-                    final EvolView evolView = EvolutionViewRefreshJob.this.getView();
+                    final EvolView evolView = getView();
                     evolView.getTableViewer().refresh();
                     evolView.refresh(false);
                 }
             });
+            monitor.worked(1);
+
             return new Status(IStatus.INFO, EvolPlugin.PLUGIN_ID, 0, "OK", null);
         }
     }
@@ -92,26 +100,29 @@ public class AutoRateAllHandler extends AbstractHandler {
          */
         private final IEditorPart editor;
 
+        private final EvolView view;
+
         /**
          * @param name
          * @param pop
          * @param theEditor
+         * @param theView
          */
-        AutoRateAllJob(final String name, final Population pop, final IEditorPart theEditor) {
+        AutoRateAllJob(
+                final String name,
+                final Population pop,
+                final IEditorPart theEditor,
+                final EvolView theView) {
             super(name);
             Assert.isLegal(pop != null);
             this.population = pop;
             this.editor = theEditor;
+            this.view = theView;
         }
 
         @Override
         protected IStatus run(final IProgressMonitor monitor) {
             try {
-                Thread.sleep(100);
-
-                monitor.beginTask("Performing Auto-rating", this.population.size() + 1);
-
-                Thread.sleep(100);
                 monitor.subTask("Determining Individual Rating");
 
                 // Do the rating.
@@ -122,7 +133,6 @@ public class AutoRateAllHandler extends AbstractHandler {
                             "The auto-rating was cancelled.");
                 }
 
-                Thread.sleep(100);
                 monitor.subTask("Determining the average rating");
 
                 System.out.println("Average rating: " + this.population.getAverageRating());
@@ -133,9 +143,14 @@ public class AutoRateAllHandler extends AbstractHandler {
             } catch (final Exception exception) {
                 return new Status(IStatus.ERROR, EvolPlugin.PLUGIN_ID,
                         "The auto-rating has failed.", exception);
-            } finally {
-                monitor.done();
             }
+        }
+
+        /**
+         * @return the evolution view
+         */
+        protected EvolView getView() {
+            return this.view;
         }
     }
 
@@ -148,31 +163,46 @@ public class AutoRateAllHandler extends AbstractHandler {
                 (EvolView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                         .findView(EvolView.ID);
 
-        if (view != null) {
-            final Population pop = view.getPopulation();
+        if (view == null) {
+            throw new ExecutionException("The Evolution View could not be found.");
+        }
 
-            final IEditorPart editor = view.getEvolModel().getLastEditor();
+        final Population pop = view.getPopulation();
+        final IEditorPart editor = view.getEvolModel().getLastEditor();
 
-            // Create a job for auto-rating.
-            final Job autoRateAllJob = new AutoRateAllJob("auto-rating", pop, editor);
+        // Create jobs for auto-rating and refreshing.
+        final Job autoRateAllJob = new AutoRateAllJob("auto-rating", pop, editor, view);
+        final Job refreshViewJob = new RefreshEvolutionViewJob("refreshing the view", view);
 
-            // Process the job.
-            final IProgressMonitor monitor = Job.getJobManager().createProgressGroup();
+        // Process the jobs.
+        final IProgressMonitor monitor = Job.getJobManager().createProgressGroup();
+
+        try {
             final int size = pop.size();
+
+            monitor.beginTask("Performing Auto-rating", size + 1 + 1);
+
             autoRateAllJob.setProgressGroup(monitor, size + 1);
-            autoRateAllJob.setPriority(Job.INTERACTIVE);
             autoRateAllJob.setUser(true);
             autoRateAllJob.schedule();
 
-            final Job refreshJob =
-                    new EvolutionViewRefreshJob("Refresh table viewer", view);
+            refreshViewJob.setProgressGroup(monitor, 1);
+            refreshViewJob.setUser(true);
+            refreshViewJob.schedule();
 
-            refreshJob.setUser(false);
-            refreshJob.setPriority(Job.DECORATE);
-            refreshJob.schedule(900);
+            // XXX: Auto-rating and refreshing are divided into two separate
+            // jobs. We want the autorating to be finished before the view is
+            // being refreshed. This is done by joining on the auto-rating job,
+            // but this way for some unknown reason the diligently notified
+            // progress bar is not shown. Where is the progress bar? :(
 
-        } else {
-            throw new ExecutionException("The Evolution View could not be found.");
+            autoRateAllJob.join();
+            refreshViewJob.join();
+
+        } catch (final InterruptedException exception) {
+            exception.printStackTrace();
+        } finally {
+            monitor.done();
         }
 
         return null;
