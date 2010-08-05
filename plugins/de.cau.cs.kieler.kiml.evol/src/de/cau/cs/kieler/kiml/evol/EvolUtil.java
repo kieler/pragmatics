@@ -335,9 +335,7 @@ public final class EvolUtil {
         // the whole diagram.
         final DiagramLayoutManager manager =
                 EclipseLayoutServices.getInstance().getManager(editor, null);
-        if (manager == null) {
-            return;
-        }
+        Assert.isNotNull(manager);
 
         /**
          *
@@ -375,19 +373,15 @@ public final class EvolUtil {
 
             final int rating = EvolUtil.layoutAndMeasure(manager, editor);
 
-            // compare new rating to previous one
-            if (ind.hasUserRating()) {
-                final int oldRating = ind.getUserRating();
-                if (oldRating < rating) {
-                    System.out.println("Ind. under-rated (" + oldRating + " -> " + rating + ")");
-                } else if (oldRating > rating) {
-                    System.out.println("Ind. was over-rated (" + oldRating + " -> " + rating + ")");
-                }
-            }
-
             ind.setUserRating(rating);
 
             if (monitor != null) {
+                try {
+                    Thread.sleep(500);
+                } catch (final InterruptedException exception) {
+                    // TODO Auto-generated catch block
+                    exception.printStackTrace();
+                }
                 monitor.worked(1);
             }
         }
@@ -655,7 +649,8 @@ public final class EvolUtil {
             final Object value = gene.getValue();
             final Object id = gene.getId();
             final LayoutOptionData data = layoutServices.getLayoutOptionData((String) id);
-            Assert.isNotNull(data);
+            Assert.isNotNull(data, "No data for " + id);
+
             switch (data.getType()) {
             case BOOLEAN:
                 if (value instanceof Boolean) {
@@ -745,6 +740,10 @@ public final class EvolUtil {
         if (learnableCount > 0) {
             uniformProb = 1.0 / learnableCount;
         }
+
+        final GeneFactory gf = new GeneFactory();
+
+        // Iterate the property descriptors of the property source.
         for (final IPropertyDescriptor p : propertyDescriptors) {
 
             final String id = (String) p.getId();
@@ -767,7 +766,6 @@ public final class EvolUtil {
             } else {
                 // learnable option?
                 if (learnables.contains(id)) {
-                    final GeneFactory gf = new GeneFactory();
                     final IGene<?> gene = gf.newGene(id, value, uniformProb);
                     Assert.isNotNull(gene, "Failed to create gene for " + id);
                     result.add(gene);
@@ -777,6 +775,21 @@ public final class EvolUtil {
             }
         }
         Assert.isTrue(learnableCount == result.size());
+
+        // Add meta-evolution genes for the layout metrics.
+        final Set<String> metricIds = EvolutionService.getInstance().getLayoutMetricsIds();
+
+        for (final String id : metricIds) {
+            final TypeInfo<Float> typeInfo =
+                    new TypeInfo<Float>(1.0f, 0.0f, 5.0f,
+                            UniversalGene.STRICTLY_POSITIVE_FLOAT_FORMATTER, Float.class);
+
+            final MutationInfo mutationInfo = new MutationInfo(1.0, .3, Distribution.GAUSSIAN);
+            final IGene<?> gene = gf.newGene(id, 1.0f, typeInfo, mutationInfo);
+            Assert.isNotNull(gene, "Failed to create gene for " + id);
+            result.add(gene);
+        }
+
         return result;
     }
 

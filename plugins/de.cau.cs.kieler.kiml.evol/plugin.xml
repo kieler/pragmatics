@@ -25,12 +25,6 @@
       </data>
       <data
             distribution="GAUSSIAN"
-            lowerBound="0"
-            name="Border Spacing"
-            option="de.cau.cs.kieler.layout.options.borderSpacing">
-      </data>
-      <data
-            distribution="GAUSSIAN"
             lowerBound="0.0"
             option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance"
             upperBound="1.0e7">
@@ -219,6 +213,18 @@
             name="Force Scaling Factor"
             option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.forceScalingFactor"
             upperBound="1000">
+      </data>
+      <data
+            distribution="GAUSSIAN"
+            lowerBound="0"
+            name="Border Spacing"
+            option="de.cau.cs.kieler.layout.options.borderSpacing">
+      </data>
+      <data
+            distribution="GAUSSIAN"
+            lowerBound="0"
+            option="de.cau.cs.kieler.kiml.ogdf.option.davidsonHarel.desiredEdgeLength"
+            upperBound="1.0e7">
       </data>
    </extension>
    <extension
