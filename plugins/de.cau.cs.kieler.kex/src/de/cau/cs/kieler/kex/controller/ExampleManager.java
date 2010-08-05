@@ -104,14 +104,22 @@ public class ExampleManager {
 		// TODO implementiernen der location.
 		// String destLocation = (String) properties
 		// .get(ExampleElement.DEST_LOCATION);
-		// TODO plattform unabhängiger pfadbau in externe methode auslagern,
-		// wenn nciht schon der richte pfad vom ui runtergereicht wird.
+		// TODO plattform unabhï¿½ngiger pfadbau in externe methode auslagern,
+		// wenn nicht schon der richte pfad vom ui runtergereicht wird.
 		// just a test
 		StringBuffer destLocation = new StringBuffer();
+		// windows test
+		destLocation.append("").append(File.separatorChar);
+		destLocation.append("bachelorarbeit").append(File.separatorChar);
 		destLocation.append("E:").append(File.separatorChar);
 		destLocation.append("bachelorarbeit").append(File.separatorChar);
 		destLocation.append("3_6 Workspace").append(File.separatorChar);
 		destLocation.append("de.cau.cs.kieler.core.kex.models");
+
+		// linux test
+		// destLocation
+		// .append("/home/pkl/kieler-workspace/de.cau.cs.kieler.core.kex.models");
+
 		Example mappedExample = ExampleExportUtil.mapToExample(properties);
 		ExampleExportUtil.checkDuplicate(mappedExample, extensionCollector,
 				onlineCollector);

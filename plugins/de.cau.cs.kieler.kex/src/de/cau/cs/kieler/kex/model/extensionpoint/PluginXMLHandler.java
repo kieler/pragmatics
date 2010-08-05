@@ -38,7 +38,7 @@ class PluginXMLHandler {
 	private static final String PLUGIN_XML = "plugin.xml";
 
 	private File filterPluginXML(final File location) throws KielerException {
-		// TODO evtl. ist der check auf ein java pluginproject schöner, als nach
+		// TODO evtl. ist der check auf ein java pluginproject schï¿½ner, als nach
 		// der plugin.xml zu suchen.
 
 		// TODO check if File parent = new File(location.getPath) besser ist...
@@ -137,53 +137,56 @@ class PluginXMLHandler {
 	// know if it works...
 	// and has to ziehen auseinander.
 	private void modifyPluginXML(final Example example) throws KielerException {
-		Element root = this.parsedXML.getDocumentElement();
 		NodeList plugins = this.parsedXML.getElementsByTagName("plugin");
 		int pluginsLength = plugins.getLength();
-		// if(pluginsLength == 0 || pluginsLength > 1)
-		// dann fehlerfall überlegen, oder sogar drauf reagieren können, evtl
-		// dann anlegen.
-
-		Node extPointKEX = null;
+		if (pluginsLength == 0 || pluginsLength > 1) {
+			// dann fehlerfall ï¿½berlegen, oder sogar drauf reagieren kï¿½nnen,
+			// evtl
+			// dann anlegen.
+		}
+		Node extensionKEX = null;
 		NodeList childNodes = plugins.item(0).getChildNodes();
 		int length = childNodes.getLength();
 		for (int i = 0; i < length; i++) {
 			Node node = childNodes.item(i);
-			// FIXME für die plugin tags und attribute benötigen wir eine
+			// FIXME fï¿½r die plugin tags und attribute benï¿½tigen wir eine
 			// enumeration
 			if ("extension".equals(node.getNodeName())) {
 				NamedNodeMap attributes = node.getAttributes();
 				Node namedItem = attributes.getNamedItem("point");
-				if ("de.cau.cs.kieler.kex".equals(namedItem.getNodeValue()))
-					extPointKEX = node;
-				break;
+				if ("de.cau.cs.kieler.kex".equals(namedItem.getNodeValue())) {
+					extensionKEX = node;
+					break;
+				}
 			}
 		}
 
 		// if (item.getLocalName().equals("de.cau.cs.kieler.kex")) {
-		// TODO ggf zusätzlichen check einbauen, ob exampleId schon
-		// existiert, normalerweise wird vorher geprüft.
-		// es können aber mehrere examples exportiert werden
+		// TODO ggf zusï¿½tzlichen check einbauen, ob exampleId schon
+		// existiert, normalerweise wird vorher geprï¿½ft.
+		// es kï¿½nnen aber mehrere examples exportiert werden
 		// ohne zwischendurch neu zu bauen.
-		testMethod(extPointKEX.getChildNodes());
+		if (extensionKEX != null)
+			testMethod(extensionKEX.getChildNodes());
+		else {
+			// create extension KEX
+		}
 
-		// xmlDoc=loadXMLDoc("books.xml");
-		//
-		// Element createdElement = pluginXML.createElement("example");
-		// createdElement.setAttribute("contact", "pkl@PluginTest");
-		// createdElement.setAttribute("description", "pluginTest description");
-		// createdElement.setAttribute("id",
-		// "de.cau.cs.kieler.pluginExportTest");
-		// createdElement.setAttribute("name", "pluginExportTest");
-		// Element createdElement2 =
-		// pluginXML.createElement("example_resource");
-		// createdElement2.setAttribute("category",
-		// "de.cau.cs.kieler.dataflow");
-		// createdElement2.setAttribute("is_head_resource", "true");
-		// // pfad aus dem workspace der kieler instance
-		// createdElement2.setAttribute("resource", "null");
-		// createdElement.appendChild(createdElement2);
-		root.appendChild(parsedXML.createElement("ladida"));
+		Element createdElement = parsedXML.createElement("example");
+		createdElement.setAttribute("contact", "pkl@PluginTest");
+		createdElement.setAttribute("description", "pluginTest description");
+		createdElement.setAttribute("id", "de.cau.cs.kieler.pluginExportTest");
+		createdElement.setAttribute("name", "pluginExportTest");
+		Element createdElement2 = parsedXML.createElement("example_resource");
+		createdElement2.setAttribute("category", "de.cau.cs.kieler.dataflow");
+		createdElement2.setAttribute("is_head_resource", "true");
+		// pfad aus dem workspace der kieler instance
+		createdElement2.setAttribute("resource", "null");
+		createdElement.appendChild(createdElement2);
+		extensionKEX.appendChild(createdElement);
+
+		// Element root = this.parsedXML.getDocumentElement();
+		// root.appendChild(parsedXML.createElement("ladida"));
 
 		// setting up a transformer
 		TransformerFactory transfac = TransformerFactory.newInstance();
