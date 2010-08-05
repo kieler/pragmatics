@@ -220,10 +220,10 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
      * every child of a node in the DFS tree. During the main part of the algorithm, the nodes are
      * traversed in reversed order of their DFI, building up the graph from the leafs to the roots.
      * For every traversed node, the tree edges are embedded, then the {@code walkup} method in
-     * invoked for every node that is connected to the traversed node by a backedge. The {@code
-     * walkup} marks all virtual root nodes on the path between these two nodes. Then, the {@code
-     * walkup} digests this information, by traversing the graph over all marked nodes, until it
-     * finds the node where the backedge should be embedded. At this point, all traversed virtual
+     * invoked for every node that is connected to the traversed node by a backedge. The
+     * {@code walkup} marks all virtual root nodes on the path between these two nodes. Then, the
+     * {@code walkup} digests this information, by traversing the graph over all marked nodes, until
+     * it finds the node where the backedge should be embedded. At this point, all traversed virtual
      * roots are merged into their parent nodes and the backedge is embedded. To keep all endpoints
      * of future backedges on the external face, the biconnnected components containing these nodes
      * may have to be flipped. This is done my marking the nodes to flip during {@code walkup}.
@@ -317,6 +317,7 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
                 for (IEdge e : missing) {
                     this.graph.removeEdge(e);
                     this.missingEdges.add(e);
+                    this.planar = false;
                 }
                 missing.clear();
             }
@@ -524,8 +525,8 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
     /**
      * Embed a back edge in the new graph. The {@code walkdown} traverses the external face of a
      * biconnected component, starting on a root node of the currently processed node in the main
-     * algorithm. Whenever it encounters a root node, that is marked as pertinent by the {@code
-     * walkup} method, it jumps to the corresponding biconnected component, and resumes the
+     * algorithm. Whenever it encounters a root node, that is marked as pertinent by the
+     * {@code walkup} method, it jumps to the corresponding biconnected component, and resumes the
      * traversal there. Eventually the method will reach one of the node marked for a backedge. Then
      * all biconnected components that were traversed along the way are merged into one biconnected
      * component, all virtual roots are removed, and the backedge is embedded. Whenever the endpoint

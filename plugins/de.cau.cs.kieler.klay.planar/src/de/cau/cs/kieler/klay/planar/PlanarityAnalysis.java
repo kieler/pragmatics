@@ -56,6 +56,7 @@ public class PlanarityAnalysis implements IAnalysis {
             IGraph graph = this.factory.createGraphFromKGraph(parentNode);
 
             // Planarity Testing
+            this.tester.reset();
             planar = this.tester.testPlanarity(graph);
 
         } catch (InconsistentGraphModelException e) {
