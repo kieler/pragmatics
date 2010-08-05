@@ -42,7 +42,10 @@ public class ExtPointExampleCreator {
 		if (sourceProject == null)
 			throw new KielerException("There is no project for given project:"
 					+ projectId);
-		xmlHandler.addExtension(sourceProject.getName(), destFile, example);
+		xmlHandler.addExtension(destFile, example);
+
+		// TODO example resource aus project id zusammenbasteln bzw. resource
+		// mapping betreiben !VIEL SPASS!
 		createExampleResources(destFile, example.getResources());
 	}
 

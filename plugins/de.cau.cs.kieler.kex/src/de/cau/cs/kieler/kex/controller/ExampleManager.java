@@ -109,8 +109,6 @@ public class ExampleManager {
 		// just a test
 		StringBuffer destLocation = new StringBuffer();
 		// windows test
-		destLocation.append("").append(File.separatorChar);
-		destLocation.append("bachelorarbeit").append(File.separatorChar);
 		destLocation.append("E:").append(File.separatorChar);
 		destLocation.append("bachelorarbeit").append(File.separatorChar);
 		destLocation.append("3_6 Workspace").append(File.separatorChar);

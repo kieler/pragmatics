@@ -5,8 +5,7 @@ import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.StringWriter;
+import java.net.URL;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -14,6 +13,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -26,6 +26,8 @@ import org.xml.sax.SAXException;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.model.Example;
+import de.cau.cs.kieler.kex.model.ExampleResource;
+import de.cau.cs.kieler.kex.model.ExtPointConstants;
 
 /**
  * manages plugin.xml changes.
@@ -38,7 +40,8 @@ class PluginXMLHandler {
 	private static final String PLUGIN_XML = "plugin.xml";
 
 	private File filterPluginXML(final File location) throws KielerException {
-		// TODO evtl. ist der check auf ein java pluginproject schï¿½ner, als nach
+		// TODO evtl. ist der check auf ein java pluginproject schï¿½ner, als
+		// nach
 		// der plugin.xml zu suchen.
 
 		// TODO check if File parent = new File(location.getPath) besser ist...
@@ -49,6 +52,7 @@ class PluginXMLHandler {
 
 				public boolean accept(File pathname) {
 					if (pathname.getName().equals(PLUGIN_XML))
+						// TODO pathname auslesen und
 						return true;
 					return false;
 				}
@@ -86,58 +90,54 @@ class PluginXMLHandler {
 				.parse(file);
 	}
 
-	public void addExtension(String projectId, File location, Example example)
+	/**
+	 * NOTE: parseElement could only be a type of Example or a example category
+	 * in String representation.
+	 * 
+	 * @param location
+	 * @param parseElement
+	 * @throws KielerException
+	 */
+	public void addExtension(File location, Object parseElement)
 			throws KielerException {
 		try {
-			// FIXME mit projectId wird das nicht gehen, brauche externen
-			// pfad...
 			File pluginXML = filterPluginXML(location);
 			parsedXML = parserPluginXML(pluginXML);
-			// TODO think about a exampleName.meta for informations of example
-			// instead of this example here.
-			modifyPluginXML(example);
+			Node extensionKEX = filterExtensionKEX();
+			// TODO only for testing!
+			testMethod(extensionKEX.getChildNodes());
+			if (parseElement instanceof Example) {
+				extensionKEX.appendChild(toNode((Example) parseElement));
+			}
+			if (parseElement instanceof String) {
+				extensionKEX.appendChild(toNode((String) parseElement));
+			} else
+				throw new RuntimeException(
+						"PluginXMLHandler: wrong parameter for parseElement.");
+			// TODO only for testing!
+			testMethod(extensionKEX.getChildNodes());
+			writePluginXML(pluginXML.getAbsolutePath());
 			// TODO plugin.xml erweitern... mit geparstem file
 		} catch (ParserConfigurationException e) {
 			// TODO KexConstants einfuehren, d.h. eigene Klasse und diese
 			// meldungen hier drin sammeln. (siehe visor constants)
-			String msg = "Error appears while parsing plugin.xml of project: "
-					+ projectId;
+			String msg = "Could not parse plugin.xml: "
+					+ e.getLocalizedMessage();
 			throw new KielerException(msg, e);
 		} catch (SAXException e) {
-			String msg = "Error appears while parsing plugin.xml of project: "
-					+ projectId;
+			String msg = "Could not parse plugin.xml: "
+					+ e.getLocalizedMessage();
 			throw new KielerException(msg, e);
 		} catch (IOException e) {
-			String msg = "Error appears while parsing plugin.xml of project: "
-					+ projectId;
+			String msg = "Could not parse plugin.xml: "
+					+ e.getLocalizedMessage();
 			throw new KielerException(msg, e);
 		}
 	}
 
-	private void extendPluginXML(Document pluginXML, final String category) {
-		NodeList nl = pluginXML.getChildNodes();
-		int nlLength = nl.getLength();
-		for (int i = 0; i < nlLength; i++) {
-			nl.item(i);
-		}
-
-		// parsedXML nun nutzen und aufloesen...
-		// TODO Beispiel fï¿½r doc zugriff nun erweitern...
-		// NodeList nl = node.getChildNodes();
-		//
-		// for (int i = 0, cnt = nl.getLength(); i < cnt; i++) {
-		// System.out.println("[" + nl.item(i) + "]");
-		//
-		// visit(nl.item(i), level + 1);
-		// }
-
-	}
-
-	// TODO has to change, cause its not really performant and I do not really
-	// know if it works...
-	// and has to ziehen auseinander.
-	private void modifyPluginXML(final Example example) throws KielerException {
-		NodeList plugins = this.parsedXML.getElementsByTagName("plugin");
+	private Node filterExtensionKEX() {
+		NodeList plugins = this.parsedXML
+				.getElementsByTagName(PluginXmlConstants.PLUGIN);
 		int pluginsLength = plugins.getLength();
 		if (pluginsLength == 0 || pluginsLength > 1) {
 			// dann fehlerfall ï¿½berlegen, oder sogar drauf reagieren kï¿½nnen,
@@ -149,12 +149,12 @@ class PluginXMLHandler {
 		int length = childNodes.getLength();
 		for (int i = 0; i < length; i++) {
 			Node node = childNodes.item(i);
-			// FIXME fï¿½r die plugin tags und attribute benï¿½tigen wir eine
-			// enumeration
-			if ("extension".equals(node.getNodeName())) {
+			if (PluginXmlConstants.EXTENSION.equals(node.getNodeName())) {
 				NamedNodeMap attributes = node.getAttributes();
-				Node namedItem = attributes.getNamedItem("point");
-				if ("de.cau.cs.kieler.kex".equals(namedItem.getNodeValue())) {
+				Node namedItem = attributes
+						.getNamedItem(PluginXmlConstants.POINT);
+				if (ExtPointConstants.EXT_POINT
+						.equals(namedItem.getNodeValue())) {
 					extensionKEX = node;
 					break;
 				}
@@ -171,94 +171,94 @@ class PluginXMLHandler {
 		else {
 			// create extension KEX
 		}
+		return extensionKEX;
+	}
 
-		Element createdElement = parsedXML.createElement("example");
-		createdElement.setAttribute("contact", "pkl@PluginTest");
-		createdElement.setAttribute("description", "pluginTest description");
-		createdElement.setAttribute("id", "de.cau.cs.kieler.pluginExportTest");
-		createdElement.setAttribute("name", "pluginExportTest");
-		Element createdElement2 = parsedXML.createElement("example_resource");
-		createdElement2.setAttribute("category", "de.cau.cs.kieler.dataflow");
-		createdElement2.setAttribute("is_head_resource", "true");
-		// pfad aus dem workspace der kieler instance
-		createdElement2.setAttribute("resource", "null");
-		createdElement.appendChild(createdElement2);
-		extensionKEX.appendChild(createdElement);
-
-		// Element root = this.parsedXML.getDocumentElement();
-		// root.appendChild(parsedXML.createElement("ladida"));
-
-		// setting up a transformer
-		TransformerFactory transfac = TransformerFactory.newInstance();
-		Transformer trans;
+	private void writePluginXML(String pluginPath) throws KielerException {
 		try {
-			trans = transfac.newTransformer();
-		} catch (TransformerConfigurationException e1) {
-			throw new KielerException(e1.getMessage());
-		}
-
-		// generating string from xml tree
-		StringWriter sw = new StringWriter();
-		StreamResult result = new StreamResult(sw);
-		DOMSource source = new DOMSource(parsedXML);
-		try {
-			trans.transform(source, result);
-		} catch (TransformerException e) {
-			throw new KielerException(e.getMessage());
-		}
-		String xmlString = sw.toString();
-
-		// Saving the XML content to File
-		OutputStream f0;
-		byte buf[] = xmlString.getBytes();
-		try {
-			f0 = new FileOutputStream("testXML.xml");
+			Transformer transformer = TransformerFactory.newInstance()
+					.newTransformer();
+			DOMSource source = new DOMSource(parsedXML);
+			FileOutputStream os = new FileOutputStream(new File(pluginPath));
+			StreamResult result = new StreamResult(os);
+			transformer.transform(source, result);
+		} catch (TransformerConfigurationException e) {
+			throwPluginError(e);
+		} catch (TransformerFactoryConfigurationError e) {
+			throwPluginError(e);
 		} catch (FileNotFoundException e) {
-			throw new KielerException(e.getMessage());
+			throwPluginError(e);
+		} catch (TransformerException e) {
+			throwPluginError(e);
 		}
-		for (int i = 0; i < buf.length; i++) {
-			try {
-				f0.write(buf[i]);
-			} catch (IOException e) {
-				throw new KielerException(e.getMessage());
-			}
-		}
-		try {
-			f0.close();
-		} catch (IOException e) {
-			throw new KielerException(e.getMessage());
-		}
-		buf = null;
 
+	}
+
+	private void throwPluginError(Throwable e) throws KielerException {
+		throw new KielerException(
+				"Could not write to plugin.xml of given project.\n"
+						+ e.getLocalizedMessage());
 	}
 
 	private void testMethod(NodeList childNodes) {
 		int length = childNodes.getLength();
-		for (int i = 0; i < length; i++)
-			if ("example".equals(childNodes.item(i).getNodeName())) {
-				Node item = childNodes.item(i);
-				item.getAttributes();
+		for (int i = 0; i < length; i++) {
+			Node item = childNodes.item(i);
+			if (ExtPointConstants.EXAMPLE.equals(item.getNodeName())) {
+				NamedNodeMap attributes = item.getAttributes();
+				int attLength = attributes.getLength();
+				for (int j = 0; j < attLength; j++) {
+					Node attItem = attributes.item(j);
+					System.out.println(new StringBuffer()
+							.append(attItem.getNodeName()).append("; ")
+							.append(attItem.getNodeType()).toString());
+				}
 			}
+		}
 	}
 
-	private Node toNode(String category) {
-		return null;
+	private Node toNode(String categoryId) {
+		Element createdElement = parsedXML
+				.createElement(ExtPointConstants.CATEGORY);
+		createdElement.setAttribute(ExtPointConstants.ID, categoryId);
+		return createdElement;
 	}
 
 	private Node toNode(Example example) {
-		// - <example contact="pkl@informatik.uni-kiel.de"
-		// description="just a test"
-		// id="de.cau.cs.kieler.core.kex.models.flight" name="Flight"
-		// version="1.0">
-		// <example_resource category="de.cau.cs.kieler.dataflow"
-		// is_head_resource="true" resource="dataflow/Flight.dataflow_diagram"/>
-		// <example_resource category="de.cau.cs.kieler.dataflow"
-		// is_head_resource="false"
-		// resource="dataflow/Orthogonal.dataflow_diagram" />
-		// </example>
+		// TODO check nullpointer, they shouldn´t set to plugin.xml
+		Element createdExample = parsedXML
+				.createElement(ExtPointConstants.EXAMPLE);
+		createdExample.setAttribute(ExtPointConstants.ID, example.getId());
+		createdExample.setAttribute(ExtPointConstants.CONTACT,
+				example.getContact());
+		createdExample.setAttribute(ExtPointConstants.DESCRIPTION,
+				example.getDescription());
+		createdExample.setAttribute(ExtPointConstants.NAME, example.getName());
+		createdExample.setAttribute(ExtPointConstants.VERSION, example
+				.getVersion().toString());
+		for (ExampleResource exResource : example.getResources()) {
+			createdExample.appendChild(toNode(exResource));
+		}
+		return createdExample;
+	}
 
-		// return new NodeImpl();
-
-		return null;
+	private Node toNode(ExampleResource exResource) {
+		// TODO check nullpointer, they shouldn´t set to plugin.xml
+		// but here are no nullpointer allowed.
+		Element createdExResource = parsedXML
+				.createElement(ExtPointConstants.EXAMPLE_RESOURCE);
+		createdExResource.setAttribute(ExtPointConstants.CATEGORY,
+				exResource.getCategory());
+		createdExResource.setAttribute(ExtPointConstants.IS_HEAD_RESOURCE,
+				(exResource.isHeadResource() ? "true" : "false"));
+		// pfad des neuen platzes
+		for (URL resource : exResource.getResources()) {
+			Element createdResource = parsedXML
+					.createElement(ExtPointConstants.RESOURCE);
+			createdResource.setAttribute(ExtPointConstants.PATH,
+					resource.getPath());
+			createdExResource.appendChild(createdResource);
+		}
+		return createdExResource;
 	}
 }
