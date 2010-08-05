@@ -31,15 +31,6 @@
       </wizard>
    </extension>
    <extension
-         point="org.eclipse.ui.importWizards">
-      <wizard
-            category="de.cau.cs.kieler"
-            class="de.cau.cs.kieler.graphs.wizards.ImportGraphWizard"
-            id="de.cau.cs.kieler.graphs.wizards.importGraph"
-            name="Graph File">
-      </wizard>
-   </extension>
-   <extension
          point="org.eclipse.gmf.runtime.diagram.ui.editpolicyProviders">
       <editpolicyProvider
             class="de.cau.cs.kieler.graphs.custom.GraphsDeletionPolicyProvider">
