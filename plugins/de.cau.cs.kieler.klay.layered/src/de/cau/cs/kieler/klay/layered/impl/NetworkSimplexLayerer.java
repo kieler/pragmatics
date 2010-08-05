@@ -155,6 +155,8 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      */
     private void initialize(final Collection<LNode> nodes, final Collection<LEdge> edges) {
 
+        super.reset();
+
         int numNodes = nodes.size();
         int numEdges = edges.size();
 
@@ -206,7 +208,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      */
     public void layer(final Collection<LNode> nodes, final LayeredGraph layeredGraph) {
 
-        getMonitor().begin("network simplex layering", 1);
+        getMonitor().begin("network-simplex layering", 1);
         if (nodes.size() < 1) {
             getMonitor().done();
             return;
@@ -225,13 +227,14 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             // current layering is not optimal
             exchange(e, enterEdge(e));
         }
-        int numLayers = normalize();
+        // int numLayers =
+        normalize();
         balance();
 
         // put nodes into their assigned layers
-        for (int i = layerGraph.getLayers().size(); i < numLayers; i++) {
-            layerGraph.getLayers().add(0, new Layer(layeredGraph));
-        }
+        // for (int i = layerGraph.getLayers().size(); i < numLayers; i++) {
+        // layerGraph.getLayers().add(0, new Layer(layeredGraph));
+        // }
         for (LNode node : layerNodes) {
             putNode(node);
         }
@@ -282,8 +285,6 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         Arrays.fill(visited, false);
         postorderTraversal(layerNodes.iterator().next());
         naiveCutvalues();
-        // TODO change it back
-
     }
 
     /**
@@ -385,7 +386,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * Helper method for the network simplex layerer. It determines the cut value of each tree edge,
      * which is defined as follows: If the edge is deleted, the spanning tree breaks into two
      * connected components, the head component containing the target node of the edge and the tail
-     * component containing the source node of the edge. The cut value is the sum of the weight of
+     * component containing the source node of the edge. The cut value is the sum of the weights of
      * all edges going from the tail to the head component, including the tree edge itself, minus
      * the sum of the weights of all edges from the head to the tail component.
      */
@@ -404,15 +405,21 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         for (LEdge edge : layerEdges) {
             if (treeEdge[edge.id]) {
                 cutvalue[edge.id] = 1;
-            }
-            for (LEdge cur : layerEdges) {
-                if (!treeEdge[cur.id]) {
-                    source = isInHead(cur.getSource().getNode(), edge);
-                    target = isInHead(cur.getTarget().getNode(), edge);
-                    if (target && !source) {
-                        cutvalue[edge.id]++;
-                    } else if (source && !target) {
-                        cutvalue[edge.id]--;
+                for (LEdge cur : layerEdges) {
+                    if (!treeEdge[cur.id]) {
+                        source = isInHead(cur.getSource().getNode(), edge);
+                        target = isInHead(cur.getTarget().getNode(), edge);
+                        if (target ^ source) {
+                            System.out.println("cvEdge: " + edge.toString() + " ,curEdge: "
+                                    + cur.toString());
+                            System.out.println("sourceInHead: " + source + " ,targetInHead: "
+                                    + target + "\n");
+                        }
+                        if (target && !source) {
+                            cutvalue[edge.id]++;
+                        } else if (source && !target) {
+                            cutvalue[edge.id]--;
+                        }
                     }
                 }
             }
@@ -421,10 +428,10 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
 
     /**
      * Helper method for the network simplex layerer. It shifts all leafs (i.e. source or sink
-     * nodes) as close to their adjacent nodes as possible (i.e. the layering remains feasible).
-     * Note, that this method is originally not part of the network simplex method. It serves as a
-     * first optimization to minimize the number of (partially more expensive) iterations necessary
-     * in the main algorithm.
+     * nodes) as close to their adjacent nodes as possible (i.e. as the layering remains feasible).
+     * Note that this method is originally not part of the network simplex approach. It serves as a
+     * first optimization here to minimize the number of (potentially more expensive) iterations
+     * necessary in the main algorithm.
      */
     private void shiftLeafs() {
 
@@ -465,10 +472,10 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * Helper method for the network simplex layerer. It determines an non-tree edge to replace the
      * given tree edge in the spanning tree. All edges going from the head component to the tail
      * component of the edge will be considered. The edge with a minimal amount of slack (i.e. the
-     * minimal difference between its current to its minimal length) will be returned.
+     * difference between its current to its minimal length) will be returned.
      * 
-     * @param the
-     *            tree edge to determine a non-tree edge to replace with
+     * @param edge
+     *            the tree edge to determine a non-tree edge to be replaced with
      * @return a non-tree edge with a minimal amount of slack to replace the given edge
      * @throws IllegalArgumentException
      *             if the input edge is not a tree edge
@@ -533,7 +540,6 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         Arrays.fill(visited, false);
         postorderTraversal(layerNodes.iterator().next());
         naiveCutvalues();
-        // TODO change it back
     }
 
     /**
@@ -562,7 +568,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         // normalize
         for (LNode node : layerNodes) {
             layer[node.id] -= lowest;
-            
+
         }
         return highest - lowest + 1;
     }
@@ -707,7 +713,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * @return the opposite port from the viewpoint of the given port
      * 
      * @throws IllegalArgumentException
-     *             if the input port is not connected to the input edge
+     *             if the input edge is not connected to the input port
      */
     private LPort getOpposite(final LPort port, final LEdge edge) {
 
@@ -716,7 +722,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         } else if (edge.getTarget().equals(port)) {
             return edge.getSource();
         }
-        throw new IllegalArgumentException("Input port is not connected to the input edge.");
+        throw new IllegalArgumentException("Input edge is not connected to the input port.");
     }
 
     /**
@@ -728,7 +734,13 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      */
     private void putNode(final LNode node) {
 
-        node.setLayer(layerGraph.getLayers().get(layer[node.id]));
+        List<Layer> layers = layerGraph.getLayers();
+        // add additional layers to match required amount
+        for (int i = layerGraph.getLayers().size() - 1; i < layer[node.id]; i++) {
+            layers.add(layers.size(), new Layer(layerGraph));
+        }
+
+        node.setLayer(layers.get(layer[node.id]));
     }
 
     /**
@@ -756,7 +768,8 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         }
         poID[node.id] = postOrder;
         lowestPoID[node.id] = Math.min(lowest, postOrder++);
-        System.out.println(node.toString() + ", poID = " + poID[node.id] + ", lowestpoID = " + lowestPoID[node.id]);
+        System.out.println(node.toString() + ", poID = " + poID[node.id] + ", lowestpoID = "
+                + lowestPoID[node.id]);
         return lowestPoID[node.id];
     }
 
@@ -778,19 +791,20 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      */
     private boolean isInHead(final LNode node, final LEdge edge) {
 
+        // FIXME incorrect cut value, if source has an incoming or outgoing non-tree edge
         LNode source = edge.getSource().getNode();
-        if (poID[source.id] < poID[edge.getTarget().getNode().id]) {
-            // root is in the head component
-            if (lowestPoID[source.id] <= poID[node.id] && poID[node.id] <= poID[source.id]) {
+        if (lowestPoID[source.id] <= poID[node.id] && poID[node.id] <= poID[source.id]) {
+            if (poID[source.id] < poID[edge.getTarget().getNode().id]) {
+                // root is in the head component
                 return false;
             }
             return true;
         }
-        // root is in the tail component
-        if (lowestPoID[source.id] >= poID[node.id] && poID[node.id] >= poID[source.id]) {
-            return false;
+        if (poID[source.id] < poID[edge.getTarget().getNode().id]) {
+            // root is in the head component
+            return true;
         }
-        return true;
+        return false;
     }
 
 }
