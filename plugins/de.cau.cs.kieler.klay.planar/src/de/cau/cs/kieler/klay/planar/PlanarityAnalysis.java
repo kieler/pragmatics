@@ -64,7 +64,7 @@ public class PlanarityAnalysis implements IAnalysis {
         }
 
         progressMonitor.done();
-        return planar;
+        return "The graph is " + (planar ? "" : "not") + " planar.";
     }
 
 }
