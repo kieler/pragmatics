@@ -19,7 +19,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.kgraph.KEdge;
+import de.cau.cs.kieler.core.util.Property;
 import de.cau.cs.kieler.kiml.options.PortType;
+import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -208,7 +211,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             getMonitor().done();
             return;
         }
-
+        // System.out.println("\nfirst node = " + (nodes.iterator().next()));
         // initialize attributes
         layerGraph = layeredGraph;
         layerNodes = nodes;
@@ -222,10 +225,13 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             // current layering is not optimal
             exchange(e, enterEdge(e));
         }
-        normalize();
+        int numLayers = normalize();
         balance();
 
         // put nodes into their assigned layers
+        for (int i = layerGraph.getLayers().size(); i < numLayers; i++) {
+            layerGraph.getLayers().add(0, new Layer(layeredGraph));
+        }
         for (LNode node : layerNodes) {
             putNode(node);
         }
@@ -257,7 +263,6 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             LEdge e = minimalSlack();
             System.out.println("\n\n tightTreeNodes = " + a + " ,minSlackEdge = " + (e == null)
                     + "\n");
-            // FIXME e is null here. Why?
             int delta = layer[e.getTarget().getNode().id] - layer[e.getSource().getNode().id]
                     - minSpan[e.id];
             if (treeNode[e.getSource().getNode().id]) {
@@ -270,6 +275,11 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             }
             Arrays.fill(visited, false);
         }
+        System.out.println(" --- Spanning Tree --- ");
+        for (LEdge edge : layerEdges) {
+            System.out.println(edge.toString() + " ,isTreeEdge = " + treeEdge[edge.id]);
+        }
+        Arrays.fill(visited, false);
         postorderTraversal(layerNodes.iterator().next());
         naiveCutvalues();
         // TODO change it back
@@ -392,7 +402,9 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         boolean source;
         boolean target;
         for (LEdge edge : layerEdges) {
-            cutvalue[edge.id]++;
+            if (treeEdge[edge.id]) {
+                cutvalue[edge.id] = 1;
+            }
             for (LEdge cur : layerEdges) {
                 if (!treeEdge[cur.id]) {
                     source = isInHead(cur.getSource().getNode(), edge);
@@ -438,11 +450,14 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      */
     private LEdge leaveEdge() {
 
+        System.out.println(" --- Cutvalues --- ");
         for (LEdge edge : layerEdges) {
+            System.out.print(edge.toString() + " ,cw = " + cutvalue[edge.id] + "\n");
             if (treeEdge[edge.id] && cutvalue[edge.id] < 0) {
                 return edge;
             }
         }
+        System.out.println("");
         return null;
     }
 
@@ -525,21 +540,31 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * Helper method for the network simplex layerer. It normalizes the layering, i.e. determines
      * the lowest layer assigned to a node and shifts all nodes up or down in the layers
      * accordingly. After termination, the lowest layer assigned to a node will be zeroth (and
-     * therefore first) layer.
+     * therefore first) layer. The number of layers necessary to layer the graph will be returned.
+     * 
+     * @return number of layers necessary to layer the graph
      */
-    private void normalize() {
+    private int normalize() {
 
-        // determine lowest assigned layer
+        int highest = Integer.MIN_VALUE;
+        // determine lowest assigned layer and layer count
         int lowest = Integer.MAX_VALUE;
         for (LNode node : sources) {
             if (layer[node.id] < lowest) {
                 lowest = layer[node.id];
             }
         }
+        for (LNode node : sinks) {
+            if (layer[node.id] > highest) {
+                highest = layer[node.id];
+            }
+        }
         // normalize
         for (LNode node : layerNodes) {
             layer[node.id] -= lowest;
+            
         }
+        return highest - lowest + 1;
     }
 
     private void balance() {
@@ -588,9 +613,6 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
                 } else if (port.getType() == PortType.INPUT) {
                     inDegree[node.id] += port.getEdges().size();
                 }
-                // TODO / FIXME what about undirected edges? how are they handled in the data
-                // structure?
-                // e.g. print out edge size and compare it with drawing in editor.
                 // ports of type "UNDEFINED" are neglected and should not occur
             }
             if (outDegree[node.id] == 0) {
@@ -660,7 +682,6 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         int minimalSpan = Integer.MAX_VALUE;
         int currentSpan;
         for (LPort port : node.getPorts(orientation)) {
-            // TODO do ports with both incoming and outgoing edges occur?
             for (LEdge edge : port.getEdges()) {
                 currentSpan = layer[edge.getTarget().getNode().id]
                         - layer[edge.getSource().getNode().id];
@@ -707,11 +728,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      */
     private void putNode(final LNode node) {
 
-        List<Layer> layers = layerGraph.getLayers();
-        for (int i = layers.size(); i < layer[node.id]; i++) {
-            layers.add(0, new Layer(layerGraph));
-        }
-        node.setLayer(layers.get(layers.size() - layer[node.id]));
+        node.setLayer(layerGraph.getLayers().get(layer[node.id]));
     }
 
     /**
@@ -739,6 +756,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         }
         poID[node.id] = postOrder;
         lowestPoID[node.id] = Math.min(lowest, postOrder++);
+        System.out.println(node.toString() + ", poID = " + poID[node.id] + ", lowestpoID = " + lowestPoID[node.id]);
         return lowestPoID[node.id];
     }
 
