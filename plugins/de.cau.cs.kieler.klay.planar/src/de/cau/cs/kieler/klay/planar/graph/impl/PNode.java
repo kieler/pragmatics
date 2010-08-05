@@ -312,10 +312,6 @@ class PNode extends PGraphElement implements INode, Serializable {
     public void merge(final INode node, final boolean append)
             throws InconsistentGraphModelException {
 
-        if (!(this.getParent() instanceof PGraph)) {
-            throw new InconsistentGraphModelException(
-                    "Attempted to merge nodes in graph of incompatible type.");
-        }
         if (!(node instanceof PNode)) {
             throw new InconsistentGraphModelException(
                     "Attempted to merge node of incompatible type.");
@@ -336,14 +332,13 @@ class PNode extends PGraphElement implements INode, Serializable {
 
         this.getParent().removeNode(node);
         this.copyProperties((PNode) node);
-        ((PGraph) this.getParent()).setChangedFaces();
     }
 
     @Override
     public String toString() {
         String res = "Node (" + this.getID() + "):\n";
         for (IEdge edge : this.edges) {
-            res += "\t" + edge.toString();
+            res += "\t" + edge.toString() + "\n";
         }
         return res;
     }

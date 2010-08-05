@@ -18,7 +18,6 @@ import java.util.List;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -29,9 +28,9 @@ import de.cau.cs.kieler.klay.planar.alg.IPlanarizer;
 import de.cau.cs.kieler.klay.planar.alg.impl.BoyerMyrvoldPlanarityTester;
 import de.cau.cs.kieler.klay.planar.alg.impl.EdgeInsertionPlanarization;
 import de.cau.cs.kieler.klay.planar.alg.impl.LRPlanarityTester;
+import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.IGraphFactory;
-import de.cau.cs.kieler.klay.planar.graph.INode;
 import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
 import de.cau.cs.kieler.klay.planar.graph.impl.PGraphFactory;
 
@@ -129,7 +128,7 @@ public class OrthogonalLayoutProvider extends AbstractLayoutProvider {
             graph = this.factory.createGraphFromKGraph(layoutNode);
 
             // Step 1: Planarity Testing
-            List<Pair<INode, INode>> edges = this.tester.planarSubgraph(graph);
+            List<IEdge> edges = this.tester.planarSubgraph(graph);
 
             // Step 2: Planarization
             this.planarizer.planarize(graph, edges);

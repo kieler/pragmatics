@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.klay.planar.alg.impl;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -59,7 +58,7 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
     private IGraph graph;
 
     /** The list of edges not yet in the planar subgraph. */
-    private LinkedList<Pair<INode, INode>> missingEdges;
+    private LinkedList<IEdge> missingEdges;
 
     /** The result of the planarity testing algorithm. */
     private boolean planar;
@@ -67,14 +66,8 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
     /** The list of graph nodes in reversed DFI order. */
     private LinkedList<INode> reversedNodes;
 
-    /** The list of roots of DFS trees in the graph. */
-    private LinkedList<INode> dfsRoots;
-
     /** The external face of the graph. */
     private ManuallyIterable<INode> externalFace;
-
-    /** Set to remember to-be-removed edges temporarily. */
-    private HashSet<IEdge> tempEdges;
 
     // ======================== Node Properties ====================================================
 
@@ -110,12 +103,6 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
     private int[] ancestor;
 
     /**
-     * The back edge flag of every node. Indicates the number of back edges that should be embedded
-     * between the node and the currently processed node.
-     */
-    private int[] backedgeFlag;
-
-    /**
      * The visited flag of every node. A boolean that indicates if a node has been visited by the
      * walkup method. The boolean value is dependent on the currently traversed root node, so it is
      * true concerning the root node, if the value of the visited flag is equal to the root node.
@@ -145,11 +132,15 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
     private LinkedHashSet<INode>[] separatedChildren;
 
     /**
-     * The list of neighbors of every node. A neighbor of a node is a node that is connected to the
-     * node, but neither the parent nor a child. Hence, the neighbors define where back edges have
-     * to be embedded in the tree.
+     * The list of back edges on every node.
      */
-    private LinkedList<INode>[] neighbors;
+    private LinkedList<IEdge>[] backedges;
+
+    /**
+     * The pertinent back edges of every node. Indicates the back edges that should be embedded
+     * between the node and the currently processed node.
+     */
+    private LinkedList<IEdge>[] pertinentBackedges;
 
     /**
      * The list of root nodes of every node. The root nodes of a node are virtual nodes that are
@@ -175,10 +166,8 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
      */
     public BoyerMyrvoldPlanarityTester() {
         super();
-        this.missingEdges = new LinkedList<Pair<INode, INode>>();
+        this.missingEdges = new LinkedList<IEdge>();
         this.reversedNodes = new LinkedList<INode>();
-        this.dfsRoots = new LinkedList<INode>();
-        this.tempEdges = new HashSet<IEdge>();
         this.planar = true;
     }
 
@@ -187,8 +176,6 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
         this.graph = null;
         this.missingEdges.clear();
         this.reversedNodes.clear();
-        this.dfsRoots.clear();
-        this.tempEdges.clear();
         this.planar = true;
     }
 
@@ -216,8 +203,7 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
      * @throws InconsistentGraphModelException
      *             if the graph is inconsistent
      */
-    public List<Pair<INode, INode>> planarSubgraph(final IGraph g)
-            throws InconsistentGraphModelException {
+    public List<IEdge> planarSubgraph(final IGraph g) throws InconsistentGraphModelException {
         getMonitor().begin("Planarity Testing", 1);
         this.graph = g;
         this.planarity();
@@ -255,8 +241,6 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
     private void planarity() throws InconsistentGraphModelException {
         this.missingEdges.clear();
         this.reversedNodes.clear();
-        this.dfsRoots.clear();
-        this.tempEdges.clear();
         this.externalFace = new ManuallyIterable<INode>(this.graph.getNodeCount());
 
         // Initialize all node properties
@@ -268,35 +252,30 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
         this.flipped = new boolean[size];
         this.lowpoint = new int[size];
         this.ancestor = new int[size];
-        this.backedgeFlag = new int[size];
         this.visited = new INode[size];
         this.parent = new INode[size];
         this.children = new LinkedList[size];
         this.separatedChildren = new LinkedHashSet[size];
-        this.neighbors = new LinkedList[size];
+        this.backedges = new LinkedList[size];
+        this.pertinentBackedges = new LinkedList[size];
         this.roots = new LinkedHashSet[size];
         this.pertinentRoots = new LinkedList[size];
 
         // Find the DFS roots (i.e. nodes in separated connected components)
+        LinkedList<INode> dfsRoots = new LinkedList<INode>();
         for (INode root : this.graph.getNodes()) {
             if (this.visited[root.getID()] == null) {
-                this.dfsRoots.add(root);
+                dfsRoots.add(root);
                 this.findRoots(root);
             }
         }
+        Arrays.fill(this.visited, null);
 
         // Set node properties via DFS
         List<INode>[] buckets = new LinkedList[size];
         int index = 0;
-        for (INode root : this.dfsRoots) {
-            if (this.children[root.getID()] == null) {
-                index = this.preProcessing(root, null, index + 1, buckets);
-            }
-        }
-
-        // Remove edges
-        for (IEdge edge : this.tempEdges) {
-            this.graph.removeEdge(edge);
+        for (INode root : dfsRoots) {
+            index = this.preProcessing(root, null, index + 1, buckets);
         }
 
         // Sort child lists with bucket sort
@@ -315,16 +294,11 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
         for (INode node : this.reversedNodes) {
             int iNode = node.getID();
 
-            // Embed tree edges
-            for (INode root : this.roots[iNode]) {
-                INode child = this.children[root.getID()].getFirst();
-                this.neighbors[child.getID()].remove(node);
-                this.graph.addEdge(root, child);
-            }
-
             // Find pertinent Nodes for all back edges
-            for (INode neighbor : this.neighbors[iNode]) {
+            for (IEdge backedge : this.backedges[iNode]) {
+                INode neighbor = node.getAdjacentNode(backedge);
                 if (this.dfi[neighbor.getID()] > this.dfi[iNode]) {
+                    this.pertinentBackedges[neighbor.getID()].add(backedge);
                     this.walkup(node, neighbor);
                 }
             }
@@ -337,21 +311,21 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
             }
 
             // Check if all edges are embedded
-            for (INode neighbor : this.neighbors[iNode]) {
-                while (this.backedgeFlag[neighbor.getID()] > 0) {
-                    this.missingEdges.add(new Pair<INode, INode>(node, neighbor));
-                    this.planar = false;
-                    this.backedgeFlag[neighbor.getID()]--;
+            for (IEdge backedge : this.backedges[iNode]) {
+                INode neighbor = node.getAdjacentNode(backedge);
+                LinkedList<IEdge> missing = this.pertinentBackedges[neighbor.getID()];
+                for (IEdge e : missing) {
+                    this.graph.removeEdge(e);
+                    this.missingEdges.add(e);
                 }
+                missing.clear();
             }
         }
 
         // Clean up the graph
         Arrays.fill(this.visited, null);
-        for (INode root : this.dfsRoots) {
-            if (this.visited[root.getID()] == null) {
-                this.postProcessing(root, null, false);
-            }
+        for (INode root : dfsRoots) {
+            this.postProcessing(root, null, false);
         }
     }
 
@@ -404,66 +378,70 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
         this.parent[iNode] = parentNode;
         this.separatedChildren[iNode] = new LinkedHashSet<INode>();
         this.children[iNode] = new LinkedList<INode>();
-        this.neighbors[iNode] = new LinkedList<INode>();
+        this.backedges[iNode] = new LinkedList<IEdge>();
+        this.pertinentBackedges[iNode] = new LinkedList<IEdge>();
         this.roots[iNode] = new LinkedHashSet<INode>();
         this.pertinentRoots[iNode] = new LinkedList<INode>();
-        this.externalFace.setSuccessor(node, node, Direction.FWD);
-        this.externalFace.setSuccessor(node, node, Direction.REV);
-
-        // Add a virtual root node as image of the parent node
-        INode bicomp = null;
-        if (parentNode != null) {
-            bicomp = this.graph.addNode();
-            int iParent = parentNode.getID();
-            int iBicomp = bicomp.getID();
-            this.dfi[iBicomp] = this.dfi[iParent];
-            this.lowpoint[iBicomp] = this.lowpoint[iParent];
-            this.ancestor[iBicomp] = this.ancestor[iParent];
-            this.isVirtual[iBicomp] = true;
-            this.parent[iBicomp] = parentNode;
-            this.children[iBicomp] = new LinkedList<INode>();
-            this.neighbors[iBicomp] = new LinkedList<INode>();
-            this.roots[iBicomp] = new LinkedHashSet<INode>();
-            this.pertinentRoots[iBicomp] = new LinkedList<INode>();
-
-            this.children[iParent].add(node);
-            this.children[iBicomp].addFirst(node);
-            this.roots[iParent].add(bicomp);
-
-            this.externalFace.setSuccessor(node, bicomp, Direction.FWD);
-            this.externalFace.setSuccessor(node, bicomp, Direction.REV);
-            this.externalFace.setSuccessor(bicomp, node, Direction.FWD);
-            this.externalFace.setSuccessor(bicomp, node, Direction.REV);
-        }
 
         // Recurse over all adjacent nodes
+        LinkedList<Pair<IEdge, INode>> tomove = new LinkedList<Pair<IEdge, INode>>();
         for (IEdge edge : node.adjacentEdges()) {
-            INode childNode = node.getAdjacentNode(edge);
-            int iChild = childNode.getID();
+            INode child = node.getAdjacentNode(edge);
+            int iChild = child.getID();
 
-            if (childNode == node) {
+            if (child == node) {
                 // Found self loop: ignore
+                continue;
+
+            } else if (child == parentNode) {
+                // Found tree edge: ignore
                 continue;
 
             } else if (this.children[iChild] != null) {
                 // Found already visited node: mark for back edge
-                this.neighbors[iNode].add(childNode);
+                this.backedges[iNode].add(edge);
 
-                // Re-Calculate the least ancestor
+                // Re-Calculate the least ancestor and lowpoint
                 if (this.dfi[iChild] < this.ancestor[iNode]) {
                     this.ancestor[iNode] = this.dfi[iChild];
                 }
+                if (this.lowpoint[iChild] < this.lowpoint[iNode]) {
+                    this.lowpoint[iNode] = this.lowpoint[iChild];
+                }
 
             } else {
-                // Found new child node: recurse
-                index = this.preProcessing(childNode, node, index + 1, buckets);
-            }
-            this.tempEdges.add(edge);
+                // Found new child node: add virtual root node and recurse
+                INode bicomp = this.graph.addNode();
+                int iBicomp = bicomp.getID();
+                this.dfi[iBicomp] = this.dfi[iNode];
+                this.lowpoint[iBicomp] = this.lowpoint[iNode];
+                this.ancestor[iBicomp] = this.ancestor[iNode];
+                this.isVirtual[iBicomp] = true;
+                this.parent[iBicomp] = node;
+                this.children[iBicomp] = new LinkedList<INode>();
+                this.roots[iBicomp] = new LinkedHashSet<INode>();
+                this.pertinentRoots[iBicomp] = new LinkedList<INode>();
 
-            // Re-Calculate the lowpoint
-            if (this.lowpoint[iChild] < this.lowpoint[iNode]) {
-                this.lowpoint[iNode] = this.lowpoint[iChild];
+                this.externalFace.setSuccessor(child, bicomp, Direction.FWD);
+                this.externalFace.setSuccessor(child, bicomp, Direction.REV);
+                this.externalFace.setSuccessor(bicomp, child, Direction.FWD);
+                this.externalFace.setSuccessor(bicomp, child, Direction.REV);
+
+                this.children[iNode].add(node);
+                this.children[iBicomp].addFirst(node);
+                this.roots[iNode].add(bicomp);
+
+                index = this.preProcessing(child, node, index + 1, buckets);
+                tomove.add(new Pair<IEdge, INode>(edge, bicomp));
+
+                // Re-Calculate the lowpoint
+                if (this.lowpoint[iChild] < this.lowpoint[iNode]) {
+                    this.lowpoint[iNode] = this.lowpoint[iChild];
+                }
             }
+        }
+        for (Pair<IEdge, INode> pair : tomove) {
+            pair.getFirst().move(node, pair.getSecond(), true);
         }
 
         // Add node to lowpoint bucket for later sorting
@@ -497,7 +475,6 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
     private void walkup(final INode node, final INode childNode) {
 
         // Set up the two traversal classes
-        this.backedgeFlag[childNode.getID()]++;
         ManualIterator<INode> left = this.externalFace.iterator(node, Direction.FWD);
         left.setCurrent(childNode);
         ManualIterator<INode> right = this.externalFace.iterator(node, Direction.REV);
@@ -577,24 +554,17 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
             int iIter = iter.getCurrent().getID();
 
             // Back edge node found, merge
-            if (this.backedgeFlag[iIter] > 0) {
+            if (!this.pertinentBackedges[iIter].isEmpty()) {
                 this.mergeBicomp(merge);
                 iter.setDirection(direction);
-                while (this.backedgeFlag[iIter] > 0) {
-                    if (direction == Direction.FWD && iter.getDirection() == Direction.FWD) {
-                        this.graph.addEdge(root, false, iter.getCurrent(), true);
-                    } else if (direction == Direction.FWD && iter.getDirection() == Direction.REV) {
-                        this.graph.addEdge(root, false, iter.getCurrent(), false);
-                    } else if (direction == Direction.REV && iter.getDirection() == Direction.FWD) {
-                        this.graph.addEdge(root, true, iter.getCurrent(), true);
-                    } else if (direction == Direction.REV && iter.getDirection() == Direction.REV) {
-                        this.graph.addEdge(root, true, iter.getCurrent(), false);
-                    }
-                    this.backedgeFlag[iIter]--;
+                for (IEdge edge : this.pertinentBackedges[iIter]) {
+                    edge.move(node, root, (direction == Direction.REV));
+                    edge.move(iter.getCurrent(), iter.getCurrent(), (direction == Direction.FWD));
+                    this.backedges[node.getID()].remove(edge);
                 }
-                Direction dir = iter.getDirection();
-                Direction opp = (dir == Direction.FWD) ? Direction.REV : Direction.FWD;
-                this.externalFace.setSuccessor(root, iter.getCurrent(), dir);
+                this.pertinentBackedges[iIter].clear();
+                Direction opp = (direction == Direction.FWD) ? Direction.REV : Direction.FWD;
+                this.externalFace.setSuccessor(root, iter.getCurrent(), direction);
                 this.externalFace.setSuccessor(iter.getCurrent(), root, opp);
 
             } else if (this.isPertinent(iter.getCurrent(), node)) {
@@ -747,8 +717,8 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
         if (this.isVirtual[node.getID()]) {
             return false;
         }
-        // Node has backedge to check node
-        if (backedgeFlag[node.getID()] > 0) {
+        // Node has back edge to check node
+        if (!pertinentBackedges[node.getID()].isEmpty()) {
             return true;
         }
         // Node has pertinent roots

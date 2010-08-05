@@ -16,9 +16,8 @@ package de.cau.cs.kieler.klay.planar.alg;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.IAlgorithm;
-import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
-import de.cau.cs.kieler.klay.planar.graph.INode;
 import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
 
 /**
@@ -37,12 +36,10 @@ public interface IPlanarizer extends IAlgorithm {
      * @param graph
      *            the planar subgraph
      * @param edges
-     *            a list containing source and target node pair, that define the edges to be
-     *            inserted into the graph
+     *            a list the edges to be inserted into the graph
      * @throws InconsistentGraphModelException
      *             if the given graph turns out to be inconsistent
      */
-    void planarize(IGraph graph, List<Pair<INode, INode>> edges)
-            throws InconsistentGraphModelException;
+    void planarize(IGraph graph, List<IEdge> edges) throws InconsistentGraphModelException;
 
 }

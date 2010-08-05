@@ -16,9 +16,8 @@ package de.cau.cs.kieler.klay.planar.alg;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.IAlgorithm;
-import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
-import de.cau.cs.kieler.klay.planar.graph.INode;
 import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
 
 /**
@@ -49,10 +48,10 @@ public interface IPlanarityTester extends IAlgorithm {
      * 
      * @param graph
      *            the graph to determine its planar embedding
-     * @return a list that contains pairs of source and target nodes of the missing edges
+     * @return a list that the missing edges
      * @throws InconsistentGraphModelException
      *             if {@code graph} is not consistent
      */
-    List<Pair<INode, INode>> planarSubgraph(IGraph graph) throws InconsistentGraphModelException;
+    List<IEdge> planarSubgraph(IGraph graph) throws InconsistentGraphModelException;
 
 }

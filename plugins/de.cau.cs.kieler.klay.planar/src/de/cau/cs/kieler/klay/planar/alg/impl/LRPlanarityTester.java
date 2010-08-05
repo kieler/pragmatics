@@ -349,8 +349,7 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * @see de.cau.cs.rtprak.planarization.graph.IEdge IEdge
      * @see de.cau.cs.kieler.core.util.Pair Pair
      */
-    public List<Pair<INode, INode>> planarSubgraph(final IGraph iGraph)
-            throws InconsistentGraphModelException {
+    public List<IEdge> planarSubgraph(final IGraph iGraph) throws InconsistentGraphModelException {
 
         getMonitor().begin("Planar embedding", 1);
         if (iGraph == null) {
@@ -421,9 +420,9 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
             mergeEmbedding(node);
         }
         // convert crossingEdges to match return type
-        LinkedList<Pair<INode, INode>> removedEdges = new LinkedList<Pair<INode, INode>>();
+        LinkedList<IEdge> removedEdges = new LinkedList<IEdge>();
         for (IEdge edge : deletedCrossing) {
-            removedEdges.add(new Pair<INode, INode>(edge.getSource(), edge.getTarget()));
+            removedEdges.add(edge);
         }
 
         getMonitor().done();

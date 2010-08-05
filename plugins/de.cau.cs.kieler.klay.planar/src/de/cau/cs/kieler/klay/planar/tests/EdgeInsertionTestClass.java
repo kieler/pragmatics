@@ -3,9 +3,9 @@ package de.cau.cs.kieler.klay.planar.tests;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.alg.IPlanarizer;
 import de.cau.cs.kieler.klay.planar.alg.impl.EdgeInsertionPlanarization;
+import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.IGraphFactory;
 import de.cau.cs.kieler.klay.planar.graph.INode;
@@ -65,9 +65,8 @@ public class EdgeInsertionTestClass {
         System.out.println(testGraph.toString());
         System.out.println("----------------------\n");
 
-        List<Pair<INode, INode>> edges = new ArrayList<Pair<INode, INode>>();
-        edges.add(new Pair<INode, INode>(nodeFour, nodeTwo));
-        // edges.add(new Pair<INode, INode>(nodeFour, nodeTwo));
+        List<IEdge> edges = new ArrayList<IEdge>();
+        edges.add(testGraph.addEdge(nodeFour, nodeTwo));
         planarizer.planarize(testGraph, edges);
         System.out.println("NEUER GRAPH");
         System.out.println(testGraph.toString());

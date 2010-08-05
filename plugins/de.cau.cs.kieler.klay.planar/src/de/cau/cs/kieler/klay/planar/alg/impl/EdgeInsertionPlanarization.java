@@ -19,7 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.alg.IPlanarizer;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IFace;
@@ -48,16 +47,16 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
      * @see de.cau.cs.kieler.core.util.Pair Pair
      */
     @SuppressWarnings("static-access")
-    public void planarize(final IGraph graph, final List<Pair<INode, INode>> edges)
+    public void planarize(final IGraph graph, final List<IEdge> edges)
             throws InconsistentGraphModelException {
 
-        for (Pair<INode, INode> insertingEdge : edges) {
+        for (IEdge insertingEdge : edges) {
 
             IGraph dualGraph = graph.createDualGraph();
             LinkedList<INode> dualPath = new LinkedList<INode>();
 
-            INode source = insertingEdge.getFirst();
-            INode target = insertingEdge.getSecond();
+            INode source = insertingEdge.getSource();
+            INode target = insertingEdge.getTarget();
 
             // assert sourceFaceID != targetFaceID : "nodes lie at the same face";
 
