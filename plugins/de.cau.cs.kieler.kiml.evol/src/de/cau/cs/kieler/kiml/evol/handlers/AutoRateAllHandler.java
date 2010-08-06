@@ -127,11 +127,10 @@ public class AutoRateAllHandler extends AbstractHandler {
 
                 // Do the rating.
                 MonitoredOperation.runInUI(new Runnable() {
-
                     public void run() {
+                        // Rate all individuals in the given editor.
                         EvolUtil.autoRateIndividuals(AutoRateAllJob.this.population,
                                 AutoRateAllJob.this.editor, monitor);
-
                     }
                 }, true);
 
@@ -169,6 +168,7 @@ public class AutoRateAllHandler extends AbstractHandler {
 
         final Population pop = view.getPopulation();
         final IEditorPart editor = view.getEvolModel().getLastEditor();
+        Assert.isNotNull(editor);
 
         // Create jobs for auto-rating and refreshing.
         final Job autoRateAllJob = new AutoRateAllJob("auto-rating", pop, editor);

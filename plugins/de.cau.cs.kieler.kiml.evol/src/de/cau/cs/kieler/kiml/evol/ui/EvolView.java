@@ -92,7 +92,7 @@ public class EvolView extends ViewPart {
         }
 
     }
-    
+
     /**
      * Refreshes the view. Must be run in UI thread.
      */
@@ -240,6 +240,7 @@ public class EvolView extends ViewPart {
 
         setInput(this.evolModel.getPopulation());
 
+        // Calculate auto-rating for the unrated individuals.
         EvolUtil.autoRateIndividuals(getPopulation().select(Population.UNRATED_FILTER),
                 EvolUtil.getCurrentEditor(), null);
 

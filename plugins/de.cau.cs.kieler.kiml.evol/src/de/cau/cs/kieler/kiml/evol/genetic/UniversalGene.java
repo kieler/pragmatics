@@ -13,11 +13,13 @@
  */
 package de.cau.cs.kieler.kiml.evol.genetic;
 
+import java.text.DecimalFormat;
 import java.util.Random;
 
 import org.eclipse.core.runtime.Assert;
 
 /**
+ * An implementation of {@link IGene}, fitting for various number formats.
  *
  * @author bdu
  *
@@ -42,10 +44,11 @@ public class UniversalGene extends AbstractGene<Float> {
      */
     public static final IValueFormatter STRICTLY_POSITIVE_FLOAT_FORMATTER = new IValueFormatter() {
         public String getString(final Object o) {
+            final DecimalFormat df = new DecimalFormat("0.00");
             if (o instanceof Float) {
-                return o + "f";
+                return df.format(o) + "f";
             } else if (o instanceof UniversalGene) {
-                return ((UniversalGene) o).getValue() + "f";
+                return df.format(((UniversalGene) o).getValue()) + "f";
             }
             return null;
         }

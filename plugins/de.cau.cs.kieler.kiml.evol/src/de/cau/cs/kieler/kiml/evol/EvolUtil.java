@@ -4,9 +4,9 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
- *   + Department of Computer Science
- *     + Real-Time and Embedded Systems Group
+ *   + Christian-Albrechts-University of Kiel
+ *     + Department of Computer Science
+ *       + Real-Time and Embedded Systems Group
  *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
@@ -115,10 +116,10 @@ public final class EvolUtil {
         public IGene<?> newGene(
                 final Object theId, final Object theValue, final double theMutationProbability) {
 
-            IGene<?> result = null;
+            IGene<?> result;
 
             final IConfigurationElement evolutionData =
-                    EvolutionService.getInstance().getEvolutionData((String) theId);
+                    EvolutionServices.getInstance().getEvolutionData((String) theId);
             final String lowerBoundAttr = evolutionData.getAttribute(ATTRIBUTE_LOWER_BOUND);
             final String upperBoundAttr = evolutionData.getAttribute(ATTRIBUTE_UPPER_BOUND);
             final String distrNameAttr = evolutionData.getAttribute(ATTRIBUTE_DISTRIBUTION);
@@ -131,112 +132,171 @@ public final class EvolUtil {
             final Type layoutOptionDataType = layoutOptionData.getType();
 
             switch (layoutOptionDataType) {
-            case BOOLEAN: {
-                final boolean booleanValue = (Integer.parseInt(theValue.toString()) == 1);
-                final Float floatValue = (booleanValue ? 1.0f : 0.0f);
+            case BOOLEAN:
+                result = newBooleanGene(theId, theValue, theMutationProbability, distr);
+                break;
+
+            case ENUM:
+                result = newEnumGene(theId, theValue, theMutationProbability, layoutOptionData);
+                break;
+
+            case INT:
                 result =
-                        new UniversalGene(theId, floatValue, UniversalGene.BOOLEAN_TYPE_INFO,
-                                new MutationInfo(theMutationProbability, distr));
-                System.out.println(theId + ": " + result);
+                        newIntegerGene(theId, theValue, theMutationProbability, lowerBoundAttr,
+                                upperBoundAttr, varianceAttr, distr);
                 break;
-            }
-
-            case ENUM: {
-                final int choicesCount = layoutOptionData.getChoices().length;
-                final Class<? extends Enum<?>> enumClass =
-                        LayoutOptions.getEnumClass((String) theId);
-                Assert.isNotNull(enumClass);
-                Assert.isTrue(enumClass.getEnumConstants().length == choicesCount);
-                final int intValue = Integer.valueOf(theValue.toString());
-                result = new EnumGene(theId, intValue, enumClass, theMutationProbability);
-                System.out.println("Enum " + enumClass.getSimpleName() + "(" + choicesCount + "): "
-                        + intValue);
-                break;
-            }
-
-            case INT: {
-                final Integer intValue = Integer.parseInt((String) theValue);
-
-                final double variance;
-                if (varianceAttr != null) {
-                    variance = Double.parseDouble(varianceAttr);
-                } else {
-                    // estimate desired variance from the absolute value
-                    variance = Math.abs(intValue) * VARIANCE_SCALING_FACTOR;
-                }
-
-                final Integer lowerBound =
-                        ((lowerBoundAttr == null) ? Integer.MIN_VALUE : (Integer
-                                .parseInt(lowerBoundAttr)));
-
-                final Integer upperBound =
-                        ((upperBoundAttr == null) ? Integer.MAX_VALUE : (Integer
-                                .parseInt(upperBoundAttr)));
-
-                final IValueFormatter formatter = UniversalGene.INTEGER_FORMATTER;
-
-                final TypeInfo<Float> typeInfo =
-                        new TypeInfo<Float>(intValue.floatValue(), lowerBound.floatValue(),
-                                upperBound.floatValue(), formatter, Integer.class);
-
-                // result = new IntegerGene(theId, intValue,
-                // theMutationProbability, var);
-
+            case FLOAT:
                 result =
-                        new UniversalGene(theId, intValue.floatValue(), typeInfo, new MutationInfo(
-                                theMutationProbability, variance, distr));
-                System.out.println(theId + ": " + result);
+                        newFloatGene(theId, theValue, theMutationProbability, lowerBoundAttr,
+                                upperBoundAttr, varianceAttr, distr);
                 break;
-            }
-
-            case FLOAT: {
-                final float floatValue = (Float.parseFloat((String) theValue));
-                final float lowerBound =
-                        (lowerBoundAttr == null ? Float.NEGATIVE_INFINITY : (Float
-                                .parseFloat(lowerBoundAttr)));
-                final float upperBound =
-                        ((upperBoundAttr == null) ? Float.POSITIVE_INFINITY : (Float
-                                .parseFloat(upperBoundAttr)));
-
-                final double variance;
-                if (varianceAttr != null) {
-                    variance = Double.parseDouble(varianceAttr);
-
-                } else {
-                    // threshold to prevent very small variances
-                    final float verySmall = 1e-3f;
-
-                    // estimate desired variance from the absolute value
-                    if ((Math.abs(floatValue) < verySmall)) {
-                        variance = MutationInfo.DEFAULT_VARIANCE;
-                    } else {
-                        variance = Math.abs(floatValue) * VARIANCE_SCALING_FACTOR;
-                    }
-                }
-
-                final IValueFormatter formatter;
-                if (lowerBound >= 0.0f) {
-                    // we need a strictly positive float gene
-                    formatter = UniversalGene.STRICTLY_POSITIVE_FLOAT_FORMATTER;
-
-                } else {
-                    // we use a general float gene
-                    formatter = UniversalGene.FLOAT_FORMATTER;
-                }
-
-                final TypeInfo<Float> typeInfo =
-                        new TypeInfo<Float>(floatValue, lowerBound, upperBound, formatter,
-                                Float.class);
-                result =
-                        new UniversalGene(theId, floatValue, typeInfo, new MutationInfo(
-                                theMutationProbability, variance, distr));
-                System.out.println(theId + ": " + result);
-                break;
-            }
 
             default:
+                result = null;
                 break;
             }
+            return result;
+        }
+
+        /**
+         * @param theId
+         * @param theValue
+         * @param theMutationProbability
+         * @param lowerBoundAttr
+         * @param upperBoundAttr
+         * @param varianceAttr
+         * @param distr
+         * @return
+         */
+        private IGene<?> newFloatGene(
+                final Object theId, final Object theValue, final double theMutationProbability,
+                final String lowerBoundAttr, final String upperBoundAttr,
+                final String varianceAttr, final Distribution distr) {
+            IGene<?> result;
+            final float floatValue = (Float.parseFloat((String) theValue));
+            final float lowerBound =
+                    (lowerBoundAttr == null ? Float.NEGATIVE_INFINITY : (Float
+                            .parseFloat(lowerBoundAttr)));
+            final float upperBound =
+                    ((upperBoundAttr == null) ? Float.POSITIVE_INFINITY : (Float
+                            .parseFloat(upperBoundAttr)));
+
+            final double variance;
+            if (varianceAttr != null) {
+                variance = Double.parseDouble(varianceAttr);
+
+            } else {
+                // threshold to prevent very small variances
+                final float verySmall = 1e-3f;
+
+                // estimate desired variance from the absolute value
+                if ((Math.abs(floatValue) < verySmall)) {
+                    variance = MutationInfo.DEFAULT_VARIANCE;
+                } else {
+                    variance = Math.abs(floatValue) * VARIANCE_SCALING_FACTOR;
+                }
+            }
+
+            final IValueFormatter formatter;
+            if (lowerBound >= 0.0f) {
+                // we need a strictly positive float gene
+                formatter = UniversalGene.STRICTLY_POSITIVE_FLOAT_FORMATTER;
+
+            } else {
+                // we use a general float gene
+                formatter = UniversalGene.FLOAT_FORMATTER;
+            }
+
+            final TypeInfo<Float> typeInfo =
+                    new TypeInfo<Float>(floatValue, lowerBound, upperBound, formatter, Float.class);
+            result =
+                    new UniversalGene(theId, floatValue, typeInfo, new MutationInfo(
+                            theMutationProbability, variance, distr));
+            System.out.println(theId + ": " + result);
+            return result;
+        }
+
+        /**
+         * @param theId
+         * @param theValue
+         * @param theMutationProbability
+         * @param lowerBoundAttr
+         * @param upperBoundAttr
+         * @param varianceAttr
+         * @param distr
+         * @return
+         */
+        private IGene<?> newIntegerGene(
+                final Object theId, final Object theValue, final double theMutationProbability,
+                final String lowerBoundAttr, final String upperBoundAttr,
+                final String varianceAttr, final Distribution distr) {
+            IGene<?> result;
+            final Integer intValue = Integer.parseInt((String) theValue);
+
+            final double variance;
+            if (varianceAttr != null) {
+                variance = Double.parseDouble(varianceAttr);
+            } else {
+                // estimate desired variance from the absolute value
+                variance = Math.abs(intValue) * VARIANCE_SCALING_FACTOR;
+            }
+
+            final Integer lowerBound =
+                    ((lowerBoundAttr == null) ? Integer.MIN_VALUE : (Integer
+                            .parseInt(lowerBoundAttr)));
+
+            final Integer upperBound =
+                    ((upperBoundAttr == null) ? Integer.MAX_VALUE : (Integer
+                            .parseInt(upperBoundAttr)));
+
+            final IValueFormatter formatter = UniversalGene.INTEGER_FORMATTER;
+
+            final TypeInfo<Float> typeInfo =
+                    new TypeInfo<Float>(intValue.floatValue(), lowerBound.floatValue(),
+                            upperBound.floatValue(), formatter, Integer.class);
+
+            // result = new IntegerGene(theId, intValue,
+            // theMutationProbability, var);
+
+            result =
+                    new UniversalGene(theId, intValue.floatValue(), typeInfo, new MutationInfo(
+                            theMutationProbability, variance, distr));
+            System.out.println(theId + ": " + result);
+            return result;
+        }
+
+        /**
+         * @param theId
+         * @param theValue
+         * @param theMutationProbability
+         * @param layoutOptionData
+         * @return
+         */
+        private IGene<?> newEnumGene(
+                final Object theId, final Object theValue, final double theMutationProbability,
+                final LayoutOptionData layoutOptionData) {
+            IGene<?> result;
+            final int choicesCount = layoutOptionData.getChoices().length;
+            final Class<? extends Enum<?>> enumClass = LayoutOptions.getEnumClass((String) theId);
+            Assert.isNotNull(enumClass);
+            Assert.isTrue(enumClass.getEnumConstants().length == choicesCount);
+            final int intValue = Integer.valueOf(theValue.toString());
+            result = new EnumGene(theId, intValue, enumClass, theMutationProbability);
+            System.out.println("Enum " + enumClass.getSimpleName() + "(" + choicesCount + "): "
+                    + intValue);
+            return result;
+        }
+
+        private IGene<?> newBooleanGene(
+                final Object theId, final Object theValue, final double theMutationProbability,
+                final Distribution distr) {
+            IGene<?> result;
+            final boolean booleanValue = (Integer.parseInt(theValue.toString()) == 1);
+            final Float floatValue = (booleanValue ? 1.0f : 0.0f);
+            result =
+                    new UniversalGene(theId, floatValue, UniversalGene.BOOLEAN_TYPE_INFO,
+                            new MutationInfo(theMutationProbability, distr));
+            System.out.println(theId + ": " + result);
             return result;
         }
 
@@ -262,6 +322,7 @@ public final class EvolUtil {
      */
     public static void applyIndividual(
             final Genome individual, final String expectedLayoutProviderId) {
+
         // Get the current editor (may be null).
         final IEditorPart currentEditor = getCurrentEditor();
 
@@ -277,8 +338,9 @@ public final class EvolUtil {
             }
         }
 
-        // Do the layout in all the selected editors.
+        // Do the layout in each selected editor.
         for (final IEditorPart editor : editors) {
+            System.out.println();
             System.out.println("Editor: " + editor.getTitle());
 
             final EditPart editPart = getEditPart(editor);
@@ -289,19 +351,22 @@ public final class EvolUtil {
             if (!expectedLayoutProviderId.equalsIgnoreCase(layoutProviderId)) {
                 // The editor is not compatible to the current population.
                 // --> skip it
-                System.out.println("Cannot adopt to " + layoutProviderId);
+                System.out
+                        .println("Cannot adopt " + individual.getId() + " to " + layoutProviderId);
                 continue;
             }
 
             // Use the options that are encoded in the individual.
-            EvolUtil.adoptIndividual(individual, editor);
+            adoptIndividual(individual, editor);
 
             // We don't specify the edit part because we want a manager for
             // the whole diagram.
             final DiagramLayoutManager manager =
                     EclipseLayoutServices.getInstance().getManager(editor, null);
+            Assert.isNotNull(manager);
 
-            final int rating = EvolUtil.layoutAndMeasure(manager, editor);
+            final Map<String, Double> coeffsMap = extractMetricWeights(individual);
+            final int rating = layoutAndMeasure(manager, editor, coeffsMap);
 
             // Update the rating.
             if ((editor == currentEditor) && !individual.hasUserRating()) {
@@ -312,7 +377,11 @@ public final class EvolUtil {
             // XXX it would be more straightforward to call
             // manager.applyLayout()
             // directly, but that method is private
-            EclipseLayoutServices.getInstance().layout(editor, null, false, false);
+
+            final boolean showAnimation = false;
+            final boolean showProgressBar = false;
+            EclipseLayoutServices.getInstance()
+                    .layout(editor, null, showAnimation, showProgressBar);
         }
     }
 
@@ -349,24 +418,20 @@ public final class EvolUtil {
 
             adoptIndividual(ind, source);
 
-            final int rating = EvolUtil.layoutAndMeasure(manager, editor);
+            final Map<String, Double> coeffsMap = extractMetricWeights(ind);
+            final int rating = layoutAndMeasure(manager, editor, coeffsMap);
 
             ind.setUserRating(rating);
 
             if (monitor != null) {
                 try {
-                    Thread.sleep(300);
+                    final int delay = 200;
+                    Thread.sleep(delay);
                 } catch (final InterruptedException exception) {
                     exception.printStackTrace();
                 }
                 monitor.worked(1);
             }
-        }
-
-        try {
-            Thread.sleep(100);
-        } catch (final InterruptedException e) {
-            e.printStackTrace();
         }
 
         // TODO: let the EvolView refresh its tableViewer
@@ -404,9 +469,13 @@ public final class EvolUtil {
      */
     public static Population createPopulation(
             final LayoutPropertySource propertySource, final int size) {
+
         final Population result = new Population();
+        final Set<String> metricIds = EvolutionServices.getInstance().getLayoutMetricsIds();
+
         for (int i = 0; i < size; i++) {
-            final Genome genome = createGenome(propertySource);
+
+            final Genome genome = createGenome(propertySource, metricIds);
             result.add(genome);
         }
         return result;
@@ -533,58 +602,6 @@ public final class EvolUtil {
     }
 
     /**
-     * Layout the diagram and measure it.
-     *
-     * @param manager
-     *            a {@code DiagramLayoutManager}
-     * @param editor
-     *            the editor
-     * @return measurement result (rating proposal)
-     */
-    public static int layoutAndMeasure(final DiagramLayoutManager manager, final IEditorPart editor) {
-        if ((editor == null) || (manager == null)) {
-            // we cannot perform the layout.
-            return 0;
-        }
-
-        // first phase: build the layout graph
-        final KNode layoutGraph = manager.buildLayoutGraph(editor, null, true);
-
-        // second phase: execute layout algorithms
-        // We need a new monitor each time because the old one
-        // gets closed.
-        final IKielerProgressMonitor monitor =
-                new BasicProgressMonitor(DiagramLayoutManager.MAX_PROGRESS_LEVELS);
-        final IStatus status = manager.layout(monitor, true, false);
-        final int rating;
-        if (status.isOK()) {
-            final KNode layoutGraphAfterLayout = manager.getLayoutGraph();
-            Assert.isTrue(layoutGraph == layoutGraphAfterLayout);
-
-            // get the metric ids
-            final Set<String> metricIds = EvolutionService.getInstance().getLayoutMetricsIds();
-
-            // XXX: arbitrarily chosen coefficients
-            final Deque<Double> coeffsQueue = new LinkedList<Double>();
-            for (final double d : normalize(1, 1, 1, 1, 1)) {
-                coeffsQueue.add(d);
-            }
-            final Map<String, Double> coeffsMap = new HashMap<String, Double>(metricIds.size());
-            for (final String metricId : metricIds) {
-                coeffsMap.put(metricId, coeffsQueue.remove());
-            }
-
-            // do the measurement
-            rating = measureDiagram(false, layoutGraphAfterLayout, coeffsMap);
-        } else {
-            // TODO: what to do about the layouting failure? Log it? Abort?
-            System.out.println(status.getMessage());
-            rating = 0;
-        }
-        return rating;
-    }
-
-    /**
      * Adopts layout options from the given {@link Genome} into the given
      * {@link IEditorPart}.
      *
@@ -594,7 +611,10 @@ public final class EvolUtil {
      *            the {@link IEditorPart}
      */
     private static void adoptIndividual(final Genome theIndividual, final IEditorPart theEditor) {
-        final LayoutPropertySource propertySource = EvolUtil.getLayoutPropertySource(theEditor);
+        Assert.isLegal(theIndividual != null);
+
+        final LayoutPropertySource propertySource = getLayoutPropertySource(theEditor);
+        Assert.isNotNull(propertySource);
         adoptIndividual(theIndividual, propertySource);
     }
 
@@ -611,14 +631,13 @@ public final class EvolUtil {
             final Genome theIndividual, final LayoutPropertySource thePropertySource) {
         Assert.isLegal(theIndividual != null);
         Assert.isLegal(thePropertySource != null);
-
         if ((theIndividual == null) || (thePropertySource == null)) {
             return;
         }
 
         System.out.println("adopt " + theIndividual.toString());
         final LayoutServices layoutServices = LayoutServices.getInstance();
-        final EvolutionService evolService = EvolutionService.getInstance();
+        final EvolutionServices evolService = EvolutionServices.getInstance();
         final Set<String> metricIds = evolService.getLayoutMetricsIds();
 
         // set layout options according to genome
@@ -634,7 +653,7 @@ public final class EvolUtil {
             }
 
             final LayoutOptionData data = layoutServices.getLayoutOptionData((String) id);
-            Assert.isNotNull(data, "No data for " + id);
+            Assert.isNotNull(data, "No layout option data for " + id);
 
             switch (data.getType()) {
             case BOOLEAN:
@@ -674,7 +693,7 @@ public final class EvolUtil {
      */
     private static int countLearnableProperties(final List<IPropertyDescriptor> propertyDescriptors) {
         int result = 0;
-        final Set<String> learnables = EvolutionService.getInstance().getEvolutionDataIds();
+        final Set<String> learnables = EvolutionServices.getInstance().getEvolutionDataIds();
         for (final IPropertyDescriptor p : propertyDescriptors) {
             final String id = (String) p.getId();
             // check property descriptor id
@@ -702,18 +721,23 @@ public final class EvolUtil {
     }
 
     /**
-     * Create a genome from the given source.
+     * Create a genome from the given source. Meta-evolution genes are appended
+     * for the given metric ids.
      *
      * @param propertySource
+     *            a {@link LayoutPropertySource}
+     * @param metricIds
+     *            a set of layout metric ids; may not be {@code null}.
      * @return a genome, or {@code null}.
      */
-    private static Genome createGenome(final LayoutPropertySource propertySource) {
-        if (propertySource == null) {
+    private static Genome createGenome(
+            final LayoutPropertySource propertySource, final Set<String> metricIds) {
+        if ((propertySource == null) || (metricIds == null)) {
             return null;
         }
 
         // Get the set of learnable elements that are registered.
-        final Set<String> learnables = EvolutionService.getInstance().getEvolutionDataIds();
+        final Set<String> learnables = EvolutionServices.getInstance().getEvolutionDataIds();
         final Genome result = new Genome();
 
         // get data from property descriptors
@@ -762,17 +786,48 @@ public final class EvolUtil {
         Assert.isTrue(learnableCount == result.size());
 
         // Add meta-evolution genes for the layout metrics.
-        final Set<String> metricIds = EvolutionService.getInstance().getLayoutMetricsIds();
-
         for (final String id : metricIds) {
             final TypeInfo<Float> typeInfo =
                     new TypeInfo<Float>(1.0f, 0.0f, 5.0f,
                             UniversalGene.STRICTLY_POSITIVE_FLOAT_FORMATTER, Float.class);
 
-            final MutationInfo mutationInfo = new MutationInfo(1.0, .3, Distribution.GAUSSIAN);
+            final MutationInfo mutationInfo = new MutationInfo(1.0, .05, Distribution.GAUSSIAN);
             final IGene<?> gene = gf.newGene(id, 1.0f, typeInfo, mutationInfo);
             Assert.isNotNull(gene, "Failed to create gene for " + id);
             result.add(gene);
+        }
+
+        return result;
+    }
+
+    /**
+     * Extracts the metric weight from the given genome.
+     *
+     * @param genome
+     *            a genome
+     * @return a map associating metric weights to metric ids.
+     */
+    private static Map<String, Double> extractMetricWeights(final Genome genome) {
+        // TODO: This method could be moved into {@code Genome}.
+        final EvolutionServices evolService = EvolutionServices.getInstance();
+        Assert.isNotNull(evolService);
+
+        final Set<String> metricIds = evolService.getLayoutMetricsIds();
+        Assert.isNotNull(metricIds);
+
+        final Map<String, Double> result = new HashMap<String, Double>(metricIds.size());
+
+        for (final IGene<?> gene : genome) {
+            Assert.isNotNull(gene);
+            final String id = (String) gene.getId();
+
+            if (!metricIds.contains(id)) {
+                // not a metric id --> skip
+                continue;
+            }
+
+            final Float value = (Float) gene.getValue();
+            result.put(id, value.doubleValue());
         }
 
         return result;
@@ -845,42 +900,139 @@ public final class EvolUtil {
     }
 
     /**
-     * Analyzes the given KGraph.
+     * Builds the layout graph for the given editor, using the given manager,
+     * and performs layout on it.
      *
-     * @param showProgressBar
-     *            indicates whether a progress bar shall be shown
+     * @param manager
+     *            a {@link DiagramLayoutManager}
+     * @param editor
+     *            an {@link IEditorPart}
+     * @return the layout graph, or {@code null} in case of an error.
+     */
+    private static KNode layout(final DiagramLayoutManager manager, final IEditorPart editor) {
+        if ((editor == null) || (manager == null)) {
+            // We cannot perform the layout.
+            return null;
+        }
+
+        // First phase: build the layout graph.
+        final KNode layoutGraph = manager.buildLayoutGraph(editor, null, true);
+
+        // Second phase: execute layout algorithms.
+        // We need a new monitor each time because the old one
+        // gets closed.
+        final IKielerProgressMonitor monitor =
+                new BasicProgressMonitor(DiagramLayoutManager.MAX_PROGRESS_LEVELS);
+        final IStatus status = manager.layout(monitor, true, false);
+
+        if (!status.isOK()) {
+            // TODO: what to do about the layouting failure? Log it? Abort?
+            System.out.println(status.getMessage());
+            return null;
+        }
+
+        final KNode layoutGraphAfterLayout = manager.getLayoutGraph();
+        Assert.isTrue(layoutGraph == layoutGraphAfterLayout);
+        return layoutGraphAfterLayout;
+    }
+
+    /**
+     * Layout the diagram and measure it.
+     *
+     * @param manager
+     *            a {@code DiagramLayoutManager}
+     * @param editor
+     *            the editor
+     * @param coeffsMap
+     *            a map that associates weights to the metrics; must not be
+     *            {@code null}
+     * @return measurement result (rating proposal)
+     *
+     */
+    private static int layoutAndMeasure(
+            final DiagramLayoutManager manager, final IEditorPart editor,
+            final Map<String, Double> coeffsMap) {
+
+        Assert.isLegal(coeffsMap != null);
+
+        final KNode layoutGraph = layout(manager, editor);
+        return measure(layoutGraph, coeffsMap);
+    }
+
+    /**
+     * Measures the given layout graph, using uniform weights for the metrics.
+     *
+     * @param layoutGraph
+     * @return a rating
+     * @deprecated it is recommended to use specific weights.
+     */
+    @Deprecated
+    private static int measure(final KNode layoutGraph) {
+
+        // Get the metric IDs.
+        final Set<String> metricIds = EvolutionServices.getInstance().getLayoutMetricsIds();
+
+        // Use uniform coefficients.
+        final Deque<Double> coeffsQueue = new LinkedList<Double>();
+        for (final double d : new double[] { 1, 1, 1, 1, 1 }) {
+            coeffsQueue.add(d);
+        }
+        final Map<String, Double> coeffsMap = new HashMap<String, Double>(metricIds.size());
+        for (final String metricId : metricIds) {
+            coeffsMap.put(metricId, coeffsQueue.remove());
+        }
+
+        normalize(coeffsMap);
+
+        return measure(layoutGraph, coeffsMap);
+    }
+
+    /**
+     * Measures the given layout graph, according to the given metric weights.
+     * The given map is modified so that its values are normalized to yield a
+     * sum of one.
+     *
      * @param parentNode
      *            the KGraph to be analyzed.
-     * @param coefficientsMap
-     *            a map containing a coefficient for each metric id.
-     * @return a rating
+     * @param weightsMap
+     *            a map that associates weights to metric ids; may not be
+     *            {@code null}
+     * @return a rating proposal
      */
-    private static int measureDiagram(
-            final boolean showProgressBar, final KNode parentNode,
-            final Map<String, Double> coefficientsMap) {
-        if (parentNode == null) {
+    private static int measure(final KNode parentNode, final Map<String, Double> weightsMap) {
+        Assert.isLegal(weightsMap != null);
+
+        if ((parentNode == null) || (weightsMap == null)) {
             return 0;
         }
-        // get the metric ids
-        final Set<String> metricIds = EvolutionService.getInstance().getLayoutMetricsIds();
+
+        // Get the metric ids.
+        final Set<String> metricIds = EvolutionServices.getInstance().getLayoutMetricsIds();
+
+        // We have the metric ids, now get the metrics.
         final AnalysisServices as = AnalysisServices.getInstance();
         final List<AbstractInfoAnalysis> metricsList =
                 new ArrayList<AbstractInfoAnalysis>(metricIds.size());
-        // we have the metric ids, now get the metrics
         for (final String metricId : metricIds) {
             final AbstractInfoAnalysis metric = as.getAnalysisById(metricId);
             Assert.isNotNull(metric, "Could not find analysis: " + metricId);
             metricsList.add(metric);
         }
-        // TODO: cache the metrics
+
+        // Make sure the metric weights are normalized.
+        normalize(weightsMap);
+
+        // Perform the measurement.
+        final boolean showProgressBar = false;
         final Map<String, Object> results =
                 DiagramAnalyser.analyse(parentNode, metricsList, showProgressBar);
+
         // final double[] scaledResults = new double[metrics.length];
         double sum = 0.0;
         double scaledSum = 0;
         for (final AbstractInfoAnalysis metric : metricsList) {
             final String metricResult = results.get(metric.getID()).toString();
-            final double coeff = coefficientsMap.get(metric.getID());
+            final double coeff = weightsMap.get(metric.getID());
 
             double val;
             try {
@@ -905,6 +1057,39 @@ public final class EvolUtil {
     }
 
     /**
+     * Scales the values in the given map so that their sum equals one. This
+     * operation changes the map entries of the given map.
+     *
+     * @param map
+     *            a map containing {@link Double} values.
+     */
+    private static void normalize(final Map<String, Double> map) {
+        Assert.isLegal(map != null);
+
+        if (map == null) {
+            return;
+        }
+
+        System.out.println(map.values());
+
+        // Calculate sum.
+        double sum = 0.0;
+        for (final Double value : map.values()) {
+            sum += value;
+        }
+
+        if (sum != 1.0) {
+            // Scale values.
+            final double factor = 1.0 / sum;
+
+            for (final Entry<String, Double> entry : map.entrySet()) {
+                final Double value = entry.getValue();
+                entry.setValue(value * factor);
+            }
+        }
+    }
+
+    /**
      * Scale the given double values so that their sum equals one.
      *
      * @param values
@@ -913,14 +1098,15 @@ public final class EvolUtil {
      */
     private static List<Double> normalize(final double... values) {
 
+        // Calculate sum.
         double sum = 0.0;
         for (final double val : values) {
             sum += val;
         }
-        final double factor = 1.0 / sum;
 
-        final int length = values.length;
-        final List<Double> result = new ArrayList<Double>(length);
+        // Obtain scaled values.
+        final double factor = 1.0 / sum;
+        final List<Double> result = new ArrayList<Double>(values.length);
         for (final double val : values) {
             result.add(val * factor);
         }
