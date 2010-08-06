@@ -66,19 +66,6 @@ public class Genome extends ArrayList<IGene<?>> {
         this(null, genome, genome.generation);
     }
 
-// /**
-    // * Copy constructor for a genome with the given generation.
-    // *
-    // * @param theGenome
-    // * template genome; must not be {@code null}
-    // * @param theGeneration
-    // * the generation
-    // *
-    // */
-    // private Genome(final Genome theGenome, final int theGeneration) {
-    // this(null, theGenome, theGeneration);
-    // }
-
     /**
      * Constructor for an Individual with the given id and the given genome.
      *
@@ -202,7 +189,7 @@ public class Genome extends ArrayList<IGene<?>> {
      *            better rating.
      */
     public void setUserRating(final int theRating) {
-        System.out.println("Assign rating " + theRating + " to individual" + ": " + toString());
+        System.out.println("Assign rating " + theRating + " to individual" + ": " + getId());
         // compare new rating to previous one
         if (hasUserRating()) {
             final int oldRating = getUserRating();

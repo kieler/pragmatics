@@ -37,6 +37,12 @@ import de.cau.cs.kieler.kiml.evol.ui.EvolView;
  *
  */
 public class EvolveHandler extends AbstractHandler {
+    /**
+     * A job for refreshing the evolution view.
+     * 
+     * @author bdu
+     * 
+     */
     private static final class EvolutionViewRefreshJob extends Job {
         public EvolView getView() {
             return this.view;
@@ -125,6 +131,8 @@ public class EvolveHandler extends AbstractHandler {
                     if (wantAutoRating) {
                         final IEditorPart editor = EvolUtil.getCurrentEditor();
                         Assert.isNotNull(editor);
+
+                        // Calculate auto-rating for all individuals.
                         EvolUtil.autoRateIndividuals(view.getPopulation(), editor, null);
                         System.out.println(view.getPopulation());
                     }

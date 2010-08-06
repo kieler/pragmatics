@@ -3,10 +3,8 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
- * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
- *   + Department of Computer Science
- *     + Real-Time and Embedded Systems Group
+ * Copyright 2010 by + Christian-Albrechts-University of Kiel + Department of
+ * Computer Science + Real-Time and Embedded Systems Group
  *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
@@ -32,7 +30,8 @@ public class BendsMetric implements IAnalysis {
     /**
      *
      */
-    private static final String GRANA_BENDPOINT_COUNT = "de.cau.cs.kieler.kiml.grana.bendpointCount";
+    private static final String GRANA_BENDPOINT_COUNT =
+            "de.cau.cs.kieler.kiml.grana.bendpointCount";
     /**
      *
      */
@@ -52,7 +51,7 @@ public class BendsMetric implements IAnalysis {
         final int edgesCount = (Integer) edgesResult;
         final int bendsCount = (Integer) bendsResult;
 
-        System.out.println("edges: " + edgesCount + " bends: " + bendsCount);
+        // System.out.println("edges: " + edgesCount + " bends: " + bendsCount);
 
         progressMonitor.done();
 
@@ -72,6 +71,5 @@ public class BendsMetric implements IAnalysis {
 
         return result;
     }
-
 
 }

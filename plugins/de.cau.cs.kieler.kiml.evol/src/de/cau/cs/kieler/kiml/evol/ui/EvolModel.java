@@ -84,10 +84,12 @@ public final class EvolModel {
     public String getLayoutProviderId() {
         return this.layoutProviderId;
     }
-
+    
     /**
      * @return the last editor that was used
+     * @deprecated
      */
+    @Deprecated
     public IEditorPart getLastEditor() {
         return this.lastEditor;
     }
