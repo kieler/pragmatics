@@ -21,7 +21,7 @@ import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IFace;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.INode;
-import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
+import de.cau.cs.kieler.klay.planar.graph.IncompatibleGraphTypeException;
 
 /**
  * An edge in a basic graph data structure for various graph theory algorithms.
@@ -68,11 +68,9 @@ class PEdge extends PGraphElement implements IEdge, Serializable {
      *            the target node of the edge
      * @param directed
      *            specifies if the edge is directed or undirected
-     * @throws InconsistentGraphModelException
-     *             if there are no free ports on one of the nodes
      */
     PEdge(final int id, final IGraph parent, final INode srcnode, final INode dstnode,
-            final boolean directed) throws InconsistentGraphModelException {
+            final boolean directed) {
         super(id, parent);
         this.source = srcnode;
         this.target = dstnode;
@@ -145,14 +143,11 @@ class PEdge extends PGraphElement implements IEdge, Serializable {
     /**
      * {@inheritDoc}
      */
-    public IFace getRightFace() throws InconsistentGraphModelException {
+    public IFace getRightFace() {
         if (!(this.getParent() instanceof PGraph)) {
-            throw new InconsistentGraphModelException(
-                    "Attempted to get Face in graph of incompatible type.");
+            throw new IncompatibleGraphTypeException();
         }
-        if (((PGraph) this.getParent()).getChangedFaces()) {
-            ((PGraph) this.getParent()).generateFaces();
-        }
+        ((PGraph) this.getParent()).generateFaces();
         return rightFace;
     }
 
@@ -169,14 +164,11 @@ class PEdge extends PGraphElement implements IEdge, Serializable {
     /**
      * {@inheritDoc}
      */
-    public IFace getLeftFace() throws InconsistentGraphModelException {
+    public IFace getLeftFace() {
         if (!(this.getParent() instanceof PGraph)) {
-            throw new InconsistentGraphModelException(
-                    "Attempted to get Face in graph of incompatible type.");
+            throw new IncompatibleGraphTypeException();
         }
-        if (((PGraph) this.getParent()).getChangedFaces()) {
-            ((PGraph) this.getParent()).generateFaces();
-        }
+        ((PGraph) this.getParent()).generateFaces();
         return leftFace;
     }
 
@@ -195,35 +187,23 @@ class PEdge extends PGraphElement implements IEdge, Serializable {
     /**
      * {@inheritDoc}
      */
-    public void move(final INode from, final INode to) throws InconsistentGraphModelException {
-        this.move(from, to, true);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void move(final INode from, final INode to, final boolean append)
-            throws InconsistentGraphModelException {
-
+    public void move(final INode from, final INode to) {
         // Check for graph consistency
         if (!(from instanceof PNode) || !(to instanceof PNode)) {
-            throw new InconsistentGraphModelException(
-                    "Attempted to move between nodes of incompatible type.");
-        }
-        if (!(this.getParent() instanceof PGraph)) {
-            throw new InconsistentGraphModelException(
-                    "Attempted to get move between nodes in graph of incompatible type.");
+            throw new IncompatibleGraphTypeException();
+        } else if (!(this.getParent() instanceof PGraph)) {
+            throw new IncompatibleGraphTypeException();
         }
 
         // Reset references
         if (from == this.source) {
             this.source = to;
-            ((PNode) to).linkEdge(this, append);
+            ((PNode) to).linkEdge(this);
         } else if (from == this.target) {
             this.target = to;
-            ((PNode) to).linkEdge(this, append);
+            ((PNode) to).linkEdge(this);
         } else {
-            throw new InconsistentGraphModelException("Attempted to move unlinked edge.");
+            throw new IllegalArgumentException("The edge is not connected to the source node.");
         }
         ((PNode) from).unlinkEdge(this);
         ((PGraph) this.getParent()).setChangedFaces();

@@ -18,7 +18,6 @@ import de.cau.cs.kieler.klay.planar.alg.impl.BoyerMyrvoldPlanarityTester;
 import de.cau.cs.kieler.klay.planar.alg.impl.LRPlanarityTester;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.INode;
-import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
 import de.cau.cs.kieler.klay.planar.graph.impl.PGraphFactory;
 
 /**
@@ -64,11 +63,7 @@ public class PlanarityTesterPerformanceTester {
                 long time = 0;
                 int fails = 0;
                 for (int i = 0; i < iterations; i++) {
-                    try {
-                        time += this.measurement(this.randomGraph(n, m));
-                    } catch (InconsistentGraphModelException e) {
-                        fails++;
-                    }
+                    time += this.measurement(this.randomGraph(n, m));
                 }
                 time /= (iterations > fails) ? (iterations - fails) : 1;
                 fails /= 10;
@@ -84,10 +79,8 @@ public class PlanarityTesterPerformanceTester {
      * @param graph
      *            the graph to check for planarity
      * @return the time the algorithm needed
-     * @throws InconsistentGraphModelException
-     *             if anything goes wrong
      */
-    private long measurement(final IGraph graph) throws InconsistentGraphModelException {
+    private long measurement(final IGraph graph) {
         long time = 0;
         this.tester.reset();
         if (this.testOnly) {
@@ -110,10 +103,8 @@ public class PlanarityTesterPerformanceTester {
      * @param m
      *            the number of edges
      * @return a random graph
-     * @throws InconsistentGraphModelException
-     *             if any inconsistencies occur
      */
-    public IGraph randomGraph(final int n, final int m) throws InconsistentGraphModelException {
+    public IGraph randomGraph(final int n, final int m) {
         IGraph graph = new PGraphFactory().createEmptyGraph();
         INode[] nodes = new INode[n];
 

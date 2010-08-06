@@ -23,6 +23,7 @@ import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IFace;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.INode;
+import de.cau.cs.kieler.klay.planar.graph.IncompatibleGraphTypeException;
 import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
 
 /**
@@ -112,39 +113,10 @@ class PGraph extends PNode implements IGraph, Serializable {
         }
     }
 
-    @Override
-    public void merge(final INode node, final boolean append)
-            throws InconsistentGraphModelException {
-        super.merge(node, append);
-        if (node.getType() != NodeType.COMPOUND) {
-            return;
-        }
-        if (!(node instanceof PGraph)) {
-            throw new InconsistentGraphModelException(
-                    "Merged node is marked as compound node, but is not a subgraph.");
-        }
-        for (INode n : ((PGraph) node).getNodes()) {
-            if (this.nodes.contains(n)) {
-                throw new InconsistentGraphModelException(
-                        "Attempted to add node that is already part of the graph.");
-            }
-            this.nodes.add(n);
-        }
-        for (IEdge e : ((PGraph) node).getEdges()) {
-            if (this.edges.contains(e)) {
-                throw new InconsistentGraphModelException(
-                        "Attempted to add edge that is already part of the graph.");
-            }
-            this.edges.add(e);
-        }
-        this.reindex();
-        this.changedFaces = true;
-    }
-
     /**
      * {@inheritDoc}
      */
-    public IGraph createDualGraph() throws InconsistentGraphModelException {
+    public IGraph createDualGraph() {
         HashMap<IFace, PNode> map = new HashMap<IFace, PNode>(this.faces.size() * 2);
         PGraph dual = new PGraph();
 
@@ -195,7 +167,7 @@ class PGraph extends PNode implements IGraph, Serializable {
     /**
      * {@inheritDoc}
      */
-    public INode addNode(final IEdge edge) throws InconsistentGraphModelException {
+    public INode addNode(final IEdge edge) {
         return this.addNode(edge, NodeType.NORMAL);
     }
 
@@ -218,23 +190,16 @@ class PGraph extends PNode implements IGraph, Serializable {
     /**
      * {@inheritDoc}
      */
-    public INode addNode(final IEdge edge, final NodeType type)
-            throws InconsistentGraphModelException {
-        // Check for graph consistency
-        if (!this.edges.contains(edge)) {
-            throw new InconsistentGraphModelException("Attempted to remove non-existent edge.");
-        }
+    public INode addNode(final IEdge edge, final NodeType type) {
         if (!(edge.getSource() instanceof PNode && edge.getTarget() instanceof PNode)) {
-            throw new InconsistentGraphModelException(
-                    "Attempted to add node on edge of incompatible type.");
+            throw new IncompatibleGraphTypeException();
+        } else if (!(edge.getLeftFace() instanceof PFace && edge.getRightFace() instanceof PFace)) {
+            throw new IncompatibleGraphTypeException();
+        } else if (!this.edges.contains(edge)) {
+            throw new IllegalArgumentException("The edge (" + edge.getID()
+                    + ") is not part of the graph.");
         }
-        if (!(edge.getLeftFace() instanceof PFace && edge.getRightFace() instanceof PFace)) {
-            throw new InconsistentGraphModelException(
-                    "Attempted to add node on edge of incompatible type.");
-        }
-        if (this.changedFaces) {
-            this.generateFaces();
-        }
+        this.generateFaces();
 
         // Remember target node
         INode target = edge.getTarget();
@@ -253,11 +218,11 @@ class PGraph extends PNode implements IGraph, Serializable {
         // Create node, move edge and create new edge
         PNode node = (PNode) this.addNode(type);
         edge.move(target, node);
-        PEdge newedge = (PEdge) this.addEdge(node, true, target, true, edge.isDirected());
+        PEdge newedge = (PEdge) this.addEdge(node, target, edge.isDirected());
 
         // Move remembered edges to end of adjacency list (so new edge is at correct position)
         for (IEdge e : move) {
-            e.move(target, target, true);
+            e.move(target, target);
         }
 
         // Update references in faces
@@ -275,10 +240,11 @@ class PGraph extends PNode implements IGraph, Serializable {
     /**
      * {@inheritDoc}
      */
-    public void removeNode(final INode node) throws InconsistentGraphModelException {
+    public void removeNode(final INode node) {
         // Check for graph consistency
         if (!this.nodes.contains(node)) {
-            throw new InconsistentGraphModelException("Attempted to remove non-existent node.");
+            throw new IllegalArgumentException("The node (" + node.getID()
+                    + ") is not part of the graph.");
         }
         // Remove node
         this.nodes.remove(node);
@@ -288,12 +254,11 @@ class PGraph extends PNode implements IGraph, Serializable {
             IEdge edge = es.next();
 
             // Check for graph consistency (again)
-            if (!this.edges.contains(edge)) {
-                throw new InconsistentGraphModelException("Attempted to remove non-existent edge.");
-            }
             if (!(node.getAdjacentNode(edge) instanceof PNode)) {
-                throw new InconsistentGraphModelException(
-                        "Attempted to remove edge of incompatible type.");
+                throw new IncompatibleGraphTypeException();
+            } else if (!this.edges.contains(edge)) {
+                throw new InconsistentGraphModelException("The edge (" + edge.getID()
+                        + ") is not part of the graph.");
             }
 
             ((PNode) node.getAdjacentNode(edge)).unlinkEdge(edge);
@@ -321,63 +286,29 @@ class PGraph extends PNode implements IGraph, Serializable {
 
     /**
      * {@inheritDoc}
-     * 
-     * @throws InconsistentGraphModelException
-     *             if the graph does not contain source node or target node of the edge or if either
-     *             node is not a {@code PNode}
      */
-    public IEdge addEdge(final INode source, final INode target)
-            throws InconsistentGraphModelException {
-        return this.addEdge(source, true, target, true);
+    public IEdge addEdge(final INode source, final INode target) {
+        return this.addEdge(source, target, true);
     }
 
     /**
      * {@inheritDoc}
-     * 
-     * @throws InconsistentGraphModelException
-     *             if the graph does not contain source node or target node of the edge or if either
-     *             node is not a {@code PNode}
      */
-    public IEdge addEdge(final INode source, final INode target, final boolean directed)
-            throws InconsistentGraphModelException {
-        return this.addEdge(source, true, target, true, directed);
-    }
-
-    /**
-     * {@inheritDoc}
-     * 
-     * @throws InconsistentGraphModelException
-     *             if the graph does not contain source node or target node of the edge or if either
-     *             node is not a {@code PNode}
-     */
-    public IEdge addEdge(final INode source, final boolean appendSource, final INode target,
-            final boolean appendTarget) throws InconsistentGraphModelException {
-        return this.addEdge(source, appendSource, target, appendTarget, true);
-    }
-
-    /**
-     * {@inheritDoc}
-     * 
-     * @throws InconsistentGraphModelException
-     *             if the graph does not contain source node or target node of the edge or if either
-     *             node is not a {@code PNode}
-     */
-    public IEdge addEdge(final INode source, final boolean appendSource, final INode target,
-            final boolean appendTarget, final boolean directed)
-            throws InconsistentGraphModelException {
+    public IEdge addEdge(final INode source, final INode target, final boolean directed) {
         // Check for graph consistency
-        if (!this.nodes.contains(source) || !this.nodes.contains(target)) {
-            throw new InconsistentGraphModelException(
-                    "Attempted to link non-existent nodes by an edge.");
-        }
         if (!(source instanceof PNode && target instanceof PNode)) {
-            throw new InconsistentGraphModelException(
-                    "Attempted to connect nodes of incompatible type.");
+            throw new IncompatibleGraphTypeException();
+        } else if (!this.nodes.contains(source)) {
+            throw new IllegalArgumentException("The node (" + source.getID()
+                    + ") is not part of the graph.");
+        } else if (!this.nodes.contains(target)) {
+            throw new IllegalArgumentException("The node (" + target.getID()
+                    + ") is not part of the graph.");
         }
 
         IEdge edge = new PEdge(this.edgeIndex++, this, source, target, directed);
-        ((PNode) source).linkEdge(edge, appendSource);
-        ((PNode) target).linkEdge(edge, appendTarget);
+        ((PNode) source).linkEdge(edge);
+        ((PNode) target).linkEdge(edge);
         this.edges.add(edge);
         this.changedFaces = true;
         return edge;
@@ -386,15 +317,15 @@ class PGraph extends PNode implements IGraph, Serializable {
     /**
      * {@inheritDoc}
      */
-    public void removeEdge(final IEdge edge) throws InconsistentGraphModelException {
+    public void removeEdge(final IEdge edge) {
         // Check for graph consistency
-        if (!this.edges.contains(edge)) {
-            throw new InconsistentGraphModelException("Attempted to remove non-existent edge.");
-        }
         if (!(edge.getSource() instanceof PNode && edge.getTarget() instanceof PNode)) {
-            throw new InconsistentGraphModelException(
-                    "Attempted to remove edge of incompatible type.");
+            throw new IncompatibleGraphTypeException();
+        } else if (!this.edges.contains(edge)) {
+            throw new IllegalArgumentException("The edge (" + edge.getID()
+                    + ") is not part of the graph.");
         }
+
         // Remove edge and references
         this.edges.remove(edge);
         ((PNode) edge.getSource()).unlinkEdge(edge);
@@ -409,38 +340,18 @@ class PGraph extends PNode implements IGraph, Serializable {
      * dynamically changed. This is necessary to guarantee constant time performance for most
      * operations. If the graph has changed since the last method call, the faces have to be
      * regenerated which may take some time.
-     * 
-     * @throws InconsistentGraphModelException
-     *             if the faces can not be generated correctly
      */
-    public Iterable<IFace> getFaces() throws InconsistentGraphModelException {
-        if (this.changedFaces) {
-            this.generateFaces();
-        }
+    public Iterable<IFace> getFaces() {
+        this.generateFaces();
         return this.faces;
     }
 
     /**
      * {@inheritDoc}
-     * 
-     * @throws InconsistentGraphModelException
-     *             if the faces can not be generated correctly
      */
-    public int getFaceCount() throws InconsistentGraphModelException {
-        if (this.changedFaces) {
-            this.generateFaces();
-        }
+    public int getFaceCount() {
+        this.generateFaces();
         return this.faces.size();
-    }
-
-    /**
-     * Check if the graph model has changed since the last the last time the faces have been
-     * generated.
-     * 
-     * @return true if the graph has changed
-     */
-    boolean getChangedFaces() {
-        return this.changedFaces;
     }
 
     /**
@@ -456,13 +367,14 @@ class PGraph extends PNode implements IGraph, Serializable {
      * after the graph has changed. This method will then regenerate all faces in the graph. Note
      * that this will not run in constant time, so your algorithm heavily relies on face
      * information, this graph structure may not be good for you.
-     * 
-     * @throws InconsistentGraphModelException
-     *             if the graph turns out to be inconsistent
      */
-    void generateFaces() throws InconsistentGraphModelException {
-        // Reset flag here to avoid infinite loops
-        this.changedFaces = false;
+    void generateFaces() {
+        if (!this.changedFaces) {
+            return;
+        } else {
+            this.changedFaces = false;
+        }
+
         for (IEdge edge : this.edges) {
             // Check for left face
             if (edge.getLeftFace() == null) {

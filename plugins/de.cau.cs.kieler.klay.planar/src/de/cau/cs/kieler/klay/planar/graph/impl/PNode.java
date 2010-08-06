@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.planar.graph.impl;
 
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import de.cau.cs.kieler.core.util.ICondition;
@@ -21,7 +22,6 @@ import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IEmbeddingConstraint;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.INode;
-import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
 import de.cau.cs.kieler.klay.planar.graph.IEmbeddingConstraint.ConstraintType;
 import de.cau.cs.kieler.klay.planar.util.FilteredIterable;
 import de.cau.cs.kieler.klay.planar.util.IFunction;
@@ -101,7 +101,7 @@ class PNode extends PGraphElement implements INode, Serializable {
     /**
      * {@inheritDoc}
      */
-    public boolean isAdjacent(final INode node) {
+    public boolean isAdjacent(final INode node) { // TODO O(n)
         for (IEdge e : this.edges) {
             if (e.getSource() == this && e.getTarget() == node) {
                 return true;
@@ -115,45 +115,40 @@ class PNode extends PGraphElement implements INode, Serializable {
     /**
      * {@inheritDoc}
      */
-    public INode getAdjacentNode(final IEdge edge) throws InconsistentGraphModelException {
+    public INode getAdjacentNode(final IEdge edge) {
         if (edge.getSource() == this) {
             return edge.getTarget();
         } else if (edge.getTarget() == this) {
             return edge.getSource();
         } else {
-            throw new InconsistentGraphModelException(
-                    "Attempted to get adjacent node from unconnected edge");
+            throw new IllegalArgumentException("The edge (" + edge.getID()
+                    + ") is not connected to the node (" + this.getID() + ").");
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    public IEdge getEdge(final INode node) throws InconsistentGraphModelException {
+    public IEdge getEdge(final INode node) { // TODO O(n)
         for (IEdge e : this.edges) {
             if (this.getAdjacentNode(e) == node) {
                 return e;
             }
         }
-        throw new InconsistentGraphModelException("Attempted to get edge from non-adjacent node");
+        throw new IllegalArgumentException("The node (" + node.getID()
+                + ") is not adjacent to the node (" + this.getID() + ").");
     }
 
     /**
      * Connect an edge to this node. The parameter {@code append} determines if the edge is added at
-     * the start or the end of the adjacency list.
+     * the end of the adjacency list.
      * 
      * @param edge
      *            the edge to add
-     * @param append
-     *            append edge to list if true, prepend if false
      * @return the port the edge was linked to
      */
-    void linkEdge(final IEdge edge, final boolean append) {
-        if (append) {
-            this.edges.addLast(edge);
-        } else {
-            this.edges.addFirst(edge);
-        }
+    void linkEdge(final IEdge edge) {
+        this.edges.add(edge);
     }
 
     /**
@@ -162,10 +157,8 @@ class PNode extends PGraphElement implements INode, Serializable {
      * 
      * @param edge
      *            the edge to remove
-     * @throws InconsistentGraphModelException
-     *             if the given edge {@code e} is not connected to this node
      */
-    void unlinkEdge(final IEdge edge) throws InconsistentGraphModelException {
+    void unlinkEdge(final IEdge edge) { // TODO O(n)
         this.edges.remove(edge);
     }
 
@@ -206,11 +199,7 @@ class PNode extends PGraphElement implements INode, Serializable {
     public Iterable<INode> adjacentNodes() {
         return new MappedIterable<IEdge, INode>(this.edges, new IFunction<IEdge, INode>() {
             public INode evaluate(final IEdge element) {
-                try {
-                    return getAdjacentNode(element);
-                } catch (InconsistentGraphModelException e) {
-                    return null;
-                }
+                return getAdjacentNode(element);
             }
         });
     }
@@ -302,36 +291,37 @@ class PNode extends PGraphElement implements INode, Serializable {
     /**
      * {@inheritDoc}
      */
-    public void merge(final INode node) throws InconsistentGraphModelException {
-        this.merge(node, true);
+    public void moveToStart(final IEdge edge) { // TODO O(2n)
+        int count = 0;
+        Iterator<IEdge> iter = this.edges.iterator();
+        while (iter.hasNext()) {
+            if (iter.next() == edge) {
+                iter.remove();
+                count++;
+            }
+        }
+        while (count > 0) {
+            count--;
+            this.edges.addFirst(edge);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
-    public void merge(final INode node, final boolean append)
-            throws InconsistentGraphModelException {
-
-        if (!(node instanceof PNode)) {
-            throw new InconsistentGraphModelException(
-                    "Attempted to merge node of incompatible type.");
-        }
-
-        // Create temporary list to avoid breaking the iterator
-        LinkedList<IEdge> toadd = new LinkedList<IEdge>();
-        for (IEdge edge : node.adjacentEdges()) {
-            if (append) {
-                toadd.addLast(edge);
-            } else {
-                toadd.addFirst(edge);
+    public void moveToEnd(final IEdge edge) { // TODO O(2n)
+        int count = 0;
+        Iterator<IEdge> iter = this.edges.iterator();
+        while (iter.hasNext()) {
+            if (iter.next() == edge) {
+                iter.remove();
+                count++;
             }
         }
-        for (IEdge edge : toadd) {
-            edge.move(node, this, append);
+        while (count > 0) {
+            count--;
+            this.edges.addLast(edge);
         }
-
-        this.getParent().removeNode(node);
-        this.copyProperties((PNode) node);
     }
 
     @Override

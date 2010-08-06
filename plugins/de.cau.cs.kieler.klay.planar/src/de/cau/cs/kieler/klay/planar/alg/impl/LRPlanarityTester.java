@@ -28,7 +28,6 @@ import de.cau.cs.kieler.klay.planar.alg.IPlanarityTester;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.INode;
-import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
 import de.cau.cs.kieler.klay.planar.util.IFunction;
 
 /**
@@ -277,8 +276,6 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * @param iGraph
      *            the graph to check for planarity.
      * @return {@code true}, if the graph is planar, {@code false} otherwise
-     * @throws InconsistentGraphModelException
-     *             if the input graph is not consistent
      * 
      * @see de.cau.cs.rtprak.planarization.OrthogonalLayoutProvider OrthogonalLayoutProvider
      * @see de.cau.cs.rtprak.planarization.IPlanarityTester IPlanarityTester
@@ -286,11 +283,11 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * @see de.cau.cs.rtprak.planarization.graph.INode INode
      * @see de.cau.cs.rtprak.planarization.graph.IEdge IEdge
      */
-    public boolean testPlanarity(final IGraph iGraph) throws InconsistentGraphModelException {
+    public boolean testPlanarity(final IGraph iGraph) {
 
         getMonitor().begin("Test planarity", 1);
         if (iGraph == null) {
-            throw new InconsistentGraphModelException("Input graph is null.");
+            throw new NullPointerException("Input graph is null.");
         }
 
         iGraph.reindex();
@@ -339,8 +336,6 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      *            the graph to reduce to a planar subgraph and determine its planar embedding
      * @return a list of edges of the input graph, that are not part of the determined subgraph and
      *         have been removed therefore (empty, if fully planar).
-     * @throws InconsistentGraphModelException
-     *             if {@code iGraph} is {@code null} or not consistent
      * 
      * @see de.cau.cs.rtprak.planarization.OrthogonalLayoutProvider OrthogonalLayoutProvider
      * @see de.cau.cs.rtprak.planarization.IPlanarityTester IPlanarityTester
@@ -349,11 +344,11 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * @see de.cau.cs.rtprak.planarization.graph.IEdge IEdge
      * @see de.cau.cs.kieler.core.util.Pair Pair
      */
-    public List<IEdge> planarSubgraph(final IGraph iGraph) throws InconsistentGraphModelException {
+    public List<IEdge> planarSubgraph(final IGraph iGraph) {
 
         getMonitor().begin("Planar embedding", 1);
         if (iGraph == null) {
-            throw new InconsistentGraphModelException("Input graph is null.");
+            throw new NullPointerException("Input graph is null.");
         }
 
         iGraph.reindex();
@@ -442,10 +437,8 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * 
      * @param v
      *            the root of the current DFS-subtree
-     * @throws InconsistentGraphModelException
-     *             if the graph is not consistent
      */
-    private void orientationDFS(final INode v) throws InconsistentGraphModelException {
+    private void orientationDFS(final INode v) {
 
         IEdge uv = parentEdge[v.getID()];
         for (IEdge vw : v.adjacentEdges()) {
@@ -538,11 +531,8 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      *            if {@code true}, this method will identify all edges, that cause edge crossings
      *            (designed for planar subgraph determination). If {@code false}, it will only run
      *            until one crossing edge is identified (designed for simple planarity testing)
-     * @throws InconsistentGraphModelException
-     *             if the graph is not consistent
      */
-    private void testingDFS(final INode v, final boolean mode)
-            throws InconsistentGraphModelException {
+    private void testingDFS(final INode v, final boolean mode) {
 
         IEdge uv = parentEdge[v.getID()];
         IEdge vw1 = null;
@@ -979,10 +969,8 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * 
      * @param node
      *            the node to merge its determined edge orders
-     * @throws InconsistentGraphModelException
-     *             in the graph is not consistent
      */
-    private void mergeEmbedding(final INode node) throws InconsistentGraphModelException {
+    private void mergeEmbedding(final INode node) {
 
         // Nothing needs to be done for small lists
         if (node.getAdjacentEdgeCount() <= 1) {
@@ -1014,26 +1002,25 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
 
         // Move self loops to the beginning of the list
         for (IEdge loop : loops) {
-            loop.move(loop.getSource(), node, false);
-            loop.move(loop.getTarget(), node, false);
+            node.moveToStart(loop);
         }
 
         // Move incoming tree edge to beginning of the list
         if (treeEdge != null) {
-            treeEdge.move(node, node, false);
+            node.moveToStart(treeEdge);
         }
 
         // Move outgoing back edges and incoming tree edges to the end of the list
         IEdge toAdd = initialRef[node.getID()];
         while (toAdd != null) {
-            toAdd.move(node, node, true);
+            node.moveToEnd(toAdd);
             rest.remove(toAdd);
             toAdd = ref[toAdd.getID()];
         }
 
         // Move all edges after insertion point to the end of the list
         for (IEdge edge : rest) {
-            edge.move(node, node, true);
+            node.moveToEnd(edge);
         }
     }
 }

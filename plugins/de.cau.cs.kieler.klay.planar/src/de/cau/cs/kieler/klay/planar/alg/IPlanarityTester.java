@@ -18,7 +18,6 @@ import java.util.List;
 import de.cau.cs.kieler.core.alg.IAlgorithm;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
-import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
 
 /**
  * Interface for planarity testing algorithms. Uses the Strategy design pattern to provide a common
@@ -35,10 +34,8 @@ public interface IPlanarityTester extends IAlgorithm {
      * @param graph
      *            the graph to test for planarity
      * @return true if the graph is planar, false otherwise
-     * @throws InconsistentGraphModelException
-     *             if {@code graph} is not consistent
      */
-    boolean testPlanarity(IGraph graph) throws InconsistentGraphModelException;
+    boolean testPlanarity(IGraph graph);
 
     /**
      * Determines a planar embedding of the graph. If the Graph is fully planar, this algorithm
@@ -49,9 +46,7 @@ public interface IPlanarityTester extends IAlgorithm {
      * @param graph
      *            the graph to determine its planar embedding
      * @return a list that the missing edges
-     * @throws InconsistentGraphModelException
-     *             if {@code graph} is not consistent
      */
-    List<IEdge> planarSubgraph(IGraph graph) throws InconsistentGraphModelException;
+    List<IEdge> planarSubgraph(IGraph graph);
 
 }

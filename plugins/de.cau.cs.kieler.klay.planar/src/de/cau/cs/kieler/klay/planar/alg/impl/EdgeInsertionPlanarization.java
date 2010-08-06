@@ -24,7 +24,6 @@ import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IFace;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.INode;
-import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
 
 /**
  * Inserts an edge in a planar graph by building the dual graph. In this graph shortest path is
@@ -46,9 +45,7 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
      * 
      * @see de.cau.cs.kieler.core.util.Pair Pair
      */
-    @SuppressWarnings("static-access")
-    public void planarize(final IGraph graph, final List<IEdge> edges)
-            throws InconsistentGraphModelException {
+    public void planarize(final IGraph graph, final List<IEdge> edges) {
 
         for (IEdge insertingEdge : edges) {
 
@@ -163,10 +160,8 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
      * @param node
      *            , the given node
      * @return faces, all faces that contact the node
-     * @throws InconsistentGraphModelException
      */
-    private HashSet<IFace> findSurroundingFaces(final INode node)
-            throws InconsistentGraphModelException {
+    private HashSet<IFace> findSurroundingFaces(final INode node) {
         HashSet<IFace> faces = new HashSet<IFace>();
         for (IEdge edge : node.adjacentEdges()) {
             faces.add(edge.getLeftFace());
@@ -183,11 +178,8 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
      *            , the new edge
      * @param node
      *            , the given node
-     * 
-     * @throws InconsistentGraphModelException
      */
-    private void reinsertEdges(final IFace face, final IEdge edge, final INode node)
-            throws InconsistentGraphModelException {
+    private void reinsertEdges(final IFace face, final IEdge edge, final INode node) {
 
         IEdge preNewEdge = findFirstFaceEdge(edge, node);
         List<IEdge> edges = new LinkedList<IEdge>();
@@ -220,10 +212,8 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
      * @param node
      *            , the gven node
      * @return edge, the clockwise first edge at this node
-     * @throws InconsistentGraphModelException
      */
-    private IEdge findFirstFaceEdge(final IEdge iedge, final INode node)
-            throws InconsistentGraphModelException {
+    private IEdge findFirstFaceEdge(final IEdge iedge, final INode node) {
         IFace face = iedge.getLeftFace();
         for (IEdge edge : node.adjacentEdges()) {
             if (edge.getRightFace() == face || edge.getLeftFace() == face) {
@@ -261,10 +251,8 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
      * @param graph
      *            , the given graph
      * @return face, the searched face
-     * @throws InconsistentGraphModelException
      */
-    private IFace dualNodeToFace(final INode node, final IGraph graph)
-            throws InconsistentGraphModelException {
+    private IFace dualNodeToFace(final INode node, final IGraph graph) {
         for (IFace face : graph.getFaces()) {
             if (node.getID() == face.getID()) {
                 return face;
@@ -327,10 +315,8 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
      * @param graph
      *            , the given graph
      * @return parent , array with the parents from root to all nodes
-     * @throws InconsistentGraphModelException
      */
-    private int[] bfs(final INode root, final INode target, final IGraph graph)
-            throws InconsistentGraphModelException {
+    private int[] bfs(final INode root, final INode target, final IGraph graph) {
         int size = graph.getNodeCount();
         int rootID = root.getID();
         int targetID = target.getID();

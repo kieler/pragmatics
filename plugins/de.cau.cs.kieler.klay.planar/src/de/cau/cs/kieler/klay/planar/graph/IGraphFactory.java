@@ -42,10 +42,8 @@ public interface IGraphFactory {
      * @param nodes
      *            the number of nodes in the graph
      * @return a full graph with the given number of nodes
-     * @throws InconsistentGraphModelException
-     *             if any inconsistencies occur
      */
-    IGraph createFullGraph(int nodes) throws InconsistentGraphModelException;
+    IGraph createFullGraph(int nodes);
 
     /**
      * Create a random graph with a given number of nodes and edges.
@@ -55,10 +53,8 @@ public interface IGraphFactory {
      * @param edges
      *            the number of edges in the random graph
      * @return a random graph
-     * @throws InconsistentGraphModelException
-     *             if any inconsistencies occur
      */
-    IGraph createRandomGraph(int nodes, int edges) throws InconsistentGraphModelException;
+    IGraph createRandomGraph(int nodes, int edges);
 
     /**
      * Create a graph from a {@code KGraph} instance.
@@ -66,10 +62,8 @@ public interface IGraphFactory {
      * @param kgraph
      *            a {@code KNode} to base the graph upon
      * @return a graph corresponding to {@code kgraph}
-     * @throws InconsistentGraphModelException
-     *             if the given {@code KGraph} is not consistent
      */
-    IGraph createGraphFromKGraph(KNode kgraph) throws InconsistentGraphModelException;
+    IGraph createGraphFromKGraph(KNode kgraph);
 
     /**
      * Create a graph based on a file in the DIMACS format.
@@ -79,9 +73,7 @@ public interface IGraphFactory {
      * @return a graph based on the DIMACS file
      * @throws IOException
      *             if problems during file reading occur
-     * @throws InconsistentGraphModelException
-     *             if the graph in the description file is not valid
      */
-    IGraph createGraphFromDIMACS(File dimacs) throws IOException, InconsistentGraphModelException;
+    IGraph createGraphFromDIMACS(File dimacs) throws IOException;
 
 }

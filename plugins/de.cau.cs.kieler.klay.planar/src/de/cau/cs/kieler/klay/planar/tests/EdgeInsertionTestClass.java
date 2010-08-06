@@ -9,12 +9,11 @@ import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.IGraphFactory;
 import de.cau.cs.kieler.klay.planar.graph.INode;
-import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
 import de.cau.cs.kieler.klay.planar.graph.impl.PGraphFactory;
 
 public class EdgeInsertionTestClass {
 
-    public static void main(String[] args) throws InconsistentGraphModelException {
+    public static void main(String[] args) {
         // build test graph
         IGraphFactory factory = new PGraphFactory();
         IGraph testGraph = factory.createEmptyGraph();
@@ -33,32 +32,27 @@ public class EdgeInsertionTestClass {
         INode nodeOne2 = testGraph2.addNode();
         INode nodeTwo2 = testGraph2.addNode();
 
-        try {
-            testGraph.addEdge(nodeZero, nodeOne);
-            testGraph.addEdge(nodeZero, nodeFour);
-            testGraph.addEdge(nodeZero, nodeThree);
-            testGraph.addEdge(nodeZero, nodeTwo);
+        testGraph.addEdge(nodeZero, nodeOne);
+        testGraph.addEdge(nodeZero, nodeFour);
+        testGraph.addEdge(nodeZero, nodeThree);
+        testGraph.addEdge(nodeZero, nodeTwo);
 
-            testGraph.addEdge(nodeOne, nodeFive);
-            testGraph.addEdge(nodeOne, nodeFour);
+        testGraph.addEdge(nodeOne, nodeFive);
+        testGraph.addEdge(nodeOne, nodeFour);
 
-            testGraph.addEdge(nodeFive, nodeSeven);
+        testGraph.addEdge(nodeFive, nodeSeven);
 
-            testGraph.addEdge(nodeSeven, nodeSix);
-            testGraph.addEdge(nodeSeven, nodeFour);
+        testGraph.addEdge(nodeSeven, nodeSix);
+        testGraph.addEdge(nodeSeven, nodeFour);
 
-            testGraph.addEdge(nodeSix, nodeTwo);
-            testGraph.addEdge(nodeSix, nodeThree);
+        testGraph.addEdge(nodeSix, nodeTwo);
+        testGraph.addEdge(nodeSix, nodeThree);
 
-            testGraph.addEdge(nodeFour, nodeSix);
+        testGraph.addEdge(nodeFour, nodeSix);
 
-            testGraph2.addEdge(nodeZero2, nodeOne2);
-            testGraph2.addEdge(nodeOne2, nodeTwo2);
+        testGraph2.addEdge(nodeZero2, nodeOne2);
+        testGraph2.addEdge(nodeOne2, nodeTwo2);
 
-        } catch (InconsistentGraphModelException e) {
-
-            e.printStackTrace();
-        }
         IPlanarizer planarizer = new EdgeInsertionPlanarization();
 
         System.out.println("Eingabe Graph \n\n");

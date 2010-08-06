@@ -15,25 +15,24 @@ package de.cau.cs.kieler.klay.planar.graph;
 
 /**
  * A exception for the graph model in the planarization plug-in. This exception is thrown whenever
- * the common graph data structure detects inconsistencies in the graph model.
+ * objects from different graph implementation are mixed in the same graph, so that problems due to
+ * improper casting may occur.
  * 
  * @see de.cau.cs.kieler.klay.planar.graph.IGraph {@code IGraph}
  * 
  * @author ocl
  */
-public class InconsistentGraphModelException extends RuntimeException {
+public class IncompatibleGraphTypeException extends RuntimeException {
 
-    /**
-     * Generated UID for serialization.
-     */
-    private static final long serialVersionUID = 831928613895541892L;
+    /** Generated UID for serialization. */
+    private static final long serialVersionUID = 8218864270443727491L;
 
     // ====================== Constructor =====================================
 
     /**
      * Default Constructor.
      */
-    public InconsistentGraphModelException() {
+    public IncompatibleGraphTypeException() {
         super();
     }
 
@@ -43,7 +42,7 @@ public class InconsistentGraphModelException extends RuntimeException {
      * @param msg
      *            the exception message
      */
-    public InconsistentGraphModelException(final String msg) {
+    public IncompatibleGraphTypeException(final String msg) {
         super(msg);
     }
 

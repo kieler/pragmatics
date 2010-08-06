@@ -23,7 +23,6 @@ import de.cau.cs.kieler.klay.planar.alg.IPlanarityTester;
 import de.cau.cs.kieler.klay.planar.alg.impl.BoyerMyrvoldPlanarityTester;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.IGraphFactory;
-import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
 import de.cau.cs.kieler.klay.planar.graph.impl.PGraphFactory;
 
 /**
@@ -49,19 +48,13 @@ public class PlanarityAnalysis implements IAnalysis {
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) throws KielerException {
         progressMonitor.begin("Planarity testing", 1);
-        boolean planar;
 
-        try {
-            // KGraph -> PGraph conversion
-            IGraph graph = this.factory.createGraphFromKGraph(parentNode);
+        // KGraph -> PGraph conversion
+        IGraph graph = this.factory.createGraphFromKGraph(parentNode);
 
-            // Planarity Testing
-            this.tester.reset();
-            planar = this.tester.testPlanarity(graph);
-
-        } catch (InconsistentGraphModelException e) {
-            throw new KielerException("Inconsistent Graph Model: " + e.getMessage());
-        }
+        // Planarity Testing
+        this.tester.reset();
+        boolean planar = this.tester.testPlanarity(graph);
 
         progressMonitor.done();
         return "The graph is " + (planar ? "" : "not") + " planar.";

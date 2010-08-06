@@ -25,7 +25,6 @@ import de.cau.cs.kieler.klay.planar.alg.IPlanarityTester;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.INode;
-import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
 import de.cau.cs.kieler.klay.planar.util.ManuallyIterable;
 import de.cau.cs.kieler.klay.planar.util.ManuallyIterable.Direction;
 import de.cau.cs.kieler.klay.planar.util.ManuallyIterable.ManualIterator;
@@ -184,11 +183,8 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
     /**
      * {@inheritDoc} This guarantees to check for graph planarity in time linear to the number of
      * nodes in the graph.
-     * 
-     * @throws InconsistentGraphModelException
-     *             if the graph is inconsistent
      */
-    public boolean testPlanarity(final IGraph g) throws InconsistentGraphModelException {
+    public boolean testPlanarity(final IGraph g) {
         getMonitor().begin("Planarity Testing", 1);
         this.graph = g;
         this.planarity();
@@ -199,11 +195,8 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
     /**
      * {@inheritDoc} This guarantees to find a planar embedding for a subgraph in time linear to the
      * number of nodes in the graph.
-     * 
-     * @throws InconsistentGraphModelException
-     *             if the graph is inconsistent
      */
-    public List<IEdge> planarSubgraph(final IGraph g) throws InconsistentGraphModelException {
+    public List<IEdge> planarSubgraph(final IGraph g) {
         getMonitor().begin("Planarity Testing", 1);
         this.graph = g;
         this.planarity();
@@ -220,10 +213,10 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
      * every child of a node in the DFS tree. During the main part of the algorithm, the nodes are
      * traversed in reversed order of their DFI, building up the graph from the leafs to the roots.
      * For every traversed node, the tree edges are embedded, then the {@code walkup} method in
-     * invoked for every node that is connected to the traversed node by a backedge. The
-     * {@code walkup} marks all virtual root nodes on the path between these two nodes. Then, the
-     * {@code walkup} digests this information, by traversing the graph over all marked nodes, until
-     * it finds the node where the backedge should be embedded. At this point, all traversed virtual
+     * invoked for every node that is connected to the traversed node by a backedge. The {@code
+     * walkup} marks all virtual root nodes on the path between these two nodes. Then, the {@code
+     * walkup} digests this information, by traversing the graph over all marked nodes, until it
+     * finds the node where the backedge should be embedded. At this point, all traversed virtual
      * roots are merged into their parent nodes and the backedge is embedded. To keep all endpoints
      * of future backedges on the external face, the biconnnected components containing these nodes
      * may have to be flipped. This is done my marking the nodes to flip during {@code walkup}.
@@ -232,13 +225,11 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
      * roots from the graph.
      * 
      * @param inputGraph
-     *            the input graph to test
-     * @throws InconsistentGraphModelException
-     *             if the graph is inconsistent
+     *            the input graph to test]
      */
     // Initialization of arrays for node properties require unchecked casts
     @SuppressWarnings("unchecked")
-    private void planarity() throws InconsistentGraphModelException {
+    private void planarity() {
         this.missingEdges.clear();
         this.reversedNodes.clear();
         this.externalFace = new ManuallyIterable<INode>(this.graph.getNodeCount());
@@ -362,11 +353,9 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
      * @param map
      *            a map used to map input graph nodes to working graph nodes
      * @return the next DFS index
-     * @throws InconsistentGraphModelException
-     *             if the copied graph turns out to be inconsistent
      */
     private int preProcessing(final INode node, final INode parentNode, final int i,
-            final List<INode>[] buckets) throws InconsistentGraphModelException {
+            final List<INode>[] buckets) {
         int index = i;
         int iNode = node.getID();
         this.reversedNodes.addFirst(node);
@@ -442,7 +431,7 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
             }
         }
         for (Pair<IEdge, INode> pair : tomove) {
-            pair.getFirst().move(node, pair.getSecond(), true);
+            pair.getFirst().move(node, pair.getSecond());
         }
 
         // Add node to lowpoint bucket for later sorting
@@ -525,8 +514,8 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
     /**
      * Embed a back edge in the new graph. The {@code walkdown} traverses the external face of a
      * biconnected component, starting on a root node of the currently processed node in the main
-     * algorithm. Whenever it encounters a root node, that is marked as pertinent by the
-     * {@code walkup} method, it jumps to the corresponding biconnected component, and resumes the
+     * algorithm. Whenever it encounters a root node, that is marked as pertinent by the {@code
+     * walkup} method, it jumps to the corresponding biconnected component, and resumes the
      * traversal there. Eventually the method will reach one of the node marked for a backedge. Then
      * all biconnected components that were traversed along the way are merged into one biconnected
      * component, all virtual roots are removed, and the backedge is embedded. Whenever the endpoint
@@ -539,11 +528,8 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
      * @param direction
      *            the direction of the face traversal
      * @return true if the embedding was successful
-     * @throws InconsistentGraphModelException
-     *             if the graph is inconsistent
      */
-    private boolean walkdown(final INode root, final Direction direction)
-            throws InconsistentGraphModelException {
+    private boolean walkdown(final INode root, final Direction direction) {
 
         LinkedList<ManualIterator<INode>> merge = new LinkedList<ManualIterator<INode>>();
         INode node = this.parent[root.getID()];
@@ -559,9 +545,18 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
                 this.mergeBicomp(merge);
                 iter.setDirection(direction);
                 for (IEdge edge : this.pertinentBackedges[iIter]) {
-                    edge.move(node, root, (direction == Direction.REV));
-                    edge.move(iter.getCurrent(), iter.getCurrent(), (direction == Direction.FWD));
                     this.backedges[node.getID()].remove(edge);
+                    edge.move(node, root);
+                    switch (direction) {
+                    case FWD:
+                        root.moveToStart(edge);
+                        iter.getCurrent().moveToEnd(edge);
+                        break;
+                    case REV:
+                        root.moveToEnd(edge);
+                        iter.getCurrent().moveToStart(edge);
+                        break;
+                    }
                 }
                 this.pertinentBackedges[iIter].clear();
                 Direction opp = (direction == Direction.FWD) ? Direction.REV : Direction.FWD;
@@ -643,11 +638,8 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
      * 
      * @param stack
      *            the merge stack
-     * @throws InconsistentGraphModelException
-     *             if the edges in the graph are not correctly linked
      */
-    private void mergeBicomp(final LinkedList<ManualIterator<INode>> stack)
-            throws InconsistentGraphModelException {
+    private void mergeBicomp(final LinkedList<ManualIterator<INode>> stack) {
         while (!stack.isEmpty()) {
             // The virtual root of node
             ManualIterator<INode> root = stack.pop();
@@ -678,7 +670,24 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
             }
 
             // Remove virtual root from graph
-            node.getCurrent().merge(root.getCurrent(), (node.getDirection() == Direction.FWD));
+            LinkedList<IEdge> edges = new LinkedList<IEdge>();
+            for (IEdge edge : root.getCurrent().adjacentEdges()) {
+                switch (node.getDirection()) {
+                case FWD:
+                    edges.addLast(edge);
+                    break;
+                case REV:
+                    edges.addFirst(edge);
+                    break;
+                }
+            }
+            for (IEdge edge : edges) {
+                edge.move(root.getCurrent(), node.getCurrent());
+                if (node.getDirection() == Direction.REV) {
+                    node.getCurrent().moveToStart(edge);
+                }
+            }
+            this.graph.removeNode(root.getCurrent());
             this.separatedChildren[iNode].remove(this.children[iRoot].getFirst());
             this.roots[iNode].remove(root.getCurrent());
             for (Iterator<INode> rs = this.pertinentRoots[iNode].iterator(); rs.hasNext();) {
@@ -767,12 +776,9 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
      * @param parentNode
      *            the previously processed node
      * @param sign
-     *            the sign of the tree path up to now
-     * @throws InconsistentGraphModelException
-     *             if the graph turns out to be inconsistent
+     *            the sign of the tree path up to now]
      */
-    private void postProcessing(final INode current, final INode parentNode, final boolean sign)
-            throws InconsistentGraphModelException {
+    private void postProcessing(final INode current, final INode parentNode, final boolean sign) {
         int iCurrent = current.getID();
         this.visited[iCurrent] = current;
         boolean s = sign ^ this.flipped[iCurrent];
@@ -780,7 +786,14 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
 
         // Remove virtual roots from graph
         for (INode root : this.roots[iCurrent]) {
-            current.merge(root, true);
+            LinkedList<IEdge> edges = new LinkedList<IEdge>();
+            for (IEdge edge : root.adjacentEdges()) {
+                edges.add(edge);
+            }
+            for (IEdge edge : edges) {
+                edge.move(root, current);
+            }
+            this.graph.removeNode(root);
         }
 
         // Reverse adjacency list if necessary

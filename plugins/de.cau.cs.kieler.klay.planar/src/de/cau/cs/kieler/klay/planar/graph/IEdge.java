@@ -70,19 +70,15 @@ public interface IEdge extends IGraphElement {
      * Get the {@code IFace} on the right side of this edge.
      * 
      * @return the right face
-     * @throws InconsistentGraphModelException
-     *             if any inconsistencies in the graph occur
      */
-    IFace getRightFace() throws InconsistentGraphModelException;
+    IFace getRightFace();
 
     /**
      * Get the {@code IFace} on the left side of this edge.
      * 
      * @return the left face
-     * @throws InconsistentGraphModelException
-     *             if any inconsistencies in the graph occur
      */
-    IFace getLeftFace() throws InconsistentGraphModelException;
+    IFace getLeftFace();
 
     // ======================== Miscellaneous Functions ============================================
 
@@ -95,26 +91,7 @@ public interface IEdge extends IGraphElement {
      *            the node from which this edge will be removed
      * @param to
      *            the node to which this edge will be moved
-     * @throws InconsistentGraphModelException
-     *             if the node {@code from} is not part of the graph
      */
-    void move(INode from, INode to) throws InconsistentGraphModelException;
-
-    /**
-     * Move the edge from one node to another. This will remove the edge from the adjacency list of
-     * the first node, and will add itself to the adjacency list of the second node. The source and
-     * target of the edge will be set accordingly. The additional parameter {@code append}
-     * determines if the edge will be appended or prepended to the adjacency list of the new node.
-     * 
-     * @param from
-     *            the node from which this edge will be removed
-     * @param to
-     *            the node to which this edge will be moved
-     * @param append
-     *            true to append the edge to the adjacency list, false to prepend
-     * @throws InconsistentGraphModelException
-     *             if either of the nodes are not part of the graph
-     */
-    void move(INode from, INode to, boolean append) throws InconsistentGraphModelException;
+    void move(INode from, INode to);
 
 }

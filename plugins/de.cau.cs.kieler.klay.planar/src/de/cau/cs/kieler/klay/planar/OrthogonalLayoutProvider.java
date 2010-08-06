@@ -31,7 +31,6 @@ import de.cau.cs.kieler.klay.planar.alg.impl.LRPlanarityTester;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.IGraphFactory;
-import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
 import de.cau.cs.kieler.klay.planar.graph.impl.PGraphFactory;
 
 /**
@@ -121,24 +120,18 @@ public class OrthogonalLayoutProvider extends AbstractLayoutProvider {
             }
         }
 
-        try {
-            IGraph graph;
+        // KGraph -> PGraph conversion
+        IGraph graph = this.factory.createGraphFromKGraph(layoutNode);
 
-            // KGraph -> PGraph conversion
-            graph = this.factory.createGraphFromKGraph(layoutNode);
+        // Step 1: Planarity Testing
+        List<IEdge> edges = this.tester.planarSubgraph(graph);
 
-            // Step 1: Planarity Testing
-            List<IEdge> edges = this.tester.planarSubgraph(graph);
+        // Step 2: Planarization
+        this.planarizer.planarize(graph, edges);
 
-            // Step 2: Planarization
-            this.planarizer.planarize(graph, edges);
+        // Step 3: Orthogonalization
+        this.orthogonalizer.orthogonalize(graph);
 
-            // Step 3: Orthogonalization
-            this.orthogonalizer.orthogonalize(graph);
-
-        } catch (InconsistentGraphModelException e) {
-            throw new KielerException("Inconsistent Graph Model: " + e.getMessage());
-        }
         monitor.done();
     }
 

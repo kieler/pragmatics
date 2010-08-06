@@ -85,10 +85,8 @@ public interface INode extends IGraphElement {
      * @param edge
      *            the edge that connects the nodes
      * @return the adjacent node of this node regarding edge {@code e}
-     * @throws InconsistentGraphModelException
-     *             if the given edge {@code e} is not part of the adjacency list
      */
-    INode getAdjacentNode(IEdge edge) throws InconsistentGraphModelException;
+    INode getAdjacentNode(IEdge edge);
 
     /**
      * Get the edge to an adjacent node. This returns the edge that connects this node with the
@@ -97,10 +95,8 @@ public interface INode extends IGraphElement {
      * @param node
      *            the adjacent node
      * @return the edge that connects this node to {@code n}
-     * @throws InconsistentGraphModelException
-     *             if the given node {@code n} is not adjacent to an edge in the list
      */
-    IEdge getEdge(INode node) throws InconsistentGraphModelException;
+    IEdge getEdge(INode node);
 
     /**
      * Check if the node has any embedding constraints.
@@ -193,30 +189,19 @@ public interface INode extends IGraphElement {
     void sort(IFunction<IEdge, Integer> func, boolean ascending);
 
     /**
-     * Merge the node with another node. This will merge two nodes in the graph. All edges of the
-     * given node will be added to this node.
+     * Move an edge in the adjacency list to the beginning of the list.
      * 
-     * @param node
-     *            the node to merge this node with
-     * @throws InconsistentGraphModelException
-     *             if the node is not part of the graph
+     * @param edge
+     *            the edge to move
      */
-    void merge(INode node) throws InconsistentGraphModelException;
+    void moveToStart(IEdge edge);
 
     /**
-     * Merge the node with another node. This will merge two nodes in the graph. All edges of the
-     * given node will be added to this node. The additional parameter {@code append} determines if
-     * the adjacency list of the merged node will be appended or prepended to the adjacency list of
-     * this node.
+     * Move an edge in the adjacency list to the end of the list.
      * 
-     * @param node
-     *            the node to merge this node with
-     * @param append
-     *            the direction of the addition. True means the adjacency list of the second node
-     *            will be appended to the adjacency list of the first node.
-     * @throws InconsistentGraphModelException
-     *             if the node is not part of the graph
+     * @param edge
+     *            the edge to move
      */
-    void merge(INode node, boolean append) throws InconsistentGraphModelException;
+    void moveToEnd(IEdge edge);
 
 }

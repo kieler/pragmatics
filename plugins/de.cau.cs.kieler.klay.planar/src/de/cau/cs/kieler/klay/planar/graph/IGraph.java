@@ -50,10 +50,8 @@ public interface IGraph extends INode {
      * face in the original graph, and edges between neighboring faces.
      * 
      * @return the dual graph to this graph
-     * @throws InconsistentGraphModelException
-     *             if the given graph turns out to be inconsistent
      */
-    IGraph createDualGraph() throws InconsistentGraphModelException;
+    IGraph createDualGraph();
 
     // ======================== Nodes ==============================================================
 
@@ -88,10 +86,8 @@ public interface IGraph extends INode {
      * @param edge
      *            the edge to split up by the node
      * @return the new node in the graph
-     * @throws InconsistentGraphModelException
-     *             if the edge is not part of the graph
      */
-    INode addNode(IEdge edge) throws InconsistentGraphModelException;
+    INode addNode(IEdge edge);
 
     /**
      * Add a new node of a specific type to the graph. This adds an empty node of the given type to
@@ -113,10 +109,8 @@ public interface IGraph extends INode {
      * @param type
      *            the type of the node
      * @return the new node in the graph
-     * @throws InconsistentGraphModelException
-     *             if the edge is not part of the graph
      */
-    INode addNode(IEdge edge, NodeType type) throws InconsistentGraphModelException;
+    INode addNode(IEdge edge, NodeType type);
 
     /**
      * Remove a node from the graph. The node will be remove, together with all references to it in
@@ -124,10 +118,8 @@ public interface IGraph extends INode {
      * 
      * @param node
      *            the node to remove
-     * @throws InconsistentGraphModelException
-     *             if the graph does not contain the specified node
      */
-    void removeNode(INode node) throws InconsistentGraphModelException;
+    void removeNode(INode node);
 
     // ======================== Edges ==============================================================
 
@@ -157,11 +149,8 @@ public interface IGraph extends INode {
      * @param target
      *            the target node of the edge
      * @return the edge that was just added
-     * @throws InconsistentGraphModelException
-     *             if the graph does not contain the source node or target node of the edge, or if
-     *             there are no free ports to host the edge
      */
-    IEdge addEdge(INode source, INode target) throws InconsistentGraphModelException;
+    IEdge addEdge(INode source, INode target);
 
     /**
      * Add an edge to the graph. A new edge will be inserted into the graph, connecting the two
@@ -176,62 +165,8 @@ public interface IGraph extends INode {
      * @param directed
      *            specifies if the edge is directed or undirected
      * @return the edge that was just added
-     * @throws InconsistentGraphModelException
-     *             if the graph does not contain the source node or target node of the edge, or if
-     *             there are no free ports to host the edge
      */
-    IEdge addEdge(INode source, INode target, boolean directed)
-            throws InconsistentGraphModelException;
-
-    /**
-     * Add a directed edge to the graph. A new, directed edge will be inserted into the graph,
-     * connecting the two nodes {@code source} and {@code target}. This checks if the two given
-     * nodes are actually part of the graph and throws an exception otherwise. The newly created
-     * edge object is returned for further use. The additional parameters {@code appendSource} and
-     * {@code appendTarget} specify if the edge is appended or prepended to the adjacency list of
-     * {@code source} and {@code target} respectively.
-     * 
-     * @param source
-     *            the source node of the edge
-     * @param appendSource
-     *            true to append the edge to the source node, false to prepend the edge
-     * @param target
-     *            the target node of the edge
-     * @param appendTarget
-     *            true to append the edge to the target node, false to prepend the edge
-     * @return the edge that was just added
-     * @throws InconsistentGraphModelException
-     *             if the graph does not contain the source node or target node of the edge, or if
-     *             there are no free ports to host the edge
-     */
-    IEdge addEdge(INode source, boolean appendSource, INode target, boolean appendTarget)
-            throws InconsistentGraphModelException;
-
-    /**
-     * Add an edge to the graph. A new edge will be inserted into the graph, connecting the two
-     * nodes {@code source} and {@code target}. The node can be either directed or undirected. This
-     * checks if the two given nodes are actually part of the graph and throws an exception
-     * otherwise. The newly created edge object is returned for further use. The additional
-     * parameters {@code appendSource} and {@code appendTarget} specify if the edge is appended or
-     * prepended to the adjacency list of {@code source} and {@code target} respectively.
-     * 
-     * @param source
-     *            the source node of the edge
-     * @param appendSource
-     *            true to append the edge to the source node, false to prepend the edge
-     * @param target
-     *            the target node of the edge
-     * @param appendTarget
-     *            true to append the edge to the target node, false to prepend the edge
-     * @param directed
-     *            specifies if the edge is directed or undirected
-     * @return the edge that was just added
-     * @throws InconsistentGraphModelException
-     *             if the graph does not contain the source node or target node of the edge, or if
-     *             there are no free ports to host the edge
-     */
-    IEdge addEdge(INode source, boolean appendSource, INode target, boolean appendTarget,
-            boolean directed) throws InconsistentGraphModelException;
+    IEdge addEdge(INode source, INode target, boolean directed);
 
     /**
      * Remove an edge from the graph. The edge will be removed together will all references to the
@@ -239,10 +174,8 @@ public interface IGraph extends INode {
      * 
      * @param edge
      *            the edge to remove
-     * @throws InconsistentGraphModelException
-     *             if the graph does not contain the specified edge
      */
-    void removeEdge(IEdge edge) throws InconsistentGraphModelException;
+    void removeEdge(IEdge edge);
 
     // ======================== Faces ==============================================================
 
@@ -251,18 +184,14 @@ public interface IGraph extends INode {
      * faces that are part of the graph.
      * 
      * @return {@code Iterable} containing all graph faces
-     * @throws InconsistentGraphModelException
-     *             if the graph turns out to be inconsistent
      */
-    Iterable<IFace> getFaces() throws InconsistentGraphModelException;
+    Iterable<IFace> getFaces();
 
     /**
      * Get the number of faces in the graph.
      * 
      * @return the number of faces
-     * @throws InconsistentGraphModelException
-     *             if the graph turns out to be inconsistent
      */
-    int getFaceCount() throws InconsistentGraphModelException;
+    int getFaceCount();
 
 }

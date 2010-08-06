@@ -48,7 +48,7 @@ public class PGraphFactory implements IGraphFactory {
     /**
      * {@inheritDoc}
      */
-    public IGraph createFullGraph(final int nodes) throws InconsistentGraphModelException {
+    public IGraph createFullGraph(final int nodes) {
         IGraph graph = new PGraph();
         INode[] nodeArray = new INode[nodes];
 
@@ -69,8 +69,7 @@ public class PGraphFactory implements IGraphFactory {
     /**
      * {@inheritDoc}
      */
-    public IGraph createRandomGraph(final int nodes, final int edges)
-            throws InconsistentGraphModelException {
+    public IGraph createRandomGraph(final int nodes, final int edges) {
         IGraph graph = new PGraph();
         INode[] nodeArray = new INode[nodes];
 
@@ -90,8 +89,9 @@ public class PGraphFactory implements IGraphFactory {
 
     /**
      * {@inheritDoc}
+     * 
      */
-    public IGraph createGraphFromKGraph(final KNode kgraph) throws InconsistentGraphModelException {
+    public IGraph createGraphFromKGraph(final KNode kgraph) {
         // TODO check for hyper nodes
         // TODO check for directed/undirected edges
         // TODO check for embedding constraints (ports)
@@ -120,7 +120,7 @@ public class PGraphFactory implements IGraphFactory {
                 }
                 INode source = map.get(kedge.getSource());
                 INode target = map.get(kedge.getTarget());
-                IEdge edge = graph.addEdge(source, true, target, true, true);
+                IEdge edge = graph.addEdge(source, target, true);
                 edge.setProperty(IGraph.TOKGRAPH, kedge);
             }
         }
@@ -133,8 +133,7 @@ public class PGraphFactory implements IGraphFactory {
     /**
      * {@inheritDoc}
      */
-    public IGraph createGraphFromDIMACS(final File dimacs) throws IOException,
-            InconsistentGraphModelException {
+    public IGraph createGraphFromDIMACS(final File dimacs) throws IOException {
         BufferedReader input = new BufferedReader(new FileReader(dimacs));
         IGraph graph = new PGraph();
         INode[] nodes = null;
