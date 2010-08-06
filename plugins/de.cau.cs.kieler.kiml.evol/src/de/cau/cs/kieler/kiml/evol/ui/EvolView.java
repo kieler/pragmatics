@@ -92,9 +92,9 @@ public class EvolView extends ViewPart {
         }
 
     }
-
+    
     /**
-     * Refreshes the view.
+     * Refreshes the view. Must be run in UI thread.
      */
     public void refresh(final boolean onlyCurrent) {
 
@@ -330,7 +330,11 @@ public class EvolView extends ViewPart {
         Assert.isNotNull(expectedLayoutProviderId);
 
         // Adopt and layout the current individual.
-        EvolUtil.applyIndividual(currentIndividual, expectedLayoutProviderId);
+        MonitoredOperation.runInUI(new Runnable() {
+            public void run() {
+                EvolUtil.applyIndividual(currentIndividual, expectedLayoutProviderId);
+            }
+        }, true);
 
         // Refresh the layout view.
         MonitoredOperation.runInUI(new LayoutViewRefresher(), false);

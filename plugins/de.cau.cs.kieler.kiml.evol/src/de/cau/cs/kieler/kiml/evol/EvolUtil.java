@@ -45,7 +45,6 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
@@ -319,7 +318,7 @@ public final class EvolUtil {
 
     /**
      * Layouts the given individuals in the given editor and calculates
-     * automatic ratings for them.
+     * automatic ratings for them. This must be run in the UI thread.
      *
      * @param pop
      *            a {@link Population} (list of individuals)
@@ -337,32 +336,11 @@ public final class EvolUtil {
                 EclipseLayoutServices.getInstance().getManager(editor, null);
         Assert.isNotNull(manager);
 
-        /**
-         *
-         * @author bdu
-         *
-         */
-        class SourceGetter implements Runnable {
-            private LayoutPropertySource source;
-
-            public LayoutPropertySource getSource() {
-                return this.source;
-            }
-
-            public void run() {
-                this.source = getLayoutPropertySource();
-            }
-        }
-
-        final SourceGetter sourceGetterRunnable = new SourceGetter();
-        MonitoredOperation.runInUI(sourceGetterRunnable, true);
-        final LayoutPropertySource source = sourceGetterRunnable.getSource();
-
-        try {
-            Thread.sleep(50);
-        } catch (final InterruptedException e) {
-            e.printStackTrace();
-        }
+        // final SourceGetter sourceGetterRunnable = new SourceGetter();
+        // MonitoredOperation.runInUI(sourceGetterRunnable, true);
+        // final LayoutPropertySource source = sourceGetterRunnable.getSource();
+        final LayoutPropertySource source = getLayoutPropertySource();
+        Assert.isNotNull(source);
 
         // The current diagram gets layouted and measured for each individual.
         for (int pos = 0; pos < pop.size(); pos++) {
@@ -377,9 +355,8 @@ public final class EvolUtil {
 
             if (monitor != null) {
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(300);
                 } catch (final InterruptedException exception) {
-                    // TODO Auto-generated catch block
                     exception.printStackTrace();
                 }
                 monitor.worked(1);
@@ -452,7 +429,7 @@ public final class EvolUtil {
             }
         }
 
-        // Try to get the active editor of the workbench.
+        // Try to get the active editor of the workbench (must be in UI thread).
         final IWorkbench workbench = PlatformUI.getWorkbench();
         final IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
         if (window == null) {
@@ -641,6 +618,8 @@ public final class EvolUtil {
 
         System.out.println("adopt " + theIndividual.toString());
         final LayoutServices layoutServices = LayoutServices.getInstance();
+        final EvolutionService evolService = EvolutionService.getInstance();
+        final Set<String> metricIds = evolService.getLayoutMetricsIds();
 
         // set layout options according to genome
         for (final IGene<?> gene : theIndividual) {
@@ -648,6 +627,12 @@ public final class EvolUtil {
             Assert.isNotNull(gene);
             final Object value = gene.getValue();
             final Object id = gene.getId();
+
+            if (metricIds.contains(id)) {
+                // it is a metric id --> skip
+                continue;
+            }
+
             final LayoutOptionData data = layoutServices.getLayoutOptionData((String) id);
             Assert.isNotNull(data, "No data for " + id);
 
