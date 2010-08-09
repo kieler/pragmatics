@@ -48,6 +48,8 @@ public abstract class OgdfLayouter {
     /** layout option identifier for label margin distance. */
     public static final String OPT_LABEL_MARGIN_DISTANCE =
             "de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance";
+    /** the minimal distance between the source point and the first bend point. */
+    private static final float SOURCE_POINT_FIRST_BEND_DISTANCE = 2;
 
     /**
      * Layouts the given graph.
@@ -399,10 +401,14 @@ public abstract class OgdfLayouter {
                         // sometimes
                         if (first) {
                             first = false;
-                            if (sourcePoint.getX() < point.getX() + 2
-                                    && sourcePoint.getX() > point.getX() - 2
-                                    && sourcePoint.getY() < point.getY() + 2
-                                    && sourcePoint.getY() > point.getY() - 2) {
+                            if (sourcePoint.getX() < point.getX()
+                                    + SOURCE_POINT_FIRST_BEND_DISTANCE
+                                    && sourcePoint.getX() > point.getX()
+                                            - SOURCE_POINT_FIRST_BEND_DISTANCE
+                                    && sourcePoint.getY() < point.getY()
+                                            + SOURCE_POINT_FIRST_BEND_DISTANCE
+                                    && sourcePoint.getY() > point.getY()
+                                            - SOURCE_POINT_FIRST_BEND_DISTANCE) {
                                 continue;
                             }
                         }
