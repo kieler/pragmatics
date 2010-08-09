@@ -2,7 +2,7 @@
 <feature
       id="net.ogdf.lib"
       label="OGDF Library"
-      version="1.0.0.qualifier"
+      version="2.0.0.qualifier"
       provider-name="Technische Universität Dortmund"
       os="linux,macosx,solaris,win32"
       arch="sparc,x86,x86_64">
@@ -636,15 +636,6 @@ instead of this License. But first, please read &lt;http://www.gnu.org/philosoph
          fragment="true"/>
 
    <plugin
-         id="net.ogdf.lib.linux.x86_64"
-         os="linux"
-         arch="x86_64"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"/>
-
-   <plugin
          id="net.ogdf.lib.macosx.x86"
          os="macosx"
          arch="x86"
@@ -675,15 +666,6 @@ instead of this License. But first, please read &lt;http://www.gnu.org/philosoph
          id="net.ogdf.lib.win32.x86"
          os="win32"
          arch="x86"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"/>
-
-   <plugin
-         id="net.ogdf.lib.win32.x86_64"
-         os="win32"
-         arch="x86_64"
          download-size="0"
          install-size="0"
          version="0.0.0"
