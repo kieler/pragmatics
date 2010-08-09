@@ -24,10 +24,9 @@ public class ExtPointExampleCollector extends ExampleCollector {
 
 	private final Map<String, Example> examplePool;
 
-	private final List<String> categoryPool;
+	private List<String> categoryPool;
 
 	public ExtPointExampleCollector() {
-		categoryPool = new ArrayList<String>();
 		examplePool = new HashMap<String, Example>();
 
 	}
@@ -37,14 +36,11 @@ public class ExtPointExampleCollector extends ExampleCollector {
 	 */
 	@Override
 	public void loadExamples() {
-
+		if (this.categoryPool == null) {
+			this.categoryPool = new ArrayList<String>();
+		}
 		IConfigurationElement[] configElements = Platform
 				.getExtensionRegistry().getConfigurationElementsFor(KEX_EXT_ID);
-		// Platform.getUserLocation()
-		// Versuche f�r die Projekt Workspace Ansprechung und so weiter...
-		// IExtension[] extensions =
-		// Platform.getExtensionRegistry().getExtensions("de.cau.cs.kieler.core.kex.model");
-		//
 		for (IConfigurationElement element : configElements) {
 			try {
 				String elementName = element.getName();
@@ -57,21 +53,14 @@ public class ExtPointExampleCollector extends ExampleCollector {
 					}
 					Example example = ExtPointCollectionUtil.toExample(element);
 					this.examplePool.put(exampleId, example);
-				} else if (ExtPointConstants.CATEGORY.equals(elementName)) {
+				}
+				if (ExtPointConstants.CATEGORY.equals(elementName)) {
 					collectCategories(element);
-
-				} else {
-					// ExceptionHandler
-					// .get()
-					// .addUnique(
-					// new KielerException(
-					// "Extension: "
-					// + element.getName()
-					// + ", was found after searching with example id: "
-					// + KEX_EXT_ID));
-					// TODO Statusmanager benutzen
 				}
 			} catch (Exception e) {
+				// mh, hier kann nciht einfach jeden exception gefangen
+				// werden... untersuche welche exceptions kommen und lasse sie
+				// in eine kieler exception verschwinden
 				// if (e instanceof KielerException)
 				// TODO auch hier besser machen, den ganzen mechanismus und
 				// natuerlich ueber statusmanager
@@ -84,7 +73,7 @@ public class ExtPointExampleCollector extends ExampleCollector {
 	}
 
 	public void collectCategories(IConfigurationElement categoryElement) {
-		String categoryId = categoryElement.getAttribute("id");
+		String categoryId = categoryElement.getAttribute(ExtPointConstants.ID);
 		if (categoryId == null || categoryId.length() < 4) {
 			// TODO StatusManager als globalen Exceptionhandler
 			// ansprechen...
@@ -103,7 +92,20 @@ public class ExtPointExampleCollector extends ExampleCollector {
 	}
 
 	public List<String> getCategoryPool() {
+		if (this.categoryPool == null) {
+			this.categoryPool = new ArrayList<String>();
+			loadCategories();
+		}
 		return categoryPool;
 	}
 
+	private void loadCategories() {
+		IConfigurationElement[] configElements = Platform
+				.getExtensionRegistry().getConfigurationElementsFor(KEX_EXT_ID);
+		for (IConfigurationElement element : configElements) {
+			if (ExtPointConstants.CATEGORY.equals(element.getName())) {
+				collectCategories(element);
+			}
+		}
+	}
 }

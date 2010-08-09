@@ -174,7 +174,7 @@ public class ExampleResourcePage extends WizardPage {
 	}
 
 	private void initTree(Tree tree) {
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < 20; i++) {
 			TreeItem iItem = new TreeItem(tree, 0);
 			iItem.setText("ExRe");
 		}

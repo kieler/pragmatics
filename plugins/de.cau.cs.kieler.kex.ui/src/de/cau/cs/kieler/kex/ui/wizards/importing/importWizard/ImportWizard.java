@@ -14,6 +14,8 @@ public class ImportWizard extends Wizard implements IWizard {
 
 	private final IStructuredSelection selection;
 
+	// TODO schweinerein sollen die wizard überleben, also sicher machen auf
+	// nullprüfungen, fieses hin und her wechseln der pages and so on...
 	public ImportWizard(IStructuredSelection selection) {
 		super();
 

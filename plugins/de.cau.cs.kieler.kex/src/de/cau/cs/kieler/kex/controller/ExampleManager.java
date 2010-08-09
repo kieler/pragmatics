@@ -82,6 +82,8 @@ public class ExampleManager {
 
 	public void importExamples(IPath selectedResource,
 			List<Example> selectedExamples) throws KielerException {
+		// TODO testen auf mehrere Examples gleichzeitig importieren, wenn nicht
+		// geht, muss das zum laufen gebracht werden.
 		ExampleImportUtil.importExamples(selectedResource, selectedExamples);
 	}
 
