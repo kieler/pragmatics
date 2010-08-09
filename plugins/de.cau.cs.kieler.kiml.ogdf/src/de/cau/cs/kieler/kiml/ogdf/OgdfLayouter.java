@@ -377,28 +377,35 @@ public abstract class OgdfLayouter {
             if (Ogdf.Graph_getNumberOfBends(ogdfEdge) >= 2) {
                 Ogdf.createBendsInterator(ogdfEdge);
                 // set the source point
-                edgeLayout.setSourcePoint(toKPoint(Ogdf.BendsIterator_getX(),
-                        Ogdf.BendsIterator_getY(), offsetX, offsetY));
+                KPoint sourcePoint =
+                        toKPoint(Ogdf.BendsIterator_getX(),
+                                Ogdf.BendsIterator_getY(), offsetX, offsetY);
+                edgeLayout.setSourcePoint(sourcePoint);
                 Ogdf.BendsIterator_next();
                 // set the bend points
+                boolean first = true;
                 while (Ogdf.BendsIterator_hasNext()) {
                     float x = Ogdf.BendsIterator_getX();
                     float y = Ogdf.BendsIterator_getY();
                     Ogdf.BendsIterator_next();
                     KPoint point = toKPoint(x, y, offsetX, offsetY);
                     if (!Ogdf.BendsIterator_hasNext()) {
-                        // workaround for a bug that causes two bend points to
-                        // be created on the target point
-                        if (kbends.size() > 0) {
-                            KPoint lastBend = kbends.get(kbends.size() - 1);
-                            if (lastBend.getX() == point.getX()
-                                    && lastBend.getY() == point.getY()) {
-                                kbends.remove(kbends.size() - 1);
-                            }
-                        }
                         // set the target point
                         edgeLayout.setTargetPoint(point);
                     } else {
+                        // workaround for a gef problem that occures when too
+                        // bend points are very close to each other like the
+                        // source point and the first bend that ogdf computes
+                        // sometimes
+                        if (first) {
+                            first = false;
+                            if (sourcePoint.getX() < point.getX() + 2
+                                    && sourcePoint.getX() > point.getX() - 2
+                                    && sourcePoint.getY() < point.getY() + 2
+                                    && sourcePoint.getY() > point.getY() - 2) {
+                                continue;
+                            }
+                        }
                         kbends.add(point);
                     }
                 }
