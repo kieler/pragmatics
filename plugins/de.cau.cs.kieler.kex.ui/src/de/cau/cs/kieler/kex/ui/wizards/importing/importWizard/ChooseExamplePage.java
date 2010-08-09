@@ -46,8 +46,6 @@ public class ChooseExamplePage extends WizardPage {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL
-				| GridData.GRAB_VERTICAL));
 		setControl(composite);
 		createTreeElement(composite);
 		createExampleGroup(composite);

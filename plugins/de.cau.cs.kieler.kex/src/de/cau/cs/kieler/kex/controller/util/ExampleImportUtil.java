@@ -76,24 +76,23 @@ public class ExampleImportUtil {
 	/**
 	 * 
 	 * @param sourceUrl
-	 *            , source url
-	 * @param destFile
-	 *            , destination file
+	 *            , source URL
+	 * @param destPath
+	 *            , destination path as String
 	 * @param overwrite
 	 *            , boolean
 	 * @throws KielerException
 	 * @throws IOException
 	 */
-	private static void writeFile(final URL sourceUrl, final String destFile,
+	// TODO in IOHandler auslagern...
+	private static void writeFile(final URL sourceUrl, final String destPath,
 			final boolean overwrite) throws IOException {
-		File f2 = new File(destFile);
-		// update test...
-		if (f2.exists() && !overwrite) {
-			return;
-		}
+		File f2 = new File(destPath);
 
 		// TODO Mechanismus nochmal genau anschauen und verstehen.
-
+		// TODO immer auf override setzen, muss über methode geregelt werden
+		// nicht über konstr. glaube ich.
+		// TODO mit export teilen siehe ExampleExportUtil
 		InputStream is = sourceUrl.openStream();
 		OutputStream os = new FileOutputStream(f2, overwrite);
 		byte[] buf = new byte[1024];

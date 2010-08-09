@@ -2,7 +2,7 @@ package de.cau.cs.kieler.kex.ui.wizards.exporting;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -10,22 +10,16 @@ import org.eclipse.swt.widgets.Text;
 
 public class ExamplePage extends WizardPage {
 
-	private String projectId;
-
-	private String location;
-
 	private Text id;
-	// TODO Textarea waere besser geeignet.
+
 	private Text exampleName;
 
 	private Text version;
 
-	private StyledText exampleDescription;
+	private Text exampleDescription;
 
 	private Text contact;
 
-	// TODO localprojects ueber den store laden... falls es keinen mechanismus
-	// gibt
 	public ExamplePage(String pageName) {
 		super(pageName);
 		setTitle("Example Export");
@@ -35,49 +29,37 @@ public class ExamplePage extends WizardPage {
 
 	public void createControl(Composite parent) {
 
-		// TODO projectId und location noch zusammenbauen
-		// sch�nen mechanismus �berlegen
-
-		Composite composite = new Composite(parent, SWT.NONE);
+		Composite composite = new Composite(parent, SWT.BORDER);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		composite.setLayout(layout);
 		setControl(composite);
+		composite.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+		new Label(composite, SWT.NONE).setText("Id:");
+		Text idText = new Text(composite, SWT.BORDER);
+		idText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		setId(idText);
+		new Label(composite, SWT.NONE).setText("Name:");
+		Text nameText = new Text(composite, SWT.BORDER);
+		nameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		setExampleName(nameText);
 
-		new Label(composite, SWT.NONE).setText("ID");
-		setId(new Text(composite, SWT.NONE));
+		new Label(composite, SWT.NONE).setText("Version:");
+		Text versionText = new Text(composite, SWT.BORDER);
+		versionText.setText("1.0");
+		versionText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		setVersion(versionText);
 
-		new Label(composite, SWT.NONE).setText("Name");
-		setExampleName(new Text(composite, SWT.NONE));
+		new Label(composite, SWT.NONE).setText("Contact:");
+		Text contactText = new Text(composite, SWT.BORDER);
+		contactText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		setContact(contactText);
 
-		new Label(composite, SWT.NONE).setText("Version");
-		Text text = new Text(composite, SWT.NONE);
-		text.setText("1.0.0");
-		setVersion(text);
-
-		// new Label(composite, SWT.NONE).setText("Description");
-		// setExampleDescription(new StyledText(parent, SWT.BORDER | SWT.MULTI
-		// | SWT.V_SCROLL | SWT.H_SCROLL));
-		// exampleDescription.setLayoutData(new GridData(GridData.FILL_BOTH
-		// | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL));
-		// exampleDescription.addKeyListener(new KeyAdapter() {
-		// @Override
-		// public void keyPressed(KeyEvent e) {
-		// super.keyPressed(e);
-		//
-		// }
-		// });
-
-		new Label(composite, SWT.NONE).setText("Contact");
-		setContact(new Text(composite, SWT.NONE));
-
-		// newResourcePage = new ProjectImportPage("projectImportPage");
-
-		// Control control = newResourcePage.createControl(parent);
-		// getWorkbench().getHelpSystem().setHelp(control,
-		// IWorkbenchHelpContextIds.NEW_WIZARD_SELECTION_WIZARD_PAGE);
-		// setControl(control);
-
+		new Label(composite, SWT.NONE).setText("Description:");
+		Text descText = new Text(composite, SWT.BORDER | SWT.MULTI
+				| SWT.V_SCROLL | SWT.H_SCROLL);
+		descText.setLayoutData(new GridData(GridData.FILL_BOTH));
+		setExampleDescription(descText);
 	}
 
 	public void setId(Text id) {
@@ -104,28 +86,12 @@ public class ExamplePage extends WizardPage {
 		return this.exampleName.getText();
 	}
 
-	public void setExampleDescription(StyledText exampleDescription) {
+	public void setExampleDescription(Text exampleDescription) {
 		this.exampleDescription = exampleDescription;
 	}
 
 	public String getExampleDescription() {
 		return exampleDescription.getText();
-	}
-
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
-	}
-
-	public String getProjectId() {
-		return projectId;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
-	}
-
-	public String getLocation() {
-		return location;
 	}
 
 	public void setContact(Text contact) {

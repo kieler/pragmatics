@@ -15,6 +15,7 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.KielerModelException;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.ExampleResource;
+import de.cau.cs.kieler.kex.model.ExtPointConstants;
 import de.cau.cs.kieler.kex.model.ImportType;
 
 public class ExtPointCollectionUtil {
@@ -41,9 +42,11 @@ public class ExtPointCollectionUtil {
 			KielerException {
 
 		Example example = null;
-		String idAttribute = exampleElement.getAttribute("id");
-		String nameAttribute = exampleElement.getAttribute("name");
-		String versionAttribute = exampleElement.getAttribute("version");
+		String idAttribute = exampleElement.getAttribute(ExtPointConstants.ID);
+		String nameAttribute = exampleElement
+				.getAttribute(ExtPointConstants.NAME);
+		String versionAttribute = exampleElement
+				.getAttribute(ExtPointConstants.VERSION);
 
 		// TODO eine art versions validator bauen. evtl. kann Version sowas
 		// schon
@@ -57,8 +60,10 @@ public class ExtPointCollectionUtil {
 		else
 			example = new Example(idAttribute, nameAttribute,
 					ImportType.EXTENSIONPOINT);
-		example.setDescription(exampleElement.getAttribute("description"));
-		example.setContact(exampleElement.getAttribute("contact"));
+		example.setDescription(exampleElement
+				.getAttribute(ExtPointConstants.DESCRIPTION));
+		example.setContact(exampleElement
+				.getAttribute(ExtPointConstants.CONTACT));
 		String exNamespaceId = exampleElement.getNamespaceIdentifier();
 		example.setNamespaceId(exNamespaceId);
 		List<ExampleResource> exampleResources = ExtPointCollectionUtil
@@ -72,11 +77,12 @@ public class ExtPointCollectionUtil {
 			throws KielerException {
 		List<ExampleResource> exampleResources = new ArrayList<ExampleResource>();
 		for (IConfigurationElement configElement : exampleElement
-				.getChildren("example_resource")) {
+				.getChildren(ExtPointConstants.EXAMPLE_RESOURCE)) {
 			ExampleResource exampleResource = new ExampleResource();
-			exampleResource.setCategory(configElement.getAttribute("category"));
+			exampleResource.setCategory(configElement
+					.getAttribute(ExtPointConstants.CATEGORY));
 			exampleResource.setHeadResource(Boolean.valueOf(configElement
-					.getAttribute("is_head_resource")));
+					.getAttribute(ExtPointConstants.IS_HEAD_RESOURCE)));
 			addResource(exampleResource, exNamespaceId, configElement);
 			exampleResources.add(exampleResource);
 		}
@@ -88,7 +94,7 @@ public class ExtPointCollectionUtil {
 			final IConfigurationElement configElement) throws KielerException {
 		Bundle bundle = Platform.getBundle(exNamespaceId);
 		URL resourceURL = bundle.getResource(configElement
-				.getAttribute("resource"));
+				.getAttribute(ExtPointConstants.RESOURCE));
 		validateURL(resourceURL);
 		exResource.addResource(resourceURL);
 
@@ -105,6 +111,9 @@ public class ExtPointCollectionUtil {
 				// TODO ausnahme liste draus machen, eigene klasse mit ausnahmen
 				// und die dann alle abprüfen,
 				// damit noch ausnahmen hinzugefügt, bzw. entfernt werden können
+
+				// oder dateien mit prefix "." entfernen, also keine versteckten
+				// dateien mit berücksichtigen
 				if (!dictElement.getPath().contains(".svn")
 						&& !dictElement.getPath().contains(".cvs"))
 					exResource.addResource(dictElement);

@@ -1,13 +1,10 @@
 package de.cau.cs.kieler.kex.controller;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.util.ExampleExportUtil;
@@ -27,7 +24,7 @@ public class ExampleManager {
 	private final ExtPointExampleCollector extensionCollector;
 	private final OnlineExampleCollector onlineCollector;
 
-	private ExtPointExampleCreator extensionCreation;
+	private final ExtPointExampleCreator extensionCreator;
 
 	// TODO wenn in ui ein editor offen ist, dann macht er den wizard nicht auf.
 
@@ -40,14 +37,8 @@ public class ExampleManager {
 
 	private ExampleManager() {
 		this.extensionCollector = new ExtPointExampleCollector();
+		this.extensionCreator = new ExtPointExampleCreator();
 		this.onlineCollector = new OnlineExampleCollector();
-		try {
-			extensionCreation = new ExtPointExampleCreator();
-		} catch (KielerException e) {
-			// FIXME plugin id sollte nicht null sein.
-			StatusManager.getManager().addLoggedStatus(
-					new Status(Status.ERROR, null, e.getMessage()));
-		}
 	}
 
 	public synchronized static ExampleManager get() {
@@ -85,7 +76,7 @@ public class ExampleManager {
 	}
 
 	public List<String> getCategories() {
-		// TODO onlineExampleCollector categories hinzufuegen
+		// TODO onlineCollector categories hinzufuegen
 		return extensionCollector.getCategoryPool();
 	}
 
@@ -96,33 +87,8 @@ public class ExampleManager {
 
 	public void exportExample(Map<ExampleElement, Object> properties)
 			throws KielerException {
-		// TODO implementiernen der project id.
-		String projectId = (String) properties.get(ExampleElement.PROJECTID);
-
-		// just a test
-		projectId = "testpro";
-		// TODO implementiernen der location.
-		// String destLocation = (String) properties
-		// .get(ExampleElement.DEST_LOCATION);
-		// TODO plattform unabh�ngiger pfadbau in externe methode auslagern,
-		// wenn nicht schon der richte pfad vom ui runtergereicht wird.
-		// just a test
-		StringBuffer destLocation = new StringBuffer();
-		// windows test
-		destLocation.append("E:").append(File.separatorChar);
-		destLocation.append("bachelorarbeit").append(File.separatorChar);
-		destLocation.append("3_6 Workspace").append(File.separatorChar);
-		destLocation.append("de.cau.cs.kieler.core.kex.models");
-
-		// linux test
-		// destLocation
-		// .append("/home/pkl/kieler-workspace/de.cau.cs.kieler.core.kex.models");
-
-		Example mappedExample = ExampleExportUtil.mapToExample(properties);
-		ExampleExportUtil.checkDuplicate(mappedExample, extensionCollector,
-				onlineCollector);
-		extensionCreation.addExtension(projectId, destLocation.toString(),
-				mappedExample);
+		ExampleExportUtil.exportExample(properties, this.extensionCreator,
+				this.extensionCollector, this.onlineCollector);
 	}
 
 	/**

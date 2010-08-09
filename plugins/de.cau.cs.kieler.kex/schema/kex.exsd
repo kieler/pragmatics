@@ -7,7 +7,6 @@
       </appinfo>
       <documentation>
          To add new examples to KEX you have to extend that extensionpoint.
-
       </documentation>
    </annotation>
 
@@ -188,7 +187,6 @@ It will be unique.
 &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;+ Real-Time and Embedded Systems Group&lt;br&gt;
 This program and the accompanying materials are made available under the terms of the Eclipse Public License (EPL) which accompanies this distribution, and is available at
 &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;.
-
       </documentation>
    </annotation>
 

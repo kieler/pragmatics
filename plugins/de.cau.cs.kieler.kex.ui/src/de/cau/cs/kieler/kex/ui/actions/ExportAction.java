@@ -2,6 +2,7 @@ package de.cau.cs.kieler.kex.ui.actions;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -18,7 +19,11 @@ public class ExportAction implements IWorkbenchWindowActionDelegate {
 			// action has been disposed
 			return;
 		}
-		ExportExampleWizard wizard = new ExportExampleWizard();
+		ISelection selection = workbenchWindow.getSelectionService()
+				.getSelection();
+		ExportExampleWizard wizard = new ExportExampleWizard(
+				(selection instanceof IStructuredSelection) ? (IStructuredSelection) selection
+						: null);
 		Shell parent = workbenchWindow.getShell();
 		WizardDialog dialog = new WizardDialog(parent, wizard);
 		dialog.create();

@@ -10,6 +10,7 @@ import org.eclipse.core.runtime.Platform;
 
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.ExampleCollector;
+import de.cau.cs.kieler.kex.model.ExtPointConstants;
 
 public class ExtPointExampleCollector extends ExampleCollector {
 
@@ -31,20 +32,6 @@ public class ExtPointExampleCollector extends ExampleCollector {
 
 	}
 
-	public void collectCategories(IConfigurationElement categoryElement) {
-		String categoryId = categoryElement.getAttribute("id");
-		if (categoryId == null || categoryId.length() < 4) {
-			// TODO StatusManager als globalen Exceptionhandler
-			// ansprechen...
-		} else {
-			if (!getCategoryPool().contains(categoryId))
-				getCategoryPool().add(categoryId);
-			else {
-				// TODO StatusManager ansprechen
-			}
-		}
-	}
-
 	/**
 	 * loads examples of extenders.
 	 */
@@ -61,15 +48,16 @@ public class ExtPointExampleCollector extends ExampleCollector {
 		for (IConfigurationElement element : configElements) {
 			try {
 				String elementName = element.getName();
-				if ("example".equals(elementName)) {
-					String exampleId = element.getAttribute("id");
+				if (ExtPointConstants.EXAMPLE.equals(elementName)) {
+					String exampleId = element
+							.getAttribute(ExtPointConstants.ID);
 					if (getExamplePool().containsKey(exampleId)) {
 						// TODO darf eigentlich nicht passieren
 						continue;
 					}
 					Example example = ExtPointCollectionUtil.toExample(element);
 					this.examplePool.put(exampleId, example);
-				} else if ("category".equals(elementName)) {
+				} else if (ExtPointConstants.CATEGORY.equals(elementName)) {
 					collectCategories(element);
 
 				} else {
@@ -91,6 +79,20 @@ public class ExtPointExampleCollector extends ExampleCollector {
 				// new KielerModelException(e.getMessage(), element));
 				// else
 				// e.printStackTrace();
+			}
+		}
+	}
+
+	public void collectCategories(IConfigurationElement categoryElement) {
+		String categoryId = categoryElement.getAttribute("id");
+		if (categoryId == null || categoryId.length() < 4) {
+			// TODO StatusManager als globalen Exceptionhandler
+			// ansprechen...
+		} else {
+			if (!getCategoryPool().contains(categoryId))
+				getCategoryPool().add(categoryId);
+			else {
+				// TODO StatusManager ansprechen
 			}
 		}
 	}
