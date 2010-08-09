@@ -57,6 +57,16 @@ public interface IGraphFactory {
     IGraph createRandomGraph(int nodes, int edges);
 
     /**
+     * Create a graph base on an existing graph. This method does not guarantee an exact copy of the
+     * graph (e.g. indices may be different), but the embedding should be equal.
+     * 
+     * @param graph
+     *            the graph to copy
+     * @return a copy of the given graph
+     */
+    IGraph createGraphCopy(IGraph graph);
+
+    /**
      * Create a graph from a {@code KGraph} instance.
      * 
      * @param kgraph

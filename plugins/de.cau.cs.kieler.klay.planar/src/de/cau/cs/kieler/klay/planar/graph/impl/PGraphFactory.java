@@ -89,7 +89,36 @@ public class PGraphFactory implements IGraphFactory {
 
     /**
      * {@inheritDoc}
-     * 
+     */
+    public IGraph createGraphCopy(final IGraph graph) {
+        // TODO check for embedding constraints (ports)
+        // TODO recurse over children in compound nodes
+        PGraph copy = new PGraph();
+        HashMap<INode, INode> nodes = new HashMap<INode, INode>(graph.getNodeCount() * 2);
+
+        // Adding Nodes
+        for (INode node : graph.getNodes()) {
+            nodes.put(node, copy.addNode(node.getType()));
+        }
+
+        // Adding Edges
+        for (IEdge edge : graph.getEdges()) {
+            if (!nodes.containsKey(edge.getSource()) || !nodes.containsKey(edge.getTarget())) {
+                throw new InconsistentGraphModelException(
+                        "Attempted to link non-existent nodes by an edge.");
+            }
+            INode source = nodes.get(edge.getSource());
+            INode target = nodes.get(edge.getTarget());
+            copy.addEdge(source, target, edge.isDirected());
+        }
+
+        // Adding Faces
+        copy.generateFaces();
+        return copy;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public IGraph createGraphFromKGraph(final KNode kgraph) {
         // TODO check for hyper nodes
