@@ -84,7 +84,7 @@ public final class EvolModel {
     public String getLayoutProviderId() {
         return this.layoutProviderId;
     }
-    
+
     /**
      * @return the last editor that was used
      * @deprecated
@@ -209,18 +209,6 @@ public final class EvolModel {
     }
 
     /**
-     * @param thePopulation
-     *            a population
-     * @deprecated
-     */
-    @Deprecated
-    public void setPopulation(final Population thePopulation) {
-        // this.population = thePopulation;
-
-        updatePosition();
-    }
-
-    /**
      * @param thePosition
      *            the new position.
      */
@@ -310,5 +298,25 @@ public final class EvolModel {
                 step();
             }
         }
+    }
+    
+    /**
+     *
+     */
+    public void evolve() {
+        if (!isValid()) {
+            return;
+        }
+
+        step();
+        
+        selectInterestingIndividual();
+
+        // Calculate auto-rating for the unrated individuals.
+        EvolUtil.autoRateIndividuals(getPopulation().select(Population.UNRATED_FILTER),
+                EvolUtil.getCurrentEditor(), null);
+        
+        Assert.isTrue(getPosition() >= 0);
+
     }
 }

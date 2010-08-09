@@ -62,7 +62,7 @@ public class AutoRateAllHandler extends AbstractHandler {
         /**
          * @return the evolution view
          */
-        protected EvolView getView() {
+        private EvolView getView() {
             return this.view;
         }
 
@@ -78,7 +78,6 @@ public class AutoRateAllHandler extends AbstractHandler {
                 }
             }, false);
 
-
             monitor.worked(1);
 
             return new Status(IStatus.INFO, EvolPlugin.PLUGIN_ID, 0, "OK", null);
@@ -92,6 +91,14 @@ public class AutoRateAllHandler extends AbstractHandler {
      *
      */
     private static final class AutoRateAllJob extends Job {
+        Population getPopulation() {
+            return this.population;
+        }
+
+        IEditorPart getEditor() {
+            return this.editor;
+        }
+
         /**
          * The population to be rated.
          */
@@ -110,10 +117,7 @@ public class AutoRateAllHandler extends AbstractHandler {
          * @param theEditor
          * @param theView
          */
-        AutoRateAllJob(
-                final String name,
-                final Population pop,
- final IEditorPart theEditor) {
+        AutoRateAllJob(final String name, final Population pop, final IEditorPart theEditor) {
             super(name);
             Assert.isLegal(pop != null);
             this.population = pop;
@@ -124,13 +128,15 @@ public class AutoRateAllHandler extends AbstractHandler {
         protected IStatus run(final IProgressMonitor monitor) {
             try {
                 monitor.subTask("Determining Individual Rating");
+                final int delay = 200;
+                Thread.sleep(delay);
 
                 // Do the rating.
                 MonitoredOperation.runInUI(new Runnable() {
                     public void run() {
                         // Rate all individuals in the given editor.
-                        EvolUtil.autoRateIndividuals(AutoRateAllJob.this.population,
-                                AutoRateAllJob.this.editor, monitor);
+                        EvolUtil.autoRateIndividuals(AutoRateAllJob.this.getPopulation(),
+                                AutoRateAllJob.this.getEditor(), monitor);
                     }
                 }, true);
 
@@ -184,11 +190,14 @@ public class AutoRateAllHandler extends AbstractHandler {
 
             autoRateAllJob.setProgressGroup(monitor, size + 1);
             autoRateAllJob.setUser(true);
+            autoRateAllJob.setPriority(Job.INTERACTIVE);
             autoRateAllJob.schedule();
 
             refreshViewJob.setProgressGroup(monitor, 1);
             refreshViewJob.setUser(true);
-            refreshViewJob.schedule();
+            refreshViewJob.setPriority(Job.SHORT);
+            final int delay = 200;
+            refreshViewJob.schedule(delay);
 
             // XXX: Auto-rating and refreshing are divided into two separate
             // jobs. We want the autorating to be finished before the view is
@@ -197,7 +206,9 @@ public class AutoRateAllHandler extends AbstractHandler {
             // progress bar is not shown. Where is the progress bar? :(
 
             autoRateAllJob.join();
+            Thread.sleep(delay);
             refreshViewJob.join();
+            Thread.sleep(delay);
 
         } catch (final InterruptedException exception) {
             exception.printStackTrace();

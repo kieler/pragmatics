@@ -67,16 +67,15 @@ public class EvolPreferencePage extends FieldEditorPreferencePage
         final Group miscGroup = new Group(parent, SWT.NONE);
         miscGroup.setText("Misc parameters");
         final RadioGroupFieldEditor editorsEditor =
-                new RadioGroupFieldEditor(EvolPlugin.PREF_EDITORS, "Use editors", 1, new String[][] {
-                        { "all editors", "ALL" }, { "current editor", "CURRENT" } }, miscGroup,
-                        true);
+                new RadioGroupFieldEditor(EvolPlugin.PREF_EDITORS, "Use editors", 1,
+                        new String[][] { { "all editors", EvolPlugin.ALL_EDITORS },
+                                { "current editor", EvolPlugin.CURRENT_EDITOR } }, miscGroup, true);
         addField(editorsEditor);
 
         // layout
         algorithmGroup.setLayout(new GridLayout(NUM_COLUMNS, false));
         miscGroup.setLayout(new GridLayout(NUM_COLUMNS, false));
         parent.setLayout(new FillLayout());
-
     }
 
     private static final int NUM_COLUMNS = 3;

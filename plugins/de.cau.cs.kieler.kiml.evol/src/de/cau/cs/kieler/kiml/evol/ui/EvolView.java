@@ -40,73 +40,34 @@ import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
  */
 public class EvolView extends ViewPart {
     /**
-     * A table viewer with selectable rows.
-     *
      * @author bdu
      *
      */
-    public class SelectorTableViewer extends TableViewer {
+    private static final class IndividualApplier implements Runnable {
         /**
-         * Creates a TableViewer for the given table.
+         * Creates a new {@link IndividualApplier} instance.
          *
-         * @param table
-         *            a table
+         * @param theExpectedLayoutProviderId
+         * @param theCurrentIndividual
          */
-        public SelectorTableViewer(final Table table) {
-            super(table);
+        IndividualApplier(
+                final String theExpectedLayoutProviderId,
+                final Genome theCurrentIndividual) {
+            this.expectedLayoutProviderId = theExpectedLayoutProviderId;
+            this.currentIndividual = theCurrentIndividual;
         }
+        /**
+         *
+         */
+        private final String expectedLayoutProviderId;
 
         /**
-         * @param pos
+         *
          */
-        void selectRow(final int pos) {
-            if (getPopulation() == null) {
-                return;
-            }
-            Assert.isTrue((pos >= 0) && (pos <= getPopulation().size()), "position out of range");
-            Display.getCurrent().syncExec(new Runnable() {
-                public void run() {
-                    final int[] indices = new int[] { pos };
-                    // SelectorTableViewer.this.doSelect(indices);
-                    SelectorTableViewer.this.doSetSelection(indices);
-                }
-            });
-        }
+        private final Genome currentIndividual;
 
-        /**
-         * @param pos
-         * @return
-         */
-        public Object selectRowAndGetElement(final int pos) {
-            selectRow(pos);
-            return getSelectedElement();
-        }
-
-        /**
-         * @return
-         */
-        private Object getSelectedElement() {
-            final IStructuredSelection selection = (IStructuredSelection) this.getSelection();
-            final Object element = selection.getFirstElement();
-            return element;
-        }
-
-    }
-
-    /**
-     * Refreshes the view. Must be run in UI thread.
-     */
-    public void refresh(final boolean onlyCurrent) {
-
-        if (!onlyCurrent) {
-            this.tableViewer.refresh();
-        }
-
-        final int pos = this.getEvolModel().getPosition();
-        final Object element = this.tableViewer.selectRowAndGetElement(pos);
-
-        if (element != null) {
-            this.tableViewer.update(element, null);
+        public void run() {
+            EvolUtil.applyIndividual(this.currentIndividual, this.expectedLayoutProviderId);
         }
     }
 
@@ -133,9 +94,145 @@ public class EvolView extends ViewPart {
     }
 
     /**
+     * @author bdu
+     *
+     */
+    private final class SelectionChangedListener implements ISelectionChangedListener {
+        /**
+         * Creates a new {@link SelectionChangedListener} instance.
+         *
+         * @param theTableViewer
+         */
+        SelectionChangedListener(final SelectorTableViewer theTableViewer) {
+            this.tv = theTableViewer;
+        }
+
+        private final SelectorTableViewer tv;
+        private Object oldElement;
+
+        public synchronized void selectionChanged(final SelectionChangedEvent event) {
+            final ISelection selection = event.getSelection();
+            System.out.println("selectionChanged");
+
+            if ((selection == null) || (selection.isEmpty())
+                    || !(selection instanceof IStructuredSelection)) {
+                System.out.println("empty or null selection");
+                return;
+            }
+
+            final Object element = ((IStructuredSelection) selection).getFirstElement();
+            if (element instanceof PopulationTableEntry) {
+                this.tv.removeSelectionChangedListener(this);
+
+                // Update the model.
+                final int oldPos = EvolView.this.getEvolModel().getPosition();
+                final int newPos = ((PopulationTableEntry) element).getIndex();
+                EvolView.this.getEvolModel().setPosition(newPos);
+
+                MonitoredOperation.runInUI(new Runnable() {
+                    public void run() {
+                        SelectionChangedListener.this.getTableViewer().update(element, null);
+                    }
+                }, true);
+
+                // Refresh the layout according to the selected individual.
+                System.out.println("before applySelectedIndividual");
+                applySelectedIndividual();
+                System.out.println("after applySelectedIndividual");
+                System.out.println(oldPos + " -> " + newPos);
+
+                if (this.oldElement == null) {
+                    this.oldElement = element;
+                }
+
+                System.out.println("updating row");
+                this.tv.update(this.oldElement, null);
+                final Object oldElement1 = this.tv.getElementAt(oldPos);
+                this.tv.update(oldElement1, null);
+
+                this.tv.update(element, null);
+
+                this.tv.addPostSelectionChangedListener(this);
+                System.out.println();
+                this.oldElement = element;
+            }
+        }
+
+        SelectorTableViewer getTableViewer() {
+            return this.tv;
+        }
+    }
+
+    /**
+     * A table viewer with selectable rows.
+     *
+     * @author bdu
+     *
+     */
+    public class SelectorTableViewer extends TableViewer {
+        /**
+         * Creates a TableViewer for the given table.
+         *
+         * @param table
+         *            a table
+         */
+        public SelectorTableViewer(final Table table) {
+            super(table);
+        }
+
+        /**
+         * @param row
+         *            zero-relative row index
+         * @return the element that is in the selected row
+         */
+        public Object selectRowAndGetElement(final int row) {
+            selectRow(row);
+            return getSelectedElement();
+        }
+
+        @Override
+        protected void doSetSelection(final int[] indices) {
+            super.doSetSelection(indices);
+        }
+
+        /**
+         * @param row
+         *            zero-relative row index
+         */
+        void selectRow(final int row) {
+            if (getPopulation() == null) {
+                return;
+            }
+            Assert.isTrue((row >= 0) && (row <= getPopulation().size()), "position out of range");
+            Display.getCurrent().syncExec(new Runnable() {
+                public void run() {
+                    final int[] indices = new int[] { row };
+                    // SelectorTableViewer.this.doSelect(indices);
+                    SelectorTableViewer.this.doSetSelection(indices);
+                }
+            });
+        }
+
+        /**
+         * @return
+         */
+        private Object getSelectedElement() {
+            final IStructuredSelection selection = (IStructuredSelection) this.getSelection();
+            final Object element = selection.getFirstElement();
+            return element;
+        }
+
+    }
+
+    /**
      * Identifier for the EvolView.
      */
     public static final String ID = "de.cau.cs.kieler.kiml.evol.evolView";
+
+    /**
+     * Column width for columns in viewer table.
+     */
+    private static final int DEFAULT_COLUMN_WIDTH = 150;
 
     /**
      *
@@ -148,11 +245,6 @@ public class EvolView extends ViewPart {
     // private fields
     private SelectorTableViewer tableViewer;
     private final EvolModel evolModel = new EvolModel();
-
-    /**
-     * Column width for columns in viewer table.
-     */
-    private static final int DEFAULT_COLUMN_WIDTH = 150;
 
     // individual property settings
     @Override
@@ -174,55 +266,7 @@ public class EvolView extends ViewPart {
         this.tableViewer = tv;
         reset();
 
-        final ISelectionChangedListener listener = new ISelectionChangedListener() {
-            private Object oldElement;
-
-            public synchronized void selectionChanged(final SelectionChangedEvent event) {
-                final ISelection selection = event.getSelection();
-                System.out.println("selectionChanged");
-
-                if ((selection == null) || (selection.isEmpty())
-                        || !(selection instanceof IStructuredSelection)) {
-                    System.out.println("empty or null selection");
-                    return;
-                }
-
-                final Object element = ((IStructuredSelection) selection).getFirstElement();
-                if (element instanceof PopulationTableEntry) {
-                    tv.removeSelectionChangedListener(this);
-
-                    final int oldPos = EvolView.this.getEvolModel().getPosition();
-
-                    final int newPos = ((PopulationTableEntry) element).getIndex();
-                    EvolView.this.getEvolModel().setPosition(newPos);
-                    MonitoredOperation.runInUI(new Runnable() {
-                        public void run() {
-                            tv.update(element, null);
-                        }
-                    }, true);
-
-                    // Refresh the layout according to the selected individual.
-                    onSelectIndividual();
-                    System.out.println("after onSelectIndividual");
-                    System.out.println(oldPos + " -> " + newPos);
-
-                    if (this.oldElement == null) {
-                        this.oldElement = element;
-                    }
-
-                    System.out.println("updating row");
-                    tv.update(this.oldElement, null);
-                    final Object oldElement1 = tv.getElementAt(oldPos);
-                    tv.update(oldElement1, null);
-
-                    tv.update(element, null);
-
-                    tv.addPostSelectionChangedListener(this);
-                    System.out.println();
-                    this.oldElement = element;
-                }
-            }
-        };
+        final ISelectionChangedListener listener = new SelectionChangedListener(tv);
         tv.addPostSelectionChangedListener(listener);
     }
 
@@ -230,35 +274,14 @@ public class EvolView extends ViewPart {
      * Performs a step of the evolutionary algorithm.
      */
     public void evolve() {
+        Assert.isNotNull(this.evolModel);
         if (!this.evolModel.isValid()) {
             return;
         }
 
-        this.evolModel.step();
-
-        this.evolModel.selectInterestingIndividual();
+        this.evolModel.evolve();
 
         setInput(this.evolModel.getPopulation());
-
-        // Calculate auto-rating for the unrated individuals.
-        EvolUtil.autoRateIndividuals(getPopulation().select(Population.UNRATED_FILTER),
-                EvolUtil.getCurrentEditor(), null);
-
-        Assert.isTrue(this.evolModel.getPosition() >= 0);
-        // getTableViewer().selectRow(this.evolModel.getPosition());
-        // getTableViewer().refresh();
-        refresh(true);
-
-        // Refresh the layout according to the selected individual.
-        onSelectIndividual();
-
-        // BasicNetwork b = new BasicNetwork();
-        // b.addLayer(new BasicLayer(2));
-        // b.addLayer(new BasicLayer(3));
-        // b.addLayer(new BasicLayer(6));
-        // b.addLayer(new BasicLayer(1));
-        // b.getStructure().finalizeStructure();
-        // System.out.println(b.calculateNeuronCount());
     }
 
     /**
@@ -292,6 +315,26 @@ public class EvolView extends ViewPart {
     }
 
     /**
+     * Refreshes the view. Must be run in UI thread.
+     *
+     * @param onlyCurrent
+     *            if set to {@code true}, only the current entry is refreshed.
+     */
+    public void refresh(final boolean onlyCurrent) {
+
+        if (!onlyCurrent) {
+            this.tableViewer.refresh();
+        }
+
+        final int pos = this.getEvolModel().getPosition();
+        final Object element = this.tableViewer.selectRowAndGetElement(pos);
+
+        if (element != null) {
+            this.tableViewer.update(element, null);
+        }
+    }
+
+    /**
      * Reset the population and restart the algorithm.
      */
     public void reset() {
@@ -315,7 +358,7 @@ public class EvolView extends ViewPart {
     /**
      * Refresh the layout according to selected individual.
      */
-    void onSelectIndividual() {
+    public void applySelectedIndividual() {
         Assert.isNotNull(this.evolModel);
 
         if (!this.evolModel.isValid()) {
@@ -331,11 +374,8 @@ public class EvolView extends ViewPart {
         Assert.isNotNull(expectedLayoutProviderId);
 
         // Adopt and layout the current individual.
-        MonitoredOperation.runInUI(new Runnable() {
-            public void run() {
-                EvolUtil.applyIndividual(currentIndividual, expectedLayoutProviderId);
-            }
-        }, true);
+        MonitoredOperation.runInUI(new IndividualApplier(expectedLayoutProviderId,
+                currentIndividual), true);
 
         // Refresh the layout view.
         MonitoredOperation.runInUI(new LayoutViewRefresher(), false);

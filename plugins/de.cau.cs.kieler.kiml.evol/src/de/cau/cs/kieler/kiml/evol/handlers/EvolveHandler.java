@@ -39,9 +39,9 @@ import de.cau.cs.kieler.kiml.evol.ui.EvolView;
 public class EvolveHandler extends AbstractHandler {
     /**
      * A job for refreshing the evolution view.
-     * 
+     *
      * @author bdu
-     * 
+     *
      */
     private static final class EvolutionViewRefreshJob extends Job {
         public EvolView getView() {
@@ -126,6 +126,22 @@ public class EvolveHandler extends AbstractHandler {
                 System.out.println("Average rating before: " + before);
                 for (int i = 0; (i < NUMBER_OF_STEPS) && (steps < maxSteps); i++) {
                     view.evolve();
+
+                    // getTableViewer().selectRow(this.evolModel.getPosition());
+                    // getTableViewer().refresh();
+                    view.refresh(true);
+
+                    // Refresh the layout according to the selected individual.
+                    view.applySelectedIndividual();
+                    
+                    // BasicNetwork b = new BasicNetwork();
+                    // b.addLayer(new BasicLayer(2));
+                    // b.addLayer(new BasicLayer(3));
+                    // b.addLayer(new BasicLayer(6));
+                    // b.addLayer(new BasicLayer(1));
+                    // b.getStructure().finalizeStructure();
+                    // System.out.println(b.calculateNeuronCount());
+
                     final boolean wantAutoRating;
                     wantAutoRating = wantAutoRatingForStep(i, stepsBeforeAutoRating);
                     if (wantAutoRating) {
@@ -142,7 +158,8 @@ public class EvolveHandler extends AbstractHandler {
                     final Double after = view.getPopulation().getAverageRating();
                     final Double relDiff = (after - before) / after;
                     System.out.println("Average rating now: " + after);
-                    System.out.println("rel. Diff (%): " + relDiff * 100);
+                    final Double relDiffPercent = (relDiff * 100);
+                    System.out.println("rel. Diff (%): " + relDiffPercent);
                     if (relDiff < MIN_INCREASE) {
                         steady++;
                         System.out.println("Steady: " + steady);
@@ -161,7 +178,8 @@ public class EvolveHandler extends AbstractHandler {
 
             refreshJob.setUser(false);
             refreshJob.setPriority(Job.DECORATE);
-            refreshJob.schedule(500);
+            final int delay = 500;
+            refreshJob.schedule(delay);
 
         }
         return null;
