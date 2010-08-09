@@ -369,6 +369,9 @@ class PGraph extends PNode implements IGraph, Serializable {
      * information, this graph structure may not be good for you.
      */
     void generateFaces() {
+        // TODO generating faces does not work properly
+        // in large random graphs an infinite loop may occur here
+
         if (!this.changedFaces) {
             return;
         } else {
