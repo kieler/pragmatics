@@ -30,5 +30,6 @@ public class EvolPreferenceInitializer extends AbstractPreferenceInitializer {
 
         // Set default values for preferences.
         store.setDefault(EvolPlugin.PREF_POPULATION_SIZE, EvolPlugin.DEF_POPULATION_SIZE);
+        store.setDefault(EvolPlugin.PREF_EDITORS, EvolPlugin.DEF_EDITORS);
     }
 }

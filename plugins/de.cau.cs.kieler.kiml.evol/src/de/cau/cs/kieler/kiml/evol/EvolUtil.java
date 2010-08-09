@@ -325,8 +325,11 @@ public final class EvolUtil {
 
         // Get the current editor (may be null).
         final IEditorPart currentEditor = getCurrentEditor();
+        
+        final String prefEditors =
+                EvolPlugin.getDefault().getPreferenceStore().getString(EvolPlugin.PREF_EDITORS);
 
-        final boolean wantAllEditors = true;
+        final boolean wantAllEditors = EvolPlugin.ALL_EDITORS.equalsIgnoreCase(prefEditors);
 
         final Collection<IEditorPart> editors;
         if (wantAllEditors) {
@@ -791,7 +794,7 @@ public final class EvolUtil {
                     new TypeInfo<Float>(1.0f, 0.0f, 5.0f,
                             UniversalGene.STRICTLY_POSITIVE_FLOAT_FORMATTER, Float.class);
 
-            final MutationInfo mutationInfo = new MutationInfo(1.0, .05, Distribution.GAUSSIAN);
+            final MutationInfo mutationInfo = new MutationInfo(0.1, .05, Distribution.GAUSSIAN);
             final IGene<?> gene = gf.newGene(id, 1.0f, typeInfo, mutationInfo);
             Assert.isNotNull(gene, "Failed to create gene for " + id);
             result.add(gene);

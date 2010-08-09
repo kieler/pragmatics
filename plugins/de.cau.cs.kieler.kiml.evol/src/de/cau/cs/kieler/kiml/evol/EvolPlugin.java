@@ -38,6 +38,26 @@ public class EvolPlugin extends AbstractUIPlugin {
      */
     public static final int DEF_POPULATION_SIZE = 12;
 
+    /**
+     * Preference constant for editor selection.
+     */
+    public static final String PREF_EDITORS = "de.cau.cs.kieler.kiml.evol.editors";
+    
+    /**
+     * Preference value for all editors.
+     */
+    public static final String ALL_EDITORS = "ALL";
+    
+    /**
+     * Preference value for current editor.
+     */
+    public static final String CURRENT_EDITOR = "CURRENT";
+
+    /**
+     * Default value for editor selection.
+     */
+    public static final String DEF_EDITORS = CURRENT_EDITOR;
+
     // The shared instance
     private static EvolPlugin plugin;
 
