@@ -16,10 +16,8 @@ package de.cau.cs.kieler.kiml.evol;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -325,7 +323,7 @@ public final class EvolUtil {
 
         // Get the current editor (may be null).
         final IEditorPart currentEditor = getCurrentEditor();
-        
+
         final String prefEditors =
                 EvolPlugin.getDefault().getPreferenceStore().getString(EvolPlugin.PREF_EDITORS);
 
@@ -492,7 +490,8 @@ public final class EvolUtil {
     public static IEditorPart getCurrentEditor() {
         // TODO: cache editor and assert that it is not replaced?
 
-        // Try to get the editor that is tracked by the layout view.
+        // Try to get the editor that is tracked by the layout view (must be in
+        // UI thread).
         final LayoutViewPart layoutViewPart = LayoutViewPart.findView();
         if (layoutViewPart != null) {
             final IEditorPart editor = layoutViewPart.getCurrentEditor();
@@ -854,7 +853,7 @@ public final class EvolUtil {
      * @param part
      *            an {@link EditPart}
      * @return a {@link LayoutPropertySource} for the given editor and edit
-     *         part.
+     *         part, or {@code null} if none can be found.
      */
     private static LayoutPropertySource getLayoutPropertySource(
             final IEditorPart editor, final EditPart part) {
@@ -874,8 +873,8 @@ public final class EvolUtil {
             return null;
         }
 
-        final LayoutPropertySource result =
-                new LayoutPropertySource(manager.getInspector(rootPart));
+        final ILayoutInspector inspector = manager.getInspector(rootPart);
+        final LayoutPropertySource result = new LayoutPropertySource(inspector);
         return result;
     }
 
@@ -959,34 +958,6 @@ public final class EvolUtil {
         Assert.isLegal(coeffsMap != null);
 
         final KNode layoutGraph = layout(manager, editor);
-        return measure(layoutGraph, coeffsMap);
-    }
-
-    /**
-     * Measures the given layout graph, using uniform weights for the metrics.
-     *
-     * @param layoutGraph
-     * @return a rating
-     * @deprecated it is recommended to use specific weights.
-     */
-    @Deprecated
-    private static int measure(final KNode layoutGraph) {
-
-        // Get the metric IDs.
-        final Set<String> metricIds = EvolutionServices.getInstance().getLayoutMetricsIds();
-
-        // Use uniform coefficients.
-        final Deque<Double> coeffsQueue = new LinkedList<Double>();
-        for (final double d : new double[] { 1, 1, 1, 1, 1 }) {
-            coeffsQueue.add(d);
-        }
-        final Map<String, Double> coeffsMap = new HashMap<String, Double>(metricIds.size());
-        for (final String metricId : metricIds) {
-            coeffsMap.put(metricId, coeffsQueue.remove());
-        }
-
-        normalize(coeffsMap);
-
         return measure(layoutGraph, coeffsMap);
     }
 
@@ -1090,31 +1061,6 @@ public final class EvolUtil {
                 entry.setValue(value * factor);
             }
         }
-    }
-
-    /**
-     * Scale the given double values so that their sum equals one.
-     *
-     * @param values
-     *            a non-empty array of doubles
-     * @return a list of the scaled values in the same order.
-     */
-    private static List<Double> normalize(final double... values) {
-
-        // Calculate sum.
-        double sum = 0.0;
-        for (final double val : values) {
-            sum += val;
-        }
-
-        // Obtain scaled values.
-        final double factor = 1.0 / sum;
-        final List<Double> result = new ArrayList<Double>(values.length);
-        for (final double val : values) {
-            result.add(val * factor);
-        }
-
-        return result;
     }
 
     /** Hidden constructor to avoid instantiation. **/
