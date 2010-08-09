@@ -204,8 +204,7 @@ public class EclipseLayoutServices extends LayoutServices {
      * @param optionData a layout option data
      * @param providerData the active layout provider data
      * @param editPart the current edit part
-     * @param containerEditPart the edit part that contains the current
-     *      edit part
+     * @param containerEditPart the container edit part that is valid for the option
      * @param hasChildren indicates whether the given edit part has children
      *     in the layout graph
      * @return an object with the default value

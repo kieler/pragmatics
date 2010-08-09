@@ -13,12 +13,12 @@
  */
 package de.cau.cs.kieler.kiml.ui.views;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -96,18 +96,18 @@ public class LayoutPropertySource implements IPropertySource {
             if (LayoutOptions.LAYOUT_HINT.equals(id)) {
                 value = layoutInspector.getFocusLayouterData().getId();
             } else {
-                boolean hasChildren = layoutInspector.getContainerPart() != null;
                 if (optionData.hasTarget(LayoutOptionData.Target.PARENTS)) {
                     value = layoutServices.getDefault(optionData,
                             layoutInspector.getFocusLayouterData(),
                             layoutInspector.getFocusPart(),
-                            layoutInspector.getFocusPart(), hasChildren);
+                            layoutInspector.getFocusPart(),
+                            layoutInspector.hasChildren());
                 } else {
                     value = layoutServices.getDefault(optionData,
                             layoutInspector.getContainerLayouterData(),
                             layoutInspector.getFocusPart(),
                             layoutInspector.getContainerPart(),
-                            hasChildren);
+                            layoutInspector.hasChildren());
                 }
             }
         } else {
@@ -226,7 +226,7 @@ public class LayoutPropertySource implements IPropertySource {
         for (LayoutProviderData providerData : layoutServices.getLayoutProviderData()) {
             String key = providerData.getType();
             if (layoutServices.getLayoutTypeName(key) == null) {
-                key = "";
+                key = "zzz";
             }
             List<LayoutProviderData> typeList = typeMap.get(key);
             if (typeList == null) {
@@ -240,25 +240,26 @@ public class LayoutPropertySource implements IPropertySource {
         layoutHintChoices = new String[choicesCount];
         layoutHintValues = new String[choicesCount];
         layoutHintIndexMap = new HashMap<String, Integer>();
-        int i = 0;
-        for (Entry<String, List<LayoutProviderData>> entry : typeMap.entrySet()) {
-            String typeId = entry.getKey();
+        String[] types = typeMap.keySet().toArray(new String[typeMap.keySet().size()]);
+        Arrays.sort(types);
+        int index = 0;
+        for (String typeId : types) {
             String typeName = layoutServices.getLayoutTypeName(typeId);
             if (typeName == null) {
                 typeName = Messages.getString("kiml.ui.8");
             }
-            layoutHintValues[i] = typeId;
-            layoutHintIndexMap.put(typeId, Integer.valueOf(i));
-            layoutHintChoices[i++] = typeName + " " + Messages.getString("kiml.ui.9");
-            for (LayoutProviderData providerData : entry.getValue()) {
+            layoutHintValues[index] = typeId;
+            layoutHintIndexMap.put(typeId, Integer.valueOf(index));
+            layoutHintChoices[index++] = typeName + " " + Messages.getString("kiml.ui.9");
+            for (LayoutProviderData providerData : typeMap.get(typeId)) {
                 String providerName = "  - " + providerData.getName();
                 String category = layoutServices.getCategoryName(providerData.getCategory());
                 if (category != null) {
                     providerName += " (" + category + ")";
                 }
-                layoutHintValues[i] = providerData.getId();
-                layoutHintIndexMap.put(providerData.getId(), Integer.valueOf(i));
-                layoutHintChoices[i++] = providerName;
+                layoutHintValues[index] = providerData.getId();
+                layoutHintIndexMap.put(providerData.getId(), Integer.valueOf(index));
+                layoutHintChoices[index++] = providerName;
             }
         }
     }

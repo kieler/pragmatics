@@ -89,6 +89,13 @@ public interface ILayoutInspector {
      * @return the layout provider data for the container edit part
      */
     LayoutProviderData getContainerLayouterData();
+    
+    /**
+     * Returns {@code true} if the associated edit part has children that can be layouted.
+     * 
+     * @return whether the edit part has children
+     */
+    boolean hasChildren();
 
     /**
      * Removes all stored layout options from the associated edit part and its children.

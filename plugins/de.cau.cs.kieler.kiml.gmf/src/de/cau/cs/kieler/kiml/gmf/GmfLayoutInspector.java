@@ -74,10 +74,12 @@ public class GmfLayoutInspector implements ILayoutInspector {
     private LayoutProviderData containerProviderData;
     /** the edit part for which options are shown. */
     private IGraphicalEditPart focusEditPart;
-    /** the edit part that contains the sub-diagram with the shown edit part. */
+    /** the edit part that contains the sub-diagram with the focus edit part. */
     private IGraphicalEditPart containerEditPart;
-    /** the edit part that specifies options for the children of the shown edit part. */
+    /** the edit part that specifies options for the children of the focus edit part. */
     private IGraphicalEditPart containmentEditPart;
+    /** whether the focus edit part has children. */
+    private boolean hasChildren;
 
     /**
      * Finds the diagram edit part of an edit part.
@@ -301,16 +303,17 @@ public class GmfLayoutInspector implements ILayoutInspector {
      * @return the shown edit part, or {@code null} if there is none
      */
     private IGraphicalEditPart getShownEditPart(final IGraphicalEditPart sourceEditPart) {
-        if (sourceEditPart instanceof CompartmentEditPart) {
-            return (IGraphicalEditPart) sourceEditPart.getParent();
+        IGraphicalEditPart editPart = sourceEditPart;
+        if (editPart instanceof CompartmentEditPart) {
+            editPart = (IGraphicalEditPart) editPart.getParent();
         }
-        if (sourceEditPart instanceof ShapeNodeEditPart) {
-            if (KimlUiUtil.isNoLayout(sourceEditPart)
-                    || KimlUiUtil.isNoLayout(sourceEditPart.getParent())) {
+        if (editPart instanceof ShapeNodeEditPart) {
+            if (KimlUiUtil.isNoLayout(editPart)
+                    || KimlUiUtil.isNoLayout(editPart.getParent())) {
                 return null;
             }
         }
-        return sourceEditPart;
+        return editPart;
     }
     
     /**
@@ -350,6 +353,7 @@ public class GmfLayoutInspector implements ILayoutInspector {
             partTarget = LayoutOptionData.Target.PARENTS;
             containerEditPart = editPart;
             containmentEditPart = editPart;
+            hasChildren = true;
         }
         if (containerEditPart instanceof CompartmentEditPart) {
             containerEditPart = (IGraphicalEditPart) containerEditPart.getParent();
@@ -369,12 +373,14 @@ public class GmfLayoutInspector implements ILayoutInspector {
             if (child instanceof ShapeNodeEditPart
                     && !(child instanceof AbstractBorderItemEditPart)
                     && !KimlUiUtil.isNoLayout((EditPart) child)) {
+                hasChildren = true;
                 return editPart;
             } else if (child instanceof CompartmentEditPart
                     && !KimlUiUtil.isNoLayout((EditPart) child)) {
                 for (Object grandChild : ((CompartmentEditPart) child).getChildren()) {
                     if (grandChild instanceof ShapeNodeEditPart
                             && !KimlUiUtil.isNoLayout((EditPart) grandChild)) {
+                        hasChildren = true;
                         return (IGraphicalEditPart) child;
                     }
                 }
@@ -581,6 +587,13 @@ public class GmfLayoutInspector implements ILayoutInspector {
      */
     public LayoutProviderData getContainerLayouterData() {
         return containerProviderData;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean hasChildren() {
+        return hasChildren;
     }
     
     /**
