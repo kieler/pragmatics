@@ -141,6 +141,8 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      */
     private int[] cutvalue;
 
+    private boolean[] knownCutvalue;
+
     // ====================== Constructor =====================================
 
     /**
@@ -196,9 +198,11 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             minSpan = new int[numEdges];
             treeEdge = new boolean[numEdges];
             edgeVisited = new boolean[numEdges];
+            knownCutvalue = new boolean[numEdges];
         } else {
             Arrays.fill(treeEdge, false);
             Arrays.fill(edgeVisited, false);
+            Arrays.fill(knownCutvalue, false);
         }
         postOrder = 1;
     }
@@ -236,7 +240,12 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             // determine feasible tree
             feasibleTree();
             LEdge e = null;
+            for (LEdge ed : layerEdges)
+                System.out.println(ed.toString() + " ,cw = " + cutvalue[ed.id]);
             while ((e = leaveEdge()) != null) {
+                System.out.println("--- Cutvalues ---");
+                for (LEdge ed : layerEdges)
+                    System.out.println(ed.toString() + " ,cw = " + cutvalue[ed.id]);
                 // current layering is not optimal
                 exchange(e, enterEdge(e));
             }
@@ -270,32 +279,33 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     private void feasibleTree() {
 
         initLayering();
-        Arrays.fill(edgeVisited, false);
-        int a;
-        while ((a = tightTreeDFS(layerNodes.iterator().next())) < layerNodes.size()) {
-            // some nodes are still not part of the tree
-            LEdge e = minimalSlack();
-            System.out.println("\n\n tightTreeNodes = " + a + " ,minSlackEdge = " + (e == null)
-                    + "\n");
-            int slack = layer[e.getTarget().getNode().id] - layer[e.getSource().getNode().id]
-                    - minSpan[e.id];
-            if (treeNode[e.getSource().getNode().id]) {
-                slack = -slack;
-            }
-            for (LNode node : layerNodes) {
-                if (treeNode[node.id]) {
-                    layer[node.id] += slack;
+        if (layerEdges.size() > 0) {
+            Arrays.fill(edgeVisited, false);
+            while (tightTreeDFS(layerNodes.iterator().next()) < layerNodes.size()) {
+                // some nodes are still not part of the tree
+                LEdge e = minimalSlack();
+                int slack = layer[e.getTarget().getNode().id] - layer[e.getSource().getNode().id]
+                        - minSpan[e.id];
+                if (treeNode[e.getSource().getNode().id]) {
+                    slack = -slack;
                 }
+                for (LNode node : layerNodes) {
+                    if (treeNode[node.id]) {
+                        layer[node.id] += slack;
+                    }
+                }
+                Arrays.fill(edgeVisited, false);
+            }
+            System.out.println(" --- Spanning Tree --- ");
+            for (LEdge edge : layerEdges) {
+                System.out.println(edge.toString() + " ,isTreeEdge = " + treeEdge[edge.id]);
             }
             Arrays.fill(edgeVisited, false);
+            postorderTraversal(layerNodes.iterator().next());
+            Arrays.fill(edgeVisited, false);
+            // naiveCutvalues();
+            cutvalues(layerNodes.iterator().next());
         }
-        System.out.println(" --- Spanning Tree --- ");
-        for (LEdge edge : layerEdges) {
-            System.out.println(edge.toString() + " ,isTreeEdge = " + treeEdge[edge.id]);
-        }
-        Arrays.fill(edgeVisited, false);
-        postorderTraversal(layerNodes.iterator().next());
-        naiveCutvalues();
     }
 
     /**
@@ -401,67 +411,71 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * component containing the source node of the edge. The cut value is the sum of the weights of
      * all edges going from the tail to the head component, including the tree edge itself, minus
      * the sum of the weights of all edges from the head to the tail component.
+     * 
+     * @param node
+     *            the root of the DFS-subtree
      */
-    private void cutvalues(final LEdge edge) {
+    private void cutvalues(final LNode node) {
 
-        if (!treeEdge[edge.id]) {
-            throw new IllegalArgumentException("Input edge is not a tree edge.");
+        /*
+         * TODO nodeVisited[node] = true; if (node is source node and has exactly one incident tree
+         * edge and has unknown cw called edge){ cw[edge] = 1; knownCw[edge] = true; for each
+         * (non-tree edge e incident on node) { if (e points at node){ cw[edge]--; } else {
+         * cw[edge]--; } } LNode opposite = opposite Node incident on edge; if
+         * (!nodeVisited[opposite]) { cutvalues(opposite); } } else if (node is target node ...){
+         * [similar to above] } else { // edge has more than one incident tree edge with known or
+         * unknown cut values for each (incident tree edge, unvisited and with unknown cutvalue
+         * called e1) { cw(e1); // edge 'ecv' to determine its CV can easily be saved and determined
+         * in this iteration } // all (except ecv, which is visited, but not with known cv) //
+         * incident edges now have known cut values compute cv of ecv
+         */
+
+        nodeVisited[node.id] = true;
+        // determine incident tree and non-tree edges
+        LinkedList<LEdge> treeEdges = new LinkedList<LEdge>();
+        LinkedList<LEdge> nonTreeEdges = new LinkedList<LEdge>();
+        for (LPort port : node.getPorts()) {
+            for (LEdge edge : port.getEdges()) {
+                if (treeEdge[edge.id]) {
+                    treeEdges.add(edge);
+                } else {
+                    nonTreeEdges.add(edge);
+                }
+            }
         }
-
-        cutvalue[edge.id] = 0;
-        int undetermined = 0;
-        LNode source = edge.getSource().getNode();
-        LNode target = edge.getTarget().getNode();
-
-        if (inDegree[source.id] == 0) {
-            // edge is incident to a source node
-            edgeVisited[edge.id] = true;
-            for (LPort port : source.getPorts()) {
-                for (LEdge e : port.getEdges()) {
-                    if (!treeEdge[e.id]) {
-                        if (e.getSource().equals(source)) {
-                            cutvalue[edge.id]++;
-                        } else {
-                            cutvalue[edge.id]--;
-                        }
+        if (treeEdges.size() == 1) {
+            // node is a leaf in the spanning tree
+            cutvalue[treeEdges.getFirst().id] = 1;
+            edgeVisited[treeEdges.getFirst().id] = true;
+            knownCutvalue[treeEdges.getFirst().id] = true;
+            if (inDegree[node.id] == 0) {
+                // node is a source
+                for (LEdge edge : nonTreeEdges) {
+                    if (edge.getSource().getNode().equals(node)) {
+                        cutvalue[treeEdges.getFirst().id]++;
+                    } else {
+                        cutvalue[treeEdges.getFirst().id]--;
                     }
                 }
-            }
-        } else if (outDegree[target.id] == 0) {
-            // edge is incident to a source node
-            edgeVisited[edge.id] = true;
-            for (LPort port : target.getPorts()) {
-                for (LEdge e : port.getEdges()) {
-                    if (!treeEdge[e.id]) {
-                        if (e.getTarget().equals(target)) {
-                            cutvalue[edge.id]++;
-                        } else {
-                            cutvalue[edge.id]--;
-                        }
-                    }
+                if (!edgeVisited[treeEdges.getFirst().id]) {
+                    cutvalues(treeEdges.getFirst().getTarget().getNode());
                 }
-            }
-        } else {
-            for (LPort port : edge.getSource().getNode().getPorts()) {
-                for (LEdge e : port.getEdges()) {
-                    if (treeEdge[e.id] && !edgeVisited[e.id]) {
-                        undetermined++;
-                    }
-                }
-            }
-            for (LPort port : edge.getTarget().getNode().getPorts()) {
-                for (LEdge e : port.getEdges()) {
-                    if (treeEdge[e.id] && !edgeVisited[e.id]) {
-                        undetermined++;
-                    }
-                }
-            }
-            if (undetermined == 0) {
-                // TODO
             } else {
-                // TODO
-            }
-
+                // node is a sink
+                for (LEdge edge : nonTreeEdges) {
+                    if (edge.getTarget().getNode().equals(node)) {
+                        cutvalue[treeEdges.getFirst().id]++;
+                    } else {
+                        cutvalue[treeEdges.getFirst().id]--;
+                    }
+                }
+                if (!edgeVisited[treeEdges.getFirst().id]) {
+                    cutvalues(treeEdges.getFirst().getSource().getNode());
+                }
+            }           
+        } else {
+            // node has multiple incident tree edges
+            // TODO
         }
         // TODO continue implementation
     }
@@ -523,14 +537,11 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      */
     private LEdge leaveEdge() {
 
-        System.out.println(" --- Cutvalues --- ");
         for (LEdge edge : layerEdges) {
-            System.out.print(edge.toString() + " ,cw = " + cutvalue[edge.id] + "\n");
             if (treeEdge[edge.id] && cutvalue[edge.id] < 0) {
                 return edge;
             }
         }
-        System.out.println("");
         return null;
     }
 
@@ -538,7 +549,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * Helper method for the network simplex layerer. It determines an non-tree edge to replace the
      * given tree edge in the spanning tree. All edges going from the head component to the tail
      * component of the edge will be considered. The edge with a minimal amount of slack (i.e. the
-     * difference between its current to its minimal length) will be returned.
+     * lowest difference between its current to its minimal length) will be returned.
      * 
      * @param edge
      *            the tree edge to determine a non-tree edge to be replaced with
@@ -615,7 +626,9 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         postOrder = 1;
         Arrays.fill(edgeVisited, false);
         postorderTraversal(layerNodes.iterator().next());
-        naiveCutvalues();
+        Arrays.fill(edgeVisited, false);
+        // naiveCutvalues();
+        cutvalues(layerNodes.iterator().next());
     }
 
     /**
@@ -973,7 +986,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             }
         }
     }
-    
+
     /**
      * Helper method for the network simplex layerer. It puts the specified node into its assigned
      * layer in the layered graph.
