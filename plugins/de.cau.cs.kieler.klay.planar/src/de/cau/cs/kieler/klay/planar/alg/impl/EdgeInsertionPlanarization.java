@@ -15,6 +15,7 @@ package de.cau.cs.kieler.klay.planar.alg.impl;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -144,11 +145,11 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
             // connect the node path
             int pathNodeCounter = 0;
             while (pathNodeCounter < path.size() - 1) {
-                IEdge newEdge = graph.addEdge(path.get(pathNodeCounter), path
-                        .get(pathNodeCounter + 1));
+                IEdge newEdge = graph.addEdge(path.get(pathNodeCounter),
+                        path.get(pathNodeCounter + 1));
 
-                reinsertEdges(shortestFacePath.get(pathNodeCounter), newEdge, path
-                        .get(pathNodeCounter));
+                reinsertEdges(shortestFacePath.get(pathNodeCounter), newEdge,
+                        path.get(pathNodeCounter));
                 pathNodeCounter++;
             }
         }
@@ -372,6 +373,81 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
                 visited[currentID] = true;
             }
         }
+        return parent;
+    }
+
+    /**
+     * a dijkstra algorithm which finds the shortest path in a graph, where edges are undirected
+     * have a weight.
+     * 
+     * @param root
+     *            , the start node
+     * @param graph
+     *            , the given graph
+     * @return parent , array with the parents from root to all nodes
+     */
+    @SuppressWarnings("unused")
+    private int[] dijkstra(final INode root, final IGraph graph) {
+
+        // TODO edges need a weight!!!
+        int egdeWeight = 1;
+        int size = graph.getNodeCount();
+        int rootID = root.getID();
+
+        // initialize arrays
+        int[] parent = new int[size];
+        int[] distance = new int[size];
+
+        for (int i = 0; i < size; i++) {
+            parent[i] = -1;
+            distance[i] = 10000;
+        }
+
+        parent[rootID] = -1;
+        distance[rootID] = 0;
+
+        // get all nodes of the given graph
+        LinkedHashSet<INode> nodes = new LinkedHashSet<INode>();
+        for (INode iNode : graph.getNodes()) {
+            nodes.add(iNode);
+        }
+        INode currentNode = root;
+        int currentID = currentNode.getID();
+
+        while (!nodes.isEmpty()) {
+
+            // FIXME
+            // find the node with smalles distance in nodes
+            int min = distance[0];
+            for (INode iNode : nodes) {
+                int iNodeID = iNode.getID();
+                if (distance[iNodeID] >= 0 && distance[iNodeID] < min) {
+                    min = distance[iNodeID];
+                    currentNode = iNode;
+                    break;
+                }
+            }
+
+            nodes.remove(currentNode);
+
+            for (INode neighborNode : currentNode.adjacentNodes()) {
+                int neighborID = neighborNode.getID();
+                if (nodes.contains(neighborNode)) {
+
+                    // distance between current and neighbor
+                    int wayLenght = egdeWeight; // currentNode.getEdge(neighborNode).getWeight();
+                    int alternative = distance[currentID] + wayLenght;
+
+                    // check if there is a shorter path
+                    if (alternative < distance[neighborID]) {
+                        distance[neighborID] = alternative;
+                        parent[neighborID] = currentID;
+                    }
+
+                }
+            }
+        }
+
         return parent;
     }
 
