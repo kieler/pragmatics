@@ -23,7 +23,7 @@ public class ExamplePage extends WizardPage {
 	public ExamplePage(String pageName) {
 		super(pageName);
 		setTitle("Example Export");
-		setDescription("Please enter example attributes");
+		setDescription("Please enter example attributes.");
 
 	}
 

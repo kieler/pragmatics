@@ -38,7 +38,7 @@ public class ChooseExamplePage extends WizardPage {
 	public ChooseExamplePage(String pageName) {
 		super(pageName);
 		setTitle("Import Example");
-		setDescription("Please choose an example");
+		setDescription("Please choose an example.");
 	}
 
 	public void createControl(Composite parent) {

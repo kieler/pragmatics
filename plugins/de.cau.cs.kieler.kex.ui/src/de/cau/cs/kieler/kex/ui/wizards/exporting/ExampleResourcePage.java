@@ -38,7 +38,7 @@ public class ExampleResourcePage extends WizardPage {
 	protected ExampleResourcePage(String pageName) {
 		super(pageName);
 		setTitle("Destination Choice");
-		setDescription("Set Destination for Example and determine example resources");
+		setDescription("Set destination for exported Example and determine Example Resources.");
 	}
 
 	public void createControl(Composite parent) {
@@ -76,22 +76,46 @@ public class ExampleResourcePage extends WizardPage {
 		middleGroup.setLayout(middleLayout);
 		createTreeElement(middleGroup);
 		createExReComposite(middleGroup);
+		createTreeButtons(middleGroup);
 
+	}
+
+	private void createTreeButtons(Group middleGroup) {
+		Composite buttonComposite = new Composite(middleGroup, SWT.NONE);
+		GridLayout gridLayout = new GridLayout();
+		gridLayout.numColumns = 5;
+		buttonComposite.setLayout(gridLayout);
+		Button newExRe = new Button(buttonComposite, SWT.NONE);
+		newExRe.setText("New");
+		newExRe.setToolTipText("Add new Example Resource");
+		Button deleteExRe = new Button(buttonComposite, SWT.NONE);
+		deleteExRe.setText("Del");
+		deleteExRe.setToolTipText("Delete Example Resource");
+		// TODO selections hier mit einbauen, damit die buttons nur nicht grayed
+		// sind wenn auch sinnvoll.
+		Label label = new Label(buttonComposite, SWT.NONE);
+		label.setText(" | ");
+		Button addResource = new Button(buttonComposite, SWT.NONE);
+		addResource.setText("Add");
+		addResource.setToolTipText("Add resources");
+		Button delResource = new Button(buttonComposite, SWT.NONE);
+		delResource.setText("Del");
+		delResource.setToolTipText("Delete resources");
 	}
 
 	private void createBottomGroup(Composite composite) {
 		Group bottomGroup = new Group(composite, SWT.NONE);
-		GridLayout buttomLayout = new GridLayout();
-		buttomLayout.numColumns = 1;
+		GridLayout bottomLayout = new GridLayout();
+		bottomLayout.numColumns = 1;
 		bottomGroup.setText("Additional Options");
-		bottomGroup.setLayout(buttomLayout);
+		bottomGroup.setLayout(bottomLayout);
 		bottomGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
 		Button exampleFolderButton = new Button(bottomGroup, SWT.CHECK);
 		exampleFolderButton.setText("create folder with example name");
 		Button hiddenFilesButton = new Button(bottomGroup, SWT.CHECK);
-		hiddenFilesButton.setText("don´t copy hidden files");
-		hiddenFilesButton.setSelection(true);
-
+		// TODO hidden files berücksichtigen, sowohl beim import(?) als auch
+		// beim export; gedanken drüber machen.
+		hiddenFilesButton.setText("Copy Hidden Files");
 	}
 
 	// TODO größe fix machen und mit scrollbar ausstatten, gilt auch für import
@@ -174,7 +198,7 @@ public class ExampleResourcePage extends WizardPage {
 	}
 
 	private void initTree(Tree tree) {
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < 3; i++) {
 			TreeItem iItem = new TreeItem(tree, 0);
 			iItem.setText("ExRe");
 		}
