@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.osgi.framework.Version;
 
 import de.cau.cs.kieler.core.KielerException;
@@ -69,7 +67,6 @@ public class ExampleExportUtil {
 		Example mappedExample = ExampleExportUtil.mapToExample(properties);
 		ExampleExportUtil.checkDuplicate(mappedExample, collectors);
 
-		String projectId = (String) properties.get(ExampleElement.PROJECTID);
 		String destLocation = (String) properties
 				.get(ExampleElement.DEST_LOCATION);
 		// TODO nullpointer check einbauen; überall prüfen, wenn ein File
@@ -79,12 +76,6 @@ public class ExampleExportUtil {
 		if (!destFile.exists())
 			throw new KielerException(
 					"There is no file at destination location:" + destLocation);
-
-		IProject sourceProject = ResourcesPlugin.getWorkspace().getRoot()
-				.getProject(projectId);
-		if (sourceProject == null)
-			throw new KielerException("There is no project for given project:"
-					+ projectId);
 
 		List<ExampleResource> resources = (List<ExampleResource>) properties
 				.get(ExampleElement.RESOURCES);

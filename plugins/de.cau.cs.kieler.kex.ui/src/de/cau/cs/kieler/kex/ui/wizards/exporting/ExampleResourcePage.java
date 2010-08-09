@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
 import de.cau.cs.kieler.kex.controller.ExampleManager;
+import de.cau.cs.kieler.kex.model.ExampleResource;
 
 public class ExampleResourcePage extends WizardPage {
 
@@ -34,6 +35,8 @@ public class ExampleResourcePage extends WizardPage {
 	private Tree exampleTree;
 
 	private final int COLUMNCOUNT = 2;
+
+	private List<ExampleResource> exampleResources;
 
 	protected ExampleResourcePage(String pageName) {
 		super(pageName);
@@ -104,6 +107,8 @@ public class ExampleResourcePage extends WizardPage {
 	}
 
 	private void createBottomGroup(Composite composite) {
+		// TODO think about: exampleFolderButton kann ich glaube ich nicht
+		// machen, nachdenken was damit passiert bis zum import
 		Group bottomGroup = new Group(composite, SWT.NONE);
 		GridLayout bottomLayout = new GridLayout();
 		bottomLayout.numColumns = 1;
@@ -232,6 +237,14 @@ public class ExampleResourcePage extends WizardPage {
 		buttonComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		headResourceButton.setText("is head resource");
 		headResourceButton.setToolTipText("Explaining of that attribute");
+	}
+
+	public String getDestLocation() {
+		return this.destPath.getText();
+	}
+
+	public List<ExampleResource> getExampleResources() {
+		return this.exampleResources;
 	}
 
 }
