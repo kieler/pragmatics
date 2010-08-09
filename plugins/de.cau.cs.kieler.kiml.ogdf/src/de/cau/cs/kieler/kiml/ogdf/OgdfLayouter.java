@@ -385,12 +385,21 @@ public abstract class OgdfLayouter {
                     float x = Ogdf.BendsIterator_getX();
                     float y = Ogdf.BendsIterator_getY();
                     Ogdf.BendsIterator_next();
+                    KPoint point = toKPoint(x, y, offsetX, offsetY);
                     if (!Ogdf.BendsIterator_hasNext()) {
+                        // workaround for a bug that causes two bend points to
+                        // be created on the target point
+                        if (kbends.size() > 0) {
+                            KPoint lastBend = kbends.get(kbends.size() - 1);
+                            if (lastBend.getX() == point.getX()
+                                    && lastBend.getY() == point.getY()) {
+                                kbends.remove(kbends.size() - 1);
+                            }
+                        }
                         // set the target point
-                        edgeLayout.setTargetPoint(toKPoint(x, y, offsetX,
-                                offsetY));
+                        edgeLayout.setTargetPoint(point);
                     } else {
-                        kbends.add(toKPoint(x, y, offsetX, offsetY));
+                        kbends.add(point);
                     }
                 }
             }
