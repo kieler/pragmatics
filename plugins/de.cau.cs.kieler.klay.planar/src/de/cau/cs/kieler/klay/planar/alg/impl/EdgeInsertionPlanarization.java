@@ -458,6 +458,7 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
      * @param graph
      *            , the given graph
      */
+    @SuppressWarnings("unused")
     private void mergeHyperNodes(final IGraph graph) {
         for (INode node : graph.getNodes()) {
             if (node.getType() == NodeType.HYPER) {
@@ -481,10 +482,11 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
         }
     }
     
-    private void splitUpHyperNode(final IGraph graph, final INode hypernode){
+    @SuppressWarnings("unused")
+    private void splitUpHyperNode(final IGraph graph, final INode hypernode) {
         INode newHyperNode = graph.addNode();
         graph.addEdge(hypernode, newHyperNode);
-        //TODO find a smart way to split up the edges from the given hypernode
+        // TODO find a smart way to split up the edges from the given hypernode
     }
 
 }
