@@ -13,7 +13,13 @@
  */
 package de.cau.cs.kieler.kiml.ogdf;
 
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Set;
+
 import net.ogdf.lib.Ogdf;
+import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -39,9 +45,53 @@ public class UpwardPlanarizationLayouter extends OgdfLayouter {
     private SelfLoopRouter loopRouter = new SelfLoopRouter();
     
     /**
+     * Returns whether the graph defined by the given parent node is connected.
+     * 
+     * @param node
+     *            the parent node of the graph
+     * @return whether the graph is connected
+     */
+    private boolean isConnected(final KNode node) {
+        // empty graphs are connected
+        if (node.getChildren().size() == 0) {
+            return true;
+        }
+        // mark all nodes connected to a random node
+        Queue<KNode> checkNodes = new LinkedList<KNode>();
+        Set<KNode> marker = new HashSet<KNode>();
+        checkNodes.addAll(node.getChildren());
+        Queue<KNode> nodes = new LinkedList<KNode>();
+        nodes.add(checkNodes.remove());
+        while (!nodes.isEmpty()) {
+            KNode currentNode = nodes.remove();
+            if (!marker.contains(currentNode)) {
+                marker.add(currentNode);
+                for (KEdge edge : currentNode.getOutgoingEdges()) {
+                    nodes.add(edge.getTarget());
+                }
+                for (KEdge edge : currentNode.getIncomingEdges()) {
+                    nodes.add(edge.getSource());
+                }
+            }
+        }
+        // if there is still a not marked node the graph is not connected 
+        for (KNode currentNode : checkNodes) {
+            if (!marker.contains(currentNode)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    /**
      * {@inheritDoc}
      */
     protected void prepareLayouter(final KNode layoutNode) {
+        
+        // the layouter crashes on not connected graphs
+        if (!isConnected(layoutNode)) {
+            throw new RuntimeException("Layouter does not support not-connected graphs.");
+        }
         
         KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
         
