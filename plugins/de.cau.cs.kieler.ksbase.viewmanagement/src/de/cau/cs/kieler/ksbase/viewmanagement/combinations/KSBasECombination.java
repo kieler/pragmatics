@@ -204,9 +204,9 @@ public class KSBasECombination extends ACombination {
      */
     public static final void initalizeEffects(final IPreferenceStore prefStore) {
         Vector<String> effectList = new Vector<String>();
-        if (!RunLogic.getInstance().getState()) {
-            RunLogic.getInstance().registerListeners();
-        }
+//        if (!RunLogic.getInstance().getState()) {
+//            RunLogic.getInstance().registerListeners();
+//        }
         List<String> availableEffects = RunLogic.getInstance()
                 .getEffectsAsText();
         // First: read all stored effects
