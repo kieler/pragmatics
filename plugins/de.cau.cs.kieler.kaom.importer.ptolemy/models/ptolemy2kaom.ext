@@ -26,7 +26,7 @@ create Entity this transform(DocumentRoot root):
  
 create Entity this transform(moml::EntityType entity):
 	let list = {}:
-	this.setName(entity.name) ->
+	this.setName(entity.name) -> 
 	createTrace(this,entity,"ptolemy","kaom") ->
 	this.addAnnotation("ptolemyClass",entity.class1) ->
 	addProperties(this, entity.property) ->
