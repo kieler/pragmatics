@@ -92,7 +92,10 @@ public class LayoutPropertySource implements IPropertySource {
         LayoutOptionData optionData = layoutServices.getLayoutOptionData((String) id);
         KOption koption = layoutInspector.getKOption(optionData, false);
         Object value = null;
-        if (koption == null) {
+        if (koption != null) {
+            value = translateValue(KimlLayoutUtil.getValue(koption, optionData), optionData);
+        }
+        if (value == null) {
             if (LayoutOptions.LAYOUT_HINT.equals(id)) {
                 value = layoutInspector.getFocusLayouterData().getId();
             } else {
@@ -110,8 +113,14 @@ public class LayoutPropertySource implements IPropertySource {
                             layoutInspector.hasChildren());
                 }
             }
-        } else {
-            value = KimlLayoutUtil.getValue(koption, optionData);
+            value = translateValue(value, optionData);
+        }
+        return value;
+    }
+    
+    private static Object translateValue(final Object value, final LayoutOptionData optionData) {
+        if (value == null) {
+            return null;
         }
         switch (optionData.getType()) {
         case STRING:
@@ -124,7 +133,13 @@ public class LayoutPropertySource implements IPropertySource {
         case FLOAT:
             return value.toString();
         case BOOLEAN:
-            return Integer.valueOf(((Boolean) value) ? 1 : 0);
+            if (value instanceof Boolean) {
+                return Integer.valueOf(((Boolean) value) ? 1 : 0);
+            } else if (value instanceof String) {
+                return Integer.valueOf(Boolean.valueOf((String) value) ? 1 : 0);
+            } else {
+                return value;
+            }
         case ENUM:
             if (value instanceof Enum<?>) {
                 return ((Enum<?>) value).ordinal();

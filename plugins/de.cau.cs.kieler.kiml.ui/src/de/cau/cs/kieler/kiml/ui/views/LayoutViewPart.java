@@ -446,10 +446,10 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
         EObject model = lastInspector.getFocusModel();
         String clazzName = model == null ? null : model.eClass().getInstanceTypeName();
         if (clazzName == null) {
-            if (plural) {
+            EditPart editPart = lastInspector.getFocusPart();
+            if (plural || editPart == null) {
                 return null;
             }
-            EditPart editPart = lastInspector.getFocusPart();
             clazzName = editPart.getClass().getName();
             if (clazzName.endsWith("EditPart")) {
                 clazzName = clazzName.substring(0, clazzName.length() - "EditPart".length());
@@ -529,18 +529,21 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
     private void setPartText() {
         if (lastInspector != null) {
             StringBuilder textBuffer = new StringBuilder();
-            textBuffer.append(getReadableName(true, false));
+            String name = getReadableName(true, false);
+            if (name != null) {
+                textBuffer.append(name);
+            }
             EObject model = lastInspector.getFocusModel();
             if (model != null) {
-                String name = getProperty(model, "Name");
-                if (name == null) {
-                    name = getProperty(model, "Label");
+                String modelName = getProperty(model, "Name");
+                if (modelName == null) {
+                    modelName = getProperty(model, "Label");
                 }
-                if (name == null) {
-                    name = getProperty(model, "Id");
+                if (modelName == null) {
+                    modelName = getProperty(model, "Id");
                 }
-                if (name != null) {
-                    textBuffer.append(" '" + name + "'");
+                if (modelName != null) {
+                    textBuffer.append(" '" + modelName + "'");
                 }
             }
             form.setText(textBuffer.toString());

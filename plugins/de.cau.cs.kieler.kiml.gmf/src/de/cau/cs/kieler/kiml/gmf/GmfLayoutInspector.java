@@ -565,7 +565,11 @@ public class GmfLayoutInspector implements ILayoutInspector {
      * {@inheritDoc}
      */
     public EObject getFocusModel() {
-        return focusEditPart.getNotationView().getElement();
+        if (focusEditPart == null) {
+            return null;
+        } else {
+            return focusEditPart.getNotationView().getElement();
+        }
     }
     
     /**
