@@ -118,15 +118,22 @@ public final class EvolUtil {
 
             final IConfigurationElement evolutionData =
                     EvolutionServices.getInstance().getEvolutionData((String) theId);
+            // FIXME: evolutionData might be null
+            Assert.isNotNull(evolutionData);
+
             final String lowerBoundAttr = evolutionData.getAttribute(ATTRIBUTE_LOWER_BOUND);
             final String upperBoundAttr = evolutionData.getAttribute(ATTRIBUTE_UPPER_BOUND);
             final String distrNameAttr = evolutionData.getAttribute(ATTRIBUTE_DISTRIBUTION);
             final String varianceAttr = evolutionData.getAttribute(ATTRIBUTE_VARIANCE);
 
             final Distribution distr = Distribution.valueOf(distrNameAttr);
+            // FIXME: distrNameAttr might be wrong
 
             final LayoutOptionData layoutOptionData =
                     LayoutServices.getInstance().getLayoutOptionData((String) theId);
+            // FIXME: layoutOptionData might be null
+            Assert.isNotNull(layoutOptionData);
+
             final Type layoutOptionDataType = layoutOptionData.getType();
 
             switch (layoutOptionDataType) {
@@ -143,6 +150,7 @@ public final class EvolUtil {
                         newIntegerGene(theId, theValue, theMutationProbability, lowerBoundAttr,
                                 upperBoundAttr, varianceAttr, distr);
                 break;
+
             case FLOAT:
                 result =
                         newFloatGene(theId, theValue, theMutationProbability, lowerBoundAttr,
@@ -181,6 +189,7 @@ public final class EvolUtil {
 
             final double variance;
             if (varianceAttr != null) {
+                // get variance from evolution data
                 variance = Double.parseDouble(varianceAttr);
 
             } else {
@@ -207,9 +216,10 @@ public final class EvolUtil {
 
             final TypeInfo<Float> typeInfo =
                     new TypeInfo<Float>(floatValue, lowerBound, upperBound, formatter, Float.class);
-            result =
-                    new UniversalGene(theId, floatValue, typeInfo, new MutationInfo(
-                            theMutationProbability, variance, distr));
+
+            final MutationInfo mutationInfo =
+                    new MutationInfo(theMutationProbability, variance, distr);
+            result = new UniversalGene(theId, floatValue, typeInfo, mutationInfo);
             System.out.println(theId + ": " + result);
             return result;
         }
@@ -233,6 +243,7 @@ public final class EvolUtil {
 
             final double variance;
             if (varianceAttr != null) {
+                // get variance from evolution data
                 variance = Double.parseDouble(varianceAttr);
             } else {
                 // estimate desired variance from the absolute value
@@ -253,12 +264,9 @@ public final class EvolUtil {
                     new TypeInfo<Float>(intValue.floatValue(), lowerBound.floatValue(),
                             upperBound.floatValue(), formatter, Integer.class);
 
-            // result = new IntegerGene(theId, intValue,
-            // theMutationProbability, var);
-
-            result =
-                    new UniversalGene(theId, intValue.floatValue(), typeInfo, new MutationInfo(
-                            theMutationProbability, variance, distr));
+            final MutationInfo mutationInfo =
+                    new MutationInfo(theMutationProbability, variance, distr);
+            result = new UniversalGene(theId, intValue.floatValue(), typeInfo, mutationInfo);
             System.out.println(theId + ": " + result);
             return result;
         }
@@ -291,9 +299,10 @@ public final class EvolUtil {
             IGene<?> result;
             final boolean booleanValue = (Integer.parseInt(theValue.toString()) == 1);
             final Float floatValue = (booleanValue ? 1.0f : 0.0f);
+            final MutationInfo mutationInfo = new MutationInfo(theMutationProbability, distr);
             result =
                     new UniversalGene(theId, floatValue, UniversalGene.BOOLEAN_TYPE_INFO,
-                            new MutationInfo(theMutationProbability, distr));
+                            mutationInfo);
             System.out.println(theId + ": " + result);
             return result;
         }
@@ -329,6 +338,7 @@ public final class EvolUtil {
 
         final boolean wantAllEditors = EvolPlugin.ALL_EDITORS.equalsIgnoreCase(prefEditors);
 
+        // Collect the editor(s).
         final Collection<IEditorPart> editors;
         if (wantAllEditors) {
             editors = getEditors();
@@ -419,8 +429,8 @@ public final class EvolUtil {
 
             adoptIndividual(ind, source);
 
-            final Map<String, Double> coeffsMap = extractMetricWeights(ind);
-            final int rating = layoutAndMeasure(manager, editor, coeffsMap);
+            final Map<String, Double> weightsMap = extractMetricWeights(ind);
+            final int rating = layoutAndMeasure(manager, editor, weightsMap);
 
             ind.setUserRating(rating);
 
@@ -444,7 +454,7 @@ public final class EvolUtil {
 
     /**
      * Creates a population of the default size, taking initial values from the
-     * given {@code LayoutPropertySource}.
+     * given {@link LayoutPropertySource}.
      *
      * @param propertySource
      *            where the initial data is taken from.
@@ -460,12 +470,12 @@ public final class EvolUtil {
 
     /**
      * Create a population of the given size, taking initial values from the
-     * given {@code LayoutPropertySource}.
+     * given {@link LayoutPropertySource}.
      *
      * @param propertySource
      *            where the initial data is taken from.
      * @param size
-     *            determines the initial size of the population.
+     *            specifies the initial size of the population.
      * @return population
      */
     public static Population createPopulation(
@@ -488,8 +498,6 @@ public final class EvolUtil {
      * @return the current editor or {@code null} if none exists.
      */
     public static IEditorPart getCurrentEditor() {
-        // TODO: cache editor and assert that it is not replaced?
-
         // Try to get the editor that is tracked by the layout view (must be in
         // UI thread).
         final LayoutViewPart layoutViewPart = LayoutViewPart.findView();
@@ -534,10 +542,12 @@ public final class EvolUtil {
         if (window == null) {
             return result;
         }
+
         final IWorkbenchPage[] pages = window.getPages();
         for (final IWorkbenchPage page : pages) {
             if (page.isEditorAreaVisible()) {
                 final IEditorReference[] references = page.getEditorReferences();
+                Assert.isNotNull(references);
 
                 for (final IEditorReference ref : references) {
                     final IEditorPart editor = ref.getEditor(false);
@@ -627,7 +637,7 @@ public final class EvolUtil {
      * @param theIndividual
      *            the {@link Genome}; must not be {@code null}
      * @param thePropertySource
-     *            the layout property source; must not be {@code null}
+     *            the {@link LayoutPropertySource}; must not be {@code null}
      */
     private static void adoptIndividual(
             final Genome theIndividual, final LayoutPropertySource thePropertySource) {
@@ -742,10 +752,10 @@ public final class EvolUtil {
         final Set<String> learnables = EvolutionServices.getInstance().getEvolutionDataIds();
         final Genome result = new Genome();
 
-        // get data from property descriptors
+        // Get data from property descriptors.
         final IPropertyDescriptor[] propertyDescriptors = propertySource.getPropertyDescriptors();
 
-        // determine uniformly distributed mutation probability
+        // Determine uniformly distributed mutation probability.
         double uniformProb = 0.0;
         final int learnableCount = countLearnableProperties(Arrays.asList(propertyDescriptors));
         if (learnableCount > 0) {
@@ -759,7 +769,7 @@ public final class EvolUtil {
 
             final String id = (String) p.getId();
             final Object value = propertySource.getPropertyValue(id);
-            // check property descriptor id
+            // Check the property descriptor id.
             if (LayoutOptions.LAYOUT_HINT.equals(id)) {
                 // layout hint --> not learnable
                 final ILabelProvider labelProvider = p.getLabelProvider();
@@ -801,12 +811,12 @@ public final class EvolUtil {
 
         return result;
     }
-
+    
     /**
      * Extracts the metric weight from the given genome.
-     *
+     * 
      * @param genome
-     *            a genome
+     *            a {@link Genome}
      * @return a map associating metric weights to metric ids.
      */
     private static Map<String, Double> extractMetricWeights(final Genome genome) {

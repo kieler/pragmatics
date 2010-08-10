@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ *
+ * Copyright 2010 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ *
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.kiml.evol.ui;
 
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -16,15 +29,17 @@ import de.cau.cs.kieler.kiml.evol.genetic.Genome;
  */
 public class PopulationTableLabelProvider extends LabelProvider implements ITableLabelProvider {
     /**
-     * 
+     *
      */
     private final EvolView evolView;
 
     /**
      * Creates a new {@link PopulationTableLabelProvider}.
-     * @param theEvolView TODO
+     *
+     * @param theEvolView
+     *            the evolution view
      */
-    public PopulationTableLabelProvider(EvolView theEvolView) {
+    public PopulationTableLabelProvider(final EvolView theEvolView) {
         this.evolView = theEvolView;
         // Nothing to do here.
     }
@@ -41,6 +56,9 @@ public class PopulationTableLabelProvider extends LabelProvider implements ITabl
         this.defaultImage.dispose();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Image getColumnImage(final Object element, final int columnIndex) {
         switch (columnIndex) {
         case 0:
@@ -55,9 +73,12 @@ public class PopulationTableLabelProvider extends LabelProvider implements ITabl
         }
     }
 
-    // TODO: use CellLabelProviders
+    /**
+     * {@inheritDoc}
+     */
     public String getColumnText(final Object element, final int columnIndex) {
-        //
+        // TODO: use CellLabelProviders
+
         switch (columnIndex) {
         case 0:
             return ((PopulationTableEntry) element).getId();
