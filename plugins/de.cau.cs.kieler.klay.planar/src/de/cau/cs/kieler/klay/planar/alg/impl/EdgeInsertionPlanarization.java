@@ -25,6 +25,7 @@ import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IFace;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.INode;
+import de.cau.cs.kieler.klay.planar.graph.INode.NodeType;
 
 /**
  * Inserts an edge in a planar graph by building the dual graph. In this graph shortest path is
@@ -400,13 +401,13 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
 
         for (int i = 0; i < size; i++) {
             parent[i] = -1;
-            distance[i] = 10000;
+            distance[i] = -1;
         }
 
         parent[rootID] = -1;
         distance[rootID] = 0;
 
-        // get all nodes of the given graph
+        // get all nodes of the given graph and put them in a hash set
         LinkedHashSet<INode> nodes = new LinkedHashSet<INode>();
         for (INode iNode : graph.getNodes()) {
             nodes.add(iNode);
@@ -416,16 +417,16 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
 
         while (!nodes.isEmpty()) {
 
-            // FIXME
-            // find the node with smalles distance in nodes
-            int min = distance[0];
-            for (INode iNode : nodes) {
-                int iNodeID = iNode.getID();
-                if (distance[iNodeID] >= 0 && distance[iNodeID] < min) {
-                    min = distance[iNodeID];
-                    currentNode = iNode;
-                    break;
-                }
+            // TODO
+            // find the node with smalles weight in nodes
+
+            int minEdgeWeight;
+            for (INode neighborNode : currentNode.adjacentNodes()) {
+                IEdge connectingEdge = currentNode.getEdge(neighborNode);
+                // int edgeWeight = connectingEdge.getWeight();
+                // if( edgeWeight < minEdgeWeight){
+                // minEdgeWeight = edgeWeight;
+                // }
             }
 
             nodes.remove(currentNode);
@@ -449,6 +450,35 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
         }
 
         return parent;
+    }
+
+    /**
+     * merges hypernodes to get a point-based approach from a tree-based approach.
+     * 
+     * @param graph
+     *            , the given graph
+     */
+    private void mergeHyperNodes(final IGraph graph) {
+        for (INode node : graph.getNodes()) {
+            if (node.getType() == NodeType.HYPER) {
+                for (INode inode : node.adjacentNodes()) {
+                    if (inode.getType() == NodeType.HYPER) {
+                        
+                        // remove edges which connect hypernodes
+                        graph.removeEdge(node.getEdge(inode));
+                        
+                        // connect all edges with 1 hypernode
+                        for (IEdge edge : inode.adjacentEdges()) {
+                            edge.move(inode, node);
+                        }
+                        
+                        // remove all unneeded hypernodes
+                        graph.removeNode(inode);
+
+                    }
+                }
+            }
+        }
     }
 
 }
