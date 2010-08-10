@@ -480,5 +480,11 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
             }
         }
     }
+    
+    private void splitUpHyperNode(final IGraph graph, final INode hypernode){
+        INode newHyperNode = graph.addNode();
+        graph.addEdge(hypernode, newHyperNode);
+        //TODO find a smart way to split up the edges from the given hypernode
+    }
 
 }
