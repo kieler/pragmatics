@@ -13,8 +13,7 @@
  */
 
 /**
- * Basic interfaces, all implemented planar test algorithms resp. planarization algorithms have to
- * implement following the strategy design pattern.
+ * A collection of algorithms on graphs.
  */
 package de.cau.cs.kieler.klay.planar.alg;
 

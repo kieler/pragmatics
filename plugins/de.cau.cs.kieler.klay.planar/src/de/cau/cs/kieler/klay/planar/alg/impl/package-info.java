@@ -13,6 +13,7 @@
  */
 
 /**
- * Implementations for the various algorithms in the planarization plug-in.
+ * Implementations for the various graph algorithms.
  */
 package de.cau.cs.kieler.klay.planar.alg.impl;
+
