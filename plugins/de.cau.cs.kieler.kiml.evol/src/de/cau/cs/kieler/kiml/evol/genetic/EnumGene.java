@@ -28,7 +28,7 @@ public final class EnumGene extends AbstractGene<Integer> {
      */
     public IGene<Integer> newInstance(final AbstractGene<Integer> template) {
         if (template instanceof EnumGene) {
-            return new EnumGene(template.getId(), template.getValue(), this.enumClass,
+            return new EnumGene(template.getId(), template.getValue().intValue(), this.enumClass,
                     getMutationInfo().getProbability());
         }
         // incompatible template
@@ -40,10 +40,6 @@ public final class EnumGene extends AbstractGene<Integer> {
      */
     public IGene<Integer> newMutation() {
         final EnumGene result = this.newMutation(this, getMutationInfo());
-        // final IGene<Integer> result =
-        // new EnumGene(template.getId(), template.getValue(),
-        // template.enumClass,
-        // getMutationInfo().getProbability());
         return result;
     }
 
@@ -63,7 +59,7 @@ public final class EnumGene extends AbstractGene<Integer> {
             final int theValue,
             final Class<? extends Enum<?>> theEnumClass,
             final double theMutationProbability) {
-        super(theId, theValue, new TypeInfo<Integer>(0, 0, choicesCount(theEnumClass) - 1,
+        super(theId, Integer.valueOf(theValue), new EnumTypeInfo(Integer.valueOf(0),
                 ENUM_FORMATTER, theEnumClass), new MutationInfo(theMutationProbability,
                 Distribution.UNIFORM));
         Assert.isLegal(theEnumClass != null);
@@ -72,7 +68,7 @@ public final class EnumGene extends AbstractGene<Integer> {
 
     /**
      *
-     * @return A string representation if this instance.
+     * @return A string representation of this instance.
      */
     @Override
     public String toString() {
@@ -81,7 +77,7 @@ public final class EnumGene extends AbstractGene<Integer> {
         if (constants == null) {
             return "";
         }
-        final int value = getValue();
+        final int value = getValue().intValue();
         Assert.isTrue((value >= 0) && (value < constants.length));
         final String result = constants[value].toString();
         return result;
@@ -117,70 +113,44 @@ public final class EnumGene extends AbstractGene<Integer> {
                 return null;
             }
 
-            final TypeInfo<Integer> typeInfo = template.getTypeInfo();
+            final EnumTypeInfo typeInfo = template.getTypeInfo();
             Assert.isNotNull(typeInfo);
 
             final Random r = template.getRandomGenerator();
             Assert.isNotNull(r);
 
             final double prob = mutationInfo.getProbability();
-            final double var = mutationInfo.getVariance();
+            // final double var = mutationInfo.getVariance();
 
             final Distribution distr = mutationInfo.getDistr();
-            final Class<? extends Enum<?>> clazz =
-                    (Class<? extends Enum<?>>) typeInfo.getTypeClass();
-            final Integer lowerBound = typeInfo.getLowerBound().intValue();
-            final Integer upperBound = typeInfo.getUpperBound().intValue();
-            final Integer defaultValue = typeInfo.getDefaultValue().intValue();
-            final Integer value = template.getValue().intValue();
+            Assert.isTrue(distr == Distribution.UNIFORM);
 
-            Integer newInt = value;
+            final Class<? extends Enum<?>> enumClass = typeInfo.getTypeClass();
+            final Integer lowerBound = typeInfo.getLowerBound();
+            final Integer upperBound = typeInfo.getUpperBound();
+            // final Integer defaultValue = typeInfo.getDefaultValue();
+            final Integer value = template.getValue();
+
+            int newInt = value.intValue();
             if (r.nextDouble() < prob) {
                 // TODO: regard genuineMutationProbability
-                switch (distr) {
-                case GAUSSIAN:
-                    do {
-                        // produce a new value within the valid bounds.
-                        final double gauss = r.nextGaussian() * Math.sqrt(var);
-                        final double newValue = (value + gauss);
-                        newInt = (int) Math.round(newValue);
-                    } while (!typeInfo.isValueWithinBounds(newInt));
-                    break;
-                case UNIFORM:
-                    newInt =
-                            (r.nextInt((upperBound.intValue() - lowerBound.intValue() + 1)) + lowerBound
-                                    .intValue());
-                    break;
-                default:
-                    // execution should never reach this line.
-                    Assert.isTrue(false);
-                    newInt = defaultValue;
-                }
+                // Uniform distribution
+                newInt =
+                        (r.nextInt((upperBound.intValue() - lowerBound.intValue() + 1)) + lowerBound
+                                .intValue());
             }
-            return new EnumGene(template.getId(), newInt, clazz, prob);
+            return new EnumGene(template.getId(), newInt, enumClass, prob);
         }
     }
 
-    /**
-     * Determines the number of possible choices in the given enumeration.
-     *
-     * @param theEnumClass
-     *            an enumeration class
-     * @return number of choices in the given enumeration.
-     */
-    private static int choicesCount(final Class<? extends Enum<?>> theEnumClass) {
-        Assert.isLegal(theEnumClass != null);
-        if (theEnumClass == null) {
-            return 0;
-        }
-        if (theEnumClass.getEnumConstants() == null) {
-            return 0;
-        }
-        return theEnumClass.getEnumConstants().length;
+    @Override
+    public EnumTypeInfo getTypeInfo() {
+        return (EnumTypeInfo) super.getTypeInfo();
     }
 
     private void setEnumClass(final Class<? extends Enum<?>> theEnumClass) {
         this.enumClass = theEnumClass;
+        // TODO: use getTypeInfo().getTypeClass() instead.
     }
 
     // private fields
@@ -189,18 +159,20 @@ public final class EnumGene extends AbstractGene<Integer> {
     private static final IValueFormatter ENUM_FORMATTER = new IValueFormatter() {
         public String getString(final Object o) {
             if (o instanceof EnumGene) {
-                Assert.isNotNull(((EnumGene) o).enumClass);
-                final Enum<?>[] constants = ((EnumGene) o).enumClass.getEnumConstants();
+                final Class<? extends Enum<?>> enumClass =
+                        ((EnumGene) o).getTypeInfo().getTypeClass();
+
+                final Enum<?>[] constants = enumClass.getEnumConstants();
                 if (constants == null) {
                     return "";
                 }
-                final int value = ((EnumGene) o).getValue();
+                final int value = ((EnumGene) o).getValue().intValue();
                 Assert.isTrue((value >= 0) && (value < constants.length));
                 final String result = constants[value].toString();
                 return result;
             } else if (o instanceof UniversalGene) {
                 // TODO: get enum string
-                final Integer intValue = ((UniversalGene) o).getIntValue();
+                final Integer intValue = Integer.valueOf(((UniversalGene) o).getIntValue());
                 return intValue.toString();
             }
             return null;

@@ -43,6 +43,31 @@ public class AutoRateAllHandler extends AbstractHandler {
      */
     private static final class RefreshEvolutionViewJob extends Job {
         /**
+         * @author bdu
+         *
+         */
+        private static final class RefreshEvolViewRunnable implements Runnable {
+            /**
+             *
+             */
+            private final EvolView evolView;
+            
+            /**
+             * Creates a new {@link RefreshEvolViewRunnable} instance.
+             * 
+             * @param theEvolView
+             */
+            RefreshEvolViewRunnable(final EvolView theEvolView) {
+                this.evolView = theEvolView;
+            }
+
+            public void run() {
+                this.evolView.getTableViewer().refresh();
+                this.evolView.refresh(false);
+            }
+        }
+
+        /**
          *
          */
         private final EvolView view;
@@ -71,12 +96,7 @@ public class AutoRateAllHandler extends AbstractHandler {
 
             monitor.subTask("Refreshing the evolution view");
             final EvolView evolView = getView();
-            MonitoredOperation.runInUI(new Runnable() {
-                public void run() {
-                    evolView.getTableViewer().refresh();
-                    evolView.refresh(false);
-                }
-            }, false);
+            MonitoredOperation.runInUI(new RefreshEvolViewRunnable(evolView), false);
 
             monitor.worked(1);
 
@@ -91,12 +111,38 @@ public class AutoRateAllHandler extends AbstractHandler {
      *
      */
     private static final class AutoRateAllJob extends Job {
-        Population getPopulation() {
-            return this.population;
-        }
+        /**
+         * @author bdu
+         *
+         */
+        private static final class AutoRateAllRunnable implements Runnable {
+            /**
+             *
+             */
+            private final IProgressMonitor monitor;
+            private final IEditorPart editor;
+            private final Population population;
+            
+            /**
+             * Creates a new {@link AutoRateAllRunnable} instance.
+             * 
+             * @param theMonitor
+             * @param theEditor
+             * @param thePopulation
+             */
+            AutoRateAllRunnable(
+                    final IProgressMonitor theMonitor,
+                    final IEditorPart theEditor,
+                    final Population thePopulation) {
+                this.monitor = theMonitor;
+                this.editor = theEditor;
+                this.population = thePopulation;
+            }
 
-        IEditorPart getEditor() {
-            return this.editor;
+            public void run() {
+                // Rate all individuals in the given editor.
+                EvolUtil.autoRateIndividuals(this.population, this.editor, this.monitor);
+            }
         }
 
         /**
@@ -132,13 +178,9 @@ public class AutoRateAllHandler extends AbstractHandler {
                 Thread.sleep(delay);
 
                 // Do the rating.
-                MonitoredOperation.runInUI(new Runnable() {
-                    public void run() {
-                        // Rate all individuals in the given editor.
-                        EvolUtil.autoRateIndividuals(AutoRateAllJob.this.getPopulation(),
-                                AutoRateAllJob.this.getEditor(), monitor);
-                    }
-                }, true);
+                MonitoredOperation.runInUI(new AutoRateAllRunnable(monitor, this.editor,
+                        this.population),
+                        true);
 
                 if (monitor.isCanceled()) {
                     return new Status(IStatus.CANCEL, EvolPlugin.PLUGIN_ID,
@@ -173,7 +215,9 @@ public class AutoRateAllHandler extends AbstractHandler {
         }
 
         final Population pop = view.getPopulation();
-        final IEditorPart editor = view.getEvolModel().getLastEditor();
+        Assert.isNotNull(pop);
+
+        final IEditorPart editor = EvolUtil.getCurrentEditor();
         Assert.isNotNull(editor);
 
         // Create jobs for auto-rating and refreshing.

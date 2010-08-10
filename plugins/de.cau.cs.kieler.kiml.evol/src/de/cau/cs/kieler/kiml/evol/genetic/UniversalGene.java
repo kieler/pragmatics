@@ -33,7 +33,7 @@ public class UniversalGene extends AbstractGene<Float> {
             if (o instanceof Boolean) {
                 return o.toString();
             } else if (o instanceof UniversalGene) {
-                return ((UniversalGene) o).getBoolValue().toString();
+                return (Boolean.valueOf(((UniversalGene) o).getBoolValue()).toString());
             }
             return null;
         }
@@ -60,7 +60,7 @@ public class UniversalGene extends AbstractGene<Float> {
     public static final IValueFormatter FLOAT_FORMATTER = new IValueFormatter() {
         public String getString(final Object o) {
             if (o instanceof Float) {
-                return (Math.signum((Float) o) <= 0 ? "-" : "+") + o + "f";
+                return ((Math.signum(((Float) o).floatValue()) <= 0 ? "-" : "+") + o + "f");
             }
             return null;
         }
@@ -75,7 +75,7 @@ public class UniversalGene extends AbstractGene<Float> {
             if (o instanceof Integer) {
                 return ((Integer) o).toString();
             } else if (o instanceof UniversalGene) {
-                return (Math.round(((UniversalGene) o).getValue()) + "");
+                return (Math.round(((UniversalGene) o).getValue().floatValue()) + "");
             }
 
             return null;
@@ -85,20 +85,20 @@ public class UniversalGene extends AbstractGene<Float> {
     /**
      * Type info for a boolean gene.
      */
-    public static final TypeInfo<Float> BOOLEAN_TYPE_INFO = new TypeInfo<Float>(0.0f, 0.0f, 1.0f,
+    public static final FloatTypeInfo BOOLEAN_TYPE_INFO = new FloatTypeInfo(0.0f, 0.0f, 1.0f,
             BOOLEAN_FORMATTER, Boolean.class);
 
     /**
      * Universal type info for a strictly positive float gene.
      */
-    public static final TypeInfo<Float> STRICTLY_POSITIVE_FLOAT_TYPE_INFO = new TypeInfo<Float>(
+    public static final FloatTypeInfo STRICTLY_POSITIVE_FLOAT_TYPE_INFO = new FloatTypeInfo(
             1.0f, Float.MIN_VALUE, Float.POSITIVE_INFINITY, STRICTLY_POSITIVE_FLOAT_FORMATTER,
             Float.class);
 
     /**
      * Universal type info for a float gene.
      */
-    public static final TypeInfo<Float> FLOAT_TYPE_INFO = new TypeInfo<Float>(.0f,
+    public static final FloatTypeInfo FLOAT_TYPE_INFO = new FloatTypeInfo(.0f,
             Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, FLOAT_FORMATTER, Float.class);
 
     @Override
@@ -124,10 +124,10 @@ public class UniversalGene extends AbstractGene<Float> {
      */
     public UniversalGene(
             final Object theId,
-            final Comparable<?> theValue,
+            final Float theValue,
             final TypeInfo<Float> theTypeInfo,
             final MutationInfo theMutationInfo) {
-        super(theId, (Float) theValue, theTypeInfo, theMutationInfo);
+        super(theId, theValue, theTypeInfo, theMutationInfo);
 
     }
 
@@ -226,10 +226,10 @@ public class UniversalGene extends AbstractGene<Float> {
             if (r.nextDouble() < prob) {
                 if (r.nextDouble() < probGenuineMutation) {
                     // enforce genuine mutation
-                    newValue = (template.getBoolValue() ? 0.0f : 1.0f);
+                    newValue = Float.valueOf(template.getBoolValue() ? 0.0f : 1.0f);
                 } else {
                     // assign a random boolean value (may be the same as before)
-                    newValue = (r.nextDouble() < PROBABILITY_FOR_TRUE ? 1.0f : 0.0f);
+                    newValue = Float.valueOf(r.nextDouble() < PROBABILITY_FOR_TRUE ? 1.0f : 0.0f);
                 }
             } else {
                 newValue = template.getValue();
@@ -272,8 +272,8 @@ public class UniversalGene extends AbstractGene<Float> {
             final Distribution distr = mutationInfo.getDistr();
             Assert.isTrue(distr == Distribution.GAUSSIAN);
 
-            final float value = template.getValue();
-            float newValue = value;
+            final Float value = template.getValue();
+            Float newValue = value;
             if (Math.random() < prob) {
                 // produce a new value within the valid bounds.
                 do {
@@ -320,10 +320,10 @@ public class UniversalGene extends AbstractGene<Float> {
             final double prob = mutationInfo.getProbability();
             final double var = mutationInfo.getVariance();
             final Distribution distr = mutationInfo.getDistr();
-            final Integer lowerBound = typeInfo.getLowerBound().intValue();
-            final Integer upperBound = typeInfo.getUpperBound().intValue();
-            final Integer defaultValue = typeInfo.getDefaultValue().intValue();
-            final Integer value = template.getValue().intValue();
+            final Integer lowerBound = Integer.valueOf(typeInfo.getLowerBound().intValue());
+            final Integer upperBound = Integer.valueOf(typeInfo.getUpperBound().intValue());
+            final Integer defaultValue = Integer.valueOf(typeInfo.getDefaultValue().intValue());
+            final Integer value = Integer.valueOf(template.getValue().intValue());
             Integer newInt = value;
             if (r.nextDouble() < prob) {
                 // TODO: regard genuineMutationProbability
@@ -355,17 +355,17 @@ public class UniversalGene extends AbstractGene<Float> {
      *
      * @return an integer representation of the value.
      */
-    public Integer getIntValue() {
-        return Math.round(getValue());
+    public int getIntValue() {
+        return Math.round(getValue().floatValue());
     }
 
     /**
      *
      * @return a boolean representation of the value.
      */
-    public Boolean getBoolValue() {
-        final double diff = 1.0 - Math.abs(getValue());
-        return ((Math.pow(diff, 2) < EPSILON));
+    public boolean getBoolValue() {
+        final double diff = 1.0 - Math.abs(getValue().floatValue());
+        return (Math.pow(diff, 2) < EPSILON);
     }
 
     private static final double EPSILON = 1.0e-5;

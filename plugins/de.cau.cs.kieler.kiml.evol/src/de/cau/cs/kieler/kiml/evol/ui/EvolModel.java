@@ -52,6 +52,26 @@ public final class EvolModel {
 
     /**
      *
+     */
+    public void evolve() {
+        if (!isValid()) {
+            return;
+        }
+
+        step();
+        
+        selectInterestingIndividual();
+
+        // Calculate auto-rating for the unrated individuals.
+        EvolUtil.autoRateIndividuals(getPopulation().select(Population.UNRATED_FILTER),
+                EvolUtil.getCurrentEditor(), null);
+        
+        Assert.isTrue(getPosition() >= 0);
+
+    }
+
+    /**
+     *
      * @return the current {@code Individual}, or {@code null} if none is
      *         selected.
      */
@@ -78,20 +98,20 @@ public final class EvolModel {
     }
 
     /**
-     *
-     * @return the layout provider id
-     */
-    public String getLayoutProviderId() {
-        return this.layoutProviderId;
-    }
-
-    /**
      * @return the last editor that was used
      * @deprecated
      */
     @Deprecated
     public IEditorPart getLastEditor() {
         return this.lastEditor;
+    }
+
+    /**
+     *
+     * @return the layout provider id
+     */
+    public String getLayoutProviderId() {
+        return this.layoutProviderId;
     }
 
     /**
@@ -159,6 +179,32 @@ public final class EvolModel {
     }
 
     /**
+     *
+     */
+    public void reset() {
+        final IEditorPart editor = EvolUtil.getCurrentEditor();
+        final EditPart part = EvolUtil.getEditPart(editor);
+        setLastEditor(editor);
+        setPosition(0);
+
+        if ((editor != null) && (editor instanceof DiagramEditor)) {
+
+            final DiagramLayoutManager manager =
+                    EclipseLayoutServices.getInstance().getManager(editor, part);
+            if (manager != null) {
+                final LayoutPropertySource propertySource =
+                        new LayoutPropertySource(manager.getInspector(part));
+                final Population sourcePopulation = EvolUtil.createPopulation(propertySource);
+                setLayoutProviderId(EvolUtil.getLayoutProviderId(editor, part));
+                final BasicEvolutionaryAlgorithm alg =
+                        new BasicEvolutionaryAlgorithm(sourcePopulation);
+                setEvolAlg(alg);
+                step();
+            }
+        }
+    }
+
+    /**
      * Selects an interesting individual.
      */
     public void selectInterestingIndividual() {
@@ -175,40 +221,6 @@ public final class EvolModel {
     }
 
     /**
-     *
-     */
-    private void updatePosition() {
-        final int lim = getPopulation().size();
-        if (getPosition() >= lim) {
-            setPosition(lim - 1);
-        }
-    }
-
-    /**
-     *
-     * @param theEvolAlg
-     *            the evolutionary algorithm
-     */
-    private void setEvolAlg(final BasicEvolutionaryAlgorithm theEvolAlg) {
-        this.evolAlg = theEvolAlg;
-    }
-
-    /**
-     * @param theLayoutProviderId
-     *            a layout provider id
-     */
-    private void setLayoutProviderId(final String theLayoutProviderId) {
-        this.layoutProviderId = theLayoutProviderId;
-    }
-
-    /**
-     * @param editor
-     */
-    private void setLastEditor(final IEditorPart editor) {
-        this.lastEditor = editor;
-    }
-
-    /**
      * @param thePosition
      *            the new position.
      */
@@ -217,6 +229,17 @@ public final class EvolModel {
         Assert.isLegal((thePosition <= getPopulation().size()));
 
         this.position = thePosition;
+    }
+
+    /**
+     * Performs a step of the evolutionary algorithm.
+     */
+    public void step() {
+        if (!isValid()) {
+            return;
+        }
+
+        this.evolAlg.step();
     }
 
     /**
@@ -264,59 +287,36 @@ public final class EvolModel {
     }
 
     /**
-     * Performs a step of the evolutionary algorithm.
+     *
+     * @param theEvolAlg
+     *            the evolutionary algorithm
      */
-    public void step() {
-        if (!isValid()) {
-            return;
-        }
-
-        this.evolAlg.step();
+    private void setEvolAlg(final BasicEvolutionaryAlgorithm theEvolAlg) {
+        this.evolAlg = theEvolAlg;
     }
 
     /**
-     *
+     * @param editor
      */
-    public void reset() {
-        final IEditorPart editor = EvolUtil.getCurrentEditor();
-        final EditPart part = EvolUtil.getEditPart(editor);
-        setLastEditor(editor);
-        setPosition(0);
+    private void setLastEditor(final IEditorPart editor) {
+        this.lastEditor = editor;
+    }
 
-        if ((editor != null) && (editor instanceof DiagramEditor)) {
-
-            final DiagramLayoutManager manager =
-                    EclipseLayoutServices.getInstance().getManager(editor, part);
-            if (manager != null) {
-                final LayoutPropertySource propertySource =
-                        new LayoutPropertySource(manager.getInspector(part));
-                final Population sourcePopulation = EvolUtil.createPopulation(propertySource);
-                setLayoutProviderId(EvolUtil.getLayoutProviderId(editor, part));
-                final BasicEvolutionaryAlgorithm alg =
-                        new BasicEvolutionaryAlgorithm(sourcePopulation);
-                setEvolAlg(alg);
-                step();
-            }
-        }
+    /**
+     * @param theLayoutProviderId
+     *            a layout provider id
+     */
+    private void setLayoutProviderId(final String theLayoutProviderId) {
+        this.layoutProviderId = theLayoutProviderId;
     }
     
     /**
      *
      */
-    public void evolve() {
-        if (!isValid()) {
-            return;
+    private void updatePosition() {
+        final int lim = getPopulation().size();
+        if (getPosition() >= lim) {
+            setPosition(lim - 1);
         }
-
-        step();
-        
-        selectInterestingIndividual();
-
-        // Calculate auto-rating for the unrated individuals.
-        EvolUtil.autoRateIndividuals(getPopulation().select(Population.UNRATED_FILTER),
-                EvolUtil.getCurrentEditor(), null);
-        
-        Assert.isTrue(getPosition() >= 0);
-
     }
 }

@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.Assert;
  *
  * @param <T>
  */
-public class TypeInfo<T extends Comparable<? super T>> {
+public abstract class TypeInfo<T extends Comparable<? super T>> {
     /**
      * Constructor for a type info.
      *
