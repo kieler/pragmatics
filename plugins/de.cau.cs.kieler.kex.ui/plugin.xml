@@ -18,14 +18,6 @@
             </separator>
          </menu>
          <action
-               class="de.cau.cs.kieler.kex.ui.actions.OverviewAction"
-               id="de.cau.cs.kieler.kex.ui.overview"
-               label="KIELER Example Overview"
-               menubarPath="kexMenu/importGroup"
-               style="push"
-               tooltip="Have a lok at imported examples">
-         </action>
-         <action
                class="de.cau.cs.kieler.kex.ui.actions.ImportAction"
                id="de.cau.cs.kieler.kex.ui.actions.import"
                label="KIELER Example Import"

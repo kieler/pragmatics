@@ -10,6 +10,7 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -17,6 +18,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -54,10 +56,8 @@ public class ExampleResourcePage extends WizardPage {
 		createBottomGroup(composite);
 	}
 
-	private void createTopGroup(Composite composite) {
+	private void createTopGroup(final Composite composite) {
 
-		// // FileDialog fileDialog = new FileDialog(composite.getShell());
-		// // fileDialog.open();
 		Group topGroup = new Group(composite, SWT.NONE);
 		GridLayout topLayout = new GridLayout();
 		topLayout.numColumns = this.COLUMNCOUNT;
@@ -67,7 +67,24 @@ public class ExampleResourcePage extends WizardPage {
 		this.destPath = new Text(topGroup, SWT.BORDER);
 		this.destPath.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		this.addDestPath = new Button(topGroup, SWT.NONE);
-		addDestPath.setText("Add...");
+		this.addDestPath.setText("Add...");
+
+		this.addDestPath.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				DirectoryDialog dirDiag = new DirectoryDialog(composite
+						.getShell());
+
+				dirDiag.setText("Destination directory choice");
+				dirDiag.setMessage("Select a directory in java project with existing plugin.xml.");
+				String dir = dirDiag.open();
+				// TODO ueberlegen, ob hier direkt eine pruefung eingebaut
+				// werden kann.
+				if (dir != null) {
+					destPath.setText(dir);
+				}
+			}
+		});
 	}
 
 	private void createMiddleGroup(Composite composite) {
@@ -88,19 +105,49 @@ public class ExampleResourcePage extends WizardPage {
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 5;
 		buttonComposite.setLayout(gridLayout);
+
 		Button newExRe = new Button(buttonComposite, SWT.NONE);
 		newExRe.setText("New");
+		this.addDestPath.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// add new exampleResource to tree
+			}
+		});
 		newExRe.setToolTipText("Add new Example Resource");
 		Button deleteExRe = new Button(buttonComposite, SWT.NONE);
 		deleteExRe.setText("Del");
 		deleteExRe.setToolTipText("Delete Example Resource");
 		// TODO selections hier mit einbauen, damit die buttons nur nicht grayed
 		// sind wenn auch sinnvoll.
+		deleteExRe.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// delete selected element(s) of tree.
+			}
+		});
 		Label label = new Label(buttonComposite, SWT.NONE);
 		label.setText(" | ");
 		Button addResource = new Button(buttonComposite, SWT.NONE);
 		addResource.setText("Add");
 		addResource.setToolTipText("Add resources");
+		addResource.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// WorkspaceResourceDialog workspaceResourceDialog = new
+				// WorkspaceResourceDialog(middleGroup.getShell(),
+				// labelProvider, contentProvider)
+				// Achtung soll ein emf widget sein, daher noch zu den
+				// dependences hinzuzufuegen
+				// aber muss auch swt widget geben.
+				// siehe export mechanism of java project,
+				// macht dann evt. den delete button ueberfluessig.
+			}
+
+		});
 		Button delResource = new Button(buttonComposite, SWT.NONE);
 		delResource.setText("Del");
 		delResource.setToolTipText("Delete resources");
@@ -118,12 +165,12 @@ public class ExampleResourcePage extends WizardPage {
 		Button exampleFolderButton = new Button(bottomGroup, SWT.CHECK);
 		exampleFolderButton.setText("create folder with example name");
 		Button hiddenFilesButton = new Button(bottomGroup, SWT.CHECK);
-		// TODO hidden files berücksichtigen, sowohl beim import(?) als auch
-		// beim export; gedanken drüber machen.
+		// TODO hidden files berï¿½cksichtigen, sowohl beim import(?) als auch
+		// beim export; gedanken drï¿½ber machen.
 		hiddenFilesButton.setText("Copy Hidden Files");
 	}
 
-	// TODO größe fix machen und mit scrollbar ausstatten, gilt auch für import
+	// TODO grï¿½ï¿½e fix machen und mit scrollbar ausstatten, gilt auch fï¿½r import
 	// mechanismus.
 	private void createTreeElement(Composite composite) {
 		exampleTree = new Tree(composite, SWT.BORDER);
@@ -209,7 +256,7 @@ public class ExampleResourcePage extends WizardPage {
 		}
 	}
 
-	// TODO schöneren namen geben.
+	// TODO schï¿½neren namen geben.
 	private void createExReComposite(Composite composite) {
 		Composite exReComposite = new Composite(composite, SWT.BORDER);
 		GridLayout gridLayout = new GridLayout();
