@@ -49,7 +49,7 @@ public class PGraphFactory implements IGraphFactory {
      * {@inheritDoc}
      */
     public IGraph createFullGraph(final int nodes) {
-        IGraph graph = new PGraph();
+        PGraph graph = new PGraph();
         INode[] nodeArray = new INode[nodes];
 
         // Create nodes
@@ -70,7 +70,7 @@ public class PGraphFactory implements IGraphFactory {
      * {@inheritDoc}
      */
     public IGraph createRandomGraph(final int nodes, final int edges) {
-        IGraph graph = new PGraph();
+        PGraph graph = new PGraph();
         INode[] nodeArray = new INode[nodes];
 
         // Create nodes
@@ -111,9 +111,6 @@ public class PGraphFactory implements IGraphFactory {
             INode target = nodes.get(edge.getTarget());
             copy.addEdge(source, target, edge.isDirected());
         }
-
-        // Adding Faces
-        copy.generateFaces();
         return copy;
     }
 
@@ -153,9 +150,6 @@ public class PGraphFactory implements IGraphFactory {
                 edge.setProperty(IGraph.TOKGRAPH, kedge);
             }
         }
-
-        // Adding Faces
-        graph.generateFaces();
         return graph;
     }
 
@@ -164,7 +158,7 @@ public class PGraphFactory implements IGraphFactory {
      */
     public IGraph createGraphFromDIMACS(final File dimacs) throws IOException {
         BufferedReader input = new BufferedReader(new FileReader(dimacs));
-        IGraph graph = new PGraph();
+        PGraph graph = new PGraph();
         INode[] nodes = null;
 
         String line = input.readLine();
@@ -172,12 +166,12 @@ public class PGraphFactory implements IGraphFactory {
             String[] items = line.trim().split("\\s+");
             switch (items[0].charAt(0)) {
             case 'c': // Skip comment line
-                continue;
+                break;
 
             case 'p': // Problem line contains number of nodes
                 int n = Integer.parseInt(items[2]);
-                nodes = new INode[n];
-                for (int i = 0; i < n; i++) {
+                nodes = new INode[n + 1];
+                for (int i = 0; i < nodes.length; i++) {
                     nodes[i] = graph.addNode();
                 }
                 break;
