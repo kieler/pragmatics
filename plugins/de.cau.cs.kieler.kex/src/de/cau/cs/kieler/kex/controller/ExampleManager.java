@@ -89,8 +89,17 @@ public class ExampleManager {
 
 	public void exportExample(Map<ExampleElement, Object> properties)
 			throws KielerException {
-		ExampleExportUtil.exportExample(properties, this.extensionCreator,
-				this.extensionCollector, this.onlineCollector);
+		if (ImportType.EXTENSIONPOINT.equals(properties
+				.get(ExampleElement.IMPORTTYPE)))
+			ExampleExportUtil.exportExample(properties, this.extensionCreator,
+					this.extensionCollector, this.onlineCollector);
+		else if (ImportType.ONLINE.equals(properties
+				.get(ExampleElement.IMPORTTYPE))) {
+			// TODO online schnittstelle bauen...
+		} else
+			throw new KielerException("No ImportType was set.");
+		// TODO besser als importtype ist auf jeden fall export type und später
+		// sowas wie wo kommt es her anzeigen.
 	}
 
 	/**

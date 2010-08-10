@@ -1,6 +1,10 @@
 package de.cau.cs.kieler.kex.ui.wizards.exporting;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -12,6 +16,7 @@ import org.eclipse.swt.SWT;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.ExampleElement;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
+import de.cau.cs.kieler.kex.model.ExampleResource;
 
 public class ExportExampleWizard extends Wizard implements IWizard {
 
@@ -39,31 +44,16 @@ public class ExportExampleWizard extends Wizard implements IWizard {
 
 		Map<ExampleElement, Object> result = new HashMap<ExampleElement, Object>();
 		result.put(ExampleElement.DEST_LOCATION, exRePage.getDestLocation());
-		result.put(ExampleElement.RESOURCES, exRePage.getExampleResources());
+		// TODO test ausbauen und echtes implementieren.
+		result.put(ExampleElement.RESOURCES, testExampleResources());
+
 		result.put(ExampleElement.ID, examplePage.getId());
 		result.put(ExampleElement.NAME, examplePage.getExampleName());
 		result.put(ExampleElement.DESCRIPTION,
 				examplePage.getExampleDescription());
 		result.put(ExampleElement.VERSION, examplePage.getVersion());
 		result.put(ExampleElement.CONTACT, examplePage.getContact());
-
-		// just a test
-		// TODO plattform unabhï¿½ngiger pfadbau in externe methode
-		// auslagern,
-		// wenn nicht schon der richte pfad vom ui runtergereicht wird.
-		// just a test
-		// StringBuffer destLocation = new StringBuffer();
-		// // windows test
-		// destLocation.append("E:").append(File.separatorChar);
-		// destLocation.append("bachelorarbeit").append(File.separatorChar);
-		// destLocation.append("3_6 Workspace").append(File.separatorChar);
-		// destLocation.append("de.cau.cs.kieler.core.kex.models");
-
-		// linux test
-		// destLocation
-		//
-		// .append("/home/pkl/kieler-workspace/de.cau.cs.kieler.core.kex.models");
-
+		result.put(ExampleElement.IMPORTTYPE, exRePage.getImportType());
 		try {
 			ExampleManager.get().exportExample(result);
 		} catch (KielerException e) {
@@ -72,5 +62,48 @@ public class ExportExampleWizard extends Wizard implements IWizard {
 			return false;
 		}
 		return true;
+	}
+
+	private List<ExampleResource> testExampleResources() {
+		List<ExampleResource> result = new ArrayList<ExampleResource>();
+		try {
+			ExampleResource resource1 = new ExampleResource();
+			resource1.setCategory("de.cau.cs.kieler.dataflow");
+			resource1.setHeadResource(true);
+			// TODO check, sollte schon direkt auch die unterliegenden Elemente
+			// hinzufügen.
+			resource1
+					.addResource(new URL(
+							"http",
+							"localhost",
+							"E:\\bachelorarbeit\\runtime-New_configuration\\testPro\\examples\\Flight\\SyncTest"));
+
+			// TODO schauen, ob resource alternativ auch ein path in form eines
+			// Strings sein kann...
+			resource1
+					.addResource(new URL(
+							"http",
+							"localhost",
+							"E:\\bachelorarbeit\\runtime-New_configuration\\testPro\\examples\\Flight\\SyncTest\\folderFile.kids"));
+			resource1
+					.addResource(new URL(
+							"http",
+							"localhost",
+							"E:\\bachelorarbeit\\runtime-New_configuration\\testPro\\examples\\Flight\\SyncTest\\folderFile.kixs"));
+			result.add(resource1);
+
+			ExampleResource resource2 = new ExampleResource();
+			resource2.setCategory("de.cau.cs.kieler.syncchart");
+			resource2.setHeadResource(true);
+			// TODO check, sollte schon direkt auch die unterliegenden Elemente
+			// hinzufügen.
+			resource2
+					.addResource(new URL("http", "localhost",
+							"E:\\bachelorarbeit\\runtime-New_configuration\\testPro\\test.file"));
+			result.add(resource2);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 }

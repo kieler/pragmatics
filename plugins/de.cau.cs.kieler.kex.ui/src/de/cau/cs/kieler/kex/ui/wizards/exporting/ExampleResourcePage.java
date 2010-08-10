@@ -12,7 +12,6 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -27,17 +26,16 @@ import org.eclipse.swt.widgets.TreeItem;
 
 import de.cau.cs.kieler.kex.controller.ExampleManager;
 import de.cau.cs.kieler.kex.model.ExampleResource;
+import de.cau.cs.kieler.kex.model.ImportType;
 
 public class ExampleResourcePage extends WizardPage {
 
 	private Text destPath;
 
-	private Button addDestPath;
-
 	private Tree exampleTree;
 
-	private final int COLUMNCOUNT = 2;
-
+	private final int TWO_COLUMNS = 2;
+	private final int THREE_COLUMNS = 3;
 	private List<ExampleResource> exampleResources;
 
 	protected ExampleResourcePage(String pageName) {
@@ -60,16 +58,18 @@ public class ExampleResourcePage extends WizardPage {
 
 		Group topGroup = new Group(composite, SWT.NONE);
 		GridLayout topLayout = new GridLayout();
-		topLayout.numColumns = this.COLUMNCOUNT;
+		topLayout.numColumns = this.THREE_COLUMNS;
 		topGroup.setLayout(topLayout);
-		topGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
+		topGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		topGroup.setText("Set Example Destination");
+		Label destLabel = new Label(topGroup, SWT.NONE);
+		destLabel.setText("To directory:");
 		this.destPath = new Text(topGroup, SWT.BORDER);
 		this.destPath.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		this.addDestPath = new Button(topGroup, SWT.NONE);
-		this.addDestPath.setText("Add...");
+		Button addDestPath = new Button(topGroup, SWT.NONE);
+		addDestPath.setText("Add...");
 
-		this.addDestPath.addSelectionListener(new SelectionAdapter() {
+		addDestPath.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
 				DirectoryDialog dirDiag = new DirectoryDialog(composite
@@ -108,7 +108,7 @@ public class ExampleResourcePage extends WizardPage {
 
 		Button newExRe = new Button(buttonComposite, SWT.NONE);
 		newExRe.setText("New");
-		this.addDestPath.addSelectionListener(new SelectionAdapter() {
+		newExRe.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -139,12 +139,14 @@ public class ExampleResourcePage extends WizardPage {
 			public void widgetSelected(SelectionEvent e) {
 				// WorkspaceResourceDialog workspaceResourceDialog = new
 				// WorkspaceResourceDialog(middleGroup.getShell(),
+
 				// labelProvider, contentProvider)
 				// Achtung soll ein emf widget sein, daher noch zu den
 				// dependences hinzuzufuegen
 				// aber muss auch swt widget geben.
 				// siehe export mechanism of java project,
 				// macht dann evt. den delete button ueberfluessig.
+				// WizardExportResourcesPage könnte auch gehen.
 			}
 
 		});
@@ -159,7 +161,7 @@ public class ExampleResourcePage extends WizardPage {
 		Group bottomGroup = new Group(composite, SWT.NONE);
 		GridLayout bottomLayout = new GridLayout();
 		bottomLayout.numColumns = 1;
-		bottomGroup.setText("Additional Options");
+		bottomGroup.setText("Options");
 		bottomGroup.setLayout(bottomLayout);
 		bottomGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
 		Button exampleFolderButton = new Button(bottomGroup, SWT.CHECK);
@@ -170,23 +172,21 @@ public class ExampleResourcePage extends WizardPage {
 		hiddenFilesButton.setText("Copy Hidden Files");
 	}
 
-	// TODO grï¿½ï¿½e fix machen und mit scrollbar ausstatten, gilt auch fï¿½r import
+	// TODO grï¿½ï¿½e fix machen und mit scrollbar ausstatten, gilt auch fï¿½r
+	// import
 	// mechanismus.
 	private void createTreeElement(Composite composite) {
 		exampleTree = new Tree(composite, SWT.BORDER);
 		exampleTree.setLayoutData(new GridData(GridData.FILL_BOTH));
-		exampleTree.addSelectionListener(new SelectionListener() {
+		exampleTree.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				// updateElements(e.item);
 			}
 
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// updateElements(e.item);
-			}
 		});
 		exampleTree
 				.setToolTipText("Use context menu to edit example resources.");
-		initTree(exampleTree);
 		// Create the editor and set its attributes
 		final TreeEditor editor = new TreeEditor(exampleTree);
 		editor.horizontalAlignment = SWT.LEFT;
@@ -249,13 +249,6 @@ public class ExampleResourcePage extends WizardPage {
 
 	}
 
-	private void initTree(Tree tree) {
-		for (int i = 0; i < 3; i++) {
-			TreeItem iItem = new TreeItem(tree, 0);
-			iItem.setText("ExRe");
-		}
-	}
-
 	// TODO schï¿½neren namen geben.
 	private void createExReComposite(Composite composite) {
 		Composite exReComposite = new Composite(composite, SWT.BORDER);
@@ -266,7 +259,7 @@ public class ExampleResourcePage extends WizardPage {
 
 		Composite comboComposite = new Composite(exReComposite, SWT.NONE);
 		GridLayout comboLayout = new GridLayout();
-		comboLayout.numColumns = this.COLUMNCOUNT;
+		comboLayout.numColumns = this.TWO_COLUMNS;
 		comboComposite.setLayout(comboLayout);
 		new Label(comboComposite, SWT.None).setText("Category:");
 		final Combo categoryCombo = new Combo(comboComposite, SWT.READ_ONLY);
@@ -292,6 +285,12 @@ public class ExampleResourcePage extends WizardPage {
 
 	public List<ExampleResource> getExampleResources() {
 		return this.exampleResources;
+	}
+
+	public ImportType getImportType() {
+		// TODO muss der user entscheiden wohin das gehen soll, außerdem muss
+		// der name der enumeration geändert werden
+		return ImportType.EXTENSIONPOINT;
 	}
 
 }

@@ -72,6 +72,8 @@ public class ExampleExportUtil {
 		// TODO nullpointer check einbauen; überall prüfen, wenn ein File
 		// erzeugt wird muss vorher ein nullcheck des strings erfolgen
 		// ansonsten unerwartete exception...
+		// muss schon vorher in der ui geprüft werden, sollte aber dennoch hier
+		// abgeprüft werden.
 		File destFile = new File(destLocation);
 		if (!destFile.exists())
 			throw new KielerException(
@@ -113,6 +115,7 @@ public class ExampleExportUtil {
 		return result;
 	}
 
+	// TODO wenn der dialog resource anbietet zu dessen ordner es schon
 	// TODO auch subdirs mit ansehen und hidden files berücksichtigen oder
 	// nicht...
 	// FIXME URLs ausbauen, das muss auch ohne gehen...
@@ -120,11 +123,21 @@ public class ExampleExportUtil {
 			throws KielerModelException {
 		List<URL> result = new ArrayList<URL>();
 		for (URL url : resources) {
+			String path = url.getPath();
+			// String[] split = path.split(String.valueOf(File.separatorChar));
+			int nameStart = 0;
+			for (int i = 0; i < path.length(); i++) {
+				if (File.separatorChar == path.charAt(i))
+					nameStart = i;
+			}
+			String fileName = path.substring(nameStart + 1);
+			// String fileName = split[split.length - 1];
 			StringBuffer sb = new StringBuffer();
-			sb.append(destPath).append(File.separatorChar)
-					.append(url.getFile());
+			sb.append(destPath).append(File.separatorChar).append(fileName);
+
 			try {
-				result.add(new URL(sb.toString()));
+				// TODO unbedingt hier url ausbauen, braucht kein mensch.
+				result.add(new URL("http", "localhost", sb.toString()));
 				IOHandler.writeFile(new File(url.getPath()),
 						new File(sb.toString()));
 			} catch (MalformedURLException e) {
