@@ -6,8 +6,8 @@ import java.util.List;
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.xtend.expression.ExecutionContext;
 import org.eclipse.xtend.expression.IExecutionContextAware;
+import org.ptolemy.moml.EntityType;
 
-import ptolemy.Moml.EntityType;
 import ptolemy.actor.IOPort;
 import ptolemy.actor.TypedCompositeActor;
 import ptolemy.kernel.CompositeEntity;

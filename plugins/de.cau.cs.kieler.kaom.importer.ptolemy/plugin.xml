@@ -43,6 +43,7 @@
          </command>
       </menuContribution>
    </extension>
+<!-- haf: this is now moved to org.ptolemy.moml
    <extension point="org.eclipse.emf.ecore.generated_package">
       <package
             uri="platform:/resource/de.cau.cs.kieler.sim.ptolemy/moml.xsd"
@@ -55,5 +56,5 @@
             type="moml"
             class="ptolemy.Moml.util.MomlResourceFactoryImpl"/>
    </extension>
-
+-->
 </plugin>

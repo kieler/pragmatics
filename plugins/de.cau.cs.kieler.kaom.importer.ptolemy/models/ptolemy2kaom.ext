@@ -1,6 +1,6 @@
 import kaom;
 import annotations;
-import Moml;
+import moml;
 extension org::eclipse::xtend::util::stdlib::io;          // debug printouts
 //extension org::eclipse:xtend:::util::stdlib::counter;   // usage of counters 
 extension org::eclipse::xtend::util::stdlib::crossref;    // find elements that reference others
@@ -24,7 +24,7 @@ create Entity this transform(DocumentRoot root):
  	this.optimize()
 ;   
  
-create Entity this transform(Moml::EntityType entity):
+create Entity this transform(moml::EntityType entity):
 	let list = {}:
 	this.setName(entity.name) ->
 	createTrace(this,entity,"ptolemy","kaom") ->
@@ -36,7 +36,7 @@ create Entity this transform(Moml::EntityType entity):
 	addChildLinks(this, entity.link) 
 ;
 
-create Relation this transform(Moml::RelationType relation):
+create Relation this transform(moml::RelationType relation):
 	this.setName(relation.name) ->
 	createTrace(this,relation,"ptolemy","kaom") ->
 	addProperties(this, relation.property)
@@ -47,7 +47,7 @@ create Relation this transform(Moml::RelationType relation):
 // it can connect a port and a relation or two relations, e.g.
 // <link port="Ramp.output" relation="relation1"/>
 // <link relation1="relation20" relation2="relation21"/>
-create Link this transform(Moml::LinkType link, Entity parent):
+create Link this transform(moml::LinkType link, Entity parent):
 	let relation = parent.getRelation(link.relation):
 	let relation1 = parent.getRelation(link.relation1):
 	let relation2 = parent.getRelation(link.relation2):
@@ -118,7 +118,7 @@ Void addChildPorts(Entity entity):
 	entity.childPorts.addAll(mergedPorts)
 ;
 
-create Port this transform(Moml::PortType ptolemyPort):
+create Port this transform(moml::PortType ptolemyPort):
 	this.setName(ptolemyPort.name) -> 
 	createTrace(this,ptolemyPort,"ptolemy","kaom") ->
 	addProperties(this,ptolemyPort.property) // this might add "input"/"output" annotations

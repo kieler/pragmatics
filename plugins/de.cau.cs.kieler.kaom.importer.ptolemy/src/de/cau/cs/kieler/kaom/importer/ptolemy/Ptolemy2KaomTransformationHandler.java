@@ -18,8 +18,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.ptolemy.moml.MomlPackage;
 
-import ptolemy.Moml.MomlPackage;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.annotations.AnnotationsPackage;
 import de.cau.cs.kieler.core.model.util.XtendTransformationUtil;
