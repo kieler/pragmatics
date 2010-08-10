@@ -13,23 +13,23 @@
  */
 package de.cau.cs.kieler.kiml.evol.ui;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.gef.EditPart;
-import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.ui.IEditorPart;
 
 import de.cau.cs.kieler.kiml.evol.EvolUtil;
 import de.cau.cs.kieler.kiml.evol.alg.BasicEvolutionaryAlgorithm;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
-import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
-import de.cau.cs.kieler.kiml.ui.views.LayoutPropertySource;
 import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
 
 /**
  * This class encapsulates the evolution model that is displayed in the
- * EvolView.
+ * EvolView. The model basically consists of an evolutionary algorithm, a
+ * population and a current individual.
  *
  * @author bdu
  *
@@ -49,25 +49,40 @@ public final class EvolModel {
     private IEditorPart lastEditor;
     private int position;
     private String layoutProviderId;
+    private final List<IEvolModelListener> listeners = new LinkedList<IEvolModelListener>();
 
     /**
+     * Adds a model listener.
      *
+     * @param listener
+     *            the {@link IEvolModelListener} to add
+     */
+    public void addListener(final IEvolModelListener listener) {
+        this.listeners.add(listener);
+    }
+
+    /**
+     * Performs a step of the evolutionary algorithm.
      */
     public void evolve() {
         if (!isValid()) {
             return;
         }
 
-        step();
-        
-        selectInterestingIndividual();
+        // Perform the step.
+        this.evolAlg.step();
 
-        // Calculate auto-rating for the unrated individuals.
-        EvolUtil.autoRateIndividuals(getPopulation().select(Population.UNRATED_FILTER),
-                EvolUtil.getCurrentEditor(), null);
-        
+        // The previously selected individual might not have survived in
+        // evolution, so select a new one as current.
+        selectInterestingIndividual();
         Assert.isTrue(getPosition() >= 0);
 
+        // Calculate auto-rating for the yet unrated individuals.
+        final Population unrated = getPopulation().select(Population.UNRATED_FILTER);
+        EvolUtil.autoRateIndividuals(unrated, EvolUtil.getCurrentEditor(), null);
+
+        // Notify listeners.
+        afterChange("evolve");
     }
 
     /**
@@ -107,6 +122,7 @@ public final class EvolModel {
     }
 
     /**
+     * The layout provider id that the population was created for.
      *
      * @return the layout provider id
      */
@@ -146,10 +162,7 @@ public final class EvolModel {
         }
 
         final Population pop = this.getPopulation();
-        if (pop == null) {
-            System.out.println("Population is not set.");
-            return false;
-        }
+        Assert.isNotNull(pop, "Population is not set.");
 
         if (pop.isEmpty()) {
             System.out.println("Population is empty.");
@@ -170,7 +183,8 @@ public final class EvolModel {
 
         if (layoutProviderHasChanged()) {
             // need to reset
-            System.out.println("The current population is not compatible to the layout provider.");
+            System.out
+                    .println("The current population is not compatible to the layout provider.");
             System.out.println("Reset the population or select " + this.getLayoutProviderId());
             return false;
         }
@@ -179,45 +193,40 @@ public final class EvolModel {
     }
 
     /**
+     * Removes the specified model listener.
      *
+     * @param listener
+     *            the {@link IEvolModelListener} to remove
+     */
+    public void removeListener(final IEvolModelListener listener) {
+        this.listeners.remove(listener);
+    }
+
+    /**
+     * Reset the population and restart the algorithm.
      */
     public void reset() {
         final IEditorPart editor = EvolUtil.getCurrentEditor();
         final EditPart part = EvolUtil.getEditPart(editor);
         setLastEditor(editor);
         setPosition(0);
+        setEvolAlg(null);
 
-        if ((editor != null) && (editor instanceof DiagramEditor)) {
+        final String providerId = EvolUtil.getLayoutProviderId(editor, part);
+        setLayoutProviderId(providerId);
 
-            final DiagramLayoutManager manager =
-                    EclipseLayoutServices.getInstance().getManager(editor, part);
-            if (manager != null) {
-                final LayoutPropertySource propertySource =
-                        new LayoutPropertySource(manager.getInspector(part));
-                final Population sourcePopulation = EvolUtil.createPopulation(propertySource);
-                setLayoutProviderId(EvolUtil.getLayoutProviderId(editor, part));
-                final BasicEvolutionaryAlgorithm alg =
-                        new BasicEvolutionaryAlgorithm(sourcePopulation);
-                setEvolAlg(alg);
-                step();
-            }
-        }
-    }
+        final Population sourcePopulation = EvolUtil.createPopulation(editor, part);
 
-    /**
-     * Selects an interesting individual.
-     */
-    public void selectInterestingIndividual() {
-        if (!isValid()) {
-            return;
+        if (!sourcePopulation.isEmpty()) {
+            // Create and initialize the algorithm.
+            final BasicEvolutionaryAlgorithm alg =
+                    new BasicEvolutionaryAlgorithm(sourcePopulation);
+            setEvolAlg(alg);
+            alg.step();
         }
 
-        final int firstUnrated = firstUnrated();
-        if (firstUnrated > -1) {
-            setPosition(firstUnrated);
-        }
-
-        updatePosition();
+        // Notify listeners.
+        afterChange("reset");
     }
 
     /**
@@ -228,18 +237,23 @@ public final class EvolModel {
         Assert.isLegal(thePosition >= 0);
         Assert.isLegal((thePosition <= getPopulation().size()));
 
+        final int oldPosition = this.position;
         this.position = thePosition;
+
+        if (oldPosition != thePosition) {
+            afterChange("setPosition");
+        }
     }
 
     /**
-     * Performs a step of the evolutionary algorithm.
+     * Notify listeners about a performed model change.
+     *
+     * @param cause
      */
-    public void step() {
-        if (!isValid()) {
-            return;
+    private void afterChange(final String cause) {
+        for (final IEvolModelListener listener : this.listeners) {
+            listener.afterChange(this, cause);
         }
-
-        this.evolAlg.step();
     }
 
     /**
@@ -249,9 +263,8 @@ public final class EvolModel {
      */
     private int firstUnrated() {
         final Population pop = this.getPopulation();
-        if (pop == null) {
-            return -1;
-        }
+        Assert.isNotNull(pop);
+
         int result = -1;
         for (int i = 0; i < pop.size(); i++) {
             final Genome ind = pop.get(i);
@@ -287,6 +300,21 @@ public final class EvolModel {
     }
 
     /**
+     * Selects an interesting individual.
+     */
+    private void selectInterestingIndividual() {
+        if (!isValid()) {
+            return;
+        }
+
+        final int firstUnrated = firstUnrated();
+        if (firstUnrated > -1) {
+            setPosition(firstUnrated);
+        }
+
+        updatePosition();
+    }
+    /**
      *
      * @param theEvolAlg
      *            the evolutionary algorithm
@@ -294,14 +322,12 @@ public final class EvolModel {
     private void setEvolAlg(final BasicEvolutionaryAlgorithm theEvolAlg) {
         this.evolAlg = theEvolAlg;
     }
-
     /**
      * @param editor
      */
     private void setLastEditor(final IEditorPart editor) {
         this.lastEditor = editor;
     }
-
     /**
      * @param theLayoutProviderId
      *            a layout provider id
@@ -309,7 +335,6 @@ public final class EvolModel {
     private void setLayoutProviderId(final String theLayoutProviderId) {
         this.layoutProviderId = theLayoutProviderId;
     }
-    
     /**
      *
      */

@@ -36,7 +36,7 @@ public class ResetHandler extends AbstractHandler {
                 PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                         .findView(EvolView.ID);
         if (view instanceof EvolView) {
-            ((EvolView) view).reset();
+            ((EvolView) view).getEvolModel().reset();
         }
         return null;
     }

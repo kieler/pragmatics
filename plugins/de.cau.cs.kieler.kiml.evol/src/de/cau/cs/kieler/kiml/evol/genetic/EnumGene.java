@@ -28,8 +28,8 @@ public final class EnumGene extends AbstractGene<Integer> {
      */
     public IGene<Integer> newInstance(final AbstractGene<Integer> template) {
         if (template instanceof EnumGene) {
-            return new EnumGene(template.getId(), template.getValue().intValue(), this.enumClass,
-                    getMutationInfo().getProbability());
+            return new EnumGene(template.getId(), template.getValue().intValue(),
+                    this.getEnumClass(), getMutationInfo().getProbability());
         }
         // incompatible template
         return null;
@@ -63,7 +63,6 @@ public final class EnumGene extends AbstractGene<Integer> {
                 ENUM_FORMATTER, theEnumClass), new MutationInfo(theMutationProbability,
                 Distribution.UNIFORM));
         Assert.isLegal(theEnumClass != null);
-        setEnumClass(theEnumClass);
     }
 
     /**
@@ -72,8 +71,8 @@ public final class EnumGene extends AbstractGene<Integer> {
      */
     @Override
     public String toString() {
-        Assert.isNotNull(this.enumClass);
-        final Enum<?>[] constants = this.enumClass.getEnumConstants();
+        Assert.isNotNull(getEnumClass());
+        final Enum<?>[] constants = getEnumClass().getEnumConstants();
         if (constants == null) {
             return "";
         }
@@ -84,9 +83,7 @@ public final class EnumGene extends AbstractGene<Integer> {
     }
 
     private EnumGene newMutation(final EnumGene template, final MutationInfo mutationInfo) {
-
         return new EnumMutator().newMutation(template, mutationInfo);
-
     }
 
     /**
@@ -120,7 +117,6 @@ public final class EnumGene extends AbstractGene<Integer> {
             Assert.isNotNull(r);
 
             final double prob = mutationInfo.getProbability();
-            // final double var = mutationInfo.getVariance();
 
             final Distribution distr = mutationInfo.getDistr();
             Assert.isTrue(distr == Distribution.UNIFORM);
@@ -128,7 +124,6 @@ public final class EnumGene extends AbstractGene<Integer> {
             final Class<? extends Enum<?>> enumClass = typeInfo.getTypeClass();
             final Integer lowerBound = typeInfo.getLowerBound();
             final Integer upperBound = typeInfo.getUpperBound();
-            // final Integer defaultValue = typeInfo.getDefaultValue();
             final Integer value = template.getValue();
 
             int newInt = value.intValue();
@@ -148,13 +143,12 @@ public final class EnumGene extends AbstractGene<Integer> {
         return (EnumTypeInfo) super.getTypeInfo();
     }
 
-    private void setEnumClass(final Class<? extends Enum<?>> theEnumClass) {
-        this.enumClass = theEnumClass;
-        // TODO: use getTypeInfo().getTypeClass() instead.
+
+    private Class<? extends Enum<?>> getEnumClass() {
+        return getTypeInfo().getTypeClass();
     }
 
     // private fields
-    private Class<? extends Enum<?>> enumClass;
 
     private static final IValueFormatter ENUM_FORMATTER = new IValueFormatter() {
         public String getString(final Object o) {

@@ -165,6 +165,63 @@ public final class EvolUtil {
             return result;
         }
 
+        public IGene<?> newGene(
+                final Object theId, final Object theValue, final TypeInfo<?> theTypeInfo,
+                final MutationInfo theMutationInfo) {
+            Assert.isLegal(theTypeInfo instanceof FloatTypeInfo);
+
+            if (theTypeInfo instanceof FloatTypeInfo) {
+                return new UniversalGene(theId, (Float) theValue, (FloatTypeInfo) theTypeInfo,
+                        theMutationInfo);
+            }
+
+            return null;
+        }
+
+        /**
+         *
+         * @param theId
+         * @param theValue
+         * @param theMutationProbability
+         * @param distr
+         * @return
+         */
+        private IGene<?> newBooleanGene(
+                final Object theId, final Object theValue, final double theMutationProbability,
+                final Distribution distr) {
+            IGene<?> result;
+            final boolean booleanValue = (Integer.parseInt(theValue.toString()) == 1);
+            final Float floatValue = Float.valueOf((booleanValue ? 1.0f : 0.0f));
+            final MutationInfo mutationInfo = new MutationInfo(theMutationProbability, distr);
+            result =
+                    new UniversalGene(theId, floatValue, UniversalGene.BOOLEAN_TYPE_INFO,
+                            mutationInfo);
+            System.out.println(theId + ": " + result);
+            return result;
+        }
+
+        /**
+         * @param theId
+         * @param theRawValue
+         * @param theMutationProbability
+         * @param layoutOptionData
+         * @return
+         */
+        private IGene<?> newEnumGene(
+                final Object theId, final Object theRawValue,
+                final double theMutationProbability, final LayoutOptionData layoutOptionData) {
+            IGene<?> result;
+            final int choicesCount = layoutOptionData.getChoices().length;
+            final Class<? extends Enum<?>> enumClass = LayoutOptions.getEnumClass((String) theId);
+            Assert.isNotNull(enumClass);
+            Assert.isTrue(enumClass.getEnumConstants().length == choicesCount);
+            final Integer value = Integer.valueOf(theRawValue.toString());
+            result = new EnumGene(theId, value.intValue(), enumClass, theMutationProbability);
+            System.out.println("Enum " + enumClass.getSimpleName() + "(" + choicesCount + "): "
+                    + value);
+            return result;
+        }
+
         /**
          * @param theId
          * @param theRawValue
@@ -177,9 +234,9 @@ public final class EvolUtil {
          * @return
          */
         private IGene<?> newFloatGene(
-                final Object theId, final Object theRawValue, final double theMutationProbability,
-                final String lowerBoundAttr, final String upperBoundAttr,
-                final String varianceAttr, final Distribution distr) {
+                final Object theId, final Object theRawValue,
+                final double theMutationProbability, final String lowerBoundAttr,
+                final String upperBoundAttr, final String varianceAttr, final Distribution distr) {
             IGene<?> result;
             final Float value = Float.valueOf((String) theRawValue);
             final Float lowerBound =
@@ -237,9 +294,9 @@ public final class EvolUtil {
          * @return
          */
         private IGene<?> newIntegerGene(
-                final Object theId, final Object theRawValue, final double theMutationProbability,
-                final String lowerBoundAttr, final String upperBoundAttr,
-                final String varianceAttr, final Distribution distr) {
+                final Object theId, final Object theRawValue,
+                final double theMutationProbability, final String lowerBoundAttr,
+                final String upperBoundAttr, final String varianceAttr, final Distribution distr) {
             IGene<?> result;
             final Integer value = Integer.valueOf((String) theRawValue);
 
@@ -274,63 +331,6 @@ public final class EvolUtil {
                             mutationInfo);
             System.out.println(theId + ": " + result);
             return result;
-        }
-
-        /**
-         * @param theId
-         * @param theRawValue
-         * @param theMutationProbability
-         * @param layoutOptionData
-         * @return
-         */
-        private IGene<?> newEnumGene(
-                final Object theId, final Object theRawValue, final double theMutationProbability,
-                final LayoutOptionData layoutOptionData) {
-            IGene<?> result;
-            final int choicesCount = layoutOptionData.getChoices().length;
-            final Class<? extends Enum<?>> enumClass = LayoutOptions.getEnumClass((String) theId);
-            Assert.isNotNull(enumClass);
-            Assert.isTrue(enumClass.getEnumConstants().length == choicesCount);
-            final Integer value = Integer.valueOf(theRawValue.toString());
-            result = new EnumGene(theId, value.intValue(), enumClass, theMutationProbability);
-            System.out.println("Enum " + enumClass.getSimpleName() + "(" + choicesCount + "): "
-                    + value);
-            return result;
-        }
-
-        /**
-         *
-         * @param theId
-         * @param theValue
-         * @param theMutationProbability
-         * @param distr
-         * @return
-         */
-        private IGene<?> newBooleanGene(
-                final Object theId, final Object theValue, final double theMutationProbability,
-                final Distribution distr) {
-            IGene<?> result;
-            final boolean booleanValue = (Integer.parseInt(theValue.toString()) == 1);
-            final Float floatValue = Float.valueOf((booleanValue ? 1.0f : 0.0f));
-            final MutationInfo mutationInfo = new MutationInfo(theMutationProbability, distr);
-            result =
-                    new UniversalGene(theId, floatValue, UniversalGene.BOOLEAN_TYPE_INFO,
-                            mutationInfo);
-            System.out.println(theId + ": " + result);
-            return result;
-        }
-
-        public IGene<?> newGene(
-                final Object theId, final Object theValue, final TypeInfo<?> theTypeInfo,
-                final MutationInfo theMutationInfo) {
-            Assert.isLegal(theTypeInfo instanceof FloatTypeInfo);
-
-            if (theTypeInfo instanceof FloatTypeInfo) {
-                return new UniversalGene(theId, (Float) theValue, (FloatTypeInfo) theTypeInfo,
-                        theMutationInfo);
-            }
-
-            return null;
         }
     }
 
@@ -378,8 +378,8 @@ public final class EvolUtil {
             if (!expectedLayoutProviderId.equalsIgnoreCase(layoutProviderId)) {
                 // The editor is not compatible to the current population.
                 // --> skip it
-                System.out
-                        .println("Cannot adopt " + individual.getId() + " to " + layoutProviderId);
+                System.out.println("Cannot adopt " + individual.getId() + " to "
+                        + layoutProviderId);
                 continue;
             }
 
@@ -407,8 +407,8 @@ public final class EvolUtil {
 
             final boolean showAnimation = false;
             final boolean showProgressBar = false;
-            EclipseLayoutServices.getInstance()
-                    .layout(editor, null, showAnimation, showProgressBar);
+            EclipseLayoutServices.getInstance().layout(editor, null, showAnimation,
+                    showProgressBar);
         }
     }
 
@@ -470,44 +470,32 @@ public final class EvolUtil {
 
     /**
      * Creates a population of the default size, taking initial values from the
-     * given {@link LayoutPropertySource}.
+     * given diagram editor and edit part.
      *
-     * @param propertySource
-     *            where the initial data is taken from; may not be {@code null}
-     * @return the new population
+     * @param editor
+     *            an {@link IEditorPart}
+     * @param part
+     *            an {@link EditPart}
+     * @return a new {@link Population} of default size, or an empty
+     *         {@link Population} in case of an error
      */
-    public static Population createPopulation(final LayoutPropertySource propertySource) {
-        Assert.isLegal(propertySource != null);
-        final int size =
-                EvolPlugin.getDefault().getPreferenceStore()
-                        .getInt(EvolPlugin.PREF_POPULATION_SIZE);
-        return createPopulation(propertySource, size);
-    }
-
-    /**
-     * Create a population of the given size, taking initial values from the
-     * given {@link LayoutPropertySource}.
-     *
-     * @param propertySource
-     *            where the initial data is taken from; may not be {@code null}
-     * @param size
-     *            a non-negative value that specifies the initial size of the
-     *            population.
-     * @return population
-     */
-    public static Population createPopulation(
-            final LayoutPropertySource propertySource, final int size) {
-        Assert.isLegal(propertySource != null);
-        Assert.isLegal(size >= 0);
-
-        final Population result = new Population();
-        final Set<String> metricIds = EvolutionServices.getInstance().getLayoutMetricsIds();
-
-        for (int i = 0; i < size; i++) {
-            final Genome genome = createGenome(propertySource, metricIds);
-            Assert.isNotNull(genome);
-            result.add(genome);
+    public static Population createPopulation(final IEditorPart editor, final EditPart part) {
+        if ((editor == null) || !(editor instanceof DiagramEditor)) {
+            return new Population();
         }
+
+        final DiagramLayoutManager manager =
+                EclipseLayoutServices.getInstance().getManager(editor, part);
+
+        if (manager == null) {
+            return new Population();
+        }
+
+        final ILayoutInspector inspector = manager.getInspector(part);
+        Assert.isNotNull(inspector);
+        final LayoutPropertySource propertySource = new LayoutPropertySource(inspector);
+        final Population result = createPopulation(propertySource);
+
         return result;
     }
 
@@ -625,9 +613,13 @@ public final class EvolUtil {
      *            an {@link EditPart}
      * @return the id of the layouter, or {@code null} if none can be found.
      */
-    public static String getLayoutProviderId(final IEditorPart theEditor, final EditPart theEditPart) {
+    public static String getLayoutProviderId(
+            final IEditorPart theEditor, final EditPart theEditPart) {
         final DiagramLayoutManager manager =
                 EclipseLayoutServices.getInstance().getManager(theEditor, theEditPart);
+        if (manager == null) {
+            return null;
+        }
         final String result = getLayoutProviderId(manager, theEditPart);
         return result;
     }
@@ -724,7 +716,8 @@ public final class EvolUtil {
      *
      * @return number of learnable properties
      */
-    private static int countLearnableProperties(final List<IPropertyDescriptor> propertyDescriptors) {
+    private static int countLearnableProperties(
+            final List<IPropertyDescriptor> propertyDescriptors) {
         int result = 0;
         final Set<String> learnables = EvolutionServices.getInstance().getEvolutionDataIds();
         for (final IPropertyDescriptor p : propertyDescriptors) {
@@ -840,6 +833,49 @@ public final class EvolUtil {
     }
 
     /**
+     * Creates a population of the default size, taking initial values from the
+     * given {@link LayoutPropertySource}.
+     *
+     * @param propertySource
+     *            where the initial data is taken from; may not be {@code null}
+     * @return the new population
+     */
+    private static Population createPopulation(final LayoutPropertySource propertySource) {
+        Assert.isLegal(propertySource != null);
+        final int size =
+                EvolPlugin.getDefault().getPreferenceStore()
+                        .getInt(EvolPlugin.PREF_POPULATION_SIZE);
+        return createPopulation(propertySource, size);
+    }
+
+    /**
+     * Create a population of the given size, taking initial values from the
+     * given {@link LayoutPropertySource}.
+     *
+     * @param propertySource
+     *            where the initial data is taken from; may not be {@code null}
+     * @param size
+     *            a non-negative value that specifies the initial size of the
+     *            population.
+     * @return population
+     */
+    private static Population createPopulation(
+            final LayoutPropertySource propertySource, final int size) {
+        Assert.isLegal(propertySource != null);
+        Assert.isLegal(size >= 0);
+
+        final Population result = new Population();
+        final Set<String> metricIds = EvolutionServices.getInstance().getLayoutMetricsIds();
+
+        for (int i = 0; i < size; i++) {
+            final Genome genome = createGenome(propertySource, metricIds);
+            Assert.isNotNull(genome);
+            result.add(genome);
+        }
+        return result;
+    }
+
+    /**
      * Extracts the metric weight from the given genome.
      *
      * @param genome
@@ -919,13 +955,17 @@ public final class EvolUtil {
      * Finds a layout provider for the given manager and the given edit part.
      *
      * @param manager
-     *            a {@link DiagramLayoutManager}
+     *            a {@link DiagramLayoutManager}; must not be {@code null}
      * @param editPart
      *            an {@link EditPart}
      * @return the id of the layouter, or {@code null} if none can be found.
      */
     private static String getLayoutProviderId(
             final DiagramLayoutManager manager, final EditPart editPart) {
+        Assert.isLegal(manager != null);
+        if (manager == null) {
+            return null;
+        }
         final ILayoutInspector inspector = manager.getInspector(editPart);
         if (inspector == null) {
             return null;

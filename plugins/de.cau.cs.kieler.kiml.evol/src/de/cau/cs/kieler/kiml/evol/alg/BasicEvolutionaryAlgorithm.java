@@ -90,8 +90,9 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
     @Override
     protected void initialize() {
         super.initialize();
-        // obtain more diversity by performing some mutations
-        for (int i = 0; i < 20; i++) {
+        // obtain more initial diversity by performing some mutations
+        final int some = 20;
+        for (int i = 0; i < some; i++) {
             mutate();
         }
         System.out.println("*** initialize");

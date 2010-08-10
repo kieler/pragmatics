@@ -56,6 +56,7 @@ public class EvolView extends ViewPart {
             this.expectedLayoutProviderId = theExpectedLayoutProviderId;
             this.currentIndividual = theCurrentIndividual;
         }
+
         /**
          *
          */
@@ -240,6 +241,30 @@ public class EvolView extends ViewPart {
     public EvolView() {
         super();
         this.tableViewer = null;
+        this.evolModel.addListener(new IEvolModelListener() {
+            public void afterChange(final EvolModel source, final String cause) {
+                if ("setPosition".equalsIgnoreCase(cause)) {
+                    System.out.println("setPosition occurred");
+                    return;
+                }
+                // TODO: what if currentEditor is null?
+                if (EvolUtil.getCurrentEditor() != null) {
+                    EvolView.this.setInput(source.getPopulation());
+                }
+
+                final SelectorTableViewer tv = EvolView.this.getTableViewer();
+
+                final int row = source.getPosition();
+                if ("reset".equalsIgnoreCase(cause)) {
+                    Assert.isTrue(source.getPosition() == 0);
+                }
+
+                tv.selectRow(row);
+
+                EvolView.this.refresh(false);
+
+            }
+        });
     }
 
     // private fields
@@ -260,11 +285,15 @@ public class EvolView extends ViewPart {
         column.setWidth(DEFAULT_COLUMN_WIDTH);
         final TableColumn column2 = new TableColumn(table, SWT.NONE);
         column2.setWidth(DEFAULT_COLUMN_WIDTH);
+
         final SelectorTableViewer tv = new SelectorTableViewer(table);
         tv.setContentProvider(new PopulationTableContentProvider());
         tv.setLabelProvider(new PopulationTableLabelProvider(this));
         this.tableViewer = tv;
-        reset();
+
+        // Reset the model.
+        Assert.isNotNull(this.evolModel);
+        this.evolModel.reset();
 
         final ISelectionChangedListener listener = new SelectionChangedListener(tv);
         tv.addPostSelectionChangedListener(listener);
@@ -272,7 +301,10 @@ public class EvolView extends ViewPart {
 
     /**
      * Performs a step of the evolutionary algorithm.
+     *
+     * @deprecated
      */
+    @Deprecated
     public void evolve() {
         Assert.isNotNull(this.evolModel);
         if (!this.evolModel.isValid()) {
@@ -300,9 +332,8 @@ public class EvolView extends ViewPart {
             return null;
         }
         final Population pop = this.evolModel.getPopulation();
-        if (pop == null) {
-            return null;
-        }
+        Assert.isNotNull(pop);
+
         return new Population(pop);
     }
 
@@ -332,22 +363,6 @@ public class EvolView extends ViewPart {
         if (element != null) {
             this.tableViewer.update(element, null);
         }
-    }
-
-    /**
-     * Reset the population and restart the algorithm.
-     */
-    public void reset() {
-        Assert.isNotNull(this.evolModel);
-
-        this.evolModel.reset();
-
-        if (EvolUtil.getCurrentEditor() != null) {
-            setInput(this.evolModel.getPopulation());
-        }
-
-        this.tableViewer.selectRow(0);
-        this.tableViewer.refresh();
     }
 
     @Override
@@ -382,18 +397,18 @@ public class EvolView extends ViewPart {
     }
 
     /**
-     * Sets a population as the input of the viewer.
+     * Sets a population as the input of the viewer. Has no effect if the
+     * population is {@code null}.
      *
      * @param thePopulation
      *            new source population
      */
-    private void setInput(final Population thePopulation) {
+    void setInput(final Population thePopulation) {
         Assert.isNotNull(this.evolModel);
 
         if ((thePopulation != null)) {
 
             final Population modelPop = this.evolModel.getPopulation();
-
             Assert.isTrue((thePopulation.equals(modelPop)));
 
             final Runnable runnable = new Runnable() {

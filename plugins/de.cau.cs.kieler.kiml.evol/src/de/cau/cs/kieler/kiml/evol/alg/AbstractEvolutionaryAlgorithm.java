@@ -26,8 +26,6 @@ import java.util.List;
  */
 public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
 
-    private final List<IEvolutionListener> listeners = new LinkedList<IEvolutionListener>();
-
     /**
      * Adds an evolution listener.
      *
@@ -167,4 +165,5 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
     // private fields
     private int generation = 0;
     private boolean isInitialized = false;
+    private final List<IEvolutionListener> listeners = new LinkedList<IEvolutionListener>();
 }

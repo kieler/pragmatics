@@ -85,21 +85,24 @@ public class UniversalGene extends AbstractGene<Float> {
     /**
      * Type info for a boolean gene.
      */
-    public static final FloatTypeInfo BOOLEAN_TYPE_INFO = new FloatTypeInfo(0.0f, 0.0f, 1.0f,
-            BOOLEAN_FORMATTER, Boolean.class);
+    public static final FloatTypeInfo BOOLEAN_TYPE_INFO = new FloatTypeInfo(Float.valueOf(0.0f),
+            Float.valueOf(0.0f), Float.valueOf(1.0f), BOOLEAN_FORMATTER, Boolean.class);
 
     /**
      * Universal type info for a strictly positive float gene.
      */
     public static final FloatTypeInfo STRICTLY_POSITIVE_FLOAT_TYPE_INFO = new FloatTypeInfo(
-            1.0f, Float.MIN_VALUE, Float.POSITIVE_INFINITY, STRICTLY_POSITIVE_FLOAT_FORMATTER,
+            Float.valueOf(1.0f), Float.valueOf(Float.MIN_VALUE),
+            Float.valueOf(Float.POSITIVE_INFINITY),
+            STRICTLY_POSITIVE_FLOAT_FORMATTER,
             Float.class);
 
     /**
      * Universal type info for a float gene.
      */
-    public static final FloatTypeInfo FLOAT_TYPE_INFO = new FloatTypeInfo(.0f,
-            Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, FLOAT_FORMATTER, Float.class);
+    public static final FloatTypeInfo FLOAT_TYPE_INFO = new FloatTypeInfo(Float.valueOf(0.0f),
+            Float.valueOf(Float.NEGATIVE_INFINITY), Float.valueOf(Float.POSITIVE_INFINITY),
+            FLOAT_FORMATTER, Float.class);
 
     @Override
     public String toString() {
@@ -279,7 +282,7 @@ public class UniversalGene extends AbstractGene<Float> {
                 do {
                     final double gauss = r.nextGaussian() * Math.sqrt(var);
                     // TODO: regard genuineMutationProbability
-                    newValue = (float) (value + gauss);
+                    newValue = Float.valueOf((float) (value.doubleValue() + gauss));
                 } while (!typeInfo.isValueWithinBounds(newValue));
             }
             return new UniversalGene(template.getId(), newValue, typeInfo, mutationInfo);
@@ -332,9 +335,9 @@ public class UniversalGene extends AbstractGene<Float> {
                     do {
                         // produce a new value within the valid bounds.
                         final double gauss = r.nextGaussian() * Math.sqrt(var);
-                        final double newValue = (value + gauss);
-                        newInt = (int) Math.round(newValue);
-                    } while (!typeInfo.isValueWithinBounds((float) newInt));
+                        final double newValue = (value.doubleValue() + gauss);
+                        newInt = Integer.valueOf((int) Math.round(newValue));
+                    } while (!typeInfo.isValueWithinBounds((Float.valueOf(newInt.floatValue()))));
                     break;
                 case UNIFORM:
                     newInt =
@@ -347,7 +350,8 @@ public class UniversalGene extends AbstractGene<Float> {
                     newInt = defaultValue;
                 }
             }
-            return new UniversalGene(template.getId(), newInt.floatValue(), typeInfo, mutationInfo);
+            return new UniversalGene(template.getId(), Float.valueOf(newInt.floatValue()),
+                    typeInfo, mutationInfo);
         }
     }
 

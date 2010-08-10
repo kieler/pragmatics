@@ -42,12 +42,12 @@ public class EvolPlugin extends AbstractUIPlugin {
      * Preference constant for editor selection.
      */
     public static final String PREF_EDITORS = "de.cau.cs.kieler.kiml.evol.editors";
-    
+
     /**
      * Preference value for all editors.
      */
     public static final String ALL_EDITORS = "ALL";
-    
+
     /**
      * Preference value for current editor.
      */
@@ -61,7 +61,6 @@ public class EvolPlugin extends AbstractUIPlugin {
     // The shared instance
     private static EvolPlugin plugin;
 
-
     /**
      * The constructor.
      */
@@ -71,6 +70,8 @@ public class EvolPlugin extends AbstractUIPlugin {
 
     /**
      * {@inheritDoc}
+     *
+     *
      */
     @Override
     public void start(final BundleContext context) throws Exception {
@@ -80,7 +81,6 @@ public class EvolPlugin extends AbstractUIPlugin {
         System.out.println(EvolutionServices.getInstance().getEvolutionDataIds());
         System.out.println(EvolutionServices.getInstance().getLayoutMetricsIds());
     }
-
 
     /**
      * {@inheritDoc}

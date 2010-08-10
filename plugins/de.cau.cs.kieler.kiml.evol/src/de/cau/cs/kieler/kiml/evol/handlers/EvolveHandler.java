@@ -122,18 +122,16 @@ public class EvolveHandler extends AbstractHandler {
             int steady = 0;
             int steps = 0;
             do {
-                final Double before = view.getPopulation().getAverageRating();
+                final double before = view.getPopulation().getAverageRating().doubleValue();
                 System.out.println("Average rating before: " + before);
                 for (int i = 0; (i < NUMBER_OF_STEPS) && (steps < maxSteps); i++) {
-                    view.evolve();
+                    view.getEvolModel().evolve();
 
-                    // getTableViewer().selectRow(this.evolModel.getPosition());
-                    // getTableViewer().refresh();
                     view.refresh(true);
 
                     // Refresh the layout according to the selected individual.
                     view.applySelectedIndividual();
-                    
+
                     // BasicNetwork b = new BasicNetwork();
                     // b.addLayer(new BasicLayer(2));
                     // b.addLayer(new BasicLayer(3));
@@ -155,10 +153,10 @@ public class EvolveHandler extends AbstractHandler {
                     steps++;
                     Assert.isNotNull(view.getPopulation());
 
-                    final Double after = view.getPopulation().getAverageRating();
-                    final Double relDiff = (after - before) / after;
+                    final double after = view.getPopulation().getAverageRating().doubleValue();
+                    final double relDiff = (after - before) / after;
                     System.out.println("Average rating now: " + after);
-                    final Double relDiffPercent = (relDiff * 100);
+                    final double relDiffPercent = (relDiff * 100);
                     System.out.println("rel. Diff (%): " + relDiffPercent);
                     if (relDiff < MIN_INCREASE) {
                         steady++;

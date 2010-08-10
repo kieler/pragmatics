@@ -13,14 +13,14 @@
  */
 package de.cau.cs.kieler.kiml.evol;
 
-
 /**
- * This interface can be used to implement a custom filter for lists that
- * implement {@link IFilterable}.
+ * This interface can be used to implement a custom filter for a list that
+ * implements {@link IFilterable}.
  *
  * @author bdu
  *
  * @param <T>
+ *            specifies the type of the list items
  */
 public interface IItemFilter<T> {
     /**
