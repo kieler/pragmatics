@@ -138,20 +138,67 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
             ArrayList<INode> path = new ArrayList<INode>();
             path.add(source);
             for (IEdge crossingEdge : crossingBorders) {
-                INode newNode = graph.addNode(crossingEdge);
-                path.add(newNode);
+
+                // crossing a hyperedge
+                if (crossingEdge.getSource().getType() == NodeType.HYPER) {
+                    path.add(crossingEdge.getSource());
+                }
+
+                if (crossingEdge.getTarget().getType() == NodeType.HYPER) {
+                    path.add(crossingEdge.getTarget());
+                }
+
+                // crossing a normal edge
+                else {
+                    INode newNode = graph.addNode(crossingEdge);
+                    path.add(newNode);
+                }
             }
             path.add(target);
 
             // connect the node path
             int pathNodeCounter = 0;
             while (pathNodeCounter < path.size() - 1) {
-                IEdge newEdge = graph.addEdge(path.get(pathNodeCounter),
-                        path.get(pathNodeCounter + 1));
 
-                reinsertEdges(shortestFacePath.get(pathNodeCounter), newEdge,
-                        path.get(pathNodeCounter));
-                pathNodeCounter++;
+                // split up the crossed hypernodes
+                if (path.get(pathNodeCounter).getType() == NodeType.HYPER) {
+
+                    // create new hypernode and connect this with the old one
+                    INode newHyperNode = graph.addNode();
+                    IEdge twoHyperEdge = graph.addEdge(path.get(pathNodeCounter), newHyperNode);
+                    
+                    // bring edge in right order
+                    // TODO check this!!!
+                    reinsertEdges(shortestFacePath.get(pathNodeCounter), twoHyperEdge,
+                            path.get(pathNodeCounter));
+                    // bring edges at the new hypernode in right order
+                    reinsertEdges(shortestFacePath.get(pathNodeCounter), twoHyperEdge,
+                            newHyperNode);
+                    
+                    // split up the new edge
+                    INode midNode = graph.addNode(twoHyperEdge);
+                    
+                    // connect the new node
+                    IEdge newEdge = graph.addEdge(midNode, path.get(pathNodeCounter + 1));
+
+                    // bring new edges in right order
+                    reinsertEdges(shortestFacePath.get(pathNodeCounter), newEdge,
+                            path.get(pathNodeCounter));
+                    pathNodeCounter++;
+                }
+
+                // connecting new normal nodes
+                else {
+
+                    IEdge newEdge = graph.addEdge(path.get(pathNodeCounter),
+                            path.get(pathNodeCounter + 1));
+
+                    // bring new edges in right order
+                    reinsertEdges(shortestFacePath.get(pathNodeCounter), newEdge,
+                            path.get(pathNodeCounter));
+                    
+                    pathNodeCounter++;
+                }
             }
         }
     }
@@ -464,15 +511,15 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
             if (node.getType() == NodeType.HYPER) {
                 for (INode inode : node.adjacentNodes()) {
                     if (inode.getType() == NodeType.HYPER) {
-                        
+
                         // remove edges which connect hypernodes
                         graph.removeEdge(node.getEdge(inode));
-                        
+
                         // connect all edges with 1 hypernode
                         for (IEdge edge : inode.adjacentEdges()) {
                             edge.move(inode, node);
                         }
-                        
+
                         // remove all unneeded hypernodes
                         graph.removeNode(inode);
 
@@ -480,13 +527,6 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
                 }
             }
         }
-    }
-    
-    @SuppressWarnings("unused")
-    private void splitUpHyperNode(final IGraph graph, final INode hypernode) {
-        INode newHyperNode = graph.addNode();
-        graph.addEdge(hypernode, newHyperNode);
-        // TODO find a smart way to split up the edges from the given hypernode
     }
 
 }
