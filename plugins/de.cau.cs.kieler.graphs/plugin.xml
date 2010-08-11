@@ -24,7 +24,7 @@
             category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.graphs.wizards.CreateRandomModelWizard"
             hasPages="true"
-            icon="icons/full/obj16/Graph.gif"
+            icon="icons/obj16/random.gif"
             id="de.cau.cs.kieler.graphs.wizards.randomGraph"
             name="Create Random Graph"
             project="false">
