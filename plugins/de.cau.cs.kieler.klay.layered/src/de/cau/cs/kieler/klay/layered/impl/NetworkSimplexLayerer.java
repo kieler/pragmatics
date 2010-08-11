@@ -98,12 +98,16 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     /**
      * A flag indicating whether a specified node is part of the spanning tree determined by
      * {@code feasibleTree()}.
+     * 
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#feasibleTree() feasibleTree()
      */
     private boolean[] treeNode;
 
     /**
      * A flag indicating whether a specified edge is part of the spanning tree determined by
-     * {@code feasibleTree()}.
+     * {@code tightTree()}.
+     * 
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#tightTreeDFS(LNode) tightTree()
      */
     private boolean[] treeEdge;
 
@@ -122,15 +126,26 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     /**
      * The current postorder traversal number used by {@code postorderTraversal()} to assign an
      * unique traversal ID to each node.
+     * 
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#postorderTraversal(LNode)
+     *      postorderTraversal()
      */
     private int postOrder;
 
-    /** The postorder traversal ID of each node determined by {@code postorderTraversal()}. */
+    /**
+     * The postorder traversal ID of each node determined by {@code postorderTraversal()}.
+     * 
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#postorderTraversal(LNode)
+     *      postorderTraversal()
+     */
     private int[] poID;
 
     /**
      * The lowest postorder traversal ID of each nodes reachable through a node lower in the
      * traversal tree determined by {@code postorderTraversal}.
+     * 
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#postorderTraversal(LNode)
+     *      postorderTraversal()
      */
     private int[] lowestPoID;
 
@@ -141,6 +156,8 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * of the weight (here {@code 1}) of all edges going from the tail to the head component,
      * including the tree edge, minus the sum of the weights of all edges from the head to the tail
      * component.
+     * 
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#cutvalues() cutvalues()
      */
     private int[] cutvalue;
 
@@ -160,11 +177,11 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * graph given by a {@code Collection} containing all nodes of the graph.
      * 
      * @param nodes
-     *            a {@link Collection} containing all nodes of the graph to determine the connected
+     *            a {@code Collection} containing all nodes of the graph to determine the connected
      *            components
-     * @return an {@link LinkedList} of {@code LinkedLists} containing all nodes of every connected
+     * @return an {@code LinkedList} of {@code LinkedLists} containing all nodes of every connected
      *         component
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer.connectedComponentsDFS(LNode)
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#connectedComponentsDFS(LNode)
      *      connectedComponentsDFS()
      */
     private LinkedList<LinkedList<LNode>> connectedComponents(final Collection<LNode> nodes) {
@@ -209,8 +226,8 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      *            the root of the DFS-subtree
      * @return a {@code LinkedList} containing all nodes reachable through a path beginning at the
      *         input node (i.e. all nodes connected to the input node)
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer.connectedComponents(Collection<
-     *      LNode>) connectedComponents()
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#connectedComponents(Collection)
+     *      connectedComponents()
      */
     private void connectedComponentsDFS(final LNode node) {
 
@@ -315,13 +332,20 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * Note that the execution time of this implemented algorithms has not been proven quadratic so far.
      * 
      * @param nodes
-     *            a {@link Collection} of all nodes of the graph to layer
+     *            a {@code Collection} of all nodes of the graph to layer
      * @param layeredGraph
      *            an initially empty layered graph which is filled with layers
-     * 
+     *            
      * @see de.cau.cs.kieler.klay.layered.modules.ILayerer ILayerer
      */
     public void layer(final Collection<LNode> nodes, final LayeredGraph layeredGraph) {
+
+        if (nodes == null) {
+            throw new IllegalArgumentException("Input nodes are null.");
+        }
+        if (layeredGraph == null) {
+            throw new IllegalArgumentException("Input graph is null.");
+        }
 
         super.reset();
         getMonitor().begin("network-simplex layering", 1);
@@ -334,19 +358,16 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         // layer graph, each connected component separately
         for (LinkedList<LNode> connComp : connectedComponents(nodes)) {
 
-            // initialize attributes
             initialize(connComp);
-
-            // determine feasible tree
+            // determine optimal layering
             feasibleTree();
             LEdge e = null;
             while ((e = leaveEdge()) != null) {
                 // current layering is not optimal
                 exchange(e, enterEdge(e));
             }
-            // balance layering and normalize
-            balance(normalize(false));
 
+            balance(normalize(false));
             // put nodes into their assigned layers
             for (LNode node : layerNodes) {
                 putNode(node);
@@ -409,7 +430,6 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * 
      * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#layeringDFS(LNode, boolean)
      *      layeringDFS()
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#shiftLeafs() shiftLeafs()
      */
     private void initLayering() {
 
@@ -427,7 +447,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
                     - layer[edge.getSource().getNode().id], revLayer[edge.getTarget().getNode().id]
                     - revLayer[edge.getSource().getNode().id]);
         }
-        // pull sources and sinks closer to their adjacent nodes (first optimization)
+        // pull sources and sinks closer to their adjacent nodes
         shiftLeafs();
     }
 
@@ -845,9 +865,8 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * @throws IllegalArgumentException
      *             if either {@code leave} is no tree edge or {@code enter} is a tree edge already
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#postorderTraversal(LNode)
-     *      postorderTraversal()
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#cutvalues() cutvalues()
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#enterEdge(LEdge) enterEdge()
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#leaveEdge() leaveEdge()
      */
     private void exchange(final LEdge leave, final LEdge enter) {
 
@@ -887,16 +906,16 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * 
      * @param mode
      *            if {@code false}, only the amount of nodes in the currently layered connected
-     *            component will be considered for determining the filling structure of the layers.
+     *            component will be considered for determining the layer's filling structure.
      *            Otherwise, all nodes, that have been layered already will be considered.
      * 
      * @return an integer array indicating how many nodes are assigned to which layer
      */
     private int[] normalize(final boolean mode) {
 
+        // determine lowest assigned layer and layer count
         int highest = Integer.MIN_VALUE;
         int lowest = Integer.MAX_VALUE;
-        // determine lowest assigned layer and layer count
         for (LNode node : sources) {
             if (layer[node.id] < lowest) {
                 lowest = layer[node.id];
@@ -937,9 +956,9 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      */
     private void balance(final int[] filling) {
 
+        // determine possible layers
         int newLayer;
         Pair<Integer, Integer> range = null;
-        // determine possible layers
         for (LNode node : layerNodes) {
             if (inDegree[node.id] == outDegree[node.id]) {
                 newLayer = layer[node.id];
