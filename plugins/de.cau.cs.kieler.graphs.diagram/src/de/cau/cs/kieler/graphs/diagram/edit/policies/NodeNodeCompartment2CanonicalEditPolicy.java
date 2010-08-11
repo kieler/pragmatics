@@ -70,7 +70,7 @@ public class NodeNodeCompartment2CanonicalEditPolicy extends CanonicalEditPolicy
         View viewObject = (View) getHost().getModel();
         LinkedList<EObject> result = new LinkedList<EObject>();
         List<GraphsNodeDescriptor> childDescriptors = GraphsDiagramUpdater
-            .getNodeNodeCompartment_7002SemanticChildren(viewObject);
+                .getNodeNodeCompartment_7002SemanticChildren(viewObject);
         for (GraphsNodeDescriptor d : childDescriptors) {
             result.add(d.getModelElement());
         }
@@ -101,7 +101,7 @@ public class NodeNodeCompartment2CanonicalEditPolicy extends CanonicalEditPolicy
         }
         LinkedList<IAdaptable> createdViews = new LinkedList<IAdaptable>();
         List<GraphsNodeDescriptor> childDescriptors = GraphsDiagramUpdater
-            .getNodeNodeCompartment_7002SemanticChildren((View) getHost().getModel());
+                .getNodeNodeCompartment_7002SemanticChildren((View) getHost().getModel());
         LinkedList<View> orphaned = new LinkedList<View>();
         // we care to check only views we recognize as ours
         LinkedList<View> knownViewChildren = new LinkedList<View>();
@@ -117,7 +117,7 @@ public class NodeNodeCompartment2CanonicalEditPolicy extends CanonicalEditPolicy
         // iterates views, potentially losing view (size/bounds) information - i.e. if there are few views to reference same EObject, only last one 
         // to answer isOrphaned == true will be used for the domain element representation, see #cleanCanonicalSemanticChildren()
         for (Iterator<GraphsNodeDescriptor> descriptorsIterator = childDescriptors.iterator(); descriptorsIterator
-            .hasNext();) {
+                .hasNext();) {
             GraphsNodeDescriptor next = descriptorsIterator.next();
             String hint = GraphsVisualIDRegistry.getType(next.getVisualID());
             LinkedList<View> perfectMatch = new LinkedList<View>(); // both semanticElement and hint match that of NodeDescriptor
@@ -148,15 +148,15 @@ public class NodeNodeCompartment2CanonicalEditPolicy extends CanonicalEditPolicy
         orphaned.addAll(knownViewChildren);
         //
         CompositeTransactionalCommand boundsCommand = new CompositeTransactionalCommand(host()
-            .getEditingDomain(), DiagramUIMessages.SetLocationCommand_Label_Resize);
+                .getEditingDomain(), DiagramUIMessages.SetLocationCommand_Label_Resize);
         ArrayList<CreateViewRequest.ViewDescriptor> viewDescriptors = new ArrayList<CreateViewRequest.ViewDescriptor>(
-            childDescriptors.size());
+                childDescriptors.size());
         for (GraphsNodeDescriptor next : childDescriptors) {
             String hint = GraphsVisualIDRegistry.getType(next.getVisualID());
             IAdaptable elementAdapter = new CanonicalElementAdapter(next.getModelElement(), hint);
             CreateViewRequest.ViewDescriptor descriptor = new CreateViewRequest.ViewDescriptor(
-                elementAdapter, Node.class, hint, ViewUtil.APPEND, false, host()
-                    .getDiagramPreferencesHint());
+                    elementAdapter, Node.class, hint, ViewUtil.APPEND, false, host()
+                            .getDiagramPreferencesHint());
             viewDescriptors.add(descriptor);
 
             LinkedList<View> possibleMatches = potentialViews.get(next);
@@ -172,17 +172,17 @@ public class NodeNodeCompartment2CanonicalEditPolicy extends CanonicalEditPolicy
                     if (((Node) originalView).getLayoutConstraint() instanceof Bounds) {
                         Bounds b = (Bounds) ((Node) originalView).getLayoutConstraint();
                         boundsCommand.add(new SetBoundsCommand(boundsCommand.getEditingDomain(),
-                            boundsCommand.getLabel(), descriptor, new Rectangle(b.getX(), b.getY(),
-                                b.getWidth(), b.getHeight())));
+                                boundsCommand.getLabel(), descriptor, new Rectangle(b.getX(), b.getY(),
+                                        b.getWidth(), b.getHeight())));
                     } else if (((Node) originalView).getLayoutConstraint() instanceof Location) {
                         Location l = (Location) ((Node) originalView).getLayoutConstraint();
                         boundsCommand.add(new SetBoundsCommand(boundsCommand.getEditingDomain(),
-                            boundsCommand.getLabel(), descriptor, new Point(l.getX(), l.getY())));
+                                boundsCommand.getLabel(), descriptor, new Point(l.getX(), l.getY())));
                     } else if (((Node) originalView).getLayoutConstraint() instanceof Size) {
                         Size s = (Size) ((Node) originalView).getLayoutConstraint();
                         boundsCommand.add(new SetBoundsCommand(boundsCommand.getEditingDomain(),
-                            boundsCommand.getLabel(), descriptor, new Dimension(s.getWidth(), s
-                                .getHeight())));
+                                boundsCommand.getLabel(), descriptor, new Dimension(s.getWidth(), s
+                                        .getHeight())));
                     }
                 }
             }
@@ -193,8 +193,7 @@ public class NodeNodeCompartment2CanonicalEditPolicy extends CanonicalEditPolicy
         CreateViewRequest request = getCreateViewRequest(viewDescriptors);
         Command cmd = getCreateViewCommand(request);
         if (cmd != null && cmd.canExecute()) {
-            SetViewMutabilityCommand.makeMutable(new EObjectAdapter(host().getNotationView()))
-                .execute();
+            SetViewMutabilityCommand.makeMutable(new EObjectAdapter(host().getNotationView())).execute();
             executeCommand(cmd);
             if (boundsCommand.canExecute()) {
                 executeCommand(new ICommandProxy(boundsCommand.reduce()));
@@ -209,7 +208,7 @@ public class NodeNodeCompartment2CanonicalEditPolicy extends CanonicalEditPolicy
         if (createdViews.size() > 1) {
             // perform a layout of the container
             DeferredLayoutCommand layoutCmd = new DeferredLayoutCommand(host().getEditingDomain(),
-                createdViews, host());
+                    createdViews, host());
             executeCommand(new ICommandProxy(layoutCmd));
         }
 

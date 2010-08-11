@@ -17,7 +17,7 @@ public class GraphsDomainNavigatorItem extends PlatformObject {
      * @generated
      */
     static {
-        final Class[] supportedTypes = new Class[] { EObject.class, IPropertySource.class };
+        final Class[] supportedTypes = new Class[] {EObject.class, IPropertySource.class};
         Platform.getAdapterManager().registerAdapters(new IAdapterFactory() {
 
             public Object getAdapter(Object adaptableObject, Class adapterType) {
@@ -28,8 +28,8 @@ public class GraphsDomainNavigatorItem extends PlatformObject {
                         return eObject;
                     }
                     if (adapterType == IPropertySource.class) {
-                        return domainNavigatorItem.getPropertySourceProvider().getPropertySource(
-                            eObject);
+                        return domainNavigatorItem.getPropertySourceProvider()
+                                .getPropertySource(eObject);
                     }
                 }
 
@@ -61,7 +61,7 @@ public class GraphsDomainNavigatorItem extends PlatformObject {
      * @generated
      */
     public GraphsDomainNavigatorItem(EObject eObject, Object parent,
-        IPropertySourceProvider propertySourceProvider) {
+            IPropertySourceProvider propertySourceProvider) {
         myParent = parent;
         myEObject = eObject;
         myPropertySourceProvider = propertySourceProvider;
@@ -94,11 +94,10 @@ public class GraphsDomainNavigatorItem extends PlatformObject {
     public boolean equals(Object obj) {
         if (obj instanceof de.cau.cs.kieler.graphs.diagram.navigator.GraphsDomainNavigatorItem) {
             return EcoreUtil
-                .getURI(getEObject())
-                .equals(
-                    EcoreUtil
-                        .getURI(((de.cau.cs.kieler.graphs.diagram.navigator.GraphsDomainNavigatorItem) obj)
-                            .getEObject()));
+                    .getURI(getEObject())
+                    .equals(EcoreUtil
+                            .getURI(((de.cau.cs.kieler.graphs.diagram.navigator.GraphsDomainNavigatorItem) obj)
+                                    .getEObject()));
         }
         return super.equals(obj);
     }

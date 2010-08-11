@@ -28,8 +28,7 @@ public class GraphsLinkDescriptor extends GraphsNodeDescriptor {
     /**
      * @generated
      */
-    private GraphsLinkDescriptor(EObject source, EObject destination, EObject linkElement,
-        int linkVID) {
+    private GraphsLinkDescriptor(EObject source, EObject destination, EObject linkElement, int linkVID) {
         super(linkElement, linkVID);
         mySource = source;
         myDestination = destination;
@@ -39,7 +38,7 @@ public class GraphsLinkDescriptor extends GraphsNodeDescriptor {
      * @generated
      */
     public GraphsLinkDescriptor(EObject source, EObject destination, IElementType elementType,
-        int linkVID) {
+            int linkVID) {
         this(source, destination, (EObject) null, linkVID);
         final IElementType elementTypeCopy = elementType;
         mySemanticAdapter = new IAdaptable() {
@@ -56,7 +55,7 @@ public class GraphsLinkDescriptor extends GraphsNodeDescriptor {
      * @generated
      */
     public GraphsLinkDescriptor(EObject source, EObject destination, EObject linkElement,
-        IElementType elementType, int linkVID) {
+            IElementType elementType, int linkVID) {
         this(source, destination, linkElement, linkVID);
         final IElementType elementTypeCopy = elementType;
         mySemanticAdapter = new EObjectAdapter(linkElement) {

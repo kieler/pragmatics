@@ -140,10 +140,9 @@ public class GraphsDiagramEditorPlugin extends AbstractUIPlugin {
      */
     public ImageDescriptor getItemImageDescriptor(Object item) {
         IItemLabelProvider labelProvider = (IItemLabelProvider) adapterFactory.adapt(item,
-            IItemLabelProvider.class);
+                IItemLabelProvider.class);
         if (labelProvider != null) {
-            return ExtendedImageRegistry.getInstance().getImageDescriptor(
-                labelProvider.getImage(item));
+            return ExtendedImageRegistry.getInstance().getImageDescriptor(labelProvider.getImage(item));
         }
         return null;
     }
@@ -172,8 +171,8 @@ public class GraphsDiagramEditorPlugin extends AbstractUIPlugin {
     public static ImageDescriptor findImageDescriptor(String path) {
         final IPath p = new Path(path);
         if (p.isAbsolute() && p.segmentCount() > 1) {
-            return AbstractUIPlugin.imageDescriptorFromPlugin(p.segment(0), p
-                .removeFirstSegments(1).makeAbsolute().toString());
+            return AbstractUIPlugin.imageDescriptorFromPlugin(p.segment(0), p.removeFirstSegments(1)
+                    .makeAbsolute().toString());
         } else {
             return getBundledImageDescriptor(p.makeAbsolute().toString());
         }
@@ -272,7 +271,7 @@ public class GraphsDiagramEditorPlugin extends AbstractUIPlugin {
             error = throwable.getMessage();
         }
         getLog().log(
-            new Status(IStatus.ERROR, GraphsDiagramEditorPlugin.ID, IStatus.OK, error, throwable));
+                new Status(IStatus.ERROR, GraphsDiagramEditorPlugin.ID, IStatus.OK, error, throwable));
         debug(error, throwable);
     }
 
@@ -291,7 +290,7 @@ public class GraphsDiagramEditorPlugin extends AbstractUIPlugin {
             message = throwable.getMessage();
         }
         getLog().log(
-            new Status(IStatus.INFO, GraphsDiagramEditorPlugin.ID, IStatus.OK, message, throwable));
+                new Status(IStatus.INFO, GraphsDiagramEditorPlugin.ID, IStatus.OK, message, throwable));
         debug(message, throwable);
     }
 

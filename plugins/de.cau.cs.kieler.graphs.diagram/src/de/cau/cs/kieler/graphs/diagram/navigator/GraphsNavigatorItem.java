@@ -15,14 +15,14 @@ public class GraphsNavigatorItem extends GraphsAbstractNavigatorItem {
      * @generated
      */
     static {
-        final Class[] supportedTypes = new Class[] { View.class, EObject.class };
+        final Class[] supportedTypes = new Class[] {View.class, EObject.class};
         Platform.getAdapterManager().registerAdapters(new IAdapterFactory() {
 
             public Object getAdapter(Object adaptableObject, Class adapterType) {
                 if (adaptableObject instanceof de.cau.cs.kieler.graphs.diagram.navigator.GraphsNavigatorItem
-                    && (adapterType == View.class || adapterType == EObject.class)) {
+                        && (adapterType == View.class || adapterType == EObject.class)) {
                     return ((de.cau.cs.kieler.graphs.diagram.navigator.GraphsNavigatorItem) adaptableObject)
-                        .getView();
+                            .getView();
                 }
                 return null;
             }
@@ -71,10 +71,11 @@ public class GraphsNavigatorItem extends GraphsAbstractNavigatorItem {
      */
     public boolean equals(Object obj) {
         if (obj instanceof de.cau.cs.kieler.graphs.diagram.navigator.GraphsNavigatorItem) {
-            return EcoreUtil.getURI(getView()).equals(
-                EcoreUtil
-                    .getURI(((de.cau.cs.kieler.graphs.diagram.navigator.GraphsNavigatorItem) obj)
-                        .getView()));
+            return EcoreUtil
+                    .getURI(getView())
+                    .equals(EcoreUtil
+                            .getURI(((de.cau.cs.kieler.graphs.diagram.navigator.GraphsNavigatorItem) obj)
+                                    .getView()));
         }
         return super.equals(obj);
     }

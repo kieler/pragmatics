@@ -183,7 +183,7 @@ public class NodeNodeLabel2EditPart extends CompartmentEditPart implements IText
         EObject parserElement = getParserElement();
         if (parserElement != null && getParser() != null) {
             text = getParser().getPrintString(new EObjectAdapter(parserElement),
-                getParserOptions().intValue());
+                    getParserOptions().intValue());
         }
         if (text == null || text.length() == 0) {
             text = defaultText;
@@ -214,7 +214,7 @@ public class NodeNodeLabel2EditPart extends CompartmentEditPart implements IText
             return ""; //$NON-NLS-1$
         }
         return getParser().getEditString(new EObjectAdapter(getParserElement()),
-            getParserOptions().intValue());
+                getParserOptions().intValue());
     }
 
     /**
@@ -235,16 +235,15 @@ public class NodeNodeLabel2EditPart extends CompartmentEditPart implements IText
                     final EObject element = getParserElement();
                     final IParser parser = getParser();
                     try {
-                        IParserEditStatus valid = (IParserEditStatus) getEditingDomain()
-                            .runExclusive(new RunnableWithResult.Impl<IParserEditStatus>() {
+                        IParserEditStatus valid = (IParserEditStatus) getEditingDomain().runExclusive(
+                                new RunnableWithResult.Impl<IParserEditStatus>() {
 
-                                public void run() {
-                                    setResult(parser.isValidEditString(new EObjectAdapter(element),
-                                        (String) value));
-                                }
-                            });
-                        return valid.getCode() == ParserEditStatus.EDITABLE ? null : valid
-                            .getMessage();
+                                    public void run() {
+                                        setResult(parser.isValidEditString(new EObjectAdapter(element),
+                                                (String) value));
+                                    }
+                                });
+                        return valid.getCode() == ParserEditStatus.EDITABLE ? null : valid.getMessage();
                     } catch (InterruptedException ie) {
                         ie.printStackTrace();
                     }
@@ -279,11 +278,11 @@ public class NodeNodeLabel2EditPart extends CompartmentEditPart implements IText
     public IParser getParser() {
         if (parser == null) {
             parser = GraphsParserProvider
-                .getParser(
-                    GraphsElementTypes.Node_3001,
-                    getParserElement(),
-                    GraphsVisualIDRegistry
-                        .getType(de.cau.cs.kieler.graphs.diagram.edit.parts.NodeNodeLabel2EditPart.VISUAL_ID));
+                    .getParser(
+                            GraphsElementTypes.Node_3001,
+                            getParserElement(),
+                            GraphsVisualIDRegistry
+                                    .getType(de.cau.cs.kieler.graphs.diagram.edit.parts.NodeNodeLabel2EditPart.VISUAL_ID));
         }
         return parser;
     }
@@ -294,8 +293,8 @@ public class NodeNodeLabel2EditPart extends CompartmentEditPart implements IText
     protected DirectEditManager getManager() {
         if (manager == null) {
             setManager(new TextDirectEditManager(this,
-                TextDirectEditManager.getTextCellEditorClass(this),
-                GraphsEditPartFactory.getTextCellEditorLocator(this)));
+                    TextDirectEditManager.getTextCellEditorClass(this),
+                    GraphsEditPartFactory.getTextCellEditorLocator(this)));
         }
         return manager;
     }
@@ -345,12 +344,12 @@ public class NodeNodeLabel2EditPart extends CompartmentEditPart implements IText
                 public void run() {
                     if (isActive() && isEditable()) {
                         if (theRequest.getExtendedData().get(
-                            RequestConstants.REQ_DIRECTEDIT_EXTENDEDDATA_INITIAL_CHAR) instanceof Character) {
+                                RequestConstants.REQ_DIRECTEDIT_EXTENDEDDATA_INITIAL_CHAR) instanceof Character) {
                             Character initialChar = (Character) theRequest.getExtendedData().get(
-                                RequestConstants.REQ_DIRECTEDIT_EXTENDEDDATA_INITIAL_CHAR);
+                                    RequestConstants.REQ_DIRECTEDIT_EXTENDEDDATA_INITIAL_CHAR);
                             performDirectEdit(initialChar.charValue());
                         } else if ((theRequest instanceof DirectEditRequest)
-                            && (getEditText().equals(getLabelText()))) {
+                                && (getEditText().equals(getLabelText()))) {
                             DirectEditRequest editRequest = (DirectEditRequest) theRequest;
                             performDirectEdit(editRequest.getLocation());
                         } else {
@@ -397,7 +396,7 @@ public class NodeNodeLabel2EditPart extends CompartmentEditPart implements IText
      */
     protected void refreshUnderline() {
         FontStyle style = (FontStyle) getFontStyleOwnerView().getStyle(
-            NotationPackage.eINSTANCE.getFontStyle());
+                NotationPackage.eINSTANCE.getFontStyle());
         if (style != null && getFigure() instanceof WrappingLabel) {
             ((WrappingLabel) getFigure()).setTextUnderline(style.isUnderline());
         }
@@ -408,7 +407,7 @@ public class NodeNodeLabel2EditPart extends CompartmentEditPart implements IText
      */
     protected void refreshStrikeThrough() {
         FontStyle style = (FontStyle) getFontStyleOwnerView().getStyle(
-            NotationPackage.eINSTANCE.getFontStyle());
+                NotationPackage.eINSTANCE.getFontStyle());
         if (style != null && getFigure() instanceof WrappingLabel) {
             ((WrappingLabel) getFigure()).setTextStrikeThrough(style.isStrikeThrough());
         }
@@ -419,11 +418,11 @@ public class NodeNodeLabel2EditPart extends CompartmentEditPart implements IText
      */
     protected void refreshFont() {
         FontStyle style = (FontStyle) getFontStyleOwnerView().getStyle(
-            NotationPackage.eINSTANCE.getFontStyle());
+                NotationPackage.eINSTANCE.getFontStyle());
         if (style != null) {
             FontData fontData = new FontData(style.getFontName(), style.getFontHeight(),
-                (style.isBold() ? SWT.BOLD : SWT.NORMAL)
-                    | (style.isItalic() ? SWT.ITALIC : SWT.NORMAL));
+                    (style.isBold() ? SWT.BOLD : SWT.NORMAL)
+                            | (style.isItalic() ? SWT.ITALIC : SWT.NORMAL));
             setFont(fontData);
         }
     }
@@ -441,8 +440,7 @@ public class NodeNodeLabel2EditPart extends CompartmentEditPart implements IText
     protected void addSemanticListeners() {
         if (getParser() instanceof ISemanticParser) {
             EObject element = resolveSemanticElement();
-            parserElements = ((ISemanticParser) getParser())
-                .getSemanticElementsBeingParsed(element);
+            parserElements = ((ISemanticParser) getParser()).getSemanticElementsBeingParsed(element);
             for (int i = 0; i < parserElements.size(); i++) {
                 addListenerFilter("SemanticModel" + i, this, (EObject) parserElements.get(i)); //$NON-NLS-1$
             }
@@ -515,13 +513,13 @@ public class NodeNodeLabel2EditPart extends CompartmentEditPart implements IText
         } else if (NotationPackage.eINSTANCE.getFontStyle_StrikeThrough().equals(feature)) {
             refreshStrikeThrough();
         } else if (NotationPackage.eINSTANCE.getFontStyle_FontHeight().equals(feature)
-            || NotationPackage.eINSTANCE.getFontStyle_FontName().equals(feature)
-            || NotationPackage.eINSTANCE.getFontStyle_Bold().equals(feature)
-            || NotationPackage.eINSTANCE.getFontStyle_Italic().equals(feature)) {
+                || NotationPackage.eINSTANCE.getFontStyle_FontName().equals(feature)
+                || NotationPackage.eINSTANCE.getFontStyle_Bold().equals(feature)
+                || NotationPackage.eINSTANCE.getFontStyle_Italic().equals(feature)) {
             refreshFont();
         } else {
             if (getParser() != null
-                && getParser().isAffectingEvent(event, getParserOptions().intValue())) {
+                    && getParser().isAffectingEvent(event, getParserOptions().intValue())) {
                 refreshLabel();
             }
             if (getParser() instanceof ISemanticParser) {

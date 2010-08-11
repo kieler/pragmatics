@@ -441,7 +441,7 @@ public class GraphsDiagramUpdater {
     public static List<GraphsLinkDescriptor> getNode_2001IncomingLinks(View view) {
         Node modelElement = (Node) view.getElement();
         Map<EObject, Collection<EStructuralFeature.Setting>> crossReferences = EcoreUtil.CrossReferencer
-            .find(view.eResource().getResourceSet().getResources());
+                .find(view.eResource().getResourceSet().getResources());
         LinkedList<GraphsLinkDescriptor> result = new LinkedList<GraphsLinkDescriptor>();
         result.addAll(getIncomingTypeModelFacetLinks_Edge_4001(modelElement, crossReferences));
         result.addAll(getIncomingTypeModelFacetLinks_Edge_4002(modelElement, crossReferences));
@@ -456,7 +456,7 @@ public class GraphsDiagramUpdater {
     public static List<GraphsLinkDescriptor> getNode_2002IncomingLinks(View view) {
         Node modelElement = (Node) view.getElement();
         Map<EObject, Collection<EStructuralFeature.Setting>> crossReferences = EcoreUtil.CrossReferencer
-            .find(view.eResource().getResourceSet().getResources());
+                .find(view.eResource().getResourceSet().getResources());
         LinkedList<GraphsLinkDescriptor> result = new LinkedList<GraphsLinkDescriptor>();
         result.addAll(getIncomingTypeModelFacetLinks_Edge_4001(modelElement, crossReferences));
         result.addAll(getIncomingTypeModelFacetLinks_Edge_4002(modelElement, crossReferences));
@@ -471,7 +471,7 @@ public class GraphsDiagramUpdater {
     public static List<GraphsLinkDescriptor> getNode_3001IncomingLinks(View view) {
         Node modelElement = (Node) view.getElement();
         Map<EObject, Collection<EStructuralFeature.Setting>> crossReferences = EcoreUtil.CrossReferencer
-            .find(view.eResource().getResourceSet().getResources());
+                .find(view.eResource().getResourceSet().getResources());
         LinkedList<GraphsLinkDescriptor> result = new LinkedList<GraphsLinkDescriptor>();
         result.addAll(getIncomingTypeModelFacetLinks_Edge_4001(modelElement, crossReferences));
         result.addAll(getIncomingTypeModelFacetLinks_Edge_4002(modelElement, crossReferences));
@@ -486,7 +486,7 @@ public class GraphsDiagramUpdater {
     public static List<GraphsLinkDescriptor> getPort_3002IncomingLinks(View view) {
         Port modelElement = (Port) view.getElement();
         Map<EObject, Collection<EStructuralFeature.Setting>> crossReferences = EcoreUtil.CrossReferencer
-            .find(view.eResource().getResourceSet().getResources());
+                .find(view.eResource().getResourceSet().getResources());
         LinkedList<GraphsLinkDescriptor> result = new LinkedList<GraphsLinkDescriptor>();
         result.addAll(getIncomingTypeModelFacetLinks_Edge_4003(modelElement, crossReferences));
         result.addAll(getIncomingTypeModelFacetLinks_Edge_4004(modelElement, crossReferences));
@@ -501,7 +501,7 @@ public class GraphsDiagramUpdater {
     public static List<GraphsLinkDescriptor> getNode_3003IncomingLinks(View view) {
         Node modelElement = (Node) view.getElement();
         Map<EObject, Collection<EStructuralFeature.Setting>> crossReferences = EcoreUtil.CrossReferencer
-            .find(view.eResource().getResourceSet().getResources());
+                .find(view.eResource().getResourceSet().getResources());
         LinkedList<GraphsLinkDescriptor> result = new LinkedList<GraphsLinkDescriptor>();
         result.addAll(getIncomingTypeModelFacetLinks_Edge_4001(modelElement, crossReferences));
         result.addAll(getIncomingTypeModelFacetLinks_Edge_4002(modelElement, crossReferences));
@@ -691,7 +691,7 @@ public class GraphsDiagramUpdater {
      * @generated
      */
     private static Collection<GraphsLinkDescriptor> getContainedTypeModelFacetLinks_Edge_4001(
-        KNode container) {
+            KNode container) {
         LinkedList<GraphsLinkDescriptor> result = new LinkedList<GraphsLinkDescriptor>();
         for (Iterator<?> links = container.getOutgoingEdges().iterator(); links.hasNext();) {
             EObject linkObject = (EObject) links.next();
@@ -705,7 +705,7 @@ public class GraphsDiagramUpdater {
             KNode dst = link.getTarget();
             KNode src = link.getSource();
             result.add(new GraphsLinkDescriptor(src, dst, link, GraphsElementTypes.Edge_4001,
-                EdgeEditPart.VISUAL_ID));
+                    EdgeEditPart.VISUAL_ID));
         }
         return result;
     }
@@ -714,7 +714,7 @@ public class GraphsDiagramUpdater {
      * @generated
      */
     private static Collection<GraphsLinkDescriptor> getContainedTypeModelFacetLinks_Edge_4002(
-        KNode container) {
+            KNode container) {
         LinkedList<GraphsLinkDescriptor> result = new LinkedList<GraphsLinkDescriptor>();
         for (Iterator<?> links = container.getOutgoingEdges().iterator(); links.hasNext();) {
             EObject linkObject = (EObject) links.next();
@@ -728,7 +728,7 @@ public class GraphsDiagramUpdater {
             KNode dst = link.getTarget();
             KNode src = link.getSource();
             result.add(new GraphsLinkDescriptor(src, dst, link, GraphsElementTypes.Edge_4002,
-                Edge2EditPart.VISUAL_ID));
+                    Edge2EditPart.VISUAL_ID));
         }
         return result;
     }
@@ -737,7 +737,7 @@ public class GraphsDiagramUpdater {
      * @generated
      */
     private static Collection<GraphsLinkDescriptor> getContainedTypeModelFacetLinks_Edge_4003(
-        KNode container) {
+            KNode container) {
         LinkedList<GraphsLinkDescriptor> result = new LinkedList<GraphsLinkDescriptor>();
         for (Iterator<?> links = container.getOutgoingEdges().iterator(); links.hasNext();) {
             EObject linkObject = (EObject) links.next();
@@ -751,7 +751,7 @@ public class GraphsDiagramUpdater {
             KPort dst = link.getTargetPort();
             KPort src = link.getSourcePort();
             result.add(new GraphsLinkDescriptor(src, dst, link, GraphsElementTypes.Edge_4003,
-                Edge3EditPart.VISUAL_ID));
+                    Edge3EditPart.VISUAL_ID));
         }
         return result;
     }
@@ -760,7 +760,7 @@ public class GraphsDiagramUpdater {
      * @generated
      */
     private static Collection<GraphsLinkDescriptor> getContainedTypeModelFacetLinks_Edge_4004(
-        KNode container) {
+            KNode container) {
         LinkedList<GraphsLinkDescriptor> result = new LinkedList<GraphsLinkDescriptor>();
         for (Iterator<?> links = container.getOutgoingEdges().iterator(); links.hasNext();) {
             EObject linkObject = (EObject) links.next();
@@ -774,7 +774,7 @@ public class GraphsDiagramUpdater {
             KPort dst = link.getTargetPort();
             KPort src = link.getSourcePort();
             result.add(new GraphsLinkDescriptor(src, dst, link, GraphsElementTypes.Edge_4004,
-                Edge4EditPart.VISUAL_ID));
+                    Edge4EditPart.VISUAL_ID));
         }
         return result;
     }
@@ -783,7 +783,7 @@ public class GraphsDiagramUpdater {
      * @generated
      */
     private static Collection<GraphsLinkDescriptor> getContainedTypeModelFacetLinks_Edge_4005(
-        KNode container) {
+            KNode container) {
         LinkedList<GraphsLinkDescriptor> result = new LinkedList<GraphsLinkDescriptor>();
         for (Iterator<?> links = container.getOutgoingEdges().iterator(); links.hasNext();) {
             EObject linkObject = (EObject) links.next();
@@ -797,7 +797,7 @@ public class GraphsDiagramUpdater {
             KNode dst = link.getTarget();
             KPort src = link.getSourcePort();
             result.add(new GraphsLinkDescriptor(src, dst, link, GraphsElementTypes.Edge_4005,
-                Edge5EditPart.VISUAL_ID));
+                    Edge5EditPart.VISUAL_ID));
         }
         return result;
     }
@@ -806,7 +806,7 @@ public class GraphsDiagramUpdater {
      * @generated
      */
     private static Collection<GraphsLinkDescriptor> getContainedTypeModelFacetLinks_Edge_4006(
-        KNode container) {
+            KNode container) {
         LinkedList<GraphsLinkDescriptor> result = new LinkedList<GraphsLinkDescriptor>();
         for (Iterator<?> links = container.getOutgoingEdges().iterator(); links.hasNext();) {
             EObject linkObject = (EObject) links.next();
@@ -820,7 +820,7 @@ public class GraphsDiagramUpdater {
             KNode dst = link.getTarget();
             KPort src = link.getSourcePort();
             result.add(new GraphsLinkDescriptor(src, dst, link, GraphsElementTypes.Edge_4006,
-                Edge6EditPart.VISUAL_ID));
+                    Edge6EditPart.VISUAL_ID));
         }
         return result;
     }
@@ -829,7 +829,7 @@ public class GraphsDiagramUpdater {
      * @generated
      */
     private static Collection<GraphsLinkDescriptor> getContainedTypeModelFacetLinks_Edge_4007(
-        KNode container) {
+            KNode container) {
         LinkedList<GraphsLinkDescriptor> result = new LinkedList<GraphsLinkDescriptor>();
         for (Iterator<?> links = container.getOutgoingEdges().iterator(); links.hasNext();) {
             EObject linkObject = (EObject) links.next();
@@ -843,7 +843,7 @@ public class GraphsDiagramUpdater {
             KPort dst = link.getTargetPort();
             KNode src = link.getSource();
             result.add(new GraphsLinkDescriptor(src, dst, link, GraphsElementTypes.Edge_4007,
-                Edge7EditPart.VISUAL_ID));
+                    Edge7EditPart.VISUAL_ID));
         }
         return result;
     }
@@ -852,7 +852,7 @@ public class GraphsDiagramUpdater {
      * @generated
      */
     private static Collection<GraphsLinkDescriptor> getContainedTypeModelFacetLinks_Edge_4008(
-        KNode container) {
+            KNode container) {
         LinkedList<GraphsLinkDescriptor> result = new LinkedList<GraphsLinkDescriptor>();
         for (Iterator<?> links = container.getOutgoingEdges().iterator(); links.hasNext();) {
             EObject linkObject = (EObject) links.next();
@@ -866,7 +866,7 @@ public class GraphsDiagramUpdater {
             KPort dst = link.getTargetPort();
             KNode src = link.getSource();
             result.add(new GraphsLinkDescriptor(src, dst, link, GraphsElementTypes.Edge_4008,
-                Edge8EditPart.VISUAL_ID));
+                    Edge8EditPart.VISUAL_ID));
         }
         return result;
     }
@@ -875,12 +875,12 @@ public class GraphsDiagramUpdater {
      * @generated
      */
     private static Collection<GraphsLinkDescriptor> getIncomingTypeModelFacetLinks_Edge_4001(
-        KNode target, Map<EObject, Collection<EStructuralFeature.Setting>> crossReferences) {
+            KNode target, Map<EObject, Collection<EStructuralFeature.Setting>> crossReferences) {
         LinkedList<GraphsLinkDescriptor> result = new LinkedList<GraphsLinkDescriptor>();
         Collection<EStructuralFeature.Setting> settings = crossReferences.get(target);
         for (EStructuralFeature.Setting setting : settings) {
             if (setting.getEStructuralFeature() != KGraphPackage.eINSTANCE.getKEdge_Target()
-                || false == setting.getEObject() instanceof Edge) {
+                    || false == setting.getEObject() instanceof Edge) {
                 continue;
             }
             Edge link = (Edge) setting.getEObject();
@@ -889,7 +889,7 @@ public class GraphsDiagramUpdater {
             }
             KNode src = link.getSource();
             result.add(new GraphsLinkDescriptor(src, target, link, GraphsElementTypes.Edge_4001,
-                EdgeEditPart.VISUAL_ID));
+                    EdgeEditPart.VISUAL_ID));
         }
         return result;
     }
@@ -898,12 +898,12 @@ public class GraphsDiagramUpdater {
      * @generated
      */
     private static Collection<GraphsLinkDescriptor> getIncomingTypeModelFacetLinks_Edge_4002(
-        KNode target, Map<EObject, Collection<EStructuralFeature.Setting>> crossReferences) {
+            KNode target, Map<EObject, Collection<EStructuralFeature.Setting>> crossReferences) {
         LinkedList<GraphsLinkDescriptor> result = new LinkedList<GraphsLinkDescriptor>();
         Collection<EStructuralFeature.Setting> settings = crossReferences.get(target);
         for (EStructuralFeature.Setting setting : settings) {
             if (setting.getEStructuralFeature() != KGraphPackage.eINSTANCE.getKEdge_Target()
-                || false == setting.getEObject() instanceof Edge) {
+                    || false == setting.getEObject() instanceof Edge) {
                 continue;
             }
             Edge link = (Edge) setting.getEObject();
@@ -912,7 +912,7 @@ public class GraphsDiagramUpdater {
             }
             KNode src = link.getSource();
             result.add(new GraphsLinkDescriptor(src, target, link, GraphsElementTypes.Edge_4002,
-                Edge2EditPart.VISUAL_ID));
+                    Edge2EditPart.VISUAL_ID));
         }
         return result;
     }
@@ -921,12 +921,12 @@ public class GraphsDiagramUpdater {
      * @generated
      */
     private static Collection<GraphsLinkDescriptor> getIncomingTypeModelFacetLinks_Edge_4003(
-        KPort target, Map<EObject, Collection<EStructuralFeature.Setting>> crossReferences) {
+            KPort target, Map<EObject, Collection<EStructuralFeature.Setting>> crossReferences) {
         LinkedList<GraphsLinkDescriptor> result = new LinkedList<GraphsLinkDescriptor>();
         Collection<EStructuralFeature.Setting> settings = crossReferences.get(target);
         for (EStructuralFeature.Setting setting : settings) {
             if (setting.getEStructuralFeature() != KGraphPackage.eINSTANCE.getKEdge_TargetPort()
-                || false == setting.getEObject() instanceof Edge) {
+                    || false == setting.getEObject() instanceof Edge) {
                 continue;
             }
             Edge link = (Edge) setting.getEObject();
@@ -935,7 +935,7 @@ public class GraphsDiagramUpdater {
             }
             KPort src = link.getSourcePort();
             result.add(new GraphsLinkDescriptor(src, target, link, GraphsElementTypes.Edge_4003,
-                Edge3EditPart.VISUAL_ID));
+                    Edge3EditPart.VISUAL_ID));
         }
         return result;
     }
@@ -944,12 +944,12 @@ public class GraphsDiagramUpdater {
      * @generated
      */
     private static Collection<GraphsLinkDescriptor> getIncomingTypeModelFacetLinks_Edge_4004(
-        KPort target, Map<EObject, Collection<EStructuralFeature.Setting>> crossReferences) {
+            KPort target, Map<EObject, Collection<EStructuralFeature.Setting>> crossReferences) {
         LinkedList<GraphsLinkDescriptor> result = new LinkedList<GraphsLinkDescriptor>();
         Collection<EStructuralFeature.Setting> settings = crossReferences.get(target);
         for (EStructuralFeature.Setting setting : settings) {
             if (setting.getEStructuralFeature() != KGraphPackage.eINSTANCE.getKEdge_TargetPort()
-                || false == setting.getEObject() instanceof Edge) {
+                    || false == setting.getEObject() instanceof Edge) {
                 continue;
             }
             Edge link = (Edge) setting.getEObject();
@@ -958,7 +958,7 @@ public class GraphsDiagramUpdater {
             }
             KPort src = link.getSourcePort();
             result.add(new GraphsLinkDescriptor(src, target, link, GraphsElementTypes.Edge_4004,
-                Edge4EditPart.VISUAL_ID));
+                    Edge4EditPart.VISUAL_ID));
         }
         return result;
     }
@@ -967,12 +967,12 @@ public class GraphsDiagramUpdater {
      * @generated
      */
     private static Collection<GraphsLinkDescriptor> getIncomingTypeModelFacetLinks_Edge_4005(
-        KNode target, Map<EObject, Collection<EStructuralFeature.Setting>> crossReferences) {
+            KNode target, Map<EObject, Collection<EStructuralFeature.Setting>> crossReferences) {
         LinkedList<GraphsLinkDescriptor> result = new LinkedList<GraphsLinkDescriptor>();
         Collection<EStructuralFeature.Setting> settings = crossReferences.get(target);
         for (EStructuralFeature.Setting setting : settings) {
             if (setting.getEStructuralFeature() != KGraphPackage.eINSTANCE.getKEdge_Target()
-                || false == setting.getEObject() instanceof Edge) {
+                    || false == setting.getEObject() instanceof Edge) {
                 continue;
             }
             Edge link = (Edge) setting.getEObject();
@@ -981,7 +981,7 @@ public class GraphsDiagramUpdater {
             }
             KPort src = link.getSourcePort();
             result.add(new GraphsLinkDescriptor(src, target, link, GraphsElementTypes.Edge_4005,
-                Edge5EditPart.VISUAL_ID));
+                    Edge5EditPart.VISUAL_ID));
         }
         return result;
     }
@@ -990,12 +990,12 @@ public class GraphsDiagramUpdater {
      * @generated
      */
     private static Collection<GraphsLinkDescriptor> getIncomingTypeModelFacetLinks_Edge_4006(
-        KNode target, Map<EObject, Collection<EStructuralFeature.Setting>> crossReferences) {
+            KNode target, Map<EObject, Collection<EStructuralFeature.Setting>> crossReferences) {
         LinkedList<GraphsLinkDescriptor> result = new LinkedList<GraphsLinkDescriptor>();
         Collection<EStructuralFeature.Setting> settings = crossReferences.get(target);
         for (EStructuralFeature.Setting setting : settings) {
             if (setting.getEStructuralFeature() != KGraphPackage.eINSTANCE.getKEdge_Target()
-                || false == setting.getEObject() instanceof Edge) {
+                    || false == setting.getEObject() instanceof Edge) {
                 continue;
             }
             Edge link = (Edge) setting.getEObject();
@@ -1004,7 +1004,7 @@ public class GraphsDiagramUpdater {
             }
             KPort src = link.getSourcePort();
             result.add(new GraphsLinkDescriptor(src, target, link, GraphsElementTypes.Edge_4006,
-                Edge6EditPart.VISUAL_ID));
+                    Edge6EditPart.VISUAL_ID));
         }
         return result;
     }
@@ -1013,12 +1013,12 @@ public class GraphsDiagramUpdater {
      * @generated
      */
     private static Collection<GraphsLinkDescriptor> getIncomingTypeModelFacetLinks_Edge_4007(
-        KPort target, Map<EObject, Collection<EStructuralFeature.Setting>> crossReferences) {
+            KPort target, Map<EObject, Collection<EStructuralFeature.Setting>> crossReferences) {
         LinkedList<GraphsLinkDescriptor> result = new LinkedList<GraphsLinkDescriptor>();
         Collection<EStructuralFeature.Setting> settings = crossReferences.get(target);
         for (EStructuralFeature.Setting setting : settings) {
             if (setting.getEStructuralFeature() != KGraphPackage.eINSTANCE.getKEdge_TargetPort()
-                || false == setting.getEObject() instanceof Edge) {
+                    || false == setting.getEObject() instanceof Edge) {
                 continue;
             }
             Edge link = (Edge) setting.getEObject();
@@ -1027,7 +1027,7 @@ public class GraphsDiagramUpdater {
             }
             KNode src = link.getSource();
             result.add(new GraphsLinkDescriptor(src, target, link, GraphsElementTypes.Edge_4007,
-                Edge7EditPart.VISUAL_ID));
+                    Edge7EditPart.VISUAL_ID));
         }
         return result;
     }
@@ -1036,12 +1036,12 @@ public class GraphsDiagramUpdater {
      * @generated
      */
     private static Collection<GraphsLinkDescriptor> getIncomingTypeModelFacetLinks_Edge_4008(
-        KPort target, Map<EObject, Collection<EStructuralFeature.Setting>> crossReferences) {
+            KPort target, Map<EObject, Collection<EStructuralFeature.Setting>> crossReferences) {
         LinkedList<GraphsLinkDescriptor> result = new LinkedList<GraphsLinkDescriptor>();
         Collection<EStructuralFeature.Setting> settings = crossReferences.get(target);
         for (EStructuralFeature.Setting setting : settings) {
             if (setting.getEStructuralFeature() != KGraphPackage.eINSTANCE.getKEdge_TargetPort()
-                || false == setting.getEObject() instanceof Edge) {
+                    || false == setting.getEObject() instanceof Edge) {
                 continue;
             }
             Edge link = (Edge) setting.getEObject();
@@ -1050,7 +1050,7 @@ public class GraphsDiagramUpdater {
             }
             KNode src = link.getSource();
             result.add(new GraphsLinkDescriptor(src, target, link, GraphsElementTypes.Edge_4008,
-                Edge8EditPart.VISUAL_ID));
+                    Edge8EditPart.VISUAL_ID));
         }
         return result;
     }
@@ -1058,14 +1058,13 @@ public class GraphsDiagramUpdater {
     /**
      * @generated
      */
-    private static Collection<GraphsLinkDescriptor> getOutgoingTypeModelFacetLinks_Edge_4001(
-        KNode source) {
+    private static Collection<GraphsLinkDescriptor> getOutgoingTypeModelFacetLinks_Edge_4001(KNode source) {
         KNode container = null;
         // Find container element for the link.
         // Climb up by containment hierarchy starting from the source
         // and return the first element that is instance of the container class.
         for (EObject element = source; element != null && container == null; element = element
-            .eContainer()) {
+                .eContainer()) {
             if (element instanceof KNode) {
                 container = (KNode) element;
             }
@@ -1089,7 +1088,7 @@ public class GraphsDiagramUpdater {
                 continue;
             }
             result.add(new GraphsLinkDescriptor(src, dst, link, GraphsElementTypes.Edge_4001,
-                EdgeEditPart.VISUAL_ID));
+                    EdgeEditPart.VISUAL_ID));
         }
         return result;
     }
@@ -1097,14 +1096,13 @@ public class GraphsDiagramUpdater {
     /**
      * @generated
      */
-    private static Collection<GraphsLinkDescriptor> getOutgoingTypeModelFacetLinks_Edge_4002(
-        KNode source) {
+    private static Collection<GraphsLinkDescriptor> getOutgoingTypeModelFacetLinks_Edge_4002(KNode source) {
         KNode container = null;
         // Find container element for the link.
         // Climb up by containment hierarchy starting from the source
         // and return the first element that is instance of the container class.
         for (EObject element = source; element != null && container == null; element = element
-            .eContainer()) {
+                .eContainer()) {
             if (element instanceof KNode) {
                 container = (KNode) element;
             }
@@ -1128,7 +1126,7 @@ public class GraphsDiagramUpdater {
                 continue;
             }
             result.add(new GraphsLinkDescriptor(src, dst, link, GraphsElementTypes.Edge_4002,
-                Edge2EditPart.VISUAL_ID));
+                    Edge2EditPart.VISUAL_ID));
         }
         return result;
     }
@@ -1136,14 +1134,13 @@ public class GraphsDiagramUpdater {
     /**
      * @generated
      */
-    private static Collection<GraphsLinkDescriptor> getOutgoingTypeModelFacetLinks_Edge_4003(
-        KPort source) {
+    private static Collection<GraphsLinkDescriptor> getOutgoingTypeModelFacetLinks_Edge_4003(KPort source) {
         KNode container = null;
         // Find container element for the link.
         // Climb up by containment hierarchy starting from the source
         // and return the first element that is instance of the container class.
         for (EObject element = source; element != null && container == null; element = element
-            .eContainer()) {
+                .eContainer()) {
             if (element instanceof KNode) {
                 container = (KNode) element;
             }
@@ -1167,7 +1164,7 @@ public class GraphsDiagramUpdater {
                 continue;
             }
             result.add(new GraphsLinkDescriptor(src, dst, link, GraphsElementTypes.Edge_4003,
-                Edge3EditPart.VISUAL_ID));
+                    Edge3EditPart.VISUAL_ID));
         }
         return result;
     }
@@ -1175,14 +1172,13 @@ public class GraphsDiagramUpdater {
     /**
      * @generated
      */
-    private static Collection<GraphsLinkDescriptor> getOutgoingTypeModelFacetLinks_Edge_4004(
-        KPort source) {
+    private static Collection<GraphsLinkDescriptor> getOutgoingTypeModelFacetLinks_Edge_4004(KPort source) {
         KNode container = null;
         // Find container element for the link.
         // Climb up by containment hierarchy starting from the source
         // and return the first element that is instance of the container class.
         for (EObject element = source; element != null && container == null; element = element
-            .eContainer()) {
+                .eContainer()) {
             if (element instanceof KNode) {
                 container = (KNode) element;
             }
@@ -1206,7 +1202,7 @@ public class GraphsDiagramUpdater {
                 continue;
             }
             result.add(new GraphsLinkDescriptor(src, dst, link, GraphsElementTypes.Edge_4004,
-                Edge4EditPart.VISUAL_ID));
+                    Edge4EditPart.VISUAL_ID));
         }
         return result;
     }
@@ -1214,14 +1210,13 @@ public class GraphsDiagramUpdater {
     /**
      * @generated
      */
-    private static Collection<GraphsLinkDescriptor> getOutgoingTypeModelFacetLinks_Edge_4005(
-        KPort source) {
+    private static Collection<GraphsLinkDescriptor> getOutgoingTypeModelFacetLinks_Edge_4005(KPort source) {
         KNode container = null;
         // Find container element for the link.
         // Climb up by containment hierarchy starting from the source
         // and return the first element that is instance of the container class.
         for (EObject element = source; element != null && container == null; element = element
-            .eContainer()) {
+                .eContainer()) {
             if (element instanceof KNode) {
                 container = (KNode) element;
             }
@@ -1245,7 +1240,7 @@ public class GraphsDiagramUpdater {
                 continue;
             }
             result.add(new GraphsLinkDescriptor(src, dst, link, GraphsElementTypes.Edge_4005,
-                Edge5EditPart.VISUAL_ID));
+                    Edge5EditPart.VISUAL_ID));
         }
         return result;
     }
@@ -1253,14 +1248,13 @@ public class GraphsDiagramUpdater {
     /**
      * @generated
      */
-    private static Collection<GraphsLinkDescriptor> getOutgoingTypeModelFacetLinks_Edge_4006(
-        KPort source) {
+    private static Collection<GraphsLinkDescriptor> getOutgoingTypeModelFacetLinks_Edge_4006(KPort source) {
         KNode container = null;
         // Find container element for the link.
         // Climb up by containment hierarchy starting from the source
         // and return the first element that is instance of the container class.
         for (EObject element = source; element != null && container == null; element = element
-            .eContainer()) {
+                .eContainer()) {
             if (element instanceof KNode) {
                 container = (KNode) element;
             }
@@ -1284,7 +1278,7 @@ public class GraphsDiagramUpdater {
                 continue;
             }
             result.add(new GraphsLinkDescriptor(src, dst, link, GraphsElementTypes.Edge_4006,
-                Edge6EditPart.VISUAL_ID));
+                    Edge6EditPart.VISUAL_ID));
         }
         return result;
     }
@@ -1292,14 +1286,13 @@ public class GraphsDiagramUpdater {
     /**
      * @generated
      */
-    private static Collection<GraphsLinkDescriptor> getOutgoingTypeModelFacetLinks_Edge_4007(
-        KNode source) {
+    private static Collection<GraphsLinkDescriptor> getOutgoingTypeModelFacetLinks_Edge_4007(KNode source) {
         KNode container = null;
         // Find container element for the link.
         // Climb up by containment hierarchy starting from the source
         // and return the first element that is instance of the container class.
         for (EObject element = source; element != null && container == null; element = element
-            .eContainer()) {
+                .eContainer()) {
             if (element instanceof KNode) {
                 container = (KNode) element;
             }
@@ -1323,7 +1316,7 @@ public class GraphsDiagramUpdater {
                 continue;
             }
             result.add(new GraphsLinkDescriptor(src, dst, link, GraphsElementTypes.Edge_4007,
-                Edge7EditPart.VISUAL_ID));
+                    Edge7EditPart.VISUAL_ID));
         }
         return result;
     }
@@ -1331,14 +1324,13 @@ public class GraphsDiagramUpdater {
     /**
      * @generated
      */
-    private static Collection<GraphsLinkDescriptor> getOutgoingTypeModelFacetLinks_Edge_4008(
-        KNode source) {
+    private static Collection<GraphsLinkDescriptor> getOutgoingTypeModelFacetLinks_Edge_4008(KNode source) {
         KNode container = null;
         // Find container element for the link.
         // Climb up by containment hierarchy starting from the source
         // and return the first element that is instance of the container class.
         for (EObject element = source; element != null && container == null; element = element
-            .eContainer()) {
+                .eContainer()) {
             if (element instanceof KNode) {
                 container = (KNode) element;
             }
@@ -1362,7 +1354,7 @@ public class GraphsDiagramUpdater {
                 continue;
             }
             result.add(new GraphsLinkDescriptor(src, dst, link, GraphsElementTypes.Edge_4008,
-                Edge8EditPart.VISUAL_ID));
+                    Edge8EditPart.VISUAL_ID));
         }
         return result;
     }

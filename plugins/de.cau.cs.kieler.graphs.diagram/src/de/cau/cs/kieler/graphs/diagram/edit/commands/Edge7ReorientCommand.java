@@ -72,7 +72,7 @@ public class Edge7ReorientCommand extends EditElementCommand {
         }
         KNode container = (KNode) getLink().eContainer();
         return GraphsBaseItemSemanticEditPolicy.getLinkConstraints().canExistEdge_4007(container,
-            getLink(), getNewSource(), target);
+                getLink(), getNewSource(), target);
     }
 
     /**
@@ -88,14 +88,14 @@ public class Edge7ReorientCommand extends EditElementCommand {
         }
         KNode container = (KNode) getLink().eContainer();
         return GraphsBaseItemSemanticEditPolicy.getLinkConstraints().canExistEdge_4007(container,
-            getLink(), source, getNewTarget());
+                getLink(), source, getNewTarget());
     }
 
     /**
      * @generated
      */
     protected CommandResult doExecuteWithResult(IProgressMonitor monitor, IAdaptable info)
-        throws ExecutionException {
+            throws ExecutionException {
         if (!canExecute()) {
             throw new ExecutionException("Invalid arguments in reorient link command"); //$NON-NLS-1$
         }

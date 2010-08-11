@@ -45,11 +45,10 @@ public class GraphsOCLFactory {
      * @generated
      */
     public static GraphsAbstractExpression getExpression(int index, EClassifier context,
-        Map<String, EClassifier> environment) {
+            Map<String, EClassifier> environment) {
         GraphsOCLFactory cached = GraphsDiagramEditorPlugin.getInstance().getGraphsOCLFactory();
         if (cached == null) {
-            GraphsDiagramEditorPlugin.getInstance().setGraphsOCLFactory(
-                cached = new GraphsOCLFactory());
+            GraphsDiagramEditorPlugin.getInstance().setGraphsOCLFactory(cached = new GraphsOCLFactory());
         }
         if (index < 0 || index >= cached.expressions.length) {
             throw new IllegalArgumentException();
@@ -81,7 +80,7 @@ public class GraphsOCLFactory {
                     "graphs::EdgeType::Node2Port", //$NON-NLS-1$
             };
             cached.expressions[index] = getExpression(exprBodies[index], context,
-                environment == null ? Collections.<String, EClassifier> emptyMap() : environment);
+                    environment == null ? Collections.<String, EClassifier> emptyMap() : environment);
         }
         return cached.expressions[index];
     }
@@ -90,7 +89,7 @@ public class GraphsOCLFactory {
      * @generated
      */
     public static GraphsAbstractExpression getExpression(String body, EClassifier context,
-        Map<String, EClassifier> environment) {
+            Map<String, EClassifier> environment) {
         return new Expression(body, context, environment);
     }
 
@@ -160,11 +159,11 @@ public class GraphsOCLFactory {
          * @generated
          */
         private static void initCustomEnv(
-            Environment<?, EClassifier, ?, ?, ?, EParameter, ?, ?, ?, ?, ?, ?> ecoreEnv,
-            Map<String, EClassifier> environment) {
+                Environment<?, EClassifier, ?, ?, ?, EParameter, ?, ?, ?, ?, ?, ?> ecoreEnv,
+                Map<String, EClassifier> environment) {
             // Use EObject as implicit root class for any object, to allow eContainer() and other EObject operations from OCL expressions
             ParsingOptions.setOption(ecoreEnv, ParsingOptions.implicitRootClass(ecoreEnv),
-                EcorePackage.eINSTANCE.getEObject());
+                    EcorePackage.eINSTANCE.getEObject());
             for (String varName : environment.keySet()) {
                 EClassifier varType = environment.get(varName);
                 ecoreEnv.addElement(varName, createVar(ecoreEnv, varName, varType), false);
@@ -175,8 +174,8 @@ public class GraphsOCLFactory {
          * @generated
          */
         private static org.eclipse.ocl.ecore.Variable createVar(
-            Environment<?, EClassifier, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> ecoreEnv, String name,
-            EClassifier type) {
+                Environment<?, EClassifier, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> ecoreEnv, String name,
+                EClassifier type) {
             org.eclipse.ocl.ecore.Variable var = EcoreFactory.eINSTANCE.createVariable();
             var.setName(name);
             var.setType(ecoreEnv.getUMLReflection().getOCLType(type));

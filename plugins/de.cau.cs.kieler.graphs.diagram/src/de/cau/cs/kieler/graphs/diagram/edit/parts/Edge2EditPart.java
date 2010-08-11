@@ -16,7 +16,7 @@ import de.cau.cs.kieler.graphs.diagram.part.GraphsDiagramEditorPlugin;
  * @generated
  */
 public class Edge2EditPart extends ConnectionNodeEditPart implements GraphsConnection,
-    ITreeBranchEditPart {
+        ITreeBranchEditPart {
 
     /**
      * @generated
@@ -52,7 +52,7 @@ public class Edge2EditPart extends ConnectionNodeEditPart implements GraphsConne
 
         if (figure instanceof SplineConnection) {
             ((SplineConnection) figure).setSplineMode(GraphsDiagramEditorPlugin.getInstance()
-                .getPreferenceStore().getInt(SplineConnection.PREF_SPLINE_MODE));
+                    .getPreferenceStore().getInt(SplineConnection.PREF_SPLINE_MODE));
         }
         return figure;
     }
@@ -75,25 +75,6 @@ public class Edge2EditPart extends ConnectionNodeEditPart implements GraphsConne
         public UndirectedEdgeFigure() {
 
             this.setForegroundColor(ColorConstants.black);
-        }
-
-        /**
-         * @generated
-         */
-        private boolean myUseLocalCoordinates = false;
-
-        /**
-         * @generated
-         */
-        protected boolean useLocalCoordinates() {
-            return myUseLocalCoordinates;
-        }
-
-        /**
-         * @generated
-         */
-        protected void setUseLocalCoordinates(boolean useLocalCoordinates) {
-            myUseLocalCoordinates = useLocalCoordinates;
         }
 
     }

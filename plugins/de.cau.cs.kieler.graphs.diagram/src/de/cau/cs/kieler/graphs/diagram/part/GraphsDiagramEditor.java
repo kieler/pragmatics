@@ -103,7 +103,7 @@ public class GraphsDiagramEditor extends DiagramDocumentEditor implements IGotoM
         if (type == IShowInTargetList.class) {
             return new IShowInTargetList() {
                 public String[] getShowInTargetIds() {
-                    return new String[] { ProjectExplorer.VIEW_ID };
+                    return new String[] {ProjectExplorer.VIEW_ID};
                 }
             };
         }
@@ -125,7 +125,7 @@ public class GraphsDiagramEditor extends DiagramDocumentEditor implements IGotoM
      */
     public TransactionalEditingDomain getEditingDomain() {
         IDocument document = getEditorInput() != null ? getDocumentProvider().getDocument(
-            getEditorInput()) : null;
+                getEditorInput()) : null;
         if (document instanceof IDiagramDocument) {
             return ((IDiagramDocument) document).getEditingDomain();
         }
@@ -171,8 +171,7 @@ public class GraphsDiagramEditor extends DiagramDocumentEditor implements IGotoM
         Shell shell = getSite().getShell();
         IEditorInput input = getEditorInput();
         SaveAsDialog dialog = new SaveAsDialog(shell);
-        IFile original = input instanceof IFileEditorInput ? ((IFileEditorInput) input).getFile()
-            : null;
+        IFile original = input instanceof IFileEditorInput ? ((IFileEditorInput) input).getFile() : null;
         if (original != null) {
             dialog.setOriginalFile(original);
         }
@@ -183,8 +182,8 @@ public class GraphsDiagramEditor extends DiagramDocumentEditor implements IGotoM
             return;
         }
         if (provider.isDeleted(input) && original != null) {
-            String message = NLS.bind(Messages.GraphsDiagramEditor_SavingDeletedFile,
-                original.getName());
+            String message = NLS
+                    .bind(Messages.GraphsDiagramEditor_SavingDeletedFile, original.getName());
             dialog.setErrorMessage(null);
             dialog.setMessage(message, IMessageProvider.WARNING);
         }
@@ -205,14 +204,13 @@ public class GraphsDiagramEditor extends DiagramDocumentEditor implements IGotoM
         IFile file = workspaceRoot.getFile(filePath);
         final IEditorInput newInput = new FileEditorInput(file);
         // Check if the editor is already open
-        IEditorMatchingStrategy matchingStrategy = getEditorDescriptor()
-            .getEditorMatchingStrategy();
+        IEditorMatchingStrategy matchingStrategy = getEditorDescriptor().getEditorMatchingStrategy();
         IEditorReference[] editorRefs = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-            .getActivePage().getEditorReferences();
+                .getActivePage().getEditorReferences();
         for (int i = 0; i < editorRefs.length; i++) {
             if (matchingStrategy.matches(editorRefs[i], newInput)) {
                 MessageDialog.openWarning(shell, Messages.GraphsDiagramEditor_SaveAsErrorTitle,
-                    Messages.GraphsDiagramEditor_SaveAsErrorMessage);
+                        Messages.GraphsDiagramEditor_SaveAsErrorMessage);
                 return;
             }
         }
@@ -220,13 +218,13 @@ public class GraphsDiagramEditor extends DiagramDocumentEditor implements IGotoM
         try {
             provider.aboutToChange(newInput);
             getDocumentProvider(newInput).saveDocument(progressMonitor, newInput,
-                getDocumentProvider().getDocument(getEditorInput()), true);
+                    getDocumentProvider().getDocument(getEditorInput()), true);
             success = true;
         } catch (CoreException x) {
             IStatus status = x.getStatus();
             if (status == null || status.getSeverity() != IStatus.CANCEL) {
                 ErrorDialog.openError(shell, Messages.GraphsDiagramEditor_SaveErrorTitle,
-                    Messages.GraphsDiagramEditor_SaveErrorMessage, x.getStatus());
+                        Messages.GraphsDiagramEditor_SaveErrorMessage, x.getStatus());
             }
         } finally {
             provider.changed(newInput);
@@ -269,10 +267,10 @@ public class GraphsDiagramEditor extends DiagramDocumentEditor implements IGotoM
     protected void configureGraphicalViewer() {
         super.configureGraphicalViewer();
         DiagramEditorContextMenuProvider provider = new DiagramEditorContextMenuProvider(this,
-            getDiagramGraphicalViewer());
+                getDiagramGraphicalViewer());
         getDiagramGraphicalViewer().setContextMenu(provider);
         getSite().registerContextMenu(ActionIds.DIAGRAM_EDITOR_CONTEXT_MENU, provider,
-            getDiagramGraphicalViewer());
+                getDiagramGraphicalViewer());
     }
 
 }

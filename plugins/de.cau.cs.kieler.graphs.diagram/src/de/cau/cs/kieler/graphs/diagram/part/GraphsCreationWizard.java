@@ -92,7 +92,7 @@ public class GraphsCreationWizard extends Wizard implements INewWizard {
         this.selection = selection;
         setWindowTitle(Messages.GraphsCreationWizardTitle);
         setDefaultPageImageDescriptor(GraphsDiagramEditorPlugin
-            .getBundledImageDescriptor("icons/wizban/NewGraphsWizard.gif")); //$NON-NLS-1$
+                .getBundledImageDescriptor("icons/wizban/NewGraphsWizard.gif")); //$NON-NLS-1$
         setNeedsProgressMonitor(true);
     }
 
@@ -101,28 +101,26 @@ public class GraphsCreationWizard extends Wizard implements INewWizard {
      */
     public void addPages() {
         diagramModelFilePage = new GraphsCreationWizardPage(
-            "DiagramModelFile", getSelection(), "graphdiag"); //$NON-NLS-1$ //$NON-NLS-2$
+                "DiagramModelFile", getSelection(), "graphdiag"); //$NON-NLS-1$ //$NON-NLS-2$
         diagramModelFilePage.setTitle(Messages.GraphsCreationWizard_DiagramModelFilePageTitle);
         diagramModelFilePage
-            .setDescription(Messages.GraphsCreationWizard_DiagramModelFilePageDescription);
+                .setDescription(Messages.GraphsCreationWizard_DiagramModelFilePageDescription);
         addPage(diagramModelFilePage);
 
-        domainModelFilePage = new GraphsCreationWizardPage(
-            "DomainModelFile", getSelection(), "graph") { //$NON-NLS-1$ //$NON-NLS-2$
+        domainModelFilePage = new GraphsCreationWizardPage("DomainModelFile", getSelection(), "graph") { //$NON-NLS-1$ //$NON-NLS-2$
 
             public void setVisible(boolean visible) {
                 if (visible) {
                     String fileName = diagramModelFilePage.getFileName();
                     fileName = fileName.substring(0, fileName.length() - ".graphdiag".length()); //$NON-NLS-1$
                     setFileName(GraphsDiagramEditorUtil.getUniqueFileName(getContainerFullPath(),
-                        fileName, "graph")); //$NON-NLS-1$
+                            fileName, "graph")); //$NON-NLS-1$
                 }
                 super.setVisible(visible);
             }
         };
         domainModelFilePage.setTitle(Messages.GraphsCreationWizard_DomainModelFilePageTitle);
-        domainModelFilePage
-            .setDescription(Messages.GraphsCreationWizard_DomainModelFilePageDescription);
+        domainModelFilePage.setDescription(Messages.GraphsCreationWizard_DomainModelFilePageDescription);
         addPage(domainModelFilePage);
     }
 
@@ -132,16 +130,15 @@ public class GraphsCreationWizard extends Wizard implements INewWizard {
     public boolean performFinish() {
         IRunnableWithProgress op = new WorkspaceModifyOperation(null) {
 
-            protected void execute(IProgressMonitor monitor) throws CoreException,
-                InterruptedException {
+            protected void execute(IProgressMonitor monitor) throws CoreException, InterruptedException {
                 diagram = GraphsDiagramEditorUtil.createDiagram(diagramModelFilePage.getURI(),
-                    domainModelFilePage.getURI(), monitor);
+                        domainModelFilePage.getURI(), monitor);
                 if (isOpenNewlyCreatedDiagramEditor() && diagram != null) {
                     try {
                         GraphsDiagramEditorUtil.openDiagram(diagram);
                     } catch (PartInitException e) {
                         ErrorDialog.openError(getContainer().getShell(),
-                            Messages.GraphsCreationWizardOpenEditorError, null, e.getStatus());
+                                Messages.GraphsCreationWizardOpenEditorError, null, e.getStatus());
                     }
                 }
             }
@@ -153,11 +150,11 @@ public class GraphsCreationWizard extends Wizard implements INewWizard {
         } catch (InvocationTargetException e) {
             if (e.getTargetException() instanceof CoreException) {
                 ErrorDialog.openError(getContainer().getShell(),
-                    Messages.GraphsCreationWizardCreationError, null,
-                    ((CoreException) e.getTargetException()).getStatus());
+                        Messages.GraphsCreationWizardCreationError, null,
+                        ((CoreException) e.getTargetException()).getStatus());
             } else {
                 GraphsDiagramEditorPlugin.getInstance().logError(
-                    "Error creating diagram", e.getTargetException()); //$NON-NLS-1$
+                        "Error creating diagram", e.getTargetException()); //$NON-NLS-1$
             }
             return false;
         }

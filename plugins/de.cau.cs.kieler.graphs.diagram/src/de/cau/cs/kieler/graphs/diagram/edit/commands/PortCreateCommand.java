@@ -52,7 +52,7 @@ public class PortCreateCommand extends EditElementCommand {
      * @generated
      */
     protected CommandResult doExecuteWithResult(IProgressMonitor monitor, IAdaptable info)
-        throws ExecutionException {
+            throws ExecutionException {
         Port newElement = GraphsFactory.eINSTANCE.createPort();
 
         KNode owner = (KNode) getElementToEdit();
@@ -68,10 +68,10 @@ public class PortCreateCommand extends EditElementCommand {
      * @generated
      */
     protected void doConfigure(Port newElement, IProgressMonitor monitor, IAdaptable info)
-        throws ExecutionException {
+            throws ExecutionException {
         IElementType elementType = ((CreateElementRequest) getRequest()).getElementType();
         ConfigureRequest configureRequest = new ConfigureRequest(getEditingDomain(), newElement,
-            elementType);
+                elementType);
         configureRequest.setClientContext(((CreateElementRequest) getRequest()).getClientContext());
         configureRequest.addParameters(getRequest().getParameters());
         ICommand configureCommand = elementType.getEditCommand(configureRequest);

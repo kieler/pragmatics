@@ -52,7 +52,7 @@ public class GraphsPaletteFactory {
         types.add(GraphsElementTypes.Node_2001);
         types.add(GraphsElementTypes.Node_3001);
         NodeToolEntry entry = new NodeToolEntry(Messages.Node1CreationTool_title,
-            Messages.Node1CreationTool_desc, types);
+                Messages.Node1CreationTool_desc, types);
         entry.setId("createNode1CreationTool"); //$NON-NLS-1$
         entry.setSmallIcon(GraphsElementTypes.getImageDescriptor(GraphsElementTypes.Node_2001));
         entry.setLargeIcon(entry.getSmallIcon());
@@ -69,7 +69,7 @@ public class GraphsPaletteFactory {
         types.add(GraphsElementTypes.Edge_4005);
         types.add(GraphsElementTypes.Edge_4007);
         LinkToolEntry entry = new LinkToolEntry(Messages.DirectedEdge2CreationTool_title,
-            Messages.DirectedEdge2CreationTool_desc, types);
+                Messages.DirectedEdge2CreationTool_desc, types);
         entry.setId("createDirectedEdge2CreationTool"); //$NON-NLS-1$
         entry.setSmallIcon(GraphsElementTypes.getImageDescriptor(GraphsElementTypes.Edge_4001));
         entry.setLargeIcon(entry.getSmallIcon());
@@ -86,7 +86,7 @@ public class GraphsPaletteFactory {
         types.add(GraphsElementTypes.Edge_4006);
         types.add(GraphsElementTypes.Edge_4008);
         LinkToolEntry entry = new LinkToolEntry(Messages.UndirectedEdge3CreationTool_title,
-            Messages.UndirectedEdge3CreationTool_desc, types);
+                Messages.UndirectedEdge3CreationTool_desc, types);
         entry.setId("createUndirectedEdge3CreationTool"); //$NON-NLS-1$
         entry.setSmallIcon(GraphsElementTypes.getImageDescriptor(GraphsElementTypes.Edge_4002));
         entry.setLargeIcon(entry.getSmallIcon());
@@ -98,8 +98,7 @@ public class GraphsPaletteFactory {
      */
     private ToolEntry createPort5CreationTool() {
         NodeToolEntry entry = new NodeToolEntry(Messages.Port5CreationTool_title,
-            Messages.Port5CreationTool_desc,
-            Collections.singletonList(GraphsElementTypes.Port_3002));
+                Messages.Port5CreationTool_desc, Collections.singletonList(GraphsElementTypes.Port_3002));
         entry.setId("createPort5CreationTool"); //$NON-NLS-1$
         entry.setSmallIcon(GraphsElementTypes.getImageDescriptor(GraphsElementTypes.Port_3002));
         entry.setLargeIcon(entry.getSmallIcon());
@@ -114,7 +113,7 @@ public class GraphsPaletteFactory {
         types.add(GraphsElementTypes.Node_3003);
         types.add(GraphsElementTypes.Node_2002);
         NodeToolEntry entry = new NodeToolEntry(Messages.Hypernode6CreationTool_title,
-            Messages.Hypernode6CreationTool_desc, types);
+                Messages.Hypernode6CreationTool_desc, types);
         entry.setId("createHypernode6CreationTool"); //$NON-NLS-1$
         entry.setSmallIcon(GraphsElementTypes.getImageDescriptor(GraphsElementTypes.Node_3003));
         entry.setLargeIcon(entry.getSmallIcon());

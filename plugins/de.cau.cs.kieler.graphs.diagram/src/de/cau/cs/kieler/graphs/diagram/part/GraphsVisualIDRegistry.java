@@ -97,8 +97,7 @@ public class GraphsVisualIDRegistry {
                 return -1;
             }
         }
-        return de.cau.cs.kieler.graphs.diagram.part.GraphsVisualIDRegistry.getVisualID(view
-            .getType());
+        return de.cau.cs.kieler.graphs.diagram.part.GraphsVisualIDRegistry.getVisualID(view.getType());
     }
 
     /**
@@ -125,7 +124,7 @@ public class GraphsVisualIDRegistry {
         } catch (NumberFormatException e) {
             if (Boolean.TRUE.toString().equalsIgnoreCase(Platform.getDebugOption(DEBUG_KEY))) {
                 GraphsDiagramEditorPlugin.getInstance().logError(
-                    "Unable to parse view type as a visualID number: " + type);
+                        "Unable to parse view type as a visualID number: " + type);
             }
         }
         return -1;
@@ -146,7 +145,7 @@ public class GraphsVisualIDRegistry {
             return -1;
         }
         if (GraphsPackage.eINSTANCE.getNode().isSuperTypeOf(domainElement.eClass())
-            && isDiagram((Node) domainElement)) {
+                && isDiagram((Node) domainElement)) {
             return NodeEditPart.VISUAL_ID;
         }
         return -1;
@@ -160,14 +159,14 @@ public class GraphsVisualIDRegistry {
             return -1;
         }
         String containerModelID = de.cau.cs.kieler.graphs.diagram.part.GraphsVisualIDRegistry
-            .getModelID(containerView);
+                .getModelID(containerView);
         if (!NodeEditPart.MODEL_ID.equals(containerModelID)) {
             return -1;
         }
         int containerVisualID;
         if (NodeEditPart.MODEL_ID.equals(containerModelID)) {
             containerVisualID = de.cau.cs.kieler.graphs.diagram.part.GraphsVisualIDRegistry
-                .getVisualID(containerView);
+                    .getVisualID(containerView);
         } else {
             if (containerView instanceof Diagram) {
                 containerVisualID = NodeEditPart.VISUAL_ID;
@@ -178,43 +177,43 @@ public class GraphsVisualIDRegistry {
         switch (containerVisualID) {
         case NodeEditPart.VISUAL_ID:
             if (GraphsPackage.eINSTANCE.getNode().isSuperTypeOf(domainElement.eClass())
-                && isNode_2001((Node) domainElement)) {
+                    && isNode_2001((Node) domainElement)) {
                 return Node2EditPart.VISUAL_ID;
             }
             if (GraphsPackage.eINSTANCE.getNode().isSuperTypeOf(domainElement.eClass())
-                && isNode_2002((Node) domainElement)) {
+                    && isNode_2002((Node) domainElement)) {
                 return Node3EditPart.VISUAL_ID;
             }
             break;
         case Node2EditPart.VISUAL_ID:
             if (GraphsPackage.eINSTANCE.getPort().isSuperTypeOf(domainElement.eClass())
-                && isPort_3002((Port) domainElement)) {
+                    && isPort_3002((Port) domainElement)) {
                 return PortEditPart.VISUAL_ID;
             }
             break;
         case Node4EditPart.VISUAL_ID:
             if (GraphsPackage.eINSTANCE.getPort().isSuperTypeOf(domainElement.eClass())
-                && isPort_3002((Port) domainElement)) {
+                    && isPort_3002((Port) domainElement)) {
                 return PortEditPart.VISUAL_ID;
             }
             break;
         case NodeNodeCompartmentEditPart.VISUAL_ID:
             if (GraphsPackage.eINSTANCE.getNode().isSuperTypeOf(domainElement.eClass())
-                && isNode_3001((Node) domainElement)) {
+                    && isNode_3001((Node) domainElement)) {
                 return Node4EditPart.VISUAL_ID;
             }
             if (GraphsPackage.eINSTANCE.getNode().isSuperTypeOf(domainElement.eClass())
-                && isNode_3003((Node) domainElement)) {
+                    && isNode_3003((Node) domainElement)) {
                 return Node5EditPart.VISUAL_ID;
             }
             break;
         case NodeNodeCompartment2EditPart.VISUAL_ID:
             if (GraphsPackage.eINSTANCE.getNode().isSuperTypeOf(domainElement.eClass())
-                && isNode_3001((Node) domainElement)) {
+                    && isNode_3001((Node) domainElement)) {
                 return Node4EditPart.VISUAL_ID;
             }
             if (GraphsPackage.eINSTANCE.getNode().isSuperTypeOf(domainElement.eClass())
-                && isNode_3003((Node) domainElement)) {
+                    && isNode_3003((Node) domainElement)) {
                 return Node5EditPart.VISUAL_ID;
             }
             break;
@@ -227,14 +226,14 @@ public class GraphsVisualIDRegistry {
      */
     public static boolean canCreateNode(View containerView, int nodeVisualID) {
         String containerModelID = de.cau.cs.kieler.graphs.diagram.part.GraphsVisualIDRegistry
-            .getModelID(containerView);
+                .getModelID(containerView);
         if (!NodeEditPart.MODEL_ID.equals(containerModelID)) {
             return false;
         }
         int containerVisualID;
         if (NodeEditPart.MODEL_ID.equals(containerModelID)) {
             containerVisualID = de.cau.cs.kieler.graphs.diagram.part.GraphsVisualIDRegistry
-                .getVisualID(containerView);
+                    .getVisualID(containerView);
         } else {
             if (containerView instanceof Diagram) {
                 containerVisualID = NodeEditPart.VISUAL_ID;
@@ -442,35 +441,35 @@ public class GraphsVisualIDRegistry {
             return -1;
         }
         if (GraphsPackage.eINSTANCE.getEdge().isSuperTypeOf(domainElement.eClass())
-            && isEdge_4001((Edge) domainElement)) {
+                && isEdge_4001((Edge) domainElement)) {
             return EdgeEditPart.VISUAL_ID;
         }
         if (GraphsPackage.eINSTANCE.getEdge().isSuperTypeOf(domainElement.eClass())
-            && isEdge_4002((Edge) domainElement)) {
+                && isEdge_4002((Edge) domainElement)) {
             return Edge2EditPart.VISUAL_ID;
         }
         if (GraphsPackage.eINSTANCE.getEdge().isSuperTypeOf(domainElement.eClass())
-            && isEdge_4003((Edge) domainElement)) {
+                && isEdge_4003((Edge) domainElement)) {
             return Edge3EditPart.VISUAL_ID;
         }
         if (GraphsPackage.eINSTANCE.getEdge().isSuperTypeOf(domainElement.eClass())
-            && isEdge_4004((Edge) domainElement)) {
+                && isEdge_4004((Edge) domainElement)) {
             return Edge4EditPart.VISUAL_ID;
         }
         if (GraphsPackage.eINSTANCE.getEdge().isSuperTypeOf(domainElement.eClass())
-            && isEdge_4005((Edge) domainElement)) {
+                && isEdge_4005((Edge) domainElement)) {
             return Edge5EditPart.VISUAL_ID;
         }
         if (GraphsPackage.eINSTANCE.getEdge().isSuperTypeOf(domainElement.eClass())
-            && isEdge_4006((Edge) domainElement)) {
+                && isEdge_4006((Edge) domainElement)) {
             return Edge6EditPart.VISUAL_ID;
         }
         if (GraphsPackage.eINSTANCE.getEdge().isSuperTypeOf(domainElement.eClass())
-            && isEdge_4007((Edge) domainElement)) {
+                && isEdge_4007((Edge) domainElement)) {
             return Edge7EditPart.VISUAL_ID;
         }
         if (GraphsPackage.eINSTANCE.getEdge().isSuperTypeOf(domainElement.eClass())
-            && isEdge_4008((Edge) domainElement)) {
+                && isEdge_4008((Edge) domainElement)) {
             return Edge8EditPart.VISUAL_ID;
         }
         return -1;
@@ -491,7 +490,7 @@ public class GraphsVisualIDRegistry {
      */
     private static boolean isNode_2001(Node domainElement) {
         Object result = GraphsOCLFactory.getExpression(0, GraphsPackage.eINSTANCE.getNode(), null)
-            .evaluate(domainElement);
+                .evaluate(domainElement);
         return result instanceof Boolean && ((Boolean) result).booleanValue();
     }
 
@@ -500,7 +499,7 @@ public class GraphsVisualIDRegistry {
      */
     private static boolean isNode_2002(Node domainElement) {
         Object result = GraphsOCLFactory.getExpression(2, GraphsPackage.eINSTANCE.getNode(), null)
-            .evaluate(domainElement);
+                .evaluate(domainElement);
         return result instanceof Boolean && ((Boolean) result).booleanValue();
     }
 
@@ -509,7 +508,7 @@ public class GraphsVisualIDRegistry {
      */
     private static boolean isNode_3001(Node domainElement) {
         Object result = GraphsOCLFactory.getExpression(0, GraphsPackage.eINSTANCE.getNode(), null)
-            .evaluate(domainElement);
+                .evaluate(domainElement);
         return result instanceof Boolean && ((Boolean) result).booleanValue();
     }
 
@@ -518,7 +517,7 @@ public class GraphsVisualIDRegistry {
      */
     private static boolean isPort_3002(Port domainElement) {
         Object result = GraphsOCLFactory.getExpression(1, GraphsPackage.eINSTANCE.getPort(), null)
-            .evaluate(domainElement);
+                .evaluate(domainElement);
         return result instanceof Boolean && ((Boolean) result).booleanValue();
     }
 
@@ -527,7 +526,7 @@ public class GraphsVisualIDRegistry {
      */
     private static boolean isNode_3003(Node domainElement) {
         Object result = GraphsOCLFactory.getExpression(2, GraphsPackage.eINSTANCE.getNode(), null)
-            .evaluate(domainElement);
+                .evaluate(domainElement);
         return result instanceof Boolean && ((Boolean) result).booleanValue();
     }
 
@@ -536,7 +535,7 @@ public class GraphsVisualIDRegistry {
      */
     private static boolean isEdge_4001(Edge domainElement) {
         Object result = GraphsOCLFactory.getExpression(5, GraphsPackage.eINSTANCE.getEdge(), null)
-            .evaluate(domainElement);
+                .evaluate(domainElement);
         return result instanceof Boolean && ((Boolean) result).booleanValue();
     }
 
@@ -545,7 +544,7 @@ public class GraphsVisualIDRegistry {
      */
     private static boolean isEdge_4002(Edge domainElement) {
         Object result = GraphsOCLFactory.getExpression(7, GraphsPackage.eINSTANCE.getEdge(), null)
-            .evaluate(domainElement);
+                .evaluate(domainElement);
         return result instanceof Boolean && ((Boolean) result).booleanValue();
     }
 
@@ -554,7 +553,7 @@ public class GraphsVisualIDRegistry {
      */
     private static boolean isEdge_4003(Edge domainElement) {
         Object result = GraphsOCLFactory.getExpression(8, GraphsPackage.eINSTANCE.getEdge(), null)
-            .evaluate(domainElement);
+                .evaluate(domainElement);
         return result instanceof Boolean && ((Boolean) result).booleanValue();
     }
 
@@ -563,7 +562,7 @@ public class GraphsVisualIDRegistry {
      */
     private static boolean isEdge_4004(Edge domainElement) {
         Object result = GraphsOCLFactory.getExpression(11, GraphsPackage.eINSTANCE.getEdge(), null)
-            .evaluate(domainElement);
+                .evaluate(domainElement);
         return result instanceof Boolean && ((Boolean) result).booleanValue();
     }
 
@@ -572,7 +571,7 @@ public class GraphsVisualIDRegistry {
      */
     private static boolean isEdge_4005(Edge domainElement) {
         Object result = GraphsOCLFactory.getExpression(13, GraphsPackage.eINSTANCE.getEdge(), null)
-            .evaluate(domainElement);
+                .evaluate(domainElement);
         return result instanceof Boolean && ((Boolean) result).booleanValue();
     }
 
@@ -581,7 +580,7 @@ public class GraphsVisualIDRegistry {
      */
     private static boolean isEdge_4006(Edge domainElement) {
         Object result = GraphsOCLFactory.getExpression(16, GraphsPackage.eINSTANCE.getEdge(), null)
-            .evaluate(domainElement);
+                .evaluate(domainElement);
         return result instanceof Boolean && ((Boolean) result).booleanValue();
     }
 
@@ -590,7 +589,7 @@ public class GraphsVisualIDRegistry {
      */
     private static boolean isEdge_4007(Edge domainElement) {
         Object result = GraphsOCLFactory.getExpression(18, GraphsPackage.eINSTANCE.getEdge(), null)
-            .evaluate(domainElement);
+                .evaluate(domainElement);
         return result instanceof Boolean && ((Boolean) result).booleanValue();
     }
 
@@ -599,7 +598,7 @@ public class GraphsVisualIDRegistry {
      */
     private static boolean isEdge_4008(Edge domainElement) {
         Object result = GraphsOCLFactory.getExpression(21, GraphsPackage.eINSTANCE.getEdge(), null)
-            .evaluate(domainElement);
+                .evaluate(domainElement);
         return result instanceof Boolean && ((Boolean) result).booleanValue();
     }
 

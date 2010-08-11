@@ -54,7 +54,7 @@ public class Node2CreateCommand extends EditElementCommand {
      * @generated
      */
     protected CommandResult doExecuteWithResult(IProgressMonitor monitor, IAdaptable info)
-        throws ExecutionException {
+            throws ExecutionException {
         Node newElement = GraphsFactory.eINSTANCE.createNode();
 
         KNode owner = (KNode) getElementToEdit();
@@ -72,10 +72,10 @@ public class Node2CreateCommand extends EditElementCommand {
      * @generated
      */
     protected void doConfigure(Node newElement, IProgressMonitor monitor, IAdaptable info)
-        throws ExecutionException {
+            throws ExecutionException {
         IElementType elementType = ((CreateElementRequest) getRequest()).getElementType();
         ConfigureRequest configureRequest = new ConfigureRequest(getEditingDomain(), newElement,
-            elementType);
+                elementType);
         configureRequest.setClientContext(((CreateElementRequest) getRequest()).getClientContext());
         configureRequest.addParameters(getRequest().getParameters());
         ICommand configureCommand = elementType.getEditCommand(configureRequest);

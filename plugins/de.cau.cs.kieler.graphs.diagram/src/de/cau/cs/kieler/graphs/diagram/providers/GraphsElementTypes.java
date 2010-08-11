@@ -151,7 +151,7 @@ public class GraphsElementTypes {
             EClass eClass = (EClass) element;
             if (!eClass.isAbstract()) {
                 return GraphsDiagramEditorPlugin.getInstance().getItemImageDescriptor(
-                    eClass.getEPackage().getEFactoryInstance().create(eClass));
+                        eClass.getEPackage().getEFactoryInstance().create(eClass));
             }
         }
         // TODO : support structural features

@@ -67,15 +67,15 @@ public class Edge2CreateCommand extends EditElementCommand {
         if (getContainer() == null) {
             return false;
         }
-        return GraphsBaseItemSemanticEditPolicy.getLinkConstraints().canCreateEdge_4002(
-            getContainer(), getSource(), getTarget());
+        return GraphsBaseItemSemanticEditPolicy.getLinkConstraints().canCreateEdge_4002(getContainer(),
+                getSource(), getTarget());
     }
 
     /**
      * @generated
      */
     protected CommandResult doExecuteWithResult(IProgressMonitor monitor, IAdaptable info)
-        throws ExecutionException {
+            throws ExecutionException {
         if (!canExecute()) {
             throw new ExecutionException("Invalid arguments in create link command"); //$NON-NLS-1$
         }
@@ -94,10 +94,10 @@ public class Edge2CreateCommand extends EditElementCommand {
      * @generated
      */
     protected void doConfigure(Edge newElement, IProgressMonitor monitor, IAdaptable info)
-        throws ExecutionException {
+            throws ExecutionException {
         IElementType elementType = ((CreateElementRequest) getRequest()).getElementType();
         ConfigureRequest configureRequest = new ConfigureRequest(getEditingDomain(), newElement,
-            elementType);
+                elementType);
         configureRequest.setClientContext(((CreateElementRequest) getRequest()).getClientContext());
         configureRequest.addParameters(getRequest().getParameters());
         configureRequest.setParameter(CreateRelationshipRequest.SOURCE, getSource());

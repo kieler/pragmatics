@@ -51,35 +51,30 @@ public class PortItemSemanticEditPolicy extends GraphsBaseItemSemanticEditPolicy
      */
     protected Command getDestroyElementCommand(DestroyElementRequest req) {
         View view = (View) getHost().getModel();
-        CompositeTransactionalCommand cmd = new CompositeTransactionalCommand(getEditingDomain(),
-            null);
+        CompositeTransactionalCommand cmd = new CompositeTransactionalCommand(getEditingDomain(), null);
         cmd.setTransactionNestingEnabled(false);
         for (Iterator<?> it = view.getTargetEdges().iterator(); it.hasNext();) {
             Edge incomingLink = (Edge) it.next();
             if (GraphsVisualIDRegistry.getVisualID(incomingLink) == Edge3EditPart.VISUAL_ID) {
-                DestroyElementRequest r = new DestroyElementRequest(incomingLink.getElement(),
-                    false);
+                DestroyElementRequest r = new DestroyElementRequest(incomingLink.getElement(), false);
                 cmd.add(new DestroyElementCommand(r));
                 cmd.add(new DeleteCommand(getEditingDomain(), incomingLink));
                 continue;
             }
             if (GraphsVisualIDRegistry.getVisualID(incomingLink) == Edge4EditPart.VISUAL_ID) {
-                DestroyElementRequest r = new DestroyElementRequest(incomingLink.getElement(),
-                    false);
+                DestroyElementRequest r = new DestroyElementRequest(incomingLink.getElement(), false);
                 cmd.add(new DestroyElementCommand(r));
                 cmd.add(new DeleteCommand(getEditingDomain(), incomingLink));
                 continue;
             }
             if (GraphsVisualIDRegistry.getVisualID(incomingLink) == Edge7EditPart.VISUAL_ID) {
-                DestroyElementRequest r = new DestroyElementRequest(incomingLink.getElement(),
-                    false);
+                DestroyElementRequest r = new DestroyElementRequest(incomingLink.getElement(), false);
                 cmd.add(new DestroyElementCommand(r));
                 cmd.add(new DeleteCommand(getEditingDomain(), incomingLink));
                 continue;
             }
             if (GraphsVisualIDRegistry.getVisualID(incomingLink) == Edge8EditPart.VISUAL_ID) {
-                DestroyElementRequest r = new DestroyElementRequest(incomingLink.getElement(),
-                    false);
+                DestroyElementRequest r = new DestroyElementRequest(incomingLink.getElement(), false);
                 cmd.add(new DestroyElementCommand(r));
                 cmd.add(new DeleteCommand(getEditingDomain(), incomingLink));
                 continue;
@@ -88,29 +83,25 @@ public class PortItemSemanticEditPolicy extends GraphsBaseItemSemanticEditPolicy
         for (Iterator<?> it = view.getSourceEdges().iterator(); it.hasNext();) {
             Edge outgoingLink = (Edge) it.next();
             if (GraphsVisualIDRegistry.getVisualID(outgoingLink) == Edge3EditPart.VISUAL_ID) {
-                DestroyElementRequest r = new DestroyElementRequest(outgoingLink.getElement(),
-                    false);
+                DestroyElementRequest r = new DestroyElementRequest(outgoingLink.getElement(), false);
                 cmd.add(new DestroyElementCommand(r));
                 cmd.add(new DeleteCommand(getEditingDomain(), outgoingLink));
                 continue;
             }
             if (GraphsVisualIDRegistry.getVisualID(outgoingLink) == Edge4EditPart.VISUAL_ID) {
-                DestroyElementRequest r = new DestroyElementRequest(outgoingLink.getElement(),
-                    false);
+                DestroyElementRequest r = new DestroyElementRequest(outgoingLink.getElement(), false);
                 cmd.add(new DestroyElementCommand(r));
                 cmd.add(new DeleteCommand(getEditingDomain(), outgoingLink));
                 continue;
             }
             if (GraphsVisualIDRegistry.getVisualID(outgoingLink) == Edge5EditPart.VISUAL_ID) {
-                DestroyElementRequest r = new DestroyElementRequest(outgoingLink.getElement(),
-                    false);
+                DestroyElementRequest r = new DestroyElementRequest(outgoingLink.getElement(), false);
                 cmd.add(new DestroyElementCommand(r));
                 cmd.add(new DeleteCommand(getEditingDomain(), outgoingLink));
                 continue;
             }
             if (GraphsVisualIDRegistry.getVisualID(outgoingLink) == Edge6EditPart.VISUAL_ID) {
-                DestroyElementRequest r = new DestroyElementRequest(outgoingLink.getElement(),
-                    false);
+                DestroyElementRequest r = new DestroyElementRequest(outgoingLink.getElement(), false);
                 cmd.add(new DestroyElementCommand(r));
                 cmd.add(new DeleteCommand(getEditingDomain(), outgoingLink));
                 continue;
@@ -133,7 +124,7 @@ public class PortItemSemanticEditPolicy extends GraphsBaseItemSemanticEditPolicy
      */
     protected Command getCreateRelationshipCommand(CreateRelationshipRequest req) {
         Command command = req.getTarget() == null ? getStartCreateRelationshipCommand(req)
-            : getCompleteCreateRelationshipCommand(req);
+                : getCompleteCreateRelationshipCommand(req);
         return command != null ? command : super.getCreateRelationshipCommand(req);
     }
 

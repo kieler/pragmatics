@@ -31,8 +31,8 @@ public class GraphsDiagramActionBarContributor extends DiagramActionBarContribut
     public void init(IActionBars bars, IWorkbenchPage page) {
         super.init(bars, page);
         // print preview
-        IMenuManager fileMenu = bars.getMenuManager().findMenuUsingPath(
-            IWorkbenchActionConstants.M_FILE);
+        IMenuManager fileMenu = bars.getMenuManager()
+                .findMenuUsingPath(IWorkbenchActionConstants.M_FILE);
         assert fileMenu != null;
         fileMenu.remove("pageSetupAction"); //$NON-NLS-1$
     }

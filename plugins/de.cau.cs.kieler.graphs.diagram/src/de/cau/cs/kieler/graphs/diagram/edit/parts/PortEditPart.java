@@ -134,8 +134,7 @@ public class PortEditPart extends BorderedBorderItemEditPart implements GraphsPo
      */
     protected void addBorderItem(IFigure borderItemContainer, IBorderItemEditPart borderItemEditPart) {
         if (borderItemEditPart instanceof PortPortLabelEditPart) {
-            BorderItemLocator locator = new BorderItemLocator(getMainFigure(),
-                PositionConstants.SOUTH);
+            BorderItemLocator locator = new BorderItemLocator(getMainFigure(), PositionConstants.SOUTH);
             locator.setBorderItemOffset(new Dimension(-20, -20));
             borderItemContainer.add(borderItemEditPart.getFigure(), locator);
         } else {
@@ -243,8 +242,7 @@ public class PortEditPart extends BorderedBorderItemEditPart implements GraphsPo
      * @generated
      */
     public EditPart getPrimaryChildEditPart() {
-        return getChildBySemanticHint(GraphsVisualIDRegistry
-            .getType(PortPortLabelEditPart.VISUAL_ID));
+        return getChildBySemanticHint(GraphsVisualIDRegistry.getType(PortPortLabelEditPart.VISUAL_ID));
     }
 
     /**
@@ -364,29 +362,9 @@ public class PortEditPart extends BorderedBorderItemEditPart implements GraphsPo
          * @generated
          */
         public PortFigure() {
-            this.setLineWidth(1);
             this.setForegroundColor(THIS_FORE);
             this.setBackgroundColor(THIS_BACK);
             this.setPreferredSize(new Dimension(getMapMode().DPtoLP(8), getMapMode().DPtoLP(8)));
-        }
-
-        /**
-         * @generated
-         */
-        private boolean myUseLocalCoordinates = false;
-
-        /**
-         * @generated
-         */
-        protected boolean useLocalCoordinates() {
-            return myUseLocalCoordinates;
-        }
-
-        /**
-         * @generated
-         */
-        protected void setUseLocalCoordinates(boolean useLocalCoordinates) {
-            myUseLocalCoordinates = useLocalCoordinates;
         }
 
     }

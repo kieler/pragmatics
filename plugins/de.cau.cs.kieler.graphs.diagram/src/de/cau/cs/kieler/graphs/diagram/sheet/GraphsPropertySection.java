@@ -22,8 +22,7 @@ import org.eclipse.ui.views.properties.IPropertySourceProvider;
 /**
  * @generated
  */
-public class GraphsPropertySection extends AdvancedPropertySection implements
-    IPropertySourceProvider {
+public class GraphsPropertySection extends AdvancedPropertySection implements IPropertySourceProvider {
 
     /**
      * @generated
@@ -34,8 +33,7 @@ public class GraphsPropertySection extends AdvancedPropertySection implements
         }
         AdapterFactory af = getAdapterFactory(object);
         if (af != null) {
-            IItemPropertySource ips = (IItemPropertySource) af.adapt(object,
-                IItemPropertySource.class);
+            IItemPropertySource ips = (IItemPropertySource) af.adapt(object, IItemPropertySource.class);
             if (ips != null) {
                 return new PropertySource(object, ips);
             }

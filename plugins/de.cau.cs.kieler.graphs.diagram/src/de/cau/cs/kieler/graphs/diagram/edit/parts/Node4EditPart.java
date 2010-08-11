@@ -131,14 +131,13 @@ public class Node4EditPart extends AbstractBorderedShapeEditPart implements Grap
     protected boolean addFixedChild(EditPart childEditPart) {
         if (childEditPart instanceof NodeNodeLabel2EditPart) {
             ((NodeNodeLabel2EditPart) childEditPart).setLabel(getPrimaryShape()
-                .getFigureNodeLabelFigure());
+                    .getFigureNodeLabelFigure());
             return true;
         }
         if (childEditPart instanceof PortEditPart) {
-            BorderItemLocator locator = new BorderItemLocator(getMainFigure(),
-                PositionConstants.NONE);
-            getBorderedFigure().getBorderItemContainer().add(
-                ((PortEditPart) childEditPart).getFigure(), locator);
+            BorderItemLocator locator = new BorderItemLocator(getMainFigure(), PositionConstants.EAST);
+            getBorderedFigure().getBorderItemContainer().add(((PortEditPart) childEditPart).getFigure(),
+                    locator);
             return true;
         }
         return false;
@@ -153,7 +152,7 @@ public class Node4EditPart extends AbstractBorderedShapeEditPart implements Grap
         }
         if (childEditPart instanceof PortEditPart) {
             getBorderedFigure().getBorderItemContainer().remove(
-                ((PortEditPart) childEditPart).getFigure());
+                    ((PortEditPart) childEditPart).getFigure());
             return true;
         }
         return false;
@@ -279,8 +278,7 @@ public class Node4EditPart extends AbstractBorderedShapeEditPart implements Grap
      * @generated
      */
     public EditPart getPrimaryChildEditPart() {
-        return getChildBySemanticHint(GraphsVisualIDRegistry
-            .getType(NodeNodeLabel2EditPart.VISUAL_ID));
+        return getChildBySemanticHint(GraphsVisualIDRegistry.getType(NodeNodeLabel2EditPart.VISUAL_ID));
     }
 
     /**
@@ -411,12 +409,11 @@ public class Node4EditPart extends AbstractBorderedShapeEditPart implements Grap
             this.setLayoutManager(layoutThis);
 
             this.setCornerDimensions(new Dimension(getMapMode().DPtoLP(16), getMapMode().DPtoLP(16)));
-            this.setLineWidth(1);
             this.setForegroundColor(THIS_FORE);
             this.setBackgroundColor(THIS_BACK);
 
-            this.setBorder(new MarginBorder(getMapMode().DPtoLP(5), getMapMode().DPtoLP(5),
-                getMapMode().DPtoLP(5), getMapMode().DPtoLP(5)));
+            this.setBorder(new MarginBorder(getMapMode().DPtoLP(5), getMapMode().DPtoLP(5), getMapMode()
+                    .DPtoLP(5), getMapMode().DPtoLP(5)));
             createContents();
         }
 
@@ -430,25 +427,6 @@ public class Node4EditPart extends AbstractBorderedShapeEditPart implements Grap
 
             this.add(fFigureNodeLabelFigure);
 
-        }
-
-        /**
-         * @generated
-         */
-        private boolean myUseLocalCoordinates = false;
-
-        /**
-         * @generated
-         */
-        protected boolean useLocalCoordinates() {
-            return myUseLocalCoordinates;
-        }
-
-        /**
-         * @generated
-         */
-        protected void setUseLocalCoordinates(boolean useLocalCoordinates) {
-            myUseLocalCoordinates = useLocalCoordinates;
         }
 
         /**

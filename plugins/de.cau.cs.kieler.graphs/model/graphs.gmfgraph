@@ -122,7 +122,7 @@
       name="Port"
       figure="PortFigure"
       resizeConstraint="NONE"
-      affixedParentSide="NSEW"/>
+      affixedParentSide="EAST"/>
   <connections
       name="DirectedEdge"
       figure="DirectedEdgeFigure"/>

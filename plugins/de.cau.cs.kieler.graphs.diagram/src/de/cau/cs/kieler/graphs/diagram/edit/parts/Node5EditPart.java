@@ -318,28 +318,8 @@ public class Node5EditPart extends ShapeNodeEditPart implements GraphsNode {
          * @generated
          */
         public HypernodeFigure() {
-            this.setLineWidth(1);
             this.setBackgroundColor(THIS_BACK);
             this.setPreferredSize(new Dimension(getMapMode().DPtoLP(20), getMapMode().DPtoLP(20)));
-        }
-
-        /**
-         * @generated
-         */
-        private boolean myUseLocalCoordinates = false;
-
-        /**
-         * @generated
-         */
-        protected boolean useLocalCoordinates() {
-            return myUseLocalCoordinates;
-        }
-
-        /**
-         * @generated
-         */
-        protected void setUseLocalCoordinates(boolean useLocalCoordinates) {
-            myUseLocalCoordinates = useLocalCoordinates;
         }
 
     }

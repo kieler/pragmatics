@@ -143,8 +143,7 @@ public class GraphsNavigatorActionProvider extends CommonActionProvider {
             try {
                 page.openEditor(editorInput, GraphsDiagramEditor.ID);
             } catch (PartInitException e) {
-                GraphsDiagramEditorPlugin.getInstance().logError(
-                    "Exception while openning diagram", e); //$NON-NLS-1$
+                GraphsDiagramEditorPlugin.getInstance().logError("Exception while openning diagram", e); //$NON-NLS-1$
             }
         }
 
@@ -163,7 +162,7 @@ public class GraphsNavigatorActionProvider extends CommonActionProvider {
             }
             URI uri = EcoreUtil.getURI(diagram);
             String editorName = uri.lastSegment() + '#'
-                + diagram.eResource().getContents().indexOf(diagram);
+                    + diagram.eResource().getContents().indexOf(diagram);
             IEditorInput editorInput = new URIEditorInput(uri, editorName);
             return editorInput;
         }

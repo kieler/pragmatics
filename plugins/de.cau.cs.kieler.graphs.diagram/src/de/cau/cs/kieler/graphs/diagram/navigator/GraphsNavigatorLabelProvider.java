@@ -51,16 +51,16 @@ import de.cau.cs.kieler.graphs.diagram.providers.GraphsParserProvider;
  * @generated
  */
 public class GraphsNavigatorLabelProvider extends LabelProvider implements ICommonLabelProvider,
-    ITreePathLabelProvider {
+        ITreePathLabelProvider {
 
     /**
      * @generated
      */
     static {
         GraphsDiagramEditorPlugin.getInstance().getImageRegistry()
-            .put("Navigator?UnknownElement", ImageDescriptor.getMissingImageDescriptor()); //$NON-NLS-1$
+                .put("Navigator?UnknownElement", ImageDescriptor.getMissingImageDescriptor()); //$NON-NLS-1$
         GraphsDiagramEditorPlugin.getInstance().getImageRegistry()
-            .put("Navigator?ImageNotFound", ImageDescriptor.getMissingImageDescriptor()); //$NON-NLS-1$
+                .put("Navigator?ImageNotFound", ImageDescriptor.getMissingImageDescriptor()); //$NON-NLS-1$
     }
 
     /**
@@ -69,7 +69,7 @@ public class GraphsNavigatorLabelProvider extends LabelProvider implements IComm
     public void updateLabel(ViewerLabel label, TreePath elementPath) {
         Object element = elementPath.getLastSegment();
         if (element instanceof GraphsNavigatorItem
-            && !isOwnView(((GraphsNavigatorItem) element).getView())) {
+                && !isOwnView(((GraphsNavigatorItem) element).getView())) {
             return;
         }
         label.setText(getText(element));
@@ -101,48 +101,48 @@ public class GraphsNavigatorLabelProvider extends LabelProvider implements IComm
      */
     public Image getImage(View view) {
         switch (GraphsVisualIDRegistry.getVisualID(view)) {
-        case PortEditPart.VISUAL_ID:
-            return getImage(
-                "Navigator?Node?http://kieler.cs.cau.de/graphs?Port", GraphsElementTypes.Port_3002); //$NON-NLS-1$
-        case Edge6EditPart.VISUAL_ID:
-            return getImage(
-                "Navigator?Link?http://kieler.cs.cau.de/graphs?Edge", GraphsElementTypes.Edge_4006); //$NON-NLS-1$
-        case Edge3EditPart.VISUAL_ID:
-            return getImage(
-                "Navigator?Link?http://kieler.cs.cau.de/graphs?Edge", GraphsElementTypes.Edge_4003); //$NON-NLS-1$
         case Edge8EditPart.VISUAL_ID:
             return getImage(
-                "Navigator?Link?http://kieler.cs.cau.de/graphs?Edge", GraphsElementTypes.Edge_4008); //$NON-NLS-1$
-        case Edge5EditPart.VISUAL_ID:
-            return getImage(
-                "Navigator?Link?http://kieler.cs.cau.de/graphs?Edge", GraphsElementTypes.Edge_4005); //$NON-NLS-1$
+                    "Navigator?Link?http://kieler.cs.cau.de/graphs?Edge", GraphsElementTypes.Edge_4008); //$NON-NLS-1$
         case Edge7EditPart.VISUAL_ID:
             return getImage(
-                "Navigator?Link?http://kieler.cs.cau.de/graphs?Edge", GraphsElementTypes.Edge_4007); //$NON-NLS-1$
+                    "Navigator?Link?http://kieler.cs.cau.de/graphs?Edge", GraphsElementTypes.Edge_4007); //$NON-NLS-1$
         case Edge4EditPart.VISUAL_ID:
             return getImage(
-                "Navigator?Link?http://kieler.cs.cau.de/graphs?Edge", GraphsElementTypes.Edge_4004); //$NON-NLS-1$
+                    "Navigator?Link?http://kieler.cs.cau.de/graphs?Edge", GraphsElementTypes.Edge_4004); //$NON-NLS-1$
+        case Edge3EditPart.VISUAL_ID:
+            return getImage(
+                    "Navigator?Link?http://kieler.cs.cau.de/graphs?Edge", GraphsElementTypes.Edge_4003); //$NON-NLS-1$
         case Edge2EditPart.VISUAL_ID:
             return getImage(
-                "Navigator?Link?http://kieler.cs.cau.de/graphs?Edge", GraphsElementTypes.Edge_4002); //$NON-NLS-1$
-        case EdgeEditPart.VISUAL_ID:
-            return getImage(
-                "Navigator?Link?http://kieler.cs.cau.de/graphs?Edge", GraphsElementTypes.Edge_4001); //$NON-NLS-1$
-        case Node2EditPart.VISUAL_ID:
-            return getImage(
-                "Navigator?TopLevelNode?http://kieler.cs.cau.de/graphs?Node", GraphsElementTypes.Node_2001); //$NON-NLS-1$
-        case Node3EditPart.VISUAL_ID:
-            return getImage(
-                "Navigator?TopLevelNode?http://kieler.cs.cau.de/graphs?Node", GraphsElementTypes.Node_2002); //$NON-NLS-1$
-        case Node5EditPart.VISUAL_ID:
-            return getImage(
-                "Navigator?Node?http://kieler.cs.cau.de/graphs?Node", GraphsElementTypes.Node_3003); //$NON-NLS-1$
-        case Node4EditPart.VISUAL_ID:
-            return getImage(
-                "Navigator?Node?http://kieler.cs.cau.de/graphs?Node", GraphsElementTypes.Node_3001); //$NON-NLS-1$
+                    "Navigator?Link?http://kieler.cs.cau.de/graphs?Edge", GraphsElementTypes.Edge_4002); //$NON-NLS-1$
         case NodeEditPart.VISUAL_ID:
             return getImage(
-                "Navigator?Diagram?http://kieler.cs.cau.de/graphs?Node", GraphsElementTypes.Node_1000); //$NON-NLS-1$
+                    "Navigator?Diagram?http://kieler.cs.cau.de/graphs?Node", GraphsElementTypes.Node_1000); //$NON-NLS-1$
+        case PortEditPart.VISUAL_ID:
+            return getImage(
+                    "Navigator?Node?http://kieler.cs.cau.de/graphs?Port", GraphsElementTypes.Port_3002); //$NON-NLS-1$
+        case EdgeEditPart.VISUAL_ID:
+            return getImage(
+                    "Navigator?Link?http://kieler.cs.cau.de/graphs?Edge", GraphsElementTypes.Edge_4001); //$NON-NLS-1$
+        case Node4EditPart.VISUAL_ID:
+            return getImage(
+                    "Navigator?Node?http://kieler.cs.cau.de/graphs?Node", GraphsElementTypes.Node_3001); //$NON-NLS-1$
+        case Edge5EditPart.VISUAL_ID:
+            return getImage(
+                    "Navigator?Link?http://kieler.cs.cau.de/graphs?Edge", GraphsElementTypes.Edge_4005); //$NON-NLS-1$
+        case Node3EditPart.VISUAL_ID:
+            return getImage(
+                    "Navigator?TopLevelNode?http://kieler.cs.cau.de/graphs?Node", GraphsElementTypes.Node_2002); //$NON-NLS-1$
+        case Edge6EditPart.VISUAL_ID:
+            return getImage(
+                    "Navigator?Link?http://kieler.cs.cau.de/graphs?Edge", GraphsElementTypes.Edge_4006); //$NON-NLS-1$
+        case Node2EditPart.VISUAL_ID:
+            return getImage(
+                    "Navigator?TopLevelNode?http://kieler.cs.cau.de/graphs?Node", GraphsElementTypes.Node_2001); //$NON-NLS-1$
+        case Node5EditPart.VISUAL_ID:
+            return getImage(
+                    "Navigator?Node?http://kieler.cs.cau.de/graphs?Node", GraphsElementTypes.Node_3003); //$NON-NLS-1$
         }
         return getImage("Navigator?UnknownElement", null); //$NON-NLS-1$
     }
@@ -153,8 +153,7 @@ public class GraphsNavigatorLabelProvider extends LabelProvider implements IComm
     private Image getImage(String key, IElementType elementType) {
         ImageRegistry imageRegistry = GraphsDiagramEditorPlugin.getInstance().getImageRegistry();
         Image image = imageRegistry.get(key);
-        if (image == null && elementType != null
-            && GraphsElementTypes.isKnownElementType(elementType)) {
+        if (image == null && elementType != null && GraphsElementTypes.isKnownElementType(elementType)) {
             image = GraphsElementTypes.getImage(elementType);
             imageRegistry.put(key, image);
         }
@@ -194,34 +193,34 @@ public class GraphsNavigatorLabelProvider extends LabelProvider implements IComm
             return getUnresolvedDomainElementProxyText(view);
         }
         switch (GraphsVisualIDRegistry.getVisualID(view)) {
-        case PortEditPart.VISUAL_ID:
-            return getPort_3002Text(view);
-        case Edge6EditPart.VISUAL_ID:
-            return getEdge_4006Text(view);
-        case Edge3EditPart.VISUAL_ID:
-            return getEdge_4003Text(view);
         case Edge8EditPart.VISUAL_ID:
             return getEdge_4008Text(view);
-        case Edge5EditPart.VISUAL_ID:
-            return getEdge_4005Text(view);
         case Edge7EditPart.VISUAL_ID:
             return getEdge_4007Text(view);
         case Edge4EditPart.VISUAL_ID:
             return getEdge_4004Text(view);
+        case Edge3EditPart.VISUAL_ID:
+            return getEdge_4003Text(view);
         case Edge2EditPart.VISUAL_ID:
             return getEdge_4002Text(view);
-        case EdgeEditPart.VISUAL_ID:
-            return getEdge_4001Text(view);
-        case Node2EditPart.VISUAL_ID:
-            return getNode_2001Text(view);
-        case Node3EditPart.VISUAL_ID:
-            return getNode_2002Text(view);
-        case Node5EditPart.VISUAL_ID:
-            return getNode_3003Text(view);
-        case Node4EditPart.VISUAL_ID:
-            return getNode_3001Text(view);
         case NodeEditPart.VISUAL_ID:
             return getNode_1000Text(view);
+        case PortEditPart.VISUAL_ID:
+            return getPort_3002Text(view);
+        case EdgeEditPart.VISUAL_ID:
+            return getEdge_4001Text(view);
+        case Node4EditPart.VISUAL_ID:
+            return getNode_3001Text(view);
+        case Edge5EditPart.VISUAL_ID:
+            return getEdge_4005Text(view);
+        case Node3EditPart.VISUAL_ID:
+            return getNode_2002Text(view);
+        case Edge6EditPart.VISUAL_ID:
+            return getEdge_4006Text(view);
+        case Node2EditPart.VISUAL_ID:
+            return getNode_2001Text(view);
+        case Node5EditPart.VISUAL_ID:
+            return getNode_3003Text(view);
         }
         return getUnknownElementText(view);
     }
@@ -235,7 +234,7 @@ public class GraphsNavigatorLabelProvider extends LabelProvider implements IComm
             return domainModelElement.getNodeLabel();
         } else {
             GraphsDiagramEditorPlugin.getInstance().logError(
-                "No domain element for view with visualID = " + 1000); //$NON-NLS-1$
+                    "No domain element for view with visualID = " + 1000); //$NON-NLS-1$
             return ""; //$NON-NLS-1$
         }
     }
@@ -245,15 +244,14 @@ public class GraphsNavigatorLabelProvider extends LabelProvider implements IComm
      */
     private String getNode_2001Text(View view) {
         IParser parser = GraphsParserProvider.getParser(GraphsElementTypes.Node_2001,
-            view.getElement() != null ? view.getElement() : view,
-            GraphsVisualIDRegistry.getType(NodeNodeLabelEditPart.VISUAL_ID));
+                view.getElement() != null ? view.getElement() : view,
+                GraphsVisualIDRegistry.getType(NodeNodeLabelEditPart.VISUAL_ID));
         if (parser != null) {
             return parser.getPrintString(
-                new EObjectAdapter(view.getElement() != null ? view.getElement() : view),
-                ParserOptions.NONE.intValue());
+                    new EObjectAdapter(view.getElement() != null ? view.getElement() : view),
+                    ParserOptions.NONE.intValue());
         } else {
-            GraphsDiagramEditorPlugin.getInstance().logError(
-                "Parser was not found for label " + 5003); //$NON-NLS-1$
+            GraphsDiagramEditorPlugin.getInstance().logError("Parser was not found for label " + 5003); //$NON-NLS-1$
             return ""; //$NON-NLS-1$
         }
     }
@@ -267,7 +265,7 @@ public class GraphsNavigatorLabelProvider extends LabelProvider implements IComm
             return domainModelElement.getNodeLabel();
         } else {
             GraphsDiagramEditorPlugin.getInstance().logError(
-                "No domain element for view with visualID = " + 2002); //$NON-NLS-1$
+                    "No domain element for view with visualID = " + 2002); //$NON-NLS-1$
             return ""; //$NON-NLS-1$
         }
     }
@@ -277,15 +275,14 @@ public class GraphsNavigatorLabelProvider extends LabelProvider implements IComm
      */
     private String getNode_3001Text(View view) {
         IParser parser = GraphsParserProvider.getParser(GraphsElementTypes.Node_3001,
-            view.getElement() != null ? view.getElement() : view,
-            GraphsVisualIDRegistry.getType(NodeNodeLabel2EditPart.VISUAL_ID));
+                view.getElement() != null ? view.getElement() : view,
+                GraphsVisualIDRegistry.getType(NodeNodeLabel2EditPart.VISUAL_ID));
         if (parser != null) {
             return parser.getPrintString(
-                new EObjectAdapter(view.getElement() != null ? view.getElement() : view),
-                ParserOptions.NONE.intValue());
+                    new EObjectAdapter(view.getElement() != null ? view.getElement() : view),
+                    ParserOptions.NONE.intValue());
         } else {
-            GraphsDiagramEditorPlugin.getInstance().logError(
-                "Parser was not found for label " + 5002); //$NON-NLS-1$
+            GraphsDiagramEditorPlugin.getInstance().logError("Parser was not found for label " + 5002); //$NON-NLS-1$
             return ""; //$NON-NLS-1$
         }
     }
@@ -295,15 +292,14 @@ public class GraphsNavigatorLabelProvider extends LabelProvider implements IComm
      */
     private String getPort_3002Text(View view) {
         IParser parser = GraphsParserProvider.getParser(GraphsElementTypes.Port_3002,
-            view.getElement() != null ? view.getElement() : view,
-            GraphsVisualIDRegistry.getType(PortPortLabelEditPart.VISUAL_ID));
+                view.getElement() != null ? view.getElement() : view,
+                GraphsVisualIDRegistry.getType(PortPortLabelEditPart.VISUAL_ID));
         if (parser != null) {
             return parser.getPrintString(
-                new EObjectAdapter(view.getElement() != null ? view.getElement() : view),
-                ParserOptions.NONE.intValue());
+                    new EObjectAdapter(view.getElement() != null ? view.getElement() : view),
+                    ParserOptions.NONE.intValue());
         } else {
-            GraphsDiagramEditorPlugin.getInstance().logError(
-                "Parser was not found for label " + 5001); //$NON-NLS-1$
+            GraphsDiagramEditorPlugin.getInstance().logError("Parser was not found for label " + 5001); //$NON-NLS-1$
             return ""; //$NON-NLS-1$
         }
     }
@@ -317,7 +313,7 @@ public class GraphsNavigatorLabelProvider extends LabelProvider implements IComm
             return domainModelElement.getNodeLabel();
         } else {
             GraphsDiagramEditorPlugin.getInstance().logError(
-                "No domain element for view with visualID = " + 3003); //$NON-NLS-1$
+                    "No domain element for view with visualID = " + 3003); //$NON-NLS-1$
             return ""; //$NON-NLS-1$
         }
     }
@@ -327,15 +323,14 @@ public class GraphsNavigatorLabelProvider extends LabelProvider implements IComm
      */
     private String getEdge_4001Text(View view) {
         IParser parser = GraphsParserProvider.getParser(GraphsElementTypes.Edge_4001,
-            view.getElement() != null ? view.getElement() : view,
-            GraphsVisualIDRegistry.getType(EdgeMidLabelEditPart.VISUAL_ID));
+                view.getElement() != null ? view.getElement() : view,
+                GraphsVisualIDRegistry.getType(EdgeMidLabelEditPart.VISUAL_ID));
         if (parser != null) {
             return parser.getPrintString(
-                new EObjectAdapter(view.getElement() != null ? view.getElement() : view),
-                ParserOptions.NONE.intValue());
+                    new EObjectAdapter(view.getElement() != null ? view.getElement() : view),
+                    ParserOptions.NONE.intValue());
         } else {
-            GraphsDiagramEditorPlugin.getInstance().logError(
-                "Parser was not found for label " + 6001); //$NON-NLS-1$
+            GraphsDiagramEditorPlugin.getInstance().logError("Parser was not found for label " + 6001); //$NON-NLS-1$
             return ""; //$NON-NLS-1$
         }
     }
@@ -345,15 +340,14 @@ public class GraphsNavigatorLabelProvider extends LabelProvider implements IComm
      */
     private String getEdge_4002Text(View view) {
         IParser parser = GraphsParserProvider.getParser(GraphsElementTypes.Edge_4002,
-            view.getElement() != null ? view.getElement() : view,
-            GraphsVisualIDRegistry.getType(EdgeMidLabel2EditPart.VISUAL_ID));
+                view.getElement() != null ? view.getElement() : view,
+                GraphsVisualIDRegistry.getType(EdgeMidLabel2EditPart.VISUAL_ID));
         if (parser != null) {
             return parser.getPrintString(
-                new EObjectAdapter(view.getElement() != null ? view.getElement() : view),
-                ParserOptions.NONE.intValue());
+                    new EObjectAdapter(view.getElement() != null ? view.getElement() : view),
+                    ParserOptions.NONE.intValue());
         } else {
-            GraphsDiagramEditorPlugin.getInstance().logError(
-                "Parser was not found for label " + 6006); //$NON-NLS-1$
+            GraphsDiagramEditorPlugin.getInstance().logError("Parser was not found for label " + 6006); //$NON-NLS-1$
             return ""; //$NON-NLS-1$
         }
     }
@@ -363,15 +357,14 @@ public class GraphsNavigatorLabelProvider extends LabelProvider implements IComm
      */
     private String getEdge_4003Text(View view) {
         IParser parser = GraphsParserProvider.getParser(GraphsElementTypes.Edge_4003,
-            view.getElement() != null ? view.getElement() : view,
-            GraphsVisualIDRegistry.getType(EdgeMidLabel3EditPart.VISUAL_ID));
+                view.getElement() != null ? view.getElement() : view,
+                GraphsVisualIDRegistry.getType(EdgeMidLabel3EditPart.VISUAL_ID));
         if (parser != null) {
             return parser.getPrintString(
-                new EObjectAdapter(view.getElement() != null ? view.getElement() : view),
-                ParserOptions.NONE.intValue());
+                    new EObjectAdapter(view.getElement() != null ? view.getElement() : view),
+                    ParserOptions.NONE.intValue());
         } else {
-            GraphsDiagramEditorPlugin.getInstance().logError(
-                "Parser was not found for label " + 6011); //$NON-NLS-1$
+            GraphsDiagramEditorPlugin.getInstance().logError("Parser was not found for label " + 6011); //$NON-NLS-1$
             return ""; //$NON-NLS-1$
         }
     }
@@ -381,15 +374,14 @@ public class GraphsNavigatorLabelProvider extends LabelProvider implements IComm
      */
     private String getEdge_4004Text(View view) {
         IParser parser = GraphsParserProvider.getParser(GraphsElementTypes.Edge_4004,
-            view.getElement() != null ? view.getElement() : view,
-            GraphsVisualIDRegistry.getType(EdgeMidLabel4EditPart.VISUAL_ID));
+                view.getElement() != null ? view.getElement() : view,
+                GraphsVisualIDRegistry.getType(EdgeMidLabel4EditPart.VISUAL_ID));
         if (parser != null) {
             return parser.getPrintString(
-                new EObjectAdapter(view.getElement() != null ? view.getElement() : view),
-                ParserOptions.NONE.intValue());
+                    new EObjectAdapter(view.getElement() != null ? view.getElement() : view),
+                    ParserOptions.NONE.intValue());
         } else {
-            GraphsDiagramEditorPlugin.getInstance().logError(
-                "Parser was not found for label " + 6016); //$NON-NLS-1$
+            GraphsDiagramEditorPlugin.getInstance().logError("Parser was not found for label " + 6016); //$NON-NLS-1$
             return ""; //$NON-NLS-1$
         }
     }
@@ -399,15 +391,14 @@ public class GraphsNavigatorLabelProvider extends LabelProvider implements IComm
      */
     private String getEdge_4005Text(View view) {
         IParser parser = GraphsParserProvider.getParser(GraphsElementTypes.Edge_4005,
-            view.getElement() != null ? view.getElement() : view,
-            GraphsVisualIDRegistry.getType(EdgeMidLabel5EditPart.VISUAL_ID));
+                view.getElement() != null ? view.getElement() : view,
+                GraphsVisualIDRegistry.getType(EdgeMidLabel5EditPart.VISUAL_ID));
         if (parser != null) {
             return parser.getPrintString(
-                new EObjectAdapter(view.getElement() != null ? view.getElement() : view),
-                ParserOptions.NONE.intValue());
+                    new EObjectAdapter(view.getElement() != null ? view.getElement() : view),
+                    ParserOptions.NONE.intValue());
         } else {
-            GraphsDiagramEditorPlugin.getInstance().logError(
-                "Parser was not found for label " + 6021); //$NON-NLS-1$
+            GraphsDiagramEditorPlugin.getInstance().logError("Parser was not found for label " + 6021); //$NON-NLS-1$
             return ""; //$NON-NLS-1$
         }
     }
@@ -417,15 +408,14 @@ public class GraphsNavigatorLabelProvider extends LabelProvider implements IComm
      */
     private String getEdge_4006Text(View view) {
         IParser parser = GraphsParserProvider.getParser(GraphsElementTypes.Edge_4006,
-            view.getElement() != null ? view.getElement() : view,
-            GraphsVisualIDRegistry.getType(EdgeMidLabel6EditPart.VISUAL_ID));
+                view.getElement() != null ? view.getElement() : view,
+                GraphsVisualIDRegistry.getType(EdgeMidLabel6EditPart.VISUAL_ID));
         if (parser != null) {
             return parser.getPrintString(
-                new EObjectAdapter(view.getElement() != null ? view.getElement() : view),
-                ParserOptions.NONE.intValue());
+                    new EObjectAdapter(view.getElement() != null ? view.getElement() : view),
+                    ParserOptions.NONE.intValue());
         } else {
-            GraphsDiagramEditorPlugin.getInstance().logError(
-                "Parser was not found for label " + 6026); //$NON-NLS-1$
+            GraphsDiagramEditorPlugin.getInstance().logError("Parser was not found for label " + 6026); //$NON-NLS-1$
             return ""; //$NON-NLS-1$
         }
     }
@@ -435,15 +425,14 @@ public class GraphsNavigatorLabelProvider extends LabelProvider implements IComm
      */
     private String getEdge_4007Text(View view) {
         IParser parser = GraphsParserProvider.getParser(GraphsElementTypes.Edge_4007,
-            view.getElement() != null ? view.getElement() : view,
-            GraphsVisualIDRegistry.getType(EdgeMidLabel7EditPart.VISUAL_ID));
+                view.getElement() != null ? view.getElement() : view,
+                GraphsVisualIDRegistry.getType(EdgeMidLabel7EditPart.VISUAL_ID));
         if (parser != null) {
             return parser.getPrintString(
-                new EObjectAdapter(view.getElement() != null ? view.getElement() : view),
-                ParserOptions.NONE.intValue());
+                    new EObjectAdapter(view.getElement() != null ? view.getElement() : view),
+                    ParserOptions.NONE.intValue());
         } else {
-            GraphsDiagramEditorPlugin.getInstance().logError(
-                "Parser was not found for label " + 6031); //$NON-NLS-1$
+            GraphsDiagramEditorPlugin.getInstance().logError("Parser was not found for label " + 6031); //$NON-NLS-1$
             return ""; //$NON-NLS-1$
         }
     }
@@ -453,15 +442,14 @@ public class GraphsNavigatorLabelProvider extends LabelProvider implements IComm
      */
     private String getEdge_4008Text(View view) {
         IParser parser = GraphsParserProvider.getParser(GraphsElementTypes.Edge_4008,
-            view.getElement() != null ? view.getElement() : view,
-            GraphsVisualIDRegistry.getType(EdgeMidLabel8EditPart.VISUAL_ID));
+                view.getElement() != null ? view.getElement() : view,
+                GraphsVisualIDRegistry.getType(EdgeMidLabel8EditPart.VISUAL_ID));
         if (parser != null) {
             return parser.getPrintString(
-                new EObjectAdapter(view.getElement() != null ? view.getElement() : view),
-                ParserOptions.NONE.intValue());
+                    new EObjectAdapter(view.getElement() != null ? view.getElement() : view),
+                    ParserOptions.NONE.intValue());
         } else {
-            GraphsDiagramEditorPlugin.getInstance().logError(
-                "Parser was not found for label " + 6036); //$NON-NLS-1$
+            GraphsDiagramEditorPlugin.getInstance().logError("Parser was not found for label " + 6036); //$NON-NLS-1$
             return ""; //$NON-NLS-1$
         }
     }

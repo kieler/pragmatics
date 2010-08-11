@@ -14,7 +14,7 @@ public abstract class GraphsAbstractNavigatorItem extends PlatformObject {
      * @generated
      */
     static {
-        final Class[] supportedTypes = new Class[] { ITabbedPropertySheetPageContributor.class };
+        final Class[] supportedTypes = new Class[] {ITabbedPropertySheetPageContributor.class};
         final ITabbedPropertySheetPageContributor propertySheetPageContributor = new ITabbedPropertySheetPageContributor() {
             public String getContributorId() {
                 return "de.cau.cs.kieler.graphs.diagram"; //$NON-NLS-1$
@@ -24,7 +24,7 @@ public abstract class GraphsAbstractNavigatorItem extends PlatformObject {
 
             public Object getAdapter(Object adaptableObject, Class adapterType) {
                 if (adaptableObject instanceof de.cau.cs.kieler.graphs.diagram.navigator.GraphsAbstractNavigatorItem
-                    && adapterType == ITabbedPropertySheetPageContributor.class) {
+                        && adapterType == ITabbedPropertySheetPageContributor.class) {
                     return propertySheetPageContributor;
                 }
                 return null;

@@ -18,7 +18,7 @@ public class GraphsDomainNavigatorLabelProvider implements ICommonLabelProvider 
      * @generated
      */
     private AdapterFactoryLabelProvider myAdapterFactoryLabelProvider = new AdapterFactoryLabelProvider(
-        GraphsDiagramEditorPlugin.getInstance().getItemProvidersAdapterFactory());
+            GraphsDiagramEditorPlugin.getInstance().getItemProvidersAdapterFactory());
 
     /**
      * @generated
@@ -32,7 +32,7 @@ public class GraphsDomainNavigatorLabelProvider implements ICommonLabelProvider 
     public Image getImage(Object element) {
         if (element instanceof GraphsDomainNavigatorItem) {
             return myAdapterFactoryLabelProvider.getImage(((GraphsDomainNavigatorItem) element)
-                .getEObject());
+                    .getEObject());
         }
         return null;
     }
@@ -43,7 +43,7 @@ public class GraphsDomainNavigatorLabelProvider implements ICommonLabelProvider 
     public String getText(Object element) {
         if (element instanceof GraphsDomainNavigatorItem) {
             return myAdapterFactoryLabelProvider.getText(((GraphsDomainNavigatorItem) element)
-                .getEObject());
+                    .getEObject());
         }
         return null;
     }
