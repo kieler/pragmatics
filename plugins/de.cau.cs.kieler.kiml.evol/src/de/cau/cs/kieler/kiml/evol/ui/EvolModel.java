@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.gef.EditPart;
 import org.eclipse.ui.IEditorPart;
 
+import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.evol.EvolUtil;
 import de.cau.cs.kieler.kiml.evol.alg.BasicEvolutionaryAlgorithm;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
@@ -80,24 +81,47 @@ public final class EvolModel {
 
         // Calculate auto-rating for the yet unrated individuals.
         final Population unrated = getPopulation().select(Population.UNRATED_FILTER);
-        EvolUtil.autoRateIndividuals(unrated, EvolUtil.getCurrentEditor(), null);
+        EvolUtil.autoRatePopulation(unrated, EvolUtil.getCurrentEditor());
 
         // Notify listeners.
         afterChange("evolve");
     }
-    
+
     /**
      * Auto-rate all individuals in the current editor.
      *
      * @param theMonitor
      *            a progress monitor; may be {@code null}
-     * 
+     *
      */
     public void autoRate(final IProgressMonitor theMonitor) {
+        autoRate(EvolUtil.getCurrentEditor(), theMonitor);
+    }
 
-        EvolUtil.autoRateIndividuals(getPopulation(), EvolUtil.getCurrentEditor(), theMonitor);
+    /**
+     * @param theEditor
+     * @param theMonitor
+     */
+    public void autoRate(final IEditorPart theEditor, final IProgressMonitor theMonitor) {
+
+        final long delay = 200;
+        try {
+            Thread.sleep(delay);
+        } catch (final InterruptedException exception) {
+            exception.printStackTrace();
+        }
+
+        for (final Genome ind : getPopulation()) {
+            MonitoredOperation.runInUI(new Runnable() {
+                public void run() {
+                    EvolUtil.autoRateIndividual(ind, theEditor, theMonitor);
+                }
+            }, true);
+        }
+
 
         // Notify listeners.
+
         afterChange("autoRate");
     }
 
@@ -330,6 +354,7 @@ public final class EvolModel {
 
         updatePosition();
     }
+
     /**
      *
      * @param theEvolAlg
@@ -338,12 +363,14 @@ public final class EvolModel {
     private void setEvolAlg(final BasicEvolutionaryAlgorithm theEvolAlg) {
         this.evolAlg = theEvolAlg;
     }
+
     /**
      * @param editor
      */
     private void setLastEditor(final IEditorPart editor) {
         this.lastEditor = editor;
     }
+
     /**
      * @param theLayoutProviderId
      *            a layout provider id
@@ -351,6 +378,7 @@ public final class EvolModel {
     private void setLayoutProviderId(final String theLayoutProviderId) {
         this.layoutProviderId = theLayoutProviderId;
     }
+
     /**
      *
      */

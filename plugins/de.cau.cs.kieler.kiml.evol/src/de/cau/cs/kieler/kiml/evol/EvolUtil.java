@@ -411,30 +411,24 @@ public final class EvolUtil {
                     showProgressBar);
         }
     }
-    
+
     /**
      * Layouts the given individuals in the given editor and calculates
      * automatic ratings for them. This must be run in the UI thread.
-     * 
+     *
      * @param population
-     *            a {@link Population} (list of individuals)
+     *            the {@link Population} (list of individuals) to be rated
      * @param editor
      *            Specifies the editor in which the individuals shall be
      *            layouted.
-     * @param monitor
-     *            a progress monitor. May be {@code null}.
      */
-    public static void autoRateIndividuals(
-            final Population population, final IEditorPart editor, final IProgressMonitor monitor) {
+    public static void autoRatePopulation(final Population population, final IEditorPart editor) {
         // We don't specify the edit part because we want a manager for
         // the whole diagram.
         final DiagramLayoutManager manager =
                 EclipseLayoutServices.getInstance().getManager(editor, null);
         Assert.isNotNull(manager);
 
-        // final SourceGetter sourceGetterRunnable = new SourceGetter();
-        // MonitoredOperation.runInUI(sourceGetterRunnable, true);
-        // final LayoutPropertySource source = sourceGetterRunnable.getSource();
         final LayoutPropertySource source = getLayoutPropertySource();
         Assert.isNotNull(source);
 
@@ -443,29 +437,63 @@ public final class EvolUtil {
             final Genome ind = population.get(pos);
             // TODO: synchronize on the layout graph?
 
-            adoptIndividual(ind, source);
-
-            final Map<String, Double> weightsMap = extractMetricWeights(ind);
-            final int rating = layoutAndMeasure(manager, editor, weightsMap);
-
-            ind.setUserRating(rating);
-
-            if (monitor != null) {
-                try {
-                    final int delay = 200;
-                    Thread.sleep(delay);
-                } catch (final InterruptedException exception) {
-                    exception.printStackTrace();
-                }
-                monitor.worked(1);
-            }
+            autoRateIndividual(ind, editor, null, manager, source);
         }
+    }
 
-        // TODO: let the EvolView refresh its tableViewer
-        // evolView.getTableViewer.refresh();
+    /**
+     * Layouts the given individual in the given editor and calculates automatic
+     * ratings for them. This must be run in the UI thread.
+     *
+     * @param ind
+     *            the {@link Genome} to be rated
+     * @param editor
+     *            Specifies the editor in which the individual shall be
+     *            layouted.
+     * @param monitor
+     *            a progress monitor. May be {@code null}.
+     */
+    public static void autoRateIndividual(
+            final Genome ind, final IEditorPart editor, final IProgressMonitor monitor) {
 
-        // TODO: set lastEditor for EvolView
-        // evolView.setLastEditor(editor);
+        // We don't specify the edit part because we want a manager for
+        // the whole diagram.
+        final DiagramLayoutManager manager =
+                EclipseLayoutServices.getInstance().getManager(editor, null);
+        Assert.isNotNull(manager);
+
+        final LayoutPropertySource source = getLayoutPropertySource();
+        Assert.isNotNull(source);
+
+        autoRateIndividual(ind, editor, monitor, manager, source);
+    }
+
+    /**
+     * @param ind
+     * @param editor
+     * @param monitor
+     * @param manager
+     * @param source
+     */
+    private static void autoRateIndividual(
+            final Genome ind, final IEditorPart editor, final IProgressMonitor monitor,
+            final DiagramLayoutManager manager, final LayoutPropertySource source) {
+        adoptIndividual(ind, source);
+
+        final Map<String, Double> weightsMap = extractMetricWeights(ind);
+        final int rating = layoutAndMeasure(manager, editor, weightsMap);
+
+        ind.setUserRating(rating);
+
+        if (monitor != null) {
+            try {
+                final int delay = 200;
+                Thread.sleep(delay);
+            } catch (final InterruptedException exception) {
+                exception.printStackTrace();
+            }
+            monitor.worked(1);
+        }
     }
 
     /**

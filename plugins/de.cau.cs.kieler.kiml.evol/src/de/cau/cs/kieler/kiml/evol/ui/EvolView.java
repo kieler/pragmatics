@@ -259,10 +259,12 @@ public class EvolView extends ViewPart {
                     Assert.isTrue(source.getPosition() == 0);
                 }
 
-                tv.selectRow(row);
-
-                EvolView.this.refresh(false);
-
+                MonitoredOperation.runInUI(new Runnable() {
+                    public void run() {
+                        tv.selectRow(row);
+                        EvolView.this.refresh(false);
+                    }
+                }, true);
             }
         });
     }
