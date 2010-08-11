@@ -247,7 +247,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
                 exchange(e, enterEdge(e));
             }
             // balance layering and normalize
-            balance(normalize());
+            balance(normalize(false));
 
             // put nodes into their assigned layers
             for (LNode node : layerNodes) {
@@ -435,6 +435,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         while (iter.hasNext()) {
             curNode = iter.next();
             while (unknownCutvalues.get(curNode.id).size() == 1) {
+                // one edge with undetermined cut value incident
                 toDetermine = unknownCutvalues.get(curNode.id).iterator().next();
                 cutvalue[toDetermine.id] = 1;
                 source = toDetermine.getSource().getNode();
@@ -445,7 +446,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
                             if (treeEdge[edge.id]) {
                                 if (source.equals(edge.getSource().getNode())
                                         || target.equals(edge.getTarget().getNode())) {
-                                    // edge is in same direction as toDetermine
+                                    // edge has the same direction as toDetermine
                                     cutvalue[toDetermine.id] -= cutvalue[edge.id] - 1;
                                 } else {
                                     cutvalue[toDetermine.id] += cutvalue[edge.id] - 1;
@@ -527,15 +528,11 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      */
     private void shiftLeafs() {
 
-        if (!sources.isEmpty()) {
-            for (LNode node : sources) {
-                layer[node.id] += minimalSpan(node).getSecond() - 1;
-            }
+        for (LNode node : sources) {
+            layer[node.id] += minimalSpan(node).getSecond() - 1;
         }
-        if (!sinks.isEmpty()) {
-            for (LNode node : sinks) {
-                layer[node.id] -= minimalSpan(node).getFirst() - 1;
-            }
+        for (LNode node : sinks) {
+            layer[node.id] -= minimalSpan(node).getFirst() - 1;
         }
     }
 
@@ -649,9 +646,14 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * assigned to which layer. Note that the total number of layers necessary to layer the is
      * indicated thereby, which is the size if the array.
      * 
+     * @param mode
+     *            if {@code false}, only the amount of nodes in the currently layered connected
+     *            component will be considered for determining the filling structure of the layers.
+     *            Otherwise, all nodes, that have been layered already will be considered.
+     * 
      * @return an integer array indicating how many nodes are assigned to which layer
      */
-    private int[] normalize() {
+    private int[] normalize(final boolean mode) {
 
         int highest = Integer.MIN_VALUE;
         int lowest = Integer.MAX_VALUE;
@@ -667,10 +669,19 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             }
         }
         // normalize and determine layer filling
+        int layerID = 0;
         int[] filling = new int[highest - lowest + 1];
         for (LNode node : layerNodes) {
             layer[node.id] -= lowest;
             filling[layer[node.id]]++;
+        }
+        if (mode) {
+            for (Layer eLayer : layerGraph.getLayers()) {
+                filling[layerID++] += eLayer.getNodes().size();
+                if (filling.length == layerID) {
+                    break;
+                }
+            }
         }
         return filling;
     }
@@ -690,6 +701,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         int newLayer;
         Pair<Integer, Integer> range = null;
         for (LNode node : layerNodes) {
+            // determine possible layers
             if (inDegree[node.id] == outDegree[node.id]) {
                 newLayer = layer[node.id];
                 range = minimalSpan(node);
@@ -739,7 +751,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             sources.clear();
             sinks.clear();
         }
-        // determine edges
+        // determine edges and re-index nodes
         int index = 0;
         LinkedList<LEdge> edges = new LinkedList<LEdge>();
         for (LNode node : nodes) {
