@@ -97,9 +97,9 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
 
     /**
      * A flag indicating whether a specified node is part of the spanning tree determined by
-     * {@code feasibleTree()}.
+     * {@code tightTree()}.
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#feasibleTree() feasibleTree()
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#tightTreeDFS() tightTreeDFS()
      */
     private boolean[] treeNode;
 
@@ -107,7 +107,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * A flag indicating whether a specified edge is part of the spanning tree determined by
      * {@code tightTree()}.
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#tightTreeDFS(LNode) tightTree()
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#tightTreeDFS(LNode) tightTreeDFS()
      */
     private boolean[] treeEdge;
 
@@ -181,6 +181,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      *            components
      * @return an {@code LinkedList} of {@code LinkedLists} containing all nodes of every connected
      *         component
+     * 
      * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#connectedComponentsDFS(LNode)
      *      connectedComponentsDFS()
      */
@@ -226,8 +227,10 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      *            the root of the DFS-subtree
      * @return a {@code LinkedList} containing all nodes reachable through a path beginning at the
      *         input node (i.e. all nodes connected to the input node)
+     * 
      * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#connectedComponents(Collection)
      *      connectedComponents()
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#componentNodes componentNodes
      */
     private void connectedComponentsDFS(final LNode node) {
 
@@ -329,7 +332,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * nodes in the graph concerning a minimal length of all edges by using the network simplex
      * algorithm described in {@literal Emden R. Gansner, Eleftherios Koutsofios, Stephen
      * C. North, Kiem-Phong Vo: "A Technique for Drawing Directed Graphs", AT&T Bell Laboratories.
-     * Note that the execution time of this implemented algorithms has not been proven quadratic so far.
+     * The execution time of this implemented algorithm has not been proven quadratic till now.
      * 
      * @param nodes
      *            a {@code Collection} of all nodes of the graph to layer
@@ -341,7 +344,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     public void layer(final Collection<LNode> nodes, final LayeredGraph layeredGraph) {
 
         if (nodes == null) {
-            throw new IllegalArgumentException("Input nodes are null.");
+            throw new IllegalArgumentException("Input collection of nodes is null.");
         }
         if (layeredGraph == null) {
             throw new IllegalArgumentException("Input graph is null.");
@@ -378,16 +381,16 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     }
 
     /**
-     * Helper method for the network simplex layerer. It determines an initial feasible (and tight)
-     * spanning tree of the graph. To do so, an initial feasible tree is being computed. If all tree
-     * edges contained are tight (i.e. their minimal length corresponds with their actual length), a
-     * tight tree has already been found. If not, this method iteratively determines a non-tree edge
-     * incident to the tree with a minimal amount of slack (i.e. the edge with the lowest difference
-     * between its current and minimal length) and shifts all tree edges accordingly to shorten this
-     * edge to its minimal size. The edge has become tight and will be added to the spanning tree
-     * together with all tight edges leading to non-tree nodes as well. If all nodes of the graph
-     * are contained in the spanning tree, a tight tree has been found. A concluding computation of
-     * each edge's initial cut value takes place.
+     * Helper method for the network simplex layerer. It determines an initial feasible spanning
+     * tree of the graph. This graph will be tight by construction. For determination, an initial
+     * feasible tree is being computed. If all tree edges contained are tight (i.e. their minimal
+     * length corresponds with their actual length), a tight tree has already been found. If not,
+     * this method iteratively determines a non-tree edge incident to the tree with a minimal amount
+     * of slack (i.e. the edge with the lowest difference between its current and minimal length)
+     * and shifts all tree edges accordingly to shorten the edge to its minimal size. The edge has
+     * become tight and will be added to the spanning tree together with all tight edges leading to
+     * non-tree nodes as well. If all nodes of the graph are contained in the spanning tree, a tight
+     * tree has been found. A concluding computation of each edge's initial cut value takes place.
      * 
      * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#tightTreeDFS(LNode)
      *      tightTreeDFS()
@@ -430,6 +433,8 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * 
      * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#layeringDFS(LNode, boolean)
      *      layeringDFS()
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#layer layer
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#minSpan minSpan
      */
     private void initLayering() {
 
@@ -466,6 +471,9 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      *            the traversal direction of the depth-first-search. If {@code reverse = false}),
      *            this method only traverses incoming edges. Otherwise, if {@code reverse = true},
      *            only outgoing edges will be traversed
+     * 
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#layer layer
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#revLayer revLayer
      */
     private void layeringDFS(final LNode node, final boolean reverse) {
 
@@ -555,6 +563,9 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * @param node
      *            the root of the DFS-subtree
      * @return the number of nodes in the determined tight DFS-tree
+     * 
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#treeEdge treeEdge
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#treeNode treeNode
      */
     private int tightTreeDFS(final LNode node) {
 
@@ -621,6 +632,10 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * @param node
      *            the root of the DFS-subtree
      * @return the lowest post-order ID of any descending edge in the depth-first-search
+     * 
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#poID poID
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#lowestPoID lowestPoID
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#postOrder postOrder
      */
     private int postorderTraversal(final LNode node) {
 
@@ -684,6 +699,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * all edges going from the tail to the head component, including the tree edge itself, minus
      * the sum of the weights of all edges from the head to the tail component.
      * 
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#cutvalue cutvalue
      */
     private void cutvalues() {
 
@@ -773,6 +789,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      *             performance of O(|E|^2). The method {@code cutvalues()} computes the cut values
      *             in linear time and, therefore, should be used instead.
      * 
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#cutvalue cutvalue
      * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#cutvalues() cutvalues()
      */
     @SuppressWarnings("unused")
