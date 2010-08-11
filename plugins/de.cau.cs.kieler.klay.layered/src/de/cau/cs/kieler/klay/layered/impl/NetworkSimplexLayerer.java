@@ -16,6 +16,8 @@ package de.cau.cs.kieler.klay.layered.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -141,7 +143,11 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      */
     private int[] cutvalue;
 
-    private boolean[] knownCutvalue;
+    /**
+     * A list of all tree edges incident on each node with unknown (i.e. still not computed) cut
+     * values.
+     */
+    // private ArrayList<HashSet<LEdge>> unknownCutvalues;
 
     // ====================== Constructor =====================================
 
@@ -198,11 +204,9 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             minSpan = new int[numEdges];
             treeEdge = new boolean[numEdges];
             edgeVisited = new boolean[numEdges];
-            knownCutvalue = new boolean[numEdges];
         } else {
             Arrays.fill(treeEdge, false);
             Arrays.fill(edgeVisited, false);
-            Arrays.fill(knownCutvalue, false);
         }
         postOrder = 1;
     }
@@ -232,6 +236,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
 
         // layer graph, each connected component separately
         for (LinkedList<LNode> connComp : connectedComponents(nodes)) {
+
             // initialize attributes
             layerNodes = connComp;
             layerEdges = getEdges(connComp);
@@ -303,8 +308,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             Arrays.fill(edgeVisited, false);
             postorderTraversal(layerNodes.iterator().next());
             Arrays.fill(edgeVisited, false);
-            // naiveCutvalues();
-            cutvalues(layerNodes.iterator().next());
+            cutvalues();
         }
     }
 
@@ -412,82 +416,101 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * all edges going from the tail to the head component, including the tree edge itself, minus
      * the sum of the weights of all edges from the head to the tail component.
      * 
-     * @param node
-     *            the root of the DFS-subtree
      */
-    private void cutvalues(final LNode node) {
+    private void cutvalues() {
 
-        /*
-         * TODO nodeVisited[node] = true; if (node is source node and has exactly one incident tree
-         * edge and has unknown cw called edge){ cw[edge] = 1; knownCw[edge] = true; for each
-         * (non-tree edge e incident on node) { if (e points at node){ cw[edge]--; } else {
-         * cw[edge]--; } } LNode opposite = opposite Node incident on edge; if
-         * (!nodeVisited[opposite]) { cutvalues(opposite); } } else if (node is target node ...){
-         * [similar to above] } else { // edge has more than one incident tree edge with known or
-         * unknown cut values for each (incident tree edge, unvisited and with unknown cutvalue
-         * called e1) { cw(e1); // edge 'ecv' to determine its CV can easily be saved and determined
-         * in this iteration } // all (except ecv, which is visited, but not with known cv) //
-         * incident edges now have known cut values compute cv of ecv
-         */
+        // determine incident tree edges for each node
+        LinkedList<LNode> leafs = new LinkedList<LNode>();
+        int treeEdgeCount;
+        ArrayList<HashSet<LEdge>> unknownCutvalues = new ArrayList<HashSet<LEdge>>(
+                layerNodes.size());
+        for (LNode node : layerNodes) {
+            treeEdgeCount = 0;
+            unknownCutvalues.add(new HashSet<LEdge>());
+            for (LPort port : node.getPorts()) {
+                for (LEdge edge : port.getEdges()) {
+                    System.out.println(edge.toString() + ", treeEdge: " + treeEdge[edge.id]);
+                    if (treeEdge[edge.id]) {
+                        unknownCutvalues.get(node.id).add(edge);
+                        treeEdgeCount++;
+                    }
+                }
+            }
+            if (treeEdgeCount == 1) {
+                leafs.add(node);
+            }
+        }
 
-        nodeVisited[node.id] = true;
-        // determine incident tree and non-tree edges
-        LinkedList<LEdge> treeEdges = new LinkedList<LEdge>();
-        LinkedList<LEdge> nonTreeEdges = new LinkedList<LEdge>();
-        for (LPort port : node.getPorts()) {
-            for (LEdge edge : port.getEdges()) {
-                if (treeEdge[edge.id]) {
-                    treeEdges.add(edge);
+        // determine cut values
+        LEdge toDetermine;
+        LNode source, target, curNode;
+        Iterator<LNode> iter = leafs.iterator();
+        while (iter.hasNext()) {
+            curNode = iter.next();
+            while (unknownCutvalues.get(curNode.id).size() == 1) {
+                toDetermine = unknownCutvalues.get(curNode.id).iterator().next();
+                cutvalue[toDetermine.id] = 1;
+                source = toDetermine.getSource().getNode();
+                target = toDetermine.getTarget().getNode();
+                for (LPort port : curNode.getPorts()) {
+                    for (LEdge edge : port.getEdges()) {
+                        if (!edge.equals(toDetermine)) {
+                            if (treeEdge[edge.id]) {
+                                if (source.equals(edge.getSource().getNode())
+                                        || target.equals(edge.getTarget().getNode())) {
+                                    // edge is in same direction as toDetermine
+                                    cutvalue[toDetermine.id] -= cutvalue[edge.id] - 1;
+                                } else {
+                                    cutvalue[toDetermine.id] += cutvalue[edge.id] - 1;
+                                }
+                            } else {
+                                if (curNode.equals(source)) {
+                                    if (edge.getSource().getNode().equals(curNode)) {
+                                        cutvalue[toDetermine.id]++;
+                                    } else {
+                                        cutvalue[toDetermine.id]--;
+                                    }
+                                } else {
+                                    if (edge.getSource().getNode().equals(curNode)) {
+                                        cutvalue[toDetermine.id]--;
+                                    } else {
+                                        cutvalue[toDetermine.id]++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                // remove edge from unknownCutvalues
+                unknownCutvalues.get(source.id).remove(toDetermine);
+                unknownCutvalues.get(target.id).remove(toDetermine);
+                // proceed with next node
+                if (source.equals(curNode)) {
+                    curNode = toDetermine.getTarget().getNode();
                 } else {
-                    nonTreeEdges.add(edge);
+                    curNode = toDetermine.getSource().getNode();
                 }
             }
         }
-        if (treeEdges.size() == 1) {
-            // node is a leaf in the spanning tree
-            cutvalue[treeEdges.getFirst().id] = 1;
-            edgeVisited[treeEdges.getFirst().id] = true;
-            knownCutvalue[treeEdges.getFirst().id] = true;
-            if (inDegree[node.id] == 0) {
-                // node is a source
-                for (LEdge edge : nonTreeEdges) {
-                    if (edge.getSource().getNode().equals(node)) {
-                        cutvalue[treeEdges.getFirst().id]++;
-                    } else {
-                        cutvalue[treeEdges.getFirst().id]--;
-                    }
-                }
-                if (!edgeVisited[treeEdges.getFirst().id]) {
-                    cutvalues(treeEdges.getFirst().getTarget().getNode());
-                }
-            } else {
-                // node is a sink
-                for (LEdge edge : nonTreeEdges) {
-                    if (edge.getTarget().getNode().equals(node)) {
-                        cutvalue[treeEdges.getFirst().id]++;
-                    } else {
-                        cutvalue[treeEdges.getFirst().id]--;
-                    }
-                }
-                if (!edgeVisited[treeEdges.getFirst().id]) {
-                    cutvalues(treeEdges.getFirst().getSource().getNode());
-                }
-            }           
-        } else {
-            // node has multiple incident tree edges
-            // TODO
-        }
-        // TODO continue implementation
     }
 
     /**
-     * A naive implementation of a cut value determination with a performance of O(|E|^2). For
-     * testing only.
+     * Helper method for the network simplex layerer. It determines the cut value of each tree edge,
+     * which is defined as follows: If the edge is deleted, the spanning tree breaks into two
+     * connected components, the head component containing the target node of the edge and the tail
+     * component containing the source node of the edge. The cut value is the sum of the weights of
+     * all edges going from the tail to the head component, including the tree edge itself, minus
+     * the sum of the weights of all edges from the head to the tail component.
+     * 
+     * @deprecated This method realizes a naive approach to compute the cut values with a
+     *             performance of O(|E|^2) and is originally designed for testing only. The method
+     *             {@code cutvalues()} computes the cut values in linear time and should be used
+     *             instead.
      */
+    @SuppressWarnings("unused")
     private void naiveCutvalues() {
 
-        boolean source;
-        boolean target;
+        boolean source, target;
         for (LEdge edge : layerEdges) {
             if (treeEdge[edge.id]) {
                 cutvalue[edge.id] = 1;
@@ -627,8 +650,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         Arrays.fill(edgeVisited, false);
         postorderTraversal(layerNodes.iterator().next());
         Arrays.fill(edgeVisited, false);
-        // naiveCutvalues();
-        cutvalues(layerNodes.iterator().next());
+        cutvalues();
     }
 
     /**
@@ -927,12 +949,12 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * @param nodes
      *            a {@link Collection} containing all nodes of the graph to determine the connected
      *            components
-     * @return an {@link ArrayList} of {@code LinkedList}s containing all nodes of every connected
+     * @return an {@link LinkedList} of {@code LinkedLists} containing all nodes of every connected
      *         component
      * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer.connectedComponentsDFS(LNode)
      *      connectedComponentsDFS()
      */
-    private ArrayList<LinkedList<LNode>> connectedComponents(final Collection<LNode> nodes) {
+    private LinkedList<LinkedList<LNode>> connectedComponents(final Collection<LNode> nodes) {
 
         // initialize required attributes
         if (nodeVisited == null || nodeVisited.length < nodes.size()) {
@@ -948,12 +970,18 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             node.id = counter++;
         }
         // determine connected components
-        ArrayList<LinkedList<LNode>> components = new ArrayList<LinkedList<LNode>>();
+        LinkedList<LinkedList<LNode>> components = new LinkedList<LinkedList<LNode>>();
         // default capacity of 10 should be sufficient in the very most cases
         for (LNode node : nodes) {
             if (!nodeVisited[node.id]) {
                 connectedComponentsDFS(node);
-                components.add(componentNodes);
+                if (components.isEmpty() || components.getFirst().size() < componentNodes.size()) {
+                    components.addFirst(componentNodes);
+                } else {
+                    components.addLast(componentNodes);
+                    // connected component with the most nodes should be layered first to guarantee
+                    // reusability of attribute instances
+                }
                 componentNodes = new LinkedList<LNode>();
             }
         }
