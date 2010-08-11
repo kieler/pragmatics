@@ -56,7 +56,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     private Collection<LEdge> layerEdges;
 
     /**
-     * A collection containing all nodes of the currently identified connected component in
+     * A collection containing all nodes of the currently identified connected component by
      * {@code connectedComponents()}.
      */
     private LinkedList<LNode> componentNodes;
@@ -109,12 +109,14 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     private boolean[] treeEdge;
 
     /**
-     * A flag indicating whether a specified edge has been visited during DFS-traversal.
+     * A flag indicating whether a specified edge has been visited during DFS-traversal. This array
+     * has to be filled with {@code false} each time, before a DFS-based method is invoked.
      */
     private boolean[] edgeVisited;
 
     /**
-     * A flag indicating whether a specified node has been visited during DFS-traversal.
+     * A flag indicating whether a specified node has been visited during DFS-traversal. This array
+     * has to be filled with {@code false} each time, before a DFS-based method is invoked.
      */
     private boolean[] nodeVisited;
 
@@ -142,12 +144,6 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * component.
      */
     private int[] cutvalue;
-
-    /**
-     * A list of all tree edges incident on each node with unknown (i.e. still not computed) cut
-     * values.
-     */
-    // private ArrayList<HashSet<LEdge>> unknownCutvalues;
 
     // ====================== Constructor =====================================
 
@@ -216,6 +212,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * nodes in the graph concerning a minimal length of all edges by using the network simplex
      * algorithm described in {@literal Emden R. Gansner, Eleftherios Koutsofios, Stephen
      * C. North, Kiem-Phong Vo: "A Technique for Drawing Directed Graphs", AT&T Bell Laboratories.
+     * Note that the execution time of this implemented algorithms has not been proven quadratic so far.
      * 
      * @param nodes
      *            a {@link Collection} of all nodes of the graph to layer
@@ -245,12 +242,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             // determine feasible tree
             feasibleTree();
             LEdge e = null;
-            for (LEdge ed : layerEdges)
-                System.out.println(ed.toString() + " ,cw = " + cutvalue[ed.id]);
             while ((e = leaveEdge()) != null) {
-                System.out.println("--- Cutvalues ---");
-                for (LEdge ed : layerEdges)
-                    System.out.println(ed.toString() + " ,cw = " + cutvalue[ed.id]);
                 // current layering is not optimal
                 exchange(e, enterEdge(e));
             }
@@ -301,13 +293,9 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
                 }
                 Arrays.fill(edgeVisited, false);
             }
-            System.out.println(" --- Spanning Tree --- ");
-            for (LEdge edge : layerEdges) {
-                System.out.println(edge.toString() + " ,isTreeEdge = " + treeEdge[edge.id]);
-            }
+            // update tree-related attributes
             Arrays.fill(edgeVisited, false);
             postorderTraversal(layerNodes.iterator().next());
-            Arrays.fill(edgeVisited, false);
             cutvalues();
         }
     }
@@ -429,7 +417,6 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             unknownCutvalues.add(new HashSet<LEdge>());
             for (LPort port : node.getPorts()) {
                 for (LEdge edge : port.getEdges()) {
-                    System.out.println(edge.toString() + ", treeEdge: " + treeEdge[edge.id]);
                     if (treeEdge[edge.id]) {
                         unknownCutvalues.get(node.id).add(edge);
                         treeEdgeCount++;
@@ -506,6 +493,8 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      *             performance of O(|E|^2) and is originally designed for testing only. The method
      *             {@code cutvalues()} computes the cut values in linear time and should be used
      *             instead.
+     * 
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#cutvalues() cutvalues()
      */
     @SuppressWarnings("unused")
     private void naiveCutvalues() {
@@ -649,7 +638,6 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         postOrder = 1;
         Arrays.fill(edgeVisited, false);
         postorderTraversal(layerNodes.iterator().next());
-        Arrays.fill(edgeVisited, false);
         cutvalues();
     }
 
@@ -820,8 +808,8 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      *            the node to determine the length of its shortest incident incoming and outgoing
      *            edge
      * @return a pair containing the length of the shortest incoming (first element) and outgoing
-     *         edge (second element) incident to the input node or {@code -1}, if no such edge is
-     *         incident
+     *         edge (second element) incident to the input node or {@code -1} as the length, if no
+     *         such edge is incident
      * 
      * @see de.cau.cs.kieler.core.util.Pair Pair
      */
@@ -877,10 +865,10 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
 
     /**
      * Helper method for the network simplex layerer. It performs a postorder DFS-traversal of the
-     * graph beginning with the first node in the Collection of all graph nodes. Each node will be
-     * assigned a unique traversal ID, which will be stored in {@code poID}. Furthermore, the lowest
-     * postorder traversal ID of any node in a descending path relative to the input node will be
-     * computed and stored in {@code lowestPoID}, which is also the return value of this method.
+     * graph beginning with the input node. Each node will be assigned a unique traversal ID, which
+     * will be stored in {@code poID}. Furthermore, the lowest postorder traversal ID of any node in
+     * a descending path relative to the input node will be computed and stored in
+     * {@code lowestPoID}, which is also the return value of this method.
      * 
      * @param node
      *            the root of the DFS-subtree
@@ -900,8 +888,6 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         }
         poID[node.id] = postOrder;
         lowestPoID[node.id] = Math.min(lowest, postOrder++);
-        System.out.println(node.toString() + ", poID = " + poID[node.id] + ", lowestpoID = "
-                + lowestPoID[node.id]);
         return lowestPoID[node.id];
     }
 
@@ -990,7 +976,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
 
     /**
      * Helper method for the connected components determination. It determines all nodes, that are
-     * connected with the input node (i.e. all nodes of the connected component the input node is
+     * connected with the input node (i.e. all nodes of that connected component the input node is
      * part of) and adds them to {@code componentNodes}.
      * 
      * @param node
