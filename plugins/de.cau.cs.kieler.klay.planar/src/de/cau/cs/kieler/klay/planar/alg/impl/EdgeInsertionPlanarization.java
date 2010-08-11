@@ -57,8 +57,6 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
             INode source = insertingEdge.getSource();
             INode target = insertingEdge.getTarget();
 
-            // assert sourceFaceID != targetFaceID : "nodes lie at the same face";
-
             INode dualStartNode = null;
             INode dualTargetNode = null;
 
@@ -94,6 +92,8 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
                         targetFace = itargetFace;
                     }
                 }
+
+                assert sourceFace.getID() != targetFace.getID() : "nodes lie at the same face";
 
                 // same path with faces in the normal graph
                 facePath.add(sourceFace);
@@ -161,18 +161,17 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
             while (pathNodeCounter < path.size() - 1) {
 
                 // split up the crossed hypernodes
+                // TODO check this!!!
                 if (path.get(pathNodeCounter).getType() == NodeType.HYPER) {
 
                     INode oldHyperNode = path.get(pathNodeCounter);
-                    
+
                     // create new hypernode and connect this with the old one
                     INode newHyperNode = graph.addNode();
                     IEdge newHyperEdge = graph.addEdge(oldHyperNode, newHyperNode);
 
                     // bring edge in right order
-                    // TODO check this!!!
-                    reinsertEdges(shortestFacePath.get(pathNodeCounter), newHyperEdge,
-                            oldHyperNode);
+                    reinsertEdges(shortestFacePath.get(pathNodeCounter), newHyperEdge, oldHyperNode);
                     // bring edges at the new hypernode in right order
                     reinsertEdges(shortestFacePath.get(pathNodeCounter), newHyperEdge, newHyperNode);
 
@@ -182,9 +181,8 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
                     // connect the new node
                     IEdge newEdge = graph.addEdge(midNode, path.get(pathNodeCounter + 1));
 
-                    // bring new edges in right order
-                    reinsertEdges(shortestFacePath.get(pathNodeCounter), newEdge,
-                            midNode);
+                    // bring new edges at new node in right order
+                    reinsertEdges(shortestFacePath.get(pathNodeCounter), newEdge, midNode);
                     pathNodeCounter++;
                 }
 
