@@ -411,11 +411,11 @@ public final class EvolUtil {
                     showProgressBar);
         }
     }
-
+    
     /**
      * Layouts the given individuals in the given editor and calculates
      * automatic ratings for them. This must be run in the UI thread.
-     *
+     * 
      * @param population
      *            a {@link Population} (list of individuals)
      * @param editor

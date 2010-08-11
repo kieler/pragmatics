@@ -52,6 +52,7 @@ public class PopulationTableLabelProvider extends LabelProvider implements ITabl
 
     @Override
     public void dispose() {
+        super.dispose();
         this.currentImage.dispose();
         this.defaultImage.dispose();
     }

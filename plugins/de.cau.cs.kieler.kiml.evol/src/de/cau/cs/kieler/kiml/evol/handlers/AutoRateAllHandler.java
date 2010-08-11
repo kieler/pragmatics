@@ -21,12 +21,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
-import de.cau.cs.kieler.kiml.evol.EvolUtil;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 import de.cau.cs.kieler.kiml.evol.ui.EvolView;
 
@@ -37,11 +35,21 @@ import de.cau.cs.kieler.kiml.evol.ui.EvolView;
  *
  */
 public class AutoRateAllHandler extends AbstractHandler {
+
     /**
+     * A job that does the auto-rating.
+     *
      * @author bdu
      *
      */
-    private static final class RefreshEvolutionViewJob extends Job {
+    private static final class AutoRateAllJob extends Job {
+        /**
+         * @return the evolution view
+         */
+        private EvolView getView() {
+            return this.view;
+        }
+
         /**
          * @author bdu
          *
@@ -51,10 +59,10 @@ public class AutoRateAllHandler extends AbstractHandler {
              *
              */
             private final EvolView evolView;
-            
+
             /**
              * Creates a new {@link RefreshEvolViewRunnable} instance.
-             * 
+             *
              * @param theEvolView
              */
             RefreshEvolViewRunnable(final EvolView theEvolView) {
@@ -68,50 +76,6 @@ public class AutoRateAllHandler extends AbstractHandler {
         }
 
         /**
-         *
-         */
-        private final EvolView view;
-
-        /**
-         * Creates a new {@link RefreshEvolutionViewJob} instance.
-         *
-         * @param theName
-         * @param theMonitor
-         * @param theView
-         */
-        RefreshEvolutionViewJob(final String theName, final EvolView theView) {
-            super(theName);
-            this.view = theView;
-        }
-
-        /**
-         * @return the evolution view
-         */
-        private EvolView getView() {
-            return this.view;
-        }
-
-        @Override
-        protected IStatus run(final IProgressMonitor monitor) {
-
-            monitor.subTask("Refreshing the evolution view");
-            final EvolView evolView = getView();
-            MonitoredOperation.runInUI(new RefreshEvolViewRunnable(evolView), false);
-
-            monitor.worked(1);
-
-            return new Status(IStatus.INFO, EvolPlugin.PLUGIN_ID, 0, "OK", null);
-        }
-    }
-
-    /**
-     * A job that does the auto-rating.
-     *
-     * @author bdu
-     *
-     */
-    private static final class AutoRateAllJob extends Job {
-        /**
          * @author bdu
          *
          */
@@ -120,28 +84,26 @@ public class AutoRateAllHandler extends AbstractHandler {
              *
              */
             private final IProgressMonitor monitor;
-            private final IEditorPart editor;
-            private final Population population;
-            
+            private final EvolView view;
+
             /**
              * Creates a new {@link AutoRateAllRunnable} instance.
-             * 
+             *
              * @param theMonitor
              * @param theEditor
              * @param thePopulation
              */
-            AutoRateAllRunnable(
-                    final IProgressMonitor theMonitor,
-                    final IEditorPart theEditor,
-                    final Population thePopulation) {
+            AutoRateAllRunnable(final EvolView theView, final IProgressMonitor theMonitor) {
                 this.monitor = theMonitor;
-                this.editor = theEditor;
-                this.population = thePopulation;
+                this.view = theView;
             }
 
             public void run() {
-                // Rate all individuals in the given editor.
-                EvolUtil.autoRateIndividuals(this.population, this.editor, this.monitor);
+                // Rate all individuals in the current editor.
+                this.view.getEvolModel().autoRate(this.monitor);
+
+                // EvolUtil.autoRateIndividuals(this.population, this.editor,
+                // this.monitor);
             }
         }
 
@@ -150,10 +112,8 @@ public class AutoRateAllHandler extends AbstractHandler {
          */
         private final Population population;
 
-        /**
-         * The editor in which the individuals shall be layouted.
-         */
-        private final IEditorPart editor;
+
+        private final EvolView view;
 
         /**
          * Creates a new {@link AutoRateAllJob} instance.
@@ -162,12 +122,16 @@ public class AutoRateAllHandler extends AbstractHandler {
          * @param pop
          * @param theEditor
          * @param theView
+         * @param theView
          */
-        AutoRateAllJob(final String name, final Population pop, final IEditorPart theEditor) {
+        AutoRateAllJob(
+                final String name,
+ final Population pop,
+                final EvolView theView) {
             super(name);
             Assert.isLegal(pop != null);
             this.population = pop;
-            this.editor = theEditor;
+            this.view = theView;
         }
 
         @Override
@@ -178,9 +142,7 @@ public class AutoRateAllHandler extends AbstractHandler {
                 Thread.sleep(delay);
 
                 // Do the rating.
-                MonitoredOperation.runInUI(new AutoRateAllRunnable(monitor, this.editor,
-                        this.population),
-                        true);
+                MonitoredOperation.runInUI(new AutoRateAllRunnable(this.view, monitor), false);
 
                 if (monitor.isCanceled()) {
                     return new Status(IStatus.CANCEL, EvolPlugin.PLUGIN_ID,
@@ -188,9 +150,14 @@ public class AutoRateAllHandler extends AbstractHandler {
                 }
 
                 monitor.subTask("Determining the average rating");
-
                 System.out.println("Average rating: " + this.population.getAverageRating());
                 monitor.worked(1);
+
+                // monitor.subTask("Refreshing the evolution view");
+                // final EvolView evolView = getView();
+                // MonitoredOperation.runInUI(new
+                // RefreshEvolViewRunnable(evolView), false);
+                // monitor.worked(1);
 
                 return new Status(IStatus.INFO, EvolPlugin.PLUGIN_ID, 0, "OK", null);
 
@@ -217,12 +184,13 @@ public class AutoRateAllHandler extends AbstractHandler {
         final Population pop = view.getPopulation();
         Assert.isNotNull(pop);
 
-        final IEditorPart editor = EvolUtil.getCurrentEditor();
-        Assert.isNotNull(editor);
+        // final IEditorPart editor = EvolUtil.getCurrentEditor();
+        // Assert.isNotNull(editor);
 
         // Create jobs for auto-rating and refreshing.
-        final Job autoRateAllJob = new AutoRateAllJob("auto-rating", pop, editor);
-        final Job refreshViewJob = new RefreshEvolutionViewJob("refreshing the view", view);
+        final Job autoRateAllJob = new AutoRateAllJob("auto-rating", pop, view);
+        // final Job refreshViewJob = new
+        // RefreshEvolutionViewJob("refreshing the view", view);
 
         // Process the jobs.
         final IProgressMonitor monitor = Job.getJobManager().createProgressGroup();
@@ -234,14 +202,14 @@ public class AutoRateAllHandler extends AbstractHandler {
 
             autoRateAllJob.setProgressGroup(monitor, size + 1);
             autoRateAllJob.setUser(true);
-            autoRateAllJob.setPriority(Job.INTERACTIVE);
+            autoRateAllJob.setPriority(Job.DECORATE);
             autoRateAllJob.schedule();
 
-            refreshViewJob.setProgressGroup(monitor, 1);
-            refreshViewJob.setUser(true);
-            refreshViewJob.setPriority(Job.SHORT);
+            // refreshViewJob.setProgressGroup(monitor, 1);
+            // refreshViewJob.setUser(true);
+            // refreshViewJob.setPriority(Job.SHORT);
             final int delay = 200;
-            refreshViewJob.schedule(delay);
+            // refreshViewJob.schedule(delay);
 
             // XXX: Auto-rating and refreshing are divided into two separate
             // jobs. We want the autorating to be finished before the view is
@@ -249,9 +217,9 @@ public class AutoRateAllHandler extends AbstractHandler {
             // but this way for some unknown reason the diligently notified
             // progress bar is not shown. Where is the progress bar? :(
 
-            autoRateAllJob.join();
+            // autoRateAllJob.join();
             Thread.sleep(delay);
-            refreshViewJob.join();
+            // refreshViewJob.join();
             Thread.sleep(delay);
 
         } catch (final InterruptedException exception) {
@@ -262,4 +230,5 @@ public class AutoRateAllHandler extends AbstractHandler {
 
         return null;
     }
+
 }

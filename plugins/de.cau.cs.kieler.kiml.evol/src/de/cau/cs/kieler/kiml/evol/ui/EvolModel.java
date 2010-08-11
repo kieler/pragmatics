@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.gef.EditPart;
 import org.eclipse.ui.IEditorPart;
 
@@ -83,6 +84,21 @@ public final class EvolModel {
 
         // Notify listeners.
         afterChange("evolve");
+    }
+    
+    /**
+     * Auto-rate all individuals in the current editor.
+     *
+     * @param theMonitor
+     *            a progress monitor; may be {@code null}
+     * 
+     */
+    public void autoRate(final IProgressMonitor theMonitor) {
+
+        EvolUtil.autoRateIndividuals(getPopulation(), EvolUtil.getCurrentEditor(), theMonitor);
+
+        // Notify listeners.
+        afterChange("autoRate");
     }
 
     /**

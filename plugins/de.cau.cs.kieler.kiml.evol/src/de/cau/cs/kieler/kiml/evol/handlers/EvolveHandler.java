@@ -22,11 +22,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
-import de.cau.cs.kieler.kiml.evol.EvolUtil;
 import de.cau.cs.kieler.kiml.evol.ui.EvolView;
 
 /**
@@ -143,11 +141,15 @@ public class EvolveHandler extends AbstractHandler {
                     final boolean wantAutoRating;
                     wantAutoRating = wantAutoRatingForStep(i, stepsBeforeAutoRating);
                     if (wantAutoRating) {
-                        final IEditorPart editor = EvolUtil.getCurrentEditor();
-                        Assert.isNotNull(editor);
+                        // final IEditorPart editor =
+                        // EvolUtil.getCurrentEditor();
+                        // Assert.isNotNull(editor);
 
-                        // Calculate auto-rating for all individuals.
-                        EvolUtil.autoRateIndividuals(view.getPopulation(), editor, null);
+                        // Calculate auto-rating in the current editor for all
+                        // individuals.
+                        view.getEvolModel().autoRate(null);
+                        // EvolUtil.autoRateIndividuals(view.getPopulation(),
+                        // editor, null);
                         System.out.println(view.getPopulation());
                     }
                     steps++;
