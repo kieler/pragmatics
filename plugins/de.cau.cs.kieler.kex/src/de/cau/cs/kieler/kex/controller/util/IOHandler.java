@@ -11,6 +11,7 @@ public class IOHandler {
 
 	public static void writeFile(File sourceFile, File destFile)
 			throws IOException {
+		// TODO is directory geht nur auf absolute pfade.
 		if (sourceFile.isDirectory()) {
 			destFile.mkdir();
 		} else {

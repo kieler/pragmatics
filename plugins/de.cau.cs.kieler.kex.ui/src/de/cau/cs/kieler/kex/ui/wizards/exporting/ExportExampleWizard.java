@@ -71,36 +71,30 @@ public class ExportExampleWizard extends Wizard implements IWizard {
 			resource1.setCategory("de.cau.cs.kieler.dataflow");
 			resource1.setHeadResource(true);
 			// TODO check, sollte schon direkt auch die unterliegenden Elemente
-			// hinzufügen.
-			resource1
-					.addResource(new URL(
-							"http",
-							"localhost",
-							"E:\\bachelorarbeit\\runtime-New_configuration\\testPro\\examples\\Flight\\SyncTest"));
+			// hinzufï¿½gen.
+			resource1.addResource(new URL("http", "localhost",
+					"/home/pkl/runtime-New_configuration/testpro/SyncTest"));
 
 			// TODO schauen, ob resource alternativ auch ein path in form eines
 			// Strings sein kann...
 			resource1
-					.addResource(new URL(
-							"http",
-							"localhost",
-							"E:\\bachelorarbeit\\runtime-New_configuration\\testPro\\examples\\Flight\\SyncTest\\folderFile.kids"));
+					.addResource(new URL("http", "localhost",
+							"/home/pkl/runtime-New_configuration/testpro/SyncTest/folderFile.kids"));
 			resource1
-					.addResource(new URL(
-							"http",
-							"localhost",
-							"E:\\bachelorarbeit\\runtime-New_configuration\\testPro\\examples\\Flight\\SyncTest\\folderFile.kixs"));
+					.addResource(new URL("http", "localhost",
+							"/home/pkl/runtime-New_configuration/testpro/SyncTest/folderFile.kixs"));
 			result.add(resource1);
 
-			ExampleResource resource2 = new ExampleResource();
-			resource2.setCategory("de.cau.cs.kieler.syncchart");
-			resource2.setHeadResource(true);
-			// TODO check, sollte schon direkt auch die unterliegenden Elemente
-			// hinzufügen.
-			resource2
-					.addResource(new URL("http", "localhost",
-							"E:\\bachelorarbeit\\runtime-New_configuration\\testPro\\test.file"));
-			result.add(resource2);
+			// ExampleResource resource2 = new ExampleResource();
+			// resource2.setCategory("de.cau.cs.kieler.syncchart");
+			// resource2.setHeadResource(true);
+			// // TODO check, sollte schon direkt auch die unterliegenden
+			// Elemente
+			// // hinzufï¿½gen.
+			// resource2
+			// .addResource(new URL("http", "localhost",
+			// "E:\\bachelorarbeit\\runtime-New_configuration\\testPro\\test.file"));
+			// result.add(resource2);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}

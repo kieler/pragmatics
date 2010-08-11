@@ -69,11 +69,11 @@ public class ExampleExportUtil {
 
 		String destLocation = (String) properties
 				.get(ExampleElement.DEST_LOCATION);
-		// TODO nullpointer check einbauen; überall prüfen, wenn ein File
+		// TODO nullpointer check einbauen; ï¿½berall prï¿½fen, wenn ein File
 		// erzeugt wird muss vorher ein nullcheck des strings erfolgen
 		// ansonsten unerwartete exception...
-		// muss schon vorher in der ui geprüft werden, sollte aber dennoch hier
-		// abgeprüft werden.
+		// muss schon vorher in der ui geprï¿½ft werden, sollte aber dennoch hier
+		// abgeprï¿½ft werden.
 		File destFile = new File(destLocation);
 		if (!destFile.exists())
 			throw new KielerException(
@@ -109,6 +109,7 @@ public class ExampleExportUtil {
 			resource.setHeadResource(exResource.isHeadResource());
 			resource.getResources().addAll(
 					copyFiles(exResource.getResources(), destFile.getPath()));
+			result.add(resource);
 			// TODO muss das eine URL sein... geht da nicht auch ein
 			// path, string oder file...
 		}
@@ -116,7 +117,7 @@ public class ExampleExportUtil {
 	}
 
 	// TODO wenn der dialog resource anbietet zu dessen ordner es schon
-	// TODO auch subdirs mit ansehen und hidden files berücksichtigen oder
+	// TODO auch subdirs mit ansehen und hidden files berï¿½cksichtigen oder
 	// nicht...
 	// FIXME URLs ausbauen, das muss auch ohne gehen...
 	private static List<URL> copyFiles(List<URL> resources, String destPath)
@@ -125,13 +126,13 @@ public class ExampleExportUtil {
 		for (URL url : resources) {
 			String path = url.getPath();
 			// String[] split = path.split(String.valueOf(File.separatorChar));
+			// String fileName = split[split.length - 1];
 			int nameStart = 0;
 			for (int i = 0; i < path.length(); i++) {
 				if (File.separatorChar == path.charAt(i))
 					nameStart = i;
 			}
 			String fileName = path.substring(nameStart + 1);
-			// String fileName = split[split.length - 1];
 			StringBuffer sb = new StringBuffer();
 			sb.append(destPath).append(File.separatorChar).append(fileName);
 

@@ -26,6 +26,10 @@ public class ExampleManager {
 
 	private final ExtPointExampleCreator extensionCreator;
 
+	// in bachelor arbeit eine einfuehrung ueber kieler geben;
+	// wie ein zitat/ witz der vorweg kommt.
+	// siehe projekt seite
+
 	// TODO wenn in ui ein editor offen ist, dann macht er den wizard nicht auf.
 
 	// TODO Thesis, begrï¿½nden weshalb hier instance genommen wurde.
@@ -98,7 +102,7 @@ public class ExampleManager {
 			// TODO online schnittstelle bauen...
 		} else
 			throw new KielerException("No ImportType was set.");
-		// TODO besser als importtype ist auf jeden fall export type und später
+		// TODO besser als importtype ist auf jeden fall export type und spï¿½ter
 		// sowas wie wo kommt es her anzeigen.
 	}
 

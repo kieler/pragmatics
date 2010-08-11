@@ -118,8 +118,7 @@ public class ExtPointExampleCreator {
 			testMethod(extensionKEX.getChildNodes());
 			if (parseElement instanceof Example) {
 				extensionKEX.appendChild(toNode((Example) parseElement));
-			}
-			if (parseElement instanceof String) {
+			} else if (parseElement instanceof String) {
 				extensionKEX.appendChild(toNode((String) parseElement));
 			} else
 				throw new RuntimeException(
@@ -221,7 +220,7 @@ public class ExtPointExampleCreator {
 					Node attItem = attributes.item(j);
 					System.out.println(new StringBuffer()
 							.append(attItem.getNodeName()).append("; ")
-							.append(attItem.getNodeType()).toString());
+							.append(attItem.getNodeValue()).toString());
 				}
 			}
 		}
@@ -235,7 +234,7 @@ public class ExtPointExampleCreator {
 	}
 
 	private Node toNode(Example example) {
-		// TODO check nullpointer, they shouldn´t set to plugin.xml
+		// TODO check nullpointer, they shouldnï¿½t set to plugin.xml
 		Element createdExample = parsedXML
 				.createElement(ExtPointConstants.EXAMPLE);
 		createdExample.setAttribute(ExtPointConstants.ID, example.getId());
@@ -253,7 +252,7 @@ public class ExtPointExampleCreator {
 	}
 
 	private Node toNode(ExampleResource exResource) {
-		// TODO check nullpointer, they shouldn´t set to plugin.xml
+		// TODO check nullpointer, they shouldnï¿½t set to plugin.xml
 		// but here are no nullpointer allowed.
 		Element createdExResource = parsedXML
 				.createElement(ExtPointConstants.EXAMPLE_RESOURCE);
