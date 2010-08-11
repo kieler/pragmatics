@@ -163,27 +163,28 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
                 // split up the crossed hypernodes
                 if (path.get(pathNodeCounter).getType() == NodeType.HYPER) {
 
+                    INode oldHyperNode = path.get(pathNodeCounter);
+                    
                     // create new hypernode and connect this with the old one
                     INode newHyperNode = graph.addNode();
-                    IEdge twoHyperEdge = graph.addEdge(path.get(pathNodeCounter), newHyperNode);
-                    
+                    IEdge newHyperEdge = graph.addEdge(oldHyperNode, newHyperNode);
+
                     // bring edge in right order
                     // TODO check this!!!
-                    reinsertEdges(shortestFacePath.get(pathNodeCounter), twoHyperEdge,
-                            path.get(pathNodeCounter));
+                    reinsertEdges(shortestFacePath.get(pathNodeCounter), newHyperEdge,
+                            oldHyperNode);
                     // bring edges at the new hypernode in right order
-                    reinsertEdges(shortestFacePath.get(pathNodeCounter), twoHyperEdge,
-                            newHyperNode);
-                    
+                    reinsertEdges(shortestFacePath.get(pathNodeCounter), newHyperEdge, newHyperNode);
+
                     // split up the new edge
-                    INode midNode = graph.addNode(twoHyperEdge);
-                    
+                    INode midNode = graph.addNode(newHyperEdge);
+
                     // connect the new node
                     IEdge newEdge = graph.addEdge(midNode, path.get(pathNodeCounter + 1));
 
                     // bring new edges in right order
                     reinsertEdges(shortestFacePath.get(pathNodeCounter), newEdge,
-                            path.get(pathNodeCounter));
+                            midNode);
                     pathNodeCounter++;
                 }
 
@@ -196,7 +197,7 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
                     // bring new edges in right order
                     reinsertEdges(shortestFacePath.get(pathNodeCounter), newEdge,
                             path.get(pathNodeCounter));
-                    
+
                     pathNodeCounter++;
                 }
             }
