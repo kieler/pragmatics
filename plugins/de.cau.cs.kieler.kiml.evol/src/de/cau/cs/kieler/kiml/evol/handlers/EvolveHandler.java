@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 
+import de.cau.cs.kieler.kiml.evol.EvolModel;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.ui.EvolView;
 
@@ -67,7 +68,6 @@ public class EvolveHandler extends AbstractHandler {
             Display.getDefault().asyncExec(new Runnable() {
                 public void run() {
                     final EvolView evolView = EvolutionViewRefreshJob.this.getView();
-                    evolView.getTableViewer().refresh();
                     evolView.refresh(false);
                 }
             });
@@ -106,7 +106,7 @@ public class EvolveHandler extends AbstractHandler {
                 (EvolView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                         .findView(EvolView.ID);
 
-        if ((view != null) && (view.getPopulation() != null)) {
+        if ((view != null) && (view.getEvolModel() != null)) {
             final String maxStepsAttr = event.getParameter("de.cau.cs.kieler.kiml.evol.steps");
             final int maxSteps =
                     (maxStepsAttr == null ? MAX_STEPS : Integer.parseInt(maxStepsAttr));
@@ -117,15 +117,18 @@ public class EvolveHandler extends AbstractHandler {
             final int stepsBeforeAutoRating =
                     (stepsBeforeAutoRatingAttr == null ? STEPS_PER_AUTO_RATING : Integer
                             .parseInt(stepsBeforeAutoRatingAttr));
+            final EvolModel model = view.getEvolModel();
+
             int steady = 0;
             int steps = 0;
             do {
-                final double before = view.getPopulation().getAverageRating().doubleValue();
+                final double before = model.getPopulation().getAverageRating().doubleValue();
                 System.out.println("Average rating before: " + before);
-                for (int i = 0; (i < NUMBER_OF_STEPS) && (steps < maxSteps); i++) {
-                    view.getEvolModel().evolve();
 
-                    view.refresh(true);
+                for (int i = 0; (i < NUMBER_OF_STEPS) && (steps < maxSteps); i++) {
+                    model.evolve();
+
+                    // view.refresh(true);
 
                     // Refresh the layout according to the selected individual.
                     view.applySelectedIndividual();
@@ -147,15 +150,15 @@ public class EvolveHandler extends AbstractHandler {
 
                         // Calculate auto-rating in the current editor for all
                         // individuals.
-                        view.getEvolModel().autoRate(null);
+                        model.autoRate(Job.getJobManager().createProgressGroup());
                         // EvolUtil.autoRateIndividuals(view.getPopulation(),
                         // editor, null);
-                        System.out.println(view.getPopulation());
+                        System.out.println(model.getPopulation());
                     }
                     steps++;
-                    Assert.isNotNull(view.getPopulation());
+                    Assert.isNotNull(model.getPopulation());
 
-                    final double after = view.getPopulation().getAverageRating().doubleValue();
+                    final double after = model.getPopulation().getAverageRating().doubleValue();
                     final double relDiff = (after - before) / after;
                     System.out.println("Average rating now: " + after);
                     final double relDiffPercent = (relDiff * 100);
@@ -173,8 +176,8 @@ public class EvolveHandler extends AbstractHandler {
 
             } while ((steady < STEADY_STEPS) && (steps < maxSteps));
 
-
             final Job refreshJob = new EvolutionViewRefreshJob("Refresh table viewer", view);
+
 
             refreshJob.setUser(false);
             refreshJob.setPriority(Job.DECORATE);

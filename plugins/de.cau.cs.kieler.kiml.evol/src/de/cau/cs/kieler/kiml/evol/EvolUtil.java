@@ -25,7 +25,6 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
@@ -413,6 +412,30 @@ public final class EvolUtil {
     }
 
     /**
+     * Layouts the given individual in the given editor and calculates automatic
+     * ratings for them. This must be run in the UI thread.
+     *
+     * @param individual
+     *            the {@link Genome} to be rated
+     * @param editor
+     *            Specifies the editor in which the individual shall be
+     *            layouted.
+     */
+    public static void autoRateIndividual(final Genome individual, final IEditorPart editor) {
+
+        // We don't specify the edit part because we want a manager for
+        // the whole diagram.
+        final DiagramLayoutManager manager =
+                EclipseLayoutServices.getInstance().getManager(editor, null);
+        Assert.isNotNull(manager);
+
+        final LayoutPropertySource source = getLayoutPropertySource();
+        Assert.isNotNull(source);
+
+        autoRateIndividual(individual, editor, manager, source);
+    }
+
+    /**
      * Layouts the given individuals in the given editor and calculates
      * automatic ratings for them. This must be run in the UI thread.
      *
@@ -437,62 +460,7 @@ public final class EvolUtil {
             final Genome ind = population.get(pos);
             // TODO: synchronize on the layout graph?
 
-            autoRateIndividual(ind, editor, null, manager, source);
-        }
-    }
-
-    /**
-     * Layouts the given individual in the given editor and calculates automatic
-     * ratings for them. This must be run in the UI thread.
-     *
-     * @param ind
-     *            the {@link Genome} to be rated
-     * @param editor
-     *            Specifies the editor in which the individual shall be
-     *            layouted.
-     * @param monitor
-     *            a progress monitor. May be {@code null}.
-     */
-    public static void autoRateIndividual(
-            final Genome ind, final IEditorPart editor, final IProgressMonitor monitor) {
-
-        // We don't specify the edit part because we want a manager for
-        // the whole diagram.
-        final DiagramLayoutManager manager =
-                EclipseLayoutServices.getInstance().getManager(editor, null);
-        Assert.isNotNull(manager);
-
-        final LayoutPropertySource source = getLayoutPropertySource();
-        Assert.isNotNull(source);
-
-        autoRateIndividual(ind, editor, monitor, manager, source);
-    }
-
-    /**
-     * @param ind
-     * @param editor
-     * @param monitor
-     * @param manager
-     * @param source
-     */
-    private static void autoRateIndividual(
-            final Genome ind, final IEditorPart editor, final IProgressMonitor monitor,
-            final DiagramLayoutManager manager, final LayoutPropertySource source) {
-        adoptIndividual(ind, source);
-
-        final Map<String, Double> weightsMap = extractMetricWeights(ind);
-        final int rating = layoutAndMeasure(manager, editor, weightsMap);
-
-        ind.setUserRating(rating);
-
-        if (monitor != null) {
-            try {
-                final int delay = 200;
-                Thread.sleep(delay);
-            } catch (final InterruptedException exception) {
-                exception.printStackTrace();
-            }
-            monitor.worked(1);
+            autoRateIndividual(ind, editor, manager, source);
         }
     }
 
@@ -514,7 +482,6 @@ public final class EvolUtil {
 
         final DiagramLayoutManager manager =
                 EclipseLayoutServices.getInstance().getManager(editor, part);
-
         if (manager == null) {
             return new Population();
         }
@@ -528,9 +495,11 @@ public final class EvolUtil {
     }
 
     /**
-     * Returns the current editor.
+     * Returns the current editor (if any). Returns {@code null} if called from
+     * a non-UI thread.
      *
-     * @return the current editor or {@code null} if none exists.
+     * @return the current editor or {@code null} if none exists or if called
+     *         from a non-UI thread.
      */
     public static IEditorPart getCurrentEditor() {
         // Try to get the editor that is tracked by the layout view (must be in
@@ -635,20 +604,20 @@ public final class EvolUtil {
      * Finds a layout provider for the given {@link IEditorPart} and
      * {@link EditPart}.
      *
-     * @param theEditor
+     * @param editor
      *            a {@link IEditorPart}
-     * @param theEditPart
+     * @param editPart
      *            an {@link EditPart}
      * @return the id of the layouter, or {@code null} if none can be found.
      */
     public static String getLayoutProviderId(
-            final IEditorPart theEditor, final EditPart theEditPart) {
+final IEditorPart editor, final EditPart editPart) {
         final DiagramLayoutManager manager =
-                EclipseLayoutServices.getInstance().getManager(theEditor, theEditPart);
+                EclipseLayoutServices.getInstance().getManager(editor, editPart);
         if (manager == null) {
             return null;
         }
-        final String result = getLayoutProviderId(manager, theEditPart);
+        final String result = getLayoutProviderId(manager, editPart);
         return result;
     }
 
@@ -656,43 +625,43 @@ public final class EvolUtil {
      * Adopts layout options from the given {@link Genome} into the given
      * {@link IEditorPart}.
      *
-     * @param theIndividual
+     * @param individual
      *            the {@link Genome}; must not be {@code null}
-     * @param theEditor
+     * @param editor
      *            the {@link IEditorPart}
      */
-    private static void adoptIndividual(final Genome theIndividual, final IEditorPart theEditor) {
-        Assert.isLegal(theIndividual != null);
+    private static void adoptIndividual(final Genome individual, final IEditorPart editor) {
+        Assert.isLegal(individual != null);
 
-        final LayoutPropertySource propertySource = getLayoutPropertySource(theEditor);
+        final LayoutPropertySource propertySource = getLayoutPropertySource(editor);
         Assert.isNotNull(propertySource);
-        adoptIndividual(theIndividual, propertySource);
+        adoptIndividual(individual, propertySource);
     }
 
     /**
      * Adopts layout options from the given {@link Genome} into the given
      * {@link LayoutPropertySource}.
      *
-     * @param theIndividual
+     * @param individual
      *            the {@link Genome}; must not be {@code null}
-     * @param thePropertySource
+     * @param propertySource
      *            the {@link LayoutPropertySource}; must not be {@code null}
      */
     private static void adoptIndividual(
-            final Genome theIndividual, final LayoutPropertySource thePropertySource) {
-        Assert.isLegal(theIndividual != null);
-        Assert.isLegal(thePropertySource != null);
-        if ((theIndividual == null) || (thePropertySource == null)) {
+            final Genome individual, final LayoutPropertySource propertySource) {
+        Assert.isLegal(individual != null);
+        Assert.isLegal(propertySource != null);
+        if ((individual == null) || (propertySource == null)) {
             return;
         }
 
-        System.out.println("adopt " + theIndividual.toString());
+        System.out.println("adopt " + individual.toString());
         final LayoutServices layoutServices = LayoutServices.getInstance();
         final EvolutionServices evolService = EvolutionServices.getInstance();
         final Set<String> metricIds = evolService.getLayoutMetricsIds();
 
         // set layout options according to genome
-        for (final IGene<?> gene : theIndividual) {
+        for (final IGene<?> gene : individual) {
 
             Assert.isNotNull(gene);
             final Object value = gene.getValue();
@@ -709,16 +678,16 @@ public final class EvolUtil {
             switch (data.getType()) {
             case BOOLEAN:
                 if (value instanceof Boolean) {
-                    thePropertySource.setPropertyValue(id,
+                    propertySource.setPropertyValue(id,
                             Integer.valueOf((((Boolean) value).booleanValue() ? 1 : 0)));
                 } else {
-                    thePropertySource.setPropertyValue(id,
+                    propertySource.setPropertyValue(id,
                             Integer.valueOf(Math.round(((Float) value).floatValue())));
                 }
                 break;
             case ENUM:
                 try {
-                    thePropertySource.setPropertyValue(id, value);
+                    propertySource.setPropertyValue(id, value);
                 } catch (final NullPointerException e) {
                     System.out.println("WARNING: enum property could not be set: " + id);
                     Assert.isTrue(false);
@@ -726,16 +695,34 @@ public final class EvolUtil {
                 break;
             case INT:
                 if (value instanceof Integer) {
-                    thePropertySource.setPropertyValue(id, value);
+                    propertySource.setPropertyValue(id, value);
                 } else {
-                    thePropertySource.setPropertyValue(id, gene.toString());
+                    propertySource.setPropertyValue(id, gene.toString());
                 }
                 break;
             default:
-                thePropertySource.setPropertyValue(id, value.toString());
+                propertySource.setPropertyValue(id, value.toString());
                 break;
             }
         }
+    }
+
+    /**
+     * @param ind
+     * @param editor
+     * @param monitor
+     * @param manager
+     * @param source
+     */
+    private static void autoRateIndividual(
+            final Genome ind, final IEditorPart editor,
+            final DiagramLayoutManager manager, final LayoutPropertySource source) {
+        adoptIndividual(ind, source);
+
+        final Map<String, Double> weightsMap = extractMetricWeights(ind);
+        final int rating = layoutAndMeasure(manager, editor, weightsMap);
+
+        ind.setUserRating(rating);
     }
 
     /**
@@ -744,11 +731,10 @@ public final class EvolUtil {
      *
      * @return number of learnable properties
      */
-    private static int countLearnableProperties(
-            final List<IPropertyDescriptor> propertyDescriptors) {
+    private static int countLearnableProperties(final List<IPropertyDescriptor> descriptors) {
         int result = 0;
         final Set<String> learnables = EvolutionServices.getInstance().getEvolutionDataIds();
-        for (final IPropertyDescriptor p : propertyDescriptors) {
+        for (final IPropertyDescriptor p : descriptors) {
             final String id = (String) p.getId();
             // check property descriptor id
             if (!LayoutOptions.LAYOUT_HINT.equals(id)) {
@@ -846,7 +832,7 @@ public final class EvolUtil {
         final TypeInfo<Float> typeInfo =
                 new FloatTypeInfo(Float.valueOf(1.0f), Float.valueOf(0.0f), Float.valueOf(10.0f),
                         UniversalGene.STRICTLY_POSITIVE_FLOAT_FORMATTER, Float.class);
-        final MutationInfo mutationInfo = new MutationInfo(0.01, .05, Distribution.GAUSSIAN);
+        final MutationInfo mutationInfo = new MutationInfo(0.001, .05, Distribution.GAUSSIAN);
 
         for (final String id : metricIds) {
             final IGene<?> gene = gf.newGene(id, Float.valueOf(1.0f), typeInfo, mutationInfo);
@@ -951,16 +937,16 @@ public final class EvolUtil {
      *
      * @param editor
      *            an {@link IEditorPart}
-     * @param part
+     * @param editPart
      *            an {@link EditPart}
      * @return a {@link LayoutPropertySource} for the given editor and edit
      *         part, or {@code null} if none can be found.
      */
     private static LayoutPropertySource getLayoutPropertySource(
-            final IEditorPart editor, final EditPart part) {
+            final IEditorPart editor, final EditPart editPart) {
 
         // use root edit part
-        EditPart rootPart = part;
+        EditPart rootPart = editPart;
 
         if (rootPart != null) {
             while (rootPart.getParent() != null) {

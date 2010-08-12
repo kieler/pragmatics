@@ -15,10 +15,11 @@ package de.cau.cs.kieler.kiml.evol.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
 
-import de.cau.cs.kieler.kiml.evol.genetic.Genome;
+import de.cau.cs.kieler.kiml.evol.EvolModel;
 import de.cau.cs.kieler.kiml.evol.ui.EvolView;
 
 /**
@@ -40,13 +41,12 @@ public class ChangeRatingHandler extends AbstractHandler {
                         .findView(EvolView.ID);
         if (view instanceof EvolView) {
             final EvolView evolView = (EvolView) view;
-            if (evolView.getPopulation() != null) {
-                final Genome ind = evolView.getEvolModel().getCurrentIndividual();
-                final int rating = ind.getUserRating() + delta;
-                ind.setUserRating(rating);
-                // final SelectorTableViewer tv = evolView.getTableViewer();
-                evolView.refresh(true);
-            }
+            Assert.isNotNull(evolView);
+
+            final EvolModel model = evolView.getEvolModel();
+            Assert.isNotNull(model);
+
+            model.changeCurrentRating(delta);
         }
         return null;
     }

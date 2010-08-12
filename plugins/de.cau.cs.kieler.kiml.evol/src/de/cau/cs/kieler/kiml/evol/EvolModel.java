@@ -11,21 +11,23 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.evol.ui;
+package de.cau.cs.kieler.kiml.evol;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.gef.EditPart;
 import org.eclipse.ui.IEditorPart;
 
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
-import de.cau.cs.kieler.kiml.evol.EvolUtil;
 import de.cau.cs.kieler.kiml.evol.alg.BasicEvolutionaryAlgorithm;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
+import de.cau.cs.kieler.kiml.evol.ui.IEvolModelListener;
 import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
 
 /**
@@ -39,6 +41,39 @@ import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
 public final class EvolModel {
 
     /**
+     * @author bdu
+     *
+     */
+    private static final class AutoRateRunnable implements Runnable {
+        /**
+         *
+         */
+        private final Genome individual;
+        /**
+         *
+         */
+        private final IEditorPart editor;
+
+        /**
+         * Creates a new {@link AutoRateRunnable} instance.
+         *
+         * @param theIndividual
+         * @param theEditor
+         */
+        AutoRateRunnable(
+                final Genome theIndividual,
+ final IEditorPart theEditor) {
+            this.individual = theIndividual;
+            this.editor = theEditor;
+        }
+
+        public void run() {
+            // Must be run in the UI thread.
+            EvolUtil.autoRateIndividual(this.individual, this.editor);
+        }
+    }
+
+    /**
      * Creates a new {@link EvolModel} instance.
      */
     public EvolModel() {
@@ -48,7 +83,6 @@ public final class EvolModel {
 
     // private fields
     private BasicEvolutionaryAlgorithm evolAlg;
-    private IEditorPart lastEditor;
     private int position;
     private String layoutProviderId;
     private final List<IEvolModelListener> listeners = new LinkedList<IEvolModelListener>();
@@ -77,7 +111,6 @@ public final class EvolModel {
         // The previously selected individual might not have survived in
         // evolution, so select a new one as current.
         selectInterestingIndividual();
-        Assert.isTrue(getPosition() >= 0);
 
         // Calculate auto-rating for the yet unrated individuals.
         final Population unrated = getPopulation().select(Population.UNRATED_FILTER);
@@ -91,38 +124,56 @@ public final class EvolModel {
      * Auto-rate all individuals in the current editor.
      *
      * @param theMonitor
-     *            a progress monitor; may be {@code null}
+     *            a progress monitor; must not be {@code null}
      *
      */
     public void autoRate(final IProgressMonitor theMonitor) {
+        Assert.isLegal(theMonitor != null);
         autoRate(EvolUtil.getCurrentEditor(), theMonitor);
     }
 
     /**
+     * Auto-rate all individuals in the given editor.
+     *
      * @param theEditor
+     *            an {@link IEditorPart}; must not be {@code null}
      * @param theMonitor
+     *            a progress monitor; may be {@code null}
      */
     public void autoRate(final IEditorPart theEditor, final IProgressMonitor theMonitor) {
+        Assert.isLegal((theEditor != null));
 
-        final long delay = 200;
+        final IProgressMonitor localMonitor;
+        // ensure there is a monitor of some sort
+        if (theMonitor == null) {
+            localMonitor = new NullProgressMonitor();
+        } else {
+            localMonitor = theMonitor;
+        }
+
+        // Calculate auto-rating for each individual.
+        final Population population = getPopulation();
+        final int size = population.size();
+
         try {
-            Thread.sleep(delay);
-        } catch (final InterruptedException exception) {
-            exception.printStackTrace();
-        }
+            final int scale = 100;
+            localMonitor.beginTask("Auto-rating individuals.", size * scale);
 
-        for (final Genome ind : getPopulation()) {
-            MonitoredOperation.runInUI(new Runnable() {
-                public void run() {
-                    EvolUtil.autoRateIndividual(ind, theEditor, theMonitor);
+            for (final Genome ind : population) {
+                if (localMonitor.isCanceled()) {
+                    throw new OperationCanceledException();
                 }
-            }, true);
+
+                MonitoredOperation.runInUI(new AutoRateRunnable(ind, theEditor), true);
+                localMonitor.worked(1 * scale);
+            }
+
+            // Notify listeners.
+            afterChange("autoRate");
+
+        } finally {
+            localMonitor.done();
         }
-
-
-        // Notify listeners.
-
-        afterChange("autoRate");
     }
 
     /**
@@ -150,15 +201,6 @@ public final class EvolModel {
      */
     public BasicEvolutionaryAlgorithm getEvolAlg() {
         return this.evolAlg;
-    }
-
-    /**
-     * @return the last editor that was used
-     * @deprecated
-     */
-    @Deprecated
-    public IEditorPart getLastEditor() {
-        return this.lastEditor;
     }
 
     /**
@@ -248,7 +290,6 @@ public final class EvolModel {
     public void reset() {
         final IEditorPart editor = EvolUtil.getCurrentEditor();
         final EditPart part = EvolUtil.getEditPart(editor);
-        setLastEditor(editor);
         setPosition(0);
         setEvolAlg(null);
 
@@ -353,6 +394,7 @@ public final class EvolModel {
         }
 
         updatePosition();
+        Assert.isTrue(getPosition() >= 0);
     }
 
     /**
@@ -362,13 +404,6 @@ public final class EvolModel {
      */
     private void setEvolAlg(final BasicEvolutionaryAlgorithm theEvolAlg) {
         this.evolAlg = theEvolAlg;
-    }
-
-    /**
-     * @param editor
-     */
-    private void setLastEditor(final IEditorPart editor) {
-        this.lastEditor = editor;
     }
 
     /**
@@ -386,6 +421,23 @@ public final class EvolModel {
         final int lim = getPopulation().size();
         if (getPosition() >= lim) {
             setPosition(lim - 1);
+        }
+    }
+
+    /**
+     * Changes the rating of the current individual.
+     *
+     * @param delta
+     *            the amount of the change
+     */
+    public void changeCurrentRating(final int delta) {
+        if (isValid()) {
+            final Genome ind = getCurrentIndividual();
+            final int rating = ind.getUserRating() + delta;
+            ind.setUserRating(rating);
+
+            afterChange("changeCurrentRating");
+            // TODO: in listener: only current individual needs to be updated
         }
     }
 }

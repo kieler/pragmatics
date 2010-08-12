@@ -16,6 +16,8 @@
  */
 package de.cau.cs.kieler.kiml.evol.ui;
 
+import de.cau.cs.kieler.kiml.evol.EvolModel;
+
 /**
  * Interface for listeners of the evolution model.
  *

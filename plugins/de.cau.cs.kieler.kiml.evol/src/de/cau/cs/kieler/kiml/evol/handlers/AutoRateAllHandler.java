@@ -19,14 +19,16 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 
+import de.cau.cs.kieler.kiml.evol.EvolModel;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.EvolUtil;
-import de.cau.cs.kieler.kiml.evol.genetic.Population;
 import de.cau.cs.kieler.kiml.evol.ui.EvolView;
 
 /**
@@ -45,106 +47,64 @@ public class AutoRateAllHandler extends AbstractHandler {
      */
     private static final class AutoRateAllJob extends Job {
         /**
-         * @author bdu
-         *
-         */
-        private static final class AutoRateAllRunnable implements Runnable {
-            /**
-             *
-             */
-            private final IProgressMonitor monitor;
-            private final EvolView view;
-            private final IEditorPart editor;
-
-            /**
-             * Creates a new {@link AutoRateAllRunnable} instance.
-             *
-             * @param theMonitor
-             * @param theEditor
-             * @param thePopulation
-             */
-            AutoRateAllRunnable(
-                    final EvolView theView,
-                    final IEditorPart theEditor,
-                    final IProgressMonitor theMonitor) {
-                this.editor = theEditor;
-                this.monitor = theMonitor;
-                this.view = theView;
-            }
-
-            public void run() {
-                try {
-                    final long delay = 200;
-                    Thread.sleep(delay);
-                } catch (final InterruptedException exception) {
-                    exception.printStackTrace();
-                }
-
-                // Rate all individuals in the given editor.
-                this.view.getEvolModel().autoRate(this.editor, this.monitor);
-            }
-        }
-
-        private final EvolView view;
-
-        private final IEditorPart editor;
-
-        /**
-         * Creates a new {@link AutoRateAllJob} instance.
+         * Creates a new {@link AutoRateAllJob} instance. It rates all
+         * individuals of the specified model in the specified editor.
          *
          * @param name
          * @param theEditor
-         * @param theView
+         * @param theModel
          */
-        AutoRateAllJob(
-                final String name,
-                final IEditorPart theEditor,
-                final EvolView theView) {
+        AutoRateAllJob(final String name, final IEditorPart theEditor, final EvolModel theModel) {
             super(name);
-
             this.editor = theEditor;
-            this.view = theView;
+            this.model = theModel;
         }
+
+        private final EvolModel model;
+
+        private final IEditorPart editor;
 
         @Override
         protected IStatus run(final IProgressMonitor monitor) {
 
-            final int total = this.view.getPopulation().size() + 1;
+            final int scale = 1000;
+            final int autoRatingWork = 4;
+            final int averageRatingWork = 1;
+            final int total = autoRatingWork + averageRatingWork;
 
             try {
-                monitor.beginTask("Performing Auto-rating", total);
-                final int delay = 400;
+                monitor.beginTask("Performing Auto-rating", total * scale);
 
+                // Rate all individuals in the given editor. SubProgressMonitor
+                // manages the work.
                 monitor.subTask("Determining Individual Rating");
 
-                Thread.sleep(delay + delay);
-
-                // Do the rating.
-                // new AutoRateAllRunnable(this.view, this.editor,
-                // monitor).run();
-
-                // Rate all individuals in the given editor.
-                this.view.getEvolModel().autoRate(this.editor, monitor);
-
-                Thread.sleep(delay + delay);
+                this.model.autoRate(this.editor,
+                        new SubProgressMonitor(monitor, autoRatingWork * scale));
 
                 if (monitor.isCanceled()) {
                     return new Status(IStatus.CANCEL, EvolPlugin.PLUGIN_ID,
                             "The auto-rating was cancelled.");
                 }
 
+                // final task
                 monitor.subTask("Determining the average rating");
                 System.out.println("Average rating: "
-                        + this.view.getPopulation().getAverageRating());
-                monitor.worked(1);
-
-                Thread.sleep(delay);
+                        + this.model.getPopulation().getAverageRating());
+                monitor.worked(averageRatingWork * scale);
 
                 return new Status(IStatus.INFO, EvolPlugin.PLUGIN_ID, 0, "OK", null);
 
+            } catch (final OperationCanceledException exception) {
+                // Cancelled by the user.
+                return new Status(IStatus.CANCEL, EvolPlugin.PLUGIN_ID,
+                        "The auto-rating was cancelled.", exception);
+
             } catch (final Exception exception) {
+                // Failure.
                 return new Status(IStatus.ERROR, EvolPlugin.PLUGIN_ID,
                         "The auto-rating has failed.", exception);
+
             } finally {
                 monitor.done();
             }
@@ -156,40 +116,33 @@ public class AutoRateAllHandler extends AbstractHandler {
      */
     public Object execute(final ExecutionEvent event) throws ExecutionException {
 
+        // Get the EvolView (must be in UI thread).
         final EvolView view =
                 (EvolView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                         .findView(EvolView.ID);
-
-        if (view == null) {
+        if ((view == null)) {
             throw new ExecutionException("The Evolution View could not be found.");
         }
 
-        final Population pop = view.getPopulation();
-        Assert.isNotNull(pop);
+        // Get the evolution model.
+        final EvolModel model = view.getEvolModel();
+        Assert.isNotNull(model);
 
-        final IEditorPart editor = EvolUtil.getCurrentEditor();
-        Assert.isNotNull(editor);
+        if (model.isValid()) {
+            // Get the current editor.
+            final IEditorPart editor = EvolUtil.getCurrentEditor();
+            Assert.isNotNull(editor);
 
-        // Create job for auto-rating.
-        final Job autoRateAllJob = new AutoRateAllJob("auto-rating", editor, view);
+            // Create job for auto-rating.
+            final Job autoRateAllJob = new AutoRateAllJob("Auto-Rating", editor, model);
 
-        // Process the job.
-        final IProgressMonitor monitor = Job.getJobManager().createProgressGroup();
+            // Process the job.
+            final IProgressMonitor monitor = Job.getJobManager().createProgressGroup();
 
-        final int size = pop.size();
-
-        autoRateAllJob.setProgressGroup(monitor, size + 1);
-        autoRateAllJob.setUser(true);
-        autoRateAllJob.setPriority(Job.SHORT);
-        autoRateAllJob.schedule();
-        // XXX: Where is the progress bar? :(
-
-        try {
-            final int delay = 200;
-            Thread.sleep(delay);
-
-        } catch (final InterruptedException exception) {
-            exception.printStackTrace();
+            autoRateAllJob.setProgressGroup(monitor, IProgressMonitor.UNKNOWN);
+            autoRateAllJob.setUser(true);
+            autoRateAllJob.setPriority(Job.SHORT);
+            autoRateAllJob.schedule();
         }
 
         return null;

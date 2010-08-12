@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.ViewPart;
 
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
+import de.cau.cs.kieler.kiml.evol.EvolModel;
 import de.cau.cs.kieler.kiml.evol.EvolUtil;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
@@ -130,11 +131,13 @@ public class EvolView extends ViewPart {
                 final int newPos = ((PopulationTableEntry) element).getIndex();
                 EvolView.this.getEvolModel().setPosition(newPos);
 
-                MonitoredOperation.runInUI(new Runnable() {
+                // Update the table viewer.
+                final Runnable updaterRunnable = new Runnable() {
                     public void run() {
                         SelectionChangedListener.this.getTableViewer().update(element, null);
                     }
-                }, true);
+                };
+                MonitoredOperation.runInUI(updaterRunnable, true);
 
                 // Refresh the layout according to the selected individual.
                 System.out.println("before applySelectedIndividual");
@@ -170,7 +173,7 @@ public class EvolView extends ViewPart {
      * @author bdu
      *
      */
-    public class SelectorTableViewer extends TableViewer {
+    private static class SelectorTableViewer extends TableViewer {
         /**
          * Creates a TableViewer for the given table.
          *
@@ -201,14 +204,15 @@ public class EvolView extends ViewPart {
          *            zero-relative row index
          */
         void selectRow(final int row) {
-            if (getPopulation() == null) {
+            final int itemCount = doGetItemCount();
+            if (itemCount == 0) {
                 return;
             }
-            Assert.isTrue((row >= 0) && (row <= getPopulation().size()), "position out of range");
+
+            Assert.isTrue((row >= 0) && (row < itemCount), "position out of range");
             Display.getCurrent().syncExec(new Runnable() {
                 public void run() {
                     final int[] indices = new int[] { row };
-                    // SelectorTableViewer.this.doSelect(indices);
                     SelectorTableViewer.this.doSetSelection(indices);
                 }
             });
@@ -323,20 +327,6 @@ public class EvolView extends ViewPart {
      */
     public EvolModel getEvolModel() {
         return this.evolModel;
-    }
-
-    /**
-     *
-     * @return a shallow copy of the current population.
-     */
-    public Population getPopulation() {
-        if (this.evolModel == null) {
-            return null;
-        }
-        final Population pop = this.evolModel.getPopulation();
-        Assert.isNotNull(pop);
-
-        return new Population(pop);
     }
 
     /**
