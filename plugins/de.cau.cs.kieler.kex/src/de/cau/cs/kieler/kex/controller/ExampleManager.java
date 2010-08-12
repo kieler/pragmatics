@@ -52,7 +52,7 @@ public class ExampleManager {
 	}
 
 	/**
-	 * loads examples of extenders, if not loaded before.
+	 * loads examples, if not loaded before.
 	 */
 	public void load() {
 		if (!this.isLoaded) {
@@ -75,13 +75,17 @@ public class ExampleManager {
 		this.onlineCollector.loadExamples();
 	}
 
-	public Map<String, Example> getExtPointExamples() {
-		return this.extensionCollector.getExamplePool();
+	public Map<String, Example> getExamples() {
+		Map<String, Example> result = this.extensionCollector.getExamplePool();
+		result.putAll(onlineCollector.getExamplePool());
+		return result;
 	}
 
 	public List<String> getCategories() {
-		// TODO onlineCollector categories hinzufuegen
-		return extensionCollector.getCategoryPool();
+		List<String> result = new ArrayList<String>();
+		result.addAll(onlineCollector.getCategories());
+		result.addAll(extensionCollector.getCategories());
+		return result;
 	}
 
 	public void importExamples(IPath selectedResource,
@@ -102,24 +106,9 @@ public class ExampleManager {
 			// TODO online schnittstelle bauen...
 		} else
 			throw new KielerException("No ImportType was set.");
-		// TODO besser als importtype ist auf jeden fall export type und sp�ter
+		// TODO besser als importtype ist auf jeden fall export type und
+		// sp�ter
 		// sowas wie wo kommt es her anzeigen.
-	}
-
-	/**
-	 * gives a list of examples which are already imported in local workspace.
-	 * 
-	 * @return
-	 */
-	public List<Example> getImportedExamples() {
-		// TODO implement
-
-		// Test Example
-		ArrayList<Example> result = new ArrayList<Example>();
-		Example testExample = new Example("ImportedTestExample",
-				"ImportedTestExample", ImportType.EXTENSIONPOINT);
-		result.add(testExample);
-		return result;
 	}
 
 }

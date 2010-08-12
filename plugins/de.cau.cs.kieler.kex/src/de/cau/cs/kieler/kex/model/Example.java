@@ -1,5 +1,6 @@
 package de.cau.cs.kieler.kex.model;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,21 +23,19 @@ public class Example {
 	/**
 	 * initial version is set, if not specified.
 	 */
-	private static final Version INITVERSION = new Version(1, 0, 0);
-
 	private Version version;
 
-	private List<ExampleResource> resources;
+	private List<URL> resources;
 
 	private String contact;
 
 	private String namespaceId;
 
-	private ImportType importType;
+	private URL headResource;
 
-	public Example(String id, String name, ImportType importType) {
-		init(id, name, INITVERSION, importType);
-	}
+	private List<String> categories;
+
+	private ImportType importType;
 
 	public Example(String id, String name, Version version,
 			ImportType importType) {
@@ -48,21 +47,21 @@ public class Example {
 		this.id = id;
 		this.name = name;
 		this.version = version;
-		this.importType = importType;
-		resources = new ArrayList<ExampleResource>();
+		this.setImportType(importType);
+		this.resources = new ArrayList<URL>();
+		this.categories = new ArrayList<String>();
 	}
 
 	@Override
 	public String toString() {
-		return "Example [id=" + getId()
-				+ ((getName() != null) ? ", name= " + getName() : "")
-				+ ",contact=" + getContact() + ", version="
-				+ version.toString() + "]";
+		return "Example [id=" + getId() + ", name= " + getName() + ",contact="
+				+ getContact() + ", version=" + version.toString()
+				+ "description= " + getDescription() + "]";
 	}
 
 	public boolean contains(String category) {
-		for (ExampleResource exampleResource : getResources()) {
-			if (category.equals(exampleResource.getCategory()))
+		for (String element : getCategories()) {
+			if (category.equals(element))
 				return true;
 		}
 		return false;
@@ -88,7 +87,8 @@ public class Example {
 		return this.version;
 	}
 
-	public List<ExampleResource> getResources() {
+	// TODO auf jeden fall über string path (nutze namespace identifier) lösen.
+	public List<URL> getResources() {
 		return resources;
 	}
 
@@ -100,27 +100,8 @@ public class Example {
 		this.contact = contact;
 	}
 
-	public void addResources(List<ExampleResource> exampleResources) {
+	public void addResources(List<URL> exampleResources) {
 		this.resources.addAll(exampleResources);
-	}
-
-	public List<String> getExampleCategories() {
-		List<String> categories = new ArrayList<String>();
-		boolean contained = false;
-		for (ExampleResource resource : this.resources) {
-			contained = false;
-			String category = resource.getCategory();
-			for (String element : categories) {
-				if (element.equals(category)) {
-					contained = true;
-					break;
-				}
-			}
-			if (!contained)
-				categories.add(resource.getCategory());
-		}
-		return categories;
-
 	}
 
 	public void setNamespaceId(String namespaceId) {
@@ -130,4 +111,33 @@ public class Example {
 	public String getNamespaceId() {
 		return this.namespaceId;
 	}
+
+	public void setCategories(List<String> categories) {
+		this.categories = categories;
+	}
+
+	public List<String> getCategories() {
+		return categories;
+	}
+
+	public void setHeadResource(URL headResource) {
+		this.headResource = headResource;
+	}
+
+	public URL getHeadResource() {
+		return headResource;
+	}
+
+	public void setImportType(ImportType importType) {
+		this.importType = importType;
+	}
+
+	public ImportType getImportType() {
+		return importType;
+	}
+
+	public void addCategories(List<String> categories) {
+		this.categories.addAll(categories);
+	}
+
 }

@@ -1,6 +1,6 @@
 package de.cau.cs.kieler.kex.ui.wizards.exporting;
 
-import java.util.Arrays;
+import java.net.URL;
 import java.util.List;
 
 import org.eclipse.jface.wizard.WizardPage;
@@ -15,7 +15,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Group;
@@ -25,7 +24,6 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
 import de.cau.cs.kieler.kex.controller.ExampleManager;
-import de.cau.cs.kieler.kex.model.ExampleResource;
 import de.cau.cs.kieler.kex.model.ImportType;
 
 public class ExampleResourcePage extends WizardPage {
@@ -36,7 +34,7 @@ public class ExampleResourcePage extends WizardPage {
 
 	private final int TWO_COLUMNS = 2;
 	private final int THREE_COLUMNS = 3;
-	private List<ExampleResource> exampleResources;
+	private List<URL> resources;
 
 	protected ExampleResourcePage(String pageName) {
 		super(pageName);
@@ -94,65 +92,9 @@ public class ExampleResourcePage extends WizardPage {
 		middleLayout.numColumns = 2;
 		middleGroup.setText("Add Example Resources");
 		middleGroup.setLayout(middleLayout);
-		createTreeElement(middleGroup);
-		createExReComposite(middleGroup);
-		createTreeButtons(middleGroup);
+		createCheckedTree(middleGroup);
+		// createTreeElement(middleGroup);
 
-	}
-
-	private void createTreeButtons(Group middleGroup) {
-		Composite buttonComposite = new Composite(middleGroup, SWT.NONE);
-		GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 5;
-		buttonComposite.setLayout(gridLayout);
-
-		Button newExRe = new Button(buttonComposite, SWT.NONE);
-		newExRe.setText("New");
-		newExRe.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				// add new exampleResource to tree
-			}
-		});
-		newExRe.setToolTipText("Add new Example Resource");
-		Button deleteExRe = new Button(buttonComposite, SWT.NONE);
-		deleteExRe.setText("Del");
-		deleteExRe.setToolTipText("Delete Example Resource");
-		// TODO selections hier mit einbauen, damit die buttons nur nicht grayed
-		// sind wenn auch sinnvoll.
-		deleteExRe.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				// delete selected element(s) of tree.
-			}
-		});
-		Label label = new Label(buttonComposite, SWT.NONE);
-		label.setText(" | ");
-		Button addResource = new Button(buttonComposite, SWT.NONE);
-		addResource.setText("Add");
-		addResource.setToolTipText("Add resources");
-		addResource.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				// WorkspaceResourceDialog workspaceResourceDialog = new
-				// WorkspaceResourceDialog(middleGroup.getShell(),
-
-				// labelProvider, contentProvider)
-				// Achtung soll ein emf widget sein, daher noch zu den
-				// dependences hinzuzufuegen
-				// aber muss auch swt widget geben.
-				// siehe export mechanism of java project,
-				// macht dann evt. den delete button ueberfluessig.
-				// WizardExportResourcesPage könnte auch gehen.
-			}
-
-		});
-		Button delResource = new Button(buttonComposite, SWT.NONE);
-		delResource.setText("Del");
-		delResource.setToolTipText("Delete resources");
 	}
 
 	private void createBottomGroup(Composite composite) {
@@ -166,10 +108,6 @@ public class ExampleResourcePage extends WizardPage {
 		bottomGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
 		Button exampleFolderButton = new Button(bottomGroup, SWT.CHECK);
 		exampleFolderButton.setText("create folder with example name");
-		Button hiddenFilesButton = new Button(bottomGroup, SWT.CHECK);
-		// TODO hidden files berï¿½cksichtigen, sowohl beim import(?) als auch
-		// beim export; gedanken drï¿½ber machen.
-		hiddenFilesButton.setText("Copy Hidden Files");
 	}
 
 	// TODO grï¿½ï¿½e fix machen und mit scrollbar ausstatten, gilt auch fï¿½r
@@ -249,42 +187,12 @@ public class ExampleResourcePage extends WizardPage {
 
 	}
 
-	// TODO schï¿½neren namen geben.
-	private void createExReComposite(Composite composite) {
-		Composite exReComposite = new Composite(composite, SWT.BORDER);
-		GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 1;
-		exReComposite.setLayout(gridLayout);
-		exReComposite.setToolTipText("Set Example Resource attributes.");
-
-		Composite comboComposite = new Composite(exReComposite, SWT.NONE);
-		GridLayout comboLayout = new GridLayout();
-		comboLayout.numColumns = this.TWO_COLUMNS;
-		comboComposite.setLayout(comboLayout);
-		new Label(comboComposite, SWT.None).setText("Category:");
-		final Combo categoryCombo = new Combo(comboComposite, SWT.READ_ONLY);
-		List<String> categories = ExampleManager.get().getCategories();
-		String items[] = new String[categories.size()];
-		for (int i = 0; i < categories.size(); i++) {
-			items[i] = categories.get(i);
-		}
-		Arrays.sort(items);
-
-		categoryCombo.setItems(items);
-		Composite buttonComposite = new Composite(exReComposite, SWT.NONE);
-		Button headResourceButton = new Button(buttonComposite, SWT.CHECK);
-		buttonComposite.setLayout(new GridLayout());
-		buttonComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		headResourceButton.setText("is head resource");
-		headResourceButton.setToolTipText("Explaining of that attribute");
-	}
-
 	public String getDestLocation() {
 		return this.destPath.getText();
 	}
 
-	public List<ExampleResource> getExampleResources() {
-		return this.exampleResources;
+	public List<URL> getExampleResources() {
+		return this.resources;
 	}
 
 	public ImportType getImportType() {
@@ -293,4 +201,29 @@ public class ExampleResourcePage extends WizardPage {
 		return ImportType.EXTENSIONPOINT;
 	}
 
+	void createCheckedTree(Composite parent) {
+
+		Tree checkTree = new Tree(parent, SWT.CHECK | SWT.BORDER);
+		GridData data = new GridData(GridData.FILL_BOTH);
+		checkTree.setLayoutData(data);
+		fillTree(checkTree);
+	}
+
+	/**
+	 * Helper method to fill a tree with data
+	 * 
+	 * @param tree
+	 *            the tree to fill
+	 */
+	private void fillTree(Tree tree) {
+		// Turn off drawing to avoid flicker
+		tree.setRedraw(false);
+		List<String> categories = ExampleManager.get().getCategories();
+		for (String category : categories) {
+			TreeItem item = new TreeItem(tree, SWT.NONE);
+			item.setText(category);
+		}
+		// Turn drawing back on!
+		tree.setRedraw(true);
+	}
 }

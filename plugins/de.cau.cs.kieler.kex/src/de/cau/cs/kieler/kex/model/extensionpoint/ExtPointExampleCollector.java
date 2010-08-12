@@ -42,6 +42,9 @@ public class ExtPointExampleCollector extends ExampleCollector {
 		IConfigurationElement[] configElements = Platform
 				.getExtensionRegistry().getConfigurationElementsFor(KEX_EXT_ID);
 		for (IConfigurationElement element : configElements) {
+			System.err.println(element.getName());
+		}
+		for (IConfigurationElement element : configElements) {
 			try {
 				String elementName = element.getName();
 				if (ExtPointConstants.EXAMPLE.equals(elementName)) {
@@ -49,6 +52,9 @@ public class ExtPointExampleCollector extends ExampleCollector {
 							.getAttribute(ExtPointConstants.ID);
 					if (getExamplePool().containsKey(exampleId)) {
 						// TODO darf eigentlich nicht passieren
+						// RUNTIME Exception schmeiﬂen...
+						// oder einfach annehmen, dass dies nicht geschieht
+
 						continue;
 					}
 					Example example = ExtPointCollectionUtil.toExample(element);
@@ -67,7 +73,7 @@ public class ExtPointExampleCollector extends ExampleCollector {
 				// ExceptionHandler.get().add(
 				// new KielerModelException(e.getMessage(), element));
 				// else
-				// e.printStackTrace();
+				e.printStackTrace();
 			}
 		}
 	}
@@ -78,8 +84,8 @@ public class ExtPointExampleCollector extends ExampleCollector {
 			// TODO StatusManager als globalen Exceptionhandler
 			// ansprechen...
 		} else {
-			if (!getCategoryPool().contains(categoryId))
-				getCategoryPool().add(categoryId);
+			if (!getCategories().contains(categoryId))
+				getCategories().add(categoryId);
 			else {
 				// TODO StatusManager ansprechen
 			}
@@ -91,7 +97,7 @@ public class ExtPointExampleCollector extends ExampleCollector {
 		return this.examplePool;
 	}
 
-	public List<String> getCategoryPool() {
+	public List<String> getCategories() {
 		if (this.categoryPool == null) {
 			this.categoryPool = new ArrayList<String>();
 			loadCategories();

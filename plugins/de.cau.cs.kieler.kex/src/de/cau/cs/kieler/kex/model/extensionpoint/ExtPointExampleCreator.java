@@ -1,7 +1,6 @@
 package de.cau.cs.kieler.kex.model.extensionpoint;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -25,8 +24,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import de.cau.cs.kieler.core.KielerException;
+import de.cau.cs.kieler.kex.controller.util.IOHandler;
 import de.cau.cs.kieler.kex.model.Example;
-import de.cau.cs.kieler.kex.model.ExampleResource;
 import de.cau.cs.kieler.kex.model.ExtPointConstants;
 
 /**
@@ -41,45 +40,6 @@ public class ExtPointExampleCreator {
 
 	private Document parsedXML = null;
 	private static final String PLUGIN_XML = "plugin.xml";
-
-	/**
-	 * searches for a file namend
-	 * 
-	 * @param location
-	 * @return
-	 * @throws KielerException
-	 */
-	private File filterPluginXML(final File location) throws KielerException {
-		// TODO evtl. ist der check auf ein java pluginproject sch�ner, als
-		// nach
-		// der plugin.xml zu suchen.
-
-		// TODO check if File parent = new File(location.getPath) besser ist...
-		File parent = location;
-		File[] listFiles = null;
-		while (parent != null && parent.exists() && parent.isDirectory()) {
-			listFiles = parent.listFiles(new FileFilter() {
-
-				public boolean accept(File pathname) {
-					if (pathname.getName().equals(PLUGIN_XML))
-						// TODO pathname auslesen und
-						return true;
-					return false;
-				}
-			});
-			if (listFiles.length > 0)
-				break;
-			parent = parent.getParentFile();
-		}
-		if (listFiles.length == 0)
-			throw new KielerException(
-					"The given destination location is not an plugin project and not a folder in that.");
-		if (listFiles.length > 1)
-			throw new KielerException(new StringBuffer()
-					.append("There are more than one plugin.xml file in ")
-					.append(parent.getPath()).toString());
-		return listFiles[0];
-	}
 
 	/**
 	 * parses the given file.
@@ -111,7 +71,7 @@ public class ExtPointExampleCreator {
 	public void addExtension(File location, Object parseElement)
 			throws KielerException {
 		try {
-			File pluginXML = filterPluginXML(location);
+			File pluginXML = IOHandler.filterFile(location, PLUGIN_XML);
 			parsedXML = parserPluginXML(pluginXML);
 			Node extensionKEX = filterExtensionKEX();
 			// TODO only for testing!
@@ -175,9 +135,7 @@ public class ExtPointExampleCreator {
 		// existiert, normalerweise wird vorher gepr�ft.
 		// es k�nnen aber mehrere examples exportiert werden
 		// ohne zwischendurch neu zu bauen.
-		if (extensionKEX != null)
-			testMethod(extensionKEX.getChildNodes());
-		else {
+		if (extensionKEX == null) {
 			// create extension KEX
 		}
 		return extensionKEX;
@@ -245,29 +203,29 @@ public class ExtPointExampleCreator {
 		createdExample.setAttribute(ExtPointConstants.NAME, example.getName());
 		createdExample.setAttribute(ExtPointConstants.VERSION, example
 				.getVersion().toString());
-		for (ExampleResource exResource : example.getResources()) {
+		URL headResource = example.getHeadResource();
+		if (headResource != null)
+			createdExample.setAttribute(ExtPointConstants.HEAD_RESOURCE,
+					headResource.getPath());
+
+		for (String category : example.getCategories()) {
+			createdExample.appendChild(toNode(category));
+		}
+
+		// TODO test ausbauen
+		createdExample.appendChild(toNode("de.cau.cs.kieler.test"));
+
+		for (URL exResource : example.getResources()) {
 			createdExample.appendChild(toNode(exResource));
 		}
 		return createdExample;
 	}
 
-	private Node toNode(ExampleResource exResource) {
-		// TODO check nullpointer, they shouldn�t set to plugin.xml
-		// but here are no nullpointer allowed.
+	private Node toNode(URL exResource) {
 		Element createdExResource = parsedXML
 				.createElement(ExtPointConstants.EXAMPLE_RESOURCE);
-		createdExResource.setAttribute(ExtPointConstants.CATEGORY,
-				exResource.getCategory());
-		createdExResource.setAttribute(ExtPointConstants.IS_HEAD_RESOURCE,
-				(exResource.isHeadResource() ? "true" : "false"));
-		// pfad des neuen platzes
-		for (URL resource : exResource.getResources()) {
-			Element createdResource = parsedXML
-					.createElement(ExtPointConstants.RESOURCE);
-			createdResource.setAttribute(ExtPointConstants.PATH,
-					resource.getPath());
-			createdExResource.appendChild(createdResource);
-		}
+		createdExResource.setAttribute(ExtPointConstants.RESOURCE,
+				exResource.getPath());
 		return createdExResource;
 	}
 

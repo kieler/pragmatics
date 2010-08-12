@@ -30,7 +30,6 @@ public class ChooseExamplePage extends WizardPage {
 
 	private Text exampleDescription;
 
-	private List<Example> selectedExamples;
 	private Tree exampleTree;
 
 	private static final String EXAMPLE_DATA_KEY = "example";
@@ -70,7 +69,7 @@ public class ChooseExamplePage extends WizardPage {
 	private void initTree(Tree tree) {
 		List<String> categories = ExampleManager.get().getCategories();
 		for (int i = 0; i < categories.size(); i++) {
-			TreeItem iItem = new TreeItem(tree, 0);
+			TreeItem iItem = new TreeItem(tree, SWT.NONE);
 			iItem.setText(categories.get(i));
 			addExamplesToItem(categories.get(i), iItem);
 		}
@@ -79,7 +78,7 @@ public class ChooseExamplePage extends WizardPage {
 	// TODO max performance rausholen... vielleicht schon ein tree im controller
 	// speichern... oder die map so nicht bestehen lassen...
 	private void addExamplesToItem(String category, TreeItem tItem) {
-		for (Example example : ExampleManager.get().getExtPointExamples()
+		for (Example example : ExampleManager.get().getExamples()
 				.values()) {
 			if (example.contains(category)) {
 				TreeItem item = new TreeItem(tItem, SWT.NONE);

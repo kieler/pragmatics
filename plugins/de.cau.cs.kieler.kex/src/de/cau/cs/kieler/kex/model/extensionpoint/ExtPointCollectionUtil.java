@@ -14,7 +14,6 @@ import org.osgi.framework.Version;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.KielerModelException;
 import de.cau.cs.kieler.kex.model.Example;
-import de.cau.cs.kieler.kex.model.ExampleResource;
 import de.cau.cs.kieler.kex.model.ExtPointConstants;
 import de.cau.cs.kieler.kex.model.ImportType;
 
@@ -41,84 +40,102 @@ public class ExtPointCollectionUtil {
 			throws InvalidRegistryObjectException, IllegalArgumentException,
 			KielerException {
 
-		Example example = null;
 		String idAttribute = exampleElement.getAttribute(ExtPointConstants.ID);
 		String nameAttribute = exampleElement
 				.getAttribute(ExtPointConstants.NAME);
 		String versionAttribute = exampleElement
 				.getAttribute(ExtPointConstants.VERSION);
-
-		// TODO eine art versions validator bauen. evtl. kann Version sowas
-		// schon
-		if (versionAttribute != null)
-			// FIXME IllegalArgumentException sehr wahrscheinlich, da das
-			// version feld
-			// ein freier string, min. default besser noch regex.
-			example = new Example(idAttribute, nameAttribute,
-					Version.parseVersion(versionAttribute),
-					ImportType.EXTENSIONPOINT);
-		else
-			example = new Example(idAttribute, nameAttribute,
-					ImportType.EXTENSIONPOINT);
+		// FIXME IllegalArgumentException sehr wahrscheinlich, da das
+		// version feld
+		// ein freier string, min. default besser noch regex.
+		Example example = new Example(idAttribute, nameAttribute,
+				Version.parseVersion(versionAttribute),
+				ImportType.EXTENSIONPOINT);
 		example.setDescription(exampleElement
 				.getAttribute(ExtPointConstants.DESCRIPTION));
 		example.setContact(exampleElement
 				.getAttribute(ExtPointConstants.CONTACT));
 		String exNamespaceId = exampleElement.getNamespaceIdentifier();
 		example.setNamespaceId(exNamespaceId);
-		List<ExampleResource> exampleResources = ExtPointCollectionUtil
-				.filterExampleResources(exampleElement, exNamespaceId);
-		example.addResources(exampleResources);
+		List<String> categories = filterCategories(exampleElement,
+				exNamespaceId);
+		example.addCategories(categories);
+		example.setHeadResource(filterHeadResource(exampleElement,
+				exNamespaceId));
+		// TODO Prüfung, ob head_resource schon in resources enthalten ansonsten
+		// hinzufügen.
+		List<URL> resources = ExtPointCollectionUtil.filterExampleResources(
+				exampleElement, exNamespaceId);
+		example.addResources(resources);
 		return example;
 	}
 
-	public static List<ExampleResource> filterExampleResources(
-			final IConfigurationElement exampleElement, String exNamespaceId)
-			throws KielerException {
-		List<ExampleResource> exampleResources = new ArrayList<ExampleResource>();
-		for (IConfigurationElement configElement : exampleElement
-				.getChildren(ExtPointConstants.EXAMPLE_RESOURCE)) {
-			ExampleResource exampleResource = new ExampleResource();
-			exampleResource.setCategory(configElement
-					.getAttribute(ExtPointConstants.CATEGORY));
-			exampleResource.setHeadResource(Boolean.valueOf(configElement
-					.getAttribute(ExtPointConstants.IS_HEAD_RESOURCE)));
-			addResource(exampleResource, exNamespaceId, configElement);
-			exampleResources.add(exampleResource);
-		}
-		return exampleResources;
+	private static URL filterHeadResource(IConfigurationElement exampleElement,
+			String exNamespaceId) {
+		Bundle bundle = Platform.getBundle(exNamespaceId);
+		String attribute = exampleElement
+				.getAttribute(ExtPointConstants.HEAD_RESOURCE);
+		if (attribute != null)
+			return bundle.getResource(attribute);
+		return null;
 	}
 
-	private static void addResource(ExampleResource exResource,
-			final String exNamespaceId,
-			final IConfigurationElement configElement) throws KielerException {
-		Bundle bundle = Platform.getBundle(exNamespaceId);
-		URL resourceURL = bundle.getResource(configElement
-				.getAttribute(ExtPointConstants.RESOURCE));
-		validateURL(resourceURL);
-		exResource.addResource(resourceURL);
+	private static List<String> filterCategories(
+			IConfigurationElement exampleElement, String exNamespaceId) {
+		List<String> result = new ArrayList<String>();
 
-		// searching for subfiles and folders.
-		Enumeration<?> dict = bundle.findEntries(resourceURL.getPath(), null,
-				true);
-		// TODO filter for .svn and .cvs files have to be added
-		// properly you can set this to bundle.findEntries()...
-		// adding subs
+		// check
+		for (IConfigurationElement configurationElement : exampleElement
+				.getChildren())
+			System.out.println(configurationElement.getName());
+		for (IConfigurationElement configElement : exampleElement
+				.getChildren(ExtPointConstants.CATEGORY)) {
+			System.out.println(configElement.getName()
+					+ configElement.getValue());
+			result.add(configElement.getAttribute(ExtPointConstants.ID));
+		}
+		return result;
+	}
 
-		if (dict != null) {
-			while (dict.hasMoreElements()) {
-				URL dictElement = (URL) dict.nextElement();
-				// TODO ausnahme liste draus machen, eigene klasse mit ausnahmen
-				// und die dann alle abprüfen,
-				// damit noch ausnahmen hinzugefügt, bzw. entfernt werden können
+	public static List<URL> filterExampleResources(
+			final IConfigurationElement exampleElement, String exNamespaceId)
+			throws KielerException {
+		List<URL> result = new ArrayList<URL>();
+		for (IConfigurationElement configElement : exampleElement
+				.getChildren(ExtPointConstants.EXAMPLE_RESOURCE)) {
 
-				// oder dateien mit prefix "." entfernen, also keine versteckten
-				// dateien mit berücksichtigen
-				if (!dictElement.getPath().contains(".svn")
-						&& !dictElement.getPath().contains(".cvs"))
-					exResource.addResource(dictElement);
+			Bundle bundle = Platform.getBundle(exNamespaceId);
+			URL resourceURL = bundle.getResource(configElement
+					.getAttribute(ExtPointConstants.RESOURCE));
+			validateURL(resourceURL);
+			result.add(resourceURL);
+
+			// searching for subfiles and folders.
+			Enumeration<?> dict = bundle.findEntries(resourceURL.getPath(),
+					null, true);
+			// TODO filter for .svn and .cvs files have to be added
+			// properly you can set this to bundle.findEntries()...
+			// adding subs
+
+			if (dict != null) {
+				while (dict.hasMoreElements()) {
+					URL dictElement = (URL) dict.nextElement();
+					// FIXME ausnahme liste draus machen, eigene klasse mit
+					// ausnahmen
+					// und die dann alle abprüfen,
+					// damit noch ausnahmen hinzugefügt, bzw. entfernt werden
+					// können
+
+					// oder dateien mit prefix "." entfernen, also keine
+					// versteckten
+					// dateien mit berücksichtigen
+					if (!dictElement.getPath().contains(".svn")
+							&& !dictElement.getPath().contains(".cvs"))
+						result.add(dictElement);
+				}
 			}
 		}
+		return result;
 	}
 
 	private static void validateURL(final URL resourceURL)

@@ -16,7 +16,6 @@ import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.model.Example;
-import de.cau.cs.kieler.kex.model.ExampleResource;
 
 public class ExampleImportUtil {
 
@@ -24,7 +23,7 @@ public class ExampleImportUtil {
 			List<Example> selectedExamples) throws KielerException {
 		for (Example example : selectedExamples) {
 
-			List<ExampleResource> resources = example.getResources();
+			List<URL> resources = example.getResources();
 			// TODO pr�fen, ob parameter sinnvoll...
 			// wenn mehrere examples mit gleichem namen laufen, brauchen wir
 			// eine art index
@@ -39,34 +38,29 @@ public class ExampleImportUtil {
 
 			Bundle bundle = Platform.getBundle(example.getNamespaceId());
 
-			for (ExampleResource exampleResource : resources) {
-				for (URL resource : exampleResource.getResources()) {
-					try {
-						String path = resource.getPath();
+			for (URL resource : resources) {
+				try {
+					String path = resource.getPath();
 
-						// searching for subfiles and folders.
-						Enumeration<?> dict = bundle.findEntries(path, null,
-								false);
-						// TODO filter for .svn and .cvs files have to be added
-						// properly you can set this to bundle.findEntries()...
-						// adding subs
+					// searching for subfiles and folders.
+					Enumeration<?> dict = bundle.findEntries(path, null, false);
+					// TODO filter for .svn and .cvs files have to be added
+					// properly you can set this to bundle.findEntries()...
+					// adding subs
 
-						// TODO hier ansetzen
-						if (dict != null) {
-							createFolder(destFolder);
-						} else {
-							String[] resourceSplits = path.split("/");
-							writeFile(
-									resource,
-									destFolder
-											+ resourceSplits[resourceSplits.length - 1],
-									true);
-						}
-					} catch (FileNotFoundException e) {
-						throw new KielerException("Can't import example!", e);
-					} catch (IOException e1) {
-						throw new KielerException("Can't import example!", e1);
+					// TODO hier ansetzen
+					if (dict != null) {
+						createFolder(destFolder);
+					} else {
+						String[] resourceSplits = path.split("/");
+						writeFile(resource, destFolder
+								+ resourceSplits[resourceSplits.length - 1],
+								true);
 					}
+				} catch (FileNotFoundException e) {
+					throw new KielerException("Can't import example!", e);
+				} catch (IOException e1) {
+					throw new KielerException("Can't import example!", e1);
 				}
 			}
 		}

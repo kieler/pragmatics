@@ -11,7 +11,7 @@ public class ExtPointConstants {
 	public static final String EXAMPLE_RESOURCE = "example_resource";
 	public static final String RESOURCE = "resource";
 	public static final String CATEGORY = "category";
-	public static final String IS_HEAD_RESOURCE = "is_head_resource";
+	public static final String HEAD_RESOURCE = "head_resource";
 	public static final String EXAMPLE = "example";
 	public static final String PATH = "path";
 

@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Path;
 import org.osgi.framework.Version;
 
 import de.cau.cs.kieler.core.KielerException;
@@ -15,7 +17,6 @@ import de.cau.cs.kieler.core.KielerModelException;
 import de.cau.cs.kieler.kex.controller.ExampleElement;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.ExampleCollector;
-import de.cau.cs.kieler.kex.model.ExampleResource;
 import de.cau.cs.kieler.kex.model.ImportType;
 import de.cau.cs.kieler.kex.model.extensionpoint.ExtPointExampleCreator;
 
@@ -38,7 +39,6 @@ public class ExampleExportUtil {
 		result.setDescription((String) properties
 				.get(ExampleElement.DESCRIPTION));
 		result.setContact((String) properties.get(ExampleElement.CONTACT));
-		// TODO resource krams fehlt hier noch.
 		return result;
 	}
 
@@ -72,24 +72,23 @@ public class ExampleExportUtil {
 		// TODO nullpointer check einbauen; ï¿½berall prï¿½fen, wenn ein File
 		// erzeugt wird muss vorher ein nullcheck des strings erfolgen
 		// ansonsten unerwartete exception...
-		// muss schon vorher in der ui geprï¿½ft werden, sollte aber dennoch hier
+		// muss schon vorher in der ui geprï¿½ft werden, sollte aber dennoch
+		// hier
 		// abgeprï¿½ft werden.
 		File destFile = new File(destLocation);
 		if (!destFile.exists())
 			throw new KielerException(
 					"There is no file at destination location:" + destLocation);
 
-		List<ExampleResource> resources = (List<ExampleResource>) properties
+		List<URL> resources = (List<URL>) properties
 				.get(ExampleElement.RESOURCES);
 		try {
-			List<ExampleResource> destResources = createExampleResources(
-					destFile, resources);
+			List<URL> destResources = copyResources(destFile, resources);
 			mappedExample.addResources(destResources);
 			extensionCreator.addExtension(destFile, mappedExample);
 		} catch (KielerModelException e) {
 			if (e.getModelObject() instanceof List<?>) {
-				deleteExampleResource((List<ExampleResource>) e
-						.getModelObject());
+				deleteExampleResource((List<URL>) e.getModelObject());
 			}
 			throw e;
 		}
@@ -100,16 +99,11 @@ public class ExampleExportUtil {
 	 * 
 	 * @param sourceProject
 	 */
-	private static List<ExampleResource> createExampleResources(File destFile,
-			List<ExampleResource> resources) throws KielerException {
-		List<ExampleResource> result = new ArrayList<ExampleResource>();
-		for (ExampleResource exResource : resources) {
-			ExampleResource resource = new ExampleResource();
-			resource.setCategory(exResource.getCategory());
-			resource.setHeadResource(exResource.isHeadResource());
-			resource.getResources().addAll(
-					copyFiles(exResource.getResources(), destFile.getPath()));
-			result.add(resource);
+	private static List<URL> copyResources(File destFile, List<URL> resources)
+			throws KielerException {
+		List<URL> result = new ArrayList<URL>();
+		for (URL relativeResource : resources) {
+			result.add(copyFile(relativeResource, destFile.getPath()));
 			// TODO muss das eine URL sein... geht da nicht auch ein
 			// path, string oder file...
 		}
@@ -119,43 +113,41 @@ public class ExampleExportUtil {
 	// TODO wenn der dialog resource anbietet zu dessen ordner es schon
 	// TODO auch subdirs mit ansehen und hidden files berï¿½cksichtigen oder
 	// nicht...
-	// FIXME URLs ausbauen, das muss auch ohne gehen...
-	private static List<URL> copyFiles(List<URL> resources, String destPath)
-			throws KielerModelException {
-		List<URL> result = new ArrayList<URL>();
-		for (URL url : resources) {
-			String path = url.getPath();
-			// String[] split = path.split(String.valueOf(File.separatorChar));
-			// String fileName = split[split.length - 1];
-			int nameStart = 0;
-			for (int i = 0; i < path.length(); i++) {
-				if (File.separatorChar == path.charAt(i))
-					nameStart = i;
-			}
-			String fileName = path.substring(nameStart + 1);
-			StringBuffer sb = new StringBuffer();
-			sb.append(destPath).append(File.separatorChar).append(fileName);
+	// FIXME URLs ausbauen, das muss auch ohne gehen... logisch gesehen wird url
+	// nur aus bundle.getResource() generiert
+	// also nur beim Import, d.h. der export mechanismus könnte komplett ohne
+	// urls laufen.
 
-			try {
-				// TODO unbedingt hier url ausbauen, braucht kein mensch.
-				result.add(new URL("http", "localhost", sb.toString()));
-				IOHandler.writeFile(new File(url.getPath()),
-						new File(sb.toString()));
-			} catch (MalformedURLException e) {
-				throw new KielerModelException("could not transform \" " + sb
-						+ "\" to URL!", result);
-			} catch (IOException e) {
-				throw new KielerModelException("could not transform \" " + sb
-						+ "\" to URL!", result);
-			}
+	private static URL copyFile(URL relativeResource, String destPath)
+			throws KielerModelException {
+		URL result = null;
+		StringBuffer sb = new StringBuffer();
+		try {
+			Path resourcePath = (Path) Path.fromPortableString(relativeResource
+					.getPath());
+
+			sb.append(destPath).append(File.separatorChar)
+					.append(resourcePath.removeFirstSegments(0));
+			result = new URL("http", "localhost", sb.toString());
+			Path workspacePath = (Path) ResourcesPlugin.getWorkspace()
+					.getRoot().getLocation();
+
+			String sourcePath = workspacePath.toPortableString()
+					+ relativeResource.getPath();
+
+			IOHandler.writeFile(new File(sourcePath), new File(sb.toString()));
+		} catch (MalformedURLException e) {
+			throw new KielerModelException("could not transform \" " + sb
+					+ "\" to URL!", result);
+		} catch (IOException e) {
+			throw new KielerModelException("could not transform \" " + sb
+					+ "\" to URL!", result);
 		}
 		return result;
 	}
 
-	private static void deleteExampleResource(List<ExampleResource> resources) {
-		for (ExampleResource exampleResource : resources) {
-			for (URL url : exampleResource.getResources())
-				IOHandler.deleteFile(new File(url.getPath()));
-		}
+	private static void deleteExampleResource(List<URL> resources) {
+		for (URL url : resources)
+			IOHandler.deleteFile(new File(url.getPath()));
 	}
 }
