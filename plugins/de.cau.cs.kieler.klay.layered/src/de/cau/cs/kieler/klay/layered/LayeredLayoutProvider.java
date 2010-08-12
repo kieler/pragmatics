@@ -28,6 +28,7 @@ import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.impl.GreedyCycleBreaker;
+import de.cau.cs.kieler.klay.layered.impl.LPSolveLayerer;
 import de.cau.cs.kieler.klay.layered.impl.LayerSweepCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.impl.LinearSegmentsNodePlacer;
 import de.cau.cs.kieler.klay.layered.impl.LongestPathLayerer;
@@ -121,6 +122,11 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         case LONGEST_PATH:
             if (!(layerer instanceof LongestPathLayerer)) {
                 layerer = new LongestPathLayerer();
+            }
+            break;
+        case LP_SOLVER:
+            if (!(layerer instanceof LPSolveLayerer)) {
+                layerer = new LPSolveLayerer();
             }
             break;
         default:

@@ -215,18 +215,16 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
 
     // ============================== LpSolve-Layering Algorithm ==================================
 
-/**
-     * The main method of the LpSolve-layerer. It determines an optimal layering of all
-     * nodes in the graph concerning a minimal length of all edges by using the network simplex
-     * algorithm described in {@literal Emden R. Gansner, Eleftherios Koutsofios, Stephen
-     * C. North, Kiem-Phong Vo: "A Technique for Drawing Directed Graphs", AT&T Bell Laboratories.
-     * The execution time of this implemented algorithm has not been proven quadratic till now.
+    /**
+     * The main method of the LpSolve-layerer component. It determines an optimal layering of all
+     * nodes in the graph concerning a minimal edge length using the LpSolver of
+     * lpsolve.sourceforge.net.
      * 
      * @param nodes
      *            a {@code Collection} of all nodes of the graph to layer
      * @param layeredGraph
      *            an initially empty layered graph which is filled with layers
-     *            
+     * 
      * @see de.cau.cs.kieler.klay.layered.modules.ILayerer ILayerer
      */
     public void layer(final Collection<LNode> nodes, final LayeredGraph layeredGraph) {
@@ -272,7 +270,7 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
                 throw new LpSolveLayererException(getErrorMessage(solution));
             }
         } catch (LpSolveException exception) {
-            throw new LpSolveLayererException("Feasible solution not found: ", exception);
+            throw new LpSolveLayererException("LpSolver execution failed.", exception);
         } finally {
             if (lp != null) {
                 lp.deleteLp();

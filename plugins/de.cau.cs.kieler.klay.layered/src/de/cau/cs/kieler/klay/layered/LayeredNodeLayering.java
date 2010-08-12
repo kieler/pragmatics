@@ -20,11 +20,13 @@ package de.cau.cs.kieler.klay.layered;
  */
 public enum LayeredNodeLayering {
 
+    /** All nodes will be layered with minimal edge length by using the network-simplex-algorithm. */
+    NETWORK_SIMPLEX,
+    /** All nodes will be layered with minimal edge length by using an LpSolver. */
+    LP_SOLVER,
     /** All nodes will be layered according to the longest path. */
-    LONGEST_PATH,
-    /** All nodes will be layered with minimal edge length. */
-    NETWORK_SIMPLEX;
-
+    LONGEST_PATH;
+    
     /**
      * Returns the enumeration value related to the given ordinal.
      * 
