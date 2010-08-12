@@ -326,10 +326,11 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         // get the new relative location
         Point normalPoint = offsetFromRelativeCoordinate(targetBounds,
                 absoluteBendPoints, refPoint);
-        command.addShapeLayout((View) labelEditPart.getModel(), normalPoint, null);
-        
-        // invalidate the figure to be sure that it is redrawn
-        labelEditPart.getFigure().invalidate();
+        if (normalPoint != null) {
+            command.addShapeLayout((View) labelEditPart.getModel(), normalPoint, null);   
+            // invalidate the figure to be sure that it is redrawn
+            labelEditPart.getFigure().invalidate();
+        }
     }
     
     /**
@@ -391,7 +392,8 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      * @param therefPoint the {@code Point} that is the reference point that the offset
      *     is based on, or {@code null}
      * @return a {@code Point} which represents a value offset from the {@code refPoint}
-     *     point oriented based on the nearest line segment
+     *     point oriented based on the nearest line segment, or {@code null} if no such
+     *     point can be determined
      */
     public static Point offsetFromRelativeCoordinate(final Rectangle bounds,
             final PointList points, final Point therefPoint) {
