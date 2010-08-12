@@ -357,79 +357,87 @@ public class SortingNodewiseEdgePlacer extends AbstractAlgorithm implements INod
         if (layoutDirection == LayoutDirection.DOWN) {
             for (LayerConnection connection : element.getIncomingConnections()) {
                 KPort port = connection.getTargetPort();
-                switch (LayoutOptions.getEnum(KimlLayoutUtil.getShapeLayout(port), PortSide.class)) {
-                case EAST:
-                    int rank = getRankFor(port, eastSlots, element.getRanks(PortSide.EAST));
-                    connection.setTargetSidePos(rank);
-                    break;
-                case SOUTH:
-                    rank = getRankFor(port, eastSlots, element.getRanks(PortSide.EAST));
-                    connection.setTargetSidePos(rank);
-                    rank = getRankFor(port, southSlots, element.getRanks(PortSide.SOUTH));
-                    connection.setTargetFrontPos(rank);
-                    break;
-                case WEST:
-                    rank = getRankFor(port, westSlots, element.getRanks(PortSide.WEST));
-                    connection.setTargetSidePos(-rank);
-                    break;
+                if (port != null) {
+                    switch (LayoutOptions.getEnum(KimlLayoutUtil.getShapeLayout(port), PortSide.class)) {
+                    case EAST:
+                        int rank = getRankFor(port, eastSlots, element.getRanks(PortSide.EAST));
+                        connection.setTargetSidePos(rank);
+                        break;
+                    case SOUTH:
+                        rank = getRankFor(port, eastSlots, element.getRanks(PortSide.EAST));
+                        connection.setTargetSidePos(rank);
+                        rank = getRankFor(port, southSlots, element.getRanks(PortSide.SOUTH));
+                        connection.setTargetFrontPos(rank);
+                        break;
+                    case WEST:
+                        rank = getRankFor(port, westSlots, element.getRanks(PortSide.WEST));
+                        connection.setTargetSidePos(-rank);
+                        break;
+                    }
                 }
             }
             for (LayerConnection connection : element.getOutgoingConnections()) {
                 KPort port = connection.getSourcePort();
-                switch (LayoutOptions.getEnum(KimlLayoutUtil.getShapeLayout(port), PortSide.class)) {
-                case NORTH:
-                    int rank = getRankFor(port, eastSlots, element.getRanks(PortSide.EAST));
-                    connection.setSourceSidePos(rank);
-                    rank = getRankFor(port, northSlots, element.getRanks(PortSide.NORTH));
-                    connection.setSourceBackPos(rank);
-                    break;
-                case EAST:
-                    rank = getRankFor(port, eastSlots, element.getRanks(PortSide.EAST));
-                    connection.setSourceSidePos(rank);
-                    break;
-                case WEST:
-                    rank = getRankFor(port, westSlots, element.getRanks(PortSide.WEST));
-                    connection.setSourceSidePos(-rank);
-                    break;
+                if (port != null) {
+                    switch (LayoutOptions.getEnum(KimlLayoutUtil.getShapeLayout(port), PortSide.class)) {
+                    case NORTH:
+                        int rank = getRankFor(port, eastSlots, element.getRanks(PortSide.EAST));
+                        connection.setSourceSidePos(rank);
+                        rank = getRankFor(port, northSlots, element.getRanks(PortSide.NORTH));
+                        connection.setSourceBackPos(rank);
+                        break;
+                    case EAST:
+                        rank = getRankFor(port, eastSlots, element.getRanks(PortSide.EAST));
+                        connection.setSourceSidePos(rank);
+                        break;
+                    case WEST:
+                        rank = getRankFor(port, westSlots, element.getRanks(PortSide.WEST));
+                        connection.setSourceSidePos(-rank);
+                        break;
+                    }
                 }
             }
         } else {
             for (LayerConnection connection : element.getIncomingConnections()) {
                 KPort port = connection.getTargetPort();
-                switch (LayoutOptions.getEnum(KimlLayoutUtil.getShapeLayout(port), PortSide.class)) {
-                case SOUTH:
-                    int rank = getRankFor(port, southSlots, element.getRanks(PortSide.SOUTH));
-                    connection.setTargetSidePos(rank);
-                    break;
-                case EAST:
-                    rank = getRankFor(port, southSlots, element.getRanks(PortSide.SOUTH));
-                    connection.setTargetSidePos(rank);
-                    rank = getRankFor(port, eastSlots, element.getRanks(PortSide.EAST));
-                    connection.setTargetFrontPos(rank);
-                    break;
-                case NORTH:
-                    rank = getRankFor(port, northSlots, element.getRanks(PortSide.NORTH));
-                    connection.setTargetSidePos(-rank);
-                    break;
+                if (port != null) {
+                    switch (LayoutOptions.getEnum(KimlLayoutUtil.getShapeLayout(port), PortSide.class)) {
+                    case SOUTH:
+                        int rank = getRankFor(port, southSlots, element.getRanks(PortSide.SOUTH));
+                        connection.setTargetSidePos(rank);
+                        break;
+                    case EAST:
+                        rank = getRankFor(port, southSlots, element.getRanks(PortSide.SOUTH));
+                        connection.setTargetSidePos(rank);
+                        rank = getRankFor(port, eastSlots, element.getRanks(PortSide.EAST));
+                        connection.setTargetFrontPos(rank);
+                        break;
+                    case NORTH:
+                        rank = getRankFor(port, northSlots, element.getRanks(PortSide.NORTH));
+                        connection.setTargetSidePos(-rank);
+                        break;
+                    }
                 }
             }
             for (LayerConnection connection : element.getOutgoingConnections()) {
                 KPort port = connection.getSourcePort();
-                switch (LayoutOptions.getEnum(KimlLayoutUtil.getShapeLayout(port), PortSide.class)) {
-                case WEST:
-                    int rank = getRankFor(port, southSlots, element.getRanks(PortSide.SOUTH));
-                    connection.setSourceSidePos(rank);
-                    rank = getRankFor(port, westSlots, element.getRanks(PortSide.WEST));
-                    connection.setSourceBackPos(rank);
-                    break;
-                case SOUTH:
-                    rank = getRankFor(port, southSlots, element.getRanks(PortSide.SOUTH));
-                    connection.setSourceSidePos(rank);
-                    break;
-                case NORTH:
-                    rank = getRankFor(port, northSlots, element.getRanks(PortSide.NORTH));
-                    connection.setSourceSidePos(-rank);
-                    break;
+                if (port != null) {
+                    switch (LayoutOptions.getEnum(KimlLayoutUtil.getShapeLayout(port), PortSide.class)) {
+                    case WEST:
+                        int rank = getRankFor(port, southSlots, element.getRanks(PortSide.SOUTH));
+                        connection.setSourceSidePos(rank);
+                        rank = getRankFor(port, westSlots, element.getRanks(PortSide.WEST));
+                        connection.setSourceBackPos(rank);
+                        break;
+                    case SOUTH:
+                        rank = getRankFor(port, southSlots, element.getRanks(PortSide.SOUTH));
+                        connection.setSourceSidePos(rank);
+                        break;
+                    case NORTH:
+                        rank = getRankFor(port, northSlots, element.getRanks(PortSide.NORTH));
+                        connection.setSourceSidePos(-rank);
+                        break;
+                    }
                 }
             }
         }
