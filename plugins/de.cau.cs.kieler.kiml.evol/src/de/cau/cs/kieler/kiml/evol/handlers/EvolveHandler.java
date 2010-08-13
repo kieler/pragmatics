@@ -21,7 +21,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 
@@ -58,15 +60,13 @@ public class EvolveHandler extends AbstractHandler {
         private final EvolModel model;
         private boolean isAutoRatingEnabled;
 
-        /** Creates a new {@link EvolveJob} instance.
+        /**
+         * Creates a new {@link EvolveJob} instance.
          *
          * @param theName
          * @param theModel
          */
-        EvolveJob(
-                final String theName,
-                final EvolModel theModel,
-                final boolean wantAutoRating) {
+        EvolveJob(final String theName, final EvolModel theModel, final boolean wantAutoRating) {
             super(theName);
             this.model = theModel;
             this.isAutoRatingEnabled = wantAutoRating;
@@ -77,42 +77,7 @@ public class EvolveHandler extends AbstractHandler {
             // final double before =
             // model.getPopulation().getAverageRating().doubleValue();
 
-                this.model.evolve(new SubProgressMonitor(theMonitor, 100));
-
-                // The current individual has changed.
-
-                // Get the current individual from the model.
-                final Genome individual = this.model.getCurrentIndividual();
-                Assert.isNotNull(individual);
-
-                // Get the expected layout provider id.
-                final String expectedLayoutProviderId = this.model.getLayoutProviderId();
-                Assert.isNotNull(expectedLayoutProviderId);
-
-                // Adopt and layout the current individual.
-                EvolUtil.syncApplyIndividual(individual, expectedLayoutProviderId);
-
-                // Refresh the layout view.
-                EvolUtil.asyncRefreshLayoutView();
-
-            if (this.isAutoRatingEnabled) {
-                // Calculate auto-rating in the current editor for all
-                // individuals.
-                this.model.autoRateAll(null, new SubProgressMonitor(theMonitor, 100));
-
-                System.out.println(this.model.getPopulation());
-            }
-
-                // BasicNetwork b = new BasicNetwork();
-                // b.addLayer(new BasicLayer(2));
-                // b.addLayer(new BasicLayer(3));
-                // b.addLayer(new BasicLayer(6));
-                // b.addLayer(new BasicLayer(1));
-                // b.getStructure().finalizeStructure();
-                // System.out.println(b.calculateNeuronCount());
-
-                Assert.isNotNull(this.model.getPopulation());
-
+            this.model.evolve(new SubProgressMonitor(theMonitor, 100));
 
             return new Status(IStatus.OK, EvolPlugin.PLUGIN_ID,
                     "Evolve job completed successfully.");
@@ -231,12 +196,59 @@ public class EvolveHandler extends AbstractHandler {
             final boolean wantAutoRating = isAutoRatingStep(steps, stepsBeforeAutoRating);
 
             evolveJob.setAutoRatingEnabled(wantAutoRating);
+
+            evolveJob.addJobChangeListener(new JobChangeAdapter() {
+                @Override
+                public void done(final IJobChangeEvent event) {
+                    if (event.getResult().isOK()) {
+                        // The current individual has changed.
+
+                        // Get the current individual from the model.
+                        final Genome individual = model.getCurrentIndividual();
+                        Assert.isNotNull(individual);
+
+                        // Get the expected layout provider id.
+                        final String expectedLayoutProviderId = model.getLayoutProviderId();
+                        Assert.isNotNull(expectedLayoutProviderId);
+
+                        // Adopt and layout the current individual.
+                        EvolUtil.syncApplyIndividual(individual, expectedLayoutProviderId);
+
+                        // Refresh the layout view.
+                        EvolUtil.asyncRefreshLayoutView();
+
+                        if (evolveJob.isAutoRatingEnabled()) {
+                            // Calculate auto-rating in the current editor for
+                            // all
+                            // individuals.
+                            model.autoRateAll(null, new SubProgressMonitor(monitor, 100));
+
+                            System.out.println(model.getPopulation());
+                        }
+
+                        // BasicNetwork b = new BasicNetwork();
+                        // b.addLayer(new BasicLayer(2));
+                        // b.addLayer(new BasicLayer(3));
+                        // b.addLayer(new BasicLayer(6));
+                        // b.addLayer(new BasicLayer(1));
+                        // b.getStructure().finalizeStructure();
+                        // System.out.println(b.calculateNeuronCount());
+
+                        Assert.isNotNull(model.getPopulation());
+                    } else {
+                        System.err.println("The evolve job did not complete successfully.");
+                    }
+                }
+            });
+
             evolveJob.schedule();
+
             try {
                 evolveJob.join();
             } catch (final InterruptedException exception) {
                 exception.printStackTrace();
             }
+
             // // Examine difference.
             // final double after =
             // model.getPopulation().getAverageRating().doubleValue();

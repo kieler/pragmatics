@@ -375,12 +375,13 @@ public final class EvolUtil {
             return result;
         }
     }
-
+    
     /**
-     * Applier for an individual.
-     *
+     * Applier for an individual. Can adopt, layout and measure an individual in
+     * the appropriate editor(s).
+     * 
      * @author bdu
-     *
+     * 
      */
     private static final class IndividualApplierRunnable implements Runnable {
         /**
@@ -405,6 +406,8 @@ public final class EvolUtil {
         private final Genome individual;
 
         public void run() {
+            // Adopt, layout and measure the given individual in the appropriate
+            // editor(s).
             applyIndividual(this.individual, this.layoutProviderId);
         }
     }
@@ -742,11 +745,11 @@ public final class EvolUtil {
             }
         }
     }
-
+    
     /**
      * Adopt, layout and measure the given individual in the appropriate
-     * editors. The obtained layout is applied to the diagrams.
-     *
+     * editor(s). The obtained layout is applied to the diagrams.
+     * 
      * @param individual
      *            a {@link Genome}; may not be {@code null}
      * @param expectedLayoutProviderId

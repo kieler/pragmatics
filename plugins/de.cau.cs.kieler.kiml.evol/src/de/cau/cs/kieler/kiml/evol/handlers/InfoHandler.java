@@ -34,7 +34,7 @@ public class InfoHandler extends AbstractHandler {
         }
 
         System.out.println();
-        System.out.println(model.getPopulation());
+        System.out.println(model.getPopulation().getDetails());
 
         return null;
     }

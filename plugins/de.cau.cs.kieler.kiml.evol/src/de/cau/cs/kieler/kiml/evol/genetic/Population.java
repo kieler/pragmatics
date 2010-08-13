@@ -98,9 +98,9 @@ public class Population extends ArrayList<Genome> implements IFilterable<Populat
         }
         return result;
     }
-    
+
     /**
-     * 
+     *
      * @param filter
      *            an {@link IItemFilter} for {@link Genome} objects
      * @return a new {@link Population} containing the {@link Genome} objects
@@ -123,6 +123,24 @@ public class Population extends ArrayList<Genome> implements IFilterable<Populat
         int i = 0;
         for (final Genome ind : this) {
             result.append("#" + ++i + ": " + ind.toString() + newLine);
+        }
+        return result.toString();
+    }
+
+    /**
+     * @return a string containing detailed information about the population.
+     */
+    public String getDetails() {
+        final String newLine = System.getProperty("line.separator");
+        final StringBuilder result = new StringBuilder(this.size() * 70);
+
+        int i = 0;
+        for (final Genome ind : this) {
+            result.append("Individual #" + ++i + ":" + newLine);
+            for (final IGene<?> gene : ind) {
+                result.append(gene.getId() + ": " + gene.getValue() + newLine);
+            }
+            result.append(newLine);
         }
         return result.toString();
     }
