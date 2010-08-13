@@ -114,10 +114,7 @@ public class DijkstraPathFinder extends AbstractAlgorithm implements IShortestPa
                 }
 
                 // Get edge cost property
-                Integer cost = 0; // TODO get edge cost
-                if (cost == null) {
-                    cost = 1;
-                }
+                Integer cost = edge.getProperty(PATHCOST);
                 cost += distance[iCurrent];
 
                 if (cost < distance[iNeighbor]) {

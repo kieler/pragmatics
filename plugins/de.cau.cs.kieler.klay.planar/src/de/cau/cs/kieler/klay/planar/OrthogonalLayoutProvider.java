@@ -28,6 +28,7 @@ import de.cau.cs.kieler.klay.planar.alg.IPlanarizer;
 import de.cau.cs.kieler.klay.planar.alg.impl.BoyerMyrvoldPlanarityTester;
 import de.cau.cs.kieler.klay.planar.alg.impl.EdgeInsertionPlanarization;
 import de.cau.cs.kieler.klay.planar.alg.impl.LRPlanarityTester;
+import de.cau.cs.kieler.klay.planar.alg.impl.QuodOrthogonalizer;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.IGraphFactory;
@@ -87,7 +88,7 @@ public class OrthogonalLayoutProvider extends AbstractLayoutProvider {
     private IPlanarizer planarizer = new EdgeInsertionPlanarization();
 
     /** Algorithm for orthogonalization. */
-    private IOrthogonalizer orthogonalizer = null; // new QuodOrthogonalizer(); TODO check into trac
+    private IOrthogonalizer orthogonalizer = new QuodOrthogonalizer();
 
     // ======================== Constructor ========================================================
 

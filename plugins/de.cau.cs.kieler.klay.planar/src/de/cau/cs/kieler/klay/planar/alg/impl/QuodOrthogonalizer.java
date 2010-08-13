@@ -18,7 +18,9 @@ import java.util.LinkedList;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.Property;
+import de.cau.cs.kieler.klay.planar.alg.IFlowNetworkSolver;
 import de.cau.cs.kieler.klay.planar.alg.IOrthogonalizer;
+import de.cau.cs.kieler.klay.planar.alg.IPathFinder;
 import de.cau.cs.kieler.klay.planar.alg.IFlowNetworkSolver.IMinimumCostFlowSolver;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IFace;
@@ -28,7 +30,6 @@ import de.cau.cs.kieler.klay.planar.graph.IGraphFactory;
 import de.cau.cs.kieler.klay.planar.graph.INode;
 import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
 import de.cau.cs.kieler.klay.planar.graph.impl.PGraphFactory;
-import de.cau.cs.kieler.klay.planar.util.IFunction;
 
 /**
  * Implementation of the Quod orthogonilazation algorithm, based on the paper "Quasi-Orthogonal
@@ -52,15 +53,6 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
     /** The graph the algorithm works on. */
     private IGraph graph;
 
-    /** The supply and demand values of every node in the flow network. */
-    private int[] supply;
-
-    /** The capacity values of every arc in the flow network. */
-    private int[] capacity;
-
-    /** The cost values of every arc in the flow network. */
-    private int[] cost;
-
     // ======================== Algorithm ==========================================================
 
     /**
@@ -77,20 +69,7 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
         // Solve flow network to get minimum flows
         IGraph network = this.createFlowNetwork();
         IMinimumCostFlowSolver solver = new SuccessiveShortestPathFlowSolver();
-
-        IFunction<INode, Integer> getSupply = new IFunction<INode, Integer>() {
-            public Integer evaluate(final INode element) {
-                return supply[element.getID()];
-            }
-        };
-
-        IFunction<IEdge, Integer> getCapacity = new IFunction<IEdge, Integer>() {
-            public Integer evaluate(final IEdge element) {
-                return capacity[element.getID()];
-            }
-        };
-
-        IFunction<IEdge, Integer> toFlow = solver.findFlow(network, getSupply, getCapacity);
+        solver.findFlow(network);
 
         // TODO create orthogonal representation based on flow
         // TODO force cages as rectangles
@@ -150,16 +129,11 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
         IGraph network = factory.createEmptyGraph();
         HashMap<IGraphElement, INode> map = new HashMap<IGraphElement, INode>();
 
-        this.supply = new int[this.graph.getNodeCount() + this.graph.getFaceCount()];
-        int size = 0; // TODO get number of edges in network
-        this.capacity = new int[size];
-        this.cost = new int[size];
-
         // Creating source nodes for every graph node
         for (INode node : this.graph.getNodes()) {
             INode newnode = network.addNode();
             newnode.setProperty(NETWORKTOGRAPH, node);
-            this.supply[newnode.getID()] = 4;
+            newnode.setProperty(IFlowNetworkSolver.SUPPLY, MAXDEGREE);
             map.put(node, newnode);
         }
 
@@ -177,8 +151,8 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
                             "Attempted to link non-existent nodes by an edge.");
                 }
                 IEdge newedge = network.addEdge(map.get(node), map.get(face), true);
-                this.capacity[newedge.getID()] = 4;
-                this.cost[newedge.getID()] = 0;
+                newedge.setProperty(IFlowNetworkSolver.CAPACITY, MAXDEGREE);
+                newedge.setProperty(IPathFinder.PATHCOST, 0);
                 // TODO edge has lower bound 1
             }
         }
@@ -188,8 +162,8 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
             IFace source = (IFace) edge.getSource().getProperty(IGraphFactory.TODUALGRAPH);
             IFace target = (IFace) edge.getTarget().getProperty(IGraphFactory.TODUALGRAPH);
             IEdge newedge = network.addEdge(map.get(source), map.get(target), true);
-            this.capacity[newedge.getID()] = Integer.MAX_VALUE;
-            this.cost[newedge.getID()] = 1;
+            newedge.setProperty(IFlowNetworkSolver.CAPACITY, Integer.MAX_VALUE);
+            newedge.setProperty(IPathFinder.PATHCOST, 1);
             // TODO edge has lower bound 0
         }
 

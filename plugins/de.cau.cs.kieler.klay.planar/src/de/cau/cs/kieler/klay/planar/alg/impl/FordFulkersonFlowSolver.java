@@ -18,12 +18,12 @@ import java.util.List;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.klay.planar.alg.IFlowNetworkSolver;
 import de.cau.cs.kieler.klay.planar.alg.IPathFinder;
 import de.cau.cs.kieler.klay.planar.alg.IFlowNetworkSolver.IMaximumFlowSolver;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.INode;
-import de.cau.cs.kieler.klay.planar.util.IFunction;
 
 /**
  * Solve the maximum flow problem in flow networks using the Ford-Fulkerson algorithm.
@@ -32,24 +32,16 @@ import de.cau.cs.kieler.klay.planar.util.IFunction;
  */
 public class FordFulkersonFlowSolver extends AbstractAlgorithm implements IMaximumFlowSolver {
 
-    // ======================== Attributes =========================================================
-
-    /** The flow in every edge of the network. */
-    private int[] flow;
-
-    // ======================== Algorithm ==========================================================
-
     /**
      * {@inheritDoc}
      */
-    public IFunction<IEdge, Integer> findFlow(final IGraph network,
-            final IFunction<INode, Integer> supply, final IFunction<IEdge, Integer> capacity) {
+    public void findFlow(final IGraph network) {
 
         // Add source and sink nodes
         INode source = network.addNode();
         INode sink = network.addNode();
         for (INode node : network.getNodes()) {
-            int s = supply.evaluate(node);
+            int s = node.getProperty(IFlowNetworkSolver.SUPPLY);
             if (s > 0) {
                 network.addEdge(source, node, true);
             } else if (s < 0) {
@@ -57,17 +49,13 @@ public class FordFulkersonFlowSolver extends AbstractAlgorithm implements IMaxim
             }
         }
 
-        // Initialize flow
-        int size = network.getEdgeCount();
-        this.flow = new int[size];
-
         // Initialize path finder and path condition
         IPathFinder pathFinder = new BFSPathFinder();
         ICondition<Pair<INode, IEdge>> cond = new ICondition<Pair<INode, IEdge>>() {
             public boolean evaluate(final Pair<INode, IEdge> object) {
                 INode node = object.getFirst();
                 IEdge edge = object.getSecond();
-                int cap = capacity.evaluate(edge);
+                int cap = edge.getProperty(CAPACITY);
                 if (edge.isDirected() && (node == edge.getSource())) {
                     return cap > 0;
                 } else if (edge.isDirected() && (node == edge.getTarget())) {
@@ -83,7 +71,7 @@ public class FordFulkersonFlowSolver extends AbstractAlgorithm implements IMaxim
             // Get minimal capacity along path
             int value = Integer.MAX_VALUE;
             for (IEdge edge : path) {
-                int cap = capacity.evaluate(edge);
+                int cap = edge.getProperty(CAPACITY);
                 if (cap < value) {
                     value = cap;
                 }
@@ -91,7 +79,8 @@ public class FordFulkersonFlowSolver extends AbstractAlgorithm implements IMaxim
 
             // Update flow along path
             for (IEdge edge : path) {
-                this.flow[edge.getID()] += value;
+                int flow = edge.getProperty(FLOW);
+                edge.setProperty(FLOW, flow + value);
             }
 
             path = pathFinder.findPath(source, sink, cond);
@@ -100,11 +89,5 @@ public class FordFulkersonFlowSolver extends AbstractAlgorithm implements IMaxim
         // Remove source and sink nodes
         network.removeNode(source);
         network.removeNode(sink);
-
-        return new IFunction<IEdge, Integer>() {
-            public Integer evaluate(final IEdge element) {
-                return flow[element.getID()];
-            }
-        };
     }
 }

@@ -18,6 +18,7 @@ import java.util.List;
 import de.cau.cs.kieler.core.alg.IAlgorithm;
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.core.util.Property;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.INode;
 
@@ -28,6 +29,13 @@ import de.cau.cs.kieler.klay.planar.graph.INode;
  * @author ocl
  */
 public interface IPathFinder extends IAlgorithm {
+
+    /**
+     * A property assigning a cost to an edge. This property is used when computing a shortest path
+     * in a graph.
+     */
+    Property<Integer> PATHCOST = new Property<Integer>(
+            "de.cau.cs.kieler.klay.planar.properties.pathcost", 1);
 
     /**
      * Find a path in a graph between two nodes. The algorithm looks for a valid path in the parent

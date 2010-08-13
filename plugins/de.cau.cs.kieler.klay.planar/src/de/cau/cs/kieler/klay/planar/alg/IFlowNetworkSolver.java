@@ -14,10 +14,8 @@
 package de.cau.cs.kieler.klay.planar.alg;
 
 import de.cau.cs.kieler.core.alg.IAlgorithm;
-import de.cau.cs.kieler.klay.planar.graph.IEdge;
+import de.cau.cs.kieler.core.util.Property;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
-import de.cau.cs.kieler.klay.planar.graph.INode;
-import de.cau.cs.kieler.klay.planar.util.IFunction;
 
 /**
  * Interface for algorithms to solve problems in flow networks. Uses the Strategy design pattern to
@@ -28,21 +26,35 @@ import de.cau.cs.kieler.klay.planar.util.IFunction;
 public interface IFlowNetworkSolver extends IAlgorithm {
 
     /**
-     * Solve a problem on a flow network. The method takes a function that assigns a supply or
-     * demand value to every node in the network and another function that assigns capacity (i.e.
-     * the maximal flow possible) to every arc. It returns a function that assigns the computed flow
-     * value to every arc in the network.
+     * A property assigning a supply or demand value to a node. A positive value denotes a supply
+     * and a node with a supply is considered a source in the network. A negative value denotes a
+     * demand and a node with a demand is considered a sink in the network.
+     */
+    Property<Integer> SUPPLY = new Property<Integer>(
+            "de.cau.cs.kieler.klay.planar.properties.networksupply", 0);
+
+    /**
+     * A property assigning a capacity to an edge. The capacity of an edge is the maximum flow
+     * allowed to be transferred through the edge.
+     */
+    Property<Integer> CAPACITY = new Property<Integer>(
+            "de.cau.cs.kieler.klay.planar.properties.networkcapacity", 0);
+
+    /**
+     * A property assigning a flow to an edge. This property is usually set during the network
+     * solving algorithm.
+     */
+    Property<Integer> FLOW = new Property<Integer>(
+            "de.cau.cs.kieler.klay.planar.properties.networkflow", 0);
+
+    /**
+     * Solve a problem on a flow network. The method digests the supply and capacity properties on
+     * graph elements, and computes a flow property for every arc in the network
      * 
      * @param network
      *            the network to work on
-     * @param supply
-     *            a function that assigns supply and demand values to nodes
-     * @param capacity
-     *            a function that assigns a capacity to all edges
-     * @return a function that assigns flow values to nodes
      */
-    IFunction<IEdge, Integer> findFlow(IGraph network, IFunction<INode, Integer> supply,
-            IFunction<IEdge, Integer> capacity);
+    void findFlow(IGraph network);
 
     /**
      * Interface for algorithms to solve the maximum flow problem in a flow network. The maximum
