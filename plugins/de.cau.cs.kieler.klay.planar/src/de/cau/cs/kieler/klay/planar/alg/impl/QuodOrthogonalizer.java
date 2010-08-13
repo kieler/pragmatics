@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.Property;
 import de.cau.cs.kieler.klay.planar.alg.IOrthogonalizer;
+import de.cau.cs.kieler.klay.planar.alg.IFlowNetworkSolver.IMinimumCostFlowSolver;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IFace;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
@@ -27,7 +28,14 @@ import de.cau.cs.kieler.klay.planar.graph.IGraphFactory;
 import de.cau.cs.kieler.klay.planar.graph.INode;
 import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
 import de.cau.cs.kieler.klay.planar.graph.impl.PGraphFactory;
+import de.cau.cs.kieler.klay.planar.util.IFunction;
 
+/**
+ * Implementation of the Quod orthogonilazation algorithm, based on the paper "Quasi-Orthogonal
+ * Drawing of Planar Graphs", by Gunnar W. Klau and Petra Mutzel.
+ * 
+ * @author ocl
+ */
 public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonalizer {
 
     // ======================== Constants ==========================================================
@@ -44,19 +52,50 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
     /** The graph the algorithm works on. */
     private IGraph graph;
 
+    /** The supply and demand values of every node in the flow network. */
+    private int[] supply;
+
+    /** The capacity values of every arc in the flow network. */
+    private int[] capacity;
+
+    /** The cost values of every arc in the flow network. */
+    private int[] cost;
+
     // ======================== Algorithm ==========================================================
 
     /**
      * {@inheritDoc}
      */
     public void orthogonalize(final IGraph g) {
+        getMonitor().begin("Orthogonalization", 1);
+
+        // Initialization
         this.graph = g;
+        this.graph.reindex();
         this.addCages();
+
+        // Solve flow network to get minimum flows
         IGraph network = this.createFlowNetwork();
-        // TODO solve minimum cost flow on network
+        IMinimumCostFlowSolver solver = new SuccessiveShortestPathFlowSolver();
+
+        IFunction<INode, Integer> getSupply = new IFunction<INode, Integer>() {
+            public Integer evaluate(final INode element) {
+                return supply[element.getID()];
+            }
+        };
+
+        IFunction<IEdge, Integer> getCapacity = new IFunction<IEdge, Integer>() {
+            public Integer evaluate(final IEdge element) {
+                return capacity[element.getID()];
+            }
+        };
+
+        IFunction<IEdge, Integer> toFlow = solver.findFlow(network, getSupply, getCapacity);
+
         // TODO create orthogonal representation based on flow
         // TODO force cages as rectangles
         // TODO replace cages with nodes
+        getMonitor().done();
     }
 
     /**
@@ -111,11 +150,16 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
         IGraph network = factory.createEmptyGraph();
         HashMap<IGraphElement, INode> map = new HashMap<IGraphElement, INode>();
 
+        this.supply = new int[this.graph.getNodeCount() + this.graph.getFaceCount()];
+        int size = 0; // TODO get number of edges in network
+        this.capacity = new int[size];
+        this.cost = new int[size];
+
         // Creating source nodes for every graph node
         for (INode node : this.graph.getNodes()) {
             INode newnode = network.addNode();
             newnode.setProperty(NETWORKTOGRAPH, node);
-            // TODO node is source: 4
+            this.supply[newnode.getID()] = 4;
             map.put(node, newnode);
         }
 
@@ -132,8 +176,10 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
                     throw new InconsistentGraphModelException(
                             "Attempted to link non-existent nodes by an edge.");
                 }
-                network.addEdge(map.get(node), map.get(face), true);
-                // TODO edge has lower bound 1, capacity 4, cost 0
+                IEdge newedge = network.addEdge(map.get(node), map.get(face), true);
+                this.capacity[newedge.getID()] = 4;
+                this.cost[newedge.getID()] = 0;
+                // TODO edge has lower bound 1
             }
         }
 
@@ -141,8 +187,10 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
         for (IEdge edge : dualgraph.getEdges()) {
             IFace source = (IFace) edge.getSource().getProperty(IGraphFactory.TODUALGRAPH);
             IFace target = (IFace) edge.getTarget().getProperty(IGraphFactory.TODUALGRAPH);
-            network.addEdge(map.get(source), map.get(target), true);
-            // TODO edge has lower bound 0, capacity inf, cost 1
+            IEdge newedge = network.addEdge(map.get(source), map.get(target), true);
+            this.capacity[newedge.getID()] = Integer.MAX_VALUE;
+            this.cost[newedge.getID()] = 1;
+            // TODO edge has lower bound 0
         }
 
         return network;

@@ -30,12 +30,11 @@ public class FordFulkersonFlowSolver extends AbstractAlgorithm implements IMaxim
     // ======================== Algorithm ==========================================================
 
     public IFunction<IEdge, Integer> findFlow(final IGraph network,
-            final IFunction<INode, Integer> supply) {
+            final IFunction<INode, Integer> supply, final IFunction<IEdge, Integer> capacity) {
 
         // Initialize arrays
         int size = network.getEdgeCount();
         final int[] flow = new int[size];
-        final int[] capacity = new int[size]; // TODO get capacities
 
         // Initialize path finder and path condition
         IPathFinder pathFinder = new BFSPathFinder();
@@ -43,7 +42,7 @@ public class FordFulkersonFlowSolver extends AbstractAlgorithm implements IMaxim
             public boolean evaluate(Pair<INode, IEdge> object) {
                 INode node = object.getFirst();
                 IEdge edge = object.getSecond();
-                int cap = capacity[edge.getID()] - flow[edge.getID()];
+                int cap = 0; // TODO get capacity
                 if (edge.isDirected() && (node == edge.getSource())) {
                     return cap > 0;
                 } else if (edge.isDirected() && (node == edge.getTarget())) {
@@ -56,12 +55,13 @@ public class FordFulkersonFlowSolver extends AbstractAlgorithm implements IMaxim
 
         // TODO create source and sink nodes
         List<IEdge> path = pathFinder.findPath(null, null, cond);
-        while (!path.isEmpty()) {
+        while (path != null) {
             // Get minimal capacity along path TODO
             int value = Integer.MAX_VALUE;
             for (IEdge edge : path) {
-                if (capacity[edge.getID()] < value) {
-                    value = capacity[edge.getID()];
+                int cap = 0; // TODO get capacity
+                if (cap < value) {
+                    value = cap;
                 }
             }
 

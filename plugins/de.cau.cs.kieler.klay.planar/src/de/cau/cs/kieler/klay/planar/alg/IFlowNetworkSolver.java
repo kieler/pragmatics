@@ -29,16 +29,20 @@ public interface IFlowNetworkSolver extends IAlgorithm {
 
     /**
      * Solve a problem on a flow network. The method takes a function that assigns a supply or
-     * demand value to every node in the network, and returns a function that assigns a flow value
-     * to every arc in the network.
+     * demand value to every node in the network and another function that assigns capacity (i.e.
+     * the maximal flow possible) to every arc. It returns a function that assigns the computed flow
+     * value to every arc in the network.
      * 
      * @param network
      *            the network to work on
      * @param supply
      *            a function that assigns supply and demand values to nodes
+     * @param capacity
+     *            a function that assigns a capacity to all edges
      * @return a function that assigns flow values to nodes
      */
-    IFunction<IEdge, Integer> findFlow(IGraph network, IFunction<INode, Integer> supply);
+    IFunction<IEdge, Integer> findFlow(IGraph network, IFunction<INode, Integer> supply,
+            IFunction<IEdge, Integer> capacity);
 
     /**
      * Interface for algorithms to solve the maximum flow problem in a flow network. The maximum

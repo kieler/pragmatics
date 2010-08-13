@@ -128,7 +128,7 @@ public class DijkstraPathFinder extends AbstractAlgorithm implements IShortestPa
         }
 
         // Finished without reaching the target
-        return new LinkedList<IEdge>();
+        return null;
     }
 
 }
