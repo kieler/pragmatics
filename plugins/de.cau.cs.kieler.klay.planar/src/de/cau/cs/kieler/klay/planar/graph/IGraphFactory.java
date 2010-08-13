@@ -36,7 +36,7 @@ public interface IGraphFactory {
     Property<KGraphElement> TOKGRAPH = new Property<KGraphElement>(
             "de.cau.cs.kieler.klay.planar.properties.tokgraph");
 
-    /** Property to get the element in the dual graph for any {@code IGraphElement}. */
+    /** Property to convert between a graph element and its element in the dual graph. */
     Property<IGraphElement> TODUALGRAPH = new Property<IGraphElement>(
             "de.cau.cs.kieler.klay.planar.properties.todualgraph");
 

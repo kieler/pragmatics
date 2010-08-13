@@ -125,14 +125,16 @@ public class PGraphFactory implements IGraphFactory {
         // Add the dual nodes from graph faces
         for (IFace face : graph.getFaces()) {
             INode node = dual.addNode();
-            ((PFace) face).setProperty(IGraphFactory.TODUALGRAPH, node);
+            node.setProperty(IGraphFactory.TODUALGRAPH, face);
+            face.setProperty(IGraphFactory.TODUALGRAPH, node);
             map.put(face, node);
         }
         // Build the edges based on the neighboring faces
         for (IEdge edge : graph.getEdges()) {
             if (graph.getFaceCount() > 1) {
                 IEdge e = dual.addEdge(map.get(edge.getLeftFace()), map.get(edge.getRightFace()));
-                ((PEdge) edge).setProperty(IGraphFactory.TODUALGRAPH, e);
+                e.setProperty(IGraphFactory.TODUALGRAPH, edge);
+                edge.setProperty(IGraphFactory.TODUALGRAPH, e);
             }
         }
         return dual;
