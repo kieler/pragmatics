@@ -57,6 +57,9 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     /**
      * A {@code LinkedList} containing all nodes of the currently identified connected component by
      * {@code connectedComponents()}.
+     * 
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#connectedComponents(Collection)
+     *      connectedComponents()
      */
     private LinkedList<LNode> componentNodes;
 
@@ -92,7 +95,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      */
     private int[] revLayer;
 
-    /** The minimal span (i.e. shortest length) of each edge in the layered graph. */
+    /** The minimal span (i.e. shortest possible length) of each edge in the layered graph. */
     private int[] minSpan;
 
     /**
@@ -107,7 +110,8 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * A flag indicating whether a specified edge is part of the spanning tree determined by
      * {@code tightTree()}.
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#tightTreeDFS(LNode) tightTreeDFS()
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#tightTreeDFS(LNode)
+     *      tightTreeDFS()
      */
     private boolean[] treeEdge;
 
@@ -893,6 +897,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         if (treeEdge[enter.id]) {
             throw new IllegalArgumentException("Given enter edge is a tree edge already.");
         }
+
         // update tree
         treeEdge[leave.id] = false;
         treeEdge[enter.id] = true;
@@ -918,7 +923,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * the lowest layer assigned to a node and shifts all nodes up or down in the layers
      * accordingly. After termination, the lowest layer assigned to a node will be zeroth (and
      * therefore first) layer. This method returns an integer array indicating how many nodes are
-     * assigned to which layer. Note that the total number of layers necessary to layer the is
+     * assigned to which layer. Note that the total number of layers necessary to layer the graph is
      * indicated thereby, which is the size if the array.
      * 
      * @param mode
@@ -965,7 +970,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * Helper method for the network simplex layerer. It balances the layering concerning its width,
      * i.e. the number of nodes in each layer. If the graph allows multiple optimal layerings
      * regarding a minimal edge length, this method moves separate nodes to a layer with a minimal
-     * amount of currently contained nodes with respect to the retention of the feasibility and
+     * amount of currently contained nodes with respect to the retention of feasibility and
      * optimality of the given layering.
      * 
      * @param filling
@@ -1007,7 +1012,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
 
         List<Layer> layers = layerGraph.getLayers();
         // add additional layers to match required amount
-        for (int i = layers.size() - 1; i < layer[node.id]; i++) {
+        while (layers.size() <= layer[node.id]) {
             layers.add(layers.size(), new Layer(layerGraph));
         }
         node.setLayer(layers.get(layer[node.id]));

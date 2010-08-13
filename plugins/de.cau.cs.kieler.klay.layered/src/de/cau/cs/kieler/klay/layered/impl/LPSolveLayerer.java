@@ -15,13 +15,10 @@ package de.cau.cs.kieler.klay.layered.impl;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
-import lpsolve.AbortListener;
-import lpsolve.LpSolve;
-import lpsolve.LpSolveException;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.PortType;
@@ -31,6 +28,9 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.modules.ILayerer;
+import lpsolve.AbortListener;
+import lpsolve.LpSolve;
+import lpsolve.LpSolveException;
 
 /**
  * The main class of the LpSolve-layerer component. It offers an algorithm to determine an optimal
@@ -249,7 +249,7 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
         layerGraph = layeredGraph;
         initialize(nodes);
 
-        // determine optimal layering<
+        // determine optimal layering
         LpSolve lp = null;
         try {
             // construct LP
@@ -279,9 +279,9 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
 
     /**
      * Helper method for the LpSolve-layerer. It creates a new LP representing the layering problem
-     * in this graph.
+     * of this graph.
      * 
-     * @return the created LP representing this graph
+     * @return the created LP representing the layering problem
      * @throws LpSolveException
      *             if the LP creation failed
      */
@@ -298,10 +298,9 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
         }
         lp.setObjFn(objFct);
         // set variable bounds
-        // TODO change upper bound: longest path!
-        int numNodes = layerNodes.size();
+        int upperBound = layerNodes.size() - 1;
         for (int i = 1; i <= layerNodes.size(); i++) {
-            lp.setBounds(i, 0, numNodes);
+            lp.setBounds(i, 0, upperBound);
         }
         // set variable types
         for (int i = 1; i < objFct.length; i++) {
@@ -316,8 +315,6 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
             lp.setRh(i, 1);
             lp.setConstrType(i, LpSolve.GE);
         }
-        lp.writeLp("model.lp");
-        lp.printLp();
         return lp;
     }
 
@@ -344,33 +341,21 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
         for (LNode node : layerNodes) {
             layer[node.id] = (int) solution[1 + rowCount + node.id];
         }
-        System.out.println("LPSolution: Solution: " + Arrays.toString(solution));
-        System.out.println("LPSolution: Layer: " + Arrays.toString(layer));
-        // balance and normalize the layers
-        balance(normalize());
+        // balance the layers
+        balance();
         // put nodes into their determined layers
         for (LNode node : layerNodes) {
             putNode(node);
         }
-    }
-
-    // TODO this does not work this way!
-    /**
-     * Helper method for the LpSolve-layerer. It determines the length of the longest path in the
-     * connected component given by the
-     * 
-     * @param node
-     * @return
-     */
-    private int longestPath(final LNode node) {
-
-        int height = 0;
-        for (LPort port : node.getPorts(PortType.OUTPUT)) {
-            for (LEdge edge : port.getEdges()) {
-                height = Math.max(height, longestPath(edge.getTarget().getNode()) + 1);
+        // remove empty layers
+        Iterator<Layer> iterator = layerGraph.getLayers().iterator();
+        Layer curLayer = null;
+        while (iterator.hasNext()) {
+            curLayer = iterator.next();
+            if (curLayer.getNodes().isEmpty()) {
+                iterator.remove();
             }
         }
-        return height;
     }
 
     /**
@@ -450,52 +435,26 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
     }
 
     /**
-     * Helper method for the LpSolver-layerer. It normalizes the layering, i.e. determines the
-     * lowest layer assigned to a node and shifts all nodes up or down in the layers accordingly.
-     * After termination, the lowest layer assigned to a node will be zeroth (and therefore first)
-     * layer. This method returns an integer array indicating how many nodes are assigned to which
-     * layer. Note that the total number of layers necessary to layer the graph is indicated
-     * thereby, which is the size if the array.
-     * 
-     * @return an integer array indicating how many nodes are assigned to which layer
+     * Helper method for the LpSolve-layerer. It balances the layering concerning its width, i.e.
+     * the number of nodes in each layer. If the graph allows multiple optimal layerings regarding a
+     * minimal edge length, this method moves separate nodes to a layer with a minimal amount of
+     * contained nodes with respect to the retention of the feasibility and optimality of the given
+     * layering.
      */
-    private int[] normalize() {
+    private void balance() {
 
-        // determine lowest assigned layer and layer count
+        // determine filling structure of the layers
         int highest = Integer.MIN_VALUE;
-        int lowest = Integer.MAX_VALUE;
-        for (LNode node : sources) {
-            if (layer[node.id] < lowest) {
-                lowest = layer[node.id];
-            }
-        }
         for (LNode node : sinks) {
             if (layer[node.id] > highest) {
                 highest = layer[node.id];
             }
         }
         // normalize and determine layer filling
-        int[] filling = new int[highest - lowest + 1];
+        int[] filling = new int[highest + 1];
         for (LNode node : layerNodes) {
-            layer[node.id] -= lowest;
             filling[layer[node.id]]++;
         }
-        System.out.println("Filling Structure: " + Arrays.toString(filling));
-        return filling;
-    }
-
-    /**
-     * Helper method for the LpSolve-layerer. It balances the layering concerning its width, i.e.
-     * the number of nodes in each layer. If the graph allows multiple optimal layerings regarding a
-     * minimal edge length, this method moves separate nodes to a layer with a minimal amount of
-     * currently contained nodes with respect to the retention of the feasibility and optimality of
-     * the given layering.
-     * 
-     * @param filling
-     *            an integer array indicating how many nodes are currently assigned to each layer
-     */
-    private void balance(final int[] filling) {
-
         // determine possible layers
         int newLayer;
         Pair<Integer, Integer> range = null;
@@ -517,7 +476,6 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
                 }
             }
         }
-        System.out.println("Balanced Layers: " + Arrays.toString(layer));
     }
 
     /**
