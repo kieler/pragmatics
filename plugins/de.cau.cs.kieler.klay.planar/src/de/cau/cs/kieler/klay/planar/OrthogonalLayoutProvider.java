@@ -57,7 +57,8 @@ public class OrthogonalLayoutProvider extends AbstractLayoutProvider {
     }
 
     /** The layout option ID for the planar testing algorithm option. */
-    public static final String PLANAR_TESTING_ALGORITHM = "de.cau.cs.kieler.klay.planar.options.planarTestingAlgorithm";
+    public static final String PLANAR_TESTING_ALGORITHM = new String(
+            "de.cau.cs.kieler.klay.planar.options.planarTestingAlgorithm");
 
     /** The default algorithm for planar testing. */
     private static final PlanarTestingAlgorithm DEFAULT_ALGORITHM = PlanarTestingAlgorithm.BOYER_MYRVOLD_ALGORITHM;

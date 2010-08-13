@@ -13,13 +13,9 @@
  */
 package de.cau.cs.kieler.klay.planar.alg.impl;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
+import java.util.Queue;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.ICondition;
@@ -29,11 +25,11 @@ import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.INode;
 
 /**
- * Use Dijkstra's Algorithm to find the shortest path between two nodes in any graph.
+ * Use a Breadth First Search to find a path between two nodes in any graph.
  * 
  * @author ocl
  */
-public class DijkstraPathFinder extends AbstractAlgorithm implements IPathFinder {
+public class BFSPathFinder extends AbstractAlgorithm implements IPathFinder {
 
     /**
      * {@inheritDoc}
@@ -54,36 +50,16 @@ public class DijkstraPathFinder extends AbstractAlgorithm implements IPathFinder
 
         // Initialize arrays
         int size = source.getParent().getNodeCount();
-        final int[] distance = new int[size];
+        boolean[] visited = new boolean[size];
         IEdge[] edges = new IEdge[size];
 
-        Arrays.fill(distance, -1);
-        distance[source.getID()] = 0;
+        Queue<INode> queue = new LinkedList<INode>();
+        queue.add(source);
 
-        // Initialize set of nodes
-        Set<INode> nodes = new HashSet<INode>(size * 2);
-        for (INode n : source.getParent().getNodes()) {
-            nodes.add(n);
-        }
+        while (!queue.isEmpty()) {
+            INode current = queue.remove();
 
-        // Comparator to find node of smallest distance value
-        Comparator<INode> comp = new Comparator<INode>() {
-            public int compare(final INode arg0, final INode arg1) {
-                return distance[arg0.getID()] - distance[arg1.getID()];
-            }
-        };
-
-        // Main loop
-        while (!nodes.isEmpty()) {
-            INode current = Collections.min(nodes, comp);
-            int iCurrent = current.getID();
-
-            // Remaining nodes are unreachable
-            if (distance[iCurrent] == -1) {
-                break;
-            }
-
-            // Target node found, compute shortest path
+            // Stop if the target is reached
             if (current == target) {
                 LinkedList<IEdge> path = new LinkedList<IEdge>();
                 INode pathNode = current;
@@ -96,15 +72,12 @@ public class DijkstraPathFinder extends AbstractAlgorithm implements IPathFinder
                 return path;
             }
 
-            nodes.remove(current);
-
-            // Traverse all neighbors
+            // Add neighbors to queue
             for (IEdge edge : current.adjacentEdges()) {
                 INode neighbor = current.getAdjacentNode(edge);
-                int iNeighbor = neighbor.getID();
 
-                // Skip already visited nodes
-                if (distance[iNeighbor] == -1) {
+                // Ignore visited nodes
+                if (visited[neighbor.getID()]) {
                     continue;
                 }
 
@@ -113,22 +86,14 @@ public class DijkstraPathFinder extends AbstractAlgorithm implements IPathFinder
                     continue;
                 }
 
-                // Get edge cost property
-                Integer cost = 0; // TODO get edge cost
-                if (cost == null) {
-                    cost = 1;
-                }
-                cost += distance[iCurrent];
-
-                if (cost < distance[iNeighbor]) {
-                    distance[iNeighbor] = cost;
-                    edges[iNeighbor] = edge;
-                }
+                queue.add(neighbor);
+                edges[neighbor.getID()] = edge;
             }
+            visited[current.getID()] = true;
         }
 
         // Finished without reaching the target
-        return new LinkedList<IEdge>();
+        return null;
     }
 
 }

@@ -23,6 +23,7 @@ package de.cau.cs.kieler.klay.planar.graph;
  * @author ocl
  */
 public interface IFace extends IGraphElement {
+    // TODO guarantee edge and node order
 
     /**
      * Get the {@code PNode}s which describe this face. Returns an {@code Iterable} object to gain
