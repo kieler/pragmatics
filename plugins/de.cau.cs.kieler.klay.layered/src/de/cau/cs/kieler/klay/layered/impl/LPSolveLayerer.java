@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import lpsolve.AbortListener;
 import lpsolve.LpSolve;
@@ -33,7 +34,7 @@ import de.cau.cs.kieler.klay.layered.modules.ILayerer;
 
 /**
  * The main class of the LpSolve-layerer component. It offers an algorithm to determine an optimal
- * layering of all nodes in the graph concerning a minimal edge length using the LpSolver of
+ * layering of all nodes in the graph concerning a minimal edge length using the LP-solver of
  * lpsolve.sourceforge.net.
  * 
  * @see de.cau.cs.kieler.klay.layered.modules.ILayerer ILayerer
@@ -102,7 +103,10 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
         /** A flag indicating whether a timeout has occurred. */
         private boolean timeout = false;
 
-        /** The start time for the timeout. It is set, when a instance of this class is created. */
+        /**
+         * The start time for the timeout. It is set, when the specific instance of this class is
+         * created.
+         */
         private long startTime = System.currentTimeMillis();
 
         /**
@@ -124,7 +128,7 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
     private class LpSolveLayererException extends RuntimeException {
 
         /**
-         * Generated serial version UID.
+         * The generated serial version UID.
          */
         private static final long serialVersionUID = 5549313074239264699L;
 
@@ -217,7 +221,7 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
 
     /**
      * The main method of the LpSolve-layerer component. It determines an optimal layering of all
-     * nodes in the graph concerning a minimal edge length using the LpSolver of
+     * nodes in the graph concerning a minimal edge length using the LP-solver of
      * lpsolve.sourceforge.net.
      * 
      * @param nodes
@@ -245,7 +249,7 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
         layerGraph = layeredGraph;
         initialize(nodes);
 
-        // create LP and solve it
+        // determine optimal layering<
         LpSolve lp = null;
         try {
             // construct LP
@@ -257,12 +261,6 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
             if (solution == LpSolve.OPTIMAL || solution == LpSolve.SUBOPTIMAL) {
                 // apply the solution
                 applySolution(lp);
-                // balance and normalize the layers
-                balance(normalize());
-                // put nodes into their determined layers
-                for (LNode node : layerNodes) {
-                    putNode(node);
-                }
             } else {
                 if (solution == LpSolve.USERABORT && abortListener.timeout) {
                     solution = LpSolve.TIMEOUT;
@@ -279,14 +277,100 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
         }
     }
 
-    private LpSolve createLp() {
-        // TODO
-        return null;
+    /**
+     * Helper method for the LpSolve-layerer. It creates a new LP representing the layering problem
+     * in this graph.
+     * 
+     * @return the created LP representing this graph
+     * @throws LpSolveException
+     *             if the LP creation failed
+     */
+    private LpSolve createLp() throws LpSolveException {
+
+        // create LP instance
+        LpSolve lp = LpSolve.makeLp(layerEdges.size(), layerNodes.size());
+        lp.setMinim();
+        // add objective function
+        double[] objFct = new double[layerNodes.size() + 1];
+        for (LEdge edge : layerEdges) {
+            objFct[edge.getSource().getNode().id + 1]--;
+            objFct[edge.getTarget().getNode().id + 1]++;
+        }
+        lp.setObjFn(objFct);
+        // set variable bounds
+        // TODO change upper bound: longest path!
+        int numNodes = layerNodes.size();
+        for (int i = 1; i <= layerNodes.size(); i++) {
+            lp.setBounds(i, 0, numNodes);
+        }
+        // set variable types
+        for (int i = 1; i < objFct.length; i++) {
+            lp.setInt(i, true);
+        }
+        // add constraints
+        for (LEdge edge : layerEdges) {
+            lp.setMat(edge.id + 1, edge.getSource().getNode().id + 1, -1);
+            lp.setMat(edge.id + 1, edge.getTarget().getNode().id + 1, 1);
+        }
+        for (int i = 1; i <= layerEdges.size(); i++) {
+            lp.setRh(i, 1);
+            lp.setConstrType(i, LpSolve.GE);
+        }
+        lp.writeLp("model.lp");
+        lp.printLp();
+        return lp;
     }
 
-    private void applySolution(final LpSolve lp) {
-        // TODO Auto-generated method stub
+    /**
+     * Helper method for the LpSolve-layerer. It applies the determined solution of the LP to the
+     * graph, i.e. retrieves the solution, normalizes it, balances the layering and finally assigns
+     * each node to its layer in {@code layeredGraph}.
+     * 
+     * @param lp
+     *            the LP to apply its solution
+     * @throws LpSolveException
+     *             if an error occurred during solution retrieving
+     * 
+     * @see de.cau.cs.kieler.klay.layered.impl.LPSolveLayerer#normalize() normalize()
+     * @see de.cau.cs.kieler.klay.layered.impl.LPSolveLayerer#balance(int[]) balance()
+     * @see de.cau.cs.kieler.klay.layered.impl.LPSolveLayerer#putNode(LNode) putNode()
+     */
+    private void applySolution(final LpSolve lp) throws LpSolveException {
 
+        int rowCount = lp.getNrows();
+        double[] solution = new double[1 + rowCount + lp.getNcolumns()];
+        lp.getPrimalSolution(solution);
+        // assign the layer to each node
+        for (LNode node : layerNodes) {
+            layer[node.id] = (int) solution[1 + rowCount + node.id];
+        }
+        System.out.println("LPSolution: Solution: " + Arrays.toString(solution));
+        System.out.println("LPSolution: Layer: " + Arrays.toString(layer));
+        // balance and normalize the layers
+        balance(normalize());
+        // put nodes into their determined layers
+        for (LNode node : layerNodes) {
+            putNode(node);
+        }
+    }
+
+    // TODO this does not work this way!
+    /**
+     * Helper method for the LpSolve-layerer. It determines the length of the longest path in the
+     * connected component given by the
+     * 
+     * @param node
+     * @return
+     */
+    private int longestPath(final LNode node) {
+
+        int height = 0;
+        for (LPort port : node.getPorts(PortType.OUTPUT)) {
+            for (LEdge edge : port.getEdges()) {
+                height = Math.max(height, longestPath(edge.getTarget().getNode()) + 1);
+            }
+        }
+        return height;
     }
 
     /**
@@ -396,7 +480,7 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
             layer[node.id] -= lowest;
             filling[layer[node.id]]++;
         }
-
+        System.out.println("Filling Structure: " + Arrays.toString(filling));
         return filling;
     }
 
@@ -433,6 +517,7 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
                 }
             }
         }
+        System.out.println("Balanced Layers: " + Arrays.toString(layer));
     }
 
     /**
@@ -450,29 +535,6 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
             layers.add(layers.size(), new Layer(layerGraph));
         }
         node.setLayer(layers.get(layer[node.id]));
-    }
-
-    /**
-     * Helper method for the LpSolve-layerer. It returns the port that is connected to the opposite
-     * side of the specified edge from the viewpoint of the input port.
-     * 
-     * @param port
-     *            the port to get the opposite port from
-     * @param edge
-     *            the edge to consider when determining the opposite port
-     * @return the opposite port from the viewpoint of the given port
-     * 
-     * @throws IllegalArgumentException
-     *             if the input edge is not connected to the input port
-     */
-    private LPort getOpposite(final LPort port, final LEdge edge) {
-
-        if (edge.getSource().equals(port)) {
-            return edge.getTarget();
-        } else if (edge.getTarget().equals(port)) {
-            return edge.getSource();
-        }
-        throw new IllegalArgumentException("Input edge is not connected to the input port.");
     }
 
 }
