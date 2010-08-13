@@ -32,6 +32,13 @@ import de.cau.cs.kieler.klay.planar.util.IFunction;
 public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implements
         IMinimumCostFlowSolver {
 
+    // ======================== Attributes =========================================================
+
+    /** The flow in every edge of the network. */
+    private int[] flow;
+
+    // ======================== Algorithm ==========================================================
+
     /**
      * {@inheritDoc}
      */
@@ -52,24 +59,40 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
 
         // Initialize flow
         int size = network.getNodeCount();
-        int[] flow = new int[size];
-        // TODO get capacities and cost, source and sink have capacities abs(supply) and cost 0
+        this.flow = new int[size];
+        // TODO get cost, source and sink have capacities abs(supply) and cost 0
 
         IShortestPathFinder pathFinder = new DijkstraPathFinder();
 
-        // TODO path in residual network
+        // TODO path in residual network, using cost and capacity conditions
         List<IEdge> path = pathFinder.findPath(source, sink);
         while (path != null) {
-            // TODO augment flow along path
-            // TODO update residual network
+            // Get minimal capacity along path
+            int value = Integer.MAX_VALUE;
+            for (IEdge edge : path) {
+                int cap = capacity.evaluate(edge); // TODO capacity of source and sink edges
+                if (cap < value) {
+                    value = cap;
+                }
+            }
+
+            // Update flow along path
+            for (IEdge edge : path) {
+                this.flow[edge.getID()] += value;
+            }
+
+            path = pathFinder.findPath(source, sink);
         }
 
         // Remove source and sink nodes
         network.removeNode(source);
         network.removeNode(sink);
 
-        // TODO return function
-        return null;
+        return new IFunction<IEdge, Integer>() {
+            public Integer evaluate(final IEdge element) {
+                return flow[element.getID()];
+            }
+        };
     }
 
 }
