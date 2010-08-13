@@ -98,13 +98,6 @@ public final class EvolUtil {
         }
 
         /**
-         * Creates a new {@link EvolUtil.AutoRateIndividualRunnable} instance.
-         *
-         */
-        AutoRateIndividualRunnable(final Genome theIndividual) {
-            this(theIndividual, null);
-        }
-        /**
         *
         */
         private final Genome individual;
@@ -821,21 +814,6 @@ public final class EvolUtil {
             EclipseLayoutServices.getInstance().layout(editor, null, showAnimation,
                     showProgressBar);
         }
-    }
-
-    /**
-     * Must be run in UI thread.
-     *
-     * @param individual
-     *            the {@link Genome} to be rated; must not be {@code null}
-     */
-    private void autoRateIndividual(final Genome individual) {
-        Assert.isLegal(individual != null);
-
-        final IEditorPart editor = getCurrentEditor();
-        Assert.isNotNull(editor);
-
-        autoRateIndividual(individual, editor);
     }
 
     /**

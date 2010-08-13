@@ -191,14 +191,18 @@ public class EvolView extends ViewPart {
         this.tableViewer = null;
         this.evolModel.addListener(new IEvolModelListener() {
             public void afterChange(final EvolModel source, final String cause) {
+                System.out.println("afterChange: " + cause);
                 if ("setPosition".equalsIgnoreCase(cause)) {
                     System.out.println("setPosition occurred");
                     return;
                 }
                 // TODO: what if currentEditor is null?
-                if (EvolUtil.getCurrentEditor() != null) {
-                    EvolView.this.setInput(source.getPopulation());
+                if (EvolUtil.getCurrentEditor() == null) {
+                    System.err.println("We are not in the UI thread.");
                 }
+
+                // Set the new population as input.
+                EvolView.this.setInput(source.getPopulation());
 
                 final SelectorTableViewer tv = EvolView.this.getTableViewer();
 
@@ -288,10 +292,10 @@ public class EvolView extends ViewPart {
     public void setFocus() {
         this.tableViewer.getControl().setFocus();
     }
-    
+
     /**
      * Refresh the layout according to selected individual.
-     * 
+     *
      * @deprecated
      */
     @Deprecated
@@ -330,14 +334,15 @@ public class EvolView extends ViewPart {
         if ((thePopulation != null)) {
 
             final Population modelPop = this.evolModel.getPopulation();
-            Assert.isTrue((thePopulation.equals(modelPop)));
+            Assert.isTrue((thePopulation.equals(modelPop)),
+                    "Attempt to set a population that is not in the model.");
 
             final Runnable runnable = new Runnable() {
                 public void run() {
                     EvolView.this.getTableViewer().setInput(thePopulation);
                 }
             };
-            runnable.run();
+            MonitoredOperation.runInUI(runnable, true);
         }
     }
 
