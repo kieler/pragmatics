@@ -35,7 +35,7 @@ public class ExampleExportUtil {
 				(String) properties.get(ExampleElement.NAME),
 				Version.parseVersion((String) properties
 						.get(ExampleElement.VERSION)),
-				(ImportType) properties.get(ExampleElement.IMPORTTYPE));
+				(ImportType) properties.get(ExampleElement.EXPORTTYPE));
 		result.setDescription((String) properties
 				.get(ExampleElement.DESCRIPTION));
 		result.setContact((String) properties.get(ExampleElement.CONTACT));

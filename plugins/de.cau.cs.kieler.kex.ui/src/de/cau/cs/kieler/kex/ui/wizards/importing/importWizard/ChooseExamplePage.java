@@ -78,8 +78,7 @@ public class ChooseExamplePage extends WizardPage {
 	// TODO max performance rausholen... vielleicht schon ein tree im controller
 	// speichern... oder die map so nicht bestehen lassen...
 	private void addExamplesToItem(String category, TreeItem tItem) {
-		for (Example example : ExampleManager.get().getExamples()
-				.values()) {
+		for (Example example : ExampleManager.get().getExamples().values()) {
 			if (example.contains(category)) {
 				TreeItem item = new TreeItem(tItem, SWT.NONE);
 				item.setText(example.getName());
@@ -94,9 +93,7 @@ public class ChooseExamplePage extends WizardPage {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = columnCount;
 		exampleGroup.setLayout(layout);
-		exampleGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL
-				| GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL
-				| GridData.GRAB_VERTICAL));
+		exampleGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
 		exampleGroup.setText("Selected Example");
 		exampleGroup.setFont(composite.getFont());
 		exampleGroup.setToolTipText("Selected Example");
@@ -104,26 +101,24 @@ public class ChooseExamplePage extends WizardPage {
 		new Label(exampleGroup, SWT.NONE).setText("Id:");
 		this.exampleId = new Text(exampleGroup, SWT.NONE);
 		this.exampleId.setEditable(false);
-		this.exampleId.setLayoutData(new GridData(
-				GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
+		this.exampleId.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		createEmptyLine(exampleGroup, columnCount);
 		new Label(exampleGroup, SWT.NONE).setText("Name:");
 		this.exampleName = new Text(exampleGroup, SWT.NONE);
 		this.exampleName.setEditable(false);
-		this.exampleName.setLayoutData(new GridData(
-				GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
+		this.exampleName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		createEmptyLine(exampleGroup, columnCount);
 		new Label(exampleGroup, SWT.NONE).setText("Version:");
 		this.exampleVersion = new Text(exampleGroup, SWT.NONE);
 		this.exampleVersion.setEditable(false);
-		this.exampleVersion.setLayoutData(new GridData(
-				GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
+		this.exampleVersion
+				.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		createEmptyLine(exampleGroup, columnCount);
 		new Label(exampleGroup, SWT.None).setText("Description:");
 		this.exampleDescription = new Text(exampleGroup, SWT.NONE);
 		this.exampleDescription.setEditable(false);
 		this.exampleDescription.setLayoutData(new GridData(
-				GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
+				GridData.FILL_HORIZONTAL));
 	}
 
 	private void createEmptyLine(Composite composite, int columnCount) {

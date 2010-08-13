@@ -1,6 +1,7 @@
 package de.cau.cs.kieler.kex.ui.wizards.exporting;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.wizard.WizardPage;
@@ -35,6 +36,8 @@ public class ExampleResourcePage extends WizardPage {
 	private final int TWO_COLUMNS = 2;
 	private final int THREE_COLUMNS = 3;
 	private List<URL> resources;
+
+	private Tree categoryTree;
 
 	protected ExampleResourcePage(String pageName) {
 		super(pageName);
@@ -187,26 +190,12 @@ public class ExampleResourcePage extends WizardPage {
 
 	}
 
-	public String getDestLocation() {
-		return this.destPath.getText();
-	}
-
-	public List<URL> getExampleResources() {
-		return this.resources;
-	}
-
-	public ImportType getImportType() {
-		// TODO muss der user entscheiden wohin das gehen soll, auﬂerdem muss
-		// der name der enumeration ge‰ndert werden
-		return ImportType.EXTENSIONPOINT;
-	}
-
 	void createCheckedTree(Composite parent) {
 
-		Tree checkTree = new Tree(parent, SWT.CHECK | SWT.BORDER);
+		this.categoryTree = new Tree(parent, SWT.CHECK | SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_BOTH);
-		checkTree.setLayoutData(data);
-		fillTree(checkTree);
+		categoryTree.setLayoutData(data);
+		fillTree(categoryTree);
 	}
 
 	/**
@@ -225,5 +214,27 @@ public class ExampleResourcePage extends WizardPage {
 		}
 		// Turn drawing back on!
 		tree.setRedraw(true);
+	}
+
+	public List<String> getCategories() {
+		List<String> result = new ArrayList<String>();
+		for (TreeItem item : this.categoryTree.getSelection()) {
+			result.add(item.getText());
+		}
+		return result;
+	}
+
+	public String getDestLocation() {
+		return this.destPath.getText();
+	}
+
+	public List<URL> getExampleResources() {
+		return this.resources;
+	}
+
+	public ImportType getImportType() {
+		// TODO muss der user entscheiden wohin das gehen soll, auﬂerdem muss
+		// der name der enumeration ge‰ndert werden
+		return ImportType.EXTENSIONPOINT;
 	}
 }
