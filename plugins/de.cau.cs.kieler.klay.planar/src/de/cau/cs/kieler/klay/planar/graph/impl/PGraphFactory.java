@@ -22,6 +22,7 @@ import java.util.HashMap;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
+import de.cau.cs.kieler.klay.planar.graph.IFace;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.IGraphFactory;
 import de.cau.cs.kieler.klay.planar.graph.INode;
@@ -117,6 +118,29 @@ public class PGraphFactory implements IGraphFactory {
     /**
      * {@inheritDoc}
      */
+    public IGraph createDualGraph(final IGraph graph) {
+        HashMap<IFace, INode> map = new HashMap<IFace, INode>(graph.getFaceCount() * 2);
+        PGraph dual = new PGraph();
+
+        // Add the dual nodes from graph faces
+        for (IFace face : graph.getFaces()) {
+            INode node = dual.addNode();
+            ((PFace) face).setProperty(IGraphFactory.TODUALGRAPH, node);
+            map.put(face, node);
+        }
+        // Build the edges based on the neighboring faces
+        for (IEdge edge : graph.getEdges()) {
+            if (graph.getFaceCount() > 1) {
+                IEdge e = dual.addEdge(map.get(edge.getLeftFace()), map.get(edge.getRightFace()));
+                ((PEdge) edge).setProperty(IGraphFactory.TODUALGRAPH, e);
+            }
+        }
+        return dual;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public IGraph createGraphFromKGraph(final KNode kgraph) {
         // TODO check for hyper nodes
         // TODO check for directed/undirected edges
@@ -133,7 +157,7 @@ public class PGraphFactory implements IGraphFactory {
             } else {
                 node = graph.addNode(NodeType.NORMAL);
             }
-            node.setProperty(IGraph.TOKGRAPH, knode);
+            node.setProperty(IGraphFactory.TOKGRAPH, knode);
             map.put(knode, node);
         }
 
@@ -147,7 +171,7 @@ public class PGraphFactory implements IGraphFactory {
                 INode source = map.get(kedge.getSource());
                 INode target = map.get(kedge.getTarget());
                 IEdge edge = graph.addEdge(source, target, true);
-                edge.setProperty(IGraph.TOKGRAPH, kedge);
+                edge.setProperty(IGraphFactory.TOKGRAPH, kedge);
             }
         }
         return graph;

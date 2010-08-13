@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.klay.planar.graph.impl;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -111,34 +110,6 @@ class PGraph extends PNode implements IGraph, Serializable {
         for (IFace f : this.faces) {
             ((PFace) f).setID(this.faceIndex++);
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public IGraph createDualGraph() {
-        HashMap<IFace, PNode> map = new HashMap<IFace, PNode>(this.faces.size() * 2);
-        PGraph dual = new PGraph();
-
-        if (this.changedFaces) {
-            this.generateFaces();
-        }
-
-        // Add the dual nodes from graph faces
-        for (IFace face : this.faces) {
-            PNode node = (PNode) dual.addNode();
-            node.setID(face.getID());
-            ((PFace) face).setProperty(IGraph.TODUALGRAPH, node);
-            map.put(face, node);
-        }
-        // Build the edges based on the neighboring faces
-        for (IEdge edge : this.edges) {
-            if (this.faces.size() > 1) {
-                IEdge e = dual.addEdge(map.get(edge.getLeftFace()), map.get(edge.getRightFace()));
-                ((PEdge) edge).setProperty(IGraph.TODUALGRAPH, e);
-            }
-        }
-        return dual;
     }
 
     // ======================== Nodes ==============================================================

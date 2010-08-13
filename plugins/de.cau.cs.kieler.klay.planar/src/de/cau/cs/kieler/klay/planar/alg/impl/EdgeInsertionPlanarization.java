@@ -24,8 +24,10 @@ import de.cau.cs.kieler.klay.planar.alg.IPlanarizer;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IFace;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
+import de.cau.cs.kieler.klay.planar.graph.IGraphFactory;
 import de.cau.cs.kieler.klay.planar.graph.INode;
 import de.cau.cs.kieler.klay.planar.graph.INode.NodeType;
+import de.cau.cs.kieler.klay.planar.graph.impl.PGraphFactory;
 
 /**
  * Inserts an edge in a planar graph by building the dual graph. In this graph shortest path is
@@ -51,7 +53,7 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
 
         for (IEdge insertingEdge : edges) {
 
-            IGraph dualGraph = graph.createDualGraph();
+            IGraph dualGraph = new PGraphFactory().createDualGraph(graph);
             LinkedList<INode> dualPath = new LinkedList<INode>();
 
             INode source = insertingEdge.getSource();
@@ -75,12 +77,12 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
             for (IFace sourceFace : sourceFaces) {
                 facePath.clear();
 
-                dualStartNode = (INode) sourceFace.getProperty(IGraph.TODUALGRAPH);
+                dualStartNode = (INode) sourceFace.getProperty(IGraphFactory.TODUALGRAPH);
 
                 // run BFS for all possible target faces
                 for (IFace itargetFace : targetFaces) {
 
-                    dualTargetNode = (INode) itargetFace.getProperty(IGraph.TODUALGRAPH);
+                    dualTargetNode = (INode) itargetFace.getProperty(IGraphFactory.TODUALGRAPH);
 
                     parent = bfs(dualStartNode, dualTargetNode, dualGraph);
 
@@ -189,12 +191,12 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
                 // connecting new normal nodes
                 else {
 
-                    IEdge newEdge = graph.addEdge(path.get(pathNodeCounter),
-                            path.get(pathNodeCounter + 1));
+                    IEdge newEdge = graph.addEdge(path.get(pathNodeCounter), path
+                            .get(pathNodeCounter + 1));
 
                     // bring new edges in right order
-                    reinsertEdges(shortestFacePath.get(pathNodeCounter), newEdge,
-                            path.get(pathNodeCounter));
+                    reinsertEdges(shortestFacePath.get(pathNodeCounter), newEdge, path
+                            .get(pathNodeCounter));
 
                     pathNodeCounter++;
                 }

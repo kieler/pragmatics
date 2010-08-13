@@ -13,8 +13,6 @@
  */
 package de.cau.cs.kieler.klay.planar.graph;
 
-import de.cau.cs.kieler.core.kgraph.KGraphElement;
-import de.cau.cs.kieler.core.util.Property;
 
 /**
  * Interface for a basic graph data structure. The purpose of this basic structure is to be used in
@@ -27,16 +25,6 @@ import de.cau.cs.kieler.core.util.Property;
  */
 public interface IGraph extends INode {
 
-    // ======================== Properties =========================================================
-
-    /** Property to convert an {@code IGraphElement} to its corresponding {@code KGraphElement}. */
-    Property<KGraphElement> TOKGRAPH = new Property<KGraphElement>(
-            "de.cau.cs.kieler.klay.planar.properties.tokgraph");
-
-    /** Property to get the element in the dual graph for any {@code IGraphElement}. */
-    Property<IGraphElement> TODUALGRAPH = new Property<IGraphElement>(
-            "de.cau.cs.kieler.klay.planar.properties.todualgraph");
-
     // ======================== Graph ==============================================================
 
     /**
@@ -44,14 +32,6 @@ public interface IGraph extends INode {
      * at least {@code 0} and at most the number of respective items contained it the graph.
      */
     void reindex();
-
-    /**
-     * Generate the dual graph of this graph. The dual graph is a graph, that has a node for every
-     * face in the original graph, and edges between neighboring faces.
-     * 
-     * @return the dual graph to this graph
-     */
-    IGraph createDualGraph();
 
     // ======================== Nodes ==============================================================
 

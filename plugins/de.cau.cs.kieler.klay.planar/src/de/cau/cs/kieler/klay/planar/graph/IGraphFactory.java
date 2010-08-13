@@ -16,7 +16,9 @@ package de.cau.cs.kieler.klay.planar.graph;
 import java.io.File;
 import java.io.IOException;
 
+import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.util.Property;
 
 /**
  * An interface for the creation of graph objects. This interface implements the factory method
@@ -27,6 +29,18 @@ import de.cau.cs.kieler.core.kgraph.KNode;
  * @author ocl
  */
 public interface IGraphFactory {
+
+    // ======================== Properties =========================================================
+
+    /** Property to convert an {@code IGraphElement} to its corresponding {@code KGraphElement}. */
+    Property<KGraphElement> TOKGRAPH = new Property<KGraphElement>(
+            "de.cau.cs.kieler.klay.planar.properties.tokgraph");
+
+    /** Property to get the element in the dual graph for any {@code IGraphElement}. */
+    Property<IGraphElement> TODUALGRAPH = new Property<IGraphElement>(
+            "de.cau.cs.kieler.klay.planar.properties.todualgraph");
+
+    // ======================== Graph Creation =====================================================
 
     /**
      * Create an empty graph instance. The resulting graph will not contain any edges or nodes.
@@ -65,6 +79,16 @@ public interface IGraphFactory {
      * @return a copy of the given graph
      */
     IGraph createGraphCopy(IGraph graph);
+
+    /**
+     * Generate the dual graph of another graph. The dual graph is a graph, that has a node for
+     * every face in the original graph, and edges between neighboring faces.
+     * 
+     * @param graph
+     *            the graph to create the dual graph of
+     * @return the dual graph to this graph
+     */
+    IGraph createDualGraph(IGraph graph);
 
     /**
      * Create a graph from a {@code KGraph} instance.
