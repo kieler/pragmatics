@@ -24,7 +24,7 @@ import java.util.Set;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.klay.planar.alg.IPathFinder;
+import de.cau.cs.kieler.klay.planar.alg.IPathFinder.IShortestPathFinder;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.INode;
 
@@ -33,7 +33,7 @@ import de.cau.cs.kieler.klay.planar.graph.INode;
  * 
  * @author ocl
  */
-public class DijkstraPathFinder extends AbstractAlgorithm implements IPathFinder {
+public class DijkstraPathFinder extends AbstractAlgorithm implements IShortestPathFinder {
 
     /**
      * {@inheritDoc}

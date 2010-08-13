@@ -59,4 +59,10 @@ public interface IPathFinder extends IAlgorithm {
      */
     List<IEdge> findPath(INode source, INode target, ICondition<Pair<INode, IEdge>> condition);
 
+    /**
+     * Interface for algorithms to find the shortest path in a graph.
+     */
+    public interface IShortestPathFinder extends IPathFinder {
+    }
+
 }

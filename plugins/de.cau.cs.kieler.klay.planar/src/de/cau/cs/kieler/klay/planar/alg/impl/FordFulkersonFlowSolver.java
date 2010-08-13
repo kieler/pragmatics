@@ -19,17 +19,21 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.alg.IPathFinder;
+import de.cau.cs.kieler.klay.planar.alg.IFlowNetworkSolver.IMaximumFlowSolver;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
+import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.INode;
+import de.cau.cs.kieler.klay.planar.util.IFunction;
 
-public class FordFulkersonFlowSolver extends AbstractAlgorithm {
+public class FordFulkersonFlowSolver extends AbstractAlgorithm implements IMaximumFlowSolver {
 
     // ======================== Algorithm ==========================================================
 
-    public int findMaximumFlow(final INode source, final INode sink) {
+    public IFunction<IEdge, Integer> findFlow(final IGraph network,
+            final IFunction<INode, Integer> supply) {
 
         // Initialize arrays
-        int size = source.getParent().getEdgeCount();
+        int size = network.getEdgeCount();
         final int[] flow = new int[size];
         final int[] capacity = new int[size]; // TODO get capacities
 
@@ -50,7 +54,8 @@ public class FordFulkersonFlowSolver extends AbstractAlgorithm {
             }
         };
 
-        List<IEdge> path = pathFinder.findPath(source, sink, cond);
+        // TODO create source and sink nodes
+        List<IEdge> path = pathFinder.findPath(null, null, cond);
         while (!path.isEmpty()) {
             // Get minimal capacity along path TODO
             int value = Integer.MAX_VALUE;
@@ -65,14 +70,14 @@ public class FordFulkersonFlowSolver extends AbstractAlgorithm {
                 flow[edge.getID()] += value;
             }
 
-            path = pathFinder.findPath(source, sink, cond);
+            path = pathFinder.findPath(null, null, cond);
         }
+        // TODO remove source and sink nodes
 
-        // Compute total flow emitted from source
-        int result = 0;
-        for (IEdge edge : source.adjacentEdges()) {
-            result += flow[edge.getID()];
-        }
-        return result;
+        return new IFunction<IEdge, Integer>() {
+            public Integer evaluate(final IEdge element) {
+                return flow[element.getID()];
+            }
+        };
     }
 }

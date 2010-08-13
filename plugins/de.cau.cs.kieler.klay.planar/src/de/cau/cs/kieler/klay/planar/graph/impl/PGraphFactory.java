@@ -131,7 +131,7 @@ public class PGraphFactory implements IGraphFactory {
         }
         // Build the edges based on the neighboring faces
         for (IEdge edge : graph.getEdges()) {
-            if (graph.getFaceCount() > 1) {
+            if (graph.getFaceCount() > 1) { // TODO why this check?
                 IEdge e = dual.addEdge(map.get(edge.getLeftFace()), map.get(edge.getRightFace()));
                 e.setProperty(IGraphFactory.TODUALGRAPH, edge);
                 edge.setProperty(IGraphFactory.TODUALGRAPH, e);

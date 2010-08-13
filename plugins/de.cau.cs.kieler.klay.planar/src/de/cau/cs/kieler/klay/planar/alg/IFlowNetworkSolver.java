@@ -14,10 +14,45 @@
 package de.cau.cs.kieler.klay.planar.alg;
 
 import de.cau.cs.kieler.core.alg.IAlgorithm;
+import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
+import de.cau.cs.kieler.klay.planar.graph.INode;
+import de.cau.cs.kieler.klay.planar.util.IFunction;
 
+/**
+ * Interface for algorithms to solve problems in flow networks. Uses the Strategy design pattern to
+ * provide a common interface for various implementation of algorithms working on flow networks.
+ * 
+ * @author ocl
+ */
 public interface IFlowNetworkSolver extends IAlgorithm {
 
-    void findMaximumFlow(IGraph network);
+    /**
+     * Solve a problem on a flow network. The method takes a function that assigns a supply or
+     * demand value to every node in the network, and returns a function that assigns a flow value
+     * to every arc in the network.
+     * 
+     * @param network
+     *            the network to work on
+     * @param supply
+     *            a function that assigns supply and demand values to nodes
+     * @return a function that assigns flow values to nodes
+     */
+    IFunction<IEdge, Integer> findFlow(IGraph network, IFunction<INode, Integer> supply);
+
+    /**
+     * Interface for algorithms to solve the maximum flow problem in a flow network. The maximum
+     * flow problem attempts to find the maximum possible flow through a flow network.
+     */
+    public interface IMaximumFlowSolver extends IFlowNetworkSolver {
+    }
+
+    /**
+     * Interface for algorithms to solve the minimum cost flow problem in a flow network. The
+     * minimum cost flow problem attempts to find the cheapest way to send a given flow through a
+     * flow network.
+     */
+    public interface IMinimumCostFlowSolver extends IFlowNetworkSolver {
+    }
 
 }
