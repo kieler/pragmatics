@@ -350,6 +350,12 @@
                optional="false">
          </commandParameter>
       </command>
+      <command
+            defaultHandler="de.cau.cs.kieler.kiml.evol.handlers.InfoHandler"
+            description="Display detailed information about the population."
+            id="de.cau.cs.kieler.kiml.evol.info"
+            name="Info">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -414,6 +420,12 @@
                label="Reset"
                style="push"
                tooltip="Restart with a new population.">
+         </command>
+         <command
+               commandId="de.cau.cs.kieler.kiml.evol.info"
+               label="Info"
+               style="push"
+               tooltip="Display detailed information about the population.">
          </command>
       </menuContribution>
    </extension>
