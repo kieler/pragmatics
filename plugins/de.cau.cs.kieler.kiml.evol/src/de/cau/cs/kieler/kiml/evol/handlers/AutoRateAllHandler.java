@@ -79,7 +79,7 @@ public class AutoRateAllHandler extends AbstractHandler {
                 // manages the work.
                 monitor.subTask("Determining Individual Rating");
 
-                this.model.autoRate(this.editor,
+                this.model.autoRateAll(this.editor,
                         new SubProgressMonitor(monitor, autoRatingWork * scale));
 
                 if (monitor.isCanceled()) {

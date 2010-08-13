@@ -19,7 +19,7 @@ import java.util.List;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.gef.EditPart;
 import org.eclipse.ui.IEditorPart;
 
@@ -39,39 +39,6 @@ import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
  *
  */
 public final class EvolModel {
-
-    /**
-     * @author bdu
-     *
-     */
-    private static final class AutoRateRunnable implements Runnable {
-        /**
-         *
-         */
-        private final Genome individual;
-        /**
-         *
-         */
-        private final IEditorPart editor;
-
-        /**
-         * Creates a new {@link AutoRateRunnable} instance.
-         *
-         * @param theIndividual
-         * @param theEditor
-         */
-        AutoRateRunnable(
-                final Genome theIndividual,
- final IEditorPart theEditor) {
-            this.individual = theIndividual;
-            this.editor = theEditor;
-        }
-
-        public void run() {
-            // Must be run in the UI thread.
-            EvolUtil.autoRateIndividual(this.individual, this.editor);
-        }
-    }
 
     /**
      * Creates a new {@link EvolModel} instance.
@@ -99,81 +66,96 @@ public final class EvolModel {
 
     /**
      * Performs a step of the evolutionary algorithm.
+     *
+     * @param theMonitor
+     *            a progress monitor; may be {@code null}
      */
-    public void evolve() {
-        if (!isValid()) {
-            return;
+    public void evolve(final IProgressMonitor theMonitor) {
+        // if (!isValid()) {
+        // return;
+        // }
+
+        final IProgressMonitor monitor;
+        // Ensure there is a monitor of some sort.
+        monitor = ((theMonitor != null) ? theMonitor : new NullProgressMonitor());
+
+        final int stepWork = 1;
+        final int afterStepWork = 1;
+        final int autoRateWork = 1;
+        final int listenersWork = 1;
+
+        final int total = stepWork + afterStepWork + autoRateWork + listenersWork;
+        final int scale = 100;
+
+        try {
+            monitor.beginTask("Performing evolutionary step.", total * scale);
+
+            // Perform the step.
+            this.evolAlg.step();
+            monitor.worked(stepWork * scale);
+
+            // The previously selected individual might not have survived in
+            // evolution, so select a new one as current.
+            selectInterestingIndividual();
+            monitor.worked(afterStepWork * scale);
+
+            // Calculate auto-rating for the yet unrated individuals.
+            final Population unrated = getPopulation().select(Population.UNRATED_FILTER);
+
+            final Runnable runnable = new Runnable() {
+                public void run() {
+                    final IEditorPart editor = EvolUtil.getCurrentEditor();
+                    EvolUtil.autoRate(unrated, editor, new SubProgressMonitor(monitor, 1 * scale));
+                }
+            };
+            MonitoredOperation.runInUI(runnable, true);
+            monitor.worked(autoRateWork * scale);
+
+            // Notify listeners.
+            afterChange("evolve");
+            monitor.worked(listenersWork * scale);
+
+        } finally {
+            monitor.done();
         }
-
-        // Perform the step.
-        this.evolAlg.step();
-
-        // The previously selected individual might not have survived in
-        // evolution, so select a new one as current.
-        selectInterestingIndividual();
-
-        // Calculate auto-rating for the yet unrated individuals.
-        final Population unrated = getPopulation().select(Population.UNRATED_FILTER);
-        EvolUtil.autoRatePopulation(unrated, EvolUtil.getCurrentEditor());
-
-        // Notify listeners.
-        afterChange("evolve");
     }
 
     /**
-     * Auto-rate all individuals in the current editor.
+     * Auto-rate all individuals in the current editor. NOTE: Must be run in UI
+     * thread.
      *
      * @param theMonitor
      *            a progress monitor; must not be {@code null}
+     * @deprecated
      *
      */
-    public void autoRate(final IProgressMonitor theMonitor) {
+    @Deprecated
+    private void autoRateAll(final IProgressMonitor theMonitor) {
         Assert.isLegal(theMonitor != null);
-        autoRate(EvolUtil.getCurrentEditor(), theMonitor);
+
+        final IEditorPart editor = EvolUtil.getCurrentEditor();
+        Assert.isNotNull(editor);
+
+        autoRateAll(editor, theMonitor);
     }
 
     /**
      * Auto-rate all individuals in the given editor.
      *
      * @param theEditor
-     *            an {@link IEditorPart}; must not be {@code null}
+     *            an {@link IEditorPart}
      * @param theMonitor
      *            a progress monitor; may be {@code null}
      */
-    public void autoRate(final IEditorPart theEditor, final IProgressMonitor theMonitor) {
-        Assert.isLegal((theEditor != null));
+    public void autoRateAll(final IEditorPart theEditor, final IProgressMonitor theMonitor) {
 
-        final IProgressMonitor localMonitor;
-        // ensure there is a monitor of some sort
-        if (theMonitor == null) {
-            localMonitor = new NullProgressMonitor();
-        } else {
-            localMonitor = theMonitor;
-        }
-
-        // Calculate auto-rating for each individual.
         final Population population = getPopulation();
-        final int size = population.size();
+        Assert.isNotNull(population);
 
-        try {
-            final int scale = 100;
-            localMonitor.beginTask("Auto-rating individuals.", size * scale);
+        EvolUtil.autoRate(population, theEditor, theMonitor);
 
-            for (final Genome ind : population) {
-                if (localMonitor.isCanceled()) {
-                    throw new OperationCanceledException();
-                }
-
-                MonitoredOperation.runInUI(new AutoRateRunnable(ind, theEditor), true);
-                localMonitor.worked(1 * scale);
-            }
-
-            // Notify listeners.
-            afterChange("autoRate");
-
-        } finally {
-            localMonitor.done();
-        }
+        // Notify listeners.
+        afterChange("autoRate");
     }
 
     /**
@@ -188,10 +170,12 @@ public final class EvolModel {
         if ((pop == null) || pop.isEmpty()) {
             return null;
         }
+
         // ensure that the position is within the valid range
         if ((pos >= pop.size()) || (pos < 0)) {
             return null;
         }
+
         return pop.get(pos);
     }
 
@@ -244,6 +228,7 @@ public final class EvolModel {
         }
 
         final Population pop = this.getPopulation();
+        // Population should be non-null in any case.
         Assert.isNotNull(pop, "Population is not set.");
 
         if (pop.isEmpty()) {
@@ -257,6 +242,7 @@ public final class EvolModel {
             return false;
         }
 
+        // Must be in UI thread.
         final LayoutViewPart layoutViewPart = LayoutViewPart.findView();
         if (layoutViewPart == null) {
             System.out.println("LayoutView not found.");
@@ -384,9 +370,9 @@ public final class EvolModel {
      * Selects an interesting individual.
      */
     private void selectInterestingIndividual() {
-        if (!isValid()) {
-            return;
-        }
+        // if (!isValid()) {
+        // return;
+        // }
 
         final int firstUnrated = firstUnrated();
         if (firstUnrated > -1) {
@@ -415,7 +401,7 @@ public final class EvolModel {
     }
 
     /**
-     *
+     * Make sure that the current position is not beyond the last individual.
      */
     private void updatePosition() {
         final int lim = getPopulation().size();

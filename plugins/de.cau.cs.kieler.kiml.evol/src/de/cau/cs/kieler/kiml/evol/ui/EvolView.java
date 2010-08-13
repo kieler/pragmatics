@@ -31,7 +31,6 @@ import de.cau.cs.kieler.kiml.evol.EvolModel;
 import de.cau.cs.kieler.kiml.evol.EvolUtil;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
-import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
 
 /**
  * Test view for EvolPlugin.
@@ -40,61 +39,6 @@ import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
  *
  */
 public class EvolView extends ViewPart {
-    /**
-     * @author bdu
-     *
-     */
-    private static final class IndividualApplier implements Runnable {
-        /**
-         * Creates a new {@link IndividualApplier} instance.
-         *
-         * @param theExpectedLayoutProviderId
-         * @param theCurrentIndividual
-         */
-        IndividualApplier(
-                final String theExpectedLayoutProviderId,
-                final Genome theCurrentIndividual) {
-            this.expectedLayoutProviderId = theExpectedLayoutProviderId;
-            this.currentIndividual = theCurrentIndividual;
-        }
-
-        /**
-         *
-         */
-        private final String expectedLayoutProviderId;
-
-        /**
-         *
-         */
-        private final Genome currentIndividual;
-
-        public void run() {
-            EvolUtil.applyIndividual(this.currentIndividual, this.expectedLayoutProviderId);
-        }
-    }
-
-    /**
-     * Refresher for the layout view.
-     *
-     * @author bdu
-     *
-     */
-    private static class LayoutViewRefresher implements Runnable {
-        /**
-         *
-         */
-        public LayoutViewRefresher() {
-            // nothing to do here.
-        }
-
-        public void run() {
-            final LayoutViewPart layoutView = LayoutViewPart.findView();
-            if (layoutView != null) {
-                layoutView.refresh(); // async!
-            }
-        }
-    }
-
     /**
      * @author bdu
      *
@@ -132,12 +76,12 @@ public class EvolView extends ViewPart {
                 EvolView.this.getEvolModel().setPosition(newPos);
 
                 // Update the table viewer.
-                final Runnable updaterRunnable = new Runnable() {
+                final Runnable elementUpdaterRunnable = new Runnable() {
                     public void run() {
                         SelectionChangedListener.this.getTableViewer().update(element, null);
                     }
                 };
-                MonitoredOperation.runInUI(updaterRunnable, true);
+                MonitoredOperation.runInUI(elementUpdaterRunnable, true);
 
                 // Refresh the layout according to the selected individual.
                 System.out.println("before applySelectedIndividual");
@@ -306,23 +250,6 @@ public class EvolView extends ViewPart {
     }
 
     /**
-     * Performs a step of the evolutionary algorithm.
-     *
-     * @deprecated
-     */
-    @Deprecated
-    public void evolve() {
-        Assert.isNotNull(this.evolModel);
-        if (!this.evolModel.isValid()) {
-            return;
-        }
-
-        this.evolModel.evolve();
-
-        setInput(this.evolModel.getPopulation());
-    }
-
-    /**
      * @return the evolution model that is displayed in the view.
      */
     public EvolModel getEvolModel() {
@@ -361,11 +288,14 @@ public class EvolView extends ViewPart {
     public void setFocus() {
         this.tableViewer.getControl().setFocus();
     }
-
+    
     /**
      * Refresh the layout according to selected individual.
+     * 
+     * @deprecated
      */
-    public void applySelectedIndividual() {
+    @Deprecated
+    private void applySelectedIndividual() {
         Assert.isNotNull(this.evolModel);
 
         if (!this.evolModel.isValid()) {
@@ -380,12 +310,11 @@ public class EvolView extends ViewPart {
         final String expectedLayoutProviderId = this.evolModel.getLayoutProviderId();
         Assert.isNotNull(expectedLayoutProviderId);
 
-        // Adopt and layout the current individual.
-        MonitoredOperation.runInUI(new IndividualApplier(expectedLayoutProviderId,
-                currentIndividual), true);
+        // Adopt, layout and measure the current individual.
+        EvolUtil.syncApplyIndividual(currentIndividual, expectedLayoutProviderId);
 
         // Refresh the layout view.
-        MonitoredOperation.runInUI(new LayoutViewRefresher(), false);
+        EvolUtil.asyncRefreshLayoutView();
     }
 
     /**

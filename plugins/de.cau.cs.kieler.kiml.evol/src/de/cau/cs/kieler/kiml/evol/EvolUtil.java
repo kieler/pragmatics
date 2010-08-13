@@ -25,7 +25,10 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
@@ -43,6 +46,7 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
@@ -76,6 +80,52 @@ import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
  */
 public final class EvolUtil {
     /**
+     * Auto-rater for an individual.
+     *
+     * @author bdu
+     *
+     */
+    private static final class AutoRateIndividualRunnable implements Runnable {
+        /**
+         * Creates a new {@link AutoRateIndividualRunnable} instance.
+         *
+         * @param theIndividual
+         * @param theEditor
+         */
+        AutoRateIndividualRunnable(final Genome theIndividual, final IEditorPart theEditor) {
+            this.individual = theIndividual;
+            this.editor = theEditor;
+        }
+
+        /**
+         * Creates a new {@link EvolUtil.AutoRateIndividualRunnable} instance.
+         *
+         */
+        AutoRateIndividualRunnable(final Genome theIndividual) {
+            this(theIndividual, null);
+        }
+        /**
+        *
+        */
+        private final Genome individual;
+
+        /**
+        *
+        */
+        private IEditorPart editor;
+
+        public void run() {
+            // Must be run in the UI thread.
+            if (this.editor == null) {
+                this.editor = getCurrentEditor();
+            }
+
+            autoRateIndividual(this.individual, this.editor);
+
+        }
+    }
+
+    /**
      * A factory for genes.
      *
      * @author bdu
@@ -96,7 +146,7 @@ public final class EvolUtil {
         /**
          * Creates a new {@link GeneFactory}.
          */
-        public GeneFactory() {
+        GeneFactory() {
             // nothing to do here
         }
 
@@ -334,133 +384,111 @@ public final class EvolUtil {
     }
 
     /**
-     * Adopt, layout and measure the given individual.
+     * Applier for an individual.
      *
-     * @param individual
-     *            a {@link Genome}
-     * @param expectedLayoutProviderId
-     *            the expected layout provider id
+     * @author bdu
      *
      */
-    public static void applyIndividual(
-            final Genome individual, final String expectedLayoutProviderId) {
-
-        // Get the current editor (may be null).
-        final IEditorPart currentEditor = getCurrentEditor();
-
-        final String prefEditors =
-                EvolPlugin.getDefault().getPreferenceStore().getString(EvolPlugin.PREF_EDITORS);
-
-        final boolean wantAllEditors = EvolPlugin.ALL_EDITORS.equalsIgnoreCase(prefEditors);
-
-        // Collect the editor(s).
-        final Collection<IEditorPart> editors;
-        if (wantAllEditors) {
-            editors = getEditors();
-        } else {
-            editors = new ArrayList<IEditorPart>(1);
-            if (currentEditor != null) {
-                editors.add(currentEditor);
-            }
+    private static final class IndividualApplierRunnable implements Runnable {
+        /**
+         * Creates a new {@link IndividualApplierRunnable} instance.
+         *
+         * @param theIndividual
+         * @param theLayoutProviderId
+         */
+        IndividualApplierRunnable(final Genome theIndividual, final String theLayoutProviderId) {
+            this.layoutProviderId = theLayoutProviderId;
+            this.individual = theIndividual;
         }
 
-        // Do the layout in each selected editor.
-        for (final IEditorPart editor : editors) {
-            System.out.println();
-            System.out.println("Editor: " + editor.getTitle());
+        /**
+         * The expected layout provider ID.
+         */
+        private final String layoutProviderId;
 
-            final EditPart editPart = getEditPart(editor);
+        /**
+         * The individual.
+         */
+        private final Genome individual;
 
-            // See which layout provider suits for the editor.
-            final String layoutProviderId = getLayoutProviderId(editor, editPart);
-
-            if (!expectedLayoutProviderId.equalsIgnoreCase(layoutProviderId)) {
-                // The editor is not compatible to the current population.
-                // --> skip it
-                System.out.println("Cannot adopt " + individual.getId() + " to "
-                        + layoutProviderId);
-                continue;
-            }
-
-            // Use the options that are encoded in the individual.
-            adoptIndividual(individual, editor);
-
-            // We don't specify the edit part because we want a manager for
-            // the whole diagram.
-            final DiagramLayoutManager manager =
-                    EclipseLayoutServices.getInstance().getManager(editor, null);
-            Assert.isNotNull(manager);
-
-            final Map<String, Double> coeffsMap = extractMetricWeights(individual);
-            final int rating = layoutAndMeasure(manager, editor, coeffsMap);
-
-            // Update the rating.
-            if ((editor == currentEditor) && !individual.hasUserRating()) {
-                individual.setUserRating(rating);
-            }
-
-            // Apply the layout to the diagram.
-            // XXX it would be more straightforward to call
-            // manager.applyLayout()
-            // directly, but that method is private
-
-            final boolean showAnimation = false;
-            final boolean showProgressBar = false;
-            EclipseLayoutServices.getInstance().layout(editor, null, showAnimation,
-                    showProgressBar);
+        public void run() {
+            applyIndividual(this.individual, this.layoutProviderId);
         }
     }
 
     /**
-     * Layouts the given individual in the given editor and calculates automatic
-     * ratings for them. This must be run in the UI thread.
+     * Refresher for the layout view.
      *
-     * @param individual
-     *            the {@link Genome} to be rated
-     * @param editor
-     *            Specifies the editor in which the individual shall be
-     *            layouted.
+     * @author bdu
+     *
      */
-    public static void autoRateIndividual(final Genome individual, final IEditorPart editor) {
+    private static class LayoutViewRefreshRunnable implements Runnable {
+        /**
+         * Constructs a new {@link LayoutViewRefreshRunnable} instance.
+         */
+        LayoutViewRefreshRunnable() {
+            // nothing to do here.
+        }
 
-        // We don't specify the edit part because we want a manager for
-        // the whole diagram.
-        final DiagramLayoutManager manager =
-                EclipseLayoutServices.getInstance().getManager(editor, null);
-        Assert.isNotNull(manager);
-
-        final LayoutPropertySource source = getLayoutPropertySource();
-        Assert.isNotNull(source);
-
-        autoRateIndividual(individual, editor, manager, source);
+        public void run() {
+            final LayoutViewPart layoutView = LayoutViewPart.findView();
+            if (layoutView != null) {
+                layoutView.refresh(); // async!
+            }
+        }
     }
 
     /**
-     * Layouts the given individuals in the given editor and calculates
-     * automatic ratings for them. This must be run in the UI thread.
-     *
-     * @param population
-     *            the {@link Population} (list of individuals) to be rated
-     * @param editor
-     *            Specifies the editor in which the individuals shall be
-     *            layouted.
+     * Asynchronously refreshes the layout view, if it can be found.
      */
-    public static void autoRatePopulation(final Population population, final IEditorPart editor) {
-        // We don't specify the edit part because we want a manager for
-        // the whole diagram.
-        final DiagramLayoutManager manager =
-                EclipseLayoutServices.getInstance().getManager(editor, null);
-        Assert.isNotNull(manager);
+    public static void asyncRefreshLayoutView() {
+        MonitoredOperation.runInUI(new LayoutViewRefreshRunnable(), false);
+    }
 
-        final LayoutPropertySource source = getLayoutPropertySource();
-        Assert.isNotNull(source);
+    /**
+     * Auto-rate the given population in the given editor.
+     *
+     * @param thePopulation
+     *            the {@link Population} to be rated
+     * @param theEditor
+     *            an {@link IEditorPart}; must not be {@code null}
+     * @param theMonitor
+     *            a progress monitor; may be {@code null}
+     */
+    public static void autoRate(
+            final Population thePopulation, final IEditorPart theEditor,
+            final IProgressMonitor theMonitor) {
+        Assert.isLegal((thePopulation != null));
+        if (thePopulation == null) {
+            return;
+        }
 
-        // The current diagram gets layouted and measured for each individual.
-        for (int pos = 0; pos < population.size(); pos++) {
-            final Genome ind = population.get(pos);
-            // TODO: synchronize on the layout graph?
+        // TODO: don't need theEditor
 
-            autoRateIndividual(ind, editor, manager, source);
+        // Ensure there is a monitor of some sort.
+        final IProgressMonitor monitor;
+        monitor = ((theMonitor != null) ? theMonitor : new NullProgressMonitor());
+
+        final int size = thePopulation.size();
+        final int total = size;
+        final int scale = 100;
+
+        try {
+            monitor.beginTask("Auto-rating individuals.", total * scale);
+
+            // Calculate auto-rating for each individual.
+            for (final Genome ind : thePopulation) {
+                if (monitor.isCanceled()) {
+                    throw new OperationCanceledException();
+                }
+
+                // syncAutoRate(ind, theEditor);
+                syncAutoRate(ind, theEditor);
+                monitor.worked(1 * scale);
+            }
+
+        } finally {
+            monitor.done();
         }
     }
 
@@ -590,6 +618,7 @@ public final class EvolUtil {
         return result;
     }
 
+
     /**
      *
      * @param editor
@@ -610,8 +639,7 @@ public final class EvolUtil {
      *            an {@link EditPart}
      * @return the id of the layouter, or {@code null} if none can be found.
      */
-    public static String getLayoutProviderId(
-final IEditorPart editor, final EditPart editPart) {
+    public static String getLayoutProviderId(final IEditorPart editor, final EditPart editPart) {
         final DiagramLayoutManager manager =
                 EclipseLayoutServices.getInstance().getManager(editor, editPart);
         if (manager == null) {
@@ -619,6 +647,18 @@ final IEditorPart editor, final EditPart editPart) {
         }
         final String result = getLayoutProviderId(manager, editPart);
         return result;
+    }
+
+    /**
+     * Synchronously applies the given individual.
+     *
+     * @param individual
+     *            the {@link Genome}
+     * @param providerId
+     *            the expected layout provider id
+     */
+    public static void syncApplyIndividual(final Genome individual, final String providerId) {
+        MonitoredOperation.runInUI(new IndividualApplierRunnable(individual, providerId), true);
     }
 
     /**
@@ -649,8 +689,7 @@ final IEditorPart editor, final EditPart editPart) {
      */
     private static void adoptIndividual(
             final Genome individual, final LayoutPropertySource propertySource) {
-        Assert.isLegal(individual != null);
-        Assert.isLegal(propertySource != null);
+        Assert.isLegal((individual != null) && (propertySource != null));
         if ((individual == null) || (propertySource == null)) {
             return;
         }
@@ -660,10 +699,10 @@ final IEditorPart editor, final EditPart editPart) {
         final EvolutionServices evolService = EvolutionServices.getInstance();
         final Set<String> metricIds = evolService.getLayoutMetricsIds();
 
-        // set layout options according to genome
+        // Set layout options according to the genome.
         for (final IGene<?> gene : individual) {
-
             Assert.isNotNull(gene);
+
             final Object value = gene.getValue();
             final Object id = gene.getId();
 
@@ -676,6 +715,7 @@ final IEditorPart editor, final EditPart editPart) {
             Assert.isNotNull(data, "No layout option data for " + id);
 
             switch (data.getType()) {
+
             case BOOLEAN:
                 if (value instanceof Boolean) {
                     propertySource.setPropertyValue(id,
@@ -685,6 +725,7 @@ final IEditorPart editor, final EditPart editPart) {
                             Integer.valueOf(Math.round(((Float) value).floatValue())));
                 }
                 break;
+
             case ENUM:
                 try {
                     propertySource.setPropertyValue(id, value);
@@ -693,6 +734,7 @@ final IEditorPart editor, final EditPart editPart) {
                     Assert.isTrue(false);
                 }
                 break;
+
             case INT:
                 if (value instanceof Integer) {
                     propertySource.setPropertyValue(id, value);
@@ -700,6 +742,7 @@ final IEditorPart editor, final EditPart editPart) {
                     propertySource.setPropertyValue(id, gene.toString());
                 }
                 break;
+
             default:
                 propertySource.setPropertyValue(id, value.toString());
                 break;
@@ -708,6 +751,122 @@ final IEditorPart editor, final EditPart editPart) {
     }
 
     /**
+     * Adopt, layout and measure the given individual in the appropriate
+     * editors. The obtained layout is applied to the diagrams.
+     *
+     * @param individual
+     *            a {@link Genome}; may not be {@code null}
+     * @param expectedLayoutProviderId
+     *            the expected layout provider id
+     */
+    private static void applyIndividual(
+            final Genome individual, final String expectedLayoutProviderId) {
+        Assert.isLegal((individual != null) && (expectedLayoutProviderId != null));
+        if ((individual == null) || (expectedLayoutProviderId == null)) {
+            return;
+        }
+
+        // Get the appropriate editors.
+        final Collection<IEditorPart> editors = getWantedEditors();
+
+        // Get the current editor (may be null).
+        final IEditorPart currentEditor = getCurrentEditor();
+
+        // Do the layout in each appropriate editor.
+        for (final IEditorPart editor : editors) {
+            System.out.println();
+            System.out.println("Editor: " + editor.getTitle());
+
+            final EditPart editPart = getEditPart(editor);
+
+            // See which layout provider suits for the editor.
+            final String layoutProviderId = getLayoutProviderId(editor, editPart);
+
+            if (!expectedLayoutProviderId.equalsIgnoreCase(layoutProviderId)) {
+                // The editor is not compatible to the current population.
+                // --> skip it
+                System.out.println("Cannot adopt " + individual.getId() + " to "
+                        + layoutProviderId);
+                continue;
+            }
+
+            // Use the options that are encoded in the individual.
+            adoptIndividual(individual, editor);
+
+            // We don't specify the edit part because we want a manager for
+            // the whole diagram.
+            final DiagramLayoutManager manager =
+                    EclipseLayoutServices.getInstance().getManager(editor, null);
+            Assert.isNotNull(manager);
+
+            final Map<String, Double> weightsMap = extractMetricWeights(individual);
+            Assert.isNotNull(weightsMap);
+
+            final KNode layoutGraph = calculateLayout(manager, editor);
+
+            // Update the rating.
+            // XXX: This should not be done here.
+            if ((editor == currentEditor) && !individual.hasUserRating()) {
+                final int rating = measure(layoutGraph, weightsMap);
+                individual.setUserRating(rating);
+            }
+
+            // Apply the layout to the diagram in the editor.
+            // XXX it would be more straightforward to call
+            // manager.applyLayout()
+            // directly, but that method is private
+
+            final boolean showAnimation = false;
+            final boolean showProgressBar = false;
+            EclipseLayoutServices.getInstance().layout(editor, null, showAnimation,
+                    showProgressBar);
+        }
+    }
+
+    /**
+     * Must be run in UI thread.
+     *
+     * @param individual
+     *            the {@link Genome} to be rated; must not be {@code null}
+     */
+    private void autoRateIndividual(final Genome individual) {
+        Assert.isLegal(individual != null);
+
+        final IEditorPart editor = getCurrentEditor();
+        Assert.isNotNull(editor);
+
+        autoRateIndividual(individual, editor);
+    }
+
+    /**
+     * Layouts the given individual in the given editor and calculates automatic
+     * ratings for it. This must be run in the UI thread.
+     *
+     * @param individual
+     *            the {@link Genome} to be rated; must not be {@code null}
+     * @param editor
+     *            Specifies the editor in which the individual shall be
+     *            layouted.
+     */
+    private static void autoRateIndividual(final Genome individual, final IEditorPart editor) {
+        Assert.isLegal(individual != null);
+
+        // We don't specify the edit part because we want a manager for
+        // the whole diagram.
+        final DiagramLayoutManager manager =
+                EclipseLayoutServices.getInstance().getManager(editor, null);
+        Assert.isNotNull(manager);
+
+        final LayoutPropertySource source = getLayoutPropertySource(editor);
+        Assert.isNotNull(source);
+
+        autoRateIndividual(individual, editor, manager, source);
+    }
+
+    /**
+     * Layouts the given individual in the given editor and calculates automatic
+     * ratings for it, using the given manager and layout property source.
+     *
      * @param ind
      * @param editor
      * @param monitor
@@ -717,12 +876,112 @@ final IEditorPart editor, final EditPart editPart) {
     private static void autoRateIndividual(
             final Genome ind, final IEditorPart editor,
             final DiagramLayoutManager manager, final LayoutPropertySource source) {
+        Assert.isLegal((ind != null) && (source != null));
+        if ((ind == null) || (source == null)) {
+            return;
+        }
+
         adoptIndividual(ind, source);
 
         final Map<String, Double> weightsMap = extractMetricWeights(ind);
-        final int rating = layoutAndMeasure(manager, editor, weightsMap);
+        Assert.isNotNull(weightsMap);
+
+        final KNode layoutGraph = calculateLayout(manager, editor);
+        final int rating = measure(layoutGraph, weightsMap);
 
         ind.setUserRating(rating);
+    }
+
+    /**
+     * Layouts the given individuals in the current editor and calculates
+     * automatic ratings for them. NOTE: This must be run in the UI thread.
+     *
+     * @param population
+     *            the {@link Population} (list of individuals) to be rated; must
+     *            not be {@code null}
+     * @deprecated
+     */
+    @Deprecated
+    private static void autoRatePopulation(final Population population) {
+        Assert.isLegal(population != null);
+
+        final IEditorPart editor = getCurrentEditor();
+        Assert.isNotNull(editor);
+        autoRatePopulation(population, editor);
+    }
+
+    /**
+     * Layouts the given individuals in the given editor and calculates
+     * automatic ratings for them. NOTE: This must be run in the UI thread.
+     *
+     * @param population
+     *            the {@link Population} (list of individuals) to be rated; must
+     *            not be {@code null}
+     * @param editor
+     *            Specifies the editor in which the individuals shall be
+     *            layouted.
+     */
+    private static void autoRatePopulation(final Population population, final IEditorPart editor) {
+        Assert.isLegal(population != null);
+        if (population == null) {
+            return;
+        }
+
+        // We don't specify the edit part because we want a manager for
+        // the whole diagram.
+        final DiagramLayoutManager manager =
+                EclipseLayoutServices.getInstance().getManager(editor, null);
+        Assert.isNotNull(manager);
+
+        final LayoutPropertySource source = getLayoutPropertySource(editor);
+        Assert.isNotNull(source);
+
+        // The current diagram gets layouted and measured for each individual.
+        for (int pos = 0; pos < population.size(); pos++) {
+            final Genome ind = population.get(pos);
+            Assert.isNotNull(ind);
+
+            // TODO: synchronize on the layout graph?
+            autoRateIndividual(ind, editor, manager, source);
+        }
+    }
+
+    /**
+     * Builds the layout graph for the given editor, using the given manager,
+     * and performs layout on it. NOTE: The resulting layout is not applied to
+     * the diagram.
+     *
+     * @param manager
+     *            a {@link DiagramLayoutManager}
+     * @param editor
+     *            an {@link IEditorPart}
+     * @return the layout graph, or {@code null} in case of an error.
+     */
+    private static KNode calculateLayout(final DiagramLayoutManager manager, final IEditorPart editor) {
+        if ((editor == null) || (manager == null)) {
+            // We cannot perform the layout.
+            return null;
+        }
+
+        // First phase: build the layout graph.
+        final KNode layoutGraph = manager.buildLayoutGraph(editor, null, true);
+
+        // Second phase: execute layout algorithms.
+        // We need a new monitor each time because the old one
+        // gets closed.
+        final IKielerProgressMonitor monitor =
+                new BasicProgressMonitor(DiagramLayoutManager.MAX_PROGRESS_LEVELS);
+        final IStatus status = manager.layout(monitor, true, false);
+
+        if (!status.isOK()) {
+            // TODO: what to do about the layouting failure? Log it? Abort?
+            System.err.println(status.getMessage());
+            return null;
+        }
+
+        final KNode layoutGraphAfterLayout = manager.getLayoutGraph();
+        Assert.isTrue(layoutGraph == layoutGraphAfterLayout);
+        return layoutGraphAfterLayout;
     }
 
     /**
@@ -925,7 +1184,9 @@ final IEditorPart editor, final EditPart editPart) {
     /**
      *
      * @return a {@link LayoutPropertySource} for the current editor.
+     * @deprecated
      */
+    @Deprecated
     private static LayoutPropertySource getLayoutPropertySource() {
         final IEditorPart editor = getCurrentEditor();
         final IGraphicalEditPart part = (IGraphicalEditPart) getEditPart(editor);
@@ -993,63 +1254,53 @@ final IEditorPart editor, final EditPart editPart) {
     }
 
     /**
-     * Builds the layout graph for the given editor, using the given manager,
-     * and performs layout on it.
      *
-     * @param manager
-     *            a {@link DiagramLayoutManager}
-     * @param editor
-     *            an {@link IEditorPart}
-     * @return the layout graph, or {@code null} in case of an error.
+     * @return a collection of editors, may be empty.
      */
-    private static KNode layout(final DiagramLayoutManager manager, final IEditorPart editor) {
-        if ((editor == null) || (manager == null)) {
-            // We cannot perform the layout.
-            return null;
+    private static Collection<IEditorPart> getWantedEditors() {
+        // Get the current editor (may be null).
+        final IEditorPart currentEditor = getCurrentEditor();
+
+        final String prefEditors =
+                EvolPlugin.getDefault().getPreferenceStore().getString(EvolPlugin.PREF_EDITORS);
+
+        final boolean wantAllEditors = EvolPlugin.ALL_EDITORS.equalsIgnoreCase(prefEditors);
+
+        // Collect the editor(s).
+        final Collection<IEditorPart> editors;
+        if (wantAllEditors) {
+            editors = getEditors();
+        } else {
+            editors = new ArrayList<IEditorPart>(1);
+            if (currentEditor != null) {
+                editors.add(currentEditor);
+            }
         }
-
-        // First phase: build the layout graph.
-        final KNode layoutGraph = manager.buildLayoutGraph(editor, null, true);
-
-        // Second phase: execute layout algorithms.
-        // We need a new monitor each time because the old one
-        // gets closed.
-        final IKielerProgressMonitor monitor =
-                new BasicProgressMonitor(DiagramLayoutManager.MAX_PROGRESS_LEVELS);
-        final IStatus status = manager.layout(monitor, true, false);
-
-        if (!status.isOK()) {
-            // TODO: what to do about the layouting failure? Log it? Abort?
-            System.out.println(status.getMessage());
-            return null;
-        }
-
-        final KNode layoutGraphAfterLayout = manager.getLayoutGraph();
-        Assert.isTrue(layoutGraph == layoutGraphAfterLayout);
-        return layoutGraphAfterLayout;
+        return editors;
     }
 
     /**
-     * Layout the diagram and measure it.
+     * Layout the diagram in the given editor and measure it.
      *
      * @param manager
      *            a {@code DiagramLayoutManager}
      * @param editor
      *            the editor
-     * @param coeffsMap
+     * @param weightsMap
      *            a map that associates weights to the metrics; must not be
      *            {@code null}
      * @return measurement result (rating proposal)
-     *
+     * @deprecated
      */
+    @Deprecated
     private static int layoutAndMeasure(
             final DiagramLayoutManager manager, final IEditorPart editor,
-            final Map<String, Double> coeffsMap) {
+            final Map<String, Double> weightsMap) {
 
-        Assert.isLegal(coeffsMap != null);
+        Assert.isLegal(weightsMap != null);
 
-        final KNode layoutGraph = layout(manager, editor);
-        return measure(layoutGraph, coeffsMap);
+        final KNode layoutGraph = calculateLayout(manager, editor);
+        return measure(layoutGraph, weightsMap);
     }
 
     /**
@@ -1060,7 +1311,7 @@ final IEditorPart editor, final EditPart editPart) {
      * @param parentNode
      *            the KGraph to be analyzed.
      * @param weightsMap
-     *            a map that associates weights to metric ids; may not be
+     *            a map that associates weights to metric ids; must not be
      *            {@code null}
      * @return a rating proposal
      */
@@ -1085,6 +1336,7 @@ final IEditorPart editor, final EditPart editPart) {
         }
 
         // Make sure the metric weights are normalized.
+        // XXX discard this and require weightsMap to be normalized before
         normalize(weightsMap);
 
         // Perform the measurement.
@@ -1123,7 +1375,7 @@ final IEditorPart editor, final EditPart editPart) {
 
     /**
      * Scales the values in the given map so that their sum equals one. This
-     * operation changes the map entries of the given map.
+     * operation modifies the map entries of the given map.
      *
      * @param map
      *            a map containing {@link Double} values; must not be
@@ -1143,7 +1395,7 @@ final IEditorPart editor, final EditPart editPart) {
         }
 
         if (sum != 1.0) {
-            // Scale values.
+            // Need to scale values.
             final double factor = 1.0 / sum;
 
             for (final Entry<String, Double> entry : map.entrySet()) {
@@ -1153,8 +1405,18 @@ final IEditorPart editor, final EditPart editPart) {
         }
     }
 
+    /**
+     * @param individual
+     * @param editor
+     */
+    private static void syncAutoRate(final Genome individual, final IEditorPart editor) {
+        // the editor may be null
+        MonitoredOperation.runInUI(new AutoRateIndividualRunnable(individual, editor), true);
+    }
+
     /** Hidden constructor to avoid instantiation. **/
     private EvolUtil() {
         // nothing
     }
+
 }

@@ -20,12 +20,15 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.kiml.evol.EvolModel;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
+import de.cau.cs.kieler.kiml.evol.EvolUtil;
+import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.ui.EvolView;
 
 /**
@@ -43,15 +46,6 @@ public class EvolveHandler extends AbstractHandler {
      *
      */
     private static final class EvolutionViewRefreshJob extends Job {
-        public EvolView getView() {
-            return this.view;
-        }
-
-        /**
-         *
-         */
-        private final EvolView view;
-
         /**
          * Creates a new {@link EvolutionViewRefreshJob} instance.
          *
@@ -61,6 +55,15 @@ public class EvolveHandler extends AbstractHandler {
         public EvolutionViewRefreshJob(final String theName, final EvolView theView) {
             super(theName);
             this.view = theView;
+        }
+
+        /**
+         *
+         */
+        private final EvolView view;
+
+        public EvolView getView() {
+            return this.view;
         }
 
         @Override
@@ -74,6 +77,18 @@ public class EvolveHandler extends AbstractHandler {
             return new Status(IStatus.INFO, EvolPlugin.PLUGIN_ID, 0, "OK", null);
         }
     }
+
+    // Parameter identifiers.
+    /**
+     *
+     */
+    private static final String PARAM_STEPS_PER_AUTO_RATING =
+            "de.cau.cs.kieler.kiml.evol.stepsBeforeAutoRating";
+
+    /**
+     *
+     */
+    private static final String PARAM_MAX_STEPS = "de.cau.cs.kieler.kiml.evol.steps";
 
     /**
      * Number of evolution steps.
@@ -106,32 +121,50 @@ public class EvolveHandler extends AbstractHandler {
                 (EvolView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                         .findView(EvolView.ID);
 
-        if ((view != null) && (view.getEvolModel() != null)) {
-            final String maxStepsAttr = event.getParameter("de.cau.cs.kieler.kiml.evol.steps");
-            final int maxSteps =
-                    (maxStepsAttr == null ? MAX_STEPS : Integer.parseInt(maxStepsAttr));
+        if ((view == null)) {
+            return null;
+        }
 
-            final String stepsBeforeAutoRatingAttr =
-                    event.getParameter("de.cau.cs.kieler.kiml.evol.stepsBeforeAutoRating");
+        final EvolModel model = view.getEvolModel();
+        if (((model == null) || !model.isValid())) {
+            return null;
+        }
 
-            final int stepsBeforeAutoRating =
-                    (stepsBeforeAutoRatingAttr == null ? STEPS_PER_AUTO_RATING : Integer
-                            .parseInt(stepsBeforeAutoRatingAttr));
-            final EvolModel model = view.getEvolModel();
+        final String maxStepsAttr = event.getParameter(PARAM_MAX_STEPS);
+        final int maxSteps = (maxStepsAttr == null ? MAX_STEPS : Integer.parseInt(maxStepsAttr));
+        final String stepsBeforeAutoRatingAttr = event.getParameter(PARAM_STEPS_PER_AUTO_RATING);
+        final int stepsBeforeAutoRating =
+                (stepsBeforeAutoRatingAttr == null ? STEPS_PER_AUTO_RATING : Integer
+                        .parseInt(stepsBeforeAutoRatingAttr));
 
-            int steady = 0;
-            int steps = 0;
-            do {
-                final double before = model.getPopulation().getAverageRating().doubleValue();
-                System.out.println("Average rating before: " + before);
+        final int steady = 0;
+        int steps = 0;
 
-                for (int i = 0; (i < NUMBER_OF_STEPS) && (steps < maxSteps); i++) {
-                    model.evolve();
+        final Job evolveJob = new Job("") {
+            @Override
+            protected IStatus run(final IProgressMonitor theMonitor) {
+                // final double before =
+                // model.getPopulation().getAverageRating().doubleValue();
 
-                    // view.refresh(true);
+                for (int i = 0; (i < NUMBER_OF_STEPS); i++) {
 
-                    // Refresh the layout according to the selected individual.
-                    view.applySelectedIndividual();
+                    model.evolve(new SubProgressMonitor(theMonitor, 100));
+
+                    // The current individual has changed.
+
+                    // Get the current individual from the model.
+                    final Genome individual = model.getCurrentIndividual();
+                    Assert.isNotNull(individual);
+
+                    // Get the expected layout provider id.
+                    final String expectedLayoutProviderId = model.getLayoutProviderId();
+                    Assert.isNotNull(expectedLayoutProviderId);
+
+                    // Adopt and layout the current individual.
+                    EvolUtil.syncApplyIndividual(individual, expectedLayoutProviderId);
+
+                    // Refresh the layout view.
+                    EvolUtil.asyncRefreshLayoutView();
 
                     // BasicNetwork b = new BasicNetwork();
                     // b.addLayer(new BasicLayer(2));
@@ -141,57 +174,76 @@ public class EvolveHandler extends AbstractHandler {
                     // b.getStructure().finalizeStructure();
                     // System.out.println(b.calculateNeuronCount());
 
-                    final boolean wantAutoRating;
-                    wantAutoRating = wantAutoRatingForStep(i, stepsBeforeAutoRating);
-                    if (wantAutoRating) {
-                        // final IEditorPart editor =
-                        // EvolUtil.getCurrentEditor();
-                        // Assert.isNotNull(editor);
-
-                        // Calculate auto-rating in the current editor for all
-                        // individuals.
-                        model.autoRate(Job.getJobManager().createProgressGroup());
-                        // EvolUtil.autoRateIndividuals(view.getPopulation(),
-                        // editor, null);
-                        System.out.println(model.getPopulation());
-                    }
-                    steps++;
                     Assert.isNotNull(model.getPopulation());
 
-                    final double after = model.getPopulation().getAverageRating().doubleValue();
-                    final double relDiff = (after - before) / after;
-                    System.out.println("Average rating now: " + after);
-                    final double relDiffPercent = (relDiff * 100);
-                    System.out.println("rel. Diff (%): " + relDiffPercent);
-                    if (relDiff < MIN_INCREASE) {
-                        steady++;
-                        System.out.println("Steady: " + steady);
-                    } else {
-                        if (steady > 0) {
-                            steady--;
-                        }
-                        System.out.println(relDiff);
+                    final boolean wantAutoRating = isAutoRatingStep(i, stepsBeforeAutoRating);
+
+                    if (wantAutoRating) {
+                        // Calculate auto-rating in the current editor for all
+                        // individuals.
+                        model.autoRateAll(null, new SubProgressMonitor(theMonitor, 100));
+
+                        System.out.println(model.getPopulation());
                     }
+
+
+                    // // Examine difference.
+                    // final double after =
+                    // model.getPopulation().getAverageRating().doubleValue();
+                    // final double relDiff = (after - before) / after;
+                    // System.out.println("Average rating before: " + before);
+                    // System.out.println("Average rating now: " + after);
+                    // final double relDiffPercent = (relDiff * 100);
+                    // System.out.println("rel. Diff (%): " + relDiffPercent);
+
+                    // // Do we have significant improvement?
+                    // if (relDiff < MIN_INCREASE) {
+                    // steady++;
+                    // System.out.println("Steady: " + steady);
+                    // } else {
+                    // if (steady > 0) {
+                    // steady--;
+                    // }
+                    // }
+
+                } // for int i
+
+                return new Status(IStatus.OK, EvolPlugin.PLUGIN_ID,
+                        "Evolve job completed successfully.");
+            }
+
+            /**
+             *
+             * @param i
+             * @param p
+             * @return {@code true} iff step i is an auto-rating step.
+             */
+            private boolean isAutoRatingStep(final int i, final int p) {
+                if (p == 1) {
+                    return true;
                 }
+                return (((i + 1) % p) == 0);
+            }
+        };
 
-            } while ((steady < STEADY_STEPS) && (steps < maxSteps));
+        final IProgressMonitor monitor = Job.getJobManager().createProgressGroup();
 
-            final Job refreshJob = new EvolutionViewRefreshJob("Refresh table viewer", view);
+        evolveJob.setProgressGroup(monitor, IProgressMonitor.UNKNOWN);
+        evolveJob.setPriority(Job.SHORT);
+        evolveJob.setUser(true);
 
+        do {
+            evolveJob.schedule();
+            steps++;
 
-            refreshJob.setUser(false);
-            refreshJob.setPriority(Job.DECORATE);
-            final int delay = 500;
-            refreshJob.schedule(delay);
+        } while ((steady < STEADY_STEPS) && (steps < maxSteps));
 
-        }
+        // refresh evolution view
+        final Job refreshJob = new EvolutionViewRefreshJob("Refresh table viewer", view);
+        refreshJob.setUser(false);
+        refreshJob.setPriority(Job.DECORATE);
+        final int delay = 500;
+        refreshJob.schedule(delay);
         return null;
-    }
-
-    private boolean wantAutoRatingForStep(final int i, final int p) {
-        if (p == 1) {
-            return true;
-        }
-        return (((i + 1) % p) == 0);
     }
 }
