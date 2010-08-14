@@ -55,7 +55,7 @@ public class BellmanFordPathFinder extends AbstractAlgorithm implements IShortes
         final int[] distance = new int[size];
         IEdge[] edges = new IEdge[size];
 
-        Arrays.fill(distance, -1);
+        Arrays.fill(distance, Integer.MAX_VALUE);
         distance[source.getID()] = 0;
 
         // Relax edges
@@ -68,7 +68,6 @@ public class BellmanFordPathFinder extends AbstractAlgorithm implements IShortes
                     distance[iNeighbor] = cost;
                     edges[iNeighbor] = edge;
                 }
-
             }
         }
 

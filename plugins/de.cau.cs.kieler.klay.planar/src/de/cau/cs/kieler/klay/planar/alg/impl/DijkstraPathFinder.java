@@ -57,7 +57,7 @@ public class DijkstraPathFinder extends AbstractAlgorithm implements IShortestPa
         final int[] distance = new int[size];
         IEdge[] edges = new IEdge[size];
 
-        Arrays.fill(distance, -1);
+        Arrays.fill(distance, Integer.MAX_VALUE);
         distance[source.getID()] = 0;
 
         // Initialize set of nodes
@@ -79,7 +79,7 @@ public class DijkstraPathFinder extends AbstractAlgorithm implements IShortestPa
             int iCurrent = current.getID();
 
             // Remaining nodes are unreachable
-            if (distance[iCurrent] == -1) {
+            if (distance[iCurrent] == Integer.MAX_VALUE) {
                 break;
             }
 
@@ -104,7 +104,7 @@ public class DijkstraPathFinder extends AbstractAlgorithm implements IShortestPa
                 int iNeighbor = neighbor.getID();
 
                 // Skip already visited nodes
-                if (distance[iNeighbor] == -1) {
+                if (!nodes.contains(neighbor)) {
                     continue;
                 }
 

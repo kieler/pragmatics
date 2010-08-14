@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.planar.alg.impl;
 
+import java.util.Arrays;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
@@ -56,7 +57,23 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
             }
         }
 
-        // TODO establish node potentials using bellman-ford
+        // Initialize node potentials using Bellman-Ford-Algorithm
+        int size = network.getNodeCount();
+        final int[] potential = new int[size];
+        Arrays.fill(potential, -1);
+        potential[source.getID()] = 0;
+
+        for (int i = 1; i < size; i++) {
+            for (IEdge edge : source.getParent().getEdges()) {
+                int iNeighbor = edge.getTarget().getID();
+                Integer cost = edge.getProperty(IPathFinder.PATHCOST);
+                cost += potential[edge.getSource().getID()];
+                if (cost < potential[iNeighbor]) {
+                    potential[iNeighbor] = cost;
+                }
+            }
+        }
+
         // TODO reduce cost
 
         // Initialize path finder and path condition
