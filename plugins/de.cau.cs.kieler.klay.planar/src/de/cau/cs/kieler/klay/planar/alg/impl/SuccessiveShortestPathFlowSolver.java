@@ -33,6 +33,7 @@ import de.cau.cs.kieler.klay.planar.graph.INode;
  */
 public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implements
         IMinimumCostFlowSolver {
+    // TODO residual network: directed/undirected, multiedges?
 
     /**
      * {@inheritDoc}
@@ -55,6 +56,9 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
             }
         }
 
+        // TODO establish node potentials using bellman-ford
+        // TODO reduce cost
+
         // Initialize path finder and path condition
         IShortestPathFinder pathFinder = new DijkstraPathFinder();
         ICondition<Pair<INode, IEdge>> cond = new ICondition<Pair<INode, IEdge>>() {
@@ -74,6 +78,8 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
 
         List<IEdge> path = pathFinder.findPath(source, sink, cond);
         while (path != null) {
+            // TODO reduce cost
+
             // Get minimal capacity along path
             int value = Integer.MAX_VALUE;
             for (IEdge edge : path) {

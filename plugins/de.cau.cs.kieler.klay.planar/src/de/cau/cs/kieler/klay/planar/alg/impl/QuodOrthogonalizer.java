@@ -73,7 +73,8 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
 
         // TODO create orthogonal representation based on flow
         // TODO force cages as rectangles
-        // TODO replace cages with nodes
+
+        this.removeCages();
         getMonitor().done();
     }
 
@@ -113,6 +114,13 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
                 this.graph.addEdge(current, first);
             }
         }
+    }
+
+    /**
+     * Replace the cages with the original node and reling edges.
+     */
+    private void removeCages() {
+        // TODO this whole section
     }
 
     /**
