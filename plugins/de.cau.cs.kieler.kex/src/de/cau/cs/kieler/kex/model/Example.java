@@ -25,6 +25,8 @@ public class Example {
 	 */
 	private Version version;
 
+	// TODO versuchen beim import ein ipath raus zu zaubern... nicht mit urls
+	// arbeiten
 	private List<URL> resources;
 
 	private String contact;
@@ -35,15 +37,15 @@ public class Example {
 
 	private List<String> categories;
 
-	private ImportType importType;
+	private ExportType importType;
 
 	public Example(String id, String name, Version version,
-			ImportType importType) {
+			ExportType importType) {
 		init(id, name, version, importType);
 	}
 
 	private void init(String id, String name, Version version,
-			ImportType importType) {
+			ExportType importType) {
 		this.id = id;
 		this.name = name;
 		this.version = version;
@@ -128,11 +130,11 @@ public class Example {
 		return headResource;
 	}
 
-	public void setImportType(ImportType importType) {
+	public void setImportType(ExportType importType) {
 		this.importType = importType;
 	}
 
-	public ImportType getImportType() {
+	public ExportType getImportType() {
 		return importType;
 	}
 

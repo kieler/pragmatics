@@ -83,7 +83,6 @@ public class ExampleImportUtil {
 			final boolean overwrite) throws IOException {
 		File f2 = new File(destPath);
 
-		// TODO Mechanismus nochmal genau anschauen und verstehen.
 		// TODO immer auf override setzen, muss über methode geregelt werden
 		// nicht über konstr. glaube ich.
 		// TODO mit export teilen siehe ExampleExportUtil

@@ -1,6 +1,6 @@
 package de.cau.cs.kieler.kex.model;
 
-public enum ImportType {
+public enum ExportType {
 
 	EXTENSIONPOINT, ONLINE;
 

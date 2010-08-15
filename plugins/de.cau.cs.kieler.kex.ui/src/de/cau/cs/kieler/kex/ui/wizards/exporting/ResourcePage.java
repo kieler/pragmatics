@@ -28,6 +28,8 @@ import org.eclipse.ui.internal.ide.dialogs.ResourceTreeAndListGroup;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
+import de.cau.cs.kieler.kex.model.ExportResource;
+
 @SuppressWarnings("restriction")
 public class ResourcePage extends WizardPage {
 
@@ -42,10 +44,13 @@ public class ResourcePage extends WizardPage {
 
 	private boolean insertHiddenFiles;
 
+	private final List<ExportResource> exportResources;
+
 	protected ResourcePage(String pageName) {
 		super(pageName);
 		this.setTitle("Example Resources");
 		this.setDescription("Choose resources to export");
+		this.exportResources = new ArrayList<ExportResource>();
 		exportedFolders = new ArrayList<IFolder>();
 		exportedProjects = new ArrayList<IProject>();
 	}
@@ -212,22 +217,23 @@ public class ResourcePage extends WizardPage {
 		return headFileLabel.getText();
 	}
 
-	public List<IPath> getExportedResources() {
-		List<IPath> result = new ArrayList<IPath>();
+	public void buildResourceStructure() {
 		List<IResource> duplicateChecker = new ArrayList<IResource>();
 		for (IProject iProject : getExportedProjects()) {
 			try {
 				for (IResource resource : iProject.members()) {
 					if (resource instanceof IFolder) {
-						IPath resourcePath = filterResourceName(resource);
 						addFolderWithElements((IContainer) resource,
-								(IContainer) resource, result, duplicateChecker);
+								(IContainer) resource, duplicateChecker);
 					}
 					if (resource instanceof IFile) {
 						if (!insertHiddenFiles
 								&& !resource.getName().startsWith(".")) {
 							if (!duplicateChecker.contains(resource)) {
-								result.add(makeRelativePath(iProject, resource));
+								IPath fileRootPath = makeRelativePath(iProject,
+										resource);
+								this.exportResources.add(new ExportResource(
+										resource, fileRootPath));
 								duplicateChecker.add(resource);
 							}
 						}
@@ -239,17 +245,22 @@ public class ResourcePage extends WizardPage {
 		}
 		for (IContainer folder : getExportedFolders()) {
 			if (!duplicateChecker.contains(folder)) {
-				addFolderWithElements(folder, folder, result, duplicateChecker);
+				addFolderWithElements(folder, folder, duplicateChecker);
 			}
 		}
 		for (IFile file : getExportedFiles()) {
 			if (!duplicateChecker.contains(file)) {
-				result.add(filterResourceName(file));
+
+				IPath fileRootPath = filterResourceName(file);
+				this.exportResources
+						.add(new ExportResource(file, fileRootPath));
 				duplicateChecker.add(file);
 			}
 		}
+	}
 
-		return result;
+	public List<ExportResource> getExportedResources() {
+		return this.exportResources;
 	}
 
 	/**
@@ -261,20 +272,22 @@ public class ResourcePage extends WizardPage {
 	 * 
 	 * @param resource
 	 * @param resourcePath
-	 * @param destination
 	 * @param duplicateChecker
 	 */
 	private void addFolderWithElements(IContainer resource, IContainer root,
-			List<IPath> destination, List<IResource> duplicateChecker) {
-		destination.add(makeRelativePath(root, resource));
+			List<IResource> duplicateChecker) {
+		IPath rootPath = makeRelativePath(root, resource);
+		this.exportResources.add(new ExportResource(resource, rootPath));
 		duplicateChecker.add(resource);
 		try {
 			for (IResource element : resource.members()) {
 				if (element instanceof IFolder) {
 					addFolderWithElements((IContainer) element, root,
-							destination, duplicateChecker);
+							duplicateChecker);
 				} else {
-					destination.add(makeRelativePath(root, element));
+					IPath fileRootPath = makeRelativePath(root, element);
+					this.exportResources.add(new ExportResource(element,
+							fileRootPath));
 					duplicateChecker.add(element);
 				}
 			}

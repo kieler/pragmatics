@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -16,6 +17,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.core.runtime.IPath;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -66,25 +68,28 @@ public class ExtPointExampleCreator {
 	 * 
 	 * @param location
 	 * @param parseElement
+	 * @param destResources
 	 * @throws KielerException
 	 */
-	public void addExtension(File location, Object parseElement)
-			throws KielerException {
+	public void addExtension(File location, Object parseElement,
+			List<IPath> destResources) throws KielerException {
 		try {
 			File pluginXML = IOHandler.filterFile(location, PLUGIN_XML);
 			parsedXML = parserPluginXML(pluginXML);
 			Node extensionKEX = filterExtensionKEX();
-			// TODO only for testing!
-			testMethod(extensionKEX.getChildNodes());
-			if (parseElement instanceof Example) {
-				extensionKEX.appendChild(toNode((Example) parseElement));
-			} else if (parseElement instanceof String) {
-				extensionKEX.appendChild(toNode((String) parseElement));
-			} else
-				throw new RuntimeException(
-						"PluginXMLHandler: wrong parameter for parseElement.");
-			// TODO only for testing!
-			testMethod(extensionKEX.getChildNodes());
+			if (extensionKEX != null) {
+				if (parseElement instanceof Example) {
+					extensionKEX.appendChild(toNode((Example) parseElement,
+							destResources));
+				} else if (parseElement instanceof String) {
+					extensionKEX.appendChild(toNode((String) parseElement));
+				} else
+					throw new RuntimeException(
+							"PluginXMLHandler: wrong parameter for parseElement.");
+				// TODO only for testing!
+			} else {
+				// create new extension KEX
+			}
 			writePluginXML(pluginXML.getAbsolutePath());
 			// TODO plugin.xml erweitern... mit geparstem file
 		} catch (ParserConfigurationException e) {
@@ -167,23 +172,6 @@ public class ExtPointExampleCreator {
 						+ e.getLocalizedMessage());
 	}
 
-	private void testMethod(NodeList childNodes) {
-		int length = childNodes.getLength();
-		for (int i = 0; i < length; i++) {
-			Node item = childNodes.item(i);
-			if (ExtPointConstants.EXAMPLE.equals(item.getNodeName())) {
-				NamedNodeMap attributes = item.getAttributes();
-				int attLength = attributes.getLength();
-				for (int j = 0; j < attLength; j++) {
-					Node attItem = attributes.item(j);
-					System.out.println(new StringBuffer()
-							.append(attItem.getNodeName()).append("; ")
-							.append(attItem.getNodeValue()).toString());
-				}
-			}
-		}
-	}
-
 	private Node toNode(String categoryId) {
 		Element createdElement = parsedXML
 				.createElement(ExtPointConstants.CATEGORY);
@@ -191,7 +179,7 @@ public class ExtPointExampleCreator {
 		return createdElement;
 	}
 
-	private Node toNode(Example example) {
+	private Node toNode(Example example, List<IPath> resources) {
 		// TODO check nullpointer, they shouldn�t set to plugin.xml
 		Element createdExample = parsedXML
 				.createElement(ExtPointConstants.EXAMPLE);
@@ -212,20 +200,17 @@ public class ExtPointExampleCreator {
 			createdExample.appendChild(toNode(category));
 		}
 
-		// TODO test ausbauen
-		createdExample.appendChild(toNode("de.cau.cs.kieler.test"));
-
-		for (URL exResource : example.getResources()) {
+		for (IPath exResource : resources) {
 			createdExample.appendChild(toNode(exResource));
 		}
 		return createdExample;
 	}
 
-	private Node toNode(URL exResource) {
+	private Node toNode(IPath exResource) {
 		Element createdExResource = parsedXML
 				.createElement(ExtPointConstants.EXAMPLE_RESOURCE);
 		createdExResource.setAttribute(ExtPointConstants.RESOURCE,
-				exResource.getPath());
+				exResource.toPortableString());
 		return createdExResource;
 	}
 

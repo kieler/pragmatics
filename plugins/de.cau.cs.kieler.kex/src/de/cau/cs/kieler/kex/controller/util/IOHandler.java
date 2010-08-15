@@ -15,6 +15,10 @@ public class IOHandler {
 	public static void writeFile(File sourceFile, File destFile)
 			throws IOException {
 		// TODO is directory geht nur auf absolute pfade.
+		if (!sourceFile.exists()) {
+			throw new IOException("Source file for does not exist for path: "
+					+ sourceFile.getPath());
+		}
 		if (sourceFile.isDirectory()) {
 			destFile.mkdir();
 		} else {

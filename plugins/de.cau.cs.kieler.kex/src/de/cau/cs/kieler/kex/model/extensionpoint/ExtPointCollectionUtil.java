@@ -15,7 +15,7 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.KielerModelException;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.ExtPointConstants;
-import de.cau.cs.kieler.kex.model.ImportType;
+import de.cau.cs.kieler.kex.model.ExportType;
 
 public class ExtPointCollectionUtil {
 
@@ -50,7 +50,7 @@ public class ExtPointCollectionUtil {
 		// ein freier string, min. default besser noch regex.
 		Example example = new Example(idAttribute, nameAttribute,
 				Version.parseVersion(versionAttribute),
-				ImportType.EXTENSIONPOINT);
+				ExportType.EXTENSIONPOINT);
 		example.setDescription(exampleElement
 				.getAttribute(ExtPointConstants.DESCRIPTION));
 		example.setContact(exampleElement

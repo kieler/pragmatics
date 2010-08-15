@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
 import de.cau.cs.kieler.kex.controller.ExampleManager;
-import de.cau.cs.kieler.kex.model.ImportType;
+import de.cau.cs.kieler.kex.model.ExportType;
 
 public class ExampleResourcePage extends WizardPage {
 
@@ -205,14 +205,14 @@ public class ExampleResourcePage extends WizardPage {
 	 *            the tree to fill
 	 */
 	private void fillTree(Tree tree) {
-		// Turn off drawing to avoid flicker
+		// disable drawing to avoid flicker
 		tree.setRedraw(false);
 		List<String> categories = ExampleManager.get().getCategories();
 		for (String category : categories) {
 			TreeItem item = new TreeItem(tree, SWT.NONE);
 			item.setText(category);
 		}
-		// Turn drawing back on!
+		// enable drawing
 		tree.setRedraw(true);
 	}
 
@@ -232,9 +232,9 @@ public class ExampleResourcePage extends WizardPage {
 		return this.resources;
 	}
 
-	public ImportType getImportType() {
+	public ExportType getExportType() {
 		// TODO muss der user entscheiden wohin das gehen soll, auﬂerdem muss
 		// der name der enumeration ge‰ndert werden
-		return ImportType.EXTENSIONPOINT;
+		return ExportType.EXTENSIONPOINT;
 	}
 }
