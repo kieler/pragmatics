@@ -14,8 +14,8 @@ import org.osgi.framework.Version;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.KielerModelException;
 import de.cau.cs.kieler.kex.model.Example;
-import de.cau.cs.kieler.kex.model.ExtPointConstants;
 import de.cau.cs.kieler.kex.model.ExportType;
+import de.cau.cs.kieler.kex.model.ExtPointConstants;
 
 public class ExtPointCollectionUtil {
 
@@ -57,8 +57,7 @@ public class ExtPointCollectionUtil {
 				.getAttribute(ExtPointConstants.CONTACT));
 		String exNamespaceId = exampleElement.getNamespaceIdentifier();
 		example.setNamespaceId(exNamespaceId);
-		List<String> categories = filterCategories(exampleElement,
-				exNamespaceId);
+		List<String> categories = filterExampleCategories(exampleElement);
 		example.addCategories(categories);
 		example.setHeadResource(filterHeadResource(exampleElement,
 				exNamespaceId));
@@ -80,19 +79,12 @@ public class ExtPointCollectionUtil {
 		return null;
 	}
 
-	private static List<String> filterCategories(
-			IConfigurationElement exampleElement, String exNamespaceId) {
+	private static List<String> filterExampleCategories(
+			IConfigurationElement exampleElement) {
 		List<String> result = new ArrayList<String>();
-
-		// check
 		for (IConfigurationElement configurationElement : exampleElement
-				.getChildren())
-			System.out.println(configurationElement.getName());
-		for (IConfigurationElement configElement : exampleElement
 				.getChildren(ExtPointConstants.CATEGORY)) {
-			System.out.println(configElement.getName()
-					+ configElement.getValue());
-			result.add(configElement.getAttribute(ExtPointConstants.ID));
+			result.add(configurationElement.getAttribute(ExtPointConstants.ID));
 		}
 		return result;
 	}

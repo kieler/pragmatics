@@ -89,7 +89,7 @@ public class ExportExampleWizard extends Wizard implements IWizard {
 		validateField(exampleName, 4, "Example Name");
 		map.put(ExampleElement.NAME, exampleName);
 
-		String exampleDescription = examplePage.getDescription();
+		String exampleDescription = examplePage.getExampleDescription();
 		validateField(exampleDescription, 10, "Example Description");
 		map.put(ExampleElement.DESCRIPTION, exampleDescription);
 

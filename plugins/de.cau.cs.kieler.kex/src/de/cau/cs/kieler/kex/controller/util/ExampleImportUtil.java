@@ -19,6 +19,9 @@ import de.cau.cs.kieler.kex.model.Example;
 
 public class ExampleImportUtil {
 
+	private final static String workspaceLocation = Platform.getLocation()
+			.toString();
+
 	public static void importExamples(IPath selectedResource,
 			List<Example> selectedExamples) throws KielerException {
 		for (Example example : selectedExamples) {
@@ -30,10 +33,8 @@ public class ExampleImportUtil {
 			// bzw. den identifierer... als datei oder in project properties
 			// oder im namen
 			// src/Hankees.txt
-			String localWorkspaceLocation = Platform.getLocation().toString();
-			String destFolder = localWorkspaceLocation
-					+ selectedResource.toString() + "/" + example.getName()
-					+ "/";
+			String destFolder = workspaceLocation + selectedResource.toString()
+					+ "/" + example.getName() + "/";
 			createFolder(destFolder);
 
 			Bundle bundle = Platform.getBundle(example.getNamespaceId());
@@ -48,7 +49,6 @@ public class ExampleImportUtil {
 					// properly you can set this to bundle.findEntries()...
 					// adding subs
 
-					// TODO hier ansetzen
 					if (dict != null) {
 						createFolder(destFolder);
 					} else {

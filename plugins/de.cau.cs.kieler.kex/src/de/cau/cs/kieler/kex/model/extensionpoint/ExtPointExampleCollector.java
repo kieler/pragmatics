@@ -42,9 +42,6 @@ public class ExtPointExampleCollector extends ExampleCollector {
 		IConfigurationElement[] configElements = Platform
 				.getExtensionRegistry().getConfigurationElementsFor(KEX_EXT_ID);
 		for (IConfigurationElement element : configElements) {
-			System.err.println(element.getName());
-		}
-		for (IConfigurationElement element : configElements) {
 			try {
 				String elementName = element.getName();
 				if (ExtPointConstants.EXAMPLE.equals(elementName)) {
@@ -59,9 +56,8 @@ public class ExtPointExampleCollector extends ExampleCollector {
 					}
 					Example example = ExtPointCollectionUtil.toExample(element);
 					this.examplePool.put(exampleId, example);
-				}
-				if (ExtPointConstants.CATEGORY.equals(elementName)) {
-					collectCategories(element);
+				} else if (ExtPointConstants.CATEGORY.equals(elementName)) {
+					collectCategory(element);
 				}
 			} catch (Exception e) {
 				// mh, hier kann nciht einfach jeden exception gefangen
@@ -78,7 +74,7 @@ public class ExtPointExampleCollector extends ExampleCollector {
 		}
 	}
 
-	public void collectCategories(IConfigurationElement categoryElement) {
+	public void collectCategory(IConfigurationElement categoryElement) {
 		String categoryId = categoryElement.getAttribute(ExtPointConstants.ID);
 		if (categoryId == null || categoryId.length() < 4) {
 			// TODO StatusManager als globalen Exceptionhandler
@@ -110,7 +106,7 @@ public class ExtPointExampleCollector extends ExampleCollector {
 				.getExtensionRegistry().getConfigurationElementsFor(KEX_EXT_ID);
 		for (IConfigurationElement element : configElements) {
 			if (ExtPointConstants.CATEGORY.equals(element.getName())) {
-				collectCategories(element);
+				collectCategory(element);
 			}
 		}
 	}
