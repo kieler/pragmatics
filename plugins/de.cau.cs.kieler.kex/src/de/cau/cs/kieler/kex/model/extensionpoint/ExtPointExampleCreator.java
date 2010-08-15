@@ -74,22 +74,29 @@ public class ExtPointExampleCreator {
 	public void addExtension(File location, Object parseElement,
 			List<IPath> destResources) throws KielerException {
 		try {
+			// FIXME filterFile so umbauen, dass in höheren instancen nach
+			// ".project" gesucht wird, dann annehmen, dass java project
+			// gefunden. dann nach manifest.mf suchen -> annehmen pluginproject;
+			// dann plugin.xml suchen
+			// wenn vorhanden, dann erweitern ansonsten neue plugin.xml
+			// hinzufügen.
+
 			File pluginXML = IOHandler.filterFile(location, PLUGIN_XML);
 			parsedXML = parserPluginXML(pluginXML);
 			Node extensionKEX = filterExtensionKEX();
-			if (extensionKEX != null) {
-				if (parseElement instanceof Example) {
-					extensionKEX.appendChild(toNode((Example) parseElement,
-							destResources));
-				} else if (parseElement instanceof String) {
-					extensionKEX.appendChild(toNode((String) parseElement));
-				} else
-					throw new RuntimeException(
-							"PluginXMLHandler: wrong parameter for parseElement.");
-				// TODO only for testing!
-			} else {
-				// create new extension KEX
+			if (extensionKEX == null) {
+				extensionKEX = parsedXML
+						.createElement(ExtPointConstants.EXT_POINT);
 			}
+			if (parseElement instanceof Example) {
+				extensionKEX.appendChild(toNode((Example) parseElement,
+						destResources));
+			} else if (parseElement instanceof String) {
+				extensionKEX.appendChild(toNode((String) parseElement));
+			} else
+				throw new RuntimeException(
+						"PluginXMLHandler: wrong parameter for parseElement.");
+
 			writePluginXML(pluginXML.getAbsolutePath());
 			// TODO plugin.xml erweitern... mit geparstem file
 		} catch (ParserConfigurationException e) {

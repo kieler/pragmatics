@@ -39,7 +39,9 @@ public class IOHandler {
 	}
 
 	/**
-	 * searches for a file namend
+	 * Searches for a file namend searchObject.<br>
+	 * If more than one found, a KielerException will throw,<br>
+	 * if less than one found, null will returned.
 	 * 
 	 * @param location
 	 * @return
@@ -47,7 +49,6 @@ public class IOHandler {
 	 */
 	public static File filterFile(final File location, final String searchObject)
 			throws KielerException {
-		// TODO check if File parent = new File(location.getPath) besser ist...
 		File parent = location;
 		File[] listFiles = null;
 		while (parent != null && parent.exists() && parent.isDirectory()) {
@@ -64,8 +65,7 @@ public class IOHandler {
 			parent = parent.getParentFile();
 		}
 		if (listFiles.length == 0)
-			throw new KielerException(
-					"The given destination location is not an plugin project and not a containing folder.");
+			return null;
 		if (listFiles.length > 1)
 			throw new KielerException(new StringBuffer()
 					.append("There are more than one " + searchObject

@@ -14,9 +14,6 @@ import de.cau.cs.kieler.kex.model.ExtPointConstants;
 
 public class ExtPointExampleCollector extends ExampleCollector {
 
-	// ID of KEX extension-points
-	private static final String KEX_EXT_ID = "de.cau.cs.kieler.kex";
-
 	// leichter HashMap, da wir eine Pruefung auf enthalten sein machen.
 	// und wir dann bei einer liste komplett ueber alle elemente iterieren
 	// muessten
@@ -40,7 +37,8 @@ public class ExtPointExampleCollector extends ExampleCollector {
 			this.categoryPool = new ArrayList<String>();
 		}
 		IConfigurationElement[] configElements = Platform
-				.getExtensionRegistry().getConfigurationElementsFor(KEX_EXT_ID);
+				.getExtensionRegistry().getConfigurationElementsFor(
+						ExtPointConstants.EXT_POINT);
 		for (IConfigurationElement element : configElements) {
 			try {
 				String elementName = element.getName();
@@ -103,7 +101,8 @@ public class ExtPointExampleCollector extends ExampleCollector {
 
 	private void loadCategories() {
 		IConfigurationElement[] configElements = Platform
-				.getExtensionRegistry().getConfigurationElementsFor(KEX_EXT_ID);
+				.getExtensionRegistry().getConfigurationElementsFor(
+						ExtPointConstants.EXT_POINT);
 		for (IConfigurationElement element : configElements) {
 			if (ExtPointConstants.CATEGORY.equals(element.getName())) {
 				collectCategory(element);
