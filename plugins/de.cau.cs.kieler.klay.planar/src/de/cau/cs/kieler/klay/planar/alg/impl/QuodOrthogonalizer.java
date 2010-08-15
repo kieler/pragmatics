@@ -14,7 +14,9 @@
 package de.cau.cs.kieler.klay.planar.alg.impl;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.Property;
@@ -48,50 +50,44 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
     /** The maximal node degree in an orthogonal layout. */
     private static final int MAXDEGREE = 4;
 
-    // ======================== Attributes =========================================================
-
-    /** The graph the algorithm works on. */
-    private IGraph graph;
-
-    // ======================== Algorithm ==========================================================
+    // ======================== Helper Classes =====================================================
 
     /**
-     * {@inheritDoc}
+     * A cage in the working graph. Since the underlying flow network can only solve
+     * orthogonalization problems with a maximum node degree of 4, evey node with a higher degree is
+     * replaced by a cage. A cage consists of a face replacing the original node, surrounded by a
+     * ring with a node for every edge the original node was adjacent to. This cage class is used to
+     * keep track of a cage in the graph for a clean transformation.
      */
-    public void orthogonalize(final IGraph g) {
-        getMonitor().begin("Orthogonalization", 1);
+    private class Cage {
 
-        // Initialization
-        this.graph = g;
-        this.graph.reindex();
-        this.addCages();
+        // -------------------- Attributes ---------------------------------------------------------
 
-        // Solve flow network to get minimum flows
-        IGraph network = this.createFlowNetwork();
-        IMinimumCostFlowSolver solver = new SuccessiveShortestPathFlowSolver();
-        solver.findFlow(network);
+        /** The graph the cage is a part of. */
+        private IGraph graph;
 
-        // TODO create orthogonal representation based on flow
-        // TODO force cages as rectangles
+        /** The original node replaced by the cage. */
+        private INode node;
 
-        this.removeCages();
-        getMonitor().done();
-    }
+        /** A mapping from the ring nodes to the corresponding edges. */
+        private LinkedHashMap<INode, IEdge> map;
 
-    /**
-     * Replace every node with more than 4 adjacent edges with a ring of nodes. The ring contains a
-     * node for every edge adjacent to the original node.
-     */
-    private void addCages() {
-        for (INode node : this.graph.getNodes()) {
-            // Check for node degree
-            if (node.getAdjacentEdgeCount() > MAXDEGREE) {
-                continue;
-            }
+        // -------------------- Constructor --------------------------------------------------------
+
+        /**
+         * Replace a node in the graph by a cage.
+         * 
+         * @param n
+         *            the node to replace
+         */
+        public Cage(final INode n) {
+            this.node = n;
+            this.graph = this.node.getParent();
+            this.map = new LinkedHashMap<INode, IEdge>(this.node.getAdjacentEdgeCount() * 2);
 
             // Create temporary list to not break the iterator
             LinkedList<IEdge> edges = new LinkedList<IEdge>();
-            for (IEdge edge : node.adjacentEdges()) {
+            for (IEdge edge : this.node.adjacentEdges()) {
                 edges.add(edge);
             }
 
@@ -102,25 +98,73 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
             for (IEdge edge : edges) {
                 previous = current;
                 current = this.graph.addNode();
+                this.map.put(current, edge);
                 if (first == null) {
                     first = current;
                 }
                 if (previous != null) {
                     this.graph.addEdge(previous, current);
                 }
-                edge.move(node.getAdjacentNode(edge), current);
+                edge.move(this.node.getAdjacentNode(edge), current);
             }
             if (first != null) {
                 this.graph.addEdge(current, first);
             }
         }
+
+        /**
+         * Remove the cage from the graph.
+         */
+        public void remove() {
+            // Since we use a linked hash map, the edges are added in the original order
+            for (Map.Entry<INode, IEdge> entry : this.map.entrySet()) {
+                INode node = entry.getKey();
+                IEdge edge = entry.getValue();
+                edge.move(node, this.node);
+                this.graph.removeNode(node);
+            }
+        }
     }
 
+    // ======================== Attributes =========================================================
+
+    /** The graph the algorithm works on. */
+    private IGraph graph;
+
+    // ======================== Algorithm ==========================================================
+    // TODO does leaving the cage nodes in the graph influence the flow network?
+
     /**
-     * Replace the cages with the original node and reling edges.
+     * {@inheritDoc}
      */
-    private void removeCages() {
-        // TODO this whole section
+    public void orthogonalize(final IGraph g) {
+        getMonitor().begin("Orthogonalization", 1);
+
+        // Initialization
+        this.graph = g;
+        this.graph.reindex();
+
+        // Replace high-degree nodes with cages
+        LinkedList<Cage> cages = new LinkedList<Cage>();
+        for (INode node : this.graph.getNodes()) {
+            if (node.getAdjacentEdgeCount() > MAXDEGREE) {
+                cages.add(new Cage(node));
+            }
+        }
+
+        // Solve flow network to get minimum flows
+        IGraph network = this.createFlowNetwork();
+        IMinimumCostFlowSolver solver = new SuccessiveShortestPathFlowSolver();
+        solver.findFlow(network);
+
+        // TODO create orthogonal representation based on flow
+        // TODO force cages as rectangles
+
+        // Remove the cages from the graph
+        for (Cage cage : cages) {
+            cage.remove();
+        }
+        getMonitor().done();
     }
 
     /**

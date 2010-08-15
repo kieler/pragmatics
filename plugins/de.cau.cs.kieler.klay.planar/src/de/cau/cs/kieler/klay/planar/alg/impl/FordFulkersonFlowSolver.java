@@ -55,14 +55,14 @@ public class FordFulkersonFlowSolver extends AbstractAlgorithm implements IMaxim
             public boolean evaluate(final Pair<INode, IEdge> object) {
                 INode node = object.getFirst();
                 IEdge edge = object.getSecond();
-                int cap = edge.getProperty(CAPACITY);
+                int cap = 0;
                 if (edge.isDirected() && (node == edge.getSource())) {
-                    return cap > 0;
+                    cap = edge.getProperty(CAPACITY) - edge.getProperty(FLOW);
                 } else if (edge.isDirected() && (node == edge.getTarget())) {
-                    return cap < 0;
-                } else {
-                    return false;
+                    cap = edge.getProperty(FLOW);
                 }
+                edge.setProperty(RESIDUALCAPACITY, cap);
+                return cap > 0;
             }
         };
 
@@ -71,7 +71,7 @@ public class FordFulkersonFlowSolver extends AbstractAlgorithm implements IMaxim
             // Get minimal capacity along path
             int value = Integer.MAX_VALUE;
             for (IEdge edge : path) {
-                int cap = edge.getProperty(CAPACITY);
+                int cap = edge.getProperty(RESIDUALCAPACITY);
                 if (cap < value) {
                     value = cap;
                 }
@@ -83,6 +83,7 @@ public class FordFulkersonFlowSolver extends AbstractAlgorithm implements IMaxim
                 edge.setProperty(FLOW, flow + value);
             }
 
+            pathFinder.reset();
             path = pathFinder.findPath(source, sink, cond);
         }
 

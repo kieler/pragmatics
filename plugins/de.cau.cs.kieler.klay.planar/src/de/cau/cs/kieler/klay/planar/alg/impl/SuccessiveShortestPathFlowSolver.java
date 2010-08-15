@@ -34,7 +34,8 @@ import de.cau.cs.kieler.klay.planar.graph.INode;
  */
 public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implements
         IMinimumCostFlowSolver {
-    // TODO residual network: directed/undirected, multiedges?
+    // TODO Handle multi edges in network
+    // TODO different path costs for forward and backward edges in residual network
 
     /**
      * {@inheritDoc}
@@ -57,13 +58,13 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
             }
         }
 
-        // Initialize node potentials using Bellman-Ford-Algorithm
-        int size = network.getNodeCount();
-        final int[] potential = new int[size];
+        // Initialize arrays for potentials and residual capacity
+        final int[] potential = new int[network.getNodeCount()];
         Arrays.fill(potential, -1);
         potential[source.getID()] = 0;
 
-        for (int i = 1; i < size; i++) {
+        // Initialize node potentials using Bellman-Ford-Algorithm
+        for (int i = 1; i < network.getNodeCount(); i++) {
             for (IEdge edge : source.getParent().getEdges()) {
                 int iNeighbor = edge.getTarget().getID();
                 Integer cost = edge.getProperty(IPathFinder.PATHCOST);
@@ -74,33 +75,47 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
             }
         }
 
-        // TODO reduce cost
+        // Initialize path costs based on potentials
+        for (IEdge edge : network.getEdges()) {
+            int cost = edge.getProperty(IPathFinder.PATHCOST);
+            cost += potential[edge.getSource().getID()];
+            cost -= potential[edge.getTarget().getID()];
+            edge.setProperty(IPathFinder.PATHCOST, cost);
+        }
 
-        // Initialize path finder and path condition
+        // Initialize path finder
+        // Condition describes residual network
         IShortestPathFinder pathFinder = new DijkstraPathFinder();
         ICondition<Pair<INode, IEdge>> cond = new ICondition<Pair<INode, IEdge>>() {
             public boolean evaluate(final Pair<INode, IEdge> object) {
                 INode node = object.getFirst();
                 IEdge edge = object.getSecond();
-                int cap = edge.getProperty(CAPACITY);
+                int cap = 0;
                 if (edge.isDirected() && (node == edge.getSource())) {
-                    return cap > 0;
+                    cap = edge.getProperty(CAPACITY) - edge.getProperty(FLOW);
                 } else if (edge.isDirected() && (node == edge.getTarget())) {
-                    return cap < 0;
-                } else {
-                    return false;
+                    cap = edge.getProperty(FLOW);
                 }
+                edge.setProperty(RESIDUALCAPACITY, cap);
+                return cap > 0;
             }
         };
 
         List<IEdge> path = pathFinder.findPath(source, sink, cond);
         while (path != null) {
-            // TODO reduce cost
+
+            // Update path costs based on potentials
+            for (IEdge edge : network.getEdges()) {
+                int cost = edge.getProperty(IPathFinder.PATHCOST);
+                cost += potential[edge.getSource().getID()];
+                cost -= potential[edge.getTarget().getID()];
+                edge.setProperty(IPathFinder.PATHCOST, cost);
+            }
 
             // Get minimal capacity along path
             int value = Integer.MAX_VALUE;
             for (IEdge edge : path) {
-                int cap = edge.getProperty(CAPACITY);
+                int cap = edge.getProperty(RESIDUALCAPACITY);
                 if (cap < value) {
                     value = cap;
                 }
@@ -112,6 +127,7 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
                 edge.setProperty(FLOW, flow + value);
             }
 
+            pathFinder.reset();
             path = pathFinder.findPath(source, sink, cond);
         }
 
@@ -119,5 +135,4 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
         network.removeNode(source);
         network.removeNode(sink);
     }
-
 }

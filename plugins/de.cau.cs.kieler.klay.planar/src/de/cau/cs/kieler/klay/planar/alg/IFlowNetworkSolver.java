@@ -41,6 +41,14 @@ public interface IFlowNetworkSolver extends IAlgorithm {
             "de.cau.cs.kieler.klay.planar.properties.networkcapacity", 0);
 
     /**
+     * A property assigning a capacity to an edge in the residual network. The capacity in the
+     * residual network is the initial capacity minus the flow in edge direction, or the flow
+     * against edge direction.
+     */
+    Property<Integer> RESIDUALCAPACITY = new Property<Integer>(
+            "de.cau.cs.kieler.klay.planar.properties.networkresidualcapacity", 0);
+
+    /**
      * A property assigning a flow to an edge. This property is usually set during the network
      * solving algorithm.
      */
