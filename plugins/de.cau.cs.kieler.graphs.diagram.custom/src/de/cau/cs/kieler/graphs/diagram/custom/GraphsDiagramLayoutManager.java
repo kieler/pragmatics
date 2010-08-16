@@ -31,11 +31,14 @@ import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.graphs.Node;
+import de.cau.cs.kieler.graphs.Port;
 import de.cau.cs.kieler.kiml.gmf.GmfDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.gmf.GmfLayoutInspector;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
@@ -104,6 +107,14 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
         }
     }
     
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void transferLayout(final boolean cacheLayout) {
+        super.transferLayout(cacheLayout);
+    }
+    
     private KNode buildLayoutGraphRecursively(final KNode graphNode,
             final IGraphicalEditPart editPart) {
         Map<?, ?> editPartRegistry = editPart.getViewer().getEditPartRegistry();
@@ -127,6 +138,9 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
         getGraphElem2EditPartMap().put(layoutNode, editPart);
         graphMap.put(graphNode, layoutNode);
         
+        // set label text
+        layoutNode.getLabel().setText(((Node) graphNode).getNodeLabel());
+        
         // process ports
         for (KPort port : graphNode.getPorts()) {
             Object obj = editPartRegistry.get(graphElem2ViewMap.get(port));
@@ -144,6 +158,9 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
                 portLayout.setYpos(portBounds.y - nodeBounds.y);
                 portLayout.setWidth(portBounds.width);
                 portLayout.setHeight(portBounds.height);
+                
+                // set label text
+                layoutPort.getLabel().setText(((Port) port).getPortLabel());
                 
                 // set user defined layout options for the port
                 GmfLayoutInspector.setLayoutOptions(portEP, portLayout, true);
@@ -179,6 +196,9 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
             } else {
                 LayoutOptions.setEnum(nodeLayout, PortConstraints.FREE);
             }
+        }
+        if (((Node) graphNode).isIsHypernode()) {
+            LayoutOptions.setBoolean(nodeLayout, LayoutOptions.HYPERNODE, true);
         }
         GmfLayoutInspector.setLayoutOptions(editPart, nodeLayout, true);
         return layoutNode;
@@ -222,6 +242,10 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
                 // store the current coordinates of the edge
                 KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(layoutEdge);
                 setEdgeLayout(edgeLayout, connection, offsetx, offsety);
+                
+                // set edge labels
+                processLabels(connection, layoutEdge, EdgeLabelPlacement.UNDEFINED,
+                        offsetx, offsety);
     
                 // set user defined layout options for the edge
                 GmfLayoutInspector.setLayoutOptions(connection, edgeLayout, true);

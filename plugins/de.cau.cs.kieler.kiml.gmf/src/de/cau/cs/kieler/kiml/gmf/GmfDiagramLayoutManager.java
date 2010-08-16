@@ -735,7 +735,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      * @param offsetx the offset for horizontal coordinates
      * @param offsety the offset for vertical coordinates
      */
-    private void processLabels(final ConnectionEditPart connection, final KEdge edge,
+    protected void processLabels(final ConnectionEditPart connection, final KEdge edge,
             final EdgeLabelPlacement placement, final float offsetx, final float offsety) {
         /* ars: source and target is exchanged when defining it in the
          * gmfgen file. So if Emma sets a label to be placed as target on a
