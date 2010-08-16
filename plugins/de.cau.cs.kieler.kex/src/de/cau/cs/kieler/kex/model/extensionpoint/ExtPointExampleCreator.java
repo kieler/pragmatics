@@ -9,6 +9,9 @@ import java.util.List;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -41,7 +44,6 @@ import de.cau.cs.kieler.kex.model.ExtPointConstants;
 public class ExtPointExampleCreator {
 
 	private Document parsedXML = null;
-	private static final String PLUGIN_XML = "plugin.xml";
 
 	/**
 	 * parses the given file.
@@ -74,31 +76,32 @@ public class ExtPointExampleCreator {
 	public void addExtension(File location, Object parseElement,
 			List<IPath> destResources) throws KielerException {
 		try {
-			// FIXME filterFile so umbauen, dass in höheren instancen nach
-			// ".project" gesucht wird, dann annehmen, dass java project
-			// gefunden. dann nach manifest.mf suchen -> annehmen pluginproject;
-			// dann plugin.xml suchen
-			// wenn vorhanden, dann erweitern ansonsten neue plugin.xml
-			// hinzufügen.
-
-			File pluginXML = IOHandler.filterFile(location, PLUGIN_XML);
+			File pluginXML = null;
+			File filteredFile = IOHandler.filterPluginXML(location);
+			if (!IOHandler.PLUGIN_XML.equals(filteredFile.getName())) {
+				pluginXML = createPluginXML(filteredFile);
+			} else {
+				pluginXML = filteredFile;
+			}
 			parsedXML = parserPluginXML(pluginXML);
 			Node extensionKEX = filterExtensionKEX();
 			if (extensionKEX == null) {
 				extensionKEX = parsedXML
 						.createElement(ExtPointConstants.EXT_POINT);
+				// TODO test createElement, kann sein, dass noch an root knoten
+				// angeschlossen werden muss. getestet GEHT NICHT, muss nochmal
+				// ueberschaut werden.
 			}
 			if (parseElement instanceof Example) {
 				extensionKEX.appendChild(toNode((Example) parseElement,
 						destResources));
 			} else if (parseElement instanceof String) {
 				extensionKEX.appendChild(toNode((String) parseElement));
-			} else
+			} else {
 				throw new RuntimeException(
 						"PluginXMLHandler: wrong parameter for parseElement.");
-
+			}
 			writePluginXML(pluginXML.getAbsolutePath());
-			// TODO plugin.xml erweitern... mit geparstem file
 		} catch (ParserConfigurationException e) {
 			// TODO KexConstants einfuehren, d.h. eigene Klasse und diese
 			// meldungen hier drin sammeln. (siehe visor constants)
@@ -114,6 +117,35 @@ public class ExtPointExampleCreator {
 					+ e.getLocalizedMessage();
 			throw new KielerException(msg, e);
 		}
+	}
+
+	// TODO eclipse version mit reinkriegen momentan steht da standalone no!
+	@SuppressWarnings("restriction")
+	private File createPluginXML(File parent) {
+		String path = parent.getAbsolutePath() + File.separatorChar
+				+ IOHandler.PLUGIN_XML;
+		XMLOutputFactory factory = XMLOutputFactory.newInstance();
+		XMLStreamWriter writer;
+		try {
+			writer = factory.createXMLStreamWriter(new FileOutputStream(path));
+			writer.writeStartDocument();
+			writer.writeStartElement(PluginXmlConstants.PLUGIN);
+			writer.writeStartElement(PluginXmlConstants.EXTENSION);
+			writer.writeAttribute(PluginXmlConstants.POINT,
+					ExtPointConstants.EXT_POINT);
+			writer.writeEndElement();
+			writer.writeEndElement();
+			writer.writeEndDocument();
+			writer.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return new File(path);
+
 	}
 
 	private Node filterExtensionKEX() {
