@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.navigator.navigatorContent">
+      <commonWizard
+            menuGroupId="de.cau.cs.kieler"
+            type="new"
+            wizardId="de.cau.cs.kieler.graphs.diagram.part.GraphsCreationWizardID">
+         <enablement>
+            <or>
+               <adapt
+                     type="org.eclipse.core.resources.IProject">
+               </adapt>
+               <adapt
+                     type="org.eclipse.core.resources.IFolder">
+               </adapt>
+            </or>
+         </enablement>
+      </commonWizard>
+      <commonWizard
+            menuGroupId="de.cau.cs.kieler"
+            type="new"
+            wizardId="de.cau.cs.kieler.graphs.wizards.randomGraph">
+         <enablement>
+            <or>
+               <adapt
+                     type="org.eclipse.core.resources.IProject">
+               </adapt>
+               <adapt
+                     type="org.eclipse.core.resources.IFolder">
+               </adapt>
+            </or>
+         </enablement>
+      </commonWizard>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.kiml.ui.layoutManagers">
+      <manager
+            class="de.cau.cs.kieler.graphs.diagram.custom.GraphsDiagramLayoutManager"
+            priority="1">
+      </manager>
+   </extension>
+
+</plugin>

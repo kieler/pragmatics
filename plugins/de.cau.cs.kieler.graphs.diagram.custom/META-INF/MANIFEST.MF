@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Custom Code for KIELER Graphs Editor
+Bundle-SymbolicName: de.cau.cs.kieler.graphs.diagram.custom;singleton:=true
+Bundle-Version: 0.1.0.qualifier
+Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Require-Bundle: org.eclipse.ui.navigator;bundle-version="3.5.0",
+ de.cau.cs.kieler.kiml.ui,
+ de.cau.cs.kieler.kiml.gmf
