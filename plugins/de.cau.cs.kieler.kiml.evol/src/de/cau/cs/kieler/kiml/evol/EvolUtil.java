@@ -945,14 +945,14 @@ public final class EvolUtil {
         }
 
         // First phase: build the layout graph.
-        final KNode layoutGraph = manager.buildLayoutGraph(editor, null, true);
+        final KNode layoutGraph = manager.buildLayoutGraph(editor, null, false);
 
         // Second phase: execute layout algorithms.
         // We need a new monitor each time because the old one
         // gets closed.
         final IKielerProgressMonitor monitor =
                 new BasicProgressMonitor(DiagramLayoutManager.MAX_PROGRESS_LEVELS);
-        final IStatus status = manager.layout(monitor, true, false);
+        final IStatus status = manager.layout(monitor, false);
 
         if (!status.isOK()) {
             // TODO: what to do about the layouting failure? Log it? Abort?

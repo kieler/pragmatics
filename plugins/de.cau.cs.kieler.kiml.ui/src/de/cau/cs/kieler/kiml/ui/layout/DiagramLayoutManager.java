@@ -105,14 +105,14 @@ public abstract class DiagramLayoutManager {
                 @Override
                 protected IStatus execute(final IProgressMonitor monitor) {
                     return layout(new KielerProgressMonitor(monitor,
-                            MAX_PROGRESS_LEVELS), layoutAncestors, cacheLayout);
+                            MAX_PROGRESS_LEVELS), layoutAncestors);
                 }
 
                 // third phase: apply layout with animation
                 @Override
                 protected void postUIexec(final IStatus status) {
                     int nodeCount = status == null ? 0 : status.getCode();
-                    applyAnimatedLayout(animate, nodeCount);
+                    applyAnimatedLayout(animate, cacheLayout, nodeCount);
                 }
             };
             monitoredOperation.runMonitored();
@@ -126,13 +126,12 @@ public abstract class DiagramLayoutManager {
                 }
             }, true);
             // second phase: execute layout algorithms
-            final IStatus status = layout(new BasicProgressMonitor(0),
-                    layoutAncestors, cacheLayout);
+            final IStatus status = layout(new BasicProgressMonitor(0), layoutAncestors);
             MonitoredOperation.runInUI(new Runnable() {
                 // third phase: apply layout with animation
                 public void run() {
                     int nodeCount = status == null ? 0 : status.getCode();
-                    applyAnimatedLayout(animate, nodeCount);
+                    applyAnimatedLayout(animate, cacheLayout, nodeCount);
                 }
             }, false);
         }
@@ -143,10 +142,15 @@ public abstract class DiagramLayoutManager {
      * 
      * @param animate
      *            if true, activate Draw2D animation
+     * @param cacheLayout
+     *            if true, the layout result is cached for the underlying model
      * @param nodeCount
      *            the number of nodes in the layouted diagram
      */
-    private void applyAnimatedLayout(final boolean animate, final int nodeCount) {
+    private void applyAnimatedLayout(final boolean animate, final boolean cacheLayout,
+            final int nodeCount) {
+        // transfer layout to the diagram
+        transferLayout(cacheLayout);
         if (animate) {
             // apply the layout with animation
             Animation.markBegin();
@@ -170,13 +174,11 @@ public abstract class DiagramLayoutManager {
      * @param layoutAncestors
      *            if true, layout is not only performed for the selected edit
      *            part, but also for its ancestors
-     * @param cacheLayout
-     *            if true, the layout result is cached for the underlying model
      * @return a status indicating success or failure; if successful, the status
      *         contains the number of layouted nodes as code value
      */
     public IStatus layout(final IKielerProgressMonitor progressMonitor,
-            final boolean layoutAncestors, final boolean cacheLayout) {
+            final boolean layoutAncestors) {
         try {
             LayoutServices layoutServices = LayoutServices.getInstance();
 
@@ -192,9 +194,6 @@ public abstract class DiagramLayoutManager {
                 return new Status(IStatus.CANCEL, KimlUiPlugin.PLUGIN_ID, 0,
                         null, null);
             }
-
-            // transfer layout to the diagram
-            transferLayout(cacheLayout);
 
             // notify layout listeners about the performed layout
             layoutServices.layoutPerformed(layoutGraph, progressMonitor);

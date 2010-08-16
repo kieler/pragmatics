@@ -121,6 +121,24 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     private Command applyLayoutCommand;
 
     /**
+     * Returns the map of layout graph elements to corresponding edit parts.
+     * 
+     * @return the graphElem2EditPartMap
+     */
+    protected Map<KGraphElement, IGraphicalEditPart> getGraphElem2EditPartMap() {
+        return graphElem2EditPartMap;
+    }
+
+    /**
+     * Returns the map of graphical edit parts to corresponding layout graph elements.
+     * 
+     * @return the editPart2GraphElemMap
+     */
+    protected Map<IGraphicalEditPart, KGraphElement> getEditPart2GraphElemMap() {
+        return editPart2GraphElemMap;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -247,7 +265,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         // find the diagram edit part
         diagramEditPart = GmfLayoutInspector.getDiagramEditPart(layoutRootPart);
 
-        layoutGraph = doBuildLayoutGraph();
+        layoutGraph = doBuildLayoutGraph(layoutRootPart);
         return layoutGraph;
     }
 
@@ -326,40 +344,36 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     /**
      * Builds the layout graph for the given root edit part.
      * 
+     * @param rootPart the root edit part for layout
      * @return layout graph layout graph that represents the structure contained
      *         in the root edit part
      */
-    private KNode doBuildLayoutGraph() {
+    protected KNode doBuildLayoutGraph(final IGraphicalEditPart rootPart) {
         KNode topNode = KimlLayoutUtil.createInitializedNode();
         KShapeLayout shapeLayout = KimlLayoutUtil.getShapeLayout(topNode);
-        Rectangle rootBounds = layoutRootPart.getFigure().getBounds();
+        Rectangle rootBounds = rootPart.getFigure().getBounds();
         // start with the whole diagram as root for layout
-        if (layoutRootPart instanceof DiagramEditPart) {
+        if (rootPart instanceof DiagramEditPart) {
             topNode.getLabel()
-                    .setText(((DiagramEditPart) layoutRootPart).getDiagramView().getName());
+                    .setText(((DiagramEditPart) rootPart).getDiagramView().getName());
             // start with a specific node as root for layout
         } else {
             shapeLayout.setXpos(rootBounds.x);
             shapeLayout.setYpos(rootBounds.y);
         }
-
         shapeLayout.setHeight(rootBounds.height);
         shapeLayout.setWidth(rootBounds.width);
-        editPart2GraphElemMap.put(layoutRootPart, topNode);
-        graphElem2EditPartMap.put(topNode, layoutRootPart);
+        editPart2GraphElemMap.put(rootPart, topNode);
+        graphElem2EditPartMap.put(topNode, rootPart);
+        
         // traverse the children of the layout root part
-        buildLayoutGraphRecursively(layoutRootPart, topNode, layoutRootPart);
+        buildLayoutGraphRecursively(rootPart, topNode, rootPart);
         // set user defined layout options for the diagram
-        GmfLayoutInspector.setLayoutOptions(layoutRootPart, shapeLayout, true);
+        GmfLayoutInspector.setLayoutOptions(rootPart, shapeLayout, true);
         // transform all connections in the selected area
         processConnections();
 
-        if (ancestryTargetNode != null) {
-            cleanupAncestryPath();
-            return ancestryTargetNode;
-        } else {
-            return topNode;
-        }
+        return cleanupAncestryPath(topNode);
     }
 
     /**
@@ -671,23 +685,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     
                 // store the current coordinates of the edge
                 KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(edge);
-                Connection figure = connection.getConnectionFigure();
-                PointList pointList = figure.getPoints();
-                KPoint sourcePoint = edgeLayout.getSourcePoint();
-                Point firstPoint = KimlUiUtil.getAbsolutePoint(figure, 0);
-                sourcePoint.setX(firstPoint.x - offsetx);
-                sourcePoint.setY(firstPoint.y - offsety);
-                for (int i = 1; i < pointList.size() - 1; i++) {
-                    Point point = KimlUiUtil.getAbsolutePoint(figure, i);
-                    KPoint kpoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-                    kpoint.setX(point.x - offsetx);
-                    kpoint.setY(point.y - offsety);
-                    edgeLayout.getBendPoints().add(kpoint);
-                }
-                KPoint targetPoint = edgeLayout.getTargetPoint();
-                Point lastPoint = KimlUiUtil.getAbsolutePoint(figure, pointList.size() - 1);
-                targetPoint.setX(lastPoint.x - offsetx);
-                targetPoint.setY(lastPoint.y - offsety);
+                setEdgeLayout(edgeLayout, connection, offsetx, offsety);
     
                 // set user defined layout options for the edge
                 GmfLayoutInspector.setLayoutOptions(connection, edgeLayout, true);
@@ -696,6 +694,35 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             // process edge labels
             processLabels(connection, edge, edgeLabelPlacement, offsetx, offsety);
         }
+    }
+    
+    /**
+     * Stores the layout information of the given connection edit part into an edge layout.
+     * 
+     * @param edgeLayout an edge layout
+     * @param connection a connection edit part
+     * @param offsetx horizontal offset to be subtracted from coordinates
+     * @param offsety vertical offset to be subtracted from coordinates
+     */
+    protected void setEdgeLayout(final KEdgeLayout edgeLayout, final ConnectionEditPart connection,
+            final float offsetx, final float offsety) {
+        Connection figure = connection.getConnectionFigure();
+        PointList pointList = figure.getPoints();
+        KPoint sourcePoint = edgeLayout.getSourcePoint();
+        Point firstPoint = KimlUiUtil.getAbsolutePoint(figure, 0);
+        sourcePoint.setX(firstPoint.x - offsetx);
+        sourcePoint.setY(firstPoint.y - offsety);
+        for (int i = 1; i < pointList.size() - 1; i++) {
+            Point point = KimlUiUtil.getAbsolutePoint(figure, i);
+            KPoint kpoint = KLayoutDataFactory.eINSTANCE.createKPoint();
+            kpoint.setX(point.x - offsetx);
+            kpoint.setY(point.y - offsety);
+            edgeLayout.getBendPoints().add(kpoint);
+        }
+        KPoint targetPoint = edgeLayout.getTargetPoint();
+        Point lastPoint = KimlUiUtil.getAbsolutePoint(figure, pointList.size() - 1);
+        targetPoint.setX(lastPoint.x - offsetx);
+        targetPoint.setY(lastPoint.y - offsety);
     }
     
     /**
@@ -786,21 +813,30 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     }
     
     /**
-     * Cleans the path from the ancestry target node to the root node, including all parallel paths.
+     * Cleans the path from the ancestry target node to the top level node, including
+     * all parallel paths.
+     * 
+     * @param topNode the top level node
+     * @return the top level node or the ancestry target node
      */
-    private void cleanupAncestryPath() {
-        KNode previousNode = ancestryTargetNode;
-        KNode parent = ancestryTargetNode.getParent();
-        while (parent != null) {
-            for (KNode child : parent.getChildren()) {
-                if (child != previousNode) {
-                    KShapeLayout childLayout = KimlLayoutUtil.getShapeLayout(child);
-                    LayoutOptions.setBoolean(childLayout, LayoutOptions.FIXED_SIZE, true);
-                    removeFromLayout(child);
+    protected KNode cleanupAncestryPath(final KNode topNode) {
+        if (ancestryTargetNode != null) {
+            KNode previousNode = ancestryTargetNode;
+            KNode parent = ancestryTargetNode.getParent();
+            while (parent != null) {
+                for (KNode child : parent.getChildren()) {
+                    if (child != previousNode) {
+                        KShapeLayout childLayout = KimlLayoutUtil.getShapeLayout(child);
+                        LayoutOptions.setBoolean(childLayout, LayoutOptions.FIXED_SIZE, true);
+                        removeFromLayout(child);
+                    }
                 }
+                previousNode = parent;
+                parent = parent.getParent();
             }
-            previousNode = parent;
-            parent = parent.getParent();
+            return ancestryTargetNode;
+        } else {
+            return topNode;
         }
     }
     
