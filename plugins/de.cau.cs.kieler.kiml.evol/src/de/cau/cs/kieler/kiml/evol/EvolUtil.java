@@ -375,13 +375,13 @@ public final class EvolUtil {
             return result;
         }
     }
-    
+
     /**
      * Applier for an individual. Can adopt, layout and measure an individual in
      * the appropriate editor(s).
-     * 
+     *
      * @author bdu
-     * 
+     *
      */
     private static final class IndividualApplierRunnable implements Runnable {
         /**
@@ -710,7 +710,8 @@ public final class EvolUtil {
             final LayoutOptionData data = layoutServices.getLayoutOptionData((String) id);
             Assert.isNotNull(data, "No layout option data for " + id);
 
-            switch (data.getType()) {
+            final Type layoutOptionType = data.getType();
+            switch (layoutOptionType) {
 
             case BOOLEAN:
                 if (value instanceof Boolean) {
@@ -745,11 +746,11 @@ public final class EvolUtil {
             }
         }
     }
-    
+
     /**
      * Adopt, layout and measure the given individual in the appropriate
      * editor(s). The obtained layout is applied to the diagrams.
-     * 
+     *
      * @param individual
      *            a {@link Genome}; may not be {@code null}
      * @param expectedLayoutProviderId
@@ -874,60 +875,6 @@ public final class EvolUtil {
     }
 
     /**
-     * Layouts the given individuals in the current editor and calculates
-     * automatic ratings for them. NOTE: This must be run in the UI thread.
-     *
-     * @param population
-     *            the {@link Population} (list of individuals) to be rated; must
-     *            not be {@code null}
-     * @deprecated
-     */
-    @Deprecated
-    private static void autoRatePopulation(final Population population) {
-        Assert.isLegal(population != null);
-
-        final IEditorPart editor = getCurrentEditor();
-        Assert.isNotNull(editor);
-        autoRatePopulation(population, editor);
-    }
-
-    /**
-     * Layouts the given individuals in the given editor and calculates
-     * automatic ratings for them. NOTE: This must be run in the UI thread.
-     *
-     * @param population
-     *            the {@link Population} (list of individuals) to be rated; must
-     *            not be {@code null}
-     * @param editor
-     *            Specifies the editor in which the individuals shall be
-     *            layouted.
-     */
-    private static void autoRatePopulation(final Population population, final IEditorPart editor) {
-        Assert.isLegal(population != null);
-        if (population == null) {
-            return;
-        }
-
-        // We don't specify the edit part because we want a manager for
-        // the whole diagram.
-        final DiagramLayoutManager manager =
-                EclipseLayoutServices.getInstance().getManager(editor, null);
-        Assert.isNotNull(manager);
-
-        final LayoutPropertySource source = getLayoutPropertySource(editor);
-        Assert.isNotNull(source);
-
-        // The current diagram gets layouted and measured for each individual.
-        for (int pos = 0; pos < population.size(); pos++) {
-            final Genome ind = population.get(pos);
-            Assert.isNotNull(ind);
-
-            // TODO: synchronize on the layout graph?
-            autoRateIndividual(ind, editor, manager, source);
-        }
-    }
-
-    /**
      * Builds the layout graph for the given editor, using the given manager,
      * and performs layout on it. NOTE: The resulting layout is not applied to
      * the diagram.
@@ -952,7 +899,9 @@ public final class EvolUtil {
         // gets closed.
         final IKielerProgressMonitor monitor =
                 new BasicProgressMonitor(DiagramLayoutManager.MAX_PROGRESS_LEVELS);
-        final IStatus status = manager.layout(monitor, false);
+        final boolean layoutAncestors = false;
+        final boolean cacheLayout = false;
+        final IStatus status = manager.layout(monitor, layoutAncestors, cacheLayout);
 
         if (!status.isOK()) {
             // TODO: what to do about the layouting failure? Log it? Abort?
@@ -1137,7 +1086,7 @@ public final class EvolUtil {
      * @return a map associating metric weights to metric ids.
      */
     private static Map<String, Double> extractMetricWeights(final Genome genome) {
-        // TODO: This method could be moved into {@code Genome}.
+        // TODO: Discuss whether this method should be moved into Genome.
         final EvolutionServices evolService = EvolutionServices.getInstance();
         Assert.isNotNull(evolService);
 
@@ -1159,19 +1108,6 @@ public final class EvolUtil {
             result.put(id, Double.valueOf(value.doubleValue()));
         }
 
-        return result;
-    }
-
-    /**
-     *
-     * @return a {@link LayoutPropertySource} for the current editor.
-     * @deprecated
-     */
-    @Deprecated
-    private static LayoutPropertySource getLayoutPropertySource() {
-        final IEditorPart editor = getCurrentEditor();
-        final IGraphicalEditPart part = (IGraphicalEditPart) getEditPart(editor);
-        final LayoutPropertySource result = getLayoutPropertySource(editor, part);
         return result;
     }
 
@@ -1258,30 +1194,6 @@ public final class EvolUtil {
             }
         }
         return editors;
-    }
-
-    /**
-     * Layout the diagram in the given editor and measure it.
-     *
-     * @param manager
-     *            a {@code DiagramLayoutManager}
-     * @param editor
-     *            the editor
-     * @param weightsMap
-     *            a map that associates weights to the metrics; must not be
-     *            {@code null}
-     * @return measurement result (rating proposal)
-     * @deprecated
-     */
-    @Deprecated
-    private static int layoutAndMeasure(
-            final DiagramLayoutManager manager, final IEditorPart editor,
-            final Map<String, Double> weightsMap) {
-
-        Assert.isLegal(weightsMap != null);
-
-        final KNode layoutGraph = calculateLayout(manager, editor);
-        return measure(layoutGraph, weightsMap);
     }
 
     /**

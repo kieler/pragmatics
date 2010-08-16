@@ -75,7 +75,7 @@ public class Population extends ArrayList<Genome> implements IFilterable<Populat
      */
     public Double getAverageRating() {
         if (this.isEmpty()) {
-            return Double.NaN;
+            return Double.valueOf(Double.NaN);
         }
         int ratingSum = 0;
         for (final Genome ind : this) {
@@ -136,7 +136,7 @@ public class Population extends ArrayList<Genome> implements IFilterable<Populat
 
         int i = 0;
         for (final Genome ind : this) {
-            result.append("Individual #" + ++i + ":" + newLine);
+            result.append("Individual #" + ++i + " (" + ind.getId() + "):" + newLine);
             for (final IGene<?> gene : ind) {
                 result.append(gene.getId() + ": " + gene.getValue() + newLine);
             }
