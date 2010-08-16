@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.util.Property;
 import de.cau.cs.kieler.klay.planar.alg.IPlanarizer;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IFace;
@@ -40,6 +41,14 @@ import de.cau.cs.kieler.klay.planar.graph.impl.PGraphFactory;
  * 
  */
 public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPlanarizer {
+
+
+    /**
+     * A property assigning a cost to an edge. This property is used when computing a shortest path
+     * in a graph.
+     */
+    private Property<Integer> PATHCOST = new Property<Integer>(
+            "de.cau.cs.kieler.klay.planar.properties.pathcost", 1);
 
     /**
      * Inserts a list of given pairs of nodes (that presemt edges) into a given planar embedding of
@@ -191,12 +200,12 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
                 // connecting new normal nodes
                 else {
 
-                    IEdge newEdge = graph.addEdge(path.get(pathNodeCounter), path
-                            .get(pathNodeCounter + 1));
+                    IEdge newEdge = graph.addEdge(path.get(pathNodeCounter),
+                            path.get(pathNodeCounter + 1));
 
                     // bring new edges in right order
-                    reinsertEdges(shortestFacePath.get(pathNodeCounter), newEdge, path
-                            .get(pathNodeCounter));
+                    reinsertEdges(shortestFacePath.get(pathNodeCounter), newEdge,
+                            path.get(pathNodeCounter));
 
                     pathNodeCounter++;
                 }
@@ -438,8 +447,6 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
     @SuppressWarnings("unused")
     private int[] dijkstra(final INode root, final IGraph graph) {
 
-        // TODO edges need a weight!!!
-        int egdeWeight = 1;
         int size = graph.getNodeCount();
         int rootID = root.getID();
 
@@ -465,16 +472,16 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
 
         while (!nodes.isEmpty()) {
 
-            // TODO
             // find the node with smalles weight in nodes
 
-            int minEdgeWeight;
+            //TODO check initialisation
+            int minEdgeWeight = 0;
             for (INode neighborNode : currentNode.adjacentNodes()) {
                 IEdge connectingEdge = currentNode.getEdge(neighborNode);
-                // int edgeWeight = connectingEdge.getWeight();
-                // if( edgeWeight < minEdgeWeight){
-                // minEdgeWeight = edgeWeight;
-                // }
+                int edgeWeight = connectingEdge.getProperty(PATHCOST);
+                if (edgeWeight < minEdgeWeight) {
+                    minEdgeWeight = edgeWeight;
+                }
             }
 
             nodes.remove(currentNode);
@@ -484,7 +491,7 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
                 if (nodes.contains(neighborNode)) {
 
                     // distance between current and neighbor
-                    int wayLenght = egdeWeight; // currentNode.getEdge(neighborNode).getWeight();
+                    int wayLenght = currentNode.getEdge(neighborNode).getProperty(PATHCOST);
                     int alternative = distance[currentID] + wayLenght;
 
                     // check if there is a shorter path
