@@ -22,9 +22,7 @@ import de.cau.cs.kieler.kex.model.Example;
 
 public class ChooseExamplePage extends WizardPage {
 
-	private Text exampleId;
-
-	private Text exampleName;
+	private Text exampleTitle;
 
 	private Text exampleVersion;
 
@@ -32,22 +30,50 @@ public class ChooseExamplePage extends WizardPage {
 
 	private Tree exampleTree;
 
+	private Text exampleContact;
+
 	private static final String EXAMPLE_DATA_KEY = "example";
 
 	public ChooseExamplePage(String pageName) {
 		super(pageName);
-		setTitle("Import Example");
+		setTitle("Example Selection");
 		setDescription("Please choose an example.");
 	}
 
 	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
+		layout.numColumns = 1;
 		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		setControl(composite);
+		createMiddleComponent(composite);
+		createBottomComponent(composite);
+	}
+
+	private void createMiddleComponent(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		composite.setLayout(layout);
 		createTreeElement(composite);
 		createExampleGroup(composite);
+
+	}
+
+	private void createBottomComponent(Composite parent) {
+		Label descriptionLabel = new Label(parent, SWT.NONE);
+		descriptionLabel.setText("Description:");
+		// Group descriptionGroup = new Group(parent, SWT.NONE);
+		// descriptionGroup.setLayout(new GridLayout());
+		// descriptionGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
+		// descriptionGroup.setText("Example Description");
+		this.exampleDescription = new Text(parent, SWT.MULTI | SWT.V_SCROLL
+				| SWT.H_SCROLL | SWT.BORDER);
+		this.exampleDescription.setEditable(false);
+		this.exampleDescription.setText("\n\n\n\n");
+		this.exampleDescription.setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
 	private void createTreeElement(Composite composite) {
@@ -97,33 +123,21 @@ public class ChooseExamplePage extends WizardPage {
 		exampleGroup.setText("Selected Example");
 		exampleGroup.setFont(composite.getFont());
 		exampleGroup.setToolTipText("Selected Example");
-		createEmptyLine(exampleGroup, columnCount);
-		new Label(exampleGroup, SWT.NONE).setText("Id:");
-		this.exampleId = new Text(exampleGroup, SWT.NONE);
-		this.exampleId.setEditable(false);
-		this.exampleId.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		createEmptyLine(exampleGroup, columnCount);
-		new Label(exampleGroup, SWT.NONE).setText("Name:");
-		this.exampleName = new Text(exampleGroup, SWT.NONE);
-		this.exampleName.setEditable(false);
-		this.exampleName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		createEmptyLine(exampleGroup, columnCount);
+		new Label(exampleGroup, SWT.NONE).setText("Title:");
+		this.setExampleTitle(new Text(exampleGroup, SWT.NONE));
+		this.getExampleTitle().setEditable(false);
+		this.getExampleTitle().setLayoutData(
+				new GridData(GridData.FILL_HORIZONTAL));
 		new Label(exampleGroup, SWT.NONE).setText("Version:");
 		this.exampleVersion = new Text(exampleGroup, SWT.NONE);
 		this.exampleVersion.setEditable(false);
 		this.exampleVersion
 				.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		createEmptyLine(exampleGroup, columnCount);
-		new Label(exampleGroup, SWT.None).setText("Description:");
-		this.exampleDescription = new Text(exampleGroup, SWT.NONE);
-		this.exampleDescription.setEditable(false);
-		this.exampleDescription.setLayoutData(new GridData(
-				GridData.FILL_HORIZONTAL));
-	}
-
-	private void createEmptyLine(Composite composite, int columnCount) {
-		for (int i = 0; i < columnCount; i++)
-			new Label(composite, SWT.NONE);
+		new Label(exampleGroup, SWT.NONE).setText("Contact:");
+		this.exampleContact = new Text(exampleGroup, SWT.NONE);
+		this.exampleContact.setEditable(false);
+		this.exampleContact
+				.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
 
 	private void updateElements(Widget widget) {
@@ -132,22 +146,22 @@ public class ChooseExamplePage extends WizardPage {
 			Object data = selected.getData(EXAMPLE_DATA_KEY);
 			if (data instanceof Example) {
 				Example selectedExample = (Example) data;
-				getExampleId().setText(selectedExample.getId());
-				getExampleName().setText(selectedExample.getName());
+				getExampleTitle().setText(selectedExample.getId());
 				getExampleDescription().setText(
 						selectedExample.getDescription());
+				getExampleContact().setText(selectedExample.getContact());
 				getExampleVersion().setText(
 						selectedExample.getVersion().toString());
 			}
 		}
 	}
 
-	public void setExampleId(Text exampleId) {
-		this.exampleId = exampleId;
-	}
-
-	public Text getExampleId() {
-		return exampleId;
+	public List<Example> getSelectedExamples() {
+		List<Example> result = new ArrayList<Example>();
+		for (TreeItem item : exampleTree.getSelection()) {
+			result.add((Example) item.getData("example"));
+		}
+		return result;
 	}
 
 	public void setExampleDescription(Text exampleDescription) {
@@ -166,19 +180,19 @@ public class ChooseExamplePage extends WizardPage {
 		return exampleVersion;
 	}
 
-	public void setExampleName(Text exampleName) {
-		this.exampleName = exampleName;
+	public void setExampleContact(Text exampleContact) {
+		this.exampleContact = exampleContact;
 	}
 
-	public Text getExampleName() {
-		return exampleName;
+	public Text getExampleContact() {
+		return exampleContact;
 	}
 
-	public List<Example> getSelectedExamples() {
-		List<Example> result = new ArrayList<Example>();
-		for (TreeItem item : exampleTree.getSelection()) {
-			result.add((Example) item.getData("example"));
-		}
-		return result;
+	public void setExampleTitle(Text exampleTitle) {
+		this.exampleTitle = exampleTitle;
+	}
+
+	public Text getExampleTitle() {
+		return exampleTitle;
 	}
 }
