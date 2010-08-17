@@ -14,10 +14,10 @@
 package de.cau.cs.kieler.graphs.diagram.custom;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Dimension;
@@ -61,6 +61,8 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
     private Map<KGraphElement, View> graphElem2ViewMap = new HashMap<KGraphElement, View>();
     /** edges of the original graph. */
     private List<KEdge> edges = new LinkedList<KEdge>();
+    /** map of hyperedges to the representing hypernodes in the original graph. */
+    private Map<Set<KNode>, List<KNode>> hyperedgeMap;
     
     /**
      * Builds the view map by traversing the notation view tree.
@@ -105,7 +107,9 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
             // transform all connections in the selected area
             processConnections(rootPart);
     
-            return cleanupAncestryPath(topNode);
+            topNode = cleanupAncestryPath(topNode);
+            hyperedgeMap = HypernodesEditPolicy.createHyperedgeMap(topNode);
+            return topNode;
         } else {
             return super.doBuildLayoutGraph(rootPart);
         }
@@ -116,27 +120,19 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
      */
     @Override
     protected void transferLayout(final boolean cacheLayout) {
-        CompoundCommand compoundCommand = new CompoundCommand(Messages.getString("kiml.ui.5"));
         // first update the hypernodes structure in the domain model
-        HypernodesRequest request = new HypernodesRequest(getLayoutGraph());
-        Iterator<KGraphElement> elemIter = getGraphElem2EditPartMap().keySet().iterator();
-        while (elemIter.hasNext()) {
-            KGraphElement elem = elemIter.next();
-            if (elem instanceof KNode) {
-                KNode node = (KNode) elem;
-                KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(node);
-                if (LayoutOptions.getBoolean(nodeLayout, LayoutOptions.HYPERNODE)) {
-                    elemIter.remove();
-                    request.getOldHypernodes().add(node);
-                }
-            }
-        }
-        Command updateHypernodesCommand = getDiagramEditPart().getCommand(request);
-        compoundCommand.add(updateHypernodesCommand);
+        HypernodesRequest request = new HypernodesRequest(getLayoutGraph(), hyperedgeMap);
+        Command updateHypernodesCommand = null;//getDiagramEditPart().getCommand(request);
         
         // then layout the rest of the diagram
         super.transferLayout(cacheLayout);
-        compoundCommand.add(getLayoutCommand());
+        if (updateHypernodesCommand != null) {
+            CompoundCommand compoundCommand = new CompoundCommand(Messages.getString("kiml.ui.5"));
+            compoundCommand.add(updateHypernodesCommand);
+            Command layoutCommand = getLayoutCommand();
+            compoundCommand.add(layoutCommand);
+            setLayoutCommand(compoundCommand);
+        }
     }
     
     /**

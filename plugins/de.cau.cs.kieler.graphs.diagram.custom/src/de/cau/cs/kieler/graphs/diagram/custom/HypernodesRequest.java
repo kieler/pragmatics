@@ -13,8 +13,9 @@
  */
 package de.cau.cs.kieler.graphs.diagram.custom;
 
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.gef.Request;
 
@@ -30,28 +31,22 @@ public class HypernodesRequest extends Request {
     /** the request type used to update hypernodes. */
     public static final String REQ_UPDATE_HYPERNODES = "apply layout";
     
-    /** list of old hypernodes in the graph. */
-    private List<KNode> oldHypernodes = new LinkedList<KNode>();
     /** the root of the layout graph. */
     private KNode rootLayoutNode;
+    /** map of hyperedges to the representing hypernodes in the original graph. */
+    private Map<Set<KNode>, List<KNode>> hyperedgeMap;
     
     /**
      * Creates a request to apply layout.
      * 
      * @param theRootNode the root of the layout graph
+     * @param thehyperedgeMap map of hyperedges to the representing hypernodes in the original graph
      */
-    public HypernodesRequest(final KNode theRootNode) {
+    public HypernodesRequest(final KNode theRootNode,
+            final Map<Set<KNode>, List<KNode>> thehyperedgeMap) {
         super(REQ_UPDATE_HYPERNODES);
         this.rootLayoutNode = theRootNode;
-    }
-    
-    /**
-     * Returns the list of old hypernodes in the graph, which is initially empty.
-     * 
-     * @return the list of old hypernodes
-     */
-    public List<KNode> getOldHypernodes() {
-        return oldHypernodes;
+        this.hyperedgeMap = thehyperedgeMap;
     }
     
     /**
@@ -61,6 +56,15 @@ public class HypernodesRequest extends Request {
      */
     public KNode getRootNode() {
         return rootLayoutNode;
+    }
+    
+    /**
+     * Returns the map of hyperedges to the representing hypernodes in the original graph.
+     * 
+     * @return the hyperedge map
+     */
+    public Map<Set<KNode>, List<KNode>> getHyperedgeMap() {
+        return hyperedgeMap;
     }
     
 }

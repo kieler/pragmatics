@@ -156,6 +156,15 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     protected Command getLayoutCommand() {
         return applyLayoutCommand;
     }
+    
+    /**
+     * Sets the given command as new layout command.
+     * 
+     * @param thelayoutCommand the apply layout command
+     */
+    protected void setLayoutCommand(final Command thelayoutCommand) {
+        this.applyLayoutCommand = thelayoutCommand;
+    }
 
     /**
      * {@inheritDoc}
