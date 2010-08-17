@@ -49,6 +49,12 @@ public interface IFlowNetworkSolver extends IAlgorithm {
             "de.cau.cs.kieler.klay.planar.properties.networkresidualcapacity", 0);
 
     /**
+     * A property assigning a lower bound to an edge.
+     */
+    Property<Integer> LOWERBOUND = new Property<Integer>(
+            "de.cau.cs.kieler.klay.planar.properties.networklowerbound", 0);
+
+    /**
      * A property assigning a flow to an edge. This property is usually set during the network
      * solving algorithm.
      */

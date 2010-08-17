@@ -155,8 +155,8 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
                 }
                 IEdge newedge = network.addEdge(map.get(node), newnode, true);
                 newedge.setProperty(IFlowNetworkSolver.CAPACITY, MAXDEGREE);
+                newedge.setProperty(IFlowNetworkSolver.LOWERBOUND, 1);
                 newedge.setProperty(IPathFinder.PATHCOST, 0);
-                // TODO edge has lower bound 1
                 this.nodeArcs.add(newedge);
             }
 
@@ -164,8 +164,8 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
             for (IFace adj : face.adjacentFaces()) {
                 IEdge newedge = network.addEdge(map.get(adj), newnode, true);
                 newedge.setProperty(IFlowNetworkSolver.CAPACITY, Integer.MAX_VALUE);
+                newedge.setProperty(IFlowNetworkSolver.LOWERBOUND, 0);
                 newedge.setProperty(IPathFinder.PATHCOST, 1);
-                // TODO edge has lower bound 0
                 this.faceArcs.add(newedge);
             }
 

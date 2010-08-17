@@ -36,6 +36,7 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
         IMinimumCostFlowSolver {
     // TODO Handle multi edges in network
     // TODO different path costs for forward and backward edges in residual network
+    // TODO handle lower bounds on edges
 
     /**
      * {@inheritDoc}
