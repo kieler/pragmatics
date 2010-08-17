@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.graphs.diagram.custom;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,8 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Insets;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.gef.commands.Command;
+import org.eclipse.gef.commands.CompoundCommand;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.notation.View;
@@ -41,6 +44,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
+import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
 
@@ -112,9 +116,36 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
      */
     @Override
     protected void transferLayout(final boolean cacheLayout) {
+        CompoundCommand compoundCommand = new CompoundCommand(Messages.getString("kiml.ui.5"));
+        // first update the hypernodes structure in the domain model
+        HypernodesRequest request = new HypernodesRequest(getLayoutGraph());
+        Iterator<KGraphElement> elemIter = getGraphElem2EditPartMap().keySet().iterator();
+        while (elemIter.hasNext()) {
+            KGraphElement elem = elemIter.next();
+            if (elem instanceof KNode) {
+                KNode node = (KNode) elem;
+                KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(node);
+                if (LayoutOptions.getBoolean(nodeLayout, LayoutOptions.HYPERNODE)) {
+                    elemIter.remove();
+                    request.getOldHypernodes().add(node);
+                }
+            }
+        }
+        Command updateHypernodesCommand = getDiagramEditPart().getCommand(request);
+        compoundCommand.add(updateHypernodesCommand);
+        
+        // then layout the rest of the diagram
         super.transferLayout(cacheLayout);
+        compoundCommand.add(getLayoutCommand());
     }
     
+    /**
+     * Builds the layout graph from the original graph structure.
+     * 
+     * @param graphNode a node from the original graph
+     * @param editPart the corresponding edit part
+     * @return a layout node that is linked with the given graph node
+     */
     private KNode buildLayoutGraphRecursively(final KNode graphNode,
             final IGraphicalEditPart editPart) {
         Map<?, ?> editPartRegistry = editPart.getViewer().getEditPartRegistry();
@@ -204,6 +235,11 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
         return layoutNode;
     }
     
+    /**
+     * Process all the connections in the graph.
+     * 
+     * @param rootPart the root edit part for layout
+     */
     private void processConnections(final IGraphicalEditPart rootPart) {
         Map<?, ?> editPartRegistry = rootPart.getViewer().getEditPartRegistry();
         for (KEdge graphEdge : edges) {

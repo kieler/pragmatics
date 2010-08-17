@@ -41,5 +41,14 @@
             priority="1">
       </manager>
    </extension>
+   <extension
+         point="org.eclipse.gmf.runtime.diagram.ui.editpolicyProviders">
+      <editpolicyProvider
+            class="de.cau.cs.kieler.graphs.diagram.custom.HypernodesEditPolicyProvider">
+         <Priority
+               name="Lowest">
+         </Priority>
+      </editpolicyProvider>
+   </extension>
 
 </plugin>

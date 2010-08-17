@@ -139,6 +139,25 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     }
 
     /**
+     * Returns the diagram edit part.
+     * 
+     * @return the diagram edit part
+     */
+    protected DiagramEditPart getDiagramEditPart() {
+        return diagramEditPart;
+    }
+
+    /**
+     * Returns the command that is calculated by {@link #transferLayout(boolean)} to apply
+     * the layout.
+     * 
+     * @return the apply layout command
+     */
+    protected Command getLayoutCommand() {
+        return applyLayoutCommand;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

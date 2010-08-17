@@ -82,16 +82,16 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
     /** map of edge layouts to existing point lists. */
     private Map<KEdgeLayout, PointList> pointListMap = new HashMap<KEdgeLayout, PointList>();
     
-    /* (non-Javadoc)
-     * @see org.eclipse.gef.editpolicies.AbstractEditPolicy#understandsRequest(org.eclipse.gef.Request)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public boolean understandsRequest(final Request req) {
         return (ApplyLayoutRequest.REQ_APPLY_LAYOUT.equals(req.getType()));
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.gef.editpolicies.AbstractEditPolicy#getCommand(org.eclipse.gef.Request)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public Command getCommand(final Request request) {
