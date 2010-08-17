@@ -219,9 +219,8 @@ public class EvolveHandler extends AbstractHandler {
 
                         if (evolveJob.isAutoRatingEnabled()) {
                             // Calculate auto-rating in the current editor for
-                            // all
-                            // individuals.
-                            model.autoRateAll(null, new SubProgressMonitor(monitor, 100));
+                            // all individuals.
+                            model.autoRateAll(new SubProgressMonitor(monitor, 100));
 
                             System.out.println(model.getPopulation());
                         }

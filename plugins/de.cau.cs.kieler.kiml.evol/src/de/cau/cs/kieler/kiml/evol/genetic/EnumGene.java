@@ -166,8 +166,19 @@ public final class EnumGene extends AbstractGene<Integer> {
                 return result;
             } else if (o instanceof UniversalGene) {
                 // TODO: get enum string
-                final Integer intValue = Integer.valueOf(((UniversalGene) o).getIntValue());
-                return intValue.toString();
+                final Class<?> enumClass = ((UniversalGene) o).getTypeInfo().getTypeClass();
+                final Enum<?>[] constants =
+                        ((Class<? extends Enum<?>>) enumClass).getEnumConstants();
+
+                final Integer value = Integer.valueOf(((UniversalGene) o).getIntValue());
+
+                if (constants == null) {
+                    return value.toString();
+                }
+                Assert.isTrue((value >= 0) && (value < constants.length));
+                final String result = constants[value].toString();
+
+                return result;
             }
             return null;
         }

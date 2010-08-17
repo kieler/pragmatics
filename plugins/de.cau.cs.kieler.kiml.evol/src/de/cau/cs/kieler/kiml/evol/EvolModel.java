@@ -109,8 +109,7 @@ public final class EvolModel {
 
             final Runnable runnable = new Runnable() {
                 public void run() {
-                    final IEditorPart editor = EvolUtil.getCurrentEditor();
-                    EvolUtil.autoRate(unrated, editor, new SubProgressMonitor(monitor, 1 * scale));
+                    EvolUtil.autoRate(unrated, new SubProgressMonitor(monitor, 1 * scale));
                 }
             };
             MonitoredOperation.runInUI(runnable, true);
@@ -128,17 +127,15 @@ public final class EvolModel {
     /**
      * Auto-rate all individuals in the given editor.
      *
-     * @param theEditor
-     *            an {@link IEditorPart}
      * @param theMonitor
      *            a progress monitor; may be {@code null}
      */
-    public void autoRateAll(final IEditorPart theEditor, final IProgressMonitor theMonitor) {
+    public void autoRateAll(final IProgressMonitor theMonitor) {
 
         final Population population = getPopulation();
         Assert.isNotNull(population);
 
-        EvolUtil.autoRate(population, theEditor, theMonitor);
+        EvolUtil.autoRate(population, theMonitor);
 
         // Notify listeners.
         afterChange("autoRate");

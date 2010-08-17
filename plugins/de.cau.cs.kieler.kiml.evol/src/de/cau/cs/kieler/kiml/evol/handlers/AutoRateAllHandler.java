@@ -51,18 +51,14 @@ public class AutoRateAllHandler extends AbstractHandler {
          * individuals of the specified model in the specified editor.
          *
          * @param name
-         * @param theEditor
          * @param theModel
          */
-        AutoRateAllJob(final String name, final IEditorPart theEditor, final EvolModel theModel) {
+        AutoRateAllJob(final String name, final EvolModel theModel) {
             super(name);
-            this.editor = theEditor;
             this.model = theModel;
         }
 
         private final EvolModel model;
-
-        private final IEditorPart editor;
 
         @Override
         protected IStatus run(final IProgressMonitor monitor) {
@@ -75,12 +71,11 @@ public class AutoRateAllHandler extends AbstractHandler {
             try {
                 monitor.beginTask("Performing Auto-rating", total * scale);
 
-                // Rate all individuals in the given editor. SubProgressMonitor
-                // manages the work.
+                // Rate all individuals in the current editor.
+                // SubProgressMonitor manages the work.
                 monitor.subTask("Determining Individual Rating");
 
-                this.model.autoRateAll(this.editor,
-                        new SubProgressMonitor(monitor, autoRatingWork * scale));
+                this.model.autoRateAll(new SubProgressMonitor(monitor, autoRatingWork * scale));
 
                 if (monitor.isCanceled()) {
                     return new Status(IStatus.CANCEL, EvolPlugin.PLUGIN_ID,
@@ -134,7 +129,7 @@ public class AutoRateAllHandler extends AbstractHandler {
             Assert.isNotNull(editor);
 
             // Create job for auto-rating.
-            final Job autoRateAllJob = new AutoRateAllJob("Auto-Rating", editor, model);
+            final Job autoRateAllJob = new AutoRateAllJob("Auto-Rating", model);
 
             // Process the job.
             final IProgressMonitor monitor = Job.getJobManager().createProgressGroup();

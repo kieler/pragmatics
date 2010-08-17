@@ -165,7 +165,7 @@ public final class EvolUtil {
             final IConfigurationElement evolutionData =
                     EvolutionServices.getInstance().getEvolutionData((String) theId);
             // FIXME: evolutionData might be null
-            Assert.isNotNull(evolutionData);
+            Assert.isNotNull(evolutionData, "Not registered: " + theId);
 
             final String lowerBoundAttr = evolutionData.getAttribute(ATTRIBUTE_LOWER_BOUND);
             final String upperBoundAttr = evolutionData.getAttribute(ATTRIBUTE_UPPER_BOUND);
@@ -263,7 +263,7 @@ public final class EvolUtil {
             final Integer value = Integer.valueOf(theRawValue.toString());
             result = new EnumGene(theId, value.intValue(), enumClass, theMutationProbability);
             System.out.println("Enum " + enumClass.getSimpleName() + "(" + choicesCount + "): "
-                    + value);
+                    + enumClass.getEnumConstants()[value.intValue()] + " (" + value + ")");
             return result;
         }
 
@@ -449,20 +449,14 @@ public final class EvolUtil {
      *
      * @param thePopulation
      *            the {@link Population} to be rated
-     * @param theEditor
-     *            an {@link IEditorPart}; must not be {@code null}
      * @param theMonitor
      *            a progress monitor; may be {@code null}
      */
-    public static void autoRate(
-            final Population thePopulation, final IEditorPart theEditor,
-            final IProgressMonitor theMonitor) {
+    public static void autoRate(final Population thePopulation, final IProgressMonitor theMonitor) {
         Assert.isLegal((thePopulation != null));
         if (thePopulation == null) {
             return;
         }
-
-        // TODO: don't need theEditor
 
         // Ensure there is a monitor of some sort.
         final IProgressMonitor monitor;
@@ -481,8 +475,7 @@ public final class EvolUtil {
                     throw new OperationCanceledException();
                 }
 
-                // syncAutoRate(ind, theEditor);
-                syncAutoRate(ind, theEditor);
+                syncAutoRate(ind);
                 monitor.worked(1 * scale);
             }
 
@@ -804,6 +797,11 @@ public final class EvolUtil {
                 break;
 
             default:
+                if (LayoutOptions.LAYOUT_HINT.equalsIgnoreCase((String) id)) {
+                    final Integer integerValue = Float.valueOf(value.toString()).intValue();
+                    propertySource.setPropertyValue(id, integerValue);
+                    break;
+                }
                 propertySource.setPropertyValue(id, value.toString());
                 break;
             }
@@ -893,10 +891,8 @@ public final class EvolUtil {
             // manager.applyLayout();
             // directly, but that method is protected
 
-            final boolean showAnimation = false;
-            final boolean showProgressBar = false;
-            EclipseLayoutServices.getInstance().layout(editor, null, showAnimation,
-                    showProgressBar);
+            EclipseLayoutServices.getInstance().layout(editor, null, false /* showAnimation */,
+                    false /* showProgressBar */);
         }
     }
 
@@ -1047,9 +1043,8 @@ public final class EvolUtil {
         }
 
         /*
-         * TODO: Discuss:
-         * If more than one LayoutPropertySource is contained in the given list, they may
-         * stem from different editors containing different layout providers.
+         * TODO: Discuss: If more than one LayoutPropertySource is contained in the given list,
+         * they may stem from different editors containing different layout providers.
          * Should the genes from different layout providers
          *   - be pooled without hierarchy?
          *   - be mapped to their layout provider id?
@@ -1089,9 +1084,9 @@ public final class EvolUtil {
             uniformProb = 0.0;
         }
 
-        System.out.println("Creating genome of " + learnableCount + " genes ...");
+        System.out.println("Creating genome of " + learnableCount + " layout property genes ...");
         final GeneFactory gf = new GeneFactory();
-        final SortedSet<Integer> layoutHintValues = new TreeSet<Integer>();
+        final SortedSet<String> layoutHintIds = new TreeSet<String>();
 
         // Iterate the layout property sources.
         for (final LayoutPropertySource propertySource : propertySources) {
@@ -1101,26 +1096,38 @@ public final class EvolUtil {
 
                 final String id = (String) p.getId();
                 final Object value = propertySource.getPropertyValue(id);
+
                 // Check the property descriptor id.
                 if (LayoutOptions.LAYOUT_HINT.equals(id)) {
-                    // layout hint --> store it for later
-
-                    if (value != null) {
-                        layoutHintValues.add((Integer) value);
-                    }
+                    /* Property is a layout hint --> obtain its id and store it
+                       for later use. */
 
                     final ILabelProvider labelProvider = p.getLabelProvider();
                     String text;
+                    String hintId = null;
                     if ((value != null) && (labelProvider != null)) {
+                        // Get the caption.
                         try {
                             text = labelProvider.getText(value);
                         } catch (final ArrayIndexOutOfBoundsException e) {
+                            // This might occur for an Enum property, if value
+                            // is out of the Enum's bounds.
                             text = "*** EXCEPTION";
                         }
+
+                        /* XXX @msp Is there a more elegant way to obtain the
+                         layout hint id? */
+                        hintId = LayoutPropertySource.getLayoutHint(text);
+
+                        Assert.isTrue(hintId.length() > 0,
+                                "Could not find layout provider id for '" + text + "'");
+
                     } else {
                         text = "???";
                     }
                     System.out.println("--- LAYOUT_HINT: " + value + "=" + text);
+
+                    layoutHintIds.add(hintId);
 
                 } else if (result.find(id) != null) {
                     // already added this option
@@ -1140,23 +1147,35 @@ public final class EvolUtil {
         } // propertySource : propertySources
 
         Assert.isTrue(learnableCount == result.size(),
-                "The number of genes is does not have the predicted count of " + learnableCount);
+                "The number of genes does not have the predicted count of " + learnableCount);
 
-// // Add a gene for the layout hint.
-        // if (!layoutHintValues.isEmpty()) {
-        // // XXX we are regarding only the layout hint with the lowest value,
-        // // which is actually random.
-        //
-        // final LayoutOptionData data =
-        // LayoutServices.getInstance().getLayoutOptionData(LayoutOptions.LAYOUT_HINT);
-        // final IGene<?> gene =
-        // gf.newEnumGene(LayoutOptions.LAYOUT_HINT, layoutHintValues.first(),
-        // 0.01,
-        // data);
-        //
-        // Assert.isNotNull(gene, "Failed to create layout hint gene.");
-        // result.add(gene);
-        // }
+        // Add a gene for the layout hint.
+        if (!layoutHintIds.isEmpty()) {
+
+            /* TODO Implement a gene that can mutate over a list of
+               layout hint IDs. */
+
+            // final Float value = Float.valueOf(0);
+            //
+            // final LayoutOptionData data =
+            // LayoutServices.getInstance().getLayoutOptionData(LayoutOptions.LAYOUT_HINT);
+            // final IValueFormatter formatter =
+            // UniversalGene.INTEGER_FORMATTER;
+            // final TypeInfo<Float> typeInfo =
+            // new FloatTypeInfo(value, Float.valueOf(0),
+            // Float.valueOf(layoutHintIds
+            // .size()), formatter, Integer.class);
+            //
+            // final MutationInfo mutationInfo = new MutationInfo(0.01,
+            // Distribution.GAUSSIAN);
+            //
+            // final IGene<?> gene =
+            // new UniversalGene(LayoutOptions.LAYOUT_HINT, value, typeInfo,
+            // mutationInfo);
+            //
+            // Assert.isNotNull(gene, "Failed to create layout hint gene.");
+            // result.add(gene);
+        }
 
         // Add meta-evolution genes for the layout metrics.
         System.out.println("Adding metric weights ...");
@@ -1476,11 +1495,9 @@ public final class EvolUtil {
 
     /**
      * @param individual
-     * @param editor
      */
-    private static void syncAutoRate(final Genome individual, final IEditorPart editor) {
-        // the editor may be null
-        MonitoredOperation.runInUI(new AutoRateIndividualRunnable(individual, editor), true);
+    private static void syncAutoRate(final Genome individual) {
+        MonitoredOperation.runInUI(new AutoRateIndividualRunnable(individual, null), true);
     }
 
     /** Hidden constructor to avoid instantiation. **/
