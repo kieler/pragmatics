@@ -11,9 +11,9 @@ import de.cau.cs.kieler.kex.controller.util.ExampleExportUtil;
 import de.cau.cs.kieler.kex.controller.util.ExampleImportUtil;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.ExportType;
+import de.cau.cs.kieler.kex.model.database.DBExampleCollector;
 import de.cau.cs.kieler.kex.model.extensionpoint.ExtPointExampleCollector;
 import de.cau.cs.kieler.kex.model.extensionpoint.ExtPointExampleCreator;
-import de.cau.cs.kieler.kex.model.online.OnlineExampleCollector;
 
 public class ExampleManager {
 
@@ -22,7 +22,7 @@ public class ExampleManager {
 	private boolean isLoaded;
 
 	private final ExtPointExampleCollector extensionCollector;
-	private final OnlineExampleCollector onlineCollector;
+	private final DBExampleCollector databaseCollector;
 
 	private final ExtPointExampleCreator extensionCreator;
 
@@ -42,7 +42,7 @@ public class ExampleManager {
 	private ExampleManager() {
 		this.extensionCollector = new ExtPointExampleCollector();
 		this.extensionCreator = new ExtPointExampleCreator();
-		this.onlineCollector = new OnlineExampleCollector();
+		this.databaseCollector = new DBExampleCollector();
 	}
 
 	public synchronized static ExampleManager get() {
@@ -72,18 +72,18 @@ public class ExampleManager {
 
 	private void loadExamples() {
 		this.extensionCollector.loadExamples();
-		this.onlineCollector.loadExamples();
+		this.databaseCollector.loadExamples();
 	}
 
 	public Map<String, Example> getExamples() {
 		Map<String, Example> result = this.extensionCollector.getExamplePool();
-		result.putAll(onlineCollector.getExamplePool());
+		result.putAll(databaseCollector.getExamplePool());
 		return result;
 	}
 
 	public List<String> getCategories() {
 		List<String> result = new ArrayList<String>();
-		result.addAll(onlineCollector.getCategories());
+		result.addAll(databaseCollector.getCategories());
 		result.addAll(extensionCollector.getCategories());
 		return result;
 	}
@@ -101,7 +101,7 @@ public class ExampleManager {
 		if (ExportType.EXTENSIONPOINT.equals(properties
 				.get(ExampleElement.EXPORTTYPE)))
 			ExampleExportUtil.exportExample(properties, this.extensionCreator,
-					this.extensionCollector, this.onlineCollector);
+					this.extensionCollector, this.databaseCollector);
 		else if (ExportType.ONLINE.equals(properties
 				.get(ExampleElement.EXPORTTYPE))) {
 			// TODO online schnittstelle bauen...
