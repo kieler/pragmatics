@@ -292,8 +292,8 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
      * @return edge1, the borderEdge
      */
     private IEdge findBorderEdge(final IFace face1, final IFace face2) {
-        for (IEdge edge1 : face1.getEdges()) {
-            for (IEdge edge2 : face2.getEdges()) {
+        for (IEdge edge1 : face1.adjacentEdges()) {
+            for (IEdge edge2 : face2.adjacentEdges()) {
                 if (edge1.getID() == edge2.getID()) {
                     return edge1;
                 }

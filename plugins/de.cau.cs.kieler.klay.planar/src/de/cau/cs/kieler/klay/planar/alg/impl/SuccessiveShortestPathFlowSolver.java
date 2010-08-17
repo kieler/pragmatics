@@ -124,6 +124,7 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
             // Update flow along path
             for (IEdge edge : path) {
                 int flow = edge.getProperty(FLOW);
+                // TODO substract if other direction?
                 edge.setProperty(FLOW, flow + value);
             }
 

@@ -20,6 +20,8 @@ import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IFace;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.INode;
+import de.cau.cs.kieler.klay.planar.util.IFunction;
+import de.cau.cs.kieler.klay.planar.util.MappedIterable;
 
 /**
  * A face in a basic graph data structure for various graph theory algorithms.
@@ -63,8 +65,49 @@ class PFace extends PGraphElement implements IFace, Serializable {
     /**
      * {@inheritDoc}
      */
-    public Iterable<INode> getNodes() {
-        return this.nodes;
+    public int getAdjacentNodeCount() {
+        return this.nodes.size();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isAdjacent(final IFace face) { // TODO O(n)
+        for (IEdge e : this.edges) {
+            if (e.getLeftFace() == this && e.getRightFace() == face) {
+                return true;
+            } else if (e.getRightFace() == this && e.getLeftFace() == face) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public IFace getAdjacentFace(final IEdge edge) {
+        if (edge.getLeftFace() == this) {
+            return edge.getRightFace();
+        } else if (edge.getRightFace() == this) {
+            return edge.getLeftFace();
+        } else {
+            throw new IllegalArgumentException("The edge (" + edge.getID()
+                    + ") is not connected to the face (" + this.getID() + ").");
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public IEdge getEdge(final IFace face) { // TODO O(n)
+        for (IEdge e : this.edges) {
+            if (this.getAdjacentFace(e) == face) {
+                return e;
+            }
+        }
+        throw new IllegalArgumentException("The face (" + face.getID()
+                + ") is not adjacent to the face (" + this.getID() + ").");
     }
 
     /**
@@ -78,13 +121,6 @@ class PFace extends PGraphElement implements IFace, Serializable {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public Iterable<IEdge> getEdges() {
-        return this.edges;
-    }
-
-    /**
      * Add a new edge to the face.
      * 
      * @param edge
@@ -92,6 +128,33 @@ class PFace extends PGraphElement implements IFace, Serializable {
      */
     void addEdge(final IEdge edge) {
         this.edges.add(edge);
+    }
+
+    // ======================== Iterators ==========================================================
+
+    /**
+     * {@inheritDoc}
+     */
+    public Iterable<INode> adjacentNodes() {
+        return this.nodes;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Iterable<IEdge> adjacentEdges() {
+        return this.edges;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Iterable<IFace> adjacentFaces() {
+        return new MappedIterable<IEdge, IFace>(this.edges, new IFunction<IEdge, IFace>() {
+            public IFace evaluate(final IEdge element) {
+                return getAdjacentFace(element);
+            }
+        });
     }
 
     // ======================== Miscellaneous Functions ============================================

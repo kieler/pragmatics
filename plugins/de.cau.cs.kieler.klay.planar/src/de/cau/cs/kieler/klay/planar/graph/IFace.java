@@ -25,20 +25,68 @@ package de.cau.cs.kieler.klay.planar.graph;
 public interface IFace extends IGraphElement {
     // TODO guarantee edge and node order
 
+    // ======================== Getters and Setters ================================================
+
     /**
-     * Get the {@code PNode}s which describe this face. Returns an {@code Iterable} object to gain
-     * access to all {@code INode}s that lay on the border of this face.
+     * Get the number of nodes adjacent to the face.
+     * 
+     * @return the number of adjacent nodes
+     */
+    int getAdjacentNodeCount();
+
+    /**
+     * Check if a face is adjacent to this face (i.e. an edge exists that connects the two faces).
+     * 
+     * @param face
+     *            the face to check for
+     * @return true if {@code face} is adjacent to this face
+     */
+    boolean isAdjacent(IFace face);
+
+    /**
+     * Get an adjacent face specified by the connecting edge. This returns the face directly
+     * adjacent to this face, connected by the given edge {@code edge}.
+     * 
+     * @param edge
+     *            the edge that connects the faces
+     * @return the adjacent face of this face regarding {@code e}
+     */
+    IFace getAdjacentFace(IEdge edge);
+
+    /**
+     * Get the edge to an adjacent face. This returns the edge that connects this face with the
+     * given face {@code face}.
+     * 
+     * @param face
+     *            the adjacent face
+     * @return the edge that connects this face to {@code face}
+     */
+    IEdge getEdge(IFace face);
+
+    // ======================== Iterators ==========================================================
+
+    /**
+     * Get the {@code PNode}s which describe this face. Returns an {@code Iterable} object
+     * containing all {@code INode}s that lay on the border of this face.
      * 
      * @return the surrounding nodes
      */
-    Iterable<INode> getNodes();
+    Iterable<INode> adjacentNodes();
 
     /**
-     * Get the {@code PEgde}s surrounding this edge. Returns at {@code Iterable} object to gain
-     * access to all {@code IEdge}s that define the border of this edge.
+     * Get the {@code IEgde}s surrounding this edge. Returns an {@code Iterable} object containing
+     * all {@code IEdge}s that define the border of this edge.
      * 
-     * @return the surrounding edges
+     * @return iterable object containing the surrounding edges
      */
-    Iterable<IEdge> getEdges();
+    Iterable<IEdge> adjacentEdges();
+
+    /**
+     * Get the {@code IFace}s surrounding this face. Returns an {@code Iterable} object containing
+     * all {@code IFace}s adjacent to this face.
+     * 
+     * @return iterable object containing all adjacent faces
+     */
+    Iterable<IFace> adjacentFaces();
 
 }

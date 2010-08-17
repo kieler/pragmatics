@@ -74,27 +74,27 @@ public interface INode extends IGraphElement {
      * 
      * @param node
      *            the node to check for
-     * @return true if the node {@code n} is adjacent to this node
+     * @return true if {@code node} is adjacent to this node
      */
     boolean isAdjacent(INode node);
 
     /**
      * Get an adjacent node specified by the connecting edge. This returns the node directly
-     * adjacent to this node, connected by the given edge {@code e}.
+     * adjacent to this node, connected by the given edge {@code edge}.
      * 
      * @param edge
      *            the edge that connects the nodes
-     * @return the adjacent node of this node regarding edge {@code e}
+     * @return the adjacent node of this node regarding edge {@code edge}
      */
     INode getAdjacentNode(IEdge edge);
 
     /**
      * Get the edge to an adjacent node. This returns the edge that connects this node with the
-     * given node {@code n}.
+     * given node {@code node}.
      * 
      * @param node
      *            the adjacent node
-     * @return the edge that connects this node to {@code n}
+     * @return the edge that connects this node to {@code node}
      */
     IEdge getEdge(INode node);
 

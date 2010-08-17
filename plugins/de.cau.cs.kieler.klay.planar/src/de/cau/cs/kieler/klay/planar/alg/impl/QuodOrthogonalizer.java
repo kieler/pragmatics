@@ -23,7 +23,6 @@ import de.cau.cs.kieler.core.util.Property;
 import de.cau.cs.kieler.klay.planar.alg.IFlowNetworkSolver;
 import de.cau.cs.kieler.klay.planar.alg.IOrthogonalizer;
 import de.cau.cs.kieler.klay.planar.alg.IPathFinder;
-import de.cau.cs.kieler.klay.planar.alg.IFlowNetworkSolver.IMinimumCostFlowSolver;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IFace;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
@@ -36,6 +35,8 @@ import de.cau.cs.kieler.klay.planar.graph.impl.PGraphFactory;
 /**
  * Implementation of the Quod orthogonilazation algorithm, based on the paper "Quasi-Orthogonal
  * Drawing of Planar Graphs", by Gunnar W. Klau and Petra Mutzel.
+ * 
+ * TODO improved javadoc
  * 
  * @author ocl
  */
@@ -67,7 +68,7 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
         private IGraph graph;
 
         /** The original node replaced by the cage. */
-        private INode node;
+        private INode cageNode;
 
         /** A mapping from the ring nodes to the corresponding edges. */
         private LinkedHashMap<INode, IEdge> map;
@@ -77,17 +78,17 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
         /**
          * Replace a node in the graph by a cage.
          * 
-         * @param n
+         * @param node
          *            the node to replace
          */
-        public Cage(final INode n) {
-            this.node = n;
-            this.graph = this.node.getParent();
-            this.map = new LinkedHashMap<INode, IEdge>(this.node.getAdjacentEdgeCount() * 2);
+        public Cage(final INode node) {
+            this.cageNode = node;
+            this.graph = this.cageNode.getParent();
+            this.map = new LinkedHashMap<INode, IEdge>(this.cageNode.getAdjacentEdgeCount() * 2);
 
             // Create temporary list to not break the iterator
             LinkedList<IEdge> edges = new LinkedList<IEdge>();
-            for (IEdge edge : this.node.adjacentEdges()) {
+            for (IEdge edge : this.cageNode.adjacentEdges()) {
                 edges.add(edge);
             }
 
@@ -105,7 +106,7 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
                 if (previous != null) {
                     this.graph.addEdge(previous, current);
                 }
-                edge.move(this.node.getAdjacentNode(edge), current);
+                edge.move(this.cageNode.getAdjacentNode(edge), current);
             }
             if (first != null) {
                 this.graph.addEdge(current, first);
@@ -120,7 +121,7 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
             for (Map.Entry<INode, IEdge> entry : this.map.entrySet()) {
                 INode node = entry.getKey();
                 IEdge edge = entry.getValue();
-                edge.move(node, this.node);
+                edge.move(node, this.cageNode);
                 this.graph.removeNode(node);
             }
         }
@@ -130,6 +131,18 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
 
     /** The graph the algorithm works on. */
     private IGraph graph;
+
+    /**
+     * The arcs in the flow network from a node to an adjacent face. The flow in these arcs specify
+     * the sum of angles at the source node in the target face.
+     */
+    private LinkedList<IEdge> nodeArcs;
+
+    /**
+     * The arcs in the flow network from a face to an adjacent face. The flow in these arcs specify
+     * the number of bends along the edge between the two faces.
+     */
+    private LinkedList<IEdge> faceArcs;
 
     // ======================== Algorithm ==========================================================
     // TODO does leaving the cage nodes in the graph influence the flow network?
@@ -152,9 +165,9 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
             }
         }
 
-        // Solve flow network to get minimum flows
+        // Solve flow network
         IGraph network = this.createFlowNetwork();
-        IMinimumCostFlowSolver solver = new SuccessiveShortestPathFlowSolver();
+        IFlowNetworkSolver solver = new SuccessiveShortestPathFlowSolver();
         solver.findFlow(network);
 
         // TODO create orthogonal representation based on flow
@@ -177,9 +190,10 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
      */
     private IGraph createFlowNetwork() {
         IGraphFactory factory = new PGraphFactory();
-        IGraph dualgraph = factory.createDualGraph(this.graph);
         IGraph network = factory.createEmptyGraph();
         HashMap<IGraphElement, INode> map = new HashMap<IGraphElement, INode>();
+        this.nodeArcs = new LinkedList<IEdge>();
+        this.faceArcs = new LinkedList<IEdge>();
 
         // Creating source nodes for every graph node
         for (INode node : this.graph.getNodes()) {
@@ -193,7 +207,6 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
         for (IFace face : this.graph.getFaces()) {
             INode newnode = network.addNode();
             newnode.setProperty(NETWORKTOGRAPH, face);
-            // TODO node is sink: 2*degree-4 for internal, 2*degree+4 for external
             map.put(face, newnode);
 
             // Creating arcs for every node adjacent to the face
@@ -206,10 +219,15 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
                 newedge.setProperty(IFlowNetworkSolver.CAPACITY, MAXDEGREE);
                 newedge.setProperty(IPathFinder.PATHCOST, 0);
                 // TODO edge has lower bound 1
+                this.nodeArcs.add(newedge);
             }
+            
+            // Creating arcs for every face adjacent to the face
+            for ()
         }
 
         // Create arcs for edges in the dual graph
+        // TODO not only dual edges, but all adjacent faces (i.e. two arcs per dual edge()
         for (IEdge edge : dualgraph.getEdges()) {
             IFace source = (IFace) edge.getSource().getProperty(IGraphFactory.TODUALGRAPH);
             IFace target = (IFace) edge.getTarget().getProperty(IGraphFactory.TODUALGRAPH);
@@ -217,9 +235,23 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
             newedge.setProperty(IFlowNetworkSolver.CAPACITY, Integer.MAX_VALUE);
             newedge.setProperty(IPathFinder.PATHCOST, 1);
             // TODO edge has lower bound 0
+            this.faceArcs.add(newedge);
+        }
+
+        // Set supply of sink nodes based on degree
+        boolean internal = false;
+        for (INode node : network.getNodes()) {
+            if (node.getProperty(IFlowNetworkSolver.SUPPLY) == 0) {
+                int supply = -2 * node.getAdjacentEdgeCount();
+                if (internal) {
+                    node.setProperty(IFlowNetworkSolver.SUPPLY, supply + 4);
+                } else {
+                    internal = true;
+                    node.setProperty(IFlowNetworkSolver.SUPPLY, supply - 4);
+                }
+            }
         }
 
         return network;
     }
-
 }
