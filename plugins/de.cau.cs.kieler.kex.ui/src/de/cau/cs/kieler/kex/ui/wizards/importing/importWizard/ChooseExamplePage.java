@@ -32,6 +32,8 @@ public class ChooseExamplePage extends WizardPage {
 
 	private Text exampleContact;
 
+	private final String dummyText = "                                                                  ";
+
 	private static final String EXAMPLE_DATA_KEY = "example";
 
 	public ChooseExamplePage(String pageName) {
@@ -65,10 +67,7 @@ public class ChooseExamplePage extends WizardPage {
 	private void createBottomComponent(Composite parent) {
 		Label descriptionLabel = new Label(parent, SWT.NONE);
 		descriptionLabel.setText("Description:");
-		// Group descriptionGroup = new Group(parent, SWT.NONE);
-		// descriptionGroup.setLayout(new GridLayout());
-		// descriptionGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
-		// descriptionGroup.setText("Example Description");
+
 		this.exampleDescription = new Text(parent, SWT.MULTI | SWT.V_SCROLL
 				| SWT.H_SCROLL | SWT.BORDER);
 		this.exampleDescription.setEditable(false);
@@ -78,8 +77,7 @@ public class ChooseExamplePage extends WizardPage {
 
 	private void createTreeElement(Composite composite) {
 		exampleTree = new Tree(composite, SWT.BORDER);
-		exampleTree.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL
-				| GridData.GRAB_VERTICAL));
+		exampleTree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		exampleTree.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				updateElements(e.item);
@@ -123,21 +121,33 @@ public class ChooseExamplePage extends WizardPage {
 		exampleGroup.setText("Selected Example");
 		exampleGroup.setFont(composite.getFont());
 		exampleGroup.setToolTipText("Selected Example");
+		createEmptyLine(exampleGroup, columnCount);
 		new Label(exampleGroup, SWT.NONE).setText("Title:");
-		this.setExampleTitle(new Text(exampleGroup, SWT.NONE));
+		Text text = new Text(exampleGroup, SWT.NONE);
+		text.setText(this.dummyText);
+		// text.setTabs(16);
+		this.setExampleTitle(text);
 		this.getExampleTitle().setEditable(false);
 		this.getExampleTitle().setLayoutData(
 				new GridData(GridData.FILL_HORIZONTAL));
+		createEmptyLine(exampleGroup, columnCount);
 		new Label(exampleGroup, SWT.NONE).setText("Version:");
 		this.exampleVersion = new Text(exampleGroup, SWT.NONE);
 		this.exampleVersion.setEditable(false);
 		this.exampleVersion
 				.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		createEmptyLine(exampleGroup, columnCount);
 		new Label(exampleGroup, SWT.NONE).setText("Contact:");
 		this.exampleContact = new Text(exampleGroup, SWT.NONE);
 		this.exampleContact.setEditable(false);
 		this.exampleContact
 				.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		createEmptyLine(exampleGroup, columnCount);
+	}
+
+	private void createEmptyLine(Composite composite, int columnCount) {
+		for (int i = 0; i < columnCount; i++)
+			new Label(composite, SWT.NONE);
 	}
 
 	private void updateElements(Widget widget) {

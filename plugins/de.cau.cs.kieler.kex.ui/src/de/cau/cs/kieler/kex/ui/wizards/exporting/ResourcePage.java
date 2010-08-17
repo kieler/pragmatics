@@ -20,7 +20,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.internal.ide.DialogUtil;
@@ -33,9 +33,7 @@ import de.cau.cs.kieler.kex.model.ExportResource;
 @SuppressWarnings("restriction")
 public class ResourcePage extends WizardPage {
 
-	private Button headFileButton;
-
-	private Label headFileLabel;
+	private Combo headFileCombo;
 
 	private ResourceTreeAndListGroup resourceGroup;
 
@@ -58,30 +56,30 @@ public class ResourcePage extends WizardPage {
 	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.BORDER);
 		composite.setLayout(new GridLayout());
-		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL
-				| GridData.HORIZONTAL_ALIGN_FILL));
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		composite.setFont(parent.getFont());
 		createResourcesGroup(composite);
-		createHeadResourceGroup(composite);
+		createHeadFileComposite(composite);
 		setControl(composite);
 	}
 
-	private void createHeadResourceGroup(Composite composite) {
+	private void createHeadFileComposite(Composite composite) {
 		Composite headResourceComposite = new Composite(composite, SWT.BORDER);
-		headResourceComposite.setLayout(new GridLayout());
 		GridLayout data = new GridLayout();
 		data.numColumns = 2;
-		this.headFileButton = new Button(composite, SWT.CHECK);
-		this.headFileButton.setText("Head File:");
-		this.headFileButton
-				.setToolTipText("Select one of the resources to make it head_file");
-		this.headFileLabel = new Label(composite, SWT.BORDER);
-		this.headFileButton.addSelectionListener(new SelectionAdapter() {
+		headResourceComposite.setLayout(data);
+		headResourceComposite.setLayoutData(new GridData(
+				GridData.FILL_HORIZONTAL));
+		new Label(headResourceComposite, SWT.NONE).setText("Head File:");
+		this.headFileCombo = new Combo(headResourceComposite, SWT.READ_ONLY);
+		this.headFileCombo
+				.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		this.headFileCombo
+				.setToolTipText("Choose one of selected files to make it the headfile.");
+		headFileCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				// TODO vlt. auch einfach wie destlocation implementieren, da so
-				// nicht geht, da der benutzte tree kein selectionlistener
-				// annimmt.
+				// e.data;
 			}
 		});
 
@@ -141,10 +139,27 @@ public class ResourcePage extends WizardPage {
 					else
 						getExportedProjects().remove(element);
 				}
+
+				fillHeadFileCombo();
 			}
 
 		});
 
+	}
+
+	protected void fillHeadFileCombo() {
+		@SuppressWarnings("unchecked")
+		List<IFile> allCheckedListItems = this.resourceGroup
+				.getAllCheckedListItems();
+		int size = allCheckedListItems.size();
+		String[] items = new String[size];
+		for (int i = 0; i < size; i++) {
+			Object object = allCheckedListItems.get(i);
+			if (object instanceof IFile) {
+				items[i] = ((IFile) object).getFullPath().toString();
+			}
+		}
+		headFileCombo.setItems(items);
 	}
 
 	/**
@@ -213,8 +228,17 @@ public class ResourcePage extends WizardPage {
 		return this.exportedFolders;
 	}
 
-	public String getHeadResource() {
-		return headFileLabel.getText();
+	public IPath getHeadFile() {
+		return null;
+	}
+
+	// TODO validier mechanismen schon bei umschlagen auf den neue page
+	// abprüfen,
+	// im wizard, nicht erst bei finish.
+
+	@Override
+	public boolean isPageComplete() {
+		return true;
 	}
 
 	public void buildResourceStructure() {

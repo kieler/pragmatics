@@ -68,7 +68,7 @@ public class ExportExampleWizard extends Wizard implements IWizard {
 			validateElement(exportedResources, 1, "Exported Resources");
 			result.put(ExampleElement.RESOURCES, exportedResources);
 
-			result.put(ExampleElement.HEAD_RESOURCE, rePage.getHeadResource());
+			result.put(ExampleElement.HEAD_RESOURCE, rePage.getHeadFile());
 
 			ExampleManager.get().exportExample(result);
 		} catch (KielerException e) {

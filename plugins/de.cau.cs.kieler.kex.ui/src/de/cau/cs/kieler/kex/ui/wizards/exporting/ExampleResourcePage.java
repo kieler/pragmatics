@@ -6,11 +6,6 @@ import java.util.List;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.TreeEditor;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -31,9 +26,6 @@ public class ExampleResourcePage extends WizardPage {
 
 	private Text destPath;
 
-	private Tree exampleTree;
-
-	private final int TWO_COLUMNS = 2;
 	private final int THREE_COLUMNS = 3;
 	private List<URL> resources;
 
@@ -93,10 +85,10 @@ public class ExampleResourcePage extends WizardPage {
 		GridLayout middleLayout = new GridLayout();
 		middleGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
 		middleLayout.numColumns = 2;
-		middleGroup.setText("Add Example Resources");
+		middleGroup.setText("Add Example Category");
+		middleGroup.setToolTipText("There could be more selected than one.");
 		middleGroup.setLayout(middleLayout);
 		createCheckedTree(middleGroup);
-		// createTreeElement(middleGroup);
 
 	}
 
@@ -111,91 +103,18 @@ public class ExampleResourcePage extends WizardPage {
 		bottomGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
 		Button exampleFolderButton = new Button(bottomGroup, SWT.CHECK);
 		exampleFolderButton.setText("create folder with example name");
-	}
-
-	// TODO grï¿½ï¿½e fix machen und mit scrollbar ausstatten, gilt auch fï¿½r
-	// import
-	// mechanismus.
-	private void createTreeElement(Composite composite) {
-		exampleTree = new Tree(composite, SWT.BORDER);
-		exampleTree.setLayoutData(new GridData(GridData.FILL_BOTH));
-		exampleTree.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				// updateElements(e.item);
-			}
-
-		});
-		exampleTree
-				.setToolTipText("Use context menu to edit example resources.");
-		// Create the editor and set its attributes
-		final TreeEditor editor = new TreeEditor(exampleTree);
-		editor.horizontalAlignment = SWT.LEFT;
-		editor.grabHorizontal = true;
-
-		// Add a key listener to the tree that listens for F2.
-		// If F2 is pressed, we do the editing
-		exampleTree.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent event) {
-				// Make sure one and only one item is selected when F2 is
-				// pressed
-				if (event.keyCode == SWT.F2
-						&& exampleTree.getSelectionCount() == 1) {
-					// Determine the item to edit
-					final TreeItem item = exampleTree.getSelection()[0];
-
-					// Create a text field to do the editing
-					final Text text = new Text(exampleTree, SWT.NONE);
-					text.setText(item.getText());
-					text.selectAll();
-					text.setFocus();
-
-					// If the text field loses focus, set its text into the tree
-					// and end the editing session
-					text.addFocusListener(new FocusAdapter() {
-						@Override
-						public void focusLost(FocusEvent event) {
-							item.setText(text.getText());
-							text.dispose();
-						}
-					});
-
-					// If they hit Enter, set the text into the tree and end the
-					// editing
-					// session. If they hit Escape, ignore the text and end the
-					// editing
-					// session
-					text.addKeyListener(new KeyAdapter() {
-						@Override
-						public void keyPressed(KeyEvent event) {
-							switch (event.keyCode) {
-							case SWT.CR:
-								// Enter hit--set the text into the tree and
-								// drop through
-								item.setText(text.getText());
-							case SWT.ESC:
-								// End editing session
-								text.dispose();
-								break;
-							}
-						}
-					});
-
-					// Set the text field into the editor
-					editor.setEditor(text, item);
-				}
-			}
-		});
+		exampleFolderButton.setSelection(true);
+		Button copyHiddenFilesButton = new Button(bottomGroup, SWT.CHECK);
+		copyHiddenFilesButton.setText("copy hidden files");
 
 	}
 
 	void createCheckedTree(Composite parent) {
-
 		this.categoryTree = new Tree(parent, SWT.CHECK | SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		categoryTree.setLayoutData(data);
 		fillTree(categoryTree);
+
 	}
 
 	/**
@@ -237,4 +156,9 @@ public class ExampleResourcePage extends WizardPage {
 		// der name der enumeration geändert werden
 		return ExportType.EXTENSIONPOINT;
 	}
+
+	@Override
+	public boolean isPageComplete() {
+		return true;
+	};
 }
