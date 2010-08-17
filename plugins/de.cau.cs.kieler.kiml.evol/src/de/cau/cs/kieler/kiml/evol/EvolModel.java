@@ -15,6 +15,7 @@ package de.cau.cs.kieler.kiml.evol;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -24,6 +25,8 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.ui.IEditorPart;
 
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
+import de.cau.cs.kieler.kiml.LayoutProviderData;
+import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.evol.alg.BasicEvolutionaryAlgorithm;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
@@ -46,12 +49,14 @@ public final class EvolModel {
     public EvolModel() {
         this.position = 0;
         this.layoutProviderId = null;
+        this.layoutTypeId = null;
     }
 
     // private fields
     private BasicEvolutionaryAlgorithm evolAlg;
     private int position;
     private String layoutProviderId;
+    private String layoutTypeId;
     private final List<IEvolModelListener> listeners = new LinkedList<IEvolModelListener>();
 
     /**
@@ -118,25 +123,6 @@ public final class EvolModel {
         } finally {
             monitor.done();
         }
-    }
-
-    /**
-     * Auto-rate all individuals in the current editor. NOTE: Must be run in UI
-     * thread.
-     *
-     * @param theMonitor
-     *            a progress monitor; must not be {@code null}
-     * @deprecated
-     *
-     */
-    @Deprecated
-    private void autoRateAll(final IProgressMonitor theMonitor) {
-        Assert.isLegal(theMonitor != null);
-
-        final IEditorPart editor = EvolUtil.getCurrentEditor();
-        Assert.isNotNull(editor);
-
-        autoRateAll(editor, theMonitor);
     }
 
     /**
@@ -249,7 +235,7 @@ public final class EvolModel {
             return false;
         }
 
-        if (layoutProviderHasChanged()) {
+        if (!isCompatibleLayoutProvider()) {
             // need to reset
             System.out
                     .println("The current population is not compatible to the layout provider.");
@@ -282,7 +268,18 @@ public final class EvolModel {
         final String providerId = EvolUtil.getLayoutProviderId(editor, part);
         setLayoutProviderId(providerId);
 
-        final Population sourcePopulation = EvolUtil.createPopulation(editor, part);
+        if (providerId != null) {
+            final LayoutServices layoutServices = LayoutServices.getInstance();
+            Assert.isNotNull(layoutServices);
+            final LayoutProviderData providerData =
+                    layoutServices.getLayoutProviderData(providerId);
+            Assert.isNotNull(providerData);
+            final String typeId = providerData.getType();
+            setLayoutTypeId(typeId);
+        }
+
+        final Set<IEditorPart> editors = EvolUtil.getEditors();
+        final Population sourcePopulation = EvolUtil.createPopulation(editors);
 
         if (!sourcePopulation.isEmpty()) {
             // Create and initialize the algorithm.
@@ -294,6 +291,13 @@ public final class EvolModel {
 
         // Notify listeners.
         afterChange("reset");
+    }
+
+    /**
+     * @param theLayoutTypeId
+     */
+    private void setLayoutTypeId(final String theLayoutTypeId) {
+        this.layoutTypeId = theLayoutTypeId;
     }
 
     /**
@@ -361,8 +365,43 @@ public final class EvolModel {
         final boolean result = !(oldId.equalsIgnoreCase(newId));
         if (result) {
             System.out.println("Current layout provider : " + newId);
+            final String newTypeId =
+                    LayoutServices.getInstance().getLayoutProviderData(newId).getType();
+            System.out.println("Type: " + newTypeId);
             System.out.println("Expected layout provider: " + oldId);
+            final String oldTypeId =
+                    LayoutServices.getInstance().getLayoutProviderData(oldId).getType();
+            System.out.println("Type: " + oldTypeId);
         }
+        return result;
+    }
+
+    private boolean isCompatibleLayoutProvider() {
+
+        final IEditorPart editor = EvolUtil.getCurrentEditor();
+        final EditPart editPart = EvolUtil.getEditPart(editor);
+
+        final String oldId = this.layoutProviderId;
+        final String newId = EvolUtil.getLayoutProviderId(editor, editPart);
+
+        if ((newId == null) || (oldId == null)) {
+            return (oldId == null) && (newId == null);
+        }
+
+        final String oldTypeId =
+                LayoutServices.getInstance().getLayoutProviderData(oldId).getType();
+        final String newTypeId =
+                LayoutServices.getInstance().getLayoutProviderData(newId).getType();
+
+        Assert.isTrue(oldTypeId.equalsIgnoreCase(this.layoutTypeId));
+
+        final boolean result = oldTypeId.equalsIgnoreCase(newTypeId);
+
+        if (!result) {
+            System.out.println("expected type: " + this.layoutTypeId);
+            System.out.println("present type: " + newTypeId);
+        }
+
         return result;
     }
 

@@ -275,4 +275,18 @@ public class Genome extends ArrayList<IGene<?>> {
     private int userRating;
     private int automaticRating;
 
+    /**
+     * @param theId
+     * @return
+     */
+    public IGene find(final String theId) {
+        for (final IGene gene : this) {
+            if (gene.getId().equals(theId)) {
+                return gene;
+            }
+
+        }
+        return null;
+    }
+
 }
