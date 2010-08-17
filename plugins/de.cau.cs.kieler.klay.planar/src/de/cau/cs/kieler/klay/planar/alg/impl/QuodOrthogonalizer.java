@@ -208,47 +208,42 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
             INode newnode = network.addNode();
             newnode.setProperty(NETWORKTOGRAPH, face);
             map.put(face, newnode);
+        }
+
+        // Linking nodes
+        boolean internal = false;
+        for (IFace face : this.graph.getFaces()) {
+            INode newnode = map.get(face);
 
             // Creating arcs for every node adjacent to the face
-            for (INode node : face.getNodes()) {
+            for (INode node : face.adjacentNodes()) {
                 if (!map.containsKey(node)) {
                     throw new InconsistentGraphModelException(
                             "Attempted to link non-existent nodes by an edge.");
                 }
-                IEdge newedge = network.addEdge(map.get(node), map.get(face), true);
+                IEdge newedge = network.addEdge(map.get(node), newnode, true);
                 newedge.setProperty(IFlowNetworkSolver.CAPACITY, MAXDEGREE);
                 newedge.setProperty(IPathFinder.PATHCOST, 0);
                 // TODO edge has lower bound 1
                 this.nodeArcs.add(newedge);
             }
-            
+
             // Creating arcs for every face adjacent to the face
-            for ()
-        }
+            for (IFace adj : face.adjacentFaces()) {
+                IEdge newedge = network.addEdge(map.get(adj), newnode, true);
+                newedge.setProperty(IFlowNetworkSolver.CAPACITY, Integer.MAX_VALUE);
+                newedge.setProperty(IPathFinder.PATHCOST, 1);
+                // TODO edge has lower bound 0
+                this.faceArcs.add(newedge);
+            }
 
-        // Create arcs for edges in the dual graph
-        // TODO not only dual edges, but all adjacent faces (i.e. two arcs per dual edge()
-        for (IEdge edge : dualgraph.getEdges()) {
-            IFace source = (IFace) edge.getSource().getProperty(IGraphFactory.TODUALGRAPH);
-            IFace target = (IFace) edge.getTarget().getProperty(IGraphFactory.TODUALGRAPH);
-            IEdge newedge = network.addEdge(map.get(source), map.get(target), true);
-            newedge.setProperty(IFlowNetworkSolver.CAPACITY, Integer.MAX_VALUE);
-            newedge.setProperty(IPathFinder.PATHCOST, 1);
-            // TODO edge has lower bound 0
-            this.faceArcs.add(newedge);
-        }
-
-        // Set supply of sink nodes based on degree
-        boolean internal = false;
-        for (INode node : network.getNodes()) {
-            if (node.getProperty(IFlowNetworkSolver.SUPPLY) == 0) {
-                int supply = -2 * node.getAdjacentEdgeCount();
-                if (internal) {
-                    node.setProperty(IFlowNetworkSolver.SUPPLY, supply + 4);
-                } else {
-                    internal = true;
-                    node.setProperty(IFlowNetworkSolver.SUPPLY, supply - 4);
-                }
+            // Set demand property of the node
+            int supply = -2 * newnode.getAdjacentEdgeCount();
+            if (internal) {
+                newnode.setProperty(IFlowNetworkSolver.SUPPLY, supply + 4);
+            } else {
+                internal = true;
+                newnode.setProperty(IFlowNetworkSolver.SUPPLY, supply - 4);
             }
         }
 
