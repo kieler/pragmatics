@@ -354,7 +354,6 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             throw new IllegalArgumentException("Input graph is null.");
         }
 
-        super.reset();
         getMonitor().begin("network-simplex layering", 1);
         if (nodes.size() < 1) {
             getMonitor().done();

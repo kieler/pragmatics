@@ -58,12 +58,6 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
     private LinkedList<LEdge> layerEdges;
 
     /**
-     * A {@code LinkedList} containing all source nodes of the graph, i.e. all edges that have no
-     * incident incoming edges.
-     */
-    private LinkedList<LNode> sources;
-
-    /**
      * A {@code LinkedList} containing all sink nodes of the graph, i.e. all edges that have no
      * incident outgoing edges.
      */
@@ -93,7 +87,7 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
     // ================================= Inner Classes ============================================
 
     /**
-     * A abort listener for the LpSolve-Layerer used to abort the execution when the timeout has
+     * A abort listener for the LpSolve-Layerer used to abort the execution when the timeout was
      * reached.
      * 
      * @see de.cau.cs.kieler.klay.layered.impl.LPSolveLayerer#LPSOLVE_TIMEOUT LPSOLVE_TIMEOUT
@@ -127,9 +121,7 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
      */
     private class LpSolveLayererException extends RuntimeException {
 
-        /**
-         * The generated serial version UID.
-         */
+        /** The generated serial version UID. */
         private static final long serialVersionUID = 5549313074239264699L;
 
         /**
@@ -163,11 +155,9 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
      * execution of the LpSolve-layerer and initializes them with their default values. If the
      * attributes already exist (i.e. they were created by a previous function call) and if their
      * size fits for the nodes of the current graph, then the old instances will be reused as far as
-     * possible. Furthermore, all edges in the connected component given by the input argument will
-     * be determined, as well as the number of incoming and outgoing edges of each node (
-     * {@code inDegree}, respectively {@code outDegree}). All sinks and source nodes in the
-     * connected component identified in this step will be added to {@code sinks}, respectively
-     * {@code sources}.
+     * possible. Furthermore, all edges in the graph will be determined, as well as the number of
+     * incoming and outgoing edges of each node ( {@code inDegree}, respectively {@code outDegree}).
+     * All sinks nodes in the graph identified in this step will be added to {@code sinks}.
      * 
      * @param nodes
      *            a {@code Collection} containing all nodes of the graph
@@ -185,7 +175,6 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
             Arrays.fill(outDegree, 0);
             Arrays.fill(layer, 0);
         }
-        sources = new LinkedList<LNode>();
         sinks = new LinkedList<LNode>();
         layerNodes = nodes;
 
@@ -204,9 +193,6 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
             }
             if (outDegree[node.id] == 0) {
                 sinks.add(node);
-            }
-            if (inDegree[node.id] == 0) {
-                sources.add(node);
             }
         }
         // re-index edges
@@ -240,8 +226,7 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
             throw new IllegalArgumentException("Input graph is null.");
         }
 
-        super.reset();
-        getMonitor().begin("LPSolve layering", 1);
+        getMonitor().begin("LpSolve layering", 1);
         if (nodes.size() < 1) {
             getMonitor().done();
             return;
@@ -290,7 +275,7 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
         // create LP instance
         LpSolve lp = LpSolve.makeLp(layerEdges.size(), layerNodes.size());
         lp.setMinim();
-        // add objective function
+        // set objective function
         double[] objFct = new double[layerNodes.size() + 1];
         for (LEdge edge : layerEdges) {
             objFct[edge.getSource().getNode().id + 1]--;
@@ -320,15 +305,14 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
 
     /**
      * Helper method for the LpSolve-layerer. It applies the determined solution of the LP to the
-     * graph, i.e. retrieves the solution, normalizes it, balances the layering and finally assigns
-     * each node to its layer in {@code layeredGraph}.
+     * graph, i.e. retrieves the solution from the LP-Solver, balances the layering and assigns each
+     * node to its determined layer in {@code layeredGraph}.
      * 
      * @param lp
      *            the LP to apply its solution
      * @throws LpSolveException
      *             if an error occurred during solution retrieving
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.LPSolveLayerer#normalize() normalize()
      * @see de.cau.cs.kieler.klay.layered.impl.LPSolveLayerer#balance(int[]) balance()
      * @see de.cau.cs.kieler.klay.layered.impl.LPSolveLayerer#putNode(LNode) putNode()
      */
@@ -438,7 +422,7 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
      * Helper method for the LpSolve-layerer. It balances the layering concerning its width, i.e.
      * the number of nodes in each layer. If the graph allows multiple optimal layerings regarding a
      * minimal edge length, this method moves separate nodes to a layer with a minimal amount of
-     * contained nodes with respect to the retention of the feasibility and optimality of the given
+     * contained nodes with respect to the retention of feasibility and optimality of the given
      * layering.
      */
     private void balance() {
@@ -489,7 +473,7 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
 
         List<Layer> layers = layerGraph.getLayers();
         // add additional layers to match required amount
-        for (int i = layers.size() - 1; i < layer[node.id]; i++) {
+        while (layers.size() <= layer[node.id]) {
             layers.add(layers.size(), new Layer(layerGraph));
         }
         node.setLayer(layers.get(layer[node.id]));
