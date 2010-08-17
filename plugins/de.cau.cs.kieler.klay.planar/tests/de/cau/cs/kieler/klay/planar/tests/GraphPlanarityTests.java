@@ -41,13 +41,13 @@ public class GraphPlanarityTests {
     // ======================== Constants ==========================================================
 
     /** The number of graphs to test. */
-    private static final int NUMTESTS = 1000;
+    private static final int NUMTESTS = 10000;
 
     /** The maximum number of nodes a graph can have. */
-    private static final int MAXNODES = 200;
+    private static final int MAXNODES = 10;
 
     /** The maximum number of edges a graph can have. */
-    private static final int MAXEDGES = 500;
+    private static final int MAXEDGES = 20;
 
     /** A File system path pointing to the directory containing planar test graphs. */
     private static final String GRAPHDIRECTORY = "./graphs";
@@ -89,7 +89,7 @@ public class GraphPlanarityTests {
     /**
      * Read planar graphs in DIMACS format from files and test each one for planarity.
      */
-    @Test
+    // @Test
     public void testPlanarGraphsFromFile() {
         File directory = new File(GRAPHDIRECTORY);
         for (File file : directory.listFiles()) {
@@ -111,11 +111,19 @@ public class GraphPlanarityTests {
      */
     private boolean testGraph(final IGraph graph) {
         Boolean result = null;
-        for (IPlanarityTester tester : testers) {
+        for (IPlanarityTester tester : this.testers) {
             IGraph copy = this.factory.createGraphCopy(graph);
             tester.reset();
             boolean planar = tester.testPlanarity(copy);
             if (result != null) {
+                if (result != planar) {
+                    for (IPlanarityTester t : this.testers) {
+                        System.out.println(t.getClass().getName());
+                    }
+                    System.out.println(result);
+                    System.out.println(planar);
+                    System.out.println(graph);
+                }
                 assertTrue(result == planar);
             }
             result = planar;

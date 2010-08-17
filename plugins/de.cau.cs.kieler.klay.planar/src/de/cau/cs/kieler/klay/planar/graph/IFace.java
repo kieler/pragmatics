@@ -24,6 +24,7 @@ package de.cau.cs.kieler.klay.planar.graph;
  */
 public interface IFace extends IGraphElement {
     // TODO guarantee edge and node order
+    // TODO is left/right face correct according to source/target?
 
     // ======================== Getters and Setters ================================================
 
