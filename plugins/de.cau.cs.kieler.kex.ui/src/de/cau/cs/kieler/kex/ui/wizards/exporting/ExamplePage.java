@@ -40,6 +40,10 @@ public class ExamplePage extends WizardPage {
 		layout.numColumns = 2;
 		composite.setLayout(layout);
 		setControl(composite);
+		addAttributeFields(composite);
+	}
+
+	private void addAttributeFields(Composite composite) {
 		composite.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 
 		new Label(composite, SWT.NONE).setText("Id:");
@@ -55,6 +59,8 @@ public class ExamplePage extends WizardPage {
 		new Label(composite, SWT.NONE).setText("Version:");
 		Text versionText = new Text(composite, SWT.BORDER);
 		versionText.setText("1.0");
+		// TODO mom. noch 1.0.0 wenn geladen wird, da version type Version of
+		// example, vlt. ein trim hier...
 		versionText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		setVersion(versionText);
 

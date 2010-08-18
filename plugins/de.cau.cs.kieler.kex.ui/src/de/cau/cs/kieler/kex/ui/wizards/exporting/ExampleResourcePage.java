@@ -4,6 +4,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.IInputValidator;
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -68,8 +70,8 @@ public class ExampleResourcePage extends WizardPage {
 				DirectoryDialog dirDiag = new DirectoryDialog(composite
 						.getShell());
 
-				dirDiag.setText("Destination directory choice");
-				dirDiag.setMessage("Select a directory in java project with existing plugin.xml.");
+				dirDiag.setText("Choose destination directory");
+				dirDiag.setMessage("Select a directory in a java plugin project.");
 				String dir = dirDiag.open();
 				// TODO ueberlegen, ob hier direkt eine pruefung eingebaut
 				// werden kann.
@@ -80,15 +82,42 @@ public class ExampleResourcePage extends WizardPage {
 		});
 	}
 
-	private void createMiddleGroup(Composite composite) {
+	private void createMiddleGroup(final Composite composite) {
 		Group middleGroup = new Group(composite, SWT.NONE);
 		GridLayout middleLayout = new GridLayout();
 		middleGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
-		middleLayout.numColumns = 2;
+		middleLayout.numColumns = 1;
 		middleGroup.setText("Add Example Category");
 		middleGroup.setToolTipText("There could be more selected than one.");
 		middleGroup.setLayout(middleLayout);
 		createCheckedTree(middleGroup);
+		Button addCategory = new Button(middleGroup, SWT.NONE);
+		addCategory.setText("Create New Category");
+		addCategory.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				IInputValidator validator = new IInputValidator() {
+					public String isValid(String newText) {
+						if (newText.length() < 4) {
+							return "Category name has to have at least 4 characters.";
+						}
+						for (TreeItem item : categoryTree.getItems()) {
+							if (newText.equals(item.getText()))
+								return "Category exists already! Please enter another name.";
+						}
+						return null;
+
+					}
+				};
+				InputDialog dialog = new InputDialog(getShell(),
+						"Create New Category", "Please enter a new category.",
+						"", validator);
+				dialog.open();
+				TreeItem item = new TreeItem(categoryTree, SWT.NONE);
+				item.setText(dialog.getValue());
+				// categoryTree.redraw();
+			}
+		});
 
 	}
 
@@ -152,8 +181,7 @@ public class ExampleResourcePage extends WizardPage {
 	}
 
 	public ExportType getExportType() {
-		// TODO muss der user entscheiden wohin das gehen soll, außerdem muss
-		// der name der enumeration geändert werden
+		// TODO muss der user entscheiden wohin das gehen soll
 		return ExportType.EXTENSIONPOINT;
 	}
 

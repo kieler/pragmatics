@@ -116,7 +116,6 @@ public class ResourcePage extends WizardPage {
 	 *            , input elements for {@link ResourceTreeAndListGroup}
 	 */
 	private void initResourceGroup(Composite parent, List<Object> input) {
-
 		this.resourceGroup = new ResourceTreeAndListGroup(parent, input,
 				getResourceProvider(IResource.FOLDER),
 				WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(),
