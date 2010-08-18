@@ -32,24 +32,17 @@ public class SwitchableFigure extends Figure { // implements IAttributeAwareFigu
      */
     private IFigure currentFigure;
 
-    // private FigureType defaultFigureType;
-
-    // private IFigure defaultFigure;
-
     /**
      * The constructor. Sets default figure.
      */
     public SwitchableFigure() {
         super();
-
-        // this.transformToNormalFigure();
-        // currentFigureType = FigureType.NORMAL;
     }
 
     @Override
     public void paint(final Graphics graphics) {
+        super.paint(graphics);
         if (currentFigure != null) {
-            super.paint(graphics);
             Rectangle newBounds = new Rectangle();
             newBounds.x = this.getBounds().x + 1;
             newBounds.y = this.getBounds().y + 1;
@@ -74,6 +67,7 @@ public class SwitchableFigure extends Figure { // implements IAttributeAwareFigu
      */
     public void setCurrentFigure(final IFigure figure) {
         currentFigure = figure;
+        this.repaint();
     }
 
     /**
@@ -106,10 +100,12 @@ public class SwitchableFigure extends Figure { // implements IAttributeAwareFigu
     public void setBounds(final Rectangle rect) {
         // Notifier target = getTarget();
         /*
-         * LayoutManager layoutManager = getLayoutManager(); if
-         * (((StateLayout)layoutManager).getNotifier() instanceof State && layoutManager instanceof
-         * StateLayout) { ((StateLayout) layoutManager).checkNewSize(this, (State)
-         * ((StateLayout)layoutManager).getNotifier(), rect); }
+        LayoutManager layoutManager = getLayoutManager();
+        if (((StateLayout) layoutManager).getNotifier() instanceof State
+                && layoutManager instanceof StateLayout) {
+            ((StateLayout) layoutManager).checkNewSize(this,
+                    (State) ((StateLayout) layoutManager).getNotifier(), rect);
+        }
          */
         super.setBounds(rect);
     }

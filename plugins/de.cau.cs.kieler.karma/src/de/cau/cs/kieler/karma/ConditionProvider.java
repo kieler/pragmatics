@@ -22,7 +22,6 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EEnum;
@@ -60,6 +59,14 @@ public final class ConditionProvider {
      */
     private Hashtable<String, IFigureProvider> hashTableFigureProviders = new Hashtable<String, IFigureProvider>();
 
+    /**
+     * HashTable for caching the relevant features and feature ids. Not yet used, will probably removed again. 
+     */
+    private Hashtable<Integer, EStructuralFeature> hashTableRelevantFeatures = new Hashtable<Integer, EStructuralFeature>();
+    
+    /**
+     * Constructor set to private to ensure usage of singleton instance.
+     */
     private ConditionProvider() {
 
     }
@@ -109,18 +116,22 @@ public final class ConditionProvider {
             // String editorId = settings.getAttribute("editorId");
             IConfigurationElement[] parts = settings.getChildren("editPart");
             if (checkCompatibleEditParts(parts, callingEditPart)) {
-
                 IConfigurationElement[] packages = settings.getChildren("package");
                 IConfigurationElement[] conditionsContainer = settings.getChildren("conditions");
+                /*
                 IConfigurationElement[] mutatableObjectContainer = settings
                         .getChildren("mutatableObject");
                 if (mutatableObjectContainer.length != 0) {
-                    // TODO support for mutatable objects
-                } else {
+                    // TODO support for mutatable objects, probably wont make it into final version since 
+                    //      annotations also work with conditions.
+                } else {*/ 
                     for (IConfigurationElement conditionContainer : conditionsContainer) {
                         IConfigurationElement[] conditions = conditionContainer.getChildren();
                         for (IConfigurationElement condition : conditions) {
                             String figureParam = condition.getAttribute("figureParam");
+                            if ((figureParam == null) || (figureParam.isEmpty())) {
+                            	System.out.println("figureparam empty");
+                            }
                             // IFigure figure = figureProvider.getFigureByString(figureParam);
                             ICondition<EObject> cond = getCondition(condition, packages);
                             if ((cond != null) /* && (figure != null) */) {
@@ -135,7 +146,7 @@ public final class ConditionProvider {
                         }
                     }
 
-                }
+                
                 hashTableConditions.put(callingEditPart, conditionFigurePairs);
                 return conditionFigurePairs;
             }
@@ -159,6 +170,9 @@ public final class ConditionProvider {
             String typeString = condition.getAttribute("type");
             EStructuralFeature feature = getFeatureFromPackages(packages, featureString, typeString);
             if (feature != null) {
+                if(!(hashTableRelevantFeatures.containsKey(feature.getFeatureID()))) {
+                    hashTableRelevantFeatures.put(feature.getFeatureID(), feature);
+                }
                 Object value = getValueByFeature(feature, condition.getAttribute("value"));
                 if (value != null) {
                     FeatureValueCondition cond = new FeatureValueCondition(feature, value);
@@ -181,6 +195,9 @@ public final class ConditionProvider {
             String operator = this.parseListSize(sizeString).getFirst();
             EStructuralFeature feature = getFeatureFromPackages(packages, featureString, typeString);
             if (feature != null) {
+                if (!(hashTableRelevantFeatures.containsKey(feature.getFeatureID()))) {
+                    hashTableRelevantFeatures.put(feature.getFeatureID(), feature);
+                }
                 ListSizeCondition cond = new ListSizeCondition(feature, size, operator);
                 return cond;
             } else {
@@ -206,8 +223,12 @@ public final class ConditionProvider {
         } else if (condition.getName().equals("customCondition")) {
             try {
                 Object customConditionObject = condition.createExecutableExtension("condition");
-                if (customConditionObject instanceof ICondition<?>) {
-                    ICondition<EObject> customCondition = (ICondition<EObject>) customConditionObject;
+                String key = condition.getAttribute("key");
+                String value = condition.getAttribute("value");
+                if (customConditionObject instanceof ICustomCondition<?>) {
+                    @SuppressWarnings("unchecked")
+                    ICustomCondition<EObject> customCondition = (ICustomCondition<EObject>) customConditionObject;
+                    customCondition.initialize(key, value);
                     return customCondition;
                 }
             } catch (CoreException e) {
@@ -229,14 +250,11 @@ public final class ConditionProvider {
      * @return the value parsed to the correct type
      */
     private Object getValueByFeature(final EObject feature, final String value) {
-        // if (feature instanceof String){
-        // return value;
         if (feature instanceof EAttributeImpl) {
             EAttributeImpl attr = (EAttributeImpl) feature;
             EClassifier type = attr.getEType();
-            // EDataType dataType = attr.getEAttributeType();
             if (type instanceof EEnum) {
-                EEnum eenum = (EEnum) ((EAttribute) feature).getEType();
+                EEnum eenum = (EEnum) ((EAttribute) feature).getEType();               
                 EEnumLiteral literal = eenum.getEEnumLiteral(value);
                 return literal.getInstance();
             } else if (type.getName().equals("EBoolean")) {
@@ -265,7 +283,6 @@ public final class ConditionProvider {
                 pack = EcoreUtil2.getEPackageByClassName(packClassName);
             } catch (ConfigurationException ce) {
                 throw new RuntimeException("Package filed to load.");
-                // System.out.println("Package filed to load.");
             }
             if (pack != null) {
 

@@ -136,7 +136,7 @@
             <element ref="customCondition"/>
             <element ref="compoundCondition"/>
          </choice>
-         <attribute name="figureParam" type="string" use="required">
+         <attribute name="figureParam" type="string">
             <annotation>
                <documentation>
                   This string will be given to te figure provider. The figure provider should be able to handle the string and return a figure according to this string.
@@ -159,7 +159,7 @@
                   The custom condition class.
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.karma.ICustomCondition"/>
+                  <meta.attribute kind="java" basedOn="de.cau.cs.kieler.karma.ICustomCondition:"/>
                </appinfo>
             </annotation>
          </attribute>
@@ -190,11 +190,8 @@
    <element name="configuration">
       <complexType>
          <sequence>
-            <choice>
-               <element ref="conditions"/>
-               <element ref="mutatableObject"/>
-            </choice>
-            <element ref="package" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="conditions"/>
+            <element ref="package" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="editPart" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="FigureProvider" type="string" use="required">
@@ -264,9 +261,6 @@
             </annotation>
          </attribute>
       </complexType>
-   </element>
-
-   <element name="mutatableObject" type="string">
    </element>
 
 

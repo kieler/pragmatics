@@ -32,7 +32,7 @@ public interface IFigureProvider {
      * @param oldFigure the old figure
      * @return the figure
      */
-    public IFigure getFigureByString(String input, IFigure oldFigure, EObject object);
+    public IFigure getFigureByString(final String input, final IFigure oldFigure, final EObject object);
     
     /**
      * Returns the figure to be displayed on default.

@@ -12,6 +12,7 @@
  * See the file epl-v10.html for the license text.
  * 
  *****************************************************************************/
+
 package de.cau.cs.kieler.karma;
 
 import java.util.List;
@@ -20,25 +21,22 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionNodeEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderedShapeEditPart;
 import org.eclipse.gmf.runtime.notation.View;
+import org.eclipse.gmf.runtime.notation.impl.BoundsImpl;
 
-import de.cau.cs.kieler.core.ui.figures.SplineConnection;
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
 
 /**
- * 
  * @author ckru
- * 
  */
-public abstract class AdvancedRenderingConnectionEditPart extends ConnectionNodeEditPart implements
-        IAdvancedRenderingEditPart {
+public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBorderedShapeEditPart
+        implements IAdvancedRenderingEditPart {
 
     /**
      * Figure that that represents the model element.
      */
-    //SUPPRESS CHECKSTYLE NEXT VisibilityModifier
     protected IFigure primaryShape;
 
     /**
@@ -50,7 +48,7 @@ public abstract class AdvancedRenderingConnectionEditPart extends ConnectionNode
      * The figure provider for generating the figures from a string.
      */
     private IFigureProvider figureProvider;
-    
+
     /**
      * Container for the last positive condition. Used for performance optimizations.
      */
@@ -62,28 +60,30 @@ public abstract class AdvancedRenderingConnectionEditPart extends ConnectionNode
      * @param view
      *            to be given to super
      */
-    public AdvancedRenderingConnectionEditPart(final View view) {
+    public AdvancedRenderingBorderedShapeEditPart(final View view) {
         super(view);
         String className = this.getClass().getName();
         ConditionProvider conditionProvider = ConditionProvider.getInstance();
         conditions = conditionProvider.getPairs(className);
         figureProvider = conditionProvider.getFigureProvider(className);
+
     }
 
     @Override
     public void handleNotificationEvent(final Notification notification) {
         super.handleNotificationEvent(notification);
-        if (!(notification.isTouch())) {
-            primaryShape = this.getFigure();
+        if (!(notification.isTouch()) && !(notification.getNotifier() instanceof BoundsImpl)) {
             if (primaryShape != null) {
-                if (primaryShape instanceof SplineConnection) {
-                    SplineConnection splineFigure = (SplineConnection) primaryShape;
-                    boolean changed = this.updateFigure(splineFigure);
+                if (primaryShape instanceof SwitchableFigure) {
+                    SwitchableFigure attrFigure = (SwitchableFigure) primaryShape;
+                    // attrFigure.setCurrentFigure(figureProvider.getDefaultFigure());
+                    boolean changed = this.updateFigure(attrFigure);
                     if (changed) {
-                        LayoutManager layoutManager = splineFigure.getLayoutManager();
+                        LayoutManager layoutManager = attrFigure.getLayoutManager();
                         if (layoutManager != null) {
-                            layoutManager.layout(splineFigure);
+                            layoutManager.layout(attrFigure);
                         }
+                        this.refresh();
                     }
                 }
             }
@@ -94,18 +94,20 @@ public abstract class AdvancedRenderingConnectionEditPart extends ConnectionNode
      * {@inheritDoc}
      */
     public boolean updateFigure(final IFigure figure) {
-        if ((figure instanceof SplineConnection) && (conditions != null)) {
+        if ((figure instanceof SwitchableFigure) && (conditions != null)) {
             if (!(conditions.isEmpty())) {
-            SplineConnection splineFigure = (SplineConnection) figure;
-            IFigure oldFigure = splineFigure;
+            SwitchableFigure attrFigure = (SwitchableFigure) figure;
+            IFigure oldFigure = attrFigure.getCurrentFigure();
             IFigure newFigure = null;
             for (Pair<String, ICondition<EObject>> cf : conditions) {
                 if (cf.getSecond().evaluate(this.getModelElement())) {
-                    if (cf.getSecond() == lastCondition) {
+                    if (lastCondition == cf.getSecond()) {
                         return false;
                     } else {
-                        newFigure = figureProvider.getFigureByString(cf.getFirst(), oldFigure, null);
-                        primaryShape = newFigure;
+                        newFigure = figureProvider
+                                .getFigureByString(cf.getFirst(), oldFigure, null);
+                        attrFigure.setCurrentFigure(newFigure);
+                        
                         lastCondition = cf.getSecond();
                         return true;
                     }
@@ -117,6 +119,7 @@ public abstract class AdvancedRenderingConnectionEditPart extends ConnectionNode
     }
 
     /**
+     * Getter of the model element for conveniences sake.
      * 
      * @return the modelElement of this editPart
      */
