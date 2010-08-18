@@ -27,6 +27,12 @@ public class ExamplePage extends WizardPage {
 
 	}
 
+	/**
+	 * creates the control composite and adds attributes field for it.
+	 * 
+	 * @param parent
+	 *            , parent composite
+	 */
 	public void createControl(Composite parent) {
 
 		Composite composite = new Composite(parent, SWT.BORDER);
@@ -35,10 +41,12 @@ public class ExamplePage extends WizardPage {
 		composite.setLayout(layout);
 		setControl(composite);
 		composite.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+
 		new Label(composite, SWT.NONE).setText("Id:");
 		Text idText = new Text(composite, SWT.BORDER);
 		idText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		setId(idText);
+
 		new Label(composite, SWT.NONE).setText("Name:");
 		Text nameText = new Text(composite, SWT.BORDER);
 		nameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

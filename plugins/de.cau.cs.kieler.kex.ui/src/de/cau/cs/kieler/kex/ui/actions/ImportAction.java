@@ -9,7 +9,6 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.cau.cs.kieler.kex.ui.wizards.importing.importWizard.ImportWizard;
@@ -84,11 +83,6 @@ public class ImportAction implements IWorkbenchWindowActionDelegate {
 	}
 
 	protected IStructuredSelection getSelectionToUse(ExecutionEvent event) {
-
-		//
-		PlatformUI.getWorkbench();
-		//
-
 		ISelection selection = HandlerUtil.getCurrentSelection(event);
 		if (selection instanceof IStructuredSelection) {
 			return (IStructuredSelection) selection;

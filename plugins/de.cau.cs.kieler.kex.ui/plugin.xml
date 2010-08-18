@@ -35,4 +35,59 @@
          </action>
       </actionSet>
    </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+         <menu
+               id="de.cau.cs.kieler"
+               label="KIELER"
+               mnemonic="K">
+            <menu
+                  icon="icons/keksIcon.jpg"
+                  id="de.cau.cs.kieler.examplemanagement"
+                  label="ExampleManagement"
+                  mnemonic="KE">
+               <command
+                     commandId="de.cau.cs.kieler.kex.ui.import"
+                     label="Import"
+                     style="push">
+               </command>
+               <command
+                     commandId="de.cau.cs.kieler.kex.ui.export"
+                     label="Export"
+                     style="push">
+               </command>
+            </menu>
+         </menu>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="de.cau.cs.kieler.kex.ui.examplecategory"
+            name="Example Category">
+      </category>
+      <command
+            categoryId="de.cau.cs.kieler.kex.ui.examplecategory"
+            id="de.cau.cs.kieler.kex.ui.import"
+            name="Import">
+      </command>
+      <command
+            categoryId="de.cau.cs.kieler.kex.ui.examplecategory"
+            id="de.cau.cs.kieler.kex.ui.export"
+            name="Export">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="de.cau.cs.kieler.kex.ui.handlers.ExampleImportHandler"
+            commandId="de.cau.cs.kieler.kex.ui.import">
+      </handler>
+      <handler
+            class="de.cau.cs.kieler.kex.ui.handlers.ExampleExportHandler"
+            commandId="de.cau.cs.kieler.kex.ui.export">
+      </handler>
+   </extension>
 </plugin>
