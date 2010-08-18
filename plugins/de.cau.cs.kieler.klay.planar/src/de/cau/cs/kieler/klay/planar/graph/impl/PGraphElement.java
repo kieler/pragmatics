@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.klay.planar.graph.impl;
 
-import de.cau.cs.kieler.core.util.PropertyHolder;
+import de.cau.cs.kieler.core.util.MapPropertyHolder;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.IGraphElement;
 
@@ -24,7 +24,7 @@ import de.cau.cs.kieler.klay.planar.graph.IGraphElement;
  * 
  * @author ocl
  */
-abstract class PGraphElement extends PropertyHolder implements IGraphElement {
+abstract class PGraphElement extends MapPropertyHolder implements IGraphElement {
 
     // ======================== Attributes =========================================================
 

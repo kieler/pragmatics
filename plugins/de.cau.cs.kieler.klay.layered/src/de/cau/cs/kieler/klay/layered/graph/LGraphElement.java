@@ -13,14 +13,14 @@
  */
 package de.cau.cs.kieler.klay.layered.graph;
 
-import de.cau.cs.kieler.core.util.PropertyHolder;
+import de.cau.cs.kieler.core.util.MapPropertyHolder;
 
 /**
  * Abstract superclass for the layers, nodes, ports, and edges of a layered graph.
  *
  * @author msp
  */
-public abstract class LGraphElement extends PropertyHolder
+public abstract class LGraphElement extends MapPropertyHolder
         implements Comparable<LGraphElement> {
 
     // CHECKSTYLEOFF VisibilityModifier

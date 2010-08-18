@@ -14,23 +14,21 @@
 package de.cau.cs.kieler.core.util;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
- * An abstract holder class for properties.
+ * An abstract holder class for properties that uses a hash map.
  *
  * @author msp
  */
-public abstract class PropertyHolder {
+public abstract class MapPropertyHolder implements IPropertyHolder {
 
     /** map of property identifiers to their values. */
     private Map<Property<?>, Object> propertyMap = null;
     
     /**
-     * Sets a property value.
-     * 
-     * @param property the property to set
-     * @param value the new value
+     * {@inheritDoc}
      */
     public void setProperty(final Property<?> property, final Object value) {
         if (propertyMap == null) {
@@ -40,11 +38,7 @@ public abstract class PropertyHolder {
     }
     
     /**
-     * Retrieves a property value.
-     * 
-     * @param <T> type of property
-     * @param property the property to get
-     * @return the current value, or the default value if the property is not set
+     * {@inheritDoc}
      */
     public <T> T getProperty(final Property<T> property) {
         if (propertyMap != null) {
@@ -58,18 +52,30 @@ public abstract class PropertyHolder {
     }
     
     /**
-     * Copy all properties from another property holder to this one.
-     * 
-     * @param other another property holder
+     * {@inheritDoc}
      */
-    public void copyProperties(final PropertyHolder other) {
-        if (other.propertyMap != null) {
-            if (this.propertyMap == null) {
-                propertyMap = new HashMap<Property<?>, Object>(other.propertyMap);
-            } else {
-                this.propertyMap.putAll(other.propertyMap);
+    public void copyProperties(final IPropertyHolder holder) {
+        if (holder instanceof MapPropertyHolder) {
+            MapPropertyHolder other = (MapPropertyHolder) holder;
+            if (other.propertyMap != null) {
+                if (this.propertyMap == null) {
+                    propertyMap = new HashMap<Property<?>, Object>(other.propertyMap);
+                } else {
+                    this.propertyMap.putAll(other.propertyMap);
+                }
+            }
+        } else {
+            for (Pair<Property<?>, Object> prop : holder.getAllProperties()) {
+                setProperty(prop.getFirst(), prop.getSecond());
             }
         }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public List<Pair<Property<?>, Object>> getAllProperties() {
+        return Pair.toList(propertyMap);
     }
     
 }
