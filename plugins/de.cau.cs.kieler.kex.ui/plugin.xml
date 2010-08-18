@@ -44,10 +44,8 @@
                label="KIELER"
                mnemonic="K">
             <menu
-                  icon="icons/keksIcon.jpg"
                   id="de.cau.cs.kieler.examplemanagement"
-                  label="ExampleManagement"
-                  mnemonic="KE">
+                  label="ExampleManagement">
                <command
                      commandId="de.cau.cs.kieler.kex.ui.import"
                      label="Import"
