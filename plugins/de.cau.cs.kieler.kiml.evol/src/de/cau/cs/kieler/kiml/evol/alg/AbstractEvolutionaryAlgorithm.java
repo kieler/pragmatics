@@ -65,7 +65,7 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
             determineFitness();
             while (!isDone()) {
                 step();
-                // TODO: pause here for stepwise execution
+                // pause here for stepwise execution using an IEvolutionListener
             }
             this.isInitialized = false;
         }
@@ -127,7 +127,7 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
      **/
     protected void initialize() {
         if (this.isInitialized) {
-            System.out.println("Warning: Algorithm already initialized.");
+            System.err.println("Warning: Algorithm already initialized.");
         } else {
             this.generation = 0;
             this.isInitialized = true;

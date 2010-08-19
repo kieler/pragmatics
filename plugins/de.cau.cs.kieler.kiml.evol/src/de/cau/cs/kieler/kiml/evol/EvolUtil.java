@@ -98,9 +98,8 @@ public final class EvolUtil {
          * @param theIndividual
          * @param theEditor
          */
-        AutoRateIndividualRunnable(final Genome theIndividual, final IEditorPart theEditor) {
+        AutoRateIndividualRunnable(final Genome theIndividual) {
             this.individual = theIndividual;
-            this.editor = theEditor;
         }
 
         /**
@@ -115,11 +114,12 @@ public final class EvolUtil {
 
         public void run() {
             // Must be run in the UI thread.
-            if (this.editor == null) {
-                this.editor = getCurrentEditor();
-            }
 
-            autoRateIndividual(this.individual, this.editor);
+                final Collection<IEditorPart> editors = EvolUtil.getWantedEditors();
+
+            final Set<IEditorPart> editorsSet = new HashSet<IEditorPart>(editors);
+            
+            autoRateIndividual(this.individual, editorsSet);
 
         }
     }
@@ -448,7 +448,7 @@ public final class EvolUtil {
     }
 
     /**
-     * Auto-rate the given population in the given editor.
+     * Auto-rate the given population in the appropriate editors.
      *
      * @param thePopulation
      *            the {@link Population} to be rated
@@ -497,7 +497,7 @@ public final class EvolUtil {
      *            an {@link EditPart}
      * @return a new {@link Population} of default size, or an empty
      *         {@link Population} in case of an error
-     * @deprecated
+     * @deprecated use {@link #createPopulation(Set)} instead.
      */
     @Deprecated
     public static Population createPopulation(final IEditorPart editor, final EditPart part) {
@@ -934,22 +934,16 @@ public final class EvolUtil {
      * @param individual
      *            the {@link Genome} to be rated; must not be {@code null}
      * @param editor
-     *            Specifies the editor in which the individual shall be
-     *            layouted.
+     *            Specifies the editor in which the individual shall be laid
+     *            out.
      */
     private static void autoRateIndividual(final Genome individual, final IEditorPart editor) {
         Assert.isLegal(individual != null);
 
-        // We don't specify the edit part because we want a manager for
-        // the whole diagram.
-        final DiagramLayoutManager manager =
-                EclipseLayoutServices.getInstance().getManager(editor, null);
-        Assert.isNotNull(manager);
+        final Set<IEditorPart> editors = new HashSet<IEditorPart>(1);
+        editors.add(editor);
 
-        final LayoutPropertySource source = getLayoutPropertySource(editor);
-        Assert.isNotNull(source);
-
-        autoRateIndividual(individual, editor, manager, source);
+        autoRateIndividual(individual, editors);
     }
 
     /**
@@ -964,13 +958,104 @@ public final class EvolUtil {
      *            a {@link DiagramLayoutManager}
      * @param source
      *            a {@link LayoutPropertySource}
+     * @deprecated use {@link #calculateAutoRating()} or the version for more
+     *             editors
      */
+    @Deprecated
     private static void autoRateIndividual(
             final Genome ind, final IEditorPart editor, final DiagramLayoutManager manager,
             final LayoutPropertySource source) {
         Assert.isLegal((ind != null) && (source != null));
         if ((ind == null) || (source == null)) {
             return;
+        }
+
+        final int rating = calculateAutoRating(ind, editor, manager, source);
+
+        ind.setUserRating(rating);
+    }
+
+    /**
+     * Layouts the given individual in the given editors and calculates
+     * automatic ratings for it.
+     *
+     * @param ind
+     *            a {@link Genome}
+     * @param editors
+     */
+    private static void autoRateIndividual(final Genome ind, final Set<IEditorPart> editors) {
+        Assert.isLegal((ind != null) && (editors != null));
+        if ((ind == null) || (editors == null)) {
+            return;
+        }
+
+        final int rating = calculateAutoRating(ind, editors);
+        ind.setUserRating(rating);
+    }
+
+    /**
+     * Layouts the given individual in the given editors and calculates
+     * automatic ratings for it. <strong>Note</strong>: The rating is not stored
+     * in the individual.
+     *
+     * @param ind
+     *            a {@link Genome}
+     * @param editors
+     *
+     * @return the rating proposal
+     */
+    private static int calculateAutoRating(final Genome ind, final Set<IEditorPart> editors) {
+        Assert.isLegal((ind != null) && (editors != null));
+        if ((ind == null) || (editors == null)) {
+            return 0;
+        }
+
+        int totalRating = 0;
+        final int editorCount = editors.size();
+
+        for (final IEditorPart editor : editors) {
+            // We don't specify the edit part because we want a manager for
+            // the whole diagram.
+            final DiagramLayoutManager manager =
+                    EclipseLayoutServices.getInstance().getManager(editor, null);
+            Assert.isNotNull(manager);
+
+            final LayoutPropertySource source = getLayoutPropertySource(editor);
+            Assert.isNotNull(source);
+
+            final int rating = calculateAutoRating(ind, editor, manager, source);
+            totalRating += rating;
+        }
+
+        if (editorCount > 1) {
+            final int averageRating =
+                    Math.round(totalRating / Integer.valueOf(editorCount).floatValue());
+            return averageRating;
+        }
+        return totalRating;
+    }
+
+    /**
+     * Layouts the given individual in the given editor and calculates automatic
+     * ratings for it, using the given manager and layout property source.
+     * <strong>Note</strong>: The rating is not stored in the individual.
+     *
+     * @param ind
+     *            a {@link Genome}
+     * @param editor
+     *            an {@link IEditorPart}
+     * @param manager
+     *            a {@link DiagramLayoutManager}
+     * @param source
+     *            a {@link LayoutPropertySource}
+     * @return the rating proposal
+     */
+    private static int calculateAutoRating(
+            final Genome ind, final IEditorPart editor, final DiagramLayoutManager manager,
+            final LayoutPropertySource source) {
+        Assert.isLegal((ind != null) && (source != null));
+        if ((ind == null) || (source == null)) {
+            return 0;
         }
 
         adoptIndividual(ind, source);
@@ -982,7 +1067,7 @@ public final class EvolUtil {
         final KNode layoutGraph = calculateLayout(manager, editor);
         final int rating = measure(layoutGraph, weightsMap);
 
-        ind.setUserRating(rating);
+        return rating;
     }
 
     /**
@@ -1073,7 +1158,7 @@ public final class EvolUtil {
                 case INT:
                 case FLOAT:
                     if (accepted.contains(id)) {
-                        // learnable --> count it
+                        // learnable --> collect it
                         result.add(p);
                     }
                     break;
@@ -1131,6 +1216,8 @@ public final class EvolUtil {
 
         System.out.println("Creating genome of " + learnables + " layout property genes ...");
         final GeneFactory gf = new GeneFactory();
+
+        // A set to store the layout hint IDs we run across.
         final SortedSet<String> layoutHintIds = new TreeSet<String>();
 
         // Iterate the layout property sources.
@@ -1145,8 +1232,8 @@ public final class EvolUtil {
 
                 // Check the property descriptor id.
                 if (LayoutOptions.LAYOUT_HINT.equals(id)) {
-                    /* Property is a layout hint --> obtain its id and store it
-                       for later use. */
+                    // Property is a layout hint --> store its ID for later use
+
                     Assert.isNotNull(value, "layout hint value is null");
 
                     final String hintId = getLayoutHintId(desc, value);
@@ -1171,7 +1258,7 @@ public final class EvolUtil {
         } // iterate propertySources
 
         Assert.isTrue(learnables.size() == result.size(),
-                "The number of genes does not have the predicted count of " + learnables);
+                "The number of genes does not have the predicted count of " + learnables.size());
 
         // Add a gene for the layout hint.
         if (!layoutHintIds.isEmpty()) {
@@ -1469,6 +1556,7 @@ public final class EvolUtil {
                 continue;
             }
 
+            // TODO: Discuss: Is it OK to call getRoot() in this case?
             final EditPart editPart = ((DiagramEditor) editor).getDiagramEditPart().getRoot();
 
             final DiagramLayoutManager manager =
@@ -1636,10 +1724,12 @@ public final class EvolUtil {
     }
 
     /**
+     * Synchronously auto-rates the given individual.
+     *
      * @param individual
      */
     private static void syncAutoRate(final Genome individual) {
-        MonitoredOperation.runInUI(new AutoRateIndividualRunnable(individual, null), true);
+        MonitoredOperation.runInUI(new AutoRateIndividualRunnable(individual), true);
     }
 
     /**

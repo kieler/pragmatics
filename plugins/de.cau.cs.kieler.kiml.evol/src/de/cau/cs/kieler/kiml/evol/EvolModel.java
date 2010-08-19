@@ -31,7 +31,6 @@ import de.cau.cs.kieler.kiml.evol.alg.BasicEvolutionaryAlgorithm;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 import de.cau.cs.kieler.kiml.evol.ui.IEvolModelListener;
-import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
 
 /**
  * This class encapsulates the evolution model that is displayed in the
@@ -68,6 +67,39 @@ public final class EvolModel {
     public void addListener(final IEvolModelListener listener) {
         this.listeners.add(listener);
     }
+    
+    /**
+     * Auto-rate all individuals in the appropriate editors.
+     * 
+     * @param theMonitor
+     *            a progress monitor; may be {@code null}
+     */
+    public void autoRateAll(final IProgressMonitor theMonitor) {
+
+        final Population population = getPopulation();
+        Assert.isNotNull(population);
+
+        EvolUtil.autoRate(population, theMonitor);
+
+        // Notify listeners.
+        afterChange("autoRate");
+    }
+
+    /**
+     * Changes the rating of the current individual.
+     *
+     * @param delta
+     *            the amount of the change
+     */
+    public void changeCurrentRating(final int delta) {
+        if (isValid()) {
+            final Genome ind = getCurrentIndividual();
+            final int rating = ind.getUserRating() + delta;
+            ind.setUserRating(rating);
+
+            afterChange("changeCurrentRating");
+        }
+    }
 
     /**
      * Performs a step of the evolutionary algorithm.
@@ -76,9 +108,6 @@ public final class EvolModel {
      *            a progress monitor; may be {@code null}
      */
     public void evolve(final IProgressMonitor theMonitor) {
-        // if (!isValid()) {
-        // return;
-        // }
 
         final IProgressMonitor monitor;
         // Ensure there is a monitor of some sort.
@@ -125,23 +154,7 @@ public final class EvolModel {
     }
 
     /**
-     * Auto-rate all individuals in the given editor.
-     *
-     * @param theMonitor
-     *            a progress monitor; may be {@code null}
-     */
-    public void autoRateAll(final IProgressMonitor theMonitor) {
-
-        final Population population = getPopulation();
-        Assert.isNotNull(population);
-
-        EvolUtil.autoRate(population, theMonitor);
-
-        // Notify listeners.
-        afterChange("autoRate");
-    }
-
-    /**
+     * Returns the current individual.
      *
      * @return the current {@code Individual}, or {@code null} if none is
      *         selected.
@@ -225,12 +238,12 @@ public final class EvolModel {
             return false;
         }
 
-        // Must be in UI thread.
-        final LayoutViewPart layoutViewPart = LayoutViewPart.findView();
-        if (layoutViewPart == null) {
-            System.out.println("LayoutView not found.");
-            return false;
-        }
+        // // Must be in UI thread.
+        // final LayoutViewPart layoutViewPart = LayoutViewPart.findView();
+        // if (layoutViewPart == null) {
+        // System.out.println("LayoutView not found.");
+        // return false;
+        // }
 
         if (!isCompatibleLayoutProvider()) {
             // need to reset
@@ -266,15 +279,19 @@ public final class EvolModel {
         setLayoutProviderId(providerId);
 
         if (providerId != null) {
+            // Find out which layout type it is.
             final LayoutServices layoutServices = LayoutServices.getInstance();
             Assert.isNotNull(layoutServices);
+
             final LayoutProviderData providerData =
                     layoutServices.getLayoutProviderData(providerId);
             Assert.isNotNull(providerData);
+
             final String typeId = providerData.getType();
             setLayoutTypeId(typeId);
         }
 
+        // Create an initial population.
         final Set<IEditorPart> editors = EvolUtil.getEditors();
         final Population sourcePopulation = EvolUtil.createPopulation(editors);
 
@@ -288,13 +305,6 @@ public final class EvolModel {
 
         // Notify listeners.
         afterChange("reset");
-    }
-
-    /**
-     * @param theLayoutTypeId
-     */
-    private void setLayoutTypeId(final String theLayoutTypeId) {
-        this.layoutTypeId = theLayoutTypeId;
     }
 
     /**
@@ -340,35 +350,6 @@ public final class EvolModel {
                 result = i;
                 break;
             }
-        }
-        return result;
-    }
-
-    /**
-     *
-     * @return indicates whether the layout provider has changed since the last
-     *         reset.
-     */
-    private boolean layoutProviderHasChanged() {
-        final IEditorPart editor = EvolUtil.getCurrentEditor();
-        final EditPart editPart = EvolUtil.getEditPart(editor);
-
-        final String oldId = getLayoutProviderId();
-        final String newId = EvolUtil.getLayoutProviderId(editor, editPart);
-
-        if ((newId == null) || (oldId == null)) {
-            return (oldId != null) || (newId != null);
-        }
-        final boolean result = !(oldId.equalsIgnoreCase(newId));
-        if (result) {
-            System.out.println("Current layout provider : " + newId);
-            final String newTypeId =
-                    LayoutServices.getInstance().getLayoutProviderData(newId).getType();
-            System.out.println("Type: " + newTypeId);
-            System.out.println("Expected layout provider: " + oldId);
-            final String oldTypeId =
-                    LayoutServices.getInstance().getLayoutProviderData(oldId).getType();
-            System.out.println("Type: " + oldTypeId);
         }
         return result;
     }
@@ -428,29 +409,19 @@ public final class EvolModel {
     }
 
     /**
+     * @param theLayoutTypeId
+     */
+    private void setLayoutTypeId(final String theLayoutTypeId) {
+        this.layoutTypeId = theLayoutTypeId;
+    }
+
+    /**
      * Make sure that the current position is not beyond the last individual.
      */
     private void updatePosition() {
         final int lim = getPopulation().size();
         if (getPosition() >= lim) {
             setPosition(lim - 1);
-        }
-    }
-
-    /**
-     * Changes the rating of the current individual.
-     *
-     * @param delta
-     *            the amount of the change
-     */
-    public void changeCurrentRating(final int delta) {
-        if (isValid()) {
-            final Genome ind = getCurrentIndividual();
-            final int rating = ind.getUserRating() + delta;
-            ind.setUserRating(rating);
-
-            afterChange("changeCurrentRating");
-            // TODO: in listener: only current individual needs to be updated
         }
     }
 }

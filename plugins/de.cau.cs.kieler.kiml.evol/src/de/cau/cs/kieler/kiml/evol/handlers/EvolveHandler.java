@@ -73,8 +73,6 @@ public class EvolveHandler extends AbstractHandler {
 
         @Override
         protected IStatus run(final IProgressMonitor theMonitor) {
-            // final double before =
-            // model.getPopulation().getAverageRating().doubleValue();
 
             this.model.evolve(new SubProgressMonitor(theMonitor, 100));
 
@@ -104,7 +102,7 @@ public class EvolveHandler extends AbstractHandler {
      */
     private static final int STEPS_PER_AUTO_RATING = 5;
     /**
-     * Percentual increase still considered as non-steady.
+     * Lowest percentaged increase still considered as non-steady.
      */
     private static final double MIN_INCREASE = 0.005;
 
@@ -137,6 +135,7 @@ public class EvolveHandler extends AbstractHandler {
 
         final String maxStepsAttr = event.getParameter(PARAM_MAX_STEPS);
         final int maxSteps = (maxStepsAttr == null ? MAX_STEPS : Integer.parseInt(maxStepsAttr));
+
         final String stepsBeforeAutoRatingAttr = event.getParameter(PARAM_STEPS_PER_AUTO_RATING);
         final int stepsBeforeAutoRating =
                 (stepsBeforeAutoRatingAttr == null ? STEPS_PER_AUTO_RATING : Integer

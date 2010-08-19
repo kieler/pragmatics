@@ -62,6 +62,8 @@ public class EvolView extends ViewPart {
             // Refresh the table viewer.
             final SelectorTableViewer tv = EvolView.this.getTableViewer();
 
+            final boolean isOnlyCurrent = ("changeCurrentRating".equalsIgnoreCase(cause));
+
             if (tv != null) {
                 // Set the new population as input.
                 EvolView.this.setInput(source.getPopulation());
@@ -74,7 +76,7 @@ public class EvolView extends ViewPart {
                 MonitoredOperation.runInUI(new Runnable() {
                     public void run() {
                         tv.selectRow(row);
-                        EvolView.this.refresh(false);
+                        EvolView.this.refresh(isOnlyCurrent);
                     }
                 }, true);
             }

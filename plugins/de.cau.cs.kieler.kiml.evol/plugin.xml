@@ -435,16 +435,10 @@
          </command>
          <command
                commandId="de.cau.cs.kieler.kiml.evol.info"
+               icon="icons/info16.png"
                label="Info"
                style="push"
                tooltip="Display detailed information about the population.">
-         </command>
-         <command
-               commandId="de.cau.cs.kieler.kiml.evol.multipleEditors"
-               id="de.cau.cs.kieler.kiml.evol.menuItem.multipleEditors"
-               label="Multiple Editors"
-               style="toggle"
-               tooltip="Toggle between single and multiple editors mode.">
          </command>
       </menuContribution>
    </extension>
