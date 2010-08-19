@@ -58,8 +58,7 @@ public class ExampleExportUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void exportExample(
-			final Map<ExampleElement, Object> properties,
+	public static void export(final Map<ExampleElement, Object> properties,
 			ExtPointExampleCreator extensionCreator,
 			final ExampleCollector... collectors) throws KielerException {
 
@@ -80,7 +79,9 @@ public class ExampleExportUtil {
 			List<IPath> destResources = extensionCreator.copyResources(
 					destFile, resources);
 			extensionCreator.addExtension(destFile, mappedExample,
-					destResources);
+					destResources,
+					properties.get(ExampleElement.CREATE_CATEGORIES),
+					properties.get(ExampleElement.DELETE_CATEGORIES));
 		} catch (KielerModelException e) {
 			if (e.getModelObject() instanceof List<?>) {
 				extensionCreator.deleteExampleResource((List<IPath>) e

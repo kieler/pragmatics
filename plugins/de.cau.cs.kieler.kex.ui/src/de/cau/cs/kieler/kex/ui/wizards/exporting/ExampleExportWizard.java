@@ -47,7 +47,6 @@ public class ExampleExportWizard extends Wizard implements IWizard {
 
 	@Override
 	public boolean performFinish() {
-
 		try {
 			Map<ExampleElement, Object> result = new HashMap<ExampleElement, Object>();
 
@@ -74,13 +73,28 @@ public class ExampleExportWizard extends Wizard implements IWizard {
 
 			result.put(ExampleElement.HEAD_RESOURCE, rePage.getHeadFile());
 
-			ExampleManager.get().exportExample(result);
+			List<String> creatableCategories = exRePage
+					.getCreatableCategories();
+			if (creatableCategories.size() > 0) {
+				result.put(ExampleElement.CREATE_CATEGORIES,
+						creatableCategories);
+			}
+
+			List<String> deletableCategories = exRePage
+					.getDeletableCategories();
+			if (deletableCategories.size() > 0) {
+				result.put(ExampleElement.DELETE_CATEGORIES,
+						deletableCategories);
+			}
+
+			ExampleManager.get().export(result);
 		} catch (KielerException e) {
 			MessageDialog.open(MessageDialog.INFORMATION, getShell(),
 					"Error while exporting example.", e.getMessage(), SWT.NONE);
 			return false;
 		}
 		return true;
+
 	}
 
 	private void addAttributes(Map<ExampleElement, Object> map)

@@ -26,6 +26,8 @@ import de.cau.cs.kieler.kex.model.SourceType;
 
 public class ExampleResourcePage extends WizardPage {
 
+	private static final int TWO_COLUMNS = 0;
+
 	private Text destPath;
 
 	private final int THREE_COLUMNS = 3;
@@ -33,10 +35,15 @@ public class ExampleResourcePage extends WizardPage {
 
 	private Tree categoryTree;
 
+	private final List<String> creatableCategories;
+	private final List<String> deletableCategories;
+
 	protected ExampleResourcePage(String pageName) {
 		super(pageName);
 		setTitle("Destination Choice");
 		setDescription("Set destination for exported Example and determine Example Resources.");
+		creatableCategories = new ArrayList<String>();
+		deletableCategories = new ArrayList<String>();
 	}
 
 	public void createControl(Composite parent) {
@@ -88,12 +95,25 @@ public class ExampleResourcePage extends WizardPage {
 		middleGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
 		middleLayout.numColumns = 1;
 		middleGroup.setText("Add Example Category");
-		middleGroup.setToolTipText("There could be more selected than one.");
+		middleGroup.setToolTipText("Please select one or more cateogies.");
 		middleGroup.setLayout(middleLayout);
 		createCheckedTree(middleGroup);
-		Button addCategory = new Button(middleGroup, SWT.NONE);
-		addCategory.setText("Create New Category");
+		createButonComposite(middleGroup);
+
+	}
+
+	private void createButonComposite(Group middleGroup) {
+		Composite buttonCompo = new Composite(middleGroup, SWT.NONE);
+		GridLayout buttonCompoLayout = new GridLayout();
+		buttonCompoLayout.numColumns = THREE_COLUMNS;
+		buttonCompo.setLayout(buttonCompoLayout);
+		buttonCompo.setLayoutData(new GridData(GridData.FILL_BOTH));
+		Button addCategory = new Button(buttonCompo, SWT.NONE);
+		addCategory.setText("New...");
+		// addCategory.setToolTipText("Creates a new Category");
+		// FIXME schöner noch mit dem tree editing mechanismus.
 		addCategory.addSelectionListener(new SelectionAdapter() {
+
 			@Override
 			public void widgetSelected(SelectionEvent event) {
 				IInputValidator validator = new IInputValidator() {
@@ -113,9 +133,36 @@ public class ExampleResourcePage extends WizardPage {
 						"Create New Category", "Please enter a new category.",
 						"", validator);
 				dialog.open();
+				String value = dialog.getValue();
 				TreeItem item = new TreeItem(categoryTree, SWT.NONE);
-				item.setText(dialog.getValue());
-				// categoryTree.redraw();
+				item.setText(value);
+				creatableCategories.add(value);
+			}
+		});
+
+		Button deleteCategory = new Button(buttonCompo, SWT.NONE);
+		deleteCategory.setText("Delete");
+		// deleteCategory.setToolTipText("Deletes selected categories.");
+		deleteCategory.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				TreeItem[] selection = categoryTree.getSelection();
+				for (TreeItem item : selection) {
+					getDeletableCategories().add(item.getText());
+					item.setGrayed(true);
+				}
+			}
+		});
+
+		Button revertTree = new Button(buttonCompo, SWT.NONE);
+		revertTree.setText("Revert");
+		revertTree.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// TODO revert button, der alle categorie änderungen
+				// zurücksetzt.
+				super.widgetSelected(e);
 			}
 		});
 
@@ -189,5 +236,13 @@ public class ExampleResourcePage extends WizardPage {
 	@Override
 	public boolean isPageComplete() {
 		return true;
+	}
+
+	public List<String> getCreatableCategories() {
+		return creatableCategories;
+	}
+
+	public List<String> getDeletableCategories() {
+		return deletableCategories;
 	};
 }

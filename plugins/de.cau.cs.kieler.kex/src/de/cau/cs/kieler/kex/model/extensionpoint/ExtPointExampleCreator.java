@@ -78,10 +78,13 @@ public class ExtPointExampleCreator {
 	 * @param location
 	 * @param parseElement
 	 * @param destResources
+	 * @param deletableCategories
+	 * @param creatableCategories
 	 * @throws KielerException
 	 */
 	public void addExtension(File location, Object parseElement,
-			List<IPath> destResources) throws KielerException {
+			List<IPath> destResources, Object creatableCategories,
+			Object deletableCategories) throws KielerException {
 		try {
 			File pluginXML = null;
 			File filteredFile = IOHandler.filterPluginXML(location);
@@ -95,20 +98,33 @@ public class ExtPointExampleCreator {
 					.getElementsByTagName(PluginConstants.PLUGIN);
 			int pluginsLength = plugins.getLength();
 			if (pluginsLength == 0 || pluginsLength > 1) {
-				// dann fehlerfall ï¿½berlegen, oder sogar drauf reagieren kï¿½nnen,
+				// dann fehlerfall ï¿½berlegen, oder sogar drauf reagieren
+				// kï¿½nnen,
 				// evtl
 				// dann anlegen.
 			}
 			Node pluginNode = plugins.item(0);
+
+			editPluginCategories(pluginNode, creatableCategories,
+					deletableCategories);
+
 			Node extensionKEX = filterExtensionKEX(pluginNode.getChildNodes());
+
 			if (extensionKEX == null) {
 				extensionKEX = parsedXML
 						.createElement(ExtPointConstants.EXT_POINT);
 				pluginNode.appendChild(extensionKEX);
+
+				// parent von extensionKEX ist plugin... muss also gehen
 				// TODO test createElement, kann sein, dass noch an root knoten
 				// angeschlossen werden muss. getestet GEHT NICHT, muss nochmal
 				// ueberschaut werden.
 			}
+
+			Node parentNode = extensionKEX.getParentNode();
+			System.out.println("parent von extensionKEX: "
+					+ parentNode.getNodeName());
+
 			if (parseElement instanceof Example) {
 				extensionKEX.appendChild(toNode((Example) parseElement,
 						destResources));
@@ -134,6 +150,46 @@ public class ExtPointExampleCreator {
 					+ e.getLocalizedMessage();
 			throw new KielerException(msg, e);
 		}
+	}
+
+	private void editPluginCategories(Node pluginNode,
+			Object creatableCategories, Object deletableCategories) {
+		if (creatableCategories != null) {
+			@SuppressWarnings("unchecked")
+			List<String> creates = (List<String>) creatableCategories;
+			for (String creatable : creates) {
+				Element createdCategory = parsedXML
+						.createElement(ExtPointConstants.CATEGORY);
+				createdCategory.setAttribute(ExtPointConstants.ID, creatable);
+				pluginNode.appendChild(createdCategory);
+
+			}
+		}
+
+		// TODO geht so nicht, da wir nur die category kennen NICHT aber das
+		// project, muss erst gesucht werden, verbinden mit der suche von todo
+		// eine zeile tiefer
+		// TODO prüfen, ob es noch examples damit gibt, bevor geloescht werden
+		// kann.
+		if (deletableCategories != null) {
+			@SuppressWarnings("unchecked")
+			List<String> deletes = (List<String>) deletableCategories;
+			NodeList childNodes = pluginNode.getChildNodes();
+			for (String category : deletes) {
+				for (int i = 0; i < childNodes.getLength(); i++) {
+					Node item = childNodes.item(0);
+					if (item.getNodeName().equals(ExtPointConstants.CATEGORY)) {
+						NamedNodeMap attributes = item.getAttributes();
+						Node namedItem = attributes
+								.getNamedItem(ExtPointConstants.ID);
+						if (category.equals(namedItem.getNodeValue())) {
+							pluginNode.removeChild(item);
+						}
+					}
+				}
+			}
+		}
+
 	}
 
 	// TODO eclipse version mit reinkriegen momentan steht da standalone no!

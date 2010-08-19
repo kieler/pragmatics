@@ -26,9 +26,11 @@ public class ExampleManager {
 
 	private final ExtPointExampleCreator extensionCreator;
 
-	// in bachelor arbeit eine einfuehrung ueber kieler geben;
+	// TODO in bachelor arbeit eine einfuehrung ueber kieler geben;
 	// wie ein zitat/ witz der vorweg kommt.
 	// siehe projekt seite
+
+	// TODO KEXMessages einbauen als statische klasse, die alle konstanten hält.
 
 	// TODO wenn in ui ein editor offen ist, dann macht er den wizard nicht auf.
 
@@ -85,17 +87,23 @@ public class ExampleManager {
 		ExampleImportUtil.importExamples(selectedResource, selectedExamples);
 	}
 
-	public void exportExample(Map<ExampleElement, Object> properties)
+	public void export(Map<ExampleElement, Object> properties)
 			throws KielerException {
 		// TODO validate von ui zu service verlegen.
 		if (SourceType.KIELER.equals(properties.get(ExampleElement.SOURCETYPE)))
-			ExampleExportUtil.exportExample(properties, this.extensionCreator,
+			ExampleExportUtil.export(properties, this.extensionCreator,
 					this.extensionCollector, this.databaseCollector);
 		else if (SourceType.PUBLIC.equals(properties
 				.get(ExampleElement.SOURCETYPE))) {
 			// TODO online schnittstelle bauen...
 		} else
 			throw new KielerException("No ExportType was set.");
+	}
+
+	public void createCategory(List<String> creatableCategories,
+			Map<ExampleElement, Object> result) {
+		// TODO Auto-generated method stub
+
 	}
 
 }
