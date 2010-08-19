@@ -1,4 +1,4 @@
-package de.cau.cs.kieler.kex.ui.wizards.update;
+package de.cau.cs.kieler.kex.ui.wizards.edit;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -6,10 +6,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
-public class UpdateResourcesPage extends WizardPage {
+public class UpdateAttributesPage extends WizardPage {
 
-	protected UpdateResourcesPage(String pageName) {
+	protected UpdateAttributesPage(String pageName) {
 		super(pageName);
+		// TODO Auto-generated constructor stub
 	}
 
 	public void createControl(Composite parent) {
@@ -17,6 +18,7 @@ public class UpdateResourcesPage extends WizardPage {
 		composite.setLayout(new GridLayout());
 		new Button(composite, SWT.NONE);
 		setControl(composite);
+
 	}
 
 }

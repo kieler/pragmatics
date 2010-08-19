@@ -11,7 +11,7 @@
                mnemonic="K">
             <menu
                   id="de.cau.cs.kieler.examplemanagement"
-                  label="ExampleManagement">
+                  label="Example Management">
                <command
                      commandId="de.cau.cs.kieler.kex.ui.import"
                      label="Import Example"
@@ -22,8 +22,8 @@
                      visible="true">
                </separator>
                <command
-                     commandId="de.cau.cs.kieler.kex.ui.update"
-                     label="Update Example"
+                     commandId="de.cau.cs.kieler.kex.ui.edit"
+                     label="Edit Example"
                      style="push">
                </command>
                <command
@@ -53,8 +53,8 @@
       </command>
       <command
             categoryId="de.cau.cs.kieler.kex.ui.examplecategory"
-            id="de.cau.cs.kieler.kex.ui.update"
-            name="Update">
+            id="de.cau.cs.kieler.kex.ui.edit"
+            name="Edit">
       </command>
    </extension>
    <extension
@@ -69,7 +69,7 @@
       </handler>
       <handler
             class="de.cau.cs.kieler.kex.ui.handlers.ExampleUpdateHandler"
-            commandId="de.cau.cs.kieler.kex.ui.update">
+            commandId="de.cau.cs.kieler.kex.ui.edit">
       </handler>
    </extension>
 </plugin>

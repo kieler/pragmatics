@@ -1,4 +1,4 @@
-package de.cau.cs.kieler.kex.ui.wizards.update;
+package de.cau.cs.kieler.kex.ui.wizards.edit;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
