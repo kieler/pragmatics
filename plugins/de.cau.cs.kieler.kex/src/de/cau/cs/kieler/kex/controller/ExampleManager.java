@@ -54,20 +54,12 @@ public class ExampleManager {
 	/**
 	 * loads examples, if not loaded before.
 	 */
-	public void load() {
-		if (!this.isLoaded) {
+	public void load(boolean forceLoad) {
+		if (!this.isLoaded || forceLoad) {
 			loadExamples();
 			// after completely loaded
 			this.isLoaded = true;
 		}
-	}
-
-	/**
-	 * reloads examples of extenders. Doesn't care about examples loaded before.
-	 * 
-	 */
-	public void reload() {
-		loadExamples();
 	}
 
 	private void loadExamples() {
