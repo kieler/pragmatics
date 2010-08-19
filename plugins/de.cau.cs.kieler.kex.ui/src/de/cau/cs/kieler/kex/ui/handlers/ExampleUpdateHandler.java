@@ -10,7 +10,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import de.cau.cs.kieler.kex.ui.wizards.edit.ExampleUpdateWizard;
+import de.cau.cs.kieler.kex.ui.wizards.editing.ExampleUpdateWizard;
 
 public class ExampleUpdateHandler extends AbstractHandler {
 

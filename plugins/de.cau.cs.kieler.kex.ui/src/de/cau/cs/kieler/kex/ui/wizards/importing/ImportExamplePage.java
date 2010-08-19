@@ -1,4 +1,4 @@
-package de.cau.cs.kieler.kex.ui.wizards.imported;
+package de.cau.cs.kieler.kex.ui.wizards.importing;
 
 import java.util.ArrayList;
 import java.util.List;

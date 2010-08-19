@@ -1,4 +1,4 @@
-package de.cau.cs.kieler.kex.ui.wizards.imported;
+package de.cau.cs.kieler.kex.ui.wizards.importing;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
