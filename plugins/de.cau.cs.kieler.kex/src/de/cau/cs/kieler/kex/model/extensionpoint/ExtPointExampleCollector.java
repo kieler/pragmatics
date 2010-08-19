@@ -50,7 +50,6 @@ public class ExtPointExampleCollector extends ExampleCollector {
 						// TODO darf eigentlich nicht passieren
 						// RUNTIME Exception schmei�en...
 						// oder einfach annehmen, dass dies nicht geschieht
-
 						continue;
 					}
 					Example example = ExtPointCollectionUtil.toExample(element);

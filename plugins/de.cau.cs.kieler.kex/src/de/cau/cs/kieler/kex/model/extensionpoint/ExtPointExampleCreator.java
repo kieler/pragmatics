@@ -91,10 +91,20 @@ public class ExtPointExampleCreator {
 				pluginXML = filteredFile;
 			}
 			parsedXML = parserPluginXML(pluginXML);
-			Node extensionKEX = filterExtensionKEX();
+			NodeList plugins = this.parsedXML
+					.getElementsByTagName(PluginConstants.PLUGIN);
+			int pluginsLength = plugins.getLength();
+			if (pluginsLength == 0 || pluginsLength > 1) {
+				// dann fehlerfall �berlegen, oder sogar drauf reagieren k�nnen,
+				// evtl
+				// dann anlegen.
+			}
+			Node pluginNode = plugins.item(0);
+			Node extensionKEX = filterExtensionKEX(pluginNode.getChildNodes());
 			if (extensionKEX == null) {
 				extensionKEX = parsedXML
 						.createElement(ExtPointConstants.EXT_POINT);
+				pluginNode.appendChild(extensionKEX);
 				// TODO test createElement, kann sein, dass noch an root knoten
 				// angeschlossen werden muss. getestet GEHT NICHT, muss nochmal
 				// ueberschaut werden.
@@ -155,24 +165,14 @@ public class ExtPointExampleCreator {
 
 	}
 
-	private Node filterExtensionKEX() {
-		NodeList plugins = this.parsedXML
-				.getElementsByTagName(PluginConstants.PLUGIN);
-		int pluginsLength = plugins.getLength();
-		if (pluginsLength == 0 || pluginsLength > 1) {
-			// dann fehlerfall �berlegen, oder sogar drauf reagieren k�nnen,
-			// evtl
-			// dann anlegen.
-		}
+	private Node filterExtensionKEX(NodeList plugins) {
 		Node extensionKEX = null;
-		NodeList childNodes = plugins.item(0).getChildNodes();
-		int length = childNodes.getLength();
+		int length = plugins.getLength();
 		for (int i = 0; i < length; i++) {
-			Node node = childNodes.item(i);
+			Node node = plugins.item(i);
 			if (PluginConstants.EXTENSION.equals(node.getNodeName())) {
 				NamedNodeMap attributes = node.getAttributes();
-				Node namedItem = attributes
-						.getNamedItem(PluginConstants.POINT);
+				Node namedItem = attributes.getNamedItem(PluginConstants.POINT);
 				if (ExtPointConstants.EXT_POINT
 						.equals(namedItem.getNodeValue())) {
 					extensionKEX = node;
@@ -241,6 +241,7 @@ public class ExtPointExampleCreator {
 			Transformer transformer = TransformerFactory.newInstance()
 					.newTransformer();
 			DOMSource source = new DOMSource(parsedXML);
+			test();
 			FileOutputStream os = new FileOutputStream(new File(pluginPath));
 			StreamResult result = new StreamResult(os);
 			transformer.transform(source, result);
@@ -254,6 +255,14 @@ public class ExtPointExampleCreator {
 			throwPluginError(e);
 		}
 
+	}
+
+	private void test() {
+		NodeList childNodes = parsedXML.getChildNodes();
+		int length = childNodes.getLength();
+		for (int i = 0; i < length; i++) {
+			System.out.println(childNodes.item(i).getNodeName());
+		}
 	}
 
 	private void throwPluginError(Throwable e) throws KielerException {
