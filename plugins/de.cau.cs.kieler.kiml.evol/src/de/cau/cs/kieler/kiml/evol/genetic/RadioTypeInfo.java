@@ -43,10 +43,20 @@ public class RadioTypeInfo extends TypeInfo<Integer> {
             final Integer theDefaultValue,
             final IValueFormatter theFormatter,
             final List<?> theList) {
-        super(theDefaultValue, 0, theList.size() - 1, (theFormatter != null ? theFormatter
-                : RadioGene.RADIO_GENE_FORMATTER), theList
-                .getClass());
+        super(theDefaultValue, 0, theList.size() - 1, theFormatter, theList.getClass());
         this.list = theList;
+    }
+
+    /**
+     * Creates a new {@link RadioTypeInfo} instance.
+     * 
+     * @param theDefaultValue
+     *            the default value
+     * @param theList
+     *            the list
+     */
+    public RadioTypeInfo(final Integer theDefaultValue, final List<?> theList) {
+        this(theDefaultValue, RadioGene.RADIO_GENE_FORMATTER, theList);
     }
 
     @Override

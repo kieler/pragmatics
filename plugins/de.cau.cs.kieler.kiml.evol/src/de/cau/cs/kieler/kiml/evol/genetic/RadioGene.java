@@ -22,10 +22,10 @@ import java.util.Random;
 import org.eclipse.core.runtime.Assert;
 
 /**
- * A gene mutation over the elements of a list.
- *
+ * A gene that can mutate over the elements of a list.
+ * 
  * @author bdu
- *
+ * 
  */
 public class RadioGene extends AbstractGene<Integer> {
 

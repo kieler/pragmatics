@@ -440,31 +440,6 @@ public final class EvolUtil {
     }
 
     /**
-     * Return a list of the IDs of all layout providers that can handle the
-     * specified layout type.
-     *
-     * @param layoutType
-     *            the type id to look for; must not be {@code null}
-     * @return a list of layout provider IDs of all layout providers of the
-     *         given type; may be empty.
-     */
-    public static List<String> getLayoutProviderIds(final String layoutType) {
-        Assert.isLegal(layoutType != null);
-
-        final List<String> result = new LinkedList<String>();
-
-        final LayoutServices layoutServices = LayoutServices.getInstance();
-
-        for (final LayoutProviderData data : layoutServices.getLayoutProviderData()) {
-            if (data.getType().equalsIgnoreCase(layoutType)) {
-                result.add(data.getId());
-            }
-        }
-
-        return result;
-    }
-
-    /**
      * Asynchronously refreshes the layout view, if it can be found.
      */
     public static void asyncRefreshLayoutView() {
@@ -513,66 +488,6 @@ public final class EvolUtil {
 
     /**
      * Creates a population of the default size, taking initial values from the
-     * given diagram editors.
-     *
-     * @param editors
-     *            a set of {@link IEditorPart} instances. Must be
-     *            DiagramEditors.
-     * @return a new {@link Population} of default size, or an empty
-     *         {@link Population} in case of an error
-     */
-    public static Population createPopulation(final Set<IEditorPart> editors) {
-        if ((editors == null) || editors.isEmpty()) {
-            return new Population();
-        }
-
-        final List<LayoutPropertySource> sources = getLayoutPropertySources(editors);
-        Assert.isNotNull(sources);
-
-        if (sources.isEmpty()) {
-            return new Population();
-        }
-
-        final Population result = createPopulation(sources);
-        return result;
-    }
-
-    /**
-     * Collect the layout property sources of the given editors.
-     *
-     * @param editors
-     * @return
-     */
-    private static List<LayoutPropertySource> getLayoutPropertySources(
-            final Set<IEditorPart> editors) {
-        final List<LayoutPropertySource> sources = new LinkedList<LayoutPropertySource>();
-
-        // Collect the layout property sources of the editors.
-        for (final IEditorPart editor : editors) {
-            if (!(editor instanceof DiagramEditor)) {
-                // Editor is not a DiagramEditor. Skip it.
-                continue;
-            }
-
-            final EditPart editPart = ((DiagramEditor) editor).getDiagramEditPart().getRoot();
-
-            final DiagramLayoutManager manager =
-                    EclipseLayoutServices.getInstance().getManager(editor, editPart);
-            if (manager == null) {
-                // No layout manager found. Ignore this editor.
-                continue;
-            }
-
-            final ILayoutInspector inspector = manager.getInspector(editPart);
-            Assert.isNotNull(inspector);
-            final LayoutPropertySource propertySource = new LayoutPropertySource(inspector);
-            sources.add(propertySource);
-        }
-        return sources;
-    }
-
-    /**
-     * Creates a population of the default size, taking initial values from the
      * given diagram editor and edit part.
      *
      * @param editor
@@ -600,6 +515,32 @@ public final class EvolUtil {
         final LayoutPropertySource propertySource = new LayoutPropertySource(inspector);
         final Population result = createPopulation(propertySource);
 
+        return result;
+    }
+
+    /**
+     * Creates a population of the default size, taking initial values from the
+     * given diagram editors.
+     *
+     * @param editors
+     *            a set of {@link IEditorPart} instances. Must be
+     *            DiagramEditors.
+     * @return a new {@link Population} of default size, or an empty
+     *         {@link Population} in case of an error
+     */
+    public static Population createPopulation(final Set<IEditorPart> editors) {
+        if ((editors == null) || editors.isEmpty()) {
+            return new Population();
+        }
+
+        final List<LayoutPropertySource> sources = getLayoutPropertySources(editors);
+        Assert.isNotNull(sources);
+
+        if (sources.isEmpty()) {
+            return new Population();
+        }
+
+        final Population result = createPopulation(sources);
         return result;
     }
 
@@ -726,6 +667,54 @@ public final class EvolUtil {
             return null;
         }
         final String result = getLayoutProviderId(manager, editPart);
+        return result;
+    }
+
+    /**
+     * Return a list of the IDs of all layout providers that can handle the
+     * specified layout type.
+     *
+     * @param layoutType
+     *            the type id to look for; must not be {@code null}
+     * @return a list of layout provider IDs of all layout providers of the
+     *         given type; may be empty.
+     */
+    public static List<String> getLayoutProviderIds(final String layoutType) {
+        Assert.isLegal(layoutType != null);
+
+        final List<String> result = new LinkedList<String>();
+
+        final LayoutServices layoutServices = LayoutServices.getInstance();
+
+        for (final LayoutProviderData data : layoutServices.getLayoutProviderData()) {
+            if (data.getType().equalsIgnoreCase(layoutType)) {
+                result.add(data.getId());
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * @param providerId
+     *            layout provider ID
+     * @param typeId
+     *            layout type ID
+     * @return {@code true} iff the given layout provider is of the given type
+     */
+    public static boolean isCompatibleLayoutProvider(final String providerId, final String typeId) {
+
+        final LayoutServices layoutServices = LayoutServices.getInstance();
+
+        final String newTypeId = layoutServices.getLayoutProviderData(providerId).getType();
+
+        final boolean result = typeId.equalsIgnoreCase(newTypeId);
+
+        if (!result) {
+            System.out.println("expected type: " + typeId);
+            System.out.println("present type: " + newTypeId);
+        }
+
         return result;
     }
 
@@ -1099,7 +1088,7 @@ public final class EvolUtil {
      * @param propertySources
      *            a list of {@link LayoutPropertySource} instances
      * @param metricIds
-     *            a set of layout metric ids; may not be {@code null}.
+     *            a set of layout metric IDs; may not be {@code null}.
      * @return a genome, or {@code null}.
      */
     private static Genome createGenome(
@@ -1126,19 +1115,7 @@ public final class EvolUtil {
 
         // Get data from property descriptors.
         final Map<String, IPropertyDescriptor> allPropertyDescriptors =
-                new HashMap<String, IPropertyDescriptor>();
-
-        for (final LayoutPropertySource source : propertySources) {
-            final IPropertyDescriptor[] propertyDescriptorsArray =
-                    source.getPropertyDescriptors();
-
-            final List<IPropertyDescriptor> propertyDescriptorsList =
-                    Arrays.asList(propertyDescriptorsArray);
-
-            for (final IPropertyDescriptor pd : propertyDescriptorsList) {
-                allPropertyDescriptors.put((String) pd.getId(), pd);
-            }
-        }
+                getPropertyDescriptors(propertySources);
 
         // TODO: instead of merely counting, collect the learnable properties.
         final int learnableCount =
@@ -1152,14 +1129,14 @@ public final class EvolUtil {
         final SortedSet<String> layoutHintIds = new TreeSet<String>();
 
         // Iterate the layout property sources.
-        for (final LayoutPropertySource propertySource : propertySources) {
+        for (final LayoutPropertySource source : propertySources) {
 
             // Iterate the property descriptors of the layout property source.
-            final IPropertyDescriptor[] descriptors = propertySource.getPropertyDescriptors();
-            for (final IPropertyDescriptor p : descriptors) {
+            final IPropertyDescriptor[] descriptors = source.getPropertyDescriptors();
+            for (final IPropertyDescriptor desc : descriptors) {
 
-                final String id = (String) p.getId();
-                final Object value = propertySource.getPropertyValue(id);
+                final String id = (String) desc.getId();
+                final Object value = source.getPropertyValue(id);
 
                 // Check the property descriptor id.
                 if (LayoutOptions.LAYOUT_HINT.equals(id)) {
@@ -1168,7 +1145,7 @@ public final class EvolUtil {
 
                     Assert.isNotNull(value, "layout hint value is null");
 
-                    final String hintId = getLayoutHintId(p, value);
+                    final String hintId = getLayoutHintId(desc, value);
 
                     layoutHintIds.add(hintId);
 
@@ -1195,49 +1172,29 @@ public final class EvolUtil {
         // Add a gene for the layout hint.
         if (!layoutHintIds.isEmpty()) {
 
-            /* TODO Implement a gene that can mutate over a list of
-               layout hint IDs. */
+            // Create a gene that can mutate over a list of layout hint IDs.
 
             final String hintId = layoutHintIds.first();
 
             final LayoutServices layoutServices = LayoutServices.getInstance();
             final LayoutProviderData provider = layoutServices.getLayoutProviderData(hintId);
             final String typeId = provider.getType();
+
             // Get the IDs of all suitable providers for this type.
             final List<String> providerIds = getLayoutProviderIds(typeId);
 
-            System.out.println(providerIds);
-            final int positionOfProvider = 0; // FIXME: find position of
+            System.out.println("Providers for " + typeId + ": " + providerIds);
+            final Integer positionOfProvider = 0; // FIXME: find position of
                                               // provider in list
 
 
-            final RadioTypeInfo typeInfo =
-                    new RadioTypeInfo(positionOfProvider, null, providerIds);
+            final RadioTypeInfo typeInfo = new RadioTypeInfo(positionOfProvider, providerIds);
 
-            final MutationInfo mutationInfo = new MutationInfo(0.1);
+            final MutationInfo mutationInfo = new MutationInfo(0.01);
 
             final RadioGene hintGene =
                     new RadioGene(LayoutOptions.LAYOUT_HINT, positionOfProvider, typeInfo,
                             mutationInfo);
-
-            // final Float value = Float.valueOf(0);
-            //
-            // final LayoutOptionData data =
-            // LayoutServices.getInstance().getLayoutOptionData(LayoutOptions.LAYOUT_HINT);
-            // final IValueFormatter formatter =
-            // UniversalGene.INTEGER_FORMATTER;
-            // final TypeInfo<Float> typeInfo =
-            // new FloatTypeInfo(value, Float.valueOf(0),
-            // Float.valueOf(layoutHintIds
-            // .size()), formatter, Integer.class);
-            //
-            // final MutationInfo mutationInfo = new MutationInfo(0.01,
-            // Distribution.GAUSSIAN);
-            //
-            // final IGene<?> gene =
-            // new UniversalGene(LayoutOptions.LAYOUT_HINT, value, typeInfo,
-            // mutationInfo);
-            //
 
             Assert.isNotNull(hintGene, "Failed to create layout hint gene.");
             result.add(hintGene);
@@ -1256,82 +1213,26 @@ public final class EvolUtil {
     }
 
     /**
-     * Obtain the layout hint id from the given property descriptor.
-     *
-     * @param descriptor
-     * @param value
+     * @param propertySources
      * @return
      */
-    private static String getLayoutHintId(final IPropertyDescriptor descriptor, final Object value) {
-        final ILabelProvider labelProvider = descriptor.getLabelProvider();
-        Assert.isNotNull(labelProvider,
-                "Could not obtain label provider for " + descriptor.getId());
+    private static Map<String, IPropertyDescriptor> getPropertyDescriptors(
+            final List<LayoutPropertySource> propertySources) {
+        final Map<String, IPropertyDescriptor> allPropertyDescriptors =
+                new HashMap<String, IPropertyDescriptor>();
 
-        String text;
-        String hintId = null;
+        for (final LayoutPropertySource source : propertySources) {
+            final IPropertyDescriptor[] propertyDescriptorsArray =
+                    source.getPropertyDescriptors();
 
-        // Get the caption.
-        try {
-            text = labelProvider.getText(value);
-        } catch (final ArrayIndexOutOfBoundsException e) {
-            // This might occur for an Enum property, if value is out of the
-            // Enum's bounds.
-            text = "*** EXCEPTION";
+            final List<IPropertyDescriptor> propertyDescriptorsList =
+                    Arrays.asList(propertyDescriptorsArray);
+
+            for (final IPropertyDescriptor pd : propertyDescriptorsList) {
+                allPropertyDescriptors.put((String) pd.getId(), pd);
+            }
         }
-
-        // XXX @msp Is there a more elegant way to obtain the layout hint id?
-        hintId = LayoutPropertySource.getLayoutHint(text);
-
-        Assert.isTrue(hintId.length() > 0, "Could not find layout provider id for '" + text + "'");
-
-        System.out.println("--- LAYOUT_HINT: " + value + "=" + text);
-        return hintId;
-    }
-
-    /**
-     * @param metricIds
-     *            a set of metric IDs; may not be {@code null}
-     * @param gf
-     *            a {@link GeneFactory}; may be {@code null}
-     * @return
-     */
-    private static Genome createWeightGenes(final Set<String> metricIds, final GeneFactory gf) {
-        Assert.isLegal(metricIds != null);
-        if (metricIds == null) {
-            return null;
-        }
-
-        final IGeneFactory factory = (gf != null ? gf : new GeneFactory());
-
-        final TypeInfo<Float> typeInfo =
-                new FloatTypeInfo(Float.valueOf(1.0f), Float.valueOf(0.0f), Float.valueOf(10.0f),
-                        UniversalGene.STRICTLY_POSITIVE_FLOAT_FORMATTER, Float.class);
-        final MutationInfo mutationInfo = new MutationInfo(0.001, .05, Distribution.GAUSSIAN);
-
-        final Genome result = new Genome();
-        for (final String id : metricIds) {
-            final IGene<?> gene =
-                    factory.newGene(id, Float.valueOf(1.0f), typeInfo, mutationInfo);
-            Assert.isNotNull(gene, "Failed to create gene for " + id);
-            result.add(gene);
-        }
-        return result;
-    }
-
-    /**
-     * @param choicesCount
-     * @return the multiplicative inverse of the given number, or 0.0 if it is
-     *         not > 0.
-     */
-    private static double uniformProbability(final int choicesCount) {
-        final double uniformProb;
-        if (choicesCount > 0) {
-            uniformProb = 1.0 / choicesCount;
-        } else {
-            System.err.println("No learnable properties found.");
-            uniformProb = 0.0;
-        }
-        return uniformProb;
+        return allPropertyDescriptors;
     }
 
     /**
@@ -1348,6 +1249,28 @@ public final class EvolUtil {
                 EvolPlugin.getDefault().getPreferenceStore()
                         .getInt(EvolPlugin.PREF_POPULATION_SIZE);
         return createPopulation(propertySource, size);
+    }
+
+    /**
+     * Create a population of the given size, taking initial values from the
+     * given {@link LayoutPropertySource}.
+     *
+     * @param propertySource
+     *            where the initial data is taken from; may not be {@code null}
+     * @param size
+     *            a non-negative value that specifies the initial size of the
+     *            population.
+     * @return population
+     */
+    private static Population createPopulation(
+            final LayoutPropertySource propertySource, final int size) {
+        Assert.isLegal(propertySource != null);
+        Assert.isLegal(size >= 0);
+
+        final List<LayoutPropertySource> sources = new ArrayList<LayoutPropertySource>(1);
+        sources.add(propertySource);
+
+        return createPopulation(sources, size);
     }
 
     /**
@@ -1389,25 +1312,33 @@ public final class EvolUtil {
     }
 
     /**
-     * Create a population of the given size, taking initial values from the
-     * given {@link LayoutPropertySource}.
-     *
-     * @param propertySource
-     *            where the initial data is taken from; may not be {@code null}
-     * @param size
-     *            a non-negative value that specifies the initial size of the
-     *            population.
-     * @return population
+     * @param metricIds
+     *            a set of metric IDs; may not be {@code null}
+     * @param gf
+     *            a {@link GeneFactory}; may be {@code null}
+     * @return
      */
-    private static Population createPopulation(
-            final LayoutPropertySource propertySource, final int size) {
-        Assert.isLegal(propertySource != null);
-        Assert.isLegal(size >= 0);
+    private static Genome createWeightGenes(final Set<String> metricIds, final GeneFactory gf) {
+        Assert.isLegal(metricIds != null);
+        if (metricIds == null) {
+            return null;
+        }
 
-        final List<LayoutPropertySource> sources = new ArrayList<LayoutPropertySource>(1);
-        sources.add(propertySource);
+        final IGeneFactory factory = (gf != null ? gf : new GeneFactory());
 
-        return createPopulation(sources, size);
+        final TypeInfo<Float> typeInfo =
+                new FloatTypeInfo(Float.valueOf(1.0f), Float.valueOf(0.0f), Float.valueOf(10.0f),
+                        UniversalGene.STRICTLY_POSITIVE_FLOAT_FORMATTER, Float.class);
+        final MutationInfo mutationInfo = new MutationInfo(0.001, .05, Distribution.GAUSSIAN);
+
+        final Genome result = new Genome();
+        for (final String id : metricIds) {
+            final IGene<?> gene =
+                    factory.newGene(id, Float.valueOf(1.0f), typeInfo, mutationInfo);
+            Assert.isNotNull(gene, "Failed to create gene for " + id);
+            result.add(gene);
+        }
+        return result;
     }
 
     /**
@@ -1444,6 +1375,42 @@ public final class EvolUtil {
     }
 
     /**
+     * Obtain the layout hint id from the given property descriptor.
+     *
+     * @param descriptor
+     * @param value
+     * @return
+     */
+    private static String getLayoutHintId(final IPropertyDescriptor descriptor, final Object value) {
+        final ILabelProvider labelProvider = descriptor.getLabelProvider();
+        Assert.isNotNull(labelProvider,
+                "Could not obtain label provider for " + descriptor.getId());
+
+        String text;
+        String hintId = null;
+
+        // Get the caption.
+        try {
+            text = labelProvider.getText(value);
+
+            // XXX @msp Is there a more elegant way to obtain the layout hint
+            // id?
+            hintId = LayoutPropertySource.getLayoutHint(text);
+            
+            Assert.isTrue(hintId.length() > 0, "Could not find layout provider id for '" + text
+                    + "'");
+
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            // This might occur for an Enum property, if value is out of the
+            // Enum's bounds.
+            text = "*** EXCEPTION";
+        }
+
+        System.out.println("--- LAYOUT_HINT: " + value + "=" + text);
+        return hintId;
+    }
+
+    /**
      *
      * @param editor
      *            an {@link IEditorPart}
@@ -1473,6 +1440,40 @@ public final class EvolUtil {
         final ILayoutInspector inspector = manager.getInspector(rootPart);
         final LayoutPropertySource result = new LayoutPropertySource(inspector);
         return result;
+    }
+
+    /**
+     * Collect the layout property sources of the given editors.
+     *
+     * @param editors
+     * @return
+     */
+    private static List<LayoutPropertySource> getLayoutPropertySources(
+            final Set<IEditorPart> editors) {
+        final List<LayoutPropertySource> sources = new LinkedList<LayoutPropertySource>();
+
+        // Collect the layout property sources of the editors.
+        for (final IEditorPart editor : editors) {
+            if (!(editor instanceof DiagramEditor)) {
+                // Editor is not a DiagramEditor. Skip it.
+                continue;
+            }
+
+            final EditPart editPart = ((DiagramEditor) editor).getDiagramEditPart().getRoot();
+
+            final DiagramLayoutManager manager =
+                    EclipseLayoutServices.getInstance().getManager(editor, editPart);
+            if (manager == null) {
+                // No layout manager found. Ignore this editor.
+                continue;
+            }
+
+            final ILayoutInspector inspector = manager.getInspector(editPart);
+            Assert.isNotNull(inspector);
+            final LayoutPropertySource propertySource = new LayoutPropertySource(inspector);
+            sources.add(propertySource);
+        }
+        return sources;
     }
 
     /**
@@ -1634,32 +1635,25 @@ public final class EvolUtil {
         MonitoredOperation.runInUI(new AutoRateIndividualRunnable(individual, null), true);
     }
 
+    /**
+     * @param choicesCount
+     * @return the multiplicative inverse of the given number, or 0.0 if it is
+     *         not > 0.
+     */
+    private static double uniformProbability(final int choicesCount) {
+        final double uniformProb;
+        if (choicesCount > 0) {
+            uniformProb = 1.0 / choicesCount;
+        } else {
+            System.err.println("No learnable properties found.");
+            uniformProb = 0.0;
+        }
+        return uniformProb;
+    }
+
     /** Hidden constructor to avoid instantiation. **/
     private EvolUtil() {
         // nothing
-    }
-
-    /**
-     * @param providerId
-     *            layout provider ID
-     * @param typeId
-     *            layout type ID
-     * @return {@code true} iff the given layout provider is of the given type
-     */
-    public static boolean isCompatibleLayoutProvider(final String providerId, final String typeId) {
-
-        final LayoutServices layoutServices = LayoutServices.getInstance();
-
-        final String newTypeId = layoutServices.getLayoutProviderData(providerId).getType();
-
-        final boolean result = typeId.equalsIgnoreCase(newTypeId);
-
-        if (!result) {
-            System.out.println("expected type: " + typeId);
-            System.out.println("present type: " + newTypeId);
-        }
-
-        return result;
     }
 
 }
