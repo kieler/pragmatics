@@ -1,4 +1,4 @@
-package de.cau.cs.kieler.kex.ui.wizards.importing.importWizard;
+package de.cau.cs.kieler.kex.ui.wizards.imported;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
@@ -9,7 +9,6 @@ import de.cau.cs.kieler.kex.controller.ExampleManager;
 
 public class ExampleImportWizard extends Wizard implements IWizard {
 
-	private ChooseExamplePage chooseExamplePage;
 	private ImportExamplePage importExamplePage;
 
 	private final IStructuredSelection selection;
@@ -29,8 +28,6 @@ public class ExampleImportWizard extends Wizard implements IWizard {
 
 	@Override
 	public void addPages() {
-		chooseExamplePage = new ChooseExamplePage("chooseExamplePage");
-		addPage(chooseExamplePage);
 		importExamplePage = new ImportExamplePage("importExamplePage",
 				selection);
 		addPage(importExamplePage);
@@ -45,7 +42,7 @@ public class ExampleImportWizard extends Wizard implements IWizard {
 		try {
 			ExampleManager.get().importExamples(
 					importExamplePage.getContainerPath(),
-					chooseExamplePage.getSelectedExamples());
+					importExamplePage.getSelectedExamples());
 		} catch (KielerException e) {
 			// Messagebox ausgabe
 			return false;
