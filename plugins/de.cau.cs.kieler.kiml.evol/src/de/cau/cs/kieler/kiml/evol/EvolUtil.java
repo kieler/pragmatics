@@ -1176,25 +1176,7 @@ public final class EvolUtil {
 
             final String hintId = layoutHintIds.first();
 
-            final LayoutServices layoutServices = LayoutServices.getInstance();
-            final LayoutProviderData provider = layoutServices.getLayoutProviderData(hintId);
-            final String typeId = provider.getType();
-
-            // Get the IDs of all suitable providers for this type.
-            final List<String> providerIds = getLayoutProviderIds(typeId);
-
-            System.out.println("Providers for " + typeId + ": " + providerIds);
-            final Integer positionOfProvider = 0; // FIXME: find position of
-                                              // provider in list
-
-
-            final RadioTypeInfo typeInfo = new RadioTypeInfo(positionOfProvider, providerIds);
-
-            final MutationInfo mutationInfo = new MutationInfo(0.01);
-
-            final RadioGene hintGene =
-                    new RadioGene(LayoutOptions.LAYOUT_HINT, positionOfProvider, typeInfo,
-                            mutationInfo);
+            final RadioGene hintGene = createLayoutHintGene(hintId);
 
             Assert.isNotNull(hintGene, "Failed to create layout hint gene.");
             result.add(hintGene);
@@ -1210,6 +1192,33 @@ public final class EvolUtil {
         System.out.println();
 
         return result;
+    }
+
+    /**
+     * @param hintId
+     * @return a gene that mutates over the providers of the given layout hint
+     */
+    private static RadioGene createLayoutHintGene(final String hintId) {
+        final LayoutServices layoutServices = LayoutServices.getInstance();
+        final LayoutProviderData provider = layoutServices.getLayoutProviderData(hintId);
+        final String typeId = provider.getType();
+
+        // Get the IDs of all suitable providers for this type.
+        final List<String> providerIds = getLayoutProviderIds(typeId);
+
+        System.out.println("Providers for " + typeId + ": " + providerIds);
+        final Integer positionOfProvider = 0; // FIXME: find position of
+                                          // provider in list
+
+
+        final RadioTypeInfo typeInfo = new RadioTypeInfo(positionOfProvider, providerIds);
+
+        final MutationInfo mutationInfo = new MutationInfo(0.01);
+
+        final RadioGene hintGene =
+                new RadioGene(LayoutOptions.LAYOUT_HINT, positionOfProvider, typeInfo,
+                        mutationInfo);
+        return hintGene;
     }
 
     /**
@@ -1396,7 +1405,7 @@ public final class EvolUtil {
             // XXX @msp Is there a more elegant way to obtain the layout hint
             // id?
             hintId = LayoutPropertySource.getLayoutHint(text);
-            
+
             Assert.isTrue(hintId.length() > 0, "Could not find layout provider id for '" + text
                     + "'");
 
