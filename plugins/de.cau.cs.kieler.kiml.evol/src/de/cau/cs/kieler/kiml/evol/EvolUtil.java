@@ -819,7 +819,7 @@ public final class EvolUtil {
                     // index for the internal list in the gene, not for the
                     // layout hint array in the property source which we would
                     // need.
-                    // XXX LayoutPropertySource#setPropertyValue needs to be
+                    // TODO: LayoutPropertySource#setPropertyValue needs to be
                     // modified in order to accept a layout provider ID as
                     // value.
                     final String layoutHintId = gene.toString();
@@ -905,6 +905,7 @@ public final class EvolUtil {
 
             final Map<String, Double> weightsMap = extractMetricWeights(individual);
             Assert.isNotNull(weightsMap);
+            normalize(weightsMap);
 
             final KNode layoutGraph = calculateLayout(manager, editor);
 
@@ -975,6 +976,7 @@ public final class EvolUtil {
 
         final Map<String, Double> weightsMap = extractMetricWeights(ind);
         Assert.isNotNull(weightsMap);
+        normalize(weightsMap);
 
         final KNode layoutGraph = calculateLayout(manager, editor);
         final int rating = measure(layoutGraph, weightsMap);
@@ -1175,6 +1177,7 @@ public final class EvolUtil {
             // Create a gene that can mutate over a list of layout hint IDs.
 
             final String hintId = layoutHintIds.first();
+            //
 
             final RadioGene hintGene = createLayoutHintGene(hintId);
 
@@ -1541,8 +1544,9 @@ public final class EvolUtil {
 
     /**
      * Measures the given layout graph, according to the given metric weights.
-     * The given map is modified so that its values are normalized to yield a
-     * sum of one.
+     * It is recommended but not necessary to normalize the weights map before
+     * so that its values yield a sum of one. Use {@link #normalize(Map)} for
+     * that purpose.
      *
      * @param parentNode
      *            the KGraph to be analyzed.
@@ -1571,10 +1575,6 @@ public final class EvolUtil {
             metricsList.add(metric);
         }
 
-        // Make sure the metric weights are normalized.
-        // XXX discard this and require weightsMap to be normalized before
-        normalize(weightsMap);
-
         // Perform the measurement.
         final boolean showProgressBar = false;
         final Map<String, Object> results =
@@ -1601,7 +1601,7 @@ public final class EvolUtil {
             sum += val;
         }
 
-        final int newRating = (int) Math.round((scaledSum * 10000));
+        final int newRating = (int) Math.round((scaledSum * 1000));
         return newRating;
     }
 

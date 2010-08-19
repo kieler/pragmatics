@@ -15,7 +15,6 @@ package de.cau.cs.kieler.kiml.evol;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IntegerFieldEditor;
-import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -66,12 +65,12 @@ public class EvolPreferencePage extends FieldEditorPreferencePage
         // miscellaneous parameters
         final Group miscGroup = new Group(parent, SWT.NONE);
         miscGroup.setText("Misc parameters");
-        final RadioGroupFieldEditor editorsEditor =
-                new RadioGroupFieldEditor(EvolPlugin.PREF_EDITORS, "Use editors", 1,
-                        new String[][] { { "all editors", EvolPlugin.ALL_EDITORS },
-                                { "current editor", EvolPlugin.CURRENT_EDITOR } }, miscGroup,
-                        true /* useGroup */);
-        addField(editorsEditor);
+        // final RadioGroupFieldEditor editorsEditor =
+        // new RadioGroupFieldEditor(EvolPlugin.PREF_EDITORS, "Use editors", 1,
+        // new String[][] { { "all editors", EvolPlugin.ALL_EDITORS },
+        // { "current editor", EvolPlugin.CURRENT_EDITOR } }, miscGroup,
+        // true /* useGroup */);
+        // addField(editorsEditor);
 
         // layout
         algorithmGroup.setLayout(new GridLayout(NUM_COLUMNS, false));

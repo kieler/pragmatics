@@ -14,6 +14,10 @@
 package de.cau.cs.kieler.kiml.evol.ui;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -24,10 +28,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.evol.EvolModel;
+import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.EvolUtil;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
@@ -39,6 +47,79 @@ import de.cau.cs.kieler.kiml.evol.genetic.Population;
  *
  */
 public class EvolView extends ViewPart {
+    private final IEvolModelListener modelListener = new IEvolModelListener() {
+        public void afterChange(final EvolModel source, final String cause) {
+            System.out.println("afterChange: " + cause);
+            if ("setPosition".equalsIgnoreCase(cause)) {
+                System.out.println("setPosition occurred");
+                return;
+            }
+            // TODO: what if currentEditor is null?
+            if (EvolUtil.getCurrentEditor() == null) {
+                System.err.println("We are not in the UI thread.");
+            }
+
+            // Refresh the table viewer.
+            final SelectorTableViewer tv = EvolView.this.getTableViewer();
+
+            if (tv != null) {
+                // Set the new population as input.
+                EvolView.this.setInput(source.getPopulation());
+
+                final int row = source.getPosition();
+                if ("reset".equalsIgnoreCase(cause)) {
+                    Assert.isTrue(source.getPosition() == 0);
+                }
+
+                MonitoredOperation.runInUI(new Runnable() {
+                    public void run() {
+                        tv.selectRow(row);
+                        EvolView.this.refresh(false);
+                    }
+                }, true);
+            }
+        }
+    };
+
+    @Override
+    public void init(final IViewSite theSite) throws PartInitException {
+        super.init(theSite);
+
+        // Reset the model.
+        Assert.isNotNull(this.evolModel);
+        this.evolModel.reset();
+    }
+
+    /**
+     * @author bdu
+     *
+     */
+    private static final class SetInputRunnable implements Runnable {
+        /**
+         *
+         */
+        private final Population population;
+        /**
+         *
+         */
+        private final TableViewer tableViewer;
+
+        /**
+         * Creates a new {@link SetInputRunnable} instance.
+         *
+         * @param thePopulation
+         * @param theTableViewer
+         */
+        SetInputRunnable(final Population thePopulation, final TableViewer theTableViewer) {
+            this.population = thePopulation;
+            this.tableViewer = theTableViewer;
+        }
+
+        public void run() {
+            this.tableViewer.setInput(this.population);
+        }
+    }
+
     /**
      * @author bdu
      *
@@ -189,36 +270,8 @@ public class EvolView extends ViewPart {
     public EvolView() {
         super();
         this.tableViewer = null;
-        this.evolModel.addListener(new IEvolModelListener() {
-            public void afterChange(final EvolModel source, final String cause) {
-                System.out.println("afterChange: " + cause);
-                if ("setPosition".equalsIgnoreCase(cause)) {
-                    System.out.println("setPosition occurred");
-                    return;
-                }
-                // TODO: what if currentEditor is null?
-                if (EvolUtil.getCurrentEditor() == null) {
-                    System.err.println("We are not in the UI thread.");
-                }
 
-                // Set the new population as input.
-                EvolView.this.setInput(source.getPopulation());
-
-                final SelectorTableViewer tv = EvolView.this.getTableViewer();
-
-                final int row = source.getPosition();
-                if ("reset".equalsIgnoreCase(cause)) {
-                    Assert.isTrue(source.getPosition() == 0);
-                }
-
-                MonitoredOperation.runInUI(new Runnable() {
-                    public void run() {
-                        tv.selectRow(row);
-                        EvolView.this.refresh(false);
-                    }
-                }, true);
-            }
-        });
+        this.evolModel.addListener(this.modelListener);
     }
 
     // private fields
@@ -228,6 +281,8 @@ public class EvolView extends ViewPart {
     // individual property settings
     @Override
     public void createPartControl(final Composite parent) {
+
+        // create table view
         final Table table = new Table(parent, SWT.BORDER | SWT.BORDER_SOLID);
         // Composite tableComposite = new Composite(parent, SWT.NONE);
         // TableColumnLayout tableColumnLayout = new TableColumnLayout();
@@ -245,12 +300,36 @@ public class EvolView extends ViewPart {
         tv.setLabelProvider(new PopulationTableLabelProvider(this));
         this.tableViewer = tv;
 
-        // Reset the model.
-        Assert.isNotNull(this.evolModel);
-        this.evolModel.reset();
-
         final ISelectionChangedListener listener = new SelectionChangedListener(tv);
         tv.addPostSelectionChangedListener(listener);
+
+        final IToolBarManager tm = this.getViewSite().getActionBars().getToolBarManager();
+
+        final IAction multipleEditorsAction = new Action("Multiple editors") {
+
+            @Override
+            public void run() {
+                final IPreferenceStore store = EvolPlugin.getDefault().getPreferenceStore();
+
+                final String newValue =
+                        ((isChecked()) ? EvolPlugin.ALL_EDITORS : EvolPlugin.CURRENT_EDITOR);
+
+                store.setValue(EvolPlugin.PREF_EDITORS, newValue);
+            }
+        };
+
+        multipleEditorsAction.setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(
+                EvolPlugin.PLUGIN_ID, "icons/multiple16.png"));
+        multipleEditorsAction.setChecked(EvolPlugin.PREF_EDITORS.equals(EvolPlugin.ALL_EDITORS));
+
+
+        // Add the toggle button
+        tm.add(multipleEditorsAction);
+        // XXX too bad all the other buttons are added later via extension point
+        // so we can't change their order as we would like
+
+        // Set the population as input in order to populate the view.
+        setInput(this.evolModel.getPopulation());
     }
 
     /**
@@ -323,7 +402,7 @@ public class EvolView extends ViewPart {
 
     /**
      * Sets a population as the input of the viewer. Has no effect if the
-     * population is {@code null}.
+     * population is {@code null} or if the table viewer is {@code null}.
      *
      * @param thePopulation
      *            new source population
@@ -331,17 +410,14 @@ public class EvolView extends ViewPart {
     void setInput(final Population thePopulation) {
         Assert.isNotNull(this.evolModel);
 
-        if ((thePopulation != null)) {
+        final SelectorTableViewer tv = this.getTableViewer();
 
+        if (((thePopulation != null) && (tv != null))) {
             final Population modelPop = this.evolModel.getPopulation();
             Assert.isTrue((thePopulation.equals(modelPop)),
                     "Attempt to set a population that is not in the model.");
 
-            final Runnable runnable = new Runnable() {
-                public void run() {
-                    EvolView.this.getTableViewer().setInput(thePopulation);
-                }
-            };
+            final Runnable runnable = new SetInputRunnable(thePopulation, tv);
             MonitoredOperation.runInUI(runnable, true);
         }
     }

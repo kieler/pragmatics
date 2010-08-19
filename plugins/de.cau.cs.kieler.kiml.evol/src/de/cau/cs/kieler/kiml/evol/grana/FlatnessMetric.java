@@ -57,18 +57,17 @@ public class FlatnessMetric implements IAnalysis {
         final boolean isXdimZero = (xdim == 0.0f);
         final boolean isYdimZero = (ydim == 0.0f);
         if (isXdimZero && isYdimZero) {
-            // XXX this should happen rarely, consider returning NaN?
-            result = 0.5f;
+            throw new KielerException("Flatness metric analysis failed.");
+        }
+
+        final float heightToWidthRatio = (isXdimZero ? Float.POSITIVE_INFINITY : ydim / xdim);
+        final float widthToHeightRatio = (isYdimZero ? Float.POSITIVE_INFINITY : xdim / ydim);
+        if (widthToHeightRatio < 1.0) {
+            // narrow
+            result = widthToHeightRatio * .5f;
         } else {
-            final float heightToWidthRatio = (isXdimZero ? Float.POSITIVE_INFINITY : ydim / xdim);
-            final float widthToHeightRatio = (isYdimZero ? Float.POSITIVE_INFINITY : xdim / ydim);
-            if (widthToHeightRatio < 1.0) {
-                // narrow
-                result = widthToHeightRatio * .5f;
-            } else {
-                // wide
-                result = 1.0f - (heightToWidthRatio * .5f);
-            }
+            // wide
+            result = 1.0f - (heightToWidthRatio * .5f);
         }
         progressMonitor.done();
         return result;

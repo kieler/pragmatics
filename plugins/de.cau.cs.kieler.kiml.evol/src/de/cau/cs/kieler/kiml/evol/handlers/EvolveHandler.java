@@ -181,8 +181,6 @@ public class EvolveHandler extends AbstractHandler {
                             // Calculate auto-rating in the current editor for
                             // all individuals.
                             model.autoRateAll(new SubProgressMonitor(monitor, 100));
-
-                            System.out.println(model.getPopulation());
                         }
 
                         // BasicNetwork b = new BasicNetwork();

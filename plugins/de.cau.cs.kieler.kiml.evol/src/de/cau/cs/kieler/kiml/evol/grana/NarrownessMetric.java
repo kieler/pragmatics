@@ -58,18 +58,16 @@ public class NarrownessMetric implements IAnalysis {
         final boolean isXdimZero = (xdim == 0.0f);
         final boolean isYdimZero = (ydim == 0.0f);
         if (isXdimZero && isYdimZero) {
-            // XXX this should happen rarely, consider returning NaN?
-            result = 0.5f;
+            throw new KielerException("Narrowness metric analysis failed.");
+        }
+        final float heightToWidthRatio = (isXdimZero ? Float.POSITIVE_INFINITY : ydim / xdim);
+        final float widthToHeightRatio = (isYdimZero ? Float.POSITIVE_INFINITY : xdim / ydim);
+        if (heightToWidthRatio < 1.0) {
+            // wide
+            result = heightToWidthRatio * .5f;
         } else {
-            final float heightToWidthRatio = (isXdimZero ? Float.POSITIVE_INFINITY : ydim / xdim);
-            final float widthToHeightRatio = (isYdimZero ? Float.POSITIVE_INFINITY : xdim / ydim);
-            if (heightToWidthRatio < 1.0) {
-                // wide
-                result = heightToWidthRatio * .5f;
-            } else {
-                // narrow
-                result = 1.0f - (widthToHeightRatio * .5f);
-            }
+            // narrow
+            result = 1.0f - (widthToHeightRatio * .5f);
         }
         progressMonitor.done();
         return result;
