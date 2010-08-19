@@ -1,14 +1,10 @@
 package de.cau.cs.kieler.kex.controller.util;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.osgi.framework.Version;
 
 import de.cau.cs.kieler.core.KielerException;
@@ -17,13 +13,10 @@ import de.cau.cs.kieler.kex.controller.ExampleElement;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.ExampleCollector;
 import de.cau.cs.kieler.kex.model.ExportResource;
-import de.cau.cs.kieler.kex.model.ExportType;
+import de.cau.cs.kieler.kex.model.SourceType;
 import de.cau.cs.kieler.kex.model.extensionpoint.ExtPointExampleCreator;
 
 public class ExampleExportUtil {
-
-	private static final Path workspacePath = (Path) ResourcesPlugin
-			.getWorkspace().getRoot().getLocation();
 
 	/**
 	 * mapping of properties onto an example.
@@ -39,7 +32,7 @@ public class ExampleExportUtil {
 				(String) properties.get(ExampleElement.NAME),
 				Version.parseVersion((String) properties
 						.get(ExampleElement.VERSION)),
-				(ExportType) properties.get(ExampleElement.EXPORTTYPE));
+				(SourceType) properties.get(ExampleElement.SOURCETYPE));
 		result.setDescription((String) properties
 				.get(ExampleElement.DESCRIPTION));
 		result.setContact((String) properties.get(ExampleElement.CONTACT));
@@ -84,59 +77,17 @@ public class ExampleExportUtil {
 		List<ExportResource> resources = (List<ExportResource>) properties
 				.get(ExampleElement.RESOURCES);
 		try {
-			List<IPath> destResources = copyResources(destFile, resources);
+			List<IPath> destResources = extensionCreator.copyResources(
+					destFile, resources);
 			extensionCreator.addExtension(destFile, mappedExample,
 					destResources);
 		} catch (KielerModelException e) {
 			if (e.getModelObject() instanceof List<?>) {
-				deleteExampleResource((List<IPath>) e.getModelObject());
+				extensionCreator.deleteExampleResource((List<IPath>) e
+						.getModelObject());
 			}
 			throw e;
 		}
 	}
 
-	/**
-	 * creates example files to given location
-	 * 
-	 * @param sourceProject
-	 */
-	private static List<IPath> copyResources(File destFile,
-			List<ExportResource> resources) throws KielerException {
-		List<IPath> errorList = new ArrayList<IPath>();
-		List<IPath> result = new ArrayList<IPath>();
-		try {
-			for (ExportResource resource : resources) {
-				copyFile(resource, destFile.getPath(), errorList);
-				result.add(resource.getLocalPath());
-			}
-		} catch (KielerException e) {
-			throw new KielerModelException(e.getLocalizedMessage(), errorList);
-		}
-		return result;
-	}
-
-	private static void copyFile(ExportResource resource, String destPath,
-			List<IPath> errorList) throws KielerException {
-		StringBuffer destLocation = new StringBuffer();
-		try {
-
-			String sourcePath = ExampleExportUtil.workspacePath
-					.toPortableString()
-					+ resource.getResource().getFullPath().toPortableString();
-
-			destLocation.append(destPath).append(File.separatorChar)
-					.append(resource.getLocalPath());
-			Path destination = new Path(destLocation.toString());
-			errorList.add(destination);
-
-			IOHandler.writeFile(new File(sourcePath), destination.toFile());
-		} catch (IOException e) {
-			// TODO ErrorHandling überlegen.
-		}
-	}
-
-	private static void deleteExampleResource(List<IPath> resources) {
-		for (IPath path : resources)
-			IOHandler.deleteFile(path.toFile());
-	}
 }

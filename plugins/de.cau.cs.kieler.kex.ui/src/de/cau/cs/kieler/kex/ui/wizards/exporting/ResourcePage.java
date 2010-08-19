@@ -40,8 +40,6 @@ public class ResourcePage extends WizardPage {
 	private final List<IProject> exportedProjects;
 	private final List<IFolder> exportedFolders;
 
-	private boolean insertHiddenFiles;
-
 	private final List<ExportResource> exportResources;
 
 	protected ResourcePage(String pageName) {

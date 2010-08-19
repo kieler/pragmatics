@@ -7,6 +7,7 @@ import java.util.Map;
 
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.ExampleCollector;
+import de.cau.cs.kieler.kex.model.SourceType;
 
 /**
  * this is an example for extending KEX with online examples.
@@ -36,11 +37,16 @@ public class DBExampleCollector extends ExampleCollector {
 
 	@Override
 	public void loadExamples() {
-//		database.loadExample();
+		// database.loadExample();
 	}
 
 	public List<String> getCategories() {
 		return categories;
+	}
+
+	@Override
+	public SourceType getSourceType() {
+		return SourceType.PUBLIC;
 	}
 
 }

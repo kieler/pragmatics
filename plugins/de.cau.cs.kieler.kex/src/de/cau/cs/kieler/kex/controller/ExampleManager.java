@@ -10,7 +10,7 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.util.ExampleExportUtil;
 import de.cau.cs.kieler.kex.controller.util.ExampleImportUtil;
 import de.cau.cs.kieler.kex.model.Example;
-import de.cau.cs.kieler.kex.model.ExportType;
+import de.cau.cs.kieler.kex.model.SourceType;
 import de.cau.cs.kieler.kex.model.database.DBExampleCollector;
 import de.cau.cs.kieler.kex.model.extensionpoint.ExtPointExampleCollector;
 import de.cau.cs.kieler.kex.model.extensionpoint.ExtPointExampleCreator;
@@ -98,12 +98,11 @@ public class ExampleManager {
 	public void exportExample(Map<ExampleElement, Object> properties)
 			throws KielerException {
 		// TODO validate von ui zu service verlegen.
-		if (ExportType.EXTENSIONPOINT.equals(properties
-				.get(ExampleElement.EXPORTTYPE)))
+		if (SourceType.KIELER.equals(properties.get(ExampleElement.SOURCETYPE)))
 			ExampleExportUtil.exportExample(properties, this.extensionCreator,
 					this.extensionCollector, this.databaseCollector);
-		else if (ExportType.ONLINE.equals(properties
-				.get(ExampleElement.EXPORTTYPE))) {
+		else if (SourceType.PUBLIC.equals(properties
+				.get(ExampleElement.SOURCETYPE))) {
 			// TODO online schnittstelle bauen...
 		} else
 			throw new KielerException("No ExportType was set.");

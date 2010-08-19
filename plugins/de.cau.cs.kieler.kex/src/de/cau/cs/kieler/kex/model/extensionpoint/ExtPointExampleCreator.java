@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -21,6 +22,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -29,8 +32,10 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import de.cau.cs.kieler.core.KielerException;
+import de.cau.cs.kieler.core.KielerModelException;
 import de.cau.cs.kieler.kex.controller.util.IOHandler;
 import de.cau.cs.kieler.kex.model.Example;
+import de.cau.cs.kieler.kex.model.ExportResource;
 import de.cau.cs.kieler.kex.model.ExtPointConstants;
 
 /**
@@ -42,6 +47,8 @@ import de.cau.cs.kieler.kex.model.ExtPointConstants;
  */
 
 public class ExtPointExampleCreator {
+
+	private final IPath workspacePath = Platform.getLocation();
 
 	private Document parsedXML = null;
 
@@ -129,9 +136,9 @@ public class ExtPointExampleCreator {
 		try {
 			writer = factory.createXMLStreamWriter(new FileOutputStream(path));
 			writer.writeStartDocument();
-			writer.writeStartElement(PluginXmlConstants.PLUGIN);
-			writer.writeStartElement(PluginXmlConstants.EXTENSION);
-			writer.writeAttribute(PluginXmlConstants.POINT,
+			writer.writeStartElement(PluginConstants.PLUGIN);
+			writer.writeStartElement(PluginConstants.EXTENSION);
+			writer.writeAttribute(PluginConstants.POINT,
 					ExtPointConstants.EXT_POINT);
 			writer.writeEndElement();
 			writer.writeEndElement();
@@ -150,7 +157,7 @@ public class ExtPointExampleCreator {
 
 	private Node filterExtensionKEX() {
 		NodeList plugins = this.parsedXML
-				.getElementsByTagName(PluginXmlConstants.PLUGIN);
+				.getElementsByTagName(PluginConstants.PLUGIN);
 		int pluginsLength = plugins.getLength();
 		if (pluginsLength == 0 || pluginsLength > 1) {
 			// dann fehlerfall �berlegen, oder sogar drauf reagieren k�nnen,
@@ -162,10 +169,10 @@ public class ExtPointExampleCreator {
 		int length = childNodes.getLength();
 		for (int i = 0; i < length; i++) {
 			Node node = childNodes.item(i);
-			if (PluginXmlConstants.EXTENSION.equals(node.getNodeName())) {
+			if (PluginConstants.EXTENSION.equals(node.getNodeName())) {
 				NamedNodeMap attributes = node.getAttributes();
 				Node namedItem = attributes
-						.getNamedItem(PluginXmlConstants.POINT);
+						.getNamedItem(PluginConstants.POINT);
 				if (ExtPointConstants.EXT_POINT
 						.equals(namedItem.getNodeValue())) {
 					extensionKEX = node;
@@ -183,6 +190,50 @@ public class ExtPointExampleCreator {
 			// create extension KEX
 		}
 		return extensionKEX;
+	}
+
+	/**
+	 * creates example files to given location
+	 * 
+	 * @param sourceProject
+	 */
+	public List<IPath> copyResources(File destFile,
+			List<ExportResource> resources) throws KielerException {
+		List<IPath> errorList = new ArrayList<IPath>();
+		List<IPath> result = new ArrayList<IPath>();
+		try {
+			for (ExportResource resource : resources) {
+				copyFile(resource, destFile.getPath(), errorList);
+				result.add(resource.getLocalPath());
+			}
+		} catch (KielerException e) {
+			throw new KielerModelException(e.getLocalizedMessage(), errorList);
+		}
+		return result;
+	}
+
+	private void copyFile(ExportResource resource, String destPath,
+			List<IPath> errorList) throws KielerException {
+		StringBuffer destLocation = new StringBuffer();
+		try {
+
+			String sourcePath = this.workspacePath.toPortableString()
+					+ resource.getResource().getFullPath().toPortableString();
+
+			destLocation.append(destPath).append(File.separatorChar)
+					.append(resource.getLocalPath());
+			Path destination = new Path(destLocation.toString());
+			errorList.add(destination);
+
+			IOHandler.writeFile(new File(sourcePath), destination.toFile());
+		} catch (IOException e) {
+			// TODO ErrorHandling �berlegen.
+		}
+	}
+
+	public void deleteExampleResource(List<IPath> resources) {
+		for (IPath path : resources)
+			IOHandler.deleteFile(path.toFile());
 	}
 
 	private void writePluginXML(String pluginPath) throws KielerException {

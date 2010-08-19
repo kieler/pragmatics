@@ -15,7 +15,7 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.ExampleElement;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
 import de.cau.cs.kieler.kex.model.ExportResource;
-import de.cau.cs.kieler.kex.model.ExportType;
+import de.cau.cs.kieler.kex.model.SourceType;
 
 public class ExampleExportWizard extends Wizard implements IWizard {
 
@@ -53,10 +53,10 @@ public class ExampleExportWizard extends Wizard implements IWizard {
 
 			addAttributes(result);
 
-			ExportType exportType = exRePage.getExportType();
+			SourceType exportType = exRePage.getExportType();
 			if (exportType == null)
 				throw new KielerException("Export type was not set.");
-			result.put(ExampleElement.EXPORTTYPE, exportType);
+			result.put(ExampleElement.SOURCETYPE, exportType);
 
 			String destLocation = exRePage.getDestLocation();
 			validateField(destLocation, 2, "Destination Location");

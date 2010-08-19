@@ -1,6 +1,6 @@
 package de.cau.cs.kieler.kex.model.extensionpoint;
 
-public class PluginXmlConstants {
+public class PluginConstants {
 	public static final String PLUGIN = "plugin";
 	public static final String EXTENSION = "extension";
 	public static final String POINT = "point";
@@ -8,6 +8,6 @@ public class PluginXmlConstants {
 	/**
 	 * should not be called.
 	 */
-	private PluginXmlConstants() {
+	private PluginConstants() {
 	}
 }

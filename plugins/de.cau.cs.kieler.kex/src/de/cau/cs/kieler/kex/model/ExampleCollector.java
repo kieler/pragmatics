@@ -23,4 +23,6 @@ public abstract class ExampleCollector {
 		return examplesAsString;
 	}
 
+	public abstract SourceType getSourceType();
+
 }

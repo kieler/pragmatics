@@ -83,8 +83,8 @@ public class ExampleImportUtil {
 			final boolean overwrite) throws IOException {
 		File f2 = new File(destPath);
 
-		// TODO immer auf override setzen, muss über methode geregelt werden
-		// nicht über konstr. glaube ich.
+		// TODO immer auf override setzen, muss ï¿½ber methode geregelt werden
+		// nicht ï¿½ber konstr. glaube ich.
 		// TODO mit export teilen siehe ExampleExportUtil
 		InputStream is = sourceUrl.openStream();
 		OutputStream os = new FileOutputStream(f2, overwrite);

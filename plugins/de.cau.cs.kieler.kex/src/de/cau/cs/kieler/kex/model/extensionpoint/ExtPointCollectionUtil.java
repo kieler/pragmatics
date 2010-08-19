@@ -14,8 +14,8 @@ import org.osgi.framework.Version;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.KielerModelException;
 import de.cau.cs.kieler.kex.model.Example;
-import de.cau.cs.kieler.kex.model.ExportType;
 import de.cau.cs.kieler.kex.model.ExtPointConstants;
+import de.cau.cs.kieler.kex.model.SourceType;
 
 public class ExtPointCollectionUtil {
 
@@ -49,8 +49,7 @@ public class ExtPointCollectionUtil {
 		// version feld
 		// ein freier string, min. default besser noch regex.
 		Example example = new Example(idAttribute, nameAttribute,
-				Version.parseVersion(versionAttribute),
-				ExportType.EXTENSIONPOINT);
+				Version.parseVersion(versionAttribute), SourceType.KIELER);
 		example.setDescription(exampleElement
 				.getAttribute(ExtPointConstants.DESCRIPTION));
 		example.setContact(exampleElement
@@ -61,8 +60,8 @@ public class ExtPointCollectionUtil {
 		example.addCategories(categories);
 		example.setHeadResource(filterHeadResource(exampleElement,
 				exNamespaceId));
-		// TODO Prüfung, ob head_resource schon in resources enthalten ansonsten
-		// hinzufügen.
+		// TODO Prï¿½fung, ob head_resource schon in resources enthalten ansonsten
+		// hinzufï¿½gen.
 		List<URL> resources = ExtPointCollectionUtil.filterExampleResources(
 				exampleElement, exNamespaceId);
 		example.addResources(resources);
@@ -105,25 +104,13 @@ public class ExtPointCollectionUtil {
 			// searching for subfiles and folders.
 			Enumeration<?> dict = bundle.findEntries(resourceURL.getPath(),
 					null, true);
-			// TODO filter for .svn and .cvs files have to be added
-			// properly you can set this to bundle.findEntries()...
-			// adding subs
-
 			if (dict != null) {
 				while (dict.hasMoreElements()) {
 					URL dictElement = (URL) dict.nextElement();
-					// FIXME ausnahme liste draus machen, eigene klasse mit
-					// ausnahmen
-					// und die dann alle abprüfen,
-					// damit noch ausnahmen hinzugefügt, bzw. entfernt werden
-					// können
-
-					// oder dateien mit prefix "." entfernen, also keine
-					// versteckten
-					// dateien mit berücksichtigen
-					if (!dictElement.getPath().contains(".svn")
-							&& !dictElement.getPath().contains(".cvs"))
+					// hidden files check
+					if (!dictElement.getFile().startsWith(".")) {
 						result.add(dictElement);
+					}
 				}
 			}
 		}

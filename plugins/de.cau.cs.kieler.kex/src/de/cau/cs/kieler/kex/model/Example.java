@@ -37,15 +37,15 @@ public class Example {
 
 	private List<String> categories;
 
-	private ExportType importType;
+	private SourceType importType;
 
 	public Example(String id, String name, Version version,
-			ExportType importType) {
+			SourceType importType) {
 		init(id, name, version, importType);
 	}
 
 	private void init(String id, String name, Version version,
-			ExportType importType) {
+			SourceType importType) {
 		this.id = id;
 		this.name = name;
 		this.version = version;
@@ -89,7 +89,7 @@ public class Example {
 		return this.version;
 	}
 
-	// TODO auf jeden fall über string path (nutze namespace identifier) lösen.
+	// TODO auf jeden fall ï¿½ber string path (nutze namespace identifier) lï¿½sen.
 	public List<URL> getResources() {
 		return resources;
 	}
@@ -130,11 +130,11 @@ public class Example {
 		return headResource;
 	}
 
-	public void setImportType(ExportType importType) {
+	public void setImportType(SourceType importType) {
 		this.importType = importType;
 	}
 
-	public ExportType getImportType() {
+	public SourceType getImportType() {
 		return importType;
 	}
 

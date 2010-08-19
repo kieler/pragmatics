@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.Platform;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.ExampleCollector;
 import de.cau.cs.kieler.kex.model.ExtPointConstants;
+import de.cau.cs.kieler.kex.model.SourceType;
 
 public class ExtPointExampleCollector extends ExampleCollector {
 
@@ -47,7 +48,7 @@ public class ExtPointExampleCollector extends ExampleCollector {
 							.getAttribute(ExtPointConstants.ID);
 					if (getExamplePool().containsKey(exampleId)) {
 						// TODO darf eigentlich nicht passieren
-						// RUNTIME Exception schmeißen...
+						// RUNTIME Exception schmeiï¿½en...
 						// oder einfach annehmen, dass dies nicht geschieht
 
 						continue;
@@ -108,5 +109,10 @@ public class ExtPointExampleCollector extends ExampleCollector {
 				collectCategory(element);
 			}
 		}
+	}
+
+	@Override
+	public SourceType getSourceType() {
+		return SourceType.KIELER;
 	}
 }

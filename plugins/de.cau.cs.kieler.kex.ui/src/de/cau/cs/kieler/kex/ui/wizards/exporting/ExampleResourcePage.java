@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
 import de.cau.cs.kieler.kex.controller.ExampleManager;
-import de.cau.cs.kieler.kex.model.ExportType;
+import de.cau.cs.kieler.kex.model.SourceType;
 
 public class ExampleResourcePage extends WizardPage {
 
@@ -180,9 +180,9 @@ public class ExampleResourcePage extends WizardPage {
 		return this.resources;
 	}
 
-	public ExportType getExportType() {
+	public SourceType getExportType() {
 		// TODO muss der user entscheiden wohin das gehen soll
-		return ExportType.EXTENSIONPOINT;
+		return SourceType.KIELER;
 	}
 
 	@Override
