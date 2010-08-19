@@ -11,7 +11,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import de.cau.cs.kieler.kex.ui.wizards.importing.importWizard.ImportWizard;
+import de.cau.cs.kieler.kex.ui.wizards.importing.importWizard.ExampleImportWizard;
 
 /**
  * Our sample action implements workbench action delegate. The action proxy will
@@ -39,7 +39,7 @@ public class ImportAction implements IWorkbenchWindowActionDelegate {
 		}
 		ISelection selection = workbenchWindow.getSelectionService()
 				.getSelection();
-		ImportWizard wizard = new ImportWizard(
+		ExampleImportWizard wizard = new ExampleImportWizard(
 				(selection instanceof IStructuredSelection) ? (IStructuredSelection) selection
 						: null);
 		Shell parent = workbenchWindow.getShell();

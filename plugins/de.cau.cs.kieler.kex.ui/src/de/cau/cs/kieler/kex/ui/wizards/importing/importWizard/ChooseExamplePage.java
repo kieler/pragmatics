@@ -159,7 +159,9 @@ public class ChooseExamplePage extends WizardPage {
 				getExampleTitle().setText(selectedExample.getId());
 				getExampleDescription().setText(
 						selectedExample.getDescription());
-				getExampleContact().setText(selectedExample.getContact());
+				String contact = selectedExample.getContact();
+				if (contact != null)
+					getExampleContact().setText(contact);
 				getExampleVersion().setText(
 						selectedExample.getVersion().toString());
 			}

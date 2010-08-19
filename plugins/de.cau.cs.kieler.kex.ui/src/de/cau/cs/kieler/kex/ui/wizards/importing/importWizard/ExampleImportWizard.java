@@ -7,16 +7,16 @@ import org.eclipse.jface.wizard.Wizard;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
 
-public class ImportWizard extends Wizard implements IWizard {
+public class ExampleImportWizard extends Wizard implements IWizard {
 
 	private ChooseExamplePage chooseExamplePage;
 	private ImportExamplePage importExamplePage;
 
 	private final IStructuredSelection selection;
 
-	// TODO schweinerein sollen die wizard überleben, also sicher machen auf
-	// nullprüfungen, fieses hin und her wechseln der pages and so on...
-	public ImportWizard(IStructuredSelection selection) {
+	// TODO schweinerein sollen die wizard ï¿½berleben, also sicher machen auf
+	// nullprï¿½fungen, fieses hin und her wechseln der pages and so on...
+	public ExampleImportWizard(IStructuredSelection selection) {
 		super();
 
 		// TODO nullpointer exception falls selection null!
@@ -25,6 +25,19 @@ public class ImportWizard extends Wizard implements IWizard {
 		setNeedsProgressMonitor(true);
 		setWindowTitle("Kieler Example Import");
 		ExampleManager.get().load();
+	}
+
+	@Override
+	public void addPages() {
+		chooseExamplePage = new ChooseExamplePage("chooseExamplePage");
+		addPage(chooseExamplePage);
+		importExamplePage = new ImportExamplePage("importExamplePage",
+				selection);
+		addPage(importExamplePage);
+	}
+
+	public IStructuredSelection getSelection() {
+		return selection;
 	}
 
 	@Override
@@ -43,16 +56,4 @@ public class ImportWizard extends Wizard implements IWizard {
 		return true;
 	}
 
-	@Override
-	public void addPages() {
-		chooseExamplePage = new ChooseExamplePage("chooseExamplePage");
-		addPage(chooseExamplePage);
-		importExamplePage = new ImportExamplePage("importExamplePage",
-				selection);
-		addPage(importExamplePage);
-	}
-
-	public IStructuredSelection getSelection() {
-		return selection;
-	}
 }

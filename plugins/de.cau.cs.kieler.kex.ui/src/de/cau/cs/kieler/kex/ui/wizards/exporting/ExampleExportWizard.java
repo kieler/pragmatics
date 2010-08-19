@@ -17,7 +17,7 @@ import de.cau.cs.kieler.kex.controller.ExampleManager;
 import de.cau.cs.kieler.kex.model.ExportResource;
 import de.cau.cs.kieler.kex.model.ExportType;
 
-public class ExportExampleWizard extends Wizard implements IWizard {
+public class ExampleExportWizard extends Wizard implements IWizard {
 
 	private ExamplePage examplePage;
 	private ExampleResourcePage exRePage;
@@ -25,7 +25,7 @@ public class ExportExampleWizard extends Wizard implements IWizard {
 
 	private final IStructuredSelection selection;
 
-	public ExportExampleWizard(IStructuredSelection selection) {
+	public ExampleExportWizard(IStructuredSelection selection) {
 		super();
 		this.selection = selection;
 		setWindowTitle("Kieler Example Export");
@@ -39,6 +39,10 @@ public class ExportExampleWizard extends Wizard implements IWizard {
 		addPage(examplePage);
 		addPage(exRePage);
 		addPage(rePage);
+	}
+
+	public IStructuredSelection getSelection() {
+		return this.selection;
 	}
 
 	@Override

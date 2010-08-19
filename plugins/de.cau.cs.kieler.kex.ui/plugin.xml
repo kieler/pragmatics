@@ -48,12 +48,21 @@
                   label="ExampleManagement">
                <command
                      commandId="de.cau.cs.kieler.kex.ui.import"
-                     label="Import"
+                     label="Import Example"
+                     style="push">
+               </command>
+               <separator
+                     name="de.cau.cs.kieler.kex.ui.import_export"
+                     visible="true">
+               </separator>
+               <command
+                     commandId="de.cau.cs.kieler.kex.ui.update"
+                     label="Update Example"
                      style="push">
                </command>
                <command
                      commandId="de.cau.cs.kieler.kex.ui.export"
-                     label="Export"
+                     label="Export Example"
                      style="push">
                </command>
             </menu>
@@ -76,6 +85,11 @@
             id="de.cau.cs.kieler.kex.ui.export"
             name="Export">
       </command>
+      <command
+            categoryId="de.cau.cs.kieler.kex.ui.examplecategory"
+            id="de.cau.cs.kieler.kex.ui.update"
+            name="Update">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -86,6 +100,10 @@
       <handler
             class="de.cau.cs.kieler.kex.ui.handlers.ExampleExportHandler"
             commandId="de.cau.cs.kieler.kex.ui.export">
+      </handler>
+      <handler
+            class="de.cau.cs.kieler.kex.ui.handlers.ExampleUpdateHandler"
+            commandId="de.cau.cs.kieler.kex.ui.update">
       </handler>
    </extension>
 </plugin>

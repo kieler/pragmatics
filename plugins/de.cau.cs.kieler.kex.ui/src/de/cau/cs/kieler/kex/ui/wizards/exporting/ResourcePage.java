@@ -184,7 +184,8 @@ public class ResourcePage extends WizardPage {
 					for (int i = 0; i < members.length; i++) {
 						// And the test bits with the resource types to see if
 						// they are what we want
-						if ((members[i].getType() & resourceType) > 0) {
+						if ((members[i].getType() & resourceType) > 0
+								&& !members[i].getName().startsWith(".")) {
 							results.add(members[i]);
 						}
 					}
@@ -232,7 +233,7 @@ public class ResourcePage extends WizardPage {
 	}
 
 	// TODO validier mechanismen schon bei umschlagen auf den neue page
-	// abprüfen,
+	// abprï¿½fen,
 	// im wizard, nicht erst bei finish.
 
 	@Override
@@ -245,20 +246,19 @@ public class ResourcePage extends WizardPage {
 		for (IProject iProject : getExportedProjects()) {
 			try {
 				for (IResource resource : iProject.members()) {
+					if (checkHiddenResource(resource))
+						continue;
 					if (resource instanceof IFolder) {
 						addFolderWithElements((IContainer) resource,
 								(IContainer) resource, duplicateChecker);
 					}
 					if (resource instanceof IFile) {
-						if (!insertHiddenFiles
-								&& !resource.getName().startsWith(".")) {
-							if (!duplicateChecker.contains(resource)) {
-								IPath fileRootPath = makeRelativePath(iProject,
-										resource);
-								this.exportResources.add(new ExportResource(
-										resource, fileRootPath));
-								duplicateChecker.add(resource);
-							}
+						if (!duplicateChecker.contains(resource)) {
+							IPath fileRootPath = makeRelativePath(iProject,
+									resource);
+							this.exportResources.add(new ExportResource(
+									resource, fileRootPath));
+							duplicateChecker.add(resource);
 						}
 					}
 				}
@@ -267,11 +267,15 @@ public class ResourcePage extends WizardPage {
 			}
 		}
 		for (IContainer folder : getExportedFolders()) {
+			if (checkHiddenResource(folder))
+				continue;
 			if (!duplicateChecker.contains(folder)) {
 				addFolderWithElements(folder, folder, duplicateChecker);
 			}
 		}
 		for (IFile file : getExportedFiles()) {
+			if (checkHiddenResource(file))
+				continue;
 			if (!duplicateChecker.contains(file)) {
 
 				IPath fileRootPath = filterResourceName(file);
@@ -284,6 +288,14 @@ public class ResourcePage extends WizardPage {
 
 	public List<ExportResource> getExportedResources() {
 		return this.exportResources;
+	}
+
+	private boolean checkHiddenResource(IResource resource) {
+		if (resource.getName().startsWith(".")) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -304,6 +316,9 @@ public class ResourcePage extends WizardPage {
 		duplicateChecker.add(resource);
 		try {
 			for (IResource element : resource.members()) {
+				if (checkHiddenResource(element)) {
+					continue;
+				}
 				if (element instanceof IFolder) {
 					addFolderWithElements((IContainer) element, root,
 							duplicateChecker);

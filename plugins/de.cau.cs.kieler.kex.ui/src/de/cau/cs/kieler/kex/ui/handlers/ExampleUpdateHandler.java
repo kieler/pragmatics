@@ -10,11 +10,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import de.cau.cs.kieler.kex.ui.wizards.exporting.ExampleExportWizard;
+import de.cau.cs.kieler.kex.ui.wizards.update.ExampleUpdateWizard;
 
-public class ExampleExportHandler extends AbstractHandler {
+public class ExampleUpdateHandler extends AbstractHandler {
 
 	public Object execute(ExecutionEvent event) throws ExecutionException {
+
 		IWorkbenchWindow workbenchWindow = HandlerUtil
 				.getActiveWorkbenchWindowChecked(event);
 		if (workbenchWindow == null) {
@@ -23,7 +24,7 @@ public class ExampleExportHandler extends AbstractHandler {
 		}
 		ISelection selection = workbenchWindow.getSelectionService()
 				.getSelection();
-		ExampleExportWizard wizard = new ExampleExportWizard(
+		ExampleUpdateWizard wizard = new ExampleUpdateWizard(
 				(selection instanceof IStructuredSelection) ? (IStructuredSelection) selection
 						: null);
 		Shell parent = workbenchWindow.getShell();

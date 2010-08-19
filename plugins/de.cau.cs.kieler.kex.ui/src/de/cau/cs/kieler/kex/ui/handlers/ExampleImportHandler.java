@@ -10,7 +10,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import de.cau.cs.kieler.kex.ui.wizards.importing.importWizard.ImportWizard;
+import de.cau.cs.kieler.kex.ui.wizards.importing.importWizard.ExampleImportWizard;
 
 public class ExampleImportHandler extends AbstractHandler {
 
@@ -24,7 +24,7 @@ public class ExampleImportHandler extends AbstractHandler {
 		}
 		ISelection selection = workbenchWindow.getSelectionService()
 				.getSelection();
-		ImportWizard wizard = new ImportWizard(
+		ExampleImportWizard wizard = new ExampleImportWizard(
 				(selection instanceof IStructuredSelection) ? (IStructuredSelection) selection
 						: null);
 		Shell parent = workbenchWindow.getShell();

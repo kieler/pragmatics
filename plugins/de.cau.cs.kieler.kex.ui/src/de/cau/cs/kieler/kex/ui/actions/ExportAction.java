@@ -8,7 +8,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-import de.cau.cs.kieler.kex.ui.wizards.exporting.ExportExampleWizard;
+import de.cau.cs.kieler.kex.ui.wizards.exporting.ExampleExportWizard;
 
 public class ExportAction implements IWorkbenchWindowActionDelegate {
 
@@ -21,7 +21,7 @@ public class ExportAction implements IWorkbenchWindowActionDelegate {
 		}
 		ISelection selection = workbenchWindow.getSelectionService()
 				.getSelection();
-		ExportExampleWizard wizard = new ExportExampleWizard(
+		ExampleExportWizard wizard = new ExampleExportWizard(
 				(selection instanceof IStructuredSelection) ? (IStructuredSelection) selection
 						: null);
 		Shell parent = workbenchWindow.getShell();
