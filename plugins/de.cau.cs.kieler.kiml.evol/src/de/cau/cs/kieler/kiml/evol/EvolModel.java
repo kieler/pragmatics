@@ -373,42 +373,33 @@ public final class EvolModel {
         return result;
     }
 
+    /**
+     * Checks if the expected layout provider is of the same type as the layout
+     * provider of the current editor.
+     *
+     * @return {@code true} iff the layout providers are compatible or both are
+     *         {@code null}
+     */
     private boolean isCompatibleLayoutProvider() {
 
         final IEditorPart editor = EvolUtil.getCurrentEditor();
         final EditPart editPart = EvolUtil.getEditPart(editor);
 
-        final String oldId = this.layoutProviderId;
-        final String newId = EvolUtil.getLayoutProviderId(editor, editPart);
+        final String oldProviderId = this.layoutProviderId;
+        final String newProviderId = EvolUtil.getLayoutProviderId(editor, editPart);
 
-        if ((newId == null) || (oldId == null)) {
-            return (oldId == null) && (newId == null);
+        if ((newProviderId == null) || (oldProviderId == null)) {
+            return (oldProviderId == null) && (newProviderId == null);
         }
 
-        final String oldTypeId =
-                LayoutServices.getInstance().getLayoutProviderData(oldId).getType();
-        final String newTypeId =
-                LayoutServices.getInstance().getLayoutProviderData(newId).getType();
-
-        Assert.isTrue(oldTypeId.equalsIgnoreCase(this.layoutTypeId));
-
-        final boolean result = oldTypeId.equalsIgnoreCase(newTypeId);
-
-        if (!result) {
-            System.out.println("expected type: " + this.layoutTypeId);
-            System.out.println("present type: " + newTypeId);
-        }
-
-        return result;
+        final String expectedTypeId = this.layoutTypeId;
+        return EvolUtil.isCompatibleLayoutProvider(newProviderId, expectedTypeId);
     }
 
     /**
      * Selects an interesting individual.
      */
     private void selectInterestingIndividual() {
-        // if (!isValid()) {
-        // return;
-        // }
 
         final int firstUnrated = firstUnrated();
         if (firstUnrated > -1) {

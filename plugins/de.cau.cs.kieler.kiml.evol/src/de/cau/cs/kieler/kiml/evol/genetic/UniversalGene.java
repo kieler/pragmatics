@@ -176,7 +176,7 @@ public class UniversalGene extends AbstractGene<Float> {
      * @author bdu
      *
      */
-    private static interface IMutator {
+    public static interface IMutator {
         /**
          *
          * @param template

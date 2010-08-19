@@ -33,9 +33,25 @@ public class MutationInfo {
     public static final double DEFAULT_PROBABILITY = .1;
 
     /**
+     * Default distribution.
+     */
+    private static final Distribution DEFAULT_DISTRIBUTION = Distribution.UNIFORM;
+
+    /**
      * Default mutation variance for Gaussian distribution.
      */
     public static final double DEFAULT_VARIANCE = 1.0;
+
+    /**
+     * Creates a new {@link MutationInfo} instance with the given mutation
+     * probability and default distribution.
+     *
+     * @param prob
+     *            the probability that a mutation occurs.
+     */
+    public MutationInfo(final double prob) {
+        this(prob, DEFAULT_VARIANCE, DEFAULT_GENUINE_MUTATION_PROBABILITY, DEFAULT_DISTRIBUTION);
+    }
 
     /**
      * Constructor for a mutation info.

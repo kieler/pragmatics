@@ -63,13 +63,14 @@ public class EvolPreferencePage extends FieldEditorPreferencePage
         popSizeEditor.setValidRange(1, Integer.MAX_VALUE);
         addField(popSizeEditor);
 
-        // misc parameters
+        // miscellaneous parameters
         final Group miscGroup = new Group(parent, SWT.NONE);
         miscGroup.setText("Misc parameters");
         final RadioGroupFieldEditor editorsEditor =
                 new RadioGroupFieldEditor(EvolPlugin.PREF_EDITORS, "Use editors", 1,
                         new String[][] { { "all editors", EvolPlugin.ALL_EDITORS },
-                                { "current editor", EvolPlugin.CURRENT_EDITOR } }, miscGroup, true);
+                                { "current editor", EvolPlugin.CURRENT_EDITOR } }, miscGroup,
+                        true /* useGroup */);
         addField(editorsEditor);
 
         // layout

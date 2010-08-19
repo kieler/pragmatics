@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.kiml.evol.EvolModel;
@@ -81,45 +80,6 @@ public class EvolveHandler extends AbstractHandler {
 
             return new Status(IStatus.OK, EvolPlugin.PLUGIN_ID,
                     "Evolve job completed successfully.");
-        }
-    }
-
-    /**
-     * A job for refreshing the evolution view.
-     *
-     * @author bdu
-     *
-     */
-    private static final class EvolutionViewRefreshJob extends Job {
-        /**
-         * Creates a new {@link EvolutionViewRefreshJob} instance.
-         *
-         * @param theName
-         * @param theView
-         */
-        public EvolutionViewRefreshJob(final String theName, final EvolView theView) {
-            super(theName);
-            this.view = theView;
-        }
-
-        /**
-         *
-         */
-        private final EvolView view;
-
-        public EvolView getView() {
-            return this.view;
-        }
-
-        @Override
-        protected IStatus run(final IProgressMonitor theMonitor) {
-            Display.getDefault().asyncExec(new Runnable() {
-                public void run() {
-                    final EvolView evolView = EvolutionViewRefreshJob.this.getView();
-                    evolView.refresh(false);
-                }
-            });
-            return new Status(IStatus.INFO, EvolPlugin.PLUGIN_ID, 0, "OK", null);
         }
     }
 
