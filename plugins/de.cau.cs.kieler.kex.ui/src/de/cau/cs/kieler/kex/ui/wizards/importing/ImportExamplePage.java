@@ -97,7 +97,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
 	}
 
 	private void createTreeElement(Composite composite) {
-		exampleTree = new Tree(composite, SWT.BORDER);
+		exampleTree = new Tree(composite, SWT.BORDER | SWT.CHECK);
 		exampleTree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		exampleTree.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
@@ -192,7 +192,10 @@ public class ImportExamplePage extends WizardResourceImportPage {
 	public List<Example> getSelectedExamples() {
 		List<Example> result = new ArrayList<Example>();
 		for (TreeItem item : exampleTree.getSelection()) {
-			result.add((Example) item.getData("example"));
+			Object data = item.getData("example");
+			// if category is choosen.
+			if (data != null)
+				result.add((Example) data);
 		}
 		return result;
 	}

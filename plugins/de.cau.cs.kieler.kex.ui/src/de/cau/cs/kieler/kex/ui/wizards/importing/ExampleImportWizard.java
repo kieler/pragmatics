@@ -23,7 +23,7 @@ public class ExampleImportWizard extends Wizard implements IWizard {
 		this.selection = selection;
 		setNeedsProgressMonitor(true);
 		setWindowTitle("Kieler Example Import");
-		ExampleManager.get().load();
+		ExampleManager.get().load(false);
 	}
 
 	@Override

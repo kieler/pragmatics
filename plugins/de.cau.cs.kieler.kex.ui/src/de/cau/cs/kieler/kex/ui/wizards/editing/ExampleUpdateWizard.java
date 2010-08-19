@@ -18,7 +18,7 @@ public class ExampleUpdateWizard extends Wizard implements IWizard {
 		super();
 		this.selection = selection;
 		setWindowTitle("Kieler Example Update");
-		ExampleManager.get().load();
+		ExampleManager.get().load(false);
 	}
 
 	@Override
