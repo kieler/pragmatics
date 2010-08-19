@@ -2,40 +2,6 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="org.eclipse.ui.actionSets">
-      <actionSet
-            id="de.cau.cs.kieler.kex.ui.actionSet"
-            label="KIELER Example Management"
-            visible="true">
-         <menu
-               id="kexMenu"
-               label="KEX">
-            <separator
-                  name="exportGroup">
-            </separator>
-            <separator
-                  name="importGroup">
-            </separator>
-         </menu>
-         <action
-               class="de.cau.cs.kieler.kex.ui.actions.ImportAction"
-               id="de.cau.cs.kieler.kex.ui.actions.import"
-               label="KIELER Example Import"
-               menubarPath="kexMenu/importGroup"
-               style="push"
-               tooltip="Import examples to your local workspace">
-         </action>
-         <action
-               class="de.cau.cs.kieler.kex.ui.actions.ExportAction"
-               id="de.cau.cs.kieler.kex.ui.export"
-               label="KIELER Example Export"
-               menubarPath="kexMenu/exportGroup"
-               style="push"
-               tooltip="Export examples of your local workspace">
-         </action>
-      </actionSet>
-   </extension>
-   <extension
          point="org.eclipse.ui.menus">
       <menuContribution
             locationURI="menu:org.eclipse.ui.main.menu?after=additions">
