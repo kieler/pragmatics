@@ -120,8 +120,6 @@ public class ImportExamplePage extends WizardResourceImportPage {
 		}
 	}
 
-	// TODO max performance rausholen... vielleicht schon ein tree im controller
-	// speichern... oder die map so nicht bestehen lassen...
 	private void addExamplesToItem(String category, TreeItem tItem) {
 		for (Example example : ExampleManager.get().getExamples().values()) {
 			if (example.contains(category)) {

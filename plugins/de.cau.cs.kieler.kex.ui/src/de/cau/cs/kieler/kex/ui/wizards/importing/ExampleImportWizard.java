@@ -17,7 +17,6 @@ public class ExampleImportWizard extends Wizard implements IWizard {
 	// nullpr�fungen, fieses hin und her wechseln der pages and so on...
 	public ExampleImportWizard(IStructuredSelection selection) {
 		super();
-		// TODO nullpointer exception falls selection null!
 		this.selection = selection;
 		setNeedsProgressMonitor(true);
 		setWindowTitle("Kieler Example Import");

@@ -182,6 +182,7 @@ public class ExampleResourcePage extends WizardPage {
 
 	public SourceType getExportType() {
 		// TODO muss der user entscheiden wohin das gehen soll
+		// für feld wurde SourceType.map gebaut.
 		return SourceType.KIELER;
 	}
 
