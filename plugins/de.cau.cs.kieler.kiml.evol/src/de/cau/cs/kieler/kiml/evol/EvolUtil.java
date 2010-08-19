@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kiml.evol;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -1026,22 +1027,23 @@ public final class EvolUtil {
     }
 
     /**
-     * Count the learnable properties of the given list of IPropertyDescriptor
-     * objects.
+     * Collect the learnable properties from the given list of
+     * IPropertyDescriptor objects.
      *
      * @param descriptors
      *            a collection of property descriptors
      * @param acceptedProperties
      *            a set of accepted properties. If this is {@code null}, then
      *            all registered properties are used.
-     * @return number of learnable properties
+     * @return learnable properties
      */
-    private static int countLearnableProperties(
+    private static Set<IPropertyDescriptor> collectLearnableProperties(
             final Collection<IPropertyDescriptor> descriptors,
             final Set<String> acceptedProperties) {
 
+
         if ((descriptors == null) || descriptors.isEmpty()) {
-            return 0;
+            return Collections.emptySet();
         }
 
         final Set<String> accepted;
@@ -1053,7 +1055,8 @@ public final class EvolUtil {
         }
 
         final LayoutServices layoutServices = LayoutServices.getInstance();
-        int result = 0;
+
+        final Set<IPropertyDescriptor> result = new HashSet<IPropertyDescriptor>();
 
         // Iterate the given property descriptors.
         for (final IPropertyDescriptor p : descriptors) {
@@ -1071,7 +1074,7 @@ public final class EvolUtil {
                 case FLOAT:
                     if (accepted.contains(id)) {
                         // learnable --> count it
-                        result++;
+                        result.add(p);
                     }
                     break;
                 default:
@@ -1119,14 +1122,14 @@ public final class EvolUtil {
         final Map<String, IPropertyDescriptor> allPropertyDescriptors =
                 getPropertyDescriptors(propertySources);
 
-        // TODO: instead of merely counting, collect the learnable properties.
-        final int learnableCount =
-                countLearnableProperties(allPropertyDescriptors.values(), registeredLearnables);
+        // Collect the learnable properties.
+        final Set<IPropertyDescriptor> learnables =
+                collectLearnableProperties(allPropertyDescriptors.values(), registeredLearnables);
 
         // Determine uniformly distributed mutation probability.
-        final double uniformProb = uniformProbability(learnableCount);
+        final double uniformProb = uniformProbability(learnables.size());
 
-        System.out.println("Creating genome of " + learnableCount + " layout property genes ...");
+        System.out.println("Creating genome of " + learnables + " layout property genes ...");
         final GeneFactory gf = new GeneFactory();
         final SortedSet<String> layoutHintIds = new TreeSet<String>();
 
@@ -1144,7 +1147,6 @@ public final class EvolUtil {
                 if (LayoutOptions.LAYOUT_HINT.equals(id)) {
                     /* Property is a layout hint --> obtain its id and store it
                        for later use. */
-
                     Assert.isNotNull(value, "layout hint value is null");
 
                     final String hintId = getLayoutHintId(desc, value);
@@ -1168,16 +1170,14 @@ public final class EvolUtil {
             } // iterate descriptors
         } // iterate propertySources
 
-        Assert.isTrue(learnableCount == result.size(),
-                "The number of genes does not have the predicted count of " + learnableCount);
+        Assert.isTrue(learnables.size() == result.size(),
+                "The number of genes does not have the predicted count of " + learnables);
 
         // Add a gene for the layout hint.
         if (!layoutHintIds.isEmpty()) {
-
             // Create a gene that can mutate over a list of layout hint IDs.
 
             final String hintId = layoutHintIds.first();
-            //
 
             final RadioGene hintGene = createLayoutHintGene(hintId);
 
@@ -1210,16 +1210,14 @@ public final class EvolUtil {
         final List<String> providerIds = getLayoutProviderIds(typeId);
 
         System.out.println("Providers for " + typeId + ": " + providerIds);
-        final Integer positionOfProvider = 0; // FIXME: find position of
-                                          // provider in list
 
-
-        final RadioTypeInfo typeInfo = new RadioTypeInfo(positionOfProvider, providerIds);
-
+        final Integer indexOfProviderId = Integer.valueOf(providerIds.indexOf(provider.getId()));
+        Assert.isTrue(indexOfProviderId.intValue() >= 0);
+        final RadioTypeInfo typeInfo = new RadioTypeInfo(indexOfProviderId, providerIds);
         final MutationInfo mutationInfo = new MutationInfo(0.01);
 
         final RadioGene hintGene =
-                new RadioGene(LayoutOptions.LAYOUT_HINT, positionOfProvider, typeInfo,
+                new RadioGene(LayoutOptions.LAYOUT_HINT, indexOfProviderId, typeInfo,
                         mutationInfo);
         return hintGene;
     }
