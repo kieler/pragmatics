@@ -97,7 +97,8 @@ public class ImportExamplePage extends WizardResourceImportPage {
 	}
 
 	private void createTreeElement(Composite composite) {
-		exampleTree = new Tree(composite, SWT.BORDER | SWT.CHECK);
+		exampleTree = new Tree(composite, SWT.BORDER | SWT.CHECK | SWT.V_SCROLL
+				| SWT.H_SCROLL);
 		exampleTree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		exampleTree.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {

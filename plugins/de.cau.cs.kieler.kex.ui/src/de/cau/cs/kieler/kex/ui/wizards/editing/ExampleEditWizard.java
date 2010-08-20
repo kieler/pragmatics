@@ -6,7 +6,7 @@ import org.eclipse.jface.wizard.Wizard;
 
 import de.cau.cs.kieler.kex.controller.ExampleManager;
 
-public class ExampleUpdateWizard extends Wizard implements IWizard {
+public class ExampleEditWizard extends Wizard implements IWizard {
 
 	private ChooseExamplePage chooseExamplePage;
 	private UpdateAttributesPage updateAttributePage;
@@ -14,10 +14,10 @@ public class ExampleUpdateWizard extends Wizard implements IWizard {
 
 	private final IStructuredSelection selection;
 
-	public ExampleUpdateWizard(IStructuredSelection selection) {
+	public ExampleEditWizard(IStructuredSelection selection) {
 		super();
 		this.selection = selection;
-		setWindowTitle("Kieler Example Update");
+		setWindowTitle("Kieler Example Edit");
 		ExampleManager.get().load(false);
 	}
 

@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import de.cau.cs.kieler.kex.ui.wizards.editing.ExampleUpdateWizard;
+import de.cau.cs.kieler.kex.ui.wizards.editing.ExampleEditWizard;
 import de.cau.cs.kieler.kex.ui.wizards.exporting.ExampleExportWizard;
 import de.cau.cs.kieler.kex.ui.wizards.importing.ExampleImportWizard;
 
@@ -43,7 +43,7 @@ public class ExampleHandler extends AbstractHandler {
 		} else if (wizardType == WizardType.EXPORT) {
 			wizard = new ExampleExportWizard(structuredSelection);
 		} else if (wizardType == WizardType.UPDATE) {
-			wizard = new ExampleUpdateWizard(structuredSelection);
+			wizard = new ExampleEditWizard(structuredSelection);
 		} else
 			return null;
 		Shell parent = workbenchWindow.getShell();
