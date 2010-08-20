@@ -280,20 +280,27 @@ public class LayoutPropertySource implements IPropertySource {
      */
     public static String getLayoutHint(final String displayedName) {
         // look for a matching layout provider
+        String bestHint = null;
+        int bestLength = 0;
         for (LayoutProviderData providerData : LayoutServices.getInstance().getLayoutProviderData()) {
-            if (displayedName.startsWith(providerData.getName())) {
-                return providerData.getId();
+            String name = providerData.getName();
+            if (displayedName.startsWith(name) && name.length() > bestLength) {
+                bestHint = providerData.getId();
+                bestLength = name.length();
             }
         }
-        // look for a matching layout type
-        for (Pair<String, String> layoutType : LayoutServices.getInstance().getLayoutTypes()) {
-            String typeId = layoutType.getFirst();
-            String typeName = layoutType.getSecond();
-            if (displayedName.startsWith(typeName)) {
-                return typeId;
+        if (bestHint == null) {
+            // look for a matching layout type
+            for (Pair<String, String> layoutType : LayoutServices.getInstance().getLayoutTypes()) {
+                String typeId = layoutType.getFirst();
+                String typeName = layoutType.getSecond();
+                if (displayedName.startsWith(typeName) && typeName.length() > bestLength) {
+                    bestHint = typeId;
+                    bestLength = typeName.length();
+                }
             }
         }
-        return "";
+        return bestHint;
     }
 
 }
