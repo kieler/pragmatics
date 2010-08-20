@@ -46,13 +46,13 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     // ================================== Attributes ==============================================
 
     /** The layered graph all methods in this class operate on. */
-    private LayeredGraph layerGraph;
+    private LayeredGraph layeredGraph;
 
     /** A {@code Collection} containing all nodes in the graph to layer. */
-    private Collection<LNode> layerNodes;
+    private Collection<LNode> nodes;
 
     /** A {@code LinkedList} containing all edges in the graph. */
-    private LinkedList<LEdge> layerEdges;
+    private LinkedList<LEdge> edges;
 
     /**
      * A {@code LinkedList} containing all nodes of the currently identified connected component by
@@ -64,13 +64,13 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     private LinkedList<LNode> componentNodes;
 
     /**
-     * A {@code LinkedList} containing all source nodes of the graph, i.e. all edges that have no
+     * A {@code LinkedList} containing all source nodes of the graph, i.e. all nodes that have no
      * incident incoming edges.
      */
     private LinkedList<LNode> sources;
 
     /**
-     * A {@code LinkedList} containing all sink nodes of the graph, i.e. all edges that have no
+     * A {@code LinkedList} containing all sink nodes of the graph, i.e. all nodes that have no
      * incident outgoing edges.
      */
     private LinkedList<LNode> sinks;
@@ -180,7 +180,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * Helper method for the network simplex layerer. It determines all connected components of the
      * graph given by a {@code Collection} containing all nodes of the graph.
      * 
-     * @param nodes
+     * @param theNodes
      *            a {@code Collection} containing all nodes of the graph to determine the connected
      *            components
      * @return an {@code LinkedList} of {@code LinkedLists} containing all nodes of every connected
@@ -189,11 +189,11 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#connectedComponentsDFS(LNode)
      *      connectedComponentsDFS()
      */
-    private LinkedList<LinkedList<LNode>> connectedComponents(final Collection<LNode> nodes) {
+    private LinkedList<LinkedList<LNode>> connectedComponents(final Collection<LNode> theNodes) {
 
         // initialize required attributes
-        if (nodeVisited == null || nodeVisited.length < nodes.size()) {
-            nodeVisited = new boolean[nodes.size()];
+        if (nodeVisited == null || nodeVisited.length < theNodes.size()) {
+            nodeVisited = new boolean[theNodes.size()];
         } else {
             Arrays.fill(nodeVisited, false);
         }
@@ -201,12 +201,12 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
 
         // re-index nodes
         int counter = 0;
-        for (LNode node : nodes) {
+        for (LNode node : theNodes) {
             node.id = counter++;
         }
         // determine connected components
         LinkedList<LinkedList<LNode>> components = new LinkedList<LinkedList<LNode>>();
-        for (LNode node : nodes) {
+        for (LNode node : theNodes) {
             if (!nodeVisited[node.id]) {
                 connectedComponentsDFS(node);
                 // connected component with the most nodes should be layered first to guarantee
@@ -239,8 +239,10 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     private void connectedComponentsDFS(final LNode node) {
 
         nodeVisited[node.id] = true;
+        // node is part of the current connected component
         componentNodes.add(node);
         LNode opposite;
+        // continue with next nodes, if not already visited
         for (LPort port : node.getPorts()) {
             for (LEdge edge : port.getEdges()) {
                 opposite = getOpposite(port, edge).getNode();
@@ -262,16 +264,16 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * connected component identified in this step will be added to {@code sinks}, respectively
      * {@code sources}.
      * 
-     * @param nodes
+     * @param theNodes
      *            a {@code Collection} containing all nodes of the graph
      */
-    private void initialize(final Collection<LNode> nodes) {
+    private void initialize(final Collection<LNode> theNodes) {
 
         // initialize node attributes
-        int numNodes = nodes.size();
-        if (inDegree == null || inDegree.length < nodes.size()) {
-            inDegree = new int[nodes.size()];
-            outDegree = new int[nodes.size()];
+        int numNodes = theNodes.size();
+        if (inDegree == null || inDegree.length < numNodes) {
+            inDegree = new int[numNodes];
+            outDegree = new int[numNodes];
             layer = new int[numNodes];
             revLayer = new int[numNodes];
             Arrays.fill(revLayer, numNodes);
@@ -287,21 +289,22 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         }
         sources = new LinkedList<LNode>();
         sinks = new LinkedList<LNode>();
-        layerNodes = nodes;
+        nodes = theNodes;
 
         // determine edges and re-index nodes
         int index = 0;
-        LinkedList<LEdge> edges = new LinkedList<LEdge>();
-        for (LNode node : nodes) {
+        LinkedList<LEdge> theEdges = new LinkedList<LEdge>();
+        for (LNode node : theNodes) {
             node.id = index++;
             for (LPort port : node.getPorts()) {
                 if (port.getType() == PortType.OUTPUT) {
-                    edges.addAll(port.getEdges());
+                    theEdges.addAll(port.getEdges());
                     outDegree[node.id] += port.getEdges().size();
                 } else if (port.getType() == PortType.INPUT) {
                     inDegree[node.id] += port.getEdges().size();
                 }
             }
+            // add node to sinks, resp. sources
             if (outDegree[node.id] == 0) {
                 sinks.add(node);
             }
@@ -311,11 +314,11 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         }
         // re-index edges
         int counter = 0;
-        for (LEdge edge : edges) {
+        for (LEdge edge : theEdges) {
             edge.id = counter++;
         }
         // initialize edge attributes
-        int numEdges = edges.size();
+        int numEdges = theEdges.size();
         if (cutvalue == null || cutvalue.length < numEdges) {
             cutvalue = new int[numEdges];
             minSpan = new int[numEdges];
@@ -325,7 +328,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             Arrays.fill(treeEdge, false);
             Arrays.fill(edgeVisited, false);
         }
-        layerEdges = edges;
+        edges = theEdges;
         postOrder = 1;
     }
 
@@ -336,33 +339,33 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * nodes in the graph concerning a minimal length of all edges by using the network simplex
      * algorithm described in {@literal Emden R. Gansner, Eleftherios Koutsofios, Stephen
      * C. North, Kiem-Phong Vo: "A Technique for Drawing Directed Graphs", AT&T Bell Laboratories.
-     * The execution time of this implemented algorithm has not been proven quadratic till now.
+     * Note that the execution time of this implemented algorithm has not been proven quadratic yet.
      * 
-     * @param nodes
+     * @param theNodes
      *            a {@code Collection} of all nodes of the graph to layer
-     * @param layeredGraph
+     * @param theLayeredGraph
      *            an initially empty layered graph which is filled with layers
      *            
      * @see de.cau.cs.kieler.klay.layered.modules.ILayerer ILayerer
      */
-    public void layer(final Collection<LNode> nodes, final LayeredGraph layeredGraph) {
+    public void layer(final Collection<LNode> theNodes, final LayeredGraph theLayeredGraph) {
 
-        if (nodes == null) {
-            throw new IllegalArgumentException("Input collection of nodes is null.");
+        if (theNodes == null) {
+            throw new NullPointerException("Input collection of nodes is null.");
         }
-        if (layeredGraph == null) {
-            throw new IllegalArgumentException("Input graph is null.");
+        if (theLayeredGraph == null) {
+            throw new NullPointerException("Input graph is null.");
         }
 
         getMonitor().begin("network-simplex layering", 1);
-        if (nodes.size() < 1) {
+        if (theNodes.size() < 1) {
             getMonitor().done();
             return;
         }
-        layerGraph = layeredGraph;
+        layeredGraph = theLayeredGraph;
 
         // layer graph, each connected component separately
-        for (LinkedList<LNode> connComp : connectedComponents(nodes)) {
+        for (LinkedList<LNode> connComp : connectedComponents(theNodes)) {
 
             initialize(connComp);
             // determine optimal layering
@@ -375,7 +378,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
 
             balance(normalize(false));
             // put nodes into their assigned layers
-            for (LNode node : layerNodes) {
+            for (LNode node : nodes) {
                 putNode(node);
             }
         }
@@ -401,9 +404,9 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     private void feasibleTree() {
 
         initLayering();
-        if (layerEdges.size() > 0) {
+        if (edges.size() > 0) {
             Arrays.fill(edgeVisited, false);
-            while (tightTreeDFS(layerNodes.iterator().next()) < layerNodes.size()) {
+            while (tightTreeDFS(nodes.iterator().next()) < nodes.size()) {
                 // some nodes are still not part of the tree
                 LEdge e = minimalSlack();
                 int slack = layer[e.getTarget().getNode().id] - layer[e.getSource().getNode().id]
@@ -412,7 +415,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
                     slack = -slack;
                 }
                 // update tree
-                for (LNode node : layerNodes) {
+                for (LNode node : nodes) {
                     if (treeNode[node.id]) {
                         layer[node.id] += slack;
                     }
@@ -421,7 +424,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             }
             // update tree-related attributes
             Arrays.fill(edgeVisited, false);
-            postorderTraversal(layerNodes.iterator().next());
+            postorderTraversal(nodes.iterator().next());
             cutvalues();
         }
     }
@@ -450,7 +453,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             layeringDFS(node, true);
         }
         // determine minimal length of each edge
-        for (LEdge edge : layerEdges) {
+        for (LEdge edge : edges) {
             minSpan[edge.id] = Math.min(layer[edge.getTarget().getNode().id]
                     - layer[edge.getSource().getNode().id], revLayer[edge.getTarget().getNode().id]
                     - revLayer[edge.getSource().getNode().id]);
@@ -611,7 +614,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         int minSlack = Integer.MAX_VALUE;
         LEdge minSlackEdge = null;
         int curSlack;
-        for (LEdge edge : layerEdges) {
+        for (LEdge edge : edges) {
             if (treeNode[edge.getSource().getNode().id] ^ treeNode[edge.getTarget().getNode().id]) {
                 // edge is non-tree edge and incident on the tree
                 curSlack = layer[edge.getTarget().getNode().id]
@@ -709,9 +712,8 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         // determine incident tree edges for each node
         LinkedList<LNode> leafs = new LinkedList<LNode>();
         int treeEdgeCount;
-        ArrayList<HashSet<LEdge>> unknownCutvalues = new ArrayList<HashSet<LEdge>>(
-                layerNodes.size());
-        for (LNode node : layerNodes) {
+        ArrayList<HashSet<LEdge>> unknownCutvalues = new ArrayList<HashSet<LEdge>>(nodes.size());
+        for (LNode node : nodes) {
             treeEdgeCount = 0;
             unknownCutvalues.add(new HashSet<LEdge>());
             for (LPort port : node.getPorts()) {
@@ -790,7 +792,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * 
      * @deprecated This method realizes a naive approach to compute the cut values with a
      *             performance of O(|E|^2). The method {@code cutvalues()} computes the cut values
-     *             in linear time and, therefore, should be used instead.
+     *             in linear time and therefore, should be used instead.
      * 
      * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#cutvalue cutvalue
      * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#cutvalues() cutvalues()
@@ -799,10 +801,10 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     private void naiveCutvalues() {
 
         boolean source, target;
-        for (LEdge edge : layerEdges) {
+        for (LEdge edge : edges) {
             if (treeEdge[edge.id]) {
                 cutvalue[edge.id] = 1;
-                for (LEdge cur : layerEdges) {
+                for (LEdge cur : edges) {
                     if (!treeEdge[cur.id]) {
                         source = isInHead(cur.getSource().getNode(), edge);
                         target = isInHead(cur.getTarget().getNode(), edge);
@@ -827,7 +829,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      */
     private LEdge leaveEdge() {
 
-        for (LEdge edge : layerEdges) {
+        for (LEdge edge : edges) {
             if (treeEdge[edge.id] && cutvalue[edge.id] < 0) {
                 return edge;
             }
@@ -841,32 +843,31 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * component of the edge will be considered. The edge with a minimal amount of slack (i.e. the
      * lowest difference between its current to its minimal length) will be returned.
      * 
-     * @param edge
+     * @param leave
      *            the tree edge to determine a non-tree edge to be replaced with
      * @return a non-tree edge with a minimal amount of slack to replace the given edge
      * @throws IllegalArgumentException
      *             if the input edge is not a tree edge
      */
-    private LEdge enterEdge(final LEdge edge) {
+    private LEdge enterEdge(final LEdge leave) {
 
-        if (!treeEdge[edge.id]) {
+        if (!treeEdge[leave.id]) {
             throw new IllegalArgumentException("The input edge is not a tree edge.");
         }
 
         LEdge replace = null;
         int repSlack = Integer.MAX_VALUE;
         int slack;
-        LNode source = null;
-        LNode target = null;
-        for (LEdge cons : layerEdges) {
-            source = cons.getSource().getNode();
-            target = cons.getTarget().getNode();
-            if (isInHead(source, edge) && !isInHead(target, edge)) {
+        LNode source, target;
+        for (LEdge edge : edges) {
+            source = edge.getSource().getNode();
+            target = edge.getTarget().getNode();
+            if (isInHead(source, leave) && !isInHead(target, leave)) {
                 // edge is to consider
-                slack = layer[target.id] - layer[source.id] - minSpan[cons.id];
+                slack = layer[target.id] - layer[source.id] - minSpan[edge.id];
                 if (slack < repSlack) {
                     repSlack = slack;
-                    replace = cons;
+                    replace = edge;
                 }
             }
         }
@@ -905,7 +906,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         if (!isInHead(enter.getTarget().getNode(), leave)) {
             delta = -delta;
         }
-        for (LNode node : layerNodes) {
+        for (LNode node : nodes) {
             if (!isInHead(node, leave)) {
                 layer[node.id] += delta;
             }
@@ -913,7 +914,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         // update tree-based values
         postOrder = 1;
         Arrays.fill(edgeVisited, false);
-        postorderTraversal(layerNodes.iterator().next());
+        postorderTraversal(nodes.iterator().next());
         cutvalues();
     }
 
@@ -950,12 +951,13 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         // normalize and determine layer filling
         int layerID = 0;
         int[] filling = new int[highest - lowest + 1];
-        for (LNode node : layerNodes) {
+        for (LNode node : nodes) {
             layer[node.id] -= lowest;
             filling[layer[node.id]]++;
         }
         if (mode) {
-            for (Layer eLayer : layerGraph.getLayers()) {
+            // also consider nodes of already layered connected components of the graph
+            for (Layer eLayer : layeredGraph.getLayers()) {
                 filling[layerID++] += eLayer.getNodes().size();
                 if (filling.length == layerID) {
                     break;
@@ -980,8 +982,9 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         // determine possible layers
         int newLayer;
         Pair<Integer, Integer> range = null;
-        for (LNode node : layerNodes) {
+        for (LNode node : nodes) {
             if (inDegree[node.id] == outDegree[node.id]) {
+                // node might get shifted
                 newLayer = layer[node.id];
                 range = minimalSpan(node);
                 for (int i = layer[node.id] - range.getFirst() + 1; i < layer[node.id]
@@ -1002,17 +1005,23 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
 
     /**
      * Helper method for the network simplex layerer. It puts the specified node into its assigned
-     * layer in the layered graph.
+     * layer indicated by {@code layer} in the layered graph. If the layered graph does not contain
+     * the specified layer (i.e. the number of layers in {@code layeredGraph} is less than the
+     * supposed height in the layering), additional layers will be added to match the required
+     * amount.
      * 
      * @param node
-     *            the node to put into the layered graph
+     *            the node to put into its assigned layer in the layered graph
+     * 
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#layeredGraph layeredGraph
+     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#layer layer
      */
     private void putNode(final LNode node) {
 
-        List<Layer> layers = layerGraph.getLayers();
+        List<Layer> layers = layeredGraph.getLayers();
         // add additional layers to match required amount
         while (layers.size() <= layer[node.id]) {
-            layers.add(layers.size(), new Layer(layerGraph));
+            layers.add(layers.size(), new Layer(layeredGraph));
         }
         node.setLayer(layers.get(layer[node.id]));
     }

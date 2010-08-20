@@ -58,7 +58,7 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
     private LinkedList<LEdge> layerEdges;
 
     /**
-     * A {@code LinkedList} containing all sink nodes of the graph, i.e. all edges that have no
+     * A {@code LinkedList} containing all sink nodes of the graph, i.e. all nodes that have no
      * incident outgoing edges.
      */
     private LinkedList<LNode> sinks;
@@ -220,10 +220,10 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
     public void layer(final Collection<LNode> nodes, final LayeredGraph layeredGraph) {
 
         if (nodes == null) {
-            throw new IllegalArgumentException("Input collection of nodes is null.");
+            throw new NullPointerException("Input collection of nodes is null.");
         }
         if (layeredGraph == null) {
-            throw new IllegalArgumentException("Input graph is null.");
+            throw new NullPointerException("Input graph is null.");
         }
 
         getMonitor().begin("LpSolve layering", 1);
