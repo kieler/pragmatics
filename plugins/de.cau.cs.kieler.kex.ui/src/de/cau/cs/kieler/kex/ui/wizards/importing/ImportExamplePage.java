@@ -45,7 +45,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
 		setDescription("Enter example attributes and destination location.");
 	}
 
-	// TODO Probleme mit der Hintergrund farbe unter ubuntu, könnten mit dem
+	// TODO Probleme mit der Hintergrund farbe unter ubuntu, kï¿½nnten mit dem
 	// set font der elemente geloest werden.
 
 	@Override
@@ -192,8 +192,13 @@ public class ImportExamplePage extends WizardResourceImportPage {
 		for (TreeItem item : exampleTree.getSelection()) {
 			Object data = item.getData("example");
 			// if category is choosen.
-			if (data != null)
+			if (data != null) {
 				result.add((Example) data);
+			} else {
+				for (TreeItem itemElement : item.getItems()) {
+					result.add((Example) itemElement.getData("example"));
+				}
+			}
 		}
 		return result;
 	}
